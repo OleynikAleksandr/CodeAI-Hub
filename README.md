@@ -2,16 +2,27 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.241** (Managed handoff barrier rebuild)
+**Current Release — v1.2.242** (Managed contract review boundary rebuild)
 
-This release fixes the cross-stage managed handoff defects found while
-retesting `v1.2.240`. Core now unlocks downstream stages only after the
-upstream terminal artifacts are reread and validated, while keeping the
-completed upstream stage active through its own Phase 4 idle anchor and
-user-return loop. Diagram Modules no longer opens Application Skeleton early,
-Application Skeleton no longer opens Quality Gates from an unresolved
-materialization repair, and Quality Gates opens only its idle post-completion
-anchor after validated integration instead of auto-opening `revision1`.
+This release fixes the final Quality Gates review-boundary defects found while
+retesting `v1.2.241`. The Quality Gates panel now shows a step-local `Accept
+Contract` button under `quality-gates.md`, draft-turn prompts ask the user to
+confirm the contract or list revisions instead of asking Core for approval,
+and typed contract acceptance now routes through the same Core command path
+for both Application Skeleton and Quality Gates. Short acknowledgements such
+as `Окей` or `Давай дальше` remain ordinary chat replies and do not silently
+advance the managed plan.
+
+**Previous release: v1.2.241** (Managed handoff barrier rebuild)
+
+This release fixes the cross-stage managed handoff defects found while retesting
+`v1.2.240`. Core now unlocks downstream stages only after the upstream terminal
+artifacts are reread and validated, while keeping the completed upstream stage
+active through its own Phase 4 idle anchor and user-return loop. Diagram
+Modules no longer opens Application Skeleton early, Application Skeleton no
+longer opens Quality Gates from an unresolved materialization repair, and
+Quality Gates opens only its idle post-completion anchor after validated
+integration instead of auto-opening `revision1`.
 
 **Previous release: v1.2.240** (Quality Gates release retest fixes)
 

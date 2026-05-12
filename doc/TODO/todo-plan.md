@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "23cd4b8bb",
+  "lastRecordedCommit": "c4770aa8d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase18.rebuild-confirmation.task1",
-  "expectedCommitMessage": "docs: prepare managed contract review rebuild checkpoint",
+  "currentTaskId": "quality-gates-implementation.phase19.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare managed contract review release notes",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed contract review rebuild checkpoint",
-    "preCommitHead": "23cd4b8bb",
+    "expectedCommitMessage": "docs: prepare managed contract review release notes",
+    "preCommitHead": "c4770aa8d",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase18.rebuild-confirmation.task1"
+    "taskId": "quality-gates-implementation.phase19.rebuild-docs.task1"
   }
 }
 ```
@@ -269,14 +269,14 @@
 ### Stream: Release Confirmation
 
 103. [DONE] `quality-gates-implementation.phase18.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed contract review fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review rebuild checkpoint`). Rebuild already approved by the user on 2026-05-12 with the instruction to continue through the next release build without another pause after the repair streams were created.
-104. [PENDING] Git Commit: `docs: prepare managed contract review rebuild checkpoint` (hash: TBD)
+104. [DONE] Git Commit: `docs: prepare managed contract review rebuild checkpoint` (hash: c4770aa8d)
 
 ## Phase 19 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Rebuild Release Candidate
 
-105. [TODO] `quality-gates-implementation.phase19.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed contract review candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review release notes`).
-106. [TODO] Git Commit: `docs: prepare managed contract review release notes` (hash: TBD)
+105. [DONE] `quality-gates-implementation.phase19.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed contract review candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.242`; release scope: explicit Quality Gates review action in PM, user-facing accept-or-revise draft wording, stage-aware typed acceptance fallback for `application_skeleton` and `quality_gates`, and regression guards that keep ambiguous short acknowledgements on the normal revision path.
+106. [PENDING] Git Commit: `docs: prepare managed contract review release notes` (hash: TBD)
 107. [TODO] `quality-gates-implementation.phase19.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed contract review release`).
 108. [TODO] Git Commit: `chore: rebuild managed contract review release` (hash: TBD)
 

@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.242] - 2026-05-12
+### Fixed
+- **Quality Gates now exposes an explicit review-boundary action in Project Manager.** The `quality-gates.md` panel renders a local `Accept Contract` button with a revision-in-chat hint, so the user no longer has to guess how to advance the managed review phase.
+- **Contract draft prompts now ask the user for confirmation instead of asking Core for approval.** Application Skeleton and Quality Gates both end the draft turn by telling the user to confirm the contract or list revisions, while Core remains responsible only for structural validation, managed commits, and post-acceptance continuation.
+- **Typed contract acceptance now reaches the same Core acceptance command for both managed review stages.** A recognized acceptance phrase in `quality_gates` no longer stalls in the dispatch router; it follows the same `typed-fallback` Core path as the PM button.
+- **Ambiguous short acknowledgements stay in the normal revision path.** Short replies like `Окей`, `Давай дальше`, and `Все хорошо` are explicitly excluded from contract acceptance recognition, preventing accidental lifecycle advancement.
+
+### Tests
+- Targeted managed contract review verification passed: `52/52` tests across bundled prompt/template sync, the Quality Gates PM button, accept-command HTTP transport, typed acceptance routing, post-turn phrase recognition, and PM transport clients.
+- `npm run build --workspace packages/core`, `npm run typecheck:webview`, and `npm run build:webview` all passed before release packaging.
+
 ## [1.2.241] - 2026-05-12
 ### Fixed
 - **Validated handoff now gates downstream unlocks across all managed technical stages.** Diagram Modules, Application Skeleton, and Quality Gates no longer advance on a terminal-looking commit message alone; Core first rereads the committed artifacts and opens the downstream stage only from the validated post-completion anchor.
