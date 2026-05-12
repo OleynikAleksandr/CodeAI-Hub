@@ -15,6 +15,11 @@ const STATIC_QUALITY_GATES_PHASE_RE =
 const LEGACY_STREAM_TASK_RE = /quality-gates\.stream1\.task2/u;
 const INTEGRATION_TASK_RE = /quality-gates\.phase3\.integration\.task1/u;
 const INCLUDED_IN_COMMIT_RE = /included-in-commit/u;
+const USER_RETURN_ANCHOR_TASK_ID = "quality-gates.phase4.user-return.task1";
+const USER_RETURN_REVISION1_MESSAGE =
+  "docs: revise quality gates user return revision 1";
+const USER_RETURN_REVISION1_TASK_RE =
+  /quality-gates\.phase4\.user-return\.revision1\.task1/u;
 
 const createWorkspaceRoot = (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "quality-gates-shim-"));
@@ -62,91 +67,169 @@ const commitPlan = async (
   });
 };
 
-test("quality gates shim grows the child plan dynamically with paired commits", async () => {
+const bootstrapQualityGatesIntegrationPlan = async (
+  workspaceRoot: string
+): Promise<{
+  readonly artifactRoot: string;
+  readonly planPath: string;
+  readonly scriptPath: string;
+}> => {
+  await configureGit(workspaceRoot);
+  await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+    initialStage: "quality_gates",
+  });
+
+  const scriptPath = path.join(
+    workspaceRoot,
+    "scripts/plan-orchestrator/plan-cli.mjs"
+  );
+  const planPath = path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH);
+  const artifactRoot = path.join(
+    workspaceRoot,
+    ".codeai-hub/demo-workspace/quality_gates"
+  );
+  await mkdir(artifactRoot, { recursive: true });
+
+  const seedPlan = await readFile(planPath, "utf8");
+  assert.doesNotMatch(seedPlan, STATIC_QUALITY_GATES_PHASE_RE);
+  assert.doesNotMatch(seedPlan, LEGACY_STREAM_TASK_RE);
+  assertImmediateCommitPair(
+    seedPlan,
+    "quality-gates.phase1.draft.task1",
+    "docs: draft quality gates contract"
+  );
+
+  await writeFile(
+    path.join(artifactRoot, "quality-gates.md"),
+    "# Quality Gates\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(artifactRoot, "quality-gates.json"),
+    `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: false }, null, 2)}\n`,
+    "utf8"
+  );
+  await commitPlan(
+    workspaceRoot,
+    scriptPath,
+    "docs: draft quality gates contract"
+  );
+
+  const reviewPlan = await readFile(planPath, "utf8");
+  assertImmediateCommitPair(
+    reviewPlan,
+    "quality-gates.phase2.review.task1",
+    "docs: revise quality gates contract - revision 1"
+  );
+  assert.doesNotMatch(reviewPlan, INTEGRATION_TASK_RE);
+
+  const acceptanceInjection = injectQualityGatesTaskPair({
+    kind: "acceptance",
+    planText: reviewPlan,
+  });
+  assert.ok(acceptanceInjection);
+  await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
+  await writeFile(
+    path.join(artifactRoot, "quality-gates.json"),
+    `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: true, acceptanceCommitted: false }, null, 2)}\n`,
+    "utf8"
+  );
+  await commitPlan(
+    workspaceRoot,
+    scriptPath,
+    "docs: accept quality gates contract"
+  );
+
+  const integrationPlan = await readFile(planPath, "utf8");
+  assertImmediateCommitPair(
+    integrationPlan,
+    "quality-gates.phase3.integration.task1",
+    "feat: integrate quality gates baseline"
+  );
+  return { artifactRoot, planPath, scriptPath };
+};
+
+const writeValidatedIntegratedQualityGatesArtifacts = async (
+  workspaceRoot: string,
+  artifactRoot: string
+): Promise<void> => {
+  await mkdir(path.join(workspaceRoot, ".husky"), { recursive: true });
+  await mkdir(path.join(workspaceRoot, "scripts", "quality-gates"), {
+    recursive: true,
+  });
+  await writeFile(
+    path.join(workspaceRoot, "package.json"),
+    `${JSON.stringify(
+      {
+        name: "demo",
+        scripts: {
+          build: "echo build",
+          "qg:before-commit":
+            "node scripts/quality-gates/run.mjs requiredBeforeCommit",
+          "qg:before-push":
+            "node scripts/quality-gates/run.mjs requiredBeforePush",
+        },
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, ".husky", "pre-commit"),
+    "npm run qg:before-commit\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, ".husky", "pre-push"),
+    "npm run qg:before-push\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, "scripts", "quality-gates", "run.mjs"),
+    "process.exit(0);\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(artifactRoot, "quality-gates.json"),
+    `${JSON.stringify(
+      {
+        schema: "codeai-quality-gates-v1",
+        accepted: true,
+        acceptanceCommitted: true,
+        integrated: true,
+        integrationState: "integrated",
+        commands: {
+          build: {
+            command: "npm run build",
+            desiredStatus: "required",
+          },
+        },
+        requiredBeforeCommit: ["build"],
+        requiredBeforePush: [],
+        integratedPaths: [
+          "package.json",
+          ".husky/pre-commit",
+          ".husky/pre-push",
+          "scripts/quality-gates/run.mjs",
+        ],
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+};
+
+test("quality gates shim opens the phase 4 idle anchor only after validated integration", async () => {
   const workspaceRoot = await createWorkspaceRoot();
   try {
-    await configureGit(workspaceRoot);
-    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
-      initialStage: "quality_gates",
-    });
+    const { artifactRoot, planPath, scriptPath } =
+      await bootstrapQualityGatesIntegrationPlan(workspaceRoot);
 
-    const scriptPath = path.join(
+    await writeValidatedIntegratedQualityGatesArtifacts(
       workspaceRoot,
-      "scripts/plan-orchestrator/plan-cli.mjs"
-    );
-    const planPath = path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH);
-    const artifactRoot = path.join(
-      workspaceRoot,
-      ".codeai-hub/demo-workspace/quality_gates"
-    );
-    await mkdir(artifactRoot, { recursive: true });
-
-    const seedPlan = await readFile(planPath, "utf8");
-    assert.doesNotMatch(seedPlan, STATIC_QUALITY_GATES_PHASE_RE);
-    assert.doesNotMatch(seedPlan, LEGACY_STREAM_TASK_RE);
-    assertImmediateCommitPair(
-      seedPlan,
-      "quality-gates.phase1.draft.task1",
-      "docs: draft quality gates contract"
-    );
-
-    await writeFile(
-      path.join(artifactRoot, "quality-gates.md"),
-      "# Quality Gates\n",
-      "utf8"
-    );
-    await writeFile(
-      path.join(artifactRoot, "quality-gates.json"),
-      `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: false }, null, 2)}\n`,
-      "utf8"
-    );
-    await commitPlan(
-      workspaceRoot,
-      scriptPath,
-      "docs: draft quality gates contract"
-    );
-
-    const reviewPlan = await readFile(planPath, "utf8");
-    assertImmediateCommitPair(
-      reviewPlan,
-      "quality-gates.phase2.review.task1",
-      "docs: revise quality gates contract - revision 1"
-    );
-    assert.doesNotMatch(reviewPlan, INTEGRATION_TASK_RE);
-
-    const acceptanceInjection = injectQualityGatesTaskPair({
-      kind: "acceptance",
-      planText: reviewPlan,
-    });
-    assert.ok(acceptanceInjection);
-    await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
-    await writeFile(
-      path.join(artifactRoot, "quality-gates.json"),
-      `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: true, acceptanceCommitted: false }, null, 2)}\n`,
-      "utf8"
-    );
-    await commitPlan(
-      workspaceRoot,
-      scriptPath,
-      "docs: accept quality gates contract"
-    );
-
-    const integrationPlan = await readFile(planPath, "utf8");
-    assertImmediateCommitPair(
-      integrationPlan,
-      "quality-gates.phase3.integration.task1",
-      "feat: integrate quality gates baseline"
-    );
-
-    await writeFile(
-      path.join(workspaceRoot, "package.json"),
-      `${JSON.stringify({ name: "demo", scripts: { build: "echo build" } }, null, 2)}\n`,
-      "utf8"
-    );
-    await writeFile(
-      path.join(artifactRoot, "quality-gates.json"),
-      `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: true, acceptanceCommitted: true, integrated: true, integrationState: "integrated" }, null, 2)}\n`,
-      "utf8"
+      artifactRoot
     );
     await commitPlan(
       workspaceRoot,
@@ -157,9 +240,48 @@ test("quality gates shim grows the child plan dynamically with paired commits", 
     const userReturnPlan = await readFile(planPath, "utf8");
     assertImmediateCommitPair(
       userReturnPlan,
-      "quality-gates.phase4.user-return.revision1.task1",
-      "docs: revise quality gates user return revision 1"
+      USER_RETURN_ANCHOR_TASK_ID,
+      USER_RETURN_REVISION1_MESSAGE
     );
+    assert.doesNotMatch(userReturnPlan, USER_RETURN_REVISION1_TASK_RE);
+    assert.doesNotMatch(userReturnPlan, INCLUDED_IN_COMMIT_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("quality gates shim opens the same phase 4 idle anchor after a validated integration repair", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    const { artifactRoot, planPath, scriptPath } =
+      await bootstrapQualityGatesIntegrationPlan(workspaceRoot);
+    const integrationPlan = await readFile(planPath, "utf8");
+    const repairInjection = injectQualityGatesTaskPair({
+      diagnostics: ["hook registry output missing"],
+      kind: "repair",
+      planText: integrationPlan,
+      targetPhase: "phase3.integration",
+    });
+    assert.ok(repairInjection);
+    await writeFile(planPath, repairInjection.nextPlanText, "utf8");
+
+    await writeValidatedIntegratedQualityGatesArtifacts(
+      workspaceRoot,
+      artifactRoot
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "docs: repair quality gates phase3.integration attempt 1"
+    );
+
+    const userReturnPlan = await readFile(planPath, "utf8");
+    assertImmediateCommitPair(
+      userReturnPlan,
+      USER_RETURN_ANCHOR_TASK_ID,
+      USER_RETURN_REVISION1_MESSAGE
+    );
+    assert.doesNotMatch(userReturnPlan, USER_RETURN_REVISION1_TASK_RE);
     assert.doesNotMatch(userReturnPlan, INCLUDED_IN_COMMIT_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

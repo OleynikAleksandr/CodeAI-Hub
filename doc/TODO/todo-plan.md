@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "7e07030f1",
+  "lastRecordedCommit": "547eac0cd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase13.user-return-anchors.task1",
-  "expectedCommitMessage": "fix: normalize managed user return anchors",
+  "currentTaskId": "quality-gates-implementation.phase13.quality-gates-user-return-anchor.task1",
+  "expectedCommitMessage": "fix: gate quality gates user return anchor on validated integration",
   "debt": {
-    "expectedCommitMessage": "fix: normalize managed user return anchors",
-    "preCommitHead": "7e07030f1",
+    "expectedCommitMessage": "fix: gate quality gates user return anchor on validated integration",
+    "preCommitHead": "547eac0cd",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase13.user-return-anchors.task1"
+    "taskId": "quality-gates-implementation.phase13.quality-gates-user-return-anchor.task1"
   }
 }
 ```
@@ -199,12 +199,12 @@
 ### Stream: Post-Completion User Return Anchors
 
 73. [DONE] `quality-gates-implementation.phase13.user-return-anchors.task1` Reopen Application Skeleton Phase 4 revisions from the idle handoff anchor once the user actually changes owned files, and treat clean Phase 4 handoff turns as discussion rather than `out_of_scope` so the idle anchor remains reachable at runtime (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts`; expected commit: `fix: normalize managed user return anchors`).
-74. [PENDING] Git Commit: `fix: normalize managed user return anchors` (hash: TBD)
+74. [DONE] Git Commit: `fix: normalize managed user return anchors` (hash: 547eac0cd)
 
 ### Stream: Quality Gates Validated User Return Anchor
 
-75. [TODO] `quality-gates-implementation.phase13.quality-gates-user-return-anchor.task1` Rework Quality Gates so integration or repair commits open only the Phase 4 idle anchor after Core rereads the integrated contract, confirms accepted integrated state plus hook/package wiring, and leaves `revision1` to real user-return diffs instead of auto-opening it on the terminal integration commit (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: gate quality gates user return anchor on validated integration`).
-76. [TODO] Git Commit: `fix: gate quality gates user return anchor on validated integration` (hash: TBD)
+75. [DONE] `quality-gates-implementation.phase13.quality-gates-user-return-anchor.task1` Rework Quality Gates so integration or repair commits open only the Phase 4 idle anchor after Core rereads the integrated contract, confirms accepted integrated state plus hook/package wiring, and leaves `revision1` to real user-return diffs instead of auto-opening it on the terminal integration commit (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: gate quality gates user return anchor on validated integration`).
+76. [PENDING] Git Commit: `fix: gate quality gates user return anchor on validated integration` (hash: TBD)
 
 ### Stream: Cross-Stage Regression Coverage
 

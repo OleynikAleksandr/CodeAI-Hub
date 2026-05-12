@@ -369,14 +369,86 @@ const insertQualityGatesIntegrationTaskPair = (lines, commitLineIndex, state, me
   const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
   lines.splice(commitLineIndex + 1, 0, "", "## Phase 3 — Quality Gates Integration", "", "### Stream: Accepted-Only Integration", "", formatNewTaskLine(taskNumber, "quality-gates.phase3.integration.task1", "TODO", "Integrate the accepted Quality Gates baseline into the materialized Application Skeleton and stop for Core validation", ".codeai-hub/**/quality_gates/**, package.json, package-lock.json, scripts/gates/**, .husky/**", "feat: integrate quality gates baseline"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: integrate quality gates baseline\\\` (hash: TBD)\`);
 };
+const QUALITY_GATES_JSON_FILE_RE = /\\/quality_gates\\/quality-gates\\.json$/u;
+const QUALITY_GATES_MARKDOWN_FILE_RE = /\\/quality_gates\\/quality-gates\\.md$/u;
+const QUALITY_GATES_REPAIR_COMMIT_RE = /^docs: repair quality gates phase3\\.integration attempt \\d+$/u;
+const readQualityGatesJsonObject = (filePath) => {
+  if (!(typeof filePath === "string" && existsSync(filePath))) { return null; }
+  try {
+    const parsed = JSON.parse(readFileSync(filePath, "utf8"));
+    return typeof parsed === "object" && parsed !== null && !Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+const readQualityGatesText = (filePath) =>
+  typeof filePath === "string" && existsSync(filePath)
+    ? readFileSync(filePath, "utf8")
+    : null;
+const readQualityGatesBooleanFlag = (value, key) =>
+  Boolean(value && typeof value === "object" && !Array.isArray(value) && value[key] === true);
+const hasQualityGatesCommands = (value) =>
+  Boolean(value && typeof value.commands === "object" && value.commands !== null && !Array.isArray(value.commands));
+const readQualityGatesStringArray = (value, key) =>
+  Array.isArray(value?.[key])
+    ? value[key].filter((entry) => typeof entry === "string").map((entry) => entry.trim()).filter(Boolean)
+    : [];
+const readQualityGatesPackageScripts = () => {
+  const packageJson = readQualityGatesJsonObject("package.json");
+  const scripts = packageJson?.scripts;
+  if (!(typeof scripts === "object" && scripts !== null && !Array.isArray(scripts))) { return {}; }
+  return Object.fromEntries(Object.entries(scripts).filter((entry) => typeof entry[1] === "string"));
+};
+const toQualityGatesPackageScriptName = (gateId) =>
+  gateId.startsWith("qg-") ? \`qg:\${gateId.slice("qg-".length)}\` : gateId;
+const hasQualityGatesAggregateHookRunner = ({ hookText, packageScripts, scope, scriptName }) => {
+  const script = packageScripts[scriptName];
+  return Boolean(script?.includes("scripts/quality-gates/run.mjs") && script.includes(scope) && (hookText.includes(scriptName) || hookText.includes(\`npm run \${scriptName}\`)));
+};
+const validateQualityGatesHookCommands = ({ gateIds, hookText }) =>
+  gateIds.filter((gateId) => {
+    const packageScriptName = toQualityGatesPackageScriptName(gateId);
+    return !(hookText.includes(gateId) || hookText.includes(packageScriptName));
+  });
+const validateQualityGatesDeclaredHookIntegration = (contract) => {
+  const packageScripts = readQualityGatesPackageScripts();
+  const preCommitText = readQualityGatesText(".husky/pre-commit") ?? "";
+  const prePushText = readQualityGatesText(".husky/pre-push") ?? "";
+  const preCommitGateIds = readQualityGatesStringArray(contract, "requiredBeforeCommit");
+  const prePushGateIds = readQualityGatesStringArray(contract, "requiredBeforePush");
+  return [
+    ...(hasQualityGatesAggregateHookRunner({ hookText: preCommitText, packageScripts, scope: "requiredBeforeCommit", scriptName: "qg:before-commit" }) ? [] : validateQualityGatesHookCommands({ gateIds: preCommitGateIds, hookText: preCommitText })),
+    ...(hasQualityGatesAggregateHookRunner({ hookText: prePushText, packageScripts, scope: "requiredBeforePush", scriptName: "qg:before-push" }) ? [] : validateQualityGatesHookCommands({ gateIds: prePushGateIds, hookText: prePushText })),
+  ];
+};
+const hasQualityGatesIntegratedPaths = (contract) => {
+  const integratedPaths = readQualityGatesStringArray(contract, "integratedPaths");
+  return integratedPaths.length > 0 && integratedPaths.every((entry) => existsSync(entry));
+};
+const isValidatedQualityGatesIntegration = (changedFiles) => {
+  const jsonPath = changedFiles.find((file) => QUALITY_GATES_JSON_FILE_RE.test(file));
+  if (!jsonPath) { return false; }
+  const markdownPath = changedFiles.find((file) => QUALITY_GATES_MARKDOWN_FILE_RE.test(file)) ?? jsonPath.replace("quality-gates.json", "quality-gates.md");
+  const contract = readQualityGatesJsonObject(jsonPath);
+  if (!(typeof markdownPath === "string" && existsSync(markdownPath) && contract && hasQualityGatesCommands(contract) && readQualityGatesBooleanFlag(contract, "accepted") && readQualityGatesBooleanFlag(contract, "acceptanceCommitted") && readQualityGatesBooleanFlag(contract, "integrated") && contract.integrationState === "integrated" && hasQualityGatesIntegratedPaths(contract))) { return false; }
+  return validateQualityGatesDeclaredHookIntegration(contract).length === 0;
+};
 const existingQualityGatesUserReturnRevisionNumbers = (lines) => lines.map((line) => /quality-gates\\.phase4\\.user-return\\.revision(\\d+)\\.task1/u.exec(line)?.[1]).filter(Boolean).map((value) => Number.parseInt(value, 10)).filter(Number.isFinite);
-const isQualityGatesIntegrationRepairCommit = (event, currentStage) => currentStage === "quality_gates" && /^docs: repair quality gates phase3\\.integration attempt \\d+$/u.test(event.message);
-const shouldInsertQualityGatesUserReturnRevision = (state, message, changedFiles) =>
-  (state.currentTaskId === "quality-gates.phase3.integration.task1" && message === "feat: integrate quality gates baseline") ||
-  (/^quality-gates\\.phase3\\.integration\\.repair\\d+\\.task1$/u.test(state.currentTaskId ?? "") && isQualityGatesIntegrationRepairCommit({ changedFiles, message }, "quality_gates")) ||
-  (/^quality-gates\\.phase4\\.user-return\\.revision\\d+\\.task1$/u.test(state.currentTaskId ?? "") && /^docs: revise quality gates user return revision \\d+$/u.test(message));
+const shouldInsertQualityGatesUserReturnAnchor = (state, message, changedFiles) =>
+  ((state.currentTaskId === "quality-gates.phase3.integration.task1" && message === "feat: integrate quality gates baseline") ||
+    (/^quality-gates\\.phase3\\.integration\\.repair\\d+\\.task1$/u.test(state.currentTaskId ?? "") && QUALITY_GATES_REPAIR_COMMIT_RE.test(message))) &&
+  isValidatedQualityGatesIntegration(changedFiles);
 const insertQualityGatesUserReturnRevisionTaskPair = (lines, commitLineIndex, state, message, changedFiles) => {
-  if (!shouldInsertQualityGatesUserReturnRevision(state, message, changedFiles)) { return; }
+  if (shouldInsertQualityGatesUserReturnAnchor(state, message, changedFiles)) {
+    if (lines.some((line) => line.includes("quality-gates.phase4.user-return.task1"))) { return; }
+    const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+    const phaseLines = lines.some((line) => line.includes("Phase 4 — Persistent Quality Gates User Return"))
+      ? []
+      : ["", "## Phase 4 — Persistent Quality Gates User Return", "", "### Stream: User Return And Revisions", ""];
+    lines.splice(commitLineIndex + 1, 0, ...phaseLines, formatNewTaskLine(taskNumber, "quality-gates.phase4.user-return.task1", "TODO", "Open post-completion Quality Gates user-return revisions; Core must inject revision task pairs after real user diffs", ".codeai-hub/**/quality_gates/**, .codeai-hub/**/workflow/revisions/quality-gates/**", "docs: revise quality gates user return revision 1"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`docs: revise quality gates user return revision 1\\\` (hash: TBD)\`);
+    return;
+  }
+  if (!(/^quality-gates\\.phase4\\.user-return\\.revision\\d+\\.task1$/u.test(state.currentTaskId ?? "") && /^docs: revise quality gates user return revision \\d+$/u.test(message))) { return; }
   const existingRevisions = existingQualityGatesUserReturnRevisionNumbers(lines);
   const nextRevision = (existingRevisions.length > 0 ? Math.max(...existingRevisions) : 0) + 1;
   const taskId = \`quality-gates.phase4.user-return.revision\${nextRevision}.task1\`;
