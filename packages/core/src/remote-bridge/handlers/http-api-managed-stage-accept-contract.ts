@@ -42,3 +42,29 @@ export const handleApplicationSkeletonAcceptContract = async (
   }
   res.json({ stage: decision.stage, status: "accepted" });
 };
+
+export const handleQualityGatesAcceptContract = async (
+  req: Request,
+  res: Response,
+  service: ManagedWorkflowPostTurnService
+): Promise<void> => {
+  const body = isRecord(req.body) ? req.body : {};
+  const sessionId = readNonEmptyString(body.sessionId);
+  if (!sessionId) {
+    res.status(HTTP_BAD_REQUEST).json({ error: "Missing sessionId" });
+    return;
+  }
+  const decision = await service.handleQualityGatesAcceptContractCommand({
+    sessionId,
+    source: readSource(body.source),
+  });
+  if (decision.kind === "rejected") {
+    res.status(HTTP_CONFLICT).json({
+      error: "rejected",
+      reasons: decision.reasons,
+      stage: decision.stage,
+    });
+    return;
+  }
+  res.json({ stage: decision.stage, status: "accepted" });
+};

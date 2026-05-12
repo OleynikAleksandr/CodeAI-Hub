@@ -36,6 +36,10 @@ import {
 import type { ApplicationSkeletonAcceptContractDecision } from "./managed-stage-accept-contract-handler";
 import { runApplicationSkeletonAcceptContractCommand } from "./managed-stage-accept-contract-runner";
 import {
+  type QualityGatesAcceptContractDecision,
+  runQualityGatesAcceptContractCommand,
+} from "./quality-gates-accept-contract-runner";
+import {
   type QualityGatesProgressSnapshot,
   readQualityGatesProgressSnapshot,
 } from "./quality-gates-progress";
@@ -256,6 +260,24 @@ export class ManagedWorkflowPostTurnService {
     });
   }
 
+  handleQualityGatesAcceptContractCommand(params: {
+    readonly sessionId: string;
+    readonly source: "ui-button" | "typed-fallback";
+  }): Promise<QualityGatesAcceptContractDecision> {
+    return runQualityGatesAcceptContractCommand({
+      appendAudit: (sessionId, record) =>
+        this.appendManagedAuditMessage(sessionId, record),
+      handle: (sessionId) => this.handle(sessionId),
+      logger: this.logger,
+      markAccepted: (sessionId) => this.recentlyAcceptedSessions.add(sessionId),
+      resetRetryCounter: (sessionId) => this.retryCounters.delete(sessionId),
+      resolveSession: (sessionId) =>
+        this.sessionManager?.getSession(sessionId) ?? null,
+      sessionId: params.sessionId,
+      source: params.source,
+    });
+  }
+
   handleContractAcceptance(params: {
     readonly phrase: string;
     readonly sessionId: string;
@@ -271,6 +293,19 @@ export class ManagedWorkflowPostTurnService {
           stage: stage ?? null,
         }
       );
+      return;
+    }
+    if (stage === "quality_gates") {
+      this.handleQualityGatesAcceptContractCommand({
+        sessionId: params.sessionId,
+        source: "typed-fallback",
+      }).catch((error: unknown) => {
+        this.logger.error(
+          "Quality Gates typed acceptance routing failed",
+          error instanceof Error ? error : undefined,
+          { sessionId: params.sessionId }
+        );
+      });
       return;
     }
     this.retryCounters.delete(params.sessionId);
