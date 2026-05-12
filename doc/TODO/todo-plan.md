@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "c8d1a9bdc",
+  "lastRecordedCommit": "5e206572e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase17.review-regressions.task1",
-  "expectedCommitMessage": "test: cover managed contract review protocol",
+  "currentTaskId": "quality-gates-implementation.phase18.verification.task1",
+  "expectedCommitMessage": "test: verify managed contract review fixes",
   "debt": {
-    "expectedCommitMessage": "test: cover managed contract review protocol",
-    "preCommitHead": "c8d1a9bdc",
+    "expectedCommitMessage": "test: verify managed contract review fixes",
+    "preCommitHead": "5e206572e",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase17.review-regressions.task1"
+    "taskId": "quality-gates-implementation.phase18.verification.task1"
   }
 }
 ```
@@ -257,14 +257,14 @@
 97. [DONE] `quality-gates-implementation.phase17.acceptance-fallback.task1` Replace the Application Skeleton-only typed acceptance router with a stage-aware managed contract acceptance fallback so explicit Quality Gates acceptance text reaches the Core runner while ambiguous replies continue down the normal revision path (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: route managed contract typed acceptance by stage`).
 98. [DONE] Git Commit: `fix: route managed contract typed acceptance by stage` (hash: c8d1a9bdc)
 99. [DONE] `quality-gates-implementation.phase17.review-regressions.task1` Add focused regression coverage for the shared contract review protocol, Quality Gates accept-command transport, and post-turn acceptance wording so the release retest cannot regress back to silent review dead-ends (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts`; expected commit: `test: cover managed contract review protocol`).
-100. [PENDING] Git Commit: `test: cover managed contract review protocol` (hash: TBD)
+100. [DONE] Git Commit: `test: cover managed contract review protocol` (hash: 5e206572e)
 
 ## Phase 18 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Targeted Verification
 
-101. [TODO] `quality-gates-implementation.phase18.verification.task1` Run targeted verification for the managed contract review boundary fixes across Core, prompt assets, and Project Manager, then record the executed commands in this plan before any rebuild is requested (scope: `packages/core, packages/agents, src/client/project-manager`; expected commit: `test: verify managed contract review fixes`).
-102. [TODO] Git Commit: `test: verify managed contract review fixes` (hash: TBD)
+101. [DONE] `quality-gates-implementation.phase18.verification.task1` Run targeted verification for the managed contract review boundary fixes across Core, prompt assets, and Project Manager, then record the executed commands in this plan before any rebuild is requested (scope: `packages/core, packages/agents, src/client/project-manager`; expected commit: `test: verify managed contract review fixes`). Verification evidence (2026-05-12): `npx tsx --test packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.test.tsx packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts src/client/project-manager/services/managed-stage-accept-contract-client.test.ts` passed (`52/52`); `npm run build --workspace packages/core` passed; `npm run typecheck:webview` passed; `npm run build:webview` passed.
+102. [PENDING] Git Commit: `test: verify managed contract review fixes` (hash: TBD)
 
 ### Stream: Release Confirmation
 
