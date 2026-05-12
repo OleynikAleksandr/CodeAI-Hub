@@ -20,6 +20,7 @@ export type QualityGatesSubstep =
   | "outdated";
 
 export interface QualityGatesProgressSnapshot {
+  readonly acceptanceCommitted?: boolean;
   readonly accepted: boolean;
   readonly commandContractReady: boolean;
   readonly integrated: boolean;
@@ -73,6 +74,10 @@ const readAcceptedFlag = (value: Record<string, unknown> | null): boolean => {
     (acceptance as Record<string, unknown>).accepted === true
   );
 };
+
+const readAcceptanceCommittedFlag = (
+  value: Record<string, unknown> | null
+): boolean => value?.acceptanceCommitted === true;
 
 const readIntegratedFlag = (value: Record<string, unknown> | null): boolean =>
   value?.integrated === true;
@@ -272,6 +277,7 @@ export const readQualityGatesProgressSnapshot = async (params: {
     jsonExists &&
     commandContractReady &&
     readAcceptedFlag(contract);
+  const acceptanceCommitted = accepted && readAcceptanceCommittedFlag(contract);
   const integrationState = readIntegrationState(contract);
   const declaredIntegrated =
     accepted && commandContractReady && readIntegratedFlag(contract);
@@ -283,6 +289,7 @@ export const readQualityGatesProgressSnapshot = async (params: {
   const integrated = declaredIntegrated && validationErrors.length === 0;
   return {
     accepted,
+    acceptanceCommitted,
     commandContractReady,
     integrated,
     integrationState,

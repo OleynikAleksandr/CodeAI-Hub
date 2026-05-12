@@ -60,7 +60,7 @@ const writeManagedPlanEvidence = async (params: {
               message: "feat: integrate quality gates baseline",
               planPath: "doc/TODO/stages/quality-gates/todo-plan.md",
               stage: "quality_gates",
-              taskId: "quality-gates.stream1.task2",
+              taskId: "quality-gates.phase3.integration.task1",
             },
           ],
           activePlanPath: "doc/TODO/stages/quality-gates/todo-plan.md",
@@ -109,7 +109,7 @@ const writeManagedPlanEvidence = async (params: {
       "```json",
       JSON.stringify(
         {
-          currentTaskId: "quality-gates.stream1.task3",
+          currentTaskId: "quality-gates.phase4.user-return.task1",
           debt: null,
           executionScopeStatus: "ACTIVE",
           expectedCommitMessage: "feat: integrate quality gates baseline",
