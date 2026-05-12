@@ -2,7 +2,10 @@
 
 **Status:** Active contract
 **Created:** 2026-05-07
+**Updated:** 2026-05-12
 **Owner:** Oleksandr + Codex
+
+**2026-05-12 update:** Quality Gates Baseline lifecycle uses dynamic child-plan task injection rather than a static stream1.task2 follow-up. Tasks injected by Core: `quality-gates.phase1.draft.task1`, `quality-gates.phase2.review.task1` + `phase2.review.revisionN.task1`, `quality-gates.phase2.acceptance.task1`, `quality-gates.phase3.integration.task1`, `quality-gates.phase4.user-return.revisionN.task1`, and repair pairs `quality-gates.<phase>.repairN.task1`. Stage status is sticky-completed by `workspace.plan.md` `acceptedCommits` evidence.
 
 ## 1. Boundary
 

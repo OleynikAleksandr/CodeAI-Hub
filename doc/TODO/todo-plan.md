@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "fa6b1562a",
+  "lastRecordedCommit": "a4d9b5a59",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase7.system-docs.task1",
-  "expectedCommitMessage": "docs: document quality gates managed lifecycle",
+  "currentTaskId": "quality-gates-implementation.phase7.contract-docs.task1",
+  "expectedCommitMessage": "docs: update quality gates workflow contracts",
   "debt": {
-    "expectedCommitMessage": "docs: document quality gates managed lifecycle",
-    "preCommitHead": "fa6b1562a",
+    "expectedCommitMessage": "docs: update quality gates workflow contracts",
+    "preCommitHead": "a4d9b5a59",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase7.system-docs.task1"
+    "taskId": "quality-gates-implementation.phase7.contract-docs.task1"
   }
 }
 ```
@@ -133,9 +133,9 @@
 ### Stream: System Docs Sync
 
 43. [DONE] `quality-gates-implementation.phase7.system-docs.task1` Sync system architecture docs with the implemented Quality Gates lifecycle and stage-light ownership model (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`; expected commit: `docs: document quality gates managed lifecycle`).
-44. [PENDING] Git Commit: `docs: document quality gates managed lifecycle` (hash: TBD)
-45. [TODO] `quality-gates-implementation.phase7.contract-docs.task1` Sync lifecycle contracts, rollout guardrails, and docs index with Quality Gates implementation boundaries (scope: `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update quality gates workflow contracts`).
-46. [TODO] Git Commit: `docs: update quality gates workflow contracts` (hash: TBD)
+44. [DONE] Git Commit: `docs: document quality gates managed lifecycle` (hash: a4d9b5a59)
+45. [DONE] `quality-gates-implementation.phase7.contract-docs.task1` Sync lifecycle contracts, rollout guardrails, and docs index with Quality Gates implementation boundaries (scope: `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update quality gates workflow contracts`).
+46. [PENDING] Git Commit: `docs: update quality gates workflow contracts` (hash: TBD)
 47. [TODO] `quality-gates-implementation.phase7.verification.task1` Run targeted verification for core, agent assets, and Project Manager changes, then record the executed commands in this plan (scope: `packages/core, packages/agents/quality-gates-agent, src/client/project-manager`; expected commit: `test: verify quality gates managed orchestration`).
 48. [TODO] Git Commit: `test: verify quality gates managed orchestration` (hash: TBD)
 

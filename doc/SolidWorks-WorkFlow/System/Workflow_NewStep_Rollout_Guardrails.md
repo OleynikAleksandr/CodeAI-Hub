@@ -1,9 +1,11 @@
 # Workflow New Step Rollout Guardrails (SSOT)
 
 **Status:** Active
-**Updated:** 2026-05-11
+**Updated:** 2026-05-12
 **Owner:** Oleksandr + Codex
 **Scope:** minimum rules for adding a new workflow step or retrofitting an already released one without split truth, asymmetry, or restart regressions.
+
+**2026-05-12 retrofit reference:** Quality Gates Baseline finished the managed-orchestration retrofit. Anchor child-plan task ids: `quality-gates.phase1.draft.task1`, `quality-gates.phase2.review.task1`, `quality-gates.phase2.acceptance.task1`, `quality-gates.phase3.integration.task1`, `quality-gates.phase4.user-return.task1`. Stage-light completion is sticky from `workspace.plan.md` `acceptedCommits`; downstream dirty paths must not recolor it.
 
 ---
 
