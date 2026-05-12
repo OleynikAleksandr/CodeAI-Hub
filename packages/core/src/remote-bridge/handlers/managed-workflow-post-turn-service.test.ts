@@ -301,6 +301,49 @@ test("post-turn service does not dispatch via gateway without explicit handle() 
   assert.deepEqual(dispatched, []);
 });
 
+test("post-turn service replays a queued rerun after the current pass completes", async () => {
+  const sessionId = "quality-gates-session";
+  let callCount = 0;
+  let releaseFirstPass: (() => void) | null = null;
+  const service = new ManagedWorkflowPostTurnService({
+    logger: new Logger("error"),
+    sessionManager: {
+      getSession: () => ({
+        initiativeSlug: "demo-workspace",
+        stage: "quality_gates",
+        workspacePath: "/tmp/demo-workspace",
+      }),
+    } as unknown as SessionManager,
+  });
+
+  (
+    service as unknown as {
+      run: (params: {
+        sessionId: string;
+        stage: string;
+        workspaceRoot: string;
+        workspaceSlug: string;
+      }) => Promise<void>;
+    }
+  ).run = async () => {
+    callCount += 1;
+    if (callCount === 1) {
+      await new Promise<void>((resolve) => {
+        releaseFirstPass = resolve;
+      });
+    }
+  };
+
+  service.handle(sessionId);
+  service.handle(sessionId);
+  assert.equal(callCount, 1);
+
+  releaseFirstPass?.();
+  await service.whenIdle(sessionId);
+
+  assert.equal(callCount, 2);
+});
+
 test("post-turn service does not mutate future stage plans during diagram modules arbitration", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "managed-post-turn-stage-scope-")

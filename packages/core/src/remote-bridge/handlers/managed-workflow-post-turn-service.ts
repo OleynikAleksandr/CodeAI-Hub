@@ -147,6 +147,7 @@ export class ManagedWorkflowPostTurnService {
   private readonly transaction = new ManagedDocumentationCommitTransaction();
   private readonly sessionManager?: SessionManager;
   private readonly inFlight = new Map<string, Promise<void>>();
+  private readonly queuedReruns = new Set<string>();
   private readonly recentlyAcceptedSessions = new Set<string>();
   private readonly retryCounters = new Map<
     string,
@@ -214,8 +215,9 @@ export class ManagedWorkflowPostTurnService {
       return;
     }
     if (this.inFlight.has(sessionId)) {
+      this.queuedReruns.add(sessionId);
       this.logger.debug(
-        "Managed workflow post-turn arbitration already in flight; skipping concurrent invocation",
+        "Managed workflow post-turn arbitration already in flight; queued rerun after current pass",
         { sessionId, workspaceSlug: session.initiativeSlug }
       );
       return;
@@ -233,6 +235,13 @@ export class ManagedWorkflowPostTurnService {
       })
       .finally(() => {
         this.inFlight.delete(sessionId);
+        if (this.queuedReruns.delete(sessionId)) {
+          this.logger.debug(
+            "Managed workflow post-turn arbitration replaying queued rerun",
+            { sessionId, workspaceSlug }
+          );
+          this.handle(sessionId);
+        }
       });
     this.inFlight.set(sessionId, task);
   }

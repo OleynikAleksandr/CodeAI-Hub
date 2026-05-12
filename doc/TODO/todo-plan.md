@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "ca5cc329d",
+  "lastRecordedCommit": "c7426e39b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase24.user-reretest.task1",
-  "expectedCommitMessage": "docs: record managed typed acceptance workflow acceptance",
+  "currentTaskId": "quality-gates-implementation.phase25.acceptance-continuation.task1",
+  "expectedCommitMessage": "fix: queue managed acceptance continuation reruns",
   "debt": {
-    "expectedCommitMessage": "docs: record managed typed acceptance workflow acceptance",
-    "preCommitHead": "ca5cc329d",
+    "expectedCommitMessage": "fix: queue managed acceptance continuation reruns",
+    "preCommitHead": "c7426e39b",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase24.user-reretest.task1"
+    "taskId": "quality-gates-implementation.phase25.acceptance-continuation.task1"
   }
 }
 ```
@@ -327,14 +327,14 @@
 ### Stream: User Re-Re-Re-Re-Retest
 
 125. [DONE] `quality-gates-implementation.phase24.user-reretest.task1` User installs the rebuilt release and retests Application Skeleton and Quality Gates review acceptance, including typed acceptance with `Подтверждаю` after at least one contract revision (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed typed acceptance workflow acceptance`). Retest result (2026-05-12): Application Skeleton accepted typed `Подтверждаю` and continued into materialization correctly. Quality Gates still stalled after the same typed acceptance phrase on release `1.2.243`: the child plan advanced through `docs: accept quality gates contract` into `quality-gates.phase3.integration.task1`, but no provider-visible integration continuation arrived in the same session. The Quality Gates acceptance-to-integration continuation transport must be repaired and regression-covered before another rebuild.
-126. [PENDING] Git Commit: `docs: record managed typed acceptance workflow acceptance` (hash: TBD)
+126. [DONE] Git Commit: `docs: record managed typed acceptance workflow acceptance` (hash: c7426e39b)
 
 ## Phase 25 - Acceptance Continuation Transport Repair (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Post-Turn Re-Entry Queue
 
-127. [TODO] `quality-gates-implementation.phase25.acceptance-continuation.task1` Queue a managed post-turn rerun when a Core-owned acceptance command calls `handle(sessionId)` while that session still has an in-flight post-turn arbitration, so the acceptance commit can always trigger the provider-visible Quality Gates integration continuation after the current pass finishes (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: queue managed acceptance continuation reruns`).
-128. [TODO] Git Commit: `fix: queue managed acceptance continuation reruns` (hash: TBD)
+127. [DONE] `quality-gates-implementation.phase25.acceptance-continuation.task1` Queue a managed post-turn rerun when a Core-owned acceptance command calls `handle(sessionId)` while that session still has an in-flight post-turn arbitration, so the acceptance commit can always trigger the provider-visible Quality Gates integration continuation after the current pass finishes (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: queue managed acceptance continuation reruns`).
+128. [PENDING] Git Commit: `fix: queue managed acceptance continuation reruns` (hash: TBD)
 
 ## Phase 26 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
 
