@@ -338,7 +338,11 @@ test("post-turn service replays a queued rerun after the current pass completes"
   service.handle(sessionId);
   assert.equal(callCount, 1);
 
-  releaseFirstPass?.();
+  const release = releaseFirstPass as (() => void) | null;
+  if (release === null) {
+    throw new Error("Expected the first pass blocker to be registered.");
+  }
+  release();
   await service.whenIdle(sessionId);
 
   assert.equal(callCount, 2);

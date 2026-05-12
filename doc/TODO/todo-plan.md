@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "c7426e39b",
+  "lastRecordedCommit": "1eb58d53e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase25.acceptance-continuation.task1",
-  "expectedCommitMessage": "fix: queue managed acceptance continuation reruns",
+  "currentTaskId": "quality-gates-implementation.phase26.verification.task1",
+  "expectedCommitMessage": "test: verify managed acceptance continuation reruns",
   "debt": {
-    "expectedCommitMessage": "fix: queue managed acceptance continuation reruns",
-    "preCommitHead": "c7426e39b",
+    "expectedCommitMessage": "test: verify managed acceptance continuation reruns",
+    "preCommitHead": "1eb58d53e",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase25.acceptance-continuation.task1"
+    "taskId": "quality-gates-implementation.phase26.verification.task1"
   }
 }
 ```
@@ -334,14 +334,14 @@
 ### Stream: Post-Turn Re-Entry Queue
 
 127. [DONE] `quality-gates-implementation.phase25.acceptance-continuation.task1` Queue a managed post-turn rerun when a Core-owned acceptance command calls `handle(sessionId)` while that session still has an in-flight post-turn arbitration, so the acceptance commit can always trigger the provider-visible Quality Gates integration continuation after the current pass finishes (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts`; expected commit: `fix: queue managed acceptance continuation reruns`).
-128. [PENDING] Git Commit: `fix: queue managed acceptance continuation reruns` (hash: TBD)
+128. [DONE] Git Commit: `fix: queue managed acceptance continuation reruns` (hash: 1eb58d53e)
 
 ## Phase 26 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Targeted Verification
 
-129. [TODO] `quality-gates-implementation.phase26.verification.task1` Run targeted verification for the managed acceptance continuation rerun repair and record the executed commands in this plan before any rebuild is requested (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed acceptance continuation reruns`).
-130. [TODO] Git Commit: `test: verify managed acceptance continuation reruns` (hash: TBD)
+129. [DONE] `quality-gates-implementation.phase26.verification.task1` Run targeted verification for the managed acceptance continuation rerun repair and record the executed commands in this plan before any rebuild is requested (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed acceptance continuation reruns`). Verification evidence (2026-05-12): `npx tsx --test packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts` passed (`32/32`); `npx ultracite check packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts` passed; `npm run build --workspace packages/core` passed.
+130. [PENDING] Git Commit: `test: verify managed acceptance continuation reruns` (hash: TBD)
 
 ### Stream: Release Confirmation
 
