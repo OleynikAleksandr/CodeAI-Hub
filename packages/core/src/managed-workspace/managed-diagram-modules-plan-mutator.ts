@@ -266,13 +266,9 @@ const collectProductPartIdsFromIndex = (files) => {
   if (!indexFile || !existsSync(indexFile)) { return []; }
   return [...readFileSync(indexFile, "utf8").matchAll(PRODUCT_PART_DECLARATION_RE)].map((match) => match[1]?.trim()).filter((id, index, ids) => id && id !== "part-id" && ids.indexOf(id) === index);
 };
-const readCurrentTaskLineBeforeCommit = (lines, commitLineIndex) =>
-  [...lines.slice(0, commitLineIndex)].reverse().find((line) => line.includes("diagram-modules.")) ?? "";
-const isDiagramModulesRepairTaskLine = (line) => line.includes("diagram-modules.") && line.includes(".repair");
 const committedProductPartIds = (lines, files, commitLineIndex) => {
   const fromPlan = lines.map((line) => /^\\d+\\. \\[DONE\\] \`diagram-modules\\.product-part\\.([a-z0-9]+(?:-[a-z0-9]+)*)\`/u.exec(line)?.[1]).filter(Boolean);
-  const currentTaskLine = readCurrentTaskLineBeforeCommit(lines, commitLineIndex);
-  const fromCommit = isDiagramModulesRepairTaskLine(currentTaskLine) ? [] : files.map((file) => /diagram_modules\\/product-parts\\/([^/]+)\\.md$/u.exec(file)?.[1]).filter(Boolean);
+  const fromCommit = files.map((file) => /diagram_modules\\/product-parts\\/([^/]+)\\.md$/u.exec(file)?.[1]).filter(Boolean);
   return [...new Set([...fromPlan, ...fromCommit])];
 };
 const existingUserReturnRevisionNumbers = (lines) =>

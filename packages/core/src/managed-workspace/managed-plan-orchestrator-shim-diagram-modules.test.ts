@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
+import { injectDiagramModulesRepairTaskPair } from "./managed-diagram-modules-plan-mutator";
 import { ManagedPlanOrchestratorInstaller } from "./managed-plan-orchestrator-installer";
 
 const execFileAsync = promisify(execFile);
@@ -143,6 +144,74 @@ test("Diagram Modules final Product Part opens a persistent user-return revision
 
     assert.match(revisionStatus.stdout, USER_RETURN_REVISION2_TASK_RE);
     assert.match(revisionStatus.stdout, USER_RETURN_REVISION2_COMMIT_RE);
+    assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules accepted final repair opens the persistent user-return revision pair", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+
+  try {
+    await runGit(workspaceRoot, ["init"]);
+    await runGit(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await runGit(workspaceRoot, ["config", "user.name", "Test User"]);
+    await runGit(workspaceRoot, ["config", "core.hooksPath", ".husky"]);
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot);
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const planPath = path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH);
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
+      createProductPartsIndex()
+    );
+    await runGit(workspaceRoot, ["add", "."]);
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: update diagram modules product part index"],
+      { cwd: workspaceRoot }
+    );
+
+    const repairedPlan = injectDiagramModulesRepairTaskPair({
+      diagnostics: ["Product Part artifact file is missing."],
+      partId: "local-runtime",
+      planText: await readFile(planPath, "utf8"),
+      targetArtifactPath:
+        ".codeai-hub/demo-workspace/diagram_modules/product-parts/local-runtime.md",
+      targetKind: "product_part",
+      validator: "diagram_modules.product_part",
+    });
+    assert.ok(repairedPlan);
+    await writeFile(planPath, repairedPlan.nextPlanText, "utf8");
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts/local-runtime.md",
+      "# Product Part: local-runtime\n"
+    );
+    await runGit(workspaceRoot, ["add", "."]);
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", repairedPlan.nextCommitMessage],
+      { cwd: workspaceRoot }
+    );
+
+    const status = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    const plan = await readFile(planPath, "utf8");
+
+    assert.match(status.stdout, USER_RETURN_TASK_RE);
+    assert.match(status.stdout, USER_RETURN_COMMIT_RE);
+    assert.match(plan, USER_RETURN_PHASE_RE);
+    assert.match(plan, USER_RETURN_PLAN_COMMIT_RE);
     assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

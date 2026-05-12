@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "4b53b29a1",
+  "lastRecordedCommit": "292b21bab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase12.user-reretest.task1",
-  "expectedCommitMessage": "docs: record rebuilt quality gates user workflow acceptance",
+  "currentTaskId": "quality-gates-implementation.phase13.diagram-modules-handoff.task1",
+  "expectedCommitMessage": "fix: harden diagram modules handoff barrier",
   "debt": {
-    "expectedCommitMessage": "docs: record rebuilt quality gates user workflow acceptance",
-    "preCommitHead": "4b53b29a1",
+    "expectedCommitMessage": "fix: harden diagram modules handoff barrier",
+    "preCommitHead": "292b21bab",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase12.user-reretest.task1"
+    "taskId": "quality-gates-implementation.phase13.diagram-modules-handoff.task1"
   }
 }
 ```
@@ -182,28 +182,28 @@
 ### Stream: User Re-Retest
 
 67. [DONE] `quality-gates-implementation.phase12.user-reretest.task1` User installs the rebuilt release and retests Diagram Modules, Application Skeleton, Quality Gates, and Development Tree unlock behavior against the Quality Gates release-fix scenario (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record rebuilt quality gates user workflow acceptance`). Retest candidate (2026-05-12): build commit `4b53b29a1`, VSIX `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.240.vsix`, refreshed tarballs in `doc/tmp/releases/`. Retest result (2026-05-12): release `1.2.240` failed during Application Skeleton. Observed defects: Core opened Application Skeleton Phase 4 user-return before materialization was accepted; Phase 3 materialization pair `7/8` and premature Phase 4 pair `11/12` ended up blocked while `phase3.materialize.repair2.task1` remained in progress; workspace ledger advanced `application_skeleton` to completed / `quality_gates` active on repair commit `1d99f36` before the materialization revalidation loop converged. The same managed stage-handoff shortcut must be audited for Diagram Modules and removed from Quality Gates parity paths.
-68. [PENDING] Git Commit: `docs: record rebuilt quality gates user workflow acceptance` (hash: TBD)
+68. [DONE] Git Commit: `docs: record rebuilt quality gates user workflow acceptance` (hash: 292b21bab)
 
 ## Phase 13 - Cross-Stage Lifecycle Barrier Repairs (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Diagram Modules Handoff Audit
 
-69. [TODO] `quality-gates-implementation.phase13.diagram-modules-handoff.task1` Audit Diagram Modules for the same premature managed handoff pattern and require a validated post-commit completion boundary before opening Application Skeleton from the persistent user-return phase (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: harden diagram modules handoff barrier`).
-70. [TODO] Git Commit: `fix: harden diagram modules handoff barrier` (hash: TBD)
+69. [DONE] `quality-gates-implementation.phase13.diagram-modules-handoff.task1` Audit Diagram Modules for the same managed handoff boundary and ensure the final accepted Product Part repair still completes the step and opens Application Skeleton only after the repaired artifact is reread as valid (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts`; expected commit: `fix: harden diagram modules handoff barrier`).
+70. [PENDING] Git Commit: `fix: harden diagram modules handoff barrier` (hash: TBD)
 
 ### Stream: Application Skeleton Validated Handoff
 
-71. [TODO] `quality-gates-implementation.phase13.application-skeleton-handoff.task1` Rework Application Skeleton so materialization or repair commits do not unlock Quality Gates or mark the stage completed until Core rereads the committed artifacts and confirms a materialized accepted skeleton without validation errors (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: gate application skeleton handoff on validated materialization`).
+71. [TODO] `quality-gates-implementation.phase13.application-skeleton-handoff.task1` Rework Application Skeleton so materialization or repair commits do not unlock Quality Gates or mark the stage completed until Core rereads the committed artifacts, confirms a materialized accepted skeleton without validation errors, and opens only a Phase 4 idle user-return anchor instead of auto-opening `revision1` (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts`; expected commit: `fix: gate application skeleton handoff on validated materialization`).
 72. [TODO] Git Commit: `fix: gate application skeleton handoff on validated materialization` (hash: TBD)
 
 ### Stream: Post-Completion User Return Anchors
 
-73. [TODO] `quality-gates-implementation.phase13.user-return-anchors.task1` Normalize Application Skeleton and Quality Gates post-completion plans around a single Phase 4 idle anchor so Core injects revision task-pairs only after a real user-return diff instead of auto-opening `revision1` on the terminal materialization or integration commit (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: normalize managed user return anchors`).
+73. [TODO] `quality-gates-implementation.phase13.user-return-anchors.task1` Normalize Quality Gates post-completion plans around a single Phase 4 idle anchor and reopen Application Skeleton Phase 4 revisions from the idle anchor once the user actually changes owned files, instead of auto-opening `revision1` on the terminal integration commit or leaving the anchor unreachable at runtime (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts`; expected commit: `fix: normalize managed user return anchors`).
 74. [TODO] Git Commit: `fix: normalize managed user return anchors` (hash: TBD)
 
 ### Stream: Cross-Stage Regression Coverage
 
-75. [TODO] `quality-gates-implementation.phase13.lifecycle-regressions.task1` Add regression coverage for Diagram Modules, Application Skeleton, and Quality Gates so workspace ledger advancement cannot outrun a child-plan repair/review loop and blocked terminal pairs remain impossible after a premature handoff attempt (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `test: cover managed stage handoff barriers`).
+75. [TODO] `quality-gates-implementation.phase13.lifecycle-regressions.task1` Add regression coverage for Diagram Modules, Application Skeleton, and Quality Gates so workspace ledger advancement cannot outrun a child-plan repair/review loop, successful Application Skeleton/Quality Gates completion leaves an idle Phase 4 anchor instead of `revision1`, and blocked terminal pairs remain impossible after a premature handoff attempt (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts`; expected commit: `test: cover managed stage handoff barriers`).
 76. [TODO] Git Commit: `test: cover managed stage handoff barriers` (hash: TBD)
 
 ## Phase 14 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)

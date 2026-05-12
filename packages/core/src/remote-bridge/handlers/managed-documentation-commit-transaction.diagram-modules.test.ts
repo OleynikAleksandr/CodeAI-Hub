@@ -21,6 +21,8 @@ const USER_RETURN_REVISION2_STATE_RE =
   /"currentTaskId": "diagram-modules\.user-return\.revision2\.task1"/u;
 const USER_RETURN_REVISION_COMMIT_RE =
   /docs: revise diagram modules user return revision 1/u;
+const FINAL_REPAIR_COMMIT_RE =
+  /docs: repair diagram modules product part project-manager attempt 1/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -202,6 +204,66 @@ test("Diagram Modules user-return revision commits Project Manager artifact edit
     assert.match(
       await runGit(workspaceRoot, ["log", "--oneline", "-3"]),
       USER_RETURN_REVISION_COMMIT_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules accepted final repair opens user-return revision 1", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-final-repair-commit-")
+  );
+
+  try {
+    await initManagedWorkspace(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
+      createProjectManagerIndex("planned")
+    );
+
+    const indexResult =
+      await new ManagedDocumentationCommitTransaction().commitAcceptedStage({
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      });
+    assert.equal(indexResult.status, "committed");
+
+    const planPath = path.join(workspaceRoot, DIAGRAM_PLAN_PATH);
+    const repairInjection = injectDiagramModulesRepairTaskPair({
+      diagnostics: ["Product Part artifact file is missing."],
+      partId: "project-manager",
+      planText: await readFile(planPath, "utf8"),
+      targetArtifactPath: `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/project-manager.md`,
+      targetKind: "product_part",
+      validator: "diagram_modules.product_part",
+    });
+    assert.ok(repairInjection);
+    await writeFile(planPath, repairInjection.nextPlanText, "utf8");
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/project-manager.md`,
+      createProjectManagerPart("Repaired final ownership.")
+    );
+
+    const repairResult =
+      await new ManagedDocumentationCommitTransaction().commitAcceptedStage({
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      });
+
+    assert.equal(repairResult.status, "committed");
+    assert.deepEqual(repairResult.unmanagedDirtyFiles, []);
+    assert.deepEqual(await runGit(workspaceRoot, ["status", "--short"]), "");
+    assert.match(
+      await readFile(path.join(workspaceRoot, DIAGRAM_PLAN_PATH), "utf8"),
+      USER_RETURN_REVISION1_STATE_RE
+    );
+    assert.match(
+      await runGit(workspaceRoot, ["log", "--oneline", "-3"]),
+      FINAL_REPAIR_COMMIT_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
