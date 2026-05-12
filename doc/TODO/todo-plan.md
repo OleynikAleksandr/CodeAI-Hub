@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "95c3adf2b",
+  "lastRecordedCommit": "3f4947d80",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase11.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare quality gates rebuild release notes",
+  "currentTaskId": "quality-gates-implementation.phase11.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild quality gates release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates rebuild release notes",
-    "preCommitHead": "95c3adf2b",
+    "expectedCommitMessage": "chore: rebuild quality gates release",
+    "preCommitHead": "3f4947d80",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase11.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase11.rebuild-build.task1"
   }
 }
 ```
@@ -173,9 +173,9 @@
 ### Stream: Rebuild Release Candidate
 
 63. [DONE] `quality-gates-implementation.phase11.rebuild-docs.task1` After explicit confirmation only, update release notes for the next Quality Gates release and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates rebuild release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.240`.
-64. [PENDING] Git Commit: `docs: prepare quality gates rebuild release notes` (hash: TBD)
-65. [TODO] `quality-gates-implementation.phase11.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates release`).
-66. [TODO] Git Commit: `chore: rebuild quality gates release` (hash: TBD)
+64. [DONE] Git Commit: `docs: prepare quality gates rebuild release notes` (hash: 3f4947d80)
+65. [DONE] `quality-gates-implementation.phase11.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates release`). Build evidence (2026-05-12): `./scripts/build-all.sh --version 1.2.240` completed successfully; refreshed tarballs now present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`.
+66. [PENDING] Git Commit: `chore: rebuild quality gates release` (hash: TBD)
 
 ## Phase 12 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-12)
 
