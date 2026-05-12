@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "e5a90a205",
+  "lastRecordedCommit": "0184c0e40",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase16.user-reretest.task1",
-  "expectedCommitMessage": "docs: record managed handoff rebuild acceptance",
+  "currentTaskId": "quality-gates-implementation.phase17.review-prompts.task1",
+  "expectedCommitMessage": "docs: align managed contract review prompts",
   "debt": {
-    "expectedCommitMessage": "docs: record managed handoff rebuild acceptance",
-    "preCommitHead": "e5a90a205",
+    "expectedCommitMessage": "docs: align managed contract review prompts",
+    "preCommitHead": "0184c0e40",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase16.user-reretest.task1"
+    "taskId": "quality-gates-implementation.phase17.review-prompts.task1"
   }
 }
 ```
@@ -242,54 +242,56 @@
 ### Stream: User Re-Re-Retest
 
 89. [DONE] `quality-gates-implementation.phase16.user-reretest.task1` User installs the rebuilt release and retests Diagram Modules, Application Skeleton, Quality Gates, and Development Tree unlock behavior against the managed handoff barrier fix scenario (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed handoff rebuild acceptance`). Result: release `1.2.241` passed Diagram Modules and Application Skeleton, but Quality Gates stalled in contract review. Observed defects: Project Manager exposed no step-local `Accept Contract` button under `quality-gates.md`; the agent ended the draft turn with Core-review wording instead of an explicit user accept-or-revise instruction; typed Quality Gates acceptance still did not advance from review into the Core-owned acceptance/integration continuation. Agreed repair scope: shared contract-review protocol with Core form-check before user review, panel-scoped explicit acceptance, normal chat revisions for requested changes, and Core-owned continuation into post-acceptance materialization/integration.
-90. [PENDING] Git Commit: `docs: record managed handoff rebuild acceptance` (hash: TBD)
+90. [DONE] Git Commit: `docs: record managed handoff rebuild acceptance` (hash: 0184c0e40)
 
 ## Phase 17 - Contract Review Boundary Repairs (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Managed Contract Review Protocol
 
-91. [TODO] `quality-gates-implementation.phase17.review-prompts.task1` Align Application Skeleton and Quality Gates prompt assets with the shared contract review protocol so draft turns explicitly ask the user to confirm the contract or list revisions, never phrase that boundary as Core review/approval, and keep Core reserved for form/lifecycle ownership plus post-acceptance continuation (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: align managed contract review prompts`).
-92. [TODO] Git Commit: `docs: align managed contract review prompts` (hash: TBD)
-93. [TODO] `quality-gates-implementation.phase17.quality-gates-panel.task1` Add a step-local Quality Gates `Accept Contract` button under the rendered contract artifact, reuse Core transport decisions for disabled-state reasons, and surface a short "write revisions in chat" hint next to the button (scope: `src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.tsx, src/client/project-manager/components/quality-gates/quality-gates-panel.tsx, src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.test.tsx`; expected commit: `feat: add quality gates accept contract button`).
-94. [TODO] Git Commit: `feat: add quality gates accept contract button` (hash: TBD)
-95. [TODO] `quality-gates-implementation.phase17.acceptance-fallback.task1` Replace the Application Skeleton-only typed acceptance router with a stage-aware managed contract acceptance fallback so explicit Quality Gates acceptance text reaches the Core runner while ambiguous replies continue down the normal revision path (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: route managed contract typed acceptance by stage`).
-96. [TODO] Git Commit: `fix: route managed contract typed acceptance by stage` (hash: TBD)
-97. [TODO] `quality-gates-implementation.phase17.review-regressions.task1` Add focused regression coverage for the shared contract review protocol, Quality Gates accept-command transport, and post-turn acceptance wording so the release retest cannot regress back to silent review dead-ends (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts`; expected commit: `test: cover managed contract review protocol`).
-98. [TODO] Git Commit: `test: cover managed contract review protocol` (hash: TBD)
+91. [DONE] `quality-gates-implementation.phase17.review-prompts.task1` Align Application Skeleton and Quality Gates prompt assets with the shared contract review protocol so draft turns explicitly ask the user to confirm the contract or list revisions, never phrase that boundary as Core review/approval, and keep Core reserved for form/lifecycle ownership plus post-acceptance continuation; record the resulting task split in the active plan before continuing with template-only regressions (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: align managed contract review prompts`).
+92. [PENDING] Git Commit: `docs: align managed contract review prompts` (hash: TBD)
+93. [TODO] `quality-gates-implementation.phase17.review-template-tests.task1` Sync bundled template assertions with the revised user-review wording for Application Skeleton and Quality Gates so asset/template drift is caught without widening the prompt-edit task scope (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: sync managed contract review prompt templates`).
+94. [TODO] Git Commit: `test: sync managed contract review prompt templates` (hash: TBD)
+95. [TODO] `quality-gates-implementation.phase17.quality-gates-panel.task1` Add a step-local Quality Gates `Accept Contract` button under the rendered contract artifact, reuse Core transport decisions for disabled-state reasons, and surface a short "write revisions in chat" hint next to the button (scope: `src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.tsx, src/client/project-manager/components/quality-gates/quality-gates-panel.tsx, src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.test.tsx`; expected commit: `feat: add quality gates accept contract button`).
+96. [TODO] Git Commit: `feat: add quality gates accept contract button` (hash: TBD)
+97. [TODO] `quality-gates-implementation.phase17.acceptance-fallback.task1` Replace the Application Skeleton-only typed acceptance router with a stage-aware managed contract acceptance fallback so explicit Quality Gates acceptance text reaches the Core runner while ambiguous replies continue down the normal revision path (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: route managed contract typed acceptance by stage`).
+98. [TODO] Git Commit: `fix: route managed contract typed acceptance by stage` (hash: TBD)
+99. [TODO] `quality-gates-implementation.phase17.review-regressions.task1` Add focused regression coverage for the shared contract review protocol, Quality Gates accept-command transport, and post-turn acceptance wording so the release retest cannot regress back to silent review dead-ends (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts`; expected commit: `test: cover managed contract review protocol`).
+100. [TODO] Git Commit: `test: cover managed contract review protocol` (hash: TBD)
 
 ## Phase 18 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Targeted Verification
 
-99. [TODO] `quality-gates-implementation.phase18.verification.task1` Run targeted verification for the managed contract review boundary fixes across Core, prompt assets, and Project Manager, then record the executed commands in this plan before any rebuild is requested (scope: `packages/core, packages/agents, src/client/project-manager`; expected commit: `test: verify managed contract review fixes`).
-100. [TODO] Git Commit: `test: verify managed contract review fixes` (hash: TBD)
+101. [TODO] `quality-gates-implementation.phase18.verification.task1` Run targeted verification for the managed contract review boundary fixes across Core, prompt assets, and Project Manager, then record the executed commands in this plan before any rebuild is requested (scope: `packages/core, packages/agents, src/client/project-manager`; expected commit: `test: verify managed contract review fixes`).
+102. [TODO] Git Commit: `test: verify managed contract review fixes` (hash: TBD)
 
 ### Stream: Release Confirmation
 
-101. [TODO] `quality-gates-implementation.phase18.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed contract review fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review rebuild checkpoint`).
-102. [TODO] Git Commit: `docs: prepare managed contract review rebuild checkpoint` (hash: TBD)
+103. [TODO] `quality-gates-implementation.phase18.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed contract review fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review rebuild checkpoint`).
+104. [TODO] Git Commit: `docs: prepare managed contract review rebuild checkpoint` (hash: TBD)
 
 ## Phase 19 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Rebuild Release Candidate
 
-103. [TODO] `quality-gates-implementation.phase19.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed contract review candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review release notes`).
-104. [TODO] Git Commit: `docs: prepare managed contract review release notes` (hash: TBD)
-105. [TODO] `quality-gates-implementation.phase19.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed contract review release`).
-106. [TODO] Git Commit: `chore: rebuild managed contract review release` (hash: TBD)
+105. [TODO] `quality-gates-implementation.phase19.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed contract review candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review release notes`).
+106. [TODO] Git Commit: `docs: prepare managed contract review release notes` (hash: TBD)
+107. [TODO] `quality-gates-implementation.phase19.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed contract review release`).
+108. [TODO] Git Commit: `chore: rebuild managed contract review release` (hash: TBD)
 
 ## Phase 20 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-12)
 
 ### Stream: User Re-Re-Re-Retest
 
-107. [TODO] `quality-gates-implementation.phase20.user-reretest.task1` User installs the rebuilt release and retests Diagram Modules, Application Skeleton, Quality Gates, and Development Tree unlock behavior against the managed contract review boundary fix scenario (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed contract review acceptance`).
-108. [TODO] Git Commit: `docs: record managed contract review acceptance` (hash: TBD)
+109. [TODO] `quality-gates-implementation.phase20.user-reretest.task1` User installs the rebuilt release and retests Diagram Modules, Application Skeleton, Quality Gates, and Development Tree unlock behavior against the managed contract review boundary fix scenario (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed contract review acceptance`).
+110. [TODO] Git Commit: `docs: record managed contract review acceptance` (hash: TBD)
 
 ## Phase 21 - Scope Closeout (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Close Active Scope
 
-109. [TODO] `quality-gates-implementation.phase21.closeout.task1` After explicit user acceptance only, archive this active plan and close the Quality Gates implementation scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-quality-gates-managed-orchestration-implementation-2026-05-11.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md`; expected commit: `docs: close quality gates implementation scope`).
-110. [TODO] Git Commit: `docs: close quality gates implementation scope` (hash: TBD)
-111. [TODO] `quality-gates-implementation.phase21.plans-cleanup.task1` Move or archive completed Quality Gates planning materials and refresh the docs index (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Quality_Gates_Scenario_1.2.TBD.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive quality gates implementation planning`).
-112. [TODO] Git Commit: `docs: archive quality gates implementation planning` (hash: TBD)
+111. [TODO] `quality-gates-implementation.phase21.closeout.task1` After explicit user acceptance only, archive this active plan and close the Quality Gates implementation scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-quality-gates-managed-orchestration-implementation-2026-05-11.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md`; expected commit: `docs: close quality gates implementation scope`).
+112. [TODO] Git Commit: `docs: close quality gates implementation scope` (hash: TBD)
+113. [TODO] `quality-gates-implementation.phase21.plans-cleanup.task1` Move or archive completed Quality Gates planning materials and refresh the docs index (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Quality_Gates_Scenario_1.2.TBD.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive quality gates implementation planning`).
+114. [TODO] Git Commit: `docs: archive quality gates implementation planning` (hash: TBD)

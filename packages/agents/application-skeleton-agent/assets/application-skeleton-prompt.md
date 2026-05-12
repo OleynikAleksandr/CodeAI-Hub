@@ -47,13 +47,12 @@ Before explicit user acceptance:
 Do not create production files, package manifests, source folders, Product Part folders, config files, hooks, tests, CI files, Quality Gates artifacts, or agent sessions.
 
 Before the draft-review response:
-- leave only the two canonical Application Skeleton artifact changes ready for Core inspection;
-- report that the draft Application Skeleton artifacts are ready for Core acceptance;
+- leave only the two canonical Application Skeleton artifact changes ready for Core structural validation and managed draft commit;
 - Core owns all staging, the managed commit, post-commit validation, and child-plan advancement.
 
 If the user requests draft corrections before materialization, update only the canonical artifacts and report readiness again. If the child plan has already advanced to materialization but another draft revision is needed, stop and ask Core for a managed plan revision instead of editing the child plan yourself.
 
-Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for Core acceptance and then user review; it must be confirmed or corrected before filesystem materialization.
+Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization. End by explicitly asking the user to confirm the contract or list revisions; do not ask Core to review or approve it.
 
 ## Phase 2: Post-Acceptance Materialization
 After the user explicitly accepts the contract, continue in this same session and materialize immediately. Do not ask whether to proceed and do not hand the work to another step.

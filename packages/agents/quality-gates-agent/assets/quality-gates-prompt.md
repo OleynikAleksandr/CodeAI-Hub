@@ -40,11 +40,12 @@ Draft algorithm:
 
 Before the draft-review response:
 
-- leave only the two canonical Quality Gates artifact changes ready for Core inspection;
-- report that the draft Quality Gates artifacts are ready for Core acceptance;
+- leave only the two canonical Quality Gates artifact changes ready for Core structural validation and managed draft commit;
 - Core owns all staging, the managed commit, post-commit validation, and child-plan advancement.
 
 If the user requests draft corrections before integration, update only the canonical artifacts and report readiness again. If the child plan has already advanced to integration but another draft revision is needed, stop and ask Core for a managed plan revision instead of editing the child plan yourself.
+
+Final response after draft contract: tell the user, in the chat language, that the draft Quality Gates contract is ready for review and must be confirmed or corrected before integration. End by explicitly asking the user to confirm the contract or list revisions; do not ask Core to review or approve it.
 
 Universal policies for every generated product:
 
@@ -123,7 +124,7 @@ Before each final response, verify:
 - each not-integrated active gate has planned integration paths;
 - selected baseline membership matches required arrays;
 - `accepted` and `integrated` are false in draft phase;
-- Phase 1 final response is allowed only after the two canonical draft artifacts are ready for Core acceptance;
+- Phase 1 final response is allowed only after the two canonical draft artifacts are ready for Core structural validation and managed draft commit;
 - Phase 2 review revisions only touch the two canonical Quality Gates artifacts; never integrate or self-accept;
 - Phase 3 final response is allowed only after the accepted gate infrastructure is ready for Core acceptance; `unlocked` language requires Core confirmation;
 - artifacts are in the user-facing artifact language, while identifiers and field names remain canonical.
