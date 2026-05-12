@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "a4d9b5a59",
+  "lastRecordedCommit": "ec5928811",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase7.contract-docs.task1",
-  "expectedCommitMessage": "docs: update quality gates workflow contracts",
+  "currentTaskId": "quality-gates-implementation.phase7.verification.task1",
+  "expectedCommitMessage": "test: verify quality gates managed orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: update quality gates workflow contracts",
-    "preCommitHead": "a4d9b5a59",
+    "expectedCommitMessage": "test: verify quality gates managed orchestration",
+    "preCommitHead": "ec5928811",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase7.contract-docs.task1"
+    "taskId": "quality-gates-implementation.phase7.verification.task1"
   }
 }
 ```
@@ -135,9 +135,9 @@
 43. [DONE] `quality-gates-implementation.phase7.system-docs.task1` Sync system architecture docs with the implemented Quality Gates lifecycle and stage-light ownership model (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`; expected commit: `docs: document quality gates managed lifecycle`).
 44. [DONE] Git Commit: `docs: document quality gates managed lifecycle` (hash: a4d9b5a59)
 45. [DONE] `quality-gates-implementation.phase7.contract-docs.task1` Sync lifecycle contracts, rollout guardrails, and docs index with Quality Gates implementation boundaries (scope: `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update quality gates workflow contracts`).
-46. [PENDING] Git Commit: `docs: update quality gates workflow contracts` (hash: TBD)
-47. [TODO] `quality-gates-implementation.phase7.verification.task1` Run targeted verification for core, agent assets, and Project Manager changes, then record the executed commands in this plan (scope: `packages/core, packages/agents/quality-gates-agent, src/client/project-manager`; expected commit: `test: verify quality gates managed orchestration`).
-48. [TODO] Git Commit: `test: verify quality gates managed orchestration` (hash: TBD)
+46. [DONE] Git Commit: `docs: update quality gates workflow contracts` (hash: ec5928811)
+47. [DONE] `quality-gates-implementation.phase7.verification.task1` Run targeted verification for core, agent assets, and Project Manager changes, then record the executed commands in this plan (scope: `packages/core, packages/agents/quality-gates-agent, src/client/project-manager`; expected commit: `test: verify quality gates managed orchestration`). Verification commands (2026-05-12): `npm run build --workspace packages/core` (OK), `npm run typecheck:webview` (OK), `npx tsx --test packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.test.ts packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/managed-workspace/managed-hook-registry.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts` (65/65 pass).
+48. [PENDING] Git Commit: `test: verify quality gates managed orchestration` (hash: TBD)
 
 ## Phase 8 - Release Build (owner: Codex, updated: 2026-05-11)
 
