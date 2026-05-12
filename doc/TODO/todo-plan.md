@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "ce3ba0859",
+  "lastRecordedCommit": "76f7de93e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase23.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare managed typed acceptance release notes",
+  "currentTaskId": "quality-gates-implementation.phase23.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild managed typed acceptance release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed typed acceptance release notes",
-    "preCommitHead": "ce3ba0859",
+    "expectedCommitMessage": "chore: rebuild managed typed acceptance release",
+    "preCommitHead": "76f7de93e",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase23.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase23.rebuild-build.task1"
   }
 }
 ```
@@ -318,9 +318,9 @@
 ### Stream: Rebuild Release Candidate
 
 121. [DONE] `quality-gates-implementation.phase23.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed typed acceptance candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed typed acceptance release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.243`; release scope: production stage-aware typed acceptance routing for `quality_gates`, exact mandatory review-closing phrase for Application Skeleton and Quality Gates draft/revision turns, and regression coverage that locks both the bootstrap dispatch path and the shared prompt/template boundary.
-122. [PENDING] Git Commit: `docs: prepare managed typed acceptance release notes` (hash: TBD)
-123. [TODO] `quality-gates-implementation.phase23.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed typed acceptance release`).
-124. [TODO] Git Commit: `chore: rebuild managed typed acceptance release` (hash: TBD)
+122. [DONE] Git Commit: `docs: prepare managed typed acceptance release notes` (hash: 76f7de93e)
+123. [DONE] `quality-gates-implementation.phase23.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed typed acceptance release`). Build evidence (2026-05-12): `./scripts/build-all.sh --allow-dirty --version 1.2.243` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.243.vsix`.
+124. [PENDING] Git Commit: `chore: rebuild managed typed acceptance release` (hash: TBD)
 
 ## Phase 24 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-12)
 
