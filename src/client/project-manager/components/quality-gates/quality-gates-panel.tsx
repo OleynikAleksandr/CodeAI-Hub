@@ -1,3 +1,10 @@
+// Quality Gates panel surfaces the canonical Quality Gates Baseline artifact
+// as read from the workspace; acceptance/integration state is owned by Core
+// and surfaces only through the workflow-state snapshot (qualityGatesProgress).
+// PM does not flip `accepted` or `integrated` locally. Accept-contract requests
+// from PM go through `acceptQualityGatesContract` in `managed-stage-accept-
+// contract-client.ts`, which posts to the Core HTTP endpoint.
+
 import type React from "react";
 import { useCallback, useMemo } from "react";
 import type { ProviderStackId } from "../../../../types/provider";

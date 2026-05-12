@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { acceptApplicationSkeletonContract } from "./managed-stage-accept-contract-client";
+import {
+  acceptApplicationSkeletonContract,
+  acceptQualityGatesContract,
+} from "./managed-stage-accept-contract-client";
 
 const buildFetch = (
   recorded: Array<{ readonly body: unknown; readonly url: string }>,
@@ -74,4 +77,39 @@ test("client honours an explicit typed-fallback source", async () => {
   );
   const body = recorded[0]?.body as { source?: string } | null;
   assert.equal(body?.source, "typed-fallback");
+});
+
+test("quality gates client posts to the quality-gates-accept-contract endpoint", async () => {
+  const recorded: Array<{ body: unknown; url: string }> = [];
+  const decision = await acceptQualityGatesContract(
+    { sessionId: "qg-session-1" },
+    buildFetch(recorded, { body: { status: "accepted" }, ok: true })
+  );
+  assert.equal(decision.kind, "accepted");
+  assert.equal(
+    recorded[0]?.url,
+    "/api/v1/orchestrator/quality-gates-accept-contract"
+  );
+  assert.deepEqual(recorded[0]?.body, {
+    sessionId: "qg-session-1",
+    source: "ui-button",
+  });
+});
+
+test("quality gates client surfaces Core rejection reasons verbatim", async () => {
+  const decision = await acceptQualityGatesContract(
+    { sessionId: "qg-session-1" },
+    buildFetch([], {
+      body: {
+        error: "rejected",
+        reasons: ["draft contract missing"],
+      },
+      ok: false,
+    })
+  );
+  assert.equal(decision.kind, "rejected");
+  if (decision.kind === "rejected") {
+    assert.deepEqual(decision.reasons, ["draft contract missing"]);
+    assert.equal(decision.stage, "quality_gates");
+  }
 });
