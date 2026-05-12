@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "cb5cd218c",
+  "lastRecordedCommit": "86e0b5e10",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase27.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare managed acceptance continuation release notes",
+  "currentTaskId": "quality-gates-implementation.phase27.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild managed acceptance continuation release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed acceptance continuation release notes",
-    "preCommitHead": "cb5cd218c",
+    "expectedCommitMessage": "chore: rebuild managed acceptance continuation release",
+    "preCommitHead": "86e0b5e10",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase27.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase27.rebuild-build.task1"
   }
 }
 ```
@@ -353,9 +353,9 @@
 ### Stream: Rebuild Release Candidate
 
 133. [DONE] `quality-gates-implementation.phase27.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed acceptance continuation candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed acceptance continuation release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.244`; release scope: queued rerun of managed post-turn arbitration when Core acceptance lands during an in-flight pass, preserved Quality Gates acceptance-to-integration continuation in the same session, and regression coverage that locks the lost-rerun race.
-134. [PENDING] Git Commit: `docs: prepare managed acceptance continuation release notes` (hash: TBD)
-135. [TODO] `quality-gates-implementation.phase27.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed acceptance continuation release`).
-136. [TODO] Git Commit: `chore: rebuild managed acceptance continuation release` (hash: TBD)
+134. [DONE] Git Commit: `docs: prepare managed acceptance continuation release notes` (hash: 86e0b5e10)
+135. [DONE] `quality-gates-implementation.phase27.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed acceptance continuation release`). Build evidence (2026-05-12): `./scripts/build-all.sh --allow-dirty --version 1.2.244` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.244.vsix`.
+136. [PENDING] Git Commit: `chore: rebuild managed acceptance continuation release` (hash: TBD)
 
 ## Phase 28 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-12)
 
