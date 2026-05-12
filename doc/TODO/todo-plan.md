@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "5e206572e",
+  "lastRecordedCommit": "23cd4b8bb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase18.verification.task1",
-  "expectedCommitMessage": "test: verify managed contract review fixes",
+  "currentTaskId": "quality-gates-implementation.phase18.rebuild-confirmation.task1",
+  "expectedCommitMessage": "docs: prepare managed contract review rebuild checkpoint",
   "debt": {
-    "expectedCommitMessage": "test: verify managed contract review fixes",
-    "preCommitHead": "5e206572e",
+    "expectedCommitMessage": "docs: prepare managed contract review rebuild checkpoint",
+    "preCommitHead": "23cd4b8bb",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase18.verification.task1"
+    "taskId": "quality-gates-implementation.phase18.rebuild-confirmation.task1"
   }
 }
 ```
@@ -264,12 +264,12 @@
 ### Stream: Targeted Verification
 
 101. [DONE] `quality-gates-implementation.phase18.verification.task1` Run targeted verification for the managed contract review boundary fixes across Core, prompt assets, and Project Manager, then record the executed commands in this plan before any rebuild is requested (scope: `packages/core, packages/agents, src/client/project-manager`; expected commit: `test: verify managed contract review fixes`). Verification evidence (2026-05-12): `npx tsx --test packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.test.tsx packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts src/client/project-manager/services/managed-stage-accept-contract-client.test.ts` passed (`52/52`); `npm run build --workspace packages/core` passed; `npm run typecheck:webview` passed; `npm run build:webview` passed.
-102. [PENDING] Git Commit: `test: verify managed contract review fixes` (hash: TBD)
+102. [DONE] Git Commit: `test: verify managed contract review fixes` (hash: 23cd4b8bb)
 
 ### Stream: Release Confirmation
 
-103. [TODO] `quality-gates-implementation.phase18.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed contract review fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review rebuild checkpoint`).
-104. [TODO] Git Commit: `docs: prepare managed contract review rebuild checkpoint` (hash: TBD)
+103. [DONE] `quality-gates-implementation.phase18.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed contract review fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review rebuild checkpoint`). Rebuild already approved by the user on 2026-05-12 with the instruction to continue through the next release build without another pause after the repair streams were created.
+104. [PENDING] Git Commit: `docs: prepare managed contract review rebuild checkpoint` (hash: TBD)
 
 ## Phase 19 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
