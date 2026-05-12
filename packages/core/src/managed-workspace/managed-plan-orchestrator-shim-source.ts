@@ -1,4 +1,5 @@
 import { createDiagramModulesPlanMutatorShimSource } from "./managed-diagram-modules-plan-mutator";
+import { createQualityGatesPlanMutatorShimSource } from "./managed-quality-gates-plan-mutator";
 import {
   createManagedStagePlan,
   NEXT_STAGE_AFTER,
@@ -7,16 +8,7 @@ import {
 } from "./managed-todo-tree";
 
 const buildStageMappingsBlock = (): string =>
-  [
-    `const STAGE_PLANS = ${JSON.stringify(STAGE_PLANS)};`,
-    `const STAGE_TERMINAL_COMMITS = ${JSON.stringify(STAGE_TERMINAL_COMMITS)};`,
-    `const NEXT_STAGE_AFTER = ${JSON.stringify(NEXT_STAGE_AFTER)};`,
-    `const STAGE_INITIAL_PLAN_TEXTS = ${JSON.stringify({
-      application_skeleton: createManagedStagePlan("application_skeleton"),
-      diagram_modules: createManagedStagePlan("diagram_modules"),
-      quality_gates: createManagedStagePlan("quality_gates"),
-    })};`,
-  ].join("\n");
+  `const STAGE_PLANS = ${JSON.stringify(STAGE_PLANS)};\nconst STAGE_TERMINAL_COMMITS = ${JSON.stringify(STAGE_TERMINAL_COMMITS)};\nconst NEXT_STAGE_AFTER = ${JSON.stringify(NEXT_STAGE_AFTER)};\nconst STAGE_INITIAL_PLAN_TEXTS = ${JSON.stringify({ application_skeleton: createManagedStagePlan("application_skeleton"), diagram_modules: createManagedStagePlan("diagram_modules"), quality_gates: createManagedStagePlan("quality_gates") })};`;
 
 export const createPlanCliShim = (): string => `#!/usr/bin/env node
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -249,6 +241,7 @@ const insertApplicationSkeletonUserReturnRevisionTaskPair = (lines, commitLineIn
     \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${messageForRevision}\\\` (hash: TBD)\`
   );
 };
+${createQualityGatesPlanMutatorShimSource()}
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
   const blockEnd = text.indexOf(END);
@@ -305,6 +298,9 @@ const advancePlanForCommit = (message) => {
   insertApplicationSkeletonReviewTaskPair(lines, commitLineIndex, state, message);
   insertApplicationSkeletonMaterializationTaskPair(lines, commitLineIndex, state, message);
   insertApplicationSkeletonUserReturnRevisionTaskPair(lines, commitLineIndex, state, message, changedFiles);
+  insertQualityGatesReviewTaskPair(lines, commitLineIndex, state, message);
+  insertQualityGatesIntegrationTaskPair(lines, commitLineIndex, state, message);
+  insertQualityGatesUserReturnRevisionTaskPair(lines, commitLineIndex, state, message, changedFiles);
 
   const nextTaskLineIndex = lines.findIndex(
     (line, index) => index > commitLineIndex && readTaskLine(line)

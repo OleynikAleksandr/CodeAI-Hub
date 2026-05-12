@@ -328,3 +328,37 @@ export const injectQualityGatesTaskPair = (
     sequenceNumber: taskPair.sequenceNumber,
   };
 };
+
+export const createQualityGatesPlanMutatorShimSource = (): string => `
+const insertQualityGatesReviewTaskPair = (lines, commitLineIndex, state, message) => {
+  if (state.currentTaskId !== "quality-gates.phase1.draft.task1" || message !== "docs: draft quality gates contract") { return; }
+  if (lines.some((line) => line.includes("quality-gates.phase2.review.task1"))) { return; }
+  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+  lines.splice(commitLineIndex + 1, 0, "", "## Phase 2 — Quality Gates Contract Review", "", "### Stream: User-Led Review", "", formatNewTaskLine(taskNumber, "quality-gates.phase2.review.task1", "TODO", "Open Quality Gates contract review for user-driven revisions; Core must inject revision task pairs or an explicit acceptance task before integration", ".codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json", "docs: revise quality gates contract - revision 1"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`docs: revise quality gates contract - revision 1\\\` (hash: TBD)\`);
+};
+const insertQualityGatesIntegrationTaskPair = (lines, commitLineIndex, state, message) => {
+  if (state.currentTaskId !== "quality-gates.phase2.acceptance.task1" || message !== "docs: accept quality gates contract") { return; }
+  if (lines.some((line) => line.includes("quality-gates.phase3.integration.task1"))) { return; }
+  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+  lines.splice(commitLineIndex + 1, 0, "", "## Phase 3 — Quality Gates Integration", "", "### Stream: Accepted-Only Integration", "", formatNewTaskLine(taskNumber, "quality-gates.phase3.integration.task1", "TODO", "Integrate the accepted Quality Gates baseline into the materialized Application Skeleton and stop for Core validation", ".codeai-hub/**/quality_gates/**, package.json, package-lock.json, scripts/gates/**, .husky/**", "feat: integrate quality gates baseline"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: integrate quality gates baseline\\\` (hash: TBD)\`);
+};
+const existingQualityGatesUserReturnRevisionNumbers = (lines) => lines.map((line) => /quality-gates\\.phase4\\.user-return\\.revision(\\d+)\\.task1/u.exec(line)?.[1]).filter(Boolean).map((value) => Number.parseInt(value, 10)).filter(Number.isFinite);
+const isQualityGatesIntegrationRepairCommit = (event, currentStage) => currentStage === "quality_gates" && /^docs: repair quality gates phase3\\.integration attempt \\d+$/u.test(event.message);
+const shouldInsertQualityGatesUserReturnRevision = (state, message, changedFiles) =>
+  (state.currentTaskId === "quality-gates.phase3.integration.task1" && message === "feat: integrate quality gates baseline") ||
+  (/^quality-gates\\.phase3\\.integration\\.repair\\d+\\.task1$/u.test(state.currentTaskId ?? "") && isQualityGatesIntegrationRepairCommit({ changedFiles, message }, "quality_gates")) ||
+  (/^quality-gates\\.phase4\\.user-return\\.revision\\d+\\.task1$/u.test(state.currentTaskId ?? "") && /^docs: revise quality gates user return revision \\d+$/u.test(message));
+const insertQualityGatesUserReturnRevisionTaskPair = (lines, commitLineIndex, state, message, changedFiles) => {
+  if (!shouldInsertQualityGatesUserReturnRevision(state, message, changedFiles)) { return; }
+  const existingRevisions = existingQualityGatesUserReturnRevisionNumbers(lines);
+  const nextRevision = (existingRevisions.length > 0 ? Math.max(...existingRevisions) : 0) + 1;
+  const taskId = \`quality-gates.phase4.user-return.revision\${nextRevision}.task1\`;
+  if (lines.some((line) => line.includes(\`\${taskId}\`))) { return; }
+  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
+  const messageForRevision = \`docs: revise quality gates user return revision \${nextRevision}\`;
+  const phaseLines = lines.some((line) => line.includes("Phase 4 — Persistent Quality Gates User Return"))
+    ? []
+    : ["", "## Phase 4 — Persistent Quality Gates User Return", "", "### Stream: User Return And Revisions", ""];
+  lines.splice(commitLineIndex + 1, 0, ...phaseLines, formatNewTaskLine(taskNumber, taskId, "TODO", \`Apply post-completion Quality Gates user revision \${nextRevision} and stop for Core acceptance\`, ".codeai-hub/**/quality_gates/**, .codeai-hub/**/workflow/revisions/quality-gates/**", messageForRevision), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${messageForRevision}\\\` (hash: TBD)\`);
+};
+`;

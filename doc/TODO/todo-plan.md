@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "d77a4a226",
+  "lastRecordedCommit": "d0e1da71a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase1.seed.task1",
-  "expectedCommitMessage": "fix: seed quality gates draft-only plan",
+  "currentTaskId": "quality-gates-implementation.phase1.shim.task1",
+  "expectedCommitMessage": "fix: bundle quality gates dynamic plan shim",
   "debt": {
-    "expectedCommitMessage": "fix: seed quality gates draft-only plan",
-    "preCommitHead": "d77a4a226",
+    "expectedCommitMessage": "fix: bundle quality gates dynamic plan shim",
+    "preCommitHead": "d0e1da71a",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase1.seed.task1"
+    "taskId": "quality-gates-implementation.phase1.shim.task1"
   }
 }
 ```
@@ -65,9 +65,9 @@
 3. [DONE] `quality-gates-implementation.phase1.plan-mutator.task1` Add a Quality Gates child-plan mutator for acceptance, integration, repair, review revision, and post-completion user-return task-pair injection (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts`; expected commit: `feat: add quality gates plan mutator`).
 4. [DONE] Git Commit: `feat: add quality gates plan mutator` (hash: d77a4a226)
 5. [DONE] `quality-gates-implementation.phase1.seed.task1` Replace static Quality Gates follow-up seeding with draft-only bootstrap and phase-aware task ids (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.ts`; expected commit: `fix: seed quality gates draft-only plan`).
-6. [PENDING] Git Commit: `fix: seed quality gates draft-only plan` (hash: TBD)
-7. [TODO] `quality-gates-implementation.phase1.shim.task1` Align the bundled managed-plan orchestrator shim with the new Quality Gates dynamic plan lifecycle (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: bundle quality gates dynamic plan shim`).
-8. [TODO] Git Commit: `fix: bundle quality gates dynamic plan shim` (hash: TBD)
+6. [DONE] Git Commit: `fix: seed quality gates draft-only plan` (hash: d0e1da71a)
+7. [DONE] `quality-gates-implementation.phase1.shim.task1` Align the bundled managed-plan orchestrator shim with the new Quality Gates dynamic plan lifecycle (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `fix: bundle quality gates dynamic plan shim`).
+8. [PENDING] Git Commit: `fix: bundle quality gates dynamic plan shim` (hash: TBD)
 
 ## Phase 2 - Acceptance Boundary (owner: Codex, updated: 2026-05-11)
 
