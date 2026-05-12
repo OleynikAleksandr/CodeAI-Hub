@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "fbeafb634",
+  "lastRecordedCommit": "7e07030f1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase13.application-skeleton-handoff.task1",
-  "expectedCommitMessage": "fix: gate application skeleton handoff on validated materialization",
+  "currentTaskId": "quality-gates-implementation.phase13.user-return-anchors.task1",
+  "expectedCommitMessage": "fix: normalize managed user return anchors",
   "debt": {
-    "expectedCommitMessage": "fix: gate application skeleton handoff on validated materialization",
-    "preCommitHead": "fbeafb634",
+    "expectedCommitMessage": "fix: normalize managed user return anchors",
+    "preCommitHead": "7e07030f1",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase13.application-skeleton-handoff.task1"
+    "taskId": "quality-gates-implementation.phase13.user-return-anchors.task1"
   }
 }
 ```
@@ -194,51 +194,56 @@
 ### Stream: Application Skeleton Validated Handoff
 
 71. [DONE] `quality-gates-implementation.phase13.application-skeleton-handoff.task1` Rework Application Skeleton so materialization or repair commits do not unlock Quality Gates or mark the stage completed until Core rereads the committed artifacts, confirms a materialized accepted skeleton without validation errors, and opens only a Phase 4 idle user-return anchor instead of auto-opening `revision1` (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts`; expected commit: `fix: gate application skeleton handoff on validated materialization`).
-72. [PENDING] Git Commit: `fix: gate application skeleton handoff on validated materialization` (hash: TBD)
+72. [DONE] Git Commit: `fix: gate application skeleton handoff on validated materialization` (hash: 7e07030f1)
 
 ### Stream: Post-Completion User Return Anchors
 
-73. [TODO] `quality-gates-implementation.phase13.user-return-anchors.task1` Normalize Quality Gates post-completion plans around a single Phase 4 idle anchor and reopen Application Skeleton Phase 4 revisions from the idle anchor once the user actually changes owned files, instead of auto-opening `revision1` on the terminal integration commit or leaving the anchor unreachable at runtime (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts`; expected commit: `fix: normalize managed user return anchors`).
-74. [TODO] Git Commit: `fix: normalize managed user return anchors` (hash: TBD)
+73. [DONE] `quality-gates-implementation.phase13.user-return-anchors.task1` Reopen Application Skeleton Phase 4 revisions from the idle handoff anchor once the user actually changes owned files, and treat clean Phase 4 handoff turns as discussion rather than `out_of_scope` so the idle anchor remains reachable at runtime (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts`; expected commit: `fix: normalize managed user return anchors`).
+74. [PENDING] Git Commit: `fix: normalize managed user return anchors` (hash: TBD)
+
+### Stream: Quality Gates Validated User Return Anchor
+
+75. [TODO] `quality-gates-implementation.phase13.quality-gates-user-return-anchor.task1` Rework Quality Gates so integration or repair commits open only the Phase 4 idle anchor after Core rereads the integrated contract, confirms accepted integrated state plus hook/package wiring, and leaves `revision1` to real user-return diffs instead of auto-opening it on the terminal integration commit (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: gate quality gates user return anchor on validated integration`).
+76. [TODO] Git Commit: `fix: gate quality gates user return anchor on validated integration` (hash: TBD)
 
 ### Stream: Cross-Stage Regression Coverage
 
-75. [TODO] `quality-gates-implementation.phase13.lifecycle-regressions.task1` Add regression coverage for Diagram Modules, Application Skeleton, and Quality Gates so workspace ledger advancement cannot outrun a child-plan repair/review loop, successful Application Skeleton/Quality Gates completion leaves an idle Phase 4 anchor instead of `revision1`, and blocked terminal pairs remain impossible after a premature handoff attempt (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts`; expected commit: `test: cover managed stage handoff barriers`).
-76. [TODO] Git Commit: `test: cover managed stage handoff barriers` (hash: TBD)
+77. [TODO] `quality-gates-implementation.phase13.lifecycle-regressions.task1` Add regression coverage for Diagram Modules, Application Skeleton, and Quality Gates so workspace ledger advancement cannot outrun a child-plan repair/review loop, successful Application Skeleton/Quality Gates completion leaves an idle Phase 4 anchor instead of `revision1`, and blocked terminal pairs remain impossible after a premature handoff attempt (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts`; expected commit: `test: cover managed stage handoff barriers`).
+78. [TODO] Git Commit: `test: cover managed stage handoff barriers` (hash: TBD)
 
 ## Phase 14 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Targeted Verification
 
-77. [TODO] `quality-gates-implementation.phase14.verification.task1` Run targeted verification for the cross-stage managed handoff barrier fixes and record the executed commands in this plan before any rebuild is requested (scope: `packages/core/src/managed-workspace, packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed stage handoff fixes`).
-78. [TODO] Git Commit: `test: verify managed stage handoff fixes` (hash: TBD)
+79. [TODO] `quality-gates-implementation.phase14.verification.task1` Run targeted verification for the cross-stage managed handoff barrier fixes and record the executed commands in this plan before any rebuild is requested (scope: `packages/core/src/managed-workspace, packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed stage handoff fixes`).
+80. [TODO] Git Commit: `test: verify managed stage handoff fixes` (hash: TBD)
 
 ### Stream: Release Confirmation
 
-79. [TODO] `quality-gates-implementation.phase14.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed handoff barrier fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild checkpoint`).
-80. [TODO] Git Commit: `docs: prepare managed handoff rebuild checkpoint` (hash: TBD)
+81. [TODO] `quality-gates-implementation.phase14.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed handoff barrier fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild checkpoint`).
+82. [TODO] Git Commit: `docs: prepare managed handoff rebuild checkpoint` (hash: TBD)
 
 ## Phase 15 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Rebuild Release Candidate
 
-81. [TODO] `quality-gates-implementation.phase15.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed handoff rebuild candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild release notes`).
-82. [TODO] Git Commit: `docs: prepare managed handoff rebuild release notes` (hash: TBD)
-83. [TODO] `quality-gates-implementation.phase15.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed handoff release`).
-84. [TODO] Git Commit: `chore: rebuild managed handoff release` (hash: TBD)
+83. [TODO] `quality-gates-implementation.phase15.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed handoff rebuild candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild release notes`).
+84. [TODO] Git Commit: `docs: prepare managed handoff rebuild release notes` (hash: TBD)
+85. [TODO] `quality-gates-implementation.phase15.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed handoff release`).
+86. [TODO] Git Commit: `chore: rebuild managed handoff release` (hash: TBD)
 
 ## Phase 16 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-12)
 
 ### Stream: User Re-Re-Retest
 
-85. [TODO] `quality-gates-implementation.phase16.user-reretest.task1` User installs the rebuilt release and retests Diagram Modules, Application Skeleton, Quality Gates, and Development Tree unlock behavior against the managed handoff barrier fix scenario (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed handoff rebuild acceptance`).
-86. [TODO] Git Commit: `docs: record managed handoff rebuild acceptance` (hash: TBD)
+87. [TODO] `quality-gates-implementation.phase16.user-reretest.task1` User installs the rebuilt release and retests Diagram Modules, Application Skeleton, Quality Gates, and Development Tree unlock behavior against the managed handoff barrier fix scenario (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed handoff rebuild acceptance`).
+88. [TODO] Git Commit: `docs: record managed handoff rebuild acceptance` (hash: TBD)
 
 ## Phase 17 - Scope Closeout (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Close Active Scope
 
-87. [TODO] `quality-gates-implementation.phase17.closeout.task1` After explicit user acceptance only, archive this active plan and close the Quality Gates implementation scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-quality-gates-managed-orchestration-implementation-2026-05-11.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md`; expected commit: `docs: close quality gates implementation scope`).
-88. [TODO] Git Commit: `docs: close quality gates implementation scope` (hash: TBD)
-89. [TODO] `quality-gates-implementation.phase17.plans-cleanup.task1` Move or archive completed Quality Gates planning materials and refresh the docs index (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Quality_Gates_Scenario_1.2.TBD.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive quality gates implementation planning`).
-90. [TODO] Git Commit: `docs: archive quality gates implementation planning` (hash: TBD)
+89. [TODO] `quality-gates-implementation.phase17.closeout.task1` After explicit user acceptance only, archive this active plan and close the Quality Gates implementation scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-quality-gates-managed-orchestration-implementation-2026-05-11.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md`; expected commit: `docs: close quality gates implementation scope`).
+90. [TODO] Git Commit: `docs: close quality gates implementation scope` (hash: TBD)
+91. [TODO] `quality-gates-implementation.phase17.plans-cleanup.task1` Move or archive completed Quality Gates planning materials and refresh the docs index (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Quality_Gates_Scenario_1.2.TBD.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive quality gates implementation planning`).
+92. [TODO] Git Commit: `docs: archive quality gates implementation planning` (hash: TBD)
