@@ -10,7 +10,7 @@ import {
   serializeSessionModelBinding,
   shouldBroadcastAppliedProviderModelUpdate,
 } from "../types";
-import { routeApplicationSkeletonTypedAcceptance } from "./application-skeleton-typed-acceptance-router";
+import { routeManagedTypedAcceptance } from "./application-skeleton-typed-acceptance-router";
 import { recognizeManagedAcceptanceForStage } from "./managed-workflow-post-turn-service";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
@@ -178,7 +178,7 @@ export class SessionRequestHandlerMessageDispatch {
     const stage = session.stage ?? null;
     const acceptancePhrase = recognizeManagedAcceptanceForStage(stage, content);
     if (acceptancePhrase) {
-      await routeApplicationSkeletonTypedAcceptance({
+      await routeManagedTypedAcceptance({
         acceptancePhrase,
         handleManagedAcceptContractCommand:
           this.deps.handleManagedAcceptContractCommand,

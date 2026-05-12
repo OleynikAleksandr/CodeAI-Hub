@@ -1,12 +1,11 @@
 import type { Logger } from "../../telemetry/logger";
 
-// Routes a recognized typed acceptance phrase for the Application Skeleton
-// stage to the same Core command handler as the UI button. Other Type B
-// acceptance-eligible stages (e.g. Quality Gates) currently rely on the
-// upstream skip-provider path only — a pluggable callback keeps them future
-// compatible without bloating the dispatch class.
+const MANAGED_TYPED_ACCEPTANCE_STAGES = new Set([
+  "application_skeleton",
+  "quality_gates",
+]);
 
-export interface ApplicationSkeletonTypedAcceptanceRouterParams {
+export interface ManagedTypedAcceptanceRouterParams {
   readonly acceptancePhrase: string;
   readonly handleManagedAcceptContractCommand?: (params: {
     readonly sessionId: string;
@@ -17,15 +16,15 @@ export interface ApplicationSkeletonTypedAcceptanceRouterParams {
   readonly stage: string | null;
 }
 
-export const routeApplicationSkeletonTypedAcceptance = async (
-  params: ApplicationSkeletonTypedAcceptanceRouterParams
+export const routeManagedTypedAcceptance = async (
+  params: ManagedTypedAcceptanceRouterParams
 ): Promise<void> => {
-  params.logger.info("Skipping managed contract acceptance phrase", {
+  params.logger.info("Routing managed contract acceptance phrase", {
     phrase: params.acceptancePhrase,
     sessionId: params.sessionId,
     stage: params.stage,
   });
-  if (params.stage !== "application_skeleton") {
+  if (!(params.stage && MANAGED_TYPED_ACCEPTANCE_STAGES.has(params.stage))) {
     return;
   }
   await params.handleManagedAcceptContractCommand?.({

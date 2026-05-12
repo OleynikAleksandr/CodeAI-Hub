@@ -143,19 +143,17 @@ test("handler rejects when out-of-owner dirty paths block the workspace", () => 
   }
 });
 
-test("typed acceptance router only forwards Application Skeleton phrases", async () => {
-  const { routeApplicationSkeletonTypedAcceptance } = await import(
+test("typed acceptance router forwards both managed contract review stages", async () => {
+  const { routeManagedTypedAcceptance } = await import(
     "./application-skeleton-typed-acceptance-router"
   );
   const recorded: Array<{ sessionId: string; source: string }> = [];
   const logged: string[] = [];
   const logger = {
     info: (message: string) => logged.push(message),
-  } as unknown as Parameters<
-    typeof routeApplicationSkeletonTypedAcceptance
-  >[0]["logger"];
+  } as unknown as Parameters<typeof routeManagedTypedAcceptance>[0]["logger"];
 
-  await routeApplicationSkeletonTypedAcceptance({
+  await routeManagedTypedAcceptance({
     acceptancePhrase: "Принимаю контракт",
     handleManagedAcceptContractCommand: (params) => {
       recorded.push(params);
@@ -170,7 +168,7 @@ test("typed acceptance router only forwards Application Skeleton phrases", async
   ]);
   assert.equal(logged.length, 1);
 
-  await routeApplicationSkeletonTypedAcceptance({
+  await routeManagedTypedAcceptance({
     acceptancePhrase: "Принимаю контракт",
     handleManagedAcceptContractCommand: (params) => {
       recorded.push(params);
@@ -180,10 +178,24 @@ test("typed acceptance router only forwards Application Skeleton phrases", async
     sessionId: "session-2",
     stage: "quality_gates",
   });
-  // Quality Gates stage skips the Application Skeleton command callback —
-  // only the log line fires. Recorded set must remain unchanged.
-  assert.equal(recorded.length, 1);
+  assert.deepEqual(recorded, [
+    { sessionId: "session-1", source: "typed-fallback" },
+    { sessionId: "session-2", source: "typed-fallback" },
+  ]);
   assert.equal(logged.length, 2);
+
+  await routeManagedTypedAcceptance({
+    acceptancePhrase: "Принимаю контракт",
+    handleManagedAcceptContractCommand: (params) => {
+      recorded.push(params);
+      return Promise.resolve();
+    },
+    logger,
+    sessionId: "session-3",
+    stage: "diagram_modules",
+  });
+  assert.equal(recorded.length, 2);
+  assert.equal(logged.length, 3);
 });
 
 test("handler rejects when stage is already materialized", () => {

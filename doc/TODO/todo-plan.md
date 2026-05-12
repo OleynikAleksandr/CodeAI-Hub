@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "73353f131",
+  "lastRecordedCommit": "69defd28e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase17.quality-gates-panel.task1",
-  "expectedCommitMessage": "feat: add quality gates accept contract button",
+  "currentTaskId": "quality-gates-implementation.phase17.acceptance-fallback.task1",
+  "expectedCommitMessage": "fix: route managed contract typed acceptance by stage",
   "debt": {
-    "expectedCommitMessage": "feat: add quality gates accept contract button",
-    "preCommitHead": "73353f131",
+    "expectedCommitMessage": "fix: route managed contract typed acceptance by stage",
+    "preCommitHead": "69defd28e",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase17.quality-gates-panel.task1"
+    "taskId": "quality-gates-implementation.phase17.acceptance-fallback.task1"
   }
 }
 ```
@@ -253,9 +253,9 @@
 93. [DONE] `quality-gates-implementation.phase17.review-template-tests.task1` Sync bundled template assertions with the revised user-review wording for Application Skeleton and Quality Gates so asset/template drift is caught without widening the prompt-edit task scope (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: sync managed contract review prompt templates`).
 94. [DONE] Git Commit: `test: sync managed contract review prompt templates` (hash: 73353f131)
 95. [DONE] `quality-gates-implementation.phase17.quality-gates-panel.task1` Add a step-local Quality Gates `Accept Contract` button under the rendered contract artifact, reuse Core transport decisions for disabled-state reasons, and surface a short "write revisions in chat" hint next to the button (scope: `src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.tsx, src/client/project-manager/components/quality-gates/quality-gates-panel.tsx, src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.test.tsx`; expected commit: `feat: add quality gates accept contract button`).
-96. [PENDING] Git Commit: `feat: add quality gates accept contract button` (hash: TBD)
-97. [TODO] `quality-gates-implementation.phase17.acceptance-fallback.task1` Replace the Application Skeleton-only typed acceptance router with a stage-aware managed contract acceptance fallback so explicit Quality Gates acceptance text reaches the Core runner while ambiguous replies continue down the normal revision path (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: route managed contract typed acceptance by stage`).
-98. [TODO] Git Commit: `fix: route managed contract typed acceptance by stage` (hash: TBD)
+96. [DONE] Git Commit: `feat: add quality gates accept contract button` (hash: 69defd28e)
+97. [DONE] `quality-gates-implementation.phase17.acceptance-fallback.task1` Replace the Application Skeleton-only typed acceptance router with a stage-aware managed contract acceptance fallback so explicit Quality Gates acceptance text reaches the Core runner while ambiguous replies continue down the normal revision path (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts`; expected commit: `fix: route managed contract typed acceptance by stage`).
+98. [PENDING] Git Commit: `fix: route managed contract typed acceptance by stage` (hash: TBD)
 99. [TODO] `quality-gates-implementation.phase17.review-regressions.task1` Add focused regression coverage for the shared contract review protocol, Quality Gates accept-command transport, and post-turn acceptance wording so the release retest cannot regress back to silent review dead-ends (scope: `packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts`; expected commit: `test: cover managed contract review protocol`).
 100. [TODO] Git Commit: `test: cover managed contract review protocol` (hash: TBD)
 
