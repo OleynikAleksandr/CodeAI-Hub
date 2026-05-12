@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "1e35586f9",
+  "lastRecordedCommit": "efc65ad37",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase6.rejection-tests.task1",
-  "expectedCommitMessage": "test: cover quality gates rejection retry lifecycle",
+  "currentTaskId": "quality-gates-implementation.phase6.boundary-tests.task1",
+  "expectedCommitMessage": "test: cover quality gates acceptance and user return boundaries",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates rejection retry lifecycle",
-    "preCommitHead": "1e35586f9",
+    "expectedCommitMessage": "test: cover quality gates acceptance and user return boundaries",
+    "preCommitHead": "efc65ad37",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase6.rejection-tests.task1"
+    "taskId": "quality-gates-implementation.phase6.boundary-tests.task1"
   }
 }
 ```
@@ -124,9 +124,9 @@
 37. [DONE] `quality-gates-implementation.phase6.prompt-pack.task1` Remove duplicate or stale Quality Gates phase narratives from Project Manager runtime prompt packing (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, src/client/project-manager/services/prompt-pack-builder.diagram-contract.test.ts`; expected commit: `fix: remove stale quality gates runtime prompt narrative`).
 38. [DONE] Git Commit: `fix: remove stale quality gates runtime prompt narrative` (hash: 1e35586f9)
 39. [DONE] `quality-gates-implementation.phase6.rejection-tests.task1` Add deterministic tests for Core rejection, repair task injection, failed-attempt evidence, and retry commit behavior (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts`; expected commit: `test: cover quality gates rejection retry lifecycle`).
-40. [PENDING] Git Commit: `test: cover quality gates rejection retry lifecycle` (hash: TBD)
-41. [TODO] `quality-gates-implementation.phase6.boundary-tests.task1` Add deterministic tests for acceptance-before-integration, post-completion user-return revision, and downstream blocker isolation (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover quality gates acceptance and user return boundaries`).
-42. [TODO] Git Commit: `test: cover quality gates acceptance and user return boundaries` (hash: TBD)
+40. [DONE] Git Commit: `test: cover quality gates rejection retry lifecycle` (hash: efc65ad37)
+41. [DONE] `quality-gates-implementation.phase6.boundary-tests.task1` Add deterministic tests for acceptance-before-integration, post-completion user-return revision, and downstream blocker isolation (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover quality gates acceptance and user return boundaries`).
+42. [PENDING] Git Commit: `test: cover quality gates acceptance and user return boundaries` (hash: TBD)
 
 ## Phase 7 - Documentation And Targeted Verification (owner: Codex, updated: 2026-05-11)
 

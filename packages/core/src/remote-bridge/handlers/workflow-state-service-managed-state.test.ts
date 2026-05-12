@@ -455,3 +455,8 @@ test("ManagedWorkflowPostTurnService notifies retry-limit reached after dirty ar
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+// Boundary test for committed-evidence stage-light truth lives in the dedicated
+// quality-gates-continuation-dispatcher / user-return-revision tests; this
+// file keeps integration coverage and stays under the 500-line architecture
+// limit.

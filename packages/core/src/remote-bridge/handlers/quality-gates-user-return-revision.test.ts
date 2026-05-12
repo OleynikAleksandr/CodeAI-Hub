@@ -12,6 +12,8 @@ const REVIEW_REVISION_TASK_RE =
   /quality-gates\.phase2\.review\.revision1\.task1/u;
 const USER_RETURN_REVISION_TASK_RE =
   /quality-gates\.phase4\.user-return\.revision1\.task1/u;
+const USER_RETURN_CURRENT_TASK_RE =
+  /"currentTaskId": "quality-gates\.phase4\.user-return\.revision1\.task1"/u;
 
 const writePlanFile = async (
   workspaceRoot: string,
@@ -177,6 +179,35 @@ test("revision injection runner is a noop for non-anchor task ids", async () => 
     );
     assert.doesNotMatch(planText, REVIEW_REVISION_TASK_RE);
     assert.doesNotMatch(planText, USER_RETURN_REVISION_TASK_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("revision injection runner advances current task id away from user-return anchor", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "qg-user-return-advance-")
+  );
+  try {
+    await writePlanFile(
+      workspaceRoot,
+      "quality-gates.phase4.user-return.task1",
+      "docs: revise quality gates user return revision 1",
+      "Phase 4 — Persistent Quality Gates User Return"
+    );
+
+    await runQualityGatesRevisionInjection({
+      logger: new Logger("error"),
+      sessionId: "session-advance",
+      stage: "quality_gates",
+      workspaceRoot,
+    });
+
+    const planText = await readFile(
+      path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH),
+      "utf8"
+    );
+    assert.match(planText, USER_RETURN_CURRENT_TASK_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

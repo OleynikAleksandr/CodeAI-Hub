@@ -116,3 +116,22 @@ test("dispatcher does not refire the same prompt for the same session/substep pa
   });
   assert.equal(calls.length, 1);
 });
+
+test("dispatcher refuses integration prompt before acceptance commit lands", async () => {
+  const sessionId = "session-qg-pre-commit";
+  const { gateway, calls } = createSpyGateway();
+  await sendQualityGatesContinuationIfReady({
+    chains: [buildChain(sessionId)],
+    gateway,
+    progress: buildProgress({
+      accepted: true,
+      acceptanceCommitted: false,
+      substep: "accepted",
+    }),
+  });
+  assert.equal(
+    calls.length,
+    0,
+    "integration prompt must wait for `acceptanceCommitted: true`"
+  );
+});
