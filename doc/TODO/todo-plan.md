@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "397eba9d5",
+  "lastRecordedCommit": "78eb68e15",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase14.verification.task1",
-  "expectedCommitMessage": "test: verify managed stage handoff fixes",
+  "currentTaskId": "quality-gates-implementation.phase14.rebuild-confirmation.task1",
+  "expectedCommitMessage": "docs: prepare managed handoff rebuild checkpoint",
   "debt": {
-    "expectedCommitMessage": "test: verify managed stage handoff fixes",
-    "preCommitHead": "397eba9d5",
+    "expectedCommitMessage": "docs: prepare managed handoff rebuild checkpoint",
+    "preCommitHead": "78eb68e15",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase14.verification.task1"
+    "taskId": "quality-gates-implementation.phase14.rebuild-confirmation.task1"
   }
 }
 ```
@@ -221,12 +221,12 @@
 ### Stream: Targeted Verification
 
 81. [DONE] `quality-gates-implementation.phase14.verification.task1` Run targeted verification for the cross-stage managed handoff barrier fixes and record the executed commands in this plan before any rebuild is requested (scope: `packages/core/src/managed-workspace, packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed stage handoff fixes`). Verification commands (2026-05-12): `npx ultracite check packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` (OK), `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` (38/38 pass), `npm run build --workspace packages/core` (OK).
-82. [PENDING] Git Commit: `test: verify managed stage handoff fixes` (hash: TBD)
+82. [DONE] Git Commit: `test: verify managed stage handoff fixes` (hash: 78eb68e15)
 
 ### Stream: Release Confirmation
 
-83. [TODO] `quality-gates-implementation.phase14.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed handoff barrier fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild checkpoint`).
-84. [TODO] Git Commit: `docs: prepare managed handoff rebuild checkpoint` (hash: TBD)
+83. [DONE] `quality-gates-implementation.phase14.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed handoff barrier fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild checkpoint`). Rebuild Confirmation Gate (2026-05-12): targeted handoff verification is green (`ultracite`, 38/38 targeted tests, `npm run build --workspace packages/core`); explicit rebuild approval was provided by the user in this session for a full implementation through the next release build after one more plan review.
+84. [PENDING] Git Commit: `docs: prepare managed handoff rebuild checkpoint` (hash: TBD)
 
 ## Phase 15 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
