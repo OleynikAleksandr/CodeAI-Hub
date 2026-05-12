@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "35210bdf6",
+  "lastRecordedCommit": "a1731d6b5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase4.revision.task1",
-  "expectedCommitMessage": "feat: keep quality gates user return phase open",
+  "currentTaskId": "quality-gates-implementation.phase4.post-turn.task1",
+  "expectedCommitMessage": "fix: orchestrate quality gates repair feedback",
   "debt": {
-    "expectedCommitMessage": "feat: keep quality gates user return phase open",
-    "preCommitHead": "35210bdf6",
+    "expectedCommitMessage": "fix: orchestrate quality gates repair feedback",
+    "preCommitHead": "a1731d6b5",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase4.revision.task1"
+    "taskId": "quality-gates-implementation.phase4.post-turn.task1"
   }
 }
 ```
@@ -102,9 +102,9 @@
 25. [DONE] `quality-gates-implementation.phase4.repair.task1` Add repair orchestration that injects repair task-pairs and commits either valid owned diffs or tracked attempt evidence (scope: `packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.ts`; expected commit: `feat: commit quality gates repair attempts`).
 26. [DONE] Git Commit: `feat: commit quality gates repair attempts` (hash: 35210bdf6)
 27. [DONE] `quality-gates-implementation.phase4.revision.task1` Add review-turn and user-return revision detection with Quality Gates task-pair injection before provider-visible revision prompts (scope: `packages/core/src/remote-bridge/handlers/quality-gates-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts`; expected commit: `feat: keep quality gates user return phase open`).
-28. [PENDING] Git Commit: `feat: keep quality gates user return phase open` (hash: TBD)
-29. [TODO] `quality-gates-implementation.phase4.post-turn.task1` Compose guard, repair, revision, continuation, and feedback into the Quality Gates post-turn service path (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: orchestrate quality gates repair feedback`).
-30. [TODO] Git Commit: `fix: orchestrate quality gates repair feedback` (hash: TBD)
+28. [DONE] Git Commit: `feat: keep quality gates user return phase open` (hash: a1731d6b5)
+29. [DONE] `quality-gates-implementation.phase4.post-turn.task1` Compose guard, repair, revision, continuation, and feedback into the Quality Gates post-turn service path (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: orchestrate quality gates repair feedback`).
+30. [PENDING] Git Commit: `fix: orchestrate quality gates repair feedback` (hash: TBD)
 
 ## Phase 5 - Single Stage-Light Truth (owner: Codex, updated: 2026-05-11)
 

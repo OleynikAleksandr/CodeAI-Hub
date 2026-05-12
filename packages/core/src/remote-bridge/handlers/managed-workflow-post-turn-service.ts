@@ -40,10 +40,18 @@ import {
   runQualityGatesAcceptContractCommand,
 } from "./quality-gates-accept-contract-runner";
 import { sendQualityGatesContinuationIfReady } from "./quality-gates-continuation-dispatcher";
+import { buildQualityGatesRepairFeedbackMessage } from "./quality-gates-contract-feedback";
+import {
+  evaluateQualityGatesContractGuard,
+  type QualityGatesPhase,
+} from "./quality-gates-contract-guard";
 import {
   type QualityGatesProgressSnapshot,
   readQualityGatesProgressSnapshot,
 } from "./quality-gates-progress";
+import { runQualityGatesRepairOrchestration } from "./quality-gates-repair-orchestration";
+import { classifyQualityGatesReviewTurn } from "./quality-gates-review-turn-classifier";
+import { runQualityGatesRevisionInjection } from "./quality-gates-revision-injection-runner";
 import {
   WorkflowAgentAcceptanceFeedback,
   type WorkflowAgentAcceptanceFeedbackGateway,
@@ -439,6 +447,8 @@ export class ManagedWorkflowPostTurnService {
         gateway,
         managedGitStatus: latestManagedGitStatus,
         progress: latestQualityGatesProgress,
+        sessionId: params.sessionId,
+        stage: params.stage,
         workspaceRoot: params.workspaceRoot,
         workspaceSlug: params.workspaceSlug,
       });
@@ -636,14 +646,56 @@ export class ManagedWorkflowPostTurnService {
     readonly gateway: WorkflowAgentAcceptanceFeedbackGateway | undefined;
     readonly managedGitStatus: ManagedGitStatus;
     readonly progress: QualityGatesProgressSnapshot | null;
+    readonly sessionId: string;
+    readonly stage: string;
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<void> {
+    const ownedDirtyFiles =
+      params.managedGitStatus.dirtyByStage.quality_gates ?? [];
     const progress = attachValidationDirtyGate(
       params.progress,
       "Quality Gates",
-      params.managedGitStatus.dirtyByStage.quality_gates
+      ownedDirtyFiles
     );
+    const phase = classifyQualityGatesPhase(params.progress);
+    const guardDecision = evaluateQualityGatesContractGuard({
+      ownedDirtyFiles,
+      phase,
+      progress: params.progress,
+      terminalEventReceived: true,
+    });
+    if (guardDecision.kind !== "noop") {
+      this.logger.info("Quality Gates guard decision", {
+        decision: guardDecision.kind,
+        phase,
+        reason: guardDecision.reason,
+        sessionId: params.sessionId,
+        stage: params.stage,
+      });
+    }
+    const repairMessage = buildQualityGatesRepairFeedbackMessage(guardDecision);
+    await runQualityGatesRepairOrchestration({
+      decision: guardDecision,
+      logger: this.logger,
+      managedGitStatus: params.managedGitStatus,
+      phase,
+      progress: params.progress,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    const reviewTurnKind = classifyQualityGatesReviewTurn({
+      ownedDirtyFiles,
+      phase,
+    });
+    if (reviewTurnKind === "revision") {
+      await runQualityGatesRevisionInjection({
+        logger: this.logger,
+        sessionId: params.sessionId,
+        stage: params.stage,
+        workspaceRoot: params.workspaceRoot,
+      });
+    }
     await Promise.all([
       this.acceptanceFeedback.sendQualityGatesFeedback({
         chains: params.chains,
@@ -659,5 +711,41 @@ export class ManagedWorkflowPostTurnService {
         recentlyAcceptedSessions: this.recentlyAcceptedSessions,
       }),
     ]);
+    if (params.gateway && repairMessage) {
+      const sessionId =
+        params.chains
+          .find((chain) => chain.stage === "quality_gates")
+          ?.segments.at(-1)?.sessionId ?? null;
+      if (sessionId) {
+        await params.gateway.handleMessage(sessionId, repairMessage);
+      }
+    }
   }
 }
+
+const classifyQualityGatesPhase = (
+  progress: QualityGatesProgressSnapshot | null
+): QualityGatesPhase => {
+  if (!progress) {
+    return "phase_idle";
+  }
+  if (progress.substep === "integrated") {
+    return "phase_4_user_return";
+  }
+  if (
+    progress.substep === "integrating" ||
+    progress.integrationState === "in_progress"
+  ) {
+    return "phase_3_integration";
+  }
+  if (progress.acceptanceCommitted === true) {
+    return "phase_2_accepted";
+  }
+  if (progress.accepted === true) {
+    return "phase_2_review";
+  }
+  if (progress.substep === "awaiting_acceptance") {
+    return "phase_2_review";
+  }
+  return "phase_1_draft";
+};
