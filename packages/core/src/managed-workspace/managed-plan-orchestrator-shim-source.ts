@@ -1,3 +1,4 @@
+import { createApplicationSkeletonPlanMutatorShimSource } from "./managed-application-skeleton-plan-mutator";
 import { createDiagramModulesPlanMutatorShimSource } from "./managed-diagram-modules-plan-mutator";
 import { createQualityGatesPlanMutatorShimSource } from "./managed-quality-gates-plan-mutator";
 import {
@@ -172,75 +173,7 @@ const formatTaskLine = (line, taskId, status, summary, files, message) => {
 
 const formatNewTaskLine = (number, taskId, status, summary, scope, message) => \`\${number}. [\${status}] \\\`\${taskId}\\\` \${summary} (scope: \\\`\${scope}\\\`; expected commit: \\\`\${message}\\\`).\`;
 ${createDiagramModulesPlanMutatorShimSource()}
-const insertApplicationSkeletonReviewTaskPair = (lines, commitLineIndex, state, message) => {
-  if (state.currentTaskId !== "application-skeleton.phase1.draft.task1" || message !== "docs: draft application skeleton contract") {
-    return;
-  }
-  if (lines.some((line) => line.includes("application-skeleton.phase2.review.task1"))) {
-    return;
-  }
-  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
-  lines.splice(
-    commitLineIndex + 1,
-    0,
-    "",
-    "## Phase 2 — Application Skeleton Contract Review",
-    "",
-    "### Stream: User-Led Review",
-    "",
-    formatNewTaskLine(taskNumber, "application-skeleton.phase2.review.task1", "TODO", "Open Application Skeleton contract review for user-driven revisions; Core must inject revision task pairs or an explicit acceptance task before materialization", ".codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json", "docs: revise application skeleton review revision 1"),
-    \`\${taskNumber + 1}. [TODO] Git Commit: \\\`docs: revise application skeleton review revision 1\\\` (hash: TBD)\`
-  );
-};
-const insertApplicationSkeletonMaterializationTaskPair = (lines, commitLineIndex, state, message) => {
-  if (state.currentTaskId !== "application-skeleton.phase2.acceptance.task1" || message !== "docs: accept application skeleton contract") {
-    return;
-  }
-  if (lines.some((line) => line.includes("application-skeleton.phase3.materialize.task1"))) {
-    return;
-  }
-  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
-  lines.splice(
-    commitLineIndex + 1,
-    0,
-    "",
-    "## Phase 3 — Application Skeleton Materialization",
-    "",
-    "### Stream: Filesystem Projection",
-    "",
-    formatNewTaskLine(taskNumber, "application-skeleton.phase3.materialize.task1", "TODO", "Materialize the accepted Application Skeleton filesystem projection and stop for Core validation", "product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json", "feat: materialize application skeleton"),
-    \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: materialize application skeleton\\\` (hash: TBD)\`
-  );
-};
-const existingApplicationSkeletonUserReturnRevisionNumbers = (lines) =>
-  lines.map((line) => /application-skeleton\\.phase4\\.user-return\\.revision(\\d+)\\.task1/u.exec(line)?.[1]).filter(Boolean).map((value) => Number.parseInt(value, 10)).filter(Number.isFinite);
-const shouldInsertApplicationSkeletonUserReturnRevision = (state, message, changedFiles) =>
-  (state.currentTaskId === "application-skeleton.phase3.materialize.task1" && message === "feat: materialize application skeleton") ||
-  (/^application-skeleton\\.phase3\\.materialize\\.repair\\d+\\.task1$/u.test(state.currentTaskId ?? "") && isApplicationSkeletonMaterializationRepairCommit({ changedFiles, message }, "application_skeleton")) ||
-  (/^application-skeleton\\.phase4\\.user-return\\.revision\\d+\\.task1$/u.test(state.currentTaskId ?? "") && /^docs: revise application skeleton user return revision \\d+$/u.test(message));
-const insertApplicationSkeletonUserReturnRevisionTaskPair = (lines, commitLineIndex, state, message, changedFiles) => {
-  if (!shouldInsertApplicationSkeletonUserReturnRevision(state, message, changedFiles)) {
-    return;
-  }
-  const existingRevisions = existingApplicationSkeletonUserReturnRevisionNumbers(lines);
-  const nextRevision = (existingRevisions.length > 0 ? Math.max(...existingRevisions) : 0) + 1;
-  const taskId = \`application-skeleton.phase4.user-return.revision\${nextRevision}.task1\`;
-  if (lines.some((line) => line.includes(\`\${taskId}\`))) {
-    return;
-  }
-  const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
-  const messageForRevision = \`docs: revise application skeleton user return revision \${nextRevision}\`;
-  const phaseLines = lines.some((line) => line.includes("Phase 4 — Persistent Application Skeleton User Return"))
-    ? []
-    : ["", "## Phase 4 — Persistent Application Skeleton User Return", "", "### Stream: User Return And Revisions", ""];
-  lines.splice(
-    commitLineIndex + 1,
-    0,
-    ...phaseLines,
-    formatNewTaskLine(taskNumber, taskId, "TODO", \`Apply post-completion Application Skeleton user revision \${nextRevision} and stop for Core acceptance\`, "product-parts/**, .codeai-hub/**/application_skeleton/**, .codeai-hub/**/workflow/revisions/application-skeleton/**", messageForRevision),
-    \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${messageForRevision}\\\` (hash: TBD)\`
-  );
-};
+${createApplicationSkeletonPlanMutatorShimSource()}
 ${createQualityGatesPlanMutatorShimSource()}
 const replaceState = (text, state) => {
   const blockStart = text.indexOf(START);
@@ -297,6 +230,7 @@ const advancePlanForCommit = (message) => {
   insertDiagramModulesProductPartTasks(lines, commitLineIndex, changedFiles);
   insertApplicationSkeletonReviewTaskPair(lines, commitLineIndex, state, message);
   insertApplicationSkeletonMaterializationTaskPair(lines, commitLineIndex, state, message);
+  insertApplicationSkeletonUserReturnTaskAnchor(lines, commitLineIndex, state, message, changedFiles);
   insertApplicationSkeletonUserReturnRevisionTaskPair(lines, commitLineIndex, state, message, changedFiles);
   insertQualityGatesReviewTaskPair(lines, commitLineIndex, state, message);
   insertQualityGatesIntegrationTaskPair(lines, commitLineIndex, state, message);
@@ -390,15 +324,21 @@ const shouldUnlockDiagramModulesNextStage = (event, currentStage) => {
     planState?.currentTaskId ?? ""
   );
 };
-const isApplicationSkeletonMaterializationRepairCommit = (event, currentStage) => currentStage === "application_skeleton" && /^docs: repair application skeleton phase3\\.materialize attempt \\d+$/u.test(event.message) && event.changedFiles.some((file) => file.startsWith("product-parts/"));
+const shouldUnlockApplicationSkeletonNextStage = (event, currentStage) => {
+  if (currentStage !== "application_skeleton") {
+    return false;
+  }
+  const planState = readPlanStateAt(event.planPath);
+  return planState?.currentTaskId === "application-skeleton.phase4.user-return.task1";
+};
 const resolveWorkspaceLifecycleFields = (event, workspaceState) => {
   const currentStage = typeof workspaceState.activeStage === "string" ? workspaceState.activeStage : null;
   if (!currentStage) {
     return {};
   }
   const terminalMessage = STAGE_TERMINAL_COMMITS[currentStage];
-  const terminalNextStage = (typeof terminalMessage === "string" && terminalMessage === event.message) || isApplicationSkeletonMaterializationRepairCommit(event, currentStage) ? NEXT_STAGE_AFTER[currentStage] ?? null : null;
-  const unlockedNextStage = shouldUnlockDiagramModulesNextStage(event, currentStage)
+  const terminalNextStage = typeof terminalMessage === "string" && terminalMessage === event.message ? NEXT_STAGE_AFTER[currentStage] ?? null : null;
+  const unlockedNextStage = shouldUnlockDiagramModulesNextStage(event, currentStage) || shouldUnlockApplicationSkeletonNextStage(event, currentStage)
     ? NEXT_STAGE_AFTER[currentStage] ?? null
     : terminalNextStage;
   const baseUnlockedStages = stringArray(workspaceState.unlockedStages);

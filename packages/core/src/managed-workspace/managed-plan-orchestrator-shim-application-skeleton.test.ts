@@ -11,7 +11,6 @@ import { ManagedPlanOrchestratorInstaller } from "./managed-plan-orchestrator-in
 const execFileAsync = promisify(execFile);
 const APPLICATION_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
-const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const STATIC_APPLICATION_SKELETON_PHASE_RE =
   /Application Skeleton Contract Review|Application Skeleton Materialization|Persistent Application Skeleton User Return/u;
@@ -21,6 +20,40 @@ const MATERIALIZATION_TASK_RE = /phase3\.materialize/u;
 
 const createWorkspaceRoot = (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "app-skeleton-shim-"));
+
+const createAcceptedApplicationSkeletonMap = (): string =>
+  `${JSON.stringify({ accepted: true, reviewState: "accepted" }, null, 2)}\n`;
+
+const createMaterializedApplicationSkeletonMap = (): string =>
+  `${JSON.stringify(
+    {
+      accepted: true,
+      materialized: true,
+      materializationState: "materialized",
+      materializedPaths: ["product-parts/project-manager/README.md"],
+      productParts: [
+        {
+          partId: "project-manager",
+          codePath: "product-parts/project-manager/README.md",
+        },
+      ],
+      reviewState: "materialized",
+      sourceRoot: "product-parts",
+    },
+    null,
+    2
+  )}\n`;
+
+const createMaterializedApplicationSkeletonMarkdown = (label: string): string =>
+  [
+    "# Application Skeleton",
+    "",
+    `- reviewState: materialized (${label})`,
+    "- accepted: true",
+    "- materialized: true",
+    "- materializationState: materialized",
+    "",
+  ].join("\n");
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
@@ -91,7 +124,6 @@ test("application skeleton shim grows the child plan dynamically with paired com
       "application-skeleton.phase1.draft.task1",
       "docs: draft application skeleton contract"
     );
-    await readFile(path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH), "utf8");
 
     await writeFile(
       path.join(artifactRoot, "application-skeleton.md"),
@@ -120,7 +152,7 @@ test("application skeleton shim grows the child plan dynamically with paired com
     await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
     await writeFile(
       path.join(artifactRoot, "application-skeleton-map.json"),
-      `${JSON.stringify({ accepted: true, lifecycle: "accepted" }, null, 2)}\n`,
+      createAcceptedApplicationSkeletonMap(),
       "utf8"
     );
     await commitPlan(
@@ -146,12 +178,12 @@ test("application skeleton shim grows the child plan dynamically with paired com
     );
     await writeFile(
       path.join(artifactRoot, "application-skeleton.md"),
-      "# Application Skeleton\n\nMaterialized.\n",
+      createMaterializedApplicationSkeletonMarkdown("materialized"),
       "utf8"
     );
     await writeFile(
       path.join(artifactRoot, "application-skeleton-map.json"),
-      `${JSON.stringify({ accepted: true, lifecycle: "materialized" }, null, 2)}\n`,
+      createMaterializedApplicationSkeletonMap(),
       "utf8"
     );
     await commitPlan(
@@ -163,7 +195,7 @@ test("application skeleton shim grows the child plan dynamically with paired com
     const userReturnPlan = await readFile(planPath, "utf8");
     assertImmediateCommitPair(
       userReturnPlan,
-      "application-skeleton.phase4.user-return.revision1.task1",
+      "application-skeleton.phase4.user-return.task1",
       "docs: revise application skeleton user return revision 1"
     );
     assert.doesNotMatch(userReturnPlan, INCLUDED_IN_COMMIT_RE);
