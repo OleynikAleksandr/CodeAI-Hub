@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "2b69a8ccb",
+  "lastRecordedCommit": "6b7bf55fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase9.release-feedback.task2",
-  "expectedCommitMessage": "test: cover quality gates release feedback lifecycle",
+  "currentTaskId": "quality-gates-implementation.phase10.rebuild-confirmation.task1",
+  "expectedCommitMessage": "docs: prepare quality gates rebuild checkpoint",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates release feedback lifecycle",
-    "preCommitHead": "2b69a8ccb",
+    "expectedCommitMessage": "docs: prepare quality gates rebuild checkpoint",
+    "preCommitHead": "6b7bf55fb",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase9.release-feedback.task2"
+    "taskId": "quality-gates-implementation.phase10.rebuild-confirmation.task1"
   }
 }
 ```
@@ -159,13 +159,36 @@
 57. [DONE] `quality-gates-implementation.phase9.release-feedback.task1` Address failed release retest by aligning Quality Gates Phase 2 lifecycle with Application Skeleton: include QG child plan/workspace ledger files in managed stage ownership and keep draft/review feedback contract-only until acceptance via a dedicated Quality Gates feedback action resolver (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts`; expected commit: `fix: address quality gates release feedback`).
 58. [DONE] Git Commit: `fix: address quality gates release feedback` (hash: 2b69a8ccb)
 59. [DONE] `quality-gates-implementation.phase9.release-feedback.task2` Normalize Quality Gates Phase 2/3 post-turn continuation and review revision injection so Core never opens Phase 3 from failed acceptance state and never duplicates numbered tasks, with targeted regression coverage (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts`; expected commit: `test: cover quality gates release feedback lifecycle`).
-60. [PENDING] Git Commit: `test: cover quality gates release feedback lifecycle` (hash: TBD)
+60. [DONE] Git Commit: `test: cover quality gates release feedback lifecycle` (hash: 6b7bf55fb)
 
-## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-11)
+## Phase 10 - Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
+
+### Stream: Release Confirmation
+
+61. [DONE] `quality-gates-implementation.phase10.rebuild-confirmation.task1` After fixing the failed Quality Gates release retest in commits `2b69a8ccb` and `6b7bf55fb`, request explicit user confirmation before rebuilding release artifacts; do not run `./scripts/build-all.sh` or `./scripts/build-release.sh --use-current-version` until the user approves a new release build (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates rebuild checkpoint`). Rebuild Confirmation Gate (2026-05-12): release `1.2.239` remains rejected; the Quality Gates lifecycle fixes are now in commits `2b69a8ccb` and `6b7bf55fb`; awaiting explicit user approval before rerunning release scripts for the next candidate.
+62. [PENDING] Git Commit: `docs: prepare quality gates rebuild checkpoint` (hash: TBD)
+
+## Phase 11 - Release Rebuild (owner: Codex, updated: 2026-05-12)
+
+### Stream: Rebuild Release Candidate
+
+63. [TODO] `quality-gates-implementation.phase11.rebuild-docs.task1` After explicit confirmation only, update release notes for the next Quality Gates release and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates rebuild release notes`).
+64. [TODO] Git Commit: `docs: prepare quality gates rebuild release notes` (hash: TBD)
+65. [TODO] `quality-gates-implementation.phase11.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates release`).
+66. [TODO] Git Commit: `chore: rebuild quality gates release` (hash: TBD)
+
+## Phase 12 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-12)
+
+### Stream: User Re-Retest
+
+67. [TODO] `quality-gates-implementation.phase12.user-reretest.task1` User installs the rebuilt release and retests Diagram Modules, Application Skeleton, Quality Gates, and Development Tree unlock behavior against the Quality Gates release-fix scenario (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record rebuilt quality gates user workflow acceptance`).
+68. [TODO] Git Commit: `docs: record rebuilt quality gates user workflow acceptance` (hash: TBD)
+
+## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Close Active Scope
 
-61. [TODO] `quality-gates-implementation.phase10.closeout.task1` After explicit user acceptance only, archive this active plan and close the Quality Gates implementation scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-quality-gates-managed-orchestration-implementation-2026-05-11.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md`; expected commit: `docs: close quality gates implementation scope`).
-62. [TODO] Git Commit: `docs: close quality gates implementation scope` (hash: TBD)
-63. [TODO] `quality-gates-implementation.phase10.plans-cleanup.task1` Move or archive completed Quality Gates planning materials and refresh the docs index (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Quality_Gates_Scenario_1.2.TBD.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive quality gates implementation planning`).
-64. [TODO] Git Commit: `docs: archive quality gates implementation planning` (hash: TBD)
+69. [TODO] `quality-gates-implementation.phase13.closeout.task1` After explicit user acceptance only, archive this active plan and close the Quality Gates implementation scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-quality-gates-managed-orchestration-implementation-2026-05-11.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md`; expected commit: `docs: close quality gates implementation scope`).
+70. [TODO] Git Commit: `docs: close quality gates implementation scope` (hash: TBD)
+71. [TODO] `quality-gates-implementation.phase13.plans-cleanup.task1` Move or archive completed Quality Gates planning materials and refresh the docs index (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Quality_Gates_Scenario_1.2.TBD.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive quality gates implementation planning`).
+72. [TODO] Git Commit: `docs: archive quality gates implementation planning` (hash: TBD)
