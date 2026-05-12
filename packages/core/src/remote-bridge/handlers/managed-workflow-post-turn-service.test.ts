@@ -73,6 +73,16 @@ test("recogniser accepts bare verbs without the contract noun (Option C — broa
   );
 });
 
+test("recogniser rejects ambiguous acknowledgements that are not explicit acceptance", () => {
+  assert.equal(recognizeManagedContractAcceptancePhrase("Окей"), null);
+  assert.equal(recognizeManagedContractAcceptancePhrase("Давай дальше"), null);
+  assert.equal(recognizeManagedContractAcceptancePhrase("Все хорошо"), null);
+  assert.equal(
+    recognizeManagedAcceptanceForStage("quality_gates", "Окей"),
+    null
+  );
+});
+
 test("recogniser accepts bare English acceptance verbs", () => {
   assert.equal(
     recognizeManagedContractAcceptancePhrase("accepted"),

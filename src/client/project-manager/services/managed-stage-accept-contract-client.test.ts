@@ -96,6 +96,16 @@ test("quality gates client posts to the quality-gates-accept-contract endpoint",
   });
 });
 
+test("quality gates client honours an explicit typed-fallback source", async () => {
+  const recorded: Array<{ body: unknown; url: string }> = [];
+  await acceptQualityGatesContract(
+    { sessionId: "qg-session-1", source: "typed-fallback" },
+    buildFetch(recorded, { body: { status: "accepted" }, ok: true })
+  );
+  const body = recorded[0]?.body as { source?: string } | null;
+  assert.equal(body?.source, "typed-fallback");
+});
+
 test("quality gates client surfaces Core rejection reasons verbatim", async () => {
   const decision = await acceptQualityGatesContract(
     { sessionId: "qg-session-1" },
@@ -110,6 +120,18 @@ test("quality gates client surfaces Core rejection reasons verbatim", async () =
   assert.equal(decision.kind, "rejected");
   if (decision.kind === "rejected") {
     assert.deepEqual(decision.reasons, ["draft contract missing"]);
+    assert.equal(decision.stage, "quality_gates");
+  }
+});
+
+test("quality gates client falls back to a generic rejection reason when the server payload is malformed", async () => {
+  const decision = await acceptQualityGatesContract(
+    { sessionId: "qg-session-1" },
+    buildFetch([], { body: { unexpected: true }, ok: false })
+  );
+  assert.equal(decision.kind, "rejected");
+  if (decision.kind === "rejected") {
+    assert.equal(decision.reasons.length, 1);
     assert.equal(decision.stage, "quality_gates");
   }
 });

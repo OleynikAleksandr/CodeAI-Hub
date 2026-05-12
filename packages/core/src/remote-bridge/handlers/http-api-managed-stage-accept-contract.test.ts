@@ -184,6 +184,24 @@ test("quality gates handler honours typed-fallback source when explicitly reques
   assert.equal(recorded[0]?.source, "typed-fallback");
 });
 
+test("quality gates handler falls back to ui-button for unknown source values", async () => {
+  const captured: CapturedResponse = {};
+  const recorded: Array<{ sessionId: string; source: string }> = [];
+  const service = buildQualityGatesService(recorded, { kind: "accepted" });
+  await handleQualityGatesAcceptContract(
+    {
+      body: { sessionId: "qg-session-1", source: "voice-note" },
+    } as Request,
+    buildResponse(captured),
+    service
+  );
+  assert.equal(recorded[0]?.source, "ui-button");
+  assert.deepEqual(captured.body, {
+    stage: "quality_gates",
+    status: "accepted",
+  });
+});
+
 test("quality gates handler returns 409 with reasons when service rejects", async () => {
   const captured: CapturedResponse = {};
   const recorded: Array<{ sessionId: string; source: string }> = [];
