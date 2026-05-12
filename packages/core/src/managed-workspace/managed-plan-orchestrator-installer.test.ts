@@ -40,6 +40,14 @@ const DIAGRAM_THIRD_TASK_RE =
   /Current Task: diagram-modules\.product-part\.core-runtime/u;
 const DIAGRAM_THIRD_COMMIT_RE =
   /Expected Commit: docs: update diagram modules product part core-runtime/u;
+const DIAGRAM_USER_RETURN_TASK_RE =
+  /Current Task: diagram-modules\.user-return\.revision1\.task1/u;
+const DIAGRAM_USER_RETURN_REVISION2_TASK_RE =
+  /Current Task: diagram-modules\.user-return\.revision2\.task1/u;
+const DIAGRAM_USER_RETURN_COMMIT_RE =
+  /Expected Commit: docs: revise diagram modules user return revision 1/u;
+const DIAGRAM_USER_RETURN_REVISION2_COMMIT_RE =
+  /Expected Commit: docs: revise diagram modules user return revision 2/u;
 const DIAGRAM_USER_RETURN_PHASE_RE =
   /Phase 2 — Persistent Diagram Modules User Return/u;
 const DIAGRAM_USER_RETURN_PLAN_TASK_RE =
@@ -83,8 +91,6 @@ const QUALITY_GATES_USER_RETURN_COMMIT_PIN_RE =
   /\[TODO\] Git Commit: `docs: revise quality gates user return revision 1`/u;
 const QUALITY_GATES_USER_RETURN_REVISION1_RE =
   /quality-gates\.phase4\.user-return\.revision1\.task1/u;
-const APPLICATION_SKELETON_DOWNSTREAM_COMMIT_BLOCK_RE =
-  /Expected commit message: docs: draft application skeleton contract/u;
 const APPLICATION_SKELETON_STATIC_REVIEW_RE =
   /Application Skeleton Contract Review/u;
 const APPLICATION_SKELETON_STATIC_MATERIALIZE_RE =
@@ -118,6 +124,8 @@ const WORKSPACE_COMPLETED_DIAGRAM_STAGE_RE =
   /"completedStages": \[\n\s+"diagram_modules"/u;
 const WORKSPACE_UNLOCKED_APPLICATION_STAGE_RE =
   /"unlockedStages": \[[\s\S]*"application_skeleton"/u;
+const WORKSPACE_UNLOCKED_QUALITY_GATES_STAGE_RE =
+  /"unlockedStages": \[[\s\S]*"quality_gates"/u;
 const DIAGRAM_STAGE_PLAN_RE =
   /doc\/TODO\/stages\/diagram-modules\/todo-plan\.md/u;
 const ROOT_TODO_PLAN_PATH = "doc/TODO/todo-plan.md";
@@ -539,7 +547,8 @@ test("managed plan shim advances application skeleton acceptance commits to mate
     );
     assert.match(qualityGatesPlan, QUALITY_GATES_PLAN_ID_RE);
     assert.match(qualityGatesPlan, QUALITY_GATES_TASK_RE);
-    assert.match(workspacePlan, QUALITY_GATES_ACTIVE_STAGE_RE);
+    assert.match(workspacePlan, APPLICATION_SKELETON_ACTIVE_STAGE_RE);
+    assert.match(workspacePlan, WORKSPACE_UNLOCKED_QUALITY_GATES_STAGE_RE);
     assert.match(lastCommit.stdout, LEDGER_COMMIT_RE);
     assert.equal(gitStatus.stdout, "");
   } finally {
@@ -660,7 +669,8 @@ test("managed plan shim hands off application skeleton after materialization rep
     );
     assert.match(qualityGatesPlan, QUALITY_GATES_PLAN_ID_RE);
     assert.match(qualityGatesPlan, QUALITY_GATES_TASK_RE);
-    assert.match(workspacePlan, QUALITY_GATES_ACTIVE_STAGE_RE);
+    assert.match(workspacePlan, APPLICATION_SKELETON_ACTIVE_STAGE_RE);
+    assert.match(workspacePlan, WORKSPACE_UNLOCKED_QUALITY_GATES_STAGE_RE);
     assert.match(lastCommit.stdout, LEDGER_COMMIT_RE);
     assert.equal(gitStatus.stdout, "");
   } finally {
@@ -1040,11 +1050,11 @@ test("managed plan shim advances the active task inside plan commits", async () 
       path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
       "utf8"
     );
-    assert.match(userReturnStatus.stdout, APPLICATION_SKELETON_TASK_RE);
-    assert.match(userReturnStatus.stdout, APPLICATION_SKELETON_DRAFT_COMMIT_RE);
+    assert.match(userReturnStatus.stdout, DIAGRAM_USER_RETURN_TASK_RE);
+    assert.match(userReturnStatus.stdout, DIAGRAM_USER_RETURN_COMMIT_RE);
     assert.match(userReturnPlan, DIAGRAM_USER_RETURN_PHASE_RE);
     assert.match(userReturnPlan, DIAGRAM_USER_RETURN_PLAN_TASK_RE);
-    assert.match(userReturnWorkspacePlan, APPLICATION_SKELETON_ACTIVE_STAGE_RE);
+    assert.match(userReturnWorkspacePlan, WORKSPACE_PLAN_ACTIVE_STAGE_RE);
     assert.match(userReturnWorkspacePlan, WORKSPACE_COMPLETED_DIAGRAM_STAGE_RE);
     assert.match(
       userReturnWorkspacePlan,
@@ -1057,17 +1067,25 @@ test("managed plan shim advances the active task inside plan commits", async () 
       "utf8"
     );
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
-    await assert.rejects(
-      execFileAsync(
-        process.execPath,
-        [
-          scriptPath,
-          "commit",
-          "docs: revise diagram modules user return revision 1",
-        ],
-        { cwd: workspaceRoot }
-      ),
-      APPLICATION_SKELETON_DOWNSTREAM_COMMIT_BLOCK_RE
+    await execFileAsync(
+      process.execPath,
+      [
+        scriptPath,
+        "commit",
+        "docs: revise diagram modules user return revision 1",
+      ],
+      { cwd: workspaceRoot }
+    );
+
+    const revisionStatus = await execFileAsync(
+      process.execPath,
+      [scriptPath, "status"],
+      { cwd: workspaceRoot }
+    );
+    assert.match(revisionStatus.stdout, DIAGRAM_USER_RETURN_REVISION2_TASK_RE);
+    assert.match(
+      revisionStatus.stdout,
+      DIAGRAM_USER_RETURN_REVISION2_COMMIT_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

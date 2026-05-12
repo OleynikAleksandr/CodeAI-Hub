@@ -363,8 +363,8 @@ const resolveWorkspaceLifecycleFields = (event, workspaceState) => {
     ? appendUniqueString(stringArray(workspaceState.completedStages), currentStage)
     : stringArray(workspaceState.completedStages);
   return {
-    ...(unlockedNextStage ? { activeStage: unlockedNextStage, activePlanPath: STAGE_PLANS[unlockedNextStage] } : {}),
     completedStages,
+    nextUnlockedStage: unlockedNextStage,
     unlockedStages,
   };
 };
@@ -373,10 +373,11 @@ const recordWorkspaceCommit = (event, workspaceState, commitHash, commitFullHash
   const acceptedCommits = Array.isArray(workspaceState.acceptedCommits) ? workspaceState.acceptedCommits : [];
   const commitRecord = { commitFullHash, commitHash, changedFiles: event.changedFiles, message: event.message, planPath: event.planPath, stage: event.stage, summary: event.summary, taskId: event.taskId };
   const lifecycleFields = resolveWorkspaceLifecycleFields(event, workspaceState);
-  if (typeof lifecycleFields.activeStage === "string") {
-    ensureStagePlanForStage(lifecycleFields.activeStage);
+  if (typeof lifecycleFields.nextUnlockedStage === "string") {
+    ensureStagePlanForStage(lifecycleFields.nextUnlockedStage);
   }
-  const nextState = { ...workspaceState, ...lifecycleFields, lastAcceptedCommitHash: commitHash, lastAcceptedCommitMessage: event.message, acceptedCommits: [...acceptedCommits, commitRecord] };
+  const { nextUnlockedStage, ...persistedLifecycleFields } = lifecycleFields;
+  const nextState = { ...workspaceState, ...persistedLifecycleFields, lastAcceptedCommitHash: commitHash, lastAcceptedCommitMessage: event.message, acceptedCommits: [...acceptedCommits, commitRecord] };
   writeFileSync(WORKSPACE_PLAN_PATH, replaceWorkspaceState(readWorkspaceText(), nextState), "utf8");
 };
 

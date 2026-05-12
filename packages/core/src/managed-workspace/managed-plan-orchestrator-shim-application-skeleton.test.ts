@@ -14,7 +14,8 @@ const APPLICATION_PLAN_PATH =
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const STATIC_APPLICATION_SKELETON_PHASE_RE =
   /Application Skeleton Contract Review|Application Skeleton Materialization|Persistent Application Skeleton User Return/u;
-const QUALITY_GATES_ACTIVE_RE = /"activeStage": "quality_gates"/u;
+const APPLICATION_SKELETON_ACTIVE_RE = /"activeStage": "application_skeleton"/u;
+const UNLOCKED_QUALITY_GATES_RE = /"unlockedStages": \[[\s\S]*"quality_gates"/u;
 const INCLUDED_IN_COMMIT_RE = /included-in-commit/u;
 const MATERIALIZATION_TASK_RE = /phase3\.materialize/u;
 
@@ -201,7 +202,11 @@ test("application skeleton shim grows the child plan dynamically with paired com
     assert.doesNotMatch(userReturnPlan, INCLUDED_IN_COMMIT_RE);
     assert.match(
       await readFile(path.join(workspaceRoot, WORKSPACE_PLAN_PATH), "utf8"),
-      QUALITY_GATES_ACTIVE_RE
+      APPLICATION_SKELETON_ACTIVE_RE
+    );
+    assert.match(
+      await readFile(path.join(workspaceRoot, WORKSPACE_PLAN_PATH), "utf8"),
+      UNLOCKED_QUALITY_GATES_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
