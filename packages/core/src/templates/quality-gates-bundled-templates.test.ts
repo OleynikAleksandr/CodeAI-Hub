@@ -31,6 +31,8 @@ const PRESERVE_PLAN_VALIDATE_RE =
   /Preserve existing Core lifecycle commands such as `plan:validate`/;
 const CORE_OWNS_COMMIT_RE =
   /Core owns all staging, the managed commit, post-commit validation, and child-plan advancement/;
+const USER_CONFIRM_OR_REVISE_RE =
+  /End by explicitly asking the user to confirm the contract or list revisions/;
 const PLAN_COMMIT_RE = /npm run plan:commit/;
 const PROVIDER_STAGE_ONLY_RE = /stage only the two canonical/u;
 const CLEAN_GIT_RE = /git status --short/;
@@ -94,6 +96,7 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, AGGREGATE_PRE_PUSH_RE);
   assert.match(prompt, PRESERVE_PLAN_VALIDATE_RE);
   assert.match(prompt, CORE_OWNS_COMMIT_RE);
+  assert.match(prompt, USER_CONFIRM_OR_REVISE_RE);
   assert.doesNotMatch(prompt, PLAN_COMMIT_RE);
   assert.doesNotMatch(prompt, PROVIDER_STAGE_ONLY_RE);
   assert.doesNotMatch(prompt, CLEAN_GIT_RE);

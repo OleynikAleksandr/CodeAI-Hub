@@ -31,7 +31,9 @@ const TECHNOLOGY_HINTS_RE =
 const CONFIRMATION_STYLE_RE =
   /confirmation questions with your recommended option first/;
 const LOCALIZED_DRAFT_RESPONSE_RE =
-  /tell the user, in the chat language, that the draft Application Skeleton contract is ready for Core acceptance/;
+  /tell the user, in the chat language, that the draft Application Skeleton contract is ready for review/;
+const DRAFT_CONFIRM_OR_REVISE_RE =
+  /End by explicitly asking the user to confirm the contract or list revisions/;
 const LOCALIZED_MATERIALIZED_RESPONSE_RE =
   /tell the user, in the chat language, that Application Skeleton is accepted and materialized/;
 const CORE_OWNS_COMMIT_RE =
@@ -106,6 +108,7 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, TECHNOLOGY_HINTS_RE);
   assert.match(prompt, CONFIRMATION_STYLE_RE);
   assert.match(prompt, LOCALIZED_DRAFT_RESPONSE_RE);
+  assert.match(prompt, DRAFT_CONFIRM_OR_REVISE_RE);
   assert.match(prompt, LOCALIZED_MATERIALIZED_RESPONSE_RE);
   assert.match(prompt, CORE_OWNS_COMMIT_RE);
   assert.doesNotMatch(prompt, PLAN_COMMIT_RE);
