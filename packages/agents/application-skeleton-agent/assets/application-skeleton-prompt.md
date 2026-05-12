@@ -52,7 +52,9 @@ Before the draft-review response:
 
 If the user requests draft corrections before materialization, update only the canonical artifacts and report readiness again. If the child plan has already advanced to materialization but another draft revision is needed, stop and ask Core for a managed plan revision instead of editing the child plan yourself.
 
-Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization. End by explicitly asking the user to confirm the contract or list revisions; do not ask Core to review or approve it.
+Every pre-acceptance draft or revision response must end with exactly this final sentence in Russian: `Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией.` Do not add extra offers, optional next steps, or any sentence after it.
+
+Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization. Do not ask Core to review or approve it; the final sentence must be exactly `Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией.`
 
 ## Phase 2: Post-Acceptance Materialization
 After the user explicitly accepts the contract, continue in this same session and materialize immediately. Do not ask whether to proceed and do not hand the work to another step.

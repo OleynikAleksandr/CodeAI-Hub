@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "1d0a74601",
+  "lastRecordedCommit": "3575b5585",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase21.typed-acceptance-wiring.task1",
-  "expectedCommitMessage": "fix: route quality gates typed acceptance in production",
+  "currentTaskId": "quality-gates-implementation.phase21.review-closing-phrase.task1",
+  "expectedCommitMessage": "docs: enforce exact managed contract review phrase",
   "debt": {
-    "expectedCommitMessage": "fix: route quality gates typed acceptance in production",
-    "preCommitHead": "1d0a74601",
+    "expectedCommitMessage": "docs: enforce exact managed contract review phrase",
+    "preCommitHead": "3575b5585",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase21.typed-acceptance-wiring.task1"
+    "taskId": "quality-gates-implementation.phase21.review-closing-phrase.task1"
   }
 }
 ```
@@ -292,12 +292,12 @@
 ### Stream: Quality Gates Typed Acceptance Production Wiring
 
 111. [DONE] `quality-gates-implementation.phase21.typed-acceptance-wiring.task1` Route managed typed acceptance in production by the session stage so `quality_gates` acceptance phrases call the Quality Gates Core runner instead of the Application Skeleton runner, and cover the dispatch path with a regression test (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts`; expected commit: `fix: route quality gates typed acceptance in production`).
-112. [PENDING] Git Commit: `fix: route quality gates typed acceptance in production` (hash: TBD)
+112. [DONE] Git Commit: `fix: route quality gates typed acceptance in production` (hash: 3575b5585)
 
 ### Stream: Exact Contract Review Closing Phrase
 
-113. [TODO] `quality-gates-implementation.phase21.review-closing-phrase.task1` Require the exact shared Russian closing phrase for every pre-acceptance Application Skeleton and Quality Gates contract review response, and regenerate bundled template assets from the updated prompt sources (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: enforce exact managed contract review phrase`).
-114. [TODO] Git Commit: `docs: enforce exact managed contract review phrase` (hash: TBD)
+113. [DONE] `quality-gates-implementation.phase21.review-closing-phrase.task1` Require the exact shared Russian closing phrase for every pre-acceptance Application Skeleton and Quality Gates contract review response, and regenerate bundled template assets from the updated prompt sources (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: enforce exact managed contract review phrase`).
+114. [PENDING] Git Commit: `docs: enforce exact managed contract review phrase` (hash: TBD)
 115. [TODO] `quality-gates-implementation.phase21.review-closing-phrase-tests.task1` Tighten bundled template assertions so prompt drift is caught only when the exact review closing phrase remains present for both managed contract stages (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: lock managed contract review phrase`).
 116. [TODO] Git Commit: `test: lock managed contract review phrase` (hash: TBD)
 
