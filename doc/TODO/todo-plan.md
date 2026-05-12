@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "c348fa9d3",
+  "lastRecordedCommit": "0d04cba4d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase0.plan.task1",
-  "expectedCommitMessage": "docs: open quality gates implementation plan",
+  "currentTaskId": "quality-gates-implementation.phase1.plan-mutator.task1",
+  "expectedCommitMessage": "feat: add quality gates plan mutator",
   "debt": {
-    "expectedCommitMessage": "docs: open quality gates implementation plan",
-    "preCommitHead": "c348fa9d3",
+    "expectedCommitMessage": "feat: add quality gates plan mutator",
+    "preCommitHead": "0d04cba4d",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase0.plan.task1"
+    "taskId": "quality-gates-implementation.phase1.plan-mutator.task1"
   }
 }
 ```
@@ -56,14 +56,14 @@
 ### Stream: Implementation Plan Intake
 
 1. [DONE] `quality-gates-implementation.phase0.plan.task1` Mark the Quality Gates scenario accepted for implementation and open this active implementation plan (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md`; expected commit: `docs: open quality gates implementation plan`).
-2. [PENDING] Git Commit: `docs: open quality gates implementation plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: open quality gates implementation plan` (hash: 0d04cba4d)
 
 ## Phase 1 - Managed Child Plan Model (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Dynamic Quality Gates Plan
 
-3. [TODO] `quality-gates-implementation.phase1.plan-mutator.task1` Add a Quality Gates child-plan mutator for acceptance, integration, repair, review revision, and post-completion user-return task-pair injection (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts`; expected commit: `feat: add quality gates plan mutator`).
-4. [TODO] Git Commit: `feat: add quality gates plan mutator` (hash: TBD)
+3. [DONE] `quality-gates-implementation.phase1.plan-mutator.task1` Add a Quality Gates child-plan mutator for acceptance, integration, repair, review revision, and post-completion user-return task-pair injection (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts`; expected commit: `feat: add quality gates plan mutator`).
+4. [PENDING] Git Commit: `feat: add quality gates plan mutator` (hash: TBD)
 5. [TODO] `quality-gates-implementation.phase1.seed.task1` Replace static Quality Gates follow-up seeding with draft-only bootstrap and phase-aware task ids (scope: `packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.ts`; expected commit: `fix: seed quality gates draft-only plan`).
 6. [TODO] Git Commit: `fix: seed quality gates draft-only plan` (hash: TBD)
 7. [TODO] `quality-gates-implementation.phase1.shim.task1` Align the bundled managed-plan orchestrator shim with the new Quality Gates dynamic plan lifecycle (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: bundle quality gates dynamic plan shim`).
