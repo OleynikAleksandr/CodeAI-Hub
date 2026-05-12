@@ -18,7 +18,7 @@ const APPLICATION_SKELETON_MATERIALIZATION_TASK =
   "application-skeleton.phase3.materialize.task1";
 const WORKSPACE_PLAN_PATH = path.join("doc", "TODO", "workspace.plan.md");
 const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
-const QUALITY_GATES_INTEGRATION_TASK = "quality-gates.stream1.task2";
+const QUALITY_GATES_INTEGRATION_TASK = "quality-gates.phase3.integration.task1";
 const WORKSPACE_STATE_START = "<!-- codeai-workspace-plan-state:start -->";
 const WORKSPACE_STATE_END = "<!-- codeai-workspace-plan-state:end -->";
 const PLAN_STATE_START = "<!-- codeai-plan-state:start -->";

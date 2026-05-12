@@ -77,7 +77,7 @@ const APPLICATION_SKELETON_USER_RETURN_COMMIT_PIN_RE =
   /\[TODO\] Git Commit: `docs: revise application skeleton user return revision 1`/u;
 const QUALITY_GATES_ACTIVE_STAGE_RE = /"activeStage": "quality_gates"/u;
 const QUALITY_GATES_PLAN_ID_RE = /managed-workspace-quality-gates/u;
-const QUALITY_GATES_TASK_RE = /quality-gates\.stream1\.task1/u;
+const QUALITY_GATES_TASK_RE = /quality-gates\.phase1\.draft\.task1/u;
 const APPLICATION_SKELETON_STATIC_REVIEW_RE =
   /Application Skeleton Contract Review/u;
 const APPLICATION_SKELETON_STATIC_MATERIALIZE_RE =
