@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "ec5928811",
+  "lastRecordedCommit": "a34de2c9c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase7.verification.task1",
-  "expectedCommitMessage": "test: verify quality gates managed orchestration",
+  "currentTaskId": "quality-gates-implementation.phase8.release-confirmation.task1",
+  "expectedCommitMessage": "docs: prepare quality gates release checkpoint",
   "debt": {
-    "expectedCommitMessage": "test: verify quality gates managed orchestration",
-    "preCommitHead": "ec5928811",
+    "expectedCommitMessage": "docs: prepare quality gates release checkpoint",
+    "preCommitHead": "a34de2c9c",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase7.verification.task1"
+    "taskId": "quality-gates-implementation.phase8.release-confirmation.task1"
   }
 }
 ```
@@ -137,14 +137,14 @@
 45. [DONE] `quality-gates-implementation.phase7.contract-docs.task1` Sync lifecycle contracts, rollout guardrails, and docs index with Quality Gates implementation boundaries (scope: `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update quality gates workflow contracts`).
 46. [DONE] Git Commit: `docs: update quality gates workflow contracts` (hash: ec5928811)
 47. [DONE] `quality-gates-implementation.phase7.verification.task1` Run targeted verification for core, agent assets, and Project Manager changes, then record the executed commands in this plan (scope: `packages/core, packages/agents/quality-gates-agent, src/client/project-manager`; expected commit: `test: verify quality gates managed orchestration`). Verification commands (2026-05-12): `npm run build --workspace packages/core` (OK), `npm run typecheck:webview` (OK), `npx tsx --test packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.test.ts packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/managed-workspace/managed-hook-registry.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts` (65/65 pass).
-48. [PENDING] Git Commit: `test: verify quality gates managed orchestration` (hash: TBD)
+48. [DONE] Git Commit: `test: verify quality gates managed orchestration` (hash: a34de2c9c)
 
 ## Phase 8 - Release Build (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Release Candidate
 
-49. [TODO] `quality-gates-implementation.phase8.release-confirmation.task1` Stop after verification, request explicit user confirmation for the release build, and record the confirmation checkpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates release checkpoint`).
-50. [TODO] Git Commit: `docs: prepare quality gates release checkpoint` (hash: TBD)
+49. [DONE] `quality-gates-implementation.phase8.release-confirmation.task1` Stop after verification, request explicit user confirmation for the release build, and record the confirmation checkpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates release checkpoint`). Release Build Confirmation Gate (2026-05-12): Phases 0-7 implemented (commits 0d04cba4d→a34de2c9c), 65/65 QG-related tests pass, build/typecheck green. Awaiting explicit user confirmation before running `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`.
+50. [PENDING] Git Commit: `docs: prepare quality gates release checkpoint` (hash: TBD)
 51. [TODO] `quality-gates-implementation.phase8.release-docs.task1` After explicit confirmation only, update release notes for the future version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates release notes`).
 52. [TODO] Git Commit: `docs: prepare quality gates release notes` (hash: TBD)
 53. [TODO] `quality-gates-implementation.phase8.release-build.task1` After explicit confirmation only, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage produced release artifacts (scope: `package.json, package-lock.json, doc/tmp/releases/**`; expected commit: `chore: build quality gates release`).
