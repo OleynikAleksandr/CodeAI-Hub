@@ -5,7 +5,12 @@ import test from "node:test";
 import { BUNDLED_TEMPLATE_SOURCES } from "./bundled-templates";
 
 const DRAFT_PHASE_RE = /Phase 1: Draft Gate Contract/;
-const INTEGRATION_PHASE_RE = /Phase 2: Post-Acceptance Integration/;
+const REVIEW_PHASE_RE = /Phase 2: User-Led Review/;
+const INTEGRATION_PHASE_RE = /Phase 3: Post-Acceptance Integration/;
+const ACCEPTANCE_BOUNDARY_RE = /Acceptance is a Core-owned event/;
+const NO_SELF_ACCEPT_RE = /Do not set `accepted: true` yourself/;
+const ACCEPTANCE_COMMITTED_RE =
+  /`acceptanceCommitted: true` is written by Core/;
 const SIZE_POLICY_RE = /Source files and classes must stay <= 500 lines/;
 const STACK_RESEARCH_RE = /stack-specific research/;
 const NEEDS_USER_DECISION_RE = /needs_user_decision/;
@@ -72,7 +77,10 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   const prompt = decodeTemplate("quality-gates-prompt");
 
   assert.match(prompt, DRAFT_PHASE_RE);
+  assert.match(prompt, REVIEW_PHASE_RE);
   assert.match(prompt, INTEGRATION_PHASE_RE);
+  assert.match(prompt, ACCEPTANCE_BOUNDARY_RE);
+  assert.match(prompt, NO_SELF_ACCEPT_RE);
   assert.match(prompt, SIZE_POLICY_RE);
   assert.match(prompt, STACK_RESEARCH_RE);
   assert.match(prompt, NEEDS_USER_DECISION_RE);
@@ -117,6 +125,7 @@ test("quality gates bundled contract exposes integration-aware gate fields", () 
   assert.match(contract, CONTRACT_CHILD_PLAN_RE);
   assert.match(contract, CONTRACT_HOOK_AGGREGATE_RE);
   assert.match(contract, CONTRACT_INTEGRATED_HOOK_RE);
+  assert.match(contract, ACCEPTANCE_COMMITTED_RE);
   assert.match(contract, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
   assert.doesNotMatch(contract, WORKSPACE_PLAN_PATH_RE);

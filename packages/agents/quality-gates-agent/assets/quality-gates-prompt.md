@@ -55,9 +55,17 @@ Universal policies for every generated product:
 - Active gate intent must be separate from current executability. A desired active gate that is not integrated yet must say so and list planned integration paths.
 - Dependency auto-update policy must be explicit and reproducible: automated update PRs are allowed, silent unpinned drift is not.
 
-## Phase 2: Post-Acceptance Integration
+## Acceptance Boundary
 
-An explicit user acceptance message in this same session starts integration immediately. Do not ask whether to proceed and do not hand integration to another step.
+Acceptance is a Core-owned event, not a provider-initiated turn. Do not start integration in the same turn that carries a user acceptance phrase. Do not set `accepted: true` yourself: Core writes acceptance state and commits `docs: accept quality gates contract` after explicit user acceptance. Wait for the Core-injected integration prompt before performing any integration work; until then, only canonical draft artifact revisions are allowed.
+
+## Phase 2: User-Led Review
+
+Discussion-only review turns do not change canonical artifacts. When the user requests a draft correction, update only the two canonical Quality Gates artifacts and report readiness again; Core commits `docs: revise quality gates contract - revision N`. Never touch package manifests, hook files, gate scripts, or production code during review.
+
+## Phase 3: Post-Acceptance Integration
+
+Integration begins only after Core sends the integration prompt that follows the `docs: accept quality gates contract` commit. Do not ask whether to proceed and do not hand integration to another step.
 
 Integration algorithm:
 
@@ -116,5 +124,6 @@ Before each final response, verify:
 - selected baseline membership matches required arrays;
 - `accepted` and `integrated` are false in draft phase;
 - Phase 1 final response is allowed only after the two canonical draft artifacts are ready for Core acceptance;
-- Phase 2 final response is allowed only after the accepted gate infrastructure is ready for Core acceptance; `unlocked` language requires Core confirmation;
+- Phase 2 review revisions only touch the two canonical Quality Gates artifacts; never integrate or self-accept;
+- Phase 3 final response is allowed only after the accepted gate infrastructure is ready for Core acceptance; `unlocked` language requires Core confirmation;
 - artifacts are in the user-facing artifact language, while identifiers and field names remain canonical.

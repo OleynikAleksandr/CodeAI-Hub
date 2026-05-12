@@ -74,7 +74,8 @@
 - A not-integrated active gate must include `integrationRequired: true` and non-empty `plannedIntegrationPaths`.
 - `plannedRequiredAfterIntegration` must not duplicate ids already listed in `requiredBeforeCommit`, `requiredBeforeModuleExecution`, `requiredBeforePush`, or `requiredBeforeRelease`.
 - Selected tools must appear in tooling rationale, command entries, and planned integration paths.
-- `accepted: true` requires explicit user acceptance.
+- `accepted: true` is written by Core after the `docs: accept quality gates contract` commit; the agent must not flip this flag during draft or review.
+- `acceptanceCommitted: true` is written by Core after the acceptance commit lands; it gates the Phase 3 integration continuation.
 - `integrated: true` requires actual filesystem integration plus smoke evidence.
 - `integrated: true` requires lifecycle hook wiring for every non-empty required hook scope.
 - Future agents must be able to run or cite gate commands without inventing missing scripts.

@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "3e2d10012",
+  "lastRecordedCommit": "542edb329",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase3.hooks.task1",
-  "expectedCommitMessage": "fix: validate quality gates hook registry integration",
+  "currentTaskId": "quality-gates-implementation.phase3.prompts.task1",
+  "expectedCommitMessage": "docs: enforce quality gates lifecycle prompt boundary",
   "debt": {
-    "expectedCommitMessage": "fix: validate quality gates hook registry integration",
-    "preCommitHead": "3e2d10012",
+    "expectedCommitMessage": "docs: enforce quality gates lifecycle prompt boundary",
+    "preCommitHead": "542edb329",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase3.hooks.task1"
+    "taskId": "quality-gates-implementation.phase3.prompts.task1"
   }
 }
 ```
@@ -89,9 +89,9 @@
 17. [DONE] `quality-gates-implementation.phase3.commit-readiness.task1` Allow Quality Gates managed commits for draft, acceptance, integration, and repair attempts according to the active child-plan task (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts`; expected commit: `fix: commit quality gates managed lifecycle tasks`).
 18. [DONE] Git Commit: `fix: commit quality gates managed lifecycle tasks` (hash: 3e2d10012)
 19. [DONE] `quality-gates-implementation.phase3.hooks.task1` Keep hook wiring Core-owned through the managed hook registry and validate integrated state against registry-generated sections (scope: `packages/core/src/managed-workspace/managed-hook-registry.ts, packages/core/src/managed-workspace/managed-hook-registry.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts`; expected commit: `fix: validate quality gates hook registry integration`).
-20. [PENDING] Git Commit: `fix: validate quality gates hook registry integration` (hash: TBD)
-21. [TODO] `quality-gates-implementation.phase3.prompts.task1` Update Quality Gates agent assets so draft, acceptance, and integration boundaries cannot be confused (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `docs: enforce quality gates lifecycle prompt boundary`).
-22. [TODO] Git Commit: `docs: enforce quality gates lifecycle prompt boundary` (hash: TBD)
+20. [DONE] Git Commit: `fix: validate quality gates hook registry integration` (hash: 542edb329)
+21. [DONE] `quality-gates-implementation.phase3.prompts.task1` Update Quality Gates agent assets so draft, acceptance, and integration boundaries cannot be confused (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: enforce quality gates lifecycle prompt boundary`).
+22. [PENDING] Git Commit: `docs: enforce quality gates lifecycle prompt boundary` (hash: TBD)
 
 ## Phase 4 - Rejection And Repair Lifecycle (owner: Codex, updated: 2026-05-11)
 
