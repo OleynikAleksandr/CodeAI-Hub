@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.241] - 2026-05-12
+### Fixed
+- **Validated handoff now gates downstream unlocks across all managed technical stages.** Diagram Modules, Application Skeleton, and Quality Gates no longer advance on a terminal-looking commit message alone; Core first rereads the committed artifacts and opens the downstream stage only from the validated post-completion anchor.
+- **Completed upstream stages keep their own active Phase 4 anchor.** Unlocking the next stage now seeds the downstream child plan without stealing `activeStage`, so upstream user-return revisions remain committable after handoff instead of becoming blocked behind the downstream stage.
+- **Application Skeleton and Quality Gates now open idle post-completion anchors instead of auto-opening `revision1`.** Real user-return diffs create the first revision pair, which removes the premature blocked task pairs observed during the `v1.2.240` retest.
+- **Application Skeleton Phase 4 runtime classification now accepts clean handoff turns.** The idle handoff anchor stays reachable because clean post-completion discussion is treated as discussion, while owned diffs reopen a revision pair only when the user actually changes stage-owned files.
+
+### Tests
+- Targeted managed handoff verification passed: `38/38` tests across Diagram Modules, Application Skeleton, Quality Gates, installer lifecycle, and post-completion revision coverage.
+- `npx ultracite check` passed for the managed handoff barrier files and `npm run build --workspace packages/core` passed before release packaging.
+
 ## [1.2.240] - 2026-05-12
 ### Fixed
 - **Quality Gates owned-artifact gating now matches the Application Skeleton flow.** Core treats `doc/TODO/stages/quality-gates/todo-plan.md` and `doc/TODO/workspace.plan.md` as owned Quality Gates artifacts during the managed acceptance flow, so release retest no longer fails with false out-of-owner dirty paths.

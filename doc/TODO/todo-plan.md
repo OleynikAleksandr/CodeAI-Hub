@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "78eb68e15",
+  "lastRecordedCommit": "464950454",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase14.rebuild-confirmation.task1",
-  "expectedCommitMessage": "docs: prepare managed handoff rebuild checkpoint",
+  "currentTaskId": "quality-gates-implementation.phase15.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare managed handoff rebuild release notes",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed handoff rebuild checkpoint",
-    "preCommitHead": "78eb68e15",
+    "expectedCommitMessage": "docs: prepare managed handoff rebuild release notes",
+    "preCommitHead": "464950454",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase14.rebuild-confirmation.task1"
+    "taskId": "quality-gates-implementation.phase15.rebuild-docs.task1"
   }
 }
 ```
@@ -226,14 +226,14 @@
 ### Stream: Release Confirmation
 
 83. [DONE] `quality-gates-implementation.phase14.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed handoff barrier fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild checkpoint`). Rebuild Confirmation Gate (2026-05-12): targeted handoff verification is green (`ultracite`, 38/38 targeted tests, `npm run build --workspace packages/core`); explicit rebuild approval was provided by the user in this session for a full implementation through the next release build after one more plan review.
-84. [PENDING] Git Commit: `docs: prepare managed handoff rebuild checkpoint` (hash: TBD)
+84. [DONE] Git Commit: `docs: prepare managed handoff rebuild checkpoint` (hash: 464950454)
 
 ## Phase 15 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Rebuild Release Candidate
 
-85. [TODO] `quality-gates-implementation.phase15.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed handoff rebuild candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild release notes`).
-86. [TODO] Git Commit: `docs: prepare managed handoff rebuild release notes` (hash: TBD)
+85. [DONE] `quality-gates-implementation.phase15.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed handoff rebuild candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed handoff rebuild release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.241`; release scope: validated downstream unlock only after reread, persistent upstream `activeStage` through post-completion anchors, and idle Phase 4 anchors for Application Skeleton / Quality Gates before real user-return revisions.
+86. [PENDING] Git Commit: `docs: prepare managed handoff rebuild release notes` (hash: TBD)
 87. [TODO] `quality-gates-implementation.phase15.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed handoff release`).
 88. [TODO] Git Commit: `chore: rebuild managed handoff release` (hash: TBD)
 
