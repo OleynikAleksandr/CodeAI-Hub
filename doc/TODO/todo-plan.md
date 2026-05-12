@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "6b7bf55fb",
+  "lastRecordedCommit": "95c3adf2b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase10.rebuild-confirmation.task1",
-  "expectedCommitMessage": "docs: prepare quality gates rebuild checkpoint",
+  "currentTaskId": "quality-gates-implementation.phase11.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare quality gates rebuild release notes",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates rebuild checkpoint",
-    "preCommitHead": "6b7bf55fb",
+    "expectedCommitMessage": "docs: prepare quality gates rebuild release notes",
+    "preCommitHead": "95c3adf2b",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase10.rebuild-confirmation.task1"
+    "taskId": "quality-gates-implementation.phase11.rebuild-docs.task1"
   }
 }
 ```
@@ -166,14 +166,14 @@
 ### Stream: Release Confirmation
 
 61. [DONE] `quality-gates-implementation.phase10.rebuild-confirmation.task1` After fixing the failed Quality Gates release retest in commits `2b69a8ccb` and `6b7bf55fb`, request explicit user confirmation before rebuilding release artifacts; do not run `./scripts/build-all.sh` or `./scripts/build-release.sh --use-current-version` until the user approves a new release build (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates rebuild checkpoint`). Rebuild Confirmation Gate (2026-05-12): release `1.2.239` remains rejected; the Quality Gates lifecycle fixes are now in commits `2b69a8ccb` and `6b7bf55fb`; awaiting explicit user approval before rerunning release scripts for the next candidate.
-62. [PENDING] Git Commit: `docs: prepare quality gates rebuild checkpoint` (hash: TBD)
+62. [DONE] Git Commit: `docs: prepare quality gates rebuild checkpoint` (hash: 95c3adf2b)
 
 ## Phase 11 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Rebuild Release Candidate
 
-63. [TODO] `quality-gates-implementation.phase11.rebuild-docs.task1` After explicit confirmation only, update release notes for the next Quality Gates release and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates rebuild release notes`).
-64. [TODO] Git Commit: `docs: prepare quality gates rebuild release notes` (hash: TBD)
+63. [DONE] `quality-gates-implementation.phase11.rebuild-docs.task1` After explicit confirmation only, update release notes for the next Quality Gates release and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates rebuild release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.240`.
+64. [PENDING] Git Commit: `docs: prepare quality gates rebuild release notes` (hash: TBD)
 65. [TODO] `quality-gates-implementation.phase11.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates release`).
 66. [TODO] Git Commit: `chore: rebuild quality gates release` (hash: TBD)
 

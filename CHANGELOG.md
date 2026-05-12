@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.240] - 2026-05-12
+### Fixed
+- **Quality Gates owned-artifact gating now matches the Application Skeleton flow.** Core treats `doc/TODO/stages/quality-gates/todo-plan.md` and `doc/TODO/workspace.plan.md` as owned Quality Gates artifacts during the managed acceptance flow, so release retest no longer fails with false out-of-owner dirty paths.
+- **Quality Gates feedback stays contract-only until acceptance is fully committed.** Draft, review, and accepted-but-not-committed states now keep the provider focused on contract repair instead of asking for hook integration before the Core-owned acceptance boundary is complete.
+- **Phase 3 continuation is gated by the real acceptance commit boundary.** The integration prompt opens only after `accepted`, `acceptanceCommitted`, and the accepted substep are all true, which prevents the release-retest regression where Core resumed integration from a failed Phase 2 state.
+- **Review-revision task injection renumbers downstream items correctly.** Quality Gates Phase 2 no longer duplicates numbered task pairs or repeats item `3` when Core injects a revision task before the open review slot.
+
+### Tests
+- Targeted release-feedback suites passed for `managed-git-stage-gate`, `workflow-agent-acceptance-feedback`, `quality-gates-continuation-dispatcher`, and `managed-quality-gates-plan-mutator`.
+
 ## [1.2.239] - 2026-05-12
 ### Added
 - **Quality Gates managed orchestration lifecycle.** Core now drives Quality Gates Baseline through dynamic child-plan task-pair injection: draft (`docs: draft quality gates contract`), per-revision review (`docs: revise quality gates contract - revision N`), Core-owned acceptance (`docs: accept quality gates contract`), integration (`feat: integrate quality gates baseline`), repair attempts (`docs: repair quality gates <phase> attempt N`), and post-completion user-return revisions (`docs: revise quality gates user return revision N`).

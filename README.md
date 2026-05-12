@@ -2,10 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.239** (Quality Gates managed orchestration lifecycle)
+**Current Release — v1.2.240** (Quality Gates release retest fixes)
 
-This release lands the Quality Gates Baseline managed orchestration scope. Core
-now drives Quality Gates through the same dynamic child-plan lifecycle as
+This release fixes the Quality Gates defects found while retesting `v1.2.239`.
+Core now treats the Quality Gates child plan and workspace ledger as owned
+artifacts during the managed acceptance flow, keeps draft and review feedback
+contract-only until the Core-owned acceptance commit is complete, and blocks
+the integration prompt from opening out of a failed acceptance state. The
+Quality Gates child-plan mutator also renumbers review-revision task pairs
+correctly, so the Phase 2 plan no longer duplicates numbered items.
+
+**Previous release: v1.2.239** (Quality Gates managed orchestration lifecycle)
+
+This release landed the Quality Gates Baseline managed orchestration scope.
+Core now drives Quality Gates through the same dynamic child-plan lifecycle as
 Application Skeleton: a draft contract commit, a user-led review phase with
 per-revision commits, a Core-owned acceptance commit, a separate integration
 commit, and a persistent post-completion user-return revision loop. Repair
