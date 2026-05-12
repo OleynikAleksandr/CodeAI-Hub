@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "258fccd26",
+  "lastRecordedCommit": "89f92195b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase22.verification.task1",
-  "expectedCommitMessage": "test: verify managed typed acceptance review fixes",
+  "currentTaskId": "quality-gates-implementation.phase22.rebuild-confirmation.task1",
+  "expectedCommitMessage": "docs: prepare managed typed acceptance rebuild checkpoint",
   "debt": {
-    "expectedCommitMessage": "test: verify managed typed acceptance review fixes",
-    "preCommitHead": "258fccd26",
+    "expectedCommitMessage": "docs: prepare managed typed acceptance rebuild checkpoint",
+    "preCommitHead": "89f92195b",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase22.verification.task1"
+    "taskId": "quality-gates-implementation.phase22.rebuild-confirmation.task1"
   }
 }
 ```
@@ -306,12 +306,12 @@
 ### Stream: Targeted Verification
 
 117. [DONE] `quality-gates-implementation.phase22.verification.task1` Run targeted verification for the production typed acceptance repair and exact review-closing phrase enforcement, then record the executed commands in this plan before any rebuild is requested (scope: `packages/core, packages/agents/application-skeleton-agent, packages/agents/quality-gates-agent`; expected commit: `test: verify managed typed acceptance review fixes`). Verification evidence (2026-05-12): `npx tsx --test packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts` passed (`33/33`); `npx ultracite check packages/core/src/remote-bridge/remote-bridge-bootstrap.ts packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md packages/agents/quality-gates-agent/assets/quality-gates-prompt.md packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/templates/bundled-templates.ts` passed; `npm run build --workspace packages/core` passed.
-118. [PENDING] Git Commit: `test: verify managed typed acceptance review fixes` (hash: TBD)
+118. [DONE] Git Commit: `test: verify managed typed acceptance review fixes` (hash: 89f92195b)
 
 ### Stream: Release Confirmation
 
-119. [TODO] `quality-gates-implementation.phase22.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the typed acceptance and prompt-boundary fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed typed acceptance rebuild checkpoint`).
-120. [TODO] Git Commit: `docs: prepare managed typed acceptance rebuild checkpoint` (hash: TBD)
+119. [DONE] `quality-gates-implementation.phase22.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the typed acceptance and prompt-boundary fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed typed acceptance rebuild checkpoint`). Rebuild approved by the user on 2026-05-12 with the instruction to continue through release preparation and packaging without another pause.
+120. [PENDING] Git Commit: `docs: prepare managed typed acceptance rebuild checkpoint` (hash: TBD)
 
 ## Phase 23 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
