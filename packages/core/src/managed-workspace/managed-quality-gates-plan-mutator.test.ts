@@ -166,6 +166,31 @@ test("injects repair task pair and blocks rejected current task", () => {
   );
 });
 
+test("injects sequential repair task pairs and increments attempt number", () => {
+  const first = injectQualityGatesTaskPair({
+    diagnostics: ["quality-gates.json is not parseable"],
+    kind: "repair",
+    planText: createPlanText("quality-gates.phase3.integration.task1"),
+    targetPhase: "phase3.integration",
+  });
+  assert.ok(first);
+  const second = injectQualityGatesTaskPair({
+    diagnostics: ["second attempt still missing schema"],
+    kind: "repair",
+    planText: first.nextPlanText,
+    targetPhase: "phase3.integration",
+  });
+  assert.ok(second);
+  assert.equal(
+    second.nextCurrentTaskId,
+    "quality-gates.phase3.integration.repair2.task1"
+  );
+  assert.equal(
+    second.nextCommitMessage,
+    "docs: repair quality gates phase3.integration attempt 2"
+  );
+});
+
 test("injects post-completion user-return revision task pairs", () => {
   const result = injectQualityGatesTaskPair({
     kind: "user_return_revision",
