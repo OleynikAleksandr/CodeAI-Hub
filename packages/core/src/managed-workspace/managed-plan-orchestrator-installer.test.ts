@@ -14,6 +14,7 @@ import test from "node:test";
 import { promisify } from "node:util";
 import { injectApplicationSkeletonTaskPair } from "./managed-application-skeleton-plan-mutator";
 import { ManagedPlanOrchestratorInstaller } from "./managed-plan-orchestrator-installer";
+import { injectQualityGatesTaskPair } from "./managed-quality-gates-plan-mutator";
 import {
   NEXT_STAGE_AFTER,
   STAGE_PLANS,
@@ -39,16 +40,10 @@ const DIAGRAM_THIRD_TASK_RE =
   /Current Task: diagram-modules\.product-part\.core-runtime/u;
 const DIAGRAM_THIRD_COMMIT_RE =
   /Expected Commit: docs: update diagram modules product part core-runtime/u;
-const DIAGRAM_USER_RETURN_TASK_RE =
-  /Current Task: diagram-modules\.user-return\.revision1\.task1/u;
-const DIAGRAM_USER_RETURN_REVISION2_TASK_RE =
-  /Current Task: diagram-modules\.user-return\.revision2\.task1/u;
-const DIAGRAM_USER_RETURN_COMMIT_RE =
-  /Expected Commit: docs: revise diagram modules user return revision 1/u;
-const DIAGRAM_USER_RETURN_REVISION2_COMMIT_RE =
-  /Expected Commit: docs: revise diagram modules user return revision 2/u;
 const DIAGRAM_USER_RETURN_PHASE_RE =
   /Phase 2 — Persistent Diagram Modules User Return/u;
+const DIAGRAM_USER_RETURN_PLAN_TASK_RE =
+  /"currentTaskId": "diagram-modules\.user-return\.revision1\.task1"/u;
 const APPLICATION_SKELETON_TASK_RE =
   /Current Task: application-skeleton\.phase1\.draft\.task1/u;
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
@@ -72,12 +67,24 @@ const APPLICATION_SKELETON_MATERIALIZE_REPAIR_COMMIT =
 const APPLICATION_SKELETON_USER_RETURN_PHASE_RE =
   /Phase 4 — Persistent Application Skeleton User Return/u;
 const APPLICATION_SKELETON_USER_RETURN_IN_PROGRESS_RE =
-  /\[IN_PROGRESS\] `application-skeleton\.phase4\.user-return\.revision1\.task1`/u;
+  /\[IN_PROGRESS\] `application-skeleton\.phase4\.user-return\.task1`/u;
 const APPLICATION_SKELETON_USER_RETURN_COMMIT_PIN_RE =
   /\[TODO\] Git Commit: `docs: revise application skeleton user return revision 1`/u;
 const QUALITY_GATES_ACTIVE_STAGE_RE = /"activeStage": "quality_gates"/u;
+const QUALITY_GATES_COMPLETED_STAGE_RE =
+  /"completedStages": \[[\s\S]*"quality_gates"/u;
 const QUALITY_GATES_PLAN_ID_RE = /managed-workspace-quality-gates/u;
 const QUALITY_GATES_TASK_RE = /quality-gates\.phase1\.draft\.task1/u;
+const QUALITY_GATES_USER_RETURN_PHASE_RE =
+  /Phase 4 — Persistent Quality Gates User Return/u;
+const QUALITY_GATES_USER_RETURN_IN_PROGRESS_RE =
+  /\[IN_PROGRESS\] `quality-gates\.phase4\.user-return\.task1`/u;
+const QUALITY_GATES_USER_RETURN_COMMIT_PIN_RE =
+  /\[TODO\] Git Commit: `docs: revise quality gates user return revision 1`/u;
+const QUALITY_GATES_USER_RETURN_REVISION1_RE =
+  /quality-gates\.phase4\.user-return\.revision1\.task1/u;
+const APPLICATION_SKELETON_DOWNSTREAM_COMMIT_BLOCK_RE =
+  /Expected commit message: docs: draft application skeleton contract/u;
 const APPLICATION_SKELETON_STATIC_REVIEW_RE =
   /Application Skeleton Contract Review/u;
 const APPLICATION_SKELETON_STATIC_MATERIALIZE_RE =
@@ -119,6 +126,112 @@ const APPLICATION_STAGE_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
 const QUALITY_GATES_STAGE_PLAN_PATH =
   "doc/TODO/stages/quality-gates/todo-plan.md";
+
+const createAcceptedApplicationSkeletonMap = (): string =>
+  `${JSON.stringify({ accepted: true, reviewState: "accepted" }, null, 2)}\n`;
+
+const createMaterializedApplicationSkeletonMap = (partId: string): string =>
+  `${JSON.stringify(
+    {
+      accepted: true,
+      materialized: true,
+      materializationState: "materialized",
+      materializedPaths: [`product-parts/${partId}/README.md`],
+      productParts: [
+        {
+          partId,
+          codePath: `product-parts/${partId}/README.md`,
+        },
+      ],
+      reviewState: "materialized",
+      sourceRoot: "product-parts",
+    },
+    null,
+    2
+  )}\n`;
+
+const createMaterializedApplicationSkeletonMarkdown = (label: string): string =>
+  [
+    "# Application Skeleton",
+    "",
+    `- reviewState: materialized (${label})`,
+    "- accepted: true",
+    "- materialized: true",
+    "- materializationState: materialized",
+    "",
+  ].join("\n");
+
+const writeValidatedQualityGatesIntegrationArtifacts = async (
+  workspaceRoot: string,
+  artifactRoot: string
+): Promise<void> => {
+  await mkdir(path.join(workspaceRoot, ".husky"), { recursive: true });
+  await mkdir(path.join(workspaceRoot, "scripts", "quality-gates"), {
+    recursive: true,
+  });
+  await writeFile(
+    path.join(workspaceRoot, "package.json"),
+    `${JSON.stringify(
+      {
+        name: "demo",
+        scripts: {
+          build: "echo build",
+          "qg:before-commit":
+            "node scripts/quality-gates/run.mjs requiredBeforeCommit",
+          "qg:before-push":
+            "node scripts/quality-gates/run.mjs requiredBeforePush",
+        },
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, ".husky", "pre-commit"),
+    "npm run qg:before-commit\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, ".husky", "pre-push"),
+    "npm run qg:before-push\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, "scripts", "quality-gates", "run.mjs"),
+    "process.exit(0);\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(artifactRoot, "quality-gates.json"),
+    `${JSON.stringify(
+      {
+        schema: "codeai-quality-gates-v1",
+        accepted: true,
+        acceptanceCommitted: true,
+        integrated: true,
+        integrationState: "integrated",
+        commands: {
+          build: {
+            command: "npm run build",
+            desiredStatus: "required",
+          },
+        },
+        requiredBeforeCommit: ["build"],
+        requiredBeforePush: [],
+        integratedPaths: [
+          "package.json",
+          ".husky/pre-commit",
+          ".husky/pre-push",
+          "scripts/quality-gates/run.mjs",
+        ],
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+};
 
 test("ManagedPlanOrchestratorInstaller writes plan scripts, hooks, and package scripts", async () => {
   const workspaceRoot = await createWorkspaceRoot();
@@ -351,7 +464,7 @@ test("managed plan shim advances application skeleton acceptance commits to mate
     await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
     await writeFile(
       path.join(artifactRoot, "application-skeleton-map.json"),
-      `${JSON.stringify({ accepted: true, lifecycle: "accepted" }, null, 2)}\n`,
+      createAcceptedApplicationSkeletonMap(),
       "utf8"
     );
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
@@ -387,12 +500,12 @@ test("managed plan shim advances application skeleton acceptance commits to mate
     );
     await writeFile(
       path.join(artifactRoot, "application-skeleton.md"),
-      "# Application Skeleton\n\nMaterialized.\n",
+      createMaterializedApplicationSkeletonMarkdown("materialized"),
       "utf8"
     );
     await writeFile(
       path.join(artifactRoot, "application-skeleton-map.json"),
-      `${JSON.stringify({ accepted: true, lifecycle: "materialized" }, null, 2)}\n`,
+      createMaterializedApplicationSkeletonMap("project-manager"),
       "utf8"
     );
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
@@ -480,7 +593,7 @@ test("managed plan shim hands off application skeleton after materialization rep
     await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
     await writeFile(
       path.join(artifactRoot, "application-skeleton-map.json"),
-      `${JSON.stringify({ accepted: true, lifecycle: "accepted" }, null, 2)}\n`,
+      createAcceptedApplicationSkeletonMap(),
       "utf8"
     );
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
@@ -509,12 +622,12 @@ test("managed plan shim hands off application skeleton after materialization rep
     );
     await writeFile(
       path.join(artifactRoot, "application-skeleton.md"),
-      "# Application Skeleton\n\nMaterialized by repair.\n",
+      createMaterializedApplicationSkeletonMarkdown("repair"),
       "utf8"
     );
     await writeFile(
       path.join(artifactRoot, "application-skeleton-map.json"),
-      `${JSON.stringify({ accepted: true, lifecycle: "materialized" }, null, 2)}\n`,
+      createMaterializedApplicationSkeletonMap("project-manager"),
       "utf8"
     );
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
@@ -549,6 +662,195 @@ test("managed plan shim hands off application skeleton after materialization rep
     assert.match(qualityGatesPlan, QUALITY_GATES_TASK_RE);
     assert.match(workspacePlan, QUALITY_GATES_ACTIVE_STAGE_RE);
     assert.match(lastCommit.stdout, LEDGER_COMMIT_RE);
+    assert.equal(gitStatus.stdout, "");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed plan shim keeps application skeleton active when materialization is not yet validated", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "Test User"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "core.hooksPath", ".husky"], {
+      cwd: workspaceRoot,
+    });
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "application_skeleton",
+    });
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const planPath = path.join(workspaceRoot, APPLICATION_STAGE_PLAN_PATH);
+    const artifactRoot = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/application_skeleton"
+    );
+    await mkdir(artifactRoot, { recursive: true });
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton.md"),
+      "# Application Skeleton\n",
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: draft application skeleton contract"],
+      { cwd: workspaceRoot }
+    );
+
+    const acceptanceInjection = injectApplicationSkeletonTaskPair({
+      kind: "acceptance",
+      planText: await readFile(planPath, "utf8"),
+    });
+    assert.ok(acceptanceInjection);
+    await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton-map.json"),
+      createAcceptedApplicationSkeletonMap(),
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: accept application skeleton contract"],
+      { cwd: workspaceRoot }
+    );
+
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton.md"),
+      createMaterializedApplicationSkeletonMarkdown("not-yet-projected"),
+      "utf8"
+    );
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton-map.json"),
+      createMaterializedApplicationSkeletonMap("project-manager"),
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "feat: materialize application skeleton"],
+      { cwd: workspaceRoot }
+    );
+
+    const userReturnPlan = await readFile(planPath, "utf8");
+    const workspacePlan = await readFile(
+      path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+      "utf8"
+    );
+    const gitStatus = await execFileAsync("git", ["status", "--short"], {
+      cwd: workspaceRoot,
+    });
+
+    await assert.rejects(
+      access(path.join(workspaceRoot, QUALITY_GATES_STAGE_PLAN_PATH))
+    );
+    assert.doesNotMatch(
+      userReturnPlan,
+      APPLICATION_SKELETON_USER_RETURN_PHASE_RE
+    );
+    assert.match(workspacePlan, APPLICATION_SKELETON_ACTIVE_STAGE_RE);
+    assert.equal(gitStatus.stdout, "");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed plan shim leaves quality gates on the phase 4 idle anchor after validated integration", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "Test User"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "core.hooksPath", ".husky"], {
+      cwd: workspaceRoot,
+    });
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "quality_gates",
+    });
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const planPath = path.join(workspaceRoot, QUALITY_GATES_STAGE_PLAN_PATH);
+    const artifactRoot = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/quality_gates"
+    );
+    await mkdir(artifactRoot, { recursive: true });
+    await writeFile(
+      path.join(artifactRoot, "quality-gates.md"),
+      "# Quality Gates\n",
+      "utf8"
+    );
+    await writeFile(
+      path.join(artifactRoot, "quality-gates.json"),
+      `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: false }, null, 2)}\n`,
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: draft quality gates contract"],
+      { cwd: workspaceRoot }
+    );
+
+    const acceptanceInjection = injectQualityGatesTaskPair({
+      kind: "acceptance",
+      planText: await readFile(planPath, "utf8"),
+    });
+    assert.ok(acceptanceInjection);
+    await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
+    await writeFile(
+      path.join(artifactRoot, "quality-gates.json"),
+      `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: true, acceptanceCommitted: false }, null, 2)}\n`,
+      "utf8"
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "docs: accept quality gates contract"],
+      { cwd: workspaceRoot }
+    );
+
+    await writeValidatedQualityGatesIntegrationArtifacts(
+      workspaceRoot,
+      artifactRoot
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      process.execPath,
+      [scriptPath, "commit", "feat: integrate quality gates baseline"],
+      { cwd: workspaceRoot }
+    );
+
+    const userReturnPlan = await readFile(planPath, "utf8");
+    const workspacePlan = await readFile(
+      path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
+      "utf8"
+    );
+    const gitStatus = await execFileAsync("git", ["status", "--short"], {
+      cwd: workspaceRoot,
+    });
+
+    assert.match(userReturnPlan, QUALITY_GATES_USER_RETURN_PHASE_RE);
+    assert.match(userReturnPlan, QUALITY_GATES_USER_RETURN_IN_PROGRESS_RE);
+    assert.match(userReturnPlan, QUALITY_GATES_USER_RETURN_COMMIT_PIN_RE);
+    assert.doesNotMatch(userReturnPlan, QUALITY_GATES_USER_RETURN_REVISION1_RE);
+    assert.match(workspacePlan, QUALITY_GATES_ACTIVE_STAGE_RE);
+    assert.match(workspacePlan, QUALITY_GATES_COMPLETED_STAGE_RE);
     assert.equal(gitStatus.stdout, "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
@@ -738,10 +1040,11 @@ test("managed plan shim advances the active task inside plan commits", async () 
       path.join(workspaceRoot, "doc/TODO/workspace.plan.md"),
       "utf8"
     );
-    assert.match(userReturnStatus.stdout, DIAGRAM_USER_RETURN_TASK_RE);
-    assert.match(userReturnStatus.stdout, DIAGRAM_USER_RETURN_COMMIT_RE);
+    assert.match(userReturnStatus.stdout, APPLICATION_SKELETON_TASK_RE);
+    assert.match(userReturnStatus.stdout, APPLICATION_SKELETON_DRAFT_COMMIT_RE);
     assert.match(userReturnPlan, DIAGRAM_USER_RETURN_PHASE_RE);
-    assert.match(userReturnWorkspacePlan, WORKSPACE_PLAN_ACTIVE_STAGE_RE);
+    assert.match(userReturnPlan, DIAGRAM_USER_RETURN_PLAN_TASK_RE);
+    assert.match(userReturnWorkspacePlan, APPLICATION_SKELETON_ACTIVE_STAGE_RE);
     assert.match(userReturnWorkspacePlan, WORKSPACE_COMPLETED_DIAGRAM_STAGE_RE);
     assert.match(
       userReturnWorkspacePlan,
@@ -754,25 +1057,17 @@ test("managed plan shim advances the active task inside plan commits", async () 
       "utf8"
     );
     await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
-    await execFileAsync(
-      process.execPath,
-      [
-        scriptPath,
-        "commit",
-        "docs: revise diagram modules user return revision 1",
-      ],
-      { cwd: workspaceRoot }
-    );
-
-    const revisionStatus = await execFileAsync(
-      process.execPath,
-      [scriptPath, "status"],
-      { cwd: workspaceRoot }
-    );
-    assert.match(revisionStatus.stdout, DIAGRAM_USER_RETURN_REVISION2_TASK_RE);
-    assert.match(
-      revisionStatus.stdout,
-      DIAGRAM_USER_RETURN_REVISION2_COMMIT_RE
+    await assert.rejects(
+      execFileAsync(
+        process.execPath,
+        [
+          scriptPath,
+          "commit",
+          "docs: revise diagram modules user return revision 1",
+        ],
+        { cwd: workspaceRoot }
+      ),
+      APPLICATION_SKELETON_DOWNSTREAM_COMMIT_BLOCK_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

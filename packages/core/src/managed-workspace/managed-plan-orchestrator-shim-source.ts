@@ -331,27 +331,39 @@ const shouldUnlockApplicationSkeletonNextStage = (event, currentStage) => {
   const planState = readPlanStateAt(event.planPath);
   return planState?.currentTaskId === "application-skeleton.phase4.user-return.task1";
 };
+const shouldMarkQualityGatesStageCompleted = (event, currentStage) => {
+  if (currentStage !== "quality_gates") {
+    return false;
+  }
+  const planState = readPlanStateAt(event.planPath);
+  return (
+    planState?.currentTaskId === "quality-gates.phase4.user-return.task1" ||
+    /^quality-gates\\.phase4\\.user-return\\.revision\\d+\\.task1$/u.test(
+      planState?.currentTaskId ?? ""
+    )
+  );
+};
 const resolveWorkspaceLifecycleFields = (event, workspaceState) => {
   const currentStage = typeof workspaceState.activeStage === "string" ? workspaceState.activeStage : null;
   if (!currentStage) {
     return {};
   }
-  const terminalMessage = STAGE_TERMINAL_COMMITS[currentStage];
-  const terminalNextStage = typeof terminalMessage === "string" && terminalMessage === event.message ? NEXT_STAGE_AFTER[currentStage] ?? null : null;
   const unlockedNextStage = shouldUnlockDiagramModulesNextStage(event, currentStage) || shouldUnlockApplicationSkeletonNextStage(event, currentStage)
     ? NEXT_STAGE_AFTER[currentStage] ?? null
-    : terminalNextStage;
+    : null;
+  const stageCompleted =
+    Boolean(unlockedNextStage) ||
+    shouldMarkQualityGatesStageCompleted(event, currentStage);
   const baseUnlockedStages = stringArray(workspaceState.unlockedStages);
   const unlockedStages = appendUniqueString(
     appendUniqueString(baseUnlockedStages, currentStage),
     unlockedNextStage
   );
-  const completedStages =
-    terminalNextStage || unlockedNextStage
-      ? appendUniqueString(stringArray(workspaceState.completedStages), currentStage)
-      : stringArray(workspaceState.completedStages);
+  const completedStages = stageCompleted
+    ? appendUniqueString(stringArray(workspaceState.completedStages), currentStage)
+    : stringArray(workspaceState.completedStages);
   return {
-    ...(terminalNextStage ? { activeStage: terminalNextStage, activePlanPath: STAGE_PLANS[terminalNextStage] } : {}),
+    ...(unlockedNextStage ? { activeStage: unlockedNextStage, activePlanPath: STAGE_PLANS[unlockedNextStage] } : {}),
     completedStages,
     unlockedStages,
   };

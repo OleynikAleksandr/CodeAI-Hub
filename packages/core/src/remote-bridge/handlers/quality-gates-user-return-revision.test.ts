@@ -14,6 +14,8 @@ const USER_RETURN_REVISION_TASK_RE =
   /quality-gates\.phase4\.user-return\.revision1\.task1/u;
 const USER_RETURN_CURRENT_TASK_RE =
   /"currentTaskId": "quality-gates\.phase4\.user-return\.revision1\.task1"/u;
+const USER_RETURN_ANCHOR_TODO_RE =
+  /\[TODO\] `quality-gates\.phase4\.user-return\.task1`/u;
 
 const writePlanFile = async (
   workspaceRoot: string,
@@ -149,6 +151,7 @@ test("revision injection runner injects user_return_revision pair from phase 4 a
       "utf8"
     );
     assert.match(planText, USER_RETURN_REVISION_TASK_RE);
+    assert.match(planText, USER_RETURN_ANCHOR_TODO_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -208,6 +211,7 @@ test("revision injection runner advances current task id away from user-return a
       "utf8"
     );
     assert.match(planText, USER_RETURN_CURRENT_TASK_RE);
+    assert.match(planText, USER_RETURN_ANCHOR_TODO_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

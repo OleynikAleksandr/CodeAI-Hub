@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "547eac0cd",
+  "lastRecordedCommit": "e708409cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase13.quality-gates-user-return-anchor.task1",
-  "expectedCommitMessage": "fix: gate quality gates user return anchor on validated integration",
+  "currentTaskId": "quality-gates-implementation.phase13.lifecycle-regressions.task1",
+  "expectedCommitMessage": "fix: align workspace handoff with validated anchors",
   "debt": {
-    "expectedCommitMessage": "fix: gate quality gates user return anchor on validated integration",
-    "preCommitHead": "547eac0cd",
+    "expectedCommitMessage": "fix: align workspace handoff with validated anchors",
+    "preCommitHead": "e708409cc",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase13.quality-gates-user-return-anchor.task1"
+    "taskId": "quality-gates-implementation.phase13.lifecycle-regressions.task1"
   }
 }
 ```
@@ -204,12 +204,12 @@
 ### Stream: Quality Gates Validated User Return Anchor
 
 75. [DONE] `quality-gates-implementation.phase13.quality-gates-user-return-anchor.task1` Rework Quality Gates so integration or repair commits open only the Phase 4 idle anchor after Core rereads the integrated contract, confirms accepted integrated state plus hook/package wiring, and leaves `revision1` to real user-return diffs instead of auto-opening it on the terminal integration commit (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: gate quality gates user return anchor on validated integration`).
-76. [PENDING] Git Commit: `fix: gate quality gates user return anchor on validated integration` (hash: TBD)
+76. [DONE] Git Commit: `fix: gate quality gates user return anchor on validated integration` (hash: e708409cc)
 
 ### Stream: Cross-Stage Regression Coverage
 
-77. [TODO] `quality-gates-implementation.phase13.lifecycle-regressions.task1` Add regression coverage for Diagram Modules, Application Skeleton, and Quality Gates so workspace ledger advancement cannot outrun a child-plan repair/review loop, successful Application Skeleton/Quality Gates completion leaves an idle Phase 4 anchor instead of `revision1`, and blocked terminal pairs remain impossible after a premature handoff attempt (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts`; expected commit: `test: cover managed stage handoff barriers`).
-78. [TODO] Git Commit: `test: cover managed stage handoff barriers` (hash: TBD)
+77. [DONE] `quality-gates-implementation.phase13.lifecycle-regressions.task1` Align workspace ledger handoff with validated child-plan anchors so terminal commit messages cannot advance managed stages early, validated repair/terminal anchor openings can promote the correct active stage, and Quality Gates Phase 4 anchor persistence remains covered at runtime (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts`; expected commit: `fix: align workspace handoff with validated anchors`).
+78. [PENDING] Git Commit: `fix: align workspace handoff with validated anchors` (hash: TBD)
 
 ## Phase 14 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
 
