@@ -40,8 +40,7 @@ const canContinueQualityGates = (
   progress.accepted === true &&
   progress.acceptanceCommitted === true &&
   !progress.integrated &&
-  progress.substep !== "artifact" &&
-  progress.substep !== "awaiting_acceptance";
+  progress.substep === "accepted";
 
 export const sendQualityGatesContinuationIfReady = async (params: {
   readonly chains: readonly ContinuityChainSummary[];

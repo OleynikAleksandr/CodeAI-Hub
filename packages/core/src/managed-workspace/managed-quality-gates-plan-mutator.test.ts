@@ -6,6 +6,12 @@ const REVIEW_REVISION_TASK_RE =
   /\[IN_PROGRESS\] `quality-gates\.phase2\.review\.revision1\.task1`/u;
 const REVIEW_REVISION_COMMIT_RE =
   /Git Commit: `docs: revise quality gates contract - revision 1`/u;
+const REVIEW_REVISION_ANCHOR_RE =
+  /3\. \[IN_PROGRESS\] `quality-gates\.phase2\.review\.revision1\.task1`/u;
+const REVIEW_RENUMBERED_ANCHOR_RE =
+  /5\. \[TODO\] `quality-gates\.phase2\.review\.task1`/u;
+const REVIEW_RENUMBERED_COMMIT_RE =
+  /6\. \[TODO\] Git Commit: `docs: revise quality gates contract - revision 1`/u;
 const REVIEW_ANCHOR_CLOSED_RE =
   /\[DONE\] `quality-gates\.phase2\.review\.task1`/u;
 const REVIEW_ANCHOR_NO_REVISION_COMMIT_RE =
@@ -64,8 +70,8 @@ const createPlanText = (taskId = "quality-gates.phase2.review.task1") =>
 
 ### Stream: User-Led Review
 
-1. [IN_PROGRESS] \`${taskId}\` Current Quality Gates task. (scope: \`.codeai-hub/**/quality_gates/**\`; expected commit: \`docs: revise quality gates contract - revision 1\`).
-2. [TODO] Git Commit: \`docs: revise quality gates contract - revision 1\` (hash: TBD)
+3. [IN_PROGRESS] \`${taskId}\` Current Quality Gates task. (scope: \`.codeai-hub/**/quality_gates/**\`; expected commit: \`docs: revise quality gates contract - revision 1\`).
+4. [TODO] Git Commit: \`docs: revise quality gates contract - revision 1\` (hash: TBD)
 `;
 
 test("injects review revision task pair and advances plan state", () => {
@@ -85,6 +91,9 @@ test("injects review revision task pair and advances plan state", () => {
   );
   assert.match(result.nextPlanText, REVIEW_REVISION_TASK_RE);
   assert.match(result.nextPlanText, REVIEW_REVISION_COMMIT_RE);
+  assert.match(result.nextPlanText, REVIEW_REVISION_ANCHOR_RE);
+  assert.match(result.nextPlanText, REVIEW_RENUMBERED_ANCHOR_RE);
+  assert.match(result.nextPlanText, REVIEW_RENUMBERED_COMMIT_RE);
   assertImmediateCommitPair(
     result.nextPlanText,
     result.nextCurrentTaskId,

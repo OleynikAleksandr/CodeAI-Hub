@@ -72,6 +72,31 @@ const formatTaskLine = (
 const formatCommitLine = (number: number, message: string): string =>
   `${number}. [TODO] Git Commit: \`${message}\` (hash: TBD)`;
 
+const renumberTaskLinesFrom = (
+  lines: string[],
+  startIndex: number,
+  delta: number
+): void => {
+  if (delta === 0) {
+    return;
+  }
+  for (let index = startIndex; index < lines.length; index += 1) {
+    const line = lines[index];
+    const match = TASK_LINE_NUMBER_RE.exec(line ?? "");
+    if (!match) {
+      continue;
+    }
+    const currentNumber = Number.parseInt(match[1] ?? "", 10);
+    if (!Number.isFinite(currentNumber) || currentNumber <= 0) {
+      continue;
+    }
+    lines[index] = line.replace(
+      TASK_LINE_NUMBER_RE,
+      `${currentNumber + delta}.`
+    );
+  }
+};
+
 const readState = (planText: string): Record<string, unknown> | null => {
   const match = STATE_BLOCK_RE.exec(planText);
   if (!match) {
@@ -270,9 +295,10 @@ export const injectQualityGatesTaskPair = (
         taskPair.scope,
         taskPair.message
       ),
-      formatCommitLine(revisionTaskNumber, taskPair.message),
+      formatCommitLine(revisionTaskNumber + 1, taskPair.message),
       ""
     );
+    renumberTaskLinesFrom(nextLines, currentTaskLineIndex + 3, 2);
     const nextPlanText = replaceState(nextLines.join("\n"), {
       ...state,
       currentTaskId: taskPair.taskId,
@@ -316,6 +342,7 @@ export const injectQualityGatesTaskPair = (
     ),
     formatCommitLine(taskNumber + 1, taskPair.message)
   );
+  renumberTaskLinesFrom(nextLines, pairedCommitLineIndex + 3, 2);
   const nextPlanText = replaceState(nextLines.join("\n"), {
     ...state,
     currentTaskId: taskPair.taskId,
