@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "6a55f3ee4",
+  "lastRecordedCommit": "258fccd26",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase21.review-closing-phrase-tests.task1",
-  "expectedCommitMessage": "test: lock managed contract review phrase",
+  "currentTaskId": "quality-gates-implementation.phase22.verification.task1",
+  "expectedCommitMessage": "test: verify managed typed acceptance review fixes",
   "debt": {
-    "expectedCommitMessage": "test: lock managed contract review phrase",
-    "preCommitHead": "6a55f3ee4",
+    "expectedCommitMessage": "test: verify managed typed acceptance review fixes",
+    "preCommitHead": "258fccd26",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase21.review-closing-phrase-tests.task1"
+    "taskId": "quality-gates-implementation.phase22.verification.task1"
   }
 }
 ```
@@ -299,14 +299,14 @@
 113. [DONE] `quality-gates-implementation.phase21.review-closing-phrase.task1` Require the exact shared Russian closing phrase for every pre-acceptance Application Skeleton and Quality Gates contract review response, and regenerate bundled template assets from the updated prompt sources (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: enforce exact managed contract review phrase`).
 114. [DONE] Git Commit: `docs: enforce exact managed contract review phrase` (hash: 6a55f3ee4)
 115. [DONE] `quality-gates-implementation.phase21.review-closing-phrase-tests.task1` Tighten bundled template assertions so prompt drift is caught only when the exact review closing phrase remains present for both managed contract stages (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: lock managed contract review phrase`).
-116. [PENDING] Git Commit: `test: lock managed contract review phrase` (hash: TBD)
+116. [DONE] Git Commit: `test: lock managed contract review phrase` (hash: 258fccd26)
 
 ## Phase 22 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Targeted Verification
 
-117. [TODO] `quality-gates-implementation.phase22.verification.task1` Run targeted verification for the production typed acceptance repair and exact review-closing phrase enforcement, then record the executed commands in this plan before any rebuild is requested (scope: `packages/core, packages/agents/application-skeleton-agent, packages/agents/quality-gates-agent`; expected commit: `test: verify managed typed acceptance review fixes`).
-118. [TODO] Git Commit: `test: verify managed typed acceptance review fixes` (hash: TBD)
+117. [DONE] `quality-gates-implementation.phase22.verification.task1` Run targeted verification for the production typed acceptance repair and exact review-closing phrase enforcement, then record the executed commands in this plan before any rebuild is requested (scope: `packages/core, packages/agents/application-skeleton-agent, packages/agents/quality-gates-agent`; expected commit: `test: verify managed typed acceptance review fixes`). Verification evidence (2026-05-12): `npx tsx --test packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts` passed (`33/33`); `npx ultracite check packages/core/src/remote-bridge/remote-bridge-bootstrap.ts packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md packages/agents/quality-gates-agent/assets/quality-gates-prompt.md packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/templates/bundled-templates.ts` passed; `npm run build --workspace packages/core` passed.
+118. [PENDING] Git Commit: `test: verify managed typed acceptance review fixes` (hash: TBD)
 
 ### Stream: Release Confirmation
 
