@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "f51c2c385",
+  "lastRecordedCommit": "d87669576",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase4.guard.task1",
-  "expectedCommitMessage": "feat: validate quality gates phase boundaries",
+  "currentTaskId": "quality-gates-implementation.phase4.repair.task1",
+  "expectedCommitMessage": "feat: commit quality gates repair attempts",
   "debt": {
-    "expectedCommitMessage": "feat: validate quality gates phase boundaries",
-    "preCommitHead": "f51c2c385",
+    "expectedCommitMessage": "feat: commit quality gates repair attempts",
+    "preCommitHead": "d87669576",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase4.guard.task1"
+    "taskId": "quality-gates-implementation.phase4.repair.task1"
   }
 }
 ```
@@ -98,9 +98,9 @@
 ### Stream: Durable Failed Attempts
 
 23. [DONE] `quality-gates-implementation.phase4.guard.task1` Add a Quality Gates contract guard and feedback builder that request concrete repairs instead of telling the agent to do nothing while unresolved (scope: `packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts`; expected commit: `feat: validate quality gates phase boundaries`).
-24. [PENDING] Git Commit: `feat: validate quality gates phase boundaries` (hash: TBD)
-25. [TODO] `quality-gates-implementation.phase4.repair.task1` Add repair orchestration that injects repair task-pairs and commits either valid owned diffs or tracked attempt evidence (scope: `packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.ts`; expected commit: `feat: commit quality gates repair attempts`).
-26. [TODO] Git Commit: `feat: commit quality gates repair attempts` (hash: TBD)
+24. [DONE] Git Commit: `feat: validate quality gates phase boundaries` (hash: d87669576)
+25. [DONE] `quality-gates-implementation.phase4.repair.task1` Add repair orchestration that injects repair task-pairs and commits either valid owned diffs or tracked attempt evidence (scope: `packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.ts`; expected commit: `feat: commit quality gates repair attempts`).
+26. [PENDING] Git Commit: `feat: commit quality gates repair attempts` (hash: TBD)
 27. [TODO] `quality-gates-implementation.phase4.revision.task1` Add review-turn and user-return revision detection with Quality Gates task-pair injection before provider-visible revision prompts (scope: `packages/core/src/remote-bridge/handlers/quality-gates-review-turn-classifier.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts`; expected commit: `feat: keep quality gates user return phase open`).
 28. [TODO] Git Commit: `feat: keep quality gates user return phase open` (hash: TBD)
 29. [TODO] `quality-gates-implementation.phase4.post-turn.task1` Compose guard, repair, revision, continuation, and feedback into the Quality Gates post-turn service path (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `fix: orchestrate quality gates repair feedback`).
