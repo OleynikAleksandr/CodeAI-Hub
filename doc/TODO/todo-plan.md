@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "efc65ad37",
+  "lastRecordedCommit": "fa6b1562a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase6.boundary-tests.task1",
-  "expectedCommitMessage": "test: cover quality gates acceptance and user return boundaries",
+  "currentTaskId": "quality-gates-implementation.phase7.system-docs.task1",
+  "expectedCommitMessage": "docs: document quality gates managed lifecycle",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates acceptance and user return boundaries",
-    "preCommitHead": "efc65ad37",
+    "expectedCommitMessage": "docs: document quality gates managed lifecycle",
+    "preCommitHead": "fa6b1562a",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase6.boundary-tests.task1"
+    "taskId": "quality-gates-implementation.phase7.system-docs.task1"
   }
 }
 ```
@@ -126,14 +126,14 @@
 39. [DONE] `quality-gates-implementation.phase6.rejection-tests.task1` Add deterministic tests for Core rejection, repair task injection, failed-attempt evidence, and retry commit behavior (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts`; expected commit: `test: cover quality gates rejection retry lifecycle`).
 40. [DONE] Git Commit: `test: cover quality gates rejection retry lifecycle` (hash: efc65ad37)
 41. [DONE] `quality-gates-implementation.phase6.boundary-tests.task1` Add deterministic tests for acceptance-before-integration, post-completion user-return revision, and downstream blocker isolation (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover quality gates acceptance and user return boundaries`).
-42. [PENDING] Git Commit: `test: cover quality gates acceptance and user return boundaries` (hash: TBD)
+42. [DONE] Git Commit: `test: cover quality gates acceptance and user return boundaries` (hash: fa6b1562a)
 
 ## Phase 7 - Documentation And Targeted Verification (owner: Codex, updated: 2026-05-11)
 
 ### Stream: System Docs Sync
 
-43. [TODO] `quality-gates-implementation.phase7.system-docs.task1` Sync system architecture docs with the implemented Quality Gates lifecycle and stage-light ownership model (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`; expected commit: `docs: document quality gates managed lifecycle`).
-44. [TODO] Git Commit: `docs: document quality gates managed lifecycle` (hash: TBD)
+43. [DONE] `quality-gates-implementation.phase7.system-docs.task1` Sync system architecture docs with the implemented Quality Gates lifecycle and stage-light ownership model (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`; expected commit: `docs: document quality gates managed lifecycle`).
+44. [PENDING] Git Commit: `docs: document quality gates managed lifecycle` (hash: TBD)
 45. [TODO] `quality-gates-implementation.phase7.contract-docs.task1` Sync lifecycle contracts, rollout guardrails, and docs index with Quality Gates implementation boundaries (scope: `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: update quality gates workflow contracts`).
 46. [TODO] Git Commit: `docs: update quality gates workflow contracts` (hash: TBD)
 47. [TODO] `quality-gates-implementation.phase7.verification.task1` Run targeted verification for core, agent assets, and Project Manager changes, then record the executed commands in this plan (scope: `packages/core, packages/agents/quality-gates-agent, src/client/project-manager`; expected commit: `test: verify quality gates managed orchestration`).

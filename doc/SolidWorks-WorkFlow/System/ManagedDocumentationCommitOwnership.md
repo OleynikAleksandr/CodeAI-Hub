@@ -4,6 +4,8 @@
 
 Accepted for all managed workflow stages before code implementation starts.
 
+**2026-05-12 lifecycle reference:** Quality Gates Baseline commit ownership follows the Application Skeleton shape with stage-specific messages. Core owns: `docs: draft quality gates contract` (Phase 1), `docs: revise quality gates contract - revision N` (Phase 2 review), `docs: accept quality gates contract` (Phase 2 acceptance), `docs: repair quality gates <phase> attempt N` (any phase repair), `feat: integrate quality gates baseline` (Phase 3), and `docs: revise quality gates user return revision N` (Phase 4 post-completion). Agents never run Git directly for any of these messages.
+
 This document does not decide the implementation/code-generation phase. Code commits may reuse the same principle later, but only after a separate design decision for worktrees, branches, ownership manifests, tests, and merge gates.
 
 ## Decision

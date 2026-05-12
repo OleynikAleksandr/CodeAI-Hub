@@ -1,8 +1,10 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-05-09
+**Updated:** 2026-05-12
 **Owner:** Oleksandr
+
+**2026-05-12 lifecycle note:** Quality Gates Baseline runs on the managed child-plan lifecycle. Phase 1 is the Core-gated draft (`docs: draft quality gates contract`); Phase 2 is user-led review where every revision turn auto-commits `docs: revise quality gates contract - revision N`; acceptance is a Core-owned event committed as `docs: accept quality gates contract`; Phase 3 integration starts only after the acceptance commit and ends with `feat: integrate quality gates baseline`; Phase 4 is a persistent post-completion user-return revision loop committing `docs: revise quality gates user return revision N`. Core injects each child-plan task pair before provider-visible feedback, including repair attempts with tracked evidence under `.codeai-hub/<slug>/quality_gates/attempts/`.
 
 ---
 

@@ -2,6 +2,8 @@
 
 **Scope:** каноническое описание системы CodeAI Hub целиком (уровень System).
 
+**Status note (2026-05-12):** Quality Gates Baseline runtime adopts the same managed orchestration lifecycle as Application Skeleton: draft → user-led review → Core-owned acceptance commit (`docs: accept quality gates contract`) → integration (`feat: integrate quality gates baseline`) → persistent post-completion user-return revision phase. Core injects every child-plan task pair (acceptance, integration, repair, review revision, user-return revision) before provider-visible feedback. Stage-light truth is derived from `workspace.plan.md` `acceptedCommits`; completed upstream stages stay green regardless of downstream dirty paths.
+
 ## 0) Session role
 
 Этот документ читается в начале сессии как базовый SSOT знакомства с системой:
