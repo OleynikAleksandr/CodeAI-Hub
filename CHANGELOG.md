@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.244] - 2026-05-12
+### Fixed
+- **Quality Gates acceptance now survives an in-flight post-turn pass.** If Core records `docs: accept quality gates contract` while an earlier Quality Gates post-turn arbitration is still running, the follow-up continuation is now queued and replayed instead of being dropped as a concurrent invocation.
+- **Typed `Подтверждаю` now reaches the Quality Gates integration prompt in the same session.** The child plan can advance into `phase3.integration` without losing the provider-visible continuation turn that tells the agent to start integrating the accepted baseline.
+- **Post-turn regression coverage now locks the continuation re-entry race.** A targeted test keeps the managed post-turn service from regressing back to the lost-rerun behavior after future acceptance-path edits.
+
+### Tests
+- Targeted managed acceptance continuation verification passed: `32/32` tests across post-turn rerun queuing, Quality Gates acceptance runner, continuation dispatcher, and production bootstrap routing.
+- `npm run build --workspace packages/core` passed before release packaging.
+
 ## [1.2.243] - 2026-05-12
 ### Fixed
 - **Quality Gates typed acceptance now reaches the correct production Core runner.** The live bootstrap callback dispatches by managed session stage, so an explicit acceptance phrase such as `Подтверждаю` in `quality_gates` no longer falls into the Application Skeleton handler and disappears.

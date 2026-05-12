@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "e071a55cb",
+  "lastRecordedCommit": "cb5cd218c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase26.rebuild-confirmation.task1",
-  "expectedCommitMessage": "docs: prepare managed acceptance continuation rebuild checkpoint",
+  "currentTaskId": "quality-gates-implementation.phase27.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare managed acceptance continuation release notes",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed acceptance continuation rebuild checkpoint",
-    "preCommitHead": "e071a55cb",
+    "expectedCommitMessage": "docs: prepare managed acceptance continuation release notes",
+    "preCommitHead": "cb5cd218c",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase26.rebuild-confirmation.task1"
+    "taskId": "quality-gates-implementation.phase27.rebuild-docs.task1"
   }
 }
 ```
@@ -346,14 +346,14 @@
 ### Stream: Release Confirmation
 
 131. [DONE] `quality-gates-implementation.phase26.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed acceptance continuation repair, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed acceptance continuation rebuild checkpoint`). Rebuild approved by the user on 2026-05-12 with the instruction to continue through the newly sliced fix plan and immediately package a new release after the repair work completed.
-132. [PENDING] Git Commit: `docs: prepare managed acceptance continuation rebuild checkpoint` (hash: TBD)
+132. [DONE] Git Commit: `docs: prepare managed acceptance continuation rebuild checkpoint` (hash: cb5cd218c)
 
 ## Phase 27 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Rebuild Release Candidate
 
-133. [TODO] `quality-gates-implementation.phase27.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed acceptance continuation candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed acceptance continuation release notes`).
-134. [TODO] Git Commit: `docs: prepare managed acceptance continuation release notes` (hash: TBD)
+133. [DONE] `quality-gates-implementation.phase27.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed acceptance continuation candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed acceptance continuation release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.244`; release scope: queued rerun of managed post-turn arbitration when Core acceptance lands during an in-flight pass, preserved Quality Gates acceptance-to-integration continuation in the same session, and regression coverage that locks the lost-rerun race.
+134. [PENDING] Git Commit: `docs: prepare managed acceptance continuation release notes` (hash: TBD)
 135. [TODO] `quality-gates-implementation.phase27.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed acceptance continuation release`).
 136. [TODO] Git Commit: `chore: rebuild managed acceptance continuation release` (hash: TBD)
 
