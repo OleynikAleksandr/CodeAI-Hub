@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "581f98b72",
+  "lastRecordedCommit": "397eba9d5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase14.handoff-decoupling.task1",
-  "expectedCommitMessage": "fix: preserve active stage through managed handoff",
+  "currentTaskId": "quality-gates-implementation.phase14.verification.task1",
+  "expectedCommitMessage": "test: verify managed stage handoff fixes",
   "debt": {
-    "expectedCommitMessage": "fix: preserve active stage through managed handoff",
-    "preCommitHead": "581f98b72",
+    "expectedCommitMessage": "test: verify managed stage handoff fixes",
+    "preCommitHead": "397eba9d5",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase14.handoff-decoupling.task1"
+    "taskId": "quality-gates-implementation.phase14.verification.task1"
   }
 }
 ```
@@ -216,12 +216,12 @@
 ### Stream: Active Stage Persistence
 
 79. [DONE] `quality-gates-implementation.phase14.handoff-decoupling.task1` Keep managed stages on their own post-completion active plan while only unlocking downstream stages and seeding downstream child plans from the validated anchor, so upstream user-return revisions remain committable after handoff (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts`; expected commit: `fix: preserve active stage through managed handoff`).
-80. [PENDING] Git Commit: `fix: preserve active stage through managed handoff` (hash: TBD)
+80. [DONE] Git Commit: `fix: preserve active stage through managed handoff` (hash: 397eba9d5)
 
 ### Stream: Targeted Verification
 
-81. [TODO] `quality-gates-implementation.phase14.verification.task1` Run targeted verification for the cross-stage managed handoff barrier fixes and record the executed commands in this plan before any rebuild is requested (scope: `packages/core/src/managed-workspace, packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed stage handoff fixes`).
-82. [TODO] Git Commit: `test: verify managed stage handoff fixes` (hash: TBD)
+81. [DONE] `quality-gates-implementation.phase14.verification.task1` Run targeted verification for the cross-stage managed handoff barrier fixes and record the executed commands in this plan before any rebuild is requested (scope: `packages/core/src/managed-workspace, packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed stage handoff fixes`). Verification commands (2026-05-12): `npx ultracite check packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.ts packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` (OK), `npx tsx --test packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-review-turn-classifier.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts` (38/38 pass), `npm run build --workspace packages/core` (OK).
+82. [PENDING] Git Commit: `test: verify managed stage handoff fixes` (hash: TBD)
 
 ### Stream: Release Confirmation
 
