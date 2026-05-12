@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "c4770aa8d",
+  "lastRecordedCommit": "855a8aac6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase19.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare managed contract review release notes",
+  "currentTaskId": "quality-gates-implementation.phase19.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild managed contract review release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed contract review release notes",
-    "preCommitHead": "c4770aa8d",
+    "expectedCommitMessage": "chore: rebuild managed contract review release",
+    "preCommitHead": "855a8aac6",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase19.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase19.rebuild-build.task1"
   }
 }
 ```
@@ -276,9 +276,9 @@
 ### Stream: Rebuild Release Candidate
 
 105. [DONE] `quality-gates-implementation.phase19.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed contract review candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed contract review release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.242`; release scope: explicit Quality Gates review action in PM, user-facing accept-or-revise draft wording, stage-aware typed acceptance fallback for `application_skeleton` and `quality_gates`, and regression guards that keep ambiguous short acknowledgements on the normal revision path.
-106. [PENDING] Git Commit: `docs: prepare managed contract review release notes` (hash: TBD)
-107. [TODO] `quality-gates-implementation.phase19.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed contract review release`).
-108. [TODO] Git Commit: `chore: rebuild managed contract review release` (hash: TBD)
+106. [DONE] Git Commit: `docs: prepare managed contract review release notes` (hash: 855a8aac6)
+107. [DONE] `quality-gates-implementation.phase19.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed contract review release`). Build evidence (2026-05-12): `./scripts/build-all.sh --allow-dirty --version 1.2.242` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.242.vsix`.
+108. [PENDING] Git Commit: `chore: rebuild managed contract review release` (hash: TBD)
 
 ## Phase 20 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-12)
 
