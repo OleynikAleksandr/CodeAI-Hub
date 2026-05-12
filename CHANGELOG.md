@@ -4,6 +4,21 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.239] - 2026-05-12
+### Added
+- **Quality Gates managed orchestration lifecycle.** Core now drives Quality Gates Baseline through dynamic child-plan task-pair injection: draft (`docs: draft quality gates contract`), per-revision review (`docs: revise quality gates contract - revision N`), Core-owned acceptance (`docs: accept quality gates contract`), integration (`feat: integrate quality gates baseline`), repair attempts (`docs: repair quality gates <phase> attempt N`), and post-completion user-return revisions (`docs: revise quality gates user return revision N`).
+- **Quality Gates accept-contract runner and HTTP endpoint.** Typed and UI Quality Gates acceptance both route through the Core-owned runner: the runner injects the acceptance task pair, patches `quality-gates.json` (`accepted: true`), and marks the session for the integration continuation.
+- **Quality Gates contract guard, feedback, and repair orchestration.** Every Core rejection requests a concrete repair (no "do nothing" responses) and commits either a valid owned diff or tracked attempt evidence under `.codeai-hub/<slug>/quality_gates/attempts/`.
+- **Committed-evidence stage-light truth.** A new helper derives Application Skeleton / Quality Gates completion from `workspace.plan.md` `acceptedCommits`, keeping completed upstream LEDs green even while downstream stages are dirty.
+
+### Changed
+- **Static Quality Gates follow-up seeding removed.** The bundled managed-plan shim creates only the draft task pair and grows the child plan dynamically through the new Quality Gates plan mutator.
+- **Quality Gates hook integration validates against the managed hook registry section** instead of matching gate ids anywhere in the hook file.
+- **Quality Gates agent prompt and contract** make acceptance a Core-owned boundary: the agent never flips `accepted: true` or starts integration in the same turn that carries a user acceptance phrase.
+
+### Tests
+- 65/65 Quality Gates-related tests pass across plan mutator, accept-runner, continuation dispatcher, contract guard, repair orchestration, user-return revision, hook registry, bundled templates, and managed transaction commit.
+
 ## [1.2.238] - 2026-05-11
 ### Fixed
 - **Application Skeleton stays green after completion.** A global managed dirty-state no longer sets `gating.blocked.application_skeleton` after Application Skeleton is materialized. Starting the next technical step can block that current/downstream target, but it must not recolor the completed upstream stage.

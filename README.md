@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.238** (Application Skeleton completed-stage LED boundary)
+**Current Release — v1.2.239** (Quality Gates managed orchestration lifecycle)
 
-This release fixes the Project Manager LED regression found during v1.2.237
-retesting. Once Application Skeleton is materialized, downstream managed
-dirty-state from the next technical step no longer marks
-`Application Skeleton` as blocked/red again. The completed upstream step
-stays green; the dirty/current downstream target remains the blocked step.
-
-Quality Gates orchestration is intentionally not changed in this release.
-Its dedicated planning document and TODO plan remain deferred for a later
-scope.
+This release lands the Quality Gates Baseline managed orchestration scope. Core
+now drives Quality Gates through the same dynamic child-plan lifecycle as
+Application Skeleton: a draft contract commit, a user-led review phase with
+per-revision commits, a Core-owned acceptance commit, a separate integration
+commit, and a persistent post-completion user-return revision loop. Repair
+attempts inject concrete repair task-pairs and commit either valid owned diffs
+or tracked attempt evidence. Stage-light truth is derived from the
+`workspace.plan.md` `acceptedCommits` ledger, so completed Application Skeleton
+or Quality Gates LEDs stay green even while downstream artifacts are dirty.
 
 **Previous release: v1.2.237** (Application Skeleton misplaced product-parts repair)
 

@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "a34de2c9c",
+  "lastRecordedCommit": "2537dcb13",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase8.release-confirmation.task1",
-  "expectedCommitMessage": "docs: prepare quality gates release checkpoint",
+  "currentTaskId": "quality-gates-implementation.phase8.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare quality gates release notes",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates release checkpoint",
-    "preCommitHead": "a34de2c9c",
+    "expectedCommitMessage": "docs: prepare quality gates release notes",
+    "preCommitHead": "2537dcb13",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase8.release-confirmation.task1"
+    "taskId": "quality-gates-implementation.phase8.release-docs.task1"
   }
 }
 ```
@@ -144,9 +144,9 @@
 ### Stream: Release Candidate
 
 49. [DONE] `quality-gates-implementation.phase8.release-confirmation.task1` Stop after verification, request explicit user confirmation for the release build, and record the confirmation checkpoint (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates release checkpoint`). Release Build Confirmation Gate (2026-05-12): Phases 0-7 implemented (commits 0d04cba4d→a34de2c9c), 65/65 QG-related tests pass, build/typecheck green. Awaiting explicit user confirmation before running `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`.
-50. [PENDING] Git Commit: `docs: prepare quality gates release checkpoint` (hash: TBD)
-51. [TODO] `quality-gates-implementation.phase8.release-docs.task1` After explicit confirmation only, update release notes for the future version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates release notes`).
-52. [TODO] Git Commit: `docs: prepare quality gates release notes` (hash: TBD)
+50. [DONE] Git Commit: `docs: prepare quality gates release checkpoint` (hash: 2537dcb13)
+51. [DONE] `quality-gates-implementation.phase8.release-docs.task1` After explicit confirmation only, update release notes for the future version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates release notes`).
+52. [PENDING] Git Commit: `docs: prepare quality gates release notes` (hash: TBD)
 53. [TODO] `quality-gates-implementation.phase8.release-build.task1` After explicit confirmation only, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage produced release artifacts (scope: `package.json, package-lock.json, doc/tmp/releases/**`; expected commit: `chore: build quality gates release`).
 54. [TODO] Git Commit: `chore: build quality gates release` (hash: TBD)
 
