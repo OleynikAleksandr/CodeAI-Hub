@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "1eb58d53e",
+  "lastRecordedCommit": "e071a55cb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase26.verification.task1",
-  "expectedCommitMessage": "test: verify managed acceptance continuation reruns",
+  "currentTaskId": "quality-gates-implementation.phase26.rebuild-confirmation.task1",
+  "expectedCommitMessage": "docs: prepare managed acceptance continuation rebuild checkpoint",
   "debt": {
-    "expectedCommitMessage": "test: verify managed acceptance continuation reruns",
-    "preCommitHead": "1eb58d53e",
+    "expectedCommitMessage": "docs: prepare managed acceptance continuation rebuild checkpoint",
+    "preCommitHead": "e071a55cb",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase26.verification.task1"
+    "taskId": "quality-gates-implementation.phase26.rebuild-confirmation.task1"
   }
 }
 ```
@@ -341,12 +341,12 @@
 ### Stream: Targeted Verification
 
 129. [DONE] `quality-gates-implementation.phase26.verification.task1` Run targeted verification for the managed acceptance continuation rerun repair and record the executed commands in this plan before any rebuild is requested (scope: `packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed acceptance continuation reruns`). Verification evidence (2026-05-12): `npx tsx --test packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts` passed (`32/32`); `npx ultracite check packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts` passed; `npm run build --workspace packages/core` passed.
-130. [PENDING] Git Commit: `test: verify managed acceptance continuation reruns` (hash: TBD)
+130. [DONE] Git Commit: `test: verify managed acceptance continuation reruns` (hash: e071a55cb)
 
 ### Stream: Release Confirmation
 
-131. [TODO] `quality-gates-implementation.phase26.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed acceptance continuation repair, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed acceptance continuation rebuild checkpoint`).
-132. [TODO] Git Commit: `docs: prepare managed acceptance continuation rebuild checkpoint` (hash: TBD)
+131. [DONE] `quality-gates-implementation.phase26.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the managed acceptance continuation repair, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed acceptance continuation rebuild checkpoint`). Rebuild approved by the user on 2026-05-12 with the instruction to continue through the newly sliced fix plan and immediately package a new release after the repair work completed.
+132. [PENDING] Git Commit: `docs: prepare managed acceptance continuation rebuild checkpoint` (hash: TBD)
 
 ## Phase 27 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
