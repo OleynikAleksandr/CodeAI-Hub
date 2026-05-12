@@ -415,8 +415,9 @@ test("technical root prompt packs target skeleton and quality gate artifacts", (
     ),
     true
   );
-  assert.equal(gatesPack.content.includes("Work phases:"), true);
-  assert.equal(gatesPack.content.includes("runtime-embedded accepted Application Skeleton artifacts"), true);
+  assert.equal(gatesPack.content.includes("Lifecycle reminder"), true);
+  assert.equal(gatesPack.content.includes("Core-injected integration prompt"), true);
+  assert.equal(gatesPack.content.includes("runtime-embedded accepted"), false);
   assert.equal(gatesPack.content.includes('activeStage: "quality_gates"'), true);
   assert.equal(gatesPack.content.includes("Output file name: `quality-gates.md`"), true);
 });

@@ -212,11 +212,7 @@ const buildStagePhaseLines = (
   }
   if (stage === "quality_gates") {
     return [
-      "Work phases:",
-      "- Phase 1: use the runtime-embedded accepted Application Skeleton artifacts and draft `quality-gates.md` plus `quality-gates.json` with selected baseline commands and `accepted: false`, `integrated: false`, `integrationState: \"not_started\"`.",
-      "- Phase 2: after explicit user acceptance, integrate executable gate scripts, package scripts, lockfile changes, and lifecycle hook wiring in the same Quality Gates session.",
-      "- Phase 3: hook wiring is mandatory for `integrated: true`: every `requiredBeforeCommit` gate must be called by `.husky/pre-commit`, and every `requiredBeforePush` gate must be called by `.husky/pre-push`.",
-      "- Phase 4: set `integrated: true` only after the selected baseline is executable, hooked into lifecycle, verified, and committed through the managed plan.",
+      "Lifecycle reminder (Core-owned managed phases): draft → user-led review → Core acceptance commit → integration → post-completion user-return. Do not flip `accepted` or `integrated` yourself and do not start integration in the same turn that carries a user acceptance phrase; wait for the Core-injected integration prompt.",
     ];
   }
   return [];
