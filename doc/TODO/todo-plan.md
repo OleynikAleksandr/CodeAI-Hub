@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "ca0334264",
+  "lastRecordedCommit": "08dcc05f4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase2.accept-route.task1",
-  "expectedCommitMessage": "fix: route quality gates acceptance through core boundary",
+  "currentTaskId": "quality-gates-implementation.phase3.continuation.task1",
+  "expectedCommitMessage": "feat: continue quality gates after acceptance commit",
   "debt": {
-    "expectedCommitMessage": "fix: route quality gates acceptance through core boundary",
-    "preCommitHead": "ca0334264",
+    "expectedCommitMessage": "feat: continue quality gates after acceptance commit",
+    "preCommitHead": "08dcc05f4",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase2.accept-route.task1"
+    "taskId": "quality-gates-implementation.phase3.continuation.task1"
   }
 }
 ```
@@ -78,14 +78,14 @@
 11. [DONE] `quality-gates-implementation.phase2.accept-runner.task1` Add the Core-owned Quality Gates accept-contract writer and runner, including acceptance task-pair injection (scope: `packages/core/src/remote-bridge/handlers/quality-gates-acceptance-writer.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.test.ts`; expected commit: `feat: accept quality gates contract through core`).
 12. [DONE] Git Commit: `feat: accept quality gates contract through core` (hash: ca0334264)
 13. [DONE] `quality-gates-implementation.phase2.accept-route.task1` Route typed and UI acceptance through the Quality Gates runner instead of in-memory-only markers (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts`; expected commit: `fix: route quality gates acceptance through core boundary`).
-14. [PENDING] Git Commit: `fix: route quality gates acceptance through core boundary` (hash: TBD)
+14. [DONE] Git Commit: `fix: route quality gates acceptance through core boundary` (hash: 08dcc05f4)
 
 ## Phase 3 - Integration Continuation (owner: Codex, updated: 2026-05-11)
 
 ### Stream: Accepted-Only Integration
 
-15. [TODO] `quality-gates-implementation.phase3.continuation.task1` Add an accepted-and-committed-only Quality Gates continuation dispatcher for the integration prompt (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `feat: continue quality gates after acceptance commit`).
-16. [TODO] Git Commit: `feat: continue quality gates after acceptance commit` (hash: TBD)
+15. [DONE] `quality-gates-implementation.phase3.continuation.task1` Add an accepted-and-committed-only Quality Gates continuation dispatcher for the integration prompt (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `feat: continue quality gates after acceptance commit`).
+16. [PENDING] Git Commit: `feat: continue quality gates after acceptance commit` (hash: TBD)
 17. [TODO] `quality-gates-implementation.phase3.commit-readiness.task1` Allow Quality Gates managed commits for draft, acceptance, integration, and repair attempts according to the active child-plan task (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts`; expected commit: `fix: commit quality gates managed lifecycle tasks`).
 18. [TODO] Git Commit: `fix: commit quality gates managed lifecycle tasks` (hash: TBD)
 19. [TODO] `quality-gates-implementation.phase3.hooks.task1` Keep hook wiring Core-owned through the managed hook registry and validate integrated state against registry-generated sections (scope: `packages/core/src/managed-workspace/managed-hook-registry.ts, packages/core/src/managed-workspace/managed-hook-registry.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts`; expected commit: `fix: validate quality gates hook registry integration`).

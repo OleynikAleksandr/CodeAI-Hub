@@ -39,6 +39,7 @@ import {
   type QualityGatesAcceptContractDecision,
   runQualityGatesAcceptContractCommand,
 } from "./quality-gates-accept-contract-runner";
+import { sendQualityGatesContinuationIfReady } from "./quality-gates-continuation-dispatcher";
 import {
   type QualityGatesProgressSnapshot,
   readQualityGatesProgressSnapshot,
@@ -643,12 +644,20 @@ export class ManagedWorkflowPostTurnService {
       "Quality Gates",
       params.managedGitStatus.dirtyByStage.quality_gates
     );
-    await this.acceptanceFeedback.sendQualityGatesFeedback({
-      chains: params.chains,
-      gateway: params.gateway,
-      progress,
-      workspaceRoot: params.workspaceRoot,
-      workspaceSlug: params.workspaceSlug,
-    });
+    await Promise.all([
+      this.acceptanceFeedback.sendQualityGatesFeedback({
+        chains: params.chains,
+        gateway: params.gateway,
+        progress,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      }),
+      sendQualityGatesContinuationIfReady({
+        chains: params.chains,
+        gateway: params.gateway,
+        progress,
+        recentlyAcceptedSessions: this.recentlyAcceptedSessions,
+      }),
+    ]);
   }
 }
