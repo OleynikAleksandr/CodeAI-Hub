@@ -7,6 +7,7 @@ import type {
   DiagramModulesProgressSnapshot,
   ProductPartDiagnostic,
 } from "./diagram-modules-progress";
+import { createQualityGatesActionLines } from "./quality-gates-feedback-action-lines";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 export interface WorkflowAgentAcceptanceFeedbackGateway {
   readonly handleMessage: (
@@ -475,11 +476,10 @@ export class WorkflowAgentAcceptanceFeedback {
       request:
         params.progress && errors.length > 0
           ? {
-              actionLines: [
-                "Update the Quality Gates integration so every selected required gate is wired into the managed lifecycle hooks.",
-                "Re-run the affected qg:* checks and the aggregate quality gate command.",
-                "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
-              ],
+              actionLines: createQualityGatesActionLines({
+                outOfOwnerDirtyFiles,
+                progress: params.progress,
+              }),
               checkLines: createQualityGatesCheckLines(params.progress),
               errors,
               stage: QUALITY_GATES_STAGE,

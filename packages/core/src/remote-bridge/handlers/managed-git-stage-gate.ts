@@ -23,6 +23,8 @@ const DIAGRAM_MODULES_PLAN_PATH =
   "doc/TODO/stages/diagram-modules/todo-plan.md";
 const APPLICATION_SKELETON_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
+const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
+const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 
 export const isManagedStageId = (value: string): value is ManagedStageId =>
   MANAGED_STAGE_IDS.includes(value as ManagedStageId);
@@ -85,6 +87,8 @@ export const readManagedGitStatus = async (
       file.startsWith("scripts/gates/") ||
       file === ".husky/pre-commit" ||
       file === ".husky/pre-push" ||
+      file === QUALITY_GATES_PLAN_PATH ||
+      file === WORKSPACE_PLAN_PATH ||
       file === "package.json" ||
       file === "package-lock.json"
     ) {
