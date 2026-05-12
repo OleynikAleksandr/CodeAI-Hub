@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "3575b5585",
+  "lastRecordedCommit": "6a55f3ee4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase21.review-closing-phrase.task1",
-  "expectedCommitMessage": "docs: enforce exact managed contract review phrase",
+  "currentTaskId": "quality-gates-implementation.phase21.review-closing-phrase-tests.task1",
+  "expectedCommitMessage": "test: lock managed contract review phrase",
   "debt": {
-    "expectedCommitMessage": "docs: enforce exact managed contract review phrase",
-    "preCommitHead": "3575b5585",
+    "expectedCommitMessage": "test: lock managed contract review phrase",
+    "preCommitHead": "6a55f3ee4",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase21.review-closing-phrase.task1"
+    "taskId": "quality-gates-implementation.phase21.review-closing-phrase-tests.task1"
   }
 }
 ```
@@ -297,9 +297,9 @@
 ### Stream: Exact Contract Review Closing Phrase
 
 113. [DONE] `quality-gates-implementation.phase21.review-closing-phrase.task1` Require the exact shared Russian closing phrase for every pre-acceptance Application Skeleton and Quality Gates contract review response, and regenerate bundled template assets from the updated prompt sources (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: enforce exact managed contract review phrase`).
-114. [PENDING] Git Commit: `docs: enforce exact managed contract review phrase` (hash: TBD)
-115. [TODO] `quality-gates-implementation.phase21.review-closing-phrase-tests.task1` Tighten bundled template assertions so prompt drift is caught only when the exact review closing phrase remains present for both managed contract stages (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: lock managed contract review phrase`).
-116. [TODO] Git Commit: `test: lock managed contract review phrase` (hash: TBD)
+114. [DONE] Git Commit: `docs: enforce exact managed contract review phrase` (hash: 6a55f3ee4)
+115. [DONE] `quality-gates-implementation.phase21.review-closing-phrase-tests.task1` Tighten bundled template assertions so prompt drift is caught only when the exact review closing phrase remains present for both managed contract stages (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: lock managed contract review phrase`).
+116. [PENDING] Git Commit: `test: lock managed contract review phrase` (hash: TBD)
 
 ## Phase 22 - Verification And Release Rebuild Gate (owner: Codex, updated: 2026-05-12)
 
