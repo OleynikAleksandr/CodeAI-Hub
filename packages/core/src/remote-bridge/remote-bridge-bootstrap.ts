@@ -95,19 +95,27 @@ export const createRemoteBridgeBootstrap = (options: {
     onTurnCompleted: (sessionId) => {
       workflowStateService?.handleManagedWorkflowPostTurn(sessionId);
     },
-    // Phase 28 production wiring: typed-fallback router and PM Accept Contract
-    // button both funnel through `handleApplicationSkeletonAcceptContractCommand`
-    // on the post-turn service, which delegates to the Phase 24 runner that
-    // patches `application-skeleton-map.json::accepted: true` before
-    // `markAccepted` + `handle`. Late-bound through the forward-declared
-    // `workflowStateService` reference (the post-turn service instance is
-    // created on line 116 below, after this composition).
-    handleManagedAcceptContractCommand: (params) =>
-      workflowStateService
-        ? workflowStateService.managedPostTurnService.handleApplicationSkeletonAcceptContractCommand(
-            params
-          )
-        : Promise.resolve(undefined),
+    // Production typed acceptance must dispatch by the live session stage.
+    // The callback is late-bound through `workflowStateService`, but stage
+    // ownership comes from the shared `sessionManager` we already have here.
+    handleManagedAcceptContractCommand: async (params) => {
+      if (!workflowStateService) {
+        return undefined;
+      }
+      const stage = options.sessionManager.getSession(params.sessionId)?.stage;
+      if (stage === "quality_gates") {
+        await workflowStateService.managedPostTurnService.handleQualityGatesAcceptContractCommand(
+          params
+        );
+        return undefined;
+      }
+      if (stage === "application_skeleton") {
+        return workflowStateService.managedPostTurnService.handleApplicationSkeletonAcceptContractCommand(
+          params
+        );
+      }
+      return undefined;
+    },
     broadcaster: (event) => {
       options.broadcaster(event as BridgeEvent);
     },

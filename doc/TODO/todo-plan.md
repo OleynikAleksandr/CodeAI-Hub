@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "6028529e0",
+  "lastRecordedCommit": "1d0a74601",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase20.user-reretest.task1",
-  "expectedCommitMessage": "docs: record managed contract review acceptance",
+  "currentTaskId": "quality-gates-implementation.phase21.typed-acceptance-wiring.task1",
+  "expectedCommitMessage": "fix: route quality gates typed acceptance in production",
   "debt": {
-    "expectedCommitMessage": "docs: record managed contract review acceptance",
-    "preCommitHead": "6028529e0",
+    "expectedCommitMessage": "fix: route quality gates typed acceptance in production",
+    "preCommitHead": "1d0a74601",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase20.user-reretest.task1"
+    "taskId": "quality-gates-implementation.phase21.typed-acceptance-wiring.task1"
   }
 }
 ```
@@ -285,14 +285,14 @@
 ### Stream: User Re-Re-Re-Retest
 
 109. [DONE] `quality-gates-implementation.phase20.user-reretest.task1` User installs the rebuilt release and retests Diagram Modules, Application Skeleton, Quality Gates, and Development Tree unlock behavior against the managed contract review boundary fix scenario (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed contract review acceptance`). Retest result (2026-05-12): Diagram Modules and Application Skeleton passed the shared contract review flow, including revision commits and typed acceptance via `Подтверждаю`. Quality Gates still stalled in `phase2.review.task2`: the agent's review revision prompt drifted away from the mandatory accept-or-revise closing line, and explicit typed acceptance such as `Подтверждаю` was intercepted by Core but did not reach the Quality Gates accept-contract runner or advance the child plan. The previously discussed rollover continuity failure on Spark remains a separate deferred investigation and is not part of this repair slice.
-110. [PENDING] Git Commit: `docs: record managed contract review acceptance` (hash: TBD)
+110. [DONE] Git Commit: `docs: record managed contract review acceptance` (hash: 1d0a74601)
 
 ## Phase 21 - Typed Acceptance And Prompt Boundary Repairs (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Quality Gates Typed Acceptance Production Wiring
 
-111. [TODO] `quality-gates-implementation.phase21.typed-acceptance-wiring.task1` Route managed typed acceptance in production by the session stage so `quality_gates` acceptance phrases call the Quality Gates Core runner instead of the Application Skeleton runner, and cover the dispatch path with a regression test (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts`; expected commit: `fix: route quality gates typed acceptance in production`).
-112. [TODO] Git Commit: `fix: route quality gates typed acceptance in production` (hash: TBD)
+111. [DONE] `quality-gates-implementation.phase21.typed-acceptance-wiring.task1` Route managed typed acceptance in production by the session stage so `quality_gates` acceptance phrases call the Quality Gates Core runner instead of the Application Skeleton runner, and cover the dispatch path with a regression test (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts`; expected commit: `fix: route quality gates typed acceptance in production`).
+112. [PENDING] Git Commit: `fix: route quality gates typed acceptance in production` (hash: TBD)
 
 ### Stream: Exact Contract Review Closing Phrase
 
