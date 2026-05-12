@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "0ab78fb0a",
+  "lastRecordedCommit": "f5ea34211",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase5.stage-light.task1",
-  "expectedCommitMessage": "fix: keep completed technical stage lights stable",
+  "currentTaskId": "quality-gates-implementation.phase5.development-tree.task1",
+  "expectedCommitMessage": "fix: unlock development tree after integrated quality gates",
   "debt": {
-    "expectedCommitMessage": "fix: keep completed technical stage lights stable",
-    "preCommitHead": "0ab78fb0a",
+    "expectedCommitMessage": "fix: unlock development tree after integrated quality gates",
+    "preCommitHead": "f5ea34211",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase5.stage-light.task1"
+    "taskId": "quality-gates-implementation.phase5.development-tree.task1"
   }
 }
 ```
@@ -111,9 +111,9 @@
 ### Stream: Workflow State Boundaries
 
 31. [DONE] `quality-gates-implementation.phase5.stage-light.task1` Make workflow state derive Application Skeleton and Quality Gates completion from their own committed terminal evidence only (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: keep completed technical stage lights stable`).
-32. [PENDING] Git Commit: `fix: keep completed technical stage lights stable` (hash: TBD)
-33. [TODO] `quality-gates-implementation.phase5.development-tree.task1` Keep Development Tree locked until Quality Gates integration is committed, without recoloring completed upstream stages (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, src/client/project-manager/services/workflow-state-helpers.ts`; expected commit: `fix: unlock development tree after integrated quality gates`).
-34. [TODO] Git Commit: `fix: unlock development tree after integrated quality gates` (hash: TBD)
+32. [DONE] Git Commit: `fix: keep completed technical stage lights stable` (hash: f5ea34211)
+33. [DONE] `quality-gates-implementation.phase5.development-tree.task1` Keep Development Tree locked until Quality Gates integration is committed, without recoloring completed upstream stages (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, src/client/project-manager/services/workflow-state-helpers.ts`; expected commit: `fix: unlock development tree after integrated quality gates`).
+34. [PENDING] Git Commit: `fix: unlock development tree after integrated quality gates` (hash: TBD)
 35. [TODO] `quality-gates-implementation.phase5.client.task1` Align Project Manager acceptance and Quality Gates panel state with the Core-owned lifecycle truth (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, src/client/project-manager/components/quality-gates/quality-gates-panel.tsx`; expected commit: `fix: align quality gates project manager state`).
 36. [TODO] Git Commit: `fix: align quality gates project manager state` (hash: TBD)
 
