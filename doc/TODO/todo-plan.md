@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "89f92195b",
+  "lastRecordedCommit": "ce3ba0859",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase22.rebuild-confirmation.task1",
-  "expectedCommitMessage": "docs: prepare managed typed acceptance rebuild checkpoint",
+  "currentTaskId": "quality-gates-implementation.phase23.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare managed typed acceptance release notes",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed typed acceptance rebuild checkpoint",
-    "preCommitHead": "89f92195b",
+    "expectedCommitMessage": "docs: prepare managed typed acceptance release notes",
+    "preCommitHead": "ce3ba0859",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase22.rebuild-confirmation.task1"
+    "taskId": "quality-gates-implementation.phase23.rebuild-docs.task1"
   }
 }
 ```
@@ -311,14 +311,14 @@
 ### Stream: Release Confirmation
 
 119. [DONE] `quality-gates-implementation.phase22.rebuild-confirmation.task1` Stop after verification, request explicit user confirmation for rebuilding the typed acceptance and prompt-boundary fixes, and record that checkpoint before running release scripts again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed typed acceptance rebuild checkpoint`). Rebuild approved by the user on 2026-05-12 with the instruction to continue through release preparation and packaging without another pause.
-120. [PENDING] Git Commit: `docs: prepare managed typed acceptance rebuild checkpoint` (hash: TBD)
+120. [DONE] Git Commit: `docs: prepare managed typed acceptance rebuild checkpoint` (hash: ce3ba0859)
 
 ## Phase 23 - Release Rebuild (owner: Codex, updated: 2026-05-12)
 
 ### Stream: Rebuild Release Candidate
 
-121. [TODO] `quality-gates-implementation.phase23.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed typed acceptance candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed typed acceptance release notes`).
-122. [TODO] Git Commit: `docs: prepare managed typed acceptance release notes` (hash: TBD)
+121. [DONE] `quality-gates-implementation.phase23.rebuild-docs.task1` After explicit confirmation only, update release notes for the next managed typed acceptance candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed typed acceptance release notes`). Release rebuild approved by user on 2026-05-12; next candidate version: `1.2.243`; release scope: production stage-aware typed acceptance routing for `quality_gates`, exact mandatory review-closing phrase for Application Skeleton and Quality Gates draft/revision turns, and regression coverage that locks both the bootstrap dispatch path and the shared prompt/template boundary.
+122. [PENDING] Git Commit: `docs: prepare managed typed acceptance release notes` (hash: TBD)
 123. [TODO] `quality-gates-implementation.phase23.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed typed acceptance release`).
 124. [TODO] Git Commit: `chore: rebuild managed typed acceptance release` (hash: TBD)
 

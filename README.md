@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.242** (Managed contract review boundary rebuild)
+**Current Release — v1.2.243** (Managed typed acceptance rebuild)
+
+This release fixes the remaining Quality Gates acceptance stall found while
+retesting `v1.2.242`. Production typed acceptance now dispatches by live
+managed stage, so `Подтверждаю` in `quality_gates` reaches the Quality Gates
+Core runner instead of disappearing in the Application Skeleton path. The
+managed review prompts for Application Skeleton and Quality Gates now also end
+with one exact closing sentence that asks the user either to confirm the
+contract or list required revisions, without offering extra optional next
+steps after the review boundary.
+
+**Previous release: v1.2.242** (Managed contract review boundary rebuild)
 
 This release fixes the final Quality Gates review-boundary defects found while
 retesting `v1.2.241`. The Quality Gates panel now shows a step-local `Accept

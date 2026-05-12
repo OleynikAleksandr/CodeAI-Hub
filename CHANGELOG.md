@@ -4,6 +4,16 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.243] - 2026-05-12
+### Fixed
+- **Quality Gates typed acceptance now reaches the correct production Core runner.** The live bootstrap callback dispatches by managed session stage, so an explicit acceptance phrase such as `Подтверждаю` in `quality_gates` no longer falls into the Application Skeleton handler and disappears.
+- **Managed contract review prompts now end with one exact user-facing confirmation sentence.** Application Skeleton and Quality Gates both finish every pre-acceptance review turn with `Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией.` and do not append optional “I can also...” follow-ups after that boundary.
+- **Prompt/template regressions now lock the shared review-closing phrase.** Bundled template coverage fails if either managed contract prompt drifts away from the exact confirmation sentence or if the production typed-acceptance bootstrap path regresses again.
+
+### Tests
+- Targeted managed typed acceptance verification passed: `33/33` tests across production bootstrap dispatch, typed acceptance handlers, post-turn phrase recognition, and bundled prompt/template synchronization.
+- `npm run build --workspace packages/core` passed before release packaging.
+
 ## [1.2.242] - 2026-05-12
 ### Fixed
 - **Quality Gates now exposes an explicit review-boundary action in Project Manager.** The `quality-gates.md` panel renders a local `Accept Contract` button with a revision-in-chat hint, so the user no longer has to guess how to advance the managed review phase.
