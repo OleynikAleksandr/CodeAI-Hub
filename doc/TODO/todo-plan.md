@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "08dcc05f4",
+  "lastRecordedCommit": "dbac11e94",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase3.continuation.task1",
-  "expectedCommitMessage": "feat: continue quality gates after acceptance commit",
+  "currentTaskId": "quality-gates-implementation.phase3.commit-readiness.task1",
+  "expectedCommitMessage": "fix: commit quality gates managed lifecycle tasks",
   "debt": {
-    "expectedCommitMessage": "feat: continue quality gates after acceptance commit",
-    "preCommitHead": "08dcc05f4",
+    "expectedCommitMessage": "fix: commit quality gates managed lifecycle tasks",
+    "preCommitHead": "dbac11e94",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase3.continuation.task1"
+    "taskId": "quality-gates-implementation.phase3.commit-readiness.task1"
   }
 }
 ```
@@ -85,9 +85,9 @@
 ### Stream: Accepted-Only Integration
 
 15. [DONE] `quality-gates-implementation.phase3.continuation.task1` Add an accepted-and-committed-only Quality Gates continuation dispatcher for the integration prompt (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts`; expected commit: `feat: continue quality gates after acceptance commit`).
-16. [PENDING] Git Commit: `feat: continue quality gates after acceptance commit` (hash: TBD)
-17. [TODO] `quality-gates-implementation.phase3.commit-readiness.task1` Allow Quality Gates managed commits for draft, acceptance, integration, and repair attempts according to the active child-plan task (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts`; expected commit: `fix: commit quality gates managed lifecycle tasks`).
-18. [TODO] Git Commit: `fix: commit quality gates managed lifecycle tasks` (hash: TBD)
+16. [DONE] Git Commit: `feat: continue quality gates after acceptance commit` (hash: dbac11e94)
+17. [DONE] `quality-gates-implementation.phase3.commit-readiness.task1` Allow Quality Gates managed commits for draft, acceptance, integration, and repair attempts according to the active child-plan task (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts`; expected commit: `fix: commit quality gates managed lifecycle tasks`).
+18. [PENDING] Git Commit: `fix: commit quality gates managed lifecycle tasks` (hash: TBD)
 19. [TODO] `quality-gates-implementation.phase3.hooks.task1` Keep hook wiring Core-owned through the managed hook registry and validate integrated state against registry-generated sections (scope: `packages/core/src/managed-workspace/managed-hook-registry.ts, packages/core/src/managed-workspace/managed-hook-registry.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts`; expected commit: `fix: validate quality gates hook registry integration`).
 20. [TODO] Git Commit: `fix: validate quality gates hook registry integration` (hash: TBD)
 21. [TODO] `quality-gates-implementation.phase3.prompts.task1` Update Quality Gates agent assets so draft, acceptance, and integration boundaries cannot be confused (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `docs: enforce quality gates lifecycle prompt boundary`).

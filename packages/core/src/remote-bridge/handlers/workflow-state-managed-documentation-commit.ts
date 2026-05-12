@@ -66,13 +66,17 @@ const hasCommittableApplicationSkeletonStage = (
 ): boolean =>
   context.managedGitStatus.dirtyByStage.application_skeleton.length > 0;
 
+// Quality Gates dynamic child plan covers draft, review revision, acceptance,
+// integration, and repair task pairs (see managed-quality-gates-plan-mutator).
+// Any owned diff in the Quality Gates stage scope is a candidate for a managed
+// commit; ManagedDocumentationCommitTransaction validates the active task's
+// expected commit message and the owned-path allowlist before committing, so
+// distinguishing the lifecycle phase here would only duplicate that decision.
+// The previous `integrated` requirement blocked draft, acceptance, integration,
+// and repair commits even when the active child plan explicitly requested them.
 const hasCommittableQualityGatesStage = (
   context: ManagedDocumentationProgressContext
-): boolean =>
-  Boolean(
-    context.qualityGatesProgress?.integrated &&
-      context.managedGitStatus.dirtyByStage.quality_gates.length > 0
-  );
+): boolean => context.managedGitStatus.dirtyByStage.quality_gates.length > 0;
 
 const hasCommittableManagedStage = (
   context: ManagedDocumentationProgressContext

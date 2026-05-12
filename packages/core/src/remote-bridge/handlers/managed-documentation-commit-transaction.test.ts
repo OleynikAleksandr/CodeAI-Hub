@@ -85,6 +85,61 @@ test("managed documentation commit transaction commits only active stage files",
   }
 });
 
+test("managed documentation commit transaction commits Quality Gates draft files for the active draft task", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-documentation-commit-quality-gates-")
+  );
+
+  try {
+    await initManagedWorkspace(workspaceRoot, "quality_gates");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo/quality_gates/quality-gates.md",
+      "# Quality Gates\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo/quality_gates/quality-gates.json",
+      `${JSON.stringify(
+        {
+          accepted: false,
+          commands: { "qg-smoke": { id: "qg-smoke" } },
+          integrated: false,
+          integrationState: "draft",
+          schema: "codeai-quality-gates-v1",
+        },
+        null,
+        2
+      )}\n`
+    );
+
+    const result =
+      await new ManagedDocumentationCommitTransaction().commitAcceptedStage({
+        workspaceRoot,
+        workspaceSlug: "demo",
+      });
+
+    assert.equal(result.status, "committed");
+    assert.equal(result.unmanagedDirtyFiles.length, 0);
+    assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
+    assert.equal(
+      await runGit(workspaceRoot, ["log", "-1", "--pretty=%s"]),
+      "chore: record managed workspace ledger"
+    );
+    const previousCommit = await runGit(workspaceRoot, [
+      "log",
+      "-2",
+      "--pretty=%s",
+    ]);
+    assert.equal(
+      previousCommit.includes("docs: draft quality gates contract"),
+      true
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("managed documentation commit transaction blocks files outside active stage", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "managed-documentation-commit-blocked-")
