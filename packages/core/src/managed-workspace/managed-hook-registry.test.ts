@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  extractManagedHookSection,
   type ManagedQualityGateManifest,
   renderManagedHookRegistrySections,
   validateManagedQualityGateManifest,
@@ -64,5 +65,21 @@ test("renderManagedHookRegistrySections rejects non executable required gates", 
         requiredBeforeCommit: ["format-check"],
       }),
     ACTIVE_EXECUTABLE_RE
+  );
+});
+
+test("extractManagedHookSection returns content between managed markers", () => {
+  const section = renderManagedHookRegistrySections(MANIFEST)["pre-commit"];
+  assert.ok(section);
+  const wrappedHook = `#!/bin/sh\n${section}`;
+  const extracted = extractManagedHookSection(wrappedHook);
+  assert.ok(extracted);
+  assert.match(extracted, FORMAT_CHECK_RE);
+});
+
+test("extractManagedHookSection returns null when markers are absent", () => {
+  assert.equal(
+    extractManagedHookSection("#!/bin/sh\nnpm run format:check\n"),
+    null
   );
 });

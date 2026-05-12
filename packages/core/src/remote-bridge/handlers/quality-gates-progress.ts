@@ -1,5 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { extractManagedHookSection } from "../../managed-workspace/managed-hook-registry";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import type {
   WorkflowStageState,
@@ -149,19 +150,21 @@ const validateHookCommands = (params: {
   readonly gateIds: readonly string[];
   readonly hookName: string;
   readonly hookText: string;
-}): readonly string[] =>
-  params.gateIds
+}): readonly string[] => {
+  const managedSection = extractManagedHookSection(params.hookText);
+  const haystack = managedSection ?? params.hookText;
+  return params.gateIds
     .filter((gateId) => {
       const packageScriptName = toPackageScriptName(gateId);
       return !(
-        params.hookText.includes(gateId) ||
-        params.hookText.includes(packageScriptName)
+        haystack.includes(gateId) || haystack.includes(packageScriptName)
       );
     })
     .map(
       (gateId) =>
         `Quality gate ${gateId} is missing from .husky/${params.hookName}`
     );
+};
 
 const validateDeclaredHookIntegration = async (params: {
   readonly contract: Record<string, unknown> | null;

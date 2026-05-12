@@ -29,6 +29,17 @@ export type ManagedHookRegistrySections = Readonly<
 
 const HOOK_SECTION_START = "# codeai-managed:gates:start";
 const HOOK_SECTION_END = "# codeai-managed:gates:end";
+
+export const extractManagedHookSection = (hookText: string): string | null => {
+  const startIndex = hookText.indexOf(HOOK_SECTION_START);
+  const endIndex = hookText.indexOf(HOOK_SECTION_END);
+  if (startIndex < 0 || endIndex < 0 || endIndex <= startIndex) {
+    return null;
+  }
+  return hookText
+    .slice(startIndex + HOOK_SECTION_START.length, endIndex)
+    .trim();
+};
 const BASELINE_HOOK_COMMANDS: Readonly<
   Partial<Record<ManagedWorkspaceHookName, readonly string[]>>
 > = {
