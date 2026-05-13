@@ -253,3 +253,136 @@ test("post-turn service injects Phase 3 Quality Gates repair after invalid accep
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("post-turn service repairs accepted in-progress Quality Gates attempts with missing hooks", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-post-turn-qg-in-progress-repair-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sessionId = "quality-gates-session";
+  try {
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "Test User"]);
+    await writeWorkspaceFile(workspaceRoot, "README.md", "# Demo\n");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/workspace.plan.md",
+      [
+        "# Workspace Plan",
+        "",
+        "<!-- codeai-workspace-plan-state:start -->",
+        "```json",
+        JSON.stringify(
+          {
+            acceptedCommits: [
+              {
+                message: "docs: accept quality gates contract",
+                stage: "quality_gates",
+              },
+            ],
+            activePlanPath: QUALITY_GATES_PLAN_PATH,
+            activeStage: "quality_gates",
+          },
+          null,
+          2
+        ),
+        "```",
+        "<!-- codeai-workspace-plan-state:end -->",
+      ].join("\n")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      QUALITY_GATES_PLAN_PATH,
+      [
+        "# Quality Gates Plan",
+        "",
+        "<!-- codeai-plan-state:start -->",
+        "```json",
+        JSON.stringify(
+          {
+            currentTaskId: "quality-gates.phase3.integration.task1",
+            executionScopeStatus: "ACTIVE",
+            expectedCommitMessage: "feat: integrate quality gates baseline",
+            schema: "codeai-plan-v1",
+          },
+          null,
+          2
+        ),
+        "```",
+        "<!-- codeai-plan-state:end -->",
+        "",
+        "1. [IN_PROGRESS] `quality-gates.phase3.integration.task1` Integrate.",
+        "2. [TODO] Git Commit: `feat: integrate quality gates baseline` (hash: TBD)",
+      ].join("\n")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.md`,
+      "# Quality Gates\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
+      `${JSON.stringify(
+        {
+          accepted: true,
+          commands: { "qg-secret-scan": { id: "qg-secret-scan" } },
+          integrated: false,
+          integratedPaths: ["scripts/qg/run.mjs"],
+          integrationState: "draft",
+          requiredBeforeCommit: ["qg-secret-scan"],
+          schema: "codeai-quality-gates-v1",
+        },
+        null,
+        2
+      )}\n`
+    );
+    await git(workspaceRoot, ["add", "."]);
+    await git(workspaceRoot, ["commit", "-m", "baseline"]);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
+      `${JSON.stringify(
+        {
+          accepted: true,
+          commands: { "qg-secret-scan": { id: "qg-secret-scan" } },
+          integrated: false,
+          integratedPaths: ["scripts/qg/run.mjs"],
+          integrationState: "in_progress",
+          requiredBeforeCommit: ["qg-secret-scan"],
+          schema: "codeai-quality-gates-v1",
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/qg/run.mjs",
+      "console.log('ok');\n"
+    );
+
+    const service = new ManagedWorkflowPostTurnService({
+      logger: new Logger("error"),
+      sessionManager: {
+        getSession: () => ({
+          initiativeSlug: workspaceSlug,
+          stage: "quality_gates",
+          workspacePath: workspaceRoot,
+        }),
+      } as unknown as SessionManager,
+    });
+    service.handle(sessionId);
+    await service.whenIdle(sessionId);
+
+    const planText = await readFile(
+      path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH),
+      "utf8"
+    );
+    assert.match(planText, QUALITY_GATES_PHASE3_REPAIR_RE);
+    assert.doesNotMatch(planText, QUALITY_GATES_PHASE2_ACCEPTANCE_REPAIR_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});

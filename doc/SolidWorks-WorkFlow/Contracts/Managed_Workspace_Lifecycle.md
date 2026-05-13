@@ -39,7 +39,7 @@ Agents own semantic work only:
 - accepted skeleton files;
 - Quality Gates gate content and manifest.
 
-Agents must not become owners of Git, hooks, Plan Orchestrator scripts, or lifecycle repair.
+Agents must not become owners of Git, hook infrastructure bootstrap, Plan Orchestrator scripts, or lifecycle repair. The narrow exception is Quality Gates Phase 3: after the contract acceptance commit, the selected required gate calls inside `.husky/pre-commit` and `.husky/pre-push` are agent-owned integration content because the accepted contract declares them as the materialized lifecycle surface. Core still owns validation, staging, commit, downstream unlock, and repair task injection.
 
 ## 3. Upstream Freeze
 
@@ -67,7 +67,7 @@ Provider native compact is fallback only. It must not replace the product-owned 
 
 At `Diagram Modules` start, hooks are lifecycle-minimal and stack-neutral.
 
-`Quality Gates Baseline` may create stack-specific scripts/configs/manifests after acceptance. Core validates the manifest and uses the Hook Registry to regenerate hook wiring. Agents must not hand-edit hook structure as the source of truth.
+`Quality Gates Baseline` may create stack-specific scripts/configs/manifests after acceptance. The Phase 3 agent must wire every accepted required gate into the managed hook surface declared by the contract. Core validates the manifest and hook files, but Core must not be the hidden actor that finishes provider-deferred hook wiring after the provider reports content readiness.
 
 After integrated Quality Gates, Core unlocks Development Tree read model but does not automatically start all branch agents. Product Part / Cluster / Module nodes are startable units. A node Start command must validate clean Git and the materialized node folder, persist/use the selected provider/model/reasoning defaults, create only that node's draft artifacts, and create only that node's workflow session.
 
@@ -100,7 +100,9 @@ participates in the plan/commit lifecycle:
   the accepted skeleton lifecycle state.
 - `Quality Gates Baseline`: `quality-gates.json` flags are not enough; required
   gates must be wired into lifecycle hooks and the managed plan transaction must
-  be accepted.
+  be accepted. An accepted attempt with `integrationState: "in_progress"` is
+  already a repairable integration attempt; Core must validate required hook
+  calls even when `integrated` remains `false`.
 
 If acceptance fails, Core must:
 

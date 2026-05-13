@@ -6,6 +6,8 @@ Accepted for all managed workflow stages before code implementation starts.
 
 **2026-05-13 accepted lifecycle reference:** release `1.2.249` closes the managed orchestration retrofit for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`. Quality Gates Baseline now follows the same durable shape as Application Skeleton: Core-gated draft, user-led review, Core-owned acceptance commit, Core-led integration, and a persistent post-completion user-return phase. Core owns: `docs: draft quality gates contract` (Phase 1), `docs: revise quality gates contract - revision N` (Phase 2 review), `docs: accept quality gates contract` (Phase 2 acceptance), `docs: repair quality gates <phase> attempt N` (any phase repair), `feat: integrate quality gates baseline` (Phase 3, including split integration tasks), and `docs: revise quality gates user return revision N` (Phase 4 post-completion). Agents never run Git directly for any of these messages.
 
+**2026-05-13 hotfix reference:** release `1.2.250` hardens Quality Gates Phase 3 against provider differences. After `docs: accept quality gates contract`, a provider attempt with `integrationState: "in_progress"` is enough for Core to validate required lifecycle hook wiring even while `integrated` is still `false`. Missing required calls in `.husky/pre-commit` or `.husky/pre-push` become a Phase 3 repair task and provider-visible actionable feedback, not a wait-only Core boundary.
+
 This document does not decide the implementation/code-generation phase. Code commits may reuse the same principle later, but only after a separate design decision for worktrees, branches, ownership manifests, tests, and merge gates.
 
 ## Decision
@@ -81,7 +83,7 @@ Examples:
 
 - `Diagram Modules`: `.codeai-hub/<workspaceSlug>/diagram_modules/**`
 - `Application Skeleton`: `.codeai-hub/<workspaceSlug>/application_skeleton/**` and the skeleton materialized production paths declared by the accepted map.
-- `Quality Gates Baseline`: draft/review owns `.codeai-hub/<workspaceSlug>/quality_gates/**`; integration additionally owns only gate scripts, package manifest files, tool configs, and Core hook-registry output explicitly required by the accepted quality-gates contract.
+- `Quality Gates Baseline`: draft/review owns `.codeai-hub/<workspaceSlug>/quality_gates/**`; integration additionally owns only gate scripts, package manifest files, tool configs, `.husky/pre-commit`, `.husky/pre-push`, and hook-registry output explicitly required by the accepted quality-gates contract.
 - Development Tree documentation node: only that node's draft/specification/contract paths and the Core-owned node lifecycle metadata required for that node.
 
 Any dirty file outside the active stage allowlist is a hard blocker.
@@ -101,6 +103,8 @@ Every managed-stage provider prompt must include an explicit managed context pre
 For `Diagram Modules`, Core owns the automatic Phase 1 conversation until all Product Parts declared in `product-parts.index.md` have been accepted and committed one at a time. After that, Core stops automatic continuation and opens the user-owned review phase; every later user correction is a separate Core-tracked microtask and commit boundary.
 
 For `Application Skeleton` and `Quality Gates Baseline`, Core owns the same post-completion user-return boundary after materialization/integration acceptance. User-return turns that request changes create concrete `revisionN` task pairs and commits; discussion-only turns remain in session history.
+
+Quality Gates Phase 3 prompts must not tell providers to defer accepted required hook wiring to Core. During Phase 3 integration, the selected required calls inside `.husky/pre-commit` and `.husky/pre-push` are agent-owned content; Core owns validation, staging, commit, plan advancement, and any repair feedback after the provider turn completes.
 
 Provider-specific shell capability can be useful for diagnostics, but it is not part of the managed documentation lifecycle contract.
 
