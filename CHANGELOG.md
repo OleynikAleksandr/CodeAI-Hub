@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.245] - 2026-05-13
+### Fixed
+- **Quality Gates acceptance now uses the committed workspace ledger.** Progress derives `acceptanceCommitted` from `doc/TODO/workspace.plan.md` accepted commit evidence, matching Application Skeleton, so `docs: accept quality gates contract` can trigger the Phase 3 integration continuation even when `quality-gates.json` still says `acceptanceCommitted: false`.
+- **Managed review revisions are injected before the commit transaction.** Application Skeleton and Quality Gates now create the concrete `revisionN.task1` pair before Core commits an artifact-changing review/user-return turn, keeping the stable review anchor open without creating generic follow-up tasks.
+- **Stale Phase 2 review tasks are closed on acceptance.** Acceptance now closes the current `phase2.review.taskN` anchor, including legacy synthetic `task2` entries, and the bundled shim refuses to manufacture `Continue managed ...` tasks for managed review/user-return anchors.
+- **Cross-stage regressions lock the repaired lifecycle.** Application Skeleton and Quality Gates now cover the one-correction-then-accept path, while Diagram Modules user-return coverage verifies it does not regress into generic continuation tasks.
+
+### Tests
+- Targeted managed review-anchor cleanup verification passed: `47/47` tests across Quality Gates progress/continuation, managed post-turn arbitration, Application Skeleton and Quality Gates mutators, and Application Skeleton, Quality Gates, and Diagram Modules shim lifecycle tests.
+- `npx ultracite check` passed for the changed progress, post-turn, mutator, shim, and regression files.
+- `npm run build --workspace packages/core` passed before release packaging.
+
 ## [1.2.244] - 2026-05-12
 ### Fixed
 - **Quality Gates acceptance now survives an in-flight post-turn pass.** If Core records `docs: accept quality gates contract` while an earlier Quality Gates post-turn arbitration is still running, the follow-up continuation is now queued and replayed instead of being dropped as a concurrent invocation.
