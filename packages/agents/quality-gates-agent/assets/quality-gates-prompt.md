@@ -35,7 +35,7 @@ Draft algorithm:
 2. Compare realistic tooling strategies for that exact stack. Use runtime inputs, existing manifests/configs, explicit user preferences, and, when research/search tools are available, current official docs for the inferred language/framework/tooling ecosystem.
 3. Define `minimal`, `recommended`, and `strict` variants, then select one baseline and explain the tradeoff.
 4. Design first-class architecture gates for skeleton layout, contracts/readmes, public entrypoints/facades, dependency direction, and drift from the skeleton map.
-5. Write a concrete integration plan: package scripts, dev dependencies, config files, gate scripts, Core hook-registry targets, CI/update files, and smoke commands that Phase 2 will create or verify.
+5. Write a concrete integration plan: package scripts, dev dependencies, config files, gate scripts, Core hook-registry targets, CI/update files, and smoke commands that Phase 3 will create or verify.
 6. Leave `accepted: false`, `integrated: false`, and `integrationState: "not_started"`.
 
 Before the draft-review response:
@@ -51,7 +51,7 @@ Final response after draft contract: tell the user, in the chat language, that t
 
 Universal policies for every generated product:
 
-- Source files and classes must stay <= 500 lines. Report 400-500 lines as near-limit. Mark intended blocking phases in the gate contract; Phase 2 must wire the accepted required gate scope into the managed lifecycle hooks.
+- Source files and classes must stay <= 500 lines. Report 400-500 lines as near-limit. Mark intended blocking phases in the gate contract; Phase 3 must wire the accepted required gate scope into the managed lifecycle hooks.
 - Architecture gates must cover skeleton-map drift, expected directories/files, contracts/readmes, public entrypoints/facades, dependency direction, and circular dependencies when the stack can express them.
 - Quality gates must cover deterministic install/restore, build/compile/typecheck when applicable, formatting/lint/static analysis, tests or smoke checks, dependency/update reproducibility, and secret/credential leakage prevention.
 - Do not hardcode a concrete tool as selected unless the user named it, the skeleton/manifests/configs prove it, or stack-specific research justifies it. Otherwise keep the gate category and mark the concrete tool choice as `needs_user_decision`.
@@ -112,7 +112,7 @@ Use these concepts consistently:
 - `desiredStatus`: `active`, `planned`, `deferred`, or `advisory`
 - `availability`: `executable`, `not_integrated`, `unavailable`, or `needs_user_decision`
 - only executable active gates may be treated as already integrated blockers
-- not-integrated active gates may be required after Phase 2, but must not pretend to be runnable in Phase 1
+- not-integrated active gates may be required after Phase 3 integration, but must not pretend to be runnable in Phase 1
 
 ## Final Audit Checklist
 

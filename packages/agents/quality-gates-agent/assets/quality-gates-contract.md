@@ -58,8 +58,8 @@
 - `desiredStatus`: `active`, `planned`, `deferred`, or `advisory`.
 - `availability`: `executable`, `not_integrated`, `unavailable`, or `needs_user_decision`.
 - `integrationRequired` is `true` when scripts/configs/hooks/devDependencies still need to be created.
-- `plannedIntegrationPaths` names the future files or config surfaces Phase 2 will touch.
-- `integratedPaths` names real paths created or verified during Phase 2.
+- `plannedIntegrationPaths` names the future files or config surfaces Phase 3 will touch.
+- `integratedPaths` names real paths created or verified during Phase 3.
 - `integratedPaths` must include `.husky/pre-commit` or `.husky/pre-push` when non-empty required hook scopes are wired.
 - `deferredIntegration` explains advisory, deferred, or non-required infrastructure intentionally skipped during Phase 3. It must not contain gate ids that remain in required arrays.
 - Concrete tools must be selected from user preference, project evidence, or stack-specific research. Otherwise keep the gate category and mark availability as `needs_user_decision`.
