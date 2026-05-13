@@ -15,6 +15,8 @@ const STATIC_QUALITY_GATES_PHASE_RE =
 const LEGACY_STREAM_TASK_RE = /quality-gates\.stream1\.task2/u;
 const INTEGRATION_TASK_RE = /quality-gates\.phase3\.integration\.task1/u;
 const INCLUDED_IN_COMMIT_RE = /included-in-commit/u;
+const SYNTHETIC_REVIEW_TASK_RE = /quality-gates\.phase2\.review\.task2/u;
+const GENERIC_CONTINUE_RE = /Continue managed quality_gates updates/u;
 const USER_RETURN_ANCHOR_TASK_ID = "quality-gates.phase4.user-return.task1";
 const USER_RETURN_REVISION1_MESSAGE =
   "docs: revise quality gates user return revision 1";
@@ -245,6 +247,91 @@ test("quality gates shim opens the phase 4 idle anchor only after validated inte
     );
     assert.doesNotMatch(userReturnPlan, USER_RETURN_REVISION1_TASK_RE);
     assert.doesNotMatch(userReturnPlan, INCLUDED_IN_COMMIT_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("quality gates shim keeps one-correction-then-accept on revision and integration pairs", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await configureGit(workspaceRoot);
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "quality_gates",
+    });
+
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const planPath = path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH);
+    const artifactRoot = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/quality_gates"
+    );
+    await mkdir(artifactRoot, { recursive: true });
+    await writeFile(
+      path.join(artifactRoot, "quality-gates.md"),
+      "# Quality Gates\n",
+      "utf8"
+    );
+    await writeFile(
+      path.join(artifactRoot, "quality-gates.json"),
+      `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: false }, null, 2)}\n`,
+      "utf8"
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "docs: draft quality gates contract"
+    );
+
+    const reviewPlan = await readFile(planPath, "utf8");
+    const revisionInjection = injectQualityGatesTaskPair({
+      kind: "review_revision",
+      planText: reviewPlan,
+    });
+    assert.ok(revisionInjection);
+    await writeFile(planPath, revisionInjection.nextPlanText, "utf8");
+    await writeFile(
+      path.join(artifactRoot, "quality-gates.md"),
+      "# Quality Gates\n\nRevision 1\n",
+      "utf8"
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "docs: revise quality gates contract - revision 1"
+    );
+
+    const revisedPlan = await readFile(planPath, "utf8");
+    assert.doesNotMatch(revisedPlan, SYNTHETIC_REVIEW_TASK_RE);
+    assert.doesNotMatch(revisedPlan, GENERIC_CONTINUE_RE);
+    const acceptanceInjection = injectQualityGatesTaskPair({
+      kind: "acceptance",
+      planText: revisedPlan,
+    });
+    assert.ok(acceptanceInjection);
+    await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
+    await writeFile(
+      path.join(artifactRoot, "quality-gates.json"),
+      `${JSON.stringify({ schema: "codeai-quality-gates-v1", accepted: true, acceptanceCommitted: false }, null, 2)}\n`,
+      "utf8"
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "docs: accept quality gates contract"
+    );
+
+    const integrationPlan = await readFile(planPath, "utf8");
+    assertImmediateCommitPair(
+      integrationPlan,
+      "quality-gates.phase3.integration.task1",
+      "feat: integrate quality gates baseline"
+    );
+    assert.doesNotMatch(integrationPlan, SYNTHETIC_REVIEW_TASK_RE);
+    assert.doesNotMatch(integrationPlan, GENERIC_CONTINUE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

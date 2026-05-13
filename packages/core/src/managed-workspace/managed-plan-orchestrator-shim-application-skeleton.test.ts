@@ -18,6 +18,8 @@ const APPLICATION_SKELETON_ACTIVE_RE = /"activeStage": "application_skeleton"/u;
 const UNLOCKED_QUALITY_GATES_RE = /"unlockedStages": \[[\s\S]*"quality_gates"/u;
 const INCLUDED_IN_COMMIT_RE = /included-in-commit/u;
 const MATERIALIZATION_TASK_RE = /phase3\.materialize/u;
+const SYNTHETIC_REVIEW_TASK_RE = /application-skeleton\.phase2\.review\.task2/u;
+const GENERIC_CONTINUE_RE = /Continue managed application_skeleton updates/u;
 
 const createWorkspaceRoot = (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "app-skeleton-shim-"));
@@ -208,6 +210,86 @@ test("application skeleton shim grows the child plan dynamically with paired com
       await readFile(path.join(workspaceRoot, WORKSPACE_PLAN_PATH), "utf8"),
       UNLOCKED_QUALITY_GATES_RE
     );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("application skeleton shim keeps one-correction-then-accept on revision and materialization pairs", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    await configureGit(workspaceRoot);
+    await new ManagedPlanOrchestratorInstaller().install(workspaceRoot, {
+      initialStage: "application_skeleton",
+    });
+
+    const scriptPath = path.join(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    const planPath = path.join(workspaceRoot, APPLICATION_PLAN_PATH);
+    const artifactRoot = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/application_skeleton"
+    );
+    await mkdir(artifactRoot, { recursive: true });
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton.md"),
+      "# Application Skeleton\n",
+      "utf8"
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "docs: draft application skeleton contract"
+    );
+
+    const reviewPlan = await readFile(planPath, "utf8");
+    const revisionInjection = injectApplicationSkeletonTaskPair({
+      kind: "review_revision",
+      planText: reviewPlan,
+    });
+    assert.ok(revisionInjection);
+    await writeFile(planPath, revisionInjection.nextPlanText, "utf8");
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton.md"),
+      "# Application Skeleton\n\nRevision 1\n",
+      "utf8"
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "docs: revise application skeleton review revision 1"
+    );
+
+    const revisedPlan = await readFile(planPath, "utf8");
+    assert.doesNotMatch(revisedPlan, SYNTHETIC_REVIEW_TASK_RE);
+    assert.doesNotMatch(revisedPlan, GENERIC_CONTINUE_RE);
+    const acceptanceInjection = injectApplicationSkeletonTaskPair({
+      kind: "acceptance",
+      planText: revisedPlan,
+    });
+    assert.ok(acceptanceInjection);
+    await writeFile(planPath, acceptanceInjection.nextPlanText, "utf8");
+    await writeFile(
+      path.join(artifactRoot, "application-skeleton-map.json"),
+      createAcceptedApplicationSkeletonMap(),
+      "utf8"
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "docs: accept application skeleton contract"
+    );
+
+    const materializationPlan = await readFile(planPath, "utf8");
+    assertImmediateCommitPair(
+      materializationPlan,
+      "application-skeleton.phase3.materialize.task1",
+      "feat: materialize application skeleton"
+    );
+    assert.doesNotMatch(materializationPlan, SYNTHETIC_REVIEW_TASK_RE);
+    assert.doesNotMatch(materializationPlan, GENERIC_CONTINUE_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

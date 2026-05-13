@@ -24,6 +24,8 @@ const USER_RETURN_PLAN_COMMIT_RE =
   /Git Commit: `docs: revise diagram modules user return revision 1`/u;
 const USER_REVIEW_TASK_RE = /diagram-modules\.user-review\.task1/u;
 const USER_REVIEW_COMMIT_RE = /docs: review diagram modules product map/u;
+const USER_RETURN_TASK2_RE = /diagram-modules\.user-return\.task2/u;
+const GENERIC_CONTINUE_RE = /Continue managed diagram_modules updates/u;
 
 const createWorkspaceRoot = (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "managed-diagram-shim-"));
@@ -144,6 +146,12 @@ test("Diagram Modules final Product Part opens a persistent user-return revision
 
     assert.match(revisionStatus.stdout, USER_RETURN_REVISION2_TASK_RE);
     assert.match(revisionStatus.stdout, USER_RETURN_REVISION2_COMMIT_RE);
+    const revisionPlan = await readFile(
+      path.join(workspaceRoot, DIAGRAM_STAGE_PLAN_PATH),
+      "utf8"
+    );
+    assert.doesNotMatch(revisionPlan, USER_RETURN_TASK2_RE);
+    assert.doesNotMatch(revisionPlan, GENERIC_CONTINUE_RE);
     assert.equal(await runGit(workspaceRoot, ["status", "--short"]), "");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
