@@ -207,6 +207,11 @@ test("post-turn service injects Phase 3 Quality Gates repair after invalid accep
           accepted: true,
           commands: { "qg-secret-scan": { id: "qg-secret-scan" } },
           integrated: true,
+          integratedPaths: [
+            "scripts/qg/run.mjs",
+            ".oxlintrc.json",
+            "tsconfig.qg.build.json",
+          ],
           integrationState: "integrated",
           requiredBeforeCommit: ["qg-secret-scan"],
           schema: "codeai-quality-gates-v1",
@@ -217,6 +222,13 @@ test("post-turn service injects Phase 3 Quality Gates repair after invalid accep
     );
     await git(workspaceRoot, ["add", "."]);
     await git(workspaceRoot, ["commit", "-m", "baseline"]);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/qg/run.mjs",
+      "console.log('ok');\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, ".oxlintrc.json", "{}\n");
+    await writeWorkspaceFile(workspaceRoot, "tsconfig.qg.build.json", "{}\n");
 
     const service = new ManagedWorkflowPostTurnService({
       logger: new Logger("error"),

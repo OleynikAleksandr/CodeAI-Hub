@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "aa61b6783",
+  "lastRecordedCommit": "14068a80a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase35.prompt-hook-ownership.task1",
-  "expectedCommitMessage": "docs: require quality gates hook materialization",
+  "currentTaskId": "quality-gates-implementation.phase35.dynamic-ownership-regressions.task1",
+  "expectedCommitMessage": "test: cover dynamic quality gates ownership repair",
   "debt": {
-    "expectedCommitMessage": "docs: require quality gates hook materialization",
-    "preCommitHead": "aa61b6783",
+    "expectedCommitMessage": "test: cover dynamic quality gates ownership repair",
+    "preCommitHead": "14068a80a",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase35.prompt-hook-ownership.task1"
+    "taskId": "quality-gates-implementation.phase35.dynamic-ownership-regressions.task1"
   }
 }
 ```
@@ -460,12 +460,12 @@
 183. [DONE] `quality-gates-implementation.phase35.dynamic-ownership.task1` Classify Quality Gates-owned integration files from the accepted contract plus known QG toolchain paths, and make failed-integration action lines provider-actionable unless dirty files are truly outside the Quality Gates stage (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `fix: classify dynamic quality gates integration ownership`).
 184. [DONE] Git Commit: `fix: classify dynamic quality gates integration ownership` (hash: aa61b6783)
 185. [DONE] `quality-gates-implementation.phase35.prompt-hook-ownership.task1` Strengthen the Quality Gates prompt/reference so Phase 3 cannot finish by declaring Husky hook regeneration as Core-owned pending work (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: require quality gates hook materialization`).
-186. [PENDING] Git Commit: `docs: require quality gates hook materialization` (hash: TBD)
+186. [DONE] Git Commit: `docs: require quality gates hook materialization` (hash: 14068a80a)
 
 ### Stream: Dynamic Ownership Regressions
 
-187. [TODO] `quality-gates-implementation.phase35.dynamic-ownership-regressions.task1` Add regressions for dynamic Quality Gates ownership, provider-actionable dirty-path repair feedback, and Phase 3 repair targeting with `scripts/qg/**` / Oxc config paths (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts`; expected commit: `test: cover dynamic quality gates ownership repair`).
-188. [TODO] Git Commit: `test: cover dynamic quality gates ownership repair` (hash: TBD)
+187. [DONE] `quality-gates-implementation.phase35.dynamic-ownership-regressions.task1` Add regressions for dynamic Quality Gates ownership, provider-actionable dirty-path repair feedback, and Phase 3 repair targeting with `scripts/qg/**` / Oxc config paths (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts`; expected commit: `test: cover dynamic quality gates ownership repair`).
+188. [PENDING] Git Commit: `test: cover dynamic quality gates ownership repair` (hash: TBD)
 189. [TODO] `quality-gates-implementation.phase35.prompt-regressions.task1` Lock bundled Quality Gates template wording so hook wiring remains agent-owned in Phase 3 and integrated state cannot defer required Husky hooks to Core (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts`; expected commit: `test: lock quality gates hook ownership wording`).
 190. [TODO] Git Commit: `test: lock quality gates hook ownership wording` (hash: TBD)
 

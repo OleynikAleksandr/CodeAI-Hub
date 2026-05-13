@@ -131,6 +131,66 @@ test("managed Git status classifies dirty files by owning managed stage", async 
   }
 });
 
+test("managed Git status classifies dynamic Quality Gates integration paths", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-git-stage-gate-qg-dynamic-")
+  );
+  const workspaceSlug = "demo";
+
+  try {
+    await initCommittedWorkspace(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
+      `${JSON.stringify(
+        {
+          integratedPaths: [
+            "scripts/qg/run.mjs",
+            "tsconfig.qg.build.json",
+            ".oxlintrc.json",
+            "tools/qg/custom-config.json",
+          ],
+          schema: "codeai-quality-gates-v1",
+        },
+        null,
+        2
+      )}\n`
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync("git", ["commit", "-m", "docs: qg contract"], {
+      cwd: workspaceRoot,
+    });
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/qg/run.mjs",
+      "console.log('ok');\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, ".oxlintrc.json", "{}\n");
+    await writeWorkspaceFile(workspaceRoot, ".oxfmtrc.json", "{}\n");
+    await writeWorkspaceFile(workspaceRoot, "tsconfig.qg.build.json", "{}\n");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "tools/qg/custom-config.json",
+      "{}\n"
+    );
+
+    const status = await readManagedGitStatus(workspaceRoot, workspaceSlug);
+
+    assert.deepEqual(status.dirtyByStage.quality_gates, [
+      ".oxfmtrc.json",
+      ".oxlintrc.json",
+      "scripts/qg/run.mjs",
+      "tools/qg/custom-config.json",
+      "tsconfig.qg.build.json",
+    ]);
+    assert.deepEqual(status.dirtyByStage.diagram_modules, []);
+    assert.deepEqual(status.dirtyByStage.application_skeleton, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("managed Git status ignores volatile Core metadata after restart", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "managed-git-stage-gate-volatile-")
