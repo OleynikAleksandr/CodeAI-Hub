@@ -176,6 +176,58 @@ test("Quality Gates progress rejects aggregate-only lifecycle hook runners", asy
   }
 });
 
+test("Quality Gates progress fails accepted in-progress attempts with missing hooks", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-progress-in-progress-")
+  );
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo/quality_gates/quality-gates.md",
+      "# Quality Gates Baseline\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo/quality_gates/quality-gates.json",
+      `${JSON.stringify(
+        {
+          accepted: true,
+          acceptanceCommitted: false,
+          commands: {
+            "qg-secret-scan": {
+              availability: "executable",
+              desiredStatus: "active",
+              id: "qg-secret-scan",
+            },
+          },
+          integrated: false,
+          integrationState: "in_progress",
+          requiredBeforeCommit: ["qg-secret-scan"],
+          schema: "codeai-quality-gates-v1",
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceAcceptanceLedger(workspaceRoot);
+
+    const snapshot = await readQualityGatesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+
+    assert.equal(snapshot?.accepted, true);
+    assert.equal(snapshot?.acceptanceCommitted, true);
+    assert.equal(snapshot?.integrated, false);
+    assert.equal(snapshot?.substep, "failed");
+    assert.deepEqual(snapshot?.validationErrors, [
+      "Quality gate qg-secret-scan is missing from .husky/pre-commit",
+    ]);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("Quality Gates progress derives acceptanceCommitted from workspace accepted commits", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "quality-gates-progress-ledger-")

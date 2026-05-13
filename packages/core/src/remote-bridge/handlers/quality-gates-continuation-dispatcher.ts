@@ -10,7 +10,7 @@ const buildIntegrationContinuationPrompt = (): string =>
     "Core accepted and committed the Quality Gates draft contract.",
     "Begin Phase 3 integration in this same session per your Quality Gates agent instructions.",
     "Wire only the accepted gates into the materialized Application Skeleton (package manifests, lockfile, gate scripts, tool configs) and update both Quality Gates artifacts to record actual integration evidence.",
-    "Do not edit `.husky/**` directly; Core owns hook regeneration. Stop with content readiness when integration is complete and Core will own the managed commit and plan advancement.",
+    "During Phase 3, `.husky/pre-commit` and `.husky/pre-push` are Quality Gates integration-owned files: wire every selected required gate explicitly into those managed lifecycle hooks. Stop with content readiness when integration is complete and Core will own validation, the managed commit, and plan advancement.",
   ].join("\n");
 
 const resolveLatestStageSessionId = (

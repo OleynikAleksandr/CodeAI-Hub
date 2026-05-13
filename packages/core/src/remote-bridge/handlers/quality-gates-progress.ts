@@ -161,10 +161,10 @@ const validateHookCommands = (params: {
 
 const validateDeclaredHookIntegration = async (params: {
   readonly contract: Record<string, unknown> | null;
-  readonly declaredIntegrated: boolean;
+  readonly shouldValidateHooks: boolean;
   readonly workspaceRoot: string;
 }): Promise<readonly string[]> => {
-  if (!params.declaredIntegrated) {
+  if (!params.shouldValidateHooks) {
     return [];
   }
   const [preCommitText, prePushText] = await Promise.all([
@@ -190,6 +190,20 @@ const validateDeclaredHookIntegration = async (params: {
   ];
 };
 
+const hasAcceptedIntegrationAttemptStarted = (params: {
+  readonly acceptanceCommitted: boolean;
+  readonly accepted: boolean;
+  readonly declaredIntegrated: boolean;
+  readonly integrationState: string | null;
+}): boolean =>
+  params.declaredIntegrated ||
+  (params.accepted &&
+    params.acceptanceCommitted &&
+    (params.integrationState === "in_progress" ||
+      params.integrationState === "integrating" ||
+      params.integrationState === "integrated" ||
+      params.integrationState === "failed"));
+
 const resolveSubstep = (params: {
   readonly accepted: boolean;
   readonly declaredIntegrated: boolean;
@@ -202,7 +216,7 @@ const resolveSubstep = (params: {
   if (params.integrated) {
     return "integrated";
   }
-  if (params.declaredIntegrated && params.validationErrors.length > 0) {
+  if (params.validationErrors.length > 0) {
     return "failed";
   }
   if (params.integrationState === "in_progress") {
@@ -264,9 +278,15 @@ export const readQualityGatesProgressSnapshot = async (params: {
   const integrationState = readIntegrationState(contract);
   const declaredIntegrated =
     accepted && commandContractReady && readIntegratedFlag(contract);
+  const shouldValidateHooks = hasAcceptedIntegrationAttemptStarted({
+    acceptanceCommitted,
+    accepted,
+    declaredIntegrated,
+    integrationState,
+  });
   const validationErrors = await validateDeclaredHookIntegration({
     contract,
-    declaredIntegrated,
+    shouldValidateHooks,
     workspaceRoot: params.workspaceRoot,
   });
   const integrated = declaredIntegrated && validationErrors.length === 0;

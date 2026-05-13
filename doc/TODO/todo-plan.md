@@ -8,15 +8,15 @@
   "planId": "quality-gates-provider-neutral-in-progress-repair-1.2.250",
   "branch": "main",
   "baseHead": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
-  "lastRecordedCommit": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
+  "lastRecordedCommit": "9380a644b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
-  "currentTaskId": "hotfix.phase1.intake.task1",
-  "expectedCommitMessage": "docs: plan provider-neutral quality gates in-progress repair",
+  "currentTaskId": "hotfix.phase2.qg-state.task1",
+  "expectedCommitMessage": "fix: detect incomplete quality gates integration",
   "debt": {
-    "expectedCommitMessage": "docs: plan provider-neutral quality gates in-progress repair",
-    "preCommitHead": "a7c01210f",
+    "expectedCommitMessage": "fix: detect incomplete quality gates integration",
+    "preCommitHead": "9380a644b",
     "stage": "commit_pending",
-    "taskId": "hotfix.phase1.intake.task1"
+    "taskId": "hotfix.phase2.qg-state.task1"
   }
 }
 ```
@@ -46,14 +46,14 @@
 ### Stream: Scope And Plan
 
 1. [DONE] `hotfix.phase1.intake.task1` Create provider-neutral Quality Gates in-progress repair scope and docs index entry (scope: `doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan provider-neutral quality gates in-progress repair`).
-2. [PENDING] Git Commit: `docs: plan provider-neutral quality gates in-progress repair` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan provider-neutral quality gates in-progress repair` (hash: 9380a644b)
 
 ## Phase 2 — Core State Machine Fix (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Quality Gates Repair Classification
 
-3. [TODO] `hotfix.phase2.qg-state.task1` Fix Quality Gates continuation prompt and progress classification for accepted in-progress integration attempts with missing hooks (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts`; expected commit: `fix: detect incomplete quality gates integration`)
-4. [TODO] Git Commit: `fix: detect incomplete quality gates integration` (hash: TBD)
+3. [DONE] `hotfix.phase2.qg-state.task1` Fix Quality Gates continuation prompt and progress classification for accepted in-progress integration attempts with missing hooks (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts`; expected commit: `fix: detect incomplete quality gates integration`)
+4. [PENDING] Git Commit: `fix: detect incomplete quality gates integration` (hash: TBD)
 5. [TODO] `hotfix.phase2.qg-postturn.task1` Add provider-neutral post-turn regression and update managed workflow SSOT (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`; expected commit: `test: cover quality gates in-progress repair`)
 6. [TODO] Git Commit: `test: cover quality gates in-progress repair` (hash: TBD)
 
