@@ -4,7 +4,7 @@ const STATUS_TOKEN_RE = /\[(TODO|IN_PROGRESS|DONE|BLOCKED|PENDING)\]/u;
 const TASK_NUMBER_PREFIX_RE = /^\d+\. /u;
 const REVIEW_REVISION_RE =
   /`quality-gates\.phase2\.review\.revision(\d+)\.task1`/gu;
-const REVIEW_TASK_ID = "quality-gates.phase2.review.task1";
+const REVIEW_TASK_ID_RE = /^quality-gates\.phase2\.review\.task\d+$/u;
 const REPAIR_RE = /`quality-gates\.[^`]+\.repair(\d+)\.task1`/gu;
 const REVIEW_ACCEPTED_WITHOUT_REVISION_HASH =
   "hash: not-created-user-accepted-without-review-revision";
@@ -157,7 +157,7 @@ const closeOpenReviewAnchorForAcceptance = (params: {
   readonly pairedCommitLineIndex: number;
   readonly taskLineIndex: number;
 }): void => {
-  if (params.currentTaskId !== REVIEW_TASK_ID) {
+  if (!REVIEW_TASK_ID_RE.test(params.currentTaskId)) {
     return;
   }
   params.lines[params.taskLineIndex] = replaceStatus(

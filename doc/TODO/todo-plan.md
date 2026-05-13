@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "152c0928c",
+  "lastRecordedCommit": "9e38febcf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase29.precommit-revision-injection.task1",
-  "expectedCommitMessage": "fix: inject managed review revisions before commits",
+  "currentTaskId": "quality-gates-implementation.phase29.stale-anchor-guard.task1",
+  "expectedCommitMessage": "fix: prevent stale managed review anchors",
   "debt": {
-    "expectedCommitMessage": "fix: inject managed review revisions before commits",
-    "preCommitHead": "152c0928c",
+    "expectedCommitMessage": "fix: prevent stale managed review anchors",
+    "preCommitHead": "9e38febcf",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase29.precommit-revision-injection.task1"
+    "taskId": "quality-gates-implementation.phase29.stale-anchor-guard.task1"
   }
 }
 ```
@@ -374,9 +374,9 @@
 ### Stream: Contract Review Revision Anchors
 
 141. [DONE] `quality-gates-implementation.phase29.precommit-revision-injection.task1` Move Application Skeleton and Quality Gates review/user-return revision injection ahead of the managed documentation commit transaction so real artifact-changing review turns commit concrete `revisionN.task1` pairs and then return to the stable review anchor instead of letting the generic plan fallback create `phase2.review.task2` (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts`; expected commit: `fix: inject managed review revisions before commits`).
-142. [PENDING] Git Commit: `fix: inject managed review revisions before commits` (hash: TBD)
-143. [TODO] `quality-gates-implementation.phase29.stale-anchor-guard.task1` Harden managed child-plan mutation so Application Skeleton and Quality Gates acceptance cannot leave stale synthetic Phase 2 review pairs open, and the generic shim fallback cannot silently manufacture `Continue managed ...` tasks for managed contract-review anchors when explicit revision injection was required (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: prevent stale managed review anchors`).
-144. [TODO] Git Commit: `fix: prevent stale managed review anchors` (hash: TBD)
+142. [DONE] Git Commit: `fix: inject managed review revisions before commits` (hash: 9e38febcf)
+143. [DONE] `quality-gates-implementation.phase29.stale-anchor-guard.task1` Harden managed child-plan mutation so Application Skeleton and Quality Gates acceptance cannot leave stale synthetic Phase 2 review pairs open, and the generic shim fallback cannot silently manufacture `Continue managed ...` tasks for managed contract-review anchors when explicit revision injection was required (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: prevent stale managed review anchors`).
+144. [PENDING] Git Commit: `fix: prevent stale managed review anchors` (hash: TBD)
 145. [TODO] `quality-gates-implementation.phase29.cross-stage-regressions.task1` Add regression coverage for the one-correction-then-accept flow in Application Skeleton and Quality Gates, and verify Diagram Modules user-return revision flow does not regress into generic `Continue managed ...` fallback tasks (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `test: cover managed review anchor cleanup`).
 146. [TODO] Git Commit: `test: cover managed review anchor cleanup` (hash: TBD)
 147. [TODO] `quality-gates-implementation.phase29.verification.task1` Run targeted verification for the review-anchor cleanup repair across managed-workspace shim tests, post-turn service tests, and core build before any new release rebuild is requested (scope: `packages/core/src/managed-workspace, packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed review anchor cleanup`).

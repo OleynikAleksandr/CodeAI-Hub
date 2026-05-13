@@ -136,6 +136,8 @@ const nextTaskId = (taskId) => {
   }
   return \`\${match[1]}\${Number(match[2]) + 1}\`;
 };
+const MANAGED_REVIEW_ANCHOR_TASK_RE =
+  /^(application-skeleton\\.phase2\\.review\\.task\\d+|application-skeleton\\.phase4\\.user-return\\.task1|quality-gates\\.phase2\\.review\\.task\\d+|quality-gates\\.phase4\\.user-return\\.task1)$/u;
 
 const readTaskLine = (line) => {
   const match = TASK_LINE_RE.exec(line); return match ? { id: match[1], message: match[2] ?? null } : null;
@@ -240,6 +242,11 @@ const advancePlanForCommit = (message) => {
     (line, index) => index > commitLineIndex && readTaskLine(line)
   );
   const nextTask = readTaskLine(lines[nextTaskLineIndex] ?? "");
+  if (!nextTask && MANAGED_REVIEW_ANCHOR_TASK_RE.test(state.currentTaskId)) {
+    throw new Error(
+      \`Managed review/user-return revision task injection is required before committing \${state.currentTaskId}; refusing generic continuation task.\`
+    );
+  }
   const nextId = nextTask?.id ?? nextTaskId(state.currentTaskId);
   const nextMessage = nextTask ? nextTask.message : message;
   lines[taskLineIndex] = formatTaskLine(
