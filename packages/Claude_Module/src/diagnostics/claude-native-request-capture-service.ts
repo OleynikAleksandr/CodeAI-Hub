@@ -27,6 +27,7 @@ interface ClaudeNativeRequestCaptureAppliedTurnConfig {
   readonly providerId: string;
   readonly reasoningEffort?: string;
   readonly source: "settings_snapshot" | "switch_request";
+  readonly thinkingDisplaySyncEnabled?: boolean;
   readonly thinkingEnabled?: boolean;
 }
 
@@ -43,7 +44,7 @@ interface ClaudeNativeRequestCaptureAppliedInputEnvelope {
 interface ClaudeCaptureThinkingOptions {
   readonly effort?: string;
   readonly thinking: {
-    readonly display?: "summarized";
+    readonly display?: "summarized" | "omitted";
     readonly type: "adaptive" | "disabled";
   };
 }
@@ -142,8 +143,12 @@ const resolveThinkingOptions = (
   appliedTurnConfig?: ClaudeNativeRequestCaptureAppliedTurnConfig | null
 ): ClaudeCaptureThinkingOptions => {
   if (appliedTurnConfig?.thinkingEnabled) {
+    const display: "summarized" | "omitted" =
+      appliedTurnConfig.thinkingDisplaySyncEnabled === false
+        ? "omitted"
+        : "summarized";
     return {
-      thinking: { type: "adaptive", display: "summarized" },
+      thinking: { type: "adaptive", display },
       effort: readNonEmptyString(appliedTurnConfig.reasoningEffort) ?? "medium",
     };
   }

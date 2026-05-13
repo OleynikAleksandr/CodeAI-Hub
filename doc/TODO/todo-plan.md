@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-omitted-when-hidden-1.2.252",
   "branch": "main",
   "baseHead": "b4cdd457d",
-  "lastRecordedCommit": "866d6bf5e",
+  "lastRecordedCommit": "97a83eec5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_Reasoning_Omitted_When_Hidden.md",
-  "currentTaskId": "reasoning-omit.phase2.sdk-manager.task1",
-  "expectedCommitMessage": "feat: omit claude reasoning summary when hidden",
+  "currentTaskId": "reasoning-omit.phase2.capture.task1",
+  "expectedCommitMessage": "feat: mirror reasoning display selection in native capture",
   "debt": {
-    "expectedCommitMessage": "feat: omit claude reasoning summary when hidden",
-    "preCommitHead": "866d6bf5e",
+    "expectedCommitMessage": "feat: mirror reasoning display selection in native capture",
+    "preCommitHead": "97a83eec5",
     "stage": "commit_pending",
-    "taskId": "reasoning-omit.phase2.sdk-manager.task1"
+    "taskId": "reasoning-omit.phase2.capture.task1"
   }
 }
 ```
@@ -52,12 +52,12 @@
 ### Stream: SDK Manager
 
 3. [DONE] `reasoning-omit.phase2.sdk-manager.task1` Plumb `thinkingDisplaySyncEnabled` into `ClaudeSDKManager.resolveThinkingOptions` so the enabled-thinking branch picks `display: "summarized"` when the flag is `true` (or absent) and `display: "omitted"` when it is `false`; cover both branches with a unit test (scope: `packages/Claude_Module/src/sdk/claude-sdk-manager.ts, packages/Claude_Module/src/sdk/claude-sdk-manager.test.ts`; expected commit: `feat: omit claude reasoning summary when hidden`).
-4. [PENDING] Git Commit: `feat: omit claude reasoning summary when hidden` (hash: TBD)
+4. [DONE] Git Commit: `feat: omit claude reasoning summary when hidden` (hash: 97a83eec5)
 
 ### Stream: Native Capture Diagnostic
 
-5. [TODO] `reasoning-omit.phase2.capture.task1` Mirror the `thinkingDisplaySyncEnabled` signal into the diagnostic capture path: extend `ClaudeNativeRequestCaptureAppliedTurnConfig` and the local `resolveThinkingOptions` helper, widen the `display` union to `"summarized" | "omitted"`, and assert both outputs in capture tests (scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts, packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; expected commit: `feat: mirror reasoning display selection in native capture`).
-6. [TODO] Git Commit: `feat: mirror reasoning display selection in native capture` (hash: TBD)
+5. [DONE] `reasoning-omit.phase2.capture.task1` Mirror the `thinkingDisplaySyncEnabled` signal into the diagnostic capture path: extend `ClaudeNativeRequestCaptureAppliedTurnConfig` and the local `resolveThinkingOptions` helper, widen the `display` union to `"summarized" | "omitted"`, and assert both outputs in capture tests (scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts, packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; expected commit: `feat: mirror reasoning display selection in native capture`).
+6. [PENDING] Git Commit: `feat: mirror reasoning display selection in native capture` (hash: TBD)
 
 ### Stream: SSOT Docs
 

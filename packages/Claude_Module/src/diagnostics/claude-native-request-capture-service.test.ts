@@ -307,3 +307,62 @@ test("ClaudeNativeRequestCaptureService captures post-switch thinking off withou
   assert.equal("effort" in queryPayload.options, false);
   assert.deepEqual(queryPayload.options.settingSources, []);
 });
+
+test("ClaudeNativeRequestCaptureService mirrors hidden-thinking display selection", async () => {
+  const queryPayloads: {
+    readonly options: Record<string, unknown>;
+    readonly prompt: string;
+  }[] = [];
+  const service = new ClaudeNativeRequestCaptureService({
+    authManager: {
+      ensureProviderHomeSessionBootstrap: () => Promise.resolve(),
+      ensureSubscriptionAuth: () => Promise.resolve(),
+      getAuthEnvironment: () => ({}),
+    } as never,
+    installer: {
+      ensureInstalled: () => Promise.resolve(),
+      getExecutablePath: () => "/tmp/claude",
+      loadModule: () =>
+        Promise.resolve({
+          query: (payload: {
+            readonly options: Record<string, unknown>;
+            readonly prompt: string;
+          }) => {
+            queryPayloads.push(payload);
+            return emptyClaudeStream();
+          },
+        }),
+    } as never,
+    workspace: {
+      claudeProjectSlug: "workspace-slug",
+      defaultModel: "sonnet",
+      workspacePath: "/workspace",
+    },
+  });
+
+  await service.captureNativeRequest({
+    appliedTurnConfig: {
+      modelId: "opus",
+      providerId: "claudeCodeCli",
+      reasoningEffort: "high",
+      source: "switch_request",
+      thinkingDisplaySyncEnabled: false,
+      thinkingEnabled: true,
+    },
+    captureId: "capture-claude-hidden-thinking",
+    certificateEnv: {},
+    certificatePath: "/tmp/ca.pem",
+    probePrompt: "probe",
+    proxyUrl: "http://127.0.0.1:4444",
+    selectedModelId: "haiku",
+    workspacePath: "/workspace",
+  });
+
+  const queryPayload = queryPayloads[0];
+  assert.ok(queryPayload);
+  assert.deepEqual(queryPayload.options.thinking, {
+    type: "adaptive",
+    display: "omitted",
+  });
+  assert.equal(queryPayload.options.effort, "high");
+});
