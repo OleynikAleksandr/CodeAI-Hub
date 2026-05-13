@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "948f90da7",
+  "lastRecordedCommit": "1ce10740a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase35.shim-scope.task1",
-  "expectedCommitMessage": "fix: sync quality gates shim integration scope",
+  "currentTaskId": "quality-gates-implementation.phase35.verification.task1",
+  "expectedCommitMessage": "test: verify dynamic quality gates ownership repair",
   "debt": {
-    "expectedCommitMessage": "fix: sync quality gates shim integration scope",
-    "preCommitHead": "948f90da7",
+    "expectedCommitMessage": "test: verify dynamic quality gates ownership repair",
+    "preCommitHead": "1ce10740a",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase35.shim-scope.task1"
+    "taskId": "quality-gates-implementation.phase35.verification.task1"
   }
 }
 ```
@@ -472,12 +472,12 @@
 ### Stream: Installed Shim Scope
 
 191. [DONE] `quality-gates-implementation.phase35.shim-scope.task1` Sync the installed child-plan shim Quality Gates integration summary with dynamic QG toolchain paths so fallback child-plan text does not preserve the old `scripts/quality-gates/**`-only scope (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: sync quality gates shim integration scope`).
-192. [PENDING] Git Commit: `fix: sync quality gates shim integration scope` (hash: TBD)
+192. [DONE] Git Commit: `fix: sync quality gates shim integration scope` (hash: 1ce10740a)
 
 ### Stream: Verification
 
-193. [TODO] `quality-gates-implementation.phase35.verification.task1` Run targeted verification for dynamic Quality Gates ownership/action-policy repairs and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify dynamic quality gates ownership repair`).
-194. [TODO] Git Commit: `test: verify dynamic quality gates ownership repair` (hash: TBD)
+193. [DONE] `quality-gates-implementation.phase35.verification.task1` Run targeted verification for dynamic Quality Gates ownership/action-policy repairs and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify dynamic quality gates ownership repair`). Verification evidence (2026-05-13): `npx ultracite check packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts packages/agents/quality-gates-agent/assets/quality-gates-prompt.md packages/agents/quality-gates-agent/assets/quality-gates-contract.md packages/core/src/templates/bundled-templates.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts` passed (`36/36`); `npm run build --workspace packages/core` passed.
+194. [PENDING] Git Commit: `test: verify dynamic quality gates ownership repair` (hash: TBD)
 
 ## Phase 36 - Release Rebuild (owner: Codex, updated: 2026-05-13)
 
