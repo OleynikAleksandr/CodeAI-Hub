@@ -10,6 +10,7 @@
 - Core owns git setup, the lifecycle baseline inside `.husky` hooks, plan scripts, workspace plan state, active stage todo-plan state, and workflow lifecycle ledgers.
 - Quality Gates may create or update accepted gate scripts, configs, package scripts, dev dependencies, CI/update files, `quality-gates.json` manifest fields, and the Quality Gates hook wiring required by accepted `requiredBeforeCommit` / `requiredBeforePush` arrays.
 - Preserve Core lifecycle commands such as `plan:validate`. Append Quality Gates hook wiring instead of replacing the hook.
+- During Phase 3, required Quality Gates hook calls are agent-owned materialization. They must not be left as Core-owned pending regeneration.
 - Hook wiring evidence must include direct `npm run qg:<gate>` calls for every gate id in the accepted `requiredBeforeCommit` / `requiredBeforePush` arrays. Aggregate commands such as `npm run qg:before-commit` / `npm run qg:before-push` may exist as convenience commands, but they are not sufficient evidence by themselves.
 
 ## JSON Shape
@@ -61,6 +62,7 @@
 - `plannedIntegrationPaths` names the future files or config surfaces Phase 3 will touch.
 - `integratedPaths` names real paths created or verified during Phase 3.
 - `integratedPaths` must include `.husky/pre-commit` or `.husky/pre-push` when non-empty required hook scopes are wired.
+- `integratedPaths` must not omit `.husky/pre-commit` / `.husky/pre-push` while `integrated: true` if required hook scopes are non-empty.
 - `deferredIntegration` explains advisory, deferred, or non-required infrastructure intentionally skipped during Phase 3. It must not contain gate ids that remain in required arrays.
 - Concrete tools must be selected from user preference, project evidence, or stack-specific research. Otherwise keep the gate category and mark availability as `needs_user_decision`.
 - Source files and classes must stay <= 500 lines for every generated product; 400-500 lines is near-limit reporting.
@@ -78,4 +80,5 @@
 - `acceptanceCommitted: true` is written by Core after the acceptance commit lands; it gates the Phase 3 integration continuation.
 - `integrated: true` requires actual filesystem integration plus smoke evidence.
 - `integrated: true` requires explicit lifecycle hook wiring for every non-empty required hook scope.
+- `integrated: true` is invalid if required hook wiring is described as Core-owned pending regeneration.
 - Future agents must be able to run or cite gate commands without inventing missing scripts.

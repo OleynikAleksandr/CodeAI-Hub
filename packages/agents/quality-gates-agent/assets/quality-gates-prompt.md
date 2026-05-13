@@ -72,6 +72,8 @@ Integration begins only after Core sends the integration prompt that follows the
 
 Materialization is not complete until all accepted required gates have executable package scripts, real gate runner/config files where needed, explicit Husky hook calls, updated contract state, and smoke evidence. A Markdown/JSON update without `.husky/pre-commit` / `.husky/pre-push` wiring is an incomplete integration and must be repaired before the final response.
 
+During Phase 3, the Quality Gates hook section is agent-owned integration work. Do not describe `.husky/pre-commit` or `.husky/pre-push` updates as Core-owned pending regeneration, and do not finish while required hook calls are absent.
+
 Integration algorithm:
 
 1. Re-read `quality-gates.json` and `application-skeleton-map.json`.
@@ -83,6 +85,7 @@ Integration algorithm:
    - `.husky/pre-push` must explicitly call every gate id listed in `requiredBeforePush` as `npm run qg:<gate-id>`.
    - Aggregate scripts such as `qg:before-commit` or `qg:before-push` are allowed only as additional convenience commands; they are not sufficient hook wiring evidence by themselves.
    - Preserve existing Core lifecycle commands such as `plan:validate`; append the Quality Gates wiring instead of replacing the hook.
+   - If a required hook call is missing, repair `.husky/pre-commit` / `.husky/pre-push` directly; do not defer hook regeneration to Core.
 5. Avoid feature or business implementation code.
 6. Run the lightest feasible smoke checks for created gates.
 7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results only after the required hook scopes are actually wired. `deferredIntegration` may describe advisory/deferred/non-required items only; never defer a gate id that remains in `requiredBeforeCommit`, `requiredBeforePush`, `requiredBeforeModuleExecution`, or `requiredBeforeRelease`.
@@ -123,6 +126,7 @@ Before each final response, verify:
 - every required gate exists in `commands`;
 - each non-empty hook scope is actually wired into `.husky/pre-commit` / `.husky/pre-push` with explicit `npm run qg:<gate-id>` calls before `integrated: true`;
 - every required hook gate id has a matching exact `package.json` script key and matching `proposedCommand` in `quality-gates.json`;
+- `integrated: true` is never used when required hook wiring is described as Core-owned pending regeneration;
 - advisory gates have no blocking phases;
 - deferred/planned gates are not in active required arrays;
 - each not-integrated active gate has planned integration paths;

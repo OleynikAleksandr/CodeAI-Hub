@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "bf4f0fcc7",
+  "lastRecordedCommit": "aa61b6783",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase35.dynamic-ownership.task1",
-  "expectedCommitMessage": "fix: classify dynamic quality gates integration ownership",
+  "currentTaskId": "quality-gates-implementation.phase35.prompt-hook-ownership.task1",
+  "expectedCommitMessage": "docs: require quality gates hook materialization",
   "debt": {
-    "expectedCommitMessage": "fix: classify dynamic quality gates integration ownership",
-    "preCommitHead": "bf4f0fcc7",
+    "expectedCommitMessage": "docs: require quality gates hook materialization",
+    "preCommitHead": "aa61b6783",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase35.dynamic-ownership.task1"
+    "taskId": "quality-gates-implementation.phase35.prompt-hook-ownership.task1"
   }
 }
 ```
@@ -458,9 +458,9 @@
 ### Stream: Dynamic Ownership And Action Policy
 
 183. [DONE] `quality-gates-implementation.phase35.dynamic-ownership.task1` Classify Quality Gates-owned integration files from the accepted contract plus known QG toolchain paths, and make failed-integration action lines provider-actionable unless dirty files are truly outside the Quality Gates stage (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `fix: classify dynamic quality gates integration ownership`).
-184. [PENDING] Git Commit: `fix: classify dynamic quality gates integration ownership` (hash: TBD)
-185. [TODO] `quality-gates-implementation.phase35.prompt-hook-ownership.task1` Strengthen the Quality Gates prompt/reference so Phase 3 cannot finish by declaring Husky hook regeneration as Core-owned pending work (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: require quality gates hook materialization`).
-186. [TODO] Git Commit: `docs: require quality gates hook materialization` (hash: TBD)
+184. [DONE] Git Commit: `fix: classify dynamic quality gates integration ownership` (hash: aa61b6783)
+185. [DONE] `quality-gates-implementation.phase35.prompt-hook-ownership.task1` Strengthen the Quality Gates prompt/reference so Phase 3 cannot finish by declaring Husky hook regeneration as Core-owned pending work (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: require quality gates hook materialization`).
+186. [PENDING] Git Commit: `docs: require quality gates hook materialization` (hash: TBD)
 
 ### Stream: Dynamic Ownership Regressions
 
