@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "76e1fe3bb",
+  "lastRecordedCommit": "188223fbe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase32.shim-explicit-hook-regressions.task1",
-  "expectedCommitMessage": "test: require explicit quality gates hook shim wiring",
+  "currentTaskId": "quality-gates-implementation.phase32.verification.task1",
+  "expectedCommitMessage": "test: verify quality gates integration repair boundary",
   "debt": {
-    "expectedCommitMessage": "test: require explicit quality gates hook shim wiring",
-    "preCommitHead": "76e1fe3bb",
+    "expectedCommitMessage": "test: verify quality gates integration repair boundary",
+    "preCommitHead": "188223fbe",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase32.shim-explicit-hook-regressions.task1"
+    "taskId": "quality-gates-implementation.phase32.verification.task1"
   }
 }
 ```
@@ -426,9 +426,9 @@
 167. [DONE] `quality-gates-implementation.phase32.explicit-hook-validation.task1` Require explicit `npm run qg:<gate-id>` hook wiring in both the live Quality Gates progress validator and the installed child-plan shim, so aggregate `qg:before-*` scripts cannot falsely finalize integration (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `fix: require explicit quality gates hook wiring`).
 168. [DONE] Git Commit: `fix: require explicit quality gates hook wiring` (hash: 76e1fe3bb)
 169. [DONE] `quality-gates-implementation.phase32.shim-explicit-hook-regressions.task1` Update managed child-plan shim regressions so Phase 4 only opens after explicit required gate hook calls, not aggregate `qg:before-*` calls alone (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `test: require explicit quality gates hook shim wiring`).
-170. [PENDING] Git Commit: `test: require explicit quality gates hook shim wiring` (hash: TBD)
-171. [TODO] `quality-gates-implementation.phase32.verification.task1` Run targeted verification for the Quality Gates integration repair boundary across Core handlers, managed-workspace mutators, prompt templates, and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify quality gates integration repair boundary`).
-172. [TODO] Git Commit: `test: verify quality gates integration repair boundary` (hash: TBD)
+170. [DONE] Git Commit: `test: require explicit quality gates hook shim wiring` (hash: 188223fbe)
+171. [DONE] `quality-gates-implementation.phase32.verification.task1` Run targeted verification for the Quality Gates integration repair boundary across Core handlers, managed-workspace mutators, prompt templates, and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify quality gates integration repair boundary`). Verification evidence (2026-05-13): `npx ultracite check packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts packages/agents/quality-gates-agent/assets/quality-gates-prompt.md packages/agents/quality-gates-agent/assets/quality-gates-contract.md packages/core/src/templates/bundled-templates.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts` passed (`39/39`); `npm run build --workspace packages/core` passed.
+172. [PENDING] Git Commit: `test: verify quality gates integration repair boundary` (hash: TBD)
 
 ## Phase 33 - Release Rebuild (owner: Codex, updated: 2026-05-13)
 
