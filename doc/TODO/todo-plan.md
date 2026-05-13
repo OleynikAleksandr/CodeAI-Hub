@@ -8,15 +8,15 @@
   "planId": "quality-gates-provider-neutral-in-progress-repair-1.2.250",
   "branch": "main",
   "baseHead": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
-  "lastRecordedCommit": "48fbc67ab",
+  "lastRecordedCommit": "99fc3fe98",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
-  "currentTaskId": "hotfix.phase7.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.251",
+  "currentTaskId": "hotfix.phase7.release-build.task1",
+  "expectedCommitMessage": "chore: release 1.2.251",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.251",
-    "preCommitHead": "48fbc67ab",
+    "expectedCommitMessage": "chore: release 1.2.251",
+    "preCommitHead": "99fc3fe98",
     "stage": "commit_pending",
-    "taskId": "hotfix.phase7.release-docs.task1"
+    "taskId": "hotfix.phase7.release-build.task1"
   }
 }
 ```
@@ -94,9 +94,9 @@
 ### Stream: Release 1.2.251
 
 19. [DONE] `hotfix.phase7.release-docs.task1` Prepare README and CHANGELOG for release 1.2.251 after the provider-neutral continuity recovery hotfix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.251`)
-20. [PENDING] Git Commit: `docs: prepare release 1.2.251` (hash: TBD)
-21. [TODO] `hotfix.phase7.release-build.task1` Run the approved release build and collect artifacts for 1.2.251 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.251`)
-22. [TODO] Git Commit: `chore: release 1.2.251` (hash: TBD)
+20. [DONE] Git Commit: `docs: prepare release 1.2.251` (hash: 99fc3fe98)
+21. [DONE] `hotfix.phase7.release-build.task1` Run the approved release build and collect artifacts for 1.2.251 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.251`)
+22. [PENDING] Git Commit: `chore: release 1.2.251` (hash: TBD)
 
 ## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 
