@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.251] - 2026-05-13
+### Fixed
+- **Session continuity files no longer hide existing sessions after recoverable corruption.** Core now serializes `chain.json` / `index.json` writes per path and writes them atomically through temp-file rename.
+- **Project Manager can recover legacy trailing-corrupt continuity chains.** A file containing one complete JSON object followed by trailing corrupt bytes is treated as valid session evidence and rewritten as clean JSON on the next save.
+- **The invariant is provider-neutral and stage-family wide.** The same recovery path covers `description`, `virtual_simulation`, `diagram_modules`, `application_skeleton`, `quality_gates`, and nested `development_tree/...` sessions.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core` passed.
+- `node --test packages/core/dist/session-continuity/continuity-store.test.js` passed with coverage for trunk and Development Tree continuity paths.
+- A real Claude workspace recovery probe found the previously hidden Application Skeleton continuity chain.
+
 ## [1.2.250] - 2026-05-13
 ### Fixed
 - **Quality Gates in-progress integration attempts now become actionable repairs.** After the accepted contract commit, Core validates required lifecycle hook wiring even when the agent leaves `integrated: false` with `integrationState: "in_progress"`.

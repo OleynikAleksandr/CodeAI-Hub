@@ -8,15 +8,15 @@
   "planId": "quality-gates-provider-neutral-in-progress-repair-1.2.250",
   "branch": "main",
   "baseHead": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
-  "lastRecordedCommit": "6085c62bc",
+  "lastRecordedCommit": "48fbc67ab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
-  "currentTaskId": "hotfix.phase6.continuity-docs.task1",
-  "expectedCommitMessage": "docs: document continuity recovery invariant",
+  "currentTaskId": "hotfix.phase7.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.251",
   "debt": {
-    "expectedCommitMessage": "docs: document continuity recovery invariant",
-    "preCommitHead": "6085c62bc",
+    "expectedCommitMessage": "docs: prepare release 1.2.251",
+    "preCommitHead": "48fbc67ab",
     "stage": "commit_pending",
-    "taskId": "hotfix.phase6.continuity-docs.task1"
+    "taskId": "hotfix.phase7.release-docs.task1"
   }
 }
 ```
@@ -87,11 +87,27 @@
 15. [DONE] `hotfix.phase6.continuity-store.task1` Harden session continuity chain persistence and recovery for all workflow/development-tree stages so malformed `chain.json` files do not hide existing sessions from Project Manager (scope: `packages/core/src/session-continuity/continuity-store.ts, packages/core/src/session-continuity/index-registry.ts, packages/core/src/session-continuity/continuity-store.test.ts`; expected commit: `fix: harden session continuity chain persistence`)
 16. [DONE] Git Commit: `fix: harden session continuity chain persistence` (hash: 6085c62bc)
 17. [DONE] `hotfix.phase6.continuity-docs.task1` Document the continuity recovery invariant and the user-visible retest blocker in workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document continuity recovery invariant`)
-18. [PENDING] Git Commit: `docs: document continuity recovery invariant` (hash: TBD)
+18. [DONE] Git Commit: `docs: document continuity recovery invariant` (hash: 48fbc67ab)
 
-## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-13)
+## Phase 7 — Release Build (owner: Codex, updated: 2026-05-13)
+
+### Stream: Release 1.2.251
+
+19. [DONE] `hotfix.phase7.release-docs.task1` Prepare README and CHANGELOG for release 1.2.251 after the provider-neutral continuity recovery hotfix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.251`)
+20. [PENDING] Git Commit: `docs: prepare release 1.2.251` (hash: TBD)
+21. [TODO] `hotfix.phase7.release-build.task1` Run the approved release build and collect artifacts for 1.2.251 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.251`)
+22. [TODO] Git Commit: `chore: release 1.2.251` (hash: TBD)
+
+## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
+
+### Stream: User Retest
+
+23. [TODO] `hotfix.phase8.user-test.task1` User installs release 1.2.251 and retests managed steps/session continuity across providers (scope: user workflow; expected commit: `docs: accept release 1.2.251 retest`)
+24. [TODO] Git Commit: `docs: accept release 1.2.251 retest` (hash: TBD)
+
+## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Close Plan After User Acceptance
 
-19. [TODO] `hotfix.phase7.closeout.task1` Archive active plan and dispose the planning document after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close quality gates in-progress repair scope`)
-20. [TODO] Git Commit: `docs: close quality gates in-progress repair scope` (hash: TBD)
+25. [TODO] `hotfix.phase9.closeout.task1` Archive active plan and dispose the planning document after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close quality gates in-progress repair scope`)
+26. [TODO] Git Commit: `docs: close quality gates in-progress repair scope` (hash: TBD)

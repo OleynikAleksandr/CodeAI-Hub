@@ -2,23 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.250** (Provider-neutral managed in-progress repair)
+**Current Release — v1.2.251** (Provider-neutral session continuity recovery)
 
-This release repairs the provider-neutral post-turn gap exposed by the Claude
-Quality Gates retest. After `docs: accept quality gates contract`, Core now
-validates a Quality Gates Phase 3 attempt as soon as the agent records
-`integrationState: "in_progress"`, even when `integrated` is still `false`.
-Missing `.husky/pre-commit` / `.husky/pre-push` calls are routed into a normal
-Phase 3 repair task with actionable provider feedback instead of a silent wait.
+This release hardens the session continuity store used by every trunk and
+Development Tree step. Core now serializes `chain.json` / `index.json` writes per
+path, writes through temp-file rename, and recovers legacy continuity files that
+contain one complete JSON object followed by trailing corrupt bytes.
 
-The Phase 3 continuation prompt now states that the selected hook calls are
-Quality Gates integration-owned content, while Core keeps ownership of
-validation, staging, commit, and plan advancement. The same post-turn invariant
-was checked across managed trunk steps: Application Skeleton now treats
-`materializationState: "in_progress"` as a repairable materialization attempt,
-and Diagram Modules remains protected by expected-artifact subturn validation.
+The Project Manager can therefore load an existing completed session instead of
+falling back to a Start card when a provider or Core event leaves a recoverable
+continuity file behind. The fix is provider-neutral and covers `description`,
+`virtual_simulation`, `diagram_modules`, `application_skeleton`,
+`quality_gates`, and nested `development_tree/...` sessions.
 
-**Previous release: v1.2.249** (Quality Gates user-return finalization repair)
+**Previous release: v1.2.250** (Provider-neutral managed in-progress repair)
 
 This release repairs the managed feedback dead-end seen during the
 `v1.2.247` Application Skeleton retest. Core may still reject an invalid
