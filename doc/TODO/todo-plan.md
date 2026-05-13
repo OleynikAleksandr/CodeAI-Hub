@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "e6be607d8",
+  "lastRecordedCommit": "22a356c40",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase33.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare quality gates integration repair release notes",
+  "currentTaskId": "quality-gates-implementation.phase33.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild quality gates integration repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates integration repair release notes",
-    "preCommitHead": "e6be607d8",
+    "expectedCommitMessage": "chore: rebuild quality gates integration repair release",
+    "preCommitHead": "22a356c40",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase33.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase33.rebuild-build.task1"
   }
 }
 ```
@@ -435,9 +435,9 @@
 ### Stream: Rebuild Release Candidate
 
 173. [DONE] `quality-gates-implementation.phase33.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next Quality Gates integration repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates integration repair release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.246`; release scope: Phase 3 Quality Gates integration repair targeting, managed dirty-file ownership for `scripts/quality-gates/**` and `biome.jsonc`, provider-actionable failed-integration feedback, and prompt/template enforcement that materialization is complete only after explicit `npm run qg:<gate-id>` Husky hook wiring is present.
-174. [PENDING] Git Commit: `docs: prepare quality gates integration repair release notes` (hash: TBD)
-175. [TODO] `quality-gates-implementation.phase33.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates integration repair release`).
-176. [TODO] Git Commit: `chore: rebuild quality gates integration repair release` (hash: TBD)
+174. [DONE] Git Commit: `docs: prepare quality gates integration repair release notes` (hash: 22a356c40)
+175. [DONE] `quality-gates-implementation.phase33.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates integration repair release`). Build evidence (2026-05-13): `./scripts/build-all.sh --allow-dirty --version 1.2.246` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.246.vsix`.
+176. [PENDING] Git Commit: `chore: rebuild quality gates integration repair release` (hash: TBD)
 
 ## Phase 34 - Scope Closeout (owner: Codex, updated: 2026-05-13)
 
