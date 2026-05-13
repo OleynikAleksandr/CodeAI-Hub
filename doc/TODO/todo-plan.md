@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "d7701d7ac",
+  "lastRecordedCommit": "7a6e04c5b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase36.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare dynamic quality gates ownership release notes",
+  "currentTaskId": "quality-gates-implementation.phase36.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild dynamic quality gates ownership release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare dynamic quality gates ownership release notes",
-    "preCommitHead": "d7701d7ac",
+    "expectedCommitMessage": "chore: rebuild dynamic quality gates ownership release",
+    "preCommitHead": "7a6e04c5b",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase36.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase36.rebuild-build.task1"
   }
 }
 ```
@@ -484,6 +484,6 @@
 ### Stream: Rebuild Release Candidate
 
 195. [DONE] `quality-gates-implementation.phase36.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next dynamic Quality Gates ownership repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare dynamic quality gates ownership release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.247`; release scope: dynamic Quality Gates materialization ownership from `quality-gates.json.integratedPaths`, known QG toolchain paths (`scripts/qg/**`, `.ox*.json`, `tsconfig.qg*.json`), provider-actionable Phase 3 hook-wiring repair feedback, prompt/contract wording that makes required hooks agent-owned during Phase 3, and installed shim scope alignment.
-196. [PENDING] Git Commit: `docs: prepare dynamic quality gates ownership release notes` (hash: TBD)
-197. [TODO] `quality-gates-implementation.phase36.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild dynamic quality gates ownership release`).
-198. [TODO] Git Commit: `chore: rebuild dynamic quality gates ownership release` (hash: TBD)
+196. [DONE] Git Commit: `docs: prepare dynamic quality gates ownership release notes` (hash: 7a6e04c5b)
+197. [DONE] `quality-gates-implementation.phase36.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild dynamic quality gates ownership release`). Build evidence (2026-05-13): `./scripts/build-all.sh --allow-dirty --version 1.2.247` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.247.vsix`.
+198. [PENDING] Git Commit: `chore: rebuild dynamic quality gates ownership release` (hash: TBD)
