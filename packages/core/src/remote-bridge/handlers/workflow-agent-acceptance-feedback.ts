@@ -428,10 +428,16 @@ export class WorkflowAgentAcceptanceFeedback {
         "When the repair is ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
       ];
     } else if (outOfOwnerDirtyFiles.length > 0) {
-      actionLines = [
-        "Do not update Application Skeleton artifacts in response to this message.",
-        "Wait for Core to finish or repair the managed lifecycle boundary for the current target.",
-      ];
+      actionLines =
+        params.progress?.substep === "failed"
+          ? [
+              "Repair the reported Application Skeleton materialization boundary: either remove unintended files from the skeleton diff, or declare intended scaffold files in application-skeleton-map.json materializedPaths so artifacts and filesystem agree.",
+              "When the repair is ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
+            ]
+          : [
+              "Do not update Application Skeleton artifacts in response to this message.",
+              "Wait for Core to finish or repair the managed lifecycle boundary for the current target.",
+            ];
     } else if (params.progress) {
       actionLines = createApplicationSkeletonActionLines(params.progress);
     }

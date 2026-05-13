@@ -181,7 +181,7 @@ const resolveTaskPair = (
     return {
       message: "feat: materialize application skeleton",
       scope:
-        "product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json",
+        "product-parts/**, package.json, package-lock.json, tsconfig*.json, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json",
       sequenceNumber: null,
       shouldBlockCurrentTask: false,
       summary:
@@ -196,7 +196,7 @@ const resolveTaskPair = (
     return {
       message,
       scope:
-        "product-parts/**, .codeai-hub/**/application_skeleton/**, .codeai-hub/**/workflow/revisions/application-skeleton/**",
+        "product-parts/**, package.json, package-lock.json, tsconfig*.json, .codeai-hub/**/application_skeleton/**, .codeai-hub/**/workflow/revisions/application-skeleton/**",
       sequenceNumber,
       shouldBlockCurrentTask: false,
       summary: `Apply post-completion Application Skeleton user revision ${sequenceNumber} and stop for Core acceptance`,
@@ -209,7 +209,7 @@ const resolveTaskPair = (
   return {
     message,
     scope:
-      ".codeai-hub/**/application_skeleton/**, product-parts/**, .codeai-hub/**/product-parts/**, .codeai-hub/**/workflow/revisions/application-skeleton/attempts/**",
+      ".codeai-hub/**/application_skeleton/**, product-parts/**, package.json, package-lock.json, tsconfig*.json, .codeai-hub/**/product-parts/**, .codeai-hub/**/workflow/revisions/application-skeleton/attempts/**",
     sequenceNumber,
     shouldBlockCurrentTask: true,
     summary: `${params.targetSummary?.trim() || "Core rejected the previous Application Skeleton attempt; repair only the named artifact set"}; target phase: \`${targetPhase}\`; diagnostics: ${diagnosticsSummary(params.diagnostics)}`,
@@ -336,7 +336,7 @@ const insertApplicationSkeletonMaterializationTaskPair = (lines, commitLineIndex
   if (state.currentTaskId !== "application-skeleton.phase2.acceptance.task1" || message !== "docs: accept application skeleton contract") { return; }
   if (lines.some((line) => line.includes("application-skeleton.phase3.materialize.task1"))) { return; }
   const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
-  lines.splice(commitLineIndex + 1, 0, "", "## Phase 3 — Application Skeleton Materialization", "", "### Stream: Filesystem Projection", "", formatNewTaskLine(taskNumber, "application-skeleton.phase3.materialize.task1", "TODO", "Materialize the accepted Application Skeleton filesystem projection and stop for Core validation", "product-parts/**, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json", "feat: materialize application skeleton"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: materialize application skeleton\\\` (hash: TBD)\`);
+  lines.splice(commitLineIndex + 1, 0, "", "## Phase 3 — Application Skeleton Materialization", "", "### Stream: Filesystem Projection", "", formatNewTaskLine(taskNumber, "application-skeleton.phase3.materialize.task1", "TODO", "Materialize the accepted Application Skeleton filesystem projection and stop for Core validation", "product-parts/**, package.json, package-lock.json, tsconfig*.json, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json", "feat: materialize application skeleton"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: materialize application skeleton\\\` (hash: TBD)\`);
 };
 const APPLICATION_SKELETON_MAP_FILE_RE = /\\/application_skeleton\\/application-skeleton-map\\.json$/u;
 const APPLICATION_SKELETON_MARKDOWN_FILE_RE = /\\/application_skeleton\\/application-skeleton\\.md$/u;
@@ -397,7 +397,7 @@ const insertApplicationSkeletonUserReturnTaskAnchor = (lines, commitLineIndex, s
   if (!shouldInsertApplicationSkeletonUserReturnAnchor(state, message, changedFiles) || lines.some((line) => line.includes("application-skeleton.phase4.user-return.task1"))) { return; }
   const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
   const phaseLines = lines.some((line) => line.includes("Phase 4 — Persistent Application Skeleton User Return")) ? [] : ["", "## Phase 4 — Persistent Application Skeleton User Return", "", "### Stream: User Return And Revisions", ""];
-  lines.splice(commitLineIndex + 1, 0, ...phaseLines, formatNewTaskLine(taskNumber, "application-skeleton.phase4.user-return.task1", "TODO", "Open post-completion Application Skeleton user-return revisions; Core must inject revision task pairs after real user diffs", "product-parts/**, .codeai-hub/**/application_skeleton/**, .codeai-hub/**/workflow/revisions/application-skeleton/**", "docs: revise application skeleton user return revision 1"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`docs: revise application skeleton user return revision 1\\\` (hash: TBD)\`);
+  lines.splice(commitLineIndex + 1, 0, ...phaseLines, formatNewTaskLine(taskNumber, "application-skeleton.phase4.user-return.task1", "TODO", "Open post-completion Application Skeleton user-return revisions; Core must inject revision task pairs after real user diffs", "product-parts/**, package.json, package-lock.json, tsconfig*.json, .codeai-hub/**/application_skeleton/**, .codeai-hub/**/workflow/revisions/application-skeleton/**", "docs: revise application skeleton user return revision 1"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`docs: revise application skeleton user return revision 1\\\` (hash: TBD)\`);
 };
 const existingApplicationSkeletonUserReturnRevisionNumbers = (lines) => lines.map((line) => /application-skeleton\\.phase4\\.user-return\\.revision(\\d+)\\.task1/u.exec(line)?.[1]).filter(Boolean).map((value) => Number.parseInt(value, 10)).filter(Number.isFinite);
 const shouldInsertApplicationSkeletonUserReturnRevision = (state, message) =>
@@ -411,6 +411,6 @@ const insertApplicationSkeletonUserReturnRevisionTaskPair = (lines, commitLineIn
   const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
   const messageForRevision = \`docs: revise application skeleton user return revision \${nextRevision}\`;
   const phaseLines = lines.some((line) => line.includes("Phase 4 — Persistent Application Skeleton User Return")) ? [] : ["", "## Phase 4 — Persistent Application Skeleton User Return", "", "### Stream: User Return And Revisions", ""];
-  lines.splice(commitLineIndex + 1, 0, ...phaseLines, formatNewTaskLine(taskNumber, taskId, "TODO", \`Apply post-completion Application Skeleton user revision \${nextRevision} and stop for Core acceptance\`, "product-parts/**, .codeai-hub/**/application_skeleton/**, .codeai-hub/**/workflow/revisions/application-skeleton/**", messageForRevision), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${messageForRevision}\\\` (hash: TBD)\`);
+  lines.splice(commitLineIndex + 1, 0, ...phaseLines, formatNewTaskLine(taskNumber, taskId, "TODO", \`Apply post-completion Application Skeleton user revision \${nextRevision} and stop for Core acceptance\`, "product-parts/**, package.json, package-lock.json, tsconfig*.json, .codeai-hub/**/application_skeleton/**, .codeai-hub/**/workflow/revisions/application-skeleton/**", messageForRevision), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`\${messageForRevision}\\\` (hash: TBD)\`);
 };
 `;

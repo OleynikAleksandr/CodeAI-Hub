@@ -26,8 +26,16 @@ const DIAGRAM_MODULES_PLAN_PATH =
 const APPLICATION_SKELETON_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
 const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
+const APPLICATION_SKELETON_ARTIFACT_PATH =
+  "application_skeleton/application-skeleton-map.json";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const QUALITY_GATES_ARTIFACT_PATH = "quality_gates/quality-gates.json";
+const APPLICATION_SKELETON_PATH_KEYS = new Set([
+  "codePath",
+  "materializedPaths",
+  "plannedMaterializedPaths",
+  "plannedPaths",
+]);
 const QUALITY_GATES_PATH_KEYS = new Set([
   "integratedPaths",
   "plannedIntegrationPaths",
@@ -78,8 +86,9 @@ const isSafeRelativeWorkspacePath = (value: string): boolean =>
   !value.split(PATH_SEGMENT_SEPARATOR_RE).includes("..") &&
   !value.startsWith("node_modules/");
 
-const collectQualityGatesPathValues = (
+const collectManagedPathValues = (
   value: unknown,
+  keys: ReadonlySet<string>,
   paths: Set<string>
 ): void => {
   if (!(typeof value === "object" && value !== null)) {
@@ -87,13 +96,14 @@ const collectQualityGatesPathValues = (
   }
   if (Array.isArray(value)) {
     for (const entry of value) {
-      collectQualityGatesPathValues(entry, paths);
+      collectManagedPathValues(entry, keys, paths);
     }
     return;
   }
   for (const [key, entry] of Object.entries(value)) {
-    if (QUALITY_GATES_PATH_KEYS.has(key) && Array.isArray(entry)) {
-      for (const pathValue of entry) {
+    if (keys.has(key)) {
+      const pathValues = Array.isArray(entry) ? entry : [entry];
+      for (const pathValue of pathValues) {
         if (
           typeof pathValue === "string" &&
           isSafeRelativeWorkspacePath(pathValue)
@@ -103,28 +113,32 @@ const collectQualityGatesPathValues = (
       }
       continue;
     }
-    collectQualityGatesPathValues(entry, paths);
+    collectManagedPathValues(entry, keys, paths);
   }
 };
 
-const readQualityGatesIntegrationPaths = async (
+const readManagedDeclaredPaths = async (
   workspaceRoot: string,
-  workspaceSlug: string
+  workspaceSlug: string,
+  artifactPath: string,
+  keys: ReadonlySet<string>
 ): Promise<ReadonlySet<string>> => {
-  const artifactPath = path.join(
+  const absoluteArtifactPath = path.join(
     workspaceRoot,
     ".codeai-hub",
     workspaceSlug,
-    QUALITY_GATES_ARTIFACT_PATH
+    artifactPath
   );
-  const content = await readFile(artifactPath, "utf8").catch(() => null);
+  const content = await readFile(absoluteArtifactPath, "utf8").catch(
+    () => null
+  );
   const parsed = content ? parseJsonObject(content) : null;
   const paths = new Set<string>();
-  collectQualityGatesPathValues(parsed, paths);
+  collectManagedPathValues(parsed, keys, paths);
   return paths;
 };
 
-const matchesQualityGatesDeclaredPath = (
+const matchesDeclaredPath = (
   file: string,
   declaredPaths: ReadonlySet<string>
 ): boolean => {
@@ -143,6 +157,9 @@ const matchesQualityGatesDeclaredPath = (
       continue;
     }
     if (file === declaredPath) {
+      return true;
+    }
+    if (file.startsWith(`${declaredPath}/`)) {
       return true;
     }
   }
@@ -181,9 +198,17 @@ export const readManagedGitStatus = async (
     application_skeleton: [],
     quality_gates: [],
   };
-  const qualityGatesIntegrationPaths = await readQualityGatesIntegrationPaths(
+  const applicationSkeletonDeclaredPaths = await readManagedDeclaredPaths(
     workspaceRoot,
-    workspaceSlug
+    workspaceSlug,
+    APPLICATION_SKELETON_ARTIFACT_PATH,
+    APPLICATION_SKELETON_PATH_KEYS
+  );
+  const qualityGatesIntegrationPaths = await readManagedDeclaredPaths(
+    workspaceRoot,
+    workspaceSlug,
+    QUALITY_GATES_ARTIFACT_PATH,
+    QUALITY_GATES_PATH_KEYS
   );
   for (const file of dirtyFiles) {
     if (
@@ -192,19 +217,27 @@ export const readManagedGitStatus = async (
         `.codeai-hub/${workspaceSlug}/workflow/revisions/application-skeleton/`
       ) ||
       file === APPLICATION_SKELETON_PLAN_PATH ||
-      file.startsWith("product-parts/")
+      file.startsWith("product-parts/") ||
+      matchesDeclaredPath(file, applicationSkeletonDeclaredPaths)
     ) {
       dirtyByStage.application_skeleton.push(file);
-    } else if (
+    }
+    if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/diagram_modules/`) ||
-      file.startsWith(`.codeai-hub/${workspaceSlug}/workflow/`) ||
+      file.startsWith(
+        `.codeai-hub/${workspaceSlug}/workflow/revisions/diagram-modules/`
+      ) ||
       file === DIAGRAM_MODULES_PLAN_PATH
     ) {
       dirtyByStage.diagram_modules.push(file);
-    } else if (
+    }
+    if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/quality_gates/`) ||
+      file.startsWith(
+        `.codeai-hub/${workspaceSlug}/workflow/revisions/quality-gates/`
+      ) ||
       isKnownQualityGatesIntegrationPath(file) ||
-      matchesQualityGatesDeclaredPath(file, qualityGatesIntegrationPaths) ||
+      matchesDeclaredPath(file, qualityGatesIntegrationPaths) ||
       file === ".husky/pre-commit" ||
       file === ".husky/pre-push" ||
       file === QUALITY_GATES_PLAN_PATH ||

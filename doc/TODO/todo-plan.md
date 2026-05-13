@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "2fe1ef3fb",
+  "lastRecordedCommit": "334dc104e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase38.dead-end-intake.task1",
-  "expectedCommitMessage": "docs: add managed feedback dead-end repair plan",
+  "currentTaskId": "quality-gates-implementation.phase38.application-skeleton-policy.task1",
+  "expectedCommitMessage": "fix: prevent application skeleton feedback dead ends",
   "debt": {
-    "expectedCommitMessage": "docs: add managed feedback dead-end repair plan",
-    "preCommitHead": "2fe1ef3fb",
+    "expectedCommitMessage": "fix: prevent application skeleton feedback dead ends",
+    "preCommitHead": "334dc104e",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase38.dead-end-intake.task1"
+    "taskId": "quality-gates-implementation.phase38.application-skeleton-policy.task1"
   }
 }
 ```
@@ -499,12 +499,12 @@
 ### Stream: Retest Failure Intake
 
 200. [DONE] `quality-gates-implementation.phase38.dead-end-intake.task1` Record the `v1.2.247` Application Skeleton retest failure and slice the cross-stage dead-end feedback repair: Core may reject acceptance, but provider-visible feedback must not combine a repairable managed-stage failure with "do not update / wait for Core" instructions that leave the agent with no allowed action. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add managed feedback dead-end repair plan`).
-201. [PENDING] Git Commit: `docs: add managed feedback dead-end repair plan` (hash: TBD)
+201. [DONE] Git Commit: `docs: add managed feedback dead-end repair plan` (hash: 334dc104e)
 
 ### Stream: Application Skeleton Ownership And Feedback Policy
 
-202. [TODO] `quality-gates-implementation.phase38.application-skeleton-policy.task1` Treat root scaffold files that Application Skeleton may legitimately materialize as Application Skeleton-owned during Phase 3 and make remaining Application Skeleton acceptance failures provider-actionable instead of wait-only when Core reports repairable validation errors. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts`; expected commit: `fix: prevent application skeleton feedback dead ends`).
-203. [TODO] Git Commit: `fix: prevent application skeleton feedback dead ends` (hash: TBD)
+202. [DONE] `quality-gates-implementation.phase38.application-skeleton-policy.task1` Treat root scaffold files that Application Skeleton may legitimately materialize as Application Skeleton-owned during Phase 3 and make remaining Application Skeleton acceptance failures provider-actionable instead of wait-only when Core reports repairable validation errors. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts`; expected commit: `fix: prevent application skeleton feedback dead ends`).
+203. [PENDING] Git Commit: `fix: prevent application skeleton feedback dead ends` (hash: TBD)
 
 ### Stream: Cross-Stage Regressions
 
