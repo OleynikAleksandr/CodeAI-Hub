@@ -2,26 +2,28 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.251** (Provider-neutral session continuity recovery)
+**Current Release — v1.2.252** (Claude reasoning summary omitted when hidden)
+
+This release stops paying tokens for hidden Claude reasoning. When the user
+disables `Thinking in dialog` (`thinkingDisplaySyncEnabled = false`), the next
+Claude turn now requests `thinking: { type: "adaptive", display: "omitted" }`
+plus the resolved `effort`. The model still reasons internally but no longer
+streams plain-text `thinking_delta` chunks that the user never sees.
+
+The change applies to normal SDK turns and to the native request capture
+diagnostic, so capture artifacts reproduce the actual runtime payload. When
+`Thinking in dialog` is enabled, behavior is unchanged: Claude requests
+`display: "summarized"` and the live thinking pipeline renders visible
+reasoning. When thinking is disabled at the Settings layer, behavior is also
+unchanged: `thinking: { type: "disabled" }` with no `effort`.
+
+**Previous release: v1.2.251** (Provider-neutral session continuity recovery)
 
 This release hardens the session continuity store used by every trunk and
-Development Tree step. Core now serializes `chain.json` / `index.json` writes per
-path, writes through temp-file rename, and recovers legacy continuity files that
-contain one complete JSON object followed by trailing corrupt bytes.
-
-The Project Manager can therefore load an existing completed session instead of
-falling back to a Start card when a provider or Core event leaves a recoverable
-continuity file behind. The fix is provider-neutral and covers `description`,
-`virtual_simulation`, `diagram_modules`, `application_skeleton`,
-`quality_gates`, and nested `development_tree/...` sessions.
-
-**Previous release: v1.2.250** (Provider-neutral managed in-progress repair)
-
-This release repairs the managed feedback dead-end seen during the
-`v1.2.247` Application Skeleton retest. Core may still reject an invalid
-managed-stage result, but provider-visible feedback no longer combines a
-repairable failure with a wait-only instruction that leaves the agent with no
-allowed action.
+Development Tree step. Core now serializes `chain.json` / `index.json` writes
+per path, writes through temp-file rename, and recovers legacy continuity
+files that contain one complete JSON object followed by trailing corrupt
+bytes.
 
 Application Skeleton Phase 3 now treats root scaffold files declared by the
 accepted skeleton map, including `package.json` and `tsconfig.base.json`, as

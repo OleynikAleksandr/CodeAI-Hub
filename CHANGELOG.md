@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.252] - 2026-05-13
+### Changed
+- **Hidden Claude reasoning no longer spends tokens on a summary the user does not see.** When `Thinking in dialog` is disabled (`thinkingDisplaySyncEnabled = false`), the Claude SDK turn now requests `thinking: { type: "adaptive", display: "omitted" }` plus the resolved `effort` instead of `display: "summarized"`. The model still reasons internally but no plain-text `thinking_delta` is streamed.
+- **Native request capture diagnostics mirror the same `display` selection.** Capture artifacts reproduce the actual runtime payload for both `display: "summarized"` and `display: "omitted"` Claude turns.
+- **`Thinking in dialog` toggle is now a two-effect switch.** It still filters visible thinking bubbles at the Session UI (presentation-only) and additionally selects the provider-side `thinking.display` option. When `Thinking in dialog` is enabled, behavior is unchanged.
+
+### Tests
+- `npm run build --workspace packages/Claude_Module` passed.
+- `node --test packages/Claude_Module/dist/sdk/claude-sdk-manager.test.js` passed (8/8) including a new `ClaudeSDKManager omits reasoning display when thinking is hidden in dialog` regression.
+- `node --test packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js` passed (5/5) including a new `ClaudeNativeRequestCaptureService mirrors hidden-thinking display selection` regression.
+
 ## [1.2.251] - 2026-05-13
 ### Fixed
 - **Session continuity files no longer hide existing sessions after recoverable corruption.** Core now serializes `chain.json` / `index.json` writes per path and writes them atomically through temp-file rename.

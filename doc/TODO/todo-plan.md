@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-omitted-when-hidden-1.2.252",
   "branch": "main",
   "baseHead": "b4cdd457d",
-  "lastRecordedCommit": "689e85314",
+  "lastRecordedCommit": "5756ab595",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_Reasoning_Omitted_When_Hidden.md",
-  "currentTaskId": "reasoning-omit.phase2.ssot.task1",
-  "expectedCommitMessage": "docs: document reasoning summary omission",
+  "currentTaskId": "reasoning-omit.phase3.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.252",
   "debt": {
-    "expectedCommitMessage": "docs: document reasoning summary omission",
-    "preCommitHead": "689e85314",
+    "expectedCommitMessage": "docs: prepare release 1.2.252",
+    "preCommitHead": "5756ab595",
     "stage": "commit_pending",
-    "taskId": "reasoning-omit.phase2.ssot.task1"
+    "taskId": "reasoning-omit.phase3.release-docs.task1"
   }
 }
 ```
@@ -62,14 +62,14 @@
 ### Stream: SSOT Docs
 
 7. [DONE] `reasoning-omit.phase2.ssot.task1` Document the hidden-reasoning omission invariant in `Modules/Claude.md` under the messaging cluster contract: `thinkingDisplaySyncEnabled = false` selects `display: "omitted"`, no `thinking_delta` arrives, the live thinking buffer/thought translation adapter stays no-op, and Opus 4.7 falls back to encrypted `signature_delta`-only behavior (scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit: `docs: document reasoning summary omission`).
-8. [PENDING] Git Commit: `docs: document reasoning summary omission` (hash: TBD)
+8. [DONE] Git Commit: `docs: document reasoning summary omission` (hash: 5756ab595)
 
 ## Phase 3 — Release Build (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Release 1.2.252
 
-9. [TODO] `reasoning-omit.phase3.release-docs.task1` Prepare README and CHANGELOG for upcoming release `1.2.252` (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.252`).
-10. [TODO] Git Commit: `docs: prepare release 1.2.252` (hash: TBD)
+9. [DONE] `reasoning-omit.phase3.release-docs.task1` Prepare README and CHANGELOG for upcoming release `1.2.252` (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.252`).
+10. [PENDING] Git Commit: `docs: prepare release 1.2.252` (hash: TBD)
 11. [TODO] `reasoning-omit.phase3.release-build.task1` Run the approved release build and collect artifacts for `1.2.252` (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.252`).
 12. [TODO] Git Commit: `chore: release 1.2.252` (hash: TBD)
 
