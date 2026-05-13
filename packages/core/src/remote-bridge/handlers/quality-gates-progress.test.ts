@@ -53,6 +53,36 @@ const writeQualityGateArtifacts = async (
   );
 };
 
+const writeWorkspaceAcceptanceLedger = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "doc/TODO/workspace.plan.md",
+    `# Workspace Plan
+
+<!-- codeai-workspace-plan-state:start -->
+\`\`\`json
+${JSON.stringify(
+  {
+    acceptedCommits: [
+      {
+        hash: "abc1234",
+        message: "docs: accept quality gates contract",
+        stage: "quality_gates",
+      },
+    ],
+    schema: "codeai-workspace-plan-v1",
+  },
+  null,
+  2
+)}
+\`\`\`
+<!-- codeai-workspace-plan-state:end -->
+`
+  );
+};
+
 test("Quality Gates progress requires lifecycle hook wiring before integrated", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "quality-gates-progress-")
@@ -138,6 +168,54 @@ test("Quality Gates progress accepts aggregate lifecycle hook runners", async ()
     assert.equal(snapshot?.integrated, true);
     assert.equal(snapshot?.substep, "integrated");
     assert.deepEqual(snapshot?.validationErrors, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Quality Gates progress derives acceptanceCommitted from workspace accepted commits", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-progress-ledger-")
+  );
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo/quality_gates/quality-gates.md",
+      "# Quality Gates Baseline\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/demo/quality_gates/quality-gates.json",
+      `${JSON.stringify(
+        {
+          accepted: true,
+          acceptanceCommitted: false,
+          commands: {
+            "qg-format": {
+              availability: "executable",
+              desiredStatus: "active",
+              id: "qg-format",
+            },
+          },
+          integrated: false,
+          integrationState: "draft",
+          schema: "codeai-quality-gates-v1",
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceAcceptanceLedger(workspaceRoot);
+
+    const snapshot = await readQualityGatesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: "demo",
+    });
+
+    assert.equal(snapshot?.accepted, true);
+    assert.equal(snapshot?.acceptanceCommitted, true);
+    assert.equal(snapshot?.integrated, false);
+    assert.equal(snapshot?.substep, "accepted");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

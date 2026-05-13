@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "addc92e6e",
+  "lastRecordedCommit": "20901670e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase28.user-reretest.task1",
-  "expectedCommitMessage": "docs: record managed acceptance continuation workflow acceptance",
+  "currentTaskId": "quality-gates-implementation.phase29.quality-gates-accepted-ledger.task1",
+  "expectedCommitMessage": "fix: derive quality gates acceptance from ledger",
   "debt": {
-    "expectedCommitMessage": "docs: record managed acceptance continuation workflow acceptance",
-    "preCommitHead": "addc92e6e",
+    "expectedCommitMessage": "fix: derive quality gates acceptance from ledger",
+    "preCommitHead": "20901670e",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase28.user-reretest.task1"
+    "taskId": "quality-gates-implementation.phase29.quality-gates-accepted-ledger.task1"
   }
 }
 ```
@@ -362,14 +362,14 @@
 ### Stream: User Re-Re-Re-Re-Re-Retest
 
 137. [DONE] `quality-gates-implementation.phase28.user-reretest.task1` User installs the rebuilt release and retests Quality Gates typed acceptance with `Подтверждаю`, including the immediate acceptance-to-integration continuation in the same session after at least one review turn (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed acceptance continuation workflow acceptance`). Retest result (2026-05-13): release `1.2.244` still stalls after Quality Gates contract acceptance. Core intercepts `Подтверждаю`, commits `docs: accept quality gates contract`, and advances the child plan to `quality-gates.phase3.integration.task1`, but no provider-visible integration continuation is sent. Root cause: Quality Gates progress reads `acceptanceCommitted` only from `quality-gates.json`, where it remains `false`, while Application Skeleton derives the same truth from `workspace.plan.md` accepted commit evidence. A second stale `phase2.review.task2` remains open and is handled by the review-anchor cleanup repair stream below.
-138. [PENDING] Git Commit: `docs: record managed acceptance continuation workflow acceptance` (hash: TBD)
+138. [DONE] Git Commit: `docs: record managed acceptance continuation workflow acceptance` (hash: 20901670e)
 
 ## Phase 29 - Managed Review Anchor Cleanup Repair (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Quality Gates Acceptance Commit Evidence
 
-139. [TODO] `quality-gates-implementation.phase29.quality-gates-accepted-ledger.task1` Make Quality Gates derive `acceptanceCommitted` from `workspace.plan.md` accepted commit evidence, matching Application Skeleton, so Phase 3 integration continuation can fire after `docs: accept quality gates contract` even when the artifact still contains `acceptanceCommitted: false` (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts`; expected commit: `fix: derive quality gates acceptance from ledger`).
-140. [TODO] Git Commit: `fix: derive quality gates acceptance from ledger` (hash: TBD)
+139. [DONE] `quality-gates-implementation.phase29.quality-gates-accepted-ledger.task1` Make Quality Gates derive `acceptanceCommitted` from `workspace.plan.md` accepted commit evidence, matching Application Skeleton, so Phase 3 integration continuation can fire after `docs: accept quality gates contract` even when the artifact still contains `acceptanceCommitted: false` (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts`; expected commit: `fix: derive quality gates acceptance from ledger`).
+140. [PENDING] Git Commit: `fix: derive quality gates acceptance from ledger` (hash: TBD)
 
 ### Stream: Contract Review Revision Anchors
 
