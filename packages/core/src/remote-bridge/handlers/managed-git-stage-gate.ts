@@ -34,6 +34,7 @@ const isVolatileCoreMetadataPath = (
   workspaceSlug: string
 ): boolean =>
   file.startsWith(".codeai-hub/state/") ||
+  file.startsWith("node_modules/") ||
   file === `.codeai-hub/${workspaceSlug}/description/description-step.json`;
 
 const parseGitStatusPath = (line: string): string | null => {
@@ -85,8 +86,10 @@ export const readManagedGitStatus = async (
     } else if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/quality_gates/`) ||
       file.startsWith("scripts/gates/") ||
+      file.startsWith("scripts/quality-gates/") ||
       file === ".husky/pre-commit" ||
       file === ".husky/pre-push" ||
+      file === "biome.jsonc" ||
       file === QUALITY_GATES_PLAN_PATH ||
       file === WORKSPACE_PLAN_PATH ||
       file === "package.json" ||

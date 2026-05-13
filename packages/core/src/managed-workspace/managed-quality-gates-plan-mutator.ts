@@ -15,11 +15,12 @@ const TASK_LINE_NUMBER_RE = /^(\d+)\./u;
 const DRAFT_AND_REVIEW_SCOPE =
   ".codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json";
 const INTEGRATION_SCOPE =
-  ".codeai-hub/**/quality_gates/**, package.json, package-lock.json, scripts/gates/**, .husky/**";
+  ".codeai-hub/**/quality_gates/**, package.json, package-lock.json, biome.jsonc, scripts/quality-gates/**, .husky/**";
 const USER_RETURN_SCOPE =
   ".codeai-hub/**/quality_gates/**, .codeai-hub/**/workflow/revisions/quality-gates/**";
 const REPAIR_SCOPE =
   ".codeai-hub/**/quality_gates/**, .codeai-hub/**/workflow/revisions/quality-gates/attempts/**";
+const INTEGRATION_REPAIR_SCOPE = `${INTEGRATION_SCOPE}, .codeai-hub/**/workflow/revisions/quality-gates/attempts/**`;
 
 export type QualityGatesPlanTaskKind =
   | "acceptance"
@@ -235,10 +236,14 @@ const resolveTaskPair = (
   }
   const sequenceNumber = countMatches(params.planText, REPAIR_RE) + 1;
   const targetPhase = params.targetPhase?.trim() || "current";
+  const scope =
+    targetPhase === "phase3.integration"
+      ? INTEGRATION_REPAIR_SCOPE
+      : REPAIR_SCOPE;
   const message = `docs: repair quality gates ${targetPhase} attempt ${sequenceNumber}`;
   return {
     message,
-    scope: REPAIR_SCOPE,
+    scope,
     sequenceNumber,
     shouldBlockCurrentTask: true,
     summary: `${params.targetSummary?.trim() || "Core rejected the previous Quality Gates attempt; repair only the named artifact set"}; target phase: \`${targetPhase}\`; diagnostics: ${diagnosticsSummary(params.diagnostics)}`,
@@ -367,7 +372,7 @@ const insertQualityGatesIntegrationTaskPair = (lines, commitLineIndex, state, me
   if (state.currentTaskId !== "quality-gates.phase2.acceptance.task1" || message !== "docs: accept quality gates contract") { return; }
   if (lines.some((line) => line.includes("quality-gates.phase3.integration.task1"))) { return; }
   const taskNumber = lines.slice(0, commitLineIndex + 1).filter((line) => /^\\d+\\. /u.test(line)).length + 1;
-  lines.splice(commitLineIndex + 1, 0, "", "## Phase 3 — Quality Gates Integration", "", "### Stream: Accepted-Only Integration", "", formatNewTaskLine(taskNumber, "quality-gates.phase3.integration.task1", "TODO", "Integrate the accepted Quality Gates baseline into the materialized Application Skeleton and stop for Core validation", ".codeai-hub/**/quality_gates/**, package.json, package-lock.json, scripts/gates/**, .husky/**", "feat: integrate quality gates baseline"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: integrate quality gates baseline\\\` (hash: TBD)\`);
+  lines.splice(commitLineIndex + 1, 0, "", "## Phase 3 — Quality Gates Integration", "", "### Stream: Accepted-Only Integration", "", formatNewTaskLine(taskNumber, "quality-gates.phase3.integration.task1", "TODO", "Integrate the accepted Quality Gates baseline into the materialized Application Skeleton and stop for Core validation", ".codeai-hub/**/quality_gates/**, package.json, package-lock.json, biome.jsonc, scripts/quality-gates/**, .husky/**", "feat: integrate quality gates baseline"), \`\${taskNumber + 1}. [TODO] Git Commit: \\\`feat: integrate quality gates baseline\\\` (hash: TBD)\`);
 };
 const QUALITY_GATES_JSON_FILE_RE = /\\/quality_gates\\/quality-gates\\.json$/u;
 const QUALITY_GATES_MARKDOWN_FILE_RE = /\\/quality_gates\\/quality-gates\\.md$/u;

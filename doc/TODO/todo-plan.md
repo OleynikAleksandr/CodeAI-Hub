@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "891c588da",
+  "lastRecordedCommit": "f07148b2e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase31.integration-repair-plan.task1",
-  "expectedCommitMessage": "docs: add quality gates integration repair plan",
+  "currentTaskId": "quality-gates-implementation.phase32.integration-ownership.task1",
+  "expectedCommitMessage": "fix: repair quality gates integration ownership",
   "debt": {
-    "expectedCommitMessage": "docs: add quality gates integration repair plan",
-    "preCommitHead": "891c588da",
+    "expectedCommitMessage": "fix: repair quality gates integration ownership",
+    "preCommitHead": "f07148b2e",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase31.integration-repair-plan.task1"
+    "taskId": "quality-gates-implementation.phase32.integration-ownership.task1"
   }
 }
 ```
@@ -396,18 +396,18 @@
 ### Stream: Quality Gates Integration Failure Slicing
 
 153. [DONE] `quality-gates-implementation.phase31.integration-repair-plan.task1` Record the release `1.2.245` Quality Gates integration failure and slice the repair streams before changing Core behavior again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add quality gates integration repair plan`). Retest result (2026-05-13): Quality Gates now reaches Phase 3 after user acceptance, but Core rejects the agent materialization with a self-contradictory acceptance message: it lists missing hook wiring and outside-allowlist files, then tells the provider not to update Quality Gates artifacts and to wait for Core. The child plan receives a stale `phase2.acceptance.repairN` task instead of an actionable Phase 3 integration repair task, while valid integration-owned files such as `scripts/quality-gates/**` and `biome.jsonc` are treated as external blockers.
-154. [PENDING] Git Commit: `docs: add quality gates integration repair plan` (hash: TBD)
+154. [DONE] Git Commit: `docs: add quality gates integration repair plan` (hash: f07148b2e)
 
 ## Phase 32 - Quality Gates Integration Repair Boundary (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Core Integration Ownership And Phase Target
 
-155. [TODO] `quality-gates-implementation.phase32.integration-ownership.task1` Treat Quality Gates Phase 3 integrated-but-unfinalized work as integration repair, include the actual Quality Gates materialization paths in Core-owned dirty-file checks, and keep volatile install noise out of the managed stage blocker list (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `fix: repair quality gates integration ownership`).
-156. [TODO] Git Commit: `fix: repair quality gates integration ownership` (hash: TBD)
+155. [DONE] `quality-gates-implementation.phase32.integration-ownership.task1` Include the actual Quality Gates materialization paths in Core-owned dirty-file checks, child-plan integration scopes, and installed shim fallback wording, while keeping volatile install noise out of the managed stage blocker list (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: repair quality gates integration ownership`).
+156. [PENDING] Git Commit: `fix: repair quality gates integration ownership` (hash: TBD)
 
 ### Stream: Actionable Integration Repair Feedback
 
-157. [TODO] `quality-gates-implementation.phase32.integration-feedback.task1` Replace the Quality Gates failed-integration feedback dead-end with provider-actionable repair instructions tied to the newly injected Phase 3 repair task, while preserving Core-owned final commit language only after artifacts pass validation (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.test.ts`; expected commit: `fix: make quality gates repair feedback actionable`).
+157. [TODO] `quality-gates-implementation.phase32.integration-feedback.task1` Treat Quality Gates integrated-but-unfinalized Phase 3 work as integration repair and replace the failed-integration feedback dead-end with provider-actionable repair instructions tied to that repair task (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts`; expected commit: `fix: make quality gates repair feedback actionable`).
 158. [TODO] Git Commit: `fix: make quality gates repair feedback actionable` (hash: TBD)
 
 ### Stream: Quality Gates Materialization Prompt Contract
