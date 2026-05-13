@@ -1,3 +1,18 @@
+# Plan Closeout: quality-gates-provider-neutral-in-progress-repair-1.2.250
+
+**Created:** 2026-05-13T19:07:08.289Z
+**Acceptance:** User explicitly accepted release 1.2.251 retest on 2026-05-13 (acceptance commit ede566c5d) and requested to archive the previous plan before starting a new fix.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** hotfix.phase9.closeout.task1
+**Expected Commit:** docs: close quality gates in-progress repair scope
+**Last Recorded Commit:** ede566c5d
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
   "currentTaskId": "hotfix.phase9.closeout.task1",
   "expectedCommitMessage": "docs: close quality gates in-progress repair scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close quality gates in-progress repair scope",
-    "preCommitHead": "ede566c5d",
-    "stage": "commit_pending",
-    "taskId": "hotfix.phase9.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -109,5 +119,6 @@
 
 ### Stream: Close Plan After User Acceptance
 
-25. [DONE] `hotfix.phase9.closeout.task1` Archive active plan and dispose the planning document after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close quality gates in-progress repair scope`)
-26. [PENDING] Git Commit: `docs: close quality gates in-progress repair scope` (hash: TBD)
+25. [IN_PROGRESS] `hotfix.phase9.closeout.task1` Archive active plan and dispose the planning document after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close quality gates in-progress repair scope`)
+26. [TODO] Git Commit: `docs: close quality gates in-progress repair scope` (hash: TBD)
+````
