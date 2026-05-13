@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "55f93629f",
+  "lastRecordedCommit": "23a774999",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase44.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare quality gates user return release notes",
+  "currentTaskId": "quality-gates-implementation.phase44.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild quality gates user return release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates user return release notes",
-    "preCommitHead": "55f93629f",
+    "expectedCommitMessage": "chore: rebuild quality gates user return release",
+    "preCommitHead": "23a774999",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase44.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase44.rebuild-build.task1"
   }
 }
 ```
@@ -565,9 +565,9 @@
 ### Stream: Rebuild Release Candidate
 
 221. [DONE] `quality-gates-implementation.phase44.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the Quality Gates split-integration user-return repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates user return release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.249`; release scope: Quality Gates split-integration terminal anchor parity with Application Skeleton and Diagram Modules, allowing any validated `quality-gates.phase3.integration.taskN` commit to open `Phase 4 — Persistent Quality Gates User Return` and preventing generic `quality-gates.phase3.integration.task3` continuation after final validated integration.
-222. [PENDING] Git Commit: `docs: prepare quality gates user return release notes` (hash: TBD)
-223. [TODO] `quality-gates-implementation.phase44.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates user return release`).
-224. [TODO] Git Commit: `chore: rebuild quality gates user return release` (hash: TBD)
+222. [DONE] Git Commit: `docs: prepare quality gates user return release notes` (hash: 23a774999)
+223. [DONE] `quality-gates-implementation.phase44.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates user return release`). Build evidence (2026-05-13): `./scripts/build-all.sh --allow-dirty --version 1.2.249` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.249.vsix`.
+224. [PENDING] Git Commit: `chore: rebuild quality gates user return release` (hash: TBD)
 
 ## Phase 45 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 
