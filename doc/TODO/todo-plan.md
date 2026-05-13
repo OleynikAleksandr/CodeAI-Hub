@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "786b119b0",
+  "lastRecordedCommit": "d91e85012",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase29.cross-stage-regressions.task1",
-  "expectedCommitMessage": "test: cover managed review anchor cleanup",
+  "currentTaskId": "quality-gates-implementation.phase29.verification.task1",
+  "expectedCommitMessage": "test: verify managed review anchor cleanup",
   "debt": {
-    "expectedCommitMessage": "test: cover managed review anchor cleanup",
-    "preCommitHead": "786b119b0",
+    "expectedCommitMessage": "test: verify managed review anchor cleanup",
+    "preCommitHead": "d91e85012",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase29.cross-stage-regressions.task1"
+    "taskId": "quality-gates-implementation.phase29.verification.task1"
   }
 }
 ```
@@ -378,9 +378,9 @@
 143. [DONE] `quality-gates-implementation.phase29.stale-anchor-guard.task1` Harden managed child-plan mutation so Application Skeleton and Quality Gates acceptance cannot leave stale synthetic Phase 2 review pairs open, and the generic shim fallback cannot silently manufacture `Continue managed ...` tasks for managed contract-review anchors when explicit revision injection was required (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: prevent stale managed review anchors`).
 144. [DONE] Git Commit: `fix: prevent stale managed review anchors` (hash: 786b119b0)
 145. [DONE] `quality-gates-implementation.phase29.cross-stage-regressions.task1` Add regression coverage for the one-correction-then-accept flow in Application Skeleton and Quality Gates, and verify Diagram Modules user-return revision flow does not regress into generic `Continue managed ...` fallback tasks (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `test: cover managed review anchor cleanup`).
-146. [PENDING] Git Commit: `test: cover managed review anchor cleanup` (hash: TBD)
-147. [TODO] `quality-gates-implementation.phase29.verification.task1` Run targeted verification for the review-anchor cleanup repair across managed-workspace shim tests, post-turn service tests, and core build before any new release rebuild is requested (scope: `packages/core/src/managed-workspace, packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed review anchor cleanup`).
-148. [TODO] Git Commit: `test: verify managed review anchor cleanup` (hash: TBD)
+146. [DONE] Git Commit: `test: cover managed review anchor cleanup` (hash: d91e85012)
+147. [DONE] `quality-gates-implementation.phase29.verification.task1` Run targeted verification for the review-anchor cleanup repair across managed-workspace shim tests, post-turn service tests, and core build before any new release rebuild is requested (scope: `packages/core/src/managed-workspace, packages/core/src/remote-bridge/handlers`; expected commit: `test: verify managed review anchor cleanup`). Verification evidence (2026-05-13): `npx tsx --test packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts` passed (`47/47`); `npx ultracite check` passed for the changed progress, post-turn, mutator, shim, and regression files; `npm run build --workspace packages/core` passed.
+148. [PENDING] Git Commit: `test: verify managed review anchor cleanup` (hash: TBD)
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-13)
 
