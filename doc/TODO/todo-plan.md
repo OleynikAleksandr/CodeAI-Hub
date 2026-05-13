@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "5c9ef08ea",
+  "lastRecordedCommit": "5d619554a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase40.rebuild-build.task1",
-  "expectedCommitMessage": "chore: rebuild managed feedback dead-end release",
+  "currentTaskId": "quality-gates-implementation.phase42.qg-user-return-intake.task1",
+  "expectedCommitMessage": "docs: add quality gates user return finalization repair plan",
   "debt": {
-    "expectedCommitMessage": "chore: rebuild managed feedback dead-end release",
-    "preCommitHead": "5c9ef08ea",
+    "expectedCommitMessage": "docs: add quality gates user return finalization repair plan",
+    "preCommitHead": "5d619554a",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase40.rebuild-build.task1"
+    "taskId": "quality-gates-implementation.phase42.qg-user-return-intake.task1"
   }
 }
 ```
@@ -529,10 +529,33 @@
 209. [DONE] `quality-gates-implementation.phase40.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the managed feedback dead-end repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed feedback dead-end release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.248`; release scope: Application Skeleton declared root scaffold ownership (`package.json`, `package-lock.json`, `tsconfig*.json`, and safe materialized paths from `application-skeleton-map.json`), provider-actionable repair feedback for repairable Application Skeleton boundary failures, and matching Application Skeleton child-plan scopes for materialization/repair/user-return.
 210. [DONE] Git Commit: `docs: prepare managed feedback dead-end release notes` (hash: 5c9ef08ea)
 211. [DONE] `quality-gates-implementation.phase40.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed feedback dead-end release`). Build evidence (2026-05-13): `./scripts/build-all.sh --allow-dirty --version 1.2.248` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.248.vsix`.
-212. [PENDING] Git Commit: `chore: rebuild managed feedback dead-end release` (hash: TBD)
+212. [DONE] Git Commit: `chore: rebuild managed feedback dead-end release` (hash: 5d619554a)
 
 ## Phase 41 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 
 ### Stream: Retest Release Candidate
 
-213. [TODO] `quality-gates-implementation.phase41.user-retest.task1` User installs `v1.2.248` and reruns the managed workflow through Application Skeleton and Quality Gates. Retest focus: Application Skeleton materialization with declared root scaffold files must not be blocked as outside the active stage allowlist, and any repairable managed-stage failure must provide provider-actionable instructions rather than wait-only `Do not update / Wait for Core` dead ends. (scope: chat/process observation only; expected commit: none — user acceptance checkpoint).
+213. [DONE] `quality-gates-implementation.phase41.user-retest.task1` User installs `v1.2.248` and reruns the managed workflow through Application Skeleton and Quality Gates. Retest focus: Application Skeleton materialization with declared root scaffold files must not be blocked as outside the active stage allowlist, and any repairable managed-stage failure must provide provider-actionable instructions rather than wait-only `Do not update / Wait for Core` dead ends. (scope: chat/process observation only; expected commit: none — user acceptance checkpoint). Result: Release 1.2.248 retest passed the main Application Skeleton and Quality Gates flow, but Quality Gates terminal child-plan state still missed the persistent Phase 4 user-return anchor after accepted integration and stayed on a generic Phase 3 continuation task; continue with the Phase 42 repair.
+
+## Phase 42 - Quality Gates User Return Finalization Repair (owner: Codex, updated: 2026-05-13)
+
+### Stream: Retest Failure Intake
+
+214. [DONE] `quality-gates-implementation.phase42.qg-user-return-intake.task1` Record the `v1.2.248` retest follow-up: Quality Gates integration was accepted, but the managed child plan stayed in Phase 3 with a generic continuation task instead of opening `Phase 4 — Persistent Quality Gates User Return`; slice the parity fix against Application Skeleton and Diagram Modules terminal user-return behavior. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add quality gates user return finalization repair plan`).
+215. [PENDING] Git Commit: `docs: add quality gates user return finalization repair plan` (hash: TBD)
+
+### Stream: Integration Continuation Terminal Anchor
+
+216. [TODO] `quality-gates-implementation.phase42.qg-user-return-shim.task1` Make validated Quality Gates integration continuation commits open the persistent Phase 4 user-return anchor even when Phase 3 required multiple integration commits (`quality-gates.phase3.integration.task2+`), and add a split-integration shim regression. (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: open quality gates user return after split integration`).
+217. [TODO] Git Commit: `fix: open quality gates user return after split integration` (hash: TBD)
+
+### Stream: Verification
+
+218. [TODO] `quality-gates-implementation.phase42.verification.task1` Run targeted Quality Gates shim/mutator tests and Core build after the split-integration terminal-anchor repair. (scope: `packages/core/src/managed-workspace, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates split integration user return`).
+219. [TODO] Git Commit: `test: verify quality gates split integration user return` (hash: TBD)
+
+## Phase 43 - Release Rebuild Decision (owner: User, updated: 2026-05-13)
+
+### Stream: Release Confirmation Gate
+
+220. [TODO] `quality-gates-implementation.phase43.release-confirmation.task1` Stop after verification and request explicit user confirmation before preparing release notes or running the next release rebuild for the Quality Gates split-integration user-return repair. (scope: `doc/TODO/todo-plan.md`; expected commit: none — release build confirmation checkpoint).
