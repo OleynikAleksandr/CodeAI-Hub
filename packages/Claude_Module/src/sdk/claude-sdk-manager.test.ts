@@ -314,3 +314,51 @@ test("ClaudeSDKManager reuses cached fallback settings until cache expiry", asyn
     await rm(tempDir, { recursive: true, force: true });
   }
 });
+
+test("ClaudeSDKManager omits reasoning display when thinking is hidden in dialog", () => {
+  const manager = createManager();
+
+  const visibleOptions = buildQueryOptions(
+    manager,
+    {
+      sessionId: "session-123",
+      workspacePath: "/tmp/codeai-workspace",
+    } as ActiveSession,
+    {
+      __codeaiAppliedTurnConfig: {
+        providerId: "claudeCodeCli",
+        reasoningEffort: "high",
+        thinkingDisplaySyncEnabled: true,
+        thinkingEnabled: true,
+      },
+    }
+  );
+
+  assert.deepEqual(visibleOptions.thinking, {
+    type: "adaptive",
+    display: "summarized",
+  });
+  assert.equal(visibleOptions.effort, "high");
+
+  const hiddenOptions = buildQueryOptions(
+    manager,
+    {
+      sessionId: "session-456",
+      workspacePath: "/tmp/codeai-workspace",
+    } as ActiveSession,
+    {
+      __codeaiAppliedTurnConfig: {
+        providerId: "claudeCodeCli",
+        reasoningEffort: "high",
+        thinkingDisplaySyncEnabled: false,
+        thinkingEnabled: true,
+      },
+    }
+  );
+
+  assert.deepEqual(hiddenOptions.thinking, {
+    type: "adaptive",
+    display: "omitted",
+  });
+  assert.equal(hiddenOptions.effort, "high");
+});

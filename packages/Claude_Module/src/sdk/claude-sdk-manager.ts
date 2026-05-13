@@ -329,12 +329,18 @@ export class ClaudeSDKManager {
     };
   } {
     if (appliedConfig?.thinkingEnabled !== undefined) {
-      return appliedConfig.thinkingEnabled
-        ? {
-            thinking: { type: "adaptive", display: "summarized" },
-            effort: appliedConfig.reasoningEffort ?? "medium",
-          }
-        : { thinking: { type: "disabled" } };
+      if (!appliedConfig.thinkingEnabled) {
+        return { thinking: { type: "disabled" } };
+      }
+      // Hidden reasoning: keep effort, suppress plain-text `thinking_delta`.
+      const display: "summarized" | "omitted" =
+        appliedConfig.thinkingDisplaySyncEnabled === false
+          ? "omitted"
+          : "summarized";
+      return {
+        thinking: { type: "adaptive", display },
+        effort: appliedConfig.reasoningEffort ?? "medium",
+      };
     }
 
     const payload = this.resolveThinkingSettings(snapshot);
