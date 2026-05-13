@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "23a774999",
+  "lastRecordedCommit": "1cc30e620",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase44.rebuild-build.task1",
-  "expectedCommitMessage": "chore: rebuild quality gates user return release",
+  "currentTaskId": "quality-gates-implementation.phase46.lifecycle-ssot.task1",
+  "expectedCommitMessage": "docs: sync accepted managed lifecycle ssot",
   "debt": {
-    "expectedCommitMessage": "chore: rebuild quality gates user return release",
-    "preCommitHead": "23a774999",
+    "expectedCommitMessage": "docs: sync accepted managed lifecycle ssot",
+    "preCommitHead": "1cc30e620",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase44.rebuild-build.task1"
+    "taskId": "quality-gates-implementation.phase46.lifecycle-ssot.task1"
   }
 }
 ```
@@ -567,10 +567,38 @@
 221. [DONE] `quality-gates-implementation.phase44.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the Quality Gates split-integration user-return repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates user return release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.249`; release scope: Quality Gates split-integration terminal anchor parity with Application Skeleton and Diagram Modules, allowing any validated `quality-gates.phase3.integration.taskN` commit to open `Phase 4 — Persistent Quality Gates User Return` and preventing generic `quality-gates.phase3.integration.task3` continuation after final validated integration.
 222. [DONE] Git Commit: `docs: prepare quality gates user return release notes` (hash: 23a774999)
 223. [DONE] `quality-gates-implementation.phase44.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates user return release`). Build evidence (2026-05-13): `./scripts/build-all.sh --allow-dirty --version 1.2.249` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.249.vsix`.
-224. [PENDING] Git Commit: `chore: rebuild quality gates user return release` (hash: TBD)
+224. [DONE] Git Commit: `chore: rebuild quality gates user return release` (hash: 1cc30e620)
 
 ## Phase 45 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 
 ### Stream: Retest Release Candidate
 
-225. [TODO] `quality-gates-implementation.phase45.user-retest.task1` User installs `v1.2.249` and reruns the managed workflow through Quality Gates after split integration. Retest focus: after the validated Quality Gates integration commit, the child plan must open `Phase 4 — Persistent Quality Gates User Return` with `quality-gates.phase4.user-return.task1` and must not create a generic `quality-gates.phase3.integration.task3` continuation. (scope: chat/process observation only; expected commit: none — user acceptance checkpoint).
+225. [DONE] `quality-gates-implementation.phase45.user-retest.task1` User installs `v1.2.249` and reruns the managed workflow through Quality Gates after split integration. Retest focus: after the validated Quality Gates integration commit, the child plan must open `Phase 4 — Persistent Quality Gates User Return` with `quality-gates.phase4.user-return.task1` and must not create a generic `quality-gates.phase3.integration.task3` continuation. (scope: chat/process observation only; expected commit: none — user acceptance checkpoint). Result: Release 1.2.249 accepted by the user: Diagram Modules, Application Skeleton, and Quality Gates managed orchestration retest passed; proceed to SSOT sync, planning archive, scope closeout, and GitHub push.
+
+## Phase 46 - Closeout Documentation Sync (owner: Codex, updated: 2026-05-13)
+
+### Stream: Managed Lifecycle SSOT
+
+226. [DONE] `quality-gates-implementation.phase46.lifecycle-ssot.task1` Sync canonical managed lifecycle documents with the accepted release `1.2.249` behavior: Quality Gates mirrors Application Skeleton/Diagram Modules, split integration commits open the persistent user-return phase, repairable failures must stay provider-actionable, and Core owns Git/plan continuation. (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: sync accepted managed lifecycle ssot`).
+227. [PENDING] Git Commit: `docs: sync accepted managed lifecycle ssot` (hash: TBD)
+228. [TODO] `quality-gates-implementation.phase46.architecture-index.task1` Update architecture, rollout guardrails, and documentation navigation so release `1.2.249` is described as the accepted managed orchestration baseline rather than an active planning experiment. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document managed orchestration closeout`).
+229. [TODO] Git Commit: `docs: document managed orchestration closeout` (hash: TBD)
+
+### Stream: Planning Source Disposition
+
+230. [TODO] `quality-gates-implementation.phase46.archive-quality-gates-source.task1` Move the completed Quality Gates scenario planning source to the Plans archive and update the active plan planning-source references to that archived path before final closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Quality_Gates_Scenario_1.2.249.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive quality gates scenario source`).
+231. [TODO] Git Commit: `docs: archive quality gates scenario source` (hash: TBD)
+232. [TODO] `quality-gates-implementation.phase46.archive-lifecycle-source.task1` Move the completed managed workspace lifecycle planning source to the Plans archive and update navigation to the archived historical source. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workspace_Lifecycle_From_Diagram_Modules.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workspace_Lifecycle_From_Diagram_Modules_1.2.249.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive managed workspace lifecycle planning source`).
+233. [TODO] Git Commit: `docs: archive managed workspace lifecycle planning source` (hash: TBD)
+234. [TODO] `quality-gates-implementation.phase46.archive-phase-design-source.task1` Move the completed corrective-operation phase design source to the Plans archive and mark the Managed Step Orchestration planning folder as inactive. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design_1.2.249.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md`; expected commit: `docs: archive managed phase design planning source`).
+235. [TODO] Git Commit: `docs: archive managed phase design planning source` (hash: TBD)
+236. [TODO] `quality-gates-implementation.phase46.archive-index-final.task1` Finalize Docs Index links after the Managed Step Orchestration planning folder is emptied of active implementation sources. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: finalize managed planning archive index`).
+237. [TODO] Git Commit: `docs: finalize managed planning archive index` (hash: TBD)
+
+## Phase 47 - Scope Closeout (owner: Codex, updated: 2026-05-13)
+
+### Stream: Accepted Scope Closeout
+
+238. [TODO] `quality-gates-implementation.phase47.scope-closeout.task1` Run Plan Orchestrator closeout after explicit user acceptance, write the active plan archive, keep the archived planning source disposition stable, and close this execution scope into terminal `NONE` state. (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-closeout-quality-gates-managed-orchestration-implementation.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close quality gates managed orchestration plan`).
+239. [TODO] Git Commit: `docs: close quality gates managed orchestration plan` (hash: TBD)
+240. [TODO] `quality-gates-implementation.phase47.post-closeout-anchor.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

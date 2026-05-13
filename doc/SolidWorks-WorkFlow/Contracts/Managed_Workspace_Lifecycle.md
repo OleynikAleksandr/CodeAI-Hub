@@ -2,10 +2,10 @@
 
 **Status:** Active contract
 **Created:** 2026-05-07
-**Updated:** 2026-05-12
+**Updated:** 2026-05-13
 **Owner:** Oleksandr + Codex
 
-**2026-05-12 update:** Quality Gates Baseline lifecycle uses dynamic child-plan task injection rather than a static stream1.task2 follow-up. Tasks injected by Core: `quality-gates.phase1.draft.task1`, `quality-gates.phase2.review.task1` + `phase2.review.revisionN.task1`, `quality-gates.phase2.acceptance.task1`, `quality-gates.phase3.integration.task1`, `quality-gates.phase4.user-return.revisionN.task1`, and repair pairs `quality-gates.<phase>.repairN.task1`. Stage status is sticky-completed by `workspace.plan.md` `acceptedCommits` evidence.
+**2026-05-13 accepted baseline:** release `1.2.249` confirms the managed trunk lifecycle for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`. Quality Gates uses dynamic child-plan task injection rather than static follow-ups. Tasks injected by Core: `quality-gates.phase1.draft.task1`, `quality-gates.phase2.review.task1`, `quality-gates.phase2.review.revisionN.task1`, `quality-gates.phase2.acceptance.task1`, `quality-gates.phase3.integration.taskN`, idle `quality-gates.phase4.user-return.task1`, `quality-gates.phase4.user-return.revisionN.task1`, and repair pairs `quality-gates.<phase>.repairN.task1`. Stage status is sticky-completed by `workspace.plan.md` `acceptedCommits` evidence.
 
 ## 1. Boundary
 
@@ -71,6 +71,13 @@ At `Diagram Modules` start, hooks are lifecycle-minimal and stack-neutral.
 
 After integrated Quality Gates, Core unlocks Development Tree read model but does not automatically start all branch agents. Product Part / Cluster / Module nodes are startable units. A node Start command must validate clean Git and the materialized node folder, persist/use the selected provider/model/reasoning defaults, create only that node's draft artifacts, and create only that node's workflow session.
 
+Quality Gates completion has two separate truths:
+
+- integration acceptance: `quality-gates.json` records accepted/integrated state, required gates are wired into managed lifecycle hooks, and Core commits `feat: integrate quality gates baseline`;
+- post-completion availability: Core opens `Phase 4 - Persistent Quality Gates User Return` with idle `quality-gates.phase4.user-return.task1` so later user changes become tracked `revisionN` task pairs.
+
+Development Tree unlock may follow the integration commit, but it must not replace the Quality Gates user-return phase. If Phase 3 integration takes multiple commits, the final validated `quality-gates.phase3.integration.taskN` commit opens Phase 4; a generic `quality-gates.phase3.integration.taskN+1` continuation is invalid after final validation.
+
 ## 6. Agent Acceptance Feedback
 
 Core acceptance is an active loop, not a passive lock.
@@ -101,6 +108,7 @@ If acceptance fails, Core must:
 - send the validation result back into the owning workflow session;
 - include the concrete failed checks, the observed Core check context, and a
   repair request;
+- avoid wait-only provider instructions for repairable owned-stage failures;
 - avoid duplicate feedback for the same session/error set on the same provider
   turn and workspace commit before the first feedback delivery finishes;
 - resend feedback after a new agent repair commit if the same validation still
