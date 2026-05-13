@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "1ce10740a",
+  "lastRecordedCommit": "d7701d7ac",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase35.verification.task1",
-  "expectedCommitMessage": "test: verify dynamic quality gates ownership repair",
+  "currentTaskId": "quality-gates-implementation.phase36.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare dynamic quality gates ownership release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify dynamic quality gates ownership repair",
-    "preCommitHead": "1ce10740a",
+    "expectedCommitMessage": "docs: prepare dynamic quality gates ownership release notes",
+    "preCommitHead": "d7701d7ac",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase35.verification.task1"
+    "taskId": "quality-gates-implementation.phase36.rebuild-docs.task1"
   }
 }
 ```
@@ -477,13 +477,13 @@
 ### Stream: Verification
 
 193. [DONE] `quality-gates-implementation.phase35.verification.task1` Run targeted verification for dynamic Quality Gates ownership/action-policy repairs and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify dynamic quality gates ownership repair`). Verification evidence (2026-05-13): `npx ultracite check packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts packages/agents/quality-gates-agent/assets/quality-gates-prompt.md packages/agents/quality-gates-agent/assets/quality-gates-contract.md packages/core/src/templates/bundled-templates.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts` passed (`36/36`); `npm run build --workspace packages/core` passed.
-194. [PENDING] Git Commit: `test: verify dynamic quality gates ownership repair` (hash: TBD)
+194. [DONE] Git Commit: `test: verify dynamic quality gates ownership repair` (hash: d7701d7ac)
 
 ## Phase 36 - Release Rebuild (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Rebuild Release Candidate
 
-195. [TODO] `quality-gates-implementation.phase36.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next dynamic Quality Gates ownership repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare dynamic quality gates ownership release notes`).
-196. [TODO] Git Commit: `docs: prepare dynamic quality gates ownership release notes` (hash: TBD)
+195. [DONE] `quality-gates-implementation.phase36.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next dynamic Quality Gates ownership repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare dynamic quality gates ownership release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.247`; release scope: dynamic Quality Gates materialization ownership from `quality-gates.json.integratedPaths`, known QG toolchain paths (`scripts/qg/**`, `.ox*.json`, `tsconfig.qg*.json`), provider-actionable Phase 3 hook-wiring repair feedback, prompt/contract wording that makes required hooks agent-owned during Phase 3, and installed shim scope alignment.
+196. [PENDING] Git Commit: `docs: prepare dynamic quality gates ownership release notes` (hash: TBD)
 197. [TODO] `quality-gates-implementation.phase36.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild dynamic quality gates ownership release`).
 198. [TODO] Git Commit: `chore: rebuild dynamic quality gates ownership release` (hash: TBD)

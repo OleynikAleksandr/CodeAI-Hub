@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.247] - 2026-05-13
+### Fixed
+- **Quality Gates ownership now follows the accepted contract.** Core reads Quality Gates integration paths from `quality-gates.json` and also recognizes common QG toolchain paths such as `scripts/qg/**`, `.ox*.json`, and `tsconfig.qg*.json`.
+- **Phase 3 repair feedback no longer dead-ends on QG-owned files.** Missing Husky hook wiring remains provider-actionable, so the agent is told to continue Phase 3 repair instead of receiving `Do not update... Wait for Core...` for its own materialization files.
+- **Required hook wiring is explicitly agent-owned during Phase 3.** The prompt and contract now forbid finishing with `.husky/pre-commit` / `.husky/pre-push` left as Core-owned pending regeneration.
+- **Installed child-plan shim scope matches the runtime scope.** Fallback shim wording now includes dynamic QG paths rather than preserving the old `scripts/quality-gates/**`-only integration scope.
+
+### Tests
+- Targeted dynamic Quality Gates ownership verification passed: `36/36` tests across dirty-file ownership, action-line feedback, post-turn repair targeting, bundled templates, mutators, shim lifecycle, progress validation, and continuation dispatch.
+- `npx ultracite check` passed for the changed Core handlers, managed-workspace mutators/shim source, prompt assets, bundled templates, and regressions.
+- `npm run build --workspace packages/core` passed before release packaging.
+
 ## [1.2.246] - 2026-05-13
 ### Fixed
 - **Quality Gates Phase 3 integration repair is now actionable.** Accepted-but-invalid Quality Gates integration work is classified as Phase 3 repair, so Core opens `phase3.integration.repairN` work instead of sending the provider back into a stale Phase 2 acceptance loop.
