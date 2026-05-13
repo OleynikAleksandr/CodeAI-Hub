@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-omitted-when-hidden-1.2.252",
   "branch": "main",
   "baseHead": "b4cdd457d",
-  "lastRecordedCommit": "5756ab595",
+  "lastRecordedCommit": "6abcde267",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_Reasoning_Omitted_When_Hidden.md",
-  "currentTaskId": "reasoning-omit.phase3.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.252",
+  "currentTaskId": "reasoning-omit.phase3.release-build.task1",
+  "expectedCommitMessage": "chore: release 1.2.252",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.252",
-    "preCommitHead": "5756ab595",
+    "expectedCommitMessage": "chore: release 1.2.252",
+    "preCommitHead": "6abcde267",
     "stage": "commit_pending",
-    "taskId": "reasoning-omit.phase3.release-docs.task1"
+    "taskId": "reasoning-omit.phase3.release-build.task1"
   }
 }
 ```
@@ -69,9 +69,9 @@
 ### Stream: Release 1.2.252
 
 9. [DONE] `reasoning-omit.phase3.release-docs.task1` Prepare README and CHANGELOG for upcoming release `1.2.252` (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.252`).
-10. [PENDING] Git Commit: `docs: prepare release 1.2.252` (hash: TBD)
-11. [TODO] `reasoning-omit.phase3.release-build.task1` Run the approved release build and collect artifacts for `1.2.252` (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.252`).
-12. [TODO] Git Commit: `chore: release 1.2.252` (hash: TBD)
+10. [DONE] Git Commit: `docs: prepare release 1.2.252` (hash: 6abcde267)
+11. [DONE] `reasoning-omit.phase3.release-build.task1` Run the approved release build and collect artifacts for `1.2.252` (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.252`).
+12. [PENDING] Git Commit: `chore: release 1.2.252` (hash: TBD)
 
 ## Phase 4 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 
