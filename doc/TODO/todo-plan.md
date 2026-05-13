@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "20901670e",
+  "lastRecordedCommit": "152c0928c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase29.quality-gates-accepted-ledger.task1",
-  "expectedCommitMessage": "fix: derive quality gates acceptance from ledger",
+  "currentTaskId": "quality-gates-implementation.phase29.precommit-revision-injection.task1",
+  "expectedCommitMessage": "fix: inject managed review revisions before commits",
   "debt": {
-    "expectedCommitMessage": "fix: derive quality gates acceptance from ledger",
-    "preCommitHead": "20901670e",
+    "expectedCommitMessage": "fix: inject managed review revisions before commits",
+    "preCommitHead": "152c0928c",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase29.quality-gates-accepted-ledger.task1"
+    "taskId": "quality-gates-implementation.phase29.precommit-revision-injection.task1"
   }
 }
 ```
@@ -369,12 +369,12 @@
 ### Stream: Quality Gates Acceptance Commit Evidence
 
 139. [DONE] `quality-gates-implementation.phase29.quality-gates-accepted-ledger.task1` Make Quality Gates derive `acceptanceCommitted` from `workspace.plan.md` accepted commit evidence, matching Application Skeleton, so Phase 3 integration continuation can fire after `docs: accept quality gates contract` even when the artifact still contains `acceptanceCommitted: false` (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts`; expected commit: `fix: derive quality gates acceptance from ledger`).
-140. [PENDING] Git Commit: `fix: derive quality gates acceptance from ledger` (hash: TBD)
+140. [DONE] Git Commit: `fix: derive quality gates acceptance from ledger` (hash: 152c0928c)
 
 ### Stream: Contract Review Revision Anchors
 
-141. [TODO] `quality-gates-implementation.phase29.precommit-revision-injection.task1` Move Application Skeleton and Quality Gates review/user-return revision injection ahead of the managed documentation commit transaction so real artifact-changing review turns commit concrete `revisionN.task1` pairs and then return to the stable review anchor instead of letting the generic plan fallback create `phase2.review.task2` (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts`; expected commit: `fix: inject managed review revisions before commits`).
-142. [TODO] Git Commit: `fix: inject managed review revisions before commits` (hash: TBD)
+141. [DONE] `quality-gates-implementation.phase29.precommit-revision-injection.task1` Move Application Skeleton and Quality Gates review/user-return revision injection ahead of the managed documentation commit transaction so real artifact-changing review turns commit concrete `revisionN.task1` pairs and then return to the stable review anchor instead of letting the generic plan fallback create `phase2.review.task2` (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts`; expected commit: `fix: inject managed review revisions before commits`).
+142. [PENDING] Git Commit: `fix: inject managed review revisions before commits` (hash: TBD)
 143. [TODO] `quality-gates-implementation.phase29.stale-anchor-guard.task1` Harden managed child-plan mutation so Application Skeleton and Quality Gates acceptance cannot leave stale synthetic Phase 2 review pairs open, and the generic shim fallback cannot silently manufacture `Continue managed ...` tasks for managed contract-review anchors when explicit revision injection was required (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: prevent stale managed review anchors`).
 144. [TODO] Git Commit: `fix: prevent stale managed review anchors` (hash: TBD)
 145. [TODO] `quality-gates-implementation.phase29.cross-stage-regressions.task1` Add regression coverage for the one-correction-then-accept flow in Application Skeleton and Quality Gates, and verify Diagram Modules user-return revision flow does not regress into generic `Continue managed ...` fallback tasks (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts`; expected commit: `test: cover managed review anchor cleanup`).

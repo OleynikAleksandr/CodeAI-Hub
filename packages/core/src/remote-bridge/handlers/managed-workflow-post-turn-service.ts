@@ -380,6 +380,16 @@ export class ManagedWorkflowPostTurnService {
       readQualityGatesProgressSnapshot(params),
       readManagedGitStatus(params.workspaceRoot, params.workspaceSlug),
     ]);
+    const preparedManagedGitStatus =
+      await this.injectManagedReviewRevisionBeforeCommit({
+        applicationSkeletonProgress: rawApplicationSkeletonProgress,
+        managedGitStatus,
+        qualityGatesProgress: rawQualityGatesProgress,
+        sessionId: params.sessionId,
+        stage: params.stage,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      });
     const {
       applicationSkeletonProgress: latestApplicationSkeletonProgress,
       diagramModulesProgress: latestDiagramModulesProgress,
@@ -389,7 +399,7 @@ export class ManagedWorkflowPostTurnService {
       context: {
         applicationSkeletonProgress: rawApplicationSkeletonProgress,
         diagramModulesProgress: rawDiagramModulesProgress,
-        managedGitStatus,
+        managedGitStatus: preparedManagedGitStatus,
         qualityGatesProgress: rawQualityGatesProgress,
       },
       logger: this.logger,
@@ -462,6 +472,54 @@ export class ManagedWorkflowPostTurnService {
         workspaceSlug: params.workspaceSlug,
       });
     }
+  }
+
+  private async injectManagedReviewRevisionBeforeCommit(params: {
+    readonly applicationSkeletonProgress: ApplicationSkeletonProgressSnapshot | null;
+    readonly managedGitStatus: ManagedGitStatus;
+    readonly qualityGatesProgress: QualityGatesProgressSnapshot | null;
+    readonly sessionId: string;
+    readonly stage: string;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<ManagedGitStatus> {
+    if (params.stage === "application_skeleton") {
+      const phase = classifyApplicationSkeletonPhase(
+        params.applicationSkeletonProgress
+      );
+      const reviewTurnKind = classifyApplicationSkeletonReviewTurn({
+        ownedDirtyFiles:
+          params.managedGitStatus.dirtyByStage.application_skeleton ?? [],
+        phase,
+      });
+      if (reviewTurnKind === "revision") {
+        await runApplicationSkeletonRevisionInjection({
+          logger: this.logger,
+          sessionId: params.sessionId,
+          stage: params.stage,
+          workspaceRoot: params.workspaceRoot,
+        });
+        return readManagedGitStatus(params.workspaceRoot, params.workspaceSlug);
+      }
+    }
+    if (params.stage === "quality_gates") {
+      const phase = classifyQualityGatesPhase(params.qualityGatesProgress);
+      const reviewTurnKind = classifyQualityGatesReviewTurn({
+        ownedDirtyFiles:
+          params.managedGitStatus.dirtyByStage.quality_gates ?? [],
+        phase,
+      });
+      if (reviewTurnKind === "revision") {
+        await runQualityGatesRevisionInjection({
+          logger: this.logger,
+          sessionId: params.sessionId,
+          stage: params.stage,
+          workspaceRoot: params.workspaceRoot,
+        });
+        return readManagedGitStatus(params.workspaceRoot, params.workspaceSlug);
+      }
+    }
+    return params.managedGitStatus;
   }
 
   private async runDiagramModulesPostTurn(params: {
@@ -607,14 +665,6 @@ export class ManagedWorkflowPostTurnService {
         stage: params.stage,
       });
     }
-    if (reviewTurnKind === "revision") {
-      await runApplicationSkeletonRevisionInjection({
-        logger: this.logger,
-        sessionId: params.sessionId,
-        stage: params.stage,
-        workspaceRoot: params.workspaceRoot,
-      });
-    }
     await Promise.all([
       sendApplicationSkeletonContinuationIfReady({
         chains: params.chains,
@@ -693,18 +743,6 @@ export class ManagedWorkflowPostTurnService {
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
-    const reviewTurnKind = classifyQualityGatesReviewTurn({
-      ownedDirtyFiles,
-      phase,
-    });
-    if (reviewTurnKind === "revision") {
-      await runQualityGatesRevisionInjection({
-        logger: this.logger,
-        sessionId: params.sessionId,
-        stage: params.stage,
-        workspaceRoot: params.workspaceRoot,
-      });
-    }
     await Promise.all([
       this.acceptanceFeedback.sendQualityGatesFeedback({
         chains: params.chains,
