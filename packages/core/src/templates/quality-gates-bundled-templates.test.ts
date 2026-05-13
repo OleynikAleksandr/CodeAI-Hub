@@ -23,8 +23,9 @@ const QUALITY_GATES_HANDOFF_RE =
   /embedded Core plan status must say `activeStage: "quality_gates"`/;
 const NO_LIFECYCLE_RESTORE_RE =
   /must not rewrite, restore, revert, checkout, or replace the Core-owned lifecycle baseline/;
-const HOOK_WIRING_RE =
-  /Phase 2 must wire the accepted required gate scope into the managed lifecycle hooks/;
+const HOOK_WIRING_RE = /must explicitly call every gate id/u;
+const MATERIALIZATION_COMPLETE_RE =
+  /Materialization is not complete until all accepted required gates have executable package scripts/u;
 const AGGREGATE_PRE_COMMIT_RE = /qg:before-commit/;
 const AGGREGATE_PRE_PUSH_RE = /qg:before-push/;
 const PRESERVE_PLAN_VALIDATE_RE =
@@ -64,10 +65,12 @@ const ADVISORY_NO_BLOCKING_RE =
 const CONTRACT_HOOK_BOUNDARY_RE = /Managed Hook Boundary/;
 const CONTRACT_CHILD_PLAN_RE =
   /Core owns git setup, the lifecycle baseline inside `\.husky` hooks, plan scripts, workspace plan state, active stage todo-plan state/;
-const CONTRACT_HOOK_AGGREGATE_RE =
-  /Hook wiring may be direct .* or aggregate .*qg:before-commit.*qg:before-push/s;
+const CONTRACT_HOOK_DIRECT_EVIDENCE_RE =
+  /Hook wiring evidence must include direct `npm run qg:<gate>` calls/s;
+const CONTRACT_AGGREGATE_NOT_SUFFICIENT_RE =
+  /Aggregate commands .* are not sufficient evidence by themselves/s;
 const CONTRACT_INTEGRATED_HOOK_RE =
-  /`integrated: true` requires lifecycle hook wiring/;
+  /`integrated: true` requires explicit lifecycle hook wiring/;
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -92,6 +95,7 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, QUALITY_GATES_HANDOFF_RE);
   assert.match(prompt, NO_LIFECYCLE_RESTORE_RE);
   assert.match(prompt, HOOK_WIRING_RE);
+  assert.match(prompt, MATERIALIZATION_COMPLETE_RE);
   assert.match(prompt, AGGREGATE_PRE_COMMIT_RE);
   assert.match(prompt, AGGREGATE_PRE_PUSH_RE);
   assert.match(prompt, PRESERVE_PLAN_VALIDATE_RE);
@@ -126,7 +130,8 @@ test("quality gates bundled contract exposes integration-aware gate fields", () 
   assert.match(contract, ADVISORY_NO_BLOCKING_RE);
   assert.match(contract, CONTRACT_HOOK_BOUNDARY_RE);
   assert.match(contract, CONTRACT_CHILD_PLAN_RE);
-  assert.match(contract, CONTRACT_HOOK_AGGREGATE_RE);
+  assert.match(contract, CONTRACT_HOOK_DIRECT_EVIDENCE_RE);
+  assert.match(contract, CONTRACT_AGGREGATE_NOT_SUFFICIENT_RE);
   assert.match(contract, CONTRACT_INTEGRATED_HOOK_RE);
   assert.match(contract, ACCEPTANCE_COMMITTED_RE);
   assert.match(contract, NO_PLANNED_DUPLICATES_RE);

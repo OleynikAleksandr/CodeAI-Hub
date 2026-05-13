@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "884563429",
+  "lastRecordedCommit": "cd0fc47fd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase32.integration-regressions.task1",
-  "expectedCommitMessage": "test: cover quality gates integration repair boundary",
+  "currentTaskId": "quality-gates-implementation.phase32.integration-template-regressions.task1",
+  "expectedCommitMessage": "test: lock quality gates integration prompt contract",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates integration repair boundary",
-    "preCommitHead": "884563429",
+    "expectedCommitMessage": "test: lock quality gates integration prompt contract",
+    "preCommitHead": "cd0fc47fd",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase32.integration-regressions.task1"
+    "taskId": "quality-gates-implementation.phase32.integration-template-regressions.task1"
   }
 }
 ```
@@ -418,9 +418,9 @@
 ### Stream: Regression And Verification
 
 161. [DONE] `quality-gates-implementation.phase32.integration-regressions.task1` Add regression coverage for Quality Gates integration repair task targeting, allowed materialization paths, and actionable failed-integration feedback (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts`; expected commit: `test: cover quality gates integration repair boundary`).
-162. [PENDING] Git Commit: `test: cover quality gates integration repair boundary` (hash: TBD)
-163. [TODO] `quality-gates-implementation.phase32.integration-template-regressions.task1` Lock the Quality Gates bundled template assertions to the explicit hook wiring and materialization-completion contract (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: lock quality gates integration prompt contract`).
-164. [TODO] Git Commit: `test: lock quality gates integration prompt contract` (hash: TBD)
+162. [DONE] Git Commit: `test: cover quality gates integration repair boundary` (hash: cd0fc47fd)
+163. [DONE] `quality-gates-implementation.phase32.integration-template-regressions.task1` Lock the Quality Gates bundled template assertions to the explicit hook wiring and materialization-completion contract (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: lock quality gates integration prompt contract`).
+164. [PENDING] Git Commit: `test: lock quality gates integration prompt contract` (hash: TBD)
 165. [TODO] `quality-gates-implementation.phase32.verification.task1` Run targeted verification for the Quality Gates integration repair boundary across Core handlers, managed-workspace mutators, prompt templates, and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify quality gates integration repair boundary`).
 166. [TODO] Git Commit: `test: verify quality gates integration repair boundary` (hash: TBD)
 
