@@ -13,6 +13,8 @@ const MISPLACED_ROOT_RE = /managed metadata root/u;
 const REMOVE_MISPLACED_RE = /Remove the misplaced/u;
 const WAIT_ONLY_RE =
   /Do not update Application Skeleton artifacts|Wait for Core to finish/u;
+const MATERIALIZATION_BOUNDARY_RE =
+  /Repair the reported Application Skeleton materialization boundary/u;
 
 const createChains = (): readonly ContinuityChainSummary[] => [
   {
@@ -71,5 +73,41 @@ test("Application Skeleton misplaced product-parts feedback instructs repair ins
   assert.match(messages[0] ?? "", MISPLACED_ROOT_RE);
   assert.match(messages[0] ?? "", MOVE_MISPLACED_RE);
   assert.match(messages[0] ?? "", REMOVE_MISPLACED_RE);
+  assert.doesNotMatch(messages[0] ?? "", WAIT_ONLY_RE);
+});
+
+test("Application Skeleton repairable boundary feedback does not tell provider to wait", async () => {
+  const messages: string[] = [];
+
+  await new WorkflowAgentAcceptanceFeedback(
+    new Logger("error")
+  ).sendApplicationSkeletonFeedback({
+    chains: createChains(),
+    gateway: {
+      handleMessage: (_sessionId, content) => {
+        messages.push(stringifyFeedbackPayload(content));
+        return Promise.resolve();
+      },
+    },
+    progress: {
+      accepted: true,
+      managedGitOutOfOwnerDirtyFiles: ["package.json"],
+      mapExists: true,
+      mappingReady: true,
+      markdownExists: true,
+      materializationState: "materialized",
+      materialized: true,
+      observedMaterialization: true,
+      substep: "failed",
+      validationErrors: [
+        "Core is blocked from finalizing Application Skeleton because package.json is outside the active stage allowlist.",
+      ],
+    } as never,
+    workspaceRoot: "/tmp",
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+
+  assert.equal(messages.length, 1);
+  assert.match(messages[0] ?? "", MATERIALIZATION_BOUNDARY_RE);
   assert.doesNotMatch(messages[0] ?? "", WAIT_ONLY_RE);
 });

@@ -9,6 +9,7 @@ import type { WorkflowState } from "../../workflow/state/workflow-state-types";
 import {
   attachManagedGitStatus,
   attachValidationDirtyGate,
+  listDirtyFilesOutsideManagedStage,
   readManagedGitStatus,
 } from "./managed-git-stage-gate";
 import { resolveWorkflowBlockedStages } from "./quality-gates-progress";
@@ -186,6 +187,64 @@ test("managed Git status classifies dynamic Quality Gates integration paths", as
     ]);
     assert.deepEqual(status.dirtyByStage.diagram_modules, []);
     assert.deepEqual(status.dirtyByStage.application_skeleton, []);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("managed Git status classifies Application Skeleton declared root scaffold paths", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-git-stage-gate-skeleton-dynamic-")
+  );
+  const workspaceSlug = "demo";
+
+  try {
+    await initCommittedWorkspace(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton-map.json`,
+      `${JSON.stringify(
+        {
+          accepted: true,
+          materializationState: "materialized",
+          materialized: true,
+          materializedPaths: [
+            "product-parts/app/README.md",
+            "package.json",
+            "tsconfig.base.json",
+          ],
+          productParts: [{ codePath: "product-parts/app", id: "app" }],
+          reviewState: "materialized",
+          schema: "codeai-application-skeleton-v1",
+        },
+        null,
+        2
+      )}\n`
+    );
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync("git", ["commit", "-m", "docs: skeleton contract"], {
+      cwd: workspaceRoot,
+    });
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "product-parts/app/README.md",
+      "# App\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, "package.json", "{}\n");
+    await writeWorkspaceFile(workspaceRoot, "tsconfig.base.json", "{}\n");
+
+    const status = await readManagedGitStatus(workspaceRoot, workspaceSlug);
+
+    assert.deepEqual(status.dirtyByStage.application_skeleton, [
+      "package.json",
+      "product-parts/app/README.md",
+      "tsconfig.base.json",
+    ]);
+    assert.deepEqual(
+      listDirtyFilesOutsideManagedStage(status, "application_skeleton"),
+      []
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

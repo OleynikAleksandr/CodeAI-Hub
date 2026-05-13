@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "334dc104e",
+  "lastRecordedCommit": "bd927eb10",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase38.application-skeleton-policy.task1",
-  "expectedCommitMessage": "fix: prevent application skeleton feedback dead ends",
+  "currentTaskId": "quality-gates-implementation.phase38.dead-end-regressions.task1",
+  "expectedCommitMessage": "test: cover managed feedback dead-end policy",
   "debt": {
-    "expectedCommitMessage": "fix: prevent application skeleton feedback dead ends",
-    "preCommitHead": "334dc104e",
+    "expectedCommitMessage": "test: cover managed feedback dead-end policy",
+    "preCommitHead": "bd927eb10",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase38.application-skeleton-policy.task1"
+    "taskId": "quality-gates-implementation.phase38.dead-end-regressions.task1"
   }
 }
 ```
@@ -504,12 +504,12 @@
 ### Stream: Application Skeleton Ownership And Feedback Policy
 
 202. [DONE] `quality-gates-implementation.phase38.application-skeleton-policy.task1` Treat root scaffold files that Application Skeleton may legitimately materialize as Application Skeleton-owned during Phase 3 and make remaining Application Skeleton acceptance failures provider-actionable instead of wait-only when Core reports repairable validation errors. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts`; expected commit: `fix: prevent application skeleton feedback dead ends`).
-203. [PENDING] Git Commit: `fix: prevent application skeleton feedback dead ends` (hash: TBD)
+203. [DONE] Git Commit: `fix: prevent application skeleton feedback dead ends` (hash: bd927eb10)
 
 ### Stream: Cross-Stage Regressions
 
-204. [TODO] `quality-gates-implementation.phase38.dead-end-regressions.task1` Add regressions that cover Application Skeleton root scaffold files, provider-actionable feedback for repairable failures, and no wait-only dead ends for Diagram Modules / Application Skeleton / Quality Gates repairable acceptance failures. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `test: cover managed feedback dead-end policy`).
-205. [TODO] Git Commit: `test: cover managed feedback dead-end policy` (hash: TBD)
+204. [DONE] `quality-gates-implementation.phase38.dead-end-regressions.task1` Add regressions that cover Application Skeleton root scaffold files, provider-actionable feedback for repairable failures, and no wait-only dead ends for Diagram Modules / Application Skeleton / Quality Gates repairable acceptance failures. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `test: cover managed feedback dead-end policy`).
+205. [PENDING] Git Commit: `test: cover managed feedback dead-end policy` (hash: TBD)
 
 ### Stream: Verification
 
