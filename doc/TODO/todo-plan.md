@@ -8,15 +8,15 @@
   "planId": "quality-gates-provider-neutral-in-progress-repair-1.2.250",
   "branch": "main",
   "baseHead": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
-  "lastRecordedCommit": "cd9b13b13",
+  "lastRecordedCommit": "567acb234",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
-  "currentTaskId": "hotfix.phase4.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.250",
+  "currentTaskId": "hotfix.phase4.release-build.task1",
+  "expectedCommitMessage": "chore: release 1.2.250",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.250",
-    "preCommitHead": "cd9b13b13",
+    "expectedCommitMessage": "chore: release 1.2.250",
+    "preCommitHead": "567acb234",
     "stage": "commit_pending",
-    "taskId": "hotfix.phase4.release-docs.task1"
+    "taskId": "hotfix.phase4.release-build.task1"
   }
 }
 ```
@@ -69,9 +69,9 @@
 ### Stream: Release 1.2.250
 
 9. [DONE] `hotfix.phase4.release-docs.task1` Prepare README and CHANGELOG for release 1.2.250 (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.250`)
-10. [PENDING] Git Commit: `docs: prepare release 1.2.250` (hash: TBD)
-11. [TODO] `hotfix.phase4.release-build.task1` Run the approved release build and collect artifacts (scope: release scripts output and version manifests; expected commit: `chore: release 1.2.250`)
-12. [TODO] Git Commit: `chore: release 1.2.250` (hash: TBD)
+10. [DONE] Git Commit: `docs: prepare release 1.2.250` (hash: 567acb234)
+11. [DONE] `hotfix.phase4.release-build.task1` Run the approved release build and collect artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.250`)
+12. [PENDING] Git Commit: `chore: release 1.2.250` (hash: TBD)
 
 ## Phase 5 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 

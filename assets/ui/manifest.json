@@ -3,16 +3,16 @@
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "bundles": {
     "vscode-webview": {
-      "version": "1.2.249",
-      "package": "vscode-webview-1.2.249.tar.bz2",
-      "size": 68288,
-      "sha1": "3ef60f68ca1296586e42c06781cd0af176618c60"
+      "version": "1.2.250",
+      "package": "vscode-webview-1.2.250.tar.bz2",
+      "size": 68257,
+      "sha1": "c986a549e92cd88c5cfd689a91db27dbe86248d8"
     },
     "project-manager": {
-      "version": "1.2.249",
-      "package": "project-manager-1.2.249.tar.bz2",
-      "size": 274373,
-      "sha1": "dfadd4abcc0e8ee54480b2bb3fe0fc29aa712fe1"
+      "version": "1.2.250",
+      "package": "project-manager-1.2.250.tar.bz2",
+      "size": 274435,
+      "sha1": "48fab6fc8f19ff001289ef0fe37316eec0c2079d"
     }
   }
 }
