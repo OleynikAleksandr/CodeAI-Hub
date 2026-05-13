@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "7a6e04c5b",
+  "lastRecordedCommit": "2fe1ef3fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase36.rebuild-build.task1",
-  "expectedCommitMessage": "chore: rebuild dynamic quality gates ownership release",
+  "currentTaskId": "quality-gates-implementation.phase38.dead-end-intake.task1",
+  "expectedCommitMessage": "docs: add managed feedback dead-end repair plan",
   "debt": {
-    "expectedCommitMessage": "chore: rebuild dynamic quality gates ownership release",
-    "preCommitHead": "7a6e04c5b",
+    "expectedCommitMessage": "docs: add managed feedback dead-end repair plan",
+    "preCommitHead": "2fe1ef3fb",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase36.rebuild-build.task1"
+    "taskId": "quality-gates-implementation.phase38.dead-end-intake.task1"
   }
 }
 ```
@@ -486,4 +486,32 @@
 195. [DONE] `quality-gates-implementation.phase36.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next dynamic Quality Gates ownership repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare dynamic quality gates ownership release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.247`; release scope: dynamic Quality Gates materialization ownership from `quality-gates.json.integratedPaths`, known QG toolchain paths (`scripts/qg/**`, `.ox*.json`, `tsconfig.qg*.json`), provider-actionable Phase 3 hook-wiring repair feedback, prompt/contract wording that makes required hooks agent-owned during Phase 3, and installed shim scope alignment.
 196. [DONE] Git Commit: `docs: prepare dynamic quality gates ownership release notes` (hash: 7a6e04c5b)
 197. [DONE] `quality-gates-implementation.phase36.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild dynamic quality gates ownership release`). Build evidence (2026-05-13): `./scripts/build-all.sh --allow-dirty --version 1.2.247` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.247.vsix`.
-198. [PENDING] Git Commit: `chore: rebuild dynamic quality gates ownership release` (hash: TBD)
+198. [DONE] Git Commit: `chore: rebuild dynamic quality gates ownership release` (hash: 2fe1ef3fb)
+
+## Phase 37 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
+
+### Stream: Retest Release Candidate
+
+199. [DONE] `quality-gates-implementation.phase37.user-retest.task1` User installs `v1.2.247` and reruns the managed workflow through Quality Gates. Retest focus: Phase 3 Quality Gates materialization must treat QG tool configs/scripts/tsconfigs and `.husky` hook wiring as provider-actionable Quality Gates work, must not emit the contradictory "Do not update / Wait for Core" repair instruction for those owned files, and must finalize the managed commit or provide a concrete provider-actionable repair. (scope: chat/process observation only; expected commit: none — user acceptance checkpoint). Result: Release 1.2.247 retest blocked in Application Skeleton: Core found a repairable managed-stage failure but sent wait-only provider instructions, creating a dead-end.
+
+## Phase 38 - Managed Feedback Dead-End Repair (owner: Codex, updated: 2026-05-13)
+
+### Stream: Retest Failure Intake
+
+200. [DONE] `quality-gates-implementation.phase38.dead-end-intake.task1` Record the `v1.2.247` Application Skeleton retest failure and slice the cross-stage dead-end feedback repair: Core may reject acceptance, but provider-visible feedback must not combine a repairable managed-stage failure with "do not update / wait for Core" instructions that leave the agent with no allowed action. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add managed feedback dead-end repair plan`).
+201. [PENDING] Git Commit: `docs: add managed feedback dead-end repair plan` (hash: TBD)
+
+### Stream: Application Skeleton Ownership And Feedback Policy
+
+202. [TODO] `quality-gates-implementation.phase38.application-skeleton-policy.task1` Treat root scaffold files that Application Skeleton may legitimately materialize as Application Skeleton-owned during Phase 3 and make remaining Application Skeleton acceptance failures provider-actionable instead of wait-only when Core reports repairable validation errors. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts`; expected commit: `fix: prevent application skeleton feedback dead ends`).
+203. [TODO] Git Commit: `fix: prevent application skeleton feedback dead ends` (hash: TBD)
+
+### Stream: Cross-Stage Regressions
+
+204. [TODO] `quality-gates-implementation.phase38.dead-end-regressions.task1` Add regressions that cover Application Skeleton root scaffold files, provider-actionable feedback for repairable failures, and no wait-only dead ends for Diagram Modules / Application Skeleton / Quality Gates repairable acceptance failures. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `test: cover managed feedback dead-end policy`).
+205. [TODO] Git Commit: `test: cover managed feedback dead-end policy` (hash: TBD)
+
+### Stream: Verification
+
+206. [TODO] `quality-gates-implementation.phase38.verification.task1` Run targeted managed feedback/ownership tests and Core build before any next release rebuild decision. (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, doc/TODO/todo-plan.md`; expected commit: `test: verify managed feedback dead-end repair`).
+207. [TODO] Git Commit: `test: verify managed feedback dead-end repair` (hash: TBD)
