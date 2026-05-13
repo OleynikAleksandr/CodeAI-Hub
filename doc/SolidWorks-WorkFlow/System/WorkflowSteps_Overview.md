@@ -8,6 +8,8 @@
 
 **2026-05-13 hotfix note:** release `1.2.250` applies the same post-turn invariant across managed trunk steps. A provider terminal turn that records an accepted post-acceptance attempt as `in_progress` must be either validated to completion or converted into an actionable repair; Core must not silently commit it and wait. Quality Gates validates missing lifecycle hook calls even while `integrated` is `false`. Application Skeleton treats `materializationState: "in_progress"` as an observed materialization attempt and validates declared production paths immediately. Diagram Modules already avoids this class because its subturn state is derived from the concrete expected artifact (`product-parts.index.md` or one Product Part file), not from a free terminal `in_progress` flag.
 
+**2026-05-13 continuity note:** the post-`1.2.250` hotfix scope hardens the provider-neutral session continuity store used by every trunk and Development Tree step. Project Manager must prefer an existing continuity session over a Start/confirmation card whenever a recoverable `chain.json` exists, even if the file was left as a complete JSON object with trailing corrupt bytes by an interrupted concurrent write. Core now serializes chain/index writes per path, writes through temp-file rename, recovers legacy trailing-corrupt JSON on read, and rewrites recovered chains as clean JSON on the next save.
+
 ---
 
 ## 0) Философия Workflow
@@ -93,6 +95,7 @@ Runtime conformance constraints для managed post-turn arbitration (релиз
 - Inbound acceptance phrases ("Подтверждаю контракт", "Принимаю контракт", "Утверждаю контракт", full-message match с whitespace/case normalization) распознаются как Core-owned команды и НЕ передаются провайдеру; они скипают provider dispatch и логируются без записи в user history.
 - Managed commit boundary проверяет owned scope per-stage через диспатч-стратегии (диаграмма модулей сохраняет per-task narrowing; skeleton/quality_gates используют pass-through allowlist из `dirtyByStage`).
 - Managed Core messages обслуживают два канала: (a) user-visible delivery через workflow events feed (`type: "managed.core.message"`); (b) durable audit storage в `<basename>.audit.jsonl` рядом с primary session log; audit stream изолирован от replay/rollover/transcript reconstruction.
+- Continuity chains are stage-family agnostic. The same load/persistence rules apply to `description`, `virtual_simulation`, `diagram_modules`, `application_skeleton`, `quality_gates`, and all nested `development_tree/...` sessions; no step may depend on a separate card-only fallback once a recoverable chain exists.
 
 Любой код, который читает workflow state для Project Manager, sidebar, cards, status panel или artifact panes, обязан оставаться side-effect free относительно provider-visible messages. Read-path может возвращать snapshot и diagnostics, но не должен запускать acceptance, managed commit или continuation. Если нескольким внутренним модулям Core нужны данные одного turn-а, они получают их из общего post-turn contract/cluster, а не каждый из своего наблюдателя.
 

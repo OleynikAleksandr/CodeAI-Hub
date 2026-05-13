@@ -8,15 +8,15 @@
   "planId": "quality-gates-provider-neutral-in-progress-repair-1.2.250",
   "branch": "main",
   "baseHead": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
-  "lastRecordedCommit": "37c2dd5fe",
+  "lastRecordedCommit": "6085c62bc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
-  "currentTaskId": "hotfix.phase6.continuity-store.task1",
-  "expectedCommitMessage": "fix: harden session continuity chain persistence",
+  "currentTaskId": "hotfix.phase6.continuity-docs.task1",
+  "expectedCommitMessage": "docs: document continuity recovery invariant",
   "debt": {
-    "expectedCommitMessage": "fix: harden session continuity chain persistence",
-    "preCommitHead": "37c2dd5fe",
+    "expectedCommitMessage": "docs: document continuity recovery invariant",
+    "preCommitHead": "6085c62bc",
     "stage": "commit_pending",
-    "taskId": "hotfix.phase6.continuity-store.task1"
+    "taskId": "hotfix.phase6.continuity-docs.task1"
   }
 }
 ```
@@ -85,9 +85,9 @@
 ### Stream: Continuity Chain Recovery
 
 15. [DONE] `hotfix.phase6.continuity-store.task1` Harden session continuity chain persistence and recovery for all workflow/development-tree stages so malformed `chain.json` files do not hide existing sessions from Project Manager (scope: `packages/core/src/session-continuity/continuity-store.ts, packages/core/src/session-continuity/index-registry.ts, packages/core/src/session-continuity/continuity-store.test.ts`; expected commit: `fix: harden session continuity chain persistence`)
-16. [PENDING] Git Commit: `fix: harden session continuity chain persistence` (hash: TBD)
-17. [TODO] `hotfix.phase6.continuity-docs.task1` Document the continuity recovery invariant and the user-visible retest blocker in workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document continuity recovery invariant`)
-18. [TODO] Git Commit: `docs: document continuity recovery invariant` (hash: TBD)
+16. [DONE] Git Commit: `fix: harden session continuity chain persistence` (hash: 6085c62bc)
+17. [DONE] `hotfix.phase6.continuity-docs.task1` Document the continuity recovery invariant and the user-visible retest blocker in workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document continuity recovery invariant`)
+18. [PENDING] Git Commit: `docs: document continuity recovery invariant` (hash: TBD)
 
 ## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-13)
 
