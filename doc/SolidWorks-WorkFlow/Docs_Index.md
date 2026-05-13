@@ -78,6 +78,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md` — active hotfix planning-doc для provider-neutral Quality Gates Phase 3 repair: accepted `in_progress` integration attempts with missing lifecycle hook wiring must become actionable Core repair turns instead of silent managed commits/stalls.
 - `Plans/Archive/DevelopmentTree_Orchestration_Architecture.md` — archived planning-doc закрытого Development Tree orchestration planning scope: user-driven Development Tree documentation sessions after Quality Gates, contract-only Implementation Planner inputs, implementation waves, deterministic node micro-plans, and Core-orchestrated parallel/serial code execution.
 - `Plans/Archive/DevelopmentTree_Phase1_UserStartedDocumentation.md` — archived child planning-doc закрытого Development Tree orchestration planning scope (`doc/TODO/Archive/todo-plan-closeout-development-tree-orchestration-planning-2026-05-08.md`): Phase 1 Development Tree behavior with no automatic branch-session fan-out, user-started Product Part / Cluster / Module node cards, per-node provider/model/reasoning binding, node-scoped draft artifacts, commits, Core feedback, and user acceptance.
 - `Plans/Managed_Step_Orchestration/README.md` — inactive folder marker for the completed managed-step orchestration planning wave. Active implementation sources were archived after release `1.2.249`; new managed orchestration work must start from a fresh planning document.
