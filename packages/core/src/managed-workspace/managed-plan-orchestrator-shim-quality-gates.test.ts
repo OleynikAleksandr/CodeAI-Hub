@@ -14,10 +14,13 @@ const STATIC_QUALITY_GATES_PHASE_RE =
   /Managed Gate Integration|Quality Gates Contract Review|Quality Gates Integration|Persistent Quality Gates User Return/u;
 const LEGACY_STREAM_TASK_RE = /quality-gates\.stream1\.task2/u;
 const INTEGRATION_TASK_RE = /quality-gates\.phase3\.integration\.task1/u;
+const INTEGRATION_TASK2_RE = /quality-gates\.phase3\.integration\.task2/u;
+const INTEGRATION_TASK3_RE = /quality-gates\.phase3\.integration\.task3/u;
 const INCLUDED_IN_COMMIT_RE = /included-in-commit/u;
 const SYNTHETIC_REVIEW_TASK_RE = /quality-gates\.phase2\.review\.task2/u;
 const GENERIC_CONTINUE_RE = /Continue managed quality_gates updates/u;
 const USER_RETURN_ANCHOR_TASK_ID = "quality-gates.phase4.user-return.task1";
+const USER_RETURN_PHASE_RE = /Phase 4 — Persistent Quality Gates User Return/u;
 const USER_RETURN_REVISION1_MESSAGE =
   "docs: revise quality gates user return revision 1";
 const USER_RETURN_REVISION1_TASK_RE =
@@ -220,6 +223,50 @@ const writeValidatedIntegratedQualityGatesArtifacts = async (
   );
 };
 
+const writePartialIntegratedQualityGatesArtifacts = async (
+  workspaceRoot: string,
+  artifactRoot: string
+): Promise<void> => {
+  await writeFile(
+    path.join(workspaceRoot, "package.json"),
+    `${JSON.stringify(
+      {
+        name: "demo",
+        scripts: {
+          build: "echo build",
+        },
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+  await writeFile(
+    path.join(artifactRoot, "quality-gates.json"),
+    `${JSON.stringify(
+      {
+        schema: "codeai-quality-gates-v1",
+        accepted: true,
+        acceptanceCommitted: true,
+        integrated: false,
+        integrationState: "pending",
+        commands: {
+          "qg-build-compile": {
+            command: "npm run build",
+            desiredStatus: "required",
+          },
+        },
+        requiredBeforeCommit: ["qg-build-compile"],
+        requiredBeforePush: [],
+        integratedPaths: ["package.json"],
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+};
+
 test("quality gates shim opens the phase 4 idle anchor only after validated integration", async () => {
   const workspaceRoot = await createWorkspaceRoot();
   try {
@@ -244,6 +291,49 @@ test("quality gates shim opens the phase 4 idle anchor only after validated inte
     );
     assert.doesNotMatch(userReturnPlan, USER_RETURN_REVISION1_TASK_RE);
     assert.doesNotMatch(userReturnPlan, INCLUDED_IN_COMMIT_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("quality gates shim opens phase 4 after split integration continuation validates", async () => {
+  const workspaceRoot = await createWorkspaceRoot();
+  try {
+    const { artifactRoot, planPath, scriptPath } =
+      await bootstrapQualityGatesIntegrationPlan(workspaceRoot);
+
+    await writePartialIntegratedQualityGatesArtifacts(
+      workspaceRoot,
+      artifactRoot
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "feat: integrate quality gates baseline"
+    );
+
+    const continuationPlan = await readFile(planPath, "utf8");
+    assert.match(continuationPlan, INTEGRATION_TASK2_RE);
+    assert.doesNotMatch(continuationPlan, USER_RETURN_PHASE_RE);
+
+    await writeValidatedIntegratedQualityGatesArtifacts(
+      workspaceRoot,
+      artifactRoot
+    );
+    await commitPlan(
+      workspaceRoot,
+      scriptPath,
+      "feat: integrate quality gates baseline"
+    );
+
+    const userReturnPlan = await readFile(planPath, "utf8");
+    assertImmediateCommitPair(
+      userReturnPlan,
+      USER_RETURN_ANCHOR_TASK_ID,
+      USER_RETURN_REVISION1_MESSAGE
+    );
+    assert.doesNotMatch(userReturnPlan, INTEGRATION_TASK3_RE);
+    assert.doesNotMatch(userReturnPlan, USER_RETURN_REVISION1_TASK_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

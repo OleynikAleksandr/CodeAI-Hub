@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "5d619554a",
+  "lastRecordedCommit": "85e780390",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase42.qg-user-return-intake.task1",
-  "expectedCommitMessage": "docs: add quality gates user return finalization repair plan",
+  "currentTaskId": "quality-gates-implementation.phase42.qg-user-return-shim.task1",
+  "expectedCommitMessage": "fix: open quality gates user return after split integration",
   "debt": {
-    "expectedCommitMessage": "docs: add quality gates user return finalization repair plan",
-    "preCommitHead": "5d619554a",
+    "expectedCommitMessage": "fix: open quality gates user return after split integration",
+    "preCommitHead": "85e780390",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase42.qg-user-return-intake.task1"
+    "taskId": "quality-gates-implementation.phase42.qg-user-return-shim.task1"
   }
 }
 ```
@@ -542,12 +542,12 @@
 ### Stream: Retest Failure Intake
 
 214. [DONE] `quality-gates-implementation.phase42.qg-user-return-intake.task1` Record the `v1.2.248` retest follow-up: Quality Gates integration was accepted, but the managed child plan stayed in Phase 3 with a generic continuation task instead of opening `Phase 4 — Persistent Quality Gates User Return`; slice the parity fix against Application Skeleton and Diagram Modules terminal user-return behavior. (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add quality gates user return finalization repair plan`).
-215. [PENDING] Git Commit: `docs: add quality gates user return finalization repair plan` (hash: TBD)
+215. [DONE] Git Commit: `docs: add quality gates user return finalization repair plan` (hash: 85e780390)
 
 ### Stream: Integration Continuation Terminal Anchor
 
-216. [TODO] `quality-gates-implementation.phase42.qg-user-return-shim.task1` Make validated Quality Gates integration continuation commits open the persistent Phase 4 user-return anchor even when Phase 3 required multiple integration commits (`quality-gates.phase3.integration.task2+`), and add a split-integration shim regression. (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: open quality gates user return after split integration`).
-217. [TODO] Git Commit: `fix: open quality gates user return after split integration` (hash: TBD)
+216. [DONE] `quality-gates-implementation.phase42.qg-user-return-shim.task1` Make validated Quality Gates integration continuation commits open the persistent Phase 4 user-return anchor even when Phase 3 required multiple integration commits (`quality-gates.phase3.integration.task2+`), and add a split-integration shim regression. (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: open quality gates user return after split integration`).
+217. [PENDING] Git Commit: `fix: open quality gates user return after split integration` (hash: TBD)
 
 ### Stream: Verification
 

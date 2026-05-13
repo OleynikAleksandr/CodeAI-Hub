@@ -429,7 +429,7 @@ const isValidatedQualityGatesIntegration = (changedFiles) => {
 };
 const existingQualityGatesUserReturnRevisionNumbers = (lines) => lines.map((line) => /quality-gates\\.phase4\\.user-return\\.revision(\\d+)\\.task1/u.exec(line)?.[1]).filter(Boolean).map((value) => Number.parseInt(value, 10)).filter(Number.isFinite);
 const shouldInsertQualityGatesUserReturnAnchor = (state, message, changedFiles) =>
-  ((state.currentTaskId === "quality-gates.phase3.integration.task1" && message === "feat: integrate quality gates baseline") ||
+  ((/^quality-gates\\.phase3\\.integration\\.task\\d+$/u.test(state.currentTaskId ?? "") && message === "feat: integrate quality gates baseline") ||
     (/^quality-gates\\.phase3\\.integration\\.repair\\d+\\.task1$/u.test(state.currentTaskId ?? "") && QUALITY_GATES_REPAIR_COMMIT_RE.test(message))) &&
   isValidatedQualityGatesIntegration(changedFiles);
 const insertQualityGatesUserReturnRevisionTaskPair = (lines, commitLineIndex, state, message, changedFiles) => {
