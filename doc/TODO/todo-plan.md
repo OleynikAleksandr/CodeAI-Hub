@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "248cf80e6",
+  "lastRecordedCommit": "d6bbcdbb9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase30.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare managed review anchor cleanup release notes",
+  "currentTaskId": "quality-gates-implementation.phase30.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild managed review anchor cleanup release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed review anchor cleanup release notes",
-    "preCommitHead": "248cf80e6",
+    "expectedCommitMessage": "chore: rebuild managed review anchor cleanup release",
+    "preCommitHead": "d6bbcdbb9",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase30.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase30.rebuild-build.task1"
   }
 }
 ```
@@ -387,9 +387,9 @@
 ### Stream: Rebuild Release Candidate
 
 149. [DONE] `quality-gates-implementation.phase30.rebuild-docs.task1` After explicit user confirmation, update release notes for the next managed review-anchor cleanup candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed review anchor cleanup release notes`). Release rebuild approved by user on 2026-05-13; next candidate version: `1.2.245`; release scope: Quality Gates acceptance evidence derived from `workspace.plan.md`, pre-commit review/user-return revision injection before managed commits, stale Phase 2 review-anchor cleanup after user acceptance, and cross-stage regression coverage for Application Skeleton, Quality Gates, and Diagram Modules.
-150. [PENDING] Git Commit: `docs: prepare managed review anchor cleanup release notes` (hash: TBD)
-151. [TODO] `quality-gates-implementation.phase30.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed review anchor cleanup release`).
-152. [TODO] Git Commit: `chore: rebuild managed review anchor cleanup release` (hash: TBD)
+150. [DONE] Git Commit: `docs: prepare managed review anchor cleanup release notes` (hash: d6bbcdbb9)
+151. [DONE] `quality-gates-implementation.phase30.rebuild-build.task1` After explicit confirmation only, rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed review anchor cleanup release`). Build evidence (2026-05-13): `./scripts/build-all.sh --allow-dirty --version 1.2.245` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.245.vsix`.
+152. [PENDING] Git Commit: `chore: rebuild managed review anchor cleanup release` (hash: TBD)
 
 ## Phase 31 - Scope Closeout (owner: Codex, updated: 2026-05-13)
 
