@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "85e780390",
+  "lastRecordedCommit": "766170763",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase42.qg-user-return-shim.task1",
-  "expectedCommitMessage": "fix: open quality gates user return after split integration",
+  "currentTaskId": "quality-gates-implementation.phase42.verification.task1",
+  "expectedCommitMessage": "test: verify quality gates split integration user return",
   "debt": {
-    "expectedCommitMessage": "fix: open quality gates user return after split integration",
-    "preCommitHead": "85e780390",
+    "expectedCommitMessage": "test: verify quality gates split integration user return",
+    "preCommitHead": "766170763",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase42.qg-user-return-shim.task1"
+    "taskId": "quality-gates-implementation.phase42.verification.task1"
   }
 }
 ```
@@ -547,12 +547,12 @@
 ### Stream: Integration Continuation Terminal Anchor
 
 216. [DONE] `quality-gates-implementation.phase42.qg-user-return-shim.task1` Make validated Quality Gates integration continuation commits open the persistent Phase 4 user-return anchor even when Phase 3 required multiple integration commits (`quality-gates.phase3.integration.task2+`), and add a split-integration shim regression. (scope: `packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `fix: open quality gates user return after split integration`).
-217. [PENDING] Git Commit: `fix: open quality gates user return after split integration` (hash: TBD)
+217. [DONE] Git Commit: `fix: open quality gates user return after split integration` (hash: 766170763)
 
 ### Stream: Verification
 
-218. [TODO] `quality-gates-implementation.phase42.verification.task1` Run targeted Quality Gates shim/mutator tests and Core build after the split-integration terminal-anchor repair. (scope: `packages/core/src/managed-workspace, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates split integration user return`).
-219. [TODO] Git Commit: `test: verify quality gates split integration user return` (hash: TBD)
+218. [DONE] `quality-gates-implementation.phase42.verification.task1` Run targeted Quality Gates shim/mutator tests and Core build after the split-integration terminal-anchor repair. (scope: `packages/core/src/managed-workspace, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates split integration user return`). Verification evidence (2026-05-13): `npx ultracite check packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts` passed; `npx tsx --test packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts` passed (`10/10`); `npm run build --workspace packages/core` passed.
+219. [PENDING] Git Commit: `test: verify quality gates split integration user return` (hash: TBD)
 
 ## Phase 43 - Release Rebuild Decision (owner: User, updated: 2026-05-13)
 
