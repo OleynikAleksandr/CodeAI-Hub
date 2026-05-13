@@ -8,15 +8,15 @@
   "planId": "quality-gates-provider-neutral-in-progress-repair-1.2.250",
   "branch": "main",
   "baseHead": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
-  "lastRecordedCommit": "9b999cea5",
+  "lastRecordedCommit": "cd9b13b13",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
-  "currentTaskId": "hotfix.phase3.cross-step.task1",
-  "expectedCommitMessage": "docs: verify managed step post-turn parity",
+  "currentTaskId": "hotfix.phase4.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.250",
   "debt": {
-    "expectedCommitMessage": "docs: verify managed step post-turn parity",
-    "preCommitHead": "9b999cea5",
+    "expectedCommitMessage": "docs: prepare release 1.2.250",
+    "preCommitHead": "cd9b13b13",
     "stage": "commit_pending",
-    "taskId": "hotfix.phase3.cross-step.task1"
+    "taskId": "hotfix.phase4.release-docs.task1"
   }
 }
 ```
@@ -62,14 +62,14 @@
 ### Stream: Managed Step Parity
 
 7. [DONE] `hotfix.phase3.cross-step.task1` Patch Application Skeleton materializing attempts and document Diagram Modules parity check (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-in-progress-materialization.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: verify managed step post-turn parity`)
-8. [PENDING] Git Commit: `docs: verify managed step post-turn parity` (hash: TBD)
+8. [DONE] Git Commit: `docs: verify managed step post-turn parity` (hash: cd9b13b13)
 
 ## Phase 4 — Release Build (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Release 1.2.250
 
-9. [TODO] `hotfix.phase4.release-docs.task1` Prepare README and CHANGELOG for release 1.2.250 (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.250`)
-10. [TODO] Git Commit: `docs: prepare release 1.2.250` (hash: TBD)
+9. [DONE] `hotfix.phase4.release-docs.task1` Prepare README and CHANGELOG for release 1.2.250 (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.250`)
+10. [PENDING] Git Commit: `docs: prepare release 1.2.250` (hash: TBD)
 11. [TODO] `hotfix.phase4.release-build.task1` Run the approved release build and collect artifacts (scope: release scripts output and version manifests; expected commit: `chore: release 1.2.250`)
 12. [TODO] Git Commit: `chore: release 1.2.250` (hash: TBD)
 

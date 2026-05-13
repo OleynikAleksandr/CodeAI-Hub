@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.250] - 2026-05-13
+### Fixed
+- **Quality Gates in-progress integration attempts now become actionable repairs.** After the accepted contract commit, Core validates required lifecycle hook wiring even when the agent leaves `integrated: false` with `integrationState: "in_progress"`.
+- **The Quality Gates Phase 3 continuation prompt no longer defers hook wiring to Core.** The provider is told that `.husky/pre-commit` and `.husky/pre-push` required calls are Quality Gates integration-owned content, while Core still owns validation, Git, and plan advancement.
+- **Application Skeleton now follows the same post-turn invariant.** A terminal `materializationState: "in_progress"` attempt is treated as observed materialization and validated immediately, so missing production paths become repairable failures instead of a silent materializing state.
+
+### Tests
+- Targeted managed in-progress verification passed: `20/20` tests across Quality Gates progress, Quality Gates post-turn repair routing, Application Skeleton in-progress materialization, and Application Skeleton progress.
+- `npm run build --workspace @codeai-hub/core` passed before release documentation.
+- `npx ultracite check` passed through the planned commit hooks.
+
 ## [1.2.249] - 2026-05-13
 ### Fixed
 - **Quality Gates now opens the persistent user-return phase after split integration.** A validated `quality-gates.phase3.integration.task2+` commit now opens `Phase 4 - Persistent Quality Gates User Return` instead of falling through to another generic Phase 3 continuation task.

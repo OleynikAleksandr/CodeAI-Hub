@@ -2,22 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.249** (Quality Gates user-return finalization repair)
+**Current Release — v1.2.250** (Provider-neutral managed in-progress repair)
 
-This release repairs the remaining Quality Gates terminal child-plan mismatch
-seen during the `v1.2.248` retest. When Quality Gates integration needs more
-than one managed integration commit, Core now opens
-`Phase 4 — Persistent Quality Gates User Return` after the validated final
-integration commit instead of creating another generic Phase 3 continuation.
+This release repairs the provider-neutral post-turn gap exposed by the Claude
+Quality Gates retest. After `docs: accept quality gates contract`, Core now
+validates a Quality Gates Phase 3 attempt as soon as the agent records
+`integrationState: "in_progress"`, even when `integrated` is still `false`.
+Missing `.husky/pre-commit` / `.husky/pre-push` calls are routed into a normal
+Phase 3 repair task with actionable provider feedback instead of a silent wait.
 
-The Quality Gates managed-plan shim now treats every validated
-`quality-gates.phase3.integration.taskN` commit as eligible for the persistent
-user-return anchor. Regression coverage locks the split-integration path:
-the first incomplete integration commit may create `task2`, but the validated
-follow-up commit must create `quality-gates.phase4.user-return.task1` and must
-not create `quality-gates.phase3.integration.task3`.
+The Phase 3 continuation prompt now states that the selected hook calls are
+Quality Gates integration-owned content, while Core keeps ownership of
+validation, staging, commit, and plan advancement. The same post-turn invariant
+was checked across managed trunk steps: Application Skeleton now treats
+`materializationState: "in_progress"` as a repairable materialization attempt,
+and Diagram Modules remains protected by expected-artifact subturn validation.
 
-**Previous release: v1.2.248** (Managed feedback dead-end repair)
+**Previous release: v1.2.249** (Quality Gates user-return finalization repair)
 
 This release repairs the managed feedback dead-end seen during the
 `v1.2.247` Application Skeleton retest. Core may still reject an invalid
