@@ -166,10 +166,7 @@ const writeValidatedIntegratedQualityGatesArtifacts = async (
         name: "demo",
         scripts: {
           build: "echo build",
-          "qg:before-commit":
-            "node scripts/quality-gates/run.mjs requiredBeforeCommit",
-          "qg:before-push":
-            "node scripts/quality-gates/run.mjs requiredBeforePush",
+          "qg:build-compile": "npm run build",
         },
       },
       null,
@@ -179,7 +176,7 @@ const writeValidatedIntegratedQualityGatesArtifacts = async (
   );
   await writeFile(
     path.join(workspaceRoot, ".husky", "pre-commit"),
-    "npm run qg:before-commit\n",
+    "npm run qg:build-compile\n",
     "utf8"
   );
   await writeFile(
@@ -202,12 +199,12 @@ const writeValidatedIntegratedQualityGatesArtifacts = async (
         integrated: true,
         integrationState: "integrated",
         commands: {
-          build: {
+          "qg-build-compile": {
             command: "npm run build",
             desiredStatus: "required",
           },
         },
-        requiredBeforeCommit: ["build"],
+        requiredBeforeCommit: ["qg-build-compile"],
         requiredBeforePush: [],
         integratedPaths: [
           "package.json",
