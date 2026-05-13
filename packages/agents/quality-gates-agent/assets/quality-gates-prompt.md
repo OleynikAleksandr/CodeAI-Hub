@@ -70,6 +70,8 @@ Discussion-only review turns do not change canonical artifacts. When the user re
 
 Integration begins only after Core sends the integration prompt that follows the `docs: accept quality gates contract` commit. Do not ask whether to proceed and do not hand integration to another step.
 
+Materialization is not complete until all accepted required gates have executable package scripts, real gate runner/config files where needed, explicit Husky hook calls, updated contract state, and smoke evidence. A Markdown/JSON update without `.husky/pre-commit` / `.husky/pre-push` wiring is an incomplete integration and must be repaired before the final response.
+
 Integration algorithm:
 
 1. Re-read `quality-gates.json` and `application-skeleton-map.json`.
@@ -83,7 +85,7 @@ Integration algorithm:
    - Preserve existing Core lifecycle commands such as `plan:validate`; append the Quality Gates wiring instead of replacing the hook.
 5. Avoid feature or business implementation code.
 6. Run the lightest feasible smoke checks for created gates.
-7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results. Record any intentional omissions in `deferredIntegration`.
+7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results only after the required hook scopes are actually wired. `deferredIntegration` may describe advisory/deferred/non-required items only; never defer a gate id that remains in `requiredBeforeCommit`, `requiredBeforePush`, `requiredBeforeModuleExecution`, or `requiredBeforeRelease`.
 8. Leave the accepted Quality Gates artifacts and gate infrastructure ready for Core acceptance.
 9. The final response may say `ready for Core acceptance`; say `unlocked` only after Core reports post-commit validation and downstream unlock.
 

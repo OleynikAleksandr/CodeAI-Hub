@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "8966da8b8",
+  "lastRecordedCommit": "635f15b8b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase32.integration-feedback.task1",
-  "expectedCommitMessage": "fix: make quality gates repair feedback actionable",
+  "currentTaskId": "quality-gates-implementation.phase32.integration-prompt.task1",
+  "expectedCommitMessage": "docs: clarify quality gates integration completion",
   "debt": {
-    "expectedCommitMessage": "fix: make quality gates repair feedback actionable",
-    "preCommitHead": "8966da8b8",
+    "expectedCommitMessage": "docs: clarify quality gates integration completion",
+    "preCommitHead": "635f15b8b",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase32.integration-feedback.task1"
+    "taskId": "quality-gates-implementation.phase32.integration-prompt.task1"
   }
 }
 ```
@@ -408,12 +408,12 @@
 ### Stream: Actionable Integration Repair Feedback
 
 157. [DONE] `quality-gates-implementation.phase32.integration-feedback.task1` Treat Quality Gates integrated-but-unfinalized Phase 3 work as integration repair and replace the failed-integration feedback dead-end with provider-actionable repair instructions tied to that repair task (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts`; expected commit: `fix: make quality gates repair feedback actionable`).
-158. [PENDING] Git Commit: `fix: make quality gates repair feedback actionable` (hash: TBD)
+158. [DONE] Git Commit: `fix: make quality gates repair feedback actionable` (hash: 635f15b8b)
 
 ### Stream: Quality Gates Materialization Prompt Contract
 
-159. [TODO] `quality-gates-implementation.phase32.integration-prompt.task1` Strengthen the Quality Gates agent prompt so materialization is complete only when scripts, package commands, Husky hook wiring, and accepted artifact state are all updated and ready for Core validation (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: clarify quality gates integration completion`).
-160. [TODO] Git Commit: `docs: clarify quality gates integration completion` (hash: TBD)
+159. [DONE] `quality-gates-implementation.phase32.integration-prompt.task1` Strengthen the Quality Gates agent prompt so materialization is complete only when scripts, package commands, Husky hook wiring, and accepted artifact state are all updated and ready for Core validation (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: clarify quality gates integration completion`).
+160. [PENDING] Git Commit: `docs: clarify quality gates integration completion` (hash: TBD)
 
 ### Stream: Regression And Verification
 
