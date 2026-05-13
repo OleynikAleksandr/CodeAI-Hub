@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-omitted-when-hidden-1.2.252",
   "branch": "main",
   "baseHead": "b4cdd457d",
-  "lastRecordedCommit": "97a83eec5",
+  "lastRecordedCommit": "689e85314",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_Reasoning_Omitted_When_Hidden.md",
-  "currentTaskId": "reasoning-omit.phase2.capture.task1",
-  "expectedCommitMessage": "feat: mirror reasoning display selection in native capture",
+  "currentTaskId": "reasoning-omit.phase2.ssot.task1",
+  "expectedCommitMessage": "docs: document reasoning summary omission",
   "debt": {
-    "expectedCommitMessage": "feat: mirror reasoning display selection in native capture",
-    "preCommitHead": "97a83eec5",
+    "expectedCommitMessage": "docs: document reasoning summary omission",
+    "preCommitHead": "689e85314",
     "stage": "commit_pending",
-    "taskId": "reasoning-omit.phase2.capture.task1"
+    "taskId": "reasoning-omit.phase2.ssot.task1"
   }
 }
 ```
@@ -57,12 +57,12 @@
 ### Stream: Native Capture Diagnostic
 
 5. [DONE] `reasoning-omit.phase2.capture.task1` Mirror the `thinkingDisplaySyncEnabled` signal into the diagnostic capture path: extend `ClaudeNativeRequestCaptureAppliedTurnConfig` and the local `resolveThinkingOptions` helper, widen the `display` union to `"summarized" | "omitted"`, and assert both outputs in capture tests (scope: `packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.ts, packages/Claude_Module/src/diagnostics/claude-native-request-capture-service.test.ts`; expected commit: `feat: mirror reasoning display selection in native capture`).
-6. [PENDING] Git Commit: `feat: mirror reasoning display selection in native capture` (hash: TBD)
+6. [DONE] Git Commit: `feat: mirror reasoning display selection in native capture` (hash: 689e85314)
 
 ### Stream: SSOT Docs
 
-7. [TODO] `reasoning-omit.phase2.ssot.task1` Document the hidden-reasoning omission invariant in `Modules/Claude.md` under the messaging cluster contract: `thinkingDisplaySyncEnabled = false` selects `display: "omitted"`, no `thinking_delta` arrives, the live thinking buffer/thought translation adapter stays no-op, and Opus 4.7 falls back to encrypted `signature_delta`-only behavior (scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit: `docs: document reasoning summary omission`).
-8. [TODO] Git Commit: `docs: document reasoning summary omission` (hash: TBD)
+7. [DONE] `reasoning-omit.phase2.ssot.task1` Document the hidden-reasoning omission invariant in `Modules/Claude.md` under the messaging cluster contract: `thinkingDisplaySyncEnabled = false` selects `display: "omitted"`, no `thinking_delta` arrives, the live thinking buffer/thought translation adapter stays no-op, and Opus 4.7 falls back to encrypted `signature_delta`-only behavior (scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit: `docs: document reasoning summary omission`).
+8. [PENDING] Git Commit: `docs: document reasoning summary omission` (hash: TBD)
 
 ## Phase 3 — Release Build (owner: Codex, updated: 2026-05-13)
 
