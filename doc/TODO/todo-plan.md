@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "5d2a383d0",
+  "lastRecordedCommit": "4c756e32c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Quality_Gates_Scenario_1.2.249.md",
-  "currentTaskId": "quality-gates-implementation.phase46.archive-phase-design-source.task1",
-  "expectedCommitMessage": "docs: archive managed phase design planning source",
+  "currentTaskId": "quality-gates-implementation.phase46.archive-index-final.task1",
+  "expectedCommitMessage": "docs: finalize managed planning archive index",
   "debt": {
-    "expectedCommitMessage": "docs: archive managed phase design planning source",
-    "preCommitHead": "5d2a383d0",
+    "expectedCommitMessage": "docs: finalize managed planning archive index",
+    "preCommitHead": "4c756e32c",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase46.archive-phase-design-source.task1"
+    "taskId": "quality-gates-implementation.phase46.archive-index-final.task1"
   }
 }
 ```
@@ -591,9 +591,9 @@
 232. [DONE] `quality-gates-implementation.phase46.archive-lifecycle-source.task1` Move the completed managed workspace lifecycle planning source to the Plans archive and update navigation to the archived historical source. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workspace_Lifecycle_From_Diagram_Modules.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workspace_Lifecycle_From_Diagram_Modules_1.2.249.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive managed workspace lifecycle planning source`).
 233. [DONE] Git Commit: `docs: archive managed workspace lifecycle planning source` (hash: 5d2a383d0)
 234. [DONE] `quality-gates-implementation.phase46.archive-phase-design-source.task1` Move the completed corrective-operation phase design source to the Plans archive and mark the Managed Step Orchestration planning folder as inactive. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design_1.2.249.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md`; expected commit: `docs: archive managed phase design planning source`).
-235. [PENDING] Git Commit: `docs: archive managed phase design planning source` (hash: TBD)
-236. [TODO] `quality-gates-implementation.phase46.archive-index-final.task1` Finalize Docs Index links after the Managed Step Orchestration planning folder is emptied of active implementation sources. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: finalize managed planning archive index`).
-237. [TODO] Git Commit: `docs: finalize managed planning archive index` (hash: TBD)
+235. [DONE] Git Commit: `docs: archive managed phase design planning source` (hash: 4c756e32c)
+236. [DONE] `quality-gates-implementation.phase46.archive-index-final.task1` Finalize Docs Index links after the Managed Step Orchestration planning folder is emptied of active implementation sources. (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: finalize managed planning archive index`).
+237. [PENDING] Git Commit: `docs: finalize managed planning archive index` (hash: TBD)
 
 ## Phase 47 - Scope Closeout (owner: Codex, updated: 2026-05-13)
 
