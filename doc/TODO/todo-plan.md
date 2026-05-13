@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "bc74bd362",
+  "lastRecordedCommit": "5c9ef08ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase40.rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare managed feedback dead-end release notes",
+  "currentTaskId": "quality-gates-implementation.phase40.rebuild-build.task1",
+  "expectedCommitMessage": "chore: rebuild managed feedback dead-end release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed feedback dead-end release notes",
-    "preCommitHead": "bc74bd362",
+    "expectedCommitMessage": "chore: rebuild managed feedback dead-end release",
+    "preCommitHead": "5c9ef08ea",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase40.rebuild-docs.task1"
+    "taskId": "quality-gates-implementation.phase40.rebuild-build.task1"
   }
 }
 ```
@@ -527,9 +527,9 @@
 ### Stream: Rebuild Release Candidate
 
 209. [DONE] `quality-gates-implementation.phase40.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the managed feedback dead-end repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed feedback dead-end release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.248`; release scope: Application Skeleton declared root scaffold ownership (`package.json`, `package-lock.json`, `tsconfig*.json`, and safe materialized paths from `application-skeleton-map.json`), provider-actionable repair feedback for repairable Application Skeleton boundary failures, and matching Application Skeleton child-plan scopes for materialization/repair/user-return.
-210. [PENDING] Git Commit: `docs: prepare managed feedback dead-end release notes` (hash: TBD)
-211. [TODO] `quality-gates-implementation.phase40.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed feedback dead-end release`).
-212. [TODO] Git Commit: `chore: rebuild managed feedback dead-end release` (hash: TBD)
+210. [DONE] Git Commit: `docs: prepare managed feedback dead-end release notes` (hash: 5c9ef08ea)
+211. [DONE] `quality-gates-implementation.phase40.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed feedback dead-end release`). Build evidence (2026-05-13): `./scripts/build-all.sh --allow-dirty --version 1.2.248` completed successfully with the managed-plan dirty-state exception (`doc/TODO/todo-plan.md` machine advance before the build); refreshed tarballs are present in `doc/tmp/releases/` for Claude, Codex, Gemini, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`; `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully and confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `VSIX runtime package surface verified`; VSIX: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.248.vsix`.
+212. [PENDING] Git Commit: `chore: rebuild managed feedback dead-end release` (hash: TBD)
 
 ## Phase 41 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 
