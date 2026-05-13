@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "bd927eb10",
+  "lastRecordedCommit": "b25d20f58",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase38.dead-end-regressions.task1",
-  "expectedCommitMessage": "test: cover managed feedback dead-end policy",
+  "currentTaskId": "quality-gates-implementation.phase38.verification.task1",
+  "expectedCommitMessage": "test: verify managed feedback dead-end repair",
   "debt": {
-    "expectedCommitMessage": "test: cover managed feedback dead-end policy",
-    "preCommitHead": "bd927eb10",
+    "expectedCommitMessage": "test: verify managed feedback dead-end repair",
+    "preCommitHead": "b25d20f58",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase38.dead-end-regressions.task1"
+    "taskId": "quality-gates-implementation.phase38.verification.task1"
   }
 }
 ```
@@ -509,9 +509,9 @@
 ### Stream: Cross-Stage Regressions
 
 204. [DONE] `quality-gates-implementation.phase38.dead-end-regressions.task1` Add regressions that cover Application Skeleton root scaffold files, provider-actionable feedback for repairable failures, and no wait-only dead ends for Diagram Modules / Application Skeleton / Quality Gates repairable acceptance failures. (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts`; expected commit: `test: cover managed feedback dead-end policy`).
-205. [PENDING] Git Commit: `test: cover managed feedback dead-end policy` (hash: TBD)
+205. [DONE] Git Commit: `test: cover managed feedback dead-end policy` (hash: b25d20f58)
 
 ### Stream: Verification
 
-206. [TODO] `quality-gates-implementation.phase38.verification.task1` Run targeted managed feedback/ownership tests and Core build before any next release rebuild decision. (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, doc/TODO/todo-plan.md`; expected commit: `test: verify managed feedback dead-end repair`).
-207. [TODO] Git Commit: `test: verify managed feedback dead-end repair` (hash: TBD)
+206. [DONE] `quality-gates-implementation.phase38.verification.task1` Run targeted managed feedback/ownership tests and Core build before any next release rebuild decision. (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, doc/TODO/todo-plan.md`; expected commit: `test: verify managed feedback dead-end repair`). Verification evidence (2026-05-13): `npx ultracite check packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts` passed (`29/29`); `npm run build --workspace packages/core` passed.
+207. [PENDING] Git Commit: `test: verify managed feedback dead-end repair` (hash: TBD)
