@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "766170763",
+  "lastRecordedCommit": "55f93629f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase42.verification.task1",
-  "expectedCommitMessage": "test: verify quality gates split integration user return",
+  "currentTaskId": "quality-gates-implementation.phase44.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare quality gates user return release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify quality gates split integration user return",
-    "preCommitHead": "766170763",
+    "expectedCommitMessage": "docs: prepare quality gates user return release notes",
+    "preCommitHead": "55f93629f",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase42.verification.task1"
+    "taskId": "quality-gates-implementation.phase44.rebuild-docs.task1"
   }
 }
 ```
@@ -552,10 +552,25 @@
 ### Stream: Verification
 
 218. [DONE] `quality-gates-implementation.phase42.verification.task1` Run targeted Quality Gates shim/mutator tests and Core build after the split-integration terminal-anchor repair. (scope: `packages/core/src/managed-workspace, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates split integration user return`). Verification evidence (2026-05-13): `npx ultracite check packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts` passed; `npx tsx --test packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts` passed (`10/10`); `npm run build --workspace packages/core` passed.
-219. [PENDING] Git Commit: `test: verify quality gates split integration user return` (hash: TBD)
+219. [DONE] Git Commit: `test: verify quality gates split integration user return` (hash: 55f93629f)
 
 ## Phase 43 - Release Rebuild Decision (owner: User, updated: 2026-05-13)
 
 ### Stream: Release Confirmation Gate
 
-220. [TODO] `quality-gates-implementation.phase43.release-confirmation.task1` Stop after verification and request explicit user confirmation before preparing release notes or running the next release rebuild for the Quality Gates split-integration user-return repair. (scope: `doc/TODO/todo-plan.md`; expected commit: none — release build confirmation checkpoint).
+220. [DONE] `quality-gates-implementation.phase43.release-confirmation.task1` Stop after verification and request explicit user confirmation before preparing release notes or running the next release rebuild for the Quality Gates split-integration user-return repair. (scope: `doc/TODO/todo-plan.md`; expected commit: none — release build confirmation checkpoint). Result: User explicitly approved rebuilding the next release after the Quality Gates split-integration user-return repair; proceed to release notes and release build for 1.2.249.
+
+## Phase 44 - Release Rebuild (owner: Codex, updated: 2026-05-13)
+
+### Stream: Rebuild Release Candidate
+
+221. [DONE] `quality-gates-implementation.phase44.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the Quality Gates split-integration user-return repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates user return release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.249`; release scope: Quality Gates split-integration terminal anchor parity with Application Skeleton and Diagram Modules, allowing any validated `quality-gates.phase3.integration.taskN` commit to open `Phase 4 — Persistent Quality Gates User Return` and preventing generic `quality-gates.phase3.integration.task3` continuation after final validated integration.
+222. [PENDING] Git Commit: `docs: prepare quality gates user return release notes` (hash: TBD)
+223. [TODO] `quality-gates-implementation.phase44.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates user return release`).
+224. [TODO] Git Commit: `chore: rebuild quality gates user return release` (hash: TBD)
+
+## Phase 45 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
+
+### Stream: Retest Release Candidate
+
+225. [TODO] `quality-gates-implementation.phase45.user-retest.task1` User installs `v1.2.249` and reruns the managed workflow through Quality Gates after split integration. Retest focus: after the validated Quality Gates integration commit, the child plan must open `Phase 4 — Persistent Quality Gates User Return` with `quality-gates.phase4.user-return.task1` and must not create a generic `quality-gates.phase3.integration.task3` continuation. (scope: chat/process observation only; expected commit: none — user acceptance checkpoint).

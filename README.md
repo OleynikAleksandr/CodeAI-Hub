@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.248** (Managed feedback dead-end repair)
+**Current Release — v1.2.249** (Quality Gates user-return finalization repair)
+
+This release repairs the remaining Quality Gates terminal child-plan mismatch
+seen during the `v1.2.248` retest. When Quality Gates integration needs more
+than one managed integration commit, Core now opens
+`Phase 4 — Persistent Quality Gates User Return` after the validated final
+integration commit instead of creating another generic Phase 3 continuation.
+
+The Quality Gates managed-plan shim now treats every validated
+`quality-gates.phase3.integration.taskN` commit as eligible for the persistent
+user-return anchor. Regression coverage locks the split-integration path:
+the first incomplete integration commit may create `task2`, but the validated
+follow-up commit must create `quality-gates.phase4.user-return.task1` and must
+not create `quality-gates.phase3.integration.task3`.
+
+**Previous release: v1.2.248** (Managed feedback dead-end repair)
 
 This release repairs the managed feedback dead-end seen during the
 `v1.2.247` Application Skeleton retest. Core may still reject an invalid

@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.249] - 2026-05-13
+### Fixed
+- **Quality Gates now opens the persistent user-return phase after split integration.** A validated `quality-gates.phase3.integration.task2+` commit now opens `Phase 4 - Persistent Quality Gates User Return` instead of falling through to another generic Phase 3 continuation task.
+- **The Quality Gates shim matches Application Skeleton terminal behavior.** The user-return anchor is created after the accepted integration is validated, even when the materialization required multiple managed commits.
+- **Regression coverage locks the no-task3 path.** The shim test now verifies that an incomplete first integration commit may create `task2`, while the validated follow-up commit creates `quality-gates.phase4.user-return.task1` and does not create `quality-gates.phase3.integration.task3`.
+
+### Tests
+- Targeted Quality Gates split-integration verification passed: `10/10` tests across the Quality Gates mutator and installed child-plan shim.
+- `npx ultracite check` passed for the Quality Gates mutator and shim regression.
+- `npm run build --workspace packages/core` passed before release packaging.
+
 ## [1.2.248] - 2026-05-13
 ### Fixed
 - **Application Skeleton root scaffold files are stage-owned when declared by the accepted map.** `package.json`, `package-lock.json`, `tsconfig*.json`, and any safe relative path listed in `application-skeleton-map.json` materialization fields are classified as Application Skeleton materialization work instead of outside-allowlist noise.
