@@ -8,15 +8,15 @@
   "planId": "quality-gates-provider-neutral-in-progress-repair-1.2.250",
   "branch": "main",
   "baseHead": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
-  "lastRecordedCommit": "567acb234",
+  "lastRecordedCommit": "37c2dd5fe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
-  "currentTaskId": "hotfix.phase4.release-build.task1",
-  "expectedCommitMessage": "chore: release 1.2.250",
+  "currentTaskId": "hotfix.phase6.continuity-store.task1",
+  "expectedCommitMessage": "fix: harden session continuity chain persistence",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.250",
-    "preCommitHead": "567acb234",
+    "expectedCommitMessage": "fix: harden session continuity chain persistence",
+    "preCommitHead": "37c2dd5fe",
     "stage": "commit_pending",
-    "taskId": "hotfix.phase4.release-build.task1"
+    "taskId": "hotfix.phase6.continuity-store.task1"
   }
 }
 ```
@@ -71,18 +71,27 @@
 9. [DONE] `hotfix.phase4.release-docs.task1` Prepare README and CHANGELOG for release 1.2.250 (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.250`)
 10. [DONE] Git Commit: `docs: prepare release 1.2.250` (hash: 567acb234)
 11. [DONE] `hotfix.phase4.release-build.task1` Run the approved release build and collect artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.250`)
-12. [PENDING] Git Commit: `chore: release 1.2.250` (hash: TBD)
+12. [DONE] Git Commit: `chore: release 1.2.250` (hash: 37c2dd5fe)
 
 ## Phase 5 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 
 ### Stream: User Retest
 
-13. [TODO] `hotfix.phase5.user-test.task1` User installs release 1.2.250 and retests managed steps across providers (scope: user workflow; expected commit: `docs: accept release 1.2.250 retest`)
+13. [BLOCKED] `hotfix.phase5.user-test.task1` User installs release 1.2.250 and retests managed steps across providers. **BLOCKED 2026-05-13:** Claude provider retest exposed a provider-neutral continuity corruption defect: the completed Application Skeleton JSONL exists, but its `chain.json` became non-parseable, so Project Manager showed the start card instead of loading the existing session; Quality Gates also displayed a misleading upstream artifact "not found" label while the file existed on disk. (scope: user workflow; expected commit: `docs: accept release 1.2.250 retest`)
 14. [TODO] Git Commit: `docs: accept release 1.2.250 retest` (hash: TBD)
 
-## Phase 6 — Scope Closeout (owner: Codex, updated: 2026-05-13)
+## Phase 6 — Session Continuity Hotfix (owner: Codex, updated: 2026-05-13)
+
+### Stream: Continuity Chain Recovery
+
+15. [DONE] `hotfix.phase6.continuity-store.task1` Harden session continuity chain persistence and recovery for all workflow/development-tree stages so malformed `chain.json` files do not hide existing sessions from Project Manager (scope: `packages/core/src/session-continuity/continuity-store.ts, packages/core/src/session-continuity/index-registry.ts, packages/core/src/session-continuity/continuity-store.test.ts`; expected commit: `fix: harden session continuity chain persistence`)
+16. [PENDING] Git Commit: `fix: harden session continuity chain persistence` (hash: TBD)
+17. [TODO] `hotfix.phase6.continuity-docs.task1` Document the continuity recovery invariant and the user-visible retest blocker in workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document continuity recovery invariant`)
+18. [TODO] Git Commit: `docs: document continuity recovery invariant` (hash: TBD)
+
+## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Close Plan After User Acceptance
 
-15. [TODO] `hotfix.phase6.closeout.task1` Archive active plan and dispose the planning document after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close quality gates in-progress repair scope`)
-16. [TODO] Git Commit: `docs: close quality gates in-progress repair scope` (hash: TBD)
+19. [TODO] `hotfix.phase7.closeout.task1` Archive active plan and dispose the planning document after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**`; expected commit: `docs: close quality gates in-progress repair scope`)
+20. [TODO] Git Commit: `docs: close quality gates in-progress repair scope` (hash: TBD)

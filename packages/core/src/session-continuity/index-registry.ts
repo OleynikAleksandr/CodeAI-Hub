@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { SessionModelBinding } from "../session-model-binding";
 import type { ContinuityChain, ContinuityStageId } from "./continuity-types";
@@ -6,6 +6,89 @@ import type { ContinuityChain, ContinuityStageId } from "./continuity-types";
 const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
 const INDEX_FILE_NAME = "index.json";
+const TEMP_FILE_SUFFIX = ".tmp";
+const NON_WHITESPACE_PATTERN = /\S/u;
+
+const writeQueues = new Map<string, Promise<void>>();
+
+interface JsonScanState {
+  depth: number;
+  escaped: boolean;
+  inString: boolean;
+}
+
+const parseJson = <T>(content: string): T | null => {
+  try {
+    return JSON.parse(content) as T;
+  } catch {
+    const recovered = recoverJsonObjectPrefix(content);
+    if (!recovered) {
+      return null;
+    }
+    try {
+      return JSON.parse(recovered) as T;
+    } catch {
+      return null;
+    }
+  }
+};
+
+const consumeJsonStringChar = (state: JsonScanState, char: string): void => {
+  if (state.escaped) {
+    state.escaped = false;
+    return;
+  }
+  if (char === "\\") {
+    state.escaped = true;
+    return;
+  }
+  if (char === '"') {
+    state.inString = false;
+  }
+};
+
+const consumeJsonChar = (state: JsonScanState, char: string): void => {
+  if (state.inString) {
+    consumeJsonStringChar(state, char);
+    return;
+  }
+  if (char === '"') {
+    state.inString = true;
+    return;
+  }
+  if (char === "{") {
+    state.depth += 1;
+    return;
+  }
+  if (char === "}") {
+    state.depth -= 1;
+  }
+};
+
+const recoverJsonObjectPrefix = (content: string): string | null => {
+  const start = content.search(NON_WHITESPACE_PATTERN);
+  if (start < 0 || content[start] !== "{") {
+    return null;
+  }
+
+  const state: JsonScanState = {
+    depth: 0,
+    escaped: false,
+    inString: false,
+  };
+
+  for (let index = start; index < content.length; index += 1) {
+    consumeJsonChar(state, content[index]);
+    if (state.depth === 0 && !state.inString) {
+      return content.slice(start, index + 1);
+    }
+    if (state.depth < 0) {
+      return null;
+    }
+  }
+
+  return null;
+};
 
 export interface ContinuityIndexEntry {
   readonly dialogId: string;
@@ -33,15 +116,52 @@ export interface ContinuityIndex {
 const readJson = async <T>(filePath: string): Promise<T | null> => {
   try {
     const content = await readFile(filePath, "utf8");
-    return JSON.parse(content) as T;
+    return parseJson<T>(content);
   } catch {
     return null;
   }
 };
 
-const writeJson = async (filePath: string, value: unknown): Promise<void> => {
+const createTempPath = (filePath: string): string =>
+  path.join(
+    path.dirname(filePath),
+    `${path.basename(filePath)}.${process.pid}.${Date.now()}.${Math.random()
+      .toString(36)
+      .slice(2)}${TEMP_FILE_SUFFIX}`
+  );
+
+const writeJsonAtomic = async (
+  filePath: string,
+  value: unknown
+): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  const tempPath = createTempPath(filePath);
+  try {
+    await writeFile(tempPath, `${JSON.stringify(value, null, 2)}\n`, {
+      encoding: "utf8",
+      flag: "wx",
+    });
+    await rename(tempPath, filePath);
+  } catch (error) {
+    await rm(tempPath, { force: true }).catch(() => undefined);
+    throw error;
+  }
+};
+
+const writeJson = (filePath: string, value: unknown): Promise<void> => {
+  const previous = writeQueues.get(filePath) ?? Promise.resolve();
+  const next = previous.then(
+    () => writeJsonAtomic(filePath, value),
+    () => writeJsonAtomic(filePath, value)
+  );
+  let queued: Promise<void>;
+  queued = next.finally(() => {
+    if (writeQueues.get(filePath) === queued) {
+      writeQueues.delete(filePath);
+    }
+  });
+  writeQueues.set(filePath, queued);
+  return next;
 };
 
 const buildIndexPath = (options: {
