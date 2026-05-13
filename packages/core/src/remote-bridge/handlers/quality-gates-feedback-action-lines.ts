@@ -24,8 +24,8 @@ export const createQualityGatesActionLines = (params: {
     ];
   }
   return [
-    "Update the Quality Gates integration so every selected required gate is wired into the managed lifecycle hooks.",
-    "Re-run the affected qg:* checks and the aggregate quality gate command.",
-    "When the artifacts are ready, respond with a content-readiness note; Core owns the managed commit and downstream unlock.",
+    "Continue the Phase 3 Quality Gates integration repair. Update only Quality Gates integration-owned files: quality-gates.md/json, package.json/package-lock.json, biome.jsonc, scripts/quality-gates/**, and .husky/pre-commit/.husky/pre-push.",
+    "Wire every selected required gate explicitly into the managed lifecycle hooks; do not defer required hooks or mark the baseline integrated while hook wiring is missing.",
+    "Re-run the affected qg:* checks and the aggregate quality gate command, then respond with a content-readiness note. Core owns the managed commit and downstream unlock.",
   ];
 };

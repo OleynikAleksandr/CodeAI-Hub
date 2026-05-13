@@ -712,11 +712,14 @@ export class ManagedWorkflowPostTurnService {
   }): Promise<void> {
     const ownedDirtyFiles =
       params.managedGitStatus.dirtyByStage.quality_gates ?? [];
-    const progress = attachValidationDirtyGate(
-      params.progress,
-      "Quality Gates",
-      ownedDirtyFiles
-    );
+    const progress =
+      params.progress && params.progress.validationErrors.length === 0
+        ? attachValidationDirtyGate(
+            params.progress,
+            "Quality Gates",
+            ownedDirtyFiles
+          )
+        : params.progress;
     const phase = classifyQualityGatesPhase(params.progress);
     const guardDecision = evaluateQualityGatesContractGuard({
       ownedDirtyFiles,
@@ -778,6 +781,17 @@ const classifyQualityGatesPhase = (
   }
   if (progress.substep === "integrated") {
     return "phase_4_user_return";
+  }
+  if (
+    progress.acceptanceCommitted === true &&
+    (progress.substep === "failed" ||
+      progress.substep === "integrating" ||
+      progress.integrationState === "failed" ||
+      progress.integrationState === "integrated" ||
+      progress.integrationState === "in_progress" ||
+      progress.integrationState === "outdated")
+  ) {
+    return "phase_3_integration";
   }
   if (
     progress.substep === "integrating" ||

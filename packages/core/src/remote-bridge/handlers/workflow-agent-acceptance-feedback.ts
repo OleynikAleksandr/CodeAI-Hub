@@ -295,7 +295,7 @@ const createQualityGatesCheckLines = (
   "Stage: Quality Gates Baseline.",
   "Rule: accepted quality-gates.json must declare commands and every required gate must be wired into the managed lifecycle hooks.",
   `Observed quality-gates.json exists: ${progress.jsonExists}; quality-gates.md exists: ${progress.markdownExists}; command contract ready: ${progress.commandContractReady}.`,
-  `Observed accepted: ${progress.accepted}; integrated: ${progress.integrated}; integrationState: ${progress.integrationState ?? "(missing)"}; substep: ${progress.substep}.`,
+  `Observed accepted: ${progress.accepted}; acceptanceCommitted: ${progress.acceptanceCommitted === true}; integrated: ${progress.integrated}; integrationState: ${progress.integrationState ?? "(missing)"}; substep: ${progress.substep}.`,
 ];
 export class WorkflowAgentAcceptanceFeedback {
   private readonly logger: Logger;
