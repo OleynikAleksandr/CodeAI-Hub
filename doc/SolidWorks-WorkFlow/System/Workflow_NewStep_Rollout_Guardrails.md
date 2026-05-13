@@ -1,11 +1,11 @@
 # Workflow New Step Rollout Guardrails (SSOT)
 
 **Status:** Active
-**Updated:** 2026-05-12
+**Updated:** 2026-05-13
 **Owner:** Oleksandr + Codex
 **Scope:** minimum rules for adding a new workflow step or retrofitting an already released one without split truth, asymmetry, or restart regressions.
 
-**2026-05-12 retrofit reference:** Quality Gates Baseline finished the managed-orchestration retrofit. Anchor child-plan task ids: `quality-gates.phase1.draft.task1`, `quality-gates.phase2.review.task1`, `quality-gates.phase2.acceptance.task1`, `quality-gates.phase3.integration.task1`, `quality-gates.phase4.user-return.task1`. Stage-light completion is sticky from `workspace.plan.md` `acceptedCommits`; downstream dirty paths must not recolor it.
+**2026-05-13 retrofit reference:** release `1.2.249` accepted the managed-orchestration retrofit. Anchor child-plan task ids: `quality-gates.phase1.draft.task1`, `quality-gates.phase2.review.task1`, `quality-gates.phase2.acceptance.task1`, `quality-gates.phase3.integration.taskN`, `quality-gates.phase4.user-return.task1`. Stage-light completion is sticky from `workspace.plan.md` `acceptedCommits`; downstream dirty paths must not recolor it.
 
 ---
 
@@ -172,8 +172,10 @@ Trunk stages являются leaf nodes в sidebar (секция Documentation 
 2. Core rejection creates a repair microtask plus paired `Git Commit:` before provider-visible feedback;
 3. failed repair attempts are committed as artifact changes or tracked attempt evidence;
 4. acceptance commits precede materialization/integration continuations;
-5. post-completion user-return revisions create concrete `revisionN` task pairs;
-6. downstream blockers do not recolor completed upstream stage LEDs.
+5. final materialization/integration commits open the persistent user-return idle anchor, even when the stage needed multiple materialization/integration task commits;
+6. repairable owned-stage failures never produce wait-only provider instructions;
+7. post-completion user-return revisions create concrete `revisionN` task pairs;
+8. downstream blockers do not recolor completed upstream stage LEDs.
 
 Release gate:
 
@@ -195,7 +197,7 @@ Release gate:
 4. Gating основан на semantic readiness, а не на случайном найденном файле.
 5. Workflow-state и continuity не расходятся по active step truth после restart.
 6. PM parity с mature reference step достигнут.
-7. Managed lifecycle steps use progressive child-plan growth, Core-owned commits, repair attempt commits, acceptance commits, and post-completion user-return phases where applicable.
+7. Managed lifecycle steps use progressive child-plan growth, Core-owned commits, repair attempt commits, acceptance commits, provider-actionable repair feedback, and post-completion user-return phases where applicable.
 8. User-facing copy локализована через canonical ownership.
 9. Есть regression tests на identity, artifact path, gating/hydration, startup restore, stale-state self-heal, duplicate continuity handling, Core rejection/repair, and completed-stage LED boundaries.
 10. Packaged release подтверждает, что исправление работает вне source-tree happy path.

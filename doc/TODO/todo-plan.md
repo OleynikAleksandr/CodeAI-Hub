@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "1cc30e620",
+  "lastRecordedCommit": "ccd9f92d2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase46.lifecycle-ssot.task1",
-  "expectedCommitMessage": "docs: sync accepted managed lifecycle ssot",
+  "currentTaskId": "quality-gates-implementation.phase46.architecture-index.task1",
+  "expectedCommitMessage": "docs: document managed orchestration closeout",
   "debt": {
-    "expectedCommitMessage": "docs: sync accepted managed lifecycle ssot",
-    "preCommitHead": "1cc30e620",
+    "expectedCommitMessage": "docs: document managed orchestration closeout",
+    "preCommitHead": "ccd9f92d2",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase46.lifecycle-ssot.task1"
+    "taskId": "quality-gates-implementation.phase46.architecture-index.task1"
   }
 }
 ```
@@ -580,9 +580,9 @@
 ### Stream: Managed Lifecycle SSOT
 
 226. [DONE] `quality-gates-implementation.phase46.lifecycle-ssot.task1` Sync canonical managed lifecycle documents with the accepted release `1.2.249` behavior: Quality Gates mirrors Application Skeleton/Diagram Modules, split integration commits open the persistent user-return phase, repairable failures must stay provider-actionable, and Core owns Git/plan continuation. (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: sync accepted managed lifecycle ssot`).
-227. [PENDING] Git Commit: `docs: sync accepted managed lifecycle ssot` (hash: TBD)
-228. [TODO] `quality-gates-implementation.phase46.architecture-index.task1` Update architecture, rollout guardrails, and documentation navigation so release `1.2.249` is described as the accepted managed orchestration baseline rather than an active planning experiment. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document managed orchestration closeout`).
-229. [TODO] Git Commit: `docs: document managed orchestration closeout` (hash: TBD)
+227. [DONE] Git Commit: `docs: sync accepted managed lifecycle ssot` (hash: ccd9f92d2)
+228. [DONE] `quality-gates-implementation.phase46.architecture-index.task1` Update architecture, rollout guardrails, and documentation navigation so release `1.2.249` is described as the accepted managed orchestration baseline rather than an active planning experiment. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document managed orchestration closeout`).
+229. [PENDING] Git Commit: `docs: document managed orchestration closeout` (hash: TBD)
 
 ### Stream: Planning Source Disposition
 

@@ -25,8 +25,8 @@
 
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics and model invocation profile boundaries.
-- `System/ManagedDocumentationCommitOwnership.md` — SSOT принятого решения для pre-code managed documentation workflow: агенты владеют содержанием артефактов; Core владеет post-turn validation, Git-транзакцией, staging allowlist, plan advancement, feedback, continuation и downstream unlock; provider prompts для managed stages используют только content-readiness wording и fail-fast managed context preflight.
-- `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, or release-time regressions.
+- `System/ManagedDocumentationCommitOwnership.md` — SSOT принятого решения для pre-code managed documentation workflow: агенты владеют содержанием артефактов; Core владеет post-turn validation, Git-транзакцией, staging allowlist, plan advancement, feedback, continuation и downstream unlock; release `1.2.249` accepts Diagram Modules / Application Skeleton / Quality Gates parity, including provider-actionable repairs and persistent user-return anchors.
+- `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, release-time regressions, or managed-stage terminal-anchor drift.
 - `System/WorkflowStep_PromptTesting_Methodology.md` — SSOT methodology for live-testing any workflow step agent prompt, identifying prompt-level defects, and turning observed behavior into an ideal step front contract.
 
 ### Clusters
@@ -49,7 +49,7 @@
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation`.
 - `Contracts/Workflow_CLI.md` — state machine шагов + watcher.
-- `Contracts/Managed_Workspace_Lifecycle.md` — managed workspace lifecycle contract from `Diagram Modules`: Core-owned Git/plan/hooks baseline, tracked `.codeai-hub/workflow`, ignored runtime/cache/log state, upstream read-only freeze, recovery from `todo-plan.md`, provider-terminal post-turn acceptance, and read-model side-effect boundaries.
+- `Contracts/Managed_Workspace_Lifecycle.md` — managed workspace lifecycle contract from `Diagram Modules`: Core-owned Git/plan/hooks baseline, tracked `.codeai-hub/workflow`, ignored runtime/cache/log state, upstream read-only freeze, recovery from `todo-plan.md`, provider-terminal post-turn acceptance, read-model side-effect boundaries, and accepted `1.2.249` Quality Gates split-integration-to-user-return behavior.
 - `Contracts/Workflow_Revision_Graph.md` — revision graph contract for Diagram/Skeleton/Quality Gates/Development Tree snapshots, stable ids, diff classes, and downstream migration tasks.
 - `Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md` — UI-контракт pre-submit/post-submit для Description.
 - `Contracts/Dialogs_And_Continuity_Routing.md` — routing диалогов + continuity.
