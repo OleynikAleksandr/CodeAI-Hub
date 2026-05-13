@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "b25d20f58",
+  "lastRecordedCommit": "bc74bd362",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase38.verification.task1",
-  "expectedCommitMessage": "test: verify managed feedback dead-end repair",
+  "currentTaskId": "quality-gates-implementation.phase40.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare managed feedback dead-end release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify managed feedback dead-end repair",
-    "preCommitHead": "b25d20f58",
+    "expectedCommitMessage": "docs: prepare managed feedback dead-end release notes",
+    "preCommitHead": "bc74bd362",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase38.verification.task1"
+    "taskId": "quality-gates-implementation.phase40.rebuild-docs.task1"
   }
 }
 ```
@@ -514,4 +514,25 @@
 ### Stream: Verification
 
 206. [DONE] `quality-gates-implementation.phase38.verification.task1` Run targeted managed feedback/ownership tests and Core build before any next release rebuild decision. (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, doc/TODO/todo-plan.md`; expected commit: `test: verify managed feedback dead-end repair`). Verification evidence (2026-05-13): `npx ultracite check packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts` passed (`29/29`); `npm run build --workspace packages/core` passed.
-207. [PENDING] Git Commit: `test: verify managed feedback dead-end repair` (hash: TBD)
+207. [DONE] Git Commit: `test: verify managed feedback dead-end repair` (hash: bc74bd362)
+
+## Phase 39 - Release Rebuild Decision (owner: User, updated: 2026-05-13)
+
+### Stream: Release Confirmation Gate
+
+208. [DONE] `quality-gates-implementation.phase39.release-confirmation.task1` Stop after verification and request explicit user confirmation before preparing release notes or running the next release rebuild for the managed feedback dead-end repair. (scope: `doc/TODO/todo-plan.md`; expected commit: none — release build confirmation checkpoint). Result: User explicitly approved immediate rebuild after managed feedback dead-end repair; proceed to release notes and release build.
+
+## Phase 40 - Release Rebuild (owner: Codex, updated: 2026-05-13)
+
+### Stream: Rebuild Release Candidate
+
+209. [DONE] `quality-gates-implementation.phase40.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the managed feedback dead-end repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed feedback dead-end release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.248`; release scope: Application Skeleton declared root scaffold ownership (`package.json`, `package-lock.json`, `tsconfig*.json`, and safe materialized paths from `application-skeleton-map.json`), provider-actionable repair feedback for repairable Application Skeleton boundary failures, and matching Application Skeleton child-plan scopes for materialization/repair/user-return.
+210. [PENDING] Git Commit: `docs: prepare managed feedback dead-end release notes` (hash: TBD)
+211. [TODO] `quality-gates-implementation.phase40.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild managed feedback dead-end release`).
+212. [TODO] Git Commit: `chore: rebuild managed feedback dead-end release` (hash: TBD)
+
+## Phase 41 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
+
+### Stream: Retest Release Candidate
+
+213. [TODO] `quality-gates-implementation.phase41.user-retest.task1` User installs `v1.2.248` and reruns the managed workflow through Application Skeleton and Quality Gates. Retest focus: Application Skeleton materialization with declared root scaffold files must not be blocked as outside the active stage allowlist, and any repairable managed-stage failure must provide provider-actionable instructions rather than wait-only `Do not update / Wait for Core` dead ends. (scope: chat/process observation only; expected commit: none — user acceptance checkpoint).

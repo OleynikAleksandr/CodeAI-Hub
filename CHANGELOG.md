@@ -4,6 +4,17 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.248] - 2026-05-13
+### Fixed
+- **Application Skeleton root scaffold files are stage-owned when declared by the accepted map.** `package.json`, `package-lock.json`, `tsconfig*.json`, and any safe relative path listed in `application-skeleton-map.json` materialization fields are classified as Application Skeleton materialization work instead of outside-allowlist noise.
+- **Repairable Application Skeleton failures no longer dead-end the agent.** If Core rejects materialization with a repairable boundary failure, provider-visible feedback now gives an actionable repair path instead of combining the error with `Do not update... Wait for Core...`.
+- **Managed child-plan scopes match the actual skeleton scaffold contract.** Application Skeleton Phase 3, repair, and user-return scopes now include root scaffold files alongside `product-parts/**` and canonical skeleton artifacts.
+
+### Tests
+- Targeted managed feedback dead-end verification passed: `29/29` tests across Application Skeleton ownership, Application Skeleton actionable feedback, Diagram Modules feedback, Quality Gates action lines, post-turn repair routing, and Application Skeleton / Quality Gates child-plan shims.
+- `npx ultracite check` passed for the changed Core handlers, managed Application Skeleton mutator, and focused regressions.
+- `npm run build --workspace packages/core` passed before release packaging.
+
 ## [1.2.247] - 2026-05-13
 ### Fixed
 - **Quality Gates ownership now follows the accepted contract.** Core reads Quality Gates integration paths from `quality-gates.json` and also recognizes common QG toolchain paths such as `scripts/qg/**`, `.ox*.json`, and `tsconfig.qg*.json`.
