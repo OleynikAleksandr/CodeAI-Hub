@@ -21,6 +21,9 @@ const STALE_REVIEW_ANCHOR_RE =
 const INTEGRATION_TASK_RE = /quality-gates\.phase3\.integration\.task1/u;
 const INTEGRATION_SCOPE_RE = /package\.json/u;
 const HUSKY_SCOPE_RE = /\.husky\/\*\*/u;
+const DYNAMIC_QG_SCOPE_RE = /scripts\/qg\/\*\*/u;
+const OX_CONFIG_SCOPE_RE = /\.ox\*\.json/u;
+const QG_TSCONFIG_SCOPE_RE = /tsconfig\.qg\*\.json/u;
 const BLOCKED_INTEGRATION_TASK_RE =
   /\[BLOCKED\] `quality-gates\.phase3\.integration\.task1`/u;
 const CORE_REJECTED_HASH_RE = /hash: not-created-core-rejected/u;
@@ -141,6 +144,9 @@ test("injects integration task pair only when requested", () => {
   );
   assert.match(result.nextPlanText, INTEGRATION_SCOPE_RE);
   assert.match(result.nextPlanText, HUSKY_SCOPE_RE);
+  assert.match(result.nextPlanText, DYNAMIC_QG_SCOPE_RE);
+  assert.match(result.nextPlanText, OX_CONFIG_SCOPE_RE);
+  assert.match(result.nextPlanText, QG_TSCONFIG_SCOPE_RE);
   assertImmediateCommitPair(
     result.nextPlanText,
     result.nextCurrentTaskId,
@@ -168,6 +174,9 @@ test("injects repair task pair and blocks rejected current task", () => {
   assert.match(result.nextPlanText, BLOCKED_INTEGRATION_TASK_RE);
   assert.match(result.nextPlanText, CORE_REJECTED_HASH_RE);
   assert.match(result.nextPlanText, ATTEMPTS_SCOPE_RE);
+  assert.match(result.nextPlanText, DYNAMIC_QG_SCOPE_RE);
+  assert.match(result.nextPlanText, OX_CONFIG_SCOPE_RE);
+  assert.match(result.nextPlanText, QG_TSCONFIG_SCOPE_RE);
   assertImmediateCommitPair(
     result.nextPlanText,
     result.nextCurrentTaskId,

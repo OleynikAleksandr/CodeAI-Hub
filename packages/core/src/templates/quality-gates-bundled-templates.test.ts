@@ -26,6 +26,10 @@ const NO_LIFECYCLE_RESTORE_RE =
 const HOOK_WIRING_RE = /must explicitly call every gate id/u;
 const MATERIALIZATION_COMPLETE_RE =
   /Materialization is not complete until all accepted required gates have executable package scripts/u;
+const AGENT_OWNS_PHASE3_HOOK_RE =
+  /During Phase 3, the Quality Gates hook section is agent-owned integration work/u;
+const NO_CORE_PENDING_HOOK_RE =
+  /Do not describe `\.husky\/pre-commit` or `\.husky\/pre-push` updates as Core-owned pending regeneration/u;
 const AGGREGATE_PRE_COMMIT_RE = /qg:before-commit/;
 const AGGREGATE_PRE_PUSH_RE = /qg:before-push/;
 const PRESERVE_PLAN_VALIDATE_RE =
@@ -71,6 +75,8 @@ const CONTRACT_AGGREGATE_NOT_SUFFICIENT_RE =
   /Aggregate commands .* are not sufficient evidence by themselves/s;
 const CONTRACT_INTEGRATED_HOOK_RE =
   /`integrated: true` requires explicit lifecycle hook wiring/;
+const CONTRACT_NO_CORE_PENDING_HOOK_RE =
+  /`integrated: true` is invalid if required hook wiring is described as Core-owned pending regeneration/u;
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -96,6 +102,8 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, NO_LIFECYCLE_RESTORE_RE);
   assert.match(prompt, HOOK_WIRING_RE);
   assert.match(prompt, MATERIALIZATION_COMPLETE_RE);
+  assert.match(prompt, AGENT_OWNS_PHASE3_HOOK_RE);
+  assert.match(prompt, NO_CORE_PENDING_HOOK_RE);
   assert.match(prompt, AGGREGATE_PRE_COMMIT_RE);
   assert.match(prompt, AGGREGATE_PRE_PUSH_RE);
   assert.match(prompt, PRESERVE_PLAN_VALIDATE_RE);
@@ -133,6 +141,7 @@ test("quality gates bundled contract exposes integration-aware gate fields", () 
   assert.match(contract, CONTRACT_HOOK_DIRECT_EVIDENCE_RE);
   assert.match(contract, CONTRACT_AGGREGATE_NOT_SUFFICIENT_RE);
   assert.match(contract, CONTRACT_INTEGRATED_HOOK_RE);
+  assert.match(contract, CONTRACT_NO_CORE_PENDING_HOOK_RE);
   assert.match(contract, ACCEPTANCE_COMMITTED_RE);
   assert.match(contract, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
