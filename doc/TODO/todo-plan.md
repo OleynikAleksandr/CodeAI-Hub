@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "ccd9f92d2",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase46.architecture-index.task1",
-  "expectedCommitMessage": "docs: document managed orchestration closeout",
+  "lastRecordedCommit": "46338eb6d",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Quality_Gates_Scenario_1.2.249.md",
+  "currentTaskId": "quality-gates-implementation.phase46.archive-quality-gates-source.task1",
+  "expectedCommitMessage": "docs: archive quality gates scenario source",
   "debt": {
-    "expectedCommitMessage": "docs: document managed orchestration closeout",
-    "preCommitHead": "ccd9f92d2",
+    "expectedCommitMessage": "docs: archive quality gates scenario source",
+    "preCommitHead": "46338eb6d",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase46.architecture-index.task1"
+    "taskId": "quality-gates-implementation.phase46.archive-quality-gates-source.task1"
   }
 }
 ```
@@ -24,7 +24,7 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Quality_Gates_Scenario_1.2.249.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
@@ -582,12 +582,12 @@
 226. [DONE] `quality-gates-implementation.phase46.lifecycle-ssot.task1` Sync canonical managed lifecycle documents with the accepted release `1.2.249` behavior: Quality Gates mirrors Application Skeleton/Diagram Modules, split integration commits open the persistent user-return phase, repairable failures must stay provider-actionable, and Core owns Git/plan continuation. (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: sync accepted managed lifecycle ssot`).
 227. [DONE] Git Commit: `docs: sync accepted managed lifecycle ssot` (hash: ccd9f92d2)
 228. [DONE] `quality-gates-implementation.phase46.architecture-index.task1` Update architecture, rollout guardrails, and documentation navigation so release `1.2.249` is described as the accepted managed orchestration baseline rather than an active planning experiment. (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document managed orchestration closeout`).
-229. [PENDING] Git Commit: `docs: document managed orchestration closeout` (hash: TBD)
+229. [DONE] Git Commit: `docs: document managed orchestration closeout` (hash: 46338eb6d)
 
 ### Stream: Planning Source Disposition
 
-230. [TODO] `quality-gates-implementation.phase46.archive-quality-gates-source.task1` Move the completed Quality Gates scenario planning source to the Plans archive and update the active plan planning-source references to that archived path before final closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Quality_Gates_Scenario_1.2.249.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive quality gates scenario source`).
-231. [TODO] Git Commit: `docs: archive quality gates scenario source` (hash: TBD)
+230. [DONE] `quality-gates-implementation.phase46.archive-quality-gates-source.task1` Move the completed Quality Gates scenario planning source to the Plans archive and update the active plan planning-source references to that archived path before final closeout. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Step_Orchestration_Quality_Gates_Scenario_1.2.249.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive quality gates scenario source`).
+231. [PENDING] Git Commit: `docs: archive quality gates scenario source` (hash: TBD)
 232. [TODO] `quality-gates-implementation.phase46.archive-lifecycle-source.task1` Move the completed managed workspace lifecycle planning source to the Plans archive and update navigation to the archived historical source. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workspace_Lifecycle_From_Diagram_Modules.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workspace_Lifecycle_From_Diagram_Modules_1.2.249.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: archive managed workspace lifecycle planning source`).
 233. [TODO] Git Commit: `docs: archive managed workspace lifecycle planning source` (hash: TBD)
 234. [TODO] `quality-gates-implementation.phase46.archive-phase-design-source.task1` Move the completed corrective-operation phase design source to the Plans archive and mark the Managed Step Orchestration planning folder as inactive. (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design_1.2.249.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md`; expected commit: `docs: archive managed phase design planning source`).
