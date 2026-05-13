@@ -357,6 +357,7 @@ export const validateApplicationSkeletonMaterialization = async (params: {
   );
   const observedMaterialization =
     readMaterializedFlag(params.mapJson) ||
+    readMaterializationState(params.mapJson) === "materializing" ||
     readMaterializationState(params.mapJson) === "materialized" ||
     materializedPaths.length > 0 ||
     (await relativePathExists(params.workspaceRoot, sourceRoot)) ||

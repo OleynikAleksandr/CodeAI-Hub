@@ -8,15 +8,15 @@
   "planId": "quality-gates-provider-neutral-in-progress-repair-1.2.250",
   "branch": "main",
   "baseHead": "a7c01210f6a52e05feec1db07eea09704df9e5e5",
-  "lastRecordedCommit": "09beacc77",
+  "lastRecordedCommit": "9b999cea5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Quality_Gates_PostTurn_InProgress_Repair_1.2.250.md",
-  "currentTaskId": "hotfix.phase2.qg-postturn.task1",
-  "expectedCommitMessage": "test: cover quality gates in-progress repair",
+  "currentTaskId": "hotfix.phase3.cross-step.task1",
+  "expectedCommitMessage": "docs: verify managed step post-turn parity",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates in-progress repair",
-    "preCommitHead": "09beacc77",
+    "expectedCommitMessage": "docs: verify managed step post-turn parity",
+    "preCommitHead": "9b999cea5",
     "stage": "commit_pending",
-    "taskId": "hotfix.phase2.qg-postturn.task1"
+    "taskId": "hotfix.phase3.cross-step.task1"
   }
 }
 ```
@@ -55,14 +55,14 @@
 3. [DONE] `hotfix.phase2.qg-state.task1` Fix Quality Gates continuation prompt and progress classification for accepted in-progress integration attempts with missing hooks (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts`; expected commit: `fix: detect incomplete quality gates integration`)
 4. [DONE] Git Commit: `fix: detect incomplete quality gates integration` (hash: 09beacc77)
 5. [DONE] `hotfix.phase2.qg-postturn.task1` Add provider-neutral post-turn regression and update managed workflow SSOT (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`; expected commit: `test: cover quality gates in-progress repair`)
-6. [PENDING] Git Commit: `test: cover quality gates in-progress repair` (hash: TBD)
+6. [DONE] Git Commit: `test: cover quality gates in-progress repair` (hash: 9b999cea5)
 
 ## Phase 3 — Cross-Step Verification (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Managed Step Parity
 
-7. [TODO] `hotfix.phase3.cross-step.task1` Verify Application Skeleton and Diagram Modules cannot silently commit a post-acceptance in-progress terminal state without repair/continuation (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: verify managed step post-turn parity`)
-8. [TODO] Git Commit: `docs: verify managed step post-turn parity` (hash: TBD)
+7. [DONE] `hotfix.phase3.cross-step.task1` Patch Application Skeleton materializing attempts and document Diagram Modules parity check (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-in-progress-materialization.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: verify managed step post-turn parity`)
+8. [PENDING] Git Commit: `docs: verify managed step post-turn parity` (hash: TBD)
 
 ## Phase 4 — Release Build (owner: Codex, updated: 2026-05-13)
 
