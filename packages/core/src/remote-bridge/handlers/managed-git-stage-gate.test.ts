@@ -89,6 +89,17 @@ test("managed Git status classifies dirty files by owning managed stage", async 
     );
     await writeWorkspaceFile(
       workspaceRoot,
+      "scripts/quality-gates/run-gate.mjs",
+      "console.log('ok');\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, "biome.jsonc", "{}\n");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "node_modules/.package-lock.json",
+      "{}\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
       "scratch/outside-managed.txt",
       "unrelated\n"
     );
@@ -102,7 +113,15 @@ test("managed Git status classifies dirty files by owning managed stage", async 
     assert.deepEqual(status.dirtyByStage.application_skeleton, [
       "product-parts/core-runtime/README.md",
     ]);
-    assert.deepEqual(status.dirtyByStage.quality_gates, [".husky/pre-commit"]);
+    assert.deepEqual(status.dirtyByStage.quality_gates, [
+      ".husky/pre-commit",
+      "biome.jsonc",
+      "scripts/quality-gates/run-gate.mjs",
+    ]);
+    assert.deepEqual(
+      status.dirtyFiles.includes("node_modules/.package-lock.json"),
+      false
+    );
     assert.deepEqual(
       status.dirtyFiles.includes("scratch/outside-managed.txt"),
       true

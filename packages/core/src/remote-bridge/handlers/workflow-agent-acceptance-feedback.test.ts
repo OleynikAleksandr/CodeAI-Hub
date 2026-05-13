@@ -26,7 +26,7 @@ const APPLICATION_SKELETON_NO_MATERIALIZE_RE =
 const APPLICATION_SKELETON_WAIT_RE =
   /Do not update Application Skeleton artifacts in response to this message/u;
 const QUALITY_GATES_OBSERVED_RE =
-  /Observed accepted: true; integrated: false; integrationState: integrated; substep: failed\./u;
+  /Observed accepted: true; acceptanceCommitted: true; integrated: false; integrationState: integrated; substep: failed\./u;
 const OUT_OF_OWNER_DIRTY_RE =
   /dirty files are outside the active stage allowlist: scratch\/unmanaged\.txt/u;
 const PLAN_COMMIT_COMMAND_RE =
@@ -220,6 +220,7 @@ test("managed feedback includes diagnostic check context for every managed stage
       chains: createChains("quality_gates", "quality-session"),
       gateway,
       progress: {
+        acceptanceCommitted: true,
         accepted: true,
         commandContractReady: true,
         integrated: false,
