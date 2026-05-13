@@ -139,42 +139,6 @@ const readHookText = async (
 ): Promise<string> =>
   (await readExistingFile(path.join(workspaceRoot, ".husky", hookName))) ?? "";
 
-const readPackageScripts = async (
-  workspaceRoot: string
-): Promise<Record<string, string>> => {
-  const packageJson = parseJsonObject(
-    await readExistingFile(path.join(workspaceRoot, "package.json"))
-  );
-  const scripts = packageJson?.scripts;
-  if (
-    typeof scripts !== "object" ||
-    scripts === null ||
-    Array.isArray(scripts)
-  ) {
-    return {};
-  }
-  return Object.fromEntries(
-    Object.entries(scripts).filter(
-      (entry): entry is [string, string] => typeof entry[1] === "string"
-    )
-  );
-};
-
-const hasAggregateHookRunner = (params: {
-  readonly hookText: string;
-  readonly packageScripts: Record<string, string>;
-  readonly scope: "requiredBeforeCommit" | "requiredBeforePush";
-  readonly scriptName: string;
-}): boolean => {
-  const script = params.packageScripts[params.scriptName];
-  return Boolean(
-    script?.includes("scripts/quality-gates/run.mjs") &&
-      script.includes(params.scope) &&
-      (params.hookText.includes(params.scriptName) ||
-        params.hookText.includes(`npm run ${params.scriptName}`))
-  );
-};
-
 const validateHookCommands = (params: {
   readonly gateIds: readonly string[];
   readonly hookName: string;
@@ -207,37 +171,22 @@ const validateDeclaredHookIntegration = async (params: {
     readHookText(params.workspaceRoot, "pre-commit"),
     readHookText(params.workspaceRoot, "pre-push"),
   ]);
-  const packageScripts = await readPackageScripts(params.workspaceRoot);
   const preCommitGateIds = readStringArray(
     params.contract,
     "requiredBeforeCommit"
   );
   const prePushGateIds = readStringArray(params.contract, "requiredBeforePush");
   return [
-    ...(hasAggregateHookRunner({
+    ...validateHookCommands({
+      gateIds: preCommitGateIds,
+      hookName: "pre-commit",
       hookText: preCommitText,
-      packageScripts,
-      scope: "requiredBeforeCommit",
-      scriptName: "qg:before-commit",
-    })
-      ? []
-      : validateHookCommands({
-          gateIds: preCommitGateIds,
-          hookName: "pre-commit",
-          hookText: preCommitText,
-        })),
-    ...(hasAggregateHookRunner({
+    }),
+    ...validateHookCommands({
+      gateIds: prePushGateIds,
+      hookName: "pre-push",
       hookText: prePushText,
-      packageScripts,
-      scope: "requiredBeforePush",
-      scriptName: "qg:before-push",
-    })
-      ? []
-      : validateHookCommands({
-          gateIds: prePushGateIds,
-          hookName: "pre-push",
-          hookText: prePushText,
-        })),
+    }),
   ];
 };
 

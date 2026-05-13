@@ -127,7 +127,7 @@ test("Quality Gates progress requires lifecycle hook wiring before integrated", 
   }
 });
 
-test("Quality Gates progress accepts aggregate lifecycle hook runners", async () => {
+test("Quality Gates progress rejects aggregate-only lifecycle hook runners", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "quality-gates-progress-aggregate-")
   );
@@ -165,9 +165,12 @@ test("Quality Gates progress accepts aggregate lifecycle hook runners", async ()
       workspaceSlug: "demo",
     });
 
-    assert.equal(snapshot?.integrated, true);
-    assert.equal(snapshot?.substep, "integrated");
-    assert.deepEqual(snapshot?.validationErrors, []);
+    assert.equal(snapshot?.integrated, false);
+    assert.equal(snapshot?.substep, "failed");
+    assert.deepEqual(snapshot?.validationErrors, [
+      "Quality gate qg-secret-scan is missing from .husky/pre-commit",
+      "Quality gate qg-smoke-checks is missing from .husky/pre-push",
+    ]);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

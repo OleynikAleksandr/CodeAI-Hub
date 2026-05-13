@@ -398,32 +398,21 @@ const readQualityGatesStringArray = (value, key) =>
   Array.isArray(value?.[key])
     ? value[key].filter((entry) => typeof entry === "string").map((entry) => entry.trim()).filter(Boolean)
     : [];
-const readQualityGatesPackageScripts = () => {
-  const packageJson = readQualityGatesJsonObject("package.json");
-  const scripts = packageJson?.scripts;
-  if (!(typeof scripts === "object" && scripts !== null && !Array.isArray(scripts))) { return {}; }
-  return Object.fromEntries(Object.entries(scripts).filter((entry) => typeof entry[1] === "string"));
-};
 const toQualityGatesPackageScriptName = (gateId) =>
   gateId.startsWith("qg-") ? \`qg:\${gateId.slice("qg-".length)}\` : gateId;
-const hasQualityGatesAggregateHookRunner = ({ hookText, packageScripts, scope, scriptName }) => {
-  const script = packageScripts[scriptName];
-  return Boolean(script?.includes("scripts/quality-gates/run.mjs") && script.includes(scope) && (hookText.includes(scriptName) || hookText.includes(\`npm run \${scriptName}\`)));
-};
 const validateQualityGatesHookCommands = ({ gateIds, hookText }) =>
   gateIds.filter((gateId) => {
     const packageScriptName = toQualityGatesPackageScriptName(gateId);
     return !(hookText.includes(gateId) || hookText.includes(packageScriptName));
   });
 const validateQualityGatesDeclaredHookIntegration = (contract) => {
-  const packageScripts = readQualityGatesPackageScripts();
   const preCommitText = readQualityGatesText(".husky/pre-commit") ?? "";
   const prePushText = readQualityGatesText(".husky/pre-push") ?? "";
   const preCommitGateIds = readQualityGatesStringArray(contract, "requiredBeforeCommit");
   const prePushGateIds = readQualityGatesStringArray(contract, "requiredBeforePush");
   return [
-    ...(hasQualityGatesAggregateHookRunner({ hookText: preCommitText, packageScripts, scope: "requiredBeforeCommit", scriptName: "qg:before-commit" }) ? [] : validateQualityGatesHookCommands({ gateIds: preCommitGateIds, hookText: preCommitText })),
-    ...(hasQualityGatesAggregateHookRunner({ hookText: prePushText, packageScripts, scope: "requiredBeforePush", scriptName: "qg:before-push" }) ? [] : validateQualityGatesHookCommands({ gateIds: prePushGateIds, hookText: prePushText })),
+    ...validateQualityGatesHookCommands({ gateIds: preCommitGateIds, hookText: preCommitText }),
+    ...validateQualityGatesHookCommands({ gateIds: prePushGateIds, hookText: prePushText }),
   ];
 };
 const hasQualityGatesIntegratedPaths = (contract) => {
