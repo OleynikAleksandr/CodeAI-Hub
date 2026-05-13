@@ -15,7 +15,7 @@ const TASK_LINE_NUMBER_RE = /^(\d+)\./u;
 const DRAFT_AND_REVIEW_SCOPE =
   ".codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json";
 const INTEGRATION_SCOPE =
-  ".codeai-hub/**/quality_gates/**, package.json, package-lock.json, biome.jsonc, scripts/quality-gates/**, .husky/**";
+  ".codeai-hub/**/quality_gates/**, package.json, package-lock.json, biome.jsonc, .ox*.json, scripts/quality-gates/**, scripts/qg/**, tsconfig.qg*.json, .husky/**";
 const USER_RETURN_SCOPE =
   ".codeai-hub/**/quality_gates/**, .codeai-hub/**/workflow/revisions/quality-gates/**";
 const REPAIR_SCOPE =

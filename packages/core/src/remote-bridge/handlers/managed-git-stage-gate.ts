@@ -1,4 +1,6 @@
 import { execFile } from "node:child_process";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
@@ -25,6 +27,15 @@ const APPLICATION_SKELETON_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
 const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
+const QUALITY_GATES_ARTIFACT_PATH = "quality_gates/quality-gates.json";
+const QUALITY_GATES_PATH_KEYS = new Set([
+  "integratedPaths",
+  "plannedIntegrationPaths",
+  "integrationPaths",
+  "plannedPaths",
+]);
+const QG_TSCONFIG_RE = /^tsconfig\.qg(?:\.[a-z0-9-]+)?\.json$/u;
+const PATH_SEGMENT_SEPARATOR_RE = /[\\/]+/u;
 
 export const isManagedStageId = (value: string): value is ManagedStageId =>
   MANAGED_STAGE_IDS.includes(value as ManagedStageId);
@@ -48,6 +59,109 @@ const parseGitStatusPath = (line: string): string | null => {
   return renamedPath?.replace(/^"|"$/g, "") ?? null;
 };
 
+const parseJsonObject = (content: string): Record<string, unknown> | null => {
+  try {
+    const parsed = JSON.parse(content) as unknown;
+    return typeof parsed === "object" &&
+      parsed !== null &&
+      !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : null;
+  } catch {
+    return null;
+  }
+};
+
+const isSafeRelativeWorkspacePath = (value: string): boolean =>
+  value.length > 0 &&
+  !path.isAbsolute(value) &&
+  !value.split(PATH_SEGMENT_SEPARATOR_RE).includes("..") &&
+  !value.startsWith("node_modules/");
+
+const collectQualityGatesPathValues = (
+  value: unknown,
+  paths: Set<string>
+): void => {
+  if (!(typeof value === "object" && value !== null)) {
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      collectQualityGatesPathValues(entry, paths);
+    }
+    return;
+  }
+  for (const [key, entry] of Object.entries(value)) {
+    if (QUALITY_GATES_PATH_KEYS.has(key) && Array.isArray(entry)) {
+      for (const pathValue of entry) {
+        if (
+          typeof pathValue === "string" &&
+          isSafeRelativeWorkspacePath(pathValue)
+        ) {
+          paths.add(pathValue);
+        }
+      }
+      continue;
+    }
+    collectQualityGatesPathValues(entry, paths);
+  }
+};
+
+const readQualityGatesIntegrationPaths = async (
+  workspaceRoot: string,
+  workspaceSlug: string
+): Promise<ReadonlySet<string>> => {
+  const artifactPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    workspaceSlug,
+    QUALITY_GATES_ARTIFACT_PATH
+  );
+  const content = await readFile(artifactPath, "utf8").catch(() => null);
+  const parsed = content ? parseJsonObject(content) : null;
+  const paths = new Set<string>();
+  collectQualityGatesPathValues(parsed, paths);
+  return paths;
+};
+
+const matchesQualityGatesDeclaredPath = (
+  file: string,
+  declaredPaths: ReadonlySet<string>
+): boolean => {
+  for (const declaredPath of declaredPaths) {
+    if (declaredPath.endsWith("/**")) {
+      const prefix = declaredPath.slice(0, -"**".length);
+      if (file.startsWith(prefix)) {
+        return true;
+      }
+      continue;
+    }
+    if (declaredPath.endsWith("/")) {
+      if (file.startsWith(declaredPath)) {
+        return true;
+      }
+      continue;
+    }
+    if (file === declaredPath) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const isKnownQualityGatesIntegrationPath = (file: string): boolean =>
+  file.startsWith("scripts/gates/") ||
+  file.startsWith("scripts/quality-gates/") ||
+  file.startsWith("scripts/qg/") ||
+  file === "biome.jsonc" ||
+  file === ".oxlintrc.json" ||
+  file === ".oxfmtrc.json" ||
+  file === "oxlint.json" ||
+  file === "oxlint.config.json" ||
+  file === "oxfmt.json" ||
+  file === "oxfmt.config.json" ||
+  QG_TSCONFIG_RE.test(file);
+
 export const readManagedGitStatus = async (
   workspaceRoot: string,
   workspaceSlug: string
@@ -67,6 +181,10 @@ export const readManagedGitStatus = async (
     application_skeleton: [],
     quality_gates: [],
   };
+  const qualityGatesIntegrationPaths = await readQualityGatesIntegrationPaths(
+    workspaceRoot,
+    workspaceSlug
+  );
   for (const file of dirtyFiles) {
     if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/application_skeleton/`) ||
@@ -85,11 +203,10 @@ export const readManagedGitStatus = async (
       dirtyByStage.diagram_modules.push(file);
     } else if (
       file.startsWith(`.codeai-hub/${workspaceSlug}/quality_gates/`) ||
-      file.startsWith("scripts/gates/") ||
-      file.startsWith("scripts/quality-gates/") ||
+      isKnownQualityGatesIntegrationPath(file) ||
+      matchesQualityGatesDeclaredPath(file, qualityGatesIntegrationPaths) ||
       file === ".husky/pre-commit" ||
       file === ".husky/pre-push" ||
-      file === "biome.jsonc" ||
       file === QUALITY_GATES_PLAN_PATH ||
       file === WORKSPACE_PLAN_PATH ||
       file === "package.json" ||

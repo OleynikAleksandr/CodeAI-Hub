@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "9a57c1142",
+  "lastRecordedCommit": "bf4f0fcc7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase35.dynamic-ownership-plan.task1",
-  "expectedCommitMessage": "docs: add quality gates dynamic ownership repair plan",
+  "currentTaskId": "quality-gates-implementation.phase35.dynamic-ownership.task1",
+  "expectedCommitMessage": "fix: classify dynamic quality gates integration ownership",
   "debt": {
-    "expectedCommitMessage": "docs: add quality gates dynamic ownership repair plan",
-    "preCommitHead": "9a57c1142",
+    "expectedCommitMessage": "fix: classify dynamic quality gates integration ownership",
+    "preCommitHead": "bf4f0fcc7",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase35.dynamic-ownership-plan.task1"
+    "taskId": "quality-gates-implementation.phase35.dynamic-ownership.task1"
   }
 }
 ```
@@ -453,12 +453,12 @@
 ### Stream: Retest Failure Intake
 
 181. [DONE] `quality-gates-implementation.phase35.dynamic-ownership-plan.task1` Record the release `1.2.246` Quality Gates integration failure and slice the dynamic ownership/action-policy repair before changing Core again (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add quality gates dynamic ownership repair plan`). Retest result (2026-05-13): Quality Gates reached Phase 3 and opened `quality-gates.phase3.integration.repair1.task1`, but Core still sent provider-visible instructions to do nothing because `.oxfmtrc.json`, `.oxlintrc.json`, `scripts/qg/**`, and `tsconfig.qg*.json` were treated as outside the active stage allowlist. Those paths were declared in `quality-gates.json.integratedPaths` and are Quality Gates materialization files. Core must classify stage-owned integration paths dynamically and must not emit `Do not update... Wait for Core...` when the same feedback contains repairable Phase 3 hook-wiring errors.
-182. [PENDING] Git Commit: `docs: add quality gates dynamic ownership repair plan` (hash: TBD)
+182. [DONE] Git Commit: `docs: add quality gates dynamic ownership repair plan` (hash: bf4f0fcc7)
 
 ### Stream: Dynamic Ownership And Action Policy
 
-183. [TODO] `quality-gates-implementation.phase35.dynamic-ownership.task1` Classify Quality Gates-owned integration files from the accepted contract plus known QG toolchain paths, and make failed-integration action lines provider-actionable unless dirty files are truly outside the Quality Gates stage (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `fix: classify dynamic quality gates integration ownership`).
-184. [TODO] Git Commit: `fix: classify dynamic quality gates integration ownership` (hash: TBD)
+183. [DONE] `quality-gates-implementation.phase35.dynamic-ownership.task1` Classify Quality Gates-owned integration files from the accepted contract plus known QG toolchain paths, and make failed-integration action lines provider-actionable unless dirty files are truly outside the Quality Gates stage (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `fix: classify dynamic quality gates integration ownership`).
+184. [PENDING] Git Commit: `fix: classify dynamic quality gates integration ownership` (hash: TBD)
 185. [TODO] `quality-gates-implementation.phase35.prompt-hook-ownership.task1` Strengthen the Quality Gates prompt/reference so Phase 3 cannot finish by declaring Husky hook regeneration as Core-owned pending work (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `docs: require quality gates hook materialization`).
 186. [TODO] Git Commit: `docs: require quality gates hook materialization` (hash: TBD)
 
