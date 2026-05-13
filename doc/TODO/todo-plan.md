@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "188223fbe",
+  "lastRecordedCommit": "e6be607d8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase32.verification.task1",
-  "expectedCommitMessage": "test: verify quality gates integration repair boundary",
+  "currentTaskId": "quality-gates-implementation.phase33.rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare quality gates integration repair release notes",
   "debt": {
-    "expectedCommitMessage": "test: verify quality gates integration repair boundary",
-    "preCommitHead": "188223fbe",
+    "expectedCommitMessage": "docs: prepare quality gates integration repair release notes",
+    "preCommitHead": "e6be607d8",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase32.verification.task1"
+    "taskId": "quality-gates-implementation.phase33.rebuild-docs.task1"
   }
 }
 ```
@@ -428,14 +428,14 @@
 169. [DONE] `quality-gates-implementation.phase32.shim-explicit-hook-regressions.task1` Update managed child-plan shim regressions so Phase 4 only opens after explicit required gate hook calls, not aggregate `qg:before-*` calls alone (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts`; expected commit: `test: require explicit quality gates hook shim wiring`).
 170. [DONE] Git Commit: `test: require explicit quality gates hook shim wiring` (hash: 188223fbe)
 171. [DONE] `quality-gates-implementation.phase32.verification.task1` Run targeted verification for the Quality Gates integration repair boundary across Core handlers, managed-workspace mutators, prompt templates, and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify quality gates integration repair boundary`). Verification evidence (2026-05-13): `npx ultracite check packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts packages/agents/quality-gates-agent/assets/quality-gates-prompt.md packages/agents/quality-gates-agent/assets/quality-gates-contract.md packages/core/src/templates/bundled-templates.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts` passed (`39/39`); `npm run build --workspace packages/core` passed.
-172. [PENDING] Git Commit: `test: verify quality gates integration repair boundary` (hash: TBD)
+172. [DONE] Git Commit: `test: verify quality gates integration repair boundary` (hash: e6be607d8)
 
 ## Phase 33 - Release Rebuild (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Rebuild Release Candidate
 
-173. [TODO] `quality-gates-implementation.phase33.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next Quality Gates integration repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates integration repair release notes`).
-174. [TODO] Git Commit: `docs: prepare quality gates integration repair release notes` (hash: TBD)
+173. [DONE] `quality-gates-implementation.phase33.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next Quality Gates integration repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates integration repair release notes`). Release rebuild approved by the user on 2026-05-13; next candidate version: `1.2.246`; release scope: Phase 3 Quality Gates integration repair targeting, managed dirty-file ownership for `scripts/quality-gates/**` and `biome.jsonc`, provider-actionable failed-integration feedback, and prompt/template enforcement that materialization is complete only after explicit `npm run qg:<gate-id>` Husky hook wiring is present.
+174. [PENDING] Git Commit: `docs: prepare quality gates integration repair release notes` (hash: TBD)
 175. [TODO] `quality-gates-implementation.phase33.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild quality gates integration repair release`).
 176. [TODO] Git Commit: `chore: rebuild quality gates integration repair release` (hash: TBD)
 

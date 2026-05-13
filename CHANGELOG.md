@@ -4,6 +4,18 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.246] - 2026-05-13
+### Fixed
+- **Quality Gates Phase 3 integration repair is now actionable.** Accepted-but-invalid Quality Gates integration work is classified as Phase 3 repair, so Core opens `phase3.integration.repairN` work instead of sending the provider back into a stale Phase 2 acceptance loop.
+- **Quality Gates materialization paths are stage-owned.** Core now allows `scripts/quality-gates/**` and `biome.jsonc` during the managed Quality Gates commit gate while ignoring volatile `node_modules/**` install noise.
+- **Failed integration feedback no longer tells the agent to wait.** When hook wiring or integration evidence is missing, Core now tells the agent to continue materialization and fix the concrete missing lifecycle wiring.
+- **The Quality Gates prompt requires explicit hook wiring.** The prompt and bundled contract now define materialization as complete only after scripts, package commands, direct Husky `npm run qg:<gate-id>` commands, and accepted artifact state are all ready for Core validation.
+
+### Tests
+- Targeted Quality Gates integration repair verification passed: `39/39` tests across managed post-turn arbitration, dirty-file ownership, acceptance feedback, bundled templates, child-plan mutators, shim lifecycle, progress validation, and continuation dispatch.
+- `npx ultracite check` passed for the changed Core handlers, managed-workspace mutators, prompt assets, bundled templates, and regression tests.
+- `npm run build --workspace packages/core` passed before release packaging.
+
 ## [1.2.245] - 2026-05-13
 ### Fixed
 - **Quality Gates acceptance now uses the committed workspace ledger.** Progress derives `acceptanceCommitted` from `doc/TODO/workspace.plan.md` accepted commit evidence, matching Application Skeleton, so `docs: accept quality gates contract` can trigger the Phase 3 integration continuation even when `quality-gates.json` still says `acceptanceCommitted: false`.
