@@ -156,7 +156,7 @@ const summarizeStagedFiles = (files, fallbackMessage) => {
     return files.some((file) => file.startsWith("product-parts/")) ? "Update Application Skeleton artifacts and materialized filesystem" : "Update Application Skeleton draft contract artifacts";
   }
   if (files.some((file) => file.includes("/quality_gates/"))) {
-    return files.some((file) => file.startsWith("scripts/gates/") || file.startsWith("scripts/quality-gates/") || file === "package.json" || file === "package-lock.json" || file === "biome.jsonc") ? "Update Quality Gates baseline artifacts and gate files" : "Update Quality Gates draft contract artifacts";
+    return files.some((file) => file.startsWith("scripts/gates/") || file.startsWith("scripts/quality-gates/") || file.startsWith("scripts/qg/") || file === "package.json" || file === "package-lock.json" || file === "biome.jsonc" || file === ".oxlintrc.json" || file === ".oxfmtrc.json" || /^tsconfig\\.qg(?:\\.[a-z0-9-]+)?\\.json$/u.test(file)) ? "Update Quality Gates baseline artifacts and gate files" : "Update Quality Gates draft contract artifacts";
   }
   if (files.length > 0) {
     return \`Update managed workspace files: \${files.slice(0, 5).join(", ")}\`;

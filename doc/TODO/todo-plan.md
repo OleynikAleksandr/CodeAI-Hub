@@ -8,15 +8,15 @@
   "planId": "quality-gates-managed-orchestration-implementation",
   "branch": "main",
   "baseHead": "c348fa9d3",
-  "lastRecordedCommit": "a6a4d9204",
+  "lastRecordedCommit": "948f90da7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Scenario.md",
-  "currentTaskId": "quality-gates-implementation.phase35.prompt-regressions.task1",
-  "expectedCommitMessage": "test: lock quality gates hook ownership wording",
+  "currentTaskId": "quality-gates-implementation.phase35.shim-scope.task1",
+  "expectedCommitMessage": "fix: sync quality gates shim integration scope",
   "debt": {
-    "expectedCommitMessage": "test: lock quality gates hook ownership wording",
-    "preCommitHead": "a6a4d9204",
+    "expectedCommitMessage": "fix: sync quality gates shim integration scope",
+    "preCommitHead": "948f90da7",
     "stage": "commit_pending",
-    "taskId": "quality-gates-implementation.phase35.prompt-regressions.task1"
+    "taskId": "quality-gates-implementation.phase35.shim-scope.task1"
   }
 }
 ```
@@ -467,18 +467,23 @@
 187. [DONE] `quality-gates-implementation.phase35.dynamic-ownership-regressions.task1` Add regressions for dynamic Quality Gates ownership, provider-actionable dirty-path repair feedback, and Phase 3 repair targeting with `scripts/qg/**` / Oxc config paths (scope: `packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts`; expected commit: `test: cover dynamic quality gates ownership repair`).
 188. [DONE] Git Commit: `test: cover dynamic quality gates ownership repair` (hash: a6a4d9204)
 189. [DONE] `quality-gates-implementation.phase35.prompt-regressions.task1` Lock bundled Quality Gates template wording so hook wiring remains agent-owned in Phase 3 and integrated state cannot defer required Husky hooks to Core (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.test.ts`; expected commit: `test: lock quality gates hook ownership wording`).
-190. [PENDING] Git Commit: `test: lock quality gates hook ownership wording` (hash: TBD)
+190. [DONE] Git Commit: `test: lock quality gates hook ownership wording` (hash: 948f90da7)
+
+### Stream: Installed Shim Scope
+
+191. [DONE] `quality-gates-implementation.phase35.shim-scope.task1` Sync the installed child-plan shim Quality Gates integration summary with dynamic QG toolchain paths so fallback child-plan text does not preserve the old `scripts/quality-gates/**`-only scope (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `fix: sync quality gates shim integration scope`).
+192. [PENDING] Git Commit: `fix: sync quality gates shim integration scope` (hash: TBD)
 
 ### Stream: Verification
 
-191. [TODO] `quality-gates-implementation.phase35.verification.task1` Run targeted verification for dynamic Quality Gates ownership/action-policy repairs and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify dynamic quality gates ownership repair`).
-192. [TODO] Git Commit: `test: verify dynamic quality gates ownership repair` (hash: TBD)
+193. [TODO] `quality-gates-implementation.phase35.verification.task1` Run targeted verification for dynamic Quality Gates ownership/action-policy repairs and Core build before rebuilding the release (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/managed-workspace, packages/core/src/templates, packages/agents/quality-gates-agent`; expected commit: `test: verify dynamic quality gates ownership repair`).
+194. [TODO] Git Commit: `test: verify dynamic quality gates ownership repair` (hash: TBD)
 
 ## Phase 36 - Release Rebuild (owner: Codex, updated: 2026-05-13)
 
 ### Stream: Rebuild Release Candidate
 
-193. [TODO] `quality-gates-implementation.phase36.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next dynamic Quality Gates ownership repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare dynamic quality gates ownership release notes`).
-194. [TODO] Git Commit: `docs: prepare dynamic quality gates ownership release notes` (hash: TBD)
-195. [TODO] `quality-gates-implementation.phase36.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild dynamic quality gates ownership release`).
-196. [TODO] Git Commit: `chore: rebuild dynamic quality gates ownership release` (hash: TBD)
+195. [TODO] `quality-gates-implementation.phase36.rebuild-docs.task1` After the user's explicit rebuild request, update release notes for the next dynamic Quality Gates ownership repair candidate and record the rebuild scope before rerunning release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare dynamic quality gates ownership release notes`).
+196. [TODO] Git Commit: `docs: prepare dynamic quality gates ownership release notes` (hash: TBD)
+197. [TODO] `quality-gates-implementation.phase36.rebuild-build.task1` Rerun `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then stage the rebuilt release artifacts for the next user retest (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**`; expected commit: `chore: rebuild dynamic quality gates ownership release`).
+198. [TODO] Git Commit: `chore: rebuild dynamic quality gates ownership release` (hash: TBD)
