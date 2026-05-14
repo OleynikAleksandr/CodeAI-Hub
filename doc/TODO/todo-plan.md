@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "7b702d1cc",
+  "lastRecordedCommit": "c1d51c958",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase5.tests.task8",
-  "expectedCommitMessage": "docs: remove legacy managed orchestration references",
+  "currentTaskId": "managed-orchestration-cleanup.phase6.verify.task1",
+  "expectedCommitMessage": "docs: verify managed orchestration cleanup",
   "debt": {
-    "expectedCommitMessage": "docs: remove legacy managed orchestration references",
-    "preCommitHead": "7b702d1cc",
+    "expectedCommitMessage": "docs: verify managed orchestration cleanup",
+    "preCommitHead": "c1d51c958",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase5.tests.task8"
+    "taskId": "managed-orchestration-cleanup.phase6.verify.task1"
   }
 }
 ```
@@ -299,7 +299,7 @@ Verification for task 39:
 - Diagram Modules transaction tests now assert dirty classification with blocked transaction behavior, and progress-refresh tests assert stale read-model refresh without invoking the disabled transaction.
 
 41. [DONE] `managed-orchestration-cleanup.phase5.tests.task8` Remove stale architecture max-line allowlist entries and stale active-path docs references left by deleted legacy files (scope: `scripts/check-architecture-rules/max-lines-debt-allowlist.txt, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed orchestration references`).
-42. [PENDING] Git Commit: `docs: remove legacy managed orchestration references` (hash: TBD)
+42. [DONE] Git Commit: `docs: remove legacy managed orchestration references` (hash: c1d51c958)
 
 Verification for task 41:
 
@@ -313,8 +313,18 @@ Verification for task 41:
 
 ### Stream: Build And Static Checks
 
-43. [TODO] `managed-orchestration-cleanup.phase6.verify.task1` Run final targeted build and static checks: `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration cleanup`).
-44. [TODO] Git Commit: `docs: verify managed orchestration cleanup` (hash: TBD)
+43. [DONE] `managed-orchestration-cleanup.phase6.verify.task1` Run final targeted build and static checks: `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration cleanup`).
+44. [PENDING] Git Commit: `docs: verify managed orchestration cleanup` (hash: TBD)
+
+Verification for task 43:
+
+- `npm run build:core` passed.
+- `npm run build:project-manager` passed.
+- `npm run typecheck:webview` passed.
+- `npm run check:knip` passed.
+- `npm run check:links` passed.
+- `npm run check:dup` passed with 2.76% duplicated lines, under the 3% threshold.
+- `git status --short` after verification shows only this active plan update.
 
 ## Phase 7 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
