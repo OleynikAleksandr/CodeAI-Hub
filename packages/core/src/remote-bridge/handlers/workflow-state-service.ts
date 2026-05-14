@@ -1,8 +1,6 @@
 import path from "node:path";
 import type { Request, Response } from "express";
-import { readDevelopmentTreeBootstrapGate } from "../../development-tree/development-tree-bootstrap-gate";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
-import { DevelopmentTreeFilesystemStructuratorFacade } from "../../development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -88,8 +86,6 @@ export class WorkflowStateService {
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
   private readonly developmentTreeState = new DevelopmentTreeStateFacade();
-  private readonly filesystemStructurator =
-    new DevelopmentTreeFilesystemStructuratorFacade();
   private readonly lastActiveStore = new WorkflowLastActiveStore();
 
   constructor(options: {
@@ -100,45 +96,9 @@ export class WorkflowStateService {
     this.logger = options.logger;
     this.sessionManager = options.sessionManager;
     this.managedPostTurn = new ManagedWorkflowPostTurnService({
-      developmentTreeAgentSessions: options.developmentTreeAgentSessions,
       logger: options.logger,
-      onRetryLimitReached: (notice) => {
-        options.logger.warn(
-          "Managed arbitration retry limit reached for managed stage",
-          notice
-        );
-      },
       sessionManager: options.sessionManager,
     });
-    this.developmentTreeState.subscribeSnapshot(
-      async ({ snapshot, workspaceRoot, workspaceSlug }) => {
-        try {
-          if (
-            !(
-              await readDevelopmentTreeBootstrapGate({
-                workspaceRoot,
-                workspaceSlug,
-              })
-            ).unlocked
-          ) {
-            return;
-          }
-          await this.filesystemStructurator.materialize({
-            snapshot,
-            workspaceRoot,
-            workspaceSlug,
-          });
-        } catch (error) {
-          this.logger.warn(
-            "Failed to materialize development tree filesystem or node drafts",
-            {
-              workspaceSlug,
-              error: error instanceof Error ? error.message : String(error),
-            }
-          );
-        }
-      }
-    );
   }
 
   record(event: WorkflowWatcherEvent): WorkflowState {
@@ -288,7 +248,6 @@ export class WorkflowStateService {
                     generatedPartIds:
                       managedProgress.diagramModulesProgress
                         ?.generatedPartIds ?? [],
-                    emitSnapshotSideEffects: true,
                   })
                   .then((developmentTree) => {
                     return applyDevelopmentTreeFreshnessToState({
@@ -358,11 +317,15 @@ export class WorkflowStateService {
   }
 
   handleManagedWorkflowPostTurn(sessionId: string): void {
-    this.managedPostTurn.handle(sessionId);
+    this.logger.warn(
+      "Managed workflow post-turn handoff is disabled during orchestration cluster rewrite",
+      { sessionId }
+    );
   }
 
-  // Exposed for the HTTP transport / typed-fallback routing modules. Both go
-  // through the same Core command handler in the post-turn service.
+  // Exposed for compatibility with HTTP transport / typed-fallback routing.
+  // The returned service is fail-closed while the new orchestration cluster is
+  // being built.
   get managedPostTurnService(): ManagedWorkflowPostTurnService {
     return this.managedPostTurn;
   }

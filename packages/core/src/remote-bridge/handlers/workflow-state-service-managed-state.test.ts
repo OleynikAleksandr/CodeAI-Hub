@@ -8,39 +8,9 @@ import { promisify } from "node:util";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
-import {
-  type ManagedArbitrationRetryNotice,
-  ManagedWorkflowPostTurnService,
-} from "./managed-workflow-post-turn-service";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const execFileAsync = promisify(execFile);
-const RETRY_LIMIT_REASON_RE =
-  /Managed arbitration exceeded the per-stage retry limit/u;
-
-const initWorkspaceWithDirtyDiagramModules = async (
-  workspaceRoot: string,
-  workspaceSlug: string
-): Promise<void> => {
-  await execFileAsync("git", ["init"], { cwd: workspaceRoot });
-  await execFileAsync("git", ["config", "user.email", "test@example.com"], {
-    cwd: workspaceRoot,
-  });
-  await execFileAsync("git", ["config", "user.name", "CodeAI Test"], {
-    cwd: workspaceRoot,
-  });
-  await writeFile(path.join(workspaceRoot, "README.md"), "# Demo\n", "utf8");
-  await execFileAsync("git", ["add", "README.md"], { cwd: workspaceRoot });
-  await execFileAsync("git", ["commit", "-m", "test: initial"], {
-    cwd: workspaceRoot,
-  });
-  const dirtyPath = path.join(
-    workspaceRoot,
-    `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`
-  );
-  await mkdir(path.dirname(dirtyPath), { recursive: true });
-  await writeFile(dirtyPath, "# Product Parts\n", "utf8");
-};
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -361,9 +331,9 @@ test("workflow-state read with incomplete skeleton draft does not dispatch provi
       `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
       "# Final Description\n"
     );
-    // Phase 1A in progress: markdown exists, map.json deliberately missing —
-    // a real Phase 1A guard would emit a repair decision, but only on the
-    // post-turn path. Reading workflow-state must NOT trigger that dispatch.
+    // Phase 1A in progress: markdown exists, map.json deliberately missing.
+    // Reading workflow-state must remain a projection only and must not
+    // trigger repair dispatch while orchestration is being rewritten.
     await writeWorkspaceFile(
       workspaceRoot,
       `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton.md`,
@@ -400,23 +370,24 @@ test("workflow-state read with incomplete skeleton draft does not dispatch provi
 
     assert.equal(first.status, 200);
     assert.equal(second.status, 200);
-    // Two independent reads must produce zero provider-visible dispatches —
-    // read-model paths are side-effect free until the post-turn boundary.
+    // Two independent reads must produce zero provider-visible dispatches.
     assert.deepEqual(dispatched, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
 
-test("ManagedWorkflowPostTurnService notifies retry-limit reached after dirty arbitration repeats", async () => {
+test("workflow-state post-turn handoff is disabled during managed orchestration rewrite", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "managed-arbitration-retry-")
+    path.join(os.tmpdir(), "workflow-state-post-turn-disabled-")
   );
   const workspaceSlug = "demo-workspace";
-  const notices: ManagedArbitrationRetryNotice[] = [];
+  const dispatched: Array<{
+    readonly content: string;
+    readonly sessionId: string;
+  }> = [];
 
   try {
-    await initWorkspaceWithDirtyDiagramModules(workspaceRoot, workspaceSlug);
     const sessionManager = {
       getSession: () => ({
         id: "session-1",
@@ -427,30 +398,27 @@ test("ManagedWorkflowPostTurnService notifies retry-limit reached after dirty ar
       }),
     } as unknown as SessionManager;
 
-    const service = new ManagedWorkflowPostTurnService({
-      logger: new Logger("error"),
-      onRetryLimitReached: (notice) => {
-        notices.push(notice);
+    const service = new WorkflowStateService({
+      developmentTreeAgentSessions: {
+        gateway: {
+          createSessionForWorkflow: () => Promise.resolve(null),
+          handleMessage: (sessionId, content) => {
+            dispatched.push({
+              content: typeof content === "string" ? content : "payload",
+              sessionId,
+            });
+            return Promise.resolve();
+          },
+        },
+        providerId: "codexCli",
       },
-      retryLimit: 2,
+      logger: new Logger("error"),
       sessionManager,
     });
 
-    for (let attempt = 0; attempt < 4; attempt += 1) {
-      service.handle("session-1");
-      await service.whenIdle("session-1");
-    }
+    service.handleManagedWorkflowPostTurn("session-1");
 
-    assert.ok(
-      notices.length >= 1,
-      `Expected retry-limit notifier to fire; got ${notices.length}`
-    );
-    const firstNotice = notices[0];
-    assert.equal(firstNotice?.sessionId, "session-1");
-    assert.equal(firstNotice?.stage, "diagram_modules");
-    assert.equal(firstNotice?.retryLimit, 2);
-    assert.ok((firstNotice?.attempts ?? 0) > 2);
-    assert.match(firstNotice?.reason ?? "", RETRY_LIMIT_REASON_RE);
+    assert.deepEqual(dispatched, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

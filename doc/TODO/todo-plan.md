@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "d0a2a24fa",
+  "lastRecordedCommit": "4b7761c42",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task5",
-  "expectedCommitMessage": "refactor: remove legacy managed accept-contract runners",
+  "currentTaskId": "managed-orchestration-cleanup.phase5.readmodel.task1",
+  "expectedCommitMessage": "refactor: make managed workflow read model fail closed",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy managed accept-contract runners",
-    "preCommitHead": "d0a2a24fa",
+    "expectedCommitMessage": "refactor: make managed workflow read model fail closed",
+    "preCommitHead": "4b7761c42",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase4.postturn.task5"
+    "taskId": "managed-orchestration-cleanup.phase5.readmodel.task1"
   }
 }
 ```
@@ -195,7 +195,7 @@ Verification for task 21:
 - Revision injection runner entrypoints now return without mutating stage plans.
 
 23. [DONE] `managed-orchestration-cleanup.phase4.postturn.task5` Disable legacy Application Skeleton and Quality Gates accept-contract side-effect runners while preserving pure decision/read-model contracts until PM cleanup (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-acceptance-writer.ts`; expected commit: `refactor: remove legacy managed accept-contract runners`).
-24. [PENDING] Git Commit: `refactor: remove legacy managed accept-contract runners` (hash: TBD)
+24. [DONE] Git Commit: `refactor: remove legacy managed accept-contract runners` (hash: 4b7761c42)
 
 Verification for task 23:
 
@@ -208,8 +208,16 @@ Verification for task 23:
 
 ### Stream: Read-Only Projection
 
-25. [TODO] `managed-orchestration-cleanup.phase5.readmodel.task1` Clean workflow-state/read-model references so remaining PM projection is read-only and does not trigger legacy commits or provider messages (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: make managed workflow read model fail closed`).
-26. [TODO] Git Commit: `refactor: make managed workflow read model fail closed` (hash: TBD)
+25. [DONE] `managed-orchestration-cleanup.phase5.readmodel.task1` Clean workflow-state/read-model references so remaining PM projection is read-only and does not trigger legacy commits or provider messages (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: make managed workflow read model fail closed`).
+26. [PENDING] Git Commit: `refactor: make managed workflow read model fail closed` (hash: TBD)
+
+Verification for task 25:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js` passed.
+- Workflow-state reads no longer emit development tree snapshot side effects, and post-turn handoff from the read-model service is fail-closed without provider dispatch.
 
 ### Stream: Legacy Tests And Allowlist Debt
 
