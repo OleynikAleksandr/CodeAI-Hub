@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "6162c05d8",
+  "lastRecordedCommit": "c21749643",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task9",
-  "expectedCommitMessage": "test: remove workflow feedback continuation assertions",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task10",
+  "expectedCommitMessage": "refactor: remove application skeleton accept action UI",
   "debt": {
-    "expectedCommitMessage": "test: remove workflow feedback continuation assertions",
-    "preCommitHead": "6162c05d8",
+    "expectedCommitMessage": "refactor: remove application skeleton accept action UI",
+    "preCommitHead": "c21749643",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task9"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task10"
   }
 }
 ```
@@ -426,9 +426,9 @@ Verification for task 57:
 73. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task8` Rewrite remaining Application Skeleton continuation tests around the current no-op dispatcher and blocked typed-acceptance flow (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove application skeleton continuation assertions`).
 74. [DONE] Git Commit: `test: remove application skeleton continuation assertions` (hash: 6162c05d8)
 75. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task9` Rewrite remaining workflow-state and Diagram Modules feedback tests around disabled provider feedback/continuation dispatch (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove workflow feedback continuation assertions`).
-76. [PENDING] Git Commit: `test: remove workflow feedback continuation assertions` (hash: TBD)
-77. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task10` Remove Application Skeleton accept-contract action from PM UI during the rewrite (scope: `src/client/project-manager/components/application-skeleton/application-skeleton-panel.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.test.tsx, doc/TODO/todo-plan.md`; expected commit: `refactor: remove application skeleton accept action UI`).
-78. [TODO] Git Commit: `refactor: remove application skeleton accept action UI` (hash: TBD)
+76. [DONE] Git Commit: `test: remove workflow feedback continuation assertions` (hash: c21749643)
+77. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task10` Remove Application Skeleton accept-contract action from PM UI during the rewrite (scope: `src/client/project-manager/components/application-skeleton/application-skeleton-panel.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.test.tsx, doc/TODO/todo-plan.md`; expected commit: `refactor: remove application skeleton accept action UI`).
+78. [PENDING] Git Commit: `refactor: remove application skeleton accept action UI` (hash: TBD)
 79. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task11` Remove Quality Gates accept-contract action from PM UI during the rewrite (scope: `src/client/project-manager/components/quality-gates/quality-gates-panel.tsx, src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.tsx, src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.test.tsx, doc/TODO/todo-plan.md`; expected commit: `refactor: remove quality gates accept action UI`).
 80. [TODO] Git Commit: `refactor: remove quality gates accept action UI` (hash: TBD)
 81. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task12` Remove PM accept-contract transport client after the UI actions are gone (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept contract client`).
@@ -463,6 +463,12 @@ Verification for task 75:
 
 - `npm run build:core` passed.
 - `node --test packages/core/dist/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.js packages/core/dist/remote-bridge/handlers/workflow-agent-acceptance-feedback.diagram-modules.test.js` passed.
+
+Verification for task 77:
+
+- `npm run build:project-manager` passed.
+- `npm run typecheck:webview` passed.
+- `rg -n "ApplicationSkeletonAcceptContractButton|application-skeleton-accept-contract-button|Accept Contract" src/client/project-manager/components/application-skeleton` returned no matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 

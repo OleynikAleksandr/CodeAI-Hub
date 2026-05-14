@@ -4,7 +4,6 @@ import type { ProviderStackId } from "../../../../types/provider";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 import { StageArtifactContentView } from "../shared/stage-artifact-content-view";
 import { useStageArtifactLoader } from "../shared/use-stage-artifact-loader";
-import { ApplicationSkeletonAcceptContractButton } from "./application-skeleton-accept-contract-button";
 import { ApplicationSkeletonHelp } from "./application-skeleton-help";
 
 const APPLICATION_SKELETON_TITLE_RE = /^#\s+Application Skeleton\b/m;
@@ -21,7 +20,6 @@ const validateApplicationSkeletonMarkdown = (content: string): string | null => 
 };
 
 export const ApplicationSkeletonPanel: React.FC<{
-  readonly applicationSkeletonSessionId?: string | null;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }> = (props) => {
@@ -56,25 +54,16 @@ export const ApplicationSkeletonPanel: React.FC<{
   );
 
   if (status === "ready" && content !== null) {
-    const disabledReason = validationError
-      ? `Application Skeleton draft is not Core-clean: ${validationError}`
-      : null;
     return (
-      <>
-        <StageArtifactContentView
-          artifactPath={artifactPath}
-          content={content}
-          displayFileName="application-skeleton.md"
-          onFixStart={handleFixStart}
-          validationError={validationError}
-          workspacePath={props.workspacePath}
-          workspaceSlug={props.workspaceSlug}
-        />
-        <ApplicationSkeletonAcceptContractButton
-          disabledReason={disabledReason}
-          sessionId={props.applicationSkeletonSessionId ?? null}
-        />
-      </>
+      <StageArtifactContentView
+        artifactPath={artifactPath}
+        content={content}
+        displayFileName="application-skeleton.md"
+        onFixStart={handleFixStart}
+        validationError={validationError}
+        workspacePath={props.workspacePath}
+        workspaceSlug={props.workspaceSlug}
+      />
     );
   }
   if (status === "error") {
