@@ -197,7 +197,7 @@ Manual start из sidebar Workflow Tree:
 - пользователь сам решает, когда `virtual-simulation.md` уже достаточно хороший для перехода на следующий шаг;
 - запуск требует доступный canonical upstream artifact `virtual-simulation.md`;
 - PM не должен дополнительно требовать точный upstream status `DONE` / `completed`, если artifact уже существует и gating не блокирует старт.
-- перед provider session creation Core обязан выполнить managed workspace bootstrap и read-only freeze upstream шагов; если lifecycle validation возвращает blocker/debt, agent turn не запускается до repair или явного решения пользователя;
+- во время rewrite provider session creation для технического ствола fail-closed: старый managed workspace bootstrap, child plans, hook shims и lifecycle validation удалены из active runtime, а новый lifecycle появится только через replacement orchestration cluster;
 - если continuity session для шага ещё нет, confirmation card предвыбирает провайдера последнего trunk-step (`virtual_simulation`), а не провайдера из `Description`;
 - пользователь может прямо на карточке переключить provider до запуска; выбранный provider становится authoritative identity для новой step-session bootstrap path;
 - provider/model/reasoning controls присутствуют на всех Start/confirmation cards. При Start выбранные значения сохраняются в canonical Settings defaults выбранного provider и seed-ят новую session identity; existing continuity sessions не перепривязываются от Settings.

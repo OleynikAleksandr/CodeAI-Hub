@@ -10,7 +10,7 @@
 
 1. `System/SystemArchitecture.md`
 2. `System/WorkflowSteps_Overview.md`
-3. `System/ManagedDocumentationCommitOwnership.md`
+3. `System/ManagedDocumentationCommitOwnership.md` (suspended historical pointer)
 4. `Clusters/Project_Manager.md`
 5. `Clusters/CoreOrchestrator.md`
 6. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
@@ -21,11 +21,11 @@
 ## 1) Канонические документы (этот каталог)
 
 ### Workflow Overview
-- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→5 + Development Tree branches), артефактов, OUTDATED propagation, managed workspace boundary, and Core Runtime post-turn contract.
+- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→5 + Development Tree branches), артефактов, OUTDATED propagation, technical-stage rewrite boundary, and Core Runtime continuity/read-model contracts.
 
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics and model invocation profile boundaries.
-- `System/ManagedDocumentationCommitOwnership.md` — SSOT принятого решения для pre-code managed documentation workflow: агенты владеют содержанием артефактов; Core владеет post-turn validation, Git-транзакцией, staging allowlist, plan advancement, feedback, continuation и downstream unlock; release `1.2.249` accepts Diagram Modules / Application Skeleton / Quality Gates parity, including provider-actionable repairs and persistent user-return anchors.
+- `System/ManagedDocumentationCommitOwnership.md` — suspended historical pointer for the removed pre-rewrite documentation-stage ownership model. It is not an active runtime contract; replacement ownership must come from the new orchestration cluster.
 - `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, release-time regressions, or managed-stage terminal-anchor drift.
 - `System/WorkflowStep_PromptTesting_Methodology.md` — SSOT methodology for live-testing any workflow step agent prompt, identifying prompt-level defects, and turning observed behavior into an ideal step front contract.
 
@@ -49,7 +49,7 @@
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation`.
 - `Contracts/Workflow_CLI.md` — state machine шагов + watcher.
-- `Contracts/Managed_Workspace_Lifecycle.md` — managed workspace lifecycle contract from `Diagram Modules`: Core-owned Git/plan/hooks baseline, tracked `.codeai-hub/workflow`, ignored runtime/cache/log state, upstream read-only freeze, recovery from `todo-plan.md`, provider-terminal post-turn acceptance, read-model side-effect boundaries, and accepted `1.2.249` Quality Gates split-integration-to-user-return behavior.
+- `Contracts/Managed_Workspace_Lifecycle.md` — suspended historical pointer for the removed managed workspace lifecycle. It is retained only to prevent old links from implying an active contract; the new cluster must replace it before any future lifecycle depends on it.
 - `Contracts/Workflow_Revision_Graph.md` — revision graph contract for Diagram/Skeleton/Quality Gates/Development Tree snapshots, stable ids, diff classes, and downstream migration tasks.
 - `Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md` — UI-контракт pre-submit/post-submit для Description.
 - `Contracts/Dialogs_And_Continuity_Routing.md` — routing диалогов + continuity.
@@ -95,8 +95,8 @@
 - `Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md` — archived accepted scenario contract for incremental Diagram Modules orchestration, correction-turn microtasks, and the post-completion `revisionN` user-return commit loop. Closed by release `1.2.229`.
 - `Plans/Archive/Managed_Step_Orchestration_Application_Skeleton_Scenario_1.2.238.md` — archived accepted scenario contract replacing the superseded static Application Skeleton Phase B orchestration plan; defines dynamic draft/review/accept/materialize growth, repair microtasks with failed-attempt evidence commits, Quality Gates handoff, post-completion `revisionN` user-return commits, and completed-stage LED boundary. Closed by release `1.2.238`.
 - `Plans/Archive/Managed_Step_Orchestration_Application_Skeleton_Architecture_1.2.238.md` — archived Application Skeleton / Quality Gates baseline architecture source, rehomed from the active Managed Step Orchestration folder after Application Skeleton acceptance; stable conclusions were absorbed into the accepted `1.2.249` managed lifecycle SSOT.
-- `Plans/Archive/Managed_Workspace_Lifecycle_From_Diagram_Modules_1.2.249.md` — archived managed workspace lifecycle planning source that led to the accepted Diagram Modules / Application Skeleton / Quality Gates managed trunk lifecycle; stable requirements are now in `Contracts/Managed_Workspace_Lifecycle.md`, `System/ManagedDocumentationCommitOwnership.md`, and `System/WorkflowSteps_Overview.md`.
-- `Plans/Archive/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design_1.2.249.md` — archived corrective-operation phase design source; stable phase/repair rules are now in `System/Workflow_NewStep_Rollout_Guardrails.md` and `Contracts/Managed_Workspace_Lifecycle.md`.
+- `Plans/Archive/Managed_Workspace_Lifecycle_From_Diagram_Modules_1.2.249.md` — archived managed workspace lifecycle planning source for the retired generated-script/child-plan lifecycle. It is historical only after the cleanup.
+- `Plans/Archive/Managed_Workflow_Phase_Types_And_Corrective_Operations_Design_1.2.249.md` — archived corrective-operation phase design source for the retired lifecycle; it is not active replacement-cluster guidance.
 - `Plans/Archive/Managed_Workflow_Context_Bundles_And_Microtasks.md` — archived planning-doc закрытого scope, implemented and accepted in release `1.2.215`: no-link provider prompt bundles, rollover-as-managed-autocompact, stage todo-plans as executable order contracts, Core post-turn managed acceptance, one-at-a-time Diagram Modules Product Part continuation, Plan Orchestrator scoped commits, and managed commit boundaries per accepted microtask for Diagram Modules, Application Skeleton, Quality Gates, and Development Tree documentation sessions.
 - `Plans/Archive/Diagram_Modules_Core_Orchestrated_Subturns.md` — archived planning-doc закрытого release scope `1.2.207`: Core-orchestrated Diagram Modules one-artifact subturns, Claude stream fragment cleanup, fresh post-turn validation, input-lock ownership, and suppression of stale aggregate feedback during active Product Part continuation. Pair with `doc/TODO/Archive/todo-plan-closeout-diagram-modules-core-orchestrated-subturns.md`.
 - `Plans/Archive/Quality_Gates_Baseline_Prompt_Integration_Refinement.md` — archived planning-doc закрытого Quality Gates prompt-testing scope / release `1.2.172`: compact first prompt, concrete draft/integration split, stack-neutral gate selection, machine-readable integration plan, release + user retest loop. Открытый follow-up по `plannedRequiredAfterIntegration` перенесен в следующий managed workspace lifecycle scope.
