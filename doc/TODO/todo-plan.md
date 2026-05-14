@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "c402cb64d",
+  "lastRecordedCommit": "b63883d9c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task1",
-  "expectedCommitMessage": "refactor: remove legacy managed commit ownership",
+  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task2",
+  "expectedCommitMessage": "refactor: remove legacy managed feedback dispatchers",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy managed commit ownership",
-    "preCommitHead": "c402cb64d",
+    "expectedCommitMessage": "refactor: remove legacy managed feedback dispatchers",
+    "preCommitHead": "b63883d9c",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase4.postturn.task1"
+    "taskId": "managed-orchestration-cleanup.phase4.postturn.task2"
   }
 }
 ```
@@ -155,7 +155,7 @@ Verification for task 13:
 ### Stream: Commit And Feedback Writers
 
 15. [DONE] `managed-orchestration-cleanup.phase4.postturn.task1` Remove legacy managed documentation commit transaction and workflow-state commit helper ownership (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts`; expected commit: `refactor: remove legacy managed commit ownership`).
-16. [PENDING] Git Commit: `refactor: remove legacy managed commit ownership` (hash: TBD)
+16. [DONE] Git Commit: `refactor: remove legacy managed commit ownership` (hash: b63883d9c)
 
 Verification for task 15:
 
@@ -164,8 +164,16 @@ Verification for task 15:
 - `npm run check:knip` passed.
 - `ManagedDocumentationCommitTransaction.commitAcceptedStage` is now fail-closed and no longer stages files or invokes `npm run plan:commit`; `commitManagedDocumentationStageIfReady` refreshes read-only progress only.
 
-17. [TODO] `managed-orchestration-cleanup.phase4.postturn.task2` Remove legacy provider feedback and continuation dispatch helpers for managed orchestration (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts`; expected commit: `refactor: remove legacy managed feedback dispatchers`).
-18. [TODO] Git Commit: `refactor: remove legacy managed feedback dispatchers` (hash: TBD)
+17. [DONE] `managed-orchestration-cleanup.phase4.postturn.task2` Remove legacy provider feedback and continuation dispatch helpers for managed orchestration (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts`; expected commit: `refactor: remove legacy managed feedback dispatchers`).
+18. [PENDING] Git Commit: `refactor: remove legacy managed feedback dispatchers` (hash: TBD)
+
+Verification for task 17:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- Provider feedback and continuation dispatcher entrypoints are retained for compile compatibility but no longer resolve sessions or send provider messages.
+
 19. [TODO] `managed-orchestration-cleanup.phase4.postturn.task3` Remove legacy managed repair/revision/accept runners per discovered import graph, preserving only non-orchestration validators (scope: `packages/core/src/remote-bridge/handlers/*repair-orchestration.ts, packages/core/src/remote-bridge/handlers/*revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/*accept-contract*`; expected commit: `refactor: remove legacy managed repair runners`).
 20. [TODO] Git Commit: `refactor: remove legacy managed repair runners` (hash: TBD)
 
