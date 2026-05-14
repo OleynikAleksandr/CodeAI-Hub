@@ -143,61 +143,6 @@ test("handler rejects when out-of-owner dirty paths block the workspace", () => 
   }
 });
 
-test("typed acceptance router forwards both managed contract review stages", async () => {
-  const { routeManagedTypedAcceptance } = await import(
-    "./application-skeleton-typed-acceptance-router"
-  );
-  const recorded: Array<{ sessionId: string; source: string }> = [];
-  const logged: string[] = [];
-  const logger = {
-    info: (message: string) => logged.push(message),
-  } as unknown as Parameters<typeof routeManagedTypedAcceptance>[0]["logger"];
-
-  await routeManagedTypedAcceptance({
-    acceptancePhrase: "Принимаю контракт",
-    handleManagedAcceptContractCommand: (params) => {
-      recorded.push(params);
-      return Promise.resolve();
-    },
-    logger,
-    sessionId: "session-1",
-    stage: "application_skeleton",
-  });
-  assert.deepEqual(recorded, [
-    { sessionId: "session-1", source: "typed-fallback" },
-  ]);
-  assert.equal(logged.length, 1);
-
-  await routeManagedTypedAcceptance({
-    acceptancePhrase: "Принимаю контракт",
-    handleManagedAcceptContractCommand: (params) => {
-      recorded.push(params);
-      return Promise.resolve();
-    },
-    logger,
-    sessionId: "session-2",
-    stage: "quality_gates",
-  });
-  assert.deepEqual(recorded, [
-    { sessionId: "session-1", source: "typed-fallback" },
-    { sessionId: "session-2", source: "typed-fallback" },
-  ]);
-  assert.equal(logged.length, 2);
-
-  await routeManagedTypedAcceptance({
-    acceptancePhrase: "Принимаю контракт",
-    handleManagedAcceptContractCommand: (params) => {
-      recorded.push(params);
-      return Promise.resolve();
-    },
-    logger,
-    sessionId: "session-3",
-    stage: "diagram_modules",
-  });
-  assert.equal(recorded.length, 2);
-  assert.equal(logged.length, 3);
-});
-
 test("handler rejects when stage is already materialized", () => {
   const decision = evaluateApplicationSkeletonAcceptContractCommand({
     applicationSkeletonProgress: buildProgressSnapshot({

@@ -10,8 +10,6 @@ import {
   serializeSessionModelBinding,
   shouldBroadcastAppliedProviderModelUpdate,
 } from "../types";
-import { routeManagedTypedAcceptance } from "./application-skeleton-typed-acceptance-router";
-import { recognizeManagedAcceptanceForStage } from "./managed-workflow-post-turn-service";
 import type { ProviderSessionBinding } from "./session-request-handler";
 import type { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handler-applied-turn-config";
 import { buildDocumentationContinuationEnvelope } from "./session-request-handler-documentation-continuation-envelope";
@@ -64,10 +62,6 @@ interface SessionRequestHandlerMessageDispatchDependencies {
     readonly sessionId: string;
     readonly state: "idle" | "running";
   }) => void;
-  readonly handleManagedAcceptContractCommand?: (params: {
-    readonly sessionId: string;
-    readonly source: "typed-fallback";
-  }) => Promise<unknown>;
   readonly handleProviderFailure: (
     providerId: string,
     error: unknown,
@@ -205,18 +199,6 @@ export class SessionRequestHandlerMessageDispatch {
           code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
           retryable: false,
         },
-      });
-      return;
-    }
-    const acceptancePhrase = recognizeManagedAcceptanceForStage(stage, content);
-    if (acceptancePhrase) {
-      await routeManagedTypedAcceptance({
-        acceptancePhrase,
-        handleManagedAcceptContractCommand:
-          this.deps.handleManagedAcceptContractCommand,
-        logger: this.deps.logger,
-        sessionId,
-        stage,
       });
       return;
     }

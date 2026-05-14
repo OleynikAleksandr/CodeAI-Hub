@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "cb1990576",
+  "lastRecordedCommit": "852dc8119",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task13",
-  "expectedCommitMessage": "refactor: remove managed accept contract http endpoint",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task14",
+  "expectedCommitMessage": "refactor: remove typed managed accept routing",
   "debt": {
-    "expectedCommitMessage": "refactor: remove managed accept contract http endpoint",
-    "preCommitHead": "cb1990576",
+    "expectedCommitMessage": "refactor: remove typed managed accept routing",
+    "preCommitHead": "852dc8119",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task13"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task14"
   }
 }
 ```
@@ -434,9 +434,9 @@ Verification for task 57:
 81. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task12` Remove PM accept-contract transport client after the UI actions are gone (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept contract client`).
 82. [DONE] Git Commit: `refactor: remove managed accept contract client` (hash: cb1990576)
 83. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task13` Remove Core accept-contract HTTP route surface during the rewrite (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept contract http endpoint`).
-84. [PENDING] Git Commit: `refactor: remove managed accept contract http endpoint` (hash: TBD)
-85. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task14` Remove typed accept-contract routing from message dispatch tests and runtime entrypoint (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove typed managed accept routing`).
-86. [TODO] Git Commit: `refactor: remove typed managed accept routing` (hash: TBD)
+84. [DONE] Git Commit: `refactor: remove managed accept contract http endpoint` (hash: 852dc8119)
+85. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task14` Remove typed accept-contract routing from message dispatch tests and runtime entrypoint (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove typed managed accept routing`).
+86. [PENDING] Git Commit: `refactor: remove typed managed accept routing` (hash: TBD)
 87. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task15` Remove remaining inert accept-contract runtime option plumbing after typed routing is gone (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-types.ts, packages/core/src/remote-bridge/handlers/session-request-handler-types.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept option plumbing`).
 88. [TODO] Git Commit: `refactor: remove managed accept option plumbing` (hash: TBD)
 89. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task16` Remove provider-facing Core-owned commit/continuation promises from runtime feedback helper text (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed feedback text`).
@@ -486,6 +486,12 @@ Verification for task 83:
 
 - `npm run build:core` passed.
 - `rg -n "managed-stage-accept-contract|quality-gates-accept-contract|handleApplicationSkeletonAcceptContract|handleQualityGatesAcceptContract|http-api-managed-stage-accept-contract" packages/core/src/remote-bridge/handlers/http-api-router.ts packages/core/src/remote-bridge/handlers` now returns only remaining disabled runner/service references, not HTTP route or handler references.
+
+Verification for task 85:
+
+- `npm run build:core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/managed-stage-accept-contract-handler.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-runtime-core.test.js` passed.
+- `rg -n "application-skeleton-typed-acceptance-router|routeManagedTypedAcceptance|typed acceptance router" packages/core/src` returned no matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
