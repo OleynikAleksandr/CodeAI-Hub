@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  createDiagramModulesPlanMutatorShimSource,
   injectDiagramModulesRepairTaskPair,
   insertNextDiagramModulesProductPartTaskPair,
 } from "./managed-diagram-modules-plan-mutator";
@@ -27,9 +26,6 @@ const TARGET_ARTIFACT_RE =
   /target: `\.codeai-hub\/demo\/diagram_modules\/product-parts\/local-runtime\.md`/u;
 const VALIDATOR_RE = /validator: `diagram_modules\.product_part`/u;
 const DIAGNOSTIC_RE = /Missing Part ID `local-runtime`/u;
-const SHIM_INSERT_FUNCTION_RE = /insertDiagramModulesProductPartTasks/u;
-const SHIM_COLLECT_FUNCTION_RE = /collectProductPartIdsFromIndex/u;
-const SHIM_REPAIR_TASK_RE = /repair1/u;
 
 const createPlan = (taskId = "diagram-modules.product-part.local-runtime") =>
   [
@@ -160,12 +156,4 @@ test("repair injection increments repeated repair attempts", () => {
 
   assert.equal(second?.repairNumber, 2);
   assert.match(second?.nextPlanText ?? "", REPAIR2_TASK_RE);
-});
-
-test("shim source delegates Product Part insertion to the generated helper block", () => {
-  const source = createDiagramModulesPlanMutatorShimSource();
-
-  assert.match(source, SHIM_INSERT_FUNCTION_RE);
-  assert.match(source, SHIM_COLLECT_FUNCTION_RE);
-  assert.doesNotMatch(source, SHIM_REPAIR_TASK_RE);
 });

@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "03653b83e",
+  "lastRecordedCommit": "8ecbb95f0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase3.generated.task2",
-  "expectedCommitMessage": "refactor: remove legacy managed plan mutators",
+  "currentTaskId": "managed-orchestration-cleanup.phase3.generated.task3",
+  "expectedCommitMessage": "refactor: remove legacy diagram modules plan mutator shim",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy managed plan mutators",
-    "preCommitHead": "03653b83e",
+    "expectedCommitMessage": "refactor: remove legacy diagram modules plan mutator shim",
+    "preCommitHead": "8ecbb95f0",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase3.generated.task2"
+    "taskId": "managed-orchestration-cleanup.phase3.generated.task3"
   }
 }
 ```
@@ -131,7 +131,7 @@ Verification for task 9:
 - Remaining `plan-cli.mjs` references are legacy tests/hook-registry tails and are intentionally left for Phase 5 cleanup after the mutator and post-turn writers are removed.
 
 11. [DONE] `managed-orchestration-cleanup.phase3.generated.task2` Remove Application Skeleton and Quality Gates generated plan-mutator shim ownership after startup/post-turn paths are fail-closed (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `refactor: remove legacy managed plan mutators`).
-12. [PENDING] Git Commit: `refactor: remove legacy managed plan mutators` (hash: TBD)
+12. [DONE] Git Commit: `refactor: remove legacy managed plan mutators` (hash: 8ecbb95f0)
 
 Verification for task 11:
 
@@ -140,8 +140,15 @@ Verification for task 11:
 - `npm run check:knip` passed.
 - Diagram Modules shim mutator remains as the next dedicated cleanup task because its generated-shim helper is still directly asserted by `managed-diagram-modules-plan-mutator.test.ts`.
 
-13. [TODO] `managed-orchestration-cleanup.phase3.generated.task3` Remove Diagram Modules generated plan-mutator shim ownership and its shim-only assertion while preserving direct Product Part/repair helper behavior until read-model cleanup (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `refactor: remove legacy diagram modules plan mutator shim`).
-14. [TODO] Git Commit: `refactor: remove legacy diagram modules plan mutator shim` (hash: TBD)
+13. [DONE] `managed-orchestration-cleanup.phase3.generated.task3` Remove Diagram Modules generated plan-mutator shim ownership and its shim-only assertion while preserving direct Product Part/repair helper behavior until read-model cleanup (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `refactor: remove legacy diagram modules plan mutator shim`).
+14. [PENDING] Git Commit: `refactor: remove legacy diagram modules plan mutator shim` (hash: TBD)
+
+Verification for task 13:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- `node --test packages/core/dist/managed-workspace/managed-diagram-modules-plan-mutator.test.js` passed.
 
 ## Phase 4 — Remove Post-Turn Commit And Feedback Ownership (owner: Codex, updated: 2026-05-14)
 
