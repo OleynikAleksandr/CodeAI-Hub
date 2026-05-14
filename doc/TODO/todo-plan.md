@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "c88aba0ce",
+  "lastRecordedCommit": "e4f6f7e0f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task18",
-  "expectedCommitMessage": "docs: mark legacy managed lifecycle contracts suspended",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task19",
+  "expectedCommitMessage": "docs: record legacy orchestrator tail audit",
   "debt": {
-    "expectedCommitMessage": "docs: mark legacy managed lifecycle contracts suspended",
-    "preCommitHead": "c88aba0ce",
+    "expectedCommitMessage": "docs: record legacy orchestrator tail audit",
+    "preCommitHead": "e4f6f7e0f",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task18"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task19"
   }
 }
 ```
@@ -444,9 +444,21 @@ Verification for task 57:
 91. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task17` Remove old Core-owned managed lifecycle promises from bundled provider templates and synchronized agent assets (scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/*bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed lifecycle provider templates`).
 92. [DONE] Git Commit: `docs: remove legacy managed lifecycle provider templates` (hash: c88aba0ce)
 93. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task18` Mark active SSOT docs that old managed commit ownership and workspace lifecycle contracts are suspended during the rewrite (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md, doc/TODO/todo-plan.md`; expected commit: `docs: mark legacy managed lifecycle contracts suspended`).
-94. [PENDING] Git Commit: `docs: mark legacy managed lifecycle contracts suspended` (hash: TBD)
-95. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task19` Run the final codebase grep/test audit for legacy managed orchestrator activation paths and record the remaining intentional inactive/history-only references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
-96. [TODO] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
+94. [DONE] Git Commit: `docs: mark legacy managed lifecycle contracts suspended` (hash: e4f6f7e0f)
+95. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task19` Run the final codebase grep/test audit for legacy managed orchestrator activation paths, record the residual active tails found by audit, and expand the cleanup stream before the final audit can pass (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
+96. [PENDING] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
+97. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task20` Remove residual post-turn accept-command recognition/method surface from the disabled managed post-turn boundary and aligned tests (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept post-turn surface`).
+98. [TODO] Git Commit: `refactor: remove managed accept post-turn surface` (hash: TBD)
+99. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task21` Delete standalone accept-contract helper modules and stale helper tests after all runtime/UI routes are gone (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete managed accept contract helpers`).
+100. [TODO] Git Commit: `refactor: delete managed accept contract helpers` (hash: TBD)
+101. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task22` Remove legacy managed lifecycle wording from prompt-pack and documentation continuation envelopes (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy continuation prompt wording`).
+102. [TODO] Git Commit: `refactor: remove legacy continuation prompt wording` (hash: TBD)
+103. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task23` Suspend remaining active Workflow Steps overview legacy lifecycle narrative and align feedback wording tests with rewrite-boundary language (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts, doc/TODO/todo-plan.md`; expected commit: `docs: suspend workflow steps legacy lifecycle narrative`).
+104. [TODO] Git Commit: `docs: suspend workflow steps legacy lifecycle narrative` (hash: TBD)
+105. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task24` Remove legacy acceptance-commit read-model fields from Application Skeleton and Quality Gates progress snapshots (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy acceptance commit progress state`).
+106. [TODO] Git Commit: `refactor: remove legacy acceptance commit progress state` (hash: TBD)
+107. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task25` Run the final codebase grep/test audit again and record only intentional suspended/history references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record final legacy orchestrator audit`).
+108. [TODO] Git Commit: `docs: record final legacy orchestrator audit` (hash: TBD)
 
 Verification for task 71:
 
@@ -518,16 +530,22 @@ Verification for task 93:
 - `npm run plan:validate` passed.
 - `rg -n "docs: accept quality gates contract|Core-owned acceptance commit|managed commit|plan advancement|downstream unlock|managed-stage-accept-contract|accept-contract|continue_active_microtask|managed\\.core\\.message|Core has not yet finalized|post-commit validation|child-plan commit|provider-visible repair feedback|automatic continuation after a provider turn|Core acceptance is an active loop|expected commit metadata" doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md doc/SolidWorks-WorkFlow/System/SystemArchitecture.md doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md` returned no matches.
 
+Verification for task 95:
+
+- Initial final-audit grep confirmed that deleted generated lifecycle/orchestrator helpers are gone: `rg -n "ManagedPlanOrchestrator|ManagedPlanOrchestratorInstaller|ManagedWorkspaceBootstrapper|ManagedWorkspaceReconciler|ManagedWorkspaceValidator|ManagedWorkspaceAdoptionCommitter|ManagedWorkspaceLifecycleCommitter|managed-plan-orchestrator|managed-.*plan-mutator|managed-todo-tree|managed-hook-registry|DefaultManagedWorkspaceLifecycle|requiresManagedWorkspaceLifecycle|application-skeleton-typed-acceptance-router|managed-stage-accept-contract-client|http-api-managed-stage-accept-contract" packages/core/src src/client/project-manager scripts packages/agents --glob '!**/dist/**'` returned no matches.
+- The same audit found residual active tails that must be removed before closeout: disabled accept-contract helper modules/tests, post-turn accept-recognition surface, legacy prompt-pack/continuation wording, old Workflow Steps overview lifecycle narrative, and acceptance-commit read-model fields.
+- Follow-up tasks 97-108 were added to remove those residual tails and run the final audit again.
+
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
 ### Stream: User Acceptance
 
-97. [TODO] `managed-orchestration-cleanup.phase10.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
+109. [TODO] `managed-orchestration-cleanup.phase10.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
 
 ## Phase 11 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Cleanup Scope
 
-98. [TODO] `managed-orchestration-cleanup.phase11.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
-99. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
-100. [TODO] `managed-orchestration-cleanup.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+110. [TODO] `managed-orchestration-cleanup.phase11.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
+111. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
+112. [TODO] `managed-orchestration-cleanup.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
