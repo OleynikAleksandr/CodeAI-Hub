@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "7b1d2f82f",
+  "lastRecordedCommit": "d32a35321",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase8.clean-rebuild-docs.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.254 clean cleanup release",
+  "currentTaskId": "managed-orchestration-cleanup.phase8.clean-rebuild-artifacts.task1",
+  "expectedCommitMessage": "chore: build 1.2.254 clean release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.254 clean cleanup release",
-    "preCommitHead": "7b1d2f82f",
+    "expectedCommitMessage": "chore: build 1.2.254 clean release artifacts",
+    "preCommitHead": "d32a35321",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase8.clean-rebuild-docs.task1"
+    "taskId": "managed-orchestration-cleanup.phase8.clean-rebuild-artifacts.task1"
   }
 }
 ```
@@ -376,9 +376,25 @@ Verification for task 51:
 ### Stream: Clean Rebuild
 
 53. [DONE] `managed-orchestration-cleanup.phase8.clean-rebuild-docs.task1` Prepare release documentation for the clean managed orchestration cleanup rebuild under a new version (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.254 clean cleanup release`).
-54. [PENDING] Git Commit: `docs: prepare 1.2.254 clean cleanup release` (hash: TBD)
-55. [TODO] `managed-orchestration-cleanup.phase8.clean-rebuild-artifacts.task1` Remove stale local release outputs, run a fresh unified release artifact build, and record the generated provider/core/UI/launcher tarballs (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.254 clean release artifacts`).
-56. [TODO] Git Commit: `chore: build 1.2.254 clean release artifacts` (hash: TBD)
+54. [DONE] Git Commit: `docs: prepare 1.2.254 clean cleanup release` (hash: d32a35321)
+55. [DONE] `managed-orchestration-cleanup.phase8.clean-rebuild-artifacts.task1` Remove stale local release outputs, run a fresh unified release artifact build, and record the generated provider/core/UI/launcher tarballs (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.254 clean release artifacts`).
+56. [PENDING] Git Commit: `chore: build 1.2.254 clean release artifacts` (hash: TBD)
+
+Verification for task 55:
+
+- Removed stale local release outputs before rebuilding: `doc/tmp/releases`, `codeai-hub-1.2.253.vsix`, and any stale `codeai-hub-1.2.254.vsix`.
+- `./scripts/build-all.sh --allow-dirty` passed with only the machine-managed active plan state dirty before the build.
+- `build-all.sh` cleaned `~/.codeai-hub/releases`, provider runtime outputs, Core runtime output, and CEF launcher output before producing the new artifacts.
+- Unified version advanced from `1.2.253` to `1.2.254`.
+- Generated clean rebuild tarballs were copied to `doc/tmp/releases/`:
+  - `claude-module-1.2.254.tar.bz2`
+  - `codex-module-1.2.254.tar.bz2`
+  - `gemini-module-1.2.254.tar.bz2`
+  - `codeai-hub-core-darwin-arm64-1.2.254.tar.bz2`
+  - `CodeAIHubLauncher-macos-arm64-1.2.254.tar.bz2`
+  - `vscode-webview-1.2.254.tar.bz2`
+  - `project-manager-1.2.254.tar.bz2`
+
 57. [TODO] `managed-orchestration-cleanup.phase8.clean-vsix-build.task1` Run final VSIX package build for the clean rebuild version and record the generated package path (scope: `packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: package 1.2.254 clean release`).
 58. [TODO] Git Commit: `chore: package 1.2.254 clean release` (hash: TBD)
 
