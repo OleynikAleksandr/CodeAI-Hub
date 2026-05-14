@@ -10,23 +10,6 @@ import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const execFileAsync = promisify(execFile);
-const QUALITY_GATE_FEEDBACK_SESSION_RE = /^quality-session\n/u;
-const QUALITY_GATE_FEEDBACK_TITLE_RE =
-  /Core acceptance check failed for Quality Gates Baseline\./u;
-const QUALITY_GATE_PRE_COMMIT_ERROR_RE =
-  /Quality gate qg-secret-scan is missing from \.husky\/pre-commit/u;
-const QUALITY_GATE_PRE_PUSH_ERROR_RE =
-  /Quality gate qg-smoke-checks is missing from \.husky\/pre-push/u;
-const APPLICATION_SKELETON_FEEDBACK_SESSION_RE = /^skeleton-session\n/u;
-const APPLICATION_SKELETON_FEEDBACK_TITLE_RE =
-  /Core acceptance check failed for Application Skeleton\./u;
-const APPLICATION_SKELETON_MISSING_PATH_RE =
-  /application skeleton materializedPath is missing: product-parts\/missing-runtime/u;
-const DIAGRAM_MODULES_FEEDBACK_SESSION_RE = /^diagram-session\n/u;
-const DIAGRAM_MODULES_FEEDBACK_TITLE_RE =
-  /Core acceptance check failed for Diagram Modules\./u;
-const DIAGRAM_MODULES_MISSING_PART_RE =
-  /next missing or invalid Product Part is "local-runtime"/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -306,7 +289,6 @@ const readWorkflowStateTwice = async (params: {
 };
 
 const runFeedbackScenario = async (params: {
-  readonly expected: readonly RegExp[];
   readonly sessionId: string;
   readonly setup: (
     workspaceRoot: string,
@@ -346,10 +328,7 @@ const runFeedbackScenario = async (params: {
 
     await readWorkflowStateTwice({ service, workspaceRoot, workspaceSlug });
 
-    assert.equal(feedbackMessages.length, 1);
-    for (const expected of params.expected) {
-      assert.match(feedbackMessages[0] ?? "", expected);
-    }
+    assert.deepEqual(feedbackMessages, []);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -389,15 +368,13 @@ test("workflow-state read unlocks development tree without node auto fan-out", a
 
     assert.deepEqual(createdStages, []);
     assert.equal(
-      (
-        await stat(
-          path.join(
-            workspaceRoot,
-            ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime"
-          )
+      await stat(
+        path.join(
+          workspaceRoot,
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime"
         )
-      ).isDirectory(),
-      true
+      ).catch(() => null),
+      null
     );
 
     await readWorkflowStatePayload({
@@ -411,14 +388,8 @@ test("workflow-state read unlocks development tree without node auto fan-out", a
   }
 });
 
-test("workflow-state read sends Quality Gates acceptance feedback to the active agent", async () => {
+test("workflow-state read does not send Quality Gates feedback during rewrite", async () => {
   await runFeedbackScenario({
-    expected: [
-      QUALITY_GATE_FEEDBACK_SESSION_RE,
-      QUALITY_GATE_FEEDBACK_TITLE_RE,
-      QUALITY_GATE_PRE_COMMIT_ERROR_RE,
-      QUALITY_GATE_PRE_PUSH_ERROR_RE,
-    ],
     sessionId: "quality-session",
     stage: "quality_gates",
     tmpPrefix: "workflow-state-quality-gates-feedback-",
@@ -437,13 +408,8 @@ test("workflow-state read sends Quality Gates acceptance feedback to the active 
   });
 });
 
-test("workflow-state read sends Application Skeleton acceptance feedback to the active agent", async () => {
+test("workflow-state read does not send Application Skeleton feedback during rewrite", async () => {
   await runFeedbackScenario({
-    expected: [
-      APPLICATION_SKELETON_FEEDBACK_SESSION_RE,
-      APPLICATION_SKELETON_FEEDBACK_TITLE_RE,
-      APPLICATION_SKELETON_MISSING_PATH_RE,
-    ],
     sessionId: "skeleton-session",
     stage: "application_skeleton",
     tmpPrefix: "workflow-state-application-skeleton-feedback-",
@@ -471,13 +437,8 @@ test("workflow-state read sends Application Skeleton acceptance feedback to the 
   });
 });
 
-test("workflow-state read sends Diagram Modules acceptance feedback to the active agent", async () => {
+test("workflow-state read does not send Diagram Modules feedback during rewrite", async () => {
   await runFeedbackScenario({
-    expected: [
-      DIAGRAM_MODULES_FEEDBACK_SESSION_RE,
-      DIAGRAM_MODULES_FEEDBACK_TITLE_RE,
-      DIAGRAM_MODULES_MISSING_PART_RE,
-    ],
     sessionId: "diagram-session",
     stage: "diagram_modules",
     tmpPrefix: "workflow-state-diagram-modules-feedback-",
