@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "e4f6f7e0f",
+  "lastRecordedCommit": "1380aef8b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task19",
-  "expectedCommitMessage": "docs: record legacy orchestrator tail audit",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task20",
+  "expectedCommitMessage": "refactor: remove managed accept post-turn surface",
   "debt": {
-    "expectedCommitMessage": "docs: record legacy orchestrator tail audit",
-    "preCommitHead": "e4f6f7e0f",
+    "expectedCommitMessage": "refactor: remove managed accept post-turn surface",
+    "preCommitHead": "1380aef8b",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task19"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task20"
   }
 }
 ```
@@ -446,9 +446,9 @@ Verification for task 57:
 93. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task18` Mark active SSOT docs that old managed commit ownership and workspace lifecycle contracts are suspended during the rewrite (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md, doc/TODO/todo-plan.md`; expected commit: `docs: mark legacy managed lifecycle contracts suspended`).
 94. [DONE] Git Commit: `docs: mark legacy managed lifecycle contracts suspended` (hash: e4f6f7e0f)
 95. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task19` Run the final codebase grep/test audit for legacy managed orchestrator activation paths, record the residual active tails found by audit, and expand the cleanup stream before the final audit can pass (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
-96. [PENDING] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
-97. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task20` Remove residual post-turn accept-command recognition/method surface from the disabled managed post-turn boundary and aligned tests (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept post-turn surface`).
-98. [TODO] Git Commit: `refactor: remove managed accept post-turn surface` (hash: TBD)
+96. [DONE] Git Commit: `docs: record legacy orchestrator tail audit` (hash: 1380aef8b)
+97. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task20` Remove residual post-turn accept-command recognition/method surface from the disabled managed post-turn boundary and aligned tests (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept post-turn surface`).
+98. [PENDING] Git Commit: `refactor: remove managed accept post-turn surface` (hash: TBD)
 99. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task21` Delete standalone accept-contract helper modules and stale helper tests after all runtime/UI routes are gone (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete managed accept contract helpers`).
 100. [TODO] Git Commit: `refactor: delete managed accept contract helpers` (hash: TBD)
 101. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task22` Remove legacy managed lifecycle wording from prompt-pack and documentation continuation envelopes (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy continuation prompt wording`).
@@ -535,6 +535,12 @@ Verification for task 95:
 - Initial final-audit grep confirmed that deleted generated lifecycle/orchestrator helpers are gone: `rg -n "ManagedPlanOrchestrator|ManagedPlanOrchestratorInstaller|ManagedWorkspaceBootstrapper|ManagedWorkspaceReconciler|ManagedWorkspaceValidator|ManagedWorkspaceAdoptionCommitter|ManagedWorkspaceLifecycleCommitter|managed-plan-orchestrator|managed-.*plan-mutator|managed-todo-tree|managed-hook-registry|DefaultManagedWorkspaceLifecycle|requiresManagedWorkspaceLifecycle|application-skeleton-typed-acceptance-router|managed-stage-accept-contract-client|http-api-managed-stage-accept-contract" packages/core/src src/client/project-manager scripts packages/agents --glob '!**/dist/**'` returned no matches.
 - The same audit found residual active tails that must be removed before closeout: disabled accept-contract helper modules/tests, post-turn accept-recognition surface, legacy prompt-pack/continuation wording, old Workflow Steps overview lifecycle narrative, and acceptance-commit read-model fields.
 - Follow-up tasks 97-108 were added to remove those residual tails and run the final audit again.
+
+Verification for task 97:
+
+- `npm run build:core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/managed-workflow-post-turn-service.test.js packages/core/dist/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.js packages/core/dist/remote-bridge/remote-bridge-bootstrap.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-end-to-end.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.js` passed.
+- `rg -n "recognizeManagedContractAcceptancePhrase|recognizeManagedAcceptanceForStage|handleContractAcceptance|handleApplicationSkeletonAcceptContractCommand|handleQualityGatesAcceptContractCommand|Accept Contract" packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-end-to-end.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts` returned no matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 

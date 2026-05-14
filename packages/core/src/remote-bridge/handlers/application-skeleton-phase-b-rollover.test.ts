@@ -3,12 +3,9 @@ import test from "node:test";
 import type { ContinuityChainSummary } from "../../session-continuity/continuity-types";
 import { sendApplicationSkeletonContinuationIfReady } from "./application-skeleton-continuation-dispatcher";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
-import { recognizeManagedAcceptanceForStage } from "./managed-workflow-post-turn-service";
 import type { WorkflowAgentAcceptanceFeedbackGateway } from "./workflow-agent-acceptance-feedback";
 
 const STAGE = "application_skeleton";
-const RESUMED_USER_PHRASING =
-  "После перерыва, контракт принимаю — двигайся к материализации.";
 
 const buildChain = (sessionId: string): ContinuityChainSummary =>
   ({
@@ -44,13 +41,6 @@ const buildSpyGateway = (
     },
     markFeedbackTurnStarted: () => undefined,
   }) as unknown as WorkflowAgentAcceptanceFeedbackGateway;
-
-test("rollover preserves recogniser-eligible window for Application Skeleton phase B", () => {
-  assert.equal(
-    recognizeManagedAcceptanceForStage(STAGE, RESUMED_USER_PHRASING),
-    "Принимаю контракт"
-  );
-});
 
 test("dispatcher does not continue from recently-accepted set during rewrite", async () => {
   const resumedSessionId = "session-as-rollover-resumed";

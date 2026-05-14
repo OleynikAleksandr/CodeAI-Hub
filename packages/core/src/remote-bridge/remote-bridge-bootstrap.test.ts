@@ -71,8 +71,7 @@ const createBootstrapHarness = () => {
 };
 
 test("bootstrap blocks Quality Gates typed acceptance during rewrite", async () => {
-  const { bootstrap, dispatchApi, events, sessionManager } =
-    createBootstrapHarness();
+  const { dispatchApi, events, sessionManager } = createBootstrapHarness();
   const session = sessionManager.createSession(
     "codexCli",
     "/tmp/bootstrap-quality-gates",
@@ -82,14 +81,6 @@ test("bootstrap blocks Quality Gates typed acceptance during rewrite", async () 
       stage: "quality_gates",
     }
   );
-  const recorded: string[] = [];
-  Object.assign(bootstrap.workflowStateService.managedPostTurnService, {
-    handleQualityGatesAcceptContractCommand: () => {
-      recorded.push("quality_gates");
-      return Promise.resolve({ kind: "accepted", stage: "quality_gates" });
-    },
-  });
-
   await dispatchApi.messageDispatch.dispatchUserMessage({
     content: "Подтверждаю",
     hiddenUserMessage: false,
@@ -97,7 +88,6 @@ test("bootstrap blocks Quality Gates typed acceptance during rewrite", async () 
     sessionId: session.id,
   });
 
-  assert.deepEqual(recorded, []);
   assert.equal(
     events.some(
       (event) =>
@@ -109,8 +99,7 @@ test("bootstrap blocks Quality Gates typed acceptance during rewrite", async () 
 });
 
 test("bootstrap blocks Application Skeleton typed acceptance during rewrite", async () => {
-  const { bootstrap, dispatchApi, events, sessionManager } =
-    createBootstrapHarness();
+  const { dispatchApi, events, sessionManager } = createBootstrapHarness();
   const session = sessionManager.createSession(
     "codexCli",
     "/tmp/bootstrap-application-skeleton",
@@ -120,17 +109,6 @@ test("bootstrap blocks Application Skeleton typed acceptance during rewrite", as
       stage: "application_skeleton",
     }
   );
-  const recorded: string[] = [];
-  Object.assign(bootstrap.workflowStateService.managedPostTurnService, {
-    handleApplicationSkeletonAcceptContractCommand: () => {
-      recorded.push("application_skeleton");
-      return Promise.resolve({
-        kind: "accepted",
-        stage: "application_skeleton",
-      });
-    },
-  });
-
   await dispatchApi.messageDispatch.dispatchUserMessage({
     content: "Подтверждаю",
     hiddenUserMessage: false,
@@ -138,7 +116,6 @@ test("bootstrap blocks Application Skeleton typed acceptance during rewrite", as
     sessionId: session.id,
   });
 
-  assert.deepEqual(recorded, []);
   assert.equal(
     events.some(
       (event) =>

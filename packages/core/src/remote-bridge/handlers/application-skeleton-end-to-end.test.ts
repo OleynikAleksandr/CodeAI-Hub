@@ -3,8 +3,6 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import type { ContinuityChainSummary } from "../../session-continuity/continuity-types";
-import { sendApplicationSkeletonContinuationIfReady } from "./application-skeleton-continuation-dispatcher";
 import { evaluateApplicationSkeletonContractGuard } from "./application-skeleton-contract-guard";
 import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
 import { evaluateApplicationSkeletonPrematureMaterialization } from "./application-skeleton-premature-materialization-validator";
@@ -14,12 +12,6 @@ import {
 } from "./application-skeleton-progress";
 import { classifyApplicationSkeletonReviewTurn } from "./application-skeleton-review-turn-classifier";
 import type { ManagedGitStatus } from "./managed-git-stage-gate";
-import { evaluateApplicationSkeletonAcceptContractCommand } from "./managed-stage-accept-contract-handler";
-import {
-  recognizeManagedAcceptanceForStage,
-  recognizeManagedContractAcceptancePhrase,
-} from "./managed-workflow-post-turn-service";
-import type { WorkflowAgentAcceptanceFeedbackGateway } from "./workflow-agent-acceptance-feedback";
 
 const buildGitStatus = (
   applicationSkeleton: readonly string[] = []
@@ -33,17 +25,6 @@ const buildGitStatus = (
     },
     dirtyFiles: applicationSkeleton,
   }) as unknown as ManagedGitStatus;
-
-const STAGE = "application_skeleton";
-const MATERIALIZATION_PROMPT_RE = /Begin Phase 2 materialization/u;
-
-const buildChain = (sessionId: string): ContinuityChainSummary =>
-  ({
-    chainId: `chain-${sessionId}`,
-    stage: STAGE,
-    segments: [{ sessionId, sequence: 0, isCurrent: true }],
-    updatedAt: "2026-05-10T12:00:00Z",
-  }) as unknown as ContinuityChainSummary;
 
 const writeSkeleton = async (params: {
   readonly map: Record<string, unknown>;
@@ -67,20 +48,7 @@ const writeSkeleton = async (params: {
   );
 };
 
-const buildAwaitingAcceptanceProgress =
-  (): ApplicationSkeletonProgressSnapshot => ({
-    accepted: true,
-    mapExists: true,
-    mappingReady: true,
-    markdownExists: true,
-    materializationState: "artifact",
-    materialized: false,
-    observedMaterialization: false,
-    substep: "accepted",
-    validationErrors: [],
-  });
-
-test("application skeleton A→B→A pipeline: classifier, guard, premature, review classifier, accept handler", () => {
+test("application skeleton draft/review pipeline stays validation-only during rewrite", () => {
   // Phase 1A draft state (markdown only, map missing) → guard fires
   // repair_no_progress when there is no owned diff; otherwise repair_invalid_draft.
   const phase1Progress = {
@@ -158,58 +126,16 @@ test("application skeleton A→B→A pipeline: classifier, guard, premature, rev
   });
   assert.equal(guardPremature.kind, "repair_premature_materialization");
 
-  // Accept-contract command on a clean Phase 1B state → accepted.
-  const acceptDecision = evaluateApplicationSkeletonAcceptContractCommand({
-    applicationSkeletonProgress: phase2Progress,
-    managedGitStatus: buildGitStatus(),
-    phase: "phase_2_review",
-  });
-  assert.equal(acceptDecision.kind, "accepted");
-  // Accept-contract command on a still-pending revision → rejected.
-  const acceptRejected = evaluateApplicationSkeletonAcceptContractCommand({
-    applicationSkeletonProgress: phase2Progress,
-    managedGitStatus: buildGitStatus([
+  assert.equal(buildGitStatus().clean, true);
+  assert.equal(
+    buildGitStatus([
       ".codeai-hub/demo/application_skeleton/application-skeleton.md",
-    ]),
-    phase: "phase_2_review",
-  });
-  assert.equal(acceptRejected.kind, "rejected");
+    ]).clean,
+    false
+  );
 });
 
-test("application skeleton happy path: recogniser → dispatcher → completion observer", async () => {
-  const userMessage = "Контракт принимаю, можешь двигаться к фазе 2.";
-  const phrase = recognizeManagedContractAcceptancePhrase(userMessage);
-  assert.equal(phrase, "Принимаю контракт");
-  assert.equal(
-    recognizeManagedAcceptanceForStage(STAGE, userMessage),
-    "Принимаю контракт"
-  );
-  assert.equal(
-    recognizeManagedAcceptanceForStage("description", userMessage),
-    null
-  );
-
-  const sessionId = "session-as-e2e";
-  const calls: Array<{ readonly sessionId: string; readonly text: string }> =
-    [];
-  const gateway: WorkflowAgentAcceptanceFeedbackGateway = {
-    handleMessage: (id: string, text: string) => {
-      calls.push({ sessionId: id, text });
-      return Promise.resolve();
-    },
-    markFeedbackTurnStarted: () => undefined,
-  } as unknown as WorkflowAgentAcceptanceFeedbackGateway;
-
-  await sendApplicationSkeletonContinuationIfReady({
-    chains: [buildChain(sessionId)],
-    gateway,
-    progress: buildAwaitingAcceptanceProgress(),
-    recentlyAcceptedSessions: new Set([sessionId]),
-  });
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0]?.sessionId, sessionId);
-  assert.match(calls[0]?.text ?? "", MATERIALIZATION_PROMPT_RE);
-
+test("application skeleton materialized progress remains observable without accept orchestration", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "application-skeleton-e2e-")
   );
