@@ -155,6 +155,73 @@ Examples:
 - Phase 4 user-return anchors are inserted only after the final accepted materialization/integration commit.
 - A blocked Core-owned commit does not create provider repair work unless the provider can actually fix the cause.
 
+### 4.1 Reusable Phase Types
+
+Managed documentation steps should be described as combinations of reusable phase types. Step-specific documents should define only the artifact contract, validator, owned paths, prompts, and transition targets that differ from the shared type contract.
+
+#### Type A — Core-Gated Agent Work
+
+Type A is a phase where Core asks the provider agent to produce or repair an artifact/materialization, then Core validates and commits the attempt.
+
+Contract:
+
+- Core opens the phase by writing the active task and paired `Git Commit` outcome line.
+- Core sends the first provider-visible prompt for the phase.
+- The agent works only inside the phase-owned artifact/filesystem scope.
+- The agent does not own Git, child-plan status/hash, workspace ledger, phase creation, or downstream unlock.
+- Core validates the provider result after each terminal provider turn or deterministic recovery recheck.
+- Accepted safe attempts receive a real Git commit hash before the phase advances.
+- Rejected safe attempts may also receive a real Git commit hash when preserving the failed attempt is useful durable history for future agents.
+- Unsafe attempts or Core-boundary failures are not committed; Core writes a user-visible blocker and waits for recovery/recheck.
+- The next phase is created only after the required accepted commit exists.
+
+Typical events:
+
+```text
+PROVIDER_TURN_COMPLETED -> VALIDATION_PASSED -> COMMIT_SUCCEEDED -> OPEN_NEXT_PHASE
+PROVIDER_TURN_COMPLETED -> VALIDATION_FAILED_SAFE -> COMMIT_SUCCEEDED -> OPEN_NEXT_ATTEMPT
+PROVIDER_TURN_COMPLETED -> VALIDATION_FAILED_UNSAFE -> USER_VISIBLE_BLOCKER
+```
+
+Application Skeleton examples:
+
+- Phase 1 Contract Bootstrap.
+- Phase 3 Materialization.
+
+#### Type B — User-Led Review
+
+Type B is a phase where Core hands control to the user for a content decision, while the provider agent is idle unless the user requests changes.
+
+Contract:
+
+- Core opens the phase by writing a user-review task and paired conditional outcome line.
+- Core writes a localized user-visible message into the Project Manager dialog / persistent managed session.
+- The user input field is available immediately.
+- The user either accepts the reviewed artifact or requests revisions.
+- A direct acceptance closes the review task with an explicit non-commit disposition, then Core opens the next phase.
+- A revision request stays inside the current review task; Core sends the user's requested changes to the agent.
+- If the agent's revision is valid, Core commits the current review task with a real Git hash and opens the next review task.
+- If the agent's revision is invalid but agent-actionable, Core keeps the current review task open and sends actionable repair feedback.
+- Ambiguous user text produces a clarification message to the user, not provider work.
+
+Typical events:
+
+```text
+USER_INTENT_ACCEPTED -> CLOSE_REVIEW_WITH_NON_COMMIT_DISPOSITION -> OPEN_NEXT_PHASE
+USER_INTENT_REVISION_REQUESTED -> PROVIDER_TURN_STARTED -> VALIDATION_PASSED -> COMMIT_SUCCEEDED -> OPEN_NEXT_REVIEW_TASK
+USER_INTENT_DISCUSSION -> USER_VISIBLE_CLARIFICATION
+```
+
+Application Skeleton example:
+
+- Phase 2 Contract Review.
+
+#### Persistent Return Open Boundary
+
+Opening a persistent user-return phase after a completed step is not itself the full Type B revision workflow. It is a boundary effect that tells the user the step is complete but can be revisited later.
+
+The detailed future-return/revision workflow should be designed as a separate user-return/revision orchestration module and may reuse Type B semantics once that module is specified.
+
 ## 5. Managed Step Controllers
 
 Each managed step becomes a module behind a common interface.
@@ -517,4 +584,3 @@ This planning scope is accepted when:
 - recovery arbiter responsibilities are agreed;
 - the implementation migration plan is sliced into microtasks;
 - no code rewrite starts before the state machine contract is reviewed.
-

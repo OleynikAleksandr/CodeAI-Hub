@@ -3,13 +3,14 @@
 **Статус:** черновик для обсуждения.
 **Создан:** 2026-05-14.
 **Scope:** точная спецификация Phase 1 шага `Application Skeleton` для будущей реализации в новом managed orchestration cluster.
+**Тип фазы:** [Type A — Core-Gated Agent Work](Managed_Workflow_Orchestration_Cluster_Planning.md#type-a--core-gated-agent-work).
 **Следующая тема обсуждения:** Phase 2 `Application Skeleton Contract Review`.
 
 ## 1. Назначение Phase 1
 
 Phase 1 создаёт первый черновик Application Skeleton contract artifacts и проверяет их машинной Core-проверкой.
 
-Фаза относится к типу `Core-Gated Agent Work`:
+Фаза относится к reusable Type A `Core-Gated Agent Work`:
 
 - пользователь не участвует в содержательной проверке;
 - агент создаёт артефакты по Core prompt;
