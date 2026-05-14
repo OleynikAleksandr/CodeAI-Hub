@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "64c160a69",
+  "lastRecordedCommit": "36625cd89",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase5.tests.task1",
-  "expectedCommitMessage": "test: remove legacy managed orchestration assertions",
+  "currentTaskId": "managed-orchestration-cleanup.phase5.tests.task2",
+  "expectedCommitMessage": "test: remove legacy managed shim assertions",
   "debt": {
-    "expectedCommitMessage": "test: remove legacy managed orchestration assertions",
-    "preCommitHead": "64c160a69",
+    "expectedCommitMessage": "test: remove legacy managed shim assertions",
+    "preCommitHead": "36625cd89",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase5.tests.task1"
+    "taskId": "managed-orchestration-cleanup.phase5.tests.task2"
   }
 }
 ```
@@ -222,7 +222,7 @@ Verification for task 25:
 ### Stream: Legacy Tests And Allowlist Debt
 
 27. [DONE] `managed-orchestration-cleanup.phase5.tests.task1` Rewrite managed installer and Application Skeleton shim tests so they assert disabled legacy orchestration instead of generated plan CLI/script behavior (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-installer.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed orchestration assertions`).
-28. [PENDING] Git Commit: `test: remove legacy managed orchestration assertions` (hash: TBD)
+28. [DONE] Git Commit: `test: remove legacy managed orchestration assertions` (hash: 36625cd89)
 
 Verification for task 27:
 
@@ -232,8 +232,17 @@ Verification for task 27:
 - `node --test packages/core/dist/managed-workspace/managed-plan-orchestrator-installer.test.js packages/core/dist/managed-workspace/managed-plan-orchestrator-shim-application-skeleton.test.js` passed.
 - Managed installer and Application Skeleton shim tests now assert disabled legacy CLI/hooks/package-script behavior instead of generated shim control flow.
 
-29. [TODO] `managed-orchestration-cleanup.phase5.tests.task2` Rewrite Diagram Modules and Quality Gates shim tests so they no longer assert generated plan CLI control flow (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed shim assertions`).
-30. [TODO] Git Commit: `test: remove legacy managed shim assertions` (hash: TBD)
+29. [DONE] `managed-orchestration-cleanup.phase5.tests.task2` Rewrite Diagram Modules and Quality Gates shim tests so they no longer assert generated plan CLI control flow (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed shim assertions`).
+30. [PENDING] Git Commit: `test: remove legacy managed shim assertions` (hash: TBD)
+
+Verification for task 29:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- `node --test packages/core/dist/managed-workspace/managed-plan-orchestrator-shim-diagram-modules.test.js packages/core/dist/managed-workspace/managed-plan-orchestrator-shim-quality-gates.test.js` passed.
+- Diagram Modules and Quality Gates shim tests now assert disabled legacy CLI/hooks behavior while keeping stage plan metadata readable.
+
 31. [TODO] `managed-orchestration-cleanup.phase5.tests.task3` Rewrite post-turn managed service tests so they assert fail-closed disabled orchestration instead of legacy dispatch/repair/revision paths (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed post-turn assertions`).
 32. [TODO] Git Commit: `test: remove legacy managed post-turn assertions` (hash: TBD)
 33. [TODO] `managed-orchestration-cleanup.phase5.tests.task4` Rewrite managed commit and accept-contract runner tests around fail-closed cleanup behavior (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed commit assertions`).
