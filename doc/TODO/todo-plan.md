@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "0ff3ac7d2",
+  "lastRecordedCommit": "d0a2a24fa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task4",
-  "expectedCommitMessage": "refactor: remove legacy managed revision runners",
+  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task5",
+  "expectedCommitMessage": "refactor: remove legacy managed accept-contract runners",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy managed revision runners",
-    "preCommitHead": "0ff3ac7d2",
+    "expectedCommitMessage": "refactor: remove legacy managed accept-contract runners",
+    "preCommitHead": "d0a2a24fa",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase4.postturn.task4"
+    "taskId": "managed-orchestration-cleanup.phase4.postturn.task5"
   }
 }
 ```
@@ -185,7 +185,7 @@ Verification for task 19:
 - Repair orchestration entrypoints now return `noop` and no longer write repair tasks or evidence files.
 
 21. [DONE] `managed-orchestration-cleanup.phase4.postturn.task4` Disable legacy managed revision injection runners after repair runners are fail-closed (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed revision runners`).
-22. [PENDING] Git Commit: `refactor: remove legacy managed revision runners` (hash: TBD)
+22. [DONE] Git Commit: `refactor: remove legacy managed revision runners` (hash: d0a2a24fa)
 
 Verification for task 21:
 
@@ -194,8 +194,15 @@ Verification for task 21:
 - `npm run check:knip` passed.
 - Revision injection runner entrypoints now return without mutating stage plans.
 
-23. [TODO] `managed-orchestration-cleanup.phase4.postturn.task5` Disable legacy Application Skeleton and Quality Gates accept-contract side-effect runners while preserving pure decision/read-model contracts until PM cleanup (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed accept-contract runners`).
-24. [TODO] Git Commit: `refactor: remove legacy managed accept-contract runners` (hash: TBD)
+23. [DONE] `managed-orchestration-cleanup.phase4.postturn.task5` Disable legacy Application Skeleton and Quality Gates accept-contract side-effect runners while preserving pure decision/read-model contracts until PM cleanup (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-acceptance-writer.ts`; expected commit: `refactor: remove legacy managed accept-contract runners`).
+24. [PENDING] Git Commit: `refactor: remove legacy managed accept-contract runners` (hash: TBD)
+
+Verification for task 23:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- Accept-contract runner entrypoints now reject without injecting acceptance task pairs, patching artifacts, appending audit, marking sessions accepted, or dispatching post-turn handling.
 
 ## Phase 5 — Clean Read Model And Test Tail (owner: Codex, updated: 2026-05-14)
 

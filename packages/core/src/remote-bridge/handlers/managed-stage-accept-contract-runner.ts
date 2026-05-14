@@ -1,34 +1,11 @@
-import { readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
-import { injectApplicationSkeletonTaskPair } from "../../managed-workspace/managed-application-skeleton-plan-mutator";
 import type { ManagedAuditRecord } from "../../unified-session/storage";
-import {
-  type ApplicationSkeletonAcceptanceWriteResult,
-  writeApplicationSkeletonAcceptance,
-} from "./application-skeleton-acceptance-writer";
-import { classifyApplicationSkeletonPhase } from "./application-skeleton-phase-state";
-import {
-  type ApplicationSkeletonProgressSnapshot,
-  readApplicationSkeletonProgressSnapshot,
-} from "./application-skeleton-progress";
-import {
-  type ManagedGitStatus,
-  readManagedGitStatus,
-} from "./managed-git-stage-gate";
-import {
-  type ApplicationSkeletonAcceptContractDecision,
-  evaluateApplicationSkeletonAcceptContractCommand,
-} from "./managed-stage-accept-contract-handler";
+import type { ApplicationSkeletonAcceptanceWriteResult } from "./application-skeleton-acceptance-writer";
+import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
+import type { ManagedGitStatus } from "./managed-git-stage-gate";
+import type { ApplicationSkeletonAcceptContractDecision } from "./managed-stage-accept-contract-handler";
 
-const APPLICATION_SKELETON_PLAN_PATH =
-  "doc/TODO/stages/application-skeleton/todo-plan.md";
-
-// Side-effecting runner for the Application Skeleton accept-contract command.
-// Reads runtime state, calls the pure decision handler, and on acceptance
-// applies the Option B side-effects via the supplied dependency callbacks
-// (mark recently-accepted, append audit, route to the existing post-turn
-// dispatcher). Decoupled from `ManagedWorkflowPostTurnService` so that the
-// post-turn-service file stays under the architecture line-count limit.
+const APPLICATION_SKELETON_ACCEPT_CONTRACT_DISABLED_REASON =
+  "Application Skeleton accept-contract side effects are disabled while the managed workflow orchestration cluster is being rewritten.";
 
 export interface ApplicationSkeletonAcceptContractSession {
   readonly initiativeSlug?: string | null;
@@ -74,112 +51,17 @@ export interface ApplicationSkeletonAcceptContractRunnerInput {
   readonly source: "ui-button" | "typed-fallback";
 }
 
-const injectAcceptanceTaskPair = async (params: {
-  readonly workspaceRoot: string;
-}): Promise<boolean> => {
-  const planPath = path.join(
-    params.workspaceRoot,
-    APPLICATION_SKELETON_PLAN_PATH
-  );
-  const planText = await readFile(planPath, "utf8").catch(() => null);
-  if (!planText) {
-    return false;
-  }
-  if (planText.includes('"application-skeleton.phase2.acceptance.task1"')) {
-    return true;
-  }
-  const injection = injectApplicationSkeletonTaskPair({
-    kind: "acceptance",
-    planText,
-  });
-  if (!injection) {
-    return false;
-  }
-  await writeFile(planPath, injection.nextPlanText, "utf8");
-  return true;
-};
-
-export const runApplicationSkeletonAcceptContractCommand = async (
+export const runApplicationSkeletonAcceptContractCommand = (
   params: ApplicationSkeletonAcceptContractRunnerInput &
     ApplicationSkeletonAcceptContractRunnerDeps
 ): Promise<ApplicationSkeletonAcceptContractDecision> => {
-  const session = params.resolveSession(params.sessionId);
-  const workspaceRoot = session?.workspacePath ?? null;
-  const workspaceSlug = session?.initiativeSlug ?? null;
-  if (
-    !(session && workspaceRoot && workspaceSlug) ||
-    session.stage !== "application_skeleton"
-  ) {
-    return {
-      kind: "rejected",
-      reasons: ["Acceptance command requires an Application Skeleton session."],
-      stage: "application_skeleton",
-    };
-  }
-  const readProgress =
-    params.readApplicationSkeletonProgress ??
-    readApplicationSkeletonProgressSnapshot;
-  const readGit = params.readManagedGit ?? readManagedGitStatus;
-  const [progress, managedGitStatus] = await Promise.all([
-    readProgress({ workspaceRoot, workspaceSlug }),
-    readGit(workspaceRoot, workspaceSlug),
-  ]);
-  const decision = evaluateApplicationSkeletonAcceptContractCommand({
-    applicationSkeletonProgress: progress,
-    managedGitStatus,
-    phase: classifyApplicationSkeletonPhase(progress),
-  });
-  params.logger.info("Application Skeleton accept-contract command", {
-    decision: decision.kind,
+  params.logger.info(APPLICATION_SKELETON_ACCEPT_CONTRACT_DISABLED_REASON, {
     sessionId: params.sessionId,
     source: params.source,
-    workspaceSlug,
   });
-  if (decision.kind !== "accepted") {
-    return decision;
-  }
-  const injectTaskPair =
-    params.injectAcceptanceTaskPair ?? injectAcceptanceTaskPair;
-  const acceptanceTaskInjected = await injectTaskPair({
-    workspaceRoot,
+  return Promise.resolve({
+    kind: "rejected",
+    reasons: [APPLICATION_SKELETON_ACCEPT_CONTRACT_DISABLED_REASON],
+    stage: "application_skeleton",
   });
-  if (!acceptanceTaskInjected) {
-    return {
-      kind: "rejected",
-      reasons: [
-        "Core could not inject the Application Skeleton acceptance microtask.",
-      ],
-      stage: "application_skeleton",
-    };
-  }
-  // Variant A (Phase 24 acceptance write-path fix): the runner is the single
-  // owner of the `accepted: true` write on `application-skeleton-map.json`.
-  // PM button (via HTTP endpoint) and typed-fallback recognizer both funnel
-  // through this runner, so patching the map here closes the Phase 22 hole
-  // where every acceptance entry point only set the in-memory marker and the
-  // Phase 3 dispatcher (Option C) never observed `progress.accepted === true`.
-  const writeAcceptance =
-    params.writeAcceptanceFlag ?? writeApplicationSkeletonAcceptance;
-  const writeResult = await writeAcceptance({
-    workspaceRoot,
-    workspaceSlug,
-  });
-  params.logger.info("Application Skeleton acceptance map.json write", {
-    sessionId: params.sessionId,
-    source: params.source,
-    status: writeResult.status,
-    workspaceSlug,
-  });
-  params.resetRetryCounter(params.sessionId);
-  params.markAccepted(params.sessionId);
-  params
-    .appendAudit(params.sessionId, {
-      kind: "managed_post_turn_decision",
-      source: "core",
-      text: `Application Skeleton acceptance via ${params.source}`,
-      timestamp: new Date().toISOString(),
-    })
-    .catch(() => undefined);
-  params.handle(params.sessionId);
-  return decision;
 };
