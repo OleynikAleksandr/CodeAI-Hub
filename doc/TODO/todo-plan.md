@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "a6d66b605",
+  "lastRecordedCommit": "a72e025ca",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase5.tests.task3",
-  "expectedCommitMessage": "test: remove legacy managed post-turn assertions",
+  "currentTaskId": "managed-orchestration-cleanup.phase5.tests.task4",
+  "expectedCommitMessage": "test: remove legacy managed commit assertions",
   "debt": {
-    "expectedCommitMessage": "test: remove legacy managed post-turn assertions",
-    "preCommitHead": "a6d66b605",
+    "expectedCommitMessage": "test: remove legacy managed commit assertions",
+    "preCommitHead": "a72e025ca",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase5.tests.task3"
+    "taskId": "managed-orchestration-cleanup.phase5.tests.task4"
   }
 }
 ```
@@ -244,7 +244,7 @@ Verification for task 29:
 - Diagram Modules and Quality Gates shim tests now assert disabled legacy CLI/hooks behavior while keeping stage plan metadata readable.
 
 31. [DONE] `managed-orchestration-cleanup.phase5.tests.task3` Rewrite post-turn managed service tests so they assert fail-closed disabled orchestration instead of legacy dispatch/repair/revision paths (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed post-turn assertions`).
-32. [PENDING] Git Commit: `test: remove legacy managed post-turn assertions` (hash: TBD)
+32. [DONE] Git Commit: `test: remove legacy managed post-turn assertions` (hash: a72e025ca)
 
 Verification for task 31:
 
@@ -254,8 +254,17 @@ Verification for task 31:
 - `node --test packages/core/dist/remote-bridge/handlers/managed-workflow-post-turn-service.test.js packages/core/dist/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.js` passed.
 - Post-turn service tests now assert fail-closed provider-dispatch and accept-contract behavior instead of repair/revision orchestration side effects.
 
-33. [TODO] `managed-orchestration-cleanup.phase5.tests.task4` Rewrite managed commit and accept-contract runner tests around fail-closed cleanup behavior (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed commit assertions`).
-34. [TODO] Git Commit: `test: remove legacy managed commit assertions` (hash: TBD)
+33. [DONE] `managed-orchestration-cleanup.phase5.tests.task4` Rewrite managed commit and accept-contract runner tests around fail-closed cleanup behavior (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed commit assertions`).
+34. [PENDING] Git Commit: `test: remove legacy managed commit assertions` (hash: TBD)
+
+Verification for task 33:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/managed-documentation-commit-transaction.test.js packages/core/dist/remote-bridge/handlers/managed-stage-accept-contract-runner.test.js` passed.
+- Commit transaction and Application Skeleton accept-contract runner tests now assert fail-closed/no-side-effect behavior instead of managed staging, commit, acceptance write, audit, or dispatch side effects.
+
 35. [TODO] `managed-orchestration-cleanup.phase5.tests.task5` Rewrite remaining stage-owned managed commit repair tests around no-op progress refresh behavior (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.*.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed repair commit assertions`).
 36. [TODO] Git Commit: `test: remove legacy managed repair commit assertions` (hash: TBD)
 37. [TODO] `managed-orchestration-cleanup.phase5.tests.task6` Remove stale architecture max-line allowlist entries and stale active-path docs references left by deleted legacy files (scope: `scripts/check-architecture-rules/max-lines-debt-allowlist.txt, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed orchestration references`).
