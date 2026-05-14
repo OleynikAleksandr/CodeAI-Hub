@@ -3,7 +3,6 @@ import type { FileDropService } from "../../file-drop/file-drop-service";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import { handleApplicationSkeletonAcceptContract } from "./http-api-managed-stage-accept-contract";
 import { HttpApiSessionRoutes } from "./http-api-session-routes";
 import {
   HTTP_NO_CONTENT,
@@ -37,8 +36,6 @@ const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
 const WORKFLOW_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/workflow-artifact";
 const MANAGED_CONTEXT_BUNDLE_ENDPOINT =
   "/api/v1/orchestrator/managed-context-bundle";
-const MANAGED_STAGE_ACCEPT_CONTRACT_ENDPOINT =
-  "/api/v1/orchestrator/managed-stage-accept-contract";
 
 export interface RouterDependencies {
   readonly app: Express;
@@ -176,16 +173,6 @@ export class HttpApiRouter {
       MANAGED_CONTEXT_BUNDLE_ENDPOINT,
       async (req: Request, res: Response) => {
         await handleManagedContextBundleRead(req, res);
-      }
-    );
-    app.post(
-      MANAGED_STAGE_ACCEPT_CONTRACT_ENDPOINT,
-      async (req: Request, res: Response) => {
-        await handleApplicationSkeletonAcceptContract(
-          req,
-          res,
-          this.deps.workflowStateService.managedPostTurnService
-        );
       }
     );
     this.sessionRoutes.registerRoutes();
