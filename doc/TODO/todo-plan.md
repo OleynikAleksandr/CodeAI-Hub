@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "6c3e5e6c1",
+  "lastRecordedCommit": "874657eb6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task26",
-  "expectedCommitMessage": "refactor: delete managed post-turn service",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task27",
+  "expectedCommitMessage": "refactor: delete legacy managed helper surfaces",
   "debt": {
-    "expectedCommitMessage": "refactor: delete managed post-turn service",
-    "preCommitHead": "6c3e5e6c1",
+    "expectedCommitMessage": "refactor: delete legacy managed helper surfaces",
+    "preCommitHead": "874657eb6",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task26"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task27"
   }
 }
 ```
@@ -460,9 +460,9 @@ Verification for task 57:
 107. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task25` Run the second codebase grep/test audit, record that final audit still cannot pass, and expand the cleanup stream for the remaining runtime/docs tails found by subagents (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record final legacy orchestrator audit`).
 108. [DONE] Git Commit: `docs: record final legacy orchestrator audit` (hash: 6c3e5e6c1)
 109. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task26` Delete the disabled managed post-turn service boundary and remove its bootstrap/workflow-state wiring (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-continuation.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete managed post-turn service`).
-110. [PENDING] Git Commit: `refactor: delete managed post-turn service` (hash: TBD)
-111. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task27` Delete disabled continuation/feedback/repair/revision/managed-documentation helper surfaces and stale tests that only preserve old orchestration API names (scope: `packages/core/src/remote-bridge/handlers/*continuation-dispatcher*.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback*.ts, packages/core/src/remote-bridge/handlers/*repair-orchestration*.ts, packages/core/src/remote-bridge/handlers/*revision-injection*.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction*.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit*.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete legacy managed helper surfaces`).
-112. [TODO] Git Commit: `refactor: delete legacy managed helper surfaces` (hash: TBD)
+110. [DONE] Git Commit: `refactor: delete managed post-turn service` (hash: 874657eb6)
+111. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task27` Delete disabled continuation/feedback/repair/revision/managed-documentation helper surfaces and stale tests that only preserve old orchestration API names (scope: `packages/core/src/remote-bridge/handlers/*continuation-dispatcher*.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback*.ts, packages/core/src/remote-bridge/handlers/*repair-orchestration*.ts, packages/core/src/remote-bridge/handlers/*revision-injection*.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction*.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit*.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-progress-refresh.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-turn-classifier.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete legacy managed helper surfaces`).
+112. [PENDING] Git Commit: `refactor: delete legacy managed helper surfaces` (hash: TBD)
 113. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task28` Remove managed context bundle runtime/API/client prompt injection surface and keep rollover continuation generic during rewrite (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts, packages/core/src/remote-bridge/handlers/managed-context-bundle-http-handler.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, src/client/project-manager/services/managed-workflow-initial-context.ts, src/client/project-manager/services/description-submit-service.ts, related tests, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed context bundle surface`).
 114. [TODO] Git Commit: `refactor: remove managed context bundle surface` (hash: TBD)
 115. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task29` Remove legacy managed core event parsing and accepted-commit transaction evidence from workflow events/read-model bootstrap gates (scope: `packages/core/src/remote-bridge/handlers/workflow-events-service.ts, src/client/project-manager/services/workflow-events-client.ts, packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.ts, related tests, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed event and accepted commit evidence`).
@@ -593,6 +593,13 @@ Verification for task 109:
 - `node --test packages/core/dist/remote-bridge/remote-bridge-bootstrap.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-continuation.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.js` passed.
 - `npm run check:knip` passed with existing configuration hints only.
 - `rg -n "developmentTreeAgentSessions|handleManagedWorkflowPostTurn|managedPostTurnService|ManagedWorkflowPostTurnService|managed-workflow-post-turn-service" packages/core/src/remote-bridge packages/core/src --glob '!**/dist/**'` returned no matches.
+
+Verification for task 111:
+
+- `npm run build:core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/application-skeleton-progress.test.js packages/core/dist/remote-bridge/handlers/quality-gates-progress.test.js packages/core/dist/remote-bridge/handlers/quality-gates-feedback-action-lines.test.js packages/core/dist/remote-bridge/handlers/quality-gates-contract-guard.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.js` passed.
+- `npm run check:knip` passed with existing configuration hints only.
+- `rg -n "WorkflowAgentAcceptanceFeedback|WorkflowAgentAcceptanceFeedbackGateway|sendDiagramModulesContinuationIfReady|sendApplicationSkeletonContinuationIfReady|sendQualityGatesContinuationIfReady|runApplicationSkeletonRepairOrchestration|runDiagramModulesRepairOrchestration|runQualityGatesRepairOrchestration|runApplicationSkeletonRevisionInjection|runQualityGatesRevisionInjection|ManagedDocumentationCommitTransaction|commitManagedDocumentationStageIfReady|quality-gates-review-turn-classifier|managed-documentation-commit" packages/core/src src/client/project-manager packages/agents --glob '!**/dist/**'` returned no matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
