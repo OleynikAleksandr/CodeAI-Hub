@@ -1,9 +1,17 @@
 # Managed Step Orchestration Planning
 
-**Status:** inactive planning folder.
-**Closed by:** release `1.2.249`
+**Status:** active planning folder for the managed workflow orchestration redesign.
+**Reopened:** 2026-05-14.
 
-This folder no longer contains active implementation planning sources.
+This folder contains the new planning sources for rebuilding managed step orchestration as an explicit Core-owned state machine. The previous release `1.2.249` planning wave remains closed and archived; the current work is a new redesign scope opened after repeated post-release orchestration failures across Application Skeleton and Quality Gates.
+
+## Active Planning Sources
+
+- `Managed_Workflow_Orchestration_Cluster_Planning.md`
+- `Managed_Workflow_Orchestration_Cluster_Planning_RU.md`
+- `Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`
+
+## Previous Closed Baseline
 
 The accepted managed orchestration baseline is now canonical in:
 
@@ -23,4 +31,4 @@ Historical planning sources for this wave were moved to `doc/SolidWorks-WorkFlow
 - `Managed_Workspace_Lifecycle_From_Diagram_Modules_1.2.249.md`
 - `Managed_Workflow_Phase_Types_And_Corrective_Operations_Design_1.2.249.md`
 
-Do not add new work here by default. A new managed orchestration scope should start from a fresh planning document under `doc/SolidWorks-WorkFlow/Plans/` and a new accepted `doc/TODO/todo-plan.md`.
+New work in this folder must be tied to the active `doc/TODO/todo-plan.md` scope and discussed phase by phase before implementation.
