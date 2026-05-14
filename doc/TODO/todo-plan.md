@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "23f7c2298",
+  "lastRecordedCommit": "011614cd4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase1.intake.task1",
-  "expectedCommitMessage": "docs: plan managed workflow orchestration redesign",
+  "currentTaskId": "managed-orchestration.phase2.cluster-docs.task1",
+  "expectedCommitMessage": "docs: draft managed workflow orchestration cluster planning",
   "debt": {
-    "expectedCommitMessage": "docs: plan managed workflow orchestration redesign",
-    "preCommitHead": "23f7c2298",
+    "expectedCommitMessage": "docs: draft managed workflow orchestration cluster planning",
+    "preCommitHead": "011614cd4",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase1.intake.task1"
+    "taskId": "managed-orchestration.phase2.cluster-docs.task1"
   }
 }
 ```
@@ -49,14 +49,14 @@
 ### Stream: Scope Registration
 
 1. [DONE] `managed-orchestration.phase1.intake.task1` Reopen Managed Step Orchestration planning folder, register the new orchestration redesign scope in the docs index, and create this active todo-plan (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/README.md`; expected commit: `docs: plan managed workflow orchestration redesign`).
-2. [PENDING] Git Commit: `docs: plan managed workflow orchestration redesign` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan managed workflow orchestration redesign` (hash: 011614cd4)
 
 ## Phase 2 — Baseline Planning Artifacts (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Cluster Planning Documents
 
-3. [TODO] `managed-orchestration.phase2.cluster-docs.task1` Add the managed workflow orchestration cluster planning documents in English and Russian for durable discussion context after compaction (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md`; expected commit: `docs: draft managed workflow orchestration cluster planning`).
-4. [TODO] Git Commit: `docs: draft managed workflow orchestration cluster planning` (hash: TBD)
+3. [DONE] `managed-orchestration.phase2.cluster-docs.task1` Add the managed workflow orchestration cluster planning documents in English and Russian for durable discussion context after compaction (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md`; expected commit: `docs: draft managed workflow orchestration cluster planning`).
+4. [PENDING] Git Commit: `docs: draft managed workflow orchestration cluster planning` (hash: TBD)
 
 ### Stream: Application Skeleton Phase 1
 
