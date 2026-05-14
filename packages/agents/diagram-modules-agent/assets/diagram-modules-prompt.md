@@ -6,16 +6,16 @@ CodeAI Hub turns a product idea into a sequence of artifacts that are refined st
 The `Diagram Modules` step comes after `Description` and `Virtual Simulation`.
 Its purpose is to turn the already collected understanding of the product and system behavior into a staged modular map of the system.
 
-Your task in this step is to use `Final_Description.md`, `virtual-simulation.md`, the project materials you actually read, and the current context to materialize the current Core-assigned Diagram Modules artifact. The first turn creates only `product-parts.index.md`; later Core continuation turns request exactly one `product-parts/<part-id>.md`.
+Your task in this step is to use `Final_Description.md`, `virtual-simulation.md`, the project materials you actually read, and the current context to materialize the current runtime-assigned Diagram Modules artifact. The first turn creates only `product-parts.index.md`; later runtime continuation turns request exactly one `product-parts/<part-id>.md`.
 
 Important:
 - the user describes the product in plain language;
 - the user is not required to know terms such as `shell`, `runtime`, `cluster`, `module`, `facade`, or `boundary`;
 - do not assume that upstream `Description` or `Virtual Simulation` already contain a final module list or a fully shaped modular map;
 - you must translate the user's description and previous artifacts into a canonical staged modular map yourself;
-- do not collapse the whole structure into one giant artifact; keep one bounded file per `Product Part` when Core requests that part;
-- the first useful review surface should be the proposed `Product Part` index, even if Core or the user later corrects it;
-- discussion and continuation happen through Core feedback turns, not through automatic same-turn generation of every `Product Part` file.
+- do not collapse the whole structure into one giant artifact; keep one bounded file per `Product Part` when the runtime requests that part;
+- the first useful review surface should be the proposed `Product Part` index, even if the runtime or the user later corrects it;
+- discussion and continuation happen through runtime/user turns, not through automatic same-turn generation of every `Product Part` file.
 
 The resulting staged artifact set must already be understandable to the user at the index/skeleton stage and provide the runtime with a strong enough basis to visualize the Module Graph.
 
@@ -54,31 +54,30 @@ Artifact path ownership:
 - do not send progress updates about creating folders;
 - if the parent directory is missing, report that runtime preflight failed instead of treating directory setup as agent work.
 
-Managed lifecycle:
-- `Diagram Modules` is the first managed workspace stage. Core has already bootstrapped the workspace repo, workflow lifecycle ledgers, active workspace plan state, active stage todo-plan state, plan scripts, and hooks before this session starts.
-- Core also created the initial adoption commit for lifecycle files and accepted upstream evidence. Start from the current clean Git baseline; do not treat upstream/baseline files as your own uncommitted work.
-- Before writing or revising staged artifacts, use only the workspace plan text, active stage todo-plan text, and plan status that Core embeds in the current prompt. Do not read plan files or run plan status commands unless Core explicitly says the embedded managed context is stale or missing.
-- Do not create, reinstall, repair, or rename git, hooks, plan scripts, lifecycle folders, workspace plans, or child plans yourself. If they are missing or broken, report runtime preflight failure.
+Rewrite boundary:
+- `Diagram Modules` must not assume that child plans, plan scripts, hooks, or automatic commit ownership exists.
+- Before writing or revising staged artifacts, use only the workspace context, target artifact, and validation instructions embedded in the current runtime prompt. Do not read plan files or run plan status commands unless the current prompt explicitly asks for that diagnostic.
+- Do not create, reinstall, repair, or rename git, hooks, plan scripts, lifecycle folders, workspace plans, or child plans yourself. If baseline controls are missing or broken, report runtime preflight failure.
 - After this stage starts, `Description` and `Virtual Simulation` are read-only upstream evidence. Do not reopen those stages for editing or ask the user to continue them.
-- When the user asks for changes, update only the current Diagram Modules staged artifacts and keep the work aligned with the active managed plan provided by Core/runtime.
-- After each accepted staged artifact write or revision, leave only Diagram Modules-owned artifact changes in the workspace and respond that the staged artifacts are ready for Core acceptance. Core owns staging, the managed commit, post-commit validation, and downstream unlock.
+- When the user asks for changes, update only the current Diagram Modules staged artifacts and keep the work aligned with the runtime-provided target.
+- After each staged artifact write or revision, leave only Diagram Modules-owned artifact changes in the workspace and respond that the staged artifacts are ready for runtime/user review. Do not stage, commit, advance plans, or claim completion beyond readiness.
 
 Critical rule:
 - on the first visible turn, the canonical output is only `product-parts.index.md`;
 - do not create `product-parts/<part-id>.md` files on the index turn;
-- create a `product-parts/<part-id>.md` file only when Core starts a continuation turn whose target artifact is that exact file;
+- create a `product-parts/<part-id>.md` file only when the runtime starts a continuation turn whose target artifact is that exact file;
 - staged Markdown artifacts are allowed and expected for this step;
 - the visual diagram (Module Graph) is built separately by the runtime from staged artifacts;
 - the layout sidecar `module-map.flow.json` is not a semantic artifact and must not be created by you;
 - relation lines and cross-part wiring are not required for the first useful slice and must not block structure materialization;
 - do not create Mermaid or JSON as a replacement for staged Markdown artifacts.
 
-Immediately after reading the runtime-provided inputs on the first turn, write `product-parts.index.md` with the list of product parts and short descriptions. Then stop and report that the index artifact is ready for Core acceptance. Keep each later part file focused and bounded; do not generate one monolithic inventory file.
+Immediately after reading the runtime-provided inputs on the first turn, write `product-parts.index.md` with the list of product parts and short descriptions. Then stop and report that the index artifact is ready for runtime/user review. Keep each later part file focused and bounded; do not generate one monolithic inventory file.
 
 Before the final response on the index turn, perform the same observable completion check Core will perform:
 - `product-parts.index.md` exists and declares the ordered `Product Part` ids;
-- no `product-parts/<part-id>.md` file was created before Core requested that part;
-- the current target staged Diagram Modules artifact is written and ready for Core acceptance;
+- no `product-parts/<part-id>.md` file was created before the runtime requested that part;
+- the current target staged Diagram Modules artifact is written and ready for runtime/user review;
 - no unrelated workspace files were created or changed by this stage.
 
 If Core or the user later asks for corrections, revise only the affected staged artifact and repeat the completion check before reporting the target artifact ready.
@@ -265,7 +264,7 @@ Style requirements:
 1. Read the direct inputs: `Final_Description.md`, `virtual-simulation.md`, and any other files explicitly provided by the user.
 2. Write `product-parts.index.md` as an ordered list of product parts with short descriptions (`title` + `purpose`). DO NOT include clusters or modules on the index turn.
 3. In chat, give a short report on which product parts were identified and why.
-4. Report that the index artifact is ready for Core acceptance.
+4. Report that the index artifact is ready for runtime/user review.
 5. **STOP and wait for Core feedback.** Do not move to detailed product-part materialization in the same turn.
 
 ### 5.2. Part turn (after user confirmation)

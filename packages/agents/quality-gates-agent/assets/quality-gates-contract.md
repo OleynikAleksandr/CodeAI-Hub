@@ -5,12 +5,12 @@
 - `quality-gates.md`: human-readable gate baseline, tooling rationale, integration plan, open decisions, and acceptance checklist.
 - `quality-gates.json`: machine-readable command and integration contract for Core and future workflow/node agents.
 
-## Managed Hook Boundary
+## Project Hook Boundary
 
-- Core owns git setup, the lifecycle baseline inside `.husky` hooks, plan scripts, workspace plan state, active stage todo-plan state, and workflow lifecycle ledgers.
+- The orchestration rewrite boundary does not provide automatic commit ownership or child-plan handoff.
 - Quality Gates may create or update accepted gate scripts, configs, package scripts, dev dependencies, CI/update files, `quality-gates.json` manifest fields, and the Quality Gates hook wiring required by accepted `requiredBeforeCommit` / `requiredBeforePush` arrays.
-- Preserve Core lifecycle commands such as `plan:validate`. Append Quality Gates hook wiring instead of replacing the hook.
-- During Phase 3, required Quality Gates hook calls are agent-owned materialization. They must not be left as Core-owned pending regeneration.
+- Preserve existing project hook commands such as `plan:validate`. Append Quality Gates hook wiring instead of replacing the hook.
+- During Phase 3, required Quality Gates hook calls are agent-owned materialization. They must not be left as deferred to another actor.
 - Hook wiring evidence must include direct `npm run qg:<gate>` calls for every gate id in the accepted `requiredBeforeCommit` / `requiredBeforePush` arrays. Aggregate commands such as `npm run qg:before-commit` / `npm run qg:before-push` may exist as convenience commands, but they are not sufficient evidence by themselves.
 
 ## JSON Shape
@@ -76,9 +76,8 @@
 - A not-integrated active gate must include `integrationRequired: true` and non-empty `plannedIntegrationPaths`.
 - `plannedRequiredAfterIntegration` must not duplicate ids already listed in `requiredBeforeCommit`, `requiredBeforeModuleExecution`, `requiredBeforePush`, or `requiredBeforeRelease`.
 - Selected tools must appear in tooling rationale, command entries, and planned integration paths.
-- `accepted: true` is written by Core after the `docs: accept quality gates contract` commit; the agent must not flip this flag during draft or review.
-- `acceptanceCommitted: true` is written by Core after the acceptance commit lands; it gates the Phase 3 integration continuation.
+- `accepted: true` is written only after explicit user/runtime acceptance; the agent must not flip this flag during draft or review.
 - `integrated: true` requires actual filesystem integration plus smoke evidence.
 - `integrated: true` requires explicit lifecycle hook wiring for every non-empty required hook scope.
-- `integrated: true` is invalid if required hook wiring is described as Core-owned pending regeneration.
+- `integrated: true` is invalid if required hook wiring is described as deferred to another actor.
 - Future agents must be able to run or cite gate commands without inventing missing scripts.

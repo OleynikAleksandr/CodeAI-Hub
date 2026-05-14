@@ -10,13 +10,13 @@ const BEFORE_ACCEPTANCE_RE = /Before explicit user acceptance/;
 const NO_PRODUCTION_FILES_RE = /Do not create production files/;
 const MATERIALIZED_TRUE_RE = /materialized: true/;
 const QUALITY_GATES_START_RE = /ready for Quality Gates Baseline/;
-const MANAGED_WORKSPACE_BOUNDARY_RE = /Managed Workspace Boundary/;
-const CORE_LIFECYCLE_OWNER_RE =
-  /Core already owns and maintains the workspace repo/;
+const REWRITE_BOUNDARY_RE = /Rewrite Boundary/;
+const RUNTIME_CONTEXT_OWNER_RE =
+  /The runtime provides the current target, upstream evidence, and validation context/;
 const EMBEDDED_PLAN_CONTEXT_RE =
-  /use only the workspace plan text, active stage todo-plan text, and plan status that Core embeds/;
+  /use only the workspace context, target artifact, and validation instructions embedded in the current runtime prompt/;
 const APPLICATION_SKELETON_HANDOFF_RE =
-  /embedded Core plan status must say `activeStage: "application_skeleton"`/;
+  /runtime prompt must explicitly identify the Application Skeleton stage and target artifact/;
 const NO_LIFECYCLE_REPAIR_RE =
   /Do not create, reinstall, repair, rename, restore, revert, checkout, or replace git, hooks, plan scripts/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
@@ -36,16 +36,16 @@ const EXACT_REVIEW_CLOSING_PHRASE_RE =
   /Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией\./;
 const LOCALIZED_MATERIALIZED_RESPONSE_RE =
   /tell the user, in the chat language, that Application Skeleton is accepted and materialized/;
-const CORE_OWNS_COMMIT_RE =
-  /Core owns all staging, the managed commit, post-commit validation, and downstream unlock/;
+const RUNTIME_REVIEW_READY_RE = /ready for runtime\/user review/;
 const PLAN_COMMIT_RE = /npm run plan:commit/;
 const PROVIDER_STAGE_ONLY_RE = /stage only the two canonical/u;
 const BEFORE_COMMITTING_RE = /Before committing materialization/u;
 const THEN_COMMIT_RE = /then commit/u;
 const PARTIAL_COMMIT_RE = /commit a partial result/u;
-const DRAFT_REVISION_MICROTASK_RE = /ask Core for a managed plan revision/;
+const DRAFT_REVISION_MICROTASK_RE =
+  /Do not edit plan files or create lifecycle tasks yourself/;
 const MATERIALIZATION_CONTEXT_RE =
-  /runtime-provided managed context is still for the Application Skeleton materialization task/;
+  /runtime-provided context is still for the Application Skeleton materialization task/;
 const USER_STACK_REPLACEMENT_RE =
   /If the user explicitly replaces a stack decision/;
 const NO_STACK_DETAIL_LOOP_RE =
@@ -78,7 +78,17 @@ const STACK_ARRAYS_RE =
 const CONTRACT_TECHNOLOGY_HINTS_RE =
   /Explicit upstream technology hints, such as named shell, launcher, runtime, framework, package format, or deployment target, must be treated as strong baseline evidence/;
 const CONTRACT_CORE_LIFECYCLE_OWNER_RE =
-  /Git, hooks, workspace plan state, active stage todo-plan state/;
+  /Git, hooks, workspace plan state, active stage todo-plan state.*are not skeleton materialization output/;
+const LEGACY_LIFECYCLE_PROMISE_RE = new RegExp(
+  [
+    ["managed workspace", "lifecycle"].join(" "),
+    ["managed", "commit"].join(" "),
+    ["downstream", "unlock"].join(" "),
+    ["Core", "owns all", "staging"].join(" "),
+    ["ask Core for a managed", "plan revision"].join(" "),
+    ["Core", "acceptance"].join(" "),
+  ].join("|")
+);
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -95,8 +105,8 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, NO_PRODUCTION_FILES_RE);
   assert.match(prompt, MATERIALIZED_TRUE_RE);
   assert.match(prompt, QUALITY_GATES_START_RE);
-  assert.match(prompt, MANAGED_WORKSPACE_BOUNDARY_RE);
-  assert.match(prompt, CORE_LIFECYCLE_OWNER_RE);
+  assert.match(prompt, REWRITE_BOUNDARY_RE);
+  assert.match(prompt, RUNTIME_CONTEXT_OWNER_RE);
   assert.match(prompt, EMBEDDED_PLAN_CONTEXT_RE);
   assert.match(prompt, APPLICATION_SKELETON_HANDOFF_RE);
   assert.match(prompt, NO_LIFECYCLE_REPAIR_RE);
@@ -110,7 +120,8 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, LOCALIZED_DRAFT_RESPONSE_RE);
   assert.match(prompt, EXACT_REVIEW_CLOSING_PHRASE_RE);
   assert.match(prompt, LOCALIZED_MATERIALIZED_RESPONSE_RE);
-  assert.match(prompt, CORE_OWNS_COMMIT_RE);
+  assert.match(prompt, RUNTIME_REVIEW_READY_RE);
+  assert.doesNotMatch(prompt, LEGACY_LIFECYCLE_PROMISE_RE);
   assert.doesNotMatch(prompt, PLAN_COMMIT_RE);
   assert.doesNotMatch(prompt, PROVIDER_STAGE_ONLY_RE);
   assert.doesNotMatch(prompt, BEFORE_COMMITTING_RE);
@@ -146,6 +157,7 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, PRODUCT_PARTS_ROOT_RE);
   assert.match(contract, CONTRACT_TECHNOLOGY_HINTS_RE);
   assert.match(contract, CONTRACT_CORE_LIFECYCLE_OWNER_RE);
+  assert.doesNotMatch(contract, LEGACY_LIFECYCLE_PROMISE_RE);
   assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
   assert.doesNotMatch(contract, WORKSPACE_PLAN_PATH_RE);
   assert.match(contract, NO_CATEGORY_SPLIT_RE);

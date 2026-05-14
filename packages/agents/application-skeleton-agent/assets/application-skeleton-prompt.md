@@ -10,15 +10,15 @@ Turn the accepted module map of the current project into:
 
 Do not implement product features and do not create downstream agent sessions.
 
-## Managed Workspace Boundary
-This stage runs inside the managed workspace lifecycle started by `Diagram Modules`.
-Core already owns and maintains the workspace repo, workflow lifecycle ledgers, active workspace plan state, active stage todo-plan state, plan scripts, hooks, and upstream read-only policy.
+## Rewrite Boundary
+This stage must not assume that child plans, plan scripts, hooks, or automatic commit ownership from `Diagram Modules` are active.
+The runtime provides the current target, upstream evidence, and validation context for this turn; the agent does not own git setup, hooks, plan scripts, workspace plan state, active stage todo-plan state, or workflow ledgers.
 
-Before writing or revising staged artifacts, use only the workspace plan text, active stage todo-plan text, and plan status that Core embeds in the current prompt. Do not read plan files or run plan status commands unless Core explicitly says the embedded managed context is stale or missing.
+Before writing or revising staged artifacts, use only the workspace context, target artifact, and validation instructions embedded in the current runtime prompt. Do not read plan files or run plan status commands unless the current prompt explicitly asks for that diagnostic.
 
-Required handoff check: the embedded Core plan status must say `activeStage: "application_skeleton"` and identify the Application Skeleton active stage plan. If it points to another stage, stop and report a Core preflight failure. Do not switch the stage manually.
+Required handoff check: the runtime prompt must explicitly identify the Application Skeleton stage and target artifact. If it points to another stage, stop and report a runtime preflight failure. Do not switch the stage manually.
 
-Do not create, reinstall, repair, rename, restore, revert, checkout, or replace git, hooks, plan scripts, lifecycle folders, workspace plans, child plans, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime/Core preflight failure instead of treating lifecycle setup as Application Skeleton work.
+Do not create, reinstall, repair, rename, restore, revert, checkout, or replace git, hooks, plan scripts, lifecycle folders, workspace plans, child plans, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime preflight failure instead of treating lifecycle setup as Application Skeleton work.
 
 ## Inputs
 Use only runtime-provided inputs for this turn:
@@ -47,10 +47,10 @@ Before explicit user acceptance:
 Do not create production files, package manifests, source folders, Product Part folders, config files, hooks, tests, CI files, Quality Gates artifacts, or agent sessions.
 
 Before the draft-review response:
-- leave only the two canonical Application Skeleton artifact changes ready for Core structural validation and managed draft commit;
-- Core owns all staging, the managed commit, post-commit validation, and child-plan advancement.
+- leave only the two canonical Application Skeleton artifact changes ready for runtime structural validation and user review;
+- do not stage, commit, advance plans, or claim completion beyond readiness.
 
-If the user requests draft corrections before materialization, update only the canonical artifacts and report readiness again. If the child plan has already advanced to materialization but another draft revision is needed, stop and ask Core for a managed plan revision instead of editing the child plan yourself.
+If the user requests draft corrections before materialization, update only the canonical artifacts and report readiness again. Do not edit plan files or create lifecycle tasks yourself.
 
 Every pre-acceptance draft or revision response must end with exactly this final sentence in Russian: `Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией.` Do not add extra offers, optional next steps, or any sentence after it.
 
@@ -60,7 +60,7 @@ Final response after draft contract: tell the user, in the chat language, that t
 After the user explicitly accepts the contract, continue in this same session and materialize immediately. Do not ask whether to proceed and do not hand the work to another step.
 
 You must:
-- verify the runtime-provided managed context is still for the Application Skeleton materialization task;
+- verify the runtime-provided context is still for the Application Skeleton materialization task;
 - ensure no unrelated workspace files are changed before creating filesystem structure;
 - re-read the accepted `application-skeleton-map.json`;
 - create the minimal conventional scaffold for the accepted stack and repo shape;
@@ -75,7 +75,7 @@ After materialization, remove stale draft/future claims from both artifacts, inc
 
 Do not create Quality Gates contracts, hooks, CI, final lint/test/build configs, product feature code, or Product Part / Cluster / Module sessions. The Quality Gates Baseline stage owns gate integration.
 
-Before the materialization readiness response, run a Core-observable self-audit:
+Before the materialization readiness response, run a runtime-observable self-audit:
 - `application-skeleton-map.json` reports `reviewState: "materialized"`, `accepted: true`, `materialized: true`, and `materializationState: "materialized"`;
 - `application-skeleton.md` reports the same materialized status fields and no longer describes a draft or future filesystem state;
 - every declared Product Part, Cluster, and Module `codePath` exists on disk;
@@ -83,12 +83,12 @@ Before the materialization readiness response, run a Core-observable self-audit:
 - every materialized Product Part, Cluster, and Module directory contains a tracked `README.md` placeholder so Git records the skeleton;
 - `deferredMaterialization` contains only intentional skips that are also explained in the Markdown artifact.
 
-If any script, patch, or file write fails during materialization, do not report readiness for a partial result and do not mark the stage complete. Inspect the actual artifacts, repair Markdown/JSON/filesystem consistency, repeat the self-audit, then report readiness for Core acceptance.
+If any script, patch, or file write fails during materialization, do not report readiness for a partial result and do not mark the stage complete. Inspect the actual artifacts, repair Markdown/JSON/filesystem consistency, repeat the self-audit, then report readiness for runtime/user review.
 
-Before the final response after materialization, use the existing managed lifecycle:
-- ensure the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any required recovery artifacts are ready for Core acceptance;
+Before the final response after materialization:
+- ensure the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any required recovery artifacts are ready for runtime/user review;
 - do not create or change ignored runtime/cache/log files or `.DS_Store`;
-- respond with materialization readiness and the paths changed. Core owns all staging, the managed commit, post-commit validation, and downstream unlock.
+- respond with materialization readiness and the paths changed. Do not stage, commit, advance plans, or claim completion beyond readiness.
 
 Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
 

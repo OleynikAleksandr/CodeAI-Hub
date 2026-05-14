@@ -4,10 +4,10 @@
 - `application-skeleton.md`: human-readable technical scaffold decision record and materialization checklist.
 - `application-skeleton-map.json`: machine-readable mapping from Development Tree ownership to production code paths and materialization state.
 
-## Managed Workspace Boundary
-- Application Skeleton must assume the managed workspace lifecycle already exists from the `Diagram Modules` entrypoint.
-- Git, hooks, workspace plan state, active stage todo-plan state, plan scripts, workflow lifecycle ledgers, and upstream read-only policy are Core-owned lifecycle controls, not skeleton materialization output.
-- If lifecycle controls are missing or broken, report runtime/Core preflight failure. Do not create, reinstall, repair, rename, or replace them in this stage.
+## Rewrite Boundary
+- Application Skeleton must not assume that child plans, plan scripts, hooks, or automatic commit ownership exist from the `Diagram Modules` entrypoint.
+- Git, hooks, workspace plan state, active stage todo-plan state, plan scripts, workflow lifecycle ledgers, and upstream read-only policy are not skeleton materialization output.
+- If lifecycle controls are missing or broken, report runtime preflight failure. Do not create, reinstall, repair, rename, or replace them in this stage.
 
 ## JSON Shape
 ```json
@@ -78,5 +78,5 @@
 - `materializedPaths` must list real workspace files or directories created or verified during post-acceptance materialization, including tracked placeholders needed to preserve empty scaffold folders in Git.
 - `deferredMaterialization` must explain any mapped folder or scaffold element that was intentionally not created.
 - After materialization, `application-skeleton.md` must describe the current materialized state and must not keep draft-only/future-tense claims such as "will be created after confirmation".
-- Before the final materialization response, the stage must leave the materialized artifacts ready for Core acceptance. Core owns staging, the managed commit, post-commit validation, and downstream unlock.
+- Before the final materialization response, the stage must leave the materialized artifacts ready for runtime/user review. Do not stage, commit, advance plans, or claim completion beyond readiness.
 - Quality gate commands may be proposed in Markdown, but the dedicated Quality Gates stage owns the accepted command contract and gate integration.

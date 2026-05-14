@@ -7,45 +7,43 @@ import { BUNDLED_TEMPLATE_SOURCES } from "./bundled-templates";
 const DRAFT_PHASE_RE = /Phase 1: Draft Gate Contract/;
 const REVIEW_PHASE_RE = /Phase 2: User-Led Review/;
 const INTEGRATION_PHASE_RE = /Phase 3: Post-Acceptance Integration/;
-const ACCEPTANCE_BOUNDARY_RE = /Acceptance is a Core-owned event/;
+const ACCEPTANCE_BOUNDARY_RE = /Acceptance is a user\/runtime decision/;
 const NO_SELF_ACCEPT_RE = /Do not set `accepted: true` yourself/;
-const ACCEPTANCE_COMMITTED_RE =
-  /`acceptanceCommitted: true` is written by Core/;
 const SIZE_POLICY_RE = /Source files and classes must stay <= 500 lines/;
 const STACK_RESEARCH_RE = /stack-specific research/;
 const NEEDS_USER_DECISION_RE = /needs_user_decision/;
 const INTEGRATION_PATHS_RE = /planned integration paths/;
 const CORE_HOOK_REGISTRY_RE =
-  /Core owns the managed lifecycle baseline, git setup, plan scripts, workspace plan state, active stage todo-plan state/;
+  /orchestration rewrite boundary does not provide automatic commit ownership or child-plan handoff/;
 const EMBEDDED_PLAN_CONTEXT_RE =
-  /Use only the workspace plan text, active stage todo-plan text, and plan status that Core embeds/;
+  /Use only the workspace context, target artifacts, and validation instructions embedded in the current runtime prompt/;
 const QUALITY_GATES_HANDOFF_RE =
-  /embedded Core plan status must say `activeStage: "quality_gates"`/;
+  /runtime prompt must explicitly identify the Quality Gates stage and target artifact/;
 const NO_LIFECYCLE_RESTORE_RE =
-  /must not rewrite, restore, revert, checkout, or replace the Core-owned lifecycle baseline/;
+  /must not rewrite, restore, revert, checkout, or replace git setup, existing hooks, plan scripts/;
 const HOOK_WIRING_RE = /must explicitly call every gate id/u;
 const MATERIALIZATION_COMPLETE_RE =
   /Materialization is not complete until all accepted required gates have executable package scripts/u;
 const AGENT_OWNS_PHASE3_HOOK_RE =
   /During Phase 3, the Quality Gates hook section is agent-owned integration work/u;
 const NO_CORE_PENDING_HOOK_RE =
-  /Do not describe `\.husky\/pre-commit` or `\.husky\/pre-push` updates as Core-owned pending regeneration/u;
+  /Do not describe `\.husky\/pre-commit` or `\.husky\/pre-push` updates as deferred to another actor/u;
 const AGGREGATE_PRE_COMMIT_RE = /qg:before-commit/;
 const AGGREGATE_PRE_PUSH_RE = /qg:before-push/;
 const PRESERVE_PLAN_VALIDATE_RE =
-  /Preserve existing Core lifecycle commands such as `plan:validate`/;
-const CORE_OWNS_COMMIT_RE =
-  /Core owns all staging, the managed commit, post-commit validation, and child-plan advancement/;
+  /Preserve existing project hook commands such as `plan:validate`/;
+const RUNTIME_REVIEW_READY_RE = /ready for runtime review/;
 const EXACT_REVIEW_CLOSING_PHRASE_RE =
   /Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией\./;
 const PLAN_COMMIT_RE = /npm run plan:commit/;
 const PROVIDER_STAGE_ONLY_RE = /stage only the two canonical/u;
 const CLEAN_GIT_RE = /git status --short/;
 const CORE_UNLOCK_RE =
-  /unlocked` language requires Core confirmation|Core has confirmed the Quality Gates root gate is integrated\/unlocked/s;
-const GATE_CONTRACT_REVISION_RE = /ask Core for a managed plan revision/;
+  /do not claim completion beyond readiness|`unlocked` language is not allowed/s;
+const GATE_CONTRACT_REVISION_RE =
+  /Do not edit plan files or create lifecycle tasks yourself/;
 const INTEGRATION_CONTEXT_RE =
-  /runtime-provided managed context is still for the Quality Gates integration task/;
+  /runtime-provided context is still for the Quality Gates integration task/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
 const PLAN_STATUS_COMMAND_RE = /npm run plan:status/;
@@ -66,9 +64,9 @@ const COMMANDS_MAP_RULE_RE =
   /`commands` must be an object\/map keyed by gate id/;
 const ADVISORY_NO_BLOCKING_RE =
   /Advisory gates must not have `blockingIn` phases/;
-const CONTRACT_HOOK_BOUNDARY_RE = /Managed Hook Boundary/;
+const CONTRACT_HOOK_BOUNDARY_RE = /Project Hook Boundary/;
 const CONTRACT_CHILD_PLAN_RE =
-  /Core owns git setup, the lifecycle baseline inside `\.husky` hooks, plan scripts, workspace plan state, active stage todo-plan state/;
+  /orchestration rewrite boundary does not provide automatic commit ownership or child-plan handoff/;
 const CONTRACT_HOOK_DIRECT_EVIDENCE_RE =
   /Hook wiring evidence must include direct `npm run qg:<gate>` calls/s;
 const CONTRACT_AGGREGATE_NOT_SUFFICIENT_RE =
@@ -76,7 +74,21 @@ const CONTRACT_AGGREGATE_NOT_SUFFICIENT_RE =
 const CONTRACT_INTEGRATED_HOOK_RE =
   /`integrated: true` requires explicit lifecycle hook wiring/;
 const CONTRACT_NO_CORE_PENDING_HOOK_RE =
-  /`integrated: true` is invalid if required hook wiring is described as Core-owned pending regeneration/u;
+  /`integrated: true` is invalid if required hook wiring is described as deferred to another actor/u;
+const LEGACY_LIFECYCLE_PROMISE_RE = new RegExp(
+  [
+    ["Core", "owned"].join("-"),
+    ["Core", "owns"].join(" "),
+    ["managed", "lifecycle"].join(" "),
+    ["managed", "commit"].join(" "),
+    ["Core", "injected"].join("-"),
+    ["docs:", "accept"].join(" "),
+    ["managed", "plan"].join(" "),
+    ["downstream", "unlock"].join(" "),
+    ["Core", "confirmation"].join(" "),
+    ["pending", "regeneration"].join(" "),
+  ].join("|")
+);
 
 const decodeTemplate = (id: string): string => {
   const source = BUNDLED_TEMPLATE_SOURCES.find((item) => item.id === id);
@@ -107,7 +119,7 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.match(prompt, AGGREGATE_PRE_COMMIT_RE);
   assert.match(prompt, AGGREGATE_PRE_PUSH_RE);
   assert.match(prompt, PRESERVE_PLAN_VALIDATE_RE);
-  assert.match(prompt, CORE_OWNS_COMMIT_RE);
+  assert.match(prompt, RUNTIME_REVIEW_READY_RE);
   assert.match(prompt, EXACT_REVIEW_CLOSING_PHRASE_RE);
   assert.doesNotMatch(prompt, PLAN_COMMIT_RE);
   assert.doesNotMatch(prompt, PROVIDER_STAGE_ONLY_RE);
@@ -125,6 +137,7 @@ test("quality gates bundled prompt keeps compact two-phase integration contract"
   assert.doesNotMatch(prompt, DEVELOPMENT_TREE_SESSION_RE);
   assert.doesNotMatch(prompt, DEVELOPMENT_TREE_SESSIONS_RE);
   assert.doesNotMatch(prompt, LEGACY_RESEARCH_PASS_RE);
+  assert.doesNotMatch(prompt, LEGACY_LIFECYCLE_PROMISE_RE);
 });
 
 test("quality gates bundled contract exposes integration-aware gate fields", () => {
@@ -142,10 +155,10 @@ test("quality gates bundled contract exposes integration-aware gate fields", () 
   assert.match(contract, CONTRACT_AGGREGATE_NOT_SUFFICIENT_RE);
   assert.match(contract, CONTRACT_INTEGRATED_HOOK_RE);
   assert.match(contract, CONTRACT_NO_CORE_PENDING_HOOK_RE);
-  assert.match(contract, ACCEPTANCE_COMMITTED_RE);
   assert.match(contract, NO_PLANNED_DUPLICATES_RE);
   assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
   assert.doesNotMatch(contract, WORKSPACE_PLAN_PATH_RE);
+  assert.doesNotMatch(contract, LEGACY_LIFECYCLE_PROMISE_RE);
 });
 
 test("quality gates bundled templates stay synced with agent assets", async () => {
