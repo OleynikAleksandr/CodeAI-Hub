@@ -3,6 +3,7 @@
 **Статус:** черновик принятого сценария для будущей реализации.
 **Создан:** 2026-05-14.
 **Scope:** точная спецификация Phase 2 шага `Application Skeleton` для нового managed orchestration cluster.
+**Тип фазы:** [Type B — User-Led Review](Managed_Workflow_Orchestration_Cluster_Planning.md#type-b--user-led-review).
 **Предыдущий документ:** `Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`.
 **Следующая тема обсуждения:** Phase 3 `Application Skeleton Materialization`.
 
@@ -15,7 +16,7 @@ Phase 2 открывается только после того, как Core у�
 - Core сделал real Git commit `docs: draft application skeleton contract`;
 - Core создал Phase 2 и отправил пользователю явное сообщение о начале review.
 
-Phase 2 относится к типу `User-Led Review`.
+Phase 2 относится к reusable Type B `User-Led Review`.
 
 В самом начале Phase 2 пользователь должен получить явное сообщение от Core, из которого понятно, что теперь именно пользователь проверяет контракт и должен либо подтвердить его, либо перечислить правки. Одновременно поле ввода пользователя должно быть свободно и готово к ответу; пользователь не должен ждать скрытой работы Core или агента.
 

@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "d4724feea",
+  "lastRecordedCommit": "01986d601",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase4.reusable-phase-types.task1",
-  "expectedCommitMessage": "docs: define managed orchestration phase types",
+  "currentTaskId": "managed-orchestration.phase4.reusable-phase-types.task2",
+  "expectedCommitMessage": "docs: link application skeleton phases to phase types",
   "debt": {
-    "expectedCommitMessage": "docs: define managed orchestration phase types",
-    "preCommitHead": "d4724feea",
+    "expectedCommitMessage": "docs: link application skeleton phases to phase types",
+    "preCommitHead": "01986d601",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase4.reusable-phase-types.task1"
+    "taskId": "managed-orchestration.phase4.reusable-phase-types.task2"
   }
 }
 ```
@@ -98,9 +98,9 @@
 ### Stream: Reusable Phase Types
 
 18. [DONE] `managed-orchestration.phase4.reusable-phase-types.task1` Define reusable Type A / Type B phase contracts in the managed workflow orchestration planning document and link Application Skeleton Phase 1 to Type A (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: define managed orchestration phase types`).
-19. [PENDING] Git Commit: `docs: define managed orchestration phase types` (hash: TBD)
-20. [TODO] `managed-orchestration.phase4.reusable-phase-types.task2` Link Application Skeleton Phase 2 and Phase 3/4 planning documents to the reusable Type B / Type A phase contracts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: link application skeleton phases to phase types`).
-21. [TODO] Git Commit: `docs: link application skeleton phases to phase types` (hash: TBD)
+19. [DONE] Git Commit: `docs: define managed orchestration phase types` (hash: 01986d601)
+20. [DONE] `managed-orchestration.phase4.reusable-phase-types.task2` Link Application Skeleton Phase 2 and Phase 3/4 planning documents to the reusable Type B / Type A phase contracts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: link application skeleton phases to phase types`).
+21. [PENDING] Git Commit: `docs: link application skeleton phases to phase types` (hash: TBD)
 
 ### Stream: Remaining Phase Specs
 

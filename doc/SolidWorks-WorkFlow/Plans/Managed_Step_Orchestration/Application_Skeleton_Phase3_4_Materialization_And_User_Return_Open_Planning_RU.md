@@ -3,6 +3,7 @@
 **Статус:** черновик принятого сценария для будущей реализации.
 **Создан:** 2026-05-14.
 **Scope:** точная спецификация Phase 3 materialization и открытия Phase 4 `Persistent Application Skeleton User Return` для нового managed orchestration cluster.
+**Тип фазы:** Phase 3 — [Type A — Core-Gated Agent Work](Managed_Workflow_Orchestration_Cluster_Planning.md#type-a--core-gated-agent-work); Phase 4 opening — [Persistent Return Open Boundary](Managed_Workflow_Orchestration_Cluster_Planning.md#persistent-return-open-boundary).
 **Предыдущий документ:** `Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`.
 **Следующая тема обсуждения:** будущий отдельный кластер/модуль для пользовательских возвратов, рефакторингов и revisions уже принятого шага.
 
@@ -10,7 +11,7 @@
 
 Phase 3 открывается только после того, как пользователь принял Application Skeleton contract в Phase 2.
 
-Phase 3 относится к типу `Core-Gated Agent Work`:
+Phase 3 относится к reusable Type A `Core-Gated Agent Work`:
 
 - Core создаёт задачу материализации;
 - Core первым сообщением нового provider turn объясняет агенту, что контракт уже принят пользователем;
