@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "6218c65c9",
+  "lastRecordedCommit": "c382a9dbd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task11",
-  "expectedCommitMessage": "refactor: remove quality gates accept action UI",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task12",
+  "expectedCommitMessage": "refactor: remove managed accept contract client",
   "debt": {
-    "expectedCommitMessage": "refactor: remove quality gates accept action UI",
-    "preCommitHead": "6218c65c9",
+    "expectedCommitMessage": "refactor: remove managed accept contract client",
+    "preCommitHead": "c382a9dbd",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task11"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task12"
   }
 }
 ```
@@ -430,9 +430,9 @@ Verification for task 57:
 77. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task10` Remove Application Skeleton accept-contract action from PM UI during the rewrite (scope: `src/client/project-manager/components/application-skeleton/application-skeleton-panel.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.tsx, src/client/project-manager/components/application-skeleton/application-skeleton-accept-contract-button.test.tsx, doc/TODO/todo-plan.md`; expected commit: `refactor: remove application skeleton accept action UI`).
 78. [DONE] Git Commit: `refactor: remove application skeleton accept action UI` (hash: 6218c65c9)
 79. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task11` Remove Quality Gates accept-contract action from PM UI during the rewrite (scope: `src/client/project-manager/components/quality-gates/quality-gates-panel.tsx, src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.tsx, src/client/project-manager/components/quality-gates/quality-gates-accept-contract-button.test.tsx, doc/TODO/todo-plan.md`; expected commit: `refactor: remove quality gates accept action UI`).
-80. [PENDING] Git Commit: `refactor: remove quality gates accept action UI` (hash: TBD)
-81. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task12` Remove PM accept-contract transport client after the UI actions are gone (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept contract client`).
-82. [TODO] Git Commit: `refactor: remove managed accept contract client` (hash: TBD)
+80. [DONE] Git Commit: `refactor: remove quality gates accept action UI` (hash: c382a9dbd)
+81. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task12` Remove PM accept-contract transport client after the UI actions are gone (scope: `src/client/project-manager/services/managed-stage-accept-contract-client.ts, src/client/project-manager/services/managed-stage-accept-contract-client.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept contract client`).
+82. [PENDING] Git Commit: `refactor: remove managed accept contract client` (hash: TBD)
 83. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task13` Remove Core accept-contract HTTP route surface during the rewrite (scope: `packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.ts, packages/core/src/remote-bridge/handlers/http-api-managed-stage-accept-contract.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed accept contract http endpoint`).
 84. [TODO] Git Commit: `refactor: remove managed accept contract http endpoint` (hash: TBD)
 85. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task14` Remove typed accept-contract routing from message dispatch tests and runtime entrypoint (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/application-skeleton-typed-acceptance-router.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove typed managed accept routing`).
@@ -475,6 +475,12 @@ Verification for task 79:
 - `npm run build:project-manager` passed.
 - `npm run typecheck:webview` passed.
 - `rg -n "QualityGatesAcceptContractButton|quality-gates-accept-contract-button|Accept Contract|acceptQualityGatesContract|quality-gates-accept-contract" src/client/project-manager/components/quality-gates` returned no matches.
+
+Verification for task 81:
+
+- `npm run build:project-manager` passed.
+- `npm run typecheck:webview` passed.
+- `rg -n "managed-stage-accept-contract-client|acceptApplicationSkeletonContract|acceptQualityGatesContract|managed-stage-accept-contract|quality-gates-accept-contract" src/client/project-manager` returned no matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
