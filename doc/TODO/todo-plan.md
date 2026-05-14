@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "0410b4911",
+  "lastRecordedCommit": "8b65265f5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task2",
-  "expectedCommitMessage": "refactor: remove default managed lifecycle startup tail",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task3",
+  "expectedCommitMessage": "refactor: disable quality gates continuation dispatcher",
   "debt": {
-    "expectedCommitMessage": "refactor: remove default managed lifecycle startup tail",
-    "preCommitHead": "0410b4911",
+    "expectedCommitMessage": "refactor: disable quality gates continuation dispatcher",
+    "preCommitHead": "8b65265f5",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task2"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task3"
   }
 }
 ```
@@ -412,20 +412,22 @@ Verification for task 57:
 59. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task1` Remove the router-level managed workspace lifecycle preflight found by audit so managed documentation stages cannot bootstrap/commit old lifecycle state before the fail-closed session boundary (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: block managed lifecycle preflight during rewrite`).
 60. [DONE] Git Commit: `fix: block managed lifecycle preflight during rewrite` (hash: 0410b4911)
 61. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task2` Remove the now-unreachable default managed workspace lifecycle from workflow session startup, rewrite its tests around the fail-closed contract, rename the remaining stage predicate to rewrite-blocker semantics, and delete the unused lifecycle/adoption commit helpers exposed by that removal (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/managed-workspace/managed-workspace-adoption-committer.ts, packages/core/src/managed-workspace/managed-workspace-lifecycle-committer.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove default managed lifecycle startup tail`).
-62. [PENDING] Git Commit: `refactor: remove default managed lifecycle startup tail` (hash: TBD)
-63. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task3` Run the final codebase grep/test audit for legacy managed orchestrator activation paths and record the remaining intentional inactive/history-only references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
-64. [TODO] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
+62. [DONE] Git Commit: `refactor: remove default managed lifecycle startup tail` (hash: 8b65265f5)
+63. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task3` Disable the remaining Quality Gates provider continuation dispatcher so all managed-stage continuation dispatchers are no-op during the rewrite (scope: `packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: disable quality gates continuation dispatcher`).
+64. [PENDING] Git Commit: `refactor: disable quality gates continuation dispatcher` (hash: TBD)
+65. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task4` Run the final codebase grep/test audit for legacy managed orchestrator activation paths and record the remaining intentional inactive/history-only references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
+66. [TODO] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
 ### Stream: User Acceptance
 
-65. [TODO] `managed-orchestration-cleanup.phase10.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
+67. [TODO] `managed-orchestration-cleanup.phase10.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
 
 ## Phase 11 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Cleanup Scope
 
-66. [TODO] `managed-orchestration-cleanup.phase11.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
-67. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
-68. [TODO] `managed-orchestration-cleanup.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+68. [TODO] `managed-orchestration-cleanup.phase11.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
+69. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
+70. [TODO] `managed-orchestration-cleanup.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
