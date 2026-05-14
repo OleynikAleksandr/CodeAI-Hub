@@ -17,6 +17,8 @@ import type { CreateAndRegisterSessionOptions } from "./session-request-handler-
 
 const execFileAsync = promisify(execFile);
 const HANDOFF_COMMIT_MESSAGE = "chore: switch managed workspace stage";
+export const MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE =
+  "managed_workflow_rewrite_in_progress";
 
 export interface ManagedWorkspaceLifecycle {
   ensureReady(
@@ -64,6 +66,18 @@ export class SessionRequestHandlerWorkflowSession {
       readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
+    if (requiresManagedWorkspaceLifecycle(options.context.stage)) {
+      this.deps.logger.warn(
+        "Workflow session creation blocked: managed workflow rewrite in progress",
+        {
+          code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+          stage: options.context.stage,
+          workspaceRoot: options.workspacePath,
+        }
+      );
+      return null;
+    }
+
     const adapter = this.deps.providerRegistry.getAdapter(options.providerId);
     if (!adapter) {
       this.deps.logger.warn(

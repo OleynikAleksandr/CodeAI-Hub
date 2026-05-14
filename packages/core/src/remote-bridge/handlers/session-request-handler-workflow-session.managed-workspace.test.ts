@@ -11,6 +11,7 @@ import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import {
   DefaultManagedWorkspaceLifecycle,
+  MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
   SessionRequestHandlerWorkflowSession,
 } from "./session-request-handler-workflow-session";
 
@@ -46,19 +47,22 @@ const createAdapter = (): ProviderAdapter => ({
   subscribe: () => () => true,
 });
 
-const createLogger = (): Logger =>
+const createLogger = (warnings: unknown[] = []): Logger =>
   ({
-    warn: () => undefined,
+    warn: (_message: string, context?: unknown) => {
+      warnings.push(context);
+    },
   }) as unknown as Logger;
 
-test("createSessionForWorkflow prepares managed workspace before diagram modules provider session", async () => {
+test("createSessionForWorkflow fails closed before diagram modules provider session during managed rewrite", async () => {
   const calls: string[] = [];
+  const warnings: unknown[] = [];
   const service = new SessionRequestHandlerWorkflowSession({
     createAndRegisterSession: () => {
       calls.push("create-session");
       return Promise.resolve({ id: "runtime-session" } as Session);
     },
-    logger: createLogger(),
+    logger: createLogger(warnings),
     managedWorkspaceLifecycle: {
       ensureReady: (workspaceRoot) => {
         calls.push(`managed:${workspaceRoot}`);
@@ -69,7 +73,10 @@ test("createSessionForWorkflow prepares managed workspace before diagram modules
       handleProviderFailure: () => undefined,
     } as never,
     providerRegistry: {
-      getAdapter: () => createAdapter(),
+      getAdapter: () => {
+        calls.push("get-adapter");
+        return createAdapter();
+      },
     } as unknown as ProviderRegistry,
   });
 
@@ -82,20 +89,28 @@ test("createSessionForWorkflow prepares managed workspace before diagram modules
     },
   });
 
-  assert.equal(session?.id, "runtime-session");
-  assert.deepEqual(calls, ["managed:/tmp/workspace", "create-session"]);
+  assert.equal(session, null);
+  assert.deepEqual(calls, []);
+  assert.deepEqual(warnings, [
+    {
+      code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+      stage: "diagram_modules",
+      workspaceRoot: "/tmp/workspace",
+    },
+  ]);
 });
 
-test("createSessionForWorkflow prepares managed workspace before technical stage provider sessions", async () => {
+test("createSessionForWorkflow fails closed before technical stage provider sessions during managed rewrite", async () => {
   const stages = ["application_skeleton", "quality_gates"];
   for (const stage of stages) {
     const calls: string[] = [];
+    const warnings: unknown[] = [];
     const service = new SessionRequestHandlerWorkflowSession({
       createAndRegisterSession: () => {
         calls.push("create-session");
         return Promise.resolve({ id: `runtime-session:${stage}` } as Session);
       },
-      logger: createLogger(),
+      logger: createLogger(warnings),
       managedWorkspaceLifecycle: {
         ensureReady: (workspaceRoot) => {
           calls.push(`managed:${workspaceRoot}:${stage}`);
@@ -106,7 +121,10 @@ test("createSessionForWorkflow prepares managed workspace before technical stage
         handleProviderFailure: () => undefined,
       } as never,
       providerRegistry: {
-        getAdapter: () => createAdapter(),
+        getAdapter: () => {
+          calls.push("get-adapter");
+          return createAdapter();
+        },
       } as unknown as ProviderRegistry,
     });
 
@@ -119,10 +137,14 @@ test("createSessionForWorkflow prepares managed workspace before technical stage
       },
     });
 
-    assert.equal(session?.id, `runtime-session:${stage}`);
-    assert.deepEqual(calls, [
-      `managed:/tmp/workspace:${stage}`,
-      "create-session",
+    assert.equal(session, null);
+    assert.deepEqual(calls, []);
+    assert.deepEqual(warnings, [
+      {
+        code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+        stage,
+        workspaceRoot: "/tmp/workspace",
+      },
     ]);
   }
 });
