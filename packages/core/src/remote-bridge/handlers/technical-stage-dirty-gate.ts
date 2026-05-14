@@ -5,25 +5,19 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
-export type ManagedStageId =
+export type TechnicalStageId =
   | "diagram_modules"
   | "application_skeleton"
   | "quality_gates";
 
-export interface ManagedGitStatus {
+export interface TechnicalStageDirtyStatus {
   readonly clean: boolean;
-  readonly dirtyByStage: Readonly<Record<ManagedStageId, readonly string[]>>;
+  readonly dirtyByStage: Readonly<Record<TechnicalStageId, readonly string[]>>;
   readonly dirtyFiles: readonly string[];
 }
 
-const DIAGRAM_MODULES_PLAN_PATH =
-  "doc/TODO/stages/diagram-modules/todo-plan.md";
-const APPLICATION_SKELETON_PLAN_PATH =
-  "doc/TODO/stages/application-skeleton/todo-plan.md";
-const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
 const APPLICATION_SKELETON_ARTIFACT_PATH =
   "application_skeleton/application-skeleton-map.json";
-const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const QUALITY_GATES_ARTIFACT_PATH = "quality_gates/quality-gates.json";
 const APPLICATION_SKELETON_PATH_KEYS = new Set([
   "codePath",
@@ -78,7 +72,7 @@ const isSafeRelativeWorkspacePath = (value: string): boolean =>
   !value.split(PATH_SEGMENT_SEPARATOR_RE).includes("..") &&
   !value.startsWith("node_modules/");
 
-const collectManagedPathValues = (
+const collectTechnicalStagePathValues = (
   value: unknown,
   keys: ReadonlySet<string>,
   paths: Set<string>
@@ -88,7 +82,7 @@ const collectManagedPathValues = (
   }
   if (Array.isArray(value)) {
     for (const entry of value) {
-      collectManagedPathValues(entry, keys, paths);
+      collectTechnicalStagePathValues(entry, keys, paths);
     }
     return;
   }
@@ -105,11 +99,11 @@ const collectManagedPathValues = (
       }
       continue;
     }
-    collectManagedPathValues(entry, keys, paths);
+    collectTechnicalStagePathValues(entry, keys, paths);
   }
 };
 
-const readManagedDeclaredPaths = async (
+const readTechnicalStageDeclaredPaths = async (
   workspaceRoot: string,
   workspaceSlug: string,
   artifactPath: string,
@@ -126,7 +120,7 @@ const readManagedDeclaredPaths = async (
   );
   const parsed = content ? parseJsonObject(content) : null;
   const paths = new Set<string>();
-  collectManagedPathValues(parsed, keys, paths);
+  collectTechnicalStagePathValues(parsed, keys, paths);
   return paths;
 };
 
@@ -171,10 +165,10 @@ const isKnownQualityGatesIntegrationPath = (file: string): boolean =>
   file === "oxfmt.config.json" ||
   QG_TSCONFIG_RE.test(file);
 
-export const readManagedGitStatus = async (
+export const readTechnicalStageDirtyStatus = async (
   workspaceRoot: string,
   workspaceSlug: string
-): Promise<ManagedGitStatus> => {
+): Promise<TechnicalStageDirtyStatus> => {
   const { stdout } = await execFileAsync(
     "git",
     ["status", "--short", "--untracked-files=all"],
@@ -185,18 +179,19 @@ export const readManagedGitStatus = async (
     .map((line) => parseGitStatusPath(line))
     .filter((entry): entry is string => Boolean(entry))
     .filter((file) => !isVolatileCoreMetadataPath(file, workspaceSlug));
-  const dirtyByStage: Record<ManagedStageId, string[]> = {
+  const dirtyByStage: Record<TechnicalStageId, string[]> = {
     diagram_modules: [],
     application_skeleton: [],
     quality_gates: [],
   };
-  const applicationSkeletonDeclaredPaths = await readManagedDeclaredPaths(
-    workspaceRoot,
-    workspaceSlug,
-    APPLICATION_SKELETON_ARTIFACT_PATH,
-    APPLICATION_SKELETON_PATH_KEYS
-  );
-  const qualityGatesIntegrationPaths = await readManagedDeclaredPaths(
+  const applicationSkeletonDeclaredPaths =
+    await readTechnicalStageDeclaredPaths(
+      workspaceRoot,
+      workspaceSlug,
+      APPLICATION_SKELETON_ARTIFACT_PATH,
+      APPLICATION_SKELETON_PATH_KEYS
+    );
+  const qualityGatesIntegrationPaths = await readTechnicalStageDeclaredPaths(
     workspaceRoot,
     workspaceSlug,
     QUALITY_GATES_ARTIFACT_PATH,
@@ -208,7 +203,6 @@ export const readManagedGitStatus = async (
       file.startsWith(
         `.codeai-hub/${workspaceSlug}/workflow/revisions/application-skeleton/`
       ) ||
-      file === APPLICATION_SKELETON_PLAN_PATH ||
       file.startsWith("product-parts/") ||
       matchesDeclaredPath(file, applicationSkeletonDeclaredPaths)
     ) {
@@ -218,8 +212,7 @@ export const readManagedGitStatus = async (
       file.startsWith(`.codeai-hub/${workspaceSlug}/diagram_modules/`) ||
       file.startsWith(
         `.codeai-hub/${workspaceSlug}/workflow/revisions/diagram-modules/`
-      ) ||
-      file === DIAGRAM_MODULES_PLAN_PATH
+      )
     ) {
       dirtyByStage.diagram_modules.push(file);
     }
@@ -232,8 +225,6 @@ export const readManagedGitStatus = async (
       matchesDeclaredPath(file, qualityGatesIntegrationPaths) ||
       file === ".husky/pre-commit" ||
       file === ".husky/pre-push" ||
-      file === QUALITY_GATES_PLAN_PATH ||
-      file === WORKSPACE_PLAN_PATH ||
       file === "package.json" ||
       file === "package-lock.json"
     ) {
@@ -243,9 +234,9 @@ export const readManagedGitStatus = async (
   return { clean: dirtyFiles.length === 0, dirtyByStage, dirtyFiles };
 };
 
-export const listDirtyFilesOutsideManagedStage = (
-  status: ManagedGitStatus,
-  stage: ManagedStageId
+export const listDirtyFilesOutsideTechnicalStage = (
+  status: TechnicalStageDirtyStatus,
+  stage: TechnicalStageId
 ): readonly string[] => {
   const allowed = new Set(status.dirtyByStage[stage]);
   return status.dirtyFiles.filter((file) => !allowed.has(file));
@@ -257,12 +248,16 @@ const formatDirtyGateError = (
 ): string =>
   `Rewrite boundary blocked ${stageTitle}-owned files: ${files.join(", ")}. Respond with a content-readiness note or blocker only; do not run Git, staging, or plan commands.`;
 
-export const attachManagedGitStatus = <T extends object>(
+export const attachTechnicalStageDirtyFiles = <T extends object>(
   progress: T | null,
   files: readonly string[]
 ): T | null =>
   progress && files.length > 0
-    ? ({ ...progress, aggregateReady: false, managedGitDirtyFiles: files } as T)
+    ? ({
+        ...progress,
+        aggregateReady: false,
+        technicalStageDirtyFiles: files,
+      } as T)
     : progress;
 
 export const attachValidationDirtyGate = <

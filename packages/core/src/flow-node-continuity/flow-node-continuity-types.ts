@@ -14,7 +14,7 @@ export type FlowNodeContinuityRolloverFilter = Readonly<{
 
 export type FlowNodeContinuityRecoveryMode =
   | "continuity_report"
-  | "managed_workspace";
+  | "technical_workspace";
 
 export const FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS = [
   "description",
@@ -22,7 +22,7 @@ export const FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS = [
   "diagram_modules",
 ] as const;
 
-export const FLOW_NODE_CONTINUITY_MANAGED_STAGE_IDS = [
+export const FLOW_NODE_CONTINUITY_TECHNICAL_STAGE_IDS = [
   "diagram_modules",
   "application_skeleton",
   "quality_gates",

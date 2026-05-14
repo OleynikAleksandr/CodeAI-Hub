@@ -184,13 +184,10 @@ export interface CoreStatePayload {
   readonly sessions: readonly SerializedSession[];
 }
 
-export interface ManagedWorkflowLifecyclePayload {
+export interface TechnicalStageRewriteBoundaryPayload {
   readonly active: boolean;
   readonly blockers: readonly string[];
-  readonly controlPlanePath: string;
   readonly readOnlyStages: readonly string[];
-  readonly revisionRootPath: string;
-  readonly todoPlanPath: string;
 }
 
 interface SettingsLoadedPayload {

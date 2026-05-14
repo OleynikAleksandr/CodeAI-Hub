@@ -39,7 +39,7 @@ const readProgressFlag = (
   key: string
 ): boolean => progress?.[key] === true;
 
-const isManagedLifecycleActive = (
+const isTechnicalStageRewriteBoundaryActive = (
   workflowState: WorkflowStateSnapshot | null
 ): boolean =>
   workflowState?.stages.diagram_modules !== undefined &&
@@ -70,7 +70,8 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const activeStage = useWorkspaceTreeActiveStage(selectedWorkspaceId);
   const storeState = useWorkflowStateSnapshot();
   const workflowState: WorkflowStateSnapshot | null = storeState.snapshot;
-  const managedLifecycleActive = isManagedLifecycleActive(workflowState);
+  const technicalStageRewriteBoundaryActive =
+    isTechnicalStageRewriteBoundaryActive(workflowState);
   const baseIndent = 12;
   const depthIndent = 16 / 1.5;
   const emptyWorkspaceLabel = t(
@@ -233,14 +234,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       const blocked = workflowState.gating.blocked[stage] ?? false;
       const hasArtifact = stageArtifactAvailable[stage];
       const readOnly =
-        managedLifecycleActive && isReadOnlyUpstreamStage(stage);
+        technicalStageRewriteBoundaryActive && isReadOnlyUpstreamStage(stage);
       const title = resolveStageTitle(stage, status, blocked, t);
       return {
         id: `workflow:${stage}`,
         label: resolveStageLabel(stage, t),
         stage,
         title: readOnly
-          ? `${title} Managed lifecycle active: read-only upstream stage.`
+          ? `${title} Rewrite boundary active: read-only upstream stage.`
           : title,
         isSelected: stage === activeStage,
         status: resolveTreeStatus(status, blocked, hasArtifact),

@@ -32,9 +32,9 @@ const PROVIDER_STALE_BINDING_ERROR_CODES: ReadonlySet<string> = new Set([
   "CLAUDE_SESSION_STALE_BINDING",
   "CODEX_SESSION_STALE_BINDING",
 ]);
-const MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE =
-  "managed_workflow_rewrite_in_progress";
-const MANAGED_WORKFLOW_REWRITE_BLOCKED_STAGES: ReadonlySet<string> = new Set([
+const TECHNICAL_STAGE_REWRITE_BLOCKER_CODE =
+  "technical_stage_rewrite_in_progress";
+const TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES: ReadonlySet<string> = new Set([
   "diagram_modules",
   "application_skeleton",
   "quality_gates",
@@ -177,7 +177,7 @@ export class SessionRequestHandlerMessageDispatch {
     const { content, hiddenUserMessage, session, sessionId, turnOptions } =
       options;
     const stage = session.stage ?? null;
-    if (stage && MANAGED_WORKFLOW_REWRITE_BLOCKED_STAGES.has(stage)) {
+    if (stage && TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES.has(stage)) {
       if (
         !(
           hiddenUserMessage ||
@@ -187,16 +187,16 @@ export class SessionRequestHandlerMessageDispatch {
         return;
       }
       this.deps.logger.warn(
-        "Managed workflow user message blocked during orchestration rewrite",
-        { code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE, sessionId, stage }
+        "Technical stage user message blocked during orchestration rewrite",
+        { code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE, sessionId, stage }
       );
       this.deps.broadcaster({
         type: "session:error",
         payload: {
           sessionId,
           message:
-            "Managed workflow orchestration is temporarily disabled while the orchestration cluster is being rewritten.",
-          code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+            "Technical stage orchestration is temporarily disabled while the orchestration cluster is being rewritten.",
+          code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
           retryable: false,
         },
       });

@@ -265,7 +265,7 @@ test("diagram modules prompt pack targets product part index and omits generic t
   assert.equal(pack.content.includes("Runtime tooling facts:"), true);
   assert.equal(pack.content.includes("Artifact write encoding:"), true);
   assert.equal(pack.content.includes("Artifact edit operation:"), true);
-  assert.equal(pack.content.includes("Managed workflow context preflight:"), false);
+  assert.equal(pack.content.includes("context preflight:"), false);
   assert.equal(pack.content.includes('activeStage: "diagram_modules"'), false);
   for (const forbiddenPathLine of [
     "Target path (relative):",

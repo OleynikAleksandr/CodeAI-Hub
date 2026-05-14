@@ -6,6 +6,11 @@
 **Тип фазы:** [Type A — Core-Gated Agent Work](Managed_Workflow_Orchestration_Cluster_Planning.md#type-a--core-gated-agent-work).
 **Следующая тема обсуждения:** Phase 2 `Application Skeleton Contract Review`.
 
+**2026-05-14 cleanup note:** ссылки на `workspace.plan.md acceptedCommits`,
+child-plan mutation и workspace ledger в этом planning-документе являются
+проектными placeholder'ами для будущего `ManagedWorkflowPlanStore`. Retired
+generated child-plan/post-turn runtime не является активной реализацией.
+
 ## 1. Назначение Phase 1
 
 Phase 1 создаёт первый черновик Application Skeleton contract artifacts и проверяет их машинной Core-проверкой.
@@ -67,13 +72,13 @@ expectedCommitMessage = docs: draft application skeleton contract
 lastRecordedCommit = previous real Git hash | TBD
 ```
 
-Ожидаемое состояние workspace:
+Ожидаемое состояние workspace для будущего кластера:
 
-- managed workspace lifecycle установлен;
-- `doc/TODO/workspace.plan.md` существует;
+- new orchestration cluster lifecycle установлен;
+- persisted transition ledger exists in the storage format selected by `ManagedWorkflowPlanStore`;
 - active stage указывает на `application_skeleton`;
-- active child plan path указывает на `doc/TODO/stages/application-skeleton/todo-plan.md`;
-- upstream Diagram Modules accepted/committed;
+- active phase/task pointer belongs to the new cluster state, not retired generated child plans;
+- upstream Diagram Modules accepted/committed by the new cluster contract;
 - provider session существует или может быть восстановлена.
 
 ## 4. Core Prompt Для Agent
@@ -230,7 +235,9 @@ Core effects:
 4. Пометить Phase 1 task и paired `Git Commit` как `DONE`.
 5. Записать real hash в child plan.
 6. Обновить `lastRecordedCommit` real hash.
-7. Записать commit в `workspace.plan.md acceptedCommits`.
+7. Записать transition evidence в будущий `ManagedWorkflowPlanStore` / ledger
+   format (точное хранилище TBD; retired `workspace.plan.md acceptedCommits` не
+   является активным runtime contract).
 8. Открыть Phase 2:
 
    ```text

@@ -199,9 +199,9 @@ test("workflow-state read unblocks Application Skeleton after Core restart with 
   }
 });
 
-test("workflow-state read ignores malformed managed state while preserving skeleton progress", async () => {
+test("workflow-state read ignores malformed retired state while preserving skeleton progress", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "workflow-state-service-managed-")
+    path.join(os.tmpdir(), "workflow-state-service-retired-state-")
   );
   const workspaceSlug = "demo-workspace";
   const codePaths = [
@@ -362,8 +362,3 @@ test("workflow-state read with incomplete skeleton draft does not dispatch provi
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
-
-// Boundary test for committed-evidence stage-light truth lives in the dedicated
-// quality-gates-continuation-dispatcher / user-return-revision tests; this
-// file keeps integration coverage and stays under the 500-line architecture
-// limit.

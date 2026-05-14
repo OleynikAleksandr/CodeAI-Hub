@@ -6,13 +6,13 @@ import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
-import {
-  attachManagedGitStatus,
-  attachValidationDirtyGate,
-  listDirtyFilesOutsideManagedStage,
-  readManagedGitStatus,
-} from "./managed-git-stage-gate";
 import { resolveWorkflowBlockedStages } from "./quality-gates-progress";
+import {
+  attachTechnicalStageDirtyFiles,
+  attachValidationDirtyGate,
+  listDirtyFilesOutsideTechnicalStage,
+  readTechnicalStageDirtyStatus,
+} from "./technical-stage-dirty-gate";
 
 const execFileAsync = promisify(execFile);
 const APPLICATION_SKELETON_DIRTY_ERROR_RE =
@@ -65,9 +65,9 @@ const createWorkflowState = (): WorkflowState =>
     },
   }) as unknown as WorkflowState;
 
-test("managed Git status classifies dirty files by owning managed stage", async () => {
+test("technical stage dirty status classifies dirty files by owning stage", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "managed-git-stage-gate-")
+    path.join(os.tmpdir(), "technical-stage-dirty-gate-")
   );
   const workspaceSlug = "demo";
 
@@ -101,11 +101,14 @@ test("managed Git status classifies dirty files by owning managed stage", async 
     );
     await writeWorkspaceFile(
       workspaceRoot,
-      "scratch/outside-managed.txt",
+      "scratch/outside-technical-stage.txt",
       "unrelated\n"
     );
 
-    const status = await readManagedGitStatus(workspaceRoot, workspaceSlug);
+    const status = await readTechnicalStageDirtyStatus(
+      workspaceRoot,
+      workspaceSlug
+    );
 
     assert.equal(status.clean, false);
     assert.deepEqual(status.dirtyByStage.diagram_modules, [
@@ -124,7 +127,7 @@ test("managed Git status classifies dirty files by owning managed stage", async 
       false
     );
     assert.deepEqual(
-      status.dirtyFiles.includes("scratch/outside-managed.txt"),
+      status.dirtyFiles.includes("scratch/outside-technical-stage.txt"),
       true
     );
   } finally {
@@ -132,9 +135,9 @@ test("managed Git status classifies dirty files by owning managed stage", async 
   }
 });
 
-test("managed Git status classifies dynamic Quality Gates integration paths", async () => {
+test("technical stage dirty status classifies dynamic Quality Gates integration paths", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "managed-git-stage-gate-qg-dynamic-")
+    path.join(os.tmpdir(), "technical-stage-dirty-gate-qg-dynamic-")
   );
   const workspaceSlug = "demo";
 
@@ -176,7 +179,10 @@ test("managed Git status classifies dynamic Quality Gates integration paths", as
       "{}\n"
     );
 
-    const status = await readManagedGitStatus(workspaceRoot, workspaceSlug);
+    const status = await readTechnicalStageDirtyStatus(
+      workspaceRoot,
+      workspaceSlug
+    );
 
     assert.deepEqual(status.dirtyByStage.quality_gates, [
       ".oxfmtrc.json",
@@ -192,9 +198,9 @@ test("managed Git status classifies dynamic Quality Gates integration paths", as
   }
 });
 
-test("managed Git status classifies Application Skeleton declared root scaffold paths", async () => {
+test("technical stage dirty status classifies Application Skeleton declared root scaffold paths", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "managed-git-stage-gate-skeleton-dynamic-")
+    path.join(os.tmpdir(), "technical-stage-dirty-gate-skeleton-dynamic-")
   );
   const workspaceSlug = "demo";
 
@@ -234,7 +240,10 @@ test("managed Git status classifies Application Skeleton declared root scaffold 
     await writeWorkspaceFile(workspaceRoot, "package.json", "{}\n");
     await writeWorkspaceFile(workspaceRoot, "tsconfig.base.json", "{}\n");
 
-    const status = await readManagedGitStatus(workspaceRoot, workspaceSlug);
+    const status = await readTechnicalStageDirtyStatus(
+      workspaceRoot,
+      workspaceSlug
+    );
 
     assert.deepEqual(status.dirtyByStage.application_skeleton, [
       "package.json",
@@ -242,7 +251,7 @@ test("managed Git status classifies Application Skeleton declared root scaffold 
       "tsconfig.base.json",
     ]);
     assert.deepEqual(
-      listDirtyFilesOutsideManagedStage(status, "application_skeleton"),
+      listDirtyFilesOutsideTechnicalStage(status, "application_skeleton"),
       []
     );
   } finally {
@@ -250,9 +259,9 @@ test("managed Git status classifies Application Skeleton declared root scaffold 
   }
 });
 
-test("managed Git status ignores volatile Core metadata after restart", async () => {
+test("technical stage dirty status ignores volatile Core metadata after restart", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "managed-git-stage-gate-volatile-")
+    path.join(os.tmpdir(), "technical-stage-dirty-gate-volatile-")
   );
   const workspaceSlug = "demo";
 
@@ -313,7 +322,10 @@ test("managed Git status ignores volatile Core metadata after restart", async ()
       )}\n`
     );
 
-    const status = await readManagedGitStatus(workspaceRoot, workspaceSlug);
+    const status = await readTechnicalStageDirtyStatus(
+      workspaceRoot,
+      workspaceSlug
+    );
 
     assert.equal(status.clean, true);
     assert.deepEqual(status.dirtyFiles, []);
@@ -325,8 +337,8 @@ test("managed Git status ignores volatile Core metadata after restart", async ()
   }
 });
 
-test("managed dirty files downgrade owning stage progress with precise errors", () => {
-  const diagramProgress = attachManagedGitStatus(
+test("technical stage dirty files downgrade owning stage progress with precise errors", () => {
+  const diagramProgress = attachTechnicalStageDirtyFiles(
     {
       aggregateReady: true,
       generatedCount: 1,
@@ -338,7 +350,7 @@ test("managed dirty files downgrade owning stage progress with precise errors", 
     [".codeai-hub/demo/diagram_modules/product-parts/core.md"]
   ) as unknown as {
     readonly aggregateReady: boolean;
-    readonly managedGitDirtyFiles: string[];
+    readonly technicalStageDirtyFiles: string[];
   };
 
   const skeletonProgress = attachValidationDirtyGate(
@@ -352,7 +364,7 @@ test("managed dirty files downgrade owning stage progress with precise errors", 
   );
 
   assert.equal(diagramProgress.aggregateReady, false);
-  assert.deepEqual(diagramProgress.managedGitDirtyFiles, [
+  assert.deepEqual(diagramProgress.technicalStageDirtyFiles, [
     ".codeai-hub/demo/diagram_modules/product-parts/core.md",
   ]);
   assert.equal(skeletonProgress?.substep, "failed");
@@ -362,7 +374,7 @@ test("managed dirty files downgrade owning stage progress with precise errors", 
   );
 });
 
-test("managed dirty-gate error uses neutral content-readiness wording without git imperatives", () => {
+test("technical stage dirty-gate error uses neutral content-readiness wording without git imperatives", () => {
   const skeletonProgress = attachValidationDirtyGate(
     {
       materialized: true,
@@ -380,14 +392,14 @@ test("managed dirty-gate error uses neutral content-readiness wording without gi
   assert.doesNotMatch(error, FORBIDDEN_GIT_IMPERATIVES_RE);
 });
 
-test("managed dirty Git does not re-block completed upstream Application Skeleton", () => {
+test("technical stage dirty Git does not re-block completed upstream Application Skeleton", () => {
   const cleanBlocked = resolveWorkflowBlockedStages({
     applicationSkeletonProgress: { materialized: true } as never,
     description: {
       finalPath: ".codeai-hub/demo/description/Final_Description.md",
     },
     diagramModulesProgress: { aggregateReady: true } as never,
-    managedGitClean: true,
+    technicalStageGitClean: true,
     state: createWorkflowState(),
   });
   const dirtyBlocked = resolveWorkflowBlockedStages({
@@ -396,7 +408,7 @@ test("managed dirty Git does not re-block completed upstream Application Skeleto
       finalPath: ".codeai-hub/demo/description/Final_Description.md",
     },
     diagramModulesProgress: { aggregateReady: true } as never,
-    managedGitClean: false,
+    technicalStageGitClean: false,
     state: createWorkflowState(),
   });
   const dirtyBeforeSkeletonMaterialized = resolveWorkflowBlockedStages({
@@ -405,7 +417,7 @@ test("managed dirty Git does not re-block completed upstream Application Skeleto
       finalPath: ".codeai-hub/demo/description/Final_Description.md",
     },
     diagramModulesProgress: { aggregateReady: true } as never,
-    managedGitClean: false,
+    technicalStageGitClean: false,
     state: createWorkflowState(),
   });
 

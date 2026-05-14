@@ -61,13 +61,10 @@ export type WorkflowLastActiveSnapshot = {
   readonly updatedAt: string;
 };
 
-export type ManagedWorkflowLifecycleSnapshot = {
+export type TechnicalStageRewriteBoundarySnapshot = {
   readonly active: boolean;
   readonly blockers: readonly string[];
-  readonly controlPlanePath: string;
   readonly readOnlyStages: readonly string[];
-  readonly revisionRootPath: string;
-  readonly todoPlanPath: string;
 };
 
 export type DiagramModulesSubturnSnapshot =
@@ -112,7 +109,7 @@ export type WorkflowStateSnapshot = {
   readonly lastActive: WorkflowLastActiveSnapshot | null;
   readonly description: DescriptionBranchSnapshot | null;
   readonly gating: WorkflowGatingSnapshot;
-  readonly managedLifecycle?: ManagedWorkflowLifecycleSnapshot | null;
+  readonly technicalStageRewriteBoundary?: TechnicalStageRewriteBoundarySnapshot | null;
   readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
   readonly applicationSkeletonProgress?: Record<string, unknown> | null;
   readonly qualityGatesProgress?: Record<string, unknown> | null;
@@ -125,7 +122,7 @@ type WorkflowStateResponse = {
   readonly lastActive?: unknown;
   readonly description?: unknown;
   readonly gating?: unknown;
-  readonly managedLifecycle?: unknown;
+  readonly technicalStageRewriteBoundary?: unknown;
   readonly diagramModulesProgress?: unknown;
   readonly applicationSkeletonProgress?: unknown;
   readonly qualityGatesProgress?: unknown;
@@ -297,19 +294,16 @@ const parseStringArray = (value: unknown): readonly string[] =>
     ? value.filter((item): item is string => typeof item === "string")
     : [];
 
-const parseManagedLifecycle = (
+const parseTechnicalStageRewriteBoundary = (
   payload: unknown
-): ManagedWorkflowLifecycleSnapshot | null => {
+): TechnicalStageRewriteBoundarySnapshot | null => {
   if (!isRecord(payload) || typeof payload.active !== "boolean") {
     return null;
   }
   return {
     active: payload.active,
     blockers: parseStringArray(payload.blockers),
-    controlPlanePath: readNonEmptyString(payload.controlPlanePath) ?? "",
     readOnlyStages: parseStringArray(payload.readOnlyStages),
-    revisionRootPath: readNonEmptyString(payload.revisionRootPath) ?? "",
-    todoPlanPath: readNonEmptyString(payload.todoPlanPath) ?? "",
   };
 };
 
@@ -332,7 +326,9 @@ const parseWorkflowState = (
   const lastActive = parseLastActiveSnapshot(response?.lastActive);
   const description = parseDescriptionBranch(response?.description);
   const gating = parseWorkflowGating({ payload: response?.gating, stageOrder: STAGE_ORDER });
-  const managedLifecycle = parseManagedLifecycle(response?.managedLifecycle);
+  const technicalStageRewriteBoundary = parseTechnicalStageRewriteBoundary(
+    response?.technicalStageRewriteBoundary
+  );
   const diagramModulesProgress = isRecord(response?.diagramModulesProgress)
     ? (response.diagramModulesProgress as DiagramModulesProgressSnapshot)
     : null;
@@ -368,7 +364,7 @@ const parseWorkflowState = (
     lastActive,
     description,
     gating,
-    managedLifecycle,
+    technicalStageRewriteBoundary,
     diagramModulesProgress,
     applicationSkeletonProgress,
     qualityGatesProgress,

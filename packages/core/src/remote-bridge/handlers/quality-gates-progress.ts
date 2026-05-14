@@ -30,8 +30,8 @@ export interface QualityGatesProgressSnapshot {
   readonly validationErrors: readonly string[];
 }
 
-const HOOK_SECTION_START = "# codeai-managed:gates:start";
-const HOOK_SECTION_END = "# codeai-managed:gates:end";
+const HOOK_SECTION_START = "# codeai:gates:start";
+const HOOK_SECTION_END = "# codeai:gates:end";
 
 const readExistingFile = async (
   absolutePath: string
@@ -107,7 +107,7 @@ const readHookText = async (
 ): Promise<string> =>
   (await readExistingFile(path.join(workspaceRoot, ".husky", hookName))) ?? "";
 
-const extractManagedHookSection = (hookText: string): string | null => {
+const extractCodeAiHookSection = (hookText: string): string | null => {
   const startIndex = hookText.indexOf(HOOK_SECTION_START);
   const endIndex = hookText.indexOf(HOOK_SECTION_END);
   if (startIndex < 0 || endIndex < 0 || endIndex <= startIndex) {
@@ -123,8 +123,8 @@ const validateHookCommands = (params: {
   readonly hookName: string;
   readonly hookText: string;
 }): readonly string[] => {
-  const managedSection = extractManagedHookSection(params.hookText);
-  const haystack = managedSection ?? params.hookText;
+  const codeAiSection = extractCodeAiHookSection(params.hookText);
+  const haystack = codeAiSection ?? params.hookText;
   return params.gateIds
     .filter((gateId) => {
       const packageScriptName = toPackageScriptName(gateId);
@@ -371,27 +371,27 @@ export const resolveWorkflowBlockedStages = (params: {
     readonly finalPath?: string;
   } | null;
   readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
-  readonly managedGitClean?: boolean;
+  readonly technicalStageGitClean?: boolean;
   readonly state: WorkflowState;
 }): Partial<Record<WorkflowStageId, boolean>> => {
   const descriptionDone = Boolean(params.description?.finalPath);
-  const managedModeActive =
+  const technicalStageModeActive =
     params.state.stages.diagram_modules.status !== "idle";
   const virtualSimulationArtifactAvailable = stageHasArtifact({
     state: params.state,
     stage: "virtual_simulation",
     fileName: "virtual-simulation.md",
   });
-  const managedGitBlocked = params.managedGitClean === false;
+  const technicalStageGitBlocked = params.technicalStageGitClean === false;
   const applicationSkeletonMaterialized =
     params.applicationSkeletonProgress?.materialized === true;
   return {
-    description: managedModeActive,
-    virtual_simulation: managedModeActive || !descriptionDone,
+    description: technicalStageModeActive,
+    virtual_simulation: technicalStageModeActive || !descriptionDone,
     diagram_modules: !virtualSimulationArtifactAvailable,
     application_skeleton:
       !params.diagramModulesProgress?.aggregateReady ||
-      (managedGitBlocked && !applicationSkeletonMaterialized),
-    quality_gates: managedGitBlocked || !applicationSkeletonMaterialized,
+      (technicalStageGitBlocked && !applicationSkeletonMaterialized),
+    quality_gates: technicalStageGitBlocked || !applicationSkeletonMaterialized,
   };
 };

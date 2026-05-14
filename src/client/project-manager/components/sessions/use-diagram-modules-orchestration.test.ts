@@ -112,8 +112,8 @@ test("diagram modules orchestration source code invariants", async () => {
     "pending product part state keeps PM input locked"
   );
   assert.ok(
-    source.includes("progress?.hasManagedCommitGate"),
-    "managed dirty/blocked commit state keeps PM input locked"
+    source.includes("progress?.hasTechnicalStageDirtyGate"),
+    "technical-stage dirty/blocked state keeps PM input locked"
   );
   assert.equal(
     source.includes(".finally(() => {\n        setSequenceLock"),
@@ -123,15 +123,15 @@ test("diagram modules orchestration source code invariants", async () => {
   assert.equal(
     source.includes("api.sendSessionMessage("),
     false,
-    "Project Manager must not send managed workflow continuation messages"
+    "Project Manager must not send technical-stage continuation messages"
   );
   assert.equal(
     source.includes("buildDiagramModulesContinuationPrompt"),
     false,
-    "managed workflow continuation prompts are Core-owned, not PM-owned"
+    "technical-stage continuation prompts are disabled during rewrite"
   );
   assert.ok(
-    source.includes("managedGitOutOfOwnerDirtyFiles"),
+    source.includes("technicalStageOutOfOwnerDirtyFiles"),
     "out-of-target dirty files keep continuation blocked"
   );
   for (const banned of ['visibility: "hidden"', "cachedPartTemplateRef"]) {

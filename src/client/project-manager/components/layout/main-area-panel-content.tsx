@@ -95,7 +95,7 @@ const renderLocalizationSyncBlockedState = (
   </div>
 );
 
-const isManagedLifecycleActive = (
+const isTechnicalStageRewriteBoundaryActive = (
   snapshot: WorkflowStateSnapshot | null
 ): boolean => snapshot?.stages.diagram_modules !== undefined && snapshot.stages.diagram_modules !== "idle";
 
@@ -443,7 +443,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
 
   if (
     isReadOnlyUpstreamTool(activeTool) &&
-    isManagedLifecycleActive(workflowSnapshot)
+    isTechnicalStageRewriteBoundaryActive(workflowSnapshot)
   ) {
     const stageTitle =
       resolveWorkflowToolHeaderTitle(activeTool) ?? activeTool ?? "Workflow stage";
@@ -461,7 +461,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
         {t(
           "ui_interface",
           "pm.workflow.upstream_readonly.body",
-          "Managed workspace lifecycle has started at Diagram Modules. Existing artifacts remain available from the tree, but this upstream stage can no longer be edited."
+          "Technical stage rewrite boundary has started at Diagram Modules. Existing artifacts remain available from the tree, but this upstream stage can no longer be edited."
         )}
       </div>
     );

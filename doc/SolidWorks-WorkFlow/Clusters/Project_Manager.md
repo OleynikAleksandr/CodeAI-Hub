@@ -28,10 +28,12 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - является единственной user-facing runtime bootstrap authority для живого Core workflow.
 
 Project Manager не является владельцем managed workflow acceptance или
-automatic provider continuation. Для managed stages он отправляет только
-пользовательские intents и отображает Core snapshots/read-model; автоматические
-repair/acceptance/continuation сообщения агенту принадлежат Core post-turn
-pipeline.
+automatic provider continuation. During the orchestration rewrite, managed
+technical stages are fail-closed: PM отправляет только пользовательские intents
+и отображает Core snapshots/read-model. Automatic repair/acceptance/continuation
+сообщения агенту не должны исходить ни из PM read path, ни из retired Core
+post-turn shims; их новый владелец появится только в dedicated orchestration
+cluster.
 
 ## 2) Где живёт код
 

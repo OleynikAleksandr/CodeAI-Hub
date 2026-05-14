@@ -144,7 +144,7 @@ export class SessionProviderEventRouter {
       this.isDuplicateTerminalEvent(sessionId, typedEvent)
     ) {
       this.deps.logger.debug(
-        "Skipping duplicate terminal provider event for managed arbitration",
+        "Skipping duplicate terminal provider event for continuity arbitration",
         { sessionId, eventType: typedEvent.type }
       );
       return;

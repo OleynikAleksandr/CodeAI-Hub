@@ -100,7 +100,7 @@ test("main-area panel content routes application skeleton artifacts and help", a
   assert.equal(source.includes("renderWorkflowStagePanel({"), true);
 });
 
-test("managed upstream read-only panel covers virtual simulation and localization keys", async () => {
+test("technical-stage upstream read-only panel covers virtual simulation and localization keys", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
   const uiInterface = JSON.parse(
     await readFile(UI_INTERFACE_SOURCE_PATH, "utf8")
@@ -129,7 +129,7 @@ test("managed upstream read-only panel covers virtual simulation and localizatio
   );
   assert.equal(
     uiInterface["pm.workflow.upstream_readonly.body"]?.includes(
-      "Managed workspace lifecycle has started at Diagram Modules."
+      "Technical stage rewrite boundary has started at Diagram Modules."
     ),
     true
   );

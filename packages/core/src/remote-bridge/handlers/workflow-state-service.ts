@@ -13,21 +13,21 @@ import { WorkflowStateFacade } from "../../workflow/state/workflow-state-facade"
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
 import { applyVirtualSimulationValidation } from "../../workflow/validation/virtual-simulation-validator";
 import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types";
-import type { ManagedWorkflowLifecyclePayload } from "../types";
+import type { TechnicalStageRewriteBoundaryPayload } from "../types";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
-import {
-  attachManagedGitStatus,
-  attachValidationDirtyGate,
-  readManagedGitStatus,
-} from "./managed-git-stage-gate";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
   applyTechnicalRootProgressToState,
   readQualityGatesProgressSnapshot,
   resolveWorkflowBlockedStages,
 } from "./quality-gates-progress";
+import {
+  attachTechnicalStageDirtyFiles,
+  attachValidationDirtyGate,
+  readTechnicalStageDirtyStatus,
+} from "./technical-stage-dirty-gate";
 import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
 import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
@@ -44,19 +44,19 @@ const readAbsolutePath = (value: unknown): string | null => {
   }
   return path.isAbsolute(trimmed) ? trimmed : null;
 };
-const isManagedWorkflowActive = (state: WorkflowState): boolean =>
+const isTechnicalStageRewriteBoundaryActive = (state: WorkflowState): boolean =>
   state.stages.diagram_modules.status !== "idle" ||
   state.stages.application_skeleton.status !== "idle" ||
   state.stages.quality_gates.status !== "idle";
 type WorkspaceSlugResult =
   | { readonly ok: true; readonly value: string }
   | { readonly ok: false; readonly status: number; readonly error: string };
-const resolveManagedLifecycle = (params: {
+const resolveTechnicalStageRewriteBoundary = (params: {
   readonly applicationSkeletonProgress: ApplicationSkeletonProgressSnapshot | null;
   readonly qualityGatesProgress: QualityGatesProgressSnapshot | null;
   readonly state: WorkflowState;
-}): ManagedWorkflowLifecyclePayload => {
-  const active = isManagedWorkflowActive(params.state);
+}): TechnicalStageRewriteBoundaryPayload => {
+  const active = isTechnicalStageRewriteBoundaryActive(params.state);
   const blockers = [
     ...(params.applicationSkeletonProgress?.validationErrors ?? []),
     ...(params.qualityGatesProgress?.validationErrors ?? []),
@@ -67,10 +67,7 @@ const resolveManagedLifecycle = (params: {
   return {
     active,
     blockers,
-    controlPlanePath: ".codeai-hub/workflow",
     readOnlyStages: active ? ["description", "virtual_simulation"] : [],
-    revisionRootPath: ".codeai-hub/workflow/revisions",
-    todoPlanPath: "doc/TODO/workspace.plan.md",
   };
 };
 
@@ -146,7 +143,7 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlug: workspaceSlugResult.value,
     });
-    const managedGitStatusPromise = readManagedGitStatus(
+    const technicalStageDirtyStatusPromise = readTechnicalStageDirtyStatus(
       workspaceRoot,
       workspaceSlugResult.value
     );
@@ -158,7 +155,7 @@ export class WorkflowStateService {
       diagramModulesProgressPromise,
       applicationSkeletonProgressPromise,
       qualityGatesProgressPromise,
-      managedGitStatusPromise,
+      technicalStageDirtyStatusPromise,
     ])
       .then(
         ([
@@ -168,120 +165,121 @@ export class WorkflowStateService {
           rawDiagramModulesProgress,
           rawApplicationSkeletonProgress,
           rawQualityGatesProgress,
-          managedGitStatus,
+          technicalStageDirtyStatus,
         ]) => {
           const description = descriptionSnapshot
             ? buildDescriptionBranchSnapshot(descriptionSnapshot)
             : null;
-          const managedProgress = {
+          const technicalStageProgress = {
             applicationSkeletonProgress: attachValidationDirtyGate(
               rawApplicationSkeletonProgress,
               "Application Skeleton",
-              managedGitStatus.dirtyByStage.application_skeleton
+              technicalStageDirtyStatus.dirtyByStage.application_skeleton
             ),
-            diagramModulesProgress: attachManagedGitStatus(
+            diagramModulesProgress: attachTechnicalStageDirtyFiles(
               rawDiagramModulesProgress,
-              managedGitStatus.dirtyByStage.diagram_modules
+              technicalStageDirtyStatus.dirtyByStage.diagram_modules
             ),
-            managedGitStatus,
+            technicalStageDirtyStatus,
             qualityGatesProgress: attachValidationDirtyGate(
               rawQualityGatesProgress,
               "Quality Gates",
-              managedGitStatus.dirtyByStage.quality_gates
+              technicalStageDirtyStatus.dirtyByStage.quality_gates
             ),
           };
-          return Promise.resolve(managedProgress).then((managedProgress) =>
-            hydrateWorkflowStateFromFilesystem({
-              state,
-              workspaceRoot,
-              workspaceSlug: workspaceSlugResult.value,
-            })
-              .then((hydratedState) =>
-                applyVirtualSimulationValidation({
-                  state: hydratedState,
+          return hydrateWorkflowStateFromFilesystem({
+            state,
+            workspaceRoot,
+            workspaceSlug: workspaceSlugResult.value,
+          })
+            .then((hydratedState) =>
+              applyVirtualSimulationValidation({
+                state: hydratedState,
+                workspaceRoot,
+                workspaceSlug: workspaceSlugResult.value,
+              })
+            )
+            .then((validatedState) =>
+              hydrateDiagramModulesStateFromProgress({
+                state: validatedState,
+                workspaceRoot,
+                workspaceSlug: workspaceSlugResult.value,
+                diagramModulesProgress:
+                  technicalStageProgress.diagramModulesProgress,
+              })
+            )
+            .then((validatedState) =>
+              applyTechnicalRootProgressToState({
+                state: validatedState,
+                applicationSkeletonProgress:
+                  technicalStageProgress.applicationSkeletonProgress,
+                qualityGatesProgress:
+                  technicalStageProgress.qualityGatesProgress,
+              })
+            )
+            .then((validatedState) =>
+              this.developmentTreeState
+                .currentSnapshot({
                   workspaceRoot,
                   workspaceSlug: workspaceSlugResult.value,
+                  plannedPartIds:
+                    technicalStageProgress.diagramModulesProgress
+                      ?.plannedPartIds ?? [],
+                  generatedPartIds:
+                    technicalStageProgress.diagramModulesProgress
+                      ?.generatedPartIds ?? [],
                 })
-              )
-              .then((validatedState) =>
-                hydrateDiagramModulesStateFromProgress({
-                  state: validatedState,
-                  workspaceRoot,
-                  workspaceSlug: workspaceSlugResult.value,
-                  diagramModulesProgress:
-                    managedProgress.diagramModulesProgress,
-                })
-              )
-              .then((validatedState) =>
-                applyTechnicalRootProgressToState({
-                  state: validatedState,
-                  applicationSkeletonProgress:
-                    managedProgress.applicationSkeletonProgress,
-                  qualityGatesProgress: managedProgress.qualityGatesProgress,
-                })
-              )
-              .then((validatedState) =>
-                this.developmentTreeState
-                  .currentSnapshot({
+                .then((developmentTree) => {
+                  return applyDevelopmentTreeFreshnessToState({
+                    developmentTree,
+                    state: validatedState,
                     workspaceRoot,
-                    workspaceSlug: workspaceSlugResult.value,
-                    plannedPartIds:
-                      managedProgress.diagramModulesProgress?.plannedPartIds ??
-                      [],
-                    generatedPartIds:
-                      managedProgress.diagramModulesProgress
-                        ?.generatedPartIds ?? [],
-                  })
-                  .then((developmentTree) => {
-                    return applyDevelopmentTreeFreshnessToState({
-                      developmentTree,
-                      state: validatedState,
-                      workspaceRoot,
-                    }).then((responseState) => {
-                      const canonicalLastActive = resolveCanonicalLastActive({
-                        chains,
-                        description,
-                        lastActive,
-                        state: responseState,
-                        workspaceSlug: workspaceSlugResult.value,
-                      });
-                      const gating = {
-                        blocked: resolveWorkflowBlockedStages({
-                          state: responseState,
-                          description,
-                          diagramModulesProgress:
-                            managedProgress.diagramModulesProgress,
-                          applicationSkeletonProgress:
-                            managedProgress.applicationSkeletonProgress,
-                          managedGitClean:
-                            managedProgress.managedGitStatus.clean,
-                        }),
-                      };
-                      res.json({
-                        state: responseState,
-                        continuity: { chains },
-                        description,
-                        lastActive: canonicalLastActive,
-                        gating,
-                        diagramModulesProgress:
-                          managedProgress.diagramModulesProgress,
-                        applicationSkeletonProgress:
-                          managedProgress.applicationSkeletonProgress,
-                        qualityGatesProgress:
-                          managedProgress.qualityGatesProgress,
-                        developmentTree,
-                        managedLifecycle: resolveManagedLifecycle({
-                          state: responseState,
-                          applicationSkeletonProgress:
-                            managedProgress.applicationSkeletonProgress,
-                          qualityGatesProgress:
-                            managedProgress.qualityGatesProgress,
-                        }),
-                      });
+                  }).then((responseState) => {
+                    const canonicalLastActive = resolveCanonicalLastActive({
+                      chains,
+                      description,
+                      lastActive,
+                      state: responseState,
+                      workspaceSlug: workspaceSlugResult.value,
                     });
-                  })
-              )
-          );
+                    const gating = {
+                      blocked: resolveWorkflowBlockedStages({
+                        state: responseState,
+                        description,
+                        diagramModulesProgress:
+                          technicalStageProgress.diagramModulesProgress,
+                        applicationSkeletonProgress:
+                          technicalStageProgress.applicationSkeletonProgress,
+                        technicalStageGitClean:
+                          technicalStageProgress.technicalStageDirtyStatus
+                            .clean,
+                      }),
+                    };
+                    res.json({
+                      state: responseState,
+                      continuity: { chains },
+                      description,
+                      lastActive: canonicalLastActive,
+                      gating,
+                      diagramModulesProgress:
+                        technicalStageProgress.diagramModulesProgress,
+                      applicationSkeletonProgress:
+                        technicalStageProgress.applicationSkeletonProgress,
+                      qualityGatesProgress:
+                        technicalStageProgress.qualityGatesProgress,
+                      developmentTree,
+                      technicalStageRewriteBoundary:
+                        resolveTechnicalStageRewriteBoundary({
+                          state: responseState,
+                          applicationSkeletonProgress:
+                            technicalStageProgress.applicationSkeletonProgress,
+                          qualityGatesProgress:
+                            technicalStageProgress.qualityGatesProgress,
+                        }),
+                    });
+                  });
+                })
+            );
         }
       )
       .catch((error) => {

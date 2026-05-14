@@ -11,12 +11,6 @@ export type WorkflowEvent = {
   readonly filePath?: string;
   readonly gateId?: string;
   readonly detail?: string;
-  readonly managedLifecycle?: WorkflowEventManagedLifecycle;
-};
-
-export type WorkflowEventManagedLifecycle = {
-  readonly blocker?: string;
-  readonly status: string;
 };
 
 type WorkflowEventsResponse = {
@@ -55,23 +49,6 @@ const normalizeEvent = (event: unknown): WorkflowEvent | null => {
     filePath: readNonEmptyString(event.filePath ?? undefined) ?? undefined,
     gateId: readNonEmptyString(event.gateId ?? undefined) ?? undefined,
     detail: readNonEmptyString(event.detail ?? undefined) ?? undefined,
-    managedLifecycle: normalizeManagedLifecycle(event.managedLifecycle),
-  };
-};
-
-const normalizeManagedLifecycle = (
-  payload: unknown
-): WorkflowEventManagedLifecycle | undefined => {
-  if (!isRecord(payload)) {
-    return undefined;
-  }
-  const status = readNonEmptyString(payload.status);
-  if (!status) {
-    return undefined;
-  }
-  return {
-    blocker: readNonEmptyString(payload.blocker ?? undefined) ?? undefined,
-    status,
   };
 };
 

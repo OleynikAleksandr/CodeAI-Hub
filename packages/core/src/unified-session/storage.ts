@@ -1,4 +1,3 @@
-import { appendFile, mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import {
@@ -22,36 +21,9 @@ import {
 import { UnifiedSessionStorageDiagnostics } from "./unified-session-storage-diagnostics";
 import { listUnifiedSessionWorkspaceSlugs } from "./workspace-slugs";
 
-export type ManagedAuditRecordKind =
-  | "managed_corrective"
-  | "managed_continuation"
-  | "managed_acceptance_check"
-  | "managed_post_turn_decision";
-
-export interface ManagedAuditRecord {
-  readonly kind: ManagedAuditRecordKind;
-  readonly source: "core";
-  readonly text: string;
-  readonly timestamp: string;
-}
-
-export const MANAGED_AUDIT_FILE_SUFFIX = ".audit.jsonl";
-
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 const sanitizeSessionId = (value: string): string =>
   sanitizeWorkspaceSlug(value);
-
-const buildSessionAuditFilePath = (params: {
-  readonly provider: string;
-  readonly rootDirectory: string;
-  readonly sessionId: string;
-  readonly workspaceSlug: string;
-}): string => {
-  const baseFilePath = buildSessionFilePath(params);
-  return baseFilePath.endsWith(".jsonl")
-    ? `${baseFilePath.slice(0, -".jsonl".length)}${MANAGED_AUDIT_FILE_SUFFIX}`
-    : `${baseFilePath}${MANAGED_AUDIT_FILE_SUFFIX}`;
-};
 
 interface PendingSession {
   historySessionId: string;
@@ -87,31 +59,6 @@ export class UnifiedSessionStorage {
       ? sanitizeWorkspaceSlug(options.workspaceSlug)
       : "default-workspace";
     this.rootDirectory = options.rootDirectory ?? SESSION_ROOT;
-  }
-
-  async appendManagedAuditRecord(params: {
-    readonly record: ManagedAuditRecord;
-    readonly sessionId: string;
-  }): Promise<void> {
-    const entry = this.sessions.get(params.sessionId);
-    if (!entry) {
-      this.logger.debug("Skipping managed audit append for unknown session", {
-        sessionId: params.sessionId,
-      });
-      return;
-    }
-    const auditFilePath = buildSessionAuditFilePath({
-      provider: entry.providerId,
-      rootDirectory: this.rootDirectory,
-      sessionId: entry.historySessionId,
-      workspaceSlug: entry.workspaceSlug,
-    });
-    await mkdir(path.dirname(auditFilePath), { recursive: true });
-    await appendFile(
-      auditFilePath,
-      `${JSON.stringify(params.record)}\n`,
-      "utf8"
-    );
   }
 
   register(

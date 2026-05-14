@@ -25,11 +25,11 @@ The common cause is architectural: managed step orchestration is not implemented
 
 The new scope must start from the module/cluster architecture, then define phases and transition scenarios, and only after that rewrite implementation.
 
-## 2. Current As-Is Shape
+## 2. Historical As-Is Shape Before Cleanup
 
-Today the logical "Core orchestrator" is not one workflow module.
+Before the cleanup-first rewrite, the logical "Core orchestrator" was not one workflow module.
 
-Main code areas:
+Former code areas:
 
 - `packages/core/src/orchestrator/core-orchestrator.ts` starts the Core service but does not own managed workflow semantics.
 - `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts` starts workflow sessions and ensures managed workspace lifecycle.
@@ -42,7 +42,7 @@ Main code areas:
 - `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts` sends provider-visible feedback.
 - `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts` routes user messages and typed acceptance.
 
-Current data sources:
+Former data sources:
 
 - `session.stage`;
 - `doc/TODO/workspace.plan.md`;
@@ -102,8 +102,8 @@ Target modules:
    - rolls back or marks blocked when commit fails.
 
 7. `ManagedWorkflowPlanStore`
-   - reads/writes child plans and workspace ledger;
-   - replaces generated-script scenario logic;
+   - owns the future persisted step/transition ledger; exact storage format is TBD;
+   - replaces generated-script scenario logic instead of reusing retired `workspace.plan.md acceptedCommits`;
    - stores only real Git hashes or explicit non-commit dispositions.
 
 8. `ManagedWorkflowProviderGateway`

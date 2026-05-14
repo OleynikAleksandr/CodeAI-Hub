@@ -92,7 +92,7 @@ test("bootstrap blocks Quality Gates typed acceptance during rewrite", async () 
     events.some(
       (event) =>
         (event as { readonly payload?: { readonly code?: string } }).payload
-          ?.code === "managed_workflow_rewrite_in_progress"
+          ?.code === "technical_stage_rewrite_in_progress"
     ),
     true
   );
@@ -120,7 +120,7 @@ test("bootstrap blocks Application Skeleton typed acceptance during rewrite", as
     events.some(
       (event) =>
         (event as { readonly payload?: { readonly code?: string } }).payload
-          ?.code === "managed_workflow_rewrite_in_progress"
+          ?.code === "technical_stage_rewrite_in_progress"
     ),
     true
   );

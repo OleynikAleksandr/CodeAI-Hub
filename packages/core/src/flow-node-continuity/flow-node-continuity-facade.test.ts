@@ -45,16 +45,16 @@ test("FlowNodeContinuityFacade matches trunk workflow sessions (runSlug=null)", 
   );
 });
 
-test("FlowNodeContinuityFacade resolves managed workspace recovery mode", () => {
+test("FlowNodeContinuityFacade resolves technical workspace recovery mode", () => {
   const facade = createFacade();
 
   assert.equal(
     facade.resolveRecoveryMode({ stageId: "application_skeleton" }),
-    "managed_workspace"
+    "technical_workspace"
   );
   assert.equal(
     facade.resolveRecoveryMode({ stageId: "quality_gates" }),
-    "managed_workspace"
+    "technical_workspace"
   );
   assert.equal(
     facade.resolveRecoveryMode({ stageId: "description" }),

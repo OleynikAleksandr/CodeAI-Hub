@@ -5,17 +5,17 @@ import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtim
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { CreateAndRegisterSessionOptions } from "./session-request-handler-types";
 
-export const MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE =
-  "managed_workflow_rewrite_in_progress";
+export const TECHNICAL_STAGE_REWRITE_BLOCKER_CODE =
+  "technical_stage_rewrite_in_progress";
 
-const MANAGED_WORKFLOW_REWRITE_BLOCKED_STAGES = new Set([
+const TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES = new Set([
   "diagram_modules",
   "application_skeleton",
   "quality_gates",
 ]);
 
-export const isManagedWorkflowRewriteBlockedStage = (stage: string): boolean =>
-  MANAGED_WORKFLOW_REWRITE_BLOCKED_STAGES.has(stage);
+export const isTechnicalStageRewriteBlockedStage = (stage: string): boolean =>
+  TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES.has(stage);
 
 interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly createAndRegisterSession: (
@@ -43,11 +43,11 @@ export class SessionRequestHandlerWorkflowSession {
       readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
-    if (isManagedWorkflowRewriteBlockedStage(options.context.stage)) {
+    if (isTechnicalStageRewriteBlockedStage(options.context.stage)) {
       this.deps.logger.warn(
-        "Workflow session creation blocked: managed workflow rewrite in progress",
+        "Workflow session creation blocked: technical stage rewrite in progress",
         {
-          code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+          code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
           stage: options.context.stage,
           workspaceRoot: options.workspacePath,
         }

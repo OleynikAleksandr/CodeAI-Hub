@@ -2,7 +2,7 @@
 
 **Status:** Active (process)
 **Owner:** Oleksandr + Codex
-**Updated:** 2026-05-11
+**Updated:** 2026-05-14
 
 ## Назначение
 
@@ -22,8 +22,8 @@
 - tool/profile capabilities;
 - stage completion boundary;
 - правила acceptance;
-- managed child-plan / commit boundary;
-- Core rejection / repair feedback boundary;
+- rewrite/fail-closed orchestration boundary for managed technical stages;
+- future Core rejection / repair feedback boundary, once the new cluster owns it;
 - machine-readable schema для artifacts;
 - запреты на работу вне stage scope.
 
@@ -42,8 +42,8 @@
 - не начал ли он materialization раньше времени;
 - задавал ли вопросы до того, как сам мог подготовить draft;
 - оставил ли acceptance на пользователе;
-- не начал ли post-acceptance integration/materialization до Core-owned acceptance commit;
-- сможет ли Core при отказе создать repair microtask и paired `Git Commit:` до следующего сообщения агенту;
+- не предполагает ли он retired Core-owned acceptance commit / child-plan lifecycle;
+- не пытается ли он использовать repair path, который должен быть определён новым orchestration cluster;
 - остановился ли на границе своего шага.
 
 Хороший тест выявляет дефекты prompt'а раньше, чем они превратятся в дефекты реализации.
@@ -238,8 +238,8 @@ Prompt testing считается успешным, если:
 - финальные вопросы относятся к реальным user decisions;
 - scope шага не расширяется самопроизвольно;
 - artifacts остаются draft до explicit acceptance;
-- acceptance does not trigger integration/materialization until the Core-owned acceptance commit exists;
-- rejected agent output creates a repair path that is represented in the child plan and Git history;
+- acceptance does not trigger integration/materialization until the new cluster's acceptance boundary exists;
+- rejected agent output creates a repair path represented by the new cluster's transition ledger and Git history;
 - следующий step получает понятный и согласованный contract.
 
 Если эти условия выполнены, тест можно завершать даже без принятия конкретного artifact из тестового workspace.

@@ -45,5 +45,5 @@
   "pm.sidebar.workspace.fork_action": "Fork workspace",
   "pm.sidebar.workspace.new_action": "New workspace",
   "pm.workflow.upstream_readonly.title": "{stage} is read-only.",
-  "pm.workflow.upstream_readonly.body": "Managed workspace lifecycle has started at Diagram Modules. Existing artifacts remain available from the tree, but this upstream stage can no longer be edited."
+  "pm.workflow.upstream_readonly.body": "Technical stage rewrite boundary has started at Diagram Modules. Existing artifacts remain available from the tree, but this upstream stage can no longer be edited."
 }

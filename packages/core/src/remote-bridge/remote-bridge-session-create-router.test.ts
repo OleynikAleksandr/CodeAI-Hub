@@ -6,10 +6,10 @@ import test from "node:test";
 import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
-import { MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE } from "./handlers/session-request-handler-workflow-session";
+import { TECHNICAL_STAGE_REWRITE_BLOCKER_CODE } from "./handlers/session-request-handler-workflow-session";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 
-const MANAGED_STAGES = [
+const TECHNICAL_STAGES = [
   "diagram_modules",
   "application_skeleton",
   "quality_gates",
@@ -26,9 +26,9 @@ const createLogger = (warnings: unknown[] = []): Logger =>
     },
   }) as unknown as Logger;
 
-test("session:create skips managed workflow preflight while rewrite is active", async () => {
+test("session:create skips technical stage preflight while rewrite is active", async () => {
   const workspacePath = await mkdtemp(
-    path.join(tmpdir(), "codeai-managed-preflight-skipped-")
+    path.join(tmpdir(), "codeai-technical-preflight-skipped-")
   );
   const workspaceSlug = "demo-workspace";
   const seenStages: string[] = [];
@@ -57,7 +57,7 @@ test("session:create skips managed workflow preflight while rewrite is active", 
       } as unknown as WorkflowRuntime,
     });
 
-    for (const stage of MANAGED_STAGES) {
+    for (const stage of TECHNICAL_STAGES) {
       await router.handle("client-1", {
         type: "session:create",
         payload: {
@@ -70,7 +70,7 @@ test("session:create skips managed workflow preflight while rewrite is active", 
       });
     }
 
-    assert.deepEqual(seenStages, [...MANAGED_STAGES]);
+    assert.deepEqual(seenStages, [...TECHNICAL_STAGES]);
     assert.deepEqual(
       warnings.map((warning) =>
         typeof warning === "object" && warning !== null
@@ -78,9 +78,9 @@ test("session:create skips managed workflow preflight while rewrite is active", 
           : null
       ),
       [
-        MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
-        MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
-        MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+        TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
+        TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
+        TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
       ]
     );
     await assertMissing(path.join(workspacePath, ".git"));
@@ -92,9 +92,9 @@ test("session:create skips managed workflow preflight while rewrite is active", 
   }
 });
 
-test("session:create still prepares non-managed workflow stage directories", async () => {
+test("session:create still prepares documentation workflow stage directories", async () => {
   const workspacePath = await mkdtemp(
-    path.join(tmpdir(), "codeai-non-managed-preflight-")
+    path.join(tmpdir(), "codeai-documentation-preflight-")
   );
   const workspaceSlug = "demo-workspace";
   let handleCreateCalled = false;

@@ -4,7 +4,7 @@ import type {
   FlowNodeContinuityTemplateVariables,
 } from "./flow-node-continuity-types";
 import {
-  FLOW_NODE_CONTINUITY_MANAGED_STAGE_IDS,
+  FLOW_NODE_CONTINUITY_TECHNICAL_STAGE_IDS,
   FLOW_NODE_CONTINUITY_TRUNK_STAGE_IDS,
 } from "./flow-node-continuity-types";
 import type { ContinuityReportPaths } from "./report-path";
@@ -83,7 +83,7 @@ export class FlowNodeContinuityFacade {
       options.stageId !== null &&
       options.runSlug === null &&
       (this.isTrunkDocumentationStage(options.stageId) ||
-        this.isManagedFilesystemStage(options.stageId))
+        this.isTechnicalFilesystemStage(options.stageId))
     );
   }
 
@@ -91,8 +91,8 @@ export class FlowNodeContinuityFacade {
     readonly stageId: string | null;
   }): FlowNodeContinuityRecoveryMode {
     return options.stageId !== null &&
-      this.isManagedFilesystemStage(options.stageId)
-      ? "managed_workspace"
+      this.isTechnicalFilesystemStage(options.stageId)
+      ? "technical_workspace"
       : "continuity_report";
   }
 
@@ -115,9 +115,9 @@ export class FlowNodeContinuityFacade {
     return options.remainingPercent <= this.#preemptRemainingPercentThreshold;
   }
 
-  private isManagedFilesystemStage(stageId: string): boolean {
-    return FLOW_NODE_CONTINUITY_MANAGED_STAGE_IDS.includes(
-      stageId as (typeof FLOW_NODE_CONTINUITY_MANAGED_STAGE_IDS)[number]
+  private isTechnicalFilesystemStage(stageId: string): boolean {
+    return FLOW_NODE_CONTINUITY_TECHNICAL_STAGE_IDS.includes(
+      stageId as (typeof FLOW_NODE_CONTINUITY_TECHNICAL_STAGE_IDS)[number]
     );
   }
 

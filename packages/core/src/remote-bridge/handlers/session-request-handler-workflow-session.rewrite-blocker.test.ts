@@ -5,8 +5,8 @@ import type { ProviderAdapter } from "../../provider-registry/provider-module-lo
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import {
-  MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
   SessionRequestHandlerWorkflowSession,
+  TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
 } from "./session-request-handler-workflow-session";
 
 const createAdapter = (): ProviderAdapter => ({
@@ -24,7 +24,7 @@ const createLogger = (warnings: unknown[] = []): Logger =>
     },
   }) as unknown as Logger;
 
-test("createSessionForWorkflow fails closed before diagram modules provider session during managed rewrite", async () => {
+test("createSessionForWorkflow fails closed before diagram modules provider session during technical-stage rewrite", async () => {
   const calls: string[] = [];
   const warnings: unknown[] = [];
   const service = new SessionRequestHandlerWorkflowSession({
@@ -57,14 +57,14 @@ test("createSessionForWorkflow fails closed before diagram modules provider sess
   assert.deepEqual(calls, []);
   assert.deepEqual(warnings, [
     {
-      code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+      code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
       stage: "diagram_modules",
       workspaceRoot: "/tmp/workspace",
     },
   ]);
 });
 
-test("createSessionForWorkflow fails closed before technical stage provider sessions during managed rewrite", async () => {
+test("createSessionForWorkflow fails closed before technical stage provider sessions during technical-stage rewrite", async () => {
   const stages = ["application_skeleton", "quality_gates"];
   for (const stage of stages) {
     const calls: string[] = [];
@@ -99,7 +99,7 @@ test("createSessionForWorkflow fails closed before technical stage provider sess
     assert.deepEqual(calls, []);
     assert.deepEqual(warnings, [
       {
-        code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+        code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
         stage,
         workspaceRoot: "/tmp/workspace",
       },
@@ -107,7 +107,7 @@ test("createSessionForWorkflow fails closed before technical stage provider sess
   }
 });
 
-test("createSessionForWorkflow still creates sessions for non-managed workflow stages", async () => {
+test("createSessionForWorkflow still creates sessions for non-technical stage workflows", async () => {
   const calls: string[] = [];
   const warnings: unknown[] = [];
   const expectedSession = { id: "runtime-session" } as Session;

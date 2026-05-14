@@ -278,10 +278,10 @@ test("Documentation Tree production rollover waits for next user turn before con
             };
             return (
               payload.sessionId === targetSession.id &&
-              payload.code === "managed_workflow_rewrite_in_progress"
+              payload.code === "technical_stage_rewrite_in_progress"
             );
           }),
-          `Expected managed rewrite blocker for ${stage}`
+          `Expected technical-stage rewrite blocker for ${stage}`
         );
         continue;
       }
@@ -313,9 +313,7 @@ test("Documentation Tree production rollover waits for next user turn before con
   }
 });
 
-const STRIP_JSONL_SUFFIX_RE = /\.jsonl$/u;
-
-test("Non-managed stages do not emit managed Artifact Mode marker in rollover envelope", async () => {
+test("Documentation stages do not emit technical Artifact Mode marker in rollover envelope", async () => {
   const { buildDocumentationContinuationEnvelope } = await import(
     "./session-request-handler-documentation-continuation-envelope"
   );
@@ -331,7 +329,7 @@ test("Non-managed stages do not emit managed Artifact Mode marker in rollover en
       sourceSessionId: "source",
       stageId: "description",
       targetSessionId: "target",
-      workspacePath: "/tmp/non-managed-description",
+      workspacePath: "/tmp/documentation-description",
       workspaceSlug: "demo",
     },
     userMessage: "next user instruction",
@@ -353,32 +351,10 @@ test("Non-managed stages do not emit managed Artifact Mode marker in rollover en
       sourceSessionId: "source",
       stageId: "virtual_simulation",
       targetSessionId: "target",
-      workspacePath: "/tmp/non-managed-virtual",
+      workspacePath: "/tmp/documentation-virtual",
       workspaceSlug: "demo",
     },
     userMessage: "next user instruction",
   });
   assert.equal(virtualSim.includes("## Artifact Mode"), false);
-});
-
-test("Managed audit stream filename is isolated from primary provider session log", () => {
-  const PRIMARY_SESSION_FILE = "session-1.jsonl";
-  const MANAGED_AUDIT_FILENAME = "session-1.audit.jsonl";
-
-  assert.notEqual(PRIMARY_SESSION_FILE, MANAGED_AUDIT_FILENAME);
-  assert.equal(MANAGED_AUDIT_FILENAME.endsWith(".audit.jsonl"), true);
-  assert.equal(
-    PRIMARY_SESSION_FILE.endsWith(".audit.jsonl"),
-    false,
-    "Primary provider session log must not collide with managed audit suffix"
-  );
-  const primaryBasename = PRIMARY_SESSION_FILE.replace(
-    STRIP_JSONL_SUFFIX_RE,
-    ""
-  );
-  assert.equal(
-    MANAGED_AUDIT_FILENAME.startsWith(primaryBasename),
-    true,
-    "Managed audit filename should derive from the same basename"
-  );
 });

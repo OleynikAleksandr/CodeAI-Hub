@@ -180,7 +180,7 @@ test("workflow artifact continuation envelope stays generic during rewrite", asy
       sourceSessionId: "source",
       stageId: "application_skeleton",
       targetSessionId: "target",
-      workspacePath: "/tmp/managed-workspace",
+      workspacePath: "/tmp/rewrite-workspace",
       workspaceSlug: "demo",
     },
     userMessage: "Продолжай.",

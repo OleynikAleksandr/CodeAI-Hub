@@ -2,17 +2,17 @@ import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import {
-  isManagedWorkflowRewriteBlockedStage,
-  MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+  isTechnicalStageRewriteBlockedStage,
+  TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
 } from "./handlers/session-request-handler-workflow-session";
 import type { WebSocketManager } from "./handlers/websocket-manager";
 import { prepareWorkflowStageDirectories } from "./handlers/workspace-session-service";
 import type { IncomingMessage } from "./types";
 
-const isManagedWorkflowRewriteStage = (
+const isTechnicalStageRewriteStage = (
   stage: string | null | undefined
 ): boolean =>
-  typeof stage === "string" && isManagedWorkflowRewriteBlockedStage(stage);
+  typeof stage === "string" && isTechnicalStageRewriteBlockedStage(stage);
 
 interface RemoteBridgeSessionCreateRouterDependencies {
   readonly getManager: () => WebSocketManager | undefined;
@@ -63,11 +63,11 @@ export class RemoteBridgeSessionCreateRouter {
     }
 
     try {
-      if (isManagedWorkflowRewriteStage(createContext.stage)) {
+      if (isTechnicalStageRewriteStage(createContext.stage)) {
         this.deps.logger.warn(
-          "Session create skipped managed workflow preflight during orchestration rewrite",
+          "Session create skipped technical stage preflight during orchestration rewrite",
           {
-            code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+            code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
             stage: createContext.stage,
             workspacePath: resolvedWorkspacePath,
             workspaceSlug: initiativeSlug,

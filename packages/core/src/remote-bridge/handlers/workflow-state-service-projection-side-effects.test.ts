@@ -96,7 +96,7 @@ const readWorkflowStatePayload = async (params: {
     params.service.handleWorkflowStateRead(req, res);
   });
 
-test("workflow-state read does not send managed continuation messages", async () => {
+test("workflow-state read does not send technical-stage continuation messages", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-read-no-continuation-")
   );

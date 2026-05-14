@@ -203,7 +203,7 @@ const readStageBlocked = (
   return blocked?.[stage] ?? true;
 };
 
-const isManagedModeActive = (
+const isTechnicalStageRewriteBoundaryActive = (
   state: Awaited<ReturnType<typeof api.getWorkflowState>> | null
 ): boolean => {
   const status = state?.stages?.diagram_modules;
@@ -280,7 +280,7 @@ export class WorkflowStepStartService {
       params.onSessionCreated?.(existingSessionId);
       return existingSessionId;
     }
-    if (isManagedModeActive(state)) {
+    if (isTechnicalStageRewriteBoundaryActive(state)) {
       throw new Error(
         "Virtual Simulation is read-only after Diagram Modules has started."
       );

@@ -22,15 +22,15 @@ const readDiagramModulesProgress = (
   value: unknown
 ): {
   readonly activeSubturnStatus?: string;
-  readonly hasManagedCommitGate: boolean;
+  readonly hasTechnicalStageDirtyGate: boolean;
   readonly substep: string;
 } | null => {
   if (!isRecord(value) || typeof value.substep !== "string") {
     return null;
   }
-  const managedDirtyFiles = readStringArray(value.managedGitDirtyFiles);
+  const technicalStageDirtyFiles = readStringArray(value.technicalStageDirtyFiles);
   const outOfOwnerDirtyFiles = readStringArray(
-    value.managedGitOutOfOwnerDirtyFiles
+    value.technicalStageOutOfOwnerDirtyFiles
   );
   const activeSubturn = isRecord(value.activeSubturn)
     ? value.activeSubturn
@@ -41,8 +41,8 @@ const readDiagramModulesProgress = (
       : undefined;
   return {
     activeSubturnStatus,
-    hasManagedCommitGate:
-      managedDirtyFiles.length > 0 || outOfOwnerDirtyFiles.length > 0,
+    hasTechnicalStageDirtyGate:
+      technicalStageDirtyFiles.length > 0 || outOfOwnerDirtyFiles.length > 0,
     substep: value.substep,
   };
 };
@@ -154,7 +154,7 @@ export const useDiagramModulesOrchestration = (options: {
         ) {
           return;
         }
-        if (progress?.hasManagedCommitGate) {
+        if (progress?.hasTechnicalStageDirtyGate) {
           return;
         }
         setSequenceLock(params.sessionId, false);
