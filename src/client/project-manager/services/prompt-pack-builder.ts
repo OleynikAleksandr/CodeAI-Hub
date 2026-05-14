@@ -194,8 +194,8 @@ const buildStagePhaseLines = (
     return [
       "Work phases:",
       `- Phase 1: read the runtime-provided \`Final_Description.md\` and \`virtual-simulation.md\` inputs, then write only \`${targetFileName}\` as the canonical index of \`Product Part\` entries, their order, and purpose.`,
-      "- Phase 2: do not create `product-parts/<part-id>.md` files in this initial turn; Core validates and commits the index first.",
-      "- Phase 3: after Core sends a continuation turn, materialize only the named `product-parts/<part-id>.md` file and stop again for Core feedback.",
+      "- Phase 2: do not create `product-parts/<part-id>.md` files in this initial turn; write only the index artifact for runtime/user review.",
+      "- Phase 3: product-part materialization is outside the initial draft turn during the orchestration rewrite; do not infer continuation work from sibling paths.",
       "- Phase 4: relation lines and cross-part wiring are not required for the first useful result; stabilize the ownership structure `Product Part -> Cluster -> Module` first.",
       "- Phase 5: the visual graph and `module-map.flow.json` are maintained separately by the runtime.",
       "- Phase 6: do not spend the current turn searching for staged examples, continuity files, helper artifacts, or generic template files unless they are explicitly listed above as inputs for this turn.",
@@ -212,7 +212,7 @@ const buildStagePhaseLines = (
   }
   if (stage === "quality_gates") {
     return [
-      "Lifecycle reminder (Core-owned managed phases): draft → user-led review → Core acceptance commit → integration → post-completion user-return. Do not flip `accepted` or `integrated` yourself and do not start integration in the same turn that carries a user acceptance phrase; wait for the Core-injected integration prompt.",
+      "Rewrite boundary: write Quality Gates draft artifacts only. Do not flip `accepted` or `integrated`, do not treat user acceptance phrasing as an integration command, and do not perform integration until a replacement orchestration cluster explicitly assigns that work.",
     ];
   }
   return [];
@@ -227,27 +227,6 @@ const buildChangeSummaryBlock = (stage: WorkflowStageId): string | null => {
     "- Preserve user-added entities and user-modified fields.",
     "- Do not silently recreate entities removed by the user.",
     "- If no agent baseline exists yet, treat the current diagram as user-authored context.",
-  ].join("\n");
-};
-
-const MANAGED_WORKFLOW_STAGES = new Set<WorkflowStageId>([
-  "diagram_modules",
-  "application_skeleton",
-  "quality_gates",
-]);
-
-const buildManagedWorkflowContextPreflightBlock = (
-  stage: WorkflowStageId
-): string | null => {
-  if (!MANAGED_WORKFLOW_STAGES.has(stage)) {
-    return null;
-  }
-  return [
-    "Managed workflow context preflight:",
-    "- Managed stages require a Core context bundle in the current prompt before artifact writes.",
-    "- Required bundle title: `## Managed Workflow Context Bundle`.",
-    `- Required Plan Status line: \`activeStage: \"${stage}\"\`.`,
-    "- If this prompt does not include that bundle and status line, stop before writing files and report a Core preflight failure; do not read plan files, run plan status commands, stage files, or commit from the provider turn.",
   ].join("\n");
 };
 
@@ -296,7 +275,7 @@ const buildWorkflowArtifactModeBlock = (params: {
 }): string => {
   const stagedTargetLine =
     params.stage === "diagram_modules"
-      ? "- Diagram Modules is Core-orchestrated: this turn must make only the target artifact Core-checkable; Product Part files are requested one at a time by later Core turns."
+      ? "- Diagram Modules initial draft mode: this turn must make only the target artifact reviewable; Product Part files are not requested in this turn."
       : null;
   const lines = [
     "Workflow artifact mode:",
@@ -347,7 +326,7 @@ const buildAdditionalArtifactLines = (params: {
 }): readonly string[] => {
   if (params.stage === "diagram_modules") {
     return [
-      "Additional staged artifacts for this step are Core-orchestrated by later turns:",
+      "Additional staged artifacts for this step are outside the initial draft turn:",
       `- Later Product Part target pattern: \`.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/<part-id>.md\`; do not create these unless the current target path names that part.`,
       `- Layout sidecar (runtime-owned): \`.codeai-hub/${params.workspaceSlug}/diagram_modules/module-map.flow.json\``,
     ];
@@ -409,7 +388,6 @@ export const buildWorkflowPromptPack = (
       buildRuntimeToolingFactsBlock(params.workspacePath),
       buildArtifactWriteEncodingBlock(),
       buildArtifactEditOperationBlock(),
-      buildManagedWorkflowContextPreflightBlock(params.stage),
       buildChangeSummaryBlock(params.stage),
       params.stage === "diagram_modules"
         ? buildDiagramModulesInlineContractBlock()

@@ -72,7 +72,7 @@ const buildOutputTargetLines = (
     ];
   }
   return [
-    "Managed output target rule: write only the current target path named by Core or by the Active Stage Todo Plan Text; do not infer or expand scope from sibling files.",
+    "Workflow output target rule: write only the current target path named by the rollover context or embedded stage context; do not infer or expand scope from sibling files.",
     "Canonical output path(s) for this stage:",
     ...targets.map((target) => `- \`${target}\``),
   ];
@@ -83,7 +83,7 @@ const buildInputLines = (
 ): readonly string[] => {
   if (MANAGED_WORKSPACE_STAGES.has(context.stageId)) {
     return [
-      "Input documents and managed workflow state are embedded below by Core. Do not reread input documents by path unless Core marks the bundle as truncated or stale.",
+      "Input documents and workflow state are embedded below by the runtime. Do not reread input documents by path unless the embedded context marks the content truncated or stale.",
     ];
   }
   if (context.stageId === "virtual_simulation") {
@@ -132,9 +132,9 @@ const buildArtifactModeSection = (
   }
   return [
     "## Artifact Mode",
-    "- artifact_mode: continue_active_microtask",
+    "- artifact_mode: resume_current_stage_target",
     "- Do NOT treat this turn as `create_initial_draft`.",
-    "- Continue only the current managed microtask/target named in the Plan Status above; stop for Core acceptance once the readiness note is produced.",
+    "- Continue only the current target named in the embedded stage context; stop after the artifact update and report what changed.",
   ];
 };
 
@@ -155,8 +155,8 @@ export const buildDocumentationContinuationEnvelope = async (options: {
     ),
     "## Continuation Mode",
     "- This is a continuation of the same Documentation Tree stage after context rollover, not a cold start.",
-    "- Use the embedded Core context bundle and canonical workflow artifacts as the authoritative current state.",
-    "- Continue only the current managed microtask/target named by Core, then stop for Core acceptance.",
+    "- Use the embedded runtime context and canonical workflow artifacts as the authoritative current state.",
+    "- Continue only the current target named by the embedded context, then stop after the artifact update.",
     "- Do not create, read, or update continuity report files.",
     "- Do not search for legacy recovery reports and do not create a legacy root todo plan.",
     "- The previous provider session ended after the assistant message below.",

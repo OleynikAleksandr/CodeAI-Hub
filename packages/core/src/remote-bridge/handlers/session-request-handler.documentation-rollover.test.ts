@@ -314,26 +314,40 @@ test("Documentation Tree production rollover waits for next user turn before con
       const userMessage = `User answer after rollover for ${stage}.`;
       await harness.handler.handleMessage(targetSession.id, userMessage);
       await flushAsyncWork();
+      await flushAsyncWork();
 
-      assert.equal(providerSends.length, 1);
+      if (stage in MANAGED_STAGE_PLAN_PATHS) {
+        assert.equal(providerSends.length, 0);
+        assert.equal(targetSession.messages.at(-1)?.content, userMessage);
+        assert.ok(
+          harness.events.some((event) => {
+            if (event.type !== "session:error") {
+              return false;
+            }
+            const payload = event.payload as {
+              readonly code?: unknown;
+              readonly sessionId?: unknown;
+            };
+            return (
+              payload.sessionId === targetSession.id &&
+              payload.code === "managed_workflow_rewrite_in_progress"
+            );
+          }),
+          `Expected managed rewrite blocker for ${stage}`
+        );
+        continue;
+      }
+
+      assert.equal(
+        providerSends.length,
+        1,
+        `Expected one provider send after rollover user turn for ${stage}`
+      );
       const firstSend = providerSends.at(0);
       assert.ok(firstSend);
       assert.equal(firstSend.providerSessionId, `provider-target-${stage}`);
       assert.equal(firstSend.content.includes("## Continuation Mode"), true);
       assert.equal(firstSend.content.includes("not a cold start"), true);
-      if (stage in MANAGED_STAGE_PLAN_PATHS) {
-        assert.equal(
-          firstSend.content.includes("## Managed Workflow Context Bundle"),
-          true
-        );
-        assert.equal(
-          firstSend.content.includes(`activeStage: "${stage}"`),
-          true
-        );
-        assert.equal(firstSend.content.includes("npm run plan:commit"), false);
-        assert.equal(firstSend.content.includes("git commit"), false);
-        assert.equal(firstSend.content.includes("stage only"), false);
-      }
       assert.equal(
         firstSend.content.includes(`Question before rollover for ${stage}?`),
         true
@@ -376,7 +390,7 @@ test("Non-managed stages do not emit managed Artifact Mode marker in rollover en
   });
   assert.equal(description.includes("## Artifact Mode"), false);
   assert.equal(
-    description.includes("artifact_mode: continue_active_microtask"),
+    description.includes("artifact_mode: resume_current_stage_target"),
     false
   );
 

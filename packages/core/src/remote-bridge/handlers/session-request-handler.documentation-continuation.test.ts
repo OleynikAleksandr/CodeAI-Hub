@@ -95,7 +95,7 @@ test("Documentation Tree continuation envelope is attached to the first real use
     assert.equal(providerSends[0]?.content.includes("not a cold start"), true);
     assert.equal(
       providerSends[0]?.content.includes(
-        "embedded Core context bundle and canonical workflow artifacts as the authoritative current state"
+        "embedded runtime context and canonical workflow artifacts as the authoritative current state"
       ),
       true
     );
@@ -199,7 +199,7 @@ test("managed workflow continuation envelope resumes from todo plan", async () =
   assert.equal(envelope.includes("Final_Description.md:"), false);
   assert.equal(
     envelope.includes(
-      "Managed output target rule: write only the current target path named by Core or by the Active Stage Todo Plan Text"
+      "Workflow output target rule: write only the current target path named by the rollover context or embedded stage context"
     ),
     true
   );
