@@ -1,6 +1,5 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import { extractManagedHookSection } from "../../managed-workspace/managed-hook-registry";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import type {
   WorkflowStageState,
@@ -36,6 +35,8 @@ const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const WORKSPACE_PLAN_STATE_RE =
   /<!-- codeai-workspace-plan-state:start -->\s*```json\s*([\s\S]*?)\s*```\s*<!-- codeai-workspace-plan-state:end -->/u;
 const ACCEPTANCE_COMMIT_MESSAGE = "docs: accept quality gates contract";
+const HOOK_SECTION_START = "# codeai-managed:gates:start";
+const HOOK_SECTION_END = "# codeai-managed:gates:end";
 
 const readExistingFile = async (
   absolutePath: string
@@ -138,6 +139,17 @@ const readHookText = async (
   hookName: string
 ): Promise<string> =>
   (await readExistingFile(path.join(workspaceRoot, ".husky", hookName))) ?? "";
+
+const extractManagedHookSection = (hookText: string): string | null => {
+  const startIndex = hookText.indexOf(HOOK_SECTION_START);
+  const endIndex = hookText.indexOf(HOOK_SECTION_END);
+  if (startIndex < 0 || endIndex < 0 || endIndex <= startIndex) {
+    return null;
+  }
+  return hookText
+    .slice(startIndex + HOOK_SECTION_START.length, endIndex)
+    .trim();
+};
 
 const validateHookCommands = (params: {
   readonly gateIds: readonly string[];

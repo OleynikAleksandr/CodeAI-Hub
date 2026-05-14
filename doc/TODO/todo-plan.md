@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "e1a2abdd3",
+  "lastRecordedCommit": "6cd40aae8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task5",
-  "expectedCommitMessage": "test: remove legacy repair and revision assertions",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task6",
+  "expectedCommitMessage": "refactor: remove dormant managed workspace orchestrator helpers",
   "debt": {
-    "expectedCommitMessage": "test: remove legacy repair and revision assertions",
-    "preCommitHead": "e1a2abdd3",
+    "expectedCommitMessage": "refactor: remove dormant managed workspace orchestrator helpers",
+    "preCommitHead": "6cd40aae8",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task5"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task6"
   }
 }
 ```
@@ -418,20 +418,22 @@ Verification for task 57:
 65. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task4` Collapse `ManagedWorkflowPostTurnService` to the minimal fail-closed boundary so old arbitration, repair, continuation, revision, commit, and provider-dispatch internals are no longer present behind a disabled flag; delete the now-unused premature-materialization reader and review-revision injection helper exposed by that collapse (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: collapse managed post-turn service to fail-closed boundary`).
 66. [DONE] Git Commit: `refactor: collapse managed post-turn service to fail-closed boundary` (hash: e1a2abdd3)
 67. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task5` Rewrite stale repair/revision tests around disabled no-op behavior and remove the stale post-turn max-lines allowlist entry exposed by the post-turn collapse (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.test.ts, scripts/check-architecture-rules/max-lines-debt-allowlist.txt, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy repair and revision assertions`).
-68. [PENDING] Git Commit: `test: remove legacy repair and revision assertions` (hash: TBD)
-69. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task6` Run the final codebase grep/test audit for legacy managed orchestrator activation paths and record the remaining intentional inactive/history-only references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
-70. [TODO] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
+68. [DONE] Git Commit: `test: remove legacy repair and revision assertions` (hash: 6cd40aae8)
+69. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task6` Remove dormant managed workspace orchestrator helpers and tests that only preserved the old generated plan-orchestrator scaffold after runtime ownership was disabled (scope: `packages/core/src/managed-workspace/*orchestrator*, packages/core/src/managed-workspace/*plan-mutator*, packages/core/src/managed-workspace/managed-todo-tree.ts, packages/core/src/managed-workspace/managed-workspace-bootstrapper*, packages/core/src/managed-workspace/managed-workspace-reconciler*, packages/core/src/managed-workspace/managed-workspace-validator*, packages/core/src/managed-workspace/managed-hook-registry*, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove dormant managed workspace orchestrator helpers`).
+70. [PENDING] Git Commit: `refactor: remove dormant managed workspace orchestrator helpers` (hash: TBD)
+71. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task7` Run the final codebase grep/test audit for legacy managed orchestrator activation paths and record the remaining intentional inactive/history-only references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
+72. [TODO] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
 ### Stream: User Acceptance
 
-71. [TODO] `managed-orchestration-cleanup.phase10.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
+73. [TODO] `managed-orchestration-cleanup.phase10.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
 
 ## Phase 11 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Cleanup Scope
 
-72. [TODO] `managed-orchestration-cleanup.phase11.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
-73. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
-74. [TODO] `managed-orchestration-cleanup.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+74. [TODO] `managed-orchestration-cleanup.phase11.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
+75. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
+76. [TODO] `managed-orchestration-cleanup.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
