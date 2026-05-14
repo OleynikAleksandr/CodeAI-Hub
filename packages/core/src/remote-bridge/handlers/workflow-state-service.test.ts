@@ -198,34 +198,8 @@ test("workflow-state cold start keeps development tree preview side-effect free 
         2
       )}\n`
     );
-    const createdSessions: Array<{
-      readonly context: {
-        readonly initiativeSlug: string;
-        readonly runSlug?: string | null;
-        readonly stage: string;
-      };
-      readonly providerId: string;
-      readonly workspacePath: string;
-    }> = [];
-    const sentMessages: Array<{
-      readonly content: string;
-      readonly sessionId: string;
-    }> = [];
     const service = new WorkflowStateService({
       logger: new Logger("error"),
-      developmentTreeAgentSessions: {
-        providerId: "codexCli",
-        gateway: {
-          createSessionForWorkflow: (options) => {
-            createdSessions.push(options);
-            return Promise.resolve({ id: `session-${createdSessions.length}` });
-          },
-          handleMessage: (sessionId, content) => {
-            sentMessages.push({ sessionId, content });
-            return Promise.resolve();
-          },
-        },
-      },
     });
     const result = await readWorkflowStatePayload({
       service,
@@ -256,8 +230,6 @@ test("workflow-state cold start keeps development tree preview side-effect free 
       ).catch(() => null),
       null
     );
-    assert.equal(createdSessions.length, 0);
-    assert.equal(sentMessages.length, 0);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

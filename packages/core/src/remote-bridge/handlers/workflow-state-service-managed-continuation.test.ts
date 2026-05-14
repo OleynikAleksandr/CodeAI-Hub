@@ -102,11 +102,6 @@ test("workflow-state read does not send managed continuation messages", async ()
   );
   const workspaceSlug = "demo-workspace";
   const sessionId = "diagram-session";
-  const sentMessages: Array<{
-    readonly content: string;
-    readonly sessionId: string;
-  }> = [];
-
   try {
     await writeWorkspaceFile(
       workspaceRoot,
@@ -159,16 +154,6 @@ test("workflow-state read does not send managed continuation messages", async ()
 
     const service = new WorkflowStateService({
       logger: new Logger("error"),
-      developmentTreeAgentSessions: {
-        providerId: "claudeCodeCli",
-        gateway: {
-          createSessionForWorkflow: () => Promise.resolve(null),
-          handleMessage: (targetSessionId, content) => {
-            sentMessages.push({ sessionId: targetSessionId, content });
-            return Promise.resolve();
-          },
-        },
-      },
     });
     const result = await readWorkflowStatePayload({
       service,
@@ -177,7 +162,6 @@ test("workflow-state read does not send managed continuation messages", async ()
     });
 
     assert.equal(result.statusCode, 200);
-    assert.deepEqual(sentMessages, []);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

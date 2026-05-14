@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "5665aa6b7",
+  "lastRecordedCommit": "6c3e5e6c1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task25",
-  "expectedCommitMessage": "docs: record final legacy orchestrator audit",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task26",
+  "expectedCommitMessage": "refactor: delete managed post-turn service",
   "debt": {
-    "expectedCommitMessage": "docs: record final legacy orchestrator audit",
-    "preCommitHead": "5665aa6b7",
+    "expectedCommitMessage": "refactor: delete managed post-turn service",
+    "preCommitHead": "6c3e5e6c1",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task25"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task26"
   }
 }
 ```
@@ -458,9 +458,9 @@ Verification for task 57:
 105. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task24` Remove legacy acceptance-commit read-model fields from Application Skeleton and Quality Gates progress snapshots (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy acceptance commit progress state`).
 106. [DONE] Git Commit: `refactor: remove legacy acceptance commit progress state` (hash: 5665aa6b7)
 107. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task25` Run the second codebase grep/test audit, record that final audit still cannot pass, and expand the cleanup stream for the remaining runtime/docs tails found by subagents (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record final legacy orchestrator audit`).
-108. [PENDING] Git Commit: `docs: record final legacy orchestrator audit` (hash: TBD)
-109. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task26` Delete the disabled managed post-turn service boundary and remove its bootstrap/workflow-state wiring (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete managed post-turn service`).
-110. [TODO] Git Commit: `refactor: delete managed post-turn service` (hash: TBD)
+108. [DONE] Git Commit: `docs: record final legacy orchestrator audit` (hash: 6c3e5e6c1)
+109. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task26` Delete the disabled managed post-turn service boundary and remove its bootstrap/workflow-state wiring (scope: `packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-continuation.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.test.ts, packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.quality-gates.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete managed post-turn service`).
+110. [PENDING] Git Commit: `refactor: delete managed post-turn service` (hash: TBD)
 111. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task27` Delete disabled continuation/feedback/repair/revision/managed-documentation helper surfaces and stale tests that only preserve old orchestration API names (scope: `packages/core/src/remote-bridge/handlers/*continuation-dispatcher*.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback*.ts, packages/core/src/remote-bridge/handlers/*repair-orchestration*.ts, packages/core/src/remote-bridge/handlers/*revision-injection*.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction*.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit*.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete legacy managed helper surfaces`).
 112. [TODO] Git Commit: `refactor: delete legacy managed helper surfaces` (hash: TBD)
 113. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task28` Remove managed context bundle runtime/API/client prompt injection surface and keep rollover continuation generic during rewrite (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts, packages/core/src/remote-bridge/handlers/managed-context-bundle-http-handler.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, src/client/project-manager/services/managed-workflow-initial-context.ts, src/client/project-manager/services/description-submit-service.ts, related tests, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed context bundle surface`).
@@ -586,6 +586,13 @@ Verification for task 107:
 - Runtime audit still found legacy managed orchestration surfaces that are fail-closed/no-op but not clean removal: disabled post-turn service wiring, continuation dispatchers, provider feedback gateway, repair/revision injection runners, managed documentation commit transaction helpers, managed context bundle API/client injection, managed core workflow-event parsing, acceptedCommits terminal evidence, and rollout guardrail docs that still described the old lifecycle as active.
 - Follow-up tasks 109-120 were added before user acceptance so final audit can pass only after those tails are removed or explicitly suspended as history/future planning.
 - `npm run plan:validate` passed after expanding the stream.
+
+Verification for task 109:
+
+- `npm run build:core` passed.
+- `node --test packages/core/dist/remote-bridge/remote-bridge-bootstrap.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-continuation.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.js` passed.
+- `npm run check:knip` passed with existing configuration hints only.
+- `rg -n "developmentTreeAgentSessions|handleManagedWorkflowPostTurn|managedPostTurnService|ManagedWorkflowPostTurnService|managed-workflow-post-turn-service" packages/core/src/remote-bridge packages/core/src --glob '!**/dist/**'` returned no matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 

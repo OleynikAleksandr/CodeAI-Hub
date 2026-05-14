@@ -22,10 +22,6 @@ import {
   attachValidationDirtyGate,
   readManagedGitStatus,
 } from "./managed-git-stage-gate";
-import {
-  type DevelopmentTreeAgentSessionOptions,
-  ManagedWorkflowPostTurnService,
-} from "./managed-workflow-post-turn-service";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
   applyTechnicalRootProgressToState,
@@ -81,7 +77,6 @@ const resolveManagedLifecycle = (params: {
 
 export class WorkflowStateService {
   private readonly logger: Logger;
-  private readonly managedPostTurn: ManagedWorkflowPostTurnService;
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
@@ -89,16 +84,11 @@ export class WorkflowStateService {
   private readonly lastActiveStore = new WorkflowLastActiveStore();
 
   constructor(options: {
-    readonly developmentTreeAgentSessions?: DevelopmentTreeAgentSessionOptions;
     readonly logger: Logger;
     readonly sessionManager?: SessionManager;
   }) {
     this.logger = options.logger;
     this.sessionManager = options.sessionManager;
-    this.managedPostTurn = new ManagedWorkflowPostTurnService({
-      logger: options.logger,
-      sessionManager: options.sessionManager,
-    });
   }
 
   record(event: WorkflowWatcherEvent): WorkflowState {
@@ -314,20 +304,6 @@ export class WorkflowStateService {
           diagramModulesProgress: null,
         });
       });
-  }
-
-  handleManagedWorkflowPostTurn(sessionId: string): void {
-    this.logger.warn(
-      "Managed workflow post-turn handoff is disabled during orchestration cluster rewrite",
-      { sessionId }
-    );
-  }
-
-  // Exposed for compatibility with HTTP transport / typed-fallback routing.
-  // The returned service is fail-closed while the new orchestration cluster is
-  // being built.
-  get managedPostTurnService(): ManagedWorkflowPostTurnService {
-    return this.managedPostTurn;
   }
 
   private resolveWorkspaceSlug(req: Request): WorkspaceSlugResult {

@@ -6,7 +6,6 @@ import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
 import type { Request, Response } from "express";
-import type { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
@@ -341,19 +340,6 @@ test("workflow-state read with incomplete skeleton draft does not dispatch provi
     );
 
     const service = new WorkflowStateService({
-      developmentTreeAgentSessions: {
-        gateway: {
-          createSessionForWorkflow: () => Promise.resolve(null),
-          handleMessage: (sessionId, content) => {
-            dispatched.push({
-              content: typeof content === "string" ? content : "payload",
-              sessionId,
-            });
-            return Promise.resolve();
-          },
-        },
-        providerId: "codexCli",
-      },
       logger: new Logger("error"),
     });
 
@@ -371,53 +357,6 @@ test("workflow-state read with incomplete skeleton draft does not dispatch provi
     assert.equal(first.status, 200);
     assert.equal(second.status, 200);
     // Two independent reads must produce zero provider-visible dispatches.
-    assert.deepEqual(dispatched, []);
-  } finally {
-    await rm(workspaceRoot, { force: true, recursive: true });
-  }
-});
-
-test("workflow-state post-turn handoff is disabled during managed orchestration rewrite", async () => {
-  const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "workflow-state-post-turn-disabled-")
-  );
-  const workspaceSlug = "demo-workspace";
-  const dispatched: Array<{
-    readonly content: string;
-    readonly sessionId: string;
-  }> = [];
-
-  try {
-    const sessionManager = {
-      getSession: () => ({
-        id: "session-1",
-        workspacePath: workspaceRoot,
-        initiativeSlug: workspaceSlug,
-        stage: "diagram_modules",
-        providerId: "codexCli",
-      }),
-    } as unknown as SessionManager;
-
-    const service = new WorkflowStateService({
-      developmentTreeAgentSessions: {
-        gateway: {
-          createSessionForWorkflow: () => Promise.resolve(null),
-          handleMessage: (sessionId, content) => {
-            dispatched.push({
-              content: typeof content === "string" ? content : "payload",
-              sessionId,
-            });
-            return Promise.resolve();
-          },
-        },
-        providerId: "codexCli",
-      },
-      logger: new Logger("error"),
-      sessionManager,
-    });
-
-    service.handleManagedWorkflowPostTurn("session-1");
-
     assert.deepEqual(dispatched, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

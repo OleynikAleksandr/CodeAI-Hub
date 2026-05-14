@@ -299,7 +299,6 @@ const runFeedbackScenario = async (params: {
 }): Promise<void> => {
   const workspaceRoot = await mkdtemp(path.join(os.tmpdir(), params.tmpPrefix));
   const workspaceSlug = "demo-workspace";
-  const feedbackMessages: string[] = [];
 
   try {
     await writeTechnicalRootArtifacts(workspaceRoot, workspaceSlug);
@@ -314,21 +313,9 @@ const runFeedbackScenario = async (params: {
 
     const service = new WorkflowStateService({
       logger: new Logger("error"),
-      developmentTreeAgentSessions: {
-        gateway: {
-          createSessionForWorkflow: () => Promise.resolve(null),
-          handleMessage: (sessionId, content) => {
-            feedbackMessages.push(`${sessionId}\n${content}`);
-            return Promise.resolve();
-          },
-        },
-        providerId: "codexCli",
-      },
     });
 
     await readWorkflowStateTwice({ service, workspaceRoot, workspaceSlug });
-
-    assert.deepEqual(feedbackMessages, []);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -339,7 +326,6 @@ test("workflow-state read unlocks development tree without node auto fan-out", a
     path.join(os.tmpdir(), "workflow-state-development-tree-")
   );
   const workspaceSlug = "demo-workspace";
-  const createdStages: string[] = [];
 
   try {
     await writeTechnicalRootArtifacts(workspaceRoot, workspaceSlug);
@@ -348,16 +334,6 @@ test("workflow-state read unlocks development tree without node auto fan-out", a
     const createService = () =>
       new WorkflowStateService({
         logger: new Logger("error"),
-        developmentTreeAgentSessions: {
-          gateway: {
-            createSessionForWorkflow: (options) => {
-              createdStages.push(options.context.stage);
-              return Promise.resolve({ id: `session-${createdStages.length}` });
-            },
-            handleMessage: () => Promise.resolve(),
-          },
-          providerId: "codexCli",
-        },
       });
 
     await readWorkflowStatePayload({
@@ -366,7 +342,6 @@ test("workflow-state read unlocks development tree without node auto fan-out", a
       workspaceSlug,
     });
 
-    assert.deepEqual(createdStages, []);
     assert.equal(
       await stat(
         path.join(
@@ -382,7 +357,6 @@ test("workflow-state read unlocks development tree without node auto fan-out", a
       workspaceRoot,
       workspaceSlug,
     });
-    assert.equal(createdStages.length, 0);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

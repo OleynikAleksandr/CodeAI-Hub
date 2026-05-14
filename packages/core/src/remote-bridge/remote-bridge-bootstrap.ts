@@ -19,13 +19,6 @@ import { WorkflowEventsService } from "./handlers/workflow-events-service";
 import { WorkflowStateService } from "./handlers/workflow-state-service";
 import type { BridgeEvent, CoreStatePayload } from "./types";
 
-const resolveDevelopmentTreeBootstrapProviderId = (
-  providerRegistry: ProviderRegistry
-): string | null =>
-  providerRegistry
-    .listProviders()
-    .find((provider) => providerRegistry.getAdapter(provider.id))?.id ?? null;
-
 export interface RemoteBridgeBootstrapResult {
   readonly dialogHistoryService: DialogHistoryService;
   readonly dialogListService: DialogListService;
@@ -83,7 +76,6 @@ export const createRemoteBridgeBootstrap = (options: {
   const dialogHistoryService = new DialogHistoryService({
     logger: options.logger,
   });
-  let workflowStateService: WorkflowStateService | null = null;
   const sessionHandler = new SessionRequestHandler({
     config: options.config,
     sessionManager: options.sessionManager,
@@ -92,9 +84,6 @@ export const createRemoteBridgeBootstrap = (options: {
     logger: options.logger,
     continuityClock: () => new Date().toISOString(),
     workspaceRuntime,
-    onTurnCompleted: (sessionId) => {
-      workflowStateService?.handleManagedWorkflowPostTurn(sessionId);
-    },
     broadcaster: (event) => {
       options.broadcaster(event as BridgeEvent);
     },
@@ -110,20 +99,9 @@ export const createRemoteBridgeBootstrap = (options: {
     },
     service: new SessionSpeechService({ logger: options.logger }),
   });
-  const developmentTreeProviderId = resolveDevelopmentTreeBootstrapProviderId(
-    options.providerRegistry
-  );
-  workflowStateService = new WorkflowStateService({
+  const workflowStateService = new WorkflowStateService({
     logger: options.logger,
     sessionManager: options.sessionManager,
-    ...(developmentTreeProviderId
-      ? {
-          developmentTreeAgentSessions: {
-            gateway: sessionHandler,
-            providerId: developmentTreeProviderId,
-          },
-        }
-      : {}),
   });
   const systemHandler = new SystemRequestHandler(
     options.config,
