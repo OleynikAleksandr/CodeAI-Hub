@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-omitted-when-hidden-1.2.252",
   "branch": "main",
   "baseHead": "b4cdd457d",
-  "lastRecordedCommit": "6abcde267",
+  "lastRecordedCommit": "6f99a45f8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_Reasoning_Omitted_When_Hidden.md",
-  "currentTaskId": "reasoning-omit.phase3.release-build.task1",
-  "expectedCommitMessage": "chore: release 1.2.252",
+  "currentTaskId": "reasoning-omit.phase4.user-test.task1",
+  "expectedCommitMessage": "docs: accept release 1.2.252 retest",
   "debt": {
-    "expectedCommitMessage": "chore: release 1.2.252",
-    "preCommitHead": "6abcde267",
+    "expectedCommitMessage": "docs: accept release 1.2.252 retest",
+    "preCommitHead": "6f99a45f8",
     "stage": "commit_pending",
-    "taskId": "reasoning-omit.phase3.release-build.task1"
+    "taskId": "reasoning-omit.phase4.user-test.task1"
   }
 }
 ```
@@ -71,14 +71,14 @@
 9. [DONE] `reasoning-omit.phase3.release-docs.task1` Prepare README and CHANGELOG for upcoming release `1.2.252` (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.252`).
 10. [DONE] Git Commit: `docs: prepare release 1.2.252` (hash: 6abcde267)
 11. [DONE] `reasoning-omit.phase3.release-build.task1` Run the approved release build and collect artifacts for `1.2.252` (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts`; expected commit: `chore: release 1.2.252`).
-12. [PENDING] Git Commit: `chore: release 1.2.252` (hash: TBD)
+12. [DONE] Git Commit: `chore: release 1.2.252` (hash: 6f99a45f8)
 
 ## Phase 4 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-13)
 
 ### Stream: User Retest
 
-13. [TODO] `reasoning-omit.phase4.user-test.task1` User installs release `1.2.252`, confirms that disabling `Thinking in dialog` for Claude stops producing visible/hidden reasoning bubbles AND that the provider request body no longer reports `display: "summarized"` (scope: user workflow; expected commit: `docs: accept release 1.2.252 retest`).
-14. [TODO] Git Commit: `docs: accept release 1.2.252 retest` (hash: TBD)
+13. [DONE] `reasoning-omit.phase4.user-test.task1` User installs release `1.2.252`, confirms that disabling `Thinking in dialog` for Claude stops producing visible/hidden reasoning bubbles AND that the provider request body no longer reports `display: "summarized"` (scope: user workflow; expected commit: `docs: accept release 1.2.252 retest`).
+14. [PENDING] Git Commit: `docs: accept release 1.2.252 retest` (hash: TBD)
 
 ## Phase 5 — Scope Closeout (owner: Codex, updated: 2026-05-13)
 
