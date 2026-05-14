@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "011614cd4",
+  "lastRecordedCommit": "aef44c7a2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase2.cluster-docs.task1",
-  "expectedCommitMessage": "docs: draft managed workflow orchestration cluster planning",
+  "currentTaskId": "managed-orchestration.phase2.application-skeleton-phase1.task1",
+  "expectedCommitMessage": "docs: specify application skeleton phase 1 orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: draft managed workflow orchestration cluster planning",
-    "preCommitHead": "011614cd4",
+    "expectedCommitMessage": "docs: specify application skeleton phase 1 orchestration",
+    "preCommitHead": "aef44c7a2",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase2.cluster-docs.task1"
+    "taskId": "managed-orchestration.phase2.application-skeleton-phase1.task1"
   }
 }
 ```
@@ -56,12 +56,12 @@
 ### Stream: Cluster Planning Documents
 
 3. [DONE] `managed-orchestration.phase2.cluster-docs.task1` Add the managed workflow orchestration cluster planning documents in English and Russian for durable discussion context after compaction (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md`; expected commit: `docs: draft managed workflow orchestration cluster planning`).
-4. [PENDING] Git Commit: `docs: draft managed workflow orchestration cluster planning` (hash: TBD)
+4. [DONE] Git Commit: `docs: draft managed workflow orchestration cluster planning` (hash: aef44c7a2)
 
 ### Stream: Application Skeleton Phase 1
 
-5. [TODO] `managed-orchestration.phase2.application-skeleton-phase1.task1` Add the accepted draft planning spec for Application Skeleton Phase 1 Contract Bootstrap, including Core validation, handoff, repair, blocker, and simplified watchdog behavior (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`; expected commit: `docs: specify application skeleton phase 1 orchestration`).
-6. [TODO] Git Commit: `docs: specify application skeleton phase 1 orchestration` (hash: TBD)
+5. [DONE] `managed-orchestration.phase2.application-skeleton-phase1.task1` Add the accepted draft planning spec for Application Skeleton Phase 1 Contract Bootstrap, including Core validation, handoff, repair, blocker, and simplified watchdog behavior (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`; expected commit: `docs: specify application skeleton phase 1 orchestration`).
+6. [PENDING] Git Commit: `docs: specify application skeleton phase 1 orchestration` (hash: TBD)
 
 ## Phase 3 — Application Skeleton Phase 2 Planning (owner: Codex + User, updated: 2026-05-14)
 
