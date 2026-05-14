@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "78d8eba7c",
+  "lastRecordedCommit": "7b1d2f82f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase7.vsix-build.task1",
-  "expectedCommitMessage": "chore: package 1.2.253 release",
+  "currentTaskId": "managed-orchestration-cleanup.phase8.clean-rebuild-docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.254 clean cleanup release",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.253 release",
-    "preCommitHead": "78d8eba7c",
+    "expectedCommitMessage": "docs: prepare 1.2.254 clean cleanup release",
+    "preCommitHead": "7b1d2f82f",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase7.vsix-build.task1"
+    "taskId": "managed-orchestration-cleanup.phase8.clean-rebuild-docs.task1"
   }
 }
 ```
@@ -362,7 +362,7 @@ Verification for task 49:
   - `project-manager-1.2.253.tar.bz2`
 
 51. [DONE] `managed-orchestration-cleanup.phase7.vsix-build.task1` Run final VSIX package build for the current release version and record the generated package path (scope: `packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: package 1.2.253 release`).
-52. [PENDING] Git Commit: `chore: package 1.2.253 release` (hash: TBD)
+52. [DONE] Git Commit: `chore: package 1.2.253 release` (hash: 7b1d2f82f)
 
 Verification for task 51:
 
@@ -371,16 +371,27 @@ Verification for task 51:
 - Required release log markers were present: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
 - Generated VSIX: `codeai-hub-1.2.253.vsix` (48M).
 
-## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
+## Phase 8 — Clean Release Rebuild (owner: Codex, updated: 2026-05-14)
+
+### Stream: Clean Rebuild
+
+53. [DONE] `managed-orchestration-cleanup.phase8.clean-rebuild-docs.task1` Prepare release documentation for the clean managed orchestration cleanup rebuild under a new version (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.254 clean cleanup release`).
+54. [PENDING] Git Commit: `docs: prepare 1.2.254 clean cleanup release` (hash: TBD)
+55. [TODO] `managed-orchestration-cleanup.phase8.clean-rebuild-artifacts.task1` Remove stale local release outputs, run a fresh unified release artifact build, and record the generated provider/core/UI/launcher tarballs (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.254 clean release artifacts`).
+56. [TODO] Git Commit: `chore: build 1.2.254 clean release artifacts` (hash: TBD)
+57. [TODO] `managed-orchestration-cleanup.phase8.clean-vsix-build.task1` Run final VSIX package build for the clean rebuild version and record the generated package path (scope: `packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: package 1.2.254 clean release`).
+58. [TODO] Git Commit: `chore: package 1.2.254 clean release` (hash: TBD)
+
+## Phase 9 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
 ### Stream: User Acceptance
 
-53. [TODO] `managed-orchestration-cleanup.phase8.user-acceptance.task1` User installs the verification release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
+59. [TODO] `managed-orchestration-cleanup.phase9.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
 
-## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-14)
+## Phase 10 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Cleanup Scope
 
-54. [TODO] `managed-orchestration-cleanup.phase9.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
-55. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
-56. [TODO] `managed-orchestration-cleanup.phase9.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+60. [TODO] `managed-orchestration-cleanup.phase10.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
+61. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
+62. [TODO] `managed-orchestration-cleanup.phase10.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).

@@ -4,6 +4,14 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.254] - 2026-05-14
+### Changed
+- **Clean rebuild of the managed orchestration cleanup verification package.** Rebuilds the v1.2.253 cleanup baseline after clearing stale local release outputs, under a new release identity for retesting.
+- **Legacy managed step orchestration remains disabled by design.** The old generated plan CLI/shim wiring, accept-contract runners, repair/revision dispatchers, managed commit transaction, and post-turn orchestration side effects continue to fail closed until the replacement cluster orchestrator is implemented.
+
+### Tests
+- Clean rebuild release checks are recorded in the active cleanup plan.
+
 ## [1.2.253] - 2026-05-14
 ### Changed
 - **Legacy managed step orchestration is removed from the runtime baseline.** The generated plan CLI/shim wiring, accept-contract runners, repair/revision dispatchers, managed commit transaction, and post-turn orchestration side effects now fail closed or no-op before the replacement cluster orchestrator is implemented.
