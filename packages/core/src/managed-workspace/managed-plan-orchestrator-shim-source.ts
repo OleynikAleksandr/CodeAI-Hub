@@ -1,6 +1,4 @@
-import { createApplicationSkeletonPlanMutatorShimSource } from "./managed-application-skeleton-plan-mutator";
 import { createDiagramModulesPlanMutatorShimSource } from "./managed-diagram-modules-plan-mutator";
-import { createQualityGatesPlanMutatorShimSource } from "./managed-quality-gates-plan-mutator";
 import { createManagedStagePlan } from "./managed-todo-tree";
 
 const retainLegacyShimDependenciesUntilCleanup = (
@@ -8,9 +6,7 @@ const retainLegacyShimDependenciesUntilCleanup = (
 ): undefined => undefined;
 
 retainLegacyShimDependenciesUntilCleanup(
-  createApplicationSkeletonPlanMutatorShimSource,
   createDiagramModulesPlanMutatorShimSource,
-  createQualityGatesPlanMutatorShimSource,
   createManagedStagePlan
 );
 

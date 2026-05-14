@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "af6b31760",
+  "lastRecordedCommit": "03653b83e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase3.generated.task1",
-  "expectedCommitMessage": "refactor: remove legacy managed plan shim generation",
+  "currentTaskId": "managed-orchestration-cleanup.phase3.generated.task2",
+  "expectedCommitMessage": "refactor: remove legacy managed plan mutators",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy managed plan shim generation",
-    "preCommitHead": "af6b31760",
+    "expectedCommitMessage": "refactor: remove legacy managed plan mutators",
+    "preCommitHead": "03653b83e",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase3.generated.task1"
+    "taskId": "managed-orchestration-cleanup.phase3.generated.task2"
   }
 }
 ```
@@ -120,7 +120,7 @@ Verification for task 7:
 ### Stream: Generated Orchestrator Removal
 
 9. [DONE] `managed-orchestration-cleanup.phase3.generated.task1` Remove generated plan CLI shim runtime and installer wiring that injects old managed scenario logic into user workspaces (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed plan shim generation`).
-10. [PENDING] Git Commit: `refactor: remove legacy managed plan shim generation` (hash: TBD)
+10. [DONE] Git Commit: `refactor: remove legacy managed plan shim generation` (hash: 03653b83e)
 
 Verification for task 9:
 
@@ -130,51 +130,61 @@ Verification for task 9:
 - `managed-plan-orchestrator-shim-source.ts` no longer exports or builds `createPlanCliShim`; it is reduced to a temporary removal marker so the next cleanup step can delete mutator ownership without introducing unused-export debt.
 - Remaining `plan-cli.mjs` references are legacy tests/hook-registry tails and are intentionally left for Phase 5 cleanup after the mutator and post-turn writers are removed.
 
-11. [TODO] `managed-orchestration-cleanup.phase3.generated.task2` Remove Diagram Modules, Application Skeleton, and Quality Gates managed plan mutator ownership after startup/post-turn paths are fail-closed (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `refactor: remove legacy managed plan mutators`).
-12. [TODO] Git Commit: `refactor: remove legacy managed plan mutators` (hash: TBD)
+11. [DONE] `managed-orchestration-cleanup.phase3.generated.task2` Remove Application Skeleton and Quality Gates generated plan-mutator shim ownership after startup/post-turn paths are fail-closed (scope: `packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `refactor: remove legacy managed plan mutators`).
+12. [PENDING] Git Commit: `refactor: remove legacy managed plan mutators` (hash: TBD)
+
+Verification for task 11:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- Diagram Modules shim mutator remains as the next dedicated cleanup task because its generated-shim helper is still directly asserted by `managed-diagram-modules-plan-mutator.test.ts`.
+
+13. [TODO] `managed-orchestration-cleanup.phase3.generated.task3` Remove Diagram Modules generated plan-mutator shim ownership and its shim-only assertion while preserving direct Product Part/repair helper behavior until read-model cleanup (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `refactor: remove legacy diagram modules plan mutator shim`).
+14. [TODO] Git Commit: `refactor: remove legacy diagram modules plan mutator shim` (hash: TBD)
 
 ## Phase 4 — Remove Post-Turn Commit And Feedback Ownership (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Commit And Feedback Writers
 
-13. [TODO] `managed-orchestration-cleanup.phase4.postturn.task1` Remove legacy managed documentation commit transaction and workflow-state commit helper ownership (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed commit ownership`).
-14. [TODO] Git Commit: `refactor: remove legacy managed commit ownership` (hash: TBD)
-15. [TODO] `managed-orchestration-cleanup.phase4.postturn.task2` Remove legacy provider feedback and continuation dispatch helpers for managed orchestration (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts`; expected commit: `refactor: remove legacy managed feedback dispatchers`).
-16. [TODO] Git Commit: `refactor: remove legacy managed feedback dispatchers` (hash: TBD)
-17. [TODO] `managed-orchestration-cleanup.phase4.postturn.task3` Remove legacy managed repair/revision/accept runners per discovered import graph, preserving only non-orchestration validators (scope: `packages/core/src/remote-bridge/handlers/*repair-orchestration.ts, packages/core/src/remote-bridge/handlers/*revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/*accept-contract*`; expected commit: `refactor: remove legacy managed repair runners`).
-18. [TODO] Git Commit: `refactor: remove legacy managed repair runners` (hash: TBD)
+15. [TODO] `managed-orchestration-cleanup.phase4.postturn.task1` Remove legacy managed documentation commit transaction and workflow-state commit helper ownership (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed commit ownership`).
+16. [TODO] Git Commit: `refactor: remove legacy managed commit ownership` (hash: TBD)
+17. [TODO] `managed-orchestration-cleanup.phase4.postturn.task2` Remove legacy provider feedback and continuation dispatch helpers for managed orchestration (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts`; expected commit: `refactor: remove legacy managed feedback dispatchers`).
+18. [TODO] Git Commit: `refactor: remove legacy managed feedback dispatchers` (hash: TBD)
+19. [TODO] `managed-orchestration-cleanup.phase4.postturn.task3` Remove legacy managed repair/revision/accept runners per discovered import graph, preserving only non-orchestration validators (scope: `packages/core/src/remote-bridge/handlers/*repair-orchestration.ts, packages/core/src/remote-bridge/handlers/*revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/*accept-contract*`; expected commit: `refactor: remove legacy managed repair runners`).
+20. [TODO] Git Commit: `refactor: remove legacy managed repair runners` (hash: TBD)
 
 ## Phase 5 — Clean Read Model And Test Tail (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Read-Only Projection
 
-19. [TODO] `managed-orchestration-cleanup.phase5.readmodel.task1` Clean workflow-state/read-model references so remaining PM projection is read-only and does not trigger legacy commits or provider messages (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: make managed workflow read model fail closed`).
-20. [TODO] Git Commit: `refactor: make managed workflow read model fail closed` (hash: TBD)
+21. [TODO] `managed-orchestration-cleanup.phase5.readmodel.task1` Clean workflow-state/read-model references so remaining PM projection is read-only and does not trigger legacy commits or provider messages (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: make managed workflow read model fail closed`).
+22. [TODO] Git Commit: `refactor: make managed workflow read model fail closed` (hash: TBD)
 
 ### Stream: Legacy Tests And Allowlist Debt
 
-21. [TODO] `managed-orchestration-cleanup.phase5.tests.task1` Remove or rewrite tests that only assert the deleted generated-script and post-turn orchestration paths (scope: `packages/core/src/managed-workspace/*.test.ts, packages/core/src/remote-bridge/handlers/*managed*.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed orchestration assertions`).
-22. [TODO] Git Commit: `test: remove legacy managed orchestration assertions` (hash: TBD)
-23. [TODO] `managed-orchestration-cleanup.phase5.tests.task2` Remove stale architecture max-line allowlist entries and stale active-path docs references left by deleted legacy files (scope: `scripts/check-architecture-rules/max-lines-debt-allowlist.txt, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed orchestration references`).
-24. [TODO] Git Commit: `docs: remove legacy managed orchestration references` (hash: TBD)
+23. [TODO] `managed-orchestration-cleanup.phase5.tests.task1` Remove or rewrite tests that only assert the deleted generated-script and post-turn orchestration paths (scope: `packages/core/src/managed-workspace/*.test.ts, packages/core/src/remote-bridge/handlers/*managed*.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed orchestration assertions`).
+24. [TODO] Git Commit: `test: remove legacy managed orchestration assertions` (hash: TBD)
+25. [TODO] `managed-orchestration-cleanup.phase5.tests.task2` Remove stale architecture max-line allowlist entries and stale active-path docs references left by deleted legacy files (scope: `scripts/check-architecture-rules/max-lines-debt-allowlist.txt, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed orchestration references`).
+26. [TODO] Git Commit: `docs: remove legacy managed orchestration references` (hash: TBD)
 
 ## Phase 6 — Tooling Verification (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Build And Static Checks
 
-25. [TODO] `managed-orchestration-cleanup.phase6.verify.task1` Run final targeted build and static checks: `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration cleanup`).
-26. [TODO] Git Commit: `docs: verify managed orchestration cleanup` (hash: TBD)
+27. [TODO] `managed-orchestration-cleanup.phase6.verify.task1` Run final targeted build and static checks: `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration cleanup`).
+28. [TODO] Git Commit: `docs: verify managed orchestration cleanup` (hash: TBD)
 
 ## Phase 7 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
 ### Stream: User Acceptance
 
-27. [TODO] `managed-orchestration-cleanup.phase7.user-acceptance.task1` User reviews cleanup result and confirms the codebase is ready for the next new-cluster implementation planning cycle (scope: user workflow; expected commit: not required).
+29. [TODO] `managed-orchestration-cleanup.phase7.user-acceptance.task1` User reviews cleanup result and confirms the codebase is ready for the next new-cluster implementation planning cycle (scope: user workflow; expected commit: not required).
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Cleanup Scope
 
-28. [TODO] `managed-orchestration-cleanup.phase8.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
-29. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
-30. [TODO] `managed-orchestration-cleanup.phase8.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+30. [TODO] `managed-orchestration-cleanup.phase8.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
+31. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
+32. [TODO] `managed-orchestration-cleanup.phase8.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
