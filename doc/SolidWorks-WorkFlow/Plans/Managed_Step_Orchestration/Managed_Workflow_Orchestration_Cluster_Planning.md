@@ -1,9 +1,11 @@
 # Managed Workflow Orchestration Cluster Planning
 
-**Status:** draft planning source.
+**Status:** draft planning source; active runtime instructions from the old implementation are suspended during cleanup-first rewrite.
 **Created:** 2026-05-14.
 **Owner:** Oleksandr + Codex.
 **Scope:** redesign the Core-managed documentation step orchestration before more point fixes are attempted.
+
+**2026-05-14 execution update:** this document remains the design source for the new cluster, but its "current as-is" inventory is historical. The active implementation scope first removes the legacy generated-script/mutator/post-turn/read-model orchestration surfaces and keeps technical managed stages fail-closed. New cluster implementation starts only after that cleanup is verified.
 
 ## 1. Why This Planning Exists
 
@@ -619,9 +621,9 @@ The new worktree should treat this planning package as the recovery context for 
 Implementation intent:
 
 - create a new `Managed Workflow Orchestration` cluster instead of adding more point fixes to the current scattered implementation;
-- keep legacy orchestrator code as a reference while the new cluster is introduced;
-- avoid two competing owners for the same transition by routing each migrated stage through exactly one orchestration path;
+- remove legacy orchestrator code before cluster implementation so there are not two competing transition owners;
+- keep historical behavior only in planning/docs context, not as runnable fallback code;
 - migrate one step at a time: first Diagram Modules, then Application Skeleton, then Quality Gates, unless the implementation plan explicitly changes the order;
-- only remove legacy generated-script/mutator/post-turn logic after the corresponding step is fully owned by the new state machine and regression tests pass.
+- keep technical stages fail-closed until the corresponding step is fully owned by the new state machine and regression tests pass.
 
-First implementation plan should not start with code deletion. It should start with the new cluster skeleton, typed events/snapshots/effects, read-only snapshot reader, and pure state machine tests. Deletion comes later as a controlled cutover, not as the first task.
+Superseded execution-order note: the active cleanup scope intentionally starts with code deletion because the old orchestration path already caused conflicting ownership. The next implementation plan starts from the clean codebase with the new cluster skeleton, typed events/snapshots/effects, read-only snapshot reader, and pure state machine tests.

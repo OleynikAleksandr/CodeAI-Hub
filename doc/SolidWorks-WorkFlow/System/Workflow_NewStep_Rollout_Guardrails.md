@@ -1,11 +1,11 @@
 # Workflow New Step Rollout Guardrails (SSOT)
 
 **Status:** Active
-**Updated:** 2026-05-13
+**Updated:** 2026-05-14
 **Owner:** Oleksandr + Codex
 **Scope:** minimum rules for adding a new workflow step or retrofitting an already released one without split truth, asymmetry, or restart regressions.
 
-**2026-05-13 retrofit reference:** release `1.2.249` accepted the managed-orchestration retrofit. Anchor child-plan task ids: `quality-gates.phase1.draft.task1`, `quality-gates.phase2.review.task1`, `quality-gates.phase2.acceptance.task1`, `quality-gates.phase3.integration.taskN`, `quality-gates.phase4.user-return.task1`. Stage-light completion is sticky from `workspace.plan.md` `acceptedCommits`; downstream dirty paths must not recolor it.
+**2026-05-14 rewrite suspension:** release `1.2.249` managed-orchestration retrofit is retired as active runtime guidance during the orchestration-cluster rewrite. Generated child-plan lifecycle, `workspace.plan.md` `acceptedCommits`, Core post-turn repair/acceptance dispatch, and provider-visible managed feedback are not canonical truth for new work. Technical Documentation Tree stages remain fail-closed until the new cluster provides the replacement lifecycle.
 
 ---
 
@@ -20,14 +20,14 @@ Workflow step считается поддерживаемым только ка�
 - canonical readiness / `READY-DONE-OUTDATED-ERROR` semantics;
 - canonical continuity binding;
 - canonical workspace restore truth;
-- canonical managed child-plan lifecycle, when the step writes tracked artifacts;
+- canonical orchestration lifecycle, when the step writes tracked artifacts;
 - Project Manager parity;
 - regression tests;
 - packaged release validation.
 
 Если хотя бы один слой отсутствует, шаг считается `INCOMPLETE`.
 
-Для managed trunk steps начиная с `Diagram Modules` полный contract также включает progressive child-plan growth, one executable microtask followed by one paired `Git Commit:` item, Core-owned commits, Core rejection/repair task pairs, failed-attempt evidence commits, and a post-completion user-return phase when the step remains revisable.
+For future managed trunk steps starting with `Diagram Modules`, the full contract must be redefined by the new orchestration cluster before those steps are re-enabled. The retired generated child-plan/post-turn lifecycle must not be treated as the current implementation contract.
 
 Это правило одинаково действует:
 
@@ -129,7 +129,7 @@ Continuity хранит историю диалога. Workflow-state храни
 - workspace auto-select (last active non-idle stage);
 - startup restore.
 
-Для managed technical root stages зеленый индикатор означает только completed state этого stage from canonical workflow-state, not "some artifact exists". Downstream dirty state or blockers must not turn a completed upstream stage red unless the revision graph marks that upstream stage outdated.
+For future managed technical root stages, the green indicator must mean completed state from canonical workflow-state, not "some artifact exists". During the rewrite, these stages remain fail-closed until the new cluster owns their lifecycle.
 
 Инвариант навигации:
 
@@ -166,7 +166,7 @@ Trunk stages являются leaf nodes в sidebar (секция Documentation 
 - `Application Skeleton`
 - `Quality Gates Baseline`
 
-Для managed steps regression matrix must also cover:
+For the future managed orchestration cluster, regression matrix must also cover:
 
 1. bootstrap creates only the current executable microtask plus paired `Git Commit:`;
 2. Core rejection creates a repair microtask plus paired `Git Commit:` before provider-visible feedback;
@@ -197,7 +197,7 @@ Release gate:
 4. Gating основан на semantic readiness, а не на случайном найденном файле.
 5. Workflow-state и continuity не расходятся по active step truth после restart.
 6. PM parity с mature reference step достигнут.
-7. Managed lifecycle steps use progressive child-plan growth, Core-owned commits, repair attempt commits, acceptance commits, provider-actionable repair feedback, and post-completion user-return phases where applicable.
+7. Managed lifecycle steps use the new orchestration-cluster contract; the retired generated child-plan/post-turn lifecycle is not an acceptable active implementation.
 8. User-facing copy локализована через canonical ownership.
 9. Есть regression tests на identity, artifact path, gating/hydration, startup restore, stale-state self-heal, duplicate continuity handling, Core rejection/repair, and completed-stage LED boundaries.
 10. Packaged release подтверждает, что исправление работает вне source-tree happy path.
