@@ -584,3 +584,44 @@ This planning scope is accepted when:
 - recovery arbiter responsibilities are agreed;
 - the implementation migration plan is sliced into microtasks;
 - no code rewrite starts before the state machine contract is reviewed.
+
+## 15. Implementation Handoff For A Fresh Worktree
+
+The next implementation scope should start in a separate Git worktree, not in this planning tree.
+
+Recommended worktree:
+
+```text
+/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-managed-orchestrator
+```
+
+Recommended branch:
+
+```text
+codex/managed-orchestration-rewrite
+```
+
+The new worktree should treat this planning package as the recovery context for a zero-context agent. At the start of the implementation scope, read:
+
+1. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md`;
+2. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md`;
+3. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`;
+4. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`;
+5. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md`;
+6. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`;
+7. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Managed_Orchestration_Planning_RU.md`;
+8. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
+9. `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`;
+10. `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`;
+11. `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`;
+12. `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`.
+
+Implementation intent:
+
+- create a new `Managed Workflow Orchestration` cluster instead of adding more point fixes to the current scattered implementation;
+- keep legacy orchestrator code as a reference while the new cluster is introduced;
+- avoid two competing owners for the same transition by routing each migrated stage through exactly one orchestration path;
+- migrate one step at a time: first Diagram Modules, then Application Skeleton, then Quality Gates, unless the implementation plan explicitly changes the order;
+- only remove legacy generated-script/mutator/post-turn logic after the corresponding step is fully owned by the new state machine and regression tests pass.
+
+First implementation plan should not start with code deletion. It should start with the new cluster skeleton, typed events/snapshots/effects, read-only snapshot reader, and pure state machine tests. Deletion comes later as a controlled cutover, not as the first task.

@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "de098cbe4",
+  "lastRecordedCommit": "11f0d1146",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase4.quality-gates-doc.task1",
-  "expectedCommitMessage": "docs: specify quality gates orchestration scenario",
+  "currentTaskId": "managed-orchestration.phase5.verify.task1",
+  "expectedCommitMessage": "docs: verify managed orchestration planning package",
   "debt": {
-    "expectedCommitMessage": "docs: specify quality gates orchestration scenario",
-    "preCommitHead": "de098cbe4",
+    "expectedCommitMessage": "docs: verify managed orchestration planning package",
+    "preCommitHead": "11f0d1146",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase4.quality-gates-doc.task1"
+    "taskId": "managed-orchestration.phase5.verify.task1"
   }
 }
 ```
@@ -109,14 +109,14 @@
 22. [DONE] `managed-orchestration.phase4.diagram-modules-doc.task1` Write the Diagram Modules managed orchestration scenario with Phase 1 Type A, Phase 2 Type B User-Led Review, and Phase 3 persistent return opening (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify diagram modules orchestration scenario`).
 23. [DONE] Git Commit: `docs: specify diagram modules orchestration scenario` (hash: de098cbe4)
 24. [DONE] `managed-orchestration.phase4.quality-gates-doc.task1` Write the Quality Gates managed orchestration scenario with Phase 1 Type A, Phase 2 Type B, Phase 3 accepted-only integration Type A, and Phase 4 persistent return opening (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Managed_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify quality gates orchestration scenario`).
-25. [PENDING] Git Commit: `docs: specify quality gates orchestration scenario` (hash: TBD)
+25. [DONE] Git Commit: `docs: specify quality gates orchestration scenario` (hash: 11f0d1146)
 
 ## Phase 5 — Tooling Verification (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Planning Package Verification
 
-26. [TODO] `managed-orchestration.phase5.verify.task1` Validate the planning package, links, and active plan consistency before implementation planning starts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration planning package`).
-27. [TODO] Git Commit: `docs: verify managed orchestration planning package` (hash: TBD)
+26. [DONE] `managed-orchestration.phase5.verify.task1` Validate the planning package, links, and active plan consistency before implementation planning starts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration planning package`).
+27. [PENDING] Git Commit: `docs: verify managed orchestration planning package` (hash: TBD)
 
 ## Phase 6 — User Planning Acceptance (owner: User, updated: 2026-05-14)
 

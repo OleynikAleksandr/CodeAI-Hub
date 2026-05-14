@@ -518,3 +518,43 @@ Managed step logic должен потреблять только normalized eve
 - implementation migration plan нарезан на microtasks;
 - code rewrite не начинается до review state machine contract.
 
+## 15. Handoff Для Реализации В Новом Worktree
+
+Следующий implementation scope должен начаться в отдельном Git worktree, а не в текущем planning tree.
+
+Рекомендуемый worktree:
+
+```text
+/Users/oleksandroliinyk/VSCODE/CodeAI-Hub-managed-orchestrator
+```
+
+Рекомендуемая branch:
+
+```text
+codex/managed-orchestration-rewrite
+```
+
+Новый worktree должен считать этот planning package recovery-контекстом для агента с нулевым контекстом. В начале implementation scope нужно прочитать:
+
+1. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md`;
+2. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md`;
+3. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`;
+4. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`;
+5. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md`;
+6. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`;
+7. `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Managed_Orchestration_Planning_RU.md`;
+8. `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
+9. `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`;
+10. `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`;
+11. `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`;
+12. `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`.
+
+Смысл implementation scope:
+
+- создать новый cluster `Managed Workflow Orchestration`, а не продолжать точечно чинить текущую размазанную реализацию;
+- использовать legacy orchestrator code как reference, пока новый cluster вводится;
+- не допускать двух спорящих владельцев одного transition: каждый migrated stage должен идти ровно через один orchestration path;
+- мигрировать шаги по одному: сначала Diagram Modules, затем Application Skeleton, затем Quality Gates, если implementation plan явно не изменит порядок;
+- удалять legacy generated-script/mutator/post-turn logic только после того, как соответствующий шаг полностью перешёл под новую state machine и прошёл regression tests.
+
+Первый implementation plan не должен начинаться с удаления кода. Он должен начинаться с skeleton нового cluster, typed events/snapshots/effects, read-only snapshot reader и pure state machine tests. Удаление старого кода выполняется позже как controlled cutover, а не как первая задача.
