@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "aa561b306",
+  "lastRecordedCommit": "0ff3ac7d2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task3",
-  "expectedCommitMessage": "refactor: remove legacy managed repair runners",
+  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task4",
+  "expectedCommitMessage": "refactor: remove legacy managed revision runners",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy managed repair runners",
-    "preCommitHead": "aa561b306",
+    "expectedCommitMessage": "refactor: remove legacy managed revision runners",
+    "preCommitHead": "0ff3ac7d2",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase4.postturn.task3"
+    "taskId": "managed-orchestration-cleanup.phase4.postturn.task4"
   }
 }
 ```
@@ -175,7 +175,7 @@ Verification for task 17:
 - Provider feedback and continuation dispatcher entrypoints are retained for compile compatibility but no longer resolve sessions or send provider messages.
 
 19. [DONE] `managed-orchestration-cleanup.phase4.postturn.task3` Disable legacy managed repair orchestration runners for Diagram Modules, Application Skeleton, and Quality Gates without deleting validator/read-model helpers (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.ts`; expected commit: `refactor: remove legacy managed repair runners`).
-20. [PENDING] Git Commit: `refactor: remove legacy managed repair runners` (hash: TBD)
+20. [DONE] Git Commit: `refactor: remove legacy managed repair runners` (hash: 0ff3ac7d2)
 
 Verification for task 19:
 
@@ -184,8 +184,16 @@ Verification for task 19:
 - `npm run check:knip` passed.
 - Repair orchestration entrypoints now return `noop` and no longer write repair tasks or evidence files.
 
-21. [TODO] `managed-orchestration-cleanup.phase4.postturn.task4` Disable legacy managed revision injection runners after repair runners are fail-closed (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed revision runners`).
-22. [TODO] Git Commit: `refactor: remove legacy managed revision runners` (hash: TBD)
+21. [DONE] `managed-orchestration-cleanup.phase4.postturn.task4` Disable legacy managed revision injection runners after repair runners are fail-closed (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed revision runners`).
+22. [PENDING] Git Commit: `refactor: remove legacy managed revision runners` (hash: TBD)
+
+Verification for task 21:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- Revision injection runner entrypoints now return without mutating stage plans.
+
 23. [TODO] `managed-orchestration-cleanup.phase4.postturn.task5` Disable legacy Application Skeleton and Quality Gates accept-contract side-effect runners while preserving pure decision/read-model contracts until PM cleanup (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed accept-contract runners`).
 24. [TODO] Git Commit: `refactor: remove legacy managed accept-contract runners` (hash: TBD)
 
