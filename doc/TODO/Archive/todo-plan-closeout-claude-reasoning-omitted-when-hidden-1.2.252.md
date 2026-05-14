@@ -12,12 +12,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Claude_Reasoning_Omitted_When_Hidden.md",
   "currentTaskId": "reasoning-omit.phase5.closeout.task1",
   "expectedCommitMessage": "docs: close claude reasoning omitted when hidden scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close claude reasoning omitted when hidden scope",
-    "preCommitHead": "0c78eee71",
-    "stage": "commit_pending",
-    "taskId": "reasoning-omit.phase5.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -84,6 +79,6 @@
 
 ### Stream: Close Plan After User Acceptance
 
-15. [DONE] `reasoning-omit.phase5.closeout.task1` Archive active plan and dispose the planning document after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close claude reasoning omitted when hidden scope`).
-16. [PENDING] Git Commit: `docs: close claude reasoning omitted when hidden scope` (hash: TBD)
+15. [IN_PROGRESS] `reasoning-omit.phase5.closeout.task1` Archive active plan and dispose the planning document after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close claude reasoning omitted when hidden scope`).
+16. [TODO] Git Commit: `docs: close claude reasoning omitted when hidden scope` (hash: TBD)
 17. [TODO] `reasoning-omit.phase5.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
