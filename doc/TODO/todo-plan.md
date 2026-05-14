@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "c5bf6f01a",
+  "lastRecordedCommit": "def09270c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase7.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.253 managed cleanup release",
+  "currentTaskId": "managed-orchestration-cleanup.phase7.pre-release-verify.task1",
+  "expectedCommitMessage": "docs: record 1.2.253 pre-release verification",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.253 managed cleanup release",
-    "preCommitHead": "c5bf6f01a",
+    "expectedCommitMessage": "docs: record 1.2.253 pre-release verification",
+    "preCommitHead": "def09270c",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase7.release-prep.task1"
+    "taskId": "managed-orchestration-cleanup.phase7.pre-release-verify.task1"
   }
 }
 ```
@@ -331,9 +331,20 @@ Verification for task 43:
 ### Stream: Release Preparation And Build
 
 45. [DONE] `managed-orchestration-cleanup.phase7.release-prep.task1` Prepare release documentation for the managed orchestration cleanup verification build (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.253 managed cleanup release`).
-46. [PENDING] Git Commit: `docs: prepare 1.2.253 managed cleanup release` (hash: TBD)
-47. [TODO] `managed-orchestration-cleanup.phase7.pre-release-verify.task1` Run pre-release validation before packaging: `npm run lint`, `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.253 pre-release verification`).
-48. [TODO] Git Commit: `docs: record 1.2.253 pre-release verification` (hash: TBD)
+46. [DONE] Git Commit: `docs: prepare 1.2.253 managed cleanup release` (hash: def09270c)
+47. [DONE] `managed-orchestration-cleanup.phase7.pre-release-verify.task1` Run pre-release validation before packaging: `npm run lint`, `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.253 pre-release verification`).
+48. [PENDING] Git Commit: `docs: record 1.2.253 pre-release verification` (hash: TBD)
+
+Verification for task 47:
+
+- `npm run lint` passed.
+- `npm run build:core` passed.
+- `npm run build:project-manager` passed.
+- `npm run typecheck:webview` passed.
+- `npm run check:knip` passed.
+- `npm run check:links` passed.
+- `npm run check:dup` passed with 2.76% duplicated lines, under the 3% threshold.
+
 49. [TODO] `managed-orchestration-cleanup.phase7.release-build.task1` Run unified release artifact build with the active plan state intentionally present, then record the generated provider/core/UI/launcher tarballs (scope: `package.json, package-lock.json, packages/*/package.json, assets/launcher/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.253 release artifacts`).
 50. [TODO] Git Commit: `chore: build 1.2.253 release artifacts` (hash: TBD)
 51. [TODO] `managed-orchestration-cleanup.phase7.vsix-build.task1` Run final VSIX package build for the current release version and record the generated package path (scope: `packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: package 1.2.253 release`).
