@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "8ecbb95f0",
+  "lastRecordedCommit": "c402cb64d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase3.generated.task3",
-  "expectedCommitMessage": "refactor: remove legacy diagram modules plan mutator shim",
+  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task1",
+  "expectedCommitMessage": "refactor: remove legacy managed commit ownership",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy diagram modules plan mutator shim",
-    "preCommitHead": "8ecbb95f0",
+    "expectedCommitMessage": "refactor: remove legacy managed commit ownership",
+    "preCommitHead": "c402cb64d",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase3.generated.task3"
+    "taskId": "managed-orchestration-cleanup.phase4.postturn.task1"
   }
 }
 ```
@@ -141,7 +141,7 @@ Verification for task 11:
 - Diagram Modules shim mutator remains as the next dedicated cleanup task because its generated-shim helper is still directly asserted by `managed-diagram-modules-plan-mutator.test.ts`.
 
 13. [DONE] `managed-orchestration-cleanup.phase3.generated.task3` Remove Diagram Modules generated plan-mutator shim ownership and its shim-only assertion while preserving direct Product Part/repair helper behavior until read-model cleanup (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.test.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts`; expected commit: `refactor: remove legacy diagram modules plan mutator shim`).
-14. [PENDING] Git Commit: `refactor: remove legacy diagram modules plan mutator shim` (hash: TBD)
+14. [DONE] Git Commit: `refactor: remove legacy diagram modules plan mutator shim` (hash: c402cb64d)
 
 Verification for task 13:
 
@@ -154,8 +154,16 @@ Verification for task 13:
 
 ### Stream: Commit And Feedback Writers
 
-15. [TODO] `managed-orchestration-cleanup.phase4.postturn.task1` Remove legacy managed documentation commit transaction and workflow-state commit helper ownership (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed commit ownership`).
-16. [TODO] Git Commit: `refactor: remove legacy managed commit ownership` (hash: TBD)
+15. [DONE] `managed-orchestration-cleanup.phase4.postturn.task1` Remove legacy managed documentation commit transaction and workflow-state commit helper ownership (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts`; expected commit: `refactor: remove legacy managed commit ownership`).
+16. [PENDING] Git Commit: `refactor: remove legacy managed commit ownership` (hash: TBD)
+
+Verification for task 15:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- `ManagedDocumentationCommitTransaction.commitAcceptedStage` is now fail-closed and no longer stages files or invokes `npm run plan:commit`; `commitManagedDocumentationStageIfReady` refreshes read-only progress only.
+
 17. [TODO] `managed-orchestration-cleanup.phase4.postturn.task2` Remove legacy provider feedback and continuation dispatch helpers for managed orchestration (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts`; expected commit: `refactor: remove legacy managed feedback dispatchers`).
 18. [TODO] Git Commit: `refactor: remove legacy managed feedback dispatchers` (hash: TBD)
 19. [TODO] `managed-orchestration-cleanup.phase4.postturn.task3` Remove legacy managed repair/revision/accept runners per discovered import graph, preserving only non-orchestration validators (scope: `packages/core/src/remote-bridge/handlers/*repair-orchestration.ts, packages/core/src/remote-bridge/handlers/*revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/*accept-contract*`; expected commit: `refactor: remove legacy managed repair runners`).

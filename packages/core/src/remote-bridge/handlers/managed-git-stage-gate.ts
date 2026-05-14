@@ -16,11 +16,6 @@ export interface ManagedGitStatus {
   readonly dirtyFiles: readonly string[];
 }
 
-const MANAGED_STAGE_IDS: readonly ManagedStageId[] = [
-  "diagram_modules",
-  "application_skeleton",
-  "quality_gates",
-];
 const DIAGRAM_MODULES_PLAN_PATH =
   "doc/TODO/stages/diagram-modules/todo-plan.md";
 const APPLICATION_SKELETON_PLAN_PATH =
@@ -44,9 +39,6 @@ const QUALITY_GATES_PATH_KEYS = new Set([
 ]);
 const QG_TSCONFIG_RE = /^tsconfig\.qg(?:\.[a-z0-9-]+)?\.json$/u;
 const PATH_SEGMENT_SEPARATOR_RE = /[\\/]+/u;
-
-export const isManagedStageId = (value: string): value is ManagedStageId =>
-  MANAGED_STAGE_IDS.includes(value as ManagedStageId);
 
 const isVolatileCoreMetadataPath = (
   file: string,
