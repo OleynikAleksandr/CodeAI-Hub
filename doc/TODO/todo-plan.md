@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "4be3373b1",
+  "lastRecordedCommit": "0b5ae8fe4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase0.plan.task1",
-  "expectedCommitMessage": "docs: start managed orchestration cleanup implementation",
+  "currentTaskId": "managed-orchestration-cleanup.phase1.inventory.task1",
+  "expectedCommitMessage": "docs: inventory legacy managed orchestration owners",
   "debt": {
-    "expectedCommitMessage": "docs: start managed orchestration cleanup implementation",
-    "preCommitHead": "4be3373b1",
+    "expectedCommitMessage": "docs: inventory legacy managed orchestration owners",
+    "preCommitHead": "0b5ae8fe4",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase0.plan.task1"
+    "taskId": "managed-orchestration-cleanup.phase1.inventory.task1"
   }
 }
 ```
@@ -57,14 +57,43 @@
 ### Stream: Active Plan
 
 1. [DONE] `managed-orchestration-cleanup.phase0.plan.task1` Create this active implementation todo-plan for legacy managed orchestration cleanup (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: start managed orchestration cleanup implementation`).
-2. [PENDING] Git Commit: `docs: start managed orchestration cleanup implementation` (hash: TBD)
+2. [DONE] Git Commit: `docs: start managed orchestration cleanup implementation` (hash: 0b5ae8fe4)
 
 ## Phase 1 — Baseline And Legacy Inventory (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Inventory
 
-3. [TODO] `managed-orchestration-cleanup.phase1.inventory.task1` Run baseline diagnostics and record the legacy owner kill list in this plan before code removal (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: inventory legacy managed orchestration owners`).
-4. [TODO] Git Commit: `docs: inventory legacy managed orchestration owners` (hash: TBD)
+3. [DONE] `managed-orchestration-cleanup.phase1.inventory.task1` Run baseline diagnostics and record the legacy owner kill list in this plan before code removal (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: inventory legacy managed orchestration owners`).
+4. [PENDING] Git Commit: `docs: inventory legacy managed orchestration owners` (hash: TBD)
+
+### Inventory Findings (2026-05-14)
+
+Baseline:
+
+- `npm install` restored missing local dependencies; no tracked package files changed.
+- First direct `npm run build:core` failed because workspace dependency declarations/build outputs were missing in the local checkout.
+- After `npm run compile` and explicit workspace dependency builds for `@codeai-hub/unified-session`, `@codeai-hub/initiatives`, `@codeai-hub/claude-module`, `@codeai-hub/codex-app-server-module`, and `@codeai-hub/gemini-module`, `npm run build:core` passed.
+- Current dirty tracked file before this inventory commit: `doc/TODO/todo-plan.md` only.
+
+Protect / do not delete in this cleanup:
+
+- repo-local `scripts/plan-orchestrator/**` and package scripts used by this repository's development lifecycle;
+- stack-neutral managed workspace bootstrap/manifest/path/drift/facade helpers unless a later task proves they mutate managed documentation step transitions;
+- artifact validators/progress readers that remain read-only after legacy orchestration writers are removed.
+
+Delete / replace legacy transition owners:
+
+- generated user-workspace scenario path: `managed-plan-orchestrator-shim-source.ts`, mutators for Diagram Modules / Application Skeleton / Quality Gates, and installer wiring that writes generated scenario logic;
+- post-turn transition owner: `managed-workflow-post-turn-service.ts`;
+- Core commit owner: `managed-documentation-commit-transaction.ts` and `workflow-state-managed-documentation-commit.ts`;
+- provider continuation/repair/acceptance feedback owner: `workflow-agent-acceptance-feedback.ts`, `*-continuation-dispatcher.ts`, `*-repair-orchestration.ts`, `*-revision-injection-runner.ts`, `*accept-contract*` runners/handlers/client surfaces when they only invoke the legacy path;
+- tests that assert deleted generated-script, mutator, post-turn, commit, or provider feedback behavior as active product behavior.
+
+Initial grep evidence:
+
+- `included-in-commit` still exists in `managed-plan-orchestrator-shim-source.ts` and generated-shim tests; it must be gone by cleanup end.
+- `ManagedWorkflowPostTurnService` is constructed from `workflow-state-service.ts`, so the first runtime cutoff must prevent this service from sending provider messages or committing before deeper deletion.
+- Project Manager accept-contract buttons/clients are part of the old user acceptance command path and must either be disabled during rewrite or removed when the legacy accept-contract API is removed.
 
 ## Phase 2 — Temporary Fail-Closed Boundary (owner: Codex, updated: 2026-05-14)
 
