@@ -17,7 +17,7 @@ export const createQualityGatesActionLines = (params: {
       "When the draft artifacts are ready, respond with a content-readiness note. Do not run Git, staging, or plan commands.",
     ];
   }
-  if (params.progress.acceptanceCommitted !== true) {
+  if (!params.progress.integrated) {
     return [
       "Do not start integration yet.",
       "Integration continuation is suspended until the new orchestrator owns this transition.",

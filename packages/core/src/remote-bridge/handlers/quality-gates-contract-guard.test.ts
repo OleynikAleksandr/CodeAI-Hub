@@ -8,7 +8,6 @@ const buildProgress = (
   overrides: Partial<QualityGatesProgressSnapshot> = {}
 ): QualityGatesProgressSnapshot => ({
   accepted: false,
-  acceptanceCommitted: false,
   commandContractReady: true,
   integrated: false,
   integrationState: "draft",
@@ -86,7 +85,6 @@ test("guard returns noop for non-draft phases", () => {
     phase: "phase_3_integration",
     progress: buildProgress({
       accepted: true,
-      acceptanceCommitted: true,
       integrationState: "in_progress",
     }),
     terminalEventReceived: true,

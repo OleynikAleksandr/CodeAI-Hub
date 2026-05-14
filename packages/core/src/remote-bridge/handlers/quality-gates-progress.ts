@@ -20,7 +20,6 @@ export type QualityGatesSubstep =
   | "outdated";
 
 export interface QualityGatesProgressSnapshot {
-  readonly acceptanceCommitted?: boolean;
   readonly accepted: boolean;
   readonly commandContractReady: boolean;
   readonly integrated: boolean;
@@ -31,10 +30,6 @@ export interface QualityGatesProgressSnapshot {
   readonly validationErrors: readonly string[];
 }
 
-const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
-const WORKSPACE_PLAN_STATE_RE =
-  /<!-- codeai-workspace-plan-state:start -->\s*```json\s*([\s\S]*?)\s*```\s*<!-- codeai-workspace-plan-state:end -->/u;
-const ACCEPTANCE_COMMIT_MESSAGE = "docs: accept quality gates contract";
 const HOOK_SECTION_START = "# codeai-managed:gates:start";
 const HOOK_SECTION_END = "# codeai-managed:gates:end";
 
@@ -79,34 +74,6 @@ const readAcceptedFlag = (value: Record<string, unknown> | null): boolean => {
     acceptance !== null &&
     !Array.isArray(acceptance) &&
     (acceptance as Record<string, unknown>).accepted === true
-  );
-};
-
-const readAcceptanceCommittedFlag = (
-  value: Record<string, unknown> | null
-): boolean => value?.acceptanceCommitted === true;
-
-const readQualityGatesAcceptanceCommitted = async (
-  workspaceRoot: string
-): Promise<boolean> => {
-  const text = await readExistingFile(
-    path.join(workspaceRoot, WORKSPACE_PLAN_PATH)
-  );
-  const match = text ? WORKSPACE_PLAN_STATE_RE.exec(text) : null;
-  if (!match) {
-    return false;
-  }
-  const state = parseJsonObject(match[1] ?? null);
-  const acceptedCommits = Array.isArray(state?.acceptedCommits)
-    ? state.acceptedCommits
-    : [];
-  return acceptedCommits.some(
-    (entry) =>
-      typeof entry === "object" &&
-      entry !== null &&
-      !Array.isArray(entry) &&
-      (entry as Record<string, unknown>).stage === "quality_gates" &&
-      (entry as Record<string, unknown>).message === ACCEPTANCE_COMMIT_MESSAGE
   );
 };
 
@@ -203,14 +170,12 @@ const validateDeclaredHookIntegration = async (params: {
 };
 
 const hasAcceptedIntegrationAttemptStarted = (params: {
-  readonly acceptanceCommitted: boolean;
   readonly accepted: boolean;
   readonly declaredIntegrated: boolean;
   readonly integrationState: string | null;
 }): boolean =>
   params.declaredIntegrated ||
   (params.accepted &&
-    params.acceptanceCommitted &&
     (params.integrationState === "in_progress" ||
       params.integrationState === "integrating" ||
       params.integrationState === "integrated" ||
@@ -284,14 +249,10 @@ export const readQualityGatesProgressSnapshot = async (params: {
     jsonExists &&
     commandContractReady &&
     readAcceptedFlag(contract);
-  const acceptanceCommitted =
-    readAcceptanceCommittedFlag(contract) ||
-    (await readQualityGatesAcceptanceCommitted(params.workspaceRoot));
   const integrationState = readIntegrationState(contract);
   const declaredIntegrated =
     accepted && commandContractReady && readIntegratedFlag(contract);
   const shouldValidateHooks = hasAcceptedIntegrationAttemptStarted({
-    acceptanceCommitted,
     accepted,
     declaredIntegrated,
     integrationState,
@@ -304,7 +265,6 @@ export const readQualityGatesProgressSnapshot = async (params: {
   const integrated = declaredIntegrated && validationErrors.length === 0;
   return {
     accepted,
-    acceptanceCommitted,
     commandContractReady,
     integrated,
     integrationState,

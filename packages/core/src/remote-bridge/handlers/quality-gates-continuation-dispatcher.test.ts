@@ -7,7 +7,6 @@ import type { WorkflowAgentAcceptanceFeedbackGateway } from "./workflow-agent-ac
 
 const buildProgress = (): QualityGatesProgressSnapshot => ({
   accepted: true,
-  acceptanceCommitted: true,
   commandContractReady: true,
   integrated: false,
   integrationState: "accepted",

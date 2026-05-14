@@ -2,17 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createQualityGatesActionLines } from "./quality-gates-feedback-action-lines";
 
-const PHASE3_REPAIR_RE =
-  /Continue the Phase 3 Quality Gates integration repair/u;
-const SCRIPTS_QG_RE = /scripts\/qg\/\*\*/u;
+const SUSPENDED_INTEGRATION_RE = /Integration continuation is suspended/u;
 const DO_NOT_UPDATE_RE = /Do not update Quality Gates artifacts/u;
 const WAIT_FOR_CORE_RE = /Wait for Core/u;
 
-test("accepted Quality Gates integration repair remains provider-actionable", () => {
+test("accepted Quality Gates integration stays suspended during rewrite", () => {
   const actionLines = createQualityGatesActionLines({
     outOfOwnerDirtyFiles: [],
     progress: {
-      acceptanceCommitted: true,
       accepted: true,
       commandContractReady: true,
       integrated: false,
@@ -27,8 +24,7 @@ test("accepted Quality Gates integration repair remains provider-actionable", ()
   });
 
   const text = actionLines.join("\n");
-  assert.match(text, PHASE3_REPAIR_RE);
-  assert.match(text, SCRIPTS_QG_RE);
+  assert.match(text, SUSPENDED_INTEGRATION_RE);
   assert.doesNotMatch(text, DO_NOT_UPDATE_RE);
   assert.doesNotMatch(text, WAIT_FOR_CORE_RE);
 });

@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "516edb7cf",
+  "lastRecordedCommit": "2a3adb033",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task23",
-  "expectedCommitMessage": "docs: suspend workflow steps legacy lifecycle narrative",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task24",
+  "expectedCommitMessage": "refactor: remove legacy acceptance commit progress state",
   "debt": {
-    "expectedCommitMessage": "docs: suspend workflow steps legacy lifecycle narrative",
-    "preCommitHead": "516edb7cf",
+    "expectedCommitMessage": "refactor: remove legacy acceptance commit progress state",
+    "preCommitHead": "2a3adb033",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task23"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task24"
   }
 }
 ```
@@ -454,9 +454,9 @@ Verification for task 57:
 101. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task22` Remove legacy managed lifecycle wording from prompt-pack and documentation continuation envelopes (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy continuation prompt wording`).
 102. [DONE] Git Commit: `refactor: remove legacy continuation prompt wording` (hash: 516edb7cf)
 103. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task23` Suspend remaining active Workflow Steps overview legacy lifecycle narrative and align feedback wording tests with rewrite-boundary language (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts, doc/TODO/todo-plan.md`; expected commit: `docs: suspend workflow steps legacy lifecycle narrative`).
-104. [PENDING] Git Commit: `docs: suspend workflow steps legacy lifecycle narrative` (hash: TBD)
-105. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task24` Remove legacy acceptance-commit read-model fields from Application Skeleton and Quality Gates progress snapshots (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy acceptance commit progress state`).
-106. [TODO] Git Commit: `refactor: remove legacy acceptance commit progress state` (hash: TBD)
+104. [DONE] Git Commit: `docs: suspend workflow steps legacy lifecycle narrative` (hash: 2a3adb033)
+105. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task24` Remove legacy acceptance-commit read-model fields from Application Skeleton and Quality Gates progress snapshots (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy acceptance commit progress state`).
+106. [PENDING] Git Commit: `refactor: remove legacy acceptance commit progress state` (hash: TBD)
 107. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task25` Run the final codebase grep/test audit again and record only intentional suspended/history references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record final legacy orchestrator audit`).
 108. [TODO] Git Commit: `docs: record final legacy orchestrator audit` (hash: TBD)
 
@@ -561,6 +561,13 @@ Verification for task 103:
 - `npm run check:links` passed.
 - `node --test packages/core/dist/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.js packages/core/dist/remote-bridge/handlers/quality-gates-feedback-action-lines.test.js` passed.
 - `rg -n 'release `1\\.2\\.249`|release `1\\.2\\.250`|Phase orchestration pilot|Acceptance Commit Policy|PM Accept Contract|/managed-stage-accept-contract|typed acceptance|Core-owned acceptance commit|Core acceptance commit|Core-injected|Phase 3 continuation|managed commit flow|terminal managed commit|accepted managed lifecycle|Core owns staging' doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts` returned no active legacy lifecycle matches.
+
+Verification for task 105:
+
+- `npm run build:core` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/application-skeleton-progress.test.js packages/core/dist/remote-bridge/handlers/quality-gates-progress.test.js packages/core/dist/remote-bridge/handlers/quality-gates-feedback-action-lines.test.js packages/core/dist/remote-bridge/handlers/quality-gates-contract-guard.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.js packages/core/dist/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.js` passed.
+- `npm run check:knip` passed with existing configuration hints only.
+- `rg -n "acceptanceCommitted|ACCEPTANCE_COMMIT_MESSAGE|docs: accept application skeleton contract|docs: accept quality gates contract" packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.ts packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.test.ts packages/core/src/remote-bridge/handlers/quality-gates-continuation-dispatcher.test.ts` returned no matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 

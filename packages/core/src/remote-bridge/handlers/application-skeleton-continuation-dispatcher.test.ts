@@ -17,7 +17,6 @@ const buildProgress = (
   overrides: Partial<ApplicationSkeletonProgressSnapshot> = {}
 ): ApplicationSkeletonProgressSnapshot => ({
   accepted: true,
-  acceptanceCommitted: true,
   mapExists: true,
   mappingReady: true,
   markdownExists: true,
