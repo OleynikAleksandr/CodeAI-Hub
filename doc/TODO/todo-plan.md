@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "77df17e75",
+  "lastRecordedCommit": "c88aba0ce",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task17",
-  "expectedCommitMessage": "docs: remove legacy managed lifecycle provider templates",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task18",
+  "expectedCommitMessage": "docs: mark legacy managed lifecycle contracts suspended",
   "debt": {
-    "expectedCommitMessage": "docs: remove legacy managed lifecycle provider templates",
-    "preCommitHead": "77df17e75",
+    "expectedCommitMessage": "docs: mark legacy managed lifecycle contracts suspended",
+    "preCommitHead": "c88aba0ce",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task17"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task18"
   }
 }
 ```
@@ -442,9 +442,9 @@ Verification for task 57:
 89. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task16` Remove provider-facing Core-owned commit/continuation promises from runtime feedback helper text (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-contract-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-feedback.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.test.ts, packages/core/src/remote-bridge/handlers/managed-git-stage-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed feedback text`).
 90. [DONE] Git Commit: `refactor: remove legacy managed feedback text` (hash: 77df17e75)
 91. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task17` Remove old Core-owned managed lifecycle promises from bundled provider templates and synchronized agent assets (scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/agents/quality-gates-agent/assets/quality-gates-contract.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/*bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed lifecycle provider templates`).
-92. [PENDING] Git Commit: `docs: remove legacy managed lifecycle provider templates` (hash: TBD)
-93. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task18` Mark active SSOT docs that old managed commit ownership and workspace lifecycle contracts are suspended during the rewrite (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md, doc/TODO/todo-plan.md`; expected commit: `docs: mark legacy managed lifecycle contracts suspended`).
-94. [TODO] Git Commit: `docs: mark legacy managed lifecycle contracts suspended` (hash: TBD)
+92. [DONE] Git Commit: `docs: remove legacy managed lifecycle provider templates` (hash: c88aba0ce)
+93. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task18` Mark active SSOT docs that old managed commit ownership and workspace lifecycle contracts are suspended during the rewrite (scope: `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md, doc/TODO/todo-plan.md`; expected commit: `docs: mark legacy managed lifecycle contracts suspended`).
+94. [PENDING] Git Commit: `docs: mark legacy managed lifecycle contracts suspended` (hash: TBD)
 95. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task19` Run the final codebase grep/test audit for legacy managed orchestrator activation paths and record the remaining intentional inactive/history-only references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
 96. [TODO] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
 
@@ -511,6 +511,12 @@ Verification for task 91:
 - `npm run build:core` passed.
 - `node --test packages/core/dist/templates/diagram-modules-bundled-templates.test.js packages/core/dist/templates/application-skeleton-bundled-templates.test.js packages/core/dist/templates/quality-gates-bundled-templates.test.js` passed.
 - `rg -n "Core-owned|Core owns|managed lifecycle|managed commit|Core acceptance commit|Core-injected integration prompt|plan advancement|repair task|revision task|Wait for Core|managed plan|continuation prompt|downstream unlock|accept-contract|Accept Contract|managed-stage-accept-contract|quality-gates-accept-contract|docs: accept|user review unlock|owned by Core|Core acceptance|Core structural|Core-injected|Core reports|Core confirms|Core has|managed draft commit|managed workspace lifecycle|managed context|managed lifecycle hooks|managed lifecycle baseline|pending regeneration" packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md packages/agents/quality-gates-agent/assets/quality-gates-prompt.md packages/agents/quality-gates-agent/assets/quality-gates-contract.md packages/core/src/templates/diagram-modules-bundled-templates.test.ts packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/templates/bundled-templates.ts` returned no matches.
+
+Verification for task 93:
+
+- `npm run check:links` passed.
+- `npm run plan:validate` passed.
+- `rg -n "docs: accept quality gates contract|Core-owned acceptance commit|managed commit|plan advancement|downstream unlock|managed-stage-accept-contract|accept-contract|continue_active_microtask|managed\\.core\\.message|Core has not yet finalized|post-commit validation|child-plan commit|provider-visible repair feedback|automatic continuation after a provider turn|Core acceptance is an active loop|expected commit metadata" doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md doc/SolidWorks-WorkFlow/System/SystemArchitecture.md doc/SolidWorks-WorkFlow/Contracts/SessionContinuity.md` returned no matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 

@@ -1,145 +1,41 @@
 # Managed Workspace Lifecycle
 
-**Status:** Active contract
-**Created:** 2026-05-07
-**Updated:** 2026-05-13
+**Status:** Suspended during Managed Workflow Orchestration rewrite  
+**Updated:** 2026-05-14  
 **Owner:** Oleksandr + Codex
 
-**2026-05-13 accepted baseline:** release `1.2.249` confirms the managed trunk lifecycle for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`. Quality Gates uses dynamic child-plan task injection rather than static follow-ups. Tasks injected by Core: `quality-gates.phase1.draft.task1`, `quality-gates.phase2.review.task1`, `quality-gates.phase2.review.revisionN.task1`, `quality-gates.phase2.acceptance.task1`, `quality-gates.phase3.integration.taskN`, idle `quality-gates.phase4.user-return.task1`, `quality-gates.phase4.user-return.revisionN.task1`, and repair pairs `quality-gates.<phase>.repairN.task1`. Stage status is sticky-completed by `workspace.plan.md` `acceptedCommits` evidence.
+## Boundary
 
-## 1. Boundary
+The previous workspace lifecycle contract is not active in the current codebase.
+It is retained only as a named historical contract until the replacement
+orchestration cluster is designed and implemented.
 
-`Diagram Modules` is the first managed-mode boundary of a user workspace.
+Active runtime behavior during the rewrite:
 
-Before Core creates the provider session for `Diagram Modules`, it must initialize or validate the managed lifecycle:
+- workflow step cards must not bootstrap child plans, hook shims, workflow
+  ledgers, provider feedback loops, or automatic stage transitions through this
+  contract;
+- provider sessions must not be started from this contract;
+- read-model APIs and Project Manager refresh paths must stay side-effect free;
+- artifacts may be viewed and edited only through the ordinary step/session
+  surfaces that remain available;
+- any future workspace lifecycle must be introduced by the new cluster design
+  and covered by fresh tests and SSOT documentation.
 
-- Git repo exists or is created with `git init`;
-- `doc/TODO/todo-plan.md` exists and is the recovery owner;
-- Plan Orchestrator scripts or stack-neutral shims exist;
-- minimal hooks exist for plan validation, commit message validation, post-commit state advancement, branch/debt checks, and push blockers;
-- tracked workflow control plane exists under `.codeai-hub/workflow`;
-- machine runtime folders are ignored: `.codeai-hub/runtime`, `.codeai-hub/logs`, `.codeai-hub/cache`.
+## Non-Goals During Rewrite
 
-If this baseline is missing or blocked, Core must not start long filesystem agent work.
+This suspended contract does not define:
 
-## 2. Ownership
+- Git ownership;
+- task generation;
+- hook installation or regeneration;
+- provider repair feedback;
+- automatic continuation;
+- next-stage release;
+- release packaging behavior.
 
-Core owns lifecycle infrastructure:
+## Replacement Rule
 
-- bootstrap and repair;
-- hook installation and deterministic regeneration;
-- workflow artifact validation;
-- lifecycle blocker/debt reporting;
-- stage gates;
-- revision snapshots and downstream migration task generation.
-
-Agents own semantic work only:
-
-- stage artifacts and decisions;
-- accepted skeleton files;
-- Quality Gates gate content and manifest.
-
-Agents must not become owners of Git, hook infrastructure bootstrap, Plan Orchestrator scripts, or lifecycle repair. The narrow exception is Quality Gates Phase 3: after the contract acceptance commit, the selected required gate calls inside `.husky/pre-commit` and `.husky/pre-push` are agent-owned integration content because the accepted contract declares them as the materialized lifecycle surface. Core still owns validation, staging, commit, downstream unlock, and repair task injection.
-
-## 3. Upstream Freeze
-
-After managed `Diagram Modules` starts:
-
-- `Description` and `Virtual Simulation` artifacts stay viewable;
-- historical sessions stay readable;
-- new messages into those agents are blocked;
-- direct upstream artifact mutation is blocked.
-
-Product-level changes after this boundary must route through a `Diagram Modules` revision. Hard reset/new workflow is a separate explicit product action.
-
-## 4. Recovery
-
-Primary recovery for managed stages is:
-
-1. read `doc/TODO/todo-plan.md`;
-2. run `plan:status`;
-3. read only the active plan Context Pack;
-4. continue the current task.
-
-Provider native compact is fallback only. It must not replace the product-owned recovery path.
-
-## 5. Quality Gates
-
-At `Diagram Modules` start, hooks are lifecycle-minimal and stack-neutral.
-
-`Quality Gates Baseline` may create stack-specific scripts/configs/manifests after acceptance. The Phase 3 agent must wire every accepted required gate into the managed hook surface declared by the contract. Core validates the manifest and hook files, but Core must not be the hidden actor that finishes provider-deferred hook wiring after the provider reports content readiness.
-
-After integrated Quality Gates, Core unlocks Development Tree read model but does not automatically start all branch agents. Product Part / Cluster / Module nodes are startable units. A node Start command must validate clean Git and the materialized node folder, persist/use the selected provider/model/reasoning defaults, create only that node's draft artifacts, and create only that node's workflow session.
-
-Quality Gates completion has two separate truths:
-
-- integration acceptance: `quality-gates.json` records accepted/integrated state, required gates are wired into managed lifecycle hooks, and Core commits `feat: integrate quality gates baseline`;
-- post-completion availability: Core opens `Phase 4 - Persistent Quality Gates User Return` with idle `quality-gates.phase4.user-return.task1` so later user changes become tracked `revisionN` task pairs.
-
-Development Tree unlock may follow the integration commit, but it must not replace the Quality Gates user-return phase. If Phase 3 integration takes multiple commits, the final validated `quality-gates.phase3.integration.taskN` commit opens Phase 4; a generic `quality-gates.phase3.integration.taskN+1` continuation is invalid after final validation.
-
-## 6. Agent Acceptance Feedback
-
-Core acceptance is an active loop, not a passive lock.
-
-When a managed stage agent produces work, provider terminal events are the only
-trigger for Core-owned acceptance. Core first lets the provider turn finish,
-flushes already received assistant/dialog messages, then runs the post-turn
-managed workflow pipeline: validate the actual workspace result, commit accepted
-owned files, decide repair/continuation/pause, and only then unlock downstream
-work. Core owns the durable Git transaction for accepted managed documentation
-stages; provider agents own artifact content and must not be required to run
-`npm run plan:commit`. This applies to every managed trunk stage that
-participates in the plan/commit lifecycle:
-
-- `Diagram Modules`: planned Product Parts must resolve to valid generated
-  Product Part artifacts, and `blocked_ambiguity` must be resolved in the
-  owning session.
-- `Application Skeleton`: `application-skeleton-map.json` flags are not enough;
-  declared production `codePath` and `materializedPaths` must exist and match
-  the accepted skeleton lifecycle state.
-- `Quality Gates Baseline`: `quality-gates.json` flags are not enough; required
-  gates must be wired into lifecycle hooks and the managed plan transaction must
-  be accepted. An accepted attempt with `integrationState: "in_progress"` is
-  already a repairable integration attempt; Core must validate required hook
-  calls even when `integrated` remains `false`.
-
-If acceptance fails, Core must:
-
-- keep downstream stages blocked;
-- send the validation result back into the owning workflow session;
-- include the concrete failed checks, the observed Core check context, and a
-  repair request;
-- avoid wait-only provider instructions for repairable owned-stage failures;
-- avoid duplicate feedback for the same session/error set on the same provider
-  turn and workspace commit before the first feedback delivery finishes;
-- resend feedback after a new agent repair commit if the same validation still
-  fails, because that represents a new failed acceptance attempt;
-- re-run acceptance on the next provider terminal event after the agent repairs
-  and revises the stage.
-
-If acceptance passes, Core must:
-
-- validate that dirty Git state contains only files owned by the active stage;
-- stage only the active stage allowlist and reject any staged out-of-owner file;
-- execute the managed child-plan commit with the current expected commit
-  message;
-- re-read plan status, stage validation, and Git clean state after the commit;
-- unlock the next stage only from that post-commit snapshot.
-
-Core must reserve the feedback signature before awaiting provider/session
-delivery. If delivery fails, the reservation is released so the next state read
-can retry the same acceptance feedback.
-
-The user should not have to infer the blocker from a locked next stage. The
-same agent that produced the incomplete stage result must receive the Core
-acceptance feedback and continue the repair in place. Feedback must be specific
-enough for the agent to compare what it believes it changed with what Core
-actually observed: checked artifact/rule, observed counters or lifecycle flags,
-the failed field/path/gate, and the required repair direction.
-
-Workflow-state APIs, PM status panels, sidebars, cards, and artifact panes are
-read-model surfaces. They may display snapshots and diagnostics, but they must
-not start acceptance, managed commits, provider-visible repair feedback, or
-continuation messages. If a read path discovers stale state, it reports that
-state; the next Core post-turn pipeline owns the mutation.
+Before the new Managed Workflow Orchestration cluster can rely on a workspace
+lifecycle, a new active contract must replace this suspended placeholder and be
+linked from `doc/SolidWorks-WorkFlow/Docs_Index.md`.
