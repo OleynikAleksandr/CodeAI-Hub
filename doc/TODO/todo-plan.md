@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "9fa4033dd",
+  "lastRecordedCommit": "234fc8ecb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase10.release-rebuild.task1",
-  "expectedCommitMessage": "chore: build clean servicing audit release",
+  "currentTaskId": "managed-orchestration-cleanup.phase10.release-rebuild.task2",
+  "expectedCommitMessage": "docs: record clean servicing audit release",
   "debt": {
-    "expectedCommitMessage": "chore: build clean servicing audit release",
-    "preCommitHead": "9fa4033dd",
+    "expectedCommitMessage": "docs: record clean servicing audit release",
+    "preCommitHead": "234fc8ecb",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase10.release-rebuild.task1"
+    "taskId": "managed-orchestration-cleanup.phase10.release-rebuild.task2"
   }
 }
 ```
@@ -642,7 +642,7 @@ Verification for task 125:
 ### Stream: Release Rebuild
 
 127. [DONE] `managed-orchestration-cleanup.phase10.release-rebuild.task1` Run `./scripts/build-all.sh` for the next clean rebuild version and commit generated version/manifest release outputs (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build clean servicing audit release`).
-128. [PENDING] Git Commit: `chore: build clean servicing audit release` (hash: TBD)
+128. [DONE] Git Commit: `chore: build clean servicing audit release` (hash: 234fc8ecb)
 
 Verification for task 127:
 
@@ -651,8 +651,17 @@ Verification for task 127:
 - Generated local release tarballs under `doc/tmp/releases/`: `claude-module-1.2.255.tar.bz2`, `codex-module-1.2.255.tar.bz2`, `gemini-module-1.2.255.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.255.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.255.tar.bz2`, `vscode-webview-1.2.255.tar.bz2`, `project-manager-1.2.255.tar.bz2`.
 - `npm run plan:validate` passed after the generated version/manifest updates.
 
-129. [TODO] `managed-orchestration-cleanup.phase10.release-rebuild.task2` Run `./scripts/build-release.sh --use-current-version`, verify the new VSIX/tarballs, and record release handoff evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record clean servicing audit release`).
-130. [TODO] Git Commit: `docs: record clean servicing audit release` (hash: TBD)
+129. [DONE] `managed-orchestration-cleanup.phase10.release-rebuild.task2` Run `./scripts/build-release.sh --use-current-version`, verify the new VSIX/tarballs, and record release handoff evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record clean servicing audit release`).
+130. [PENDING] Git Commit: `docs: record clean servicing audit release` (hash: TBD)
+
+Verification for task 129:
+
+- `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.255`. The only pre-build dirty file was the machine-managed active `doc/TODO/todo-plan.md` transition after the release-output commit; `doc/TODO/**` is excluded from the VSIX by `.vscodeignore`.
+- Required release log markers were present: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
+- Release gates passed inside `build-release`: bundled template generation/coverage, `npm run build:webview`, `./scripts/check-architecture.sh`, `npx tsc -p . --noEmit`, `npm run compile`, SDK exclusions, local artifact validation, `npm run check:links`, duplication check at 2.72%, production dependency prune/restore, and VSIX runtime package surface verification.
+- Generated VSIX: `codeai-hub-1.2.255.vsix` (48M).
+- Fresh local tarballs available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`: `claude-module-1.2.255.tar.bz2`, `codex-module-1.2.255.tar.bz2`, `gemini-module-1.2.255.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.255.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.255.tar.bz2`, `vscode-webview-1.2.255.tar.bz2`, `project-manager-1.2.255.tar.bz2`.
+- `npm run plan:validate` passed after recording release handoff evidence.
 
 ## Phase 11 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
