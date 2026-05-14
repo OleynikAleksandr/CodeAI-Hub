@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "00a1fa8b0",
+  "lastRecordedCommit": "78d8eba7c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase7.release-build.task1",
-  "expectedCommitMessage": "chore: build 1.2.253 release artifacts",
+  "currentTaskId": "managed-orchestration-cleanup.phase7.vsix-build.task1",
+  "expectedCommitMessage": "chore: package 1.2.253 release",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.253 release artifacts",
-    "preCommitHead": "00a1fa8b0",
+    "expectedCommitMessage": "chore: package 1.2.253 release",
+    "preCommitHead": "78d8eba7c",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase7.release-build.task1"
+    "taskId": "managed-orchestration-cleanup.phase7.vsix-build.task1"
   }
 }
 ```
@@ -346,7 +346,7 @@ Verification for task 47:
 - `npm run check:dup` passed with 2.76% duplicated lines, under the 3% threshold.
 
 49. [DONE] `managed-orchestration-cleanup.phase7.release-build.task1` Run unified release artifact build with the active plan state intentionally present, then record the generated provider/core/UI/launcher tarballs (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.253 release artifacts`).
-50. [PENDING] Git Commit: `chore: build 1.2.253 release artifacts` (hash: TBD)
+50. [DONE] Git Commit: `chore: build 1.2.253 release artifacts` (hash: 78d8eba7c)
 
 Verification for task 49:
 
@@ -361,8 +361,15 @@ Verification for task 49:
   - `vscode-webview-1.2.253.tar.bz2`
   - `project-manager-1.2.253.tar.bz2`
 
-51. [TODO] `managed-orchestration-cleanup.phase7.vsix-build.task1` Run final VSIX package build for the current release version and record the generated package path (scope: `packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: package 1.2.253 release`).
-52. [TODO] Git Commit: `chore: package 1.2.253 release` (hash: TBD)
+51. [DONE] `managed-orchestration-cleanup.phase7.vsix-build.task1` Run final VSIX package build for the current release version and record the generated package path (scope: `packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: package 1.2.253 release`).
+52. [PENDING] Git Commit: `chore: package 1.2.253 release` (hash: TBD)
+
+Verification for task 51:
+
+- `./scripts/build-release.sh --use-current-version --allow-dirty` passed with only the machine-managed active plan state dirty before packaging.
+- Release validation completed: bundled template coverage, webview build, architecture check, `tsc --noEmit`, `npm run compile`, SDK exclusion verification, local artifact validation, markdown links, duplication check, production dependency prune, VSIX packaging, VSIX runtime package surface verification, and package-size verification.
+- Required release log markers were present: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
+- Generated VSIX: `codeai-hub-1.2.253.vsix` (48M).
 
 ## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
