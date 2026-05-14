@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "07bc2f570",
+  "lastRecordedCommit": "3509f85f6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase4.application-skeleton-phase2-handoff-clarification.task1",
-  "expectedCommitMessage": "docs: clarify application skeleton phase 2 user handoff",
+  "currentTaskId": "managed-orchestration.phase4.application-skeleton-phase1-handoff-clarification.task1",
+  "expectedCommitMessage": "docs: clarify application skeleton phase 1 user handoff",
   "debt": {
-    "expectedCommitMessage": "docs: clarify application skeleton phase 2 user handoff",
-    "preCommitHead": "07bc2f570",
+    "expectedCommitMessage": "docs: clarify application skeleton phase 1 user handoff",
+    "preCommitHead": "3509f85f6",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase4.application-skeleton-phase2-handoff-clarification.task1"
+    "taskId": "managed-orchestration.phase4.application-skeleton-phase1-handoff-clarification.task1"
   }
 }
 ```
@@ -77,31 +77,36 @@
 ### Stream: Phase 2 Clarification
 
 10. [DONE] `managed-orchestration.phase4.application-skeleton-phase2-handoff-clarification.task1` Clarify at the beginning of the Application Skeleton Phase 2 planning spec that Core sends a user-visible instruction message and the user input field is available when review starts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify application skeleton phase 2 user handoff`).
-11. [PENDING] Git Commit: `docs: clarify application skeleton phase 2 user handoff` (hash: TBD)
+11. [DONE] Git Commit: `docs: clarify application skeleton phase 2 user handoff` (hash: 3509f85f6)
+
+### Stream: Phase 1 Handoff Clarification
+
+12. [DONE] `managed-orchestration.phase4.application-skeleton-phase1-handoff-clarification.task1` Clarify that the successful end of Application Skeleton Phase 1 writes the Phase 2 handoff message into the Project Manager dialog / persistent session and leaves the user input field available (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify application skeleton phase 1 user handoff`).
+13. [PENDING] Git Commit: `docs: clarify application skeleton phase 1 user handoff` (hash: TBD)
 
 ### Stream: Remaining Phase Specs
 
-12. [TODO] `managed-orchestration.phase4.remaining-phases.task1` Add follow-up phase specs for Application Skeleton Phase 3/4 and the parallel Diagram Modules / Quality Gates scenarios once each branch is discussed and accepted (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/TODO/todo-plan.md`; expected commit: `docs: extend managed orchestration phase scenarios`).
-13. [TODO] Git Commit: `docs: extend managed orchestration phase scenarios` (hash: TBD)
+14. [TODO] `managed-orchestration.phase4.remaining-phases.task1` Add follow-up phase specs for Application Skeleton Phase 3/4 and the parallel Diagram Modules / Quality Gates scenarios once each branch is discussed and accepted (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/TODO/todo-plan.md`; expected commit: `docs: extend managed orchestration phase scenarios`).
+15. [TODO] Git Commit: `docs: extend managed orchestration phase scenarios` (hash: TBD)
 
 ## Phase 5 — Tooling Verification (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Planning Package Verification
 
-14. [TODO] `managed-orchestration.phase5.verify.task1` Validate the planning package, links, and active plan consistency before implementation planning starts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration planning package`).
-15. [TODO] Git Commit: `docs: verify managed orchestration planning package` (hash: TBD)
+16. [TODO] `managed-orchestration.phase5.verify.task1` Validate the planning package, links, and active plan consistency before implementation planning starts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration planning package`).
+17. [TODO] Git Commit: `docs: verify managed orchestration planning package` (hash: TBD)
 
 ## Phase 6 — User Planning Acceptance (owner: User, updated: 2026-05-14)
 
 ### Stream: Scenario Acceptance
 
-16. [TODO] `managed-orchestration.phase6.user-acceptance.task1` User reviews and accepts the managed orchestration planning package before implementation microtasks are created (scope: user workflow; expected commit: `docs: accept managed orchestration planning package`).
-17. [TODO] Git Commit: `docs: accept managed orchestration planning package` (hash: TBD)
+18. [TODO] `managed-orchestration.phase6.user-acceptance.task1` User reviews and accepts the managed orchestration planning package before implementation microtasks are created (scope: user workflow; expected commit: `docs: accept managed orchestration planning package`).
+19. [TODO] Git Commit: `docs: accept managed orchestration planning package` (hash: TBD)
 
 ## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Plan After User Acceptance
 
-18. [TODO] `managed-orchestration.phase7.closeout.task1` Archive this planning scope or convert it into an implementation todo-plan after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration planning scope`).
-19. [TODO] Git Commit: `docs: close managed orchestration planning scope` (hash: TBD)
-20. [TODO] `managed-orchestration.phase7.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+20. [TODO] `managed-orchestration.phase7.closeout.task1` Archive this planning scope or convert it into an implementation todo-plan after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration planning scope`).
+21. [TODO] Git Commit: `docs: close managed orchestration planning scope` (hash: TBD)
+22. [TODO] `managed-orchestration.phase7.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).

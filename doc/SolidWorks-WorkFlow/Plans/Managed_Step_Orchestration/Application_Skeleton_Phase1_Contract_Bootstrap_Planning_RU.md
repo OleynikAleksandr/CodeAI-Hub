@@ -243,7 +243,8 @@ Core effects:
    application-skeleton.phase2.review.task1
    ```
 
-10. Отправить user-visible Core handoff message.
+10. Записать user-visible Core handoff message в Project Manager dialog / persistent managed session.
+11. Оставить пользовательское поле ввода свободным и готовым к ответу по Phase 2 review.
 
 Core message пользователю:
 
@@ -258,6 +259,8 @@ Core завершил проверку черновика Application Skeleton.
 Инвариант:
 
 - пользователь узнаёт о Phase 2 не по косвенным признакам, а из явного Core message.
+- сообщение появляется в нашей persistent dialog session, а не только в provider-native transcript или Core log.
+- после сообщения пользователь может сразу написать подтверждение или перечень правок; скрытая работа Core/Agent не должна блокировать поле ввода.
 
 ## 7.2 Выход B — Repairable Not Ready
 
@@ -507,4 +510,3 @@ lastRealCommitHash
 - Quality Gates-specific behavior.
 
 Эти темы должны быть описаны отдельными planning-документами после обсуждения.
-
