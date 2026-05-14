@@ -1,3 +1,18 @@
+# Plan Closeout: managed-workflow-orchestration-redesign-planning-2026-05-14
+
+**Created:** 2026-05-14T08:47:31.265Z
+**Acceptance:** User accepted the managed orchestration planning package and requested a separate implementation worktree for the rewrite
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** managed-orchestration.phase7.closeout.task1
+**Expected Commit:** docs: close managed orchestration planning scope
+**Last Recorded Commit:** 0f39f3413
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
   "currentTaskId": "managed-orchestration.phase7.closeout.task1",
   "expectedCommitMessage": "docs: close managed orchestration planning scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed orchestration planning scope",
-    "preCommitHead": "0f39f3413",
-    "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase7.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -129,6 +139,7 @@
 
 ### Stream: Close Plan After User Acceptance
 
-30. [DONE] `managed-orchestration.phase7.closeout.task1` Archive this planning scope or convert it into an implementation todo-plan after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration planning scope`).
-31. [PENDING] Git Commit: `docs: close managed orchestration planning scope` (hash: TBD)
+30. [IN_PROGRESS] `managed-orchestration.phase7.closeout.task1` Archive this planning scope or convert it into an implementation todo-plan after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration planning scope`).
+31. [TODO] Git Commit: `docs: close managed orchestration planning scope` (hash: TBD)
 32. [TODO] `managed-orchestration.phase7.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+````
