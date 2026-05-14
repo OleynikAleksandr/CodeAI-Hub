@@ -9,7 +9,6 @@ import type { WorkflowAgentAcceptanceFeedbackGateway } from "./workflow-agent-ac
 const STAGE = "application_skeleton";
 const RESUMED_USER_PHRASING =
   "После перерыва, контракт принимаю — двигайся к материализации.";
-const MATERIALIZATION_PROMPT_RE = /Begin Phase 2 materialization/u;
 
 const buildChain = (sessionId: string): ContinuityChainSummary =>
   ({
@@ -53,7 +52,7 @@ test("rollover preserves recogniser-eligible window for Application Skeleton pha
   );
 });
 
-test("dispatcher continues to gate by recently-accepted set across rollover", async () => {
+test("dispatcher does not continue from recently-accepted set during rewrite", async () => {
   const resumedSessionId = "session-as-rollover-resumed";
   const calls: Array<{ readonly sessionId: string; readonly text: string }> =
     [];
@@ -63,24 +62,6 @@ test("dispatcher continues to gate by recently-accepted set across rollover", as
     progress: buildAwaitingAcceptanceProgress(),
     recentlyAcceptedSessions: new Set([resumedSessionId]),
   });
-  assert.equal(calls.length, 1);
-  assert.match(calls[0]?.text ?? "", MATERIALIZATION_PROMPT_RE);
 
-  const callsAfterMaterialised: Array<{
-    readonly sessionId: string;
-    readonly text: string;
-  }> = [];
-  await sendApplicationSkeletonContinuationIfReady({
-    chains: [buildChain(resumedSessionId)],
-    gateway: buildSpyGateway(callsAfterMaterialised),
-    progress: {
-      ...buildAwaitingAcceptanceProgress(),
-      accepted: true,
-      materialized: true,
-      materializationState: "materialized",
-      substep: "materialized",
-    },
-    recentlyAcceptedSessions: new Set([resumedSessionId]),
-  });
-  assert.equal(callsAfterMaterialised.length, 0);
+  assert.deepEqual(calls, []);
 });
