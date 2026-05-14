@@ -19,10 +19,10 @@ const APPLICATION_SKELETON_DIRTY_ERROR_RE =
   /Application Skeleton-owned files: product-parts\/core-runtime\/README\.md/u;
 const FORBIDDEN_GIT_IMPERATIVES_RE =
   /commit or clean|git add|git commit|stage these files|npm run plan:commit|do not run git commands/iu;
-const CORE_OWNED_DIRTY_GATE_RE =
-  /Core has not yet finalized the managed commit for [A-Za-z ]+-owned files/u;
+const REWRITE_BOUNDARY_DIRTY_GATE_RE =
+  /Rewrite boundary blocked [A-Za-z ]+-owned files/u;
 const CONTENT_READINESS_NOTE_RE =
-  /respond with a content-readiness note once the artifacts are ready/u;
+  /Respond with a content-readiness note or blocker only/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -375,7 +375,7 @@ test("managed dirty-gate error uses neutral content-readiness wording without gi
 
   assert.equal(skeletonProgress?.substep, "failed");
   const error = skeletonProgress?.validationErrors[0] ?? "";
-  assert.match(error, CORE_OWNED_DIRTY_GATE_RE);
+  assert.match(error, REWRITE_BOUNDARY_DIRTY_GATE_RE);
   assert.match(error, CONTENT_READINESS_NOTE_RE);
   assert.doesNotMatch(error, FORBIDDEN_GIT_IMPERATIVES_RE);
 });

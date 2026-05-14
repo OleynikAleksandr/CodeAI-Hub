@@ -255,7 +255,7 @@ const formatDirtyGateError = (
   stageTitle: string,
   files: readonly string[]
 ): string =>
-  `Core has not yet finalized the managed commit for ${stageTitle}-owned files: ${files.join(", ")}. Core owns this commit gate; respond with a content-readiness note once the artifacts are ready.`;
+  `Rewrite boundary blocked ${stageTitle}-owned files: ${files.join(", ")}. Respond with a content-readiness note or blocker only; do not run Git, staging, or plan commands.`;
 
 export const attachManagedGitStatus = <T extends object>(
   progress: T | null,
