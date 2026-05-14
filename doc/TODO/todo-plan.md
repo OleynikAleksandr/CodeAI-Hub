@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "f73630d8b",
+  "lastRecordedCommit": "af6b31760",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase2.failclosed.task2",
-  "expectedCommitMessage": "fix: disable legacy managed post-turn orchestration",
+  "currentTaskId": "managed-orchestration-cleanup.phase3.generated.task1",
+  "expectedCommitMessage": "refactor: remove legacy managed plan shim generation",
   "debt": {
-    "expectedCommitMessage": "fix: disable legacy managed post-turn orchestration",
-    "preCommitHead": "f73630d8b",
+    "expectedCommitMessage": "refactor: remove legacy managed plan shim generation",
+    "preCommitHead": "af6b31760",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase2.failclosed.task2"
+    "taskId": "managed-orchestration-cleanup.phase3.generated.task1"
   }
 }
 ```
@@ -108,7 +108,7 @@ Verification for task 5:
 - `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js` passed.
 
 7. [DONE] `managed-orchestration-cleanup.phase2.failclosed.task2` Disable old post-turn managed arbitration and acceptance dispatch paths behind the same blocker without touching step artifact semantics (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, doc/TODO/todo-plan.md`; expected commit: `fix: disable legacy managed post-turn orchestration`).
-8. [PENDING] Git Commit: `fix: disable legacy managed post-turn orchestration` (hash: TBD)
+8. [DONE] Git Commit: `fix: disable legacy managed post-turn orchestration` (hash: af6b31760)
 
 Verification for task 7:
 
@@ -119,8 +119,17 @@ Verification for task 7:
 
 ### Stream: Generated Orchestrator Removal
 
-9. [TODO] `managed-orchestration-cleanup.phase3.generated.task1` Remove generated plan CLI shim source and installer wiring that injects old managed scenario logic into user workspaces (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed plan shim generation`).
-10. [TODO] Git Commit: `refactor: remove legacy managed plan shim generation` (hash: TBD)
+9. [DONE] `managed-orchestration-cleanup.phase3.generated.task1` Remove generated plan CLI shim runtime and installer wiring that injects old managed scenario logic into user workspaces (scope: `packages/core/src/managed-workspace/managed-plan-orchestrator-shim-source.ts, packages/core/src/managed-workspace/managed-plan-orchestrator-installer.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed plan shim generation`).
+10. [PENDING] Git Commit: `refactor: remove legacy managed plan shim generation` (hash: TBD)
+
+Verification for task 9:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- `managed-plan-orchestrator-shim-source.ts` no longer exports or builds `createPlanCliShim`; it is reduced to a temporary removal marker so the next cleanup step can delete mutator ownership without introducing unused-export debt.
+- Remaining `plan-cli.mjs` references are legacy tests/hook-registry tails and are intentionally left for Phase 5 cleanup after the mutator and post-turn writers are removed.
+
 11. [TODO] `managed-orchestration-cleanup.phase3.generated.task2` Remove Diagram Modules, Application Skeleton, and Quality Gates managed plan mutator ownership after startup/post-turn paths are fail-closed (scope: `packages/core/src/managed-workspace/managed-diagram-modules-plan-mutator.ts, packages/core/src/managed-workspace/managed-application-skeleton-plan-mutator.ts, packages/core/src/managed-workspace/managed-quality-gates-plan-mutator.ts`; expected commit: `refactor: remove legacy managed plan mutators`).
 12. [TODO] Git Commit: `refactor: remove legacy managed plan mutators` (hash: TBD)
 
