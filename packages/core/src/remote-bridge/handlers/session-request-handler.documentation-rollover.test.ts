@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -17,57 +17,11 @@ import {
   noop,
 } from "./session-request-handler.test-helpers";
 
-const MANAGED_STAGE_PLAN_PATHS = {
-  application_skeleton: "doc/TODO/stages/application-skeleton/todo-plan.md",
-  diagram_modules: "doc/TODO/stages/diagram-modules/todo-plan.md",
-  quality_gates: "doc/TODO/stages/quality-gates/todo-plan.md",
-} as const;
-
-const writeManagedRolloverPlan = async (
-  workspacePath: string,
-  stage: keyof typeof MANAGED_STAGE_PLAN_PATHS
-): Promise<void> => {
-  const activePlanPath = MANAGED_STAGE_PLAN_PATHS[stage];
-  const write = async (
-    relativePath: string,
-    content: string
-  ): Promise<void> => {
-    const absolutePath = path.join(workspacePath, relativePath);
-    await mkdir(path.dirname(absolutePath), { recursive: true });
-    await writeFile(absolutePath, content, "utf8");
-  };
-  await write(
-    "doc/TODO/workspace.plan.md",
-    `# Workspace Plan
-
-<!-- codeai-workspace-plan-state:start -->
-\`\`\`json
-{
-  "activeStage": "${stage}",
-  "activePlanPath": "${activePlanPath}",
-  "acceptedCommits": []
-}
-\`\`\`
-<!-- codeai-workspace-plan-state:end -->
-`
-  );
-  await write(
-    activePlanPath,
-    `# Stage Plan
-
-<!-- codeai-plan-state:start -->
-\`\`\`json
-{
-  "executionScopeStatus": "ACTIVE",
-  "currentTaskId": "${stage}.rollover.task",
-  "expectedCommitMessage": "docs: ${stage} rollover task",
-  "lastRecordedCommit": "abc123"
-}
-\`\`\`
-<!-- codeai-plan-state:end -->
-`
-  );
-};
+const REWRITE_BLOCKED_STAGES = new Set([
+  "application_skeleton",
+  "diagram_modules",
+  "quality_gates",
+]);
 
 test("rolloverFlowNodeSession materializes Documentation Tree synthetic rollover state without report turn", async () => {
   const harness = createHarness();
@@ -230,12 +184,6 @@ test("Documentation Tree production rollover waits for next user turn before con
     ] as const) {
       const harness = createHarness();
       const workspacePath = path.join(tempHome, `workspace-${stage}`);
-      if (stage in MANAGED_STAGE_PLAN_PATHS) {
-        await writeManagedRolloverPlan(
-          workspacePath,
-          stage as keyof typeof MANAGED_STAGE_PLAN_PATHS
-        );
-      }
       stubDescriptionDialogSync(harness);
       const providerSends: Array<{
         readonly content: string;
@@ -316,7 +264,7 @@ test("Documentation Tree production rollover waits for next user turn before con
       await flushAsyncWork();
       await flushAsyncWork();
 
-      if (stage in MANAGED_STAGE_PLAN_PATHS) {
+      if (REWRITE_BLOCKED_STAGES.has(stage)) {
         assert.equal(providerSends.length, 0);
         assert.equal(targetSession.messages.at(-1)?.content, userMessage);
         assert.ok(

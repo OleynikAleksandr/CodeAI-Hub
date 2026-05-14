@@ -167,7 +167,7 @@ test("Documentation Tree continuation envelope is attached to the first real use
   }
 });
 
-test("managed workflow continuation envelope resumes from todo plan", async () => {
+test("workflow artifact continuation envelope stays generic during rewrite", async () => {
   const envelope = await buildDocumentationContinuationEnvelope({
     context: {
       createdAtIso: "2026-05-07T00:00:00.000Z",
@@ -187,9 +187,6 @@ test("managed workflow continuation envelope resumes from todo plan", async () =
   });
 
   assert.equal(envelope.includes("## Managed Workspace Recovery"), false);
-  assert.equal(envelope.includes("## Managed Workflow Context Bundle"), true);
-  assert.equal(envelope.includes("Workspace Plan Text"), true);
-  assert.equal(envelope.includes("Active Stage Todo Plan Text"), true);
   assert.equal(envelope.includes("legacy root todo plan"), true);
   assert.equal(envelope.includes("doc/TODO/todo-plan.md"), false);
   assert.equal(envelope.includes("npm run plan:status"), false);
@@ -199,7 +196,7 @@ test("managed workflow continuation envelope resumes from todo plan", async () =
   assert.equal(envelope.includes("Final_Description.md:"), false);
   assert.equal(
     envelope.includes(
-      "Workflow output target rule: write only the current target path named by the rollover context or embedded stage context"
+      "Workflow output target rule: write only the current target path named by this rollover envelope"
     ),
     true
   );

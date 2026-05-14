@@ -4,7 +4,6 @@ import {
   buildVirtualSimulationContract,
 } from "./idea-contract-service";
 import type { DocumentationRolloverContext } from "./session-request-handler-documentation-rollover-state";
-import { buildManagedWorkflowContextBundle } from "./session-request-handler-managed-context-bundle";
 
 const STAGE_FILE_NAMES: Record<string, string> = {
   description: "Final_Description.md",
@@ -22,7 +21,7 @@ const STAGE_LABELS: Record<string, string> = {
   quality_gates: "Quality Gates",
 };
 
-const MANAGED_WORKSPACE_STAGES = new Set([
+const WORKFLOW_ARTIFACT_STAGES = new Set([
   "diagram_modules",
   "application_skeleton",
   "quality_gates",
@@ -66,13 +65,13 @@ const buildOutputTargetLines = (
   if (targets.length === 0) {
     return [];
   }
-  if (!MANAGED_WORKSPACE_STAGES.has(context.stageId)) {
+  if (!WORKFLOW_ARTIFACT_STAGES.has(context.stageId)) {
     return [
       `Output target artifact (write exactly this relative path; do not read it first): \`${targets[0]}\``,
     ];
   }
   return [
-    "Workflow output target rule: write only the current target path named by the rollover context or embedded stage context; do not infer or expand scope from sibling files.",
+    "Workflow output target rule: write only the current target path named by this rollover envelope; do not infer or expand scope from sibling files.",
     "Canonical output path(s) for this stage:",
     ...targets.map((target) => `- \`${target}\``),
   ];
@@ -81,9 +80,9 @@ const buildOutputTargetLines = (
 const buildInputLines = (
   context: DocumentationRolloverContext
 ): readonly string[] => {
-  if (MANAGED_WORKSPACE_STAGES.has(context.stageId)) {
+  if (WORKFLOW_ARTIFACT_STAGES.has(context.stageId)) {
     return [
-      "Input documents and workflow state are embedded below by the runtime. Do not reread input documents by path unless the embedded context marks the content truncated or stale.",
+      "Use the current stage contract and rollover metadata only; do not load retired stage plans or workspace plans.",
     ];
   }
   if (context.stageId === "virtual_simulation") {
@@ -109,8 +108,7 @@ const resolveContractPrompt = async (stageId: string): Promise<string> => {
 };
 
 const buildWorkflowStartContract = async (
-  context: DocumentationRolloverContext,
-  managedBundleText: string | null
+  context: DocumentationRolloverContext
 ): Promise<string> => {
   const fileName = STAGE_FILE_NAMES[context.stageId] ?? "artifact.md";
   return [
@@ -120,14 +118,13 @@ const buildWorkflowStartContract = async (
     ...buildInputLines(context),
     `Output file name: \`${fileName}\``,
     ...buildOutputTargetLines(context),
-    managedBundleText,
   ].join("\n\n");
 };
 
 const buildArtifactModeSection = (
   context: DocumentationRolloverContext
 ): readonly string[] => {
-  if (!MANAGED_WORKSPACE_STAGES.has(context.stageId)) {
+  if (!WORKFLOW_ARTIFACT_STAGES.has(context.stageId)) {
     return [];
   }
   return [
@@ -145,14 +142,8 @@ export const buildDocumentationContinuationEnvelope = async (options: {
   if (!options.context) {
     return options.userMessage;
   }
-  const managedBundle = await buildManagedWorkflowContextBundle(
-    options.context
-  );
   return [
-    await buildWorkflowStartContract(
-      options.context,
-      managedBundle?.rendered ?? null
-    ),
+    await buildWorkflowStartContract(options.context),
     "## Continuation Mode",
     "- This is a continuation of the same Documentation Tree stage after context rollover, not a cold start.",
     "- Use the embedded runtime context and canonical workflow artifacts as the authoritative current state.",
