@@ -2,15 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
-import { injectApplicationSkeletonReviewRevisionPair } from "./managed-documentation-commit-transaction";
 import {
   ManagedWorkflowPostTurnService,
   recognizeManagedAcceptanceForStage,
   recognizeManagedContractAcceptancePhrase,
 } from "./managed-workflow-post-turn-service";
-
-const legacyRevisionHelperRetainedForCommitCleanup =
-  injectApplicationSkeletonReviewRevisionPair;
 
 const createManagedSessionManager = (
   stage: "application_skeleton" | "diagram_modules" | "quality_gates"
@@ -120,8 +116,4 @@ test("typed managed acceptance is ignored without invoking post-turn orchestrati
   await service.whenIdle("session-1");
 
   assert.deepEqual(dispatched, []);
-});
-
-test("legacy revision helper is isolated from post-turn fail-closed behavior", () => {
-  assert.equal(typeof legacyRevisionHelperRetainedForCommitCleanup, "function");
 });
