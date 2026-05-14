@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "d3909ddf6",
+  "lastRecordedCommit": "7bc4fe313",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase4.application-skeleton-phase3-doc.task1",
-  "expectedCommitMessage": "docs: specify application skeleton phase 3 orchestration",
+  "currentTaskId": "managed-orchestration.phase4.application-skeleton-phase3-4-boundary.task1",
+  "expectedCommitMessage": "docs: fold application skeleton phase 4 opening into phase 3",
   "debt": {
-    "expectedCommitMessage": "docs: specify application skeleton phase 3 orchestration",
-    "preCommitHead": "d3909ddf6",
+    "expectedCommitMessage": "docs: fold application skeleton phase 4 opening into phase 3",
+    "preCommitHead": "7bc4fe313",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase4.application-skeleton-phase3-doc.task1"
+    "taskId": "managed-orchestration.phase4.application-skeleton-phase3-4-boundary.task1"
   }
 }
 ```
@@ -34,7 +34,7 @@
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md`
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_Materialization_Planning_RU.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
@@ -87,32 +87,37 @@
 
 ### Stream: Application Skeleton Phase 3
 
-14. [DONE] `managed-orchestration.phase4.application-skeleton-phase3-doc.task1` Write the Application Skeleton Phase 3 Materialization planning spec, including accepted/rejected attempt commits, Core validation, Phase 4 creation, and the user-visible completion message (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_Materialization_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify application skeleton phase 3 orchestration`).
-15. [PENDING] Git Commit: `docs: specify application skeleton phase 3 orchestration` (hash: TBD)
+14. [DONE] `managed-orchestration.phase4.application-skeleton-phase3-doc.task1` Write the initial Application Skeleton Phase 3 Materialization planning spec, including accepted/rejected attempt commits, Core validation, Phase 4 creation, and the user-visible completion message; renamed into the Phase 3/4 boundary document by task 16 (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify application skeleton phase 3 orchestration`).
+15. [DONE] Git Commit: `docs: specify application skeleton phase 3 orchestration` (hash: 7bc4fe313)
+
+### Stream: Application Skeleton Phase 3/4 Boundary
+
+16. [DONE] `managed-orchestration.phase4.application-skeleton-phase3-4-boundary.task1` Rename the Application Skeleton Phase 3 planning document into a Phase 3/4 boundary document and limit Phase 4 to opening the persistent user-return mode with a localized Core message (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_Materialization_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: fold application skeleton phase 4 opening into phase 3`).
+17. [PENDING] Git Commit: `docs: fold application skeleton phase 4 opening into phase 3` (hash: TBD)
 
 ### Stream: Remaining Phase Specs
 
-16. [TODO] `managed-orchestration.phase4.remaining-phases.task1` Add follow-up phase specs for Application Skeleton Phase 4 and the parallel Diagram Modules / Quality Gates scenarios once each branch is discussed and accepted (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/TODO/todo-plan.md`; expected commit: `docs: extend managed orchestration phase scenarios`).
-17. [TODO] Git Commit: `docs: extend managed orchestration phase scenarios` (hash: TBD)
+18. [TODO] `managed-orchestration.phase4.remaining-phases.task1` Add follow-up phase specs for the parallel Diagram Modules / Quality Gates scenarios once each branch is discussed and accepted (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/TODO/todo-plan.md`; expected commit: `docs: extend managed orchestration phase scenarios`).
+19. [TODO] Git Commit: `docs: extend managed orchestration phase scenarios` (hash: TBD)
 
 ## Phase 5 — Tooling Verification (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Planning Package Verification
 
-18. [TODO] `managed-orchestration.phase5.verify.task1` Validate the planning package, links, and active plan consistency before implementation planning starts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration planning package`).
-19. [TODO] Git Commit: `docs: verify managed orchestration planning package` (hash: TBD)
+20. [TODO] `managed-orchestration.phase5.verify.task1` Validate the planning package, links, and active plan consistency before implementation planning starts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration planning package`).
+21. [TODO] Git Commit: `docs: verify managed orchestration planning package` (hash: TBD)
 
 ## Phase 6 — User Planning Acceptance (owner: User, updated: 2026-05-14)
 
 ### Stream: Scenario Acceptance
 
-20. [TODO] `managed-orchestration.phase6.user-acceptance.task1` User reviews and accepts the managed orchestration planning package before implementation microtasks are created (scope: user workflow; expected commit: `docs: accept managed orchestration planning package`).
-21. [TODO] Git Commit: `docs: accept managed orchestration planning package` (hash: TBD)
+22. [TODO] `managed-orchestration.phase6.user-acceptance.task1` User reviews and accepts the managed orchestration planning package before implementation microtasks are created (scope: user workflow; expected commit: `docs: accept managed orchestration planning package`).
+23. [TODO] Git Commit: `docs: accept managed orchestration planning package` (hash: TBD)
 
 ## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Plan After User Acceptance
 
-22. [TODO] `managed-orchestration.phase7.closeout.task1` Archive this planning scope or convert it into an implementation todo-plan after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration planning scope`).
-23. [TODO] Git Commit: `docs: close managed orchestration planning scope` (hash: TBD)
-24. [TODO] `managed-orchestration.phase7.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+24. [TODO] `managed-orchestration.phase7.closeout.task1` Archive this planning scope or convert it into an implementation todo-plan after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration planning scope`).
+25. [TODO] Git Commit: `docs: close managed orchestration planning scope` (hash: TBD)
+26. [TODO] `managed-orchestration.phase7.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).

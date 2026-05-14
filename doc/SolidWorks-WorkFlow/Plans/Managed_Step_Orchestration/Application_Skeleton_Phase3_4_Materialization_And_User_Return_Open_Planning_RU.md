@@ -1,12 +1,12 @@
-# Application Skeleton Phase 3 — Materialization Planning
+# Application Skeleton Phase 3/4 — Materialization And User Return Open Planning
 
 **Статус:** черновик принятого сценария для будущей реализации.
 **Создан:** 2026-05-14.
-**Scope:** точная спецификация Phase 3 шага `Application Skeleton` для нового managed orchestration cluster.
+**Scope:** точная спецификация Phase 3 materialization и открытия Phase 4 `Persistent Application Skeleton User Return` для нового managed orchestration cluster.
 **Предыдущий документ:** `Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`.
-**Следующая тема обсуждения:** Phase 4 `Persistent Application Skeleton User Return`.
+**Следующая тема обсуждения:** будущий отдельный кластер/модуль для пользовательских возвратов, рефакторингов и revisions уже принятого шага.
 
-## 1. Назначение Phase 3
+## 1. Назначение Phase 3/4
 
 Phase 3 открывается только после того, как пользователь принял Application Skeleton contract в Phase 2.
 
@@ -20,6 +20,8 @@ Phase 3 относится к типу `Core-Gated Agent Work`:
 - Core создаёт Phase 4 только после принятой материализации.
 
 Git в Phase 3 является не только механизмом фиксации успешного результата, но и durable history для будущего агента с нулевым контекстом. Поэтому безопасные, но отклонённые Core попытки должны попадать в историю Git с диагностикой в child plan.
+
+Phase 4 в этом документе описана только как момент открытия постоянного режима возврата пользователя после успешной материализации. Документ не описывает будущую логику правок, refactoring requests, downstream impact analysis и repeated user-return revision commits. Эта логика должна быть спроектирована отдельно как самостоятельный user-return/revision orchestration cluster или module.
 
 ## 2. Участники
 
@@ -202,7 +204,9 @@ Core effects:
 
 ## 7. User-Visible Message При Переходе В Phase 4
 
-Core должен написать пользователю:
+Phase 3 обязательно заканчивается понятным user-visible Core message, если материализация принята и Phase 4 создана.
+
+Core должен написать пользователю в Project Manager dialog / persistent managed session на языке, выбранном в настройках интерфейса. Русский canonical example:
 
 ```text
 Core принял материализацию Application Skeleton.
@@ -218,6 +222,8 @@ Core принял материализацию Application Skeleton.
 - сообщение появляется в persistent managed session, а не только в Core log;
 - Agent не получает продолжение после accepted attempt;
 - пользователь понимает, зачем создана Phase 4.
+- пользователь понимает, что сейчас делать ничего не обязан: Phase 4 открыта как возможность вернуться к шагу позже.
+- детальная обработка будущих обращений пользователя в Phase 4 не входит в этот документ.
 
 ## 8. Ветка B — Rejected-Safe Attempt
 
@@ -427,6 +433,7 @@ phase4Created
 Этот документ не описывает:
 
 - полный сценарий Phase 4 user-return revisions;
+- future refactoring/user-return orchestration cluster;
 - Quality Gates handoff details;
 - Diagram Modules-specific behavior;
 - Development Tree unlock.
