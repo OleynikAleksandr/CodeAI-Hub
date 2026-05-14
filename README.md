@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.252** (Claude reasoning summary omitted when hidden)
+**Current Release — v1.2.253** (Managed orchestration cleanup verification)
+
+This release intentionally removes the legacy managed step orchestration control
+path before the new cluster orchestrator is implemented. The formed workflow
+step contracts remain documented, but the old generated plan CLI/shim,
+accept-contract runners, repair/revision dispatchers, managed commit
+transaction, and post-turn orchestration side effects now fail closed instead
+of mutating workflow state.
+
+The package is a verification build for the clean baseline: Core, Project
+Manager, and the webview compile, while the removed managed step flows are not
+expected to execute until the replacement cluster orchestrator is built.
+
+**Previous release: v1.2.252** (Claude reasoning summary omitted when hidden)
 
 This release stops paying tokens for hidden Claude reasoning. When the user
 disables `Thinking in dialog` (`thinkingDisplaySyncEnabled = false`), the next

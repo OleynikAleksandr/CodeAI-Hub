@@ -4,6 +4,20 @@ This project evolves quickly during active FLOW development. We keep the changel
 
 ## [Unreleased]
 
+## [1.2.253] - 2026-05-14
+### Changed
+- **Legacy managed step orchestration is removed from the runtime baseline.** The generated plan CLI/shim wiring, accept-contract runners, repair/revision dispatchers, managed commit transaction, and post-turn orchestration side effects now fail closed or no-op before the replacement cluster orchestrator is implemented.
+- **Formed workflow step materials remain available without the old controller.** Diagram Modules, Application Skeleton, and Quality Gates planning/contract documentation stays in place for the next implementation cycle, while legacy runtime ownership no longer mutates workflow state.
+- **Verification release for a clean orchestration baseline.** This build is expected to compile and run with the managed step flows disabled until the new cluster orchestrator is introduced.
+
+### Tests
+- `npm run build:core` passed.
+- `npm run build:project-manager` passed.
+- `npm run typecheck:webview` passed.
+- `npm run check:knip` passed.
+- `npm run check:links` passed.
+- `npm run check:dup` passed with 2.76% duplicated lines, under the 3% threshold.
+
 ## [1.2.252] - 2026-05-13
 ### Changed
 - **Hidden Claude reasoning no longer spends tokens on a summary the user does not see.** When `Thinking in dialog` is disabled (`thinkingDisplaySyncEnabled = false`), the Claude SDK turn now requests `thinking: { type: "adaptive", display: "omitted" }` plus the resolved `effort` instead of `display: "summarized"`. The model still reasons internally but no plain-text `thinking_delta` is streamed.
