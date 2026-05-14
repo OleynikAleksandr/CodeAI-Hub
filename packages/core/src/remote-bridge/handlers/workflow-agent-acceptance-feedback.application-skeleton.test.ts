@@ -7,14 +7,6 @@ import { WorkflowAgentAcceptanceFeedback } from "./workflow-agent-acceptance-fee
 const WORKSPACE_SLUG = "demo-workspace";
 const MISPLACED_PRODUCT_PART =
   ".codeai-hub/demo-workspace/product-parts/project-manager/README.md";
-const MOVE_MISPLACED_RE =
-  /Move the misplaced \.codeai-hub\/demo-workspace\/product-parts\/\*\* projection to root product-parts\/\*\*/u;
-const MISPLACED_ROOT_RE = /managed metadata root/u;
-const REMOVE_MISPLACED_RE = /Remove the misplaced/u;
-const WAIT_ONLY_RE =
-  /Do not update Application Skeleton artifacts|Wait for Core to finish/u;
-const MATERIALIZATION_BOUNDARY_RE =
-  /Repair the reported Application Skeleton materialization boundary/u;
 
 const createChains = (): readonly ContinuityChainSummary[] => [
   {
@@ -38,7 +30,7 @@ const stringifyFeedbackPayload = (payload: unknown): string =>
     ? payload
     : ((payload as { readonly content?: string }).content ?? "");
 
-test("Application Skeleton misplaced product-parts feedback instructs repair instead of wait", async () => {
+test("Application Skeleton feedback is disabled during orchestration rewrite", async () => {
   const messages: string[] = [];
 
   await new WorkflowAgentAcceptanceFeedback(
@@ -69,14 +61,10 @@ test("Application Skeleton misplaced product-parts feedback instructs repair ins
     workspaceSlug: WORKSPACE_SLUG,
   });
 
-  assert.equal(messages.length, 1);
-  assert.match(messages[0] ?? "", MISPLACED_ROOT_RE);
-  assert.match(messages[0] ?? "", MOVE_MISPLACED_RE);
-  assert.match(messages[0] ?? "", REMOVE_MISPLACED_RE);
-  assert.doesNotMatch(messages[0] ?? "", WAIT_ONLY_RE);
+  assert.equal(messages.length, 0);
 });
 
-test("Application Skeleton repairable boundary feedback does not tell provider to wait", async () => {
+test("Application Skeleton repairable boundary feedback stays no-op during rewrite", async () => {
   const messages: string[] = [];
 
   await new WorkflowAgentAcceptanceFeedback(
@@ -107,7 +95,5 @@ test("Application Skeleton repairable boundary feedback does not tell provider t
     workspaceSlug: WORKSPACE_SLUG,
   });
 
-  assert.equal(messages.length, 1);
-  assert.match(messages[0] ?? "", MATERIALIZATION_BOUNDARY_RE);
-  assert.doesNotMatch(messages[0] ?? "", WAIT_ONLY_RE);
+  assert.equal(messages.length, 0);
 });

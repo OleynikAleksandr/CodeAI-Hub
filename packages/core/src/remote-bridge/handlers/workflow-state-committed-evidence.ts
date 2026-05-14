@@ -67,11 +67,10 @@ const hasTerminalCommit = (
       commit.commitHash.trim().length > 0
   );
 
-// Stage-light truth: completed upstream stages stay completed once their own
-// terminal managed commit is recorded in workspace.plan.md acceptedCommits.
-// Downstream dirty paths, blockers, or repair tasks cannot flip a recorded
-// terminal stage back to in_progress; only an explicit revision/rebuild
-// commit removes the prior terminal evidence.
+// Legacy stage-light truth: historical terminal evidence in
+// workspace.plan.md acceptedCommits may keep already completed upstream stages
+// completed in old workspaces. The orchestration rewrite must not create new
+// entries through the removed managed lifecycle.
 export const applyCommittedTerminalEvidence = async (params: {
   readonly state: WorkflowState;
   readonly workspaceRoot: string;

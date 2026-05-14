@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "b5c3c87d9",
+  "lastRecordedCommit": "516edb7cf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task22",
-  "expectedCommitMessage": "refactor: remove legacy continuation prompt wording",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task23",
+  "expectedCommitMessage": "docs: suspend workflow steps legacy lifecycle narrative",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy continuation prompt wording",
-    "preCommitHead": "b5c3c87d9",
+    "expectedCommitMessage": "docs: suspend workflow steps legacy lifecycle narrative",
+    "preCommitHead": "516edb7cf",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task22"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task23"
   }
 }
 ```
@@ -452,9 +452,9 @@ Verification for task 57:
 99. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task21` Delete standalone accept-contract helper modules and stale helper tests after all runtime/UI routes are gone (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-handler.test.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.ts, packages/core/src/remote-bridge/handlers/application-skeleton-acceptance-writer.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-acceptance-writer.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete managed accept contract helpers`).
 100. [DONE] Git Commit: `refactor: delete managed accept contract helpers` (hash: b5c3c87d9)
 101. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task22` Remove legacy managed lifecycle wording from prompt-pack and documentation continuation envelopes (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy continuation prompt wording`).
-102. [PENDING] Git Commit: `refactor: remove legacy continuation prompt wording` (hash: TBD)
-103. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task23` Suspend remaining active Workflow Steps overview legacy lifecycle narrative and align feedback wording tests with rewrite-boundary language (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts, doc/TODO/todo-plan.md`; expected commit: `docs: suspend workflow steps legacy lifecycle narrative`).
-104. [TODO] Git Commit: `docs: suspend workflow steps legacy lifecycle narrative` (hash: TBD)
+102. [DONE] Git Commit: `refactor: remove legacy continuation prompt wording` (hash: 516edb7cf)
+103. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task23` Suspend remaining active Workflow Steps overview legacy lifecycle narrative and align feedback wording tests with rewrite-boundary language (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts, doc/TODO/todo-plan.md`; expected commit: `docs: suspend workflow steps legacy lifecycle narrative`).
+104. [PENDING] Git Commit: `docs: suspend workflow steps legacy lifecycle narrative` (hash: TBD)
 105. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task24` Remove legacy acceptance-commit read-model fields from Application Skeleton and Quality Gates progress snapshots (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/quality-gates-progress.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.ts, packages/core/src/remote-bridge/handlers/quality-gates-contract-guard.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy acceptance commit progress state`).
 106. [TODO] Git Commit: `refactor: remove legacy acceptance commit progress state` (hash: TBD)
 107. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task25` Run the final codebase grep/test audit again and record only intentional suspended/history references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record final legacy orchestrator audit`).
@@ -554,6 +554,13 @@ Verification for task 101:
 - `node --test packages/core/dist/remote-bridge/handlers/session-request-handler.documentation-continuation.test.js packages/core/dist/remote-bridge/handlers/session-request-handler.documentation-rollover.test.js` passed.
 - `npx tsx --test src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts` passed.
 - `rg -n "Core acceptance|Core-injected|continue_active_microtask|managed microtask|Core sends|Core feedback|Core-orchestrated|Core-checkable|Core context bundle|Managed output target rule|managed workflow state|Core marks|Core-owned managed phases|Lifecycle reminder" src/client/project-manager/services/prompt-pack-builder.ts src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts` returned only negative assertion strings in tests.
+
+Verification for task 103:
+
+- `npm run build:core` passed.
+- `npm run check:links` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.js packages/core/dist/remote-bridge/handlers/quality-gates-feedback-action-lines.test.js` passed.
+- `rg -n 'release `1\\.2\\.249`|release `1\\.2\\.250`|Phase orchestration pilot|Acceptance Commit Policy|PM Accept Contract|/managed-stage-accept-contract|typed acceptance|Core-owned acceptance commit|Core acceptance commit|Core-injected|Phase 3 continuation|managed commit flow|terminal managed commit|accepted managed lifecycle|Core owns staging' doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md packages/core/src/remote-bridge/handlers/quality-gates-feedback-action-lines.test.ts packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.application-skeleton.test.ts packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts` returned no active legacy lifecycle matches.
 
 ## Phase 10 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
