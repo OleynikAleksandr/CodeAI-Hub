@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "11f0d1146",
+  "lastRecordedCommit": "16596870d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase5.verify.task1",
-  "expectedCommitMessage": "docs: verify managed orchestration planning package",
+  "currentTaskId": "managed-orchestration.phase6.user-acceptance.task1",
+  "expectedCommitMessage": "docs: accept managed orchestration planning package",
   "debt": {
-    "expectedCommitMessage": "docs: verify managed orchestration planning package",
-    "preCommitHead": "11f0d1146",
+    "expectedCommitMessage": "docs: accept managed orchestration planning package",
+    "preCommitHead": "16596870d",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase5.verify.task1"
+    "taskId": "managed-orchestration.phase6.user-acceptance.task1"
   }
 }
 ```
@@ -116,14 +116,14 @@
 ### Stream: Planning Package Verification
 
 26. [DONE] `managed-orchestration.phase5.verify.task1` Validate the planning package, links, and active plan consistency before implementation planning starts (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration planning package`).
-27. [PENDING] Git Commit: `docs: verify managed orchestration planning package` (hash: TBD)
+27. [DONE] Git Commit: `docs: verify managed orchestration planning package` (hash: 16596870d)
 
 ## Phase 6 — User Planning Acceptance (owner: User, updated: 2026-05-14)
 
 ### Stream: Scenario Acceptance
 
-28. [TODO] `managed-orchestration.phase6.user-acceptance.task1` User reviews and accepts the managed orchestration planning package before implementation microtasks are created (scope: user workflow; expected commit: `docs: accept managed orchestration planning package`).
-29. [TODO] Git Commit: `docs: accept managed orchestration planning package` (hash: TBD)
+28. [DONE] `managed-orchestration.phase6.user-acceptance.task1` User reviews and accepts the managed orchestration planning package before implementation microtasks are created (scope: user workflow; expected commit: `docs: accept managed orchestration planning package`).
+29. [PENDING] Git Commit: `docs: accept managed orchestration planning package` (hash: TBD)
 
 ## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
