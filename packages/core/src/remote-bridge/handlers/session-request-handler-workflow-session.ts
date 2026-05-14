@@ -1,13 +1,3 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-import { ManagedPlanOrchestratorInstaller } from "../../managed-workspace/managed-plan-orchestrator-installer";
-import { ManagedWorkspaceAdoptionCommitter } from "../../managed-workspace/managed-workspace-adoption-committer";
-import { ManagedWorkspaceBootstrapper } from "../../managed-workspace/managed-workspace-bootstrapper";
-import { ManagedWorkspaceLifecycleCommitter } from "../../managed-workspace/managed-workspace-lifecycle-committer";
-import {
-  type ManagedWorkspaceValidationResult,
-  ManagedWorkspaceValidator,
-} from "../../managed-workspace/managed-workspace-validator";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -15,45 +5,32 @@ import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtim
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { CreateAndRegisterSessionOptions } from "./session-request-handler-types";
 
-const execFileAsync = promisify(execFile);
-const HANDOFF_COMMIT_MESSAGE = "chore: switch managed workspace stage";
 export const MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE =
   "managed_workflow_rewrite_in_progress";
 
-export interface ManagedWorkspaceLifecycle {
-  ensureReady(
-    workspaceRoot: string,
-    initialStage?: string | null
-  ): Promise<ManagedWorkspaceValidationResult>;
-}
-
-const MANAGED_WORKSPACE_STAGES = new Set([
+const MANAGED_WORKFLOW_REWRITE_BLOCKED_STAGES = new Set([
   "diagram_modules",
   "application_skeleton",
   "quality_gates",
 ]);
 
-export const requiresManagedWorkspaceLifecycle = (stage: string): boolean =>
-  MANAGED_WORKSPACE_STAGES.has(stage);
+export const isManagedWorkflowRewriteBlockedStage = (stage: string): boolean =>
+  MANAGED_WORKFLOW_REWRITE_BLOCKED_STAGES.has(stage);
 
 interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly createAndRegisterSession: (
     options: CreateAndRegisterSessionOptions
   ) => Promise<Session | null>;
   readonly logger: Logger;
-  readonly managedWorkspaceLifecycle?: ManagedWorkspaceLifecycle;
   readonly providerFailureRecovery: SessionProviderFailureRecovery;
   readonly providerRegistry: ProviderRegistry;
 }
 
 export class SessionRequestHandlerWorkflowSession {
   private readonly deps: SessionRequestHandlerWorkflowSessionDependencies;
-  private readonly managedWorkspaceLifecycle: ManagedWorkspaceLifecycle;
 
   constructor(deps: SessionRequestHandlerWorkflowSessionDependencies) {
     this.deps = deps;
-    this.managedWorkspaceLifecycle =
-      deps.managedWorkspaceLifecycle ?? new DefaultManagedWorkspaceLifecycle();
   }
 
   async createSessionForWorkflow(options: {
@@ -66,7 +43,7 @@ export class SessionRequestHandlerWorkflowSession {
       readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
-    if (requiresManagedWorkspaceLifecycle(options.context.stage)) {
+    if (isManagedWorkflowRewriteBlockedStage(options.context.stage)) {
       this.deps.logger.warn(
         "Workflow session creation blocked: managed workflow rewrite in progress",
         {
@@ -88,24 +65,6 @@ export class SessionRequestHandlerWorkflowSession {
       );
       return null;
     }
-    if (requiresManagedWorkspaceLifecycle(options.context.stage)) {
-      const managedWorkspace = await this.managedWorkspaceLifecycle.ensureReady(
-        options.workspacePath,
-        options.context.stage
-      );
-      if (!managedWorkspace.ok) {
-        this.deps.logger.warn(
-          "Workflow session creation blocked: managed workspace baseline invalid",
-          {
-            issues: managedWorkspace.issues,
-            stage: options.context.stage,
-            workspaceRoot: managedWorkspace.workspaceRoot,
-          }
-        );
-        return null;
-      }
-    }
-
     try {
       return await this.deps.createAndRegisterSession({
         providerId: options.providerId,
@@ -128,67 +87,3 @@ export class SessionRequestHandlerWorkflowSession {
     }
   }
 }
-
-export class DefaultManagedWorkspaceLifecycle
-  implements ManagedWorkspaceLifecycle
-{
-  private readonly adoptionCommitter = new ManagedWorkspaceAdoptionCommitter();
-  private readonly bootstrapper = new ManagedWorkspaceBootstrapper();
-  private readonly installer = new ManagedPlanOrchestratorInstaller();
-  private readonly lifecycleCommitter =
-    new ManagedWorkspaceLifecycleCommitter();
-  private readonly validator = new ManagedWorkspaceValidator();
-
-  async ensureReady(
-    workspaceRoot: string,
-    initialStage?: string | null
-  ): Promise<ManagedWorkspaceValidationResult> {
-    await this.bootstrapper.bootstrap(workspaceRoot);
-    await this.installer.install(workspaceRoot, { initialStage });
-    await this.adoptionCommitter.commitInitialBaseline(workspaceRoot);
-    await this.lifecycleCommitter.commitInstalledLifecycle(workspaceRoot);
-    await commitManagedStageHandoff(workspaceRoot);
-    return await this.validator.validate(workspaceRoot);
-  }
-}
-
-const commitManagedStageHandoff = async (
-  workspaceRoot: string
-): Promise<void> => {
-  await execFileAsync(
-    "git",
-    ["add", "--", "doc/TODO", ".codeai-hub/workflow"],
-    {
-      cwd: workspaceRoot,
-    }
-  );
-  const hasChanges = await hasStagedChanges(workspaceRoot);
-  if (!hasChanges) {
-    return;
-  }
-  await execFileAsync(
-    "git",
-    ["-c", "core.hooksPath=", "commit", "-m", HANDOFF_COMMIT_MESSAGE],
-    {
-      cwd: workspaceRoot,
-      env: {
-        ...process.env,
-        GIT_AUTHOR_EMAIL: "managed-workspace@codeai-hub.local",
-        GIT_AUTHOR_NAME: "CodeAI Hub",
-        GIT_COMMITTER_EMAIL: "managed-workspace@codeai-hub.local",
-        GIT_COMMITTER_NAME: "CodeAI Hub",
-      },
-    }
-  );
-};
-
-const hasStagedChanges = async (workspaceRoot: string): Promise<boolean> => {
-  try {
-    await execFileAsync("git", ["diff", "--cached", "--quiet"], {
-      cwd: workspaceRoot,
-    });
-    return false;
-  } catch {
-    return true;
-  }
-};

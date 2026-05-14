@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "2ece914ee",
+  "lastRecordedCommit": "0410b4911",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task1",
-  "expectedCommitMessage": "fix: block managed lifecycle preflight during rewrite",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task2",
+  "expectedCommitMessage": "refactor: remove default managed lifecycle startup tail",
   "debt": {
-    "expectedCommitMessage": "fix: block managed lifecycle preflight during rewrite",
-    "preCommitHead": "2ece914ee",
+    "expectedCommitMessage": "refactor: remove default managed lifecycle startup tail",
+    "preCommitHead": "0410b4911",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task1"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task2"
   }
 }
 ```
@@ -410,9 +410,9 @@ Verification for task 57:
 ### Stream: Runtime Preflight Tail
 
 59. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task1` Remove the router-level managed workspace lifecycle preflight found by audit so managed documentation stages cannot bootstrap/commit old lifecycle state before the fail-closed session boundary (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: block managed lifecycle preflight during rewrite`).
-60. [PENDING] Git Commit: `fix: block managed lifecycle preflight during rewrite` (hash: TBD)
-61. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task2` Remove the now-unreachable default managed workspace lifecycle from workflow session startup and rewrite its tests around the fail-closed contract (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove default managed lifecycle startup tail`).
-62. [TODO] Git Commit: `refactor: remove default managed lifecycle startup tail` (hash: TBD)
+60. [DONE] Git Commit: `fix: block managed lifecycle preflight during rewrite` (hash: 0410b4911)
+61. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task2` Remove the now-unreachable default managed workspace lifecycle from workflow session startup, rewrite its tests around the fail-closed contract, rename the remaining stage predicate to rewrite-blocker semantics, and delete the unused lifecycle/adoption commit helpers exposed by that removal (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/managed-workspace/managed-workspace-adoption-committer.ts, packages/core/src/managed-workspace/managed-workspace-lifecycle-committer.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove default managed lifecycle startup tail`).
+62. [PENDING] Git Commit: `refactor: remove default managed lifecycle startup tail` (hash: TBD)
 63. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task3` Run the final codebase grep/test audit for legacy managed orchestrator activation paths and record the remaining intentional inactive/history-only references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record legacy orchestrator tail audit`).
 64. [TODO] Git Commit: `docs: record legacy orchestrator tail audit` (hash: TBD)
 

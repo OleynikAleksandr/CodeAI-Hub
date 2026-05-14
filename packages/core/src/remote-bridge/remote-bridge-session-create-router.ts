@@ -2,8 +2,8 @@ import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import {
+  isManagedWorkflowRewriteBlockedStage,
   MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
-  requiresManagedWorkspaceLifecycle,
 } from "./handlers/session-request-handler-workflow-session";
 import type { WebSocketManager } from "./handlers/websocket-manager";
 import { prepareWorkflowStageDirectories } from "./handlers/workspace-session-service";
@@ -12,7 +12,7 @@ import type { IncomingMessage } from "./types";
 const isManagedWorkflowRewriteStage = (
   stage: string | null | undefined
 ): boolean =>
-  typeof stage === "string" && requiresManagedWorkspaceLifecycle(stage);
+  typeof stage === "string" && isManagedWorkflowRewriteBlockedStage(stage);
 
 interface RemoteBridgeSessionCreateRouterDependencies {
   readonly getManager: () => WebSocketManager | undefined;
