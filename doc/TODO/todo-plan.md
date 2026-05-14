@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "aef44c7a2",
+  "lastRecordedCommit": "f07bce8d8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase2.application-skeleton-phase1.task1",
-  "expectedCommitMessage": "docs: specify application skeleton phase 1 orchestration",
+  "currentTaskId": "managed-orchestration.phase3.application-skeleton-phase2-doc.task1",
+  "expectedCommitMessage": "docs: specify application skeleton phase 2 orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: specify application skeleton phase 1 orchestration",
-    "preCommitHead": "aef44c7a2",
+    "expectedCommitMessage": "docs: specify application skeleton phase 2 orchestration",
+    "preCommitHead": "f07bce8d8",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase2.application-skeleton-phase1.task1"
+    "taskId": "managed-orchestration.phase3.application-skeleton-phase2-doc.task1"
   }
 }
 ```
@@ -33,6 +33,7 @@
   - `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md`
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
@@ -61,15 +62,15 @@
 ### Stream: Application Skeleton Phase 1
 
 5. [DONE] `managed-orchestration.phase2.application-skeleton-phase1.task1` Add the accepted draft planning spec for Application Skeleton Phase 1 Contract Bootstrap, including Core validation, handoff, repair, blocker, and simplified watchdog behavior (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`; expected commit: `docs: specify application skeleton phase 1 orchestration`).
-6. [PENDING] Git Commit: `docs: specify application skeleton phase 1 orchestration` (hash: TBD)
+6. [DONE] Git Commit: `docs: specify application skeleton phase 1 orchestration` (hash: f07bce8d8)
 
 ## Phase 3 — Application Skeleton Phase 2 Planning (owner: Codex + User, updated: 2026-05-14)
 
 ### Stream: Review Phase Discussion
 
-7. [TODO] `managed-orchestration.phase3.application-skeleton-phase2-discussion.task1` Continue dialog-only discussion of Application Skeleton Phase 2 User-Led Review semantics until user accepts the scenario model (scope: chat/process observation only; expected commit: not required).
-8. [TODO] `managed-orchestration.phase3.application-skeleton-phase2-doc.task1` Write the Application Skeleton Phase 2 Contract Review planning spec after the scenario is accepted (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify application skeleton phase 2 orchestration`).
-9. [TODO] Git Commit: `docs: specify application skeleton phase 2 orchestration` (hash: TBD)
+7. [DONE] `managed-orchestration.phase3.application-skeleton-phase2-discussion.task1` Continue dialog-only discussion of Application Skeleton Phase 2 User-Led Review semantics until user accepts the scenario model (scope: chat/process observation only; expected commit: not required). Result: user accepted the conditional review-task model where each user review cycle owns one review task and its paired outcome commit line.
+8. [DONE] `managed-orchestration.phase3.application-skeleton-phase2-doc.task1` Write the Application Skeleton Phase 2 Contract Review planning spec after the scenario is accepted (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify application skeleton phase 2 orchestration`).
+9. [PENDING] Git Commit: `docs: specify application skeleton phase 2 orchestration` (hash: TBD)
 
 ## Phase 4 — Further Managed Step Phase Planning (owner: Codex + User, updated: 2026-05-14)
 
