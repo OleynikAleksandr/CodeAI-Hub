@@ -1,322 +1,145 @@
 import assert from "node:assert/strict";
-import { execFile } from "node:child_process";
-import {
-  access,
-  mkdir,
-  mkdtemp,
-  readFile,
-  rm,
-  writeFile,
-} from "node:fs/promises";
+import { access, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { promisify } from "node:util";
 import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
+import { MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE } from "./handlers/session-request-handler-workflow-session";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 
-const execFileAsync = promisify(execFile);
-const DIAGRAM_MODULES_EXPECTED_COMMIT_RE =
-  /docs: update diagram modules product part index/u;
-const APPLICATION_SKELETON_EXPECTED_COMMIT_RE =
-  /docs: draft application skeleton contract/u;
-const QUALITY_GATES_EXPECTED_COMMIT_RE =
-  /feat: integrate quality gates baseline/u;
-const ROOT_TODO_PLAN_PATH = path.join("doc", "TODO", "todo-plan.md");
-const WORKSPACE_PLAN_PATH = path.join("doc", "TODO", "workspace.plan.md");
-const DIAGRAM_MODULES_STAGE_PLAN_PATH = path.join(
-  "doc",
-  "TODO",
-  "stages",
-  "diagram-modules",
-  "todo-plan.md"
-);
-const APPLICATION_SKELETON_STAGE_PLAN_PATH = path.join(
-  "doc",
-  "TODO",
-  "stages",
-  "application-skeleton",
-  "todo-plan.md"
-);
-const QUALITY_GATES_STAGE_PLAN_PATH = path.join(
-  "doc",
-  "TODO",
-  "stages",
-  "quality-gates",
-  "todo-plan.md"
-);
-const DIAGRAM_MODULES_ACTIVE_PLAN_PATH_RE =
-  /"activePlanPath": "doc\/TODO\/stages\/diagram-modules\/todo-plan\.md"/u;
-const APPLICATION_SKELETON_ACTIVE_PLAN_PATH_RE =
-  /"activePlanPath": "doc\/TODO\/stages\/application-skeleton\/todo-plan\.md"/u;
-const QUALITY_GATES_ACTIVE_PLAN_PATH_RE =
-  /"activePlanPath": "doc\/TODO\/stages\/quality-gates\/todo-plan\.md"/u;
+const MANAGED_STAGES = [
+  "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
+] as const;
 
-const assertDirectoryExists = async (directoryPath: string): Promise<void> => {
-  await access(directoryPath);
+const assertMissing = async (targetPath: string): Promise<void> => {
+  await assert.rejects(access(targetPath));
 };
 
-test("session:create prepares diagram modules lifecycle baseline before provider session", async () => {
+const createLogger = (warnings: unknown[] = []): Logger =>
+  ({
+    warn: (_message: string, context?: unknown) => {
+      warnings.push(context);
+    },
+  }) as unknown as Logger;
+
+test("session:create skips managed workflow preflight while rewrite is active", async () => {
   const workspacePath = await mkdtemp(
-    path.join(tmpdir(), "codeai-stage-preflight-")
+    path.join(tmpdir(), "codeai-managed-preflight-skipped-")
   );
   const workspaceSlug = "demo-workspace";
-  const expectedRoot = path.join(workspacePath, ".codeai-hub", workspaceSlug);
-  const descriptionPath = path.join(
-    expectedRoot,
-    "description",
-    "Final_Description.md"
-  );
-
-  try {
-    await mkdir(path.dirname(descriptionPath), { recursive: true });
-    await writeFile(descriptionPath, "# Accepted description\n", "utf8");
-
-    let handleCreateCalled = false;
-    const sessionHandler = {
-      async handleCreate(
-        _providerId: string | undefined,
-        _workspacePath: string | undefined,
-        context: { readonly stage?: string | null } | undefined
-      ): Promise<void> {
-        assert.equal(context?.stage, "diagram_modules");
-        await assertDirectoryExists(path.join(expectedRoot, "diagram_modules"));
-        await assertDirectoryExists(
-          path.join(expectedRoot, "diagram_modules", "product-parts")
-        );
-        assert.equal(
-          await git(workspacePath, ["log", "-1", "--pretty=%s"]),
-          "chore: initialize managed workflow baseline"
-        );
-        assert.equal(await git(workspacePath, ["status", "--short"]), "");
-        assert.equal(
-          await git(workspacePath, [
-            "ls-files",
-            ".codeai-hub/demo-workspace/description/Final_Description.md",
-          ]),
-          ".codeai-hub/demo-workspace/description/Final_Description.md"
-        );
-        assert.match(
-          await readFile(
-            path.join(workspacePath, DIAGRAM_MODULES_STAGE_PLAN_PATH),
-            "utf8"
-          ),
-          DIAGRAM_MODULES_EXPECTED_COMMIT_RE
-        );
-        await assert.rejects(
-          access(path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH))
-        );
-        await assert.rejects(
-          access(path.join(workspacePath, QUALITY_GATES_STAGE_PLAN_PATH))
-        );
-        assert.match(
-          await readFile(path.join(workspacePath, WORKSPACE_PLAN_PATH), "utf8"),
-          DIAGRAM_MODULES_ACTIVE_PLAN_PATH_RE
-        );
-        await assert.rejects(
-          access(path.join(workspacePath, ROOT_TODO_PLAN_PATH))
-        );
-        handleCreateCalled = true;
-      },
-    } as unknown as SessionRequestHandler;
-    const workflowRuntime = {
-      connectWorkspace: () => Promise.resolve(),
-    } as unknown as WorkflowRuntime;
-    const logger = {
-      warn(): void {
-        return;
-      },
-    } as unknown as Logger;
-
-    const router = new RemoteBridgeSessionCreateRouter({
-      getManager: () => undefined,
-      logger,
-      sessionHandler,
-      workflowRuntime,
-    });
-
-    await router.handle("client-1", {
-      type: "session:create",
-      payload: {
-        initiativeSlug: workspaceSlug,
-        providerId: "codexCli",
-        stage: "diagram_modules",
-        workspacePath,
-      },
-    });
-
-    assert.equal(handleCreateCalled, true);
-  } finally {
-    await rm(workspacePath, { force: true, recursive: true });
-  }
-});
-
-test("session:create bootstraps managed workspace before application skeleton session", async () => {
-  const workspacePath = await mkdtemp(
-    path.join(tmpdir(), "codeai-managed-session-create-")
-  );
-  const workspaceSlug = "demo-workspace";
-
-  try {
-    let handleCreateCalled = false;
-    const sessionHandler = {
-      async handleCreate(
-        _providerId: string | undefined,
-        _workspacePath: string | undefined,
-        context: { readonly stage?: string | null } | undefined
-      ): Promise<void> {
-        assert.equal(context?.stage, "application_skeleton");
-        await assertDirectoryExists(path.join(workspacePath, ".git"));
-        await assertDirectoryExists(
-          path.join(workspacePath, ".codeai-hub", "workflow")
-        );
-        await access(path.join(workspacePath, ".husky", "pre-commit"));
-        await access(path.join(workspacePath, WORKSPACE_PLAN_PATH));
-        await access(
-          path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH)
-        );
-        await assert.rejects(
-          access(path.join(workspacePath, DIAGRAM_MODULES_STAGE_PLAN_PATH))
-        );
-        await assert.rejects(
-          access(path.join(workspacePath, QUALITY_GATES_STAGE_PLAN_PATH))
-        );
-        await assert.rejects(
-          access(path.join(workspacePath, ROOT_TODO_PLAN_PATH))
-        );
-        assert.equal(
-          await git(workspacePath, ["log", "-1", "--pretty=%s"]),
-          "chore: initialize managed workflow baseline"
-        );
-        assert.equal(await git(workspacePath, ["status", "--short"]), "");
-        assert.match(
-          await readFile(
-            path.join(workspacePath, APPLICATION_SKELETON_STAGE_PLAN_PATH),
-            "utf8"
-          ),
-          APPLICATION_SKELETON_EXPECTED_COMMIT_RE
-        );
-        assert.match(
-          await readFile(path.join(workspacePath, WORKSPACE_PLAN_PATH), "utf8"),
-          APPLICATION_SKELETON_ACTIVE_PLAN_PATH_RE
-        );
-        await access(
-          path.join(
-            workspacePath,
-            "scripts",
-            "plan-orchestrator",
-            "plan-cli.mjs"
-          )
-        );
-        handleCreateCalled = true;
-      },
-    } as unknown as SessionRequestHandler;
-    const workflowRuntime = {
-      connectWorkspace: () => Promise.resolve(),
-    } as unknown as WorkflowRuntime;
-    const logger = {
-      warn(): void {
-        return;
-      },
-    } as unknown as Logger;
-
-    const router = new RemoteBridgeSessionCreateRouter({
-      getManager: () => undefined,
-      logger,
-      sessionHandler,
-      workflowRuntime,
-    });
-
-    await router.handle("client-1", {
-      type: "session:create",
-      payload: {
-        initiativeSlug: workspaceSlug,
-        providerId: "codexCli",
-        stage: "application_skeleton",
-        workspacePath,
-      },
-    });
-
-    assert.equal(handleCreateCalled, true);
-  } finally {
-    await rm(workspacePath, { force: true, recursive: true });
-  }
-});
-
-test("session:create switches managed active plan across filesystem stages", async () => {
-  const workspacePath = await mkdtemp(
-    path.join(tmpdir(), "codeai-managed-stage-route-")
-  );
-  const workspaceSlug = "demo-workspace";
-  const expectedPlans: Record<string, RegExp> = {
-    application_skeleton: APPLICATION_SKELETON_ACTIVE_PLAN_PATH_RE,
-    diagram_modules: DIAGRAM_MODULES_ACTIVE_PLAN_PATH_RE,
-    quality_gates: QUALITY_GATES_ACTIVE_PLAN_PATH_RE,
-  };
   const seenStages: string[] = [];
+  const warnings: unknown[] = [];
 
   try {
     const sessionHandler = {
-      async handleCreate(
-        _providerId: string | undefined,
-        _workspacePath: string | undefined,
+      handleCreate(
+        providerId: string | undefined,
+        workspaceRoot: string | undefined,
         context: { readonly stage?: string | null } | undefined
       ): Promise<void> {
-        const stage = context?.stage;
-        assert.ok(typeof stage === "string");
-        seenStages.push(stage);
-        assert.match(
-          await readFile(path.join(workspacePath, WORKSPACE_PLAN_PATH), "utf8"),
-          expectedPlans[stage]
-        );
-        assert.equal(await git(workspacePath, ["status", "--short"]), "");
+        assert.equal(providerId, "codexCli");
+        assert.equal(workspaceRoot, workspacePath);
+        assert.ok(typeof context?.stage === "string");
+        seenStages.push(context.stage);
+        return Promise.resolve();
       },
     } as unknown as SessionRequestHandler;
     const router = new RemoteBridgeSessionCreateRouter({
       getManager: () => undefined,
-      logger: { warn: () => undefined } as unknown as Logger,
+      logger: createLogger(warnings),
       sessionHandler,
       workflowRuntime: {
         connectWorkspace: () => Promise.resolve(),
       } as unknown as WorkflowRuntime,
     });
 
-    for (const stage of [
-      "diagram_modules",
-      "application_skeleton",
-      "quality_gates",
-    ]) {
+    for (const stage of MANAGED_STAGES) {
       await router.handle("client-1", {
         type: "session:create",
         payload: {
           initiativeSlug: workspaceSlug,
           providerId: "codexCli",
+          runSlug: "run-1",
           stage,
           workspacePath,
         },
       });
     }
 
-    assert.deepEqual(seenStages, [
-      "diagram_modules",
-      "application_skeleton",
-      "quality_gates",
-    ]);
-    assert.match(
-      await readFile(
-        path.join(workspacePath, QUALITY_GATES_STAGE_PLAN_PATH),
-        "utf8"
+    assert.deepEqual(seenStages, [...MANAGED_STAGES]);
+    assert.deepEqual(
+      warnings.map((warning) =>
+        typeof warning === "object" && warning !== null
+          ? (warning as { readonly code?: string }).code
+          : null
       ),
-      QUALITY_GATES_EXPECTED_COMMIT_RE
+      [
+        MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+        MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+        MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+      ]
     );
+    await assertMissing(path.join(workspacePath, ".git"));
+    await assertMissing(path.join(workspacePath, ".husky"));
+    await assertMissing(path.join(workspacePath, "doc", "TODO"));
+    await assertMissing(path.join(workspacePath, ".codeai-hub", workspaceSlug));
   } finally {
     await rm(workspacePath, { force: true, recursive: true });
   }
 });
 
-const git = async (cwd: string, args: readonly string[]): Promise<string> => {
-  const { stdout } = await execFileAsync("git", [...args], { cwd });
-  return stdout.trim();
-};
+test("session:create still prepares non-managed workflow stage directories", async () => {
+  const workspacePath = await mkdtemp(
+    path.join(tmpdir(), "codeai-non-managed-preflight-")
+  );
+  const workspaceSlug = "demo-workspace";
+  let handleCreateCalled = false;
+
+  try {
+    const sessionHandler = {
+      handleCreate(
+        providerId: string | undefined,
+        workspaceRoot: string | undefined,
+        context: { readonly stage?: string | null } | undefined
+      ): Promise<void> {
+        assert.equal(providerId, "codexCli");
+        assert.equal(workspaceRoot, workspacePath);
+        assert.equal(context?.stage, "description");
+        handleCreateCalled = true;
+        return Promise.resolve();
+      },
+    } as unknown as SessionRequestHandler;
+    const router = new RemoteBridgeSessionCreateRouter({
+      getManager: () => undefined,
+      logger: createLogger(),
+      sessionHandler,
+      workflowRuntime: {
+        connectWorkspace: () => Promise.resolve(),
+      } as unknown as WorkflowRuntime,
+    });
+
+    await router.handle("client-1", {
+      type: "session:create",
+      payload: {
+        initiativeSlug: workspaceSlug,
+        providerId: "codexCli",
+        stage: "description",
+        workspacePath,
+      },
+    });
+
+    assert.equal(handleCreateCalled, true);
+    await access(path.join(workspacePath, ".codeai-hub", workspaceSlug));
+    await access(
+      path.join(workspacePath, ".codeai-hub", workspaceSlug, "description")
+    );
+    await assertMissing(path.join(workspacePath, ".git"));
+    await assertMissing(path.join(workspacePath, "doc", "TODO"));
+  } finally {
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});

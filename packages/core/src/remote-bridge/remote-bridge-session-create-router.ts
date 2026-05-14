@@ -2,30 +2,30 @@ import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import {
-  DefaultManagedWorkspaceLifecycle,
-  type ManagedWorkspaceLifecycle,
+  MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
   requiresManagedWorkspaceLifecycle,
 } from "./handlers/session-request-handler-workflow-session";
 import type { WebSocketManager } from "./handlers/websocket-manager";
 import { prepareWorkflowStageDirectories } from "./handlers/workspace-session-service";
 import type { IncomingMessage } from "./types";
 
+const isManagedWorkflowRewriteStage = (
+  stage: string | null | undefined
+): boolean =>
+  typeof stage === "string" && requiresManagedWorkspaceLifecycle(stage);
+
 interface RemoteBridgeSessionCreateRouterDependencies {
   readonly getManager: () => WebSocketManager | undefined;
   readonly logger: Logger;
-  readonly managedWorkspaceLifecycle?: ManagedWorkspaceLifecycle;
   readonly sessionHandler: SessionRequestHandler;
   readonly workflowRuntime: WorkflowRuntime;
 }
 
 export class RemoteBridgeSessionCreateRouter {
   private readonly deps: RemoteBridgeSessionCreateRouterDependencies;
-  private readonly managedWorkspaceLifecycle: ManagedWorkspaceLifecycle;
 
   constructor(deps: RemoteBridgeSessionCreateRouterDependencies) {
     this.deps = deps;
-    this.managedWorkspaceLifecycle =
-      deps.managedWorkspaceLifecycle ?? new DefaultManagedWorkspaceLifecycle();
   }
 
   async handle(
@@ -63,32 +63,23 @@ export class RemoteBridgeSessionCreateRouter {
     }
 
     try {
-      await prepareWorkflowStageDirectories({
-        initiativeSlug,
-        runSlug: createContext.runSlug,
-        stage: createContext.stage,
-        workspacePath: resolvedWorkspacePath,
-      });
-      if (
-        createContext.stage &&
-        requiresManagedWorkspaceLifecycle(createContext.stage)
-      ) {
-        const managedWorkspace =
-          await this.managedWorkspaceLifecycle.ensureReady(
-            resolvedWorkspacePath,
-            createContext.stage
-          );
-        if (!managedWorkspace.ok) {
-          this.deps.logger.warn(
-            "Session create blocked: managed workspace baseline invalid",
-            {
-              issues: managedWorkspace.issues,
-              stage: createContext.stage,
-              workspaceRoot: managedWorkspace.workspaceRoot,
-            }
-          );
-          return;
-        }
+      if (isManagedWorkflowRewriteStage(createContext.stage)) {
+        this.deps.logger.warn(
+          "Session create skipped managed workflow preflight during orchestration rewrite",
+          {
+            code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+            stage: createContext.stage,
+            workspacePath: resolvedWorkspacePath,
+            workspaceSlug: initiativeSlug,
+          }
+        );
+      } else {
+        await prepareWorkflowStageDirectories({
+          initiativeSlug,
+          runSlug: createContext.runSlug,
+          stage: createContext.stage,
+          workspacePath: resolvedWorkspacePath,
+        });
       }
     } catch (error: unknown) {
       this.deps.logger.warn("Failed to prepare workflow stage directories", {
