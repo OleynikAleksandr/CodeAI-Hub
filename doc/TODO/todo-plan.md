@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "def09270c",
+  "lastRecordedCommit": "00a1fa8b0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase7.pre-release-verify.task1",
-  "expectedCommitMessage": "docs: record 1.2.253 pre-release verification",
+  "currentTaskId": "managed-orchestration-cleanup.phase7.release-build.task1",
+  "expectedCommitMessage": "chore: build 1.2.253 release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: record 1.2.253 pre-release verification",
-    "preCommitHead": "def09270c",
+    "expectedCommitMessage": "chore: build 1.2.253 release artifacts",
+    "preCommitHead": "00a1fa8b0",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase7.pre-release-verify.task1"
+    "taskId": "managed-orchestration-cleanup.phase7.release-build.task1"
   }
 }
 ```
@@ -333,7 +333,7 @@ Verification for task 43:
 45. [DONE] `managed-orchestration-cleanup.phase7.release-prep.task1` Prepare release documentation for the managed orchestration cleanup verification build (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.253 managed cleanup release`).
 46. [DONE] Git Commit: `docs: prepare 1.2.253 managed cleanup release` (hash: def09270c)
 47. [DONE] `managed-orchestration-cleanup.phase7.pre-release-verify.task1` Run pre-release validation before packaging: `npm run lint`, `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.253 pre-release verification`).
-48. [PENDING] Git Commit: `docs: record 1.2.253 pre-release verification` (hash: TBD)
+48. [DONE] Git Commit: `docs: record 1.2.253 pre-release verification` (hash: 00a1fa8b0)
 
 Verification for task 47:
 
@@ -345,8 +345,22 @@ Verification for task 47:
 - `npm run check:links` passed.
 - `npm run check:dup` passed with 2.76% duplicated lines, under the 3% threshold.
 
-49. [TODO] `managed-orchestration-cleanup.phase7.release-build.task1` Run unified release artifact build with the active plan state intentionally present, then record the generated provider/core/UI/launcher tarballs (scope: `package.json, package-lock.json, packages/*/package.json, assets/launcher/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.253 release artifacts`).
-50. [TODO] Git Commit: `chore: build 1.2.253 release artifacts` (hash: TBD)
+49. [DONE] `managed-orchestration-cleanup.phase7.release-build.task1` Run unified release artifact build with the active plan state intentionally present, then record the generated provider/core/UI/launcher tarballs (scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.253 release artifacts`).
+50. [PENDING] Git Commit: `chore: build 1.2.253 release artifacts` (hash: TBD)
+
+Verification for task 49:
+
+- `./scripts/build-all.sh --allow-dirty` passed with only the machine-managed active plan state dirty before the build.
+- Unified version advanced from `1.2.252` to `1.2.253`.
+- Generated tarballs were copied to `doc/tmp/releases/`:
+  - `claude-module-1.2.253.tar.bz2`
+  - `codex-module-1.2.253.tar.bz2`
+  - `gemini-module-1.2.253.tar.bz2`
+  - `codeai-hub-core-darwin-arm64-1.2.253.tar.bz2`
+  - `CodeAIHubLauncher-macos-arm64-1.2.253.tar.bz2`
+  - `vscode-webview-1.2.253.tar.bz2`
+  - `project-manager-1.2.253.tar.bz2`
+
 51. [TODO] `managed-orchestration-cleanup.phase7.vsix-build.task1` Run final VSIX package build for the current release version and record the generated package path (scope: `packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/TODO/todo-plan.md`; expected commit: `chore: package 1.2.253 release`).
 52. [TODO] Git Commit: `chore: package 1.2.253 release` (hash: TBD)
 
