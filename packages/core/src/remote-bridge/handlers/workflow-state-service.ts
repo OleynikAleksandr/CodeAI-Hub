@@ -28,7 +28,6 @@ import {
   readQualityGatesProgressSnapshot,
   resolveWorkflowBlockedStages,
 } from "./quality-gates-progress";
-import { applyCommittedTerminalEvidence } from "./workflow-state-committed-evidence";
 import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
 import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
@@ -219,12 +218,6 @@ export class WorkflowStateService {
                   applicationSkeletonProgress:
                     managedProgress.applicationSkeletonProgress,
                   qualityGatesProgress: managedProgress.qualityGatesProgress,
-                })
-              )
-              .then((validatedState) =>
-                applyCommittedTerminalEvidence({
-                  state: validatedState,
-                  workspaceRoot,
                 })
               )
               .then((validatedState) =>

@@ -2,22 +2,7 @@ import type { Request, Response } from "express";
 import type { Logger } from "../../telemetry/logger";
 import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types";
 
-export type ManagedCoreMessageKind =
-  | "managed_corrective"
-  | "managed_continuation"
-  | "managed_acceptance_check"
-  | "managed_post_turn_decision";
-
-export interface ManagedCoreMessageEvent {
-  readonly kind: ManagedCoreMessageKind;
-  readonly stage: string;
-  readonly text: string;
-  readonly timestamp: string;
-  readonly type: "managed.core.message";
-  readonly workspaceSlug: string;
-}
-
-export type WorkflowFeedEvent = ManagedCoreMessageEvent | WorkflowWatcherEvent;
+export type WorkflowFeedEvent = WorkflowWatcherEvent;
 
 const HTTP_BAD_REQUEST = 400;
 const MAX_EVENTS = 200;
@@ -43,13 +28,9 @@ export class WorkflowEventsService {
 
   record(event: WorkflowWatcherEvent): void {
     this.appendEvent(event);
-  }
-
-  recordManagedCoreMessage(event: ManagedCoreMessageEvent): void {
-    this.appendEvent(event);
-    this.logger.debug("Recorded managed core message in workflow feed", {
-      kind: event.kind,
+    this.logger.debug("Recorded workflow event in workflow feed", {
       stage: event.stage,
+      type: event.type,
       workspaceSlug: event.workspaceSlug,
     });
   }

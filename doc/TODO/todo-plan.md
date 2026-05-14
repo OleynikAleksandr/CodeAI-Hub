@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "7cc4c9180",
+  "lastRecordedCommit": "017ed3555",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task28",
-  "expectedCommitMessage": "refactor: remove managed context bundle surface",
+  "currentTaskId": "managed-orchestration-cleanup.phase9.runtime-audit.task29",
+  "expectedCommitMessage": "refactor: remove managed event and accepted commit evidence",
   "debt": {
-    "expectedCommitMessage": "refactor: remove managed context bundle surface",
-    "preCommitHead": "7cc4c9180",
+    "expectedCommitMessage": "refactor: remove managed event and accepted commit evidence",
+    "preCommitHead": "017ed3555",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task28"
+    "taskId": "managed-orchestration-cleanup.phase9.runtime-audit.task29"
   }
 }
 ```
@@ -464,9 +464,9 @@ Verification for task 57:
 111. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task27` Delete disabled continuation/feedback/repair/revision/managed-documentation helper surfaces and stale tests that only preserve old orchestration API names (scope: `packages/core/src/remote-bridge/handlers/*continuation-dispatcher*.ts, packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback*.ts, packages/core/src/remote-bridge/handlers/*repair-orchestration*.ts, packages/core/src/remote-bridge/handlers/*revision-injection*.ts, packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction*.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit*.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-b-rollover.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-user-return-revision.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-progress-refresh.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-turn-classifier.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: delete legacy managed helper surfaces`).
 112. [DONE] Git Commit: `refactor: delete legacy managed helper surfaces` (hash: 7cc4c9180)
 113. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task28` Remove managed context bundle runtime/API/client prompt injection surface and keep rollover continuation generic during rewrite (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-context-bundle.test.ts, packages/core/src/remote-bridge/handlers/managed-context-bundle-http-handler.ts, packages/core/src/remote-bridge/handlers/managed-context-bundle-http-handler.test.ts, packages/core/src/remote-bridge/handlers/http-api-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-documentation-continuation-envelope.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-continuation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts, src/client/project-manager/services/managed-workflow-initial-context.ts, src/client/project-manager/services/managed-workflow-initial-context.test.ts, src/client/project-manager/services/description-submit-service.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed context bundle surface`).
-114. [PENDING] Git Commit: `refactor: remove managed context bundle surface` (hash: TBD)
-115. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task29` Remove legacy managed core event parsing and accepted-commit transaction evidence from workflow events/read-model bootstrap gates (scope: `packages/core/src/remote-bridge/handlers/workflow-events-service.ts, src/client/project-manager/services/workflow-events-client.ts, packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.ts, related tests, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed event and accepted commit evidence`).
-116. [TODO] Git Commit: `refactor: remove managed event and accepted commit evidence` (hash: TBD)
+114. [DONE] Git Commit: `refactor: remove managed context bundle surface` (hash: 017ed3555)
+115. [DONE] `managed-orchestration-cleanup.phase9.runtime-audit.task29` Remove legacy managed core event parsing and accepted-commit transaction evidence from workflow events/read-model bootstrap gates (scope: `packages/core/src/remote-bridge/handlers/workflow-events-service.ts, src/client/project-manager/services/workflow-events-client.ts, packages/core/src/remote-bridge/handlers/workflow-state-committed-evidence.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove managed event and accepted commit evidence`).
+116. [PENDING] Git Commit: `refactor: remove managed event and accepted commit evidence` (hash: TBD)
 117. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task30` Suspend remaining active docs/contract references found by subagents outside Workflow Steps Overview (scope: `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md, doc/SolidWorks-WorkFlow/Contracts/Dialogs_And_Continuity_Routing.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md, doc/TODO/todo-plan.md`; expected commit: `docs: suspend remaining managed orchestration references`).
 118. [TODO] Git Commit: `docs: suspend remaining managed orchestration references` (hash: TBD)
 119. [TODO] `managed-orchestration-cleanup.phase9.runtime-audit.task31` Run the final codebase grep/test audit again and record only intentional suspended/history references (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record clean legacy orchestrator audit`).

@@ -62,73 +62,6 @@ const createProductPart = (): string =>
     "",
   ].join("\n");
 
-const writeManagedPlanEvidence = async (
-  workspaceRoot: string
-): Promise<void> => {
-  await writeJsonFile(workspaceRoot, "doc/TODO/workspace.plan.md", {});
-  await writeWorkspaceFile(
-    workspaceRoot,
-    "doc/TODO/workspace.plan.md",
-    [
-      "# Managed Workspace Plan",
-      "<!-- codeai-workspace-plan-state:start -->",
-      "```json",
-      JSON.stringify({
-        acceptedCommits: [
-          {
-            commitHash: "def5678",
-            message: "feat: materialize application skeleton",
-            planPath: "doc/TODO/stages/application-skeleton/todo-plan.md",
-            stage: "application_skeleton",
-            taskId: "application-skeleton.phase3.materialize.task1",
-          },
-          {
-            commitHash: "abc1234",
-            message: "feat: integrate quality gates baseline",
-            planPath: "doc/TODO/stages/quality-gates/todo-plan.md",
-            stage: "quality_gates",
-            taskId: "quality-gates.stream1.task2",
-          },
-        ],
-        activePlanPath: "doc/TODO/stages/quality-gates/todo-plan.md",
-        activeStage: "quality_gates",
-        schema: "codeai-workspace-plan-v1",
-      }),
-      "```",
-      "<!-- codeai-workspace-plan-state:end -->",
-    ].join("\n")
-  );
-  for (const [planPath, currentTaskId] of [
-    [
-      "doc/TODO/stages/application-skeleton/todo-plan.md",
-      "application-skeleton.handoff.task1",
-    ],
-    [
-      "doc/TODO/stages/quality-gates/todo-plan.md",
-      "quality-gates.stream1.task3",
-    ],
-  ] as const) {
-    await writeWorkspaceFile(
-      workspaceRoot,
-      planPath,
-      [
-        "# Managed Workspace TODO Plan",
-        "<!-- codeai-plan-state:start -->",
-        "```json",
-        JSON.stringify({
-          currentTaskId,
-          debt: null,
-          executionScopeStatus: "ACTIVE",
-          expectedCommitMessage: "feat: integrate quality gates baseline",
-          schema: "codeai-plan-v1",
-        }),
-        "```",
-        "<!-- codeai-plan-state:end -->",
-      ].join("\n")
-    );
-  }
-};
-
 const writeTechnicalRootArtifacts = async (
   workspaceRoot: string,
   workspaceSlug: string
@@ -220,7 +153,6 @@ const writeTechnicalRootArtifacts = async (
     ".husky/pre-push",
     "#!/bin/sh\nnpm run qg:smoke-checks\n"
   );
-  await writeManagedPlanEvidence(workspaceRoot);
 };
 
 const writeStageContinuity = (

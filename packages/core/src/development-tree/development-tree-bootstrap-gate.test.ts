@@ -1,14 +1,10 @@
 import assert from "node:assert/strict";
-import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { promisify } from "node:util";
 import { normalizeAndValidateWorkflowStageArtifact } from "../remote-bridge/handlers/http-api-artifact-validation";
 import { readDevelopmentTreeBootstrapGate } from "./development-tree-bootstrap-gate";
-
-const execFileAsync = promisify(execFile);
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -32,112 +28,6 @@ const writeJsonArtifact = async (params: {
     `.codeai-hub/${params.workspaceSlug}/${params.stage}/${params.fileName}`,
     `${JSON.stringify(params.content, null, 2)}\n`
   );
-};
-
-const writeManagedPlanEvidence = async (params: {
-  readonly workspaceRoot: string;
-}): Promise<void> => {
-  await writeWorkspaceFile(
-    params.workspaceRoot,
-    "doc/TODO/workspace.plan.md",
-    [
-      "# Managed Workspace Plan",
-      "",
-      "<!-- codeai-workspace-plan-state:start -->",
-      "```json",
-      JSON.stringify(
-        {
-          acceptedCommits: [
-            {
-              commitHash: "def5678",
-              message: "feat: materialize application skeleton",
-              planPath: "doc/TODO/stages/application-skeleton/todo-plan.md",
-              stage: "application_skeleton",
-              taskId: "application-skeleton.phase3.materialize.task1",
-            },
-            {
-              commitHash: "abc1234",
-              message: "feat: integrate quality gates baseline",
-              planPath: "doc/TODO/stages/quality-gates/todo-plan.md",
-              stage: "quality_gates",
-              taskId: "quality-gates.phase3.integration.task1",
-            },
-          ],
-          activePlanPath: "doc/TODO/stages/quality-gates/todo-plan.md",
-          activeStage: "quality_gates",
-          schema: "codeai-workspace-plan-v1",
-        },
-        null,
-        2
-      ),
-      "```",
-      "<!-- codeai-workspace-plan-state:end -->",
-      "",
-    ].join("\n")
-  );
-  await writeWorkspaceFile(
-    params.workspaceRoot,
-    "doc/TODO/stages/application-skeleton/todo-plan.md",
-    [
-      "# Managed Workspace TODO Plan",
-      "",
-      "<!-- codeai-plan-state:start -->",
-      "```json",
-      JSON.stringify(
-        {
-          currentTaskId: "application-skeleton.handoff.task1",
-          debt: null,
-          executionScopeStatus: "ACTIVE",
-          expectedCommitMessage: "feat: materialize application skeleton",
-          schema: "codeai-plan-v1",
-        },
-        null,
-        2
-      ),
-      "```",
-      "<!-- codeai-plan-state:end -->",
-      "",
-    ].join("\n")
-  );
-  await writeWorkspaceFile(
-    params.workspaceRoot,
-    "doc/TODO/stages/quality-gates/todo-plan.md",
-    [
-      "# Managed Workspace TODO Plan",
-      "",
-      "<!-- codeai-plan-state:start -->",
-      "```json",
-      JSON.stringify(
-        {
-          currentTaskId: "quality-gates.phase4.user-return.task1",
-          debt: null,
-          executionScopeStatus: "ACTIVE",
-          expectedCommitMessage: "feat: integrate quality gates baseline",
-          schema: "codeai-plan-v1",
-        },
-        null,
-        2
-      ),
-      "```",
-      "<!-- codeai-plan-state:end -->",
-      "",
-    ].join("\n")
-  );
-};
-
-const runGit = async (
-  workspaceRoot: string,
-  args: readonly string[]
-): Promise<void> => {
-  await execFileAsync("git", [...args], { cwd: workspaceRoot });
-};
-
-const commitWorkspace = async (workspaceRoot: string): Promise<void> => {
-  await runGit(workspaceRoot, ["init"]);
-  await runGit(workspaceRoot, ["config", "user.email", "test@example.com"]);
-  await runGit(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
-  await runGit(workspaceRoot, ["add", "."]);
-  await runGit(workspaceRoot, ["commit", "-m", "test: accept quality gates"]);
 };
 
 const writeMarkdownArtifact = async (params: {
@@ -252,7 +142,7 @@ test("quality gates validation rejects contradictory blocker contracts", () => {
   );
 });
 
-test("development tree stays locked until quality gates transaction is committed", async () => {
+test("development tree unlocks from application skeleton and quality gates progress", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "development-tree-bootstrap-gate-")
   );
@@ -341,35 +231,11 @@ test("development tree stays locked until quality gates transaction is committed
     });
     assert.equal(integrated.qualityGatesProgress?.integrated, true);
     assert.equal(integrated.qualityGatesProgress?.substep, "integrated");
-    assert.equal(integrated.applicationSkeletonTransaction.ready, false);
-    assert.equal(
-      integrated.applicationSkeletonTransaction.blockers.includes(
-        "Missing accepted application_skeleton materialization commit in workspace.plan.md"
-      ),
-      true
-    );
-    assert.equal(integrated.qualityGatesTransaction.ready, false);
-    assert.equal(
-      integrated.qualityGatesTransaction.blockers.includes(
-        "Missing accepted quality_gates integration commit in workspace.plan.md"
-      ),
-      true
-    );
-    assert.equal(integrated.unlocked, false);
-
-    await writeManagedPlanEvidence({ workspaceRoot });
-    await commitWorkspace(workspaceRoot);
-
-    const committed = await readDevelopmentTreeBootstrapGate({
-      workspaceRoot,
-      workspaceSlug,
-    });
-    assert.equal(committed.qualityGatesProgress?.integrated, true);
-    assert.equal(committed.applicationSkeletonTransaction.ready, true);
-    assert.equal(committed.qualityGatesTransaction.ready, true);
-    assert.deepEqual(committed.applicationSkeletonTransaction.blockers, []);
-    assert.deepEqual(committed.qualityGatesTransaction.blockers, []);
-    assert.equal(committed.unlocked, true);
+    assert.equal(integrated.applicationSkeletonReadiness.ready, true);
+    assert.equal(integrated.qualityGatesReadiness.ready, true);
+    assert.deepEqual(integrated.applicationSkeletonReadiness.blockers, []);
+    assert.deepEqual(integrated.qualityGatesReadiness.blockers, []);
+    assert.equal(integrated.unlocked, true);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
