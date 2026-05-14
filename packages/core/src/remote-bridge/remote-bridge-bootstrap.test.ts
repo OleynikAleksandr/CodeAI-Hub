@@ -31,6 +31,7 @@ const noop = (): void => {
 
 const createBootstrapHarness = () => {
   const sessionManager = new SessionManager();
+  const events: unknown[] = [];
   const providerRegistry = {
     getAdapter: () => null,
     listProviders: () => [],
@@ -42,7 +43,9 @@ const createBootstrapHarness = () => {
   } as unknown as Logger;
 
   const bootstrap = createRemoteBridgeBootstrap({
-    broadcaster: noop,
+    broadcaster: (event) => {
+      events.push(event);
+    },
     buildInitialState: () => ({}) as never,
     config: TEST_CORE_CONFIG,
     logger,
@@ -64,11 +67,12 @@ const createBootstrapHarness = () => {
     };
   };
 
-  return { bootstrap, dispatchApi, sessionManager };
+  return { bootstrap, dispatchApi, events, sessionManager };
 };
 
-test("bootstrap routes typed acceptance to Quality Gates runner for quality_gates sessions", async () => {
-  const { bootstrap, dispatchApi, sessionManager } = createBootstrapHarness();
+test("bootstrap blocks Quality Gates typed acceptance during rewrite", async () => {
+  const { bootstrap, dispatchApi, events, sessionManager } =
+    createBootstrapHarness();
   const session = sessionManager.createSession(
     "codexCli",
     "/tmp/bootstrap-quality-gates",
@@ -78,32 +82,11 @@ test("bootstrap routes typed acceptance to Quality Gates runner for quality_gate
       stage: "quality_gates",
     }
   );
-  const recorded: Array<{
-    readonly sessionId: string;
-    readonly source: "typed-fallback" | "ui-button";
-    readonly stage: "application_skeleton" | "quality_gates";
-  }> = [];
-
+  const recorded: string[] = [];
   Object.assign(bootstrap.workflowStateService.managedPostTurnService, {
-    handleApplicationSkeletonAcceptContractCommand: (params: {
-      readonly sessionId: string;
-      readonly source: "typed-fallback" | "ui-button";
-    }) => {
-      recorded.push({ ...params, stage: "application_skeleton" });
-      return Promise.resolve({
-        kind: "accepted" as const,
-        stage: "application_skeleton" as const,
-      });
-    },
-    handleQualityGatesAcceptContractCommand: (params: {
-      readonly sessionId: string;
-      readonly source: "typed-fallback" | "ui-button";
-    }) => {
-      recorded.push({ ...params, stage: "quality_gates" });
-      return Promise.resolve({
-        kind: "accepted" as const,
-        stage: "quality_gates" as const,
-      });
+    handleQualityGatesAcceptContractCommand: () => {
+      recorded.push("quality_gates");
+      return Promise.resolve({ kind: "accepted", stage: "quality_gates" });
     },
   });
 
@@ -114,17 +97,20 @@ test("bootstrap routes typed acceptance to Quality Gates runner for quality_gate
     sessionId: session.id,
   });
 
-  assert.deepEqual(recorded, [
-    {
-      sessionId: session.id,
-      source: "typed-fallback",
-      stage: "quality_gates",
-    },
-  ]);
+  assert.deepEqual(recorded, []);
+  assert.equal(
+    events.some(
+      (event) =>
+        (event as { readonly payload?: { readonly code?: string } }).payload
+          ?.code === "managed_workflow_rewrite_in_progress"
+    ),
+    true
+  );
 });
 
-test("bootstrap keeps Application Skeleton typed acceptance on its own runner", async () => {
-  const { bootstrap, dispatchApi, sessionManager } = createBootstrapHarness();
+test("bootstrap blocks Application Skeleton typed acceptance during rewrite", async () => {
+  const { bootstrap, dispatchApi, events, sessionManager } =
+    createBootstrapHarness();
   const session = sessionManager.createSession(
     "codexCli",
     "/tmp/bootstrap-application-skeleton",
@@ -134,31 +120,13 @@ test("bootstrap keeps Application Skeleton typed acceptance on its own runner", 
       stage: "application_skeleton",
     }
   );
-  const recorded: Array<{
-    readonly sessionId: string;
-    readonly source: "typed-fallback" | "ui-button";
-    readonly stage: "application_skeleton" | "quality_gates";
-  }> = [];
-
+  const recorded: string[] = [];
   Object.assign(bootstrap.workflowStateService.managedPostTurnService, {
-    handleApplicationSkeletonAcceptContractCommand: (params: {
-      readonly sessionId: string;
-      readonly source: "typed-fallback" | "ui-button";
-    }) => {
-      recorded.push({ ...params, stage: "application_skeleton" });
+    handleApplicationSkeletonAcceptContractCommand: () => {
+      recorded.push("application_skeleton");
       return Promise.resolve({
-        kind: "accepted" as const,
-        stage: "application_skeleton" as const,
-      });
-    },
-    handleQualityGatesAcceptContractCommand: (params: {
-      readonly sessionId: string;
-      readonly source: "typed-fallback" | "ui-button";
-    }) => {
-      recorded.push({ ...params, stage: "quality_gates" });
-      return Promise.resolve({
-        kind: "accepted" as const,
-        stage: "quality_gates" as const,
+        kind: "accepted",
+        stage: "application_skeleton",
       });
     },
   });
@@ -170,11 +138,13 @@ test("bootstrap keeps Application Skeleton typed acceptance on its own runner", 
     sessionId: session.id,
   });
 
-  assert.deepEqual(recorded, [
-    {
-      sessionId: session.id,
-      source: "typed-fallback",
-      stage: "application_skeleton",
-    },
-  ]);
+  assert.deepEqual(recorded, []);
+  assert.equal(
+    events.some(
+      (event) =>
+        (event as { readonly payload?: { readonly code?: string } }).payload
+          ?.code === "managed_workflow_rewrite_in_progress"
+    ),
+    true
+  );
 });

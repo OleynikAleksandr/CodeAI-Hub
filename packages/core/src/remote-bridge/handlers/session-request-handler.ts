@@ -158,8 +158,6 @@ export class SessionRequestHandler {
       config: this.config,
       continuityClock: options.continuityClock,
       continuityRootBySessionId: this.continuityRootBySessionId,
-      handleManagedAcceptContractCommand:
-        options.handleManagedAcceptContractCommand,
       logger: this.logger,
       providerRegistry: this.providerRegistry,
       providerSessions: this.providerSessions,

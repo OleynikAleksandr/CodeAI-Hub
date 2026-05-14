@@ -7,7 +7,6 @@ import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { BridgeEvent } from "../types";
-import type { ApplicationSkeletonAcceptContractDecision } from "./managed-stage-accept-contract-handler";
 
 export type {
   ProviderModelSwitchStrategy,
@@ -156,10 +155,6 @@ export interface SessionRequestHandlerOptions {
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly config: CoreConfig;
   readonly continuityClock?: () => string;
-  readonly handleManagedAcceptContractCommand?: (params: {
-    readonly sessionId: string;
-    readonly source: "typed-fallback" | "ui-button";
-  }) => Promise<ApplicationSkeletonAcceptContractDecision | undefined>;
   readonly logger: Logger;
   readonly onTurnCompleted?: (sessionId: string) => void;
   readonly providerRegistry: ProviderRegistry;

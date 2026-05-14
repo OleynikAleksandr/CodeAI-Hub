@@ -5,7 +5,6 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { BridgeEvent } from "../types";
-import type { ApplicationSkeletonAcceptContractDecision } from "./managed-stage-accept-contract-handler";
 import type {
   ContinuityLockReason,
   EmitContinuityLockEventOptions,
@@ -93,10 +92,6 @@ export interface SessionRequestHandlerRuntimeDependencies {
   readonly config: CoreConfig;
   readonly continuityClock?: () => string;
   readonly continuityRootBySessionId: Map<string, string>;
-  readonly handleManagedAcceptContractCommand?: (params: {
-    readonly sessionId: string;
-    readonly source: "typed-fallback" | "ui-button";
-  }) => Promise<ApplicationSkeletonAcceptContractDecision | undefined>;
   readonly logger: Logger;
   readonly providerRegistry: ProviderRegistry;
   readonly providerSessions: Map<string, ProviderSessionBindingLike>;

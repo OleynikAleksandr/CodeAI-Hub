@@ -95,27 +95,6 @@ export const createRemoteBridgeBootstrap = (options: {
     onTurnCompleted: (sessionId) => {
       workflowStateService?.handleManagedWorkflowPostTurn(sessionId);
     },
-    // Production typed acceptance must dispatch by the live session stage.
-    // The callback is late-bound through `workflowStateService`, but stage
-    // ownership comes from the shared `sessionManager` we already have here.
-    handleManagedAcceptContractCommand: async (params) => {
-      if (!workflowStateService) {
-        return undefined;
-      }
-      const stage = options.sessionManager.getSession(params.sessionId)?.stage;
-      if (stage === "quality_gates") {
-        await workflowStateService.managedPostTurnService.handleQualityGatesAcceptContractCommand(
-          params
-        );
-        return undefined;
-      }
-      if (stage === "application_skeleton") {
-        return workflowStateService.managedPostTurnService.handleApplicationSkeletonAcceptContractCommand(
-          params
-        );
-      }
-      return undefined;
-    },
     broadcaster: (event) => {
       options.broadcaster(event as BridgeEvent);
     },
