@@ -8,14 +8,6 @@ import { classifyQualityGatesReviewTurn } from "./quality-gates-review-turn-clas
 import { runQualityGatesRevisionInjection } from "./quality-gates-revision-injection-runner";
 
 const QUALITY_GATES_PLAN_PATH = "doc/TODO/stages/quality-gates/todo-plan.md";
-const REVIEW_REVISION_TASK_RE =
-  /quality-gates\.phase2\.review\.revision1\.task1/u;
-const USER_RETURN_REVISION_TASK_RE =
-  /quality-gates\.phase4\.user-return\.revision1\.task1/u;
-const USER_RETURN_CURRENT_TASK_RE =
-  /"currentTaskId": "quality-gates\.phase4\.user-return\.revision1\.task1"/u;
-const USER_RETURN_ANCHOR_TODO_RE =
-  /\[TODO\] `quality-gates\.phase4\.user-return\.task1`/u;
 
 const writePlanFile = async (
   workspaceRoot: string,
@@ -56,6 +48,9 @@ const writePlanFile = async (
     "utf8"
   );
 };
+
+const readPlanFile = (workspaceRoot: string): Promise<string> =>
+  readFile(path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH), "utf8");
 
 test("review classifier returns revision when phase 2 has owned diff", () => {
   const kind = classifyQualityGatesReviewTurn({
@@ -98,7 +93,7 @@ test("review classifier returns out_of_scope for non review/user-return phases",
   );
 });
 
-test("revision injection runner injects review_revision pair from review anchor", async () => {
+test("revision injection runner is fail-closed for review anchor", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "qg-review-revision-")
   );
@@ -109,6 +104,7 @@ test("revision injection runner injects review_revision pair from review anchor"
       "docs: revise quality gates contract - revision 1",
       "Phase 2 — Quality Gates Contract Review"
     );
+    const before = await readPlanFile(workspaceRoot);
 
     await runQualityGatesRevisionInjection({
       logger: new Logger("error"),
@@ -117,17 +113,13 @@ test("revision injection runner injects review_revision pair from review anchor"
       workspaceRoot,
     });
 
-    const planText = await readFile(
-      path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH),
-      "utf8"
-    );
-    assert.match(planText, REVIEW_REVISION_TASK_RE);
+    assert.equal(await readPlanFile(workspaceRoot), before);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
 
-test("revision injection runner injects user_return_revision pair from phase 4 anchor", async () => {
+test("revision injection runner is fail-closed for user-return anchor", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "qg-user-return-revision-")
   );
@@ -138,6 +130,7 @@ test("revision injection runner injects user_return_revision pair from phase 4 a
       "docs: revise quality gates user return revision 1",
       "Phase 4 — Persistent Quality Gates User Return"
     );
+    const before = await readPlanFile(workspaceRoot);
 
     await runQualityGatesRevisionInjection({
       logger: new Logger("error"),
@@ -146,12 +139,7 @@ test("revision injection runner injects user_return_revision pair from phase 4 a
       workspaceRoot,
     });
 
-    const planText = await readFile(
-      path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH),
-      "utf8"
-    );
-    assert.match(planText, USER_RETURN_REVISION_TASK_RE);
-    assert.match(planText, USER_RETURN_ANCHOR_TODO_RE);
+    assert.equal(await readPlanFile(workspaceRoot), before);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -168,6 +156,7 @@ test("revision injection runner is a noop for non-anchor task ids", async () => 
       "docs: draft quality gates contract",
       "Phase 1 — Quality Gates Contract Bootstrap"
     );
+    const before = await readPlanFile(workspaceRoot);
 
     await runQualityGatesRevisionInjection({
       logger: new Logger("error"),
@@ -176,42 +165,7 @@ test("revision injection runner is a noop for non-anchor task ids", async () => 
       workspaceRoot,
     });
 
-    const planText = await readFile(
-      path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH),
-      "utf8"
-    );
-    assert.doesNotMatch(planText, REVIEW_REVISION_TASK_RE);
-    assert.doesNotMatch(planText, USER_RETURN_REVISION_TASK_RE);
-  } finally {
-    await rm(workspaceRoot, { recursive: true, force: true });
-  }
-});
-
-test("revision injection runner advances current task id away from user-return anchor", async () => {
-  const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "qg-user-return-advance-")
-  );
-  try {
-    await writePlanFile(
-      workspaceRoot,
-      "quality-gates.phase4.user-return.task1",
-      "docs: revise quality gates user return revision 1",
-      "Phase 4 — Persistent Quality Gates User Return"
-    );
-
-    await runQualityGatesRevisionInjection({
-      logger: new Logger("error"),
-      sessionId: "session-advance",
-      stage: "quality_gates",
-      workspaceRoot,
-    });
-
-    const planText = await readFile(
-      path.join(workspaceRoot, QUALITY_GATES_PLAN_PATH),
-      "utf8"
-    );
-    assert.match(planText, USER_RETURN_CURRENT_TASK_RE);
-    assert.match(planText, USER_RETURN_ANCHOR_TODO_RE);
+    assert.equal(await readPlanFile(workspaceRoot), before);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
