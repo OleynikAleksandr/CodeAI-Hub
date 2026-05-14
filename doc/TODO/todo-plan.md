@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "584b3e84e",
+  "lastRecordedCommit": "ffe8e47aa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase5.tests.task6",
-  "expectedCommitMessage": "test: remove legacy managed quality commit assertions",
+  "currentTaskId": "managed-orchestration-cleanup.phase5.tests.task7",
+  "expectedCommitMessage": "test: remove legacy managed transaction repair assertions",
   "debt": {
-    "expectedCommitMessage": "test: remove legacy managed quality commit assertions",
-    "preCommitHead": "584b3e84e",
+    "expectedCommitMessage": "test: remove legacy managed transaction repair assertions",
+    "preCommitHead": "ffe8e47aa",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase5.tests.task6"
+    "taskId": "managed-orchestration-cleanup.phase5.tests.task7"
   }
 }
 ```
@@ -277,7 +277,7 @@ Verification for task 35:
 - Application Skeleton and Diagram Modules repair commit tests now assert read-only progress refresh and no transaction invocation.
 
 37. [DONE] `managed-orchestration-cleanup.phase5.tests.task6` Rewrite Quality Gates repair and base managed commit tests around fail-closed no-op behavior (scope: `packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed quality commit assertions`).
-38. [PENDING] Git Commit: `test: remove legacy managed quality commit assertions` (hash: TBD)
+38. [DONE] Git Commit: `test: remove legacy managed quality commit assertions` (hash: ffe8e47aa)
 
 Verification for task 37:
 
@@ -287,8 +287,17 @@ Verification for task 37:
 - `node --test packages/core/dist/remote-bridge/handlers/workflow-state-managed-documentation-commit.quality-gates-repair.test.js packages/core/dist/remote-bridge/handlers/workflow-state-managed-documentation-commit.test.js` passed.
 - Quality Gates repair and base managed commit tests now assert read-only progress refresh and no transaction invocation.
 
-39. [TODO] `managed-orchestration-cleanup.phase5.tests.task7` Rewrite Diagram Modules transaction and progress refresh tests around blocked transaction/read-only refresh behavior (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-progress-refresh.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed transaction repair assertions`).
-40. [TODO] Git Commit: `test: remove legacy managed transaction repair assertions` (hash: TBD)
+39. [DONE] `managed-orchestration-cleanup.phase5.tests.task7` Rewrite Diagram Modules transaction and progress refresh tests around blocked transaction/read-only refresh behavior (scope: `packages/core/src/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-managed-progress-refresh.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed transaction repair assertions`).
+40. [PENDING] Git Commit: `test: remove legacy managed transaction repair assertions` (hash: TBD)
+
+Verification for task 39:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- `node --test packages/core/dist/remote-bridge/handlers/managed-documentation-commit-transaction.diagram-modules.test.js packages/core/dist/remote-bridge/handlers/workflow-state-managed-progress-refresh.test.js` passed.
+- Diagram Modules transaction tests now assert dirty classification with blocked transaction behavior, and progress-refresh tests assert stale read-model refresh without invoking the disabled transaction.
+
 41. [TODO] `managed-orchestration-cleanup.phase5.tests.task8` Remove stale architecture max-line allowlist entries and stale active-path docs references left by deleted legacy files (scope: `scripts/check-architecture-rules/max-lines-debt-allowlist.txt, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed orchestration references`).
 42. [TODO] Git Commit: `docs: remove legacy managed orchestration references` (hash: TBD)
 

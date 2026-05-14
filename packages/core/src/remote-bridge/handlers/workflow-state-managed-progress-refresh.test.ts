@@ -56,7 +56,7 @@ const createProductPartMarkdown = (partId: string): string =>
     "",
   ].join("\n");
 
-test("managed documentation commit refreshes stale progress before feedback", async () => {
+test("managed documentation commit refreshes stale progress without invoking disabled transaction", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "managed-progress-refresh-")
   );
