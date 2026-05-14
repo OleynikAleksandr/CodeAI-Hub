@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "7dbb61723",
+  "lastRecordedCommit": "f73630d8b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase2.failclosed.task1",
-  "expectedCommitMessage": "fix: fail closed managed workflow session startup during rewrite",
+  "currentTaskId": "managed-orchestration-cleanup.phase2.failclosed.task2",
+  "expectedCommitMessage": "fix: disable legacy managed post-turn orchestration",
   "debt": {
-    "expectedCommitMessage": "fix: fail closed managed workflow session startup during rewrite",
-    "preCommitHead": "7dbb61723",
+    "expectedCommitMessage": "fix: disable legacy managed post-turn orchestration",
+    "preCommitHead": "f73630d8b",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase2.failclosed.task1"
+    "taskId": "managed-orchestration-cleanup.phase2.failclosed.task2"
   }
 }
 ```
@@ -100,15 +100,20 @@ Initial grep evidence:
 ### Stream: Managed Runtime Disablement
 
 5. [DONE] `managed-orchestration-cleanup.phase2.failclosed.task1` Add a minimal managed-workflow rewrite-in-progress blocker at the session/start boundary so managed documentation steps do not enter legacy orchestration (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: fail closed managed workflow session startup during rewrite`).
-6. [PENDING] Git Commit: `fix: fail closed managed workflow session startup during rewrite` (hash: TBD)
+6. [DONE] Git Commit: `fix: fail closed managed workflow session startup during rewrite` (hash: f73630d8b)
 
 Verification for task 5:
 
 - `npm run build --workspace=@codeai-hub/unified-session && npm run build --workspace=@codeai-hub/initiatives && npm run build --workspace=@codeai-hub/claude-module && npm run build --workspace=@codeai-hub/codex-app-server-module && npm run build --workspace=@codeai-hub/gemini-module && npm run build:core` passed.
 - `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js` passed.
 
-7. [TODO] `managed-orchestration-cleanup.phase2.failclosed.task2` Disable old post-turn managed arbitration and acceptance dispatch paths behind the same blocker without touching step artifact semantics (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, doc/TODO/todo-plan.md`; expected commit: `fix: disable legacy managed post-turn orchestration`).
-8. [TODO] Git Commit: `fix: disable legacy managed post-turn orchestration` (hash: TBD)
+7. [DONE] `managed-orchestration-cleanup.phase2.failclosed.task2` Disable old post-turn managed arbitration and acceptance dispatch paths behind the same blocker without touching step artifact semantics (scope: `packages/core/src/remote-bridge/handlers/managed-workflow-post-turn-service.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, doc/TODO/todo-plan.md`; expected commit: `fix: disable legacy managed post-turn orchestration`).
+8. [PENDING] Git Commit: `fix: disable legacy managed post-turn orchestration` (hash: TBD)
+
+Verification for task 7:
+
+- `npm run build --workspace=@codeai-hub/unified-session && npm run build --workspace=@codeai-hub/initiatives && npm run build --workspace=@codeai-hub/claude-module && npm run build --workspace=@codeai-hub/codex-app-server-module && npm run build --workspace=@codeai-hub/gemini-module && npm run build:core` passed.
+- Existing legacy post-turn tests are intentionally not updated in this task; they assert the old orchestration path and are scheduled for removal/rewrite in Phase 5 after the writers are removed.
 
 ## Phase 3 — Remove Generated Scenario And Plan-Mutator Ownership (owner: Codex, updated: 2026-05-14)
 

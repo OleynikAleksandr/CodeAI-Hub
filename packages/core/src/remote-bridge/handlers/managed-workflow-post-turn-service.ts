@@ -69,6 +69,12 @@ const MANAGED_POST_TURN_STAGES = new Set([
   "application_skeleton",
   "quality_gates",
 ]);
+const MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE =
+  "managed_workflow_rewrite_in_progress";
+const MANAGED_WORKFLOW_REWRITE_BLOCKER_REASON =
+  "Managed workflow orchestration is temporarily disabled while the orchestration cluster is being rewritten.";
+
+const legacyManagedOrchestrationEnabled = (): boolean => false;
 
 const DEFAULT_MANAGED_ARBITRATION_RETRY_LIMIT = 5;
 
@@ -214,6 +220,17 @@ export class ManagedWorkflowPostTurnService {
     ) {
       return;
     }
+    if (!legacyManagedOrchestrationEnabled()) {
+      this.logger.warn(
+        "Managed workflow post-turn arbitration blocked during orchestration rewrite",
+        {
+          code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+          sessionId,
+          stage: session.stage,
+        }
+      );
+      return;
+    }
     if (this.inFlight.has(sessionId)) {
       this.queuedReruns.add(sessionId);
       this.logger.debug(
@@ -264,6 +281,21 @@ export class ManagedWorkflowPostTurnService {
     readonly sessionId: string;
     readonly source: "ui-button" | "typed-fallback";
   }): Promise<ApplicationSkeletonAcceptContractDecision> {
+    if (!legacyManagedOrchestrationEnabled()) {
+      this.logger.warn(
+        "Application Skeleton accept-contract command blocked during orchestration rewrite",
+        {
+          code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+          sessionId: params.sessionId,
+          source: params.source,
+        }
+      );
+      return Promise.resolve({
+        kind: "rejected",
+        reasons: [MANAGED_WORKFLOW_REWRITE_BLOCKER_REASON],
+        stage: "application_skeleton",
+      });
+    }
     return runApplicationSkeletonAcceptContractCommand({
       appendAudit: (sessionId, record) =>
         this.appendManagedAuditMessage(sessionId, record),
@@ -282,6 +314,21 @@ export class ManagedWorkflowPostTurnService {
     readonly sessionId: string;
     readonly source: "ui-button" | "typed-fallback";
   }): Promise<QualityGatesAcceptContractDecision> {
+    if (!legacyManagedOrchestrationEnabled()) {
+      this.logger.warn(
+        "Quality Gates accept-contract command blocked during orchestration rewrite",
+        {
+          code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+          sessionId: params.sessionId,
+          source: params.source,
+        }
+      );
+      return Promise.resolve({
+        kind: "rejected",
+        reasons: [MANAGED_WORKFLOW_REWRITE_BLOCKER_REASON],
+        stage: "quality_gates",
+      });
+    }
     return runQualityGatesAcceptContractCommand({
       appendAudit: (sessionId, record) =>
         this.appendManagedAuditMessage(sessionId, record),
@@ -309,6 +356,18 @@ export class ManagedWorkflowPostTurnService {
           sessionId: params.sessionId,
           phrase: params.phrase,
           stage: stage ?? null,
+        }
+      );
+      return;
+    }
+    if (!legacyManagedOrchestrationEnabled()) {
+      this.logger.warn(
+        "Managed contract acceptance command blocked during orchestration rewrite",
+        {
+          code: MANAGED_WORKFLOW_REWRITE_BLOCKER_CODE,
+          sessionId: params.sessionId,
+          phrase: params.phrase,
+          stage,
         }
       );
       return;
