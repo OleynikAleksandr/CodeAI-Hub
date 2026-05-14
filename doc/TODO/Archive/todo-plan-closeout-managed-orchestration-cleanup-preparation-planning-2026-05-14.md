@@ -1,3 +1,18 @@
+# Plan Closeout: managed-orchestration-cleanup-preparation-planning-2026-05-14
+
+**Created:** 2026-05-14T09:11:20.414Z
+**Acceptance:** User accepted the cleanup preparation planning source and requested implementation of the cleanup scope.
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/managed-orchestration-rewrite
+**Current Task:** managed-orchestration-cleanup-prep.phase3.closeout.task1
+**Expected Commit:** docs: close managed orchestration cleanup planning intake
+**Last Recorded Commit:** 10f45847a
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
   "currentTaskId": "managed-orchestration-cleanup-prep.phase3.closeout.task1",
   "expectedCommitMessage": "docs: close managed orchestration cleanup planning intake",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed orchestration cleanup planning intake",
-    "preCommitHead": "10f45847a",
-    "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup-prep.phase3.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -66,6 +76,7 @@
 
 ### Stream: Close Planning Intake
 
-4. [DONE] `managed-orchestration-cleanup-prep.phase3.closeout.task1` Archive or close this planning intake after explicit user acceptance and prepare for the next implementation todo-plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup planning intake`).
-5. [PENDING] Git Commit: `docs: close managed orchestration cleanup planning intake` (hash: TBD)
+4. [IN_PROGRESS] `managed-orchestration-cleanup-prep.phase3.closeout.task1` Archive or close this planning intake after explicit user acceptance and prepare for the next implementation todo-plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup planning intake`).
+5. [TODO] Git Commit: `docs: close managed orchestration cleanup planning intake` (hash: TBD)
 6. [TODO] `managed-orchestration-cleanup-prep.phase3.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; no commit expected).
+````
