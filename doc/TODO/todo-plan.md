@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "b63883d9c",
+  "lastRecordedCommit": "aa561b306",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task2",
-  "expectedCommitMessage": "refactor: remove legacy managed feedback dispatchers",
+  "currentTaskId": "managed-orchestration-cleanup.phase4.postturn.task3",
+  "expectedCommitMessage": "refactor: remove legacy managed repair runners",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy managed feedback dispatchers",
-    "preCommitHead": "b63883d9c",
+    "expectedCommitMessage": "refactor: remove legacy managed repair runners",
+    "preCommitHead": "aa561b306",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase4.postturn.task2"
+    "taskId": "managed-orchestration-cleanup.phase4.postturn.task3"
   }
 }
 ```
@@ -165,7 +165,7 @@ Verification for task 15:
 - `ManagedDocumentationCommitTransaction.commitAcceptedStage` is now fail-closed and no longer stages files or invokes `npm run plan:commit`; `commitManagedDocumentationStageIfReady` refreshes read-only progress only.
 
 17. [DONE] `managed-orchestration-cleanup.phase4.postturn.task2` Remove legacy provider feedback and continuation dispatch helpers for managed orchestration (scope: `packages/core/src/remote-bridge/handlers/workflow-agent-acceptance-feedback.ts, packages/core/src/remote-bridge/handlers/diagram-modules-continuation-dispatcher.ts, packages/core/src/remote-bridge/handlers/application-skeleton-continuation-dispatcher.ts`; expected commit: `refactor: remove legacy managed feedback dispatchers`).
-18. [PENDING] Git Commit: `refactor: remove legacy managed feedback dispatchers` (hash: TBD)
+18. [DONE] Git Commit: `refactor: remove legacy managed feedback dispatchers` (hash: aa561b306)
 
 Verification for task 17:
 
@@ -174,40 +174,52 @@ Verification for task 17:
 - `npm run check:knip` passed.
 - Provider feedback and continuation dispatcher entrypoints are retained for compile compatibility but no longer resolve sessions or send provider messages.
 
-19. [TODO] `managed-orchestration-cleanup.phase4.postturn.task3` Remove legacy managed repair/revision/accept runners per discovered import graph, preserving only non-orchestration validators (scope: `packages/core/src/remote-bridge/handlers/*repair-orchestration.ts, packages/core/src/remote-bridge/handlers/*revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/*accept-contract*`; expected commit: `refactor: remove legacy managed repair runners`).
-20. [TODO] Git Commit: `refactor: remove legacy managed repair runners` (hash: TBD)
+19. [DONE] `managed-orchestration-cleanup.phase4.postturn.task3` Disable legacy managed repair orchestration runners for Diagram Modules, Application Skeleton, and Quality Gates without deleting validator/read-model helpers (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/application-skeleton-repair-orchestration.ts, packages/core/src/remote-bridge/handlers/quality-gates-repair-orchestration.ts`; expected commit: `refactor: remove legacy managed repair runners`).
+20. [PENDING] Git Commit: `refactor: remove legacy managed repair runners` (hash: TBD)
+
+Verification for task 19:
+
+- `npm run build:core` passed.
+- `npm run lint` passed.
+- `npm run check:knip` passed.
+- Repair orchestration entrypoints now return `noop` and no longer write repair tasks or evidence files.
+
+21. [TODO] `managed-orchestration-cleanup.phase4.postturn.task4` Disable legacy managed revision injection runners after repair runners are fail-closed (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-revision-injection-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-revision-injection-runner.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed revision runners`).
+22. [TODO] Git Commit: `refactor: remove legacy managed revision runners` (hash: TBD)
+23. [TODO] `managed-orchestration-cleanup.phase4.postturn.task5` Disable legacy Application Skeleton and Quality Gates accept-contract side-effect runners while preserving pure decision/read-model contracts until PM cleanup (scope: `packages/core/src/remote-bridge/handlers/managed-stage-accept-contract-runner.ts, packages/core/src/remote-bridge/handlers/quality-gates-accept-contract-runner.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: remove legacy managed accept-contract runners`).
+24. [TODO] Git Commit: `refactor: remove legacy managed accept-contract runners` (hash: TBD)
 
 ## Phase 5 — Clean Read Model And Test Tail (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Read-Only Projection
 
-21. [TODO] `managed-orchestration-cleanup.phase5.readmodel.task1` Clean workflow-state/read-model references so remaining PM projection is read-only and does not trigger legacy commits or provider messages (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: make managed workflow read model fail closed`).
-22. [TODO] Git Commit: `refactor: make managed workflow read model fail closed` (hash: TBD)
+25. [TODO] `managed-orchestration-cleanup.phase5.readmodel.task1` Clean workflow-state/read-model references so remaining PM projection is read-only and does not trigger legacy commits or provider messages (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: make managed workflow read model fail closed`).
+26. [TODO] Git Commit: `refactor: make managed workflow read model fail closed` (hash: TBD)
 
 ### Stream: Legacy Tests And Allowlist Debt
 
-23. [TODO] `managed-orchestration-cleanup.phase5.tests.task1` Remove or rewrite tests that only assert the deleted generated-script and post-turn orchestration paths (scope: `packages/core/src/managed-workspace/*.test.ts, packages/core/src/remote-bridge/handlers/*managed*.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed orchestration assertions`).
-24. [TODO] Git Commit: `test: remove legacy managed orchestration assertions` (hash: TBD)
-25. [TODO] `managed-orchestration-cleanup.phase5.tests.task2` Remove stale architecture max-line allowlist entries and stale active-path docs references left by deleted legacy files (scope: `scripts/check-architecture-rules/max-lines-debt-allowlist.txt, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed orchestration references`).
-26. [TODO] Git Commit: `docs: remove legacy managed orchestration references` (hash: TBD)
+27. [TODO] `managed-orchestration-cleanup.phase5.tests.task1` Remove or rewrite tests that only assert the deleted generated-script and post-turn orchestration paths (scope: `packages/core/src/managed-workspace/*.test.ts, packages/core/src/remote-bridge/handlers/*managed*.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: remove legacy managed orchestration assertions`).
+28. [TODO] Git Commit: `test: remove legacy managed orchestration assertions` (hash: TBD)
+29. [TODO] `managed-orchestration-cleanup.phase5.tests.task2` Remove stale architecture max-line allowlist entries and stale active-path docs references left by deleted legacy files (scope: `scripts/check-architecture-rules/max-lines-debt-allowlist.txt, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: remove legacy managed orchestration references`).
+30. [TODO] Git Commit: `docs: remove legacy managed orchestration references` (hash: TBD)
 
 ## Phase 6 — Tooling Verification (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Build And Static Checks
 
-27. [TODO] `managed-orchestration-cleanup.phase6.verify.task1` Run final targeted build and static checks: `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration cleanup`).
-28. [TODO] Git Commit: `docs: verify managed orchestration cleanup` (hash: TBD)
+31. [TODO] `managed-orchestration-cleanup.phase6.verify.task1` Run final targeted build and static checks: `npm run build:core`, `npm run build:project-manager`, `npm run typecheck:webview`, `npm run check:knip`, `npm run check:links`, `npm run check:dup`; record results in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed orchestration cleanup`).
+32. [TODO] Git Commit: `docs: verify managed orchestration cleanup` (hash: TBD)
 
 ## Phase 7 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
 ### Stream: User Acceptance
 
-29. [TODO] `managed-orchestration-cleanup.phase7.user-acceptance.task1` User reviews cleanup result and confirms the codebase is ready for the next new-cluster implementation planning cycle (scope: user workflow; expected commit: not required).
+33. [TODO] `managed-orchestration-cleanup.phase7.user-acceptance.task1` User reviews cleanup result and confirms the codebase is ready for the next new-cluster implementation planning cycle (scope: user workflow; expected commit: not required).
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Cleanup Scope
 
-30. [TODO] `managed-orchestration-cleanup.phase8.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
-31. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
-32. [TODO] `managed-orchestration-cleanup.phase8.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+34. [TODO] `managed-orchestration-cleanup.phase8.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
+35. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
+36. [TODO] `managed-orchestration-cleanup.phase8.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
