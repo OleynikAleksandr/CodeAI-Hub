@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "e12f7378e",
+  "lastRecordedCommit": "971d3f56b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase10.servicing-audit.task1",
-  "expectedCommitMessage": "docs: remove servicing legacy orchestration references",
+  "currentTaskId": "managed-orchestration-cleanup.phase10.servicing-audit.task2",
+  "expectedCommitMessage": "docs: prepare clean servicing audit release",
   "debt": {
-    "expectedCommitMessage": "docs: remove servicing legacy orchestration references",
-    "preCommitHead": "e12f7378e",
+    "expectedCommitMessage": "docs: prepare clean servicing audit release",
+    "preCommitHead": "971d3f56b",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase10.servicing-audit.task1"
+    "taskId": "managed-orchestration-cleanup.phase10.servicing-audit.task2"
   }
 }
 ```
@@ -617,9 +617,19 @@ Verification for task 119:
 ### Stream: Servicing Tail Audit
 
 121. [DONE] `managed-orchestration-cleanup.phase10.servicing-audit.task1` Remove stale active SSOT/index references that still describe the deleted managed workspace lifecycle as a live contract (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: remove servicing legacy orchestration references`).
-122. [PENDING] Git Commit: `docs: remove servicing legacy orchestration references` (hash: TBD)
-123. [TODO] `managed-orchestration-cleanup.phase10.servicing-audit.task2` Clean release-facing/readme and architecture-debt wording so servicing files do not present old managed step orchestration as current behavior (scope: `README.md, CHANGELOG.md, scripts/check-architecture-rules/max-lines-debt-allowlist.txt`; expected commit: `docs: prepare clean servicing audit release`).
-124. [TODO] Git Commit: `docs: prepare clean servicing audit release` (hash: TBD)
+122. [DONE] Git Commit: `docs: remove servicing legacy orchestration references` (hash: 971d3f56b)
+123. [DONE] `managed-orchestration-cleanup.phase10.servicing-audit.task2` Clean release-facing/readme and architecture-debt wording so servicing files do not present old managed step orchestration as current behavior (scope: `README.md, CHANGELOG.md, scripts/check-architecture-rules/max-lines-debt-allowlist.txt`; expected commit: `docs: prepare clean servicing audit release`).
+124. [PENDING] Git Commit: `docs: prepare clean servicing audit release` (hash: TBD)
+
+Verification for task 123:
+
+- `README.md` was pruned to the current verification release section so old managed-release summaries are no longer presented in the first-page release surface.
+- `CHANGELOG.md` now records the servicing-tail audit boundary and explicitly marks older cleanup-era entries as release history only, not active runtime contracts.
+- `scripts/check-architecture-rules/max-lines-debt-allowlist.txt` no longer references the old Application Skeleton orchestration pilot.
+- `scripts/plan-orchestrator/**` was audited as repo-local plan lifecycle tooling consumed by `npm run plan:*` and `.husky/*`, not the retired user-workspace managed step orchestrator.
+- `rg -n "Previous release: v1\\.2|Application Skeleton Phase B orchestration pilot" README.md scripts/check-architecture-rules/max-lines-debt-allowlist.txt` returned no matches.
+- `rg -n "managed-plan-orchestrator|ManagedPlanOrchestrator|ManagedWorkflowPostTurnService|WorkflowAgentAcceptanceFeedback|managed-stage-accept-contract|quality-gates-accept-contract|application-skeleton-typed-acceptance|ManagedDocumentationCommitTransaction|commitManagedDocumentationStageIfReady|managed-context-bundle|acceptedCommits|workflow-revisions|managed-audit|DefaultManagedWorkspaceLifecycle|ManagedWorkspaceBootstrapper|ManagedWorkspaceReconciler|ManagedWorkspaceValidator|managed-todo-tree|managed-hook-registry|managed-.*plan-mutator" packages/core/src src/client/project-manager packages/agents scripts --glob '!**/dist/**' --glob '!scripts/plan-orchestrator/*.test.mjs'` returned no matches.
+- `npm run plan:validate` passed.
 
 ### Stream: Release Rebuild
 

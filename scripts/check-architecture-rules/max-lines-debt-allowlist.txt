@@ -8,9 +8,8 @@
 # - new >500-line files must not be added here casually
 # - remove entries as soon as the file drops to 500 lines or below
 
-# Application Skeleton Phase B orchestration pilot: typed acceptance fallback
-# routing pushed `session-request-handler-message-dispatch.ts` four lines over
-# the 500-line limit. The dispatch class is the canonical entry point for
-# every provider message and a deeper refactor is out of scope for the pilot.
-# Remove this entry once the dispatch class is sliced into smaller modules.
+# Provider message dispatch rewrite debt: the canonical dispatch entrypoint
+# still contains retry/session-boundary branches and the temporary technical
+# stage rewrite blocker. Remove this entry once those branches are sliced into
+# smaller modules.
 packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts

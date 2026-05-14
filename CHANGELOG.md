@@ -2,7 +2,21 @@
 
 This project evolves quickly during active FLOW development. We keep the changelog intentionally short and treat the code + docs as the primary source of truth.
 
+Historical entries below the cleanup releases are retained as release history
+only; they are not active runtime contracts after the managed step/workflow
+orchestrator removal.
+
 ## [Unreleased]
+
+## [1.2.255] - 2026-05-14
+### Changed
+- **Clean servicing-tail audit rebuild.** Confirms `scripts/plan-orchestrator/**` is repository plan-lifecycle tooling for `npm run plan:*` and Husky hooks, not the removed managed step/workflow orchestrator.
+- **Release-facing wording no longer presents the retired controller as current behavior.** README now focuses on the current verification package instead of carrying the old managed-release history inline.
+- **Architecture-debt comments no longer reference the old Application Skeleton orchestration pilot.** The remaining oversized dispatch entry is tracked as provider-message rewrite debt.
+
+### Tests
+- `npm run plan:validate` passed during servicing-tail cleanup.
+- Targeted servicing grep verified active SSOT/release-facing files no longer describe the deleted managed workspace lifecycle as an active runtime contract.
 
 ## [1.2.254] - 2026-05-14
 ### Changed
