@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-redesign-planning-2026-05-14",
   "branch": "main",
   "baseHead": "23f7c2298",
-  "lastRecordedCommit": "6833b7f90",
+  "lastRecordedCommit": "de098cbe4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning_RU.md",
-  "currentTaskId": "managed-orchestration.phase4.diagram-modules-doc.task1",
-  "expectedCommitMessage": "docs: specify diagram modules orchestration scenario",
+  "currentTaskId": "managed-orchestration.phase4.quality-gates-doc.task1",
+  "expectedCommitMessage": "docs: specify quality gates orchestration scenario",
   "debt": {
-    "expectedCommitMessage": "docs: specify diagram modules orchestration scenario",
-    "preCommitHead": "6833b7f90",
+    "expectedCommitMessage": "docs: specify quality gates orchestration scenario",
+    "preCommitHead": "de098cbe4",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration.phase4.diagram-modules-doc.task1"
+    "taskId": "managed-orchestration.phase4.quality-gates-doc.task1"
   }
 }
 ```
@@ -107,9 +107,9 @@
 ### Stream: Remaining Phase Specs
 
 22. [DONE] `managed-orchestration.phase4.diagram-modules-doc.task1` Write the Diagram Modules managed orchestration scenario with Phase 1 Type A, Phase 2 Type B User-Led Review, and Phase 3 persistent return opening (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify diagram modules orchestration scenario`).
-23. [PENDING] Git Commit: `docs: specify diagram modules orchestration scenario` (hash: TBD)
-24. [TODO] `managed-orchestration.phase4.quality-gates-doc.task1` Write the Quality Gates managed orchestration scenario with Phase 1 Type A, Phase 2 Type B, Phase 3 accepted-only integration Type A, and Phase 4 persistent return opening (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Managed_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify quality gates orchestration scenario`).
-25. [TODO] Git Commit: `docs: specify quality gates orchestration scenario` (hash: TBD)
+23. [DONE] Git Commit: `docs: specify diagram modules orchestration scenario` (hash: de098cbe4)
+24. [DONE] `managed-orchestration.phase4.quality-gates-doc.task1` Write the Quality Gates managed orchestration scenario with Phase 1 Type A, Phase 2 Type B, Phase 3 accepted-only integration Type A, and Phase 4 persistent return opening (scope: `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Managed_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: specify quality gates orchestration scenario`).
+25. [PENDING] Git Commit: `docs: specify quality gates orchestration scenario` (hash: TBD)
 
 ## Phase 5 — Tooling Verification (owner: Codex, updated: 2026-05-14)
 
