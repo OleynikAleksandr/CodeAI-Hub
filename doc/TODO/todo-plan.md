@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "e3980a598",
+  "lastRecordedCommit": "9fa4033dd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase10.servicing-audit.task3",
-  "expectedCommitMessage": "docs: mark claude provider audit historical",
+  "currentTaskId": "managed-orchestration-cleanup.phase10.release-rebuild.task1",
+  "expectedCommitMessage": "chore: build clean servicing audit release",
   "debt": {
-    "expectedCommitMessage": "docs: mark claude provider audit historical",
-    "preCommitHead": "e3980a598",
+    "expectedCommitMessage": "chore: build clean servicing audit release",
+    "preCommitHead": "9fa4033dd",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase10.servicing-audit.task3"
+    "taskId": "managed-orchestration-cleanup.phase10.release-rebuild.task1"
   }
 }
 ```
@@ -631,7 +631,7 @@ Verification for task 123:
 - `rg -n "managed-plan-orchestrator|ManagedPlanOrchestrator|ManagedWorkflowPostTurnService|WorkflowAgentAcceptanceFeedback|managed-stage-accept-contract|quality-gates-accept-contract|application-skeleton-typed-acceptance|ManagedDocumentationCommitTransaction|commitManagedDocumentationStageIfReady|managed-context-bundle|acceptedCommits|workflow-revisions|managed-audit|DefaultManagedWorkspaceLifecycle|ManagedWorkspaceBootstrapper|ManagedWorkspaceReconciler|ManagedWorkspaceValidator|managed-todo-tree|managed-hook-registry|managed-.*plan-mutator" packages/core/src src/client/project-manager packages/agents scripts --glob '!**/dist/**' --glob '!scripts/plan-orchestrator/*.test.mjs'` returned no matches.
 - `npm run plan:validate` passed.
 125. [DONE] `managed-orchestration-cleanup.phase10.servicing-audit.task3` Mark the unarchived Claude Diagram Modules provider audit as historical so active doc-root no longer appears to require deleted managed runtime files (scope: `doc/Claude_Diagram_Modules_Provider_Audit.md, doc/TODO/todo-plan.md`; expected commit: `docs: mark claude provider audit historical`).
-126. [PENDING] Git Commit: `docs: mark claude provider audit historical` (hash: TBD)
+126. [DONE] Git Commit: `docs: mark claude provider audit historical` (hash: 9fa4033dd)
 
 Verification for task 125:
 
@@ -641,8 +641,16 @@ Verification for task 125:
 
 ### Stream: Release Rebuild
 
-127. [TODO] `managed-orchestration-cleanup.phase10.release-rebuild.task1` Run `./scripts/build-all.sh` for the next clean rebuild version and commit generated version/manifest release outputs (scope: release-generated package/version manifests and `doc/tmp/releases/**`; expected commit: `chore: build clean servicing audit release`).
-128. [TODO] Git Commit: `chore: build clean servicing audit release` (hash: TBD)
+127. [DONE] `managed-orchestration-cleanup.phase10.release-rebuild.task1` Run `./scripts/build-all.sh` for the next clean rebuild version and commit generated version/manifest release outputs (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build clean servicing audit release`).
+128. [PENDING] Git Commit: `chore: build clean servicing audit release` (hash: TBD)
+
+Verification for task 127:
+
+- `./scripts/build-all.sh --allow-dirty --version 1.2.255` passed. The only pre-build dirty file was the machine-managed active `doc/TODO/todo-plan.md` transition after the previous plan commit.
+- Root and workspace package versions now report `1.2.255`.
+- Generated local release tarballs under `doc/tmp/releases/`: `claude-module-1.2.255.tar.bz2`, `codex-module-1.2.255.tar.bz2`, `gemini-module-1.2.255.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.255.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.255.tar.bz2`, `vscode-webview-1.2.255.tar.bz2`, `project-manager-1.2.255.tar.bz2`.
+- `npm run plan:validate` passed after the generated version/manifest updates.
+
 129. [TODO] `managed-orchestration-cleanup.phase10.release-rebuild.task2` Run `./scripts/build-release.sh --use-current-version`, verify the new VSIX/tarballs, and record release handoff evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record clean servicing audit release`).
 130. [TODO] Git Commit: `docs: record clean servicing audit release` (hash: TBD)
 
