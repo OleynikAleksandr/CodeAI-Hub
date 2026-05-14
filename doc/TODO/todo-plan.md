@@ -8,15 +8,15 @@
   "planId": "managed-orchestration-legacy-cleanup-implementation-2026-05-14",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "4be3373b1",
-  "lastRecordedCommit": "971d3f56b",
+  "lastRecordedCommit": "e3980a598",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
-  "currentTaskId": "managed-orchestration-cleanup.phase10.servicing-audit.task2",
-  "expectedCommitMessage": "docs: prepare clean servicing audit release",
+  "currentTaskId": "managed-orchestration-cleanup.phase10.servicing-audit.task3",
+  "expectedCommitMessage": "docs: mark claude provider audit historical",
   "debt": {
-    "expectedCommitMessage": "docs: prepare clean servicing audit release",
-    "preCommitHead": "971d3f56b",
+    "expectedCommitMessage": "docs: mark claude provider audit historical",
+    "preCommitHead": "e3980a598",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase10.servicing-audit.task2"
+    "taskId": "managed-orchestration-cleanup.phase10.servicing-audit.task3"
   }
 }
 ```
@@ -619,7 +619,7 @@ Verification for task 119:
 121. [DONE] `managed-orchestration-cleanup.phase10.servicing-audit.task1` Remove stale active SSOT/index references that still describe the deleted managed workspace lifecycle as a live contract (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: remove servicing legacy orchestration references`).
 122. [DONE] Git Commit: `docs: remove servicing legacy orchestration references` (hash: 971d3f56b)
 123. [DONE] `managed-orchestration-cleanup.phase10.servicing-audit.task2` Clean release-facing/readme and architecture-debt wording so servicing files do not present old managed step orchestration as current behavior (scope: `README.md, CHANGELOG.md, scripts/check-architecture-rules/max-lines-debt-allowlist.txt`; expected commit: `docs: prepare clean servicing audit release`).
-124. [PENDING] Git Commit: `docs: prepare clean servicing audit release` (hash: TBD)
+124. [DONE] Git Commit: `docs: prepare clean servicing audit release` (hash: e3980a598)
 
 Verification for task 123:
 
@@ -630,24 +630,32 @@ Verification for task 123:
 - `rg -n "Previous release: v1\\.2|Application Skeleton Phase B orchestration pilot" README.md scripts/check-architecture-rules/max-lines-debt-allowlist.txt` returned no matches.
 - `rg -n "managed-plan-orchestrator|ManagedPlanOrchestrator|ManagedWorkflowPostTurnService|WorkflowAgentAcceptanceFeedback|managed-stage-accept-contract|quality-gates-accept-contract|application-skeleton-typed-acceptance|ManagedDocumentationCommitTransaction|commitManagedDocumentationStageIfReady|managed-context-bundle|acceptedCommits|workflow-revisions|managed-audit|DefaultManagedWorkspaceLifecycle|ManagedWorkspaceBootstrapper|ManagedWorkspaceReconciler|ManagedWorkspaceValidator|managed-todo-tree|managed-hook-registry|managed-.*plan-mutator" packages/core/src src/client/project-manager packages/agents scripts --glob '!**/dist/**' --glob '!scripts/plan-orchestrator/*.test.mjs'` returned no matches.
 - `npm run plan:validate` passed.
+125. [DONE] `managed-orchestration-cleanup.phase10.servicing-audit.task3` Mark the unarchived Claude Diagram Modules provider audit as historical so active doc-root no longer appears to require deleted managed runtime files (scope: `doc/Claude_Diagram_Modules_Provider_Audit.md, doc/TODO/todo-plan.md`; expected commit: `docs: mark claude provider audit historical`).
+126. [PENDING] Git Commit: `docs: mark claude provider audit historical` (hash: TBD)
+
+Verification for task 125:
+
+- `doc/Claude_Diagram_Modules_Provider_Audit.md` now starts with a historical-only status block explaining that the managed workflow runtime paths named there were removed or suspended during the 2026-05-14 cleanup.
+- `rg -n "^\\*\\*Status:\\*\\* Historical audit only|managed-workflow-post-turn-service|workflow-agent-acceptance-feedback|managed-documentation-commit-transaction" doc/Claude_Diagram_Modules_Provider_Audit.md` returns the historical status and only the archived report's evidence path references, not active contract wording.
+- `npm run plan:validate` passed.
 
 ### Stream: Release Rebuild
 
-125. [TODO] `managed-orchestration-cleanup.phase10.release-rebuild.task1` Run `./scripts/build-all.sh` for the next clean rebuild version and commit generated version/manifest release outputs (scope: release-generated package/version manifests and `doc/tmp/releases/**`; expected commit: `chore: build clean servicing audit release`).
-126. [TODO] Git Commit: `chore: build clean servicing audit release` (hash: TBD)
-127. [TODO] `managed-orchestration-cleanup.phase10.release-rebuild.task2` Run `./scripts/build-release.sh --use-current-version`, verify the new VSIX/tarballs, and record release handoff evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record clean servicing audit release`).
-128. [TODO] Git Commit: `docs: record clean servicing audit release` (hash: TBD)
+127. [TODO] `managed-orchestration-cleanup.phase10.release-rebuild.task1` Run `./scripts/build-all.sh` for the next clean rebuild version and commit generated version/manifest release outputs (scope: release-generated package/version manifests and `doc/tmp/releases/**`; expected commit: `chore: build clean servicing audit release`).
+128. [TODO] Git Commit: `chore: build clean servicing audit release` (hash: TBD)
+129. [TODO] `managed-orchestration-cleanup.phase10.release-rebuild.task2` Run `./scripts/build-release.sh --use-current-version`, verify the new VSIX/tarballs, and record release handoff evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record clean servicing audit release`).
+130. [TODO] Git Commit: `docs: record clean servicing audit release` (hash: TBD)
 
 ## Phase 11 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-14)
 
 ### Stream: User Acceptance
 
-129. [TODO] `managed-orchestration-cleanup.phase11.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
+131. [TODO] `managed-orchestration-cleanup.phase11.user-acceptance.task1` User installs the clean rebuild release, confirms the cleaned codebase compiles/runs, and verifies that the removed managed step orchestration no longer drives the formed workflow steps (scope: user workflow; expected commit: not required).
 
 ## Phase 12 — Scope Closeout (owner: Codex, updated: 2026-05-14)
 
 ### Stream: Close Cleanup Scope
 
-130. [TODO] `managed-orchestration-cleanup.phase12.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
-131. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
-132. [TODO] `managed-orchestration-cleanup.phase12.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+132. [TODO] `managed-orchestration-cleanup.phase12.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
+133. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
+134. [TODO] `managed-orchestration-cleanup.phase12.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).

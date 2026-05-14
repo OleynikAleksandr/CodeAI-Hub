@@ -1,5 +1,11 @@
 # Claude Diagram Modules Provider Audit
 
+**Status:** Historical audit only. The managed workflow runtime paths named in
+this report were removed or suspended during the 2026-05-14 managed
+orchestration cleanup. This document is retained as evidence for the earlier
+Claude/Core feedback investigation and is not an active runtime or servicing
+contract.
+
 Дата аудита: 2026-05-09
 
 ## Scope
