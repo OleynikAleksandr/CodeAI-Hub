@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "d27169b06",
+  "lastRecordedCommit": "ad649651b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase1.facade.task1",
-  "expectedCommitMessage": "feat: add managed workflow orchestration facade",
+  "currentTaskId": "managed-orchestration-kernel.phase1.facade.task2",
+  "expectedCommitMessage": "test: cover managed workflow orchestration facade",
   "debt": {
-    "expectedCommitMessage": "feat: add managed workflow orchestration facade",
-    "preCommitHead": "d27169b06",
+    "expectedCommitMessage": "test: cover managed workflow orchestration facade",
+    "preCommitHead": "ad649651b",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase1.facade.task1"
+    "taskId": "managed-orchestration-kernel.phase1.facade.task2"
   }
 }
 ```
@@ -69,10 +69,10 @@
 ### Stream: Facade Skeleton
 
 5. [DONE] `managed-orchestration-kernel.phase1.facade.task1` Create the package-local cluster folder, public facade class, public contract types, and core entrypoint export without runtime side effects (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/index.ts`; expected commit: `feat: add managed workflow orchestration facade`).
-6. [PENDING] Git Commit: `feat: add managed workflow orchestration facade` (hash: TBD)
+6. [DONE] Git Commit: `feat: add managed workflow orchestration facade` (hash: ad649651b)
 
-7. [TODO] `managed-orchestration-kernel.phase1.facade.task2` Add facade construction/unit tests that prove remote-bridge code can depend only on the facade and public contracts (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover managed workflow orchestration facade`).
-8. [TODO] Git Commit: `test: cover managed workflow orchestration facade` (hash: TBD)
+7. [DONE] `managed-orchestration-kernel.phase1.facade.task2` Add facade construction/unit tests that prove remote-bridge code can depend only on the facade and public contracts (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover managed workflow orchestration facade`).
+8. [PENDING] Git Commit: `test: cover managed workflow orchestration facade` (hash: TBD)
 
 ## Phase 2 — Kernel State Model And Step Registry (owner: Codex, updated: 2026-05-15)
 
