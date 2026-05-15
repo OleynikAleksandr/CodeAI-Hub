@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "d12e4efe3",
+  "lastRecordedCommit": "c761273e7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase46.application-skeleton-verify.task1",
-  "expectedCommitMessage": "docs: verify application skeleton managed module",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase48.release.task1",
+  "expectedCommitMessage": "docs: prepare release 267 application skeleton module",
   "debt": {
-    "expectedCommitMessage": "docs: verify application skeleton managed module",
-    "preCommitHead": "d12e4efe3",
+    "expectedCommitMessage": "docs: prepare release 267 application skeleton module",
+    "preCommitHead": "c761273e7",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase46.application-skeleton-verify.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase48.release.task1"
   }
 }
 ```
@@ -881,17 +881,43 @@ Verification evidence recorded 2026-05-15:
 - PASS `npm run lint`
 - PASS `npm run plan:validate`
 - PASS `node --test packages/core/dist/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.js packages/core/dist/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-session-actions.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-runtime-core.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-materialization-validator.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-progress.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-progress-state.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-phase-state.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-completion-observer.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-in-progress-materialization.test.js packages/core/dist/remote-bridge/handlers/technical-stage-dirty-gate.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.js` (48/48 subtests passed).
-194. [PENDING] Git Commit: `docs: verify application skeleton managed module` (hash: TBD)
+194. [DONE] Git Commit: `docs: verify application skeleton managed module` (hash: c761273e7)
 
 ## Phase 47 — Release Build Gate For Application Skeleton (owner: Codex + User, updated: 2026-05-15)
 
 ### Stream: Release Confirmation Gate
 
-195. [TODO] `diagram-plan-lifecycle-repair.phase47.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Application Skeleton managed module and pending Diagram Modules index dirty repair (scope: user workflow; expected commit: none).
+195. [DONE] `diagram-plan-lifecycle-repair.phase47.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Application Skeleton managed module and pending Diagram Modules index dirty repair (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for the Application Skeleton managed module.
 
-## Phase 48 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 48 — Release 267 Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation And Build
+
+196. [DONE] `diagram-plan-lifecycle-repair.phase48.release.task1` After explicit release-build confirmation, update release-facing docs for the future Application Skeleton managed module release before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 267 application skeleton module`).
+197. [PENDING] Git Commit: `docs: prepare release 267 application skeleton module` (hash: TBD)
+
+Release 267 preparation target:
+
+- User explicitly requested the new release after Application Skeleton managed module implementation and verification.
+- Current package version before release scripts: `1.2.266`.
+- Future release version prepared in release-facing docs: `1.2.267`.
+- Release payload: Application Skeleton managed draft validation, user review decision handling, materialization boundary, managed decision snapshot commits, and the pending Diagram Modules index dirty repair from this scope.
+
+198. [TODO] `diagram-plan-lifecycle-repair.phase48.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 267 application skeleton module`).
+199. [TODO] Git Commit: `chore: build release 267 application skeleton module` (hash: TBD)
+
+200. [TODO] `diagram-plan-lifecycle-repair.phase48.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 267 application skeleton handoff`).
+201. [TODO] Git Commit: `docs: record release 267 application skeleton handoff` (hash: TBD)
+
+## Phase 49 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+202. [TODO] `diagram-plan-lifecycle-repair.phase49.user-acceptance.task1` User installs release `1.2.267` and verifies Diagram Modules stays complete, Application Skeleton opens, reviews, materializes, and unlocks the downstream workflow without dirty managed metadata blocking progression (scope: user workflow; expected commit: none).
+
+## Phase 50 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-196. [TODO] `diagram-plan-lifecycle-repair.phase48.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-197. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+203. [TODO] `diagram-plan-lifecycle-repair.phase50.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+204. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)

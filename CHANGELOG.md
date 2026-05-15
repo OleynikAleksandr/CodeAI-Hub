@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.267] - 2026-05-15
+### Added
+- **Application Skeleton now runs through the managed orchestration module.** Core creates the managed scaffold, validates draft/materialized contract artifacts, records managed decision snapshots, and advances the stage plan through review, materialization, and persistent return phases.
+- **Application Skeleton review decisions are Core-mediated.** User acceptance opens materialization without provider-visible chatter, while requested corrections stay inside the current review task and are sent to the agent as a scoped Core instruction.
+
+### Fixed
+- **Application Skeleton managed commits include the workflow decision ledger.** Core-owned `.codeai-hub/**/workflow/managed/application_skeleton.json` is now part of the managed commit boundary, preventing a dirty untracked ledger after validation.
+
+### Tests
+- `npm run build:core`
+- `npm run lint`
+- `npm run plan:validate`
+- Application Skeleton validator/controller/review/session/runtime, dirty-gate, and workflow-state targeted tests passed, 48/48 tests.
+
 ## [1.2.266] - 2026-05-15
 ### Fixed
 - **Diagram Modules user-review plans now keep the required commit pair.** Core opens Phase 2 user review with `diagram-modules.phase2.review.task1` and a paired `Git Commit: docs: open diagram modules user review` item instead of `expected commit: none`.
