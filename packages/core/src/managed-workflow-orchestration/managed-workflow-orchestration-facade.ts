@@ -1,5 +1,6 @@
 import type {
   ManagedWorkflowOrchestrationFacadeContract,
+  ManagedWorkflowPreviewBoundaryStartDecision,
   ManagedWorkflowStageDescriptor,
   ManagedWorkflowStageId,
   ManagedWorkflowStageStartDecision,
@@ -38,7 +39,7 @@ export class ManagedWorkflowOrchestrationFacade
     return this.#registry.list().map(describeControllerStage);
   }
 
-  previewStageStart(
+  resolveStageStart(
     request: ManagedWorkflowStageStartRequest
   ): ManagedWorkflowStageStartDecision | null {
     const controller = this.#registry.get(request.stageId);
@@ -47,7 +48,27 @@ export class ManagedWorkflowOrchestrationFacade
     }
     const stage = describeControllerStage(controller);
     if (stage.startPolicy === "provider_direct") {
-      return null;
+      return {
+        canDispatchProvider: true,
+        code: "managed_workflow_provider_direct",
+        controllerId: stage.stageId,
+        message: "",
+        mode: "provider_direct",
+        stage,
+      };
+    }
+    if (stage.startPolicy === "managed_dispatch") {
+      return {
+        canDispatchProvider: true,
+        code: "managed_workflow_managed_dispatch",
+        controllerId: stage.stageId,
+        message: [
+          "Managed Workflow Orchestration cluster will dispatch this stage.",
+          "Core owns the managed phase lifecycle for this step.",
+        ].join("\n"),
+        mode: "managed_dispatch",
+        stage,
+      };
     }
     const preview = controller.createPreviewBoundary(request);
 
@@ -62,5 +83,14 @@ export class ManagedWorkflowOrchestrationFacade
       mode: "preview",
       stage,
     };
+  }
+
+  previewStageStart(
+    request: ManagedWorkflowStageStartRequest
+  ): ManagedWorkflowPreviewBoundaryStartDecision | null {
+    const decision = this.resolveStageStart(request);
+    return decision?.code === "managed_workflow_preview_boundary"
+      ? decision
+      : null;
   }
 }

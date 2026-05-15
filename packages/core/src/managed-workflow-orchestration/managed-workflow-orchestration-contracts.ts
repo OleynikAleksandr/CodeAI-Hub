@@ -11,8 +11,12 @@ export type ManagedWorkflowPhaseType =
   | "user_led_review"
   | "persistent_user_return";
 
-export type ManagedWorkflowRuntimeMode = "preview";
+export type ManagedWorkflowRuntimeMode =
+  | "managed_dispatch"
+  | "preview"
+  | "provider_direct";
 export type ManagedWorkflowStageStartPolicy =
+  | "managed_dispatch"
   | "provider_direct"
   | "core_preview_boundary";
 
@@ -31,20 +35,46 @@ export interface ManagedWorkflowStageStartRequest {
   readonly workspaceSlug: string;
 }
 
-export interface ManagedWorkflowStageStartDecision {
+export interface ManagedWorkflowPreviewBoundaryStartDecision {
   readonly canDispatchProvider: false;
   readonly code: "managed_workflow_preview_boundary";
   readonly controllerId: ManagedWorkflowStageId;
   readonly message: string;
-  readonly mode: ManagedWorkflowRuntimeMode;
+  readonly mode: "preview";
   readonly stage: ManagedWorkflowStageDescriptor;
 }
+
+export interface ManagedWorkflowProviderDirectStartDecision {
+  readonly canDispatchProvider: true;
+  readonly code: "managed_workflow_provider_direct";
+  readonly controllerId: ManagedWorkflowStageId;
+  readonly message: "";
+  readonly mode: "provider_direct";
+  readonly stage: ManagedWorkflowStageDescriptor;
+}
+
+export interface ManagedWorkflowManagedDispatchStartDecision {
+  readonly canDispatchProvider: true;
+  readonly code: "managed_workflow_managed_dispatch";
+  readonly controllerId: ManagedWorkflowStageId;
+  readonly message: string;
+  readonly mode: "managed_dispatch";
+  readonly stage: ManagedWorkflowStageDescriptor;
+}
+
+export type ManagedWorkflowStageStartDecision =
+  | ManagedWorkflowManagedDispatchStartDecision
+  | ManagedWorkflowPreviewBoundaryStartDecision
+  | ManagedWorkflowProviderDirectStartDecision;
 
 export interface ManagedWorkflowOrchestrationFacadeContract {
   canHandleStage(stageId: string): stageId is ManagedWorkflowStageId;
   describeStage(stageId: string): ManagedWorkflowStageDescriptor | null;
   listRegisteredStages(): readonly ManagedWorkflowStageDescriptor[];
   previewStageStart(
+    request: ManagedWorkflowStageStartRequest
+  ): ManagedWorkflowPreviewBoundaryStartDecision | null;
+  resolveStageStart(
     request: ManagedWorkflowStageStartRequest
   ): ManagedWorkflowStageStartDecision | null;
 }

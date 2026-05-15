@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "652a4b821",
+  "lastRecordedCommit": "9c818b558",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase0.plan.task1",
-  "expectedCommitMessage": "docs: plan preliminary and diagram modules orchestration",
+  "currentTaskId": "prelim-diagram-runtime.phase1.contract.task1",
+  "expectedCommitMessage": "feat: add managed workflow start decisions",
   "debt": {
-    "expectedCommitMessage": "docs: plan preliminary and diagram modules orchestration",
-    "preCommitHead": "652a4b821",
+    "expectedCommitMessage": "feat: add managed workflow start decisions",
+    "preCommitHead": "9c818b558",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase0.plan.task1"
+    "taskId": "prelim-diagram-runtime.phase1.contract.task1"
   }
 }
 ```
@@ -52,14 +52,14 @@
 ### Stream: Active Plan
 
 1. [DONE] `prelim-diagram-runtime.phase0.plan.task1` Create the planning source and active todo-plan for connecting Description, Virtual Simulation, and Diagram Modules to the new orchestration cluster; update Docs Index away from the archived kernel planning path (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: plan preliminary and diagram modules orchestration`).
-2. [PENDING] Git Commit: `docs: plan preliminary and diagram modules orchestration` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan preliminary and diagram modules orchestration` (hash: 9c818b558)
 
 ## Phase 1 — Orchestrator Runtime Contract For The First Three Steps (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Public Contract And Step Policy
 
-3. [TODO] `prelim-diagram-runtime.phase1.contract.task1` Extend public managed workflow contracts so registered steps can return provider-direct, preview-boundary, or managed-dispatch start decisions without callers importing controller internals (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: add managed workflow start decisions`).
-4. [TODO] Git Commit: `feat: add managed workflow start decisions` (hash: TBD)
+3. [DONE] `prelim-diagram-runtime.phase1.contract.task1` Extend public managed workflow contracts so registered steps can return provider-direct, preview-boundary, or managed-dispatch start decisions without callers importing controller internals (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: add managed workflow start decisions`).
+4. [PENDING] Git Commit: `feat: add managed workflow start decisions` (hash: TBD)
 
 5. [TODO] `prelim-diagram-runtime.phase1.steps.task1` Update the first three step controllers so Description and Virtual Simulation are explicit provider-direct controllers and Diagram Modules exposes managed dispatch metadata, required artifact targets, and phase table through the registry (scope: `packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts`; expected commit: `feat: describe first trunk step orchestration policies`).
 6. [TODO] Git Commit: `feat: describe first trunk step orchestration policies` (hash: TBD)
