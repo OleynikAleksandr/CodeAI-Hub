@@ -35,7 +35,6 @@ const PROVIDER_STALE_BINDING_ERROR_CODES: ReadonlySet<string> = new Set([
 const TECHNICAL_STAGE_REWRITE_BLOCKER_CODE =
   "technical_stage_rewrite_in_progress";
 const TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES: ReadonlySet<string> = new Set([
-  "diagram_modules",
   "application_skeleton",
   "quality_gates",
 ]);

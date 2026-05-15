@@ -50,14 +50,17 @@ const createManagedWorkflowDeps = (messages: CoreMessageCapture) => ({
   sessionManager: new SessionManager(),
 });
 
-test("createSessionForWorkflow fails closed before diagram modules provider session during technical-stage rewrite", async () => {
+test("createSessionForWorkflow dispatches diagram modules through managed workflow start policy", async () => {
   const calls: string[] = [];
   const messages: CoreMessageCapture = [];
   const warnings: unknown[] = [];
+  const diagramSession = { id: "diagram-runtime-session" } as Session;
   const service = new SessionRequestHandlerWorkflowSession({
-    createAndRegisterSession: () => {
-      calls.push("create-session");
-      return Promise.resolve({ id: "runtime-session" } as Session);
+    createAndRegisterSession: (options) => {
+      calls.push(`create-session:${options.context.stage}`);
+      assert.equal(options.providerId, "codexCli");
+      assert.equal(options.workspacePath, "/tmp/workspace");
+      return Promise.resolve(diagramSession);
     },
     ...createManagedWorkflowDeps(messages),
     logger: createLogger(warnings),
@@ -65,8 +68,8 @@ test("createSessionForWorkflow fails closed before diagram modules provider sess
       handleProviderFailure: () => undefined,
     } as never,
     providerRegistry: {
-      getAdapter: () => {
-        calls.push("get-adapter");
+      getAdapter: (providerId: string) => {
+        calls.push(`get-adapter:${providerId}`);
         return createAdapter();
       },
     } as unknown as ProviderRegistry,
@@ -81,16 +84,13 @@ test("createSessionForWorkflow fails closed before diagram modules provider sess
     },
   });
 
-  assert.ok(session);
-  assert.deepEqual(calls, []);
-  assert.equal(messages.length, 1);
-  assert.equal(messages[0]?.sessionId, session.id);
-  const warning = warnings[0] as ManagedPreviewWarning;
-  assert.equal(warning.code, TECHNICAL_STAGE_REWRITE_BLOCKER_CODE);
-  assert.equal(warning.controllerId, "diagram_modules");
-  assert.equal(warning.stage, "diagram_modules");
-  assert.equal(warning.workspaceRoot, "/tmp/workspace");
-  assert.equal(warning.message?.includes("Diagram Modules"), true);
+  assert.equal(session, diagramSession);
+  assert.deepEqual(calls, [
+    "get-adapter:codexCli",
+    "create-session:diagram_modules",
+  ]);
+  assert.deepEqual(messages, []);
+  assert.deepEqual(warnings, []);
 });
 
 test("createSessionForWorkflow fails closed before technical stage provider sessions during technical-stage rewrite", async () => {

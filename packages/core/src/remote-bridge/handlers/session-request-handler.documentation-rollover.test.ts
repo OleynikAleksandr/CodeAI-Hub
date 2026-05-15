@@ -19,7 +19,6 @@ import {
 
 const REWRITE_BLOCKED_STAGES = new Set([
   "application_skeleton",
-  "diagram_modules",
   "quality_gates",
 ]);
 

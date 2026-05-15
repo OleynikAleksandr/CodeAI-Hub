@@ -14,7 +14,12 @@ const defaultManagedWorkflowOrchestration =
   new ManagedWorkflowOrchestrationFacade();
 
 export const isTechnicalStageRewriteBlockedStage = (stage: string): boolean =>
-  defaultManagedWorkflowOrchestration.canHandleStage(stage);
+  defaultManagedWorkflowOrchestration.resolveStageStart({
+    providerId: "core",
+    stageId: stage,
+    workspaceRoot: "",
+    workspaceSlug: "",
+  })?.code === TECHNICAL_STAGE_REWRITE_BLOCKER_CODE;
 
 interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly createAndRegisterSession: (
@@ -51,7 +56,7 @@ export class SessionRequestHandlerWorkflowSession {
       readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
-    const managedDecision = this.managedWorkflowOrchestration.previewStageStart(
+    const managedDecision = this.managedWorkflowOrchestration.resolveStageStart(
       {
         providerId: options.providerId,
         runSlug: options.context.runSlug ?? null,
@@ -60,7 +65,7 @@ export class SessionRequestHandlerWorkflowSession {
         workspaceSlug: options.context.initiativeSlug,
       }
     );
-    if (managedDecision) {
+    if (managedDecision && !managedDecision.canDispatchProvider) {
       const session = this.deps.sessionManager.createSession(
         options.providerId,
         options.workspacePath,

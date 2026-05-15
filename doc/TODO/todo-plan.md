@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "e3ead5a8d",
+  "lastRecordedCommit": "3419a3481",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase1.steps.task1",
-  "expectedCommitMessage": "feat: describe first trunk step orchestration policies",
+  "currentTaskId": "prelim-diagram-runtime.phase1.runtime.task1",
+  "expectedCommitMessage": "feat: route first trunk steps through managed workflow starts",
   "debt": {
-    "expectedCommitMessage": "feat: describe first trunk step orchestration policies",
-    "preCommitHead": "e3ead5a8d",
+    "expectedCommitMessage": "feat: route first trunk steps through managed workflow starts",
+    "preCommitHead": "3419a3481",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase1.steps.task1"
+    "taskId": "prelim-diagram-runtime.phase1.runtime.task1"
   }
 }
 ```
@@ -62,12 +62,12 @@
 4. [DONE] Git Commit: `feat: add managed workflow start decisions` (hash: e3ead5a8d)
 
 5. [DONE] `prelim-diagram-runtime.phase1.steps.task1` Update the first three step controllers so Description and Virtual Simulation are explicit provider-direct controllers and Diagram Modules exposes managed dispatch metadata, required artifact targets, and phase table through the registry; include facade/registry expectations because this is an observable registration-policy task (scope: `packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts`; expected commit: `feat: describe first trunk step orchestration policies`).
-6. [PENDING] Git Commit: `feat: describe first trunk step orchestration policies` (hash: TBD)
+6. [DONE] Git Commit: `feat: describe first trunk step orchestration policies` (hash: 3419a3481)
 
 ### Stream: Runtime Dispatch Boundary
 
-7. [TODO] `prelim-diagram-runtime.phase1.runtime.task1` Route workflow session starts through the facade start decision: provider-direct steps continue existing provider transport, preview-only technical steps keep fail-closed Core message sessions, and Diagram Modules receives managed dispatch instead of preview placeholder (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `feat: route first trunk steps through managed workflow starts`).
-8. [TODO] Git Commit: `feat: route first trunk steps through managed workflow starts` (hash: TBD)
+7. [DONE] `prelim-diagram-runtime.phase1.runtime.task1` Route workflow session starts and user-message routing through the facade start decision: provider-direct steps continue existing provider transport, preview-only technical steps keep fail-closed Core message sessions, and Diagram Modules receives managed dispatch instead of preview placeholder or rewrite-blocked message dispatch (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `feat: route first trunk steps through managed workflow starts`).
+8. [PENDING] Git Commit: `feat: route first trunk steps through managed workflow starts` (hash: TBD)
 
 ## Phase 2 — Diagram Modules Managed Phase Execution (owner: Codex, updated: 2026-05-15)
 
