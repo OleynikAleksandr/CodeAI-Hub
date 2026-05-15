@@ -13,7 +13,7 @@ const createLogger = (warnings: unknown[] = []): Logger =>
     },
   }) as unknown as Logger;
 
-test("managed technical stage starts route through orchestration facade preview boundary", async () => {
+test("managed technical stage starts route through managed dispatch without preview boundary", async () => {
   const calls: string[] = [];
   const coreMessages: Array<{
     readonly content: string;
@@ -21,8 +21,8 @@ test("managed technical stage starts route through orchestration facade preview 
   }> = [];
   const warnings: unknown[] = [];
   const service = new SessionRequestHandlerWorkflowSession({
-    createAndRegisterSession: () => {
-      calls.push("create-session");
+    createAndRegisterSession: (options) => {
+      calls.push(`create-session:${options.context.stage}`);
       return Promise.resolve({ id: "runtime-session" } as Session);
     },
     eventMessages: {
@@ -35,9 +35,9 @@ test("managed technical stage starts route through orchestration facade preview 
       handleProviderFailure: () => undefined,
     } as never,
     providerRegistry: {
-      getAdapter: () => {
-        calls.push("get-adapter");
-        return null;
+      getAdapter: (providerId: string) => {
+        calls.push(`get-adapter:${providerId}`);
+        return {} as never;
       },
     } as unknown as ProviderRegistry,
     sessionManager: new SessionManager(),
@@ -53,16 +53,10 @@ test("managed technical stage starts route through orchestration facade preview 
   });
 
   assert.ok(session);
-  assert.deepEqual(calls, []);
-  assert.equal(coreMessages.length, 1);
-  assert.equal(coreMessages[0]?.sessionId, session.id);
-  assert.equal(coreMessages[0]?.content.includes("Quality Gates"), true);
-  assert.equal(
-    (warnings[0] as { readonly code?: string }).code,
-    "managed_workflow_preview_boundary"
-  );
-  assert.equal(
-    (warnings[0] as { readonly controllerId?: string }).controllerId,
-    "quality_gates"
-  );
+  assert.deepEqual(calls, [
+    "get-adapter:codexCli",
+    "create-session:quality_gates",
+  ]);
+  assert.deepEqual(coreMessages, []);
+  assert.deepEqual(warnings, []);
 });
