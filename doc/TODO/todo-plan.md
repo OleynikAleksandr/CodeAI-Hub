@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "b5658babe",
+  "lastRecordedCommit": "f829a6ca5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1",
-  "expectedCommitMessage": "fix: commit application skeleton rejected turns",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1",
+  "expectedCommitMessage": "docs: verify application skeleton runtime repair",
   "debt": {
-    "expectedCommitMessage": "fix: commit application skeleton rejected turns",
-    "preCommitHead": "b5658babe",
+    "expectedCommitMessage": "docs: verify application skeleton runtime repair",
+    "preCommitHead": "f829a6ca5",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1"
   }
 }
 ```
@@ -969,14 +969,31 @@ Release VSIX evidence recorded 2026-05-15:
 222. [DONE] Git Commit: `fix: track application skeleton rejected attempts` (hash: b5658babe)
 
 223. [DONE] `diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1` Commit safe rejected Application Skeleton provider turns before dispatching repair prompts and include the rejected commit hash in follow-up materialization diagnostics (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: commit application skeleton rejected turns`).
-224. [PENDING] Git Commit: `fix: commit application skeleton rejected turns` (hash: TBD)
+224. [DONE] Git Commit: `fix: commit application skeleton rejected turns` (hash: f829a6ca5)
 
 ## Phase 51 — Application Skeleton Repair Verification (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Targeted Verification
 
-225. [TODO] `diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1` Run targeted Core and Project Manager tests/builds for Application Skeleton prompt, managed start preflight, rejected-attempt commits, and plan validation; record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton runtime repair`).
-226. [TODO] Git Commit: `docs: verify application skeleton runtime repair` (hash: TBD)
+225. [DONE] `diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1` Run targeted Core and Project Manager tests/builds for Application Skeleton prompt, managed start preflight, rejected-attempt commits, and plan validation; record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton runtime repair`).
+226. [PENDING] Git Commit: `docs: verify application skeleton runtime repair` (hash: TBD)
+
+Verification evidence recorded 2026-05-15:
+
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts` — PASS, 15 tests.
+- `npx tsx --test src/client/project-manager/services/idea-collector-submit-service.open-fast.test.ts src/client/project-manager/services/native-request-capture-scenario-prompt.test.ts src/client/project-manager/services/description-submit-service.localization.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` — PASS, 14 tests.
+- `npm run build:core` — PASS.
+- `npm run typecheck:webview` — PASS.
+- `npm run build:webview` — PASS.
+- `npm run lint` — PASS.
+- `npm run plan:validate` — PASS.
+
+Repair coverage:
+
+- Core-owned prompt packs now provide Application Skeleton source artifacts/templates; Project Manager no longer owns workflow prompt or source-artifact truth.
+- Project Manager-created Application Skeleton sessions run Core managed start preflight before provider dispatch and open the draft microtask.
+- Application Skeleton stage plans replace bootstrap placeholders with active draft tasks, add repeatable rejected-attempt repair task/Git Commit pairs, and keep the repair-plan logic below the architecture line-limit gate through an extracted Core micro-module.
+- Invalid Application Skeleton provider turns are committed through the managed Git boundary before repair prompts are dispatched; materialization repair prompts include the rejected attempt commit hash.
 
 ## Phase 52 — Release Build Gate For Application Skeleton Repair (owner: Codex + User, updated: 2026-05-15)
 
