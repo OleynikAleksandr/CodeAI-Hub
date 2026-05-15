@@ -1,4 +1,5 @@
 import { ManagedWorkflowOrchestrationFacade } from "../../managed-workflow-orchestration";
+import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -33,17 +34,21 @@ interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly managedWorkflowOrchestration?: ManagedWorkflowOrchestrationFacade;
   readonly providerFailureRecovery: SessionProviderFailureRecovery;
   readonly providerRegistry: ProviderRegistry;
+  readonly scaffoldInstaller?: ManagedWorkflowScaffoldInstaller;
   readonly sessionManager: SessionManager;
 }
 
 export class SessionRequestHandlerWorkflowSession {
   private readonly deps: SessionRequestHandlerWorkflowSessionDependencies;
   private readonly managedWorkflowOrchestration: ManagedWorkflowOrchestrationFacade;
+  private readonly scaffoldInstaller: ManagedWorkflowScaffoldInstaller;
 
   constructor(deps: SessionRequestHandlerWorkflowSessionDependencies) {
     this.deps = deps;
     this.managedWorkflowOrchestration =
       deps.managedWorkflowOrchestration ?? defaultManagedWorkflowOrchestration;
+    this.scaffoldInstaller =
+      deps.scaffoldInstaller ?? new ManagedWorkflowScaffoldInstaller();
   }
 
   async createSessionForWorkflow(options: {
@@ -91,6 +96,14 @@ export class SessionRequestHandlerWorkflowSession {
         }
       );
       return session;
+    }
+    if (
+      managedDecision?.mode === "managed_dispatch" &&
+      options.context.stage === "diagram_modules"
+    ) {
+      await this.scaffoldInstaller.installDiagramModulesScaffold({
+        workspaceRoot: options.workspacePath,
+      });
     }
 
     const adapter = this.deps.providerRegistry.getAdapter(options.providerId);

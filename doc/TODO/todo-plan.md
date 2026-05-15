@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "145865ed5",
+  "lastRecordedCommit": "f0e12b7e5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase9.plan.task1",
-  "expectedCommitMessage": "docs: plan diagram modules continuation repair",
+  "currentTaskId": "diagram-runtime-repair.phase9.scaffold.task1",
+  "expectedCommitMessage": "feat: scaffold managed workspace on diagram modules start",
   "debt": {
-    "expectedCommitMessage": "docs: plan diagram modules continuation repair",
-    "preCommitHead": "145865ed5",
+    "expectedCommitMessage": "feat: scaffold managed workspace on diagram modules start",
+    "preCommitHead": "f0e12b7e5",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase9.plan.task1"
+    "taskId": "diagram-runtime-repair.phase9.scaffold.task1"
   }
 }
 ```
@@ -216,12 +216,12 @@ Release package evidence recorded 2026-05-15:
 ### Stream: Scenario Contract Repair
 
 42. [DONE] `diagram-runtime-repair.phase9.plan.task1` Update the active plan and planning sources so Diagram Modules Phase 1 is explicitly a multi-turn Core-led Type A sequence with startup scaffold, Product Part continuation prompts, and user-led review only after the last Product Part is accepted (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`; expected commit: `docs: plan diagram modules continuation repair`).
-43. [PENDING] Git Commit: `docs: plan diagram modules continuation repair` (hash: TBD)
+43. [DONE] Git Commit: `docs: plan diagram modules continuation repair` (hash: f0e12b7e5)
 
 ### Stream: Runtime Scaffold And Subturns
 
-44. [TODO] `diagram-runtime-repair.phase9.scaffold.task1` Add a new Managed Workflow scaffold installer owned by the orchestration cluster and call it when Diagram Modules starts, creating `doc/TODO`, stage plans, workspace plan, plan script, hooks, and package scripts before the provider turn begins (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `feat: scaffold managed workspace on diagram modules start`).
-45. [TODO] Git Commit: `feat: scaffold managed workspace on diagram modules start` (hash: TBD)
+44. [DONE] `diagram-runtime-repair.phase9.scaffold.task1` Add a new Managed Workflow scaffold installer owned by the orchestration cluster and call it when Diagram Modules starts, creating `doc/TODO`, stage plans, workspace plan, plan script, hooks, and package scripts before the provider turn begins (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `feat: scaffold managed workspace on diagram modules start`).
+45. [PENDING] Git Commit: `feat: scaffold managed workspace on diagram modules start` (hash: TBD)
 
 46. [TODO] `diagram-runtime-repair.phase9.subturn.task1` Replace aggregate-only Diagram Modules validation with subturn-aware planning: index validation accepts the index alone, extracts Product Part ids, resolves the next missing Product Part target, and emits localized Core/user messages when all Product Parts are ready for review (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: model diagram modules managed subturns`).
 47. [TODO] Git Commit: `feat: model diagram modules managed subturns` (hash: TBD)
