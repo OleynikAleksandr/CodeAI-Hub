@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "7615d8e6f",
+  "lastRecordedCommit": "60eb69c57",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase4.build-fix.task1",
-  "expectedCommitMessage": "fix: return quality gates invalid decisions as promises",
+  "currentTaskId": "quality-gates-runtime.phase4.verify.task1",
+  "expectedCommitMessage": "docs: verify quality gates managed runtime",
   "debt": {
-    "expectedCommitMessage": "fix: return quality gates invalid decisions as promises",
-    "preCommitHead": "7615d8e6f",
+    "expectedCommitMessage": "docs: verify quality gates managed runtime",
+    "preCommitHead": "60eb69c57",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase4.build-fix.task1"
+    "taskId": "quality-gates-runtime.phase4.verify.task1"
   }
 }
 ```
@@ -1044,10 +1044,14 @@ Repair coverage:
 243. [DONE] Git Commit: `docs: document quality gates managed runtime` (hash: 7615d8e6f)
 
 244. [DONE] `quality-gates-runtime.phase4.build-fix.task1` Return Quality Gates invalid-decision branches as promises so `build:core` type-checks after targeted verification surfaced TS2322 (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: return quality gates invalid decisions as promises`).
-245. [PENDING] Git Commit: `fix: return quality gates invalid decisions as promises` (hash: TBD)
+245. [DONE] Git Commit: `fix: return quality gates invalid decisions as promises` (hash: 60eb69c57)
 
-246. [TODO] `quality-gates-runtime.phase4.verify.task1` Run targeted Core/Project Manager tests and builds for Quality Gates managed runtime and record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify quality gates managed runtime`).
-247. [TODO] Git Commit: `docs: verify quality gates managed runtime` (hash: TBD)
+246. [DONE] `quality-gates-runtime.phase4.verify.task1` Run targeted Core/Project Manager tests and builds for Quality Gates managed runtime and record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify quality gates managed runtime`).
+    - PASS: `npx tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts` (14 tests).
+    - PASS: `npm run build:core`.
+    - PASS: `npm run build:project-manager`.
+    - Release build intentionally not run in this task; user explicitly requested implementation without a new release build.
+247. [PENDING] Git Commit: `docs: verify quality gates managed runtime` (hash: TBD)
 
 ## Phase 54 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
