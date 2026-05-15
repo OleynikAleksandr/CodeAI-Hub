@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "a5a8b9aaa",
+  "lastRecordedCommit": "5914a30fd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase2.steps.task2",
-  "expectedCommitMessage": "feat: register quality gates managed workflow controller",
+  "currentTaskId": "managed-orchestration-kernel.phase3.store.task1",
+  "expectedCommitMessage": "feat: add managed workflow plan store abstraction",
   "debt": {
-    "expectedCommitMessage": "feat: register quality gates managed workflow controller",
-    "preCommitHead": "a5a8b9aaa",
+    "expectedCommitMessage": "feat: add managed workflow plan store abstraction",
+    "preCommitHead": "5914a30fd",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase2.steps.task2"
+    "taskId": "managed-orchestration-kernel.phase3.store.task1"
   }
 }
 ```
@@ -93,14 +93,14 @@
 16. [DONE] Git Commit: `feat: register initial managed workflow step controllers` (hash: a5a8b9aaa)
 
 17. [DONE] `managed-orchestration-kernel.phase2.steps.task2` Add Quality Gates step-controller module and tests proving all three technical trunk steps are registered through the same extension contract (scope: `packages/core/src/managed-workflow-orchestration/steps/quality-gates-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts`; expected commit: `feat: register quality gates managed workflow controller`).
-18. [PENDING] Git Commit: `feat: register quality gates managed workflow controller` (hash: TBD)
+18. [DONE] Git Commit: `feat: register quality gates managed workflow controller` (hash: 5914a30fd)
 
 ## Phase 3 — Store, Audit, Commit Boundary, And Recovery Kernel (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Durable Kernel Services
 
-19. [TODO] `managed-orchestration-kernel.phase3.store.task1` Implement a minimal `ManagedWorkflowPlanStore` abstraction for current-state persistence and read-only snapshot reconstruction without reviving retired child-plan mutation logic (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-ledger-types.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.test.ts`; expected commit: `feat: add managed workflow plan store abstraction`).
-20. [TODO] Git Commit: `feat: add managed workflow plan store abstraction` (hash: TBD)
+19. [DONE] `managed-orchestration-kernel.phase3.store.task1` Implement a minimal `ManagedWorkflowPlanStore` abstraction for current-state persistence and read-only snapshot reconstruction without reviving retired child-plan mutation logic (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-ledger-types.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.test.ts`; expected commit: `feat: add managed workflow plan store abstraction`).
+20. [PENDING] Git Commit: `feat: add managed workflow plan store abstraction` (hash: TBD)
 
 21. [TODO] `managed-orchestration-kernel.phase3.audit.task1` Add `ManagedWorkflowAuditLog` and tests for Core decisions, effects, blockers, provider-visible messages, and recovery actions (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow audit log`).
 22. [TODO] Git Commit: `feat: add managed workflow audit log` (hash: TBD)
