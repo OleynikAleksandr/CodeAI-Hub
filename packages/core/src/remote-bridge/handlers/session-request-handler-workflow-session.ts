@@ -3,6 +3,7 @@ import path from "node:path";
 import { ManagedWorkflowOrchestrationFacade } from "../../managed-workflow-orchestration";
 import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
 import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
+import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -21,6 +22,10 @@ const APPLICATION_SKELETON_BOOTSTRAP_TASK_ID =
   "application-skeleton.phase1.bootstrap.task1";
 const APPLICATION_SKELETON_STAGE_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
+const QUALITY_GATES_STAGE = "quality_gates";
+const QUALITY_GATES_BOOTSTRAP_TASK_ID = "quality-gates.phase1.bootstrap.task1";
+const QUALITY_GATES_STAGE_PLAN_PATH =
+  "doc/TODO/stages/quality-gates/todo-plan.md";
 const FENCED_JSON_END_RE = /\s*```$/u;
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const PLAN_START = "<!-- codeai-plan-state:start -->";
@@ -47,6 +52,7 @@ interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly managedWorkflowOrchestration?: ManagedWorkflowOrchestrationFacade;
   readonly providerFailureRecovery: SessionProviderFailureRecovery;
   readonly providerRegistry: ProviderRegistry;
+  readonly qualityGatesStagePlan?: QualityGatesStagePlanController;
   readonly scaffoldInstaller?: ManagedWorkflowScaffoldInstaller;
   readonly sessionManager: SessionManager;
 }
@@ -55,6 +61,7 @@ export class SessionRequestHandlerWorkflowSession {
   private readonly deps: SessionRequestHandlerWorkflowSessionDependencies;
   private readonly applicationSkeletonStagePlan: ApplicationSkeletonStagePlanController;
   private readonly managedWorkflowOrchestration: ManagedWorkflowOrchestrationFacade;
+  private readonly qualityGatesStagePlan: QualityGatesStagePlanController;
   private readonly scaffoldInstaller: ManagedWorkflowScaffoldInstaller;
 
   constructor(deps: SessionRequestHandlerWorkflowSessionDependencies) {
@@ -64,6 +71,8 @@ export class SessionRequestHandlerWorkflowSession {
       new ApplicationSkeletonStagePlanController();
     this.managedWorkflowOrchestration =
       deps.managedWorkflowOrchestration ?? defaultManagedWorkflowOrchestration;
+    this.qualityGatesStagePlan =
+      deps.qualityGatesStagePlan ?? new QualityGatesStagePlanController();
     this.scaffoldInstaller =
       deps.scaffoldInstaller ?? new ManagedWorkflowScaffoldInstaller();
   }
@@ -126,6 +135,14 @@ export class SessionRequestHandlerWorkflowSession {
           workspaceRoot: options.workspacePath,
         });
       }
+      if (
+        options.context.stage === QUALITY_GATES_STAGE &&
+        (await this.shouldOpenQualityGatesDraft(options.workspacePath))
+      ) {
+        await this.qualityGatesStagePlan.openDraftPhase({
+          workspaceRoot: options.workspacePath,
+        });
+      }
     }
 
     const adapter = this.deps.providerRegistry.getAdapter(options.providerId);
@@ -183,6 +200,32 @@ export class SessionRequestHandlerWorkflowSession {
     return (
       state.currentTaskId === null ||
       state.currentTaskId === APPLICATION_SKELETON_BOOTSTRAP_TASK_ID
+    );
+  }
+
+  private async shouldOpenQualityGatesDraft(
+    workspaceRoot: string
+  ): Promise<boolean> {
+    const planText = await readFile(
+      path.join(workspaceRoot, QUALITY_GATES_STAGE_PLAN_PATH),
+      "utf8"
+    ).catch(() => null);
+    if (!planText) {
+      return true;
+    }
+    const rawState = planText.split(PLAN_START)[1]?.split(PLAN_END)[0];
+    const json = rawState
+      ?.trim()
+      .replace(FENCED_JSON_START_RE, "")
+      .replace(FENCED_JSON_END_RE, "")
+      .trim();
+    if (!json) {
+      return true;
+    }
+    const state = JSON.parse(json) as { readonly currentTaskId?: unknown };
+    return (
+      state.currentTaskId === null ||
+      state.currentTaskId === QUALITY_GATES_BOOTSTRAP_TASK_ID
     );
   }
 }

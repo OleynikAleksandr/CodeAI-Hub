@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "62c781c3c",
+  "lastRecordedCommit": "b46529c01",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase2.stage-plan.task1",
-  "expectedCommitMessage": "feat: add quality gates stage plan lifecycle",
+  "currentTaskId": "quality-gates-runtime.phase3.turn.task1",
+  "expectedCommitMessage": "feat: route quality gates managed turns",
   "debt": {
-    "expectedCommitMessage": "feat: add quality gates stage plan lifecycle",
-    "preCommitHead": "62c781c3c",
+    "expectedCommitMessage": "feat: route quality gates managed turns",
+    "preCommitHead": "b46529c01",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase2.stage-plan.task1"
+    "taskId": "quality-gates-runtime.phase3.turn.task1"
   }
 }
 ```
@@ -1027,12 +1027,12 @@ Repair coverage:
 ### Stream: Stage Plan Lifecycle
 
 236. [DONE] `quality-gates-runtime.phase2.stage-plan.task1` Add the Quality Gates stage-plan controller with draft opening, review acceptance, revision cycles, integration attempts, rejected-attempt repair pairs, and workspace ledger advancement (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`; expected commit: `feat: add quality gates stage plan lifecycle`).
-237. [PENDING] Git Commit: `feat: add quality gates stage plan lifecycle` (hash: TBD)
+237. [DONE] Git Commit: `feat: add quality gates stage plan lifecycle` (hash: b46529c01)
 
 ### Stream: Runtime Dispatch
 
-238. [TODO] `quality-gates-runtime.phase3.turn.task1` Connect Quality Gates managed start preflight and provider-turn validation/commit handling to the Core runtime path, without using Project Manager as state authority (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `feat: route quality gates managed turns`).
-239. [TODO] Git Commit: `feat: route quality gates managed turns` (hash: TBD)
+238. [DONE] `quality-gates-runtime.phase3.turn.task1` Connect Quality Gates managed start preflight and provider-turn validation/commit handling to the Core runtime path, without using Project Manager as state authority (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `feat: route quality gates managed turns`).
+239. [PENDING] Git Commit: `feat: route quality gates managed turns` (hash: TBD)
 
 240. [TODO] `quality-gates-runtime.phase3.review.task1` Route Quality Gates Type B user review decisions through Core-owned intent classification, including direct acceptance to integration and revision prompts that stay in the active review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `feat: route quality gates review decisions`).
 241. [TODO] Git Commit: `feat: route quality gates review decisions` (hash: TBD)

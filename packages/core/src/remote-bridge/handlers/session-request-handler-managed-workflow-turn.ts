@@ -20,14 +20,27 @@ import {
   type DiagramModulesManagedValidationResult,
   validateDiagramModulesManagedArtifacts,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
+import {
+  buildQualityGatesBoundaryBlockedMessage,
+  buildQualityGatesDraftRepairPrompt,
+  buildQualityGatesIntegrationRepairPrompt,
+} from "../../managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder";
+import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
+import {
+  type QualityGatesManagedValidationResult,
+  validateQualityGatesManagedArtifacts,
+} from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
 import type { SessionManager } from "../../session-manager";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
+const QUALITY_GATES_STAGE = "quality_gates";
 const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
   /^application-skeleton\.phase3\.repair\.task(\d+)$/u;
+const QUALITY_GATES_INTEGRATION_REPAIR_TASK_RE =
+  /^quality-gates\.phase3\.repair\.task(\d+)$/u;
 
 interface ManagedWorkflowTurnSession {
   readonly initiativeSlug?: string | null;
@@ -43,18 +56,21 @@ interface SessionRequestHandlerManagedWorkflowTurnOptions {
     "appendCoreMessage"
   >;
   readonly getMessageDispatch: () => SessionRequestHandlerMessageDispatch;
+  readonly qualityGatesStagePlan?: QualityGatesStagePlanController;
   readonly sessionManager: Pick<SessionManager, "getSession">;
 }
 
 const persistManagedDecision = async (params: {
   readonly decision:
     | ApplicationSkeletonManagedValidationResult
-    | DiagramModulesManagedValidationResult;
+    | DiagramModulesManagedValidationResult
+    | QualityGatesManagedValidationResult;
   readonly schema: string;
   readonly sessionId: string;
   readonly stage:
     | typeof APPLICATION_SKELETON_STAGE
-    | typeof DIAGRAM_MODULES_STAGE;
+    | typeof DIAGRAM_MODULES_STAGE
+    | typeof QUALITY_GATES_STAGE;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): Promise<void> => {
@@ -83,10 +99,19 @@ const resolveMaterializationRepairAttemptNumber = (
   return Number.isInteger(value) && value > 0 ? value : 1;
 };
 
+const resolveQualityGatesIntegrationRepairAttemptNumber = (
+  taskId: string | null
+): number => {
+  const match = taskId?.match(QUALITY_GATES_INTEGRATION_REPAIR_TASK_RE);
+  const value = Number(match?.[1]);
+  return Number.isInteger(value) && value > 0 ? value : 1;
+};
+
 export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly applicationStagePlan: ApplicationSkeletonStagePlanController;
   private readonly diagramStagePlan: DiagramModulesStagePlanController;
   private readonly options: SessionRequestHandlerManagedWorkflowTurnOptions;
+  private readonly qualityGatesStagePlan: QualityGatesStagePlanController;
 
   constructor(options: SessionRequestHandlerManagedWorkflowTurnOptions) {
     this.options = options;
@@ -95,6 +120,8 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       new ApplicationSkeletonStagePlanController();
     this.diagramStagePlan =
       options.diagramStagePlan ?? new DiagramModulesStagePlanController();
+    this.qualityGatesStagePlan =
+      options.qualityGatesStagePlan ?? new QualityGatesStagePlanController();
   }
 
   async handleTurnCompleted(sessionId: string): Promise<void> {
@@ -115,6 +142,14 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     }
     if (session.stage === APPLICATION_SKELETON_STAGE) {
       await this.handleApplicationSkeletonTurn({
+        sessionId,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+      return;
+    }
+    if (session.stage === QUALITY_GATES_STAGE) {
+      await this.handleQualityGatesTurn({
         sessionId,
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
@@ -276,6 +311,106 @@ export class SessionRequestHandlerManagedWorkflowTurn {
           })
         : (decision.nextPrompt ??
           buildApplicationSkeletonDraftRepairPrompt({
+            diagnostics: decision.diagnostics,
+            workspaceSlug: params.workspaceSlug,
+          }));
+    this.appendCoreMessage(params.sessionId, {
+      content: repairPrompt,
+      tag: "managed-workflow-validation",
+    });
+    await this.options
+      .getMessageDispatch()
+      .sendInternalMessage(params.sessionId, repairPrompt);
+  }
+
+  private async handleQualityGatesTurn(params: {
+    readonly sessionId: string;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    const decision = await validateQualityGatesManagedArtifacts(params);
+    await persistManagedDecision({
+      decision,
+      schema: "codeai-managed-workflow-quality-gates-v1",
+      sessionId: params.sessionId,
+      stage: QUALITY_GATES_STAGE,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    if (!decision.valid) {
+      const planAdvance = await this.qualityGatesStagePlan.commitRejectedTurn({
+        decision,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      });
+      if (planAdvance.blocked) {
+        this.appendCoreMessage(params.sessionId, {
+          content: buildQualityGatesBoundaryBlockedMessage(
+            planAdvance.blocked.message
+          ),
+          tag: "managed-workflow-validation",
+        });
+        return;
+      }
+      await this.dispatchQualityGatesRepairPrompt(params, decision, {
+        rejectedCommitHash: planAdvance.commit.hash,
+        repairTaskId: planAdvance.commit.nextTaskId,
+      });
+      return;
+    }
+    const planAdvance = await this.qualityGatesStagePlan.commitManagedTurn({
+      decision,
+      sessionId: params.sessionId,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    if (planAdvance.blocked) {
+      this.appendCoreMessage(params.sessionId, {
+        content: buildQualityGatesBoundaryBlockedMessage(
+          planAdvance.blocked.message
+        ),
+        tag: "managed-workflow-validation",
+      });
+      return;
+    }
+    if (
+      (decision.nextAction === "open_user_review" ||
+        decision.nextAction === "open_persistent_return") &&
+      decision.nextPrompt
+    ) {
+      this.appendCoreMessage(params.sessionId, {
+        content: decision.nextPrompt,
+        tag:
+          decision.nextAction === "open_user_review"
+            ? "managed-workflow-user-review"
+            : "managed-workflow-complete",
+      });
+    }
+  }
+
+  private async dispatchQualityGatesRepairPrompt(
+    params: {
+      readonly sessionId: string;
+      readonly workspaceSlug: string;
+    },
+    decision: QualityGatesManagedValidationResult,
+    rejected: {
+      readonly rejectedCommitHash: string;
+      readonly repairTaskId: string | null;
+    } | null
+  ): Promise<void> {
+    const repairPrompt =
+      decision.nextAction === "repair_integration"
+        ? buildQualityGatesIntegrationRepairPrompt({
+            attemptNumber: resolveQualityGatesIntegrationRepairAttemptNumber(
+              rejected?.repairTaskId ?? null
+            ),
+            diagnostics: decision.diagnostics,
+            rejectedCommitHash: rejected?.rejectedCommitHash ?? null,
+            workspaceSlug: params.workspaceSlug,
+          })
+        : (decision.nextPrompt ??
+          buildQualityGatesDraftRepairPrompt({
             diagnostics: decision.diagnostics,
             workspaceSlug: params.workspaceSlug,
           }));
