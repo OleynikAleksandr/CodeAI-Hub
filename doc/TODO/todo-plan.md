@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "60a11e925",
+  "lastRecordedCommit": "eb0d10680",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "remaining-technical-runtime.phase1.policy.task1",
-  "expectedCommitMessage": "feat: enable remaining technical managed dispatch policies",
+  "currentTaskId": "remaining-technical-runtime.phase1.runtime.task1",
+  "expectedCommitMessage": "feat: route remaining technical stages through managed dispatch",
   "debt": {
-    "expectedCommitMessage": "feat: enable remaining technical managed dispatch policies",
-    "preCommitHead": "60a11e925",
+    "expectedCommitMessage": "feat: route remaining technical stages through managed dispatch",
+    "preCommitHead": "eb0d10680",
     "stage": "commit_pending",
-    "taskId": "remaining-technical-runtime.phase1.policy.task1"
+    "taskId": "remaining-technical-runtime.phase1.runtime.task1"
   }
 }
 ```
@@ -136,10 +136,10 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Runtime Policy
 
 25. [DONE] `remaining-technical-runtime.phase1.policy.task1` Move Application Skeleton and Quality Gates controllers from preview-only to managed dispatch and update public facade/projection expectations (scope: `packages/core/src/managed-workflow-orchestration/steps/application-skeleton-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/quality-gates-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: enable remaining technical managed dispatch policies`).
-26. [PENDING] Git Commit: `feat: enable remaining technical managed dispatch policies` (hash: TBD)
+26. [DONE] Git Commit: `feat: enable remaining technical managed dispatch policies` (hash: eb0d10680)
 
-27. [TODO] `remaining-technical-runtime.phase1.runtime.task1` Route Application Skeleton and Quality Gates session creation/message dispatch through managed dispatch instead of preview rewrite blockers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `feat: route remaining technical stages through managed dispatch`).
-28. [TODO] Git Commit: `feat: route remaining technical stages through managed dispatch` (hash: TBD)
+27. [DONE] `remaining-technical-runtime.phase1.runtime.task1` Route Application Skeleton and Quality Gates session creation/message dispatch through managed dispatch instead of preview rewrite blockers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `feat: route remaining technical stages through managed dispatch`).
+28. [PENDING] Git Commit: `feat: route remaining technical stages through managed dispatch` (hash: TBD)
 
 ### Stream: Project Manager Launch
 

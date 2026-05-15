@@ -17,10 +17,7 @@ import {
   noop,
 } from "./session-request-handler.test-helpers";
 
-const REWRITE_BLOCKED_STAGES = new Set([
-  "application_skeleton",
-  "quality_gates",
-]);
+const REWRITE_BLOCKED_STAGES = new Set<string>();
 
 test("rolloverFlowNodeSession materializes Documentation Tree synthetic rollover state without report turn", async () => {
   const harness = createHarness();
