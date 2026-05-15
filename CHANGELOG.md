@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.257] - 2026-05-15
+### Added
+- **Preliminary workflow steps are registered in the replacement Managed Workflow Orchestration cluster.** `Description` and `Virtual Simulation` now have provider-direct controller metadata next to the technical trunk controllers.
+- **Core projects explicit start policy and read-only state.** The workflow state payload now exposes `startPolicy` per registered stage and a `readOnlyStages` list computed from real downstream technical progress.
+
+### Fixed
+- **Project Manager no longer treats active managed preview as an upstream lock.** Completed Description sessions and the Virtual Simulation start card stay visible while only the technical preview boundary is active.
+- **Provider-direct preliminary starts remain provider-direct.** Core preview boundary sessions are still limited to `Diagram Modules`, `Application Skeleton`, and `Quality Gates`.
+
+### Tests
+- `npm run build:core`
+- `node --test packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js` passed, 8/8 tests.
+- `npm run typecheck:webview`
+- `npx tsx --test src/client/project-manager/components/layout/main-area-panel-content.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts` passed, 18/18 tests.
+- `npm run build:webview`
+
 ## [1.2.256] - 2026-05-15
 ### Added
 - **Managed Workflow Orchestration preview boundary.** Core now exposes a read-only `ManagedWorkflowOrchestrationFacade` slice with registered controllers for `Diagram Modules`, `Application Skeleton`, and `Quality Gates`.

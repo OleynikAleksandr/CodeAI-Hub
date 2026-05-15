@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "745fb9189",
+  "lastRecordedCommit": "106edf5df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase10.verify.task1",
-  "expectedCommitMessage": "docs: verify preliminary workflow orchestration fix",
+  "currentTaskId": "managed-orchestration-kernel.phase10.release.task1",
+  "expectedCommitMessage": "docs: prepare preliminary workflow orchestration release",
   "debt": {
-    "expectedCommitMessage": "docs: verify preliminary workflow orchestration fix",
-    "preCommitHead": "745fb9189",
+    "expectedCommitMessage": "docs: prepare preliminary workflow orchestration release",
+    "preCommitHead": "106edf5df",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase10.verify.task1"
+    "taskId": "managed-orchestration-kernel.phase10.release.task1"
   }
 }
 ```
@@ -249,12 +249,18 @@ Verification evidence recorded 2026-05-15:
 - `npm run typecheck:webview` — passed.
 - `npx tsx --test src/client/project-manager/components/layout/main-area-panel-content.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts` — passed, 18/18 tests.
 - `npm run build:webview` — passed.
-66. [PENDING] Git Commit: `docs: verify preliminary workflow orchestration fix` (hash: TBD)
+66. [DONE] Git Commit: `docs: verify preliminary workflow orchestration fix` (hash: 106edf5df)
 
 ### Stream: Release Preparation And Build
 
-67. [TODO] `managed-orchestration-kernel.phase10.release.task1` Update release-facing docs for the future retest version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare preliminary workflow orchestration release`).
-68. [TODO] Git Commit: `docs: prepare preliminary workflow orchestration release` (hash: TBD)
+67. [DONE] `managed-orchestration-kernel.phase10.release.task1` Update release-facing docs for the future retest version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare preliminary workflow orchestration release`).
+
+Release preparation target recorded 2026-05-15:
+
+- Current package version before release scripts: `1.2.256`.
+- Future release prepared in `README.md` and `CHANGELOG.md`: `1.2.257`.
+- Release focus: preliminary `Description` and `Virtual Simulation` provider-direct routing through managed workflow metadata, plus `readOnlyStages` projection for Project Manager.
+68. [PENDING] Git Commit: `docs: prepare preliminary workflow orchestration release` (hash: TBD)
 69. [TODO] `managed-orchestration-kernel.phase10.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: generated package/version files + `doc/TODO/todo-plan.md`; expected commit: `chore: build preliminary workflow orchestration release`).
 70. [TODO] Git Commit: `chore: build preliminary workflow orchestration release` (hash: TBD)
 71. [TODO] `managed-orchestration-kernel.phase10.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record preliminary workflow orchestration release`).
