@@ -1,10 +1,7 @@
-import { execFile } from "node:child_process";
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { promisify } from "node:util";
+import { DiagramModulesManagedGitBoundary } from "./diagram-modules-managed-git-boundary";
 import type { DiagramModulesManagedValidationResult } from "./diagram-modules-validator";
-
-const execFileAsync = promisify(execFile);
 
 const PLAN_START = "<!-- codeai-plan-state:start -->";
 const PLAN_END = "<!-- codeai-plan-state:end -->";
@@ -13,8 +10,6 @@ const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
 
 const DIAGRAM_STAGE_PLAN_PATH = "doc/TODO/stages/diagram-modules/todo-plan.md";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
-const GIT_AUTHOR_EMAIL = "codeai-hub@example.local";
-const GIT_AUTHOR_NAME = "CodeAI Hub";
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const FENCED_JSON_END_RE = /\s*```$/u;
 
@@ -62,6 +57,10 @@ export type DiagramModulesStagePlanAdvanceResult =
       readonly blocked: DiagramModulesStagePlanBlocked;
       readonly commit: null;
     };
+
+export interface DiagramModulesStagePlanControllerOptions {
+  readonly gitBoundary?: DiagramModulesManagedGitBoundary;
+}
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -263,41 +262,14 @@ const uniqueExistingPaths = async (
   return existing;
 };
 
-const git = async (
-  workspaceRoot: string,
-  args: readonly string[]
-): Promise<string> => {
-  const { stdout } = await execFileAsync("git", args, {
-    cwd: workspaceRoot,
-  });
-  return stdout.trim();
-};
-
-const tryGit = async (
-  workspaceRoot: string,
-  args: readonly string[]
-): Promise<boolean> => {
-  try {
-    await git(workspaceRoot, args);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const ensureGitRepository = async (workspaceRoot: string): Promise<void> => {
-  if (!(await tryGit(workspaceRoot, ["rev-parse", "--is-inside-work-tree"]))) {
-    await git(workspaceRoot, ["init"]);
-  }
-  if (!(await tryGit(workspaceRoot, ["config", "user.email"]))) {
-    await git(workspaceRoot, ["config", "user.email", GIT_AUTHOR_EMAIL]);
-  }
-  if (!(await tryGit(workspaceRoot, ["config", "user.name"]))) {
-    await git(workspaceRoot, ["config", "user.name", GIT_AUTHOR_NAME]);
-  }
-};
-
 export class DiagramModulesStagePlanController {
+  private readonly gitBoundary: DiagramModulesManagedGitBoundary;
+
+  constructor(options: DiagramModulesStagePlanControllerOptions = {}) {
+    this.gitBoundary =
+      options.gitBoundary ?? new DiagramModulesManagedGitBoundary();
+  }
+
   async commitAcceptedTurn(params: {
     readonly decision: DiagramModulesManagedValidationResult;
     readonly sessionId: string;
@@ -355,16 +327,12 @@ export class DiagramModulesStagePlanController {
     ]);
 
     try {
-      await ensureGitRepository(params.workspaceRoot);
-      await git(params.workspaceRoot, ["add", "--", ...managedPaths]);
-      if (
-        await tryGit(params.workspaceRoot, [
-          "diff",
-          "--cached",
-          "--quiet",
-          "--",
-        ])
-      ) {
+      const gitCommit = await this.gitBoundary.commitManagedChanges({
+        commitMessage,
+        managedPaths,
+        workspaceRoot: params.workspaceRoot,
+      });
+      if (gitCommit.noStagedChanges || !gitCommit.hash) {
         return {
           blocked: {
             message: `No staged managed changes for commit "${commitMessage}".`,
@@ -373,15 +341,9 @@ export class DiagramModulesStagePlanController {
           commit: null,
         };
       }
-      await git(params.workspaceRoot, ["commit", "-m", commitMessage]);
-      const hash = await git(params.workspaceRoot, [
-        "rev-parse",
-        "--short",
-        "HEAD",
-      ]);
       await this.recordCommit({
         commitMessage,
-        hash,
+        hash: gitCommit.hash,
         next,
         sessionId: params.sessionId,
         stagePlanText,
@@ -393,7 +355,7 @@ export class DiagramModulesStagePlanController {
         blocked: null,
         commit: {
           expectedCommitMessage: commitMessage,
-          hash,
+          hash: gitCommit.hash,
           nextTaskId: next.taskId,
         },
       };

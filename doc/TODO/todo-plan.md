@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "2209d1dd0",
+  "lastRecordedCommit": "bd341d526",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase21.retest-blocker.task1",
-  "expectedCommitMessage": "docs: open diagram modules managed boundary repair stream",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase22.git-boundary.task1",
+  "expectedCommitMessage": "fix: retry diagram modules managed git lock boundary",
   "debt": {
-    "expectedCommitMessage": "docs: open diagram modules managed boundary repair stream",
-    "preCommitHead": "2209d1dd0",
+    "expectedCommitMessage": "fix: retry diagram modules managed git lock boundary",
+    "preCommitHead": "bd341d526",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase21.retest-blocker.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase22.git-boundary.task1"
   }
 }
 ```
@@ -450,14 +450,14 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Repair Planning
 
 94. [DONE] `diagram-plan-lifecycle-repair.phase21.retest-blocker.task1` Record release 261 retest failure and open bounded repair streams for Diagram Modules managed Git lock recovery and Core message localization (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open diagram modules managed boundary repair stream`).
-95. [PENDING] Git Commit: `docs: open diagram modules managed boundary repair stream` (hash: TBD)
+95. [DONE] Git Commit: `docs: open diagram modules managed boundary repair stream` (hash: bd341d526)
 
 ## Phase 22 — Diagram Modules Managed Git Boundary Recovery (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Git Lock Retry And Commit Boundary
 
-96. [TODO] `diagram-plan-lifecycle-repair.phase22.git-boundary.task1` Add a workspace-scoped managed Git boundary with retry/backoff for transient `.git/index.lock` failures and keep Diagram Modules continuation blocked until the commit hash is recorded (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `fix: retry diagram modules managed git lock boundary`).
-97. [TODO] Git Commit: `fix: retry diagram modules managed git lock boundary` (hash: TBD)
+96. [DONE] `diagram-plan-lifecycle-repair.phase22.git-boundary.task1` Add a workspace-scoped managed Git boundary with retry/backoff for transient `.git/index.lock` failures and keep Diagram Modules continuation blocked until the commit hash is recorded (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `fix: retry diagram modules managed git lock boundary`).
+97. [PENDING] Git Commit: `fix: retry diagram modules managed git lock boundary` (hash: TBD)
 
 ## Phase 23 — Core Message Localization (owner: Codex, updated: 2026-05-15)
 
