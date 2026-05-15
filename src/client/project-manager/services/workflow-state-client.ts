@@ -69,9 +69,11 @@ export type TechnicalStageRewriteBoundarySnapshot = {
 
 export type ManagedWorkflowPreviewStageSnapshot = {
   readonly controllerId: string;
+  readonly currentPhase?: Record<string, unknown> | null;
   readonly displayName: string;
   readonly phaseTypes: readonly string[];
-  readonly startPolicy: "provider_direct" | "core_preview_boundary";
+  readonly runStatus?: string;
+  readonly startPolicy: "managed_dispatch" | "provider_direct" | "core_preview_boundary";
 };
 
 export type ManagedWorkflowPreviewSnapshot = {
@@ -335,14 +337,18 @@ const parseManagedWorkflowPreviewStage = (
   if (!(controllerId && displayName)) {
     return null;
   }
+  const startPolicy =
+    payload.startPolicy === "provider_direct" ||
+    payload.startPolicy === "managed_dispatch"
+      ? payload.startPolicy
+      : "core_preview_boundary";
   return {
     controllerId,
+    currentPhase: isRecord(payload.currentPhase) ? payload.currentPhase : null,
     displayName,
     phaseTypes: parseStringArray(payload.phaseTypes),
-    startPolicy:
-      payload.startPolicy === "provider_direct"
-        ? "provider_direct"
-        : "core_preview_boundary",
+    runStatus: readNonEmptyString(payload.runStatus) ?? undefined,
+    startPolicy,
   };
 };
 

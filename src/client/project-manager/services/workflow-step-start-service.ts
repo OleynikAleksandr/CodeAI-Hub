@@ -50,7 +50,10 @@ type ContinuityStageId =
   | "application_skeleton"
   | "quality_gates";
 
-type WorkflowStageStartPolicy = "provider_direct" | "core_preview_boundary";
+type WorkflowStageStartPolicy =
+  | "managed_dispatch"
+  | "provider_direct"
+  | "core_preview_boundary";
 
 type WorkflowStateGetter = (
   workspaceSlug: string,

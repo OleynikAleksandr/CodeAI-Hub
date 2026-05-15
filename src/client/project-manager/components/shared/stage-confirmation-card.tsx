@@ -109,6 +109,8 @@ export const StageConfirmationCard: React.FC<{
     workflowSnapshot.managedWorkflowPreview?.stages.find(
       (item) => item.controllerId === stage
     ) ?? null;
+  const managedPreviewBlocked =
+    managedPreviewStage?.startPolicy === "core_preview_boundary";
 
   const providers = api.getDescriptionProviders();
   const defaultProviderId =
@@ -142,6 +144,7 @@ export const StageConfirmationCard: React.FC<{
     inheritedProviderId !== null && selectedProviderId === inheritedProviderId;
   const canStart =
     !blocked &&
+    !managedPreviewBlocked &&
     !startInFlight &&
     selectedProviderId !== null &&
     selectedProvider?.connected === true;
@@ -349,8 +352,14 @@ export const StageConfirmationCard: React.FC<{
               {managedPreviewTitle}
             </strong>
             <div style={MUTED_TEXT_STYLE}>
-              {managedPreviewStage.displayName} · {managedPreviewStage.controllerId}
+              {managedPreviewStage.displayName} · {managedPreviewStage.controllerId} ·{" "}
+              {managedPreviewStage.startPolicy}
             </div>
+            {managedPreviewStage.runStatus ? (
+              <div style={{ ...MUTED_TEXT_STYLE, marginTop: 4 }}>
+                {managedPreviewStage.runStatus}
+              </div>
+            ) : null}
             <div style={{ ...MUTED_TEXT_STYLE, marginTop: 4 }}>
               {managedPreviewReason}
             </div>

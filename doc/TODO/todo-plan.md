@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "8ffc06d9d",
+  "lastRecordedCommit": "99e2b6e33",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase2.review.task1",
-  "expectedCommitMessage": "feat: add diagram modules user review transitions",
+  "currentTaskId": "prelim-diagram-runtime.phase3.pm.task1",
+  "expectedCommitMessage": "feat: show diagram modules managed orchestration state",
   "debt": {
-    "expectedCommitMessage": "feat: add diagram modules user review transitions",
-    "preCommitHead": "8ffc06d9d",
+    "expectedCommitMessage": "feat: show diagram modules managed orchestration state",
+    "preCommitHead": "99e2b6e33",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase2.review.task1"
+    "taskId": "prelim-diagram-runtime.phase3.pm.task1"
   }
 }
 ```
@@ -85,14 +85,14 @@
 14. [DONE] Git Commit: `feat: validate diagram modules managed turns` (hash: 8ffc06d9d)
 
 15. [DONE] `prelim-diagram-runtime.phase2.review.task1` Add Type B user-intent classification for Diagram Modules review messages: accept opens persistent return, revision routes to provider, ambiguous text receives Core clarification (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-intent-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.test.ts`; expected commit: `feat: add diagram modules user review transitions`).
-16. [PENDING] Git Commit: `feat: add diagram modules user review transitions` (hash: TBD)
+16. [DONE] Git Commit: `feat: add diagram modules user review transitions` (hash: 99e2b6e33)
 
 ## Phase 3 — Project Manager Projection And Regression Coverage (owner: Codex, updated: 2026-05-15)
 
 ### Stream: PM Surface
 
-17. [TODO] `prelim-diagram-runtime.phase3.pm.task1` Update Project Manager workflow state consumption so Description/Virtual Simulation remain provider-direct, Diagram Modules managed phases are visible, and Application Skeleton/Quality Gates remain preview/fail-closed (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `feat: show diagram modules managed orchestration state`).
-18. [TODO] Git Commit: `feat: show diagram modules managed orchestration state` (hash: TBD)
+17. [DONE] `prelim-diagram-runtime.phase3.pm.task1` Update Project Manager workflow state consumption so Description/Virtual Simulation remain provider-direct, Diagram Modules managed phases are visible, and Application Skeleton/Quality Gates remain preview/fail-closed; include the start service because the parsed `managed_dispatch` policy must be accepted by launch gating (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `feat: show diagram modules managed orchestration state`).
+18. [PENDING] Git Commit: `feat: show diagram modules managed orchestration state` (hash: TBD)
 
 19. [TODO] `prelim-diagram-runtime.phase3.tests.task1` Add regression coverage for the visible three-step flow: Description session visibility, Virtual Simulation start visibility, Diagram Modules managed session start, user-review acceptance, and persistent return open projection (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts`; expected commit: `test: cover first trunk orchestration flow`).
 20. [TODO] Git Commit: `test: cover first trunk orchestration flow` (hash: TBD)
