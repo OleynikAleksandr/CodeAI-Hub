@@ -51,6 +51,9 @@ interface SessionProviderEventRouterDependencies {
     sessionId: string,
     event: unknown
   ) => Promise<void>;
+  readonly handleManagedWorkflowTurnCompleted?: (
+    sessionId: string
+  ) => Promise<void>;
   readonly handleSessionContinuityProviderEvent: (
     sessionId: string,
     event: unknown
@@ -306,6 +309,17 @@ export class SessionProviderEventRouter {
           sessionId,
           flowNodeContinuityTask
         );
+        this.deps
+          .handleManagedWorkflowTurnCompleted?.(sessionId)
+          .catch((error: unknown) => {
+            this.deps.logger.warn(
+              "Managed workflow turn completion handler failed",
+              {
+                sessionId,
+                error: error instanceof Error ? error.message : String(error),
+              }
+            );
+          });
       });
   }
 

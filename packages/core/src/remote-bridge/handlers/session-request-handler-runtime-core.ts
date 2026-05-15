@@ -1,6 +1,8 @@
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
+import { validateDiagramModulesManagedArtifacts } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
   type SessionModelBinding,
@@ -55,6 +57,7 @@ interface ClaudeTranslationServiceOwner {
 }
 
 const SETTINGS_FILE_NAME = "settings.json";
+const DIAGRAM_MODULES_STAGE = "diagram_modules";
 
 interface DeferredRuntimeRef<TDependency> {
   get(): TDependency;
@@ -88,6 +91,49 @@ export const resolveClaudeHaikuTranslationServiceForRuntime = (
     | undefined;
   return adapter?.getHaikuTranslationService?.();
 };
+
+const persistDiagramModulesManagedDecision = async (params: {
+  readonly decision: Awaited<
+    ReturnType<typeof validateDiagramModulesManagedArtifacts>
+  >;
+  readonly sessionId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<void> => {
+  const relativePath = `.codeai-hub/${params.workspaceSlug}/workflow/managed/diagram_modules.json`;
+  const absolutePath = path.join(params.workspaceRoot, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(
+    absolutePath,
+    `${JSON.stringify(
+      {
+        schema: "codeai-managed-workflow-diagram-modules-v1",
+        stage: DIAGRAM_MODULES_STAGE,
+        sessionId: params.sessionId,
+        updatedAt: new Date().toISOString(),
+        currentPartId: params.decision.currentPartId,
+        generatedPartIds: params.decision.generatedPartIds,
+        nextAction: params.decision.nextAction,
+        plannedPartIds: params.decision.plannedPartIds,
+        valid: params.decision.valid,
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+};
+
+const buildDiagramModulesRepairMessage = (
+  diagnostics: readonly string[]
+): string =>
+  [
+    "Core проверил текущий Diagram Modules subturn и нашёл ошибки.",
+    "",
+    ...diagnostics.map((diagnostic) => `- ${diagnostic}`),
+    "",
+    "Исправьте только текущий Diagram Modules artifact и остановитесь для повторной Core-проверки.",
+  ].join("\n");
 
 export const createSessionRequestHandlerRuntimeCore = (
   options: SessionRequestHandlerRuntimeDependencies,
@@ -225,6 +271,53 @@ export const createSessionRequestHandlerRuntimeCore = (
       continuity.handleProviderEvent(sessionId, event),
     handleFlowNodeContinuityProviderEvent:
       options.callbacks.handleFlowNodeContinuityProviderEvent,
+    handleManagedWorkflowTurnCompleted: async (sessionId) => {
+      const session = options.sessionManager.getSession(sessionId);
+      if (
+        !(
+          session?.stage === DIAGRAM_MODULES_STAGE &&
+          session.workspacePath &&
+          session.initiativeSlug
+        )
+      ) {
+        return;
+      }
+      const decision = await validateDiagramModulesManagedArtifacts({
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+      await persistDiagramModulesManagedDecision({
+        decision,
+        sessionId,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+      if (!decision.valid) {
+        eventMessages.appendCoreMessage(sessionId, {
+          content: buildDiagramModulesRepairMessage(decision.diagnostics),
+          tag: "managed-workflow-validation",
+        });
+        return;
+      }
+      if (decision.nextAction === "dispatch_next_product_part") {
+        eventMessages.appendCoreMessage(sessionId, {
+          content: `Core принял текущий Diagram Modules artifact. Следующий subturn: ${decision.currentPartId}.`,
+          tag: "managed-workflow-continuation",
+        });
+        if (decision.nextPrompt) {
+          await messageDispatchRef
+            .get()
+            .sendInternalMessage(sessionId, decision.nextPrompt);
+        }
+        return;
+      }
+      if (decision.nextAction === "open_user_review" && decision.nextPrompt) {
+        eventMessages.appendCoreMessage(sessionId, {
+          content: decision.nextPrompt,
+          tag: "managed-workflow-user-review",
+        });
+      }
+    },
     updateBindingWithResolvedId: (sessionId, providerSessionId) =>
       providerBindingService.updateBindingWithResolvedId(
         sessionId,

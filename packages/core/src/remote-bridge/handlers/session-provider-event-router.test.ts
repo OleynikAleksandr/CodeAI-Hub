@@ -274,6 +274,10 @@ test("SessionProviderEventRouter delays turn_completed until provider messages f
       events.push("flow-node");
       return Promise.resolve();
     },
+    handleManagedWorkflowTurnCompleted: () => {
+      events.push("managed");
+      return Promise.resolve();
+    },
     handleSessionContinuityProviderEvent: async () => {
       // noop
     },
@@ -320,6 +324,7 @@ test("SessionProviderEventRouter delays turn_completed until provider messages f
     "messages-flushed",
     "turn_completed",
     "arbitration",
+    "managed",
   ]);
 });
 
