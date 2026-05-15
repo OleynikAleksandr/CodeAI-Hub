@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "c321a5067",
+  "lastRecordedCommit": "bf3ff3dbe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase4.runtime.task2",
-  "expectedCommitMessage": "feat: persist managed workflow core boundary messages",
+  "currentTaskId": "managed-orchestration-kernel.phase5.readmodel.task1",
+  "expectedCommitMessage": "feat: project managed workflow preview state",
   "debt": {
-    "expectedCommitMessage": "feat: persist managed workflow core boundary messages",
-    "preCommitHead": "c321a5067",
+    "expectedCommitMessage": "feat: project managed workflow preview state",
+    "preCommitHead": "bf3ff3dbe",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase4.runtime.task2"
+    "taskId": "managed-orchestration-kernel.phase5.readmodel.task1"
   }
 }
 ```
@@ -122,14 +122,14 @@
 30. [DONE] Git Commit: `feat: route managed stage starts through orchestration facade` (hash: c321a5067)
 
 31. [DONE] `managed-orchestration-kernel.phase4.runtime.task2` Persist the new Core-authored preview messages into the managed session/event feed so user-visible boundary diagnostics survive refresh/restart (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts`; expected commit: `feat: persist managed workflow core boundary messages`).
-32. [PENDING] Git Commit: `feat: persist managed workflow core boundary messages` (hash: TBD)
+32. [DONE] Git Commit: `feat: persist managed workflow core boundary messages` (hash: bf3ff3dbe)
 
 ## Phase 5 — Project Manager Projection And Visual Control Point (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Read Model Projection
 
-33. [TODO] `managed-orchestration-kernel.phase5.readmodel.task1` Add read-only `ManagedWorkflowReadModelProjector` and expose preview status in workflow-state snapshots without commits/provider dispatch (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project managed workflow preview state`).
-34. [TODO] Git Commit: `feat: project managed workflow preview state` (hash: TBD)
+33. [DONE] `managed-orchestration-kernel.phase5.readmodel.task1` Add read-only `ManagedWorkflowReadModelProjector` and expose preview status in workflow-state snapshots without commits/provider dispatch (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project managed workflow preview state`).
+34. [PENDING] Git Commit: `feat: project managed workflow preview state` (hash: TBD)
 
 35. [TODO] `managed-orchestration-kernel.phase5.pm.task1` Update Project Manager technical stage surfaces to show the new orchestration preview boundary, current registered controller, and user-facing reason that step execution is waiting for the next step-specific release (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat: show managed workflow orchestration preview in project manager`).
 36. [TODO] Git Commit: `feat: show managed workflow orchestration preview in project manager` (hash: TBD)

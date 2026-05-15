@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { Request, Response } from "express";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
+import { ManagedWorkflowReadModelProjector } from "../../managed-workflow-orchestration/managed-workflow-read-model-projector";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -78,6 +79,8 @@ export class WorkflowStateService {
   private readonly descriptionStepStore = new DescriptionStepStore();
   private readonly developmentTreeState = new DevelopmentTreeStateFacade();
   private readonly lastActiveStore = new WorkflowLastActiveStore();
+  private readonly managedWorkflowReadModel =
+    new ManagedWorkflowReadModelProjector();
 
   constructor(options: {
     readonly logger: Logger;
@@ -114,6 +117,7 @@ export class WorkflowStateService {
         description: null,
         lastActive: null,
         diagramModulesProgress: null,
+        managedWorkflowPreview: null,
       });
       return;
     }
@@ -276,6 +280,8 @@ export class WorkflowStateService {
                           qualityGatesProgress:
                             technicalStageProgress.qualityGatesProgress,
                         }),
+                      managedWorkflowPreview:
+                        this.managedWorkflowReadModel.project(),
                     });
                   });
                 })
@@ -293,6 +299,7 @@ export class WorkflowStateService {
           description: null,
           lastActive: null,
           diagramModulesProgress: null,
+          managedWorkflowPreview: null,
         });
       });
   }
