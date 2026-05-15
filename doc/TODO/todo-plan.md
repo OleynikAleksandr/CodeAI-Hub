@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "41c404b32",
+  "lastRecordedCommit": "f04cbddb5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "remaining-technical-runtime.phase3.repair.task1",
-  "expectedCommitMessage": "test: align managed workspace dispatch expectation",
+  "currentTaskId": "remaining-technical-runtime.phase3.verify.task1",
+  "expectedCommitMessage": "docs: verify full trunk orchestration flow",
   "debt": {
-    "expectedCommitMessage": "test: align managed workspace dispatch expectation",
-    "preCommitHead": "41c404b32",
+    "expectedCommitMessage": "docs: verify full trunk orchestration flow",
+    "preCommitHead": "f04cbddb5",
     "stage": "commit_pending",
-    "taskId": "remaining-technical-runtime.phase3.repair.task1"
+    "taskId": "remaining-technical-runtime.phase3.verify.task1"
   }
 }
 ```
@@ -149,12 +149,22 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Verification Repair
 
 31. [DONE] `remaining-technical-runtime.phase3.repair.task1` Align the managed-workspace remote-bridge regression test with the new managed dispatch contract for Application Skeleton and Quality Gates after verification exposed stale preview-boundary expectations (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `test: align managed workspace dispatch expectation`).
-32. [PENDING] Git Commit: `test: align managed workspace dispatch expectation` (hash: TBD)
+32. [DONE] Git Commit: `test: align managed workspace dispatch expectation` (hash: f04cbddb5)
 
 ### Stream: Verification
 
-33. [TODO] `remaining-technical-runtime.phase3.verify.task1` Run targeted Core and Project Manager verification for all five trunk steps and record evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify full trunk orchestration flow`).
-34. [TODO] Git Commit: `docs: verify full trunk orchestration flow` (hash: TBD)
+33. [DONE] `remaining-technical-runtime.phase3.verify.task1` Run targeted Core and Project Manager verification for all five trunk steps and record evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify full trunk orchestration flow`).
+34. [PENDING] Git Commit: `docs: verify full trunk orchestration flow` (hash: TBD)
+
+Verification evidence recorded 2026-05-15 after connecting all five trunk steps:
+
+- `npm run build:core` — PASS.
+- `npm run typecheck:webview` — PASS.
+- `node --test packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-state-machine.test.js packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-plan-store.test.js` — PASS, 17 tests.
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/session-request-handler.documentation-rollover.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js` — PASS, 9 tests.
+- `npx tsx --test src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/layout/main-area-panel-content.test.ts` — PASS, 17 tests.
+- `npm run build:webview` — PASS.
+- `npm run plan:validate` — PASS.
 
 ## Phase 7 — Release Build (owner: Codex + User, updated: 2026-05-15)
 
