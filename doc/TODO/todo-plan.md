@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "33c27f80e",
+  "lastRecordedCommit": "f42a5fb08",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase3.recovery.task1",
-  "expectedCommitMessage": "feat: add managed workflow recovery arbiter baseline",
+  "currentTaskId": "managed-orchestration-kernel.phase4.provider-gateway.task1",
+  "expectedCommitMessage": "feat: add managed workflow provider gateway preview",
   "debt": {
-    "expectedCommitMessage": "feat: add managed workflow recovery arbiter baseline",
-    "preCommitHead": "33c27f80e",
+    "expectedCommitMessage": "feat: add managed workflow provider gateway preview",
+    "preCommitHead": "f42a5fb08",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase3.recovery.task1"
+    "taskId": "managed-orchestration-kernel.phase4.provider-gateway.task1"
   }
 }
 ```
@@ -109,14 +109,14 @@
 24. [DONE] Git Commit: `feat: add managed workflow commit transaction boundary` (hash: 33c27f80e)
 
 25. [DONE] `managed-orchestration-kernel.phase3.recovery.task1` Add baseline `ManagedWorkflowRecoveryArbiter` decisions for wait-user, wait-provider, retry-provider, blocked, and panic-stop states (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-recovery-arbiter.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-recovery-arbiter.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-snapshot.ts`; expected commit: `feat: add managed workflow recovery arbiter baseline`).
-26. [PENDING] Git Commit: `feat: add managed workflow recovery arbiter baseline` (hash: TBD)
+26. [DONE] Git Commit: `feat: add managed workflow recovery arbiter baseline` (hash: f42a5fb08)
 
 ## Phase 4 — Runtime Boundary Integration (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Provider And Runtime Gateway
 
-27. [TODO] `managed-orchestration-kernel.phase4.provider-gateway.task1` Add provider-neutral `ManagedWorkflowProviderGateway` preview boundary that can produce visible Core messages but cannot yet dispatch step work to providers (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-provider-gateway.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-core-message.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-provider-gateway.test.ts`; expected commit: `feat: add managed workflow provider gateway preview`).
-28. [TODO] Git Commit: `feat: add managed workflow provider gateway preview` (hash: TBD)
+27. [DONE] `managed-orchestration-kernel.phase4.provider-gateway.task1` Add provider-neutral `ManagedWorkflowProviderGateway` preview boundary that can produce visible Core messages but cannot yet dispatch step work to providers (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-provider-gateway.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-core-message.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-provider-gateway.test.ts`; expected commit: `feat: add managed workflow provider gateway preview`).
+28. [PENDING] Git Commit: `feat: add managed workflow provider gateway preview` (hash: TBD)
 
 29. [TODO] `managed-orchestration-kernel.phase4.runtime.task1` Route managed technical stage starts through `ManagedWorkflowOrchestrationFacade` so Diagram Modules/Application Skeleton/Quality Gates use the new preview boundary instead of a generic fail-closed message (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts`; expected commit: `feat: route managed stage starts through orchestration facade`).
 30. [TODO] Git Commit: `feat: route managed stage starts through orchestration facade` (hash: TBD)
