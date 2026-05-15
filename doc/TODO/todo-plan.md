@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "4ab225b1a",
+  "lastRecordedCommit": "b4f449860",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase29.release.task2",
-  "expectedCommitMessage": "chore: build release 263 cosmetic update",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase29.release.task3",
+  "expectedCommitMessage": "docs: record release 263 cosmetic handoff",
   "debt": {
-    "expectedCommitMessage": "chore: build release 263 cosmetic update",
-    "preCommitHead": "4ab225b1a",
+    "expectedCommitMessage": "docs: record release 263 cosmetic handoff",
+    "preCommitHead": "b4f449860",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase29.release.task2"
+    "taskId": "diagram-plan-lifecycle-repair.phase29.release.task3"
   }
 }
 ```
@@ -574,7 +574,7 @@ Release 263 preparation target:
 - Release payload: Diagram Modules sidebar marker timing fix and Core/system dialog message card styling.
 
 126. [DONE] `diagram-plan-lifecycle-repair.phase29.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 263 cosmetic update`).
-127. [PENDING] Git Commit: `chore: build release 263 cosmetic update` (hash: TBD)
+127. [DONE] Git Commit: `chore: build release 263 cosmetic update` (hash: b4f449860)
 
 Release build-all evidence recorded 2026-05-15:
 
@@ -583,8 +583,16 @@ Release build-all evidence recorded 2026-05-15:
 - Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.263.tar.bz2`, `codex-module-1.2.263.tar.bz2`, `gemini-module-1.2.263.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.263.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.263.tar.bz2`, `vscode-webview-1.2.263.tar.bz2`, `project-manager-1.2.263.tar.bz2`.
 - Updated package versions and managed release manifests to `1.2.263`.
 
-128. [TODO] `diagram-plan-lifecycle-repair.phase29.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 263 cosmetic handoff`).
-129. [TODO] Git Commit: `docs: record release 263 cosmetic handoff` (hash: TBD)
+128. [DONE] `diagram-plan-lifecycle-repair.phase29.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 263 cosmetic handoff`).
+129. [PENDING] Git Commit: `docs: record release 263 cosmetic handoff` (hash: TBD)
+
+Release VSIX evidence recorded 2026-05-15:
+
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Verified release-script milestones: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
+- Advisory release-script diagnostics: `check:links` reported 17 existing broken Markdown anchors in managed-step planning docs; the release script treated them as advisory and completed. Package-size warning remained expected for the current VSIX surface over 20MB.
+- VSIX package: `codeai-hub-1.2.263.vsix` (`47M`; script package-size check reported `48M`).
+- Release runtime archives remain available in `doc/tmp/releases/` for version `1.2.263`.
 
 ## Phase 30 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
