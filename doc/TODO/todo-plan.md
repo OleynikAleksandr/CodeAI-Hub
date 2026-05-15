@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "ea709a612",
+  "lastRecordedCommit": "2209d1dd0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase19.release.task3",
-  "expectedCommitMessage": "docs: record diagram modules managed plan lifecycle release",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase21.retest-blocker.task1",
+  "expectedCommitMessage": "docs: open diagram modules managed boundary repair stream",
   "debt": {
-    "expectedCommitMessage": "docs: record diagram modules managed plan lifecycle release",
-    "preCommitHead": "ea709a612",
+    "expectedCommitMessage": "docs: open diagram modules managed boundary repair stream",
+    "preCommitHead": "2209d1dd0",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase19.release.task3"
+    "taskId": "diagram-plan-lifecycle-repair.phase21.retest-blocker.task1"
   }
 }
 ```
@@ -429,7 +429,7 @@ Release build-all evidence recorded 2026-05-15:
 - Updated package versions and managed release manifests to `1.2.261`.
 
 91. [DONE] `diagram-plan-lifecycle-repair.phase19.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules managed plan lifecycle release`).
-92. [PENDING] Git Commit: `docs: record diagram modules managed plan lifecycle release` (hash: TBD)
+92. [DONE] Git Commit: `docs: record diagram modules managed plan lifecycle release` (hash: 2209d1dd0)
 
 Release VSIX evidence recorded 2026-05-15:
 
@@ -443,11 +443,73 @@ Release VSIX evidence recorded 2026-05-15:
 
 ### Stream: User Acceptance
 
-93. [TODO] `diagram-plan-lifecycle-repair.phase20.user-acceptance.task1` User installs the rebuilt release and verifies: Diagram Modules start creates managed scaffold, each accepted index/Product Part subturn receives a real Git commit and stage-plan hash, next Product Part microtasks are injected, Phase 2 user review appears in `doc/TODO/stages/diagram-modules/todo-plan.md`, and continuation/review messages appear only after the managed commit boundary succeeds (scope: user workflow; expected commit: none).
+93. [DONE] `diagram-plan-lifecycle-repair.phase20.user-acceptance.task1` User installs the rebuilt release and verifies: Diagram Modules start creates managed scaffold, each accepted index/Product Part subturn receives a real Git commit and stage-plan hash, next Product Part microtasks are injected, Phase 2 user review appears in `doc/TODO/stages/diagram-modules/todo-plan.md`, and continuation/review messages appear only after the managed commit boundary succeeds (scope: user workflow; expected commit: none). Result: Release 261 user retest found a Diagram Modules managed commit blocker: transient .git/index.lock stopped Core before the commit boundary, and Core/system messages need localization through Messages for the User.
 
-## Phase 21 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 21 — Release 261 Retest Blocker Intake (owner: Codex, updated: 2026-05-15)
+
+### Stream: Repair Planning
+
+94. [DONE] `diagram-plan-lifecycle-repair.phase21.retest-blocker.task1` Record release 261 retest failure and open bounded repair streams for Diagram Modules managed Git lock recovery and Core message localization (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open diagram modules managed boundary repair stream`).
+95. [PENDING] Git Commit: `docs: open diagram modules managed boundary repair stream` (hash: TBD)
+
+## Phase 22 — Diagram Modules Managed Git Boundary Recovery (owner: Codex, updated: 2026-05-15)
+
+### Stream: Git Lock Retry And Commit Boundary
+
+96. [TODO] `diagram-plan-lifecycle-repair.phase22.git-boundary.task1` Add a workspace-scoped managed Git boundary with retry/backoff for transient `.git/index.lock` failures and keep Diagram Modules continuation blocked until the commit hash is recorded (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `fix: retry diagram modules managed git lock boundary`).
+97. [TODO] Git Commit: `fix: retry diagram modules managed git lock boundary` (hash: TBD)
+
+## Phase 23 — Core Message Localization (owner: Codex, updated: 2026-05-15)
+
+### Stream: Messages For The User Pipeline
+
+98. [TODO] `diagram-plan-lifecycle-repair.phase23.localization-policy.task1` Extend session translation policy so Core/system dialog messages resolve target language from Settings > General > Messages for the User instead of the reasoning category (scope: `packages/core/src/session-translation/session-translation-policy-resolver.ts, packages/core/src/session-translation/session-translation-policy-resolver.test.ts, packages/core/src/session-translation/session-translation-dispatcher.ts`; expected commit: `feat: add messages-for-user session translation policy`).
+99. [TODO] Git Commit: `feat: add messages-for-user session translation policy` (hash: TBD)
+
+100. [TODO] `diagram-plan-lifecycle-repair.phase23.localization-runtime.task1` Route Core/system dialog messages through the session translation overlay while preserving source text, message ids, tags, and persisted translation patches (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/session-translation/session-translation-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`; expected commit: `feat: translate core system dialog messages`).
+101. [TODO] Git Commit: `feat: translate core system dialog messages` (hash: TBD)
+
+102. [TODO] `diagram-plan-lifecycle-repair.phase23.diagram-core-messages.task1` Replace Diagram Modules Core visible status/blocker strings with localization-ready message builders and avoid blind translation of DSL paths, ids, headings, or embedded prompt instructions (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `feat: localize diagram modules core workflow messages`).
+103. [TODO] Git Commit: `feat: localize diagram modules core workflow messages` (hash: TBD)
+
+## Phase 24 — Documentation And Tooling Verification (owner: Codex, updated: 2026-05-15)
+
+### Stream: Architecture Sync And Targeted Checks
+
+104. [TODO] `diagram-plan-lifecycle-repair.phase24.docs.task1` Document the managed Git boundary retry contract and Core message localization policy in system workflow docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document managed boundary and core message localization`).
+105. [TODO] Git Commit: `docs: document managed boundary and core message localization` (hash: TBD)
+
+106. [TODO] `diagram-plan-lifecycle-repair.phase24.verify.task1` Run targeted core/session translation tests plus `npm run build:core` and record evidence before release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed boundary and localization repair`).
+107. [TODO] Git Commit: `docs: verify managed boundary and localization repair` (hash: TBD)
+
+## Phase 25 — Release Build Confirmation For Managed Boundary Repair (owner: Codex + User, updated: 2026-05-15)
+
+### Stream: Release Build Confirmation
+
+108. [TODO] `diagram-plan-lifecycle-repair.phase25.release-confirmation.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the managed boundary and localization repair (scope: user workflow; expected commit: none).
+
+## Phase 26 — Release Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation And Build
+
+109. [TODO] `diagram-plan-lifecycle-repair.phase26.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed boundary and localization release`).
+110. [TODO] Git Commit: `docs: prepare managed boundary and localization release` (hash: TBD)
+
+111. [TODO] `diagram-plan-lifecycle-repair.phase26.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed boundary and localization release`).
+112. [TODO] Git Commit: `chore: build managed boundary and localization release` (hash: TBD)
+
+113. [TODO] `diagram-plan-lifecycle-repair.phase26.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed boundary and localization release`).
+114. [TODO] Git Commit: `docs: record managed boundary and localization release` (hash: TBD)
+
+## Phase 27 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+115. [TODO] `diagram-plan-lifecycle-repair.phase27.user-acceptance.task1` User installs the rebuilt release and verifies: transient Git lock during Diagram Modules managed commit boundary retries instead of stopping the stage, persistent lock reports a localized Core blocker, Core/system dialog messages use the selected Messages for the User language, and Product Part continuation resumes only after a recorded commit hash (scope: user workflow; expected commit: none).
+
+## Phase 28 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-94. [TODO] `prelim-diagram-runtime.phase21.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-95. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+116. [TODO] `diagram-plan-lifecycle-repair.phase28.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+117. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
