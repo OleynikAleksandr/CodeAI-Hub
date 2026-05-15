@@ -32,6 +32,8 @@ const QUALITY_GATES_PATH_KEYS = new Set([
   "plannedPaths",
 ]);
 const QG_TSCONFIG_RE = /^tsconfig\.qg(?:\.[a-z0-9-]+)?\.json$/u;
+const MANAGED_WORKSPACE_LEDGER_RE =
+  /^doc\/TODO\/(?:workspace\.plan\.md|stages\/(?:application-skeleton|diagram-modules|quality-gates)\/todo-plan\.md)$/u;
 const PATH_SEGMENT_SEPARATOR_RE = /[\\/]+/u;
 
 const isVolatileCoreMetadataPath = (
@@ -39,6 +41,7 @@ const isVolatileCoreMetadataPath = (
   workspaceSlug: string
 ): boolean =>
   file.startsWith(".codeai-hub/state/") ||
+  MANAGED_WORKSPACE_LEDGER_RE.test(file) ||
   file.startsWith("node_modules/") ||
   file === `.codeai-hub/${workspaceSlug}/description/description-step.json`;
 

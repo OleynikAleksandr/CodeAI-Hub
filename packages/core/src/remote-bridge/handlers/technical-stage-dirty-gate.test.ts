@@ -321,6 +321,16 @@ test("technical stage dirty status ignores volatile Core metadata after restart"
         2
       )}\n`
     );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/workspace.plan.md",
+      "# Managed Workspace Plan\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md",
+      "# Diagram Modules Managed TODO Plan\n"
+    );
 
     const status = await readTechnicalStageDirtyStatus(
       workspaceRoot,
