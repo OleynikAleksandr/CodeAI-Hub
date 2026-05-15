@@ -2,11 +2,15 @@ import type { ManagedWorkflowStageId } from "./managed-workflow-orchestration-co
 import type { ManagedWorkflowStepController } from "./managed-workflow-step-controller";
 import { assertControllerStageMatch } from "./managed-workflow-step-controller";
 import { applicationSkeletonStepController } from "./steps/application-skeleton-step-controller";
+import { descriptionStepController } from "./steps/description-step-controller";
 import { diagramModulesStepController } from "./steps/diagram-modules-step-controller";
 import { qualityGatesStepController } from "./steps/quality-gates-step-controller";
+import { virtualSimulationStepController } from "./steps/virtual-simulation-step-controller";
 
 const DEFAULT_MANAGED_WORKFLOW_CONTROLLERS: readonly ManagedWorkflowStepController[] =
   [
+    descriptionStepController,
+    virtualSimulationStepController,
     diagramModulesStepController,
     applicationSkeletonStepController,
     qualityGatesStepController,

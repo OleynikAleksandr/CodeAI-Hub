@@ -1,19 +1,26 @@
 export type ManagedWorkflowStageId =
+  | "description"
+  | "virtual_simulation"
   | "diagram_modules"
   | "application_skeleton"
   | "quality_gates";
 
 export type ManagedWorkflowPhaseType =
+  | "provider_direct"
   | "core_gated"
   | "user_led_review"
   | "persistent_user_return";
 
 export type ManagedWorkflowRuntimeMode = "preview";
+export type ManagedWorkflowStageStartPolicy =
+  | "provider_direct"
+  | "core_preview_boundary";
 
 export interface ManagedWorkflowStageDescriptor {
   readonly displayName: string;
   readonly phaseTypes: readonly ManagedWorkflowPhaseType[];
   readonly stageId: ManagedWorkflowStageId;
+  readonly startPolicy?: ManagedWorkflowStageStartPolicy;
 }
 
 export interface ManagedWorkflowStageStartRequest {

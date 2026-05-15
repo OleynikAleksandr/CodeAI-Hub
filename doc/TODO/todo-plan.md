@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "c46d10caf",
+  "lastRecordedCommit": "c2d9637fc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase9.scope.task1",
-  "expectedCommitMessage": "docs: plan preliminary workflow orchestration integration",
+  "currentTaskId": "managed-orchestration-kernel.phase9.contract.task1",
+  "expectedCommitMessage": "feat: add preliminary workflow step controllers",
   "debt": {
-    "expectedCommitMessage": "docs: plan preliminary workflow orchestration integration",
-    "preCommitHead": "c46d10caf",
+    "expectedCommitMessage": "feat: add preliminary workflow step controllers",
+    "preCommitHead": "c2d9637fc",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase9.scope.task1"
+    "taskId": "managed-orchestration-kernel.phase9.contract.task1"
   }
 }
 ```
@@ -210,14 +210,12 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Scope Extension
 
 49. [DONE] `managed-orchestration-kernel.phase9.scope.task1` Convert the failed v1.2.256 user acceptance into a focused two-phase follow-up: integrate Description and Virtual Simulation into the new orchestrator as provider-direct preliminary steps, remove duplicated start/read-only decisions from UI/service code, then rebuild a retest release (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan preliminary workflow orchestration integration`).
-50. [PENDING] Git Commit: `docs: plan preliminary workflow orchestration integration` (hash: TBD)
+50. [DONE] Git Commit: `docs: plan preliminary workflow orchestration integration` (hash: c2d9637fc)
 
 ### Stream: Step Contract And Registry
 
-51. [TODO] `managed-orchestration-kernel.phase9.contract.task1` Add explicit start policy metadata for managed workflow step controllers and create provider-direct preliminary controllers for Description and Virtual Simulation without changing provider transport behavior (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts`; expected commit: `feat: add preliminary workflow step controllers`).
-52. [TODO] Git Commit: `feat: add preliminary workflow step controllers` (hash: TBD)
-53. [TODO] `managed-orchestration-kernel.phase9.registry.task1` Register all five workflow trunk steps in the new registry while keeping Core preview boundary decisions limited to technical `core_preview_boundary` stages, not provider-direct preliminary stages (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: route preliminary steps through orchestrator registry`).
-54. [TODO] Git Commit: `feat: route preliminary steps through orchestrator registry` (hash: TBD)
+51. [DONE] `managed-orchestration-kernel.phase9.contract.task1` Add explicit start policy metadata, create provider-direct preliminary controllers, register all five workflow trunk steps, and keep Core preview boundary decisions limited to technical `core_preview_boundary` stages. This task intentionally absorbs the former registry-only slice because `knip` requires new controller files to be live-referenced before commit (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts`; expected commit: `feat: add preliminary workflow step controllers`).
+52. [PENDING] Git Commit: `feat: add preliminary workflow step controllers` (hash: TBD)
 
 ### Stream: Read Model And State Ownership
 

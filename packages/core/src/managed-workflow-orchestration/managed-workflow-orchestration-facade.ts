@@ -7,6 +7,15 @@ import type {
 } from "./managed-workflow-orchestration-contracts";
 import { ManagedWorkflowStepRegistry } from "./managed-workflow-step-registry";
 
+const DEFAULT_STAGE_START_POLICY = "core_preview_boundary";
+
+const describeControllerStage = (controller: {
+  readonly descriptor: ManagedWorkflowStageDescriptor;
+}): ManagedWorkflowStageDescriptor => ({
+  ...controller.descriptor,
+  startPolicy: controller.descriptor.startPolicy ?? DEFAULT_STAGE_START_POLICY,
+});
+
 export class ManagedWorkflowOrchestrationFacade
   implements ManagedWorkflowOrchestrationFacadeContract
 {
@@ -21,11 +30,12 @@ export class ManagedWorkflowOrchestrationFacade
   }
 
   describeStage(stageId: string): ManagedWorkflowStageDescriptor | null {
-    return this.#registry.get(stageId)?.descriptor ?? null;
+    const controller = this.#registry.get(stageId);
+    return controller ? describeControllerStage(controller) : null;
   }
 
   listRegisteredStages(): readonly ManagedWorkflowStageDescriptor[] {
-    return this.#registry.list().map((controller) => controller.descriptor);
+    return this.#registry.list().map(describeControllerStage);
   }
 
   previewStageStart(
@@ -35,18 +45,22 @@ export class ManagedWorkflowOrchestrationFacade
     if (!controller) {
       return null;
     }
+    const stage = describeControllerStage(controller);
+    if (stage.startPolicy === "provider_direct") {
+      return null;
+    }
     const preview = controller.createPreviewBoundary(request);
 
     return {
       canDispatchProvider: false,
       code: preview.code,
-      controllerId: controller.descriptor.stageId,
+      controllerId: stage.stageId,
       message: [
         "Managed Workflow Orchestration cluster preview boundary.",
         preview.message,
       ].join("\n"),
       mode: "preview",
-      stage: controller.descriptor,
+      stage,
     };
   }
 }
