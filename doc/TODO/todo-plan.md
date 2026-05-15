@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "a3bf48b96",
+  "lastRecordedCommit": "c80eb60b4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase9.pm.task2",
-  "expectedCommitMessage": "feat: route preliminary step starts through orchestrator metadata",
+  "currentTaskId": "managed-orchestration-kernel.phase9.tests.task1",
+  "expectedCommitMessage": "test: cover preliminary workflow orchestration visibility",
   "debt": {
-    "expectedCommitMessage": "feat: route preliminary step starts through orchestrator metadata",
-    "preCommitHead": "a3bf48b96",
+    "expectedCommitMessage": "test: cover preliminary workflow orchestration visibility",
+    "preCommitHead": "c80eb60b4",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase9.pm.task2"
+    "taskId": "managed-orchestration-kernel.phase9.tests.task1"
   }
 }
 ```
@@ -227,12 +227,12 @@ Verification evidence recorded 2026-05-15:
 57. [DONE] `managed-orchestration-kernel.phase9.pm.task1` Replace Project Manager's local preview-as-lock predicate with the orchestrator read-only projection so Description sessions and Virtual Simulation start cards stay visible until a real downstream technical step starts (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `fix: consume orchestrator read-only projection`).
 58. [DONE] Git Commit: `fix: consume orchestrator read-only projection` (hash: a3bf48b96)
 59. [DONE] `managed-orchestration-kernel.phase9.pm.task2` Route preliminary step start metadata and existing-session lookup through orchestrator-owned stage metadata while preserving current Description/Virtual Simulation provider-direct session transport (scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/workflow-stage-tool-routing.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat: route preliminary step starts through orchestrator metadata`).
-60. [PENDING] Git Commit: `feat: route preliminary step starts through orchestrator metadata` (hash: TBD)
+60. [DONE] Git Commit: `feat: route preliminary step starts through orchestrator metadata` (hash: c80eb60b4)
 
 ### Stream: Regression Coverage
 
-61. [TODO] `managed-orchestration-kernel.phase9.tests.task1` Add Project Manager regression coverage proving completed Description still shows/restores its session, Virtual Simulation card appears after Description completion, and technical stages still show the managed preview boundary (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover preliminary workflow orchestration visibility`).
-62. [TODO] Git Commit: `test: cover preliminary workflow orchestration visibility` (hash: TBD)
+61. [DONE] `managed-orchestration-kernel.phase9.tests.task1` Add Project Manager regression coverage proving completed Description still shows/restores its session, Virtual Simulation card appears after Description completion, and technical stages still show the managed preview boundary (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover preliminary workflow orchestration visibility`).
+62. [PENDING] Git Commit: `test: cover preliminary workflow orchestration visibility` (hash: TBD)
 63. [TODO] `managed-orchestration-kernel.phase9.tests.task2` Add Core regression coverage proving Description and Virtual Simulation are registered provider-direct steps that do not create Core preview boundary sessions, while technical stages still do (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover provider-direct preliminary step policy`).
 64. [TODO] Git Commit: `test: cover provider-direct preliminary step policy` (hash: TBD)
 

@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { Settings } from "../../ui/src/components/settings/settings-state-model";
 import type { WorkflowStateSnapshot } from "./workflow-state-client";
-
 const installWindowStub = (): void => {
   if ("window" in globalThis) {
     return;
@@ -22,7 +21,6 @@ const installWindowStub = (): void => {
     } as unknown as Window & typeof globalThis,
   });
 };
-
 const createWorkflowState = (
   overrides?: Partial<WorkflowStateSnapshot>
 ): WorkflowStateSnapshot => ({
@@ -47,9 +45,15 @@ const createWorkflowState = (
       quality_gates: false,
     },
   },
+  managedWorkflowPreview: {
+    active: true,
+    mode: "preview",
+    readOnlyStages: [],
+    reason: "Managed Workflow Orchestration cluster is active.",
+    stages: [],
+  },
   ...overrides,
 });
-
 const createSettings = (): Settings => ({
   general: {
     coreControls: { allowRestart: true },
@@ -301,6 +305,13 @@ test("startVirtualSimulation is read-only after Diagram Modules starts", async (
           diagram_modules: "in_progress",
           application_skeleton: "idle",
           quality_gates: "idle",
+        },
+        managedWorkflowPreview: {
+          active: true,
+          mode: "preview",
+          readOnlyStages: ["virtual_simulation"],
+          reason: "Managed Workflow Orchestration cluster is active.",
+          stages: [],
         },
       }),
     submitService: {
