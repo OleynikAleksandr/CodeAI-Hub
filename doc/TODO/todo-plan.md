@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "87f640717",
+  "lastRecordedCommit": "5574cc648",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase6.verify.task1",
-  "expectedCommitMessage": "docs: verify managed workflow kernel runtime slice",
+  "currentTaskId": "managed-orchestration-kernel.phase7.release.task1",
+  "expectedCommitMessage": "docs: prepare managed workflow kernel runtime release",
   "debt": {
-    "expectedCommitMessage": "docs: verify managed workflow kernel runtime slice",
-    "preCommitHead": "87f640717",
+    "expectedCommitMessage": "docs: prepare managed workflow kernel runtime release",
+    "preCommitHead": "5574cc648",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase6.verify.task1"
+    "taskId": "managed-orchestration-kernel.phase7.release.task1"
   }
 }
 ```
@@ -142,7 +142,7 @@
 ### Stream: Targeted Verification
 
 39. [DONE] `managed-orchestration-kernel.phase6.verify.task1` Run targeted core and Project Manager builds/tests for the new cluster boundary and record exact verification evidence in this plan; verify providerless boundary snapshot typing discovered during typecheck (scope: `doc/TODO/todo-plan.md, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `docs: verify managed workflow kernel runtime slice`).
-40. [PENDING] Git Commit: `docs: verify managed workflow kernel runtime slice` (hash: TBD)
+40. [DONE] Git Commit: `docs: verify managed workflow kernel runtime slice` (hash: 5574cc648)
 
 Expected verification commands:
 
@@ -166,12 +166,12 @@ Verification evidence recorded 2026-05-15:
 
 ### Stream: Release Build Confirmation
 
-41. [TODO] `managed-orchestration-kernel.phase7.release-confirmation.task1` Ask the user for explicit release build confirmation after implementation and tooling verification pass; do not prepare release notes or run build scripts before confirmation (scope: user workflow; expected commit: not required).
+41. [DONE] `managed-orchestration-kernel.phase7.release-confirmation.task1` Ask the user for explicit release build confirmation after implementation and tooling verification pass; do not prepare release notes or run build scripts before confirmation (scope: user workflow; expected commit: not required). Result: confirmed by the user request to continue through release build without pauses.
 
 ### Stream: Release Preparation And Build
 
-42. [TODO] `managed-orchestration-kernel.phase7.release.task1` After explicit confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed workflow kernel runtime release`).
-43. [TODO] Git Commit: `docs: prepare managed workflow kernel runtime release` (hash: TBD)
+42. [DONE] `managed-orchestration-kernel.phase7.release.task1` After explicit confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed workflow kernel runtime release`).
+43. [PENDING] Git Commit: `docs: prepare managed workflow kernel runtime release` (hash: TBD)
 44. [TODO] `managed-orchestration-kernel.phase7.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: generated package/version files + `doc/TODO/todo-plan.md`; expected commit: `chore: build managed workflow kernel runtime release`).
 45. [TODO] Git Commit: `chore: build managed workflow kernel runtime release` (hash: TBD)
 46. [TODO] `managed-orchestration-kernel.phase7.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow kernel runtime release`).

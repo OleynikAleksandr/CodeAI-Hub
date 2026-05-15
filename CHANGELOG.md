@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.256] - 2026-05-15
+### Added
+- **Managed Workflow Orchestration preview boundary.** Core now exposes a read-only `ManagedWorkflowOrchestrationFacade` slice with registered controllers for `Diagram Modules`, `Application Skeleton`, and `Quality Gates`.
+- **Project Manager visual control point.** Technical stage cards show the new managed preview status, registered controller, and Core-owned reason before full provider dispatch is restored in step-specific releases.
+
+### Changed
+- **Managed technical stage starts fail through the new Core boundary instead of the retired generated orchestrator.** Starting a managed technical stage creates a Core-authored preview session message and avoids native provider dispatch.
+
+### Tests
+- `npm run build:core`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- Targeted Core managed workflow/session tests: 27 passed.
+- Targeted Project Manager preview/session tests: 26 passed.
+
 ## [1.2.255] - 2026-05-14
 ### Changed
 - **Clean servicing-tail audit rebuild.** Confirms `scripts/plan-orchestrator/**` is repository plan-lifecycle tooling for `npm run plan:*` and Husky hooks, not the removed managed step/workflow orchestrator.
