@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "6888c075a",
+  "lastRecordedCommit": "a43ae6776",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task1",
-  "expectedCommitMessage": "docs: open release 264 workflow snapshot refresh repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task2",
+  "expectedCommitMessage": "fix: refresh workflow state on derived gate changes",
   "debt": {
-    "expectedCommitMessage": "docs: open release 264 workflow snapshot refresh repair",
-    "preCommitHead": "6888c075a",
+    "expectedCommitMessage": "fix: refresh workflow state on derived gate changes",
+    "preCommitHead": "a43ae6776",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task2"
   }
 }
 ```
@@ -663,12 +663,12 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Acceptance Finding
 
 142. [DONE] `diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task1` Record the release `1.2.264` acceptance finding and open a bounded repair stream for stale Project Manager workflow snapshots after the Diagram Modules Core user-review handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open release 264 workflow snapshot refresh repair`).
-143. [PENDING] Git Commit: `docs: open release 264 workflow snapshot refresh repair` (hash: TBD)
+143. [DONE] Git Commit: `docs: open release 264 workflow snapshot refresh repair` (hash: a43ae6776)
 
 ### Stream: Project Manager Snapshot Refresh
 
-144. [TODO] `diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task2` Make Project Manager workflow-state subscriptions emit when derived progress/gating changes even if the root `updatedAt` timestamp is unchanged, so Diagram Modules review readiness and Application Skeleton gating refresh after Core handoff (scope: `src/client/project-manager/services/workflow-state-store.ts, src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts`; expected commit: `fix: refresh workflow state on derived gate changes`).
-145. [TODO] Git Commit: `fix: refresh workflow state on derived gate changes` (hash: TBD)
+144. [DONE] `diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task2` Make Project Manager workflow-state subscriptions emit when derived progress/gating changes even if the root `updatedAt` timestamp is unchanged, so Diagram Modules review readiness and Application Skeleton gating refresh after Core handoff (scope: `src/client/project-manager/services/workflow-state-store.ts, src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts`; expected commit: `fix: refresh workflow state on derived gate changes`).
+145. [PENDING] Git Commit: `fix: refresh workflow state on derived gate changes` (hash: TBD)
 
 ### Stream: Verification
 

@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { api } from "../api";
+import { buildWorkflowStateChangeToken } from "./workflow-state-change-token";
 import type { WorkflowStateSnapshot } from "./workflow-state-client";
 
 const FAST_POLL_MS = 3_000;
@@ -175,17 +176,16 @@ class WorkflowStateStore {
       ) {
         return;
       }
-      // Skip emit if snapshot data has not changed — prevents
-      // unnecessary re-renders in all subscribers every poll cycle.
-      // Compare updatedAt AND continuity chain count — chains may
-      // populate after the initial snapshot without changing updatedAt.
+      // Skip emit if projected workflow data has not changed. Some derived
+      // readiness fields come from filesystem projection and can change without
+      // mutating the root workflow updatedAt timestamp.
       const prev = this.state.snapshot;
       const changed =
         !this.state.loaded ||
         !prev ||
         !snapshot ||
-        prev.updatedAt !== snapshot.updatedAt ||
-        prev.continuity.chains.length !== snapshot.continuity.chains.length;
+        buildWorkflowStateChangeToken(prev) !==
+          buildWorkflowStateChangeToken(snapshot);
       this.state = {
         workspaceSlug,
         workspacePath,
