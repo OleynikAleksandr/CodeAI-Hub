@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "67c08bba2",
+  "lastRecordedCommit": "5d323c317",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase38.review-boundary.task1",
-  "expectedCommitMessage": "docs: open diagram modules review boundary repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase38.review-boundary.task2",
+  "expectedCommitMessage": "fix: add diagram modules review commit partner",
   "debt": {
-    "expectedCommitMessage": "docs: open diagram modules review boundary repair",
-    "preCommitHead": "67c08bba2",
+    "expectedCommitMessage": "fix: add diagram modules review commit partner",
+    "preCommitHead": "5d323c317",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase38.review-boundary.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase38.review-boundary.task2"
   }
 }
 ```
@@ -734,12 +734,12 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Acceptance Finding
 
 156. [DONE] `diagram-plan-lifecycle-repair.phase38.review-boundary.task1` Record the release `1.2.265` Diagram Modules review-plan finding and open a bounded repair stream for the missing review commit partner and managed ledger dirty-gate behavior (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open diagram modules review boundary repair`).
-157. [PENDING] Git Commit: `docs: open diagram modules review boundary repair` (hash: TBD)
+157. [DONE] Git Commit: `docs: open diagram modules review boundary repair` (hash: 5d323c317)
 
 ### Stream: Stage Plan Contract
 
-158. [TODO] `diagram-plan-lifecycle-repair.phase38.review-boundary.task2` Make the Diagram Modules Phase 2 user-review handoff a commit-backed managed microtask with an explicit paired `Git Commit` line in the generated stage plan (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `fix: add diagram modules review commit partner`).
-159. [TODO] Git Commit: `fix: add diagram modules review commit partner` (hash: TBD)
+158. [DONE] `diagram-plan-lifecycle-repair.phase38.review-boundary.task2` Make the Diagram Modules Phase 2 user-review handoff a commit-backed managed microtask with an explicit paired `Git Commit` line in the generated stage plan (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `fix: add diagram modules review commit partner`).
+159. [PENDING] Git Commit: `fix: add diagram modules review commit partner` (hash: TBD)
 
 160. [TODO] `diagram-plan-lifecycle-repair.phase38.review-boundary.task3` Keep Core-managed workspace/stage plan ledger updates out of technical-stage dirty gating so a completed Diagram Modules aggregate can unlock Application Skeleton even when only review-ledger metadata is dirty (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts`; expected commit: `fix: ignore managed plan ledger in technical dirty gate`).
 161. [TODO] Git Commit: `fix: ignore managed plan ledger in technical dirty gate` (hash: TBD)

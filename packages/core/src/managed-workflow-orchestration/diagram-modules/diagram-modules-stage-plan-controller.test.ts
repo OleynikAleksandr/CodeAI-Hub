@@ -31,7 +31,10 @@ const PROJECT_MANAGER_TASK_RE =
   /diagram-modules\.phase1\.product-part\.project-manager\.task1/u;
 const PROJECT_MANAGER_TASK_STATE_RE =
   /"currentTaskId": "diagram-modules\.phase1\.product-part\.project-manager\.task1"/u;
-const REVIEW_EXPECTED_COMMIT_RE = /"expectedCommitMessage": null/u;
+const REVIEW_COMMIT_RE =
+  /Git Commit: `docs: open diagram modules user review` \(hash: TBD\)/u;
+const REVIEW_EXPECTED_COMMIT_RE =
+  /"expectedCommitMessage": "docs: open diagram modules user review"/u;
 const REVIEW_PHASE_RE = /## Phase 2 — Diagram Modules User Review/u;
 const REVIEW_TASK_RE = /diagram-modules\.phase2\.review\.task1/u;
 const REVIEW_TASK_STATE_RE =
@@ -211,6 +214,7 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
     assert.match(finalPlan, REVIEW_TASK_RE);
     assert.match(finalPlan, REVIEW_TASK_STATE_RE);
     assert.match(finalPlan, REVIEW_EXPECTED_COMMIT_RE);
+    assert.match(finalPlan, REVIEW_COMMIT_RE);
 
     const workspacePlan = await readWorkspaceFile(
       workspaceRoot,

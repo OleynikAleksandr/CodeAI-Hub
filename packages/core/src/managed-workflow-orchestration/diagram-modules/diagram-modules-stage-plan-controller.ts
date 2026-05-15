@@ -10,6 +10,9 @@ const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
 
 const DIAGRAM_STAGE_PLAN_PATH = "doc/TODO/stages/diagram-modules/todo-plan.md";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
+const DIAGRAM_MODULES_REVIEW_TASK_ID = "diagram-modules.phase2.review.task1";
+const DIAGRAM_MODULES_REVIEW_COMMIT_MESSAGE =
+  "docs: open diagram modules user review";
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const FENCED_JSON_END_RE = /\s*```$/u;
 
@@ -168,8 +171,8 @@ const resolveNextStep = (
   }
   if (decision.nextAction === "open_user_review") {
     return {
-      expectedCommitMessage: null,
-      taskId: "diagram-modules.phase2.review.task1",
+      expectedCommitMessage: DIAGRAM_MODULES_REVIEW_COMMIT_MESSAGE,
+      taskId: DIAGRAM_MODULES_REVIEW_TASK_ID,
     };
   }
   return { expectedCommitMessage: null, taskId: null };
@@ -195,7 +198,7 @@ const appendNextStep = (params: {
     return params.content;
   }
   const nextNumber = maxListNumber(params.content) + 1;
-  if (params.next.expectedCommitMessage === null) {
+  if (params.next.taskId === DIAGRAM_MODULES_REVIEW_TASK_ID) {
     return [
       params.content.trimEnd(),
       "",
@@ -203,9 +206,13 @@ const appendNextStep = (params: {
       "",
       "### Stream: User-Led Review",
       "",
-      `${nextNumber}. [IN_PROGRESS] \`${params.next.taskId}\` User reviews the accepted Diagram Modules Product Part artifacts before the stage can be completed (scope: user workflow; expected commit: none).`,
+      `${nextNumber}. [IN_PROGRESS] \`${params.next.taskId}\` User reviews the accepted Diagram Modules Product Part artifacts before the stage can be completed (scope: user workflow; expected commit: \`${params.next.expectedCommitMessage}\`).`,
+      `${nextNumber + 1}. [TODO] Git Commit: \`${params.next.expectedCommitMessage}\` (hash: TBD)`,
       "",
     ].join("\n");
+  }
+  if (params.next.expectedCommitMessage === null) {
+    return params.content;
   }
   const partId = params.next.taskId
     .replace("diagram-modules.phase1.product-part.", "")
