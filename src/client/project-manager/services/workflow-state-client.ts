@@ -71,11 +71,13 @@ export type ManagedWorkflowPreviewStageSnapshot = {
   readonly controllerId: string;
   readonly displayName: string;
   readonly phaseTypes: readonly string[];
+  readonly startPolicy: "provider_direct" | "core_preview_boundary";
 };
 
 export type ManagedWorkflowPreviewSnapshot = {
   readonly active: true;
   readonly mode: "preview";
+  readonly readOnlyStages: readonly string[];
   readonly reason: string;
   readonly stages: readonly ManagedWorkflowPreviewStageSnapshot[];
 };
@@ -337,6 +339,10 @@ const parseManagedWorkflowPreviewStage = (
     controllerId,
     displayName,
     phaseTypes: parseStringArray(payload.phaseTypes),
+    startPolicy:
+      payload.startPolicy === "provider_direct"
+        ? "provider_direct"
+        : "core_preview_boundary",
   };
 };
 
@@ -354,7 +360,15 @@ const parseManagedWorkflowPreview = (
           Boolean(stage)
         )
     : [];
-  return reason ? { active: true, mode: "preview", reason, stages } : null;
+  return reason
+    ? {
+        active: true,
+        mode: "preview",
+        readOnlyStages: parseStringArray(payload.readOnlyStages),
+        reason,
+        stages,
+      }
+    : null;
 };
 
 const parseWorkflowState = (

@@ -16,7 +16,8 @@ const installFetchStub = (payload: unknown): void => {
 const createWorkflowPayload = (
   developmentTree: unknown,
   continuity: unknown = { chains: [] },
-  updatedAt = "2026-05-04T10:00:00.000Z"
+  updatedAt = "2026-05-04T10:00:00.000Z",
+  extra: Record<string, unknown> = {}
 ): unknown => ({
   state: {
     workspaceSlug: "demo",
@@ -34,6 +35,7 @@ const createWorkflowPayload = (
       quality_gates: false,
     },
   },
+  ...extra,
 });
 
 test("fetchWorkflowState parses optional development tree readiness", async () => {
@@ -126,6 +128,50 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
     "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area"
   );
   assert.equal(part?.standaloneModules[0]?.readiness, "idle");
+});
+
+test("fetchWorkflowState preserves managed orchestration read-only projection", async () => {
+  installFetchStub(
+    createWorkflowPayload(null, { chains: [] }, "2026-05-04T10:00:00.000Z", {
+      managedWorkflowPreview: {
+        active: true,
+        mode: "preview",
+        readOnlyStages: ["description"],
+        reason: "Managed Workflow Orchestration cluster is active.",
+        stages: [
+          {
+            controllerId: "description",
+            displayName: "Description",
+            phaseTypes: ["provider_direct"],
+            startPolicy: "provider_direct",
+          },
+          {
+            controllerId: "diagram_modules",
+            displayName: "Diagram Modules",
+            phaseTypes: ["core_gated"],
+            startPolicy: "core_preview_boundary",
+          },
+        ],
+      },
+    })
+  );
+
+  const state = await fetchWorkflowState({
+    httpUrl: "http://127.0.0.1:8080",
+    workspaceSlug: "demo",
+  });
+
+  assert.deepEqual(state?.managedWorkflowPreview?.readOnlyStages, [
+    "description",
+  ]);
+  assert.equal(
+    state?.managedWorkflowPreview?.stages[0]?.startPolicy,
+    "provider_direct"
+  );
+  assert.equal(
+    state?.managedWorkflowPreview?.stages[1]?.startPolicy,
+    "core_preview_boundary"
+  );
 });
 
 test("fetchWorkflowState preserves refreshed development tree metadata", async () => {

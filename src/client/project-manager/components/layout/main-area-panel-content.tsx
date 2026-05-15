@@ -34,7 +34,6 @@ import {
   resolveStartupStageFromTool,
   resolveWorkflowToolHeaderTitle,
 } from "./workflow-stage-tool-routing";
-import { VIRTUAL_SIMULATION_TOOL_LABEL } from "./use-workflow-tool-select";
 import {
   renderWorkflowStageHelp,
   renderWorkflowStagePanel,
@@ -95,12 +94,15 @@ const renderLocalizationSyncBlockedState = (
   </div>
 );
 
-const isTechnicalStageRewriteBoundaryActive = (
+const isManagedReadOnlyStage = (
+  activeTool: string | null,
   snapshot: WorkflowStateSnapshot | null
-): boolean => snapshot?.managedWorkflowPreview?.active === true;
-
-const isReadOnlyUpstreamTool = (activeTool: string | null): boolean =>
-  activeTool === "Description" || activeTool === VIRTUAL_SIMULATION_TOOL_LABEL;
+): boolean => {
+  const stageId = resolveStartupStageFromTool(activeTool);
+  return Boolean(
+    stageId && snapshot?.managedWorkflowPreview?.readOnlyStages.includes(stageId)
+  );
+};
 
 interface SelectedArtifact {
   readonly workspacePath: string;
@@ -441,10 +443,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
     );
   }
 
-  if (
-    isReadOnlyUpstreamTool(activeTool) &&
-    isTechnicalStageRewriteBoundaryActive(workflowSnapshot)
-  ) {
+  if (isManagedReadOnlyStage(activeTool, workflowSnapshot)) {
     const stageTitle =
       resolveWorkflowToolHeaderTitle(activeTool) ?? activeTool ?? "Workflow stage";
     return (
@@ -461,7 +460,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
         {t(
           "ui_interface",
           "pm.workflow.upstream_readonly.body",
-          "Managed Workflow Orchestration preview is active for technical stages. Existing upstream artifacts remain available from the tree while step execution is routed through the new Core boundary."
+          "A downstream technical stage has started. Existing upstream artifacts remain available from the tree while this step stays protected from direct re-run."
         )}
       </div>
     );

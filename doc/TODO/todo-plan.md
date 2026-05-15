@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "074606317",
+  "lastRecordedCommit": "62fc7a339",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase9.readmodel.task1",
-  "expectedCommitMessage": "feat: project preliminary workflow orchestration state",
+  "currentTaskId": "managed-orchestration-kernel.phase9.pm.task1",
+  "expectedCommitMessage": "fix: consume orchestrator read-only projection",
   "debt": {
-    "expectedCommitMessage": "feat: project preliminary workflow orchestration state",
-    "preCommitHead": "074606317",
+    "expectedCommitMessage": "fix: consume orchestrator read-only projection",
+    "preCommitHead": "62fc7a339",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase9.readmodel.task1"
+    "taskId": "managed-orchestration-kernel.phase9.pm.task1"
   }
 }
 ```
@@ -220,12 +220,12 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Read Model And State Ownership
 
 55. [DONE] `managed-orchestration-kernel.phase9.readmodel.task1` Project orchestrator-owned state for all five trunk steps, including provider-direct stages, technical boundary stages, and real read-only upstream stages computed from downstream workflow state instead of preview availability (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project preliminary workflow orchestration state`).
-56. [PENDING] Git Commit: `feat: project preliminary workflow orchestration state` (hash: TBD)
+56. [DONE] Git Commit: `feat: project preliminary workflow orchestration state` (hash: 62fc7a339)
 
 ### Stream: Project Manager Consumption
 
-57. [TODO] `managed-orchestration-kernel.phase9.pm.task1` Replace Project Manager's local preview-as-lock predicate with the orchestrator read-only projection so Description sessions and Virtual Simulation start cards stay visible until a real downstream technical step starts (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `fix: consume orchestrator read-only projection`).
-58. [TODO] Git Commit: `fix: consume orchestrator read-only projection` (hash: TBD)
+57. [DONE] `managed-orchestration-kernel.phase9.pm.task1` Replace Project Manager's local preview-as-lock predicate with the orchestrator read-only projection so Description sessions and Virtual Simulation start cards stay visible until a real downstream technical step starts (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `fix: consume orchestrator read-only projection`).
+58. [PENDING] Git Commit: `fix: consume orchestrator read-only projection` (hash: TBD)
 59. [TODO] `managed-orchestration-kernel.phase9.pm.task2` Route preliminary step start metadata and existing-session lookup through orchestrator-owned stage metadata while preserving current Description/Virtual Simulation provider-direct session transport (scope: `src/client/project-manager/components/layout/workflow-stage-tool-routing.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat: route preliminary step starts through orchestrator metadata`).
 60. [TODO] Git Commit: `feat: route preliminary step starts through orchestrator metadata` (hash: TBD)
 
