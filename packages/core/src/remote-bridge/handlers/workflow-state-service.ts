@@ -259,6 +259,14 @@ export class WorkflowStateService {
                             .clean,
                       }),
                     };
+                    const technicalStageRewriteBoundary =
+                      resolveTechnicalStageRewriteBoundary({
+                        state: responseState,
+                        applicationSkeletonProgress:
+                          technicalStageProgress.applicationSkeletonProgress,
+                        qualityGatesProgress:
+                          technicalStageProgress.qualityGatesProgress,
+                      });
                     res.json({
                       state: responseState,
                       continuity: { chains },
@@ -272,16 +280,12 @@ export class WorkflowStateService {
                       qualityGatesProgress:
                         technicalStageProgress.qualityGatesProgress,
                       developmentTree,
-                      technicalStageRewriteBoundary:
-                        resolveTechnicalStageRewriteBoundary({
-                          state: responseState,
-                          applicationSkeletonProgress:
-                            technicalStageProgress.applicationSkeletonProgress,
-                          qualityGatesProgress:
-                            technicalStageProgress.qualityGatesProgress,
-                        }),
+                      technicalStageRewriteBoundary,
                       managedWorkflowPreview:
-                        this.managedWorkflowReadModel.project(),
+                        this.managedWorkflowReadModel.project({
+                          readOnlyStages:
+                            technicalStageRewriteBoundary.readOnlyStages,
+                        }),
                     });
                   });
                 })

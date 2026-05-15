@@ -42,15 +42,66 @@ test("workflow-state projects managed workflow preview state read-only", async (
     const projection = payload.managedWorkflowPreview as {
       readonly active?: boolean;
       readonly mode?: string;
-      readonly stages?: readonly { readonly controllerId: string }[];
+      readonly readOnlyStages?: readonly string[];
+      readonly stages?: readonly {
+        readonly controllerId: string;
+        readonly startPolicy: string;
+      }[];
     };
 
     assert.equal(projection.active, true);
     assert.equal(projection.mode, "preview");
+    assert.deepEqual(projection.readOnlyStages, []);
     assert.deepEqual(
       projection.stages?.map((stage) => stage.controllerId),
-      ["diagram_modules", "application_skeleton", "quality_gates"]
+      [
+        "description",
+        "virtual_simulation",
+        "diagram_modules",
+        "application_skeleton",
+        "quality_gates",
+      ]
     );
+    assert.deepEqual(
+      projection.stages?.map((stage) => stage.startPolicy),
+      [
+        "provider_direct",
+        "provider_direct",
+        "core_preview_boundary",
+        "core_preview_boundary",
+        "core_preview_boundary",
+      ]
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state projects managed read-only upstream stages from downstream technical progress", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-workflow-readonly-")
+  );
+  try {
+    const service = new WorkflowStateService({ logger: new Logger("error") });
+    service.record({
+      stage: "diagram_modules",
+      timestamp: "2026-05-15T10:00:00.000Z",
+      type: "workflow.run.created",
+      workspaceSlug: "demo-workspace",
+    });
+    const payload = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+    const projection = payload.managedWorkflowPreview as {
+      readonly readOnlyStages?: readonly string[];
+    };
+
+    assert.deepEqual(projection.readOnlyStages, [
+      "description",
+      "virtual_simulation",
+    ]);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

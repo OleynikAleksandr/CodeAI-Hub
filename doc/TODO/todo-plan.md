@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "c2d9637fc",
+  "lastRecordedCommit": "074606317",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase9.contract.task1",
-  "expectedCommitMessage": "feat: add preliminary workflow step controllers",
+  "currentTaskId": "managed-orchestration-kernel.phase9.readmodel.task1",
+  "expectedCommitMessage": "feat: project preliminary workflow orchestration state",
   "debt": {
-    "expectedCommitMessage": "feat: add preliminary workflow step controllers",
-    "preCommitHead": "c2d9637fc",
+    "expectedCommitMessage": "feat: project preliminary workflow orchestration state",
+    "preCommitHead": "074606317",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase9.contract.task1"
+    "taskId": "managed-orchestration-kernel.phase9.readmodel.task1"
   }
 }
 ```
@@ -215,12 +215,12 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Step Contract And Registry
 
 51. [DONE] `managed-orchestration-kernel.phase9.contract.task1` Add explicit start policy metadata, create provider-direct preliminary controllers, register all five workflow trunk steps, and keep Core preview boundary decisions limited to technical `core_preview_boundary` stages. This task intentionally absorbs the former registry-only slice because `knip` requires new controller files to be live-referenced before commit (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts`; expected commit: `feat: add preliminary workflow step controllers`).
-52. [PENDING] Git Commit: `feat: add preliminary workflow step controllers` (hash: TBD)
+52. [DONE] Git Commit: `feat: add preliminary workflow step controllers` (hash: 074606317)
 
 ### Stream: Read Model And State Ownership
 
-55. [TODO] `managed-orchestration-kernel.phase9.readmodel.task1` Project orchestrator-owned state for all five trunk steps, including provider-direct stages, technical boundary stages, and real read-only upstream stages computed from downstream workflow state instead of preview availability (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project preliminary workflow orchestration state`).
-56. [TODO] Git Commit: `feat: project preliminary workflow orchestration state` (hash: TBD)
+55. [DONE] `managed-orchestration-kernel.phase9.readmodel.task1` Project orchestrator-owned state for all five trunk steps, including provider-direct stages, technical boundary stages, and real read-only upstream stages computed from downstream workflow state instead of preview availability (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project preliminary workflow orchestration state`).
+56. [PENDING] Git Commit: `feat: project preliminary workflow orchestration state` (hash: TBD)
 
 ### Stream: Project Manager Consumption
 
