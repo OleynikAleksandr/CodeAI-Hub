@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "99e2b6e33",
+  "lastRecordedCommit": "544e7d7fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase3.pm.task1",
-  "expectedCommitMessage": "feat: show diagram modules managed orchestration state",
+  "currentTaskId": "prelim-diagram-runtime.phase3.tests.task1",
+  "expectedCommitMessage": "test: cover first trunk orchestration flow",
   "debt": {
-    "expectedCommitMessage": "feat: show diagram modules managed orchestration state",
-    "preCommitHead": "99e2b6e33",
+    "expectedCommitMessage": "test: cover first trunk orchestration flow",
+    "preCommitHead": "544e7d7fb",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase3.pm.task1"
+    "taskId": "prelim-diagram-runtime.phase3.tests.task1"
   }
 }
 ```
@@ -92,10 +92,10 @@
 ### Stream: PM Surface
 
 17. [DONE] `prelim-diagram-runtime.phase3.pm.task1` Update Project Manager workflow state consumption so Description/Virtual Simulation remain provider-direct, Diagram Modules managed phases are visible, and Application Skeleton/Quality Gates remain preview/fail-closed; include the start service because the parsed `managed_dispatch` policy must be accepted by launch gating (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `feat: show diagram modules managed orchestration state`).
-18. [PENDING] Git Commit: `feat: show diagram modules managed orchestration state` (hash: TBD)
+18. [DONE] Git Commit: `feat: show diagram modules managed orchestration state` (hash: 544e7d7fb)
 
-19. [TODO] `prelim-diagram-runtime.phase3.tests.task1` Add regression coverage for the visible three-step flow: Description session visibility, Virtual Simulation start visibility, Diagram Modules managed session start, user-review acceptance, and persistent return open projection (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts`; expected commit: `test: cover first trunk orchestration flow`).
-20. [TODO] Git Commit: `test: cover first trunk orchestration flow` (hash: TBD)
+19. [DONE] `prelim-diagram-runtime.phase3.tests.task1` Add regression coverage for the visible three-step flow: Description session visibility, Virtual Simulation start visibility, Diagram Modules managed session start, user-review acceptance, and persistent return open projection; include the start service because the fail-closed expectation is enforced below the UI card (scope: `src/client/project-manager/services/workflow-state-client.test.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts`; expected commit: `test: cover first trunk orchestration flow`).
+20. [PENDING] Git Commit: `test: cover first trunk orchestration flow` (hash: TBD)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-15)
 

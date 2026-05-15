@@ -331,11 +331,10 @@ test("startVirtualSimulation is read-only after Diagram Modules starts", async (
   );
 });
 
-test("technical root stage starts use skeleton and quality gate input artifacts", async () => {
+test("preview-only technical root stages fail closed in start service", async () => {
   installWindowStub();
   const { WorkflowStepStartService } = await import("./workflow-step-start-service");
 
-  const captured: Array<{ readonly questionnairePath: string; readonly stage?: string }> = [];
   const service = new WorkflowStepStartService({
     getWorkflowState: async () =>
       createWorkflowState({
@@ -350,41 +349,30 @@ test("technical root stage starts use skeleton and quality gate input artifacts"
         },
       }),
     submitService: {
-      submitQuestionnaire: async (params) => {
-        captured.push({
-          questionnairePath: params.questionnairePath,
-          stage: params.stage,
-        });
-        return `${params.stage ?? "unknown"}-session`;
-      },
+      submitQuestionnaire: async () => "unexpected-session",
     },
   });
 
-  await service.startApplicationSkeleton({
-    workspaceName: "Demo Workspace",
-    workspacePath: "/tmp/demo",
-    workspaceSlug: "demo-workspace",
-    providerId: "codexCli",
-  });
-  await service.startQualityGates({
-    workspaceName: "Demo Workspace",
-    workspacePath: "/tmp/demo",
-    workspaceSlug: "demo-workspace",
-    providerId: "codexCli",
-  });
-
-  assert.deepEqual(captured, [
-    {
-      questionnairePath:
-        ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md",
-      stage: "application_skeleton",
-    },
-    {
-      questionnairePath:
-        ".codeai-hub/demo-workspace/application_skeleton/application-skeleton-map.json",
-      stage: "quality_gates",
-    },
-  ]);
+  await assert.rejects(
+    () =>
+      service.startApplicationSkeleton({
+        workspaceName: "Demo Workspace",
+        workspacePath: "/tmp/demo",
+        workspaceSlug: "demo-workspace",
+        providerId: "codexCli",
+      }),
+    /Application Skeleton is managed by the Core preview boundary/
+  );
+  await assert.rejects(
+    () =>
+      service.startQualityGates({
+        workspaceName: "Demo Workspace",
+        workspacePath: "/tmp/demo",
+        workspaceSlug: "demo-workspace",
+        providerId: "codexCli",
+      }),
+    /Quality Gates is managed by the Core preview boundary/
+  );
 });
 
 test("technical stage start reuses active boundary session instead of sending a fresh draft prompt", async () => {

@@ -223,6 +223,8 @@ const resolveManagedStageStartPolicy = (
   resolveManagedStageMetadata(state, stage)?.startPolicy ??
   (stage === "virtual_simulation"
     ? "provider_direct"
+    : stage === "diagram_modules"
+      ? "managed_dispatch"
     : "core_preview_boundary");
 
 const isManagedReadOnlyStage = (
@@ -356,6 +358,11 @@ export class WorkflowStepStartService {
     if (readStageBlocked(state, "diagram_modules")) {
       throw new Error("Missing virtual-simulation.md. Complete Virtual Simulation step first.");
     }
+    if (resolveManagedStageStartPolicy(state, "diagram_modules") !== "managed_dispatch") {
+      throw new Error(
+        "Diagram Modules is waiting for Core-managed dispatch metadata."
+      );
+    }
     const progressSubstep = readDiagramModulesSubstep(state);
     const settingsPayload = this.getSettingsPayload();
     await this.persistStartCardModelDefaults(params);
@@ -394,6 +401,11 @@ export class WorkflowStepStartService {
     if (readStageBlocked(state, "application_skeleton")) {
       throw new Error("Missing completed Diagram Modules. Complete Diagram Modules first.");
     }
+    if (resolveManagedStageStartPolicy(state, "application_skeleton") === "core_preview_boundary") {
+      throw new Error(
+        "Application Skeleton is managed by the Core preview boundary."
+      );
+    }
     const settingsPayload = this.getSettingsPayload();
     await this.persistStartCardModelDefaults(params);
     return this.submitService.submitQuestionnaire({
@@ -424,6 +436,11 @@ export class WorkflowStepStartService {
     }
     if (readStageBlocked(state, "quality_gates")) {
       throw new Error("Missing accepted Application Skeleton. Complete Application Skeleton first.");
+    }
+    if (resolveManagedStageStartPolicy(state, "quality_gates") === "core_preview_boundary") {
+      throw new Error(
+        "Quality Gates is managed by the Core preview boundary."
+      );
     }
     const settingsPayload = this.getSettingsPayload();
     await this.persistStartCardModelDefaults(params);
