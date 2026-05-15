@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "5973b0e14",
+  "lastRecordedCommit": "9d6f4e1dc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase52a.client-authority-orchestrator.task1",
-  "expectedCommitMessage": "docs: record orchestrator client projection authority",
+  "currentTaskId": "quality-gates-runtime.phase0.plan.task1",
+  "expectedCommitMessage": "docs: expand scope to quality gates runtime orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: record orchestrator client projection authority",
-    "preCommitHead": "5973b0e14",
+    "expectedCommitMessage": "docs: expand scope to quality gates runtime orchestration",
+    "preCommitHead": "9d6f4e1dc",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase52a.client-authority-orchestrator.task1"
+    "taskId": "quality-gates-runtime.phase0.plan.task1"
   }
 }
 ```
@@ -34,6 +34,7 @@
   - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
   - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Managed_Orchestration_Planning_RU.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
@@ -1009,11 +1010,44 @@ Repair coverage:
 229. [DONE] Git Commit: `docs: record client projection authority invariant` (hash: 5973b0e14)
 
 230. [DONE] `diagram-plan-lifecycle-repair.phase52a.client-authority-orchestrator.task1` Record the same invariant in orchestrator and workflow-step documentation so managed workflow modules keep Core as the authority for state, prompts, artifacts, plans, validation, and localization (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: record orchestrator client projection authority`).
-231. [PENDING] Git Commit: `docs: record orchestrator client projection authority` (hash: TBD)
+231. [DONE] Git Commit: `docs: record orchestrator client projection authority` (hash: 9d6f4e1dc)
 
-## Phase 53 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 53 — Quality Gates Managed Runtime Implementation (owner: Codex, updated: 2026-05-15)
+
+### Stream: Plan Expansion
+
+232. [DONE] `quality-gates-runtime.phase0.plan.task1` Expand the active scope from closeout back to implementation so Quality Gates Baseline receives the same Core-owned managed runtime treatment as Diagram Modules and Application Skeleton (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: expand scope to quality gates runtime orchestration`).
+233. [PENDING] Git Commit: `docs: expand scope to quality gates runtime orchestration` (hash: TBD)
+
+### Stream: Core Contract And Validation
+
+234. [TODO] `quality-gates-runtime.phase1.validation.task1` Add Quality Gates managed prompt/validation logic for draft, review handoff, integration acceptance, actionable repair diagnostics, and persistent-return user message (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `feat: add quality gates managed validation`).
+235. [TODO] Git Commit: `feat: add quality gates managed validation` (hash: TBD)
+
+### Stream: Stage Plan Lifecycle
+
+236. [TODO] `quality-gates-runtime.phase2.stage-plan.task1` Add the Quality Gates stage-plan controller with draft opening, review acceptance, revision cycles, integration attempts, rejected-attempt repair pairs, and workspace ledger advancement (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`; expected commit: `feat: add quality gates stage plan lifecycle`).
+237. [TODO] Git Commit: `feat: add quality gates stage plan lifecycle` (hash: TBD)
+
+### Stream: Runtime Dispatch
+
+238. [TODO] `quality-gates-runtime.phase3.turn.task1` Connect Quality Gates managed start preflight and provider-turn validation/commit handling to the Core runtime path, without using Project Manager as state authority (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `feat: route quality gates managed turns`).
+239. [TODO] Git Commit: `feat: route quality gates managed turns` (hash: TBD)
+
+240. [TODO] `quality-gates-runtime.phase3.review.task1` Route Quality Gates Type B user review decisions through Core-owned intent classification, including direct acceptance to integration and revision prompts that stay in the active review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `feat: route quality gates review decisions`).
+241. [TODO] Git Commit: `feat: route quality gates review decisions` (hash: TBD)
+
+### Stream: Documentation And Verification
+
+242. [TODO] `quality-gates-runtime.phase4.docs.task1` Update workflow SSOT docs from fail-closed Quality Gates wording to the implemented Core-owned lifecycle and note that clients remain projections only (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates managed runtime`).
+243. [TODO] Git Commit: `docs: document quality gates managed runtime` (hash: TBD)
+
+244. [TODO] `quality-gates-runtime.phase4.verify.task1` Run targeted Core/Project Manager tests and builds for Quality Gates managed runtime and record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify quality gates managed runtime`).
+245. [TODO] Git Commit: `docs: verify quality gates managed runtime` (hash: TBD)
+
+## Phase 54 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-232. [TODO] `diagram-plan-lifecycle-repair.phase53.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-233. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+246. [TODO] `diagram-plan-lifecycle-repair.phase54.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+247. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
