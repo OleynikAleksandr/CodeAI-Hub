@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "0bdb372cb",
+  "lastRecordedCommit": "c46d10caf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase7.release.task3",
-  "expectedCommitMessage": "docs: record managed workflow kernel runtime release",
+  "currentTaskId": "managed-orchestration-kernel.phase9.scope.task1",
+  "expectedCommitMessage": "docs: plan preliminary workflow orchestration integration",
   "debt": {
-    "expectedCommitMessage": "docs: record managed workflow kernel runtime release",
-    "preCommitHead": "0bdb372cb",
+    "expectedCommitMessage": "docs: plan preliminary workflow orchestration integration",
+    "preCommitHead": "c46d10caf",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase7.release.task3"
+    "taskId": "managed-orchestration-kernel.phase9.scope.task1"
   }
 }
 ```
@@ -175,7 +175,7 @@ Verification evidence recorded 2026-05-15:
 44. [DONE] `managed-orchestration-kernel.phase7.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed workflow kernel runtime release`).
 45. [DONE] Git Commit: `chore: build managed workflow kernel runtime release` (hash: 0bdb372cb)
 46. [DONE] `managed-orchestration-kernel.phase7.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow kernel runtime release`).
-47. [PENDING] Git Commit: `docs: record managed workflow kernel runtime release` (hash: TBD)
+47. [DONE] Git Commit: `docs: record managed workflow kernel runtime release` (hash: c46d10caf)
 
 `build-all.sh` evidence recorded 2026-05-15:
 
@@ -203,12 +203,65 @@ Verification evidence recorded 2026-05-15:
 
 ### Stream: User Acceptance
 
-48. [TODO] `managed-orchestration-kernel.phase8.user-acceptance.task1` User installs the release and verifies the visible control point: technical stages route through the new `Managed Workflow Orchestration` cluster preview, existing main functions still work, no legacy managed continuation/acceptance behavior returns, and any bugs are reported as a follow-up stream instead of closing this scope (scope: user workflow; expected commit: not required).
+48. [DONE] `managed-orchestration-kernel.phase8.user-acceptance.task1` User installs the release and verifies the visible control point: technical stages route through the new `Managed Workflow Orchestration` cluster preview, existing main functions still work, no legacy managed continuation/acceptance behavior returns, and any bugs are reported as a follow-up stream instead of closing this scope (scope: user workflow; expected commit: not required). Result: v1.2.256 acceptance found a blocking UI/orchestration ownership regression. Description can complete and produce `Final_Description.md`, but Project Manager hides the Description session and Virtual Simulation start card behind a false read-only placeholder because `managedWorkflowPreview.active` is treated as a downstream lock signal instead of a visual preview signal.
 
-## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 9 — Preliminary Workflow Orchestration Integration (owner: Codex, updated: 2026-05-15)
+
+### Stream: Scope Extension
+
+49. [DONE] `managed-orchestration-kernel.phase9.scope.task1` Convert the failed v1.2.256 user acceptance into a focused two-phase follow-up: integrate Description and Virtual Simulation into the new orchestrator as provider-direct preliminary steps, remove duplicated start/read-only decisions from UI/service code, then rebuild a retest release (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan preliminary workflow orchestration integration`).
+50. [PENDING] Git Commit: `docs: plan preliminary workflow orchestration integration` (hash: TBD)
+
+### Stream: Step Contract And Registry
+
+51. [TODO] `managed-orchestration-kernel.phase9.contract.task1` Add explicit start policy metadata for managed workflow step controllers and create provider-direct preliminary controllers for Description and Virtual Simulation without changing provider transport behavior (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts`; expected commit: `feat: add preliminary workflow step controllers`).
+52. [TODO] Git Commit: `feat: add preliminary workflow step controllers` (hash: TBD)
+53. [TODO] `managed-orchestration-kernel.phase9.registry.task1` Register all five workflow trunk steps in the new registry while keeping Core preview boundary decisions limited to technical `core_preview_boundary` stages, not provider-direct preliminary stages (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: route preliminary steps through orchestrator registry`).
+54. [TODO] Git Commit: `feat: route preliminary steps through orchestrator registry` (hash: TBD)
+
+### Stream: Read Model And State Ownership
+
+55. [TODO] `managed-orchestration-kernel.phase9.readmodel.task1` Project orchestrator-owned state for all five trunk steps, including provider-direct stages, technical boundary stages, and real read-only upstream stages computed from downstream workflow state instead of preview availability (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project preliminary workflow orchestration state`).
+56. [TODO] Git Commit: `feat: project preliminary workflow orchestration state` (hash: TBD)
+
+### Stream: Project Manager Consumption
+
+57. [TODO] `managed-orchestration-kernel.phase9.pm.task1` Replace Project Manager's local preview-as-lock predicate with the orchestrator read-only projection so Description sessions and Virtual Simulation start cards stay visible until a real downstream technical step starts (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `fix: consume orchestrator read-only projection`).
+58. [TODO] Git Commit: `fix: consume orchestrator read-only projection` (hash: TBD)
+59. [TODO] `managed-orchestration-kernel.phase9.pm.task2` Route preliminary step start metadata and existing-session lookup through orchestrator-owned stage metadata while preserving current Description/Virtual Simulation provider-direct session transport (scope: `src/client/project-manager/components/layout/workflow-stage-tool-routing.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat: route preliminary step starts through orchestrator metadata`).
+60. [TODO] Git Commit: `feat: route preliminary step starts through orchestrator metadata` (hash: TBD)
+
+### Stream: Regression Coverage
+
+61. [TODO] `managed-orchestration-kernel.phase9.tests.task1` Add Project Manager regression coverage proving completed Description still shows/restores its session, Virtual Simulation card appears after Description completion, and technical stages still show the managed preview boundary (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover preliminary workflow orchestration visibility`).
+62. [TODO] Git Commit: `test: cover preliminary workflow orchestration visibility` (hash: TBD)
+63. [TODO] `managed-orchestration-kernel.phase9.tests.task2` Add Core regression coverage proving Description and Virtual Simulation are registered provider-direct steps that do not create Core preview boundary sessions, while technical stages still do (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover provider-direct preliminary step policy`).
+64. [TODO] Git Commit: `test: cover provider-direct preliminary step policy` (hash: TBD)
+
+## Phase 10 — Release Build For Preliminary Workflow Retest (owner: Codex + User, updated: 2026-05-15)
+
+### Stream: Tooling Verification
+
+65. [TODO] `managed-orchestration-kernel.phase10.verify.task1` Run targeted Core and Project Manager builds/tests for the preliminary-step integration and record exact evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify preliminary workflow orchestration fix`).
+66. [TODO] Git Commit: `docs: verify preliminary workflow orchestration fix` (hash: TBD)
+
+### Stream: Release Preparation And Build
+
+67. [TODO] `managed-orchestration-kernel.phase10.release.task1` Update release-facing docs for the future retest version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare preliminary workflow orchestration release`).
+68. [TODO] Git Commit: `docs: prepare preliminary workflow orchestration release` (hash: TBD)
+69. [TODO] `managed-orchestration-kernel.phase10.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: generated package/version files + `doc/TODO/todo-plan.md`; expected commit: `chore: build preliminary workflow orchestration release`).
+70. [TODO] Git Commit: `chore: build preliminary workflow orchestration release` (hash: TBD)
+71. [TODO] `managed-orchestration-kernel.phase10.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record preliminary workflow orchestration release`).
+72. [TODO] Git Commit: `docs: record preliminary workflow orchestration release` (hash: TBD)
+
+## Phase 11 — User Workflow Acceptance And Scope Closeout (owner: User + Codex, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+73. [TODO] `managed-orchestration-kernel.phase11.user-acceptance.task1` User installs the retest release and verifies Description session visibility, Virtual Simulation start card visibility after Description completion, technical preview boundary behavior for Diagram Modules/Application Skeleton/Quality Gates, and absence of retired managed continuation behavior (scope: user workflow; expected commit: not required).
 
 ### Stream: Close Plan After User Acceptance
 
-49. [TODO] `managed-orchestration-kernel.phase9.closeout.task1` Archive this implementation plan after explicit user acceptance and leave the repository ready for the next step-specific orchestration plan, likely Diagram Modules end-to-end (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow kernel runtime scope`).
-50. [TODO] Git Commit: `docs: close managed workflow kernel runtime scope` (hash: TBD)
-51. [TODO] `managed-orchestration-kernel.phase9.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+74. [TODO] `managed-orchestration-kernel.phase11.closeout.task1` Archive this implementation plan after explicit user acceptance and leave the repository ready for the next step-specific orchestration plan, likely Diagram Modules end-to-end (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow kernel runtime scope`).
+75. [TODO] Git Commit: `docs: close managed workflow kernel runtime scope` (hash: TBD)
+76. [TODO] `managed-orchestration-kernel.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
