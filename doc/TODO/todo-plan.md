@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "4ada0fc5e",
+  "lastRecordedCommit": "da3bbf541",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1",
-  "expectedCommitMessage": "fix: clarify application skeleton core diagnostics",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-start.task1",
+  "expectedCommitMessage": "fix: open application skeleton draft on pm start",
   "debt": {
-    "expectedCommitMessage": "fix: clarify application skeleton core diagnostics",
-    "preCommitHead": "4ada0fc5e",
+    "expectedCommitMessage": "fix: open application skeleton draft on pm start",
+    "preCommitHead": "da3bbf541",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-start.task1"
   }
 }
 ```
@@ -958,12 +958,12 @@ Release VSIX evidence recorded 2026-05-15:
 216. [DONE] Git Commit: `fix: remove project manager source artifact truth` (hash: 4ada0fc5e)
 
 217. [DONE] `diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1` Expand Application Skeleton Core repair/blocker messages so validation diagnostics are actionable and Core-owned plan blockers are understandable to the user (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: clarify application skeleton core diagnostics`).
-218. [PENDING] Git Commit: `fix: clarify application skeleton core diagnostics` (hash: TBD)
+218. [DONE] Git Commit: `fix: clarify application skeleton core diagnostics` (hash: da3bbf541)
 
 ### Stream: Managed Lifecycle
 
-219. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-start.task1` Run Application Skeleton managed start preflight for Project Manager-created sessions, not only node bootstrap workflow sessions, so Core opens the draft microtask before the provider writes artifacts (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: open application skeleton draft on pm start`).
-220. [TODO] Git Commit: `fix: open application skeleton draft on pm start` (hash: TBD)
+219. [DONE] `diagram-plan-lifecycle-repair.phase50.application-skeleton-start.task1` Run Application Skeleton managed start preflight for Project Manager-created sessions, not only node bootstrap workflow sessions, so Core opens the draft microtask before the provider writes artifacts (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: open application skeleton draft on pm start`).
+220. [PENDING] Git Commit: `fix: open application skeleton draft on pm start` (hash: TBD)
 
 221. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-plan-lifecycle.task1` Make Application Skeleton stage-plan draft opening replace bootstrap placeholders with the active draft task and add repeatable rejected-attempt task pairs for Type A draft/materialization repairs (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: track application skeleton rejected attempts`).
 222. [TODO] Git Commit: `fix: track application skeleton rejected attempts` (hash: TBD)

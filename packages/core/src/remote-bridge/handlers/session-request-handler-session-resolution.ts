@@ -1,4 +1,8 @@
+import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { ManagedWorkflowOrchestrationFacade } from "../../managed-workflow-orchestration";
+import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
+import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
 import type { ProviderRegistry } from "../../provider-registry";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session, SessionManager } from "../../session-manager";
@@ -7,7 +11,20 @@ import type { Logger } from "../../telemetry/logger";
 import { type BridgeEvent, serializeSession } from "../types";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 
+const defaultManagedWorkflowOrchestration =
+  new ManagedWorkflowOrchestrationFacade();
+const APPLICATION_SKELETON_STAGE = "application_skeleton";
+const APPLICATION_SKELETON_BOOTSTRAP_TASK_ID =
+  "application-skeleton.phase1.bootstrap.task1";
+const APPLICATION_SKELETON_STAGE_PLAN_PATH =
+  "doc/TODO/stages/application-skeleton/todo-plan.md";
+const FENCED_JSON_END_RE = /\s*```$/u;
+const FENCED_JSON_START_RE = /^```json\s*/u;
+const PLAN_START = "<!-- codeai-plan-state:start -->";
+const PLAN_END = "<!-- codeai-plan-state:end -->";
+
 interface SessionRequestHandlerSessionResolutionDependencies {
+  readonly applicationSkeletonStagePlan?: ApplicationSkeletonStagePlanController;
   readonly broadcaster: (event: BridgeEvent) => void;
   readonly broadcastSessionBinding: (sessionId: string) => void;
   readonly getDefaultProviderId: () => string;
@@ -18,7 +35,9 @@ interface SessionRequestHandlerSessionResolutionDependencies {
     sessionId?: string
   ) => void;
   readonly logger: Logger;
+  readonly managedWorkflowOrchestration?: ManagedWorkflowOrchestrationFacade;
   readonly providerRegistry: ProviderRegistry;
+  readonly scaffoldInstaller?: ManagedWorkflowScaffoldInstaller;
   readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
   readonly sessionManager: SessionManager;
   readonly workspacePathOverride?: string;
@@ -26,9 +45,19 @@ interface SessionRequestHandlerSessionResolutionDependencies {
 
 export class SessionRequestHandlerSessionResolution {
   private readonly deps: SessionRequestHandlerSessionResolutionDependencies;
+  private readonly applicationSkeletonStagePlan: ApplicationSkeletonStagePlanController;
+  private readonly managedWorkflowOrchestration: ManagedWorkflowOrchestrationFacade;
+  private readonly scaffoldInstaller: ManagedWorkflowScaffoldInstaller;
 
   constructor(deps: SessionRequestHandlerSessionResolutionDependencies) {
     this.deps = deps;
+    this.applicationSkeletonStagePlan =
+      deps.applicationSkeletonStagePlan ??
+      new ApplicationSkeletonStagePlanController();
+    this.managedWorkflowOrchestration =
+      deps.managedWorkflowOrchestration ?? defaultManagedWorkflowOrchestration;
+    this.scaffoldInstaller =
+      deps.scaffoldInstaller ?? new ManagedWorkflowScaffoldInstaller();
   }
 
   async createContinuitySession(options: {
@@ -90,6 +119,20 @@ export class SessionRequestHandlerSessionResolution {
       runSlug: context?.runSlug ?? null,
       requestedProviderSessionId: context?.providerSessionId ?? null,
     });
+    try {
+      await this.prepareManagedWorkflowStart({
+        context: {
+          initiativeSlug: context?.initiativeSlug ?? null,
+          runSlug: context?.runSlug ?? null,
+          stage: context?.stage ?? null,
+        },
+        providerId: runBound.providerId,
+        workspacePath: actualWorkspacePath,
+      });
+    } catch (error) {
+      this.deps.handleProviderFailure(runBound.providerId, error);
+      return;
+    }
     if (
       this.tryReuseExistingResumeSession({
         providerId: runBound.providerId,
@@ -254,6 +297,73 @@ export class SessionRequestHandlerSessionResolution {
     }
     const trimmed = value.trim();
     return trimmed.length > 0 ? trimmed : null;
+  }
+
+  private async prepareManagedWorkflowStart(options: {
+    readonly context: {
+      readonly initiativeSlug?: string | null;
+      readonly runSlug?: string | null;
+      readonly stage?: string | null;
+    };
+    readonly providerId: string;
+    readonly workspacePath: string;
+  }): Promise<void> {
+    const stageId = this.normalizeNullableToken(options.context.stage);
+    const workspaceSlug = this.normalizeNullableToken(
+      options.context.initiativeSlug
+    );
+    if (!(stageId && workspaceSlug)) {
+      return;
+    }
+    const managedDecision = this.managedWorkflowOrchestration.resolveStageStart(
+      {
+        providerId: options.providerId,
+        runSlug: this.normalizeNullableToken(options.context.runSlug),
+        stageId,
+        workspaceRoot: options.workspacePath,
+        workspaceSlug,
+      }
+    );
+    if (managedDecision?.mode !== "managed_dispatch") {
+      return;
+    }
+    await this.scaffoldInstaller.installDiagramModulesScaffold({
+      workspaceRoot: options.workspacePath,
+    });
+    if (
+      stageId === APPLICATION_SKELETON_STAGE &&
+      (await this.shouldOpenApplicationSkeletonDraft(options.workspacePath))
+    ) {
+      await this.applicationSkeletonStagePlan.openDraftPhase({
+        workspaceRoot: options.workspacePath,
+      });
+    }
+  }
+
+  private async shouldOpenApplicationSkeletonDraft(
+    workspaceRoot: string
+  ): Promise<boolean> {
+    const planText = await readFile(
+      path.join(workspaceRoot, APPLICATION_SKELETON_STAGE_PLAN_PATH),
+      "utf8"
+    ).catch(() => null);
+    if (!planText) {
+      return true;
+    }
+    const rawState = planText.split(PLAN_START)[1]?.split(PLAN_END)[0];
+    const json = rawState
+      ?.trim()
+      .replace(FENCED_JSON_START_RE, "")
+      .replace(FENCED_JSON_END_RE, "")
+      .trim();
+    if (!json) {
+      return true;
+    }
+    const state = JSON.parse(json) as { readonly currentTaskId?: unknown };
+    return (
+      state.currentTaskId === null ||
+      state.currentTaskId === APPLICATION_SKELETON_BOOTSTRAP_TASK_ID
+    );
   }
 
   private tryReuseExistingResumeSession(options: {
