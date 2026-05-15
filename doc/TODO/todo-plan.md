@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "8ffd89a1a",
+  "lastRecordedCommit": "318fc1220",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase26.release.task1",
-  "expectedCommitMessage": "docs: prepare managed boundary and localization release",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase26.release.task2",
+  "expectedCommitMessage": "chore: build managed boundary and localization release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed boundary and localization release",
-    "preCommitHead": "8ffd89a1a",
+    "expectedCommitMessage": "chore: build managed boundary and localization release",
+    "preCommitHead": "318fc1220",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase26.release.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase26.release.task2"
   }
 }
 ```
@@ -500,7 +500,7 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Release Preparation And Build
 
 109. [DONE] `diagram-plan-lifecycle-repair.phase26.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed boundary and localization release`).
-110. [PENDING] Git Commit: `docs: prepare managed boundary and localization release` (hash: TBD)
+110. [DONE] Git Commit: `docs: prepare managed boundary and localization release` (hash: 318fc1220)
 
 Release preparation recorded 2026-05-15:
 
@@ -509,8 +509,15 @@ Release preparation recorded 2026-05-15:
 - `README.md` current-release banner updated to the managed Git boundary and Core message localization repair.
 - `CHANGELOG.md` release entry `1.2.262` added with verification summary.
 
-111. [TODO] `diagram-plan-lifecycle-repair.phase26.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed boundary and localization release`).
-112. [TODO] Git Commit: `chore: build managed boundary and localization release` (hash: TBD)
+111. [DONE] `diagram-plan-lifecycle-repair.phase26.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed boundary and localization release`).
+112. [PENDING] Git Commit: `chore: build managed boundary and localization release` (hash: TBD)
+
+Release build-all evidence recorded 2026-05-15:
+
+- `./scripts/build-all.sh --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Unified generated version: `1.2.262`.
+- Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.262.tar.bz2`, `codex-module-1.2.262.tar.bz2`, `gemini-module-1.2.262.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.262.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.262.tar.bz2`, `vscode-webview-1.2.262.tar.bz2`, `project-manager-1.2.262.tar.bz2`.
+- Updated package versions and managed release manifests to `1.2.262`.
 
 113. [TODO] `diagram-plan-lifecycle-repair.phase26.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed boundary and localization release`).
 114. [TODO] Git Commit: `docs: record managed boundary and localization release` (hash: TBD)
