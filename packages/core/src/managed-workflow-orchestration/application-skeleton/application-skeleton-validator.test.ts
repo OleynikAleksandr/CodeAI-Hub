@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
+  buildApplicationSkeletonDraftRepairPrompt,
   buildApplicationSkeletonMaterializationPrompt,
 } from "./application-skeleton-prompt-builder";
 import { validateApplicationSkeletonManagedArtifacts } from "./application-skeleton-validator";
@@ -36,7 +37,10 @@ const REVIEW_STATE_MATERIALIZED_RE = /reviewState must be materialized/u;
 const MATERIALIZATION_RE = /materialization/u;
 const PARENT_TRAVERSAL_RE = /parent traversal/u;
 const NODE_MODULES_RE = /node_modules/u;
-const COMMIT_BOUNDARY_RE = /managed commit boundary/u;
+const COMMIT_BOUNDARY_RE = /Git commit boundary/u;
+const PLAN_STATE_PROBLEM_RE = /orchestrator plan-state problem/u;
+const PAIRED_COMMIT_ITEM_RE = /paired `Git Commit: \.\.\.` item/u;
+const CANONICAL_MARKDOWN_STRUCTURE_RE = /canonical Markdown section structure/u;
 const MATERIALIZE_WORKSPACE_RE =
   /Materialize it into the workspace filesystem/u;
 
@@ -240,4 +244,30 @@ test("Application Skeleton prompt builders expose materialization and boundary c
     buildApplicationSkeletonBoundaryBlockedMessage("git index locked"),
     COMMIT_BOUNDARY_RE
   );
+});
+
+test("Application Skeleton repair and blocker messages explain Core-owned next actions", () => {
+  const draftRepairPrompt = buildApplicationSkeletonDraftRepairPrompt({
+    diagnostics: ["markdown_missing_required_section"],
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  assert.match(draftRepairPrompt, CANONICAL_MARKDOWN_STRUCTURE_RE);
+  for (const heading of [
+    "# Application Skeleton",
+    "## Overview",
+    "## Architecture",
+    "## Stack",
+    "## Product Parts",
+    "## Filesystem",
+    "## Materialization",
+    "## Assumptions",
+  ]) {
+    assert.match(draftRepairPrompt, new RegExp(heading, "u"));
+  }
+
+  const boundaryMessage = buildApplicationSkeletonBoundaryBlockedMessage(
+    "Application Skeleton stage plan does not point to an active commit-backed microtask."
+  );
+  assert.match(boundaryMessage, PAIRED_COMMIT_ITEM_RE);
+  assert.match(boundaryMessage, PLAN_STATE_PROBLEM_RE);
 });

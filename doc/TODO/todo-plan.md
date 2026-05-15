@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "971a75df7",
+  "lastRecordedCommit": "4ada0fc5e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.pm-source-descriptor-cleanup.task1",
-  "expectedCommitMessage": "fix: remove project manager source artifact truth",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1",
+  "expectedCommitMessage": "fix: clarify application skeleton core diagnostics",
   "debt": {
-    "expectedCommitMessage": "fix: remove project manager source artifact truth",
-    "preCommitHead": "971a75df7",
+    "expectedCommitMessage": "fix: clarify application skeleton core diagnostics",
+    "preCommitHead": "4ada0fc5e",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase50.pm-source-descriptor-cleanup.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1"
   }
 }
 ```
@@ -955,10 +955,10 @@ Release VSIX evidence recorded 2026-05-15:
 214. [DONE] Git Commit: `fix: remove project manager workflow prompt truth` (hash: 971a75df7)
 
 215. [DONE] `diagram-plan-lifecycle-repair.phase50.pm-source-descriptor-cleanup.task1` Remove Project Manager source-artifact descriptor helpers and tests because Core now owns workflow source selection for all steps (scope: `src/client/project-manager/services/workflow-source-artifact-descriptors.ts, src/client/project-manager/services/workflow-source-artifact-descriptors.test.ts`; expected commit: `fix: remove project manager source artifact truth`).
-216. [PENDING] Git Commit: `fix: remove project manager source artifact truth` (hash: TBD)
+216. [DONE] Git Commit: `fix: remove project manager source artifact truth` (hash: 4ada0fc5e)
 
-217. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1` Expand Application Skeleton Core repair/blocker messages so validation diagnostics are actionable and Core-owned plan blockers are understandable to the user (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: clarify application skeleton core diagnostics`).
-218. [TODO] Git Commit: `fix: clarify application skeleton core diagnostics` (hash: TBD)
+217. [DONE] `diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1` Expand Application Skeleton Core repair/blocker messages so validation diagnostics are actionable and Core-owned plan blockers are understandable to the user (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: clarify application skeleton core diagnostics`).
+218. [PENDING] Git Commit: `fix: clarify application skeleton core diagnostics` (hash: TBD)
 
 ### Stream: Managed Lifecycle
 
