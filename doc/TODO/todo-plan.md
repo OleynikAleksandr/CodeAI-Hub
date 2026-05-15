@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "ad58984f1",
+  "lastRecordedCommit": "b5658babe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-plan-lifecycle.task1",
-  "expectedCommitMessage": "fix: track application skeleton rejected attempts",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1",
+  "expectedCommitMessage": "fix: commit application skeleton rejected turns",
   "debt": {
-    "expectedCommitMessage": "fix: track application skeleton rejected attempts",
-    "preCommitHead": "ad58984f1",
+    "expectedCommitMessage": "fix: commit application skeleton rejected turns",
+    "preCommitHead": "b5658babe",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-plan-lifecycle.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1"
   }
 }
 ```
@@ -966,10 +966,10 @@ Release VSIX evidence recorded 2026-05-15:
 220. [DONE] Git Commit: `fix: open application skeleton draft on pm start` (hash: ad58984f1)
 
 221. [DONE] `diagram-plan-lifecycle-repair.phase50.application-skeleton-plan-lifecycle.task1` Make Application Skeleton stage-plan draft opening replace bootstrap placeholders with the active draft task and add repeatable rejected-attempt task pairs for Type A draft/materialization repairs; include the extracted repair-plan micro-module required by the architecture line-limit gate (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-repair-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: track application skeleton rejected attempts`).
-222. [PENDING] Git Commit: `fix: track application skeleton rejected attempts` (hash: TBD)
+222. [DONE] Git Commit: `fix: track application skeleton rejected attempts` (hash: b5658babe)
 
-223. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1` Commit safe rejected Application Skeleton provider turns before dispatching repair prompts and include the rejected commit hash in follow-up materialization diagnostics (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: commit application skeleton rejected turns`).
-224. [TODO] Git Commit: `fix: commit application skeleton rejected turns` (hash: TBD)
+223. [DONE] `diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1` Commit safe rejected Application Skeleton provider turns before dispatching repair prompts and include the rejected commit hash in follow-up materialization diagnostics (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: commit application skeleton rejected turns`).
+224. [PENDING] Git Commit: `fix: commit application skeleton rejected turns` (hash: TBD)
 
 ## Phase 51 — Application Skeleton Repair Verification (owner: Codex, updated: 2026-05-15)
 

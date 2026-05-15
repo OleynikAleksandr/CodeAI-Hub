@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
   buildApplicationSkeletonDraftRepairPrompt,
+  buildApplicationSkeletonMaterializationRepairPrompt,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
 import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
 import {
@@ -25,6 +26,8 @@ import type { SessionRequestHandlerMessageDispatch } from "./session-request-han
 
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
+const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
+  /^application-skeleton\.phase3\.repair\.task(\d+)$/u;
 
 interface ManagedWorkflowTurnSession {
   readonly initiativeSlug?: string | null;
@@ -68,6 +71,16 @@ const persistManagedDecision = async (params: {
   };
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, `${JSON.stringify(snapshot, null, 2)}\n`);
+};
+
+const resolveMaterializationRepairAttemptNumber = (
+  taskId: string | null
+): number => {
+  const match = taskId?.match(
+    APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE
+  );
+  const value = Number(match?.[1]);
+  return Number.isInteger(value) && value > 0 ? value : 1;
 };
 
 export class SessionRequestHandlerManagedWorkflowTurn {
@@ -190,7 +203,24 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       workspaceSlug: params.workspaceSlug,
     });
     if (!decision.valid) {
-      await this.dispatchApplicationRepairPrompt(params, decision);
+      const planAdvance = await this.applicationStagePlan.commitRejectedTurn({
+        decision,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      });
+      if (planAdvance.blocked) {
+        this.appendCoreMessage(params.sessionId, {
+          content: buildApplicationSkeletonBoundaryBlockedMessage(
+            planAdvance.blocked.message
+          ),
+          tag: "managed-workflow-validation",
+        });
+        return;
+      }
+      await this.dispatchApplicationRepairPrompt(params, decision, {
+        rejectedCommitHash: planAdvance.commit.hash,
+        repairTaskId: planAdvance.commit.nextTaskId,
+      });
       return;
     }
     const planAdvance = await this.applicationStagePlan.commitManagedTurn({
@@ -228,14 +258,27 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       readonly sessionId: string;
       readonly workspaceSlug: string;
     },
-    decision: ApplicationSkeletonManagedValidationResult
+    decision: ApplicationSkeletonManagedValidationResult,
+    rejected: {
+      readonly rejectedCommitHash: string;
+      readonly repairTaskId: string | null;
+    } | null
   ): Promise<void> {
     const repairPrompt =
-      decision.nextPrompt ??
-      buildApplicationSkeletonDraftRepairPrompt({
-        diagnostics: decision.diagnostics,
-        workspaceSlug: params.workspaceSlug,
-      });
+      decision.nextAction === "repair_materialization"
+        ? buildApplicationSkeletonMaterializationRepairPrompt({
+            attemptNumber: resolveMaterializationRepairAttemptNumber(
+              rejected?.repairTaskId ?? null
+            ),
+            diagnostics: decision.diagnostics,
+            rejectedCommitHash: rejected?.rejectedCommitHash ?? null,
+            workspaceSlug: params.workspaceSlug,
+          })
+        : (decision.nextPrompt ??
+          buildApplicationSkeletonDraftRepairPrompt({
+            diagnostics: decision.diagnostics,
+            workspaceSlug: params.workspaceSlug,
+          }));
     this.appendCoreMessage(params.sessionId, {
       content: repairPrompt,
       tag: "managed-workflow-validation",

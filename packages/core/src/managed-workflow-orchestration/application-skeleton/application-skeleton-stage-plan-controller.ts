@@ -192,6 +192,52 @@ export class ApplicationSkeletonStagePlanController {
     }
   }
 
+  async commitRejectedTurn(params: {
+    readonly decision: ApplicationSkeletonManagedValidationResult;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<ApplicationSkeletonStagePlanAdvanceResult> {
+    if (params.decision.valid) {
+      return this.blockInvalidDecision();
+    }
+    const stagePlanText = await readText(
+      params.workspaceRoot,
+      APPLICATION_STAGE_PLAN_PATH
+    );
+    const stageState = parseStateBlock<ManagedPlanState>(
+      stagePlanText,
+      PLAN_START,
+      PLAN_END
+    );
+    if (!(stageState.currentTaskId && stageState.expectedCommitMessage)) {
+      return this.blockPlanMismatch();
+    }
+    const managedPaths = await this.collectManagedPaths(params);
+    try {
+      const gitCommit = await this.gitBoundary.commitManagedChanges({
+        commitMessage: stageState.expectedCommitMessage,
+        managedPaths,
+        workspaceRoot: params.workspaceRoot,
+      });
+      if (gitCommit.noStagedChanges || !gitCommit.hash) {
+        return this.blockCommitFailed(
+          `No staged managed changes for commit "${stageState.expectedCommitMessage}".`
+        );
+      }
+      return await this.recordRejectedTurn({
+        decision: params.decision,
+        rejectedCommitHash: gitCommit.hash,
+        workspaceRoot: params.workspaceRoot,
+      });
+    } catch (error) {
+      return this.blockCommitFailed(
+        error instanceof Error
+          ? error.message
+          : `Managed commit failed: ${String(error)}`
+      );
+    }
+  }
+
   async recordRejectedTurn(params: {
     readonly decision: ApplicationSkeletonManagedValidationResult;
     readonly rejectedCommitHash: string;

@@ -40,6 +40,8 @@ const QUALITY_GATES_UNLOCKED_RE = /"quality_gates"/u;
 const APPLICATION_COMPLETED_RE =
   /"completedStages": \[\n {4}"application_skeleton"/u;
 const MANAGED_DECISION_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`;
+const APPLICATION_MARKDOWN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
+const APPLICATION_MAP_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -133,12 +135,12 @@ const prepareWorkspace = async (workspaceRoot: string): Promise<void> => {
   });
   await writeWorkspaceFile(
     workspaceRoot,
-    `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`,
+    APPLICATION_MARKDOWN_PATH,
     "# Application Skeleton\n\n## Overview\n\nDraft contract.\n"
   );
   await writeWorkspaceFile(
     workspaceRoot,
-    `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
+    APPLICATION_MAP_PATH,
     `${JSON.stringify(createDraftDecision().mapJson, null, 2)}\n`
   );
 };
@@ -208,7 +210,7 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
     );
     await writeWorkspaceFile(
       workspaceRoot,
-      `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`,
+      APPLICATION_MARKDOWN_PATH,
       [
         "# Application Skeleton",
         "",
@@ -222,7 +224,7 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
     );
     await writeWorkspaceFile(
       workspaceRoot,
-      `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
+      APPLICATION_MAP_PATH,
       `${JSON.stringify(createMaterializedDecision().mapJson, null, 2)}\n`
     );
     await writeWorkspaceFile(
@@ -271,6 +273,56 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
     );
     assert.match(workspacePlan, APPLICATION_COMPLETED_RE);
     assert.match(workspacePlan, QUALITY_GATES_UNLOCKED_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("ApplicationSkeletonStagePlanController commits rejected draft artifacts before opening repair", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "application-skeleton-rejected-draft-commit-")
+  );
+  const controller = new ApplicationSkeletonStagePlanController();
+  try {
+    await prepareWorkspace(workspaceRoot);
+    await controller.openDraftPhase({ workspaceRoot });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      APPLICATION_MAP_PATH,
+      "{ invalid json\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      MANAGED_DECISION_PATH,
+      '{"stage":"application_skeleton","phase":"draft","valid":false}\n'
+    );
+
+    const rejectedCommit = await controller.commitRejectedTurn({
+      decision: createInvalidDraftDecision(),
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(rejectedCommit.blocked, null);
+    assert.match(rejectedCommit.commit?.hash ?? "", GIT_HASH_RE);
+    assert.equal(
+      await git(workspaceRoot, [
+        "status",
+        "--short",
+        "--",
+        APPLICATION_MARKDOWN_PATH,
+        APPLICATION_MAP_PATH,
+        MANAGED_DECISION_PATH,
+      ]),
+      ""
+    );
+
+    const repairPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    assert.match(repairPlan, DRAFT_REPAIR_TASK_1_RE);
+    assert.equal(repairPlan.includes(rejectedCommit.commit?.hash ?? ""), true);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
