@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "5914a30fd",
+  "lastRecordedCommit": "860c04bb4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase3.store.task1",
-  "expectedCommitMessage": "feat: add managed workflow plan store abstraction",
+  "currentTaskId": "managed-orchestration-kernel.phase3.audit.task1",
+  "expectedCommitMessage": "feat: add managed workflow audit log",
   "debt": {
-    "expectedCommitMessage": "feat: add managed workflow plan store abstraction",
-    "preCommitHead": "5914a30fd",
+    "expectedCommitMessage": "feat: add managed workflow audit log",
+    "preCommitHead": "860c04bb4",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase3.store.task1"
+    "taskId": "managed-orchestration-kernel.phase3.audit.task1"
   }
 }
 ```
@@ -100,10 +100,10 @@
 ### Stream: Durable Kernel Services
 
 19. [DONE] `managed-orchestration-kernel.phase3.store.task1` Implement a minimal `ManagedWorkflowPlanStore` abstraction for current-state persistence and read-only snapshot reconstruction without reviving retired child-plan mutation logic (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-ledger-types.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.test.ts`; expected commit: `feat: add managed workflow plan store abstraction`).
-20. [PENDING] Git Commit: `feat: add managed workflow plan store abstraction` (hash: TBD)
+20. [DONE] Git Commit: `feat: add managed workflow plan store abstraction` (hash: 860c04bb4)
 
-21. [TODO] `managed-orchestration-kernel.phase3.audit.task1` Add `ManagedWorkflowAuditLog` and tests for Core decisions, effects, blockers, provider-visible messages, and recovery actions (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow audit log`).
-22. [TODO] Git Commit: `feat: add managed workflow audit log` (hash: TBD)
+21. [DONE] `managed-orchestration-kernel.phase3.audit.task1` Add `ManagedWorkflowAuditLog` and tests for Core decisions, effects, blockers, provider-visible messages, and recovery actions (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow audit log`).
+22. [PENDING] Git Commit: `feat: add managed workflow audit log` (hash: TBD)
 
 23. [TODO] `managed-orchestration-kernel.phase3.commit.task1` Add a fail-closed `ManagedWorkflowCommitTransaction` boundary that records intended commit decisions but refuses pseudo-hashes and does not yet perform step commits (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-commit-transaction.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-commit-transaction.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow commit transaction boundary`).
 24. [TODO] Git Commit: `feat: add managed workflow commit transaction boundary` (hash: TBD)
