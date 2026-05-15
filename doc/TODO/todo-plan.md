@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "9d6f4e1dc",
+  "lastRecordedCommit": "a7c37b416",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase0.plan.task1",
-  "expectedCommitMessage": "docs: expand scope to quality gates runtime orchestration",
+  "currentTaskId": "quality-gates-runtime.phase1.validation.task1",
+  "expectedCommitMessage": "feat: add quality gates managed validation",
   "debt": {
-    "expectedCommitMessage": "docs: expand scope to quality gates runtime orchestration",
-    "preCommitHead": "9d6f4e1dc",
+    "expectedCommitMessage": "feat: add quality gates managed validation",
+    "preCommitHead": "a7c37b416",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase0.plan.task1"
+    "taskId": "quality-gates-runtime.phase1.validation.task1"
   }
 }
 ```
@@ -1017,12 +1017,12 @@ Repair coverage:
 ### Stream: Plan Expansion
 
 232. [DONE] `quality-gates-runtime.phase0.plan.task1` Expand the active scope from closeout back to implementation so Quality Gates Baseline receives the same Core-owned managed runtime treatment as Diagram Modules and Application Skeleton (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: expand scope to quality gates runtime orchestration`).
-233. [PENDING] Git Commit: `docs: expand scope to quality gates runtime orchestration` (hash: TBD)
+233. [DONE] Git Commit: `docs: expand scope to quality gates runtime orchestration` (hash: a7c37b416)
 
 ### Stream: Core Contract And Validation
 
-234. [TODO] `quality-gates-runtime.phase1.validation.task1` Add Quality Gates managed prompt/validation logic for draft, review handoff, integration acceptance, actionable repair diagnostics, and persistent-return user message (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `feat: add quality gates managed validation`).
-235. [TODO] Git Commit: `feat: add quality gates managed validation` (hash: TBD)
+234. [DONE] `quality-gates-runtime.phase1.validation.task1` Add Quality Gates managed prompt/validation logic for draft, review handoff, integration acceptance, actionable repair diagnostics, and persistent-return user message (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `feat: add quality gates managed validation`).
+235. [PENDING] Git Commit: `feat: add quality gates managed validation` (hash: TBD)
 
 ### Stream: Stage Plan Lifecycle
 

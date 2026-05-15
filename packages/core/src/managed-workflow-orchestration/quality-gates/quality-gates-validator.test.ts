@@ -1,0 +1,226 @@
+import assert from "node:assert/strict";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import test from "node:test";
+import {
+  buildQualityGatesBoundaryBlockedMessage,
+  buildQualityGatesIntegrationPrompt,
+  buildQualityGatesReviewRevisionPrompt,
+} from "./quality-gates-prompt-builder";
+import { validateQualityGatesManagedArtifacts } from "./quality-gates-validator";
+
+const WORKSPACE_SLUG = "demo-workspace";
+const DRAFT_REJECTED_RE = /Core rejected the current Quality Gates draft/u;
+const INTEGRATION_ACCEPTED_RE = /Core accepted Quality Gates integration/u;
+const INTEGRATION_OPEN_RE = /Core opens Phase 3 Quality Gates Integration/u;
+const INTEGRATION_REJECTED_RE = /Core rejected Quality Gates integration/u;
+const PLAN_STATE_PROBLEM_RE = /orchestrator plan-state problem/u;
+const REVIEW_CORRECTIONS_RE = /review corrections/u;
+const USER_REVIEW_OPEN_RE = /user review is now open/u;
+
+const writeWorkspaceFile = async (
+  workspaceRoot: string,
+  relativePath: string,
+  content: string
+): Promise<void> => {
+  const absolutePath = path.join(workspaceRoot, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, content, "utf8");
+};
+
+const buildQualityGatesJson = (
+  overrides: Record<string, unknown> = {}
+): Record<string, unknown> => ({
+  accepted: false,
+  advisory: [],
+  commands: {
+    "qg-secret-scan": {
+      availability: "not_integrated",
+      baseline: ["recommended"],
+      blockingIn: ["beforeCommit"],
+      desiredStatus: "active",
+      id: "qg-secret-scan",
+      integrationRequired: true,
+      plannedIntegrationPaths: ["package.json", "scripts/quality-gates"],
+      proposedCommand: "npm run qg:secret-scan",
+    },
+  },
+  deferred: [],
+  integrated: false,
+  integratedPaths: [],
+  integrationState: "not_started",
+  plannedRequiredAfterIntegration: [],
+  requiredBeforeCommit: ["qg-secret-scan"],
+  requiredBeforeModuleExecution: [],
+  requiredBeforePush: [],
+  requiredBeforeRelease: [],
+  schema: "codeai-quality-gates-v1",
+  verification: [],
+  ...overrides,
+});
+
+const writeQualityGatesArtifacts = async (
+  workspaceRoot: string,
+  contract: Record<string, unknown>
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`,
+    "# Quality Gates Baseline\n\n## Overview\n\nGate contract.\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.json`,
+    `${JSON.stringify(contract, null, 2)}\n`
+  );
+};
+
+test("Quality Gates validator accepts draft contract and opens user review", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-draft-")
+  );
+  try {
+    await writeQualityGatesArtifacts(workspaceRoot, buildQualityGatesJson());
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, true);
+    assert.equal(result.phase, "draft");
+    assert.equal(result.nextAction, "open_user_review");
+    assert.match(result.nextPrompt ?? "", USER_REVIEW_OPEN_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates validator rejects malformed draft commands", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-bad-draft-")
+  );
+  try {
+    await writeQualityGatesArtifacts(
+      workspaceRoot,
+      buildQualityGatesJson({ commands: [] })
+    );
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_current_artifact");
+    assert.ok(result.diagnostics.includes("commands_array"));
+    assert.match(result.nextPrompt ?? "", DRAFT_REJECTED_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates validator accepts integrated contract with scripts and hooks", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-integrated-")
+  );
+  try {
+    await writeQualityGatesArtifacts(
+      workspaceRoot,
+      buildQualityGatesJson({
+        accepted: true,
+        integrated: true,
+        integratedPaths: [
+          "package.json",
+          ".husky/pre-commit",
+          "scripts/quality-gates/secret-scan.mjs",
+        ],
+        integrationState: "integrated",
+      })
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "package.json",
+      `${JSON.stringify(
+        {
+          scripts: {
+            "qg:secret-scan": "node scripts/quality-gates/secret-scan.mjs",
+          },
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
+    );
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, true);
+    assert.equal(result.phase, "integration");
+    assert.equal(result.nextAction, "open_persistent_return");
+    assert.match(result.nextPrompt ?? "", INTEGRATION_ACCEPTED_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates validator rejects integrated contract without package script and hook wiring", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-missing-hooks-")
+  );
+  try {
+    await writeQualityGatesArtifacts(
+      workspaceRoot,
+      buildQualityGatesJson({
+        accepted: true,
+        integrated: true,
+        integrationState: "integrated",
+      })
+    );
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_integration");
+    assert.ok(result.diagnostics.includes("missing_package_json"));
+    assert.ok(
+      result.diagnostics.includes(
+        "missing_hook_gate:qg-secret-scan in .husky/pre-commit"
+      )
+    );
+    assert.match(result.nextPrompt ?? "", INTEGRATION_REJECTED_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates prompt builders expose integration, revision, and boundary messages", () => {
+  assert.match(
+    buildQualityGatesIntegrationPrompt({ workspaceSlug: WORKSPACE_SLUG }),
+    INTEGRATION_OPEN_RE
+  );
+  assert.match(
+    buildQualityGatesReviewRevisionPrompt({
+      userFeedback: "Добавь smoke gate.",
+      workspaceSlug: WORKSPACE_SLUG,
+    }),
+    REVIEW_CORRECTIONS_RE
+  );
+  assert.match(
+    buildQualityGatesBoundaryBlockedMessage(
+      "stage plan does not point to an active commit-backed microtask"
+    ),
+    PLAN_STATE_PROBLEM_RE
+  );
+});
