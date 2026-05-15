@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.259] - 2026-05-15
+### Fixed
+- **Diagram Modules no longer stops after creating only `product-parts.index.md`.** Core now creates the managed workspace scaffold at stage start and runs post-turn managed arbitration after provider completion.
+- **Diagram Modules Phase 1 is now subturn-aware.** The first Product Part index is accepted as a valid subturn, Core extracts Product Part ids, and each completed Product Part turn dispatches the next Product Part prompt.
+- **User-led review opens only after the last Product Part is accepted.** Core appends visible localized feedback during continuation and moves to review when the managed sequence is complete.
+
+### Tests
+- `npm run build:core`
+- Diagram Modules prompt/validation and managed facade tests passed, 16/16 tests.
+- Remote-bridge provider-event and managed-workspace tests passed.
+- `npm run plan:validate`
+
 ## [1.2.258] - 2026-05-15
 ### Added
 - **All five documentation trunk steps are routed through the replacement Managed Workflow Orchestration cluster boundary.** `Description` and `Virtual Simulation` keep provider-direct sessions; `Diagram Modules`, `Application Skeleton`, and `Quality Gates` now use managed dispatch.

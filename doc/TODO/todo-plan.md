@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "51bfbd9ae",
+  "lastRecordedCommit": "dd87e5299",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase9.verify.task1",
-  "expectedCommitMessage": "docs: verify diagram modules continuation repair",
+  "currentTaskId": "diagram-runtime-repair.phase11.release.task1",
+  "expectedCommitMessage": "docs: prepare diagram modules continuation repair release",
   "debt": {
-    "expectedCommitMessage": "docs: verify diagram modules continuation repair",
-    "preCommitHead": "51bfbd9ae",
+    "expectedCommitMessage": "docs: prepare diagram modules continuation repair release",
+    "preCommitHead": "dd87e5299",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase9.verify.task1"
+    "taskId": "diagram-runtime-repair.phase11.release.task1"
   }
 }
 ```
@@ -232,7 +232,7 @@ Release package evidence recorded 2026-05-15:
 ### Stream: Verification
 
 50. [DONE] `diagram-runtime-repair.phase9.verify.task1` Run targeted Core verification for the Diagram Modules scaffold and post-turn continuation flow, then record exact evidence before asking for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules continuation repair`).
-51. [PENDING] Git Commit: `docs: verify diagram modules continuation repair` (hash: TBD)
+51. [DONE] Git Commit: `docs: verify diagram modules continuation repair` (hash: dd87e5299)
 
 Verification evidence recorded 2026-05-15:
 
@@ -250,11 +250,37 @@ Repair coverage:
 
 ### Stream: Release Build Confirmation
 
-52. [TODO] `diagram-runtime-repair.phase10.release-confirmation.task1` After the repair stream and targeted verification pass, ask the user for a separate explicit confirmation before preparing release metadata or running release build scripts (scope: user workflow; expected commit: not required).
+52. [DONE] `diagram-runtime-repair.phase10.release-confirmation.task1` After the repair stream and targeted verification pass, ask the user for a separate explicit confirmation before preparing release metadata or running release build scripts (scope: user workflow; expected commit: not required). Result: User explicitly confirmed release build for the Diagram Modules continuation repair.
 
-## Phase 11 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 11 — Release Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation And Build
+
+53. [DONE] `diagram-runtime-repair.phase11.release.task1` Update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules continuation repair release`).
+54. [PENDING] Git Commit: `docs: prepare diagram modules continuation repair release` (hash: TBD)
+
+Release preparation evidence recorded 2026-05-15:
+
+- Current package version before release scripts: `1.2.258`.
+- Future release version prepared in release-facing docs: `1.2.259`.
+- `README.md` current-release banner updated to Diagram Modules continuation repair.
+- `CHANGELOG.md` release entry `1.2.259` added with verification summary.
+
+55. [TODO] `diagram-runtime-repair.phase11.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules continuation repair release`).
+56. [TODO] Git Commit: `chore: build diagram modules continuation repair release` (hash: TBD)
+
+57. [TODO] `diagram-runtime-repair.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules continuation repair release`).
+58. [TODO] Git Commit: `docs: record diagram modules continuation repair release` (hash: TBD)
+
+## Phase 12 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+59. [TODO] `diagram-runtime-repair.phase12.user-acceptance.task1` User installs the release and verifies: Description and Virtual Simulation still pass, Diagram Modules start creates the managed workspace scaffold, Core dispatches Product Part continuation prompts after provider turns, and Core opens User-Led Review only after the last Product Part is accepted (scope: user workflow; expected commit: not required).
+
+## Phase 13 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-53. [TODO] `prelim-diagram-runtime.phase7.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-54. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+60. [TODO] `prelim-diagram-runtime.phase13.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+61. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
