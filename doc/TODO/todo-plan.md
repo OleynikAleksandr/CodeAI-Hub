@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "89cdf7317",
+  "lastRecordedCommit": "357a475aa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase17.verify.task1",
-  "expectedCommitMessage": "docs: verify diagram modules managed plan lifecycle repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase18.release-gate.task1",
+  "expectedCommitMessage": "docs: open diagram modules managed plan lifecycle release gate",
   "debt": {
-    "expectedCommitMessage": "docs: verify diagram modules managed plan lifecycle repair",
-    "preCommitHead": "89cdf7317",
+    "expectedCommitMessage": "docs: open diagram modules managed plan lifecycle release gate",
+    "preCommitHead": "357a475aa",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase17.verify.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase18.release-gate.task1"
   }
 }
 ```
@@ -386,7 +386,7 @@ Release package evidence recorded 2026-05-15:
 81. [DONE] Git Commit: `fix: commit diagram modules accepted subturns` (hash: 89cdf7317)
 
 82. [DONE] `diagram-plan-lifecycle-repair.phase17.verify.task1` Run targeted Core builds/tests for Diagram Modules validation, scaffold, stage-plan advancement, and runtime post-turn arbitration; record exact evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules managed plan lifecycle repair`).
-83. [PENDING] Git Commit: `docs: verify diagram modules managed plan lifecycle repair` (hash: TBD)
+83. [DONE] Git Commit: `docs: verify diagram modules managed plan lifecycle repair` (hash: 357a475aa)
 
 Verification evidence recorded 2026-05-15:
 
@@ -395,9 +395,37 @@ Verification evidence recorded 2026-05-15:
 - `npm run plan:validate` — PASS.
 - Covered behavior: greenfield workspace without `.git` is initialized by Core; accepted index subturn commits managed scaffold/index and opens the next Product Part microtask; accepted final Product Part commits before opening Phase 2 user review in `doc/TODO/stages/diagram-modules/todo-plan.md`; runtime continuation/review messages are emitted only after the managed commit boundary succeeds.
 
-## Phase 18 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 18 — Release Build Gate For Managed Plan Lifecycle Repair (owner: Codex + User, updated: 2026-05-15)
+
+### Stream: Release Confirmation Gate
+
+84. [DONE] `diagram-plan-lifecycle-repair.phase18.release-gate.task1` Add the required post-repair release gate and retest path before closeout; closeout remains blocked until a new release is built and explicitly accepted by the user (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open diagram modules managed plan lifecycle release gate`).
+85. [PENDING] Git Commit: `docs: open diagram modules managed plan lifecycle release gate` (hash: TBD)
+
+86. [TODO] `diagram-plan-lifecycle-repair.phase18.release-confirmation.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the managed plan lifecycle repair (scope: user workflow; expected commit: none).
+
+## Phase 19 — Release Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation And Build
+
+87. [TODO] `diagram-plan-lifecycle-repair.phase19.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules managed plan lifecycle release`).
+88. [TODO] Git Commit: `docs: prepare diagram modules managed plan lifecycle release` (hash: TBD)
+
+89. [TODO] `diagram-plan-lifecycle-repair.phase19.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules managed plan lifecycle release`).
+90. [TODO] Git Commit: `chore: build diagram modules managed plan lifecycle release` (hash: TBD)
+
+91. [TODO] `diagram-plan-lifecycle-repair.phase19.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules managed plan lifecycle release`).
+92. [TODO] Git Commit: `docs: record diagram modules managed plan lifecycle release` (hash: TBD)
+
+## Phase 20 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+93. [TODO] `diagram-plan-lifecycle-repair.phase20.user-acceptance.task1` User installs the rebuilt release and verifies: Diagram Modules start creates managed scaffold, each accepted index/Product Part subturn receives a real Git commit and stage-plan hash, next Product Part microtasks are injected, Phase 2 user review appears in `doc/TODO/stages/diagram-modules/todo-plan.md`, and continuation/review messages appear only after the managed commit boundary succeeds (scope: user workflow; expected commit: none).
+
+## Phase 21 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-84. [TODO] `prelim-diagram-runtime.phase18.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-85. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+94. [TODO] `prelim-diagram-runtime.phase21.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+95. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
