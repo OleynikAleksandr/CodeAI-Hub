@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "b72322863",
+  "lastRecordedCommit": "8ffc06d9d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase2.validation.task1",
-  "expectedCommitMessage": "feat: validate diagram modules managed turns",
+  "currentTaskId": "prelim-diagram-runtime.phase2.review.task1",
+  "expectedCommitMessage": "feat: add diagram modules user review transitions",
   "debt": {
-    "expectedCommitMessage": "feat: validate diagram modules managed turns",
-    "preCommitHead": "b72322863",
+    "expectedCommitMessage": "feat: add diagram modules user review transitions",
+    "preCommitHead": "8ffc06d9d",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase2.validation.task1"
+    "taskId": "prelim-diagram-runtime.phase2.review.task1"
   }
 }
 ```
@@ -82,10 +82,10 @@
 ### Stream: Validation And Review Transition
 
 13. [DONE] `prelim-diagram-runtime.phase2.validation.task1` Connect Diagram Modules artifact validation to provider-turn completion through the new facade, using existing deterministic artifact/progress validators without reviving retired child-plan mutators; include the public contract because the validation method is a facade API (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: validate diagram modules managed turns`).
-14. [PENDING] Git Commit: `feat: validate diagram modules managed turns` (hash: TBD)
+14. [DONE] Git Commit: `feat: validate diagram modules managed turns` (hash: 8ffc06d9d)
 
-15. [TODO] `prelim-diagram-runtime.phase2.review.task1` Add Type B user-intent classification for Diagram Modules review messages: accept opens persistent return, revision routes to provider, ambiguous text receives Core clarification (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-intent-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.test.ts`; expected commit: `feat: add diagram modules user review transitions`).
-16. [TODO] Git Commit: `feat: add diagram modules user review transitions` (hash: TBD)
+15. [DONE] `prelim-diagram-runtime.phase2.review.task1` Add Type B user-intent classification for Diagram Modules review messages: accept opens persistent return, revision routes to provider, ambiguous text receives Core clarification (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-intent-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.test.ts`; expected commit: `feat: add diagram modules user review transitions`).
+16. [PENDING] Git Commit: `feat: add diagram modules user review transitions` (hash: TBD)
 
 ## Phase 3 — Project Manager Projection And Regression Coverage (owner: Codex, updated: 2026-05-15)
 

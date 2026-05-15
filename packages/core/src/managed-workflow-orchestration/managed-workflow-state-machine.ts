@@ -3,7 +3,9 @@ import type { ManagedWorkflowEvent } from "./managed-workflow-events";
 import type { ManagedWorkflowStageId } from "./managed-workflow-orchestration-contracts";
 import {
   createManagedWorkflowPhaseSnapshot,
+  PERSISTENT_RETURN_PHASE,
   TYPE_A_CORE_GATED_PHASE,
+  TYPE_B_USER_REVIEW_PHASE,
 } from "./managed-workflow-phase-contracts";
 import type {
   ManagedWorkflowSnapshot,
@@ -94,13 +96,18 @@ export class ManagedWorkflowStateMachine {
     >
   ): ManagedWorkflowStateTransition {
     if (event.result === "accepted") {
+      const currentPhase =
+        snapshot.currentPhase?.type === "core_gated"
+          ? createManagedWorkflowPhaseSnapshot(TYPE_B_USER_REVIEW_PHASE)
+          : snapshot.currentPhase;
       const next = patchSnapshot(
         snapshot,
         {
           blocker: null,
+          currentPhase,
           lastCoreMessage: "Core accepted the current managed phase.",
           status:
-            snapshot.currentPhase?.type === "persistent_user_return"
+            currentPhase?.type === "persistent_user_return"
               ? "persistent_return_open"
               : "waiting_for_user",
         },
@@ -197,6 +204,66 @@ export class ManagedWorkflowStateMachine {
     >
   ): ManagedWorkflowStateTransition {
     const accepted = event.intent === "accept";
+    const isUserReviewPhase = snapshot.currentPhase?.type === "user_led_review";
+    if (event.stageId === "diagram_modules" && isUserReviewPhase && accepted) {
+      const next = patchSnapshot(
+        snapshot,
+        {
+          accepted: true,
+          blocker: null,
+          currentPhase: createManagedWorkflowPhaseSnapshot(
+            PERSISTENT_RETURN_PHASE
+          ),
+          lastCoreMessage:
+            "Core opened persistent Diagram Modules user return. You can request revisions to the accepted diagram artifacts later.",
+          status: "persistent_return_open",
+        },
+        event.occurredAt
+      );
+      return {
+        effects: [
+          {
+            kind: "append_core_message",
+            message: next.lastCoreMessage ?? "",
+            stageId: next.stageId,
+            visibleToProvider: false,
+            visibleToUser: true,
+          },
+          ...buildSnapshotEffects(next),
+        ],
+        snapshot: next,
+      };
+    }
+    if (isUserReviewPhase && event.intent === "unknown") {
+      const next = patchSnapshot(
+        snapshot,
+        {
+          blocker: {
+            code: "user_intent_unknown",
+            detail:
+              "Core needs either explicit acceptance or concrete revision instructions.",
+            owner: "user",
+          },
+          lastCoreMessage:
+            "Please confirm the reviewed artifacts or list the revisions that must be made before continuation.",
+          status: "waiting_for_user",
+        },
+        event.occurredAt
+      );
+      return {
+        effects: [
+          {
+            kind: "append_core_message",
+            message: next.lastCoreMessage ?? "",
+            stageId: next.stageId,
+            visibleToProvider: false,
+            visibleToUser: true,
+          },
+          ...buildSnapshotEffects(next),
+        ],
+        snapshot: next,
+      };
+    }
     const message = accepted
       ? "User accepted the managed contract; continue with the next Core-owned phase."
       : event.content;
