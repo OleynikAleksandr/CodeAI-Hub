@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "d1f5a7d0a",
+  "lastRecordedCommit": "a9b3e5e42",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase2.prompt.task1",
-  "expectedCommitMessage": "feat: add diagram modules managed prompt builder",
+  "currentTaskId": "prelim-diagram-runtime.phase2.snapshot.task1",
+  "expectedCommitMessage": "feat: persist diagram modules managed phase snapshot",
   "debt": {
-    "expectedCommitMessage": "feat: add diagram modules managed prompt builder",
-    "preCommitHead": "d1f5a7d0a",
+    "expectedCommitMessage": "feat: persist diagram modules managed phase snapshot",
+    "preCommitHead": "a9b3e5e42",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase2.prompt.task1"
+    "taskId": "prelim-diagram-runtime.phase2.snapshot.task1"
   }
 }
 ```
@@ -74,10 +74,10 @@
 ### Stream: Core-Gated Prompt And Snapshot
 
 9. [DONE] `prelim-diagram-runtime.phase2.prompt.task1` Add a Diagram Modules managed prompt builder that composes inline upstream artifacts, target paths, and no-Git/no-plan agent instructions for Phase 1 (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, packages/core/src/managed-workflow-orchestration/index.ts`; expected commit: `feat: add diagram modules managed prompt builder`).
-10. [PENDING] Git Commit: `feat: add diagram modules managed prompt builder` (hash: TBD)
+10. [DONE] Git Commit: `feat: add diagram modules managed prompt builder` (hash: a9b3e5e42)
 
-11. [TODO] `prelim-diagram-runtime.phase2.snapshot.task1` Persist and project Diagram Modules managed phase snapshot for Phase 1 start and existing-session restore so PM can reopen the same managed session instead of showing a start card (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: persist diagram modules managed phase snapshot`).
-12. [TODO] Git Commit: `feat: persist diagram modules managed phase snapshot` (hash: TBD)
+11. [DONE] `prelim-diagram-runtime.phase2.snapshot.task1` Persist and project Diagram Modules managed phase snapshot for Phase 1 start and existing-session restore so PM can reopen the same managed session instead of showing a start card; include the cluster index export because the test consumes this through the public cluster boundary (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: persist diagram modules managed phase snapshot`).
+12. [PENDING] Git Commit: `feat: persist diagram modules managed phase snapshot` (hash: TBD)
 
 ### Stream: Validation And Review Transition
 

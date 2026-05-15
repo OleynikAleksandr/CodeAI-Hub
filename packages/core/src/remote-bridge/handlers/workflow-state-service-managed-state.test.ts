@@ -4,6 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { Request, Response } from "express";
+import {
+  ManagedWorkflowPlanStore,
+  ManagedWorkflowReadModelProjector,
+} from "../../managed-workflow-orchestration";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
@@ -67,7 +71,7 @@ test("workflow-state projects managed workflow preview state read-only", async (
       [
         "provider_direct",
         "provider_direct",
-        "core_preview_boundary",
+        "managed_dispatch",
         "core_preview_boundary",
         "core_preview_boundary",
       ]
@@ -75,6 +79,32 @@ test("workflow-state projects managed workflow preview state read-only", async (
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
+});
+
+test("managed workflow read model projects a persisted Diagram Modules phase snapshot", () => {
+  const store = new ManagedWorkflowPlanStore();
+  store.appendStageStartSnapshot({
+    recordedAt: "2026-05-15T12:00:00.000Z",
+    recordId: "diagram-start",
+    stageId: "diagram_modules",
+    workspaceRoot: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+  });
+  const snapshot = store.readLatestSnapshot({
+    stageId: "diagram_modules",
+    workspaceSlug: "demo-workspace",
+  });
+  const projection = new ManagedWorkflowReadModelProjector().project({
+    currentSnapshots: snapshot ? [snapshot] : [],
+  });
+  const diagramStage = projection.stages.find(
+    (stage) => stage.controllerId === "diagram_modules"
+  );
+
+  assert.equal(diagramStage?.startPolicy, "managed_dispatch");
+  assert.equal(diagramStage?.runStatus, "core_gated");
+  assert.equal(diagramStage?.currentPhase?.type, "core_gated");
+  assert.equal(diagramStage?.currentPhase?.index, 1);
 });
 
 test("workflow-state projects managed read-only upstream stages from downstream technical progress", async () => {

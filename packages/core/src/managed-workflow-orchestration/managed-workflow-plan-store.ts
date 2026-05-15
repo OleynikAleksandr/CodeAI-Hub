@@ -2,7 +2,15 @@ import type {
   ManagedWorkflowLedgerLookup,
   ManagedWorkflowLedgerRecord,
 } from "./managed-workflow-ledger-types";
-import type { ManagedWorkflowSnapshot } from "./managed-workflow-snapshot";
+import type { ManagedWorkflowStageId } from "./managed-workflow-orchestration-contracts";
+import {
+  createManagedWorkflowPhaseSnapshot,
+  TYPE_A_CORE_GATED_PHASE,
+} from "./managed-workflow-phase-contracts";
+import type {
+  ManagedWorkflowRunStatus,
+  ManagedWorkflowSnapshot,
+} from "./managed-workflow-snapshot";
 
 const buildLedgerKey = (lookup: ManagedWorkflowLedgerLookup): string =>
   `${lookup.workspaceSlug}:${lookup.stageId}`;
@@ -31,6 +39,37 @@ export class ManagedWorkflowPlanStore {
     };
     this.append(record);
     return record;
+  }
+
+  appendStageStartSnapshot(options: {
+    readonly recordedAt: string;
+    readonly recordId: string;
+    readonly stageId: ManagedWorkflowStageId;
+    readonly status?: ManagedWorkflowRunStatus;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): ManagedWorkflowLedgerRecord {
+    return this.appendSnapshot({
+      recordedAt: options.recordedAt,
+      recordId: options.recordId,
+      snapshot: {
+        accepted: false,
+        activeTaskId: `${options.stageId}.phase1.task1`,
+        blocker: null,
+        currentPhase: createManagedWorkflowPhaseSnapshot(
+          TYPE_A_CORE_GATED_PHASE
+        ),
+        integrated: false,
+        lastCoreMessage: "Core opened a managed workflow phase.",
+        materialized: false,
+        stageId: options.stageId,
+        status: options.status ?? "core_gated",
+        updatedAt: options.recordedAt,
+        version: 1,
+        workspaceRoot: options.workspaceRoot,
+        workspaceSlug: options.workspaceSlug,
+      },
+    });
   }
 
   readLedger(

@@ -14,3 +14,5 @@ export type {
   ManagedWorkflowStageStartRequest,
 } from "./managed-workflow-orchestration-contracts";
 export { ManagedWorkflowOrchestrationFacade } from "./managed-workflow-orchestration-facade";
+export { ManagedWorkflowPlanStore } from "./managed-workflow-plan-store";
+export { ManagedWorkflowReadModelProjector } from "./managed-workflow-read-model-projector";

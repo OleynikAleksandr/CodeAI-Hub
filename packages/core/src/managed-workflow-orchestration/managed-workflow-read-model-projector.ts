@@ -1,10 +1,17 @@
 import type { ManagedWorkflowStageStartPolicy } from "./managed-workflow-orchestration-contracts";
+import type {
+  ManagedWorkflowPhaseSnapshot,
+  ManagedWorkflowRunStatus,
+  ManagedWorkflowSnapshot,
+} from "./managed-workflow-snapshot";
 import { ManagedWorkflowStepRegistry } from "./managed-workflow-step-registry";
 
 export interface ManagedWorkflowPreviewStageProjection {
   readonly controllerId: string;
+  readonly currentPhase?: ManagedWorkflowPhaseSnapshot | null;
   readonly displayName: string;
   readonly phaseTypes: readonly string[];
+  readonly runStatus?: ManagedWorkflowRunStatus;
   readonly startPolicy: ManagedWorkflowStageStartPolicy;
 }
 
@@ -17,6 +24,7 @@ export interface ManagedWorkflowPreviewProjection {
 }
 
 export interface ManagedWorkflowReadModelProjectOptions {
+  readonly currentSnapshots?: readonly ManagedWorkflowSnapshot[];
   readonly readOnlyStages?: readonly string[];
 }
 
@@ -32,19 +40,30 @@ export class ManagedWorkflowReadModelProjector {
   project(
     options: ManagedWorkflowReadModelProjectOptions = {}
   ): ManagedWorkflowPreviewProjection {
+    const snapshotsByStage = new Map(
+      (options.currentSnapshots ?? []).map((snapshot) => [
+        snapshot.stageId,
+        snapshot,
+      ])
+    );
     return {
       active: true,
       mode: "preview",
       readOnlyStages: options.readOnlyStages ?? [],
       reason:
         "Managed Workflow Orchestration cluster is active in preview mode; step-specific provider dispatch waits for follow-up releases.",
-      stages: this.#registry.list().map((controller) => ({
-        controllerId: controller.descriptor.stageId,
-        displayName: controller.descriptor.displayName,
-        phaseTypes: controller.descriptor.phaseTypes,
-        startPolicy:
-          controller.descriptor.startPolicy ?? DEFAULT_STAGE_START_POLICY,
-      })),
+      stages: this.#registry.list().map((controller) => {
+        const snapshot = snapshotsByStage.get(controller.descriptor.stageId);
+        return {
+          controllerId: controller.descriptor.stageId,
+          currentPhase: snapshot?.currentPhase ?? null,
+          displayName: controller.descriptor.displayName,
+          phaseTypes: controller.descriptor.phaseTypes,
+          runStatus: snapshot?.status ?? "idle",
+          startPolicy:
+            controller.descriptor.startPolicy ?? DEFAULT_STAGE_START_POLICY,
+        };
+      }),
     };
   }
 }
