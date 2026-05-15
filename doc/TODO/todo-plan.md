@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "4fc3d08fd",
+  "lastRecordedCommit": "ea709a612",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase19.release.task2",
-  "expectedCommitMessage": "chore: build diagram modules managed plan lifecycle release",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase19.release.task3",
+  "expectedCommitMessage": "docs: record diagram modules managed plan lifecycle release",
   "debt": {
-    "expectedCommitMessage": "chore: build diagram modules managed plan lifecycle release",
-    "preCommitHead": "4fc3d08fd",
+    "expectedCommitMessage": "docs: record diagram modules managed plan lifecycle release",
+    "preCommitHead": "ea709a612",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase19.release.task2"
+    "taskId": "diagram-plan-lifecycle-repair.phase19.release.task3"
   }
 }
 ```
@@ -419,7 +419,7 @@ Release preparation evidence recorded 2026-05-15:
 - `CHANGELOG.md` release entry `1.2.261` added with verification summary.
 
 89. [DONE] `diagram-plan-lifecycle-repair.phase19.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules managed plan lifecycle release`).
-90. [PENDING] Git Commit: `chore: build diagram modules managed plan lifecycle release` (hash: TBD)
+90. [DONE] Git Commit: `chore: build diagram modules managed plan lifecycle release` (hash: ea709a612)
 
 Release build-all evidence recorded 2026-05-15:
 
@@ -428,8 +428,16 @@ Release build-all evidence recorded 2026-05-15:
 - Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.261.tar.bz2`, `codex-module-1.2.261.tar.bz2`, `gemini-module-1.2.261.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.261.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.261.tar.bz2`, `vscode-webview-1.2.261.tar.bz2`, `project-manager-1.2.261.tar.bz2`.
 - Updated package versions and managed release manifests to `1.2.261`.
 
-91. [TODO] `diagram-plan-lifecycle-repair.phase19.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules managed plan lifecycle release`).
-92. [TODO] Git Commit: `docs: record diagram modules managed plan lifecycle release` (hash: TBD)
+91. [DONE] `diagram-plan-lifecycle-repair.phase19.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules managed plan lifecycle release`).
+92. [PENDING] Git Commit: `docs: record diagram modules managed plan lifecycle release` (hash: TBD)
+
+Release VSIX evidence recorded 2026-05-15:
+
+- `./scripts/build-release.sh --use-current-version --allow-dirty` - PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition; no code/package paths were dirty before build start.
+- Required release-build output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`.
+- VSIX package: `codeai-hub-1.2.261.vsix` (`47M`; script package-size check reported `48M`).
+- Release runtime archives remain available in `doc/tmp/releases/` for version `1.2.261`.
+- Advisory warnings observed: 17 pre-existing markdown anchor issues in planning documents and package-size warning over 20MB.
 
 ## Phase 20 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
