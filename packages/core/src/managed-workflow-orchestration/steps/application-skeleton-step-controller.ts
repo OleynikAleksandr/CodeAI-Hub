@@ -20,6 +20,7 @@ export const applicationSkeletonStepController: ManagedWorkflowStepController =
       displayName: "Application Skeleton",
       phaseTypes: ["core_gated", "user_led_review", "persistent_user_return"],
       stageId: "application_skeleton",
+      startPolicy: "managed_dispatch",
     },
     ownedPathGlobs: [
       ".codeai-hub/**/application_skeleton/**",

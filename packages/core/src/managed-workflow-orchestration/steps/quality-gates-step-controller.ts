@@ -19,6 +19,7 @@ export const qualityGatesStepController: ManagedWorkflowStepController = {
     displayName: "Quality Gates Baseline",
     phaseTypes: ["core_gated", "user_led_review", "persistent_user_return"],
     stageId: "quality_gates",
+    startPolicy: "managed_dispatch",
   },
   ownedPathGlobs: [
     ".codeai-hub/**/quality_gates/**",

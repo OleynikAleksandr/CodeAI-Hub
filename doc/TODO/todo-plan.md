@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "21f2486a5",
+  "lastRecordedCommit": "60a11e925",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "remaining-technical-runtime.phase0.plan.task1",
-  "expectedCommitMessage": "docs: expand scope to remaining technical stage orchestration",
+  "currentTaskId": "remaining-technical-runtime.phase1.policy.task1",
+  "expectedCommitMessage": "feat: enable remaining technical managed dispatch policies",
   "debt": {
-    "expectedCommitMessage": "docs: expand scope to remaining technical stage orchestration",
-    "preCommitHead": "21f2486a5",
+    "expectedCommitMessage": "feat: enable remaining technical managed dispatch policies",
+    "preCommitHead": "60a11e925",
     "stage": "commit_pending",
-    "taskId": "remaining-technical-runtime.phase0.plan.task1"
+    "taskId": "remaining-technical-runtime.phase1.policy.task1"
   }
 }
 ```
@@ -129,14 +129,14 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Active Plan Extension
 
 23. [DONE] `remaining-technical-runtime.phase0.plan.task1` Expand this active scope after explicit user confirmation so Application Skeleton and Quality Gates are connected to the new orchestrator before release build (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: expand scope to remaining technical stage orchestration`).
-24. [PENDING] Git Commit: `docs: expand scope to remaining technical stage orchestration` (hash: TBD)
+24. [DONE] Git Commit: `docs: expand scope to remaining technical stage orchestration` (hash: 60a11e925)
 
 ## Phase 6 — Remaining Technical Step Managed Dispatch (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Runtime Policy
 
-25. [TODO] `remaining-technical-runtime.phase1.policy.task1` Move Application Skeleton and Quality Gates controllers from preview-only to managed dispatch and update public facade expectations (scope: `packages/core/src/managed-workflow-orchestration/steps/application-skeleton-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/quality-gates-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: enable remaining technical managed dispatch policies`).
-26. [TODO] Git Commit: `feat: enable remaining technical managed dispatch policies` (hash: TBD)
+25. [DONE] `remaining-technical-runtime.phase1.policy.task1` Move Application Skeleton and Quality Gates controllers from preview-only to managed dispatch and update public facade/projection expectations (scope: `packages/core/src/managed-workflow-orchestration/steps/application-skeleton-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/quality-gates-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: enable remaining technical managed dispatch policies`).
+26. [PENDING] Git Commit: `feat: enable remaining technical managed dispatch policies` (hash: TBD)
 
 27. [TODO] `remaining-technical-runtime.phase1.runtime.task1` Route Application Skeleton and Quality Gates session creation/message dispatch through managed dispatch instead of preview rewrite blockers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `feat: route remaining technical stages through managed dispatch`).
 28. [TODO] Git Commit: `feat: route remaining technical stages through managed dispatch` (hash: TBD)

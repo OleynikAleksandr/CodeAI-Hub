@@ -72,8 +72,8 @@ test("workflow-state projects managed workflow preview state read-only", async (
         "provider_direct",
         "provider_direct",
         "managed_dispatch",
-        "core_preview_boundary",
-        "core_preview_boundary",
+        "managed_dispatch",
+        "managed_dispatch",
       ]
     );
   } finally {

@@ -101,6 +101,14 @@ test("managed workflow facade exposes registered trunk stages through the public
     facade.describeStage("diagram_modules")?.startPolicy,
     "managed_dispatch"
   );
+  assert.equal(
+    facade.describeStage("application_skeleton")?.startPolicy,
+    "managed_dispatch"
+  );
+  assert.equal(
+    facade.describeStage("quality_gates")?.startPolicy,
+    "managed_dispatch"
+  );
 });
 
 test("managed workflow facade accepts valid Diagram Modules provider turns", async () => {
@@ -209,21 +217,24 @@ test("managed workflow facade lets preliminary provider-direct stages dispatch n
   }
 });
 
-test("managed workflow facade returns a preview boundary for technical stages", () => {
+test("managed workflow facade does not return preview boundaries for dispatched technical stages", () => {
   const facade = new ManagedWorkflowOrchestrationFacade();
 
-  const decision = facade.previewStageStart({
-    providerId: "codexCli",
-    stageId: "quality_gates",
-    workspaceRoot: "/tmp/demo",
-    workspaceSlug: "demo",
-  });
-
-  assert.ok(decision);
-  assert.equal(decision.canDispatchProvider, false);
-  assert.equal(decision.controllerId, "quality_gates");
-  assert.equal(decision.mode, "preview");
-  assert.match(decision.message, MANAGED_WORKFLOW_CLUSTER_MESSAGE_PATTERN);
+  for (const stageId of [
+    "diagram_modules",
+    "application_skeleton",
+    "quality_gates",
+  ]) {
+    assert.equal(
+      facade.previewStageStart({
+        providerId: "codexCli",
+        stageId,
+        workspaceRoot: "/tmp/demo",
+        workspaceSlug: "demo",
+      }),
+      null
+    );
+  }
 });
 
 test("managed workflow facade can return managed dispatch decisions through the public contract", () => {
