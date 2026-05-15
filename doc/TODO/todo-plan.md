@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "3419a3481",
+  "lastRecordedCommit": "d1f5a7d0a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase1.runtime.task1",
-  "expectedCommitMessage": "feat: route first trunk steps through managed workflow starts",
+  "currentTaskId": "prelim-diagram-runtime.phase2.prompt.task1",
+  "expectedCommitMessage": "feat: add diagram modules managed prompt builder",
   "debt": {
-    "expectedCommitMessage": "feat: route first trunk steps through managed workflow starts",
-    "preCommitHead": "3419a3481",
+    "expectedCommitMessage": "feat: add diagram modules managed prompt builder",
+    "preCommitHead": "d1f5a7d0a",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase1.runtime.task1"
+    "taskId": "prelim-diagram-runtime.phase2.prompt.task1"
   }
 }
 ```
@@ -67,14 +67,14 @@
 ### Stream: Runtime Dispatch Boundary
 
 7. [DONE] `prelim-diagram-runtime.phase1.runtime.task1` Route workflow session starts and user-message routing through the facade start decision: provider-direct steps continue existing provider transport, preview-only technical steps keep fail-closed Core message sessions, and Diagram Modules receives managed dispatch instead of preview placeholder or rewrite-blocked message dispatch (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `feat: route first trunk steps through managed workflow starts`).
-8. [PENDING] Git Commit: `feat: route first trunk steps through managed workflow starts` (hash: TBD)
+8. [DONE] Git Commit: `feat: route first trunk steps through managed workflow starts` (hash: d1f5a7d0a)
 
 ## Phase 2 — Diagram Modules Managed Phase Execution (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Core-Gated Prompt And Snapshot
 
-9. [TODO] `prelim-diagram-runtime.phase2.prompt.task1` Add a Diagram Modules managed prompt builder that composes inline upstream artifacts, target paths, and no-Git/no-plan agent instructions for Phase 1 (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, packages/core/src/managed-workflow-orchestration/index.ts`; expected commit: `feat: add diagram modules managed prompt builder`).
-10. [TODO] Git Commit: `feat: add diagram modules managed prompt builder` (hash: TBD)
+9. [DONE] `prelim-diagram-runtime.phase2.prompt.task1` Add a Diagram Modules managed prompt builder that composes inline upstream artifacts, target paths, and no-Git/no-plan agent instructions for Phase 1 (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, packages/core/src/managed-workflow-orchestration/index.ts`; expected commit: `feat: add diagram modules managed prompt builder`).
+10. [PENDING] Git Commit: `feat: add diagram modules managed prompt builder` (hash: TBD)
 
 11. [TODO] `prelim-diagram-runtime.phase2.snapshot.task1` Persist and project Diagram Modules managed phase snapshot for Phase 1 start and existing-session restore so PM can reopen the same managed session instead of showing a start card (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: persist diagram modules managed phase snapshot`).
 12. [TODO] Git Commit: `feat: persist diagram modules managed phase snapshot` (hash: TBD)
