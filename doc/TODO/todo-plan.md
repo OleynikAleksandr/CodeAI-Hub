@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "8ee9ad8b7",
+  "lastRecordedCommit": "b9be3b90f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase26.release.task3",
-  "expectedCommitMessage": "docs: record managed boundary and localization release",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase28.cosmetic-plan.task1",
+  "expectedCommitMessage": "docs: open release 262 cosmetic repair stream",
   "debt": {
-    "expectedCommitMessage": "docs: record managed boundary and localization release",
-    "preCommitHead": "8ee9ad8b7",
+    "expectedCommitMessage": "docs: open release 262 cosmetic repair stream",
+    "preCommitHead": "b9be3b90f",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase26.release.task3"
+    "taskId": "diagram-plan-lifecycle-repair.phase28.cosmetic-plan.task1"
   }
 }
 ```
@@ -520,7 +520,7 @@ Release build-all evidence recorded 2026-05-15:
 - Updated package versions and managed release manifests to `1.2.262`.
 
 113. [DONE] `diagram-plan-lifecycle-repair.phase26.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed boundary and localization release`).
-114. [PENDING] Git Commit: `docs: record managed boundary and localization release` (hash: TBD)
+114. [DONE] Git Commit: `docs: record managed boundary and localization release` (hash: b9be3b90f)
 
 Release VSIX evidence recorded 2026-05-15:
 
@@ -534,11 +534,27 @@ Release VSIX evidence recorded 2026-05-15:
 
 ### Stream: User Acceptance
 
-115. [TODO] `diagram-plan-lifecycle-repair.phase27.user-acceptance.task1` User installs the rebuilt release and verifies: transient Git lock during Diagram Modules managed commit boundary retries instead of stopping the stage, persistent lock reports a localized Core blocker, Core/system dialog messages use the selected Messages for the User language, and Product Part continuation resumes only after a recorded commit hash (scope: user workflow; expected commit: none).
+115. [DONE] `diagram-plan-lifecycle-repair.phase27.user-acceptance.task1` User installs the rebuilt release and verifies: transient Git lock during Diagram Modules managed commit boundary retries instead of stopping the stage, persistent lock reports a localized Core blocker, Core/system dialog messages use the selected Messages for the User language, and Product Part continuation resumes only after a recorded commit hash (scope: user workflow; expected commit: none). Result: Release 262 passed the functional retest; user reported only cosmetic follow-up issues for Diagram Modules sidebar marker timing and Core/system message card styling.
 
-## Phase 28 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 28 — Release 262 Cosmetic Repair (owner: Codex, updated: 2026-05-15)
+
+### Stream: Sidebar Marker And Core Message Card
+
+116. [DONE] `diagram-plan-lifecycle-repair.phase28.cosmetic-plan.task1` Record the release 262 cosmetic findings and open bounded implementation streams before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open release 262 cosmetic repair stream`).
+117. [PENDING] Git Commit: `docs: open release 262 cosmetic repair stream` (hash: TBD)
+
+118. [TODO] `diagram-plan-lifecycle-repair.phase28.sidebar-marker.task1` Keep the Diagram Modules sidebar marker orange while Product Part turns are still in progress and switch it to green only when Core opens the user-review phase (scope: `packages/core/src/remote-bridge/handlers/workflow-state-diagram-modules-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; expected commit: `fix: keep diagram modules marker active until review`).
+119. [TODO] Git Commit: `fix: keep diagram modules marker active until review` (hash: TBD)
+
+120. [TODO] `diagram-plan-lifecycle-repair.phase28.system-card.task1` Render Core/system dialog messages in their own subtle card with symmetric dialog-panel side offsets matching the larger assistant-card side offset (scope: `src/client/ui/src/session/dialog-panel.tsx, media/session-view.css, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `fix: style core system dialog messages as cards`).
+121. [TODO] Git Commit: `fix: style core system dialog messages as cards` (hash: TBD)
+
+122. [TODO] `diagram-plan-lifecycle-repair.phase28.verify.task1` Run targeted Core/PM UI checks for the marker and system-card fixes and record evidence before the next release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 262 cosmetic repair`).
+123. [TODO] Git Commit: `docs: verify release 262 cosmetic repair` (hash: TBD)
+
+## Phase 29 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-116. [TODO] `diagram-plan-lifecycle-repair.phase28.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-117. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+124. [TODO] `diagram-plan-lifecycle-repair.phase29.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+125. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
