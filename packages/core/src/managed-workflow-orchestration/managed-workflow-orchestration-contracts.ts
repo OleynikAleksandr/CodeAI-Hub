@@ -1,3 +1,6 @@
+import type { ManagedWorkflowEffect } from "./managed-workflow-effects";
+import type { ManagedWorkflowSnapshot } from "./managed-workflow-snapshot";
+
 export type ManagedWorkflowStageId =
   | "description"
   | "virtual_simulation"
@@ -35,6 +38,15 @@ export interface ManagedWorkflowStageStartRequest {
   readonly workspaceSlug: string;
 }
 
+export interface ManagedWorkflowProviderTurnValidationRequest {
+  readonly occurredAt: string;
+  readonly providerId: string;
+  readonly sessionId: string;
+  readonly stageId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}
+
 export interface ManagedWorkflowPreviewBoundaryStartDecision {
   readonly canDispatchProvider: false;
   readonly code: "managed_workflow_preview_boundary";
@@ -67,6 +79,13 @@ export type ManagedWorkflowStageStartDecision =
   | ManagedWorkflowPreviewBoundaryStartDecision
   | ManagedWorkflowProviderDirectStartDecision;
 
+export interface ManagedWorkflowProviderTurnValidationDecision {
+  readonly accepted: boolean;
+  readonly effects: readonly ManagedWorkflowEffect[];
+  readonly reasons: readonly string[];
+  readonly snapshot: ManagedWorkflowSnapshot;
+}
+
 export interface ManagedWorkflowOrchestrationFacadeContract {
   canHandleStage(stageId: string): stageId is ManagedWorkflowStageId;
   describeStage(stageId: string): ManagedWorkflowStageDescriptor | null;
@@ -77,6 +96,9 @@ export interface ManagedWorkflowOrchestrationFacadeContract {
   resolveStageStart(
     request: ManagedWorkflowStageStartRequest
   ): ManagedWorkflowStageStartDecision | null;
+  validateProviderTurn(
+    request: ManagedWorkflowProviderTurnValidationRequest
+  ): Promise<ManagedWorkflowProviderTurnValidationDecision | null>;
 }
 
 export type {

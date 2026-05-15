@@ -1,4 +1,8 @@
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
+import { mkdir, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import {
   ManagedWorkflowOrchestrationFacade,
@@ -9,6 +13,55 @@ import { ManagedWorkflowStepRegistry } from "./managed-workflow-step-registry";
 
 const MANAGED_WORKFLOW_CLUSTER_MESSAGE_PATTERN =
   /Managed Workflow Orchestration cluster/u;
+const TEMP_WORKSPACE_PREFIX = "codeai-managed-workflow-";
+
+const createTempWorkspace = async (): Promise<string> => {
+  const workspaceRoot = path.join(
+    tmpdir(),
+    `${TEMP_WORKSPACE_PREFIX}${randomUUID()}`
+  );
+  await mkdir(workspaceRoot, { recursive: true });
+  return workspaceRoot;
+};
+
+const writeWorkspaceFile = async (
+  workspaceRoot: string,
+  relativePath: string,
+  content: string
+): Promise<void> => {
+  const absolutePath = path.join(workspaceRoot, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, content, "utf8");
+};
+
+const writeValidDiagramModulesArtifacts = async (
+  workspaceRoot: string,
+  workspaceSlug: string
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+    [
+      "# Product Parts",
+      "",
+      "| # | Product Part ID | File | Summary |",
+      "|---|---|---|---|",
+      "| 1 | `core-runtime` | `product-parts/core-runtime.md` | Core runtime |",
+      "",
+    ].join("\n")
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/core-runtime.md`,
+    ["# Product Part: core-runtime", "", "Core runtime modules."].join("\n")
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
+    JSON.stringify({ nodes: [], edges: [] }, null, 2)
+  );
+};
+
 const buildManagedDispatchController = (): ManagedWorkflowStepController => ({
   createPreviewBoundary: () => ({
     code: "managed_workflow_preview_boundary",
@@ -48,6 +101,84 @@ test("managed workflow facade exposes registered trunk stages through the public
     facade.describeStage("diagram_modules")?.startPolicy,
     "managed_dispatch"
   );
+});
+
+test("managed workflow facade accepts valid Diagram Modules provider turns", async () => {
+  const workspaceSlug = "demo-workspace";
+  const workspaceRoot = await createTempWorkspace();
+  try {
+    await writeValidDiagramModulesArtifacts(workspaceRoot, workspaceSlug);
+    const facade = new ManagedWorkflowOrchestrationFacade();
+
+    const decision = await facade.validateProviderTurn({
+      occurredAt: "2026-05-15T10:00:00.000Z",
+      providerId: "codexCli",
+      sessionId: "session-1",
+      stageId: "diagram_modules",
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.ok(decision);
+    assert.equal(decision.accepted, true);
+    assert.deepEqual(decision.reasons, []);
+    assert.equal(decision.snapshot.stageId, "diagram_modules");
+    assert.equal(decision.snapshot.status, "waiting_for_user");
+    assert.equal(decision.snapshot.blocker, null);
+    assert.equal(
+      decision.effects.some(
+        (effect) =>
+          effect.kind === "append_core_message" &&
+          effect.visibleToUser &&
+          effect.message === "Core accepted the current managed phase."
+      ),
+      true
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("managed workflow facade rejects incomplete Diagram Modules provider turns", async () => {
+  const workspaceSlug = "demo-workspace";
+  const workspaceRoot = await createTempWorkspace();
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      ["# Product Parts", "", "1. `core-runtime`"].join("\n")
+    );
+    const facade = new ManagedWorkflowOrchestrationFacade();
+
+    const decision = await facade.validateProviderTurn({
+      occurredAt: "2026-05-15T10:00:00.000Z",
+      providerId: "codexCli",
+      sessionId: "session-2",
+      stageId: "diagram_modules",
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.ok(decision);
+    assert.equal(decision.accepted, false);
+    assert.equal(decision.snapshot.stageId, "diagram_modules");
+    assert.equal(decision.snapshot.status, "waiting_for_provider");
+    assert.equal(decision.snapshot.blocker?.owner, "provider");
+    assert.equal(
+      decision.reasons.some((reason) =>
+        reason.includes("product-parts/core-runtime.md")
+      ),
+      true
+    );
+    assert.equal(
+      decision.reasons.some((reason) =>
+        reason.includes("module-map.flow.json")
+      ),
+      true
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
 });
 
 test("managed workflow facade lets preliminary provider-direct stages dispatch normally", () => {

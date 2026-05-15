@@ -1,11 +1,15 @@
+import { validateDiagramModulesManagedArtifacts } from "./diagram-modules/diagram-modules-validator";
 import type {
   ManagedWorkflowOrchestrationFacadeContract,
   ManagedWorkflowPreviewBoundaryStartDecision,
+  ManagedWorkflowProviderTurnValidationDecision,
+  ManagedWorkflowProviderTurnValidationRequest,
   ManagedWorkflowStageDescriptor,
   ManagedWorkflowStageId,
   ManagedWorkflowStageStartDecision,
   ManagedWorkflowStageStartRequest,
 } from "./managed-workflow-orchestration-contracts";
+import { ManagedWorkflowStateMachine } from "./managed-workflow-state-machine";
 import { ManagedWorkflowStepRegistry } from "./managed-workflow-step-registry";
 
 const DEFAULT_STAGE_START_POLICY = "core_preview_boundary";
@@ -21,6 +25,7 @@ export class ManagedWorkflowOrchestrationFacade
   implements ManagedWorkflowOrchestrationFacadeContract
 {
   readonly #registry: ManagedWorkflowStepRegistry;
+  readonly #stateMachine = new ManagedWorkflowStateMachine();
 
   constructor(options?: { readonly registry?: ManagedWorkflowStepRegistry }) {
     this.#registry = options?.registry ?? new ManagedWorkflowStepRegistry();
@@ -92,5 +97,48 @@ export class ManagedWorkflowOrchestrationFacade
     return decision?.code === "managed_workflow_preview_boundary"
       ? decision
       : null;
+  }
+
+  async validateProviderTurn(
+    request: ManagedWorkflowProviderTurnValidationRequest
+  ): Promise<ManagedWorkflowProviderTurnValidationDecision | null> {
+    if (request.stageId !== "diagram_modules") {
+      return null;
+    }
+    const validation = await validateDiagramModulesManagedArtifacts(request);
+    const providerCompleted = this.#stateMachine.reduce(
+      this.#stateMachine.createInitialSnapshot({
+        stageId: "diagram_modules",
+        updatedAt: request.occurredAt,
+        workspaceRoot: request.workspaceRoot,
+        workspaceSlug: request.workspaceSlug,
+      }),
+      {
+        eventId: `${request.sessionId}:provider-turn-completed`,
+        kind: "provider_turn_completed",
+        occurredAt: request.occurredAt,
+        providerId: request.providerId,
+        sessionId: request.sessionId,
+        stageId: "diagram_modules",
+        workspaceRoot: request.workspaceRoot,
+        workspaceSlug: request.workspaceSlug,
+      }
+    );
+    const transition = this.#stateMachine.reduce(providerCompleted.snapshot, {
+      eventId: `${request.sessionId}:core-validation-completed`,
+      kind: "core_validation_completed",
+      occurredAt: request.occurredAt,
+      reasons: validation.diagnostics,
+      result: validation.valid ? "accepted" : "rejected",
+      stageId: "diagram_modules",
+      workspaceRoot: request.workspaceRoot,
+      workspaceSlug: request.workspaceSlug,
+    });
+    return {
+      accepted: validation.valid,
+      effects: transition.effects,
+      reasons: validation.diagnostics,
+      snapshot: transition.snapshot,
+    };
   }
 }

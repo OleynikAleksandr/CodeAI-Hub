@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "a9b3e5e42",
+  "lastRecordedCommit": "b72322863",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase2.snapshot.task1",
-  "expectedCommitMessage": "feat: persist diagram modules managed phase snapshot",
+  "currentTaskId": "prelim-diagram-runtime.phase2.validation.task1",
+  "expectedCommitMessage": "feat: validate diagram modules managed turns",
   "debt": {
-    "expectedCommitMessage": "feat: persist diagram modules managed phase snapshot",
-    "preCommitHead": "a9b3e5e42",
+    "expectedCommitMessage": "feat: validate diagram modules managed turns",
+    "preCommitHead": "b72322863",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase2.snapshot.task1"
+    "taskId": "prelim-diagram-runtime.phase2.validation.task1"
   }
 }
 ```
@@ -77,12 +77,12 @@
 10. [DONE] Git Commit: `feat: add diagram modules managed prompt builder` (hash: a9b3e5e42)
 
 11. [DONE] `prelim-diagram-runtime.phase2.snapshot.task1` Persist and project Diagram Modules managed phase snapshot for Phase 1 start and existing-session restore so PM can reopen the same managed session instead of showing a start card; include the cluster index export because the test consumes this through the public cluster boundary (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: persist diagram modules managed phase snapshot`).
-12. [PENDING] Git Commit: `feat: persist diagram modules managed phase snapshot` (hash: TBD)
+12. [DONE] Git Commit: `feat: persist diagram modules managed phase snapshot` (hash: b72322863)
 
 ### Stream: Validation And Review Transition
 
-13. [TODO] `prelim-diagram-runtime.phase2.validation.task1` Connect Diagram Modules artifact validation to provider-turn completion through the new facade, using existing deterministic artifact/progress validators without reviving retired child-plan mutators (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: validate diagram modules managed turns`).
-14. [TODO] Git Commit: `feat: validate diagram modules managed turns` (hash: TBD)
+13. [DONE] `prelim-diagram-runtime.phase2.validation.task1` Connect Diagram Modules artifact validation to provider-turn completion through the new facade, using existing deterministic artifact/progress validators without reviving retired child-plan mutators; include the public contract because the validation method is a facade API (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: validate diagram modules managed turns`).
+14. [PENDING] Git Commit: `feat: validate diagram modules managed turns` (hash: TBD)
 
 15. [TODO] `prelim-diagram-runtime.phase2.review.task1` Add Type B user-intent classification for Diagram Modules review messages: accept opens persistent return, revision routes to provider, ambiguous text receives Core clarification (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-intent-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.test.ts`; expected commit: `feat: add diagram modules user review transitions`).
 16. [TODO] Git Commit: `feat: add diagram modules user review transitions` (hash: TBD)
