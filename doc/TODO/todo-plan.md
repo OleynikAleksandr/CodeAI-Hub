@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "298bb6652",
+  "lastRecordedCommit": "2f8c2cb56",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.pm-capture-prompt-client.task1",
-  "expectedCommitMessage": "fix: use core prompt packs in capture prompt",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.pm-truth-cleanup.task1",
+  "expectedCommitMessage": "fix: remove project manager workflow prompt truth",
   "debt": {
-    "expectedCommitMessage": "fix: use core prompt packs in capture prompt",
-    "preCommitHead": "298bb6652",
+    "expectedCommitMessage": "fix: remove project manager workflow prompt truth",
+    "preCommitHead": "2f8c2cb56",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase50.pm-capture-prompt-client.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase50.pm-truth-cleanup.task1"
   }
 }
 ```
@@ -949,41 +949,44 @@ Release VSIX evidence recorded 2026-05-15:
 210. [DONE] Git Commit: `fix: use core workflow prompt packs in pm` (hash: 298bb6652)
 
 211. [DONE] `diagram-plan-lifecycle-repair.phase50.pm-capture-prompt-client.task1` Change native request capture prompts to request Core-owned prompt packs instead of building stage-specific prompts locally (scope: `src/client/project-manager/services/description-submit-service.ts, src/client/project-manager/services/native-request-capture-scenario-prompt.ts, src/client/project-manager/services/native-request-capture-scenario-prompt.test.ts`; expected commit: `fix: use core prompt packs in capture prompt`).
-212. [PENDING] Git Commit: `fix: use core prompt packs in capture prompt` (hash: TBD)
+212. [DONE] Git Commit: `fix: use core prompt packs in capture prompt` (hash: 2f8c2cb56)
 
-213. [TODO] `diagram-plan-lifecycle-repair.phase50.pm-truth-cleanup.task1` Remove or reduce Project Manager prompt/source descriptor helpers so remaining PM code is transport/localization plumbing, not workflow stage truth (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/workflow-source-artifact-descriptors.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `fix: remove project manager workflow prompt truth`).
-214. [TODO] Git Commit: `fix: remove project manager workflow prompt truth` (hash: TBD)
+213. [DONE] `diagram-plan-lifecycle-repair.phase50.pm-truth-cleanup.task1` Remove Project Manager prompt-builder stage truth and obsolete prompt-builder tests/helpers so remaining PM code only resolves chat language settings (scope: `src/client/project-manager/services`; expected commit: `fix: remove project manager workflow prompt truth`).
+214. [PENDING] Git Commit: `fix: remove project manager workflow prompt truth` (hash: TBD)
 
-215. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1` Expand Application Skeleton Core repair/blocker messages so validation diagnostics are actionable and Core-owned plan blockers are understandable to the user (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: clarify application skeleton core diagnostics`).
-216. [TODO] Git Commit: `fix: clarify application skeleton core diagnostics` (hash: TBD)
+215. [TODO] `diagram-plan-lifecycle-repair.phase50.pm-source-descriptor-cleanup.task1` Remove Project Manager source-artifact descriptor helpers and tests because Core now owns workflow source selection for all steps (scope: `src/client/project-manager/services/workflow-source-artifact-descriptors.ts, src/client/project-manager/services/workflow-source-artifact-descriptors.test.ts`; expected commit: `fix: remove project manager source artifact truth`).
+216. [TODO] Git Commit: `fix: remove project manager source artifact truth` (hash: TBD)
+
+217. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1` Expand Application Skeleton Core repair/blocker messages so validation diagnostics are actionable and Core-owned plan blockers are understandable to the user (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: clarify application skeleton core diagnostics`).
+218. [TODO] Git Commit: `fix: clarify application skeleton core diagnostics` (hash: TBD)
 
 ### Stream: Managed Lifecycle
 
-217. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-start.task1` Run Application Skeleton managed start preflight for Project Manager-created sessions, not only node bootstrap workflow sessions, so Core opens the draft microtask before the provider writes artifacts (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: open application skeleton draft on pm start`).
-218. [TODO] Git Commit: `fix: open application skeleton draft on pm start` (hash: TBD)
+219. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-start.task1` Run Application Skeleton managed start preflight for Project Manager-created sessions, not only node bootstrap workflow sessions, so Core opens the draft microtask before the provider writes artifacts (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: open application skeleton draft on pm start`).
+220. [TODO] Git Commit: `fix: open application skeleton draft on pm start` (hash: TBD)
 
-219. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-plan-lifecycle.task1` Make Application Skeleton stage-plan draft opening replace bootstrap placeholders with the active draft task and add repeatable rejected-attempt task pairs for Type A draft/materialization repairs (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: track application skeleton rejected attempts`).
-220. [TODO] Git Commit: `fix: track application skeleton rejected attempts` (hash: TBD)
+221. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-plan-lifecycle.task1` Make Application Skeleton stage-plan draft opening replace bootstrap placeholders with the active draft task and add repeatable rejected-attempt task pairs for Type A draft/materialization repairs (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: track application skeleton rejected attempts`).
+222. [TODO] Git Commit: `fix: track application skeleton rejected attempts` (hash: TBD)
 
-221. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1` Commit safe rejected Application Skeleton provider turns before dispatching repair prompts and include the rejected commit hash in follow-up materialization diagnostics (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: commit application skeleton rejected turns`).
-222. [TODO] Git Commit: `fix: commit application skeleton rejected turns` (hash: TBD)
+223. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-turn.task1` Commit safe rejected Application Skeleton provider turns before dispatching repair prompts and include the rejected commit hash in follow-up materialization diagnostics (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: commit application skeleton rejected turns`).
+224. [TODO] Git Commit: `fix: commit application skeleton rejected turns` (hash: TBD)
 
 ## Phase 51 — Application Skeleton Repair Verification (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Targeted Verification
 
-223. [TODO] `diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1` Run targeted Core and Project Manager tests/builds for Application Skeleton prompt, managed start preflight, rejected-attempt commits, and plan validation; record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton runtime repair`).
-224. [TODO] Git Commit: `docs: verify application skeleton runtime repair` (hash: TBD)
+225. [TODO] `diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1` Run targeted Core and Project Manager tests/builds for Application Skeleton prompt, managed start preflight, rejected-attempt commits, and plan validation; record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton runtime repair`).
+226. [TODO] Git Commit: `docs: verify application skeleton runtime repair` (hash: TBD)
 
 ## Phase 52 — Release Build Gate For Application Skeleton Repair (owner: Codex + User, updated: 2026-05-15)
 
 ### Stream: Release Build Confirmation
 
-225. [TODO] `diagram-plan-lifecycle-repair.phase52.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Application Skeleton runtime repair (scope: user workflow; expected commit: none).
+227. [TODO] `diagram-plan-lifecycle-repair.phase52.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Application Skeleton runtime repair (scope: user workflow; expected commit: none).
 
 ## Phase 53 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-226. [TODO] `diagram-plan-lifecycle-repair.phase53.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-227. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+228. [TODO] `diagram-plan-lifecycle-repair.phase53.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+229. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
