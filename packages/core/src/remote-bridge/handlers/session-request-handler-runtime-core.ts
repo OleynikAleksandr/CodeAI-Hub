@@ -3,7 +3,11 @@ import path from "node:path";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import { buildDiagramModulesProductPartRepairPrompt } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
-import { validateDiagramModulesManagedArtifacts } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
+import { DiagramModulesStagePlanController } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller";
+import {
+  type DiagramModulesManagedValidationResult,
+  validateDiagramModulesManagedArtifacts,
+} from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
   type SessionModelBinding,
@@ -57,7 +61,6 @@ interface ClaudeTranslationServiceOwner {
   readonly getHaikuTranslationService?: () => ClaudeHaikuTranslationService;
 }
 
-const SETTINGS_FILE_NAME = "settings.json";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 
 interface DeferredRuntimeRef<TDependency> {
@@ -94,35 +97,25 @@ export const resolveClaudeHaikuTranslationServiceForRuntime = (
 };
 
 const persistDiagramModulesManagedDecision = async (params: {
-  readonly decision: Awaited<
-    ReturnType<typeof validateDiagramModulesManagedArtifacts>
-  >;
+  readonly decision: DiagramModulesManagedValidationResult;
   readonly sessionId: string;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): Promise<void> => {
   const relativePath = `.codeai-hub/${params.workspaceSlug}/workflow/managed/diagram_modules.json`;
   const absolutePath = path.join(params.workspaceRoot, relativePath);
+  const snapshot = {
+    schema: "codeai-managed-workflow-diagram-modules-v1",
+    stage: DIAGRAM_MODULES_STAGE,
+    sessionId: params.sessionId,
+    updatedAt: new Date().toISOString(),
+    ...params.decision,
+    diagnostics: undefined,
+    nextPrompt: undefined,
+  };
+  const content = `${JSON.stringify(snapshot, null, 2)}\n`;
   await mkdir(path.dirname(absolutePath), { recursive: true });
-  await writeFile(
-    absolutePath,
-    `${JSON.stringify(
-      {
-        schema: "codeai-managed-workflow-diagram-modules-v1",
-        stage: DIAGRAM_MODULES_STAGE,
-        sessionId: params.sessionId,
-        updatedAt: new Date().toISOString(),
-        currentPartId: params.decision.currentPartId,
-        generatedPartIds: params.decision.generatedPartIds,
-        nextAction: params.decision.nextAction,
-        plannedPartIds: params.decision.plannedPartIds,
-        valid: params.decision.valid,
-      },
-      null,
-      2
-    )}\n`,
-    "utf8"
-  );
+  await writeFile(absolutePath, content, "utf8");
 };
 
 export const createSessionRequestHandlerRuntimeCore = (
@@ -199,7 +192,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     logger: options.logger,
     settingsPath: path.join(
       path.dirname(options.config.claudeSettingsPath),
-      SETTINGS_FILE_NAME
+      "settings.json"
     ),
     translationFacadeFactory: ({ reporter }) =>
       createCoreTranslationFacade({
@@ -215,6 +208,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     sessionStorage: options.sessionStorage,
     sessionTranslation,
   });
+  const diagramStagePlan = new DiagramModulesStagePlanController();
   const retryState = new SessionRequestHandlerRetryState({
     broadcaster: options.broadcaster,
     logger: options.logger,
@@ -248,7 +242,7 @@ export const createSessionRequestHandlerRuntimeCore = (
       fallbackGeminiModel: options.config.geminiDefaultModel,
       settingsPath: path.join(
         path.dirname(options.config.claudeSettingsPath),
-        SETTINGS_FILE_NAME
+        "settings.json"
       ),
     },
   });
@@ -295,6 +289,19 @@ export const createSessionRequestHandlerRuntimeCore = (
         await messageDispatchRef
           .get()
           .sendInternalMessage(sessionId, repairPrompt);
+        return;
+      }
+      const planAdvance = await diagramStagePlan.commitAcceptedTurn({
+        decision,
+        sessionId,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+      if (planAdvance.blocked) {
+        eventMessages.appendCoreMessage(sessionId, {
+          content: `Core blocked Diagram Modules continuation before the managed commit boundary completed.\n\n${planAdvance.blocked.message}`,
+          tag: "managed-workflow-validation",
+        });
         return;
       }
       if (decision.nextAction === "dispatch_next_product_part") {

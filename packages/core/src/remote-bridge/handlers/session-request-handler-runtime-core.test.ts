@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import type { CoreConfig } from "../../config";
+import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { ProviderAdapter } from "../../provider-registry/provider-module-loader.types";
 import { SessionManager } from "../../session-manager";
@@ -46,16 +49,46 @@ interface RuntimeContinuityCallbackOwner {
 }
 
 const noop = (): void => undefined;
+const execFileAsync = promisify(execFile);
 const DIAGRAM_REPAIR_PROMPT_RE =
   /Core rejected the current Diagram Modules subturn/u;
 const DIAGRAM_REPAIR_TARGET_RE =
   /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md/u;
 const DIAGRAM_REPAIR_HEADING_RE = /# Product Part: project-manager/u;
+const DIAGRAM_REVIEW_PHASE_RE = /## Phase 2 — Diagram Modules User Review/u;
+const DIAGRAM_REVIEW_TASK_STATE_RE =
+  /"currentTaskId": "diagram-modules\.phase2\.review\.task1"/u;
+const DIAGRAM_PRODUCT_PART_TASK_STATE_RE =
+  /"currentTaskId": "diagram-modules\.phase1\.product-part\.project-manager\.task1"/u;
+const DIAGRAM_INDEX_COMMIT_RE =
+  /docs: update diagram modules product part index/u;
+const DIAGRAM_PROJECT_MANAGER_COMMIT_RE =
+  /docs: update diagram modules project-manager product part/u;
+const DIAGRAM_CONTINUATION_PROMPT_RE =
+  /Materialize only Product Part "project-manager"/u;
 
 const readRuntimeContinuityCallbacks = (
   runtime: SessionRequestHandlerRuntimeCore
 ): RuntimeContinuityCallbacks =>
   (runtime.continuity as unknown as RuntimeContinuityCallbackOwner).callbacks;
+
+const waitForManagedTurn = (): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, 350));
+
+const readWorkspaceFile = (
+  workspaceRoot: string,
+  relativePath: string
+): Promise<string> => readFile(path.join(workspaceRoot, relativePath), "utf8");
+
+const git = async (
+  workspaceRoot: string,
+  args: readonly string[]
+): Promise<string> => {
+  const { stdout } = await execFileAsync("git", args, {
+    cwd: workspaceRoot,
+  });
+  return stdout.trim();
+};
 
 const createCoreConfig = (): CoreConfig => ({
   claudeContinuityRemainingPercentThreshold: 50,
@@ -264,7 +297,119 @@ test("createSessionRequestHandlerRuntimeCore dispatches repair prompt for invali
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_HEADING_RE);
     assert.equal(session.messages.at(-1)?.tag, "managed-workflow-validation");
   } finally {
-    await rm(workspaceRoot, { force: true, recursive: true });
+    await rm(workspaceRoot, {
+      force: true,
+      maxRetries: 3,
+      recursive: true,
+      retryDelay: 20,
+    });
+  }
+});
+
+test("createSessionRequestHandlerRuntimeCore commits accepted Diagram Modules subturns before continuation and review", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codeai-runtime-core-diagram-plan-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sentMessages: string[] = [];
+  const events: BridgeEvent[] = [];
+  const sessionManager = new SessionManager();
+  const providerSessions = new Map<string, unknown>();
+  const adapter = {
+    sendMessage: (_providerSessionId: string, content: string) => {
+      sentMessages.push(content);
+      return Promise.resolve();
+    },
+  } as unknown as ProviderAdapter;
+
+  try {
+    await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
+      workspaceRoot,
+    });
+    const diagramRoot = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      workspaceSlug,
+      "diagram_modules"
+    );
+    await mkdir(path.join(diagramRoot, "product-parts"), { recursive: true });
+    await writeFile(
+      path.join(diagramRoot, "product-parts.index.md"),
+      [
+        "# Product Parts",
+        "",
+        "1. `project-manager` - `.codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md`",
+      ].join("\n"),
+      "utf8"
+    );
+
+    const session = sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      "provider-session-1",
+      { initiativeSlug: workspaceSlug, stage: "diagram_modules" }
+    );
+    providerSessions.set(session.id, {
+      providerId: "codexCli",
+      providerSessionId: "provider-session-1",
+      unsubscribe: noop,
+    });
+    const runtime = createSessionRequestHandlerRuntimeCore(
+      createRuntimeDependencies({
+        events,
+        providerAdapter: adapter,
+        providerSessions,
+        sessionManager,
+      }),
+      {
+        clearPendingState: noop,
+        clearTokenUsageSnapshot: noop,
+      }
+    );
+
+    runtime.providerEventRouter.handleProviderEvent(session.id, {
+      eventId: "accepted-index",
+      type: "turn_completed",
+    });
+    await waitForManagedTurn();
+
+    assert.equal(sentMessages.length, 1);
+    assert.match(sentMessages[0] ?? "", DIAGRAM_CONTINUATION_PROMPT_RE);
+    const afterIndexPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md"
+    );
+    assert.match(afterIndexPlan, DIAGRAM_PRODUCT_PART_TASK_STATE_RE);
+
+    await writeFile(
+      path.join(diagramRoot, "product-parts/project-manager.md"),
+      "# Product Part: project-manager\n\n## Modules\n",
+      "utf8"
+    );
+    runtime.providerEventRouter.handleProviderEvent(session.id, {
+      eventId: "accepted-final-part",
+      type: "turn_completed",
+    });
+    await waitForManagedTurn();
+
+    const finalPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md"
+    );
+    assert.match(finalPlan, DIAGRAM_REVIEW_PHASE_RE);
+    assert.match(finalPlan, DIAGRAM_REVIEW_TASK_STATE_RE);
+    assert.equal(session.messages.at(-1)?.tag, "managed-workflow-user-review");
+
+    const subjects = await git(workspaceRoot, ["log", "--format=%s"]);
+    assert.match(subjects, DIAGRAM_INDEX_COMMIT_RE);
+    assert.match(subjects, DIAGRAM_PROJECT_MANAGER_COMMIT_RE);
+  } finally {
+    await rm(workspaceRoot, {
+      force: true,
+      maxRetries: 3,
+      recursive: true,
+      retryDelay: 20,
+    });
   }
 });
 

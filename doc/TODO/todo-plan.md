@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "1f03e44f3",
+  "lastRecordedCommit": "e3be434bf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase17.controller.task1",
-  "expectedCommitMessage": "feat: advance diagram modules managed stage plan",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase17.runtime.task1",
+  "expectedCommitMessage": "fix: commit diagram modules accepted subturns",
   "debt": {
-    "expectedCommitMessage": "feat: advance diagram modules managed stage plan",
-    "preCommitHead": "1f03e44f3",
+    "expectedCommitMessage": "fix: commit diagram modules accepted subturns",
+    "preCommitHead": "e3be434bf",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase17.controller.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase17.runtime.task1"
   }
 }
 ```
@@ -380,10 +380,10 @@ Release package evidence recorded 2026-05-15:
 77. [DONE] Git Commit: `docs: plan diagram modules managed plan lifecycle repair` (hash: 1f03e44f3)
 
 78. [DONE] `diagram-plan-lifecycle-repair.phase17.controller.task1` Add a Core-owned Diagram Modules stage-plan controller that commits accepted Type A subturns, records real hashes, injects the next Product Part microtask, and opens the Phase 2 review task after the final Product Part (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `feat: advance diagram modules managed stage plan`).
-79. [PENDING] Git Commit: `feat: advance diagram modules managed stage plan` (hash: TBD)
+79. [DONE] Git Commit: `feat: advance diagram modules managed stage plan` (hash: e3be434bf)
 
-80. [TODO] `diagram-plan-lifecycle-repair.phase17.runtime.task1` Wire the stage-plan controller into Diagram Modules post-turn arbitration so continuation/user-review messages are sent only after the accepted subturn commit boundary succeeds; include a regression for index -> Product Part -> review plan movement (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules accepted subturns`).
-81. [TODO] Git Commit: `fix: commit diagram modules accepted subturns` (hash: TBD)
+80. [DONE] `diagram-plan-lifecycle-repair.phase17.runtime.task1` Wire the stage-plan controller into Diagram Modules post-turn arbitration so continuation/user-review messages are sent only after the accepted subturn commit boundary succeeds; include a regression for index -> Product Part -> review plan movement (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules accepted subturns`).
+81. [PENDING] Git Commit: `fix: commit diagram modules accepted subturns` (hash: TBD)
 
 82. [TODO] `diagram-plan-lifecycle-repair.phase17.verify.task1` Run targeted Core builds/tests for Diagram Modules validation, scaffold, stage-plan advancement, and runtime post-turn arbitration; record exact evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules managed plan lifecycle repair`).
 83. [TODO] Git Commit: `docs: verify diagram modules managed plan lifecycle repair` (hash: TBD)
