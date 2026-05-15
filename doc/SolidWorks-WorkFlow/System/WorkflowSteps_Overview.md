@@ -1,10 +1,10 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-05-14
+**Updated:** 2026-05-15
 **Owner:** Oleksandr
 
-**2026-05-15 orchestration rewrite note:** the previous managed workflow orchestration runtime for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline` is removed from active code paths. The replacement cluster now owns the active `Diagram Modules` managed Type A lifecycle: Core creates the managed workspace scaffold, validates each subturn, records managed stage-plan Git commits, dispatches Product Part continuations only after the commit hash exists, and opens user review after the last Product Part is accepted. `Application Skeleton` and `Quality Gates Baseline` remain fail-closed until their replacement orchestration contracts are implemented and accepted.
+**2026-05-15 orchestration rewrite note:** the previous managed workflow orchestration runtime for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline` is removed from active code paths. The replacement cluster now owns the active managed lifecycles for all three technical trunk stages: `Diagram Modules` runs Product Part Type A subturns and then opens user review, `Application Skeleton` runs draft review followed by accepted-only materialization, and `Quality Gates Baseline` runs draft contract review followed by accepted-only gate integration and persistent user return. Core creates managed stage plans, validates provider turns, records Git commits, and dispatches continuations only after the commit boundary completes. Project Manager and future clients are projections only: they may collect user decisions and display Core state, but they are never the source of truth for stage phase, prompt selection, validation, Git, or unlock state.
 
 **2026-05-13 continuity note:** the post-`1.2.250` hotfix scope hardens the provider-neutral session continuity store used by every trunk and Development Tree step. Project Manager must prefer an existing continuity session over a Start/confirmation card whenever a recoverable `chain.json` exists, even if the file was left as a complete JSON object with trailing corrupt bytes by an interrupted concurrent write. Core now serializes chain/index writes per path, writes through temp-file rename, recovers legacy trailing-corrupt JSON on read, and rewrites recovered chains as clean JSON on the next save.
 
@@ -57,16 +57,16 @@ Diagram Modules
 
 Сквозной принцип: **feedback loop + OUTDATED propagation**. Любое изменение upstream-артефакта помечает downstream-шаги как требующие синхронизации.
 
-### Orchestration rewrite boundary — Diagram Modules and later
+### Managed Technical Trunk Boundary — Diagram Modules and later
 
-`Description` и `Virtual Simulation` остаются обычными документными шагами и продолжают работать как входы для технического ствола. Начиная с `Diagram Modules`, старый managed lifecycle больше не является active runtime contract. На время rewrite:
+`Description` и `Virtual Simulation` остаются обычными document steps и продолжают работать как входы для технического ствола. Начиная с `Diagram Modules`, active runtime contract принадлежит Core-owned managed cluster:
 - шаги сохраняют свои canonical artifact contracts и read-model semantics;
-- runtime не должен создавать или продвигать managed child plans для этих шагов старым механизмом;
-- Project Manager может показывать уже созданные artifacts/status, но не должен отправлять provider-visible continuation/acceptance messages;
-- provider prompts не должны обещать Git ownership, automatic acceptance, managed commits, continuation dispatch или downstream unlock;
-- replacement cluster заново определит lifecycle, sequencing и quality gates для `Diagram Modules -> Application Skeleton -> Quality Gates`.
+- Core создаёт `doc/TODO/workspace.plan.md` и stage `todo-plan.md`, открывает активную microtask pair, валидирует provider output и выполняет managed Git commit до любой следующей continuation;
+- Project Manager может показывать artifacts/status и отправлять пользовательский текст в Core, но не отправляет provider-visible continuation/acceptance messages самостоятельно;
+- provider prompts получают только текущий assigned scope и не обещают Git ownership, automatic acceptance, managed commits или downstream unlock без Core;
+- user review gates являются Core фазами: принятие или правки пользователя классифицируются по stage plan, а не по UI state.
 
-Практическое следствие: технические managed stages могут быть read-only/fail-closed в runtime до появления нового orchestration cluster. Это ожидаемое состояние чистой базы, а не ошибка сформированных шагов.
+Практическое следствие: если `Diagram Modules`, `Application Skeleton` или `Quality Gates Baseline` не могут продолжить работу без открытого Project Manager до явного user gate, контракт нарушен и должен чиниться в Core/orchestrator logic, а не в клиенте.
 
 ### Core Runtime как Product Part с контрактами
 
@@ -255,14 +255,14 @@ Visual diagram materialize-ится runtime из index + part artifacts и не 
 
 Этот шаг выбирает языки, фреймворки, package layout, build/runtime assumptions и создаёт `application-skeleton-map.json`, который связывает `Product Part -> Cluster -> Module` с production `codePath` внутри workspace. После explicit acceptance тот же агент материализует real project scaffold и Product Part / Cluster / Module folder projection. Основные папки будущего кода должны быть аналогичны Development Tree, но оставаться совместимыми с индустриальным skeleton выбранного стека.
 
-`Application Skeleton` currently owns only its canonical artifacts and, after a future accepted orchestration lifecycle exists, the real project scaffold/materialized folder projection. During the rewrite the old Application Skeleton Phase 1/2/3 orchestration pilot, accept-contract command, typed acceptance fallback, acceptance commit policy, materialization continuation dispatcher, and managed repair/revision injection paths are not active runtime behavior.
+`Application Skeleton` uses the Core-owned managed lifecycle implemented by the replacement cluster. Phase 1 drafts `application-skeleton.md` and `application-skeleton-map.json` only. Phase 2 opens user review from Core state. A direct acceptance advances the stage plan to accepted-only materialization without forwarding the user acceptance text as an agent task; requested corrections stay in the active review task and are sent as a scoped revision prompt. Phase 3 materializes the real project scaffold and Product Part / Cluster / Module folder projection only after acceptance, then Core validates and records the managed commit.
 
 The stable artifact contract remains:
 - draft/review artifacts are `application-skeleton.md` and `application-skeleton-map.json`;
 - materialization state is represented in `application-skeleton-map.json`;
-- Development Tree bootstrap remains locked until a future accepted orchestration cluster has materialized skeleton output and Quality Gates integration evidence.
+- Development Tree bootstrap remains locked until Core has committed materialized skeleton output and Quality Gates integration evidence.
 
-Provider-visible instructions for this step must therefore stay content-scoped: write/update the canonical artifacts requested by the prompt and stop with a readiness/update note. They must not promise PM Accept Contract shortcuts, typed acceptance commands, Core acceptance commits, automatic materialization continuations, managed child-plan mutation, or Git ownership.
+Provider-visible instructions for this step stay content-scoped: write/update the canonical artifacts requested by the current Core prompt and stop with a readiness/update note. They must not promise PM Accept Contract shortcuts, typed acceptance commands, direct UI-owned commits, unmanaged child-plan mutation, or Git ownership.
 
 ### Входы
 
@@ -284,7 +284,7 @@ Provider-visible instructions for this step must therefore stay content-scoped: 
 
 Без этого шага Development Tree sessions не стартуют: агентам нельзя писать код, пока project skeleton не создан и quality gates не интегрированы в реальную файловую систему.
 
-Во время orchestration rewrite старый lifecycle этого шага не активен. `Quality Gates Baseline` сохраняет artifact contract и read-model semantics, но runtime больше не должен обещать Core-owned acceptance commit, managed integration continuation, child-plan mutation или hook-registry wiring через старый managed mechanism. Integration в реальную файловую систему будет снова разрешена только после того, как replacement orchestration cluster определит и реализует новый последовательный lifecycle.
+`Quality Gates Baseline` uses the Core-owned managed lifecycle implemented by the replacement cluster. Phase 1 drafts the quality contract only. Phase 2 opens user review from Core state. A direct acceptance advances the stage plan to accepted-only integration without forwarding the user acceptance text as an agent task; requested corrections stay in the active review task and are sent as a scoped revision prompt. Phase 3 integrates the accepted gate baseline into package scripts, hook wiring, and accepted gate infrastructure, then Core validates `accepted: true`, `integrated: true`, `integrationState: "integrated"`, required scripts, and required hook calls before committing and opening persistent user return.
 
 ### Входы
 
@@ -299,9 +299,9 @@ Provider-visible instructions for this step must therefore stay content-scoped: 
 ### Execution contract
 
 - **Draft contract:** агент пишет только `quality-gates.md` и `quality-gates.json`; он не создаёт package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts или production code.
-- **Review:** пользователь может обсуждать и корректировать contract content, но старый runtime не превращает эти правки в managed child-plan commits.
-- **Integration:** отключена до replacement orchestration cluster. Агент не должен интегрировать gates в materialized skeleton без нового runtime assignment.
-- Hook structure пока не имеет active old managed owner. Quality Gates может описывать desired gate content, а новый cluster позже определит deterministic wiring/validation ownership.
+- **Review:** пользователь может принять contract или перечислить правки. Core классифицирует это по активному stage plan; acceptance открывает integration phase, а правки остаются review revision task.
+- **Integration:** агент интегрирует gates только после Core prompt Phase 3 Quality Gates Integration и только в accepted scope: package scripts/lockfiles, `.husky/pre-commit`, `.husky/pre-push`, `scripts/quality-gates/**`, selected configs/CI files, and accepted gate artifacts.
+- Hook structure имеет Core validation owner: every gate listed in `requiredBeforeCommit` or `requiredBeforePush` must have a package script and a direct lifecycle hook call before the step can complete.
 - `quality-gates.json` обязан разделять намерение и фактическую исполнимость: `desiredStatus`, `availability`, `integrationRequired`, `plannedIntegrationPaths`, `blockingIn`, `accepted`, `integrated`, `integrationState`, `integratedPaths`, `verification`.
 - Advisory/planned/deferred gates не могут быть active blockers. `availability: "not_integrated"` для required gate допустим только с `integrationRequired: true` и конкретными `plannedIntegrationPaths`.
 

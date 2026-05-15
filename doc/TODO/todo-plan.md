@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "a51fca8e5",
+  "lastRecordedCommit": "0b9fbf8f0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase3.review.task1",
-  "expectedCommitMessage": "feat: route quality gates review decisions",
+  "currentTaskId": "quality-gates-runtime.phase4.docs.task1",
+  "expectedCommitMessage": "docs: document quality gates managed runtime",
   "debt": {
-    "expectedCommitMessage": "feat: route quality gates review decisions",
-    "preCommitHead": "a51fca8e5",
+    "expectedCommitMessage": "docs: document quality gates managed runtime",
+    "preCommitHead": "0b9fbf8f0",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase3.review.task1"
+    "taskId": "quality-gates-runtime.phase4.docs.task1"
   }
 }
 ```
@@ -1035,12 +1035,13 @@ Repair coverage:
 239. [DONE] Git Commit: `feat: route quality gates managed turns` (hash: a51fca8e5)
 
 240. [DONE] `quality-gates-runtime.phase3.review.task1` Route Quality Gates Type B user review decisions through Core-owned intent classification, including direct acceptance to integration and revision prompts that stay in the active review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `feat: route quality gates review decisions`).
-241. [PENDING] Git Commit: `feat: route quality gates review decisions` (hash: TBD)
+241. [DONE] Git Commit: `feat: route quality gates review decisions` (hash: 0b9fbf8f0)
 
 ### Stream: Documentation And Verification
 
-242. [TODO] `quality-gates-runtime.phase4.docs.task1` Update workflow SSOT docs from fail-closed Quality Gates wording to the implemented Core-owned lifecycle and note that clients remain projections only (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates managed runtime`).
-243. [TODO] Git Commit: `docs: document quality gates managed runtime` (hash: TBD)
+242. [DONE] `quality-gates-runtime.phase4.docs.task1` Update workflow SSOT docs from fail-closed Quality Gates wording to the implemented Core-owned lifecycle and note that clients remain projections only (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates managed runtime`).
+    - Documentation update records Quality Gates as an implemented Core-owned draft/review/integration/persistent-return lifecycle, removes fail-closed/replacement-pending wording, and restates that Project Manager/future clients are projection/input surfaces only.
+243. [PENDING] Git Commit: `docs: document quality gates managed runtime` (hash: TBD)
 
 244. [TODO] `quality-gates-runtime.phase4.verify.task1` Run targeted Core/Project Manager tests and builds for Quality Gates managed runtime and record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify quality gates managed runtime`).
 245. [TODO] Git Commit: `docs: verify quality gates managed runtime` (hash: TBD)
