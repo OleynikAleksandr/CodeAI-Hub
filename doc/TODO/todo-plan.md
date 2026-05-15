@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "c80eb60b4",
+  "lastRecordedCommit": "327c9274a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase9.tests.task1",
-  "expectedCommitMessage": "test: cover preliminary workflow orchestration visibility",
+  "currentTaskId": "managed-orchestration-kernel.phase9.tests.task2",
+  "expectedCommitMessage": "test: cover provider-direct preliminary step policy",
   "debt": {
-    "expectedCommitMessage": "test: cover preliminary workflow orchestration visibility",
-    "preCommitHead": "c80eb60b4",
+    "expectedCommitMessage": "test: cover provider-direct preliminary step policy",
+    "preCommitHead": "327c9274a",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase9.tests.task1"
+    "taskId": "managed-orchestration-kernel.phase9.tests.task2"
   }
 }
 ```
@@ -232,9 +232,9 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Regression Coverage
 
 61. [DONE] `managed-orchestration-kernel.phase9.tests.task1` Add Project Manager regression coverage proving completed Description still shows/restores its session, Virtual Simulation card appears after Description completion, and technical stages still show the managed preview boundary (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover preliminary workflow orchestration visibility`).
-62. [PENDING] Git Commit: `test: cover preliminary workflow orchestration visibility` (hash: TBD)
-63. [TODO] `managed-orchestration-kernel.phase9.tests.task2` Add Core regression coverage proving Description and Virtual Simulation are registered provider-direct steps that do not create Core preview boundary sessions, while technical stages still do (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover provider-direct preliminary step policy`).
-64. [TODO] Git Commit: `test: cover provider-direct preliminary step policy` (hash: TBD)
+62. [DONE] Git Commit: `test: cover preliminary workflow orchestration visibility` (hash: 327c9274a)
+63. [DONE] `managed-orchestration-kernel.phase9.tests.task2` Add Core regression coverage proving Description and Virtual Simulation are registered provider-direct steps that do not create Core preview boundary sessions, while technical stages still do (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover provider-direct preliminary step policy`).
+64. [PENDING] Git Commit: `test: cover provider-direct preliminary step policy` (hash: TBD)
 
 ## Phase 10 — Release Build For Preliminary Workflow Retest (owner: Codex + User, updated: 2026-05-15)
 

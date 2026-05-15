@@ -37,15 +37,17 @@ test("managed workflow facade exposes registered trunk stages through the public
 test("managed workflow facade lets preliminary provider-direct stages dispatch normally", () => {
   const facade = new ManagedWorkflowOrchestrationFacade();
 
-  assert.equal(
-    facade.previewStageStart({
-      providerId: "claudeCodeCli",
-      stageId: "description",
-      workspaceRoot: "/tmp/demo",
-      workspaceSlug: "demo",
-    }),
-    null
-  );
+  for (const stageId of ["description", "virtual_simulation"]) {
+    assert.equal(
+      facade.previewStageStart({
+        providerId: "claudeCodeCli",
+        stageId,
+        workspaceRoot: "/tmp/demo",
+        workspaceSlug: "demo",
+      }),
+      null
+    );
+  }
 });
 
 test("managed workflow facade returns a preview boundary for technical stages", () => {

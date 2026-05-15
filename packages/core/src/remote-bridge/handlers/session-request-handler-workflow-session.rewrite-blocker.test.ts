@@ -139,17 +139,22 @@ test("createSessionForWorkflow fails closed before technical stage provider sess
   }
 });
 
-test("createSessionForWorkflow still creates sessions for non-technical stage workflows", async () => {
+test("createSessionForWorkflow still creates sessions for provider-direct preliminary workflows", async () => {
   const calls: string[] = [];
   const messages: CoreMessageCapture = [];
   const warnings: unknown[] = [];
-  const expectedSession = { id: "runtime-session" } as Session;
+  const sessions = {
+    description: { id: "description-session" } as Session,
+    virtual_simulation: { id: "virtual-simulation-session" } as Session,
+  };
   const service = new SessionRequestHandlerWorkflowSession({
     createAndRegisterSession: (options) => {
       calls.push(`create-session:${options.context.stage}`);
       assert.equal(options.providerId, "codexCli");
       assert.equal(options.workspacePath, "/tmp/workspace");
-      return Promise.resolve(expectedSession);
+      return Promise.resolve(
+        sessions[options.context.stage as keyof typeof sessions]
+      );
     },
     ...createManagedWorkflowDeps(messages),
     logger: createLogger(warnings),
@@ -166,20 +171,25 @@ test("createSessionForWorkflow still creates sessions for non-technical stage wo
     } as unknown as ProviderRegistry,
   });
 
-  const session = await service.createSessionForWorkflow({
+  const descriptionSession = await service.createSessionForWorkflow({
     providerId: "codexCli",
     workspacePath: "/tmp/workspace",
-    context: {
-      initiativeSlug: "demo-workspace",
-      stage: "description",
-    },
+    context: { initiativeSlug: "demo-workspace", stage: "description" },
+  });
+  const virtualSimulationSession = await service.createSessionForWorkflow({
+    providerId: "codexCli",
+    workspacePath: "/tmp/workspace",
+    context: { initiativeSlug: "demo-workspace", stage: "virtual_simulation" },
   });
 
-  assert.equal(session, expectedSession);
+  assert.equal(descriptionSession, sessions.description);
+  assert.equal(virtualSimulationSession, sessions.virtual_simulation);
   assert.deepEqual(messages, []);
   assert.deepEqual(calls, [
     "get-adapter:codexCli",
     "create-session:description",
+    "get-adapter:codexCli",
+    "create-session:virtual_simulation",
   ]);
   assert.deepEqual(warnings, []);
 });
