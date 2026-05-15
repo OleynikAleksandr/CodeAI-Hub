@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "2fbe51047",
+  "lastRecordedCommit": "2f02de26f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase2.state-machine.task1",
-  "expectedCommitMessage": "feat: add managed workflow state machine kernel",
+  "currentTaskId": "managed-orchestration-kernel.phase2.registry.task1",
+  "expectedCommitMessage": "feat: add managed workflow step registry",
   "debt": {
-    "expectedCommitMessage": "feat: add managed workflow state machine kernel",
-    "preCommitHead": "2fbe51047",
+    "expectedCommitMessage": "feat: add managed workflow step registry",
+    "preCommitHead": "2f02de26f",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase2.state-machine.task1"
+    "taskId": "managed-orchestration-kernel.phase2.registry.task1"
   }
 }
 ```
@@ -82,12 +82,12 @@
 10. [DONE] Git Commit: `feat: add managed workflow orchestration state types` (hash: 2fbe51047)
 
 11. [DONE] `managed-orchestration-kernel.phase2.state-machine.task1` Implement the pure `ManagedWorkflowStateMachine` with reusable Type A, Type B, persistent-return, and blocked-preview transitions but no file writes, provider calls, or Git commands (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-phase-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.test.ts`; expected commit: `feat: add managed workflow state machine kernel`).
-12. [PENDING] Git Commit: `feat: add managed workflow state machine kernel` (hash: TBD)
+12. [DONE] Git Commit: `feat: add managed workflow state machine kernel` (hash: 2f02de26f)
 
 ### Stream: Step Registry And Controllers
 
-13. [TODO] `managed-orchestration-kernel.phase2.registry.task1` Add the generic step-controller contract and registry that can register any number of future managed steps without changing runtime dispatch code (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts`; expected commit: `feat: add managed workflow step registry`).
-14. [TODO] Git Commit: `feat: add managed workflow step registry` (hash: TBD)
+13. [DONE] `managed-orchestration-kernel.phase2.registry.task1` Add the generic step-controller contract and registry that can register any number of future managed steps without changing runtime dispatch code (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts`; expected commit: `feat: add managed workflow step registry`).
+14. [PENDING] Git Commit: `feat: add managed workflow step registry` (hash: TBD)
 
 15. [TODO] `managed-orchestration-kernel.phase2.steps.task1` Add initial Diagram Modules and Application Skeleton step-controller modules that expose phase metadata and preview blocking decisions only (scope: `packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/application-skeleton-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts`; expected commit: `feat: register initial managed workflow step controllers`).
 16. [TODO] Git Commit: `feat: register initial managed workflow step controllers` (hash: TBD)
