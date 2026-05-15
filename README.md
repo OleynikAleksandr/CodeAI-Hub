@@ -2,14 +2,13 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.257** (Preliminary managed workflow routing)
+**Current Release — v1.2.258** (Full trunk managed workflow dispatch)
 
-This release routes the preliminary `Description` and `Virtual Simulation`
-steps through the replacement Managed Workflow Orchestration cluster metadata
-while preserving their provider-direct sessions. Project Manager now uses the
-Core-projected `readOnlyStages` list, so completed Description sessions and the
-Virtual Simulation start card remain visible until a real downstream technical
-stage starts.
+This release routes all five documentation trunk steps through the replacement
+Managed Workflow Orchestration cluster boundary. `Description` and
+`Virtual Simulation` remain provider-direct, while `Diagram Modules`,
+`Application Skeleton`, and `Quality Gates` now launch through managed dispatch
+instead of preview placeholder sessions.
 
 Repository lifecycle tooling under `scripts/plan-orchestrator/**` remains in
 place because it powers `npm run plan:*` and the Husky plan hooks for this code

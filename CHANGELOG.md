@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.258] - 2026-05-15
+### Added
+- **All five documentation trunk steps are routed through the replacement Managed Workflow Orchestration cluster boundary.** `Description` and `Virtual Simulation` keep provider-direct sessions; `Diagram Modules`, `Application Skeleton`, and `Quality Gates` now use managed dispatch.
+- **Application Skeleton and Quality Gates are no longer preview-only technical stages.** Project Manager can launch them through Core's managed dispatch policy while preserving upstream gating and existing-session reuse.
+
+### Fixed
+- **Managed technical starts no longer create preview placeholder sessions after the replacement boundary takes ownership.** Remote-bridge session creation, user-message dispatch, and rollover continuation now share the managed dispatch path for all technical trunk stages.
+
+### Tests
+- `npm run build:core`
+- `npm run typecheck:webview`
+- Managed workflow orchestrator tests passed, 17/17 tests.
+- Remote-bridge managed dispatch and workflow-state tests passed, 9/9 tests.
+- Project Manager workflow-state/start-surface tests passed, 17/17 tests.
+- `npm run build:webview`
+
 ## [1.2.257] - 2026-05-15
 ### Added
 - **Preliminary workflow steps are registered in the replacement Managed Workflow Orchestration cluster.** `Description` and `Virtual Simulation` now have provider-direct controller metadata next to the technical trunk controllers.
