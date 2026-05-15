@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "26d102cb3",
+  "lastRecordedCommit": "0bdb372cb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase7.release.task2",
-  "expectedCommitMessage": "chore: build managed workflow kernel runtime release",
+  "currentTaskId": "managed-orchestration-kernel.phase7.release.task3",
+  "expectedCommitMessage": "docs: record managed workflow kernel runtime release",
   "debt": {
-    "expectedCommitMessage": "chore: build managed workflow kernel runtime release",
-    "preCommitHead": "26d102cb3",
+    "expectedCommitMessage": "docs: record managed workflow kernel runtime release",
+    "preCommitHead": "0bdb372cb",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase7.release.task2"
+    "taskId": "managed-orchestration-kernel.phase7.release.task3"
   }
 }
 ```
@@ -173,9 +173,9 @@ Verification evidence recorded 2026-05-15:
 42. [DONE] `managed-orchestration-kernel.phase7.release.task1` After explicit confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed workflow kernel runtime release`).
 43. [DONE] Git Commit: `docs: prepare managed workflow kernel runtime release` (hash: 26d102cb3)
 44. [DONE] `managed-orchestration-kernel.phase7.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed workflow kernel runtime release`).
-45. [PENDING] Git Commit: `chore: build managed workflow kernel runtime release` (hash: TBD)
-46. [TODO] `managed-orchestration-kernel.phase7.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow kernel runtime release`).
-47. [TODO] Git Commit: `docs: record managed workflow kernel runtime release` (hash: TBD)
+45. [DONE] Git Commit: `chore: build managed workflow kernel runtime release` (hash: 0bdb372cb)
+46. [DONE] `managed-orchestration-kernel.phase7.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow kernel runtime release`).
+47. [PENDING] Git Commit: `docs: record managed workflow kernel runtime release` (hash: TBD)
 
 `build-all.sh` evidence recorded 2026-05-15:
 
@@ -190,6 +190,14 @@ Verification evidence recorded 2026-05-15:
   - `CodeAIHubLauncher-macos-arm64-1.2.256.tar.bz2`
   - `vscode-webview-1.2.256.tar.bz2`
   - `project-manager-1.2.256.tar.bz2`
+
+`build-release.sh` evidence recorded 2026-05-15:
+
+- Command: `./scripts/build-release.sh --use-current-version --allow-dirty`; dirty input was limited to the active plan state advanced by `plan:commit`.
+- Release version used: `1.2.256`.
+- Required release checks passed: architecture guard, root type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication check, VSIX package surface verification.
+- VSIX produced: `codeai-hub-1.2.256.vsix` (47M on disk, script summary: 48M).
+- Release tarballs remain available in `doc/tmp/releases/` and `/Users/oleksandroliinyk/.codeai-hub/releases/`.
 
 ## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
