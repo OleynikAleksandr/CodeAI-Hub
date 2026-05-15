@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "bbf7b685a",
+  "lastRecordedCommit": "b980ac108",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase36.release.task1",
-  "expectedCommitMessage": "docs: prepare release 265 workflow snapshot refresh fix",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase36.release.task2",
+  "expectedCommitMessage": "chore: build release 265 workflow snapshot refresh fix",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 265 workflow snapshot refresh fix",
-    "preCommitHead": "bbf7b685a",
+    "expectedCommitMessage": "chore: build release 265 workflow snapshot refresh fix",
+    "preCommitHead": "b980ac108",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase36.release.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase36.release.task2"
   }
 }
 ```
@@ -693,7 +693,7 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Release Preparation And Build
 
 149. [DONE] `diagram-plan-lifecycle-repair.phase36.release.task1` After explicit release-build confirmation, update release-facing docs for the future workflow snapshot refresh fix before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 265 workflow snapshot refresh fix`).
-150. [PENDING] Git Commit: `docs: prepare release 265 workflow snapshot refresh fix` (hash: TBD)
+150. [DONE] Git Commit: `docs: prepare release 265 workflow snapshot refresh fix` (hash: b980ac108)
 
 Release 265 preparation target:
 
@@ -702,8 +702,15 @@ Release 265 preparation target:
 - Future release version prepared in release-facing docs: `1.2.265`.
 - Release payload: Project Manager emits workflow-state updates when derived Diagram Modules readiness and Application Skeleton gating change without a root `updatedAt` mutation.
 
-151. [TODO] `diagram-plan-lifecycle-repair.phase36.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 265 workflow snapshot refresh fix`).
-152. [TODO] Git Commit: `chore: build release 265 workflow snapshot refresh fix` (hash: TBD)
+151. [DONE] `diagram-plan-lifecycle-repair.phase36.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 265 workflow snapshot refresh fix`).
+152. [PENDING] Git Commit: `chore: build release 265 workflow snapshot refresh fix` (hash: TBD)
+
+Release build-all evidence recorded 2026-05-15:
+
+- `./scripts/build-all.sh --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Unified generated version: `1.2.265`.
+- Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.265.tar.bz2`, `codex-module-1.2.265.tar.bz2`, `gemini-module-1.2.265.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.265.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.265.tar.bz2`, `vscode-webview-1.2.265.tar.bz2`, `project-manager-1.2.265.tar.bz2`.
+- Updated package versions and managed release manifests to `1.2.265`.
 
 153. [TODO] `diagram-plan-lifecycle-repair.phase36.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 265 workflow snapshot refresh handoff`).
 154. [TODO] Git Commit: `docs: record release 265 workflow snapshot refresh handoff` (hash: TBD)
