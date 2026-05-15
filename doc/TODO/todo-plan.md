@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "2f8c2cb56",
+  "lastRecordedCommit": "971a75df7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.pm-truth-cleanup.task1",
-  "expectedCommitMessage": "fix: remove project manager workflow prompt truth",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.pm-source-descriptor-cleanup.task1",
+  "expectedCommitMessage": "fix: remove project manager source artifact truth",
   "debt": {
-    "expectedCommitMessage": "fix: remove project manager workflow prompt truth",
-    "preCommitHead": "2f8c2cb56",
+    "expectedCommitMessage": "fix: remove project manager source artifact truth",
+    "preCommitHead": "971a75df7",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase50.pm-truth-cleanup.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase50.pm-source-descriptor-cleanup.task1"
   }
 }
 ```
@@ -952,10 +952,10 @@ Release VSIX evidence recorded 2026-05-15:
 212. [DONE] Git Commit: `fix: use core prompt packs in capture prompt` (hash: 2f8c2cb56)
 
 213. [DONE] `diagram-plan-lifecycle-repair.phase50.pm-truth-cleanup.task1` Remove Project Manager prompt-builder stage truth and obsolete prompt-builder tests/helpers so remaining PM code only resolves chat language settings (scope: `src/client/project-manager/services`; expected commit: `fix: remove project manager workflow prompt truth`).
-214. [PENDING] Git Commit: `fix: remove project manager workflow prompt truth` (hash: TBD)
+214. [DONE] Git Commit: `fix: remove project manager workflow prompt truth` (hash: 971a75df7)
 
-215. [TODO] `diagram-plan-lifecycle-repair.phase50.pm-source-descriptor-cleanup.task1` Remove Project Manager source-artifact descriptor helpers and tests because Core now owns workflow source selection for all steps (scope: `src/client/project-manager/services/workflow-source-artifact-descriptors.ts, src/client/project-manager/services/workflow-source-artifact-descriptors.test.ts`; expected commit: `fix: remove project manager source artifact truth`).
-216. [TODO] Git Commit: `fix: remove project manager source artifact truth` (hash: TBD)
+215. [DONE] `diagram-plan-lifecycle-repair.phase50.pm-source-descriptor-cleanup.task1` Remove Project Manager source-artifact descriptor helpers and tests because Core now owns workflow source selection for all steps (scope: `src/client/project-manager/services/workflow-source-artifact-descriptors.ts, src/client/project-manager/services/workflow-source-artifact-descriptors.test.ts`; expected commit: `fix: remove project manager source artifact truth`).
+216. [PENDING] Git Commit: `fix: remove project manager source artifact truth` (hash: TBD)
 
 217. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1` Expand Application Skeleton Core repair/blocker messages so validation diagnostics are actionable and Core-owned plan blockers are understandable to the user (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: clarify application skeleton core diagnostics`).
 218. [TODO] Git Commit: `fix: clarify application skeleton core diagnostics` (hash: TBD)
