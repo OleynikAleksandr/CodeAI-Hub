@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "327c9274a",
+  "lastRecordedCommit": "745fb9189",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase9.tests.task2",
-  "expectedCommitMessage": "test: cover provider-direct preliminary step policy",
+  "currentTaskId": "managed-orchestration-kernel.phase10.verify.task1",
+  "expectedCommitMessage": "docs: verify preliminary workflow orchestration fix",
   "debt": {
-    "expectedCommitMessage": "test: cover provider-direct preliminary step policy",
-    "preCommitHead": "327c9274a",
+    "expectedCommitMessage": "docs: verify preliminary workflow orchestration fix",
+    "preCommitHead": "745fb9189",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase9.tests.task2"
+    "taskId": "managed-orchestration-kernel.phase10.verify.task1"
   }
 }
 ```
@@ -234,14 +234,22 @@ Verification evidence recorded 2026-05-15:
 61. [DONE] `managed-orchestration-kernel.phase9.tests.task1` Add Project Manager regression coverage proving completed Description still shows/restores its session, Virtual Simulation card appears after Description completion, and technical stages still show the managed preview boundary (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover preliminary workflow orchestration visibility`).
 62. [DONE] Git Commit: `test: cover preliminary workflow orchestration visibility` (hash: 327c9274a)
 63. [DONE] `managed-orchestration-kernel.phase9.tests.task2` Add Core regression coverage proving Description and Virtual Simulation are registered provider-direct steps that do not create Core preview boundary sessions, while technical stages still do (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover provider-direct preliminary step policy`).
-64. [PENDING] Git Commit: `test: cover provider-direct preliminary step policy` (hash: TBD)
+64. [DONE] Git Commit: `test: cover provider-direct preliminary step policy` (hash: 745fb9189)
 
 ## Phase 10 — Release Build For Preliminary Workflow Retest (owner: Codex + User, updated: 2026-05-15)
 
 ### Stream: Tooling Verification
 
-65. [TODO] `managed-orchestration-kernel.phase10.verify.task1` Run targeted Core and Project Manager builds/tests for the preliminary-step integration and record exact evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify preliminary workflow orchestration fix`).
-66. [TODO] Git Commit: `docs: verify preliminary workflow orchestration fix` (hash: TBD)
+65. [DONE] `managed-orchestration-kernel.phase10.verify.task1` Run targeted Core and Project Manager builds/tests for the preliminary-step integration and record exact evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify preliminary workflow orchestration fix`).
+
+Verification evidence recorded 2026-05-15:
+
+- `npm run build:core` — passed.
+- `node --test packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js` — passed, 8/8 tests.
+- `npm run typecheck:webview` — passed.
+- `npx tsx --test src/client/project-manager/components/layout/main-area-panel-content.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts` — passed, 18/18 tests.
+- `npm run build:webview` — passed.
+66. [PENDING] Git Commit: `docs: verify preliminary workflow orchestration fix` (hash: TBD)
 
 ### Stream: Release Preparation And Build
 
