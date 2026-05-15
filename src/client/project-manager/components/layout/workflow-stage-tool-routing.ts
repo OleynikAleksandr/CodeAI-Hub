@@ -1,4 +1,5 @@
 import type { ConfirmableStageId } from "../shared/stage-confirmation-card";
+import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 import {
   APPLICATION_SKELETON_TOOL_LABEL,
   QUALITY_GATES_TOOL_LABEL,
@@ -31,3 +32,14 @@ export const resolveStartupStageFromTool = (tool: string | null): string => {
 export const resolveWorkflowToolHeaderTitle = (
   tool: string | null
 ): string | null => (tool ? (TOOL_HEADER_TITLES[tool] ?? tool) : null);
+
+export const resolveManagedWorkflowToolHeaderTitle = (
+  tool: string | null,
+  snapshot: WorkflowStateSnapshot | null
+): string | null => {
+  const stageId = resolveStartupStageFromTool(tool);
+  const managedStage = snapshot?.managedWorkflowPreview?.stages.find(
+    (stage) => stage.controllerId === stageId
+  );
+  return managedStage?.displayName ?? resolveWorkflowToolHeaderTitle(tool);
+};

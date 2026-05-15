@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "62fc7a339",
+  "lastRecordedCommit": "a3bf48b96",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase9.pm.task1",
-  "expectedCommitMessage": "fix: consume orchestrator read-only projection",
+  "currentTaskId": "managed-orchestration-kernel.phase9.pm.task2",
+  "expectedCommitMessage": "feat: route preliminary step starts through orchestrator metadata",
   "debt": {
-    "expectedCommitMessage": "fix: consume orchestrator read-only projection",
-    "preCommitHead": "62fc7a339",
+    "expectedCommitMessage": "feat: route preliminary step starts through orchestrator metadata",
+    "preCommitHead": "a3bf48b96",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase9.pm.task1"
+    "taskId": "managed-orchestration-kernel.phase9.pm.task2"
   }
 }
 ```
@@ -225,9 +225,9 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Project Manager Consumption
 
 57. [DONE] `managed-orchestration-kernel.phase9.pm.task1` Replace Project Manager's local preview-as-lock predicate with the orchestrator read-only projection so Description sessions and Virtual Simulation start cards stay visible until a real downstream technical step starts (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `fix: consume orchestrator read-only projection`).
-58. [PENDING] Git Commit: `fix: consume orchestrator read-only projection` (hash: TBD)
-59. [TODO] `managed-orchestration-kernel.phase9.pm.task2` Route preliminary step start metadata and existing-session lookup through orchestrator-owned stage metadata while preserving current Description/Virtual Simulation provider-direct session transport (scope: `src/client/project-manager/components/layout/workflow-stage-tool-routing.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat: route preliminary step starts through orchestrator metadata`).
-60. [TODO] Git Commit: `feat: route preliminary step starts through orchestrator metadata` (hash: TBD)
+58. [DONE] Git Commit: `fix: consume orchestrator read-only projection` (hash: a3bf48b96)
+59. [DONE] `managed-orchestration-kernel.phase9.pm.task2` Route preliminary step start metadata and existing-session lookup through orchestrator-owned stage metadata while preserving current Description/Virtual Simulation provider-direct session transport (scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/workflow-stage-tool-routing.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat: route preliminary step starts through orchestrator metadata`).
+60. [PENDING] Git Commit: `feat: route preliminary step starts through orchestrator metadata` (hash: TBD)
 
 ### Stream: Regression Coverage
 

@@ -50,6 +50,8 @@ type ContinuityStageId =
   | "application_skeleton"
   | "quality_gates";
 
+type WorkflowStageStartPolicy = "provider_direct" | "core_preview_boundary";
+
 type WorkflowStateGetter = (
   workspaceSlug: string,
   workspacePath?: string
@@ -203,22 +205,43 @@ const readStageBlocked = (
   return blocked?.[stage] ?? true;
 };
 
-const isTechnicalStageRewriteBoundaryActive = (
-  state: Awaited<ReturnType<typeof api.getWorkflowState>> | null
-): boolean => {
-  const status = state?.stages?.diagram_modules;
-  return typeof status === "string" && status !== "idle";
-};
+const resolveManagedStageMetadata = (
+  state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,
+  stage: ContinuityStageId
+) =>
+  state?.managedWorkflowPreview?.stages.find(
+    (candidate) => candidate.controllerId === stage
+  ) ?? null;
+
+const resolveManagedStageStartPolicy = (
+  state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,
+  stage: ContinuityStageId
+): WorkflowStageStartPolicy =>
+  resolveManagedStageMetadata(state, stage)?.startPolicy ??
+  (stage === "virtual_simulation"
+    ? "provider_direct"
+    : "core_preview_boundary");
+
+const isManagedReadOnlyStage = (
+  state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,
+  stage: ContinuityStageId
+): boolean =>
+  state?.managedWorkflowPreview?.readOnlyStages.includes(stage) ??
+  state?.technicalStageRewriteBoundary?.readOnlyStages.includes(stage) ??
+  false;
 
 const resolveExistingStageSessionIdForExplicitStart = (options: {
   readonly state: Awaited<ReturnType<typeof api.getWorkflowState>> | null;
   readonly stage: ContinuityStageId;
 }): string | null => {
   const chains = options.state?.continuity?.chains ?? [];
+  const controllerId =
+    resolveManagedStageMetadata(options.state, options.stage)?.controllerId ??
+    options.stage;
   let best: { readonly updatedAt: string; readonly sessionId: string } | null = null;
 
   for (const chain of chains) {
-    if (chain.stage !== options.stage) {
+    if (chain.stage !== controllerId) {
       continue;
     }
     const sessionId = chain.segments.at(-1)?.sessionId ?? null;
@@ -280,9 +303,14 @@ export class WorkflowStepStartService {
       params.onSessionCreated?.(existingSessionId);
       return existingSessionId;
     }
-    if (isTechnicalStageRewriteBoundaryActive(state)) {
+    if (isManagedReadOnlyStage(state, "virtual_simulation")) {
       throw new Error(
         "Virtual Simulation is read-only after Diagram Modules has started."
+      );
+    }
+    if (resolveManagedStageStartPolicy(state, "virtual_simulation") !== "provider_direct") {
+      throw new Error(
+        "Virtual Simulation is waiting for Core-managed start policy metadata."
       );
     }
 

@@ -31,8 +31,8 @@ import { WorkflowArtifactViewer } from "./workflow-artifact-viewer";
 import type { BranchNodeSelection } from "./main-area-utils";
 import {
   resolveConfirmableStageFromTool,
+  resolveManagedWorkflowToolHeaderTitle,
   resolveStartupStageFromTool,
-  resolveWorkflowToolHeaderTitle,
 } from "./workflow-stage-tool-routing";
 import {
   renderWorkflowStageHelp,
@@ -97,12 +97,10 @@ const renderLocalizationSyncBlockedState = (
 const isManagedReadOnlyStage = (
   activeTool: string | null,
   snapshot: WorkflowStateSnapshot | null
-): boolean => {
-  const stageId = resolveStartupStageFromTool(activeTool);
-  return Boolean(
-    stageId && snapshot?.managedWorkflowPreview?.readOnlyStages.includes(stageId)
-  );
-};
+): boolean =>
+  snapshot?.managedWorkflowPreview?.readOnlyStages.includes(
+    resolveStartupStageFromTool(activeTool)
+  ) ?? false;
 
 interface SelectedArtifact {
   readonly workspacePath: string;
@@ -445,7 +443,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
 
   if (isManagedReadOnlyStage(activeTool, workflowSnapshot)) {
     const stageTitle =
-      resolveWorkflowToolHeaderTitle(activeTool) ?? activeTool ?? "Workflow stage";
+      resolveManagedWorkflowToolHeaderTitle(activeTool, workflowSnapshot) ?? activeTool ?? "Workflow stage";
     return (
       <div className="pm-placeholder">
         <strong>
