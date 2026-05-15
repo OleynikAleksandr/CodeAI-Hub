@@ -450,6 +450,17 @@
   color: #6d9cef;
 }
 
+.session-dialog__message--system {
+  margin: 0 80px;
+  background-color: #303234;
+  border-color: #46474a;
+  box-shadow: 0px 6px 14.1px 3px #000;
+}
+
+.session-dialog__message--system .session-dialog__role {
+  color: rgba(173, 178, 186, 0.78);
+}
+
 .session-dialog__message--assistant {
   z-index: 2;
   margin: 0 80px 0 30px;

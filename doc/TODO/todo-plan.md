@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "c35e144e6",
+  "lastRecordedCommit": "5553f3933",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase28.sidebar-marker.task1",
-  "expectedCommitMessage": "fix: keep diagram modules marker active until review",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase28.system-card.task1",
+  "expectedCommitMessage": "fix: style core system dialog messages as cards",
   "debt": {
-    "expectedCommitMessage": "fix: keep diagram modules marker active until review",
-    "preCommitHead": "c35e144e6",
+    "expectedCommitMessage": "fix: style core system dialog messages as cards",
+    "preCommitHead": "5553f3933",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase28.sidebar-marker.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase28.system-card.task1"
   }
 }
 ```
@@ -544,10 +544,10 @@ Release VSIX evidence recorded 2026-05-15:
 117. [DONE] Git Commit: `docs: open release 262 cosmetic repair stream` (hash: c35e144e6)
 
 118. [DONE] `diagram-plan-lifecycle-repair.phase28.sidebar-marker.task1` Keep the Diagram Modules sidebar marker orange while Product Part turns are still in progress and switch it to green only when Core opens the user-review phase (scope: `src/client/project-manager/components/layout/workspace-tree-model.ts, src/client/project-manager/components/layout/workspace-tree-model.test.ts`; expected commit: `fix: keep diagram modules marker active until review`).
-119. [PENDING] Git Commit: `fix: keep diagram modules marker active until review` (hash: TBD)
+119. [DONE] Git Commit: `fix: keep diagram modules marker active until review` (hash: 5553f3933)
 
-120. [TODO] `diagram-plan-lifecycle-repair.phase28.system-card.task1` Render Core/system dialog messages in their own subtle card with symmetric dialog-panel side offsets matching the larger assistant-card side offset (scope: `src/client/ui/src/session/dialog-panel.tsx, media/session-view.css, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `fix: style core system dialog messages as cards`).
-121. [TODO] Git Commit: `fix: style core system dialog messages as cards` (hash: TBD)
+120. [DONE] `diagram-plan-lifecycle-repair.phase28.system-card.task1` Render Core/system dialog messages in their own subtle card with symmetric dialog-panel side offsets matching the larger assistant-card side offset (scope: `src/client/ui/src/session/dialog-panel.tsx, media/session-view.css, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `fix: style core system dialog messages as cards`).
+121. [PENDING] Git Commit: `fix: style core system dialog messages as cards` (hash: TBD)
 
 122. [TODO] `diagram-plan-lifecycle-repair.phase28.verify.task1` Run targeted Core/PM UI checks for the marker and system-card fixes and record evidence before the next release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 262 cosmetic repair`).
 123. [TODO] Git Commit: `docs: verify release 262 cosmetic repair` (hash: TBD)

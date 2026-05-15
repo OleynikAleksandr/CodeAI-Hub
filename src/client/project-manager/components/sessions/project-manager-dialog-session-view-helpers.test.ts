@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import * as React from "react";
 import { createElement } from "react";
@@ -38,6 +39,9 @@ const createAssistantMessage = (
 });
 
 (globalThis as typeof globalThis & { React?: unknown }).React = React;
+
+const SYSTEM_MESSAGE_CARD_RULE_REGEX =
+  /\.session-dialog__message--system\s*\{(?<body>[^}]*)\}/u;
 
 test("dialog bootstrap preserves model binding from dialog index", () => {
   const entry = sanitizeDialogIndexEntry({
@@ -201,4 +205,18 @@ test("DialogPanel keeps Speak button available for assistant thinking bubbles", 
     html.includes('aria-label="Speak: Codex · Thinking"'),
     true
   );
+});
+
+test("system dialog messages use the shared card chrome", () => {
+  const css = readFileSync(
+    new URL("../../../../../media/session-view.css", import.meta.url),
+    "utf8"
+  );
+  const systemRuleBody =
+    SYSTEM_MESSAGE_CARD_RULE_REGEX.exec(css)?.groups?.body ?? "";
+
+  assert.match(systemRuleBody, /\bmargin:\s*0 80px;/u);
+  assert.match(systemRuleBody, /\bbackground-color:\s*#303234;/u);
+  assert.match(systemRuleBody, /\bborder-color:\s*#46474a;/u);
+  assert.match(systemRuleBody, /\bbox-shadow:\s*0px 6px 14\.1px 3px #000;/u);
 });
