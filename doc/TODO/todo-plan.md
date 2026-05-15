@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "56cf937fa",
+  "lastRecordedCommit": "21f2486a5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase4.verify.task1",
-  "expectedCommitMessage": "docs: verify first trunk orchestration flow",
+  "currentTaskId": "remaining-technical-runtime.phase0.plan.task1",
+  "expectedCommitMessage": "docs: expand scope to remaining technical stage orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: verify first trunk orchestration flow",
-    "preCommitHead": "56cf937fa",
+    "expectedCommitMessage": "docs: expand scope to remaining technical stage orchestration",
+    "preCommitHead": "21f2486a5",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase4.verify.task1"
+    "taskId": "remaining-technical-runtime.phase0.plan.task1"
   }
 }
 ```
@@ -43,8 +43,8 @@
 - Каждая подзадача затрагивает не более 3 файлов, кроме явно указанной регистрационной задачи, где TypeScript export/registry/test должны быть атомарны для `knip`.
 - Каждая подзадача оформляется парой пунктов: реализация/изменения и отдельный `Git Commit: ...`.
 - Commit выполняется через `npm run plan:commit -- "<expected commit message>"`; hooks не обходить.
-- Цель scope: перевести первые три trunk steps на новый orchestrator-owned runtime contract: provider-direct `Description`, provider-direct `Virtual Simulation`, managed Type A/B/Persistent `Diagram Modules`.
-- `Application Skeleton` и `Quality Gates` остаются preview/fail-closed до следующих scope.
+- Цель scope: перевести все пять trunk steps на новый orchestrator-owned runtime contract: provider-direct `Description`, provider-direct `Virtual Simulation`, managed Type A/B/Persistent `Diagram Modules`, managed-dispatch `Application Skeleton`, managed-dispatch `Quality Gates`.
+- `Application Skeleton` и `Quality Gates` подключаются к новому orchestrator-owned dispatch boundary в этом scope до release build.
 - Release build нельзя выполнять до отдельного подтверждения пользователя на сборку релиза.
 
 ## Phase 0 — Scope Registration (owner: Codex, updated: 2026-05-15)
@@ -102,7 +102,7 @@
 ### Stream: Targeted Verification
 
 21. [DONE] `prelim-diagram-runtime.phase4.verify.task1` Run targeted Core and Project Manager builds/tests for the first three orchestrated steps and record exact evidence here before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify first trunk orchestration flow`).
-22. [PENDING] Git Commit: `docs: verify first trunk orchestration flow` (hash: TBD)
+22. [DONE] Git Commit: `docs: verify first trunk orchestration flow` (hash: 21f2486a5)
 
 Expected verification commands:
 
@@ -124,30 +124,57 @@ Verification evidence recorded 2026-05-15:
 - `npm run build:webview` — PASS.
 - `npm run plan:validate` — PASS.
 
-## Phase 5 — Release Build (owner: Codex + User, updated: 2026-05-15)
+## Phase 5 — Scope Expansion For Remaining Technical Steps (owner: Codex, updated: 2026-05-15)
+
+### Stream: Active Plan Extension
+
+23. [DONE] `remaining-technical-runtime.phase0.plan.task1` Expand this active scope after explicit user confirmation so Application Skeleton and Quality Gates are connected to the new orchestrator before release build (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: expand scope to remaining technical stage orchestration`).
+24. [PENDING] Git Commit: `docs: expand scope to remaining technical stage orchestration` (hash: TBD)
+
+## Phase 6 — Remaining Technical Step Managed Dispatch (owner: Codex, updated: 2026-05-15)
+
+### Stream: Runtime Policy
+
+25. [TODO] `remaining-technical-runtime.phase1.policy.task1` Move Application Skeleton and Quality Gates controllers from preview-only to managed dispatch and update public facade expectations (scope: `packages/core/src/managed-workflow-orchestration/steps/application-skeleton-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/quality-gates-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: enable remaining technical managed dispatch policies`).
+26. [TODO] Git Commit: `feat: enable remaining technical managed dispatch policies` (hash: TBD)
+
+27. [TODO] `remaining-technical-runtime.phase1.runtime.task1` Route Application Skeleton and Quality Gates session creation/message dispatch through managed dispatch instead of preview rewrite blockers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `feat: route remaining technical stages through managed dispatch`).
+28. [TODO] Git Commit: `feat: route remaining technical stages through managed dispatch` (hash: TBD)
+
+### Stream: Project Manager Launch
+
+29. [TODO] `remaining-technical-runtime.phase2.pm.task1` Allow Project Manager start service to launch Application Skeleton and Quality Gates only when their managed policy is `managed_dispatch`, preserving upstream gating and existing-session reuse (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `feat: launch remaining technical stages through managed dispatch`).
+30. [TODO] Git Commit: `feat: launch remaining technical stages through managed dispatch` (hash: TBD)
+
+### Stream: Verification
+
+31. [TODO] `remaining-technical-runtime.phase3.verify.task1` Run targeted Core and Project Manager verification for all five trunk steps and record evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify full trunk orchestration flow`).
+32. [TODO] Git Commit: `docs: verify full trunk orchestration flow` (hash: TBD)
+
+## Phase 7 — Release Build (owner: Codex + User, updated: 2026-05-15)
 
 ### Stream: Release Build Confirmation
 
-23. [TODO] `prelim-diagram-runtime.phase5.release-confirmation.task1` Ask the user for explicit release build confirmation after implementation and tooling verification pass; do not prepare release notes or run build scripts before confirmation (scope: user workflow; expected commit: not required).
+33. [DONE] `prelim-diagram-runtime.phase5.release-confirmation.task1` User explicitly confirmed release build and requested Application Skeleton / Quality Gates orchestration connection before build; release preparation remains blocked until remaining technical step verification is complete (scope: user workflow; expected commit: not required).
 
 ### Stream: Release Preparation And Build
 
-24. [TODO] `prelim-diagram-runtime.phase5.release.task1` After explicit confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare first trunk orchestration release`).
-25. [TODO] Git Commit: `docs: prepare first trunk orchestration release` (hash: TBD)
-26. [TODO] `prelim-diagram-runtime.phase5.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: version manifests/package files generated by release script + `doc/TODO/todo-plan.md`; expected commit: `chore: build first trunk orchestration release`).
-27. [TODO] Git Commit: `chore: build first trunk orchestration release` (hash: TBD)
-28. [TODO] `prelim-diagram-runtime.phase5.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record first trunk orchestration release`).
-29. [TODO] Git Commit: `docs: record first trunk orchestration release` (hash: TBD)
+34. [TODO] `prelim-diagram-runtime.phase5.release.task1` After remaining technical step verification, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare full trunk orchestration release`).
+35. [TODO] Git Commit: `docs: prepare full trunk orchestration release` (hash: TBD)
+36. [TODO] `prelim-diagram-runtime.phase5.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: version manifests/package files generated by release script + `doc/TODO/todo-plan.md`; expected commit: `chore: build full trunk orchestration release`).
+37. [TODO] Git Commit: `chore: build full trunk orchestration release` (hash: TBD)
+38. [TODO] `prelim-diagram-runtime.phase5.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record full trunk orchestration release`).
+39. [TODO] Git Commit: `docs: record full trunk orchestration release` (hash: TBD)
 
-## Phase 6 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
 ### Stream: User Acceptance
 
-30. [TODO] `prelim-diagram-runtime.phase6.user-acceptance.task1` User installs the release and verifies: Description session is visible after submit, Virtual Simulation start card appears after Description completion, Diagram Modules starts a managed provider session instead of preview placeholder, Core opens user-led review after valid artifacts, and user acceptance opens persistent return state (scope: user workflow; expected commit: not required).
+40. [TODO] `prelim-diagram-runtime.phase6.user-acceptance.task1` User installs the release and verifies: Description session is visible after submit, Virtual Simulation start card appears after Description completion, Diagram Modules starts a managed provider session instead of preview placeholder, Application Skeleton and Quality Gates start through managed dispatch instead of preview placeholders, Core opens user-led review after valid artifacts, and user acceptance opens persistent return state (scope: user workflow; expected commit: not required).
 
-## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-31. [TODO] `prelim-diagram-runtime.phase7.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close first trunk orchestration scope`).
-32. [TODO] Git Commit: `docs: close first trunk orchestration scope` (hash: TBD)
+41. [TODO] `prelim-diagram-runtime.phase7.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+42. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
