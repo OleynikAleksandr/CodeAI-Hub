@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "86ea025d2",
+  "lastRecordedCommit": "67c08bba2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase36.release.task3",
-  "expectedCommitMessage": "docs: record release 265 workflow snapshot refresh handoff",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase38.review-boundary.task1",
+  "expectedCommitMessage": "docs: open diagram modules review boundary repair",
   "debt": {
-    "expectedCommitMessage": "docs: record release 265 workflow snapshot refresh handoff",
-    "preCommitHead": "86ea025d2",
+    "expectedCommitMessage": "docs: open diagram modules review boundary repair",
+    "preCommitHead": "67c08bba2",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase36.release.task3"
+    "taskId": "diagram-plan-lifecycle-repair.phase38.review-boundary.task1"
   }
 }
 ```
@@ -713,7 +713,7 @@ Release build-all evidence recorded 2026-05-15:
 - Updated package versions and managed release manifests to `1.2.265`.
 
 153. [DONE] `diagram-plan-lifecycle-repair.phase36.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 265 workflow snapshot refresh handoff`).
-154. [PENDING] Git Commit: `docs: record release 265 workflow snapshot refresh handoff` (hash: TBD)
+154. [DONE] Git Commit: `docs: record release 265 workflow snapshot refresh handoff` (hash: 67c08bba2)
 
 Release VSIX evidence recorded 2026-05-15:
 
@@ -727,11 +727,37 @@ Release VSIX evidence recorded 2026-05-15:
 
 ### Stream: User Acceptance
 
-155. [TODO] `diagram-plan-lifecycle-repair.phase37.user-acceptance.task1` User installs the rebuilt release and verifies `Diagram Modules` turns green after Core opens user review and `Application Skeleton` becomes available from `product-parts.index.md` without a stale blocked card (scope: user workflow; expected commit: none).
+155. [BLOCKED] `diagram-plan-lifecycle-repair.phase37.user-acceptance.task1` User installs the rebuilt release and verifies `Diagram Modules` turns green after Core opens user review and `Application Skeleton` becomes available from `product-parts.index.md` without a stale blocked card (scope: user workflow; expected commit: none). **BLOCKED 2026-05-15:** release `1.2.265` correctly turns `Diagram Modules` green after Core opens user review, but the managed stage plan creates `diagram-modules.phase2.review.task1` with `expected commit: none` and no paired `Git Commit` item, leaving the Core-owned review handoff outside the required microtask/commit-pair contract.
 
-## Phase 38 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 38 — Diagram Modules Review Boundary Repair (owner: Codex, updated: 2026-05-15)
+
+### Stream: Acceptance Finding
+
+156. [DONE] `diagram-plan-lifecycle-repair.phase38.review-boundary.task1` Record the release `1.2.265` Diagram Modules review-plan finding and open a bounded repair stream for the missing review commit partner and managed ledger dirty-gate behavior (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open diagram modules review boundary repair`).
+157. [PENDING] Git Commit: `docs: open diagram modules review boundary repair` (hash: TBD)
+
+### Stream: Stage Plan Contract
+
+158. [TODO] `diagram-plan-lifecycle-repair.phase38.review-boundary.task2` Make the Diagram Modules Phase 2 user-review handoff a commit-backed managed microtask with an explicit paired `Git Commit` line in the generated stage plan (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `fix: add diagram modules review commit partner`).
+159. [TODO] Git Commit: `fix: add diagram modules review commit partner` (hash: TBD)
+
+160. [TODO] `diagram-plan-lifecycle-repair.phase38.review-boundary.task3` Keep Core-managed workspace/stage plan ledger updates out of technical-stage dirty gating so a completed Diagram Modules aggregate can unlock Application Skeleton even when only review-ledger metadata is dirty (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts`; expected commit: `fix: ignore managed plan ledger in technical dirty gate`).
+161. [TODO] Git Commit: `fix: ignore managed plan ledger in technical dirty gate` (hash: TBD)
+
+### Stream: Verification
+
+162. [TODO] `diagram-plan-lifecycle-repair.phase38.verify.task1` Run targeted Core tests/build for the Diagram Modules review commit partner and technical-stage dirty-gate repair, then record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules review boundary repair`).
+163. [TODO] Git Commit: `docs: verify diagram modules review boundary repair` (hash: TBD)
+
+## Phase 39 — Release Build Gate For Review Boundary Repair (owner: Codex + User, updated: 2026-05-15)
+
+### Stream: Release Confirmation Gate
+
+164. [TODO] `diagram-plan-lifecycle-repair.phase39.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Diagram Modules review boundary repair (scope: user workflow; expected commit: none).
+
+## Phase 40 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-156. [TODO] `diagram-plan-lifecycle-repair.phase38.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-157. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+165. [TODO] `diagram-plan-lifecycle-repair.phase40.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+166. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
