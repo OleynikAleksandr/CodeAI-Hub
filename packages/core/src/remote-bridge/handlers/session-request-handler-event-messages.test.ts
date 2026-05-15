@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { SessionManager } from "../../session-manager";
+import { computeSessionMessageSourceHash } from "../../session-translation/session-message-source-hash";
 import { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 
 const noop = (): void => {
@@ -11,6 +12,16 @@ const flushAsync = (): Promise<void> =>
   new Promise((resolve) => {
     setImmediate(resolve);
   });
+
+const waitFor = async (predicate: () => boolean): Promise<void> => {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    if (predicate()) {
+      return;
+    }
+    await flushAsync();
+  }
+  assert.equal(predicate(), true);
+};
 
 test("SessionRequestHandlerEventMessages normalizes assistant content before persistence and broadcast", async () => {
   const sessionManager = new SessionManager();
@@ -143,4 +154,101 @@ test("SessionRequestHandlerEventMessages preserves append order during async per
     "Core acceptance check failed for Diagram Modules.",
     "Reading the Core feedback.",
   ]);
+});
+
+test("SessionRequestHandlerEventMessages translates Core system messages through overlay without changing source content", async () => {
+  const sessionManager = new SessionManager();
+  const session = sessionManager.createSession(
+    "codex",
+    "/tmp/core-message-localization",
+    "provider-session-id"
+  );
+  const storedMessages: Array<{
+    readonly content: string;
+    readonly id: string;
+  }> = [];
+  const storedTranslations: Array<{
+    readonly messageId: string;
+    readonly sourceHash: string;
+    readonly translatedContent: string;
+  }> = [];
+  const broadcasts: unknown[] = [];
+  const handler = new SessionRequestHandlerEventMessages({
+    broadcaster: (event) => {
+      broadcasts.push(event);
+    },
+    continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
+    logger: {
+      error: noop,
+      info: noop,
+      warn: noop,
+    } as never,
+    sessionManager,
+    sessionStorage: {
+      appendMessage: (
+        _sessionId: string,
+        message: { readonly content: string; readonly id: string }
+      ) => {
+        storedMessages.push(message);
+        return Promise.resolve();
+      },
+      appendMessageTranslation: (
+        _sessionId: string,
+        translation: {
+          readonly messageId: string;
+          readonly sourceHash: string;
+          readonly translatedContent: string;
+        }
+      ) => {
+        storedTranslations.push(translation);
+        return Promise.resolve();
+      },
+    } as never,
+    sessionTranslation: {
+      resolveThinkingVisibilityForProvider: () => true,
+      translateDialogMessage: (candidate: {
+        readonly content: string;
+        readonly messageId: string;
+        readonly role: string;
+        readonly sessionId: string;
+      }) => {
+        assert.equal(candidate.role, "system");
+        return Promise.resolve({
+          messageId: candidate.messageId,
+          sessionId: candidate.sessionId,
+          sourceHash: computeSessionMessageSourceHash(candidate.content),
+          targetLanguage: "ru",
+          translatedContent: "Ядро приняло текущий артефакт.",
+        });
+      },
+    } as never,
+  });
+
+  handler.appendCoreMessage(session.id, {
+    content: "Core accepted the current artifact.",
+    tag: "managed-workflow-continuation",
+  });
+
+  await waitFor(() => storedTranslations.length === 1);
+
+  assert.equal(
+    session.messages[0]?.content,
+    "Core accepted the current artifact."
+  );
+  assert.equal(
+    storedMessages[0]?.content,
+    "Core accepted the current artifact."
+  );
+  assert.equal(storedTranslations[0]?.messageId, storedMessages[0]?.id);
+  assert.equal(
+    storedTranslations[0]?.translatedContent,
+    "Ядро приняло текущий артефакт."
+  );
+  assert.equal(
+    broadcasts.some(
+      (event) =>
+        (event as { type?: string }).type === "dialog:message_translation"
+    ),
+    true
+  );
 });

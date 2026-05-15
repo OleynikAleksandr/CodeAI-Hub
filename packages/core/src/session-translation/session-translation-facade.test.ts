@@ -100,6 +100,33 @@ const createBootstrapSnapshot = (): LocalizationRuntimeBootstrapSnapshot => ({
   },
 });
 
+const writeSettingsAndBootstrap = async (
+  homeDirectory: string,
+  settingsSnapshot: Record<string, unknown> = createSettingsSnapshot()
+): Promise<string> => {
+  const settingsPath = path.join(
+    homeDirectory,
+    ".codeai-hub",
+    "settings",
+    "settings.json"
+  );
+  await mkdir(path.dirname(settingsPath), { recursive: true });
+  await writeFile(
+    settingsPath,
+    `${JSON.stringify(settingsSnapshot, null, 2)}\n`,
+    "utf8"
+  );
+  const bootstrapPath =
+    resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
+  await mkdir(path.dirname(bootstrapPath), { recursive: true });
+  await writeFile(
+    bootstrapPath,
+    `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
+    "utf8"
+  );
+  return settingsPath;
+};
+
 const createSilentLogger = (): Logger => new Logger("error");
 
 interface RecordedLogEntry {
@@ -148,28 +175,7 @@ const createRecordingFactory = (
 test("SessionTranslationFacade routes through the injected translation factory", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
-    const settingsPath = path.join(
-      homeDirectory,
-      ".codeai-hub",
-      "settings",
-      "settings.json"
-    );
-    await mkdir(path.dirname(settingsPath), { recursive: true });
-    await writeFile(
-      settingsPath,
-      `${JSON.stringify(createSettingsSnapshot(), null, 2)}\n`,
-      "utf8"
-    );
-
-    const bootstrapPath =
-      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
-    await mkdir(path.dirname(bootstrapPath), { recursive: true });
-    await writeFile(
-      bootstrapPath,
-      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
-      "utf8"
-    );
-
+    const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
     const recorded: RecordedFactoryCall[] = [];
     const facade = new SessionTranslationFacade({
       logger: createSilentLogger(),
@@ -206,28 +212,7 @@ test("SessionTranslationFacade routes through the injected translation factory",
 test("SessionTranslationFacade gives short reasoning translations at least 15 seconds", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
-    const settingsPath = path.join(
-      homeDirectory,
-      ".codeai-hub",
-      "settings",
-      "settings.json"
-    );
-    await mkdir(path.dirname(settingsPath), { recursive: true });
-    await writeFile(
-      settingsPath,
-      `${JSON.stringify(createSettingsSnapshot(), null, 2)}\n`,
-      "utf8"
-    );
-
-    const bootstrapPath =
-      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
-    await mkdir(path.dirname(bootstrapPath), { recursive: true });
-    await writeFile(
-      bootstrapPath,
-      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
-      "utf8"
-    );
-
+    const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
     let recordedRequest: TranslationRequest | undefined;
     const facade = new SessionTranslationFacade({
       logger: createSilentLogger(),
@@ -269,31 +254,54 @@ test("SessionTranslationFacade gives short reasoning translations at least 15 se
   }
 });
 
+test("SessionTranslationFacade uses Messages for the User policy for Core system messages", async () => {
+  const homeDirectory = await createTempHomeDirectory();
+  try {
+    const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
+    let recordedRequest: TranslationRequest | undefined;
+    const translatedText = "Ядро приняло артефакт.";
+    const facade = new SessionTranslationFacade({
+      logger: createSilentLogger(),
+      settingsPath,
+      translationFacadeFactory: () =>
+        ({
+          translate: (request: TranslationRequest) => {
+            recordedRequest = request;
+            return Promise.resolve({
+              engine: "anthropic-claude-haiku-4-5",
+              finalText: translatedText,
+              originalText: request.text,
+              sourceLanguage: "en",
+              status: "translated",
+              targetLanguage: "ru",
+              translatedText,
+            });
+          },
+        }) as unknown as TranslationFacade,
+    });
+
+    const outcome = await facade.translateDialogMessage({
+      content: "Core accepted the artifact.",
+      messageId: "core-msg-1",
+      role: "system",
+      sessionId: "sess-core",
+      tag: "managed-workflow-continuation",
+    });
+
+    assert.equal(outcome?.translatedContent, translatedText);
+    assert.equal(outcome?.targetLanguage, "ru");
+    assert.ok(recordedRequest);
+    assert.equal(recordedRequest.category, "messages_for_the_user");
+    assert.equal(recordedRequest.targetLanguage, "ru");
+  } finally {
+    await rm(homeDirectory, { recursive: true, force: true });
+  }
+});
+
 test("SessionTranslationFacade reuses an in-flight translation for duplicate reasoning text", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
-    const settingsPath = path.join(
-      homeDirectory,
-      ".codeai-hub",
-      "settings",
-      "settings.json"
-    );
-    await mkdir(path.dirname(settingsPath), { recursive: true });
-    await writeFile(
-      settingsPath,
-      `${JSON.stringify(createSettingsSnapshot(), null, 2)}\n`,
-      "utf8"
-    );
-
-    const bootstrapPath =
-      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
-    await mkdir(path.dirname(bootstrapPath), { recursive: true });
-    await writeFile(
-      bootstrapPath,
-      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
-      "utf8"
-    );
-
+    const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
     const logger = createCapturingLogger();
     let resolveTranslation: ((value: TranslationResult) => void) | undefined;
     let translateCalls = 0;
@@ -363,28 +371,7 @@ test("SessionTranslationFacade reuses an in-flight translation for duplicate rea
 test("SessionTranslationFacade logs requested and resolved runtime metadata for Haiku mismatches", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
-    const settingsPath = path.join(
-      homeDirectory,
-      ".codeai-hub",
-      "settings",
-      "settings.json"
-    );
-    await mkdir(path.dirname(settingsPath), { recursive: true });
-    await writeFile(
-      settingsPath,
-      `${JSON.stringify(createSettingsSnapshot(), null, 2)}\n`,
-      "utf8"
-    );
-
-    const bootstrapPath =
-      resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
-    await mkdir(path.dirname(bootstrapPath), { recursive: true });
-    await writeFile(
-      bootstrapPath,
-      `${JSON.stringify(createBootstrapSnapshot(), null, 2)}\n`,
-      "utf8"
-    );
-
+    const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
     const logger = createCapturingLogger();
     const facade = new SessionTranslationFacade({
       logger: logger.logger,

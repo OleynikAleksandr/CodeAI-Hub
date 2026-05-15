@@ -10,7 +10,10 @@ import {
   type SessionTranslationDispatchCandidate,
   SessionTranslationDispatcher,
 } from "./session-translation-dispatcher";
-import { SessionTranslationPolicyResolver } from "./session-translation-policy-resolver";
+import {
+  type SessionTranslationPolicyCategory,
+  SessionTranslationPolicyResolver,
+} from "./session-translation-policy-resolver";
 
 const TRANSLATION_PREVIEW_LENGTH = 160;
 const TRANSLATION_TIMEOUT_BASE_MS = 15_000;
@@ -66,6 +69,11 @@ const isThinkingTranslationCandidate = (
 ): boolean =>
   candidate.role === "thinking" ||
   (candidate.role === "assistant" && candidate.tag === "thinking");
+
+const resolveTranslationPolicyCategory = (
+  candidate: SessionTranslationDispatchCandidate
+): SessionTranslationPolicyCategory =>
+  candidate.role === "system" ? "messages_for_the_user" : "reasoning";
 
 const buildLogPreview = (content: string): string => {
   const normalized = content.replace(/\s+/gu, " ").trim();
@@ -228,6 +236,7 @@ export class SessionTranslationFacade {
       contentLength: options.candidate.content.length,
       preview: buildLogPreview(options.candidate.content),
       engineId: options.policy.engineId,
+      policyCategory: options.policy.category,
       targetLanguage: options.policy.targetLanguage,
       timeoutMs: options.timeoutMs,
       queueWaitMs: Date.now() - options.queuedAt,
@@ -242,7 +251,7 @@ export class SessionTranslationFacade {
       ),
     });
     const result = await translation.translate({
-      category: "reasoning",
+      category: options.policy.category,
       engineId: options.policy.engineId,
       sourceLanguage: options.policy.sourceLanguage,
       targetLanguage: options.policy.targetLanguage,
@@ -259,6 +268,7 @@ export class SessionTranslationFacade {
         contentLength: options.candidate.content.length,
         preview: buildLogPreview(options.candidate.content),
         requestedEngineId: options.policy.engineId,
+        policyCategory: options.policy.category,
         resolvedEngineId: result.engine,
         targetLanguage: options.policy.targetLanguage,
         timeoutMs: options.timeoutMs,
@@ -284,6 +294,7 @@ export class SessionTranslationFacade {
           contentLength: options.candidate.content.length,
           preview: buildLogPreview(options.candidate.content),
           requestedEngineId: options.policy.engineId,
+          policyCategory: options.policy.category,
           resolvedEngineId: result.engine,
           targetLanguage: options.policy.targetLanguage,
           ...buildRuntimeMetadataLogFields(
@@ -306,6 +317,7 @@ export class SessionTranslationFacade {
       translatedLength: translatedContent.length,
       preview: buildLogPreview(options.candidate.content),
       requestedEngineId: options.policy.engineId,
+      policyCategory: options.policy.category,
       resolvedEngineId: result.engine,
       targetLanguage: options.policy.targetLanguage,
       timeoutMs: options.timeoutMs,
@@ -364,10 +376,13 @@ export class SessionTranslationFacade {
     }
 
     const sourceHash = computeSessionMessageSourceHash(candidate.content);
-    const policy = this.policyResolver.resolve(this.settingsPath);
+    const policy = this.policyResolver.resolve(
+      this.settingsPath,
+      resolveTranslationPolicyCategory(candidate)
+    );
     const dedupeKey =
       policy.enabled && policy.targetLanguage
-        ? `${policy.engineId}::${policy.targetLanguage}::${sourceHash}`
+        ? `${policy.category}::${policy.engineId}::${policy.targetLanguage}::${sourceHash}`
         : null;
     const queuedAt = Date.now();
     const queuedSnapshot = this.dispatcher.snapshot();
@@ -397,6 +412,7 @@ export class SessionTranslationFacade {
           contentLength: candidate.content.length,
           preview: buildLogPreview(candidate.content),
           engineId: policy.engineId,
+          policyCategory: policy.category,
           targetLanguage: policy.targetLanguage,
         });
         const translatedContent = await inFlightTranslation;
@@ -422,6 +438,7 @@ export class SessionTranslationFacade {
       preview: buildLogPreview(candidate.content),
       activeJobs: queuedSnapshot.activeJobs,
       pendingJobs: queuedSnapshot.pendingJobs,
+      policyCategory: policy.category,
       timeoutMs,
     });
 
