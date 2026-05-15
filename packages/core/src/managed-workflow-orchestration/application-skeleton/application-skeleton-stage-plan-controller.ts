@@ -233,6 +233,7 @@ export class ApplicationSkeletonStagePlanController {
       WORKSPACE_PLAN_PATH,
       APPLICATION_STAGE_PLAN_PATH,
       ...buildContractArtifactPaths(params.workspaceSlug),
+      `.codeai-hub/${params.workspaceSlug}/workflow/managed/application_skeleton.json`,
       ...rootConfigPaths,
       ...(params.decision.phase === "materialization"
         ? collectMaterializedPaths(params.decision.mapJson)

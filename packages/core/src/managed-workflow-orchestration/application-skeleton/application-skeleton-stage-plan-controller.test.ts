@@ -24,6 +24,7 @@ const PHASE_4_RE = /## Phase 4 — Persistent Application Skeleton User Return/u
 const QUALITY_GATES_UNLOCKED_RE = /"quality_gates"/u;
 const APPLICATION_COMPLETED_RE =
   /"completedStages": \[\n {4}"application_skeleton"/u;
+const MANAGED_DECISION_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -115,6 +116,11 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
   try {
     await prepareWorkspace(workspaceRoot);
     await controller.openDraftPhase({ workspaceRoot });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      MANAGED_DECISION_PATH,
+      '{"stage":"application_skeleton","phase":"draft"}\n'
+    );
 
     const draftCommit = await controller.commitManagedTurn({
       decision: createDraftDecision(),
@@ -124,6 +130,15 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
     });
     assert.equal(draftCommit.blocked, null);
     assert.match(draftCommit.commit?.hash ?? "", GIT_HASH_RE);
+    assert.equal(
+      await git(workspaceRoot, [
+        "status",
+        "--short",
+        "--",
+        MANAGED_DECISION_PATH,
+      ]),
+      ""
+    );
 
     const reviewPlan = await readWorkspaceFile(
       workspaceRoot,
@@ -168,6 +183,11 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
       `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
       `${JSON.stringify(createMaterializedDecision().mapJson, null, 2)}\n`
     );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      MANAGED_DECISION_PATH,
+      '{"stage":"application_skeleton","phase":"materialization"}\n'
+    );
 
     const materializedCommit = await controller.commitManagedTurn({
       decision: createMaterializedDecision(),
@@ -184,6 +204,15 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
         "--short",
         "--",
         "product-parts/core-runtime/README.md",
+      ]),
+      ""
+    );
+    assert.equal(
+      await git(workspaceRoot, [
+        "status",
+        "--short",
+        "--",
+        MANAGED_DECISION_PATH,
       ]),
       ""
     );

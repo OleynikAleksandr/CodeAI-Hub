@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "17e0355d9",
+  "lastRecordedCommit": "805ce7b47",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-runtime.task1",
-  "expectedCommitMessage": "feat: route application skeleton managed turns",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-ledger.task1",
+  "expectedCommitMessage": "fix: commit application skeleton managed decision snapshot",
   "debt": {
-    "expectedCommitMessage": "feat: route application skeleton managed turns",
-    "preCommitHead": "17e0355d9",
+    "expectedCommitMessage": "fix: commit application skeleton managed decision snapshot",
+    "preCommitHead": "805ce7b47",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-runtime.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-ledger.task1"
   }
 }
 ```
@@ -858,12 +858,12 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Runtime Dispatch
 
 187. [DONE] `diagram-plan-lifecycle-repair.phase45.application-skeleton-runtime.task1` Wire Application Skeleton managed dispatch into workflow session scaffold/start and provider turn completion without reopening the retired preview boundary (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `feat: route application skeleton managed turns`).
-188. [PENDING] Git Commit: `feat: route application skeleton managed turns` (hash: TBD)
+188. [DONE] Git Commit: `feat: route application skeleton managed turns` (hash: 805ce7b47)
 
 ### Stream: Managed Decision Ledger
 
-189. [TODO] `diagram-plan-lifecycle-repair.phase45.application-skeleton-ledger.task1` Include the Application Skeleton managed workflow decision snapshot in the Core-owned commit boundary so provider-turn validation does not leave a dirty workspace ledger file (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: commit application skeleton managed decision snapshot`).
-190. [TODO] Git Commit: `fix: commit application skeleton managed decision snapshot` (hash: TBD)
+189. [DONE] `diagram-plan-lifecycle-repair.phase45.application-skeleton-ledger.task1` Include the Application Skeleton managed workflow decision snapshot in the Core-owned commit boundary so provider-turn validation does not leave a dirty workspace ledger file (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: commit application skeleton managed decision snapshot`).
+190. [PENDING] Git Commit: `fix: commit application skeleton managed decision snapshot` (hash: TBD)
 
 ### Stream: User Review Decisions
 
