@@ -16,7 +16,7 @@
    - Phase 2 — user-led review;
    - Phase 3 — persistent user return open boundary.
 
-Этот scope не подключает `Application Skeleton` и `Quality Gates` к end-to-end runtime. Они остаются preview/fail-closed до следующих планов.
+После расширения scope 2026-05-15 `Application Skeleton` и `Quality Gates` также подключены к managed-dispatch boundary, но найденный в release `1.2.258` дефект относится к первой сложной Phase 1 `Diagram Modules`: Core открыл provider session, но не создал managed scaffold и не продолжил multi-turn sequence после первого `product-parts.index.md`.
 
 ## 2. Архитектурное Решение
 
@@ -58,20 +58,23 @@ Definition of done:
 
 Core:
 
+- до отправки первого provider prompt создает managed workspace scaffold:
+  - `doc/TODO/workspace.plan.md`;
+  - `doc/TODO/stages/diagram-modules/todo-plan.md`;
+  - stage plan placeholders для следующих technical stages;
+  - `scripts/plan-orchestrator/plan-cli.mjs`;
+  - `.husky` hooks и `package.json` plan scripts, если они отсутствуют;
 - создает managed runtime snapshot для `diagram_modules`;
-- отправляет provider-visible стартовый prompt через orchestrator gateway;
+- отправляет provider-visible стартовый prompt через orchestrator gateway на создание только `product-parts.index.md`;
 - включает inline `Final_Description.md` и `virtual-simulation.md`;
-- явно указывает target artifacts:
-  - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md`;
-  - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md`;
-  - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json`;
-- после terminal provider turn запускает deterministic validation;
-- safe valid attempt фиксирует через Core-owned commit boundary;
-- после принятия всех required artifacts открывает Phase 2.
+- после terminal provider turn запускает deterministic validation текущего subturn;
+- если index валиден, извлекает ordered Product Part ids и отправляет следующий provider-visible continuation prompt на первый отсутствующий `product-parts/<part-id>.md`;
+- после каждого Product Part turn валидирует только named target и затем отправляет следующий Product Part prompt;
+- после принятия последнего Product Part открывает Phase 2 и пишет user-visible Core message в managed session.
 
 Agent:
 
-- пишет только Diagram Modules artifacts;
+- пишет только тот Diagram Modules artifact, который назван текущим Core prompt;
 - не пишет child plan/task/hash state;
 - не обещает Git commit, downstream unlock или Core acceptance от своего имени.
 
@@ -124,4 +127,3 @@ Core:
 - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
 - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`
 - `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md`
-

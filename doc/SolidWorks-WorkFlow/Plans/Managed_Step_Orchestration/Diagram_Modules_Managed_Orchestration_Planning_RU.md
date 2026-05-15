@@ -23,13 +23,15 @@ Diagram Modules должен состоять из трёх фаз:
 
 Core по очереди ставит агенту задачи на создание Diagram Modules artifacts:
 
-- `product-parts.index.md`;
+- startup scaffold для managed workspace: `doc/TODO/workspace.plan.md`, `doc/TODO/stages/**/todo-plan.md`, `scripts/plan-orchestrator/plan-cli.mjs`, hooks и plan scripts;
+- `product-parts.index.md` как первый provider turn;
 - Product Part diagram artifacts, например `project-manager.md`, `vs-code-extension.md`, `core-runtime.md`, `ai-providers.md`;
 - любые следующие Product Part artifacts из canonical workflow index.
 
 Core owns:
 
-- prompt для текущего Product Part;
+- startup scaffold до первого provider prompt;
+- prompt для текущего subturn: сначала index, затем ровно один Product Part из принятого index;
 - validation artifact form/paths;
 - Git commit каждой safe attempt;
 - sequencing следующего Product Part;
@@ -37,12 +39,19 @@ Core owns:
 
 Agent owns:
 
-- содержание diagram artifacts;
+- содержание только текущего named artifact;
 - исправление Core diagnostics внутри текущей Type A attempt.
 
-После каждого валидного Product Part Core делает real Git commit и пишет real hash. Safe rejected attempts могут быть закоммичены как durable history, если они принадлежат Diagram Modules owned scope.
+После каждого валидного subturn Core делает real Git commit и пишет real hash. Safe rejected attempts могут быть закоммичены как durable history, если они принадлежат Diagram Modules owned scope.
 
 Phase 1 завершается, когда все Product Part diagram artifacts созданы, проверены Core и имеют real commits.
+
+Runtime continuation invariant:
+
+- агент не должен сам переходить от index к Product Part или от одного Product Part к следующему;
+- окончание каждого provider turn является триггером Core post-turn arbitration;
+- Core обязан либо отправить repair diagnostics, либо отправить continuation prompt на следующий Product Part, либо открыть Phase 2;
+- молчаливое завершение provider turn в `Diagram Modules` является дефектом оркестратора.
 
 ## 3. Phase 2 — Diagram Modules Review
 
@@ -119,3 +128,5 @@ Core принял Diagram Modules.
 5. Core messages пользователю пишутся в persistent managed session.
 6. Пользовательское поле ввода свободно при старте Phase 2 и после открытия Phase 3.
 7. `lastRecordedCommit` хранит только real Git hash.
+8. Managed scaffold создаётся при старте Diagram Modules до первого provider prompt.
+9. Каждый Product Part prompt формируется из принятого `product-parts.index.md`; hardcoded Product Part list запрещён.
