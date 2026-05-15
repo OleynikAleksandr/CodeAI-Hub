@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "0b9fbf8f0",
+  "lastRecordedCommit": "7615d8e6f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase4.docs.task1",
-  "expectedCommitMessage": "docs: document quality gates managed runtime",
+  "currentTaskId": "quality-gates-runtime.phase4.build-fix.task1",
+  "expectedCommitMessage": "fix: return quality gates invalid decisions as promises",
   "debt": {
-    "expectedCommitMessage": "docs: document quality gates managed runtime",
-    "preCommitHead": "0b9fbf8f0",
+    "expectedCommitMessage": "fix: return quality gates invalid decisions as promises",
+    "preCommitHead": "7615d8e6f",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase4.docs.task1"
+    "taskId": "quality-gates-runtime.phase4.build-fix.task1"
   }
 }
 ```
@@ -1041,14 +1041,17 @@ Repair coverage:
 
 242. [DONE] `quality-gates-runtime.phase4.docs.task1` Update workflow SSOT docs from fail-closed Quality Gates wording to the implemented Core-owned lifecycle and note that clients remain projections only (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates managed runtime`).
     - Documentation update records Quality Gates as an implemented Core-owned draft/review/integration/persistent-return lifecycle, removes fail-closed/replacement-pending wording, and restates that Project Manager/future clients are projection/input surfaces only.
-243. [PENDING] Git Commit: `docs: document quality gates managed runtime` (hash: TBD)
+243. [DONE] Git Commit: `docs: document quality gates managed runtime` (hash: 7615d8e6f)
 
-244. [TODO] `quality-gates-runtime.phase4.verify.task1` Run targeted Core/Project Manager tests and builds for Quality Gates managed runtime and record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify quality gates managed runtime`).
-245. [TODO] Git Commit: `docs: verify quality gates managed runtime` (hash: TBD)
+244. [DONE] `quality-gates-runtime.phase4.build-fix.task1` Return Quality Gates invalid-decision branches as promises so `build:core` type-checks after targeted verification surfaced TS2322 (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: return quality gates invalid decisions as promises`).
+245. [PENDING] Git Commit: `fix: return quality gates invalid decisions as promises` (hash: TBD)
+
+246. [TODO] `quality-gates-runtime.phase4.verify.task1` Run targeted Core/Project Manager tests and builds for Quality Gates managed runtime and record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify quality gates managed runtime`).
+247. [TODO] Git Commit: `docs: verify quality gates managed runtime` (hash: TBD)
 
 ## Phase 54 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-246. [TODO] `diagram-plan-lifecycle-repair.phase54.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-247. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+248. [TODO] `diagram-plan-lifecycle-repair.phase54.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+249. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)

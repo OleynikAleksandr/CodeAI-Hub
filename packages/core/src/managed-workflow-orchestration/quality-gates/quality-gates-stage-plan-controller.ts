@@ -133,7 +133,7 @@ export class QualityGatesStagePlanController {
     readonly workspaceSlug: string;
   }): Promise<QualityGatesStagePlanAdvanceResult> {
     if (!params.decision.valid) {
-      return this.blockInvalidDecision();
+      return Promise.resolve(this.blockInvalidDecision());
     }
     return this.commitCurrentTask({
       decision: params.decision,
@@ -150,7 +150,7 @@ export class QualityGatesStagePlanController {
     readonly workspaceSlug: string;
   }): Promise<QualityGatesStagePlanAdvanceResult> {
     if (params.decision.valid) {
-      return this.blockInvalidDecision();
+      return Promise.resolve(this.blockInvalidDecision());
     }
     return this.commitCurrentTask({
       decision: params.decision,
