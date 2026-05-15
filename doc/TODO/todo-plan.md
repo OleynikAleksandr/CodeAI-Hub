@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "bf65854dd",
+  "lastRecordedCommit": "ed0788384",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase15.release.task1",
-  "expectedCommitMessage": "docs: prepare diagram modules scaffold repair release",
+  "currentTaskId": "diagram-runtime-repair.phase15.release.task2",
+  "expectedCommitMessage": "chore: build diagram modules scaffold repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare diagram modules scaffold repair release",
-    "preCommitHead": "bf65854dd",
+    "expectedCommitMessage": "chore: build diagram modules scaffold repair release",
+    "preCommitHead": "ed0788384",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase15.release.task1"
+    "taskId": "diagram-runtime-repair.phase15.release.task2"
   }
 }
 ```
@@ -336,7 +336,7 @@ Repair coverage:
 ### Stream: Release Preparation And Build
 
 69. [DONE] `diagram-runtime-repair.phase15.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules scaffold repair release`).
-70. [PENDING] Git Commit: `docs: prepare diagram modules scaffold repair release` (hash: TBD)
+70. [DONE] Git Commit: `docs: prepare diagram modules scaffold repair release` (hash: ed0788384)
 
 Release preparation evidence recorded 2026-05-15:
 
@@ -345,8 +345,15 @@ Release preparation evidence recorded 2026-05-15:
 - `README.md` current-release banner updated to Diagram Modules scaffold and repair-prompt fix.
 - `CHANGELOG.md` release entry `1.2.260` added with verification summary.
 
-71. [TODO] `diagram-runtime-repair.phase15.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules scaffold repair release`).
-72. [TODO] Git Commit: `chore: build diagram modules scaffold repair release` (hash: TBD)
+71. [DONE] `diagram-runtime-repair.phase15.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules scaffold repair release`).
+72. [PENDING] Git Commit: `chore: build diagram modules scaffold repair release` (hash: TBD)
+
+Build-all evidence recorded 2026-05-15:
+
+- `./scripts/build-all.sh --allow-dirty` — PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition; no code/package paths were dirty before build start.
+- Unified generated version: `1.2.260`.
+- Updated package/version manifests for root package, provider modules, Core, shared packages, UI, and CEF launcher.
+- Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.260.tar.bz2`, `codex-module-1.2.260.tar.bz2`, `gemini-module-1.2.260.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.260.tar.bz2`, `vscode-webview-1.2.260.tar.bz2`, `project-manager-1.2.260.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.260.tar.bz2`.
 
 73. [TODO] `diagram-runtime-repair.phase15.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules scaffold repair release`).
 74. [TODO] Git Commit: `docs: record diagram modules scaffold repair release` (hash: TBD)
