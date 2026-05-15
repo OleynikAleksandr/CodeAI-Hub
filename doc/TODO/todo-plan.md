@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "63e1c6472",
+  "lastRecordedCommit": "d12e4efe3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-review.task1",
-  "expectedCommitMessage": "feat: handle application skeleton review decisions",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase46.application-skeleton-verify.task1",
+  "expectedCommitMessage": "docs: verify application skeleton managed module",
   "debt": {
-    "expectedCommitMessage": "feat: handle application skeleton review decisions",
-    "preCommitHead": "63e1c6472",
+    "expectedCommitMessage": "docs: verify application skeleton managed module",
+    "preCommitHead": "d12e4efe3",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-review.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase46.application-skeleton-verify.task1"
   }
 }
 ```
@@ -868,14 +868,20 @@ Verification evidence recorded 2026-05-15:
 ### Stream: User Review Decisions
 
 191. [DONE] `diagram-plan-lifecycle-repair.phase45.application-skeleton-review.task1` Intercept Application Skeleton Phase 2 user decisions so acceptance opens Phase 3 without provider chatter and revision requests stay inside the current review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts`; expected commit: `feat: handle application skeleton review decisions`).
-192. [PENDING] Git Commit: `feat: handle application skeleton review decisions` (hash: TBD)
+192. [DONE] Git Commit: `feat: handle application skeleton review decisions` (hash: d12e4efe3)
 
 ## Phase 46 — Application Skeleton Verification (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Targeted Tests
 
-193. [TODO] `diagram-plan-lifecycle-repair.phase46.application-skeleton-verify.task1` Run targeted Core tests/build for Application Skeleton managed draft, review, materialization, dirty-gate compatibility, and workflow-state readiness; record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton managed module`).
-194. [TODO] Git Commit: `docs: verify application skeleton managed module` (hash: TBD)
+193. [DONE] `diagram-plan-lifecycle-repair.phase46.application-skeleton-verify.task1` Run targeted Core tests/build for Application Skeleton managed draft, review, materialization, dirty-gate compatibility, and workflow-state readiness; record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton managed module`).
+
+Verification evidence recorded 2026-05-15:
+- PASS `npm run build:core`
+- PASS `npm run lint`
+- PASS `npm run plan:validate`
+- PASS `node --test packages/core/dist/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.js packages/core/dist/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-session-actions.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-runtime-core.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-materialization-validator.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-progress.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-progress-state.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-phase-state.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-completion-observer.test.js packages/core/dist/remote-bridge/handlers/application-skeleton-in-progress-materialization.test.js packages/core/dist/remote-bridge/handlers/technical-stage-dirty-gate.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.js` (48/48 subtests passed).
+194. [PENDING] Git Commit: `docs: verify application skeleton managed module` (hash: TBD)
 
 ## Phase 47 — Release Build Gate For Application Skeleton (owner: Codex + User, updated: 2026-05-15)
 
