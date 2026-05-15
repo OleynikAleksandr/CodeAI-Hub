@@ -286,9 +286,11 @@ export class SessionRequestHandler {
     this.workflowSession = new SessionRequestHandlerWorkflowSession({
       createAndRegisterSession: (createOptions) =>
         this.sessionBootstrap.createAndRegisterSession(createOptions),
+      eventMessages: this.eventMessages,
       logger: this.logger,
       providerFailureRecovery: this.providerFailureRecovery,
       providerRegistry: this.providerRegistry,
+      sessionManager: this.sessionManager,
     });
     this.providerBindingService.registerBindingBroadcastListener(
       (sessionId) => {

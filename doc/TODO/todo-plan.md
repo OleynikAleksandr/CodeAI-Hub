@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "697503b60",
+  "lastRecordedCommit": "c321a5067",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase4.runtime.task1",
-  "expectedCommitMessage": "feat: route managed stage starts through orchestration facade",
+  "currentTaskId": "managed-orchestration-kernel.phase4.runtime.task2",
+  "expectedCommitMessage": "feat: persist managed workflow core boundary messages",
   "debt": {
-    "expectedCommitMessage": "feat: route managed stage starts through orchestration facade",
-    "preCommitHead": "697503b60",
+    "expectedCommitMessage": "feat: persist managed workflow core boundary messages",
+    "preCommitHead": "c321a5067",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase4.runtime.task1"
+    "taskId": "managed-orchestration-kernel.phase4.runtime.task2"
   }
 }
 ```
@@ -119,10 +119,10 @@
 28. [DONE] Git Commit: `feat: add managed workflow provider gateway preview` (hash: 697503b60)
 
 29. [DONE] `managed-orchestration-kernel.phase4.runtime.task1` Route managed technical stage starts through `ManagedWorkflowOrchestrationFacade` so Diagram Modules/Application Skeleton/Quality Gates use the new preview boundary instead of a generic fail-closed message (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts`; expected commit: `feat: route managed stage starts through orchestration facade`).
-30. [PENDING] Git Commit: `feat: route managed stage starts through orchestration facade` (hash: TBD)
+30. [DONE] Git Commit: `feat: route managed stage starts through orchestration facade` (hash: c321a5067)
 
-31. [TODO] `managed-orchestration-kernel.phase4.runtime.task2` Persist the new Core-authored preview messages into the managed session/event feed so user-visible boundary diagnostics survive refresh/restart (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts`; expected commit: `feat: persist managed workflow core boundary messages`).
-32. [TODO] Git Commit: `feat: persist managed workflow core boundary messages` (hash: TBD)
+31. [DONE] `managed-orchestration-kernel.phase4.runtime.task2` Persist the new Core-authored preview messages into the managed session/event feed so user-visible boundary diagnostics survive refresh/restart (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts`; expected commit: `feat: persist managed workflow core boundary messages`).
+32. [PENDING] Git Commit: `feat: persist managed workflow core boundary messages` (hash: TBD)
 
 ## Phase 5 — Project Manager Projection And Visual Control Point (owner: Codex, updated: 2026-05-15)
 

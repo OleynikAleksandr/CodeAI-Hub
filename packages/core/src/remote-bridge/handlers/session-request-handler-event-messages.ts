@@ -127,6 +127,23 @@ export class SessionRequestHandlerEventMessages {
     });
   }
 
+  appendCoreMessage(
+    sessionId: string,
+    options: {
+      readonly content: string;
+      readonly tag?: string;
+      readonly timestamp?: string;
+    }
+  ): void {
+    this.appendAndBroadcastMessage({
+      sessionId,
+      role: "system",
+      content: options.content,
+      timestamp: options.timestamp,
+      tag: options.tag,
+    });
+  }
+
   async waitForMessagePersistence(sessionId: string): Promise<void> {
     await (this.messagePersistenceTailBySessionId.get(sessionId) ??
       Promise.resolve());

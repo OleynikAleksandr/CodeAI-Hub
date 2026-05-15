@@ -1,9 +1,10 @@
 import { ManagedWorkflowOrchestrationFacade } from "../../managed-workflow-orchestration";
 import type { ProviderRegistry } from "../../provider-registry";
-import type { Session } from "../../session-manager";
+import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
+import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { CreateAndRegisterSessionOptions } from "./session-request-handler-types";
 
 export const TECHNICAL_STAGE_REWRITE_BLOCKER_CODE =
@@ -19,10 +20,15 @@ interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly createAndRegisterSession: (
     options: CreateAndRegisterSessionOptions
   ) => Promise<Session | null>;
+  readonly eventMessages: Pick<
+    SessionRequestHandlerEventMessages,
+    "appendCoreMessage"
+  >;
   readonly logger: Logger;
   readonly managedWorkflowOrchestration?: ManagedWorkflowOrchestrationFacade;
   readonly providerFailureRecovery: SessionProviderFailureRecovery;
   readonly providerRegistry: ProviderRegistry;
+  readonly sessionManager: SessionManager;
 }
 
 export class SessionRequestHandlerWorkflowSession {
@@ -55,6 +61,20 @@ export class SessionRequestHandlerWorkflowSession {
       }
     );
     if (managedDecision) {
+      const session = this.deps.sessionManager.createSession(
+        options.providerId,
+        options.workspacePath,
+        undefined,
+        {
+          initiativeSlug: options.context.initiativeSlug,
+          runSlug: options.context.runSlug ?? null,
+          stage: options.context.stage,
+        }
+      );
+      this.deps.eventMessages.appendCoreMessage(session.id, {
+        content: managedDecision.message,
+        tag: "managed-workflow-preview",
+      });
       this.deps.logger.warn(
         "Workflow session creation routed to managed workflow preview boundary",
         {
@@ -65,7 +85,7 @@ export class SessionRequestHandlerWorkflowSession {
           workspaceRoot: options.workspacePath,
         }
       );
-      return null;
+      return session;
     }
 
     const adapter = this.deps.providerRegistry.getAdapter(options.providerId);

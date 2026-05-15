@@ -3,6 +3,7 @@ import test from "node:test";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { ProviderAdapter } from "../../provider-registry/provider-module-loader.types";
 import type { Session } from "../../session-manager";
+import { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import {
   SessionRequestHandlerWorkflowSession,
@@ -32,14 +33,33 @@ interface ManagedPreviewWarning {
   readonly workspaceRoot?: string;
 }
 
+type CoreMessageCapture = Array<{
+  readonly content: string;
+  readonly sessionId: string;
+}>;
+
+const createManagedWorkflowDeps = (messages: CoreMessageCapture) => ({
+  eventMessages: {
+    appendCoreMessage: (
+      sessionId: string,
+      options: { readonly content: string }
+    ) => {
+      messages.push({ content: options.content, sessionId });
+    },
+  },
+  sessionManager: new SessionManager(),
+});
+
 test("createSessionForWorkflow fails closed before diagram modules provider session during technical-stage rewrite", async () => {
   const calls: string[] = [];
+  const messages: CoreMessageCapture = [];
   const warnings: unknown[] = [];
   const service = new SessionRequestHandlerWorkflowSession({
     createAndRegisterSession: () => {
       calls.push("create-session");
       return Promise.resolve({ id: "runtime-session" } as Session);
     },
+    ...createManagedWorkflowDeps(messages),
     logger: createLogger(warnings),
     providerFailureRecovery: {
       handleProviderFailure: () => undefined,
@@ -61,8 +81,10 @@ test("createSessionForWorkflow fails closed before diagram modules provider sess
     },
   });
 
-  assert.equal(session, null);
+  assert.ok(session);
   assert.deepEqual(calls, []);
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0]?.sessionId, session.id);
   const warning = warnings[0] as ManagedPreviewWarning;
   assert.equal(warning.code, TECHNICAL_STAGE_REWRITE_BLOCKER_CODE);
   assert.equal(warning.controllerId, "diagram_modules");
@@ -75,12 +97,14 @@ test("createSessionForWorkflow fails closed before technical stage provider sess
   const stages = ["application_skeleton", "quality_gates"];
   for (const stage of stages) {
     const calls: string[] = [];
+    const messages: CoreMessageCapture = [];
     const warnings: unknown[] = [];
     const service = new SessionRequestHandlerWorkflowSession({
       createAndRegisterSession: () => {
         calls.push("create-session");
         return Promise.resolve({ id: `runtime-session:${stage}` } as Session);
       },
+      ...createManagedWorkflowDeps(messages),
       logger: createLogger(warnings),
       providerFailureRecovery: {
         handleProviderFailure: () => undefined,
@@ -102,8 +126,10 @@ test("createSessionForWorkflow fails closed before technical stage provider sess
       },
     });
 
-    assert.equal(session, null);
+    assert.ok(session);
     assert.deepEqual(calls, []);
+    assert.equal(messages.length, 1);
+    assert.equal(messages[0]?.sessionId, session.id);
     const warning = warnings[0] as ManagedPreviewWarning;
     assert.equal(warning.code, TECHNICAL_STAGE_REWRITE_BLOCKER_CODE);
     assert.equal(warning.controllerId, stage);
@@ -115,6 +141,7 @@ test("createSessionForWorkflow fails closed before technical stage provider sess
 
 test("createSessionForWorkflow still creates sessions for non-technical stage workflows", async () => {
   const calls: string[] = [];
+  const messages: CoreMessageCapture = [];
   const warnings: unknown[] = [];
   const expectedSession = { id: "runtime-session" } as Session;
   const service = new SessionRequestHandlerWorkflowSession({
@@ -124,6 +151,7 @@ test("createSessionForWorkflow still creates sessions for non-technical stage wo
       assert.equal(options.workspacePath, "/tmp/workspace");
       return Promise.resolve(expectedSession);
     },
+    ...createManagedWorkflowDeps(messages),
     logger: createLogger(warnings),
     providerFailureRecovery: {
       handleProviderFailure: () => {
@@ -148,6 +176,7 @@ test("createSessionForWorkflow still creates sessions for non-technical stage wo
   });
 
   assert.equal(session, expectedSession);
+  assert.deepEqual(messages, []);
   assert.deepEqual(calls, [
     "get-adapter:codexCli",
     "create-session:description",
