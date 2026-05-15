@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "daa8074d4",
+  "lastRecordedCommit": "d7c3998b0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase23.diagram-core-messages.task1",
-  "expectedCommitMessage": "feat: localize diagram modules core workflow messages",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase24.docs.task1",
+  "expectedCommitMessage": "docs: document managed boundary and core message localization",
   "debt": {
-    "expectedCommitMessage": "feat: localize diagram modules core workflow messages",
-    "preCommitHead": "daa8074d4",
+    "expectedCommitMessage": "docs: document managed boundary and core message localization",
+    "preCommitHead": "d7c3998b0",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase23.diagram-core-messages.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase24.docs.task1"
   }
 }
 ```
@@ -470,14 +470,14 @@ Release VSIX evidence recorded 2026-05-15:
 101. [DONE] Git Commit: `feat: translate core system dialog messages` (hash: daa8074d4)
 
 102. [DONE] `diagram-plan-lifecycle-repair.phase23.diagram-core-messages.task1` Replace Diagram Modules Core visible status/blocker strings with localization-ready message builders and avoid blind translation of DSL paths, ids, headings, or embedded prompt instructions (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `feat: localize diagram modules core workflow messages`).
-103. [PENDING] Git Commit: `feat: localize diagram modules core workflow messages` (hash: TBD)
+103. [DONE] Git Commit: `feat: localize diagram modules core workflow messages` (hash: d7c3998b0)
 
 ## Phase 24 — Documentation And Tooling Verification (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Architecture Sync And Targeted Checks
 
-104. [TODO] `diagram-plan-lifecycle-repair.phase24.docs.task1` Document the managed Git boundary retry contract and Core message localization policy in system workflow docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document managed boundary and core message localization`).
-105. [TODO] Git Commit: `docs: document managed boundary and core message localization` (hash: TBD)
+104. [DONE] `diagram-plan-lifecycle-repair.phase24.docs.task1` Document the managed Git boundary retry contract and Core message localization policy in system workflow docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document managed boundary and core message localization`).
+105. [PENDING] Git Commit: `docs: document managed boundary and core message localization` (hash: TBD)
 
 106. [TODO] `diagram-plan-lifecycle-repair.phase24.verify.task1` Run targeted core/session translation tests plus `npm run build:core` and record evidence before release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed boundary and localization repair`).
 107. [TODO] Git Commit: `docs: verify managed boundary and localization repair` (hash: TBD)
