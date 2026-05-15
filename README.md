@@ -2,13 +2,13 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.264** (Workflow marker completion boundary fix)
+**Current Release — v1.2.265** (Workflow snapshot refresh fix)
 
-This release repairs the root workflow marker completion boundary after the
-release `1.2.263` retest. Provider-direct `Description` and `Virtual Simulation`
-now turn green as soon as their draft artifact exists, while managed
-`Diagram Modules` stays orange during Product Part turns and turns green only
-after Core opens the user-review/aggregate-ready phase.
+This release repairs the Project Manager workflow-state refresh boundary after
+the release `1.2.264` retest. `Diagram Modules` now turns green when Core opens
+the user-review/aggregate-ready phase, and `Application Skeleton` refreshes from
+the derived gate state instead of keeping a stale blocked `product-parts.index.md`
+card.
 
 All five documentation trunk steps remain routed through the replacement
 Managed Workflow Orchestration cluster boundary. `Description` and

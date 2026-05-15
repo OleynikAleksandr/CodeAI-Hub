@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.265] - 2026-05-15
+### Fixed
+- **Project Manager now refreshes workflow state when derived gates change.** `Diagram Modules` turns green after Core opens user review, and `Application Skeleton` stops showing a stale blocked `product-parts.index.md not found` card once `diagramModulesProgress.aggregateReady` unlocks the next step.
+
+### Tests
+- `npx tsx --test src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` passed, 14/14 tests.
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run plan:validate`
+
 ## [1.2.264] - 2026-05-15
 ### Fixed
 - **Root workflow markers now use the correct completion boundary.** `Description` and `Virtual Simulation` turn green once their draft artifact exists, while `Diagram Modules` stays orange through Product Part turns and turns green only after Core opens the user-review/aggregate-ready phase.

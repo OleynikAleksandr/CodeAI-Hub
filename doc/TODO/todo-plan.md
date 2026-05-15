@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "bd9046e49",
+  "lastRecordedCommit": "bbf7b685a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase34.verify.task1",
-  "expectedCommitMessage": "docs: verify release 264 workflow snapshot refresh repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase36.release.task1",
+  "expectedCommitMessage": "docs: prepare release 265 workflow snapshot refresh fix",
   "debt": {
-    "expectedCommitMessage": "docs: verify release 264 workflow snapshot refresh repair",
-    "preCommitHead": "bd9046e49",
+    "expectedCommitMessage": "docs: prepare release 265 workflow snapshot refresh fix",
+    "preCommitHead": "bbf7b685a",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase34.verify.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase36.release.task1"
   }
 }
 ```
@@ -673,7 +673,7 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Verification
 
 146. [DONE] `diagram-plan-lifecycle-repair.phase34.verify.task1` Run targeted Project Manager tests/build for the derived workflow-state refresh path and record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 264 workflow snapshot refresh repair`).
-147. [PENDING] Git Commit: `docs: verify release 264 workflow snapshot refresh repair` (hash: TBD)
+147. [DONE] Git Commit: `docs: verify release 264 workflow snapshot refresh repair` (hash: bbf7b685a)
 
 Verification evidence recorded 2026-05-15:
 
@@ -686,11 +686,37 @@ Verification evidence recorded 2026-05-15:
 
 ### Stream: Release Confirmation Gate
 
-148. [TODO] `diagram-plan-lifecycle-repair.phase35.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the workflow snapshot refresh repair (scope: user workflow; expected commit: none).
+148. [DONE] `diagram-plan-lifecycle-repair.phase35.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the workflow snapshot refresh repair (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for the workflow snapshot refresh repair.
 
-## Phase 36 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 36 — Release 265 Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation And Build
+
+149. [DONE] `diagram-plan-lifecycle-repair.phase36.release.task1` After explicit release-build confirmation, update release-facing docs for the future workflow snapshot refresh fix before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 265 workflow snapshot refresh fix`).
+150. [PENDING] Git Commit: `docs: prepare release 265 workflow snapshot refresh fix` (hash: TBD)
+
+Release 265 preparation target:
+
+- User explicitly requested the new release after the workflow snapshot refresh fix.
+- Current package version before release scripts: `1.2.264`.
+- Future release version prepared in release-facing docs: `1.2.265`.
+- Release payload: Project Manager emits workflow-state updates when derived Diagram Modules readiness and Application Skeleton gating change without a root `updatedAt` mutation.
+
+151. [TODO] `diagram-plan-lifecycle-repair.phase36.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 265 workflow snapshot refresh fix`).
+152. [TODO] Git Commit: `chore: build release 265 workflow snapshot refresh fix` (hash: TBD)
+
+153. [TODO] `diagram-plan-lifecycle-repair.phase36.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 265 workflow snapshot refresh handoff`).
+154. [TODO] Git Commit: `docs: record release 265 workflow snapshot refresh handoff` (hash: TBD)
+
+## Phase 37 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+155. [TODO] `diagram-plan-lifecycle-repair.phase37.user-acceptance.task1` User installs the rebuilt release and verifies `Diagram Modules` turns green after Core opens user review and `Application Skeleton` becomes available from `product-parts.index.md` without a stale blocked card (scope: user workflow; expected commit: none).
+
+## Phase 38 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-149. [TODO] `diagram-plan-lifecycle-repair.phase36.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-150. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+156. [TODO] `diagram-plan-lifecycle-repair.phase38.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+157. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
