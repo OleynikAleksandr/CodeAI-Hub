@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "9b789c7a0",
+  "lastRecordedCommit": "4ab225b1a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase29.release.task1",
-  "expectedCommitMessage": "docs: prepare release 263 cosmetic update",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase29.release.task2",
+  "expectedCommitMessage": "chore: build release 263 cosmetic update",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 263 cosmetic update",
-    "preCommitHead": "9b789c7a0",
+    "expectedCommitMessage": "chore: build release 263 cosmetic update",
+    "preCommitHead": "4ab225b1a",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase29.release.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase29.release.task2"
   }
 }
 ```
@@ -564,7 +564,7 @@ Release 262 cosmetic repair verification evidence recorded 2026-05-15:
 ### Stream: Release Preparation And Build
 
 124. [DONE] `diagram-plan-lifecycle-repair.phase29.release.task1` After explicit user release-build confirmation, update release-facing docs for the future cosmetic release before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 263 cosmetic update`).
-125. [PENDING] Git Commit: `docs: prepare release 263 cosmetic update` (hash: TBD)
+125. [DONE] Git Commit: `docs: prepare release 263 cosmetic update` (hash: 4ab225b1a)
 
 Release 263 preparation target:
 
@@ -573,8 +573,15 @@ Release 263 preparation target:
 - Future release version prepared in release-facing docs: `1.2.263`.
 - Release payload: Diagram Modules sidebar marker timing fix and Core/system dialog message card styling.
 
-126. [TODO] `diagram-plan-lifecycle-repair.phase29.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 263 cosmetic update`).
-127. [TODO] Git Commit: `chore: build release 263 cosmetic update` (hash: TBD)
+126. [DONE] `diagram-plan-lifecycle-repair.phase29.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 263 cosmetic update`).
+127. [PENDING] Git Commit: `chore: build release 263 cosmetic update` (hash: TBD)
+
+Release build-all evidence recorded 2026-05-15:
+
+- `./scripts/build-all.sh --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Unified generated version: `1.2.263`.
+- Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.263.tar.bz2`, `codex-module-1.2.263.tar.bz2`, `gemini-module-1.2.263.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.263.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.263.tar.bz2`, `vscode-webview-1.2.263.tar.bz2`, `project-manager-1.2.263.tar.bz2`.
+- Updated package versions and managed release manifests to `1.2.263`.
 
 128. [TODO] `diagram-plan-lifecycle-repair.phase29.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 263 cosmetic handoff`).
 129. [TODO] Git Commit: `docs: record release 263 cosmetic handoff` (hash: TBD)
