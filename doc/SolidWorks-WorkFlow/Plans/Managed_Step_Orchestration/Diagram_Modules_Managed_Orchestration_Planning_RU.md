@@ -34,6 +34,8 @@ Core owns:
 - prompt для текущего subturn: сначала index, затем ровно один Product Part из принятого index;
 - validation artifact form/paths;
 - Git commit каждой safe attempt;
+- advancement `doc/TODO/stages/diagram-modules/todo-plan.md` после каждого accepted subturn;
+- advancement `doc/TODO/workspace.plan.md` после каждого accepted commit;
 - sequencing следующего Product Part;
 - переход в Phase 2 после accepted commit последнего Product Part.
 
@@ -45,6 +47,16 @@ Agent owns:
 После каждого валидного subturn Core делает real Git commit и пишет real hash. Safe rejected attempts могут быть закоммичены как durable history, если они принадлежат Diagram Modules owned scope.
 
 Phase 1 завершается, когда все Product Part diagram artifacts созданы, проверены Core и имеют real commits.
+
+Если Diagram Modules запущен в greenfield workspace без `.git`, Core обязан создать локальный Git repo перед первым managed commit. Staging при этом остается allowlist-based: Core добавляет только managed scaffold/plan paths и текущие Diagram Modules artifacts, а не все существующие upstream files. Если `git init`, `git add` или `git commit` падает, Core фиксирует blocker в managed plan/workspace ledger, пишет user-visible Core diagnostic и не отправляет следующий provider prompt.
+
+Release `1.2.260` acceptance finding:
+
+- Core создал scaffold и успешно провел все Product Part subturns до user review;
+- `doc/TODO/stages/diagram-modules/todo-plan.md` остался на `diagram-modules.phase1.index.task1`;
+- Product Part tasks и paired `Git Commit` lines не были добавлены;
+- Phase 2 user-review task не была создана в stage plan;
+- тестовый workspace не был Git repo, поэтому commit boundary должен либо инициализировать repo и выполнить managed commits, либо явно заблокировать продолжение, но не открывать review поверх незаведенного plan lifecycle.
 
 Runtime continuation invariant:
 

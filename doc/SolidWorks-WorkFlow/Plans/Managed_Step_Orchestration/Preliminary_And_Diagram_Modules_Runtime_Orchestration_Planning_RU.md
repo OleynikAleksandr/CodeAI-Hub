@@ -25,6 +25,8 @@ Release `1.2.259` исправил первый continuation gap частичн�
 
 Новый repair stream обязан проверить именно runtime path, а не только unit-level scaffold installer: установка scaffold должна происходить до первого provider prompt в том workspace, где агент пишет `.codeai-hub/.../diagram_modules`. Rejection path обязан иметь одно из трех явных решений после каждого provider turn: provider repair prompt, next Product Part continuation prompt или Phase 2 review.
 
+Release `1.2.260` подтвердил, что scaffold, multi-turn Product Part sequence, repair dispatch и финальное review message работают, но обнаружил следующий lifecycle-defect: Core не ведет созданные `doc/TODO/workspace.plan.md` и `doc/TODO/stages/diagram-modules/todo-plan.md` после accepted subturn. Stage plan остается на единственной initial index task, Product Part microtasks и paired `Git Commit` lines не создаются, hashes не записываются, а Phase 2 user review не появляется в managed stage plan. Этот дефект означает, что provider orchestration уже работает, но Core-owned plan/commit boundary не подключен к post-turn arbitration.
+
 ## 2. Архитектурное Решение
 
 Работа идет через существующий cluster:
@@ -75,6 +77,9 @@ Core:
 - отправляет provider-visible стартовый prompt через orchestrator gateway на создание только `product-parts.index.md`;
 - включает inline `Final_Description.md` и `virtual-simulation.md`;
 - после terminal provider turn запускает deterministic validation текущего subturn;
+- после каждого accepted subturn выполняет managed commit boundary: если workspace еще не является Git repo, Core инициализирует локальный Git repo и staging ограничивается только managed Diagram Modules/scaffold paths; если Git недоступен или commit boundary падает, Core блокирует продолжение и не отправляет следующий Product Part prompt;
+- после successful commit обновляет `doc/TODO/stages/diagram-modules/todo-plan.md`: закрывает текущую microtask, записывает real hash в paired `Git Commit`, создает следующую Product Part microtask или Phase 2 user-review task;
+- после successful commit обновляет `doc/TODO/workspace.plan.md`: `lastAcceptedCommitHash`, `lastAcceptedCommitMessage`, `acceptedCommits`;
 - если index валиден, извлекает ordered Product Part ids и отправляет следующий provider-visible continuation prompt на первый отсутствующий `product-parts/<part-id>.md`;
 - после каждого Product Part turn валидирует только named target и затем отправляет следующий Product Part prompt;
 - после принятия последнего Product Part открывает Phase 2 и пишет user-visible Core message в managed session.

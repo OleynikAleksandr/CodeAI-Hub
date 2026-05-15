@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "984309c62",
+  "lastRecordedCommit": "e0d1a7795",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase15.release.task3",
-  "expectedCommitMessage": "docs: record diagram modules scaffold repair release",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase17.plan.task1",
+  "expectedCommitMessage": "docs: plan diagram modules managed plan lifecycle repair",
   "debt": {
-    "expectedCommitMessage": "docs: record diagram modules scaffold repair release",
-    "preCommitHead": "984309c62",
+    "expectedCommitMessage": "docs: plan diagram modules managed plan lifecycle repair",
+    "preCommitHead": "e0d1a7795",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase15.release.task3"
+    "taskId": "diagram-plan-lifecycle-repair.phase17.plan.task1"
   }
 }
 ```
@@ -356,7 +356,7 @@ Build-all evidence recorded 2026-05-15:
 - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.260.tar.bz2`, `codex-module-1.2.260.tar.bz2`, `gemini-module-1.2.260.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.260.tar.bz2`, `vscode-webview-1.2.260.tar.bz2`, `project-manager-1.2.260.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.260.tar.bz2`.
 
 73. [DONE] `diagram-runtime-repair.phase15.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules scaffold repair release`).
-74. [PENDING] Git Commit: `docs: record diagram modules scaffold repair release` (hash: TBD)
+74. [DONE] Git Commit: `docs: record diagram modules scaffold repair release` (hash: e0d1a7795)
 
 Release package evidence recorded 2026-05-15:
 
@@ -370,11 +370,27 @@ Release package evidence recorded 2026-05-15:
 
 ### Stream: User Acceptance
 
-75. [TODO] `diagram-runtime-repair.phase16.user-acceptance.task1` User installs the repaired release and verifies: Diagram Modules start creates managed stage/TODO scaffold, valid index dispatches Product Part continuations, invalid Product Part attempts trigger provider-visible repair prompts, valid Product Parts continue through the sequence, and Core opens User-Led Review only after the last Product Part is accepted (scope: user workflow; expected commit: not required).
+75. [BLOCKED] `diagram-runtime-repair.phase16.user-acceptance.task1` User installs the repaired release and verifies: Diagram Modules start creates managed stage/TODO scaffold, valid index dispatches Product Part continuations, invalid Product Part attempts trigger provider-visible repair prompts, valid Product Parts continue through the sequence, and Core opens User-Led Review only after the last Product Part is accepted (scope: user workflow; expected commit: not required). **BLOCKED 2026-05-15:** release `1.2.260` fixed scaffold creation, Product Part continuations, repair dispatch, and the final Core review message, but Core did not advance the managed workspace/stage plans after accepted subturns. Test workspace `doc/TODO/stages/diagram-modules/todo-plan.md` stayed on the initial `index.task1`, no Product Part microtasks/commit boundaries were created, and Phase 2 user review was not represented in the stage plan.
 
-## Phase 17 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 17 — Diagram Modules Managed Plan Lifecycle Repair (owner: Codex, updated: 2026-05-15)
+
+### Stream: Runtime Plan Ownership
+
+76. [DONE] `diagram-plan-lifecycle-repair.phase17.plan.task1` Document the `1.2.260` acceptance finding and open a repair stream for Core-owned Diagram Modules stage-plan advancement, managed commit boundaries, and user-review phase creation (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`; expected commit: `docs: plan diagram modules managed plan lifecycle repair`).
+77. [PENDING] Git Commit: `docs: plan diagram modules managed plan lifecycle repair` (hash: TBD)
+
+78. [TODO] `diagram-plan-lifecycle-repair.phase17.controller.task1` Add a Core-owned Diagram Modules stage-plan controller that commits accepted Type A subturns, records real hashes, injects the next Product Part microtask, and opens the Phase 2 review task after the final Product Part (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `feat: advance diagram modules managed stage plan`).
+79. [TODO] Git Commit: `feat: advance diagram modules managed stage plan` (hash: TBD)
+
+80. [TODO] `diagram-plan-lifecycle-repair.phase17.runtime.task1` Wire the stage-plan controller into Diagram Modules post-turn arbitration so continuation/user-review messages are sent only after the accepted subturn commit boundary succeeds; include a regression for index -> Product Part -> review plan movement (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules accepted subturns`).
+81. [TODO] Git Commit: `fix: commit diagram modules accepted subturns` (hash: TBD)
+
+82. [TODO] `diagram-plan-lifecycle-repair.phase17.verify.task1` Run targeted Core builds/tests for Diagram Modules validation, scaffold, stage-plan advancement, and runtime post-turn arbitration; record exact evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules managed plan lifecycle repair`).
+83. [TODO] Git Commit: `docs: verify diagram modules managed plan lifecycle repair` (hash: TBD)
+
+## Phase 18 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-76. [TODO] `prelim-diagram-runtime.phase17.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-77. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+84. [TODO] `prelim-diagram-runtime.phase18.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+85. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
