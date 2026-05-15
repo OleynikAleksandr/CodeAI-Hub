@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "b4f449860",
+  "lastRecordedCommit": "8fb6f6fdd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase29.release.task3",
-  "expectedCommitMessage": "docs: record release 263 cosmetic handoff",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase31.marker-boundary.task1",
+  "expectedCommitMessage": "fix: restore workflow marker review boundary",
   "debt": {
-    "expectedCommitMessage": "docs: record release 263 cosmetic handoff",
-    "preCommitHead": "b4f449860",
+    "expectedCommitMessage": "fix: restore workflow marker review boundary",
+    "preCommitHead": "8fb6f6fdd",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase29.release.task3"
+    "taskId": "diagram-plan-lifecycle-repair.phase31.marker-boundary.task1"
   }
 }
 ```
@@ -584,7 +584,7 @@ Release build-all evidence recorded 2026-05-15:
 - Updated package versions and managed release manifests to `1.2.263`.
 
 128. [DONE] `diagram-plan-lifecycle-repair.phase29.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 263 cosmetic handoff`).
-129. [PENDING] Git Commit: `docs: record release 263 cosmetic handoff` (hash: TBD)
+129. [DONE] Git Commit: `docs: record release 263 cosmetic handoff` (hash: 8fb6f6fdd)
 
 Release VSIX evidence recorded 2026-05-15:
 
@@ -598,11 +598,21 @@ Release VSIX evidence recorded 2026-05-15:
 
 ### Stream: User Acceptance
 
-130. [TODO] `diagram-plan-lifecycle-repair.phase30.user-acceptance.task1` User installs the rebuilt release and verifies the Diagram Modules sidebar marker stays orange until Core opens user review, then switches green, and Core/system dialog messages render in their own subtle cards with symmetric side offsets (scope: user workflow; expected commit: none).
+130. [DONE] `diagram-plan-lifecycle-repair.phase30.user-acceptance.task1` User installs the rebuilt release and verifies the Diagram Modules sidebar marker stays orange until Core opens user review, then switches green, and Core/system dialog messages render in their own subtle cards with symmetric side offsets (scope: user workflow; expected commit: none). Result: release `1.2.263` fixed the system-message card styling but regressed the workflow marker completion rule: `Description`, `Virtual Simulation`, and `Diagram Modules` stayed yellow after the last accepted provider/Core turn.
 
-## Phase 31 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 31 — Release 263 Marker Boundary Repair (owner: Codex, updated: 2026-05-15)
+
+### Stream: Workflow Marker Completion Trigger
+
+131. [DONE] `diagram-plan-lifecycle-repair.phase31.marker-boundary.task1` Restore workflow marker completion semantics so provider-direct `Description` and `Virtual Simulation` turn green once their draft artifact exists, while managed `Diagram Modules` stays orange until Core opens the user-review/aggregate-ready phase (scope: `src/client/project-manager/components/layout/workspace-tree-model.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-model.test.ts`; expected commit: `fix: restore workflow marker review boundary`).
+132. [PENDING] Git Commit: `fix: restore workflow marker review boundary` (hash: TBD)
+
+133. [TODO] `diagram-plan-lifecycle-repair.phase31.verify.task1` Run targeted Project Manager marker tests plus webview typecheck/build and record evidence before the next release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify workflow marker review boundary`).
+134. [TODO] Git Commit: `docs: verify workflow marker review boundary` (hash: TBD)
+
+## Phase 32 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-131. [TODO] `diagram-plan-lifecycle-repair.phase31.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-132. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+135. [TODO] `diagram-plan-lifecycle-repair.phase32.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+136. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)

@@ -24,6 +24,12 @@ export type TreeNode = {
   readonly readiness?: DevelopmentTreeReadiness;
 };
 
+export type ResolveTreeStatusOptions = {
+  readonly hasArtifact?: boolean;
+  readonly reviewReady?: boolean;
+  readonly stage?: WorkflowStageId;
+};
+
 export const WORKFLOW_LABELS: Record<WorkflowStageId, string> = {
   description: "Description",
   virtual_simulation: "Virtual Simulation",
@@ -46,16 +52,31 @@ export const WORKFLOW_STAGE_BLOCKED_TITLES: Record<WorkflowStageId, string> = {
 export const resolveTreeStatus = (
   status: WorkflowStageStatus,
   blocked: boolean,
-  hasArtifact = false
-): TreeStatus =>
-  status === "idle"
-    ? "todo"
-    : status === "outdated"
-      ? "outdated"
-      : blocked || status === "invalid"
-        ? "blocked"
-        : status === "in_progress"
-          ? "progress"
-          : hasArtifact || status === "completed"
-            ? "active"
-            : "todo";
+  options: boolean | ResolveTreeStatusOptions = false
+): TreeStatus => {
+  const hasArtifact =
+    typeof options === "boolean" ? options : options.hasArtifact === true;
+  const reviewReady =
+    typeof options === "boolean" ? false : options.reviewReady === true;
+  const stage = typeof options === "boolean" ? null : (options.stage ?? null);
+
+  if (status === "idle") {
+    return "todo";
+  }
+  if (status === "outdated") {
+    return "outdated";
+  }
+  if (blocked || status === "invalid") {
+    return "blocked";
+  }
+  if (status === "completed") {
+    return "active";
+  }
+  if (status === "in_progress") {
+    if (stage === "diagram_modules") {
+      return reviewReady ? "active" : "progress";
+    }
+    return hasArtifact ? "active" : "progress";
+  }
+  return hasArtifact ? "active" : "todo";
+};

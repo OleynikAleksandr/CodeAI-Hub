@@ -228,6 +228,10 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         readProgressFlag(workflowState.qualityGatesProgress, "markdownExists") ||
         readProgressFlag(workflowState.qualityGatesProgress, "jsonExists"),
     };
+    const diagramModulesReviewReady = readProgressFlag(
+      workflowState.diagramModulesProgress,
+      "aggregateReady"
+    );
 
     return WORKFLOW_STAGE_ORDER.map((stage) => {
       const status = workflowState.stages[stage] ?? "idle";
@@ -244,7 +248,11 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           ? `${title} Rewrite boundary active: read-only upstream stage.`
           : title,
         isSelected: stage === activeStage,
-        status: resolveTreeStatus(status, blocked, hasArtifact),
+        status: resolveTreeStatus(status, blocked, {
+          hasArtifact,
+          reviewReady: stage === "diagram_modules" && diagramModulesReviewReady,
+          stage,
+        }),
         visualDepth: 0,
         onSelect: () => dispatchStageActivated(stage),
       };
