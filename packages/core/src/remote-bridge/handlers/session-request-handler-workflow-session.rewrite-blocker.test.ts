@@ -24,6 +24,14 @@ const createLogger = (warnings: unknown[] = []): Logger =>
     },
   }) as unknown as Logger;
 
+interface ManagedPreviewWarning {
+  readonly code?: string;
+  readonly controllerId?: string;
+  readonly message?: string;
+  readonly stage?: string;
+  readonly workspaceRoot?: string;
+}
+
 test("createSessionForWorkflow fails closed before diagram modules provider session during technical-stage rewrite", async () => {
   const calls: string[] = [];
   const warnings: unknown[] = [];
@@ -55,13 +63,12 @@ test("createSessionForWorkflow fails closed before diagram modules provider sess
 
   assert.equal(session, null);
   assert.deepEqual(calls, []);
-  assert.deepEqual(warnings, [
-    {
-      code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
-      stage: "diagram_modules",
-      workspaceRoot: "/tmp/workspace",
-    },
-  ]);
+  const warning = warnings[0] as ManagedPreviewWarning;
+  assert.equal(warning.code, TECHNICAL_STAGE_REWRITE_BLOCKER_CODE);
+  assert.equal(warning.controllerId, "diagram_modules");
+  assert.equal(warning.stage, "diagram_modules");
+  assert.equal(warning.workspaceRoot, "/tmp/workspace");
+  assert.equal(warning.message?.includes("Diagram Modules"), true);
 });
 
 test("createSessionForWorkflow fails closed before technical stage provider sessions during technical-stage rewrite", async () => {
@@ -97,13 +104,12 @@ test("createSessionForWorkflow fails closed before technical stage provider sess
 
     assert.equal(session, null);
     assert.deepEqual(calls, []);
-    assert.deepEqual(warnings, [
-      {
-        code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
-        stage,
-        workspaceRoot: "/tmp/workspace",
-      },
-    ]);
+    const warning = warnings[0] as ManagedPreviewWarning;
+    assert.equal(warning.code, TECHNICAL_STAGE_REWRITE_BLOCKER_CODE);
+    assert.equal(warning.controllerId, stage);
+    assert.equal(warning.stage, stage);
+    assert.equal(warning.workspaceRoot, "/tmp/workspace");
+    assert.equal(typeof warning.message, "string");
   }
 });
 

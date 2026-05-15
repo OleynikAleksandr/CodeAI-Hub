@@ -1,3 +1,4 @@
+import { ManagedWorkflowOrchestrationFacade } from "../../managed-workflow-orchestration";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -6,31 +7,32 @@ import type { SessionProviderFailureRecovery } from "./session-provider-failure-
 import type { CreateAndRegisterSessionOptions } from "./session-request-handler-types";
 
 export const TECHNICAL_STAGE_REWRITE_BLOCKER_CODE =
-  "technical_stage_rewrite_in_progress";
+  "managed_workflow_preview_boundary";
 
-const TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES = new Set([
-  "diagram_modules",
-  "application_skeleton",
-  "quality_gates",
-]);
+const defaultManagedWorkflowOrchestration =
+  new ManagedWorkflowOrchestrationFacade();
 
 export const isTechnicalStageRewriteBlockedStage = (stage: string): boolean =>
-  TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES.has(stage);
+  defaultManagedWorkflowOrchestration.canHandleStage(stage);
 
 interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly createAndRegisterSession: (
     options: CreateAndRegisterSessionOptions
   ) => Promise<Session | null>;
   readonly logger: Logger;
+  readonly managedWorkflowOrchestration?: ManagedWorkflowOrchestrationFacade;
   readonly providerFailureRecovery: SessionProviderFailureRecovery;
   readonly providerRegistry: ProviderRegistry;
 }
 
 export class SessionRequestHandlerWorkflowSession {
   private readonly deps: SessionRequestHandlerWorkflowSessionDependencies;
+  private readonly managedWorkflowOrchestration: ManagedWorkflowOrchestrationFacade;
 
   constructor(deps: SessionRequestHandlerWorkflowSessionDependencies) {
     this.deps = deps;
+    this.managedWorkflowOrchestration =
+      deps.managedWorkflowOrchestration ?? defaultManagedWorkflowOrchestration;
   }
 
   async createSessionForWorkflow(options: {
@@ -43,11 +45,22 @@ export class SessionRequestHandlerWorkflowSession {
       readonly resumeMode?: SessionResumeMode;
     };
   }): Promise<Session | null> {
-    if (isTechnicalStageRewriteBlockedStage(options.context.stage)) {
+    const managedDecision = this.managedWorkflowOrchestration.previewStageStart(
+      {
+        providerId: options.providerId,
+        runSlug: options.context.runSlug ?? null,
+        stageId: options.context.stage,
+        workspaceRoot: options.workspacePath,
+        workspaceSlug: options.context.initiativeSlug,
+      }
+    );
+    if (managedDecision) {
       this.deps.logger.warn(
-        "Workflow session creation blocked: technical stage rewrite in progress",
+        "Workflow session creation routed to managed workflow preview boundary",
         {
-          code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
+          code: managedDecision.code,
+          controllerId: managedDecision.controllerId,
+          message: managedDecision.message,
           stage: options.context.stage,
           workspaceRoot: options.workspacePath,
         }

@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "f42a5fb08",
+  "lastRecordedCommit": "697503b60",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase4.provider-gateway.task1",
-  "expectedCommitMessage": "feat: add managed workflow provider gateway preview",
+  "currentTaskId": "managed-orchestration-kernel.phase4.runtime.task1",
+  "expectedCommitMessage": "feat: route managed stage starts through orchestration facade",
   "debt": {
-    "expectedCommitMessage": "feat: add managed workflow provider gateway preview",
-    "preCommitHead": "f42a5fb08",
+    "expectedCommitMessage": "feat: route managed stage starts through orchestration facade",
+    "preCommitHead": "697503b60",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase4.provider-gateway.task1"
+    "taskId": "managed-orchestration-kernel.phase4.runtime.task1"
   }
 }
 ```
@@ -116,10 +116,10 @@
 ### Stream: Provider And Runtime Gateway
 
 27. [DONE] `managed-orchestration-kernel.phase4.provider-gateway.task1` Add provider-neutral `ManagedWorkflowProviderGateway` preview boundary that can produce visible Core messages but cannot yet dispatch step work to providers (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-provider-gateway.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-core-message.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-provider-gateway.test.ts`; expected commit: `feat: add managed workflow provider gateway preview`).
-28. [PENDING] Git Commit: `feat: add managed workflow provider gateway preview` (hash: TBD)
+28. [DONE] Git Commit: `feat: add managed workflow provider gateway preview` (hash: 697503b60)
 
-29. [TODO] `managed-orchestration-kernel.phase4.runtime.task1` Route managed technical stage starts through `ManagedWorkflowOrchestrationFacade` so Diagram Modules/Application Skeleton/Quality Gates use the new preview boundary instead of a generic fail-closed message (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts`; expected commit: `feat: route managed stage starts through orchestration facade`).
-30. [TODO] Git Commit: `feat: route managed stage starts through orchestration facade` (hash: TBD)
+29. [DONE] `managed-orchestration-kernel.phase4.runtime.task1` Route managed technical stage starts through `ManagedWorkflowOrchestrationFacade` so Diagram Modules/Application Skeleton/Quality Gates use the new preview boundary instead of a generic fail-closed message (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts`; expected commit: `feat: route managed stage starts through orchestration facade`).
+30. [PENDING] Git Commit: `feat: route managed stage starts through orchestration facade` (hash: TBD)
 
 31. [TODO] `managed-orchestration-kernel.phase4.runtime.task2` Persist the new Core-authored preview messages into the managed session/event feed so user-visible boundary diagnostics survive refresh/restart (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts`; expected commit: `feat: persist managed workflow core boundary messages`).
 32. [TODO] Git Commit: `feat: persist managed workflow core boundary messages` (hash: TBD)
