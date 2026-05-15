@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "e8dc8fae5",
+  "lastRecordedCommit": "a23479abb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase48.release.task2",
-  "expectedCommitMessage": "chore: build release 267 application skeleton module",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase48.release.task3",
+  "expectedCommitMessage": "docs: record release 267 application skeleton handoff",
   "debt": {
-    "expectedCommitMessage": "chore: build release 267 application skeleton module",
-    "preCommitHead": "e8dc8fae5",
+    "expectedCommitMessage": "docs: record release 267 application skeleton handoff",
+    "preCommitHead": "a23479abb",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase48.release.task2"
+    "taskId": "diagram-plan-lifecycle-repair.phase48.release.task3"
   }
 }
 ```
@@ -911,10 +911,18 @@ Release build-all evidence recorded 2026-05-15:
 - Unified generated version: `1.2.267`.
 - Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.267.tar.bz2`, `codex-module-1.2.267.tar.bz2`, `gemini-module-1.2.267.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.267.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.267.tar.bz2`, `vscode-webview-1.2.267.tar.bz2`, `project-manager-1.2.267.tar.bz2`.
 - Updated package versions and managed release manifests to `1.2.267`.
-199. [PENDING] Git Commit: `chore: build release 267 application skeleton module` (hash: TBD)
+199. [DONE] Git Commit: `chore: build release 267 application skeleton module` (hash: a23479abb)
 
-200. [TODO] `diagram-plan-lifecycle-repair.phase48.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 267 application skeleton handoff`).
-201. [TODO] Git Commit: `docs: record release 267 application skeleton handoff` (hash: TBD)
+200. [DONE] `diagram-plan-lifecycle-repair.phase48.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 267 application skeleton handoff`).
+
+Release VSIX evidence recorded 2026-05-15:
+
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Verified release-script milestones: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
+- Advisory release-script diagnostics: `check:links` reported 17 existing broken Markdown anchors in managed-step planning docs; the release script treated them as advisory and completed. Package-size warning remained expected for the current VSIX surface over 20MB.
+- VSIX package: `codeai-hub-1.2.267.vsix` (`48M`; script package-size check reported `48M`).
+- Release runtime archives remain available in `doc/tmp/releases/` for version `1.2.267`.
+201. [PENDING] Git Commit: `docs: record release 267 application skeleton handoff` (hash: TBD)
 
 ## Phase 49 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
