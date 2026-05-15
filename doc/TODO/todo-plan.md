@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "dd87e5299",
+  "lastRecordedCommit": "affecc5ba",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase11.release.task1",
-  "expectedCommitMessage": "docs: prepare diagram modules continuation repair release",
+  "currentTaskId": "diagram-runtime-repair.phase11.release.task2",
+  "expectedCommitMessage": "chore: build diagram modules continuation repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare diagram modules continuation repair release",
-    "preCommitHead": "dd87e5299",
+    "expectedCommitMessage": "chore: build diagram modules continuation repair release",
+    "preCommitHead": "affecc5ba",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase11.release.task1"
+    "taskId": "diagram-runtime-repair.phase11.release.task2"
   }
 }
 ```
@@ -257,7 +257,7 @@ Repair coverage:
 ### Stream: Release Preparation And Build
 
 53. [DONE] `diagram-runtime-repair.phase11.release.task1` Update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules continuation repair release`).
-54. [PENDING] Git Commit: `docs: prepare diagram modules continuation repair release` (hash: TBD)
+54. [DONE] Git Commit: `docs: prepare diagram modules continuation repair release` (hash: affecc5ba)
 
 Release preparation evidence recorded 2026-05-15:
 
@@ -266,8 +266,15 @@ Release preparation evidence recorded 2026-05-15:
 - `README.md` current-release banner updated to Diagram Modules continuation repair.
 - `CHANGELOG.md` release entry `1.2.259` added with verification summary.
 
-55. [TODO] `diagram-runtime-repair.phase11.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules continuation repair release`).
-56. [TODO] Git Commit: `chore: build diagram modules continuation repair release` (hash: TBD)
+55. [DONE] `diagram-runtime-repair.phase11.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules continuation repair release`).
+56. [PENDING] Git Commit: `chore: build diagram modules continuation repair release` (hash: TBD)
+
+Build-all evidence recorded 2026-05-15:
+
+- `./scripts/build-all.sh` — PASS.
+- Unified generated version: `1.2.259`.
+- Updated package/version manifests for root package, provider modules, Core, shared packages, UI, and CEF launcher.
+- Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.259.tar.bz2`, `codex-module-1.2.259.tar.bz2`, `gemini-module-1.2.259.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.259.tar.bz2`, `vscode-webview-1.2.259.tar.bz2`, `project-manager-1.2.259.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.259.tar.bz2`.
 
 57. [TODO] `diagram-runtime-repair.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules continuation repair release`).
 58. [TODO] Git Commit: `docs: record diagram modules continuation repair release` (hash: TBD)
