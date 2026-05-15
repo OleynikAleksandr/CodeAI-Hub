@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "106edf5df",
+  "lastRecordedCommit": "998cf4207",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase10.release.task1",
-  "expectedCommitMessage": "docs: prepare preliminary workflow orchestration release",
+  "currentTaskId": "managed-orchestration-kernel.phase10.release.task2",
+  "expectedCommitMessage": "chore: build preliminary workflow orchestration release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare preliminary workflow orchestration release",
-    "preCommitHead": "106edf5df",
+    "expectedCommitMessage": "chore: build preliminary workflow orchestration release",
+    "preCommitHead": "998cf4207",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase10.release.task1"
+    "taskId": "managed-orchestration-kernel.phase10.release.task2"
   }
 }
 ```
@@ -260,9 +260,22 @@ Release preparation target recorded 2026-05-15:
 - Current package version before release scripts: `1.2.256`.
 - Future release prepared in `README.md` and `CHANGELOG.md`: `1.2.257`.
 - Release focus: preliminary `Description` and `Virtual Simulation` provider-direct routing through managed workflow metadata, plus `readOnlyStages` projection for Project Manager.
-68. [PENDING] Git Commit: `docs: prepare preliminary workflow orchestration release` (hash: TBD)
-69. [TODO] `managed-orchestration-kernel.phase10.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: generated package/version files + `doc/TODO/todo-plan.md`; expected commit: `chore: build preliminary workflow orchestration release`).
-70. [TODO] Git Commit: `chore: build preliminary workflow orchestration release` (hash: TBD)
+68. [DONE] Git Commit: `docs: prepare preliminary workflow orchestration release` (hash: 998cf4207)
+69. [DONE] `managed-orchestration-kernel.phase10.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md, package-lock.json, package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json`; expected commit: `chore: build preliminary workflow orchestration release`).
+
+Build-all evidence recorded 2026-05-15:
+
+- Command: `./scripts/build-all.sh --allow-dirty`; dirty input was limited to active plan state advanced by the previous `plan:commit`.
+- Unified version produced: `1.2.257`.
+- Generated release tarballs copied to `doc/tmp/releases/` and `/Users/oleksandroliinyk/.codeai-hub/releases/`:
+  - `claude-module-1.2.257.tar.bz2`
+  - `codex-module-1.2.257.tar.bz2`
+  - `gemini-module-1.2.257.tar.bz2`
+  - `codeai-hub-core-darwin-arm64-1.2.257.tar.bz2`
+  - `CodeAIHubLauncher-macos-arm64-1.2.257.tar.bz2`
+  - `vscode-webview-1.2.257.tar.bz2`
+  - `project-manager-1.2.257.tar.bz2`
+70. [PENDING] Git Commit: `chore: build preliminary workflow orchestration release` (hash: TBD)
 71. [TODO] `managed-orchestration-kernel.phase10.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record preliminary workflow orchestration release`).
 72. [TODO] Git Commit: `docs: record preliminary workflow orchestration release` (hash: TBD)
 
