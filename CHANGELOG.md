@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.266] - 2026-05-15
+### Fixed
+- **Diagram Modules user-review plans now keep the required commit pair.** Core opens Phase 2 user review with `diagram-modules.phase2.review.task1` and a paired `Git Commit: docs: open diagram modules user review` item instead of `expected commit: none`.
+- **Core-managed review ledger metadata no longer blocks Application Skeleton.** Technical-stage dirty gating ignores Core-owned `doc/TODO/workspace.plan.md` and managed stage todo-plan metadata, so a completed Diagram Modules aggregate can unlock the next stage when only review-ledger files are dirty.
+
+### Tests
+- `npm run build:core`
+- Diagram Modules stage-plan controller, runtime Core arbitration, and technical-stage dirty-gate tests passed, 16/16 tests.
+- `npm run plan:validate`
+
 ## [1.2.265] - 2026-05-15
 ### Fixed
 - **Project Manager now refreshes workflow state when derived gates change.** `Diagram Modules` turns green after Core opens user review, and `Application Skeleton` stops showing a stale blocked `product-parts.index.md not found` card once `diagramModulesProgress.aggregateReady` unlocks the next step.

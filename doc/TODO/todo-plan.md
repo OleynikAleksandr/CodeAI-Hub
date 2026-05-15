@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "9e7795072",
+  "lastRecordedCommit": "b32494ffd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase38.verify.task1",
-  "expectedCommitMessage": "docs: verify diagram modules review boundary repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase40.release.task1",
+  "expectedCommitMessage": "docs: prepare release 266 review boundary fix",
   "debt": {
-    "expectedCommitMessage": "docs: verify diagram modules review boundary repair",
-    "preCommitHead": "9e7795072",
+    "expectedCommitMessage": "docs: prepare release 266 review boundary fix",
+    "preCommitHead": "b32494ffd",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase38.verify.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase40.release.task1"
   }
 }
 ```
@@ -747,7 +747,7 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Verification
 
 162. [DONE] `diagram-plan-lifecycle-repair.phase38.verify.task1` Run targeted Core tests/build for the Diagram Modules review commit partner and technical-stage dirty-gate repair, then record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules review boundary repair`).
-163. [PENDING] Git Commit: `docs: verify diagram modules review boundary repair` (hash: TBD)
+163. [DONE] Git Commit: `docs: verify diagram modules review boundary repair` (hash: b32494ffd)
 
 Verification evidence recorded 2026-05-15:
 
@@ -760,11 +760,37 @@ Verification evidence recorded 2026-05-15:
 
 ### Stream: Release Confirmation Gate
 
-164. [TODO] `diagram-plan-lifecycle-repair.phase39.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Diagram Modules review boundary repair (scope: user workflow; expected commit: none).
+164. [DONE] `diagram-plan-lifecycle-repair.phase39.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Diagram Modules review boundary repair (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for the Diagram Modules review boundary repair.
 
-## Phase 40 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 40 — Release 266 Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation And Build
+
+165. [DONE] `diagram-plan-lifecycle-repair.phase40.release.task1` After explicit release-build confirmation, update release-facing docs for the future review-boundary fix before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 266 review boundary fix`).
+166. [PENDING] Git Commit: `docs: prepare release 266 review boundary fix` (hash: TBD)
+
+Release 266 preparation target:
+
+- User explicitly requested the new release after the Diagram Modules review-boundary fix.
+- Current package version before release scripts: `1.2.265`.
+- Future release version prepared in release-facing docs: `1.2.266`.
+- Release payload: Diagram Modules Phase 2 user review receives a paired managed `Git Commit` item, and Core-managed `doc/TODO` ledger dirt no longer blocks `Application Skeleton` after Diagram Modules aggregate readiness.
+
+167. [TODO] `diagram-plan-lifecycle-repair.phase40.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 266 review boundary fix`).
+168. [TODO] Git Commit: `chore: build release 266 review boundary fix` (hash: TBD)
+
+169. [TODO] `diagram-plan-lifecycle-repair.phase40.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 266 review boundary handoff`).
+170. [TODO] Git Commit: `docs: record release 266 review boundary handoff` (hash: TBD)
+
+## Phase 41 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+171. [TODO] `diagram-plan-lifecycle-repair.phase41.user-acceptance.task1` User installs the rebuilt release and verifies Diagram Modules creates the Phase 2 review task with a paired `Git Commit` line, remains green after Core opens user review, and Application Skeleton is available when only Core-managed review ledger metadata is dirty (scope: user workflow; expected commit: none).
+
+## Phase 42 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-165. [TODO] `diagram-plan-lifecycle-repair.phase40.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-166. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+172. [TODO] `diagram-plan-lifecycle-repair.phase42.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+173. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
