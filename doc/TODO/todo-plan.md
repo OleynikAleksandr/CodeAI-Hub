@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "9c818b558",
+  "lastRecordedCommit": "e3ead5a8d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase1.contract.task1",
-  "expectedCommitMessage": "feat: add managed workflow start decisions",
+  "currentTaskId": "prelim-diagram-runtime.phase1.steps.task1",
+  "expectedCommitMessage": "feat: describe first trunk step orchestration policies",
   "debt": {
-    "expectedCommitMessage": "feat: add managed workflow start decisions",
-    "preCommitHead": "9c818b558",
+    "expectedCommitMessage": "feat: describe first trunk step orchestration policies",
+    "preCommitHead": "e3ead5a8d",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase1.contract.task1"
+    "taskId": "prelim-diagram-runtime.phase1.steps.task1"
   }
 }
 ```
@@ -59,10 +59,10 @@
 ### Stream: Public Contract And Step Policy
 
 3. [DONE] `prelim-diagram-runtime.phase1.contract.task1` Extend public managed workflow contracts so registered steps can return provider-direct, preview-boundary, or managed-dispatch start decisions without callers importing controller internals (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: add managed workflow start decisions`).
-4. [PENDING] Git Commit: `feat: add managed workflow start decisions` (hash: TBD)
+4. [DONE] Git Commit: `feat: add managed workflow start decisions` (hash: e3ead5a8d)
 
-5. [TODO] `prelim-diagram-runtime.phase1.steps.task1` Update the first three step controllers so Description and Virtual Simulation are explicit provider-direct controllers and Diagram Modules exposes managed dispatch metadata, required artifact targets, and phase table through the registry (scope: `packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts`; expected commit: `feat: describe first trunk step orchestration policies`).
-6. [TODO] Git Commit: `feat: describe first trunk step orchestration policies` (hash: TBD)
+5. [DONE] `prelim-diagram-runtime.phase1.steps.task1` Update the first three step controllers so Description and Virtual Simulation are explicit provider-direct controllers and Diagram Modules exposes managed dispatch metadata, required artifact targets, and phase table through the registry; include facade/registry expectations because this is an observable registration-policy task (scope: `packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts`; expected commit: `feat: describe first trunk step orchestration policies`).
+6. [PENDING] Git Commit: `feat: describe first trunk step orchestration policies` (hash: TBD)
 
 ### Stream: Runtime Dispatch Boundary
 
@@ -141,4 +141,3 @@ Expected verification commands:
 
 31. [TODO] `prelim-diagram-runtime.phase7.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close first trunk orchestration scope`).
 32. [TODO] Git Commit: `docs: close first trunk orchestration scope` (hash: TBD)
-

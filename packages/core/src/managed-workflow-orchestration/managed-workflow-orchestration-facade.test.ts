@@ -46,7 +46,7 @@ test("managed workflow facade exposes registered trunk stages through the public
   );
   assert.equal(
     facade.describeStage("diagram_modules")?.startPolicy,
-    "core_preview_boundary"
+    "managed_dispatch"
   );
 });
 

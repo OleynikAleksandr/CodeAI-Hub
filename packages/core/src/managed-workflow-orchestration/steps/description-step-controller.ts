@@ -5,7 +5,7 @@ export const descriptionStepController: ManagedWorkflowStepController = {
     code: "managed_workflow_preview_boundary",
     message: [
       "Description is registered in Managed Workflow Orchestration as a provider-direct preliminary step.",
-      "Provider dispatch must remain enabled for this step.",
+      "Provider dispatch remains enabled; Core does not open managed Git phases for this preliminary step.",
       `Workspace: ${request.workspaceSlug}. Provider requested: ${request.providerId}.`,
     ].join("\n"),
   }),
@@ -16,6 +16,8 @@ export const descriptionStepController: ManagedWorkflowStepController = {
     startPolicy: "provider_direct",
   },
   ownedPathGlobs: [
+    ".codeai-hub/**/description/Final_Description.md",
+    ".codeai-hub/**/description/questionnaire.md",
     ".codeai-hub/**/description/**",
     ".codeai-hub/templates/description/**",
   ],

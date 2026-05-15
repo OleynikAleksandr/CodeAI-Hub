@@ -40,12 +40,26 @@ test("step registry registers controllers without runtime dispatch branches", ()
   );
 });
 
-test("default step registry exposes all managed technical trunk stages", () => {
+test("default step registry exposes all registered trunk stages", () => {
   const registry = new ManagedWorkflowStepRegistry();
 
   assert.deepEqual(
     registry.list().map((controller) => controller.descriptor.stageId),
-    ["diagram_modules", "application_skeleton", "quality_gates"]
+    [
+      "description",
+      "virtual_simulation",
+      "diagram_modules",
+      "application_skeleton",
+      "quality_gates",
+    ]
+  );
+  assert.equal(
+    registry.get("description")?.descriptor.startPolicy,
+    "provider_direct"
+  );
+  assert.equal(
+    registry.get("diagram_modules")?.descriptor.startPolicy,
+    "managed_dispatch"
   );
   assert.match(
     registry.get("quality_gates")?.createPreviewBoundary({

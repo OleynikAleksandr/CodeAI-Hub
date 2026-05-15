@@ -5,7 +5,7 @@ export const virtualSimulationStepController: ManagedWorkflowStepController = {
     code: "managed_workflow_preview_boundary",
     message: [
       "Virtual Simulation is registered in Managed Workflow Orchestration as a provider-direct preliminary step.",
-      "Provider dispatch must remain enabled for this step.",
+      "Provider dispatch remains enabled; Core does not open managed Git phases for this preliminary step.",
       `Workspace: ${request.workspaceSlug}. Provider requested: ${request.providerId}.`,
     ].join("\n"),
   }),
@@ -16,6 +16,7 @@ export const virtualSimulationStepController: ManagedWorkflowStepController = {
     startPolicy: "provider_direct",
   },
   ownedPathGlobs: [
+    ".codeai-hub/**/virtual_simulation/virtual-simulation.md",
     ".codeai-hub/**/virtual_simulation/**",
     ".codeai-hub/templates/virtual_simulation/**",
   ],
