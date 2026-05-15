@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "528c45ae0",
+  "lastRecordedCommit": "ae3b759e1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase55.release.task2",
-  "expectedCommitMessage": "chore: build quality gates managed runtime release",
+  "currentTaskId": "quality-gates-runtime.phase55.release.task3",
+  "expectedCommitMessage": "docs: record quality gates managed runtime release",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates managed runtime release",
-    "preCommitHead": "528c45ae0",
+    "expectedCommitMessage": "docs: record quality gates managed runtime release",
+    "preCommitHead": "ae3b759e1",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase55.release.task2"
+    "taskId": "quality-gates-runtime.phase55.release.task3"
   }
 }
 ```
@@ -1077,12 +1077,17 @@ Repair coverage:
     - Unified version after build: `1.2.268`.
     - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.268.tar.bz2`, `codex-module-1.2.268.tar.bz2`, `gemini-module-1.2.268.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.268.tar.bz2`, `vscode-webview-1.2.268.tar.bz2`, `project-manager-1.2.268.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.268.tar.bz2`.
     - Matching runtime tarballs present in `~/.codeai-hub/releases/` for providers, core, UI, and launcher.
-252. [PENDING] Git Commit: `chore: build quality gates managed runtime release` (hash: TBD)
+252. [DONE] Git Commit: `chore: build quality gates managed runtime release` (hash: ae3b759e1)
 
 ### Stream: Package VSIX
 
-253. [TODO] `quality-gates-runtime.phase55.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record quality gates managed runtime release`).
-254. [TODO] Git Commit: `docs: record quality gates managed runtime release` (hash: TBD)
+253. [DONE] `quality-gates-runtime.phase55.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record quality gates managed runtime release`).
+    - `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start.
+    - Required release-build output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`.
+    - VSIX package: `codeai-hub-1.2.268.vsix` (`48M`).
+    - Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.268.tar.bz2`, `codex-module-1.2.268.tar.bz2`, `gemini-module-1.2.268.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.268.tar.bz2`, `vscode-webview-1.2.268.tar.bz2`, `project-manager-1.2.268.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.268.tar.bz2`.
+    - Advisory release warnings: markdown link checker reported 17 planning-document anchor issues; package size warning reported `48M`. Neither warning blocked packaging or runtime surface verification.
+254. [PENDING] Git Commit: `docs: record quality gates managed runtime release` (hash: TBD)
 
 ## Phase 56 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
