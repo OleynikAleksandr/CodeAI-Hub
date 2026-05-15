@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "a56774e49",
+  "lastRecordedCommit": "51bfbd9ae",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase9.post-turn.task1",
-  "expectedCommitMessage": "feat: arbitrate diagram modules turns after provider completion",
+  "currentTaskId": "diagram-runtime-repair.phase9.verify.task1",
+  "expectedCommitMessage": "docs: verify diagram modules continuation repair",
   "debt": {
-    "expectedCommitMessage": "feat: arbitrate diagram modules turns after provider completion",
-    "preCommitHead": "a56774e49",
+    "expectedCommitMessage": "docs: verify diagram modules continuation repair",
+    "preCommitHead": "51bfbd9ae",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase9.post-turn.task1"
+    "taskId": "diagram-runtime-repair.phase9.verify.task1"
   }
 }
 ```
@@ -227,12 +227,24 @@ Release package evidence recorded 2026-05-15:
 47. [DONE] Git Commit: `feat: model diagram modules managed subturns` (hash: a56774e49)
 
 48. [DONE] `diagram-runtime-repair.phase9.post-turn.task1` Wire managed post-turn arbitration into provider `turn_completed`: after message flush Core validates the current Diagram Modules subturn, persists the managed decision, appends visible Core feedback, and dispatches the next Product Part continuation prompt instead of leaving the session silent (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`; expected commit: `feat: arbitrate diagram modules turns after provider completion`).
-49. [PENDING] Git Commit: `feat: arbitrate diagram modules turns after provider completion` (hash: TBD)
+49. [DONE] Git Commit: `feat: arbitrate diagram modules turns after provider completion` (hash: 51bfbd9ae)
 
 ### Stream: Verification
 
-50. [TODO] `diagram-runtime-repair.phase9.verify.task1` Run targeted Core verification for the Diagram Modules scaffold and post-turn continuation flow, then record exact evidence before asking for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules continuation repair`).
-51. [TODO] Git Commit: `docs: verify diagram modules continuation repair` (hash: TBD)
+50. [DONE] `diagram-runtime-repair.phase9.verify.task1` Run targeted Core verification for the Diagram Modules scaffold and post-turn continuation flow, then record exact evidence before asking for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules continuation repair`).
+51. [PENDING] Git Commit: `docs: verify diagram modules continuation repair` (hash: TBD)
+
+Verification evidence recorded 2026-05-15:
+
+- `npm run build:core` — PASS.
+- `node --test packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.js packages/core/dist/remote-bridge/handlers/session-provider-event-router.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js` — PASS, 16 tests.
+- `npm run plan:validate` — PASS.
+
+Repair coverage:
+
+- Diagram Modules start creates managed workspace scaffold before provider dispatch.
+- Index-only Diagram Modules subturn is accepted as a valid subturn and produces the next Product Part continuation prompt.
+- Provider `turn_completed` waits for message flush, runs normal turn arbitration, then invokes managed workflow continuation arbitration.
 
 ## Phase 10 — Release Build Reconfirmation (owner: User, updated: 2026-05-15)
 
