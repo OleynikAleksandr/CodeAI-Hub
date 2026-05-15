@@ -8,6 +8,7 @@ import type { ManagedWorkflowStepController } from "./managed-workflow-step-cont
 import { ManagedWorkflowStepRegistry } from "./managed-workflow-step-registry";
 
 const ALREADY_REGISTERED_PATTERN = /already registered/u;
+const QUALITY_GATES_BASELINE_PATTERN = /Quality Gates Baseline/u;
 
 const createController = (
   stageId: "diagram_modules" | "application_skeleton"
@@ -36,6 +37,24 @@ test("step registry registers controllers without runtime dispatch branches", ()
   assert.deepEqual(
     registry.list().map((controller) => controller.descriptor.stageId),
     ["diagram_modules", "application_skeleton"]
+  );
+});
+
+test("default step registry exposes all managed technical trunk stages", () => {
+  const registry = new ManagedWorkflowStepRegistry();
+
+  assert.deepEqual(
+    registry.list().map((controller) => controller.descriptor.stageId),
+    ["diagram_modules", "application_skeleton", "quality_gates"]
+  );
+  assert.match(
+    registry.get("quality_gates")?.createPreviewBoundary({
+      providerId: "claudeCodeCli",
+      stageId: "quality_gates",
+      workspaceRoot: "/tmp/demo",
+      workspaceSlug: "demo",
+    }).message ?? "",
+    QUALITY_GATES_BASELINE_PATTERN
   );
 });
 

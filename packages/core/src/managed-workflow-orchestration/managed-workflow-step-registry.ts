@@ -3,9 +3,14 @@ import type { ManagedWorkflowStepController } from "./managed-workflow-step-cont
 import { assertControllerStageMatch } from "./managed-workflow-step-controller";
 import { applicationSkeletonStepController } from "./steps/application-skeleton-step-controller";
 import { diagramModulesStepController } from "./steps/diagram-modules-step-controller";
+import { qualityGatesStepController } from "./steps/quality-gates-step-controller";
 
 const DEFAULT_MANAGED_WORKFLOW_CONTROLLERS: readonly ManagedWorkflowStepController[] =
-  [diagramModulesStepController, applicationSkeletonStepController];
+  [
+    diagramModulesStepController,
+    applicationSkeletonStepController,
+    qualityGatesStepController,
+  ];
 
 export class ManagedWorkflowStepRegistry {
   readonly #controllers = new Map<

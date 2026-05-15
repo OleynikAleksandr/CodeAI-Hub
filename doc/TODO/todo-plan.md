@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "b61d57c53",
+  "lastRecordedCommit": "a5a8b9aaa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase2.steps.task1",
-  "expectedCommitMessage": "feat: register initial managed workflow step controllers",
+  "currentTaskId": "managed-orchestration-kernel.phase2.steps.task2",
+  "expectedCommitMessage": "feat: register quality gates managed workflow controller",
   "debt": {
-    "expectedCommitMessage": "feat: register initial managed workflow step controllers",
-    "preCommitHead": "b61d57c53",
+    "expectedCommitMessage": "feat: register quality gates managed workflow controller",
+    "preCommitHead": "a5a8b9aaa",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase2.steps.task1"
+    "taskId": "managed-orchestration-kernel.phase2.steps.task2"
   }
 }
 ```
@@ -90,10 +90,10 @@
 14. [DONE] Git Commit: `feat: add managed workflow step registry` (hash: b61d57c53)
 
 15. [DONE] `managed-orchestration-kernel.phase2.steps.task1` Add initial Diagram Modules and Application Skeleton step-controller modules that expose phase metadata and preview blocking decisions only (scope: `packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/application-skeleton-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts`; expected commit: `feat: register initial managed workflow step controllers`).
-16. [PENDING] Git Commit: `feat: register initial managed workflow step controllers` (hash: TBD)
+16. [DONE] Git Commit: `feat: register initial managed workflow step controllers` (hash: a5a8b9aaa)
 
-17. [TODO] `managed-orchestration-kernel.phase2.steps.task2` Add Quality Gates step-controller module and tests proving all three technical trunk steps are registered through the same extension contract (scope: `packages/core/src/managed-workflow-orchestration/steps/quality-gates-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts, packages/core/src/managed-workflow-orchestration/index.ts`; expected commit: `feat: register quality gates managed workflow controller`).
-18. [TODO] Git Commit: `feat: register quality gates managed workflow controller` (hash: TBD)
+17. [DONE] `managed-orchestration-kernel.phase2.steps.task2` Add Quality Gates step-controller module and tests proving all three technical trunk steps are registered through the same extension contract (scope: `packages/core/src/managed-workflow-orchestration/steps/quality-gates-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts`; expected commit: `feat: register quality gates managed workflow controller`).
+18. [PENDING] Git Commit: `feat: register quality gates managed workflow controller` (hash: TBD)
 
 ## Phase 3 — Store, Audit, Commit Boundary, And Recovery Kernel (owner: Codex, updated: 2026-05-15)
 
