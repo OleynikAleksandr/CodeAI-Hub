@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.262] - 2026-05-15
+### Fixed
+- **Diagram Modules managed commits now retry transient Git index locks.** Core serializes the managed boundary per workspace and retries `.git/index.lock` failures before deciding whether to block continuation.
+- **Persistent managed Git lock failures now stop safely.** Core keeps the next Product Part/user-review transition blocked until the accepted subturn commit hash is actually recorded.
+- **Core/system dialog messages now use the selected Messages for the User language.** Session translation routes `system` messages through the `messages_for_the_user` policy while preserving source content, ids, tags, paths, DSL tokens, and persisted translation overlays.
+
+### Tests
+- `npm run build:core`
+- Diagram Modules managed boundary, runtime continuation, prompt-builder, session translation policy/facade, and Core event-message tests passed, 24/24 tests.
+- `npm run plan:validate`
+
 ## [1.2.261] - 2026-05-15
 ### Fixed
 - **Diagram Modules now advances the managed stage plan after accepted subturns.** Core records real Git hashes in `doc/TODO/stages/diagram-modules/todo-plan.md`, injects Product Part microtasks, and opens the Phase 2 review task only after the final Product Part commit boundary succeeds.

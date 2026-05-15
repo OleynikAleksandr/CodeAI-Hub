@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "3e370e974",
+  "lastRecordedCommit": "8ffd89a1a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase24.verify.task1",
-  "expectedCommitMessage": "docs: verify managed boundary and localization repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase26.release.task1",
+  "expectedCommitMessage": "docs: prepare managed boundary and localization release",
   "debt": {
-    "expectedCommitMessage": "docs: verify managed boundary and localization repair",
-    "preCommitHead": "3e370e974",
+    "expectedCommitMessage": "docs: prepare managed boundary and localization release",
+    "preCommitHead": "8ffd89a1a",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase24.verify.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase26.release.task1"
   }
 }
 ```
@@ -480,7 +480,7 @@ Release VSIX evidence recorded 2026-05-15:
 105. [DONE] Git Commit: `docs: document managed boundary and core message localization` (hash: 3e370e974)
 
 106. [DONE] `diagram-plan-lifecycle-repair.phase24.verify.task1` Run targeted core/session translation tests plus `npm run build:core` and record evidence before release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed boundary and localization repair`).
-107. [PENDING] Git Commit: `docs: verify managed boundary and localization repair` (hash: TBD)
+107. [DONE] Git Commit: `docs: verify managed boundary and localization repair` (hash: 8ffd89a1a)
 
 Verification evidence recorded 2026-05-15:
 
@@ -493,14 +493,21 @@ Verification evidence recorded 2026-05-15:
 
 ### Stream: Release Build Confirmation
 
-108. [TODO] `diagram-plan-lifecycle-repair.phase25.release-confirmation.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the managed boundary and localization repair (scope: user workflow; expected commit: none).
+108. [DONE] `diagram-plan-lifecycle-repair.phase25.release-confirmation.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the managed boundary and localization repair (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for the managed boundary and localization repair.
 
 ## Phase 26 — Release Build (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Release Preparation And Build
 
-109. [TODO] `diagram-plan-lifecycle-repair.phase26.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed boundary and localization release`).
-110. [TODO] Git Commit: `docs: prepare managed boundary and localization release` (hash: TBD)
+109. [DONE] `diagram-plan-lifecycle-repair.phase26.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed boundary and localization release`).
+110. [PENDING] Git Commit: `docs: prepare managed boundary and localization release` (hash: TBD)
+
+Release preparation recorded 2026-05-15:
+
+- Current package version before release scripts: `1.2.261`.
+- Future release version prepared in release-facing docs: `1.2.262`.
+- `README.md` current-release banner updated to the managed Git boundary and Core message localization repair.
+- `CHANGELOG.md` release entry `1.2.262` added with verification summary.
 
 111. [TODO] `diagram-plan-lifecycle-repair.phase26.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed boundary and localization release`).
 112. [TODO] Git Commit: `chore: build managed boundary and localization release` (hash: TBD)
