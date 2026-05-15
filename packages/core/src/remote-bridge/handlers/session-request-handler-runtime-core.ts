@@ -2,7 +2,11 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
-import { buildDiagramModulesProductPartRepairPrompt } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
+import {
+  buildDiagramModulesManagedCommitBoundaryBlockedMessage as buildBoundaryBlockedMessage,
+  buildDiagramModulesManagedContinuationMessage as buildContinuationMessage,
+  buildDiagramModulesProductPartRepairPrompt,
+} from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
 import { DiagramModulesStagePlanController } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller";
 import {
   type DiagramModulesManagedValidationResult,
@@ -63,14 +67,7 @@ interface ClaudeTranslationServiceOwner {
 
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 
-interface DeferredRuntimeRef<TDependency> {
-  get(): TDependency;
-  set(value: TDependency): void;
-}
-
-const createDeferredRuntimeRef = <TDependency>(
-  name: string
-): DeferredRuntimeRef<TDependency> => {
+const createDeferredRuntimeRef = <TDependency>(name: string) => {
   let value: TDependency | undefined;
   return {
     get: () => {
@@ -81,7 +78,7 @@ const createDeferredRuntimeRef = <TDependency>(
       }
       return value;
     },
-    set: (nextValue) => {
+    set: (nextValue: TDependency) => {
       value = nextValue;
     },
   };
@@ -276,6 +273,7 @@ export const createSessionRequestHandlerRuntimeCore = (
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
       });
+      const messageDispatch = messageDispatchRef.get();
       if (!decision.valid) {
         const repairPrompt = buildDiagramModulesProductPartRepairPrompt({
           currentPartId: decision.currentPartId,
@@ -286,9 +284,7 @@ export const createSessionRequestHandlerRuntimeCore = (
           content: repairPrompt,
           tag: "managed-workflow-validation",
         });
-        await messageDispatchRef
-          .get()
-          .sendInternalMessage(sessionId, repairPrompt);
+        await messageDispatch.sendInternalMessage(sessionId, repairPrompt);
         return;
       }
       const planAdvance = await diagramStagePlan.commitAcceptedTurn({
@@ -299,20 +295,21 @@ export const createSessionRequestHandlerRuntimeCore = (
       });
       if (planAdvance.blocked) {
         eventMessages.appendCoreMessage(sessionId, {
-          content: `Core blocked Diagram Modules continuation before the managed commit boundary completed.\n\n${planAdvance.blocked.message}`,
+          content: buildBoundaryBlockedMessage(planAdvance.blocked.message),
           tag: "managed-workflow-validation",
         });
         return;
       }
       if (decision.nextAction === "dispatch_next_product_part") {
         eventMessages.appendCoreMessage(sessionId, {
-          content: `Core принял текущий Diagram Modules artifact. Следующий subturn: ${decision.currentPartId}.`,
+          content: buildContinuationMessage(decision.currentPartId),
           tag: "managed-workflow-continuation",
         });
         if (decision.nextPrompt) {
-          await messageDispatchRef
-            .get()
-            .sendInternalMessage(sessionId, decision.nextPrompt);
+          await messageDispatch.sendInternalMessage(
+            sessionId,
+            decision.nextPrompt
+          );
         }
         return;
       }

@@ -66,6 +66,10 @@ const DIAGRAM_PROJECT_MANAGER_COMMIT_RE =
   /docs: update diagram modules project-manager product part/u;
 const DIAGRAM_CONTINUATION_PROMPT_RE =
   /Materialize only Product Part "project-manager"/u;
+const DIAGRAM_CORE_CONTINUATION_MESSAGE_RE =
+  /Core accepted the current Diagram Modules artifact\.\nNext subturn: project-manager\./u;
+const DIAGRAM_CORE_REVIEW_MESSAGE_RE =
+  /Core completed Diagram Modules artifact validation/u;
 
 const readRuntimeContinuityCallbacks = (
   runtime: SessionRequestHandlerRuntimeCore
@@ -375,6 +379,10 @@ test("createSessionRequestHandlerRuntimeCore commits accepted Diagram Modules su
 
     assert.equal(sentMessages.length, 1);
     assert.match(sentMessages[0] ?? "", DIAGRAM_CONTINUATION_PROMPT_RE);
+    assert.match(
+      session.messages.at(-1)?.content ?? "",
+      DIAGRAM_CORE_CONTINUATION_MESSAGE_RE
+    );
     const afterIndexPlan = await readWorkspaceFile(
       workspaceRoot,
       "doc/TODO/stages/diagram-modules/todo-plan.md"
@@ -399,6 +407,10 @@ test("createSessionRequestHandlerRuntimeCore commits accepted Diagram Modules su
     assert.match(finalPlan, DIAGRAM_REVIEW_PHASE_RE);
     assert.match(finalPlan, DIAGRAM_REVIEW_TASK_STATE_RE);
     assert.equal(session.messages.at(-1)?.tag, "managed-workflow-user-review");
+    assert.match(
+      session.messages.at(-1)?.content ?? "",
+      DIAGRAM_CORE_REVIEW_MESSAGE_RE
+    );
 
     const subjects = await git(workspaceRoot, ["log", "--format=%s"]);
     assert.match(subjects, DIAGRAM_INDEX_COMMIT_RE);

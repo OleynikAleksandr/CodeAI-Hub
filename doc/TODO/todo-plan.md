@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "6863d2c1a",
+  "lastRecordedCommit": "daa8074d4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase23.localization-runtime.task1",
-  "expectedCommitMessage": "feat: translate core system dialog messages",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase23.diagram-core-messages.task1",
+  "expectedCommitMessage": "feat: localize diagram modules core workflow messages",
   "debt": {
-    "expectedCommitMessage": "feat: translate core system dialog messages",
-    "preCommitHead": "6863d2c1a",
+    "expectedCommitMessage": "feat: localize diagram modules core workflow messages",
+    "preCommitHead": "daa8074d4",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase23.localization-runtime.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase23.diagram-core-messages.task1"
   }
 }
 ```
@@ -467,10 +467,10 @@ Release VSIX evidence recorded 2026-05-15:
 99. [DONE] Git Commit: `feat: add messages-for-user session translation policy` (hash: 6863d2c1a)
 
 100. [DONE] `diagram-plan-lifecycle-repair.phase23.localization-runtime.task1` Route Core/system dialog messages through the session translation overlay while preserving source text, message ids, tags, and persisted translation patches (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/session-translation/session-translation-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`; expected commit: `feat: translate core system dialog messages`).
-101. [PENDING] Git Commit: `feat: translate core system dialog messages` (hash: TBD)
+101. [DONE] Git Commit: `feat: translate core system dialog messages` (hash: daa8074d4)
 
-102. [TODO] `diagram-plan-lifecycle-repair.phase23.diagram-core-messages.task1` Replace Diagram Modules Core visible status/blocker strings with localization-ready message builders and avoid blind translation of DSL paths, ids, headings, or embedded prompt instructions (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `feat: localize diagram modules core workflow messages`).
-103. [TODO] Git Commit: `feat: localize diagram modules core workflow messages` (hash: TBD)
+102. [DONE] `diagram-plan-lifecycle-repair.phase23.diagram-core-messages.task1` Replace Diagram Modules Core visible status/blocker strings with localization-ready message builders and avoid blind translation of DSL paths, ids, headings, or embedded prompt instructions (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `feat: localize diagram modules core workflow messages`).
+103. [PENDING] Git Commit: `feat: localize diagram modules core workflow messages` (hash: TBD)
 
 ## Phase 24 — Documentation And Tooling Verification (owner: Codex, updated: 2026-05-15)
 

@@ -132,11 +132,28 @@ export const buildDiagramModulesProductPartRepairPrompt = (
   ].join("\n");
 };
 
+export const buildDiagramModulesManagedCommitBoundaryBlockedMessage = (
+  details: string
+): string =>
+  [
+    "Core blocked Diagram Modules continuation before the managed commit boundary completed.",
+    "",
+    details,
+  ].join("\n");
+
+export const buildDiagramModulesManagedContinuationMessage = (
+  currentPartId: string | null
+): string =>
+  [
+    "Core accepted the current Diagram Modules artifact.",
+    `Next subturn: ${currentPartId ?? "none"}.`,
+  ].join("\n");
+
 export const buildDiagramModulesUserReviewMessage = (): string =>
   [
-    "Core завершил проверку Diagram Modules artifacts.",
+    "Core completed Diagram Modules artifact validation.",
     "",
-    "Все Product Part диаграммы созданы. Открыт этап пользовательского review: проверьте диаграммы по смыслу.",
+    "All Product Part diagrams have been created. User review is now open: check the diagrams for semantic correctness.",
     "",
-    "Если всё подходит, напишите «подтверждаю». Если нужны изменения, перечислите правки, которые нужно внести перед завершением шага Diagram Modules.",
+    'If everything is acceptable, reply with "подтверждаю". If changes are needed, list the corrections before Diagram Modules is completed.',
   ].join("\n");
