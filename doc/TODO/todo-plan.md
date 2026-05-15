@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "5574cc648",
+  "lastRecordedCommit": "26d102cb3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase7.release.task1",
-  "expectedCommitMessage": "docs: prepare managed workflow kernel runtime release",
+  "currentTaskId": "managed-orchestration-kernel.phase7.release.task2",
+  "expectedCommitMessage": "chore: build managed workflow kernel runtime release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed workflow kernel runtime release",
-    "preCommitHead": "5574cc648",
+    "expectedCommitMessage": "chore: build managed workflow kernel runtime release",
+    "preCommitHead": "26d102cb3",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase7.release.task1"
+    "taskId": "managed-orchestration-kernel.phase7.release.task2"
   }
 }
 ```
@@ -171,11 +171,25 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Release Preparation And Build
 
 42. [DONE] `managed-orchestration-kernel.phase7.release.task1` After explicit confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed workflow kernel runtime release`).
-43. [PENDING] Git Commit: `docs: prepare managed workflow kernel runtime release` (hash: TBD)
-44. [TODO] `managed-orchestration-kernel.phase7.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: generated package/version files + `doc/TODO/todo-plan.md`; expected commit: `chore: build managed workflow kernel runtime release`).
-45. [TODO] Git Commit: `chore: build managed workflow kernel runtime release` (hash: TBD)
+43. [DONE] Git Commit: `docs: prepare managed workflow kernel runtime release` (hash: 26d102cb3)
+44. [DONE] `managed-orchestration-kernel.phase7.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed workflow kernel runtime release`).
+45. [PENDING] Git Commit: `chore: build managed workflow kernel runtime release` (hash: TBD)
 46. [TODO] `managed-orchestration-kernel.phase7.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow kernel runtime release`).
 47. [TODO] Git Commit: `docs: record managed workflow kernel runtime release` (hash: TBD)
+
+`build-all.sh` evidence recorded 2026-05-15:
+
+- Command: `./scripts/build-all.sh --allow-dirty`; dirty input was limited to the active plan state advanced by `plan:commit`.
+- Unified version prepared: `1.2.256`.
+- Version files updated to `1.2.256`: root package, core, Claude, Codex, Gemini, localization, translation, initiatives, unified-session, and launcher manifest.
+- Release cache and `doc/tmp/releases` contain:
+  - `claude-module-1.2.256.tar.bz2`
+  - `codex-module-1.2.256.tar.bz2`
+  - `gemini-module-1.2.256.tar.bz2`
+  - `codeai-hub-core-darwin-arm64-1.2.256.tar.bz2`
+  - `CodeAIHubLauncher-macos-arm64-1.2.256.tar.bz2`
+  - `vscode-webview-1.2.256.tar.bz2`
+  - `project-manager-1.2.256.tar.bz2`
 
 ## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
