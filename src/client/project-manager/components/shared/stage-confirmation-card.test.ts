@@ -67,6 +67,18 @@ test("stage confirmation card keeps previous-step badge and override helper copy
   assert.equal(source.includes("isUsingInheritedProvider"), true);
 });
 
+test("stage confirmation card shows managed workflow preview status without acceptance controls", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("managedPreviewStage"), true);
+  assert.equal(
+    source.includes('"pm.confirmation_card.managed_preview_title"'),
+    true
+  );
+  assert.equal(source.includes("Managed Workflow Orchestration preview"), true);
+  assert.equal(source.includes("Accept contract"), false);
+});
+
 test("stage confirmation workflow includes technical root stage labels", async () => {
   const source = await readFile(WORKFLOW_SOURCE_PATH, "utf8");
 

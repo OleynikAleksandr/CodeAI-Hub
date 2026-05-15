@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "218fba394",
+  "lastRecordedCommit": "49f218020",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase5.pm.task1",
-  "expectedCommitMessage": "feat: show managed workflow orchestration preview in project manager",
+  "currentTaskId": "managed-orchestration-kernel.phase5.pm.task2",
+  "expectedCommitMessage": "test: cover managed workflow preview projection",
   "debt": {
-    "expectedCommitMessage": "feat: show managed workflow orchestration preview in project manager",
-    "preCommitHead": "218fba394",
+    "expectedCommitMessage": "test: cover managed workflow preview projection",
+    "preCommitHead": "49f218020",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase5.pm.task1"
+    "taskId": "managed-orchestration-kernel.phase5.pm.task2"
   }
 }
 ```
@@ -132,10 +132,10 @@
 34. [DONE] Git Commit: `feat: project managed workflow preview state` (hash: 218fba394)
 
 35. [DONE] `managed-orchestration-kernel.phase5.pm.task1` Update Project Manager technical stage surfaces to show the new orchestration preview boundary, current registered controller, and user-facing reason that step execution is waiting for the next step-specific release (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat: show managed workflow orchestration preview in project manager`).
-36. [PENDING] Git Commit: `feat: show managed workflow orchestration preview in project manager` (hash: TBD)
+36. [DONE] Git Commit: `feat: show managed workflow orchestration preview in project manager` (hash: 49f218020)
 
-37. [TODO] `managed-orchestration-kernel.phase5.pm.task2` Add UI/service tests for the visual control point: managed technical stages show new cluster status, no legacy accept/continue controls, and session restore prefers the existing boundary session (scope: `src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.tsx`; expected commit: `test: cover managed workflow preview projection`).
-38. [TODO] Git Commit: `test: cover managed workflow preview projection` (hash: TBD)
+37. [DONE] `managed-orchestration-kernel.phase5.pm.task2` Add UI/service tests for the visual control point: managed technical stages show new cluster status, no legacy accept/continue controls, and session restore prefers the existing boundary session (scope: `src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover managed workflow preview projection`).
+38. [PENDING] Git Commit: `test: cover managed workflow preview projection` (hash: TBD)
 
 ## Phase 6 — Tooling Verification (owner: Codex, updated: 2026-05-15)
 

@@ -5,6 +5,7 @@ import test from "node:test";
 import type { SessionSnapshot } from "../../../../types/session";
 import type { WorkspaceSnapshotPushPayload } from "../../core-stream-message-types";
 import { mergeHistoryIntoSnapshots, type SessionSnapshots } from "../../../ui/src/session/helpers";
+import { resolveRuntimeSessionFromWorkspaceSnapshot } from "./dialog-runtime-session-resolver";
 import { appendDedupedSessionMessageToSnapshots, appendOptimisticUserMessage } from "./session-message-dedupe";
 
 const CONTROLLER_SOURCE_PATH = path.resolve(
@@ -233,6 +234,29 @@ test("dialog restore refresh suppression treats snapshot-confirmed idle dialog a
   assert.equal(missingRuntime, true);
   assert.equal(liveRuntime, false);
   assert.equal(foreignWorkspace, false);
+});
+
+test("dialog runtime resolver prefers existing boundary runtime by preferred session id", () => {
+  const resolved = resolveRuntimeSessionFromWorkspaceSnapshot({
+    payload: createWorkspaceSnapshotPayload({
+      sessions: {
+        "managed-boundary-session": {
+          nodeId: "quality_gates",
+          providerSessionId: null,
+          turnState: "idle",
+          continuityLockActive: false,
+        },
+      },
+    }),
+    preferredSessionId: "managed-boundary-session",
+    dialogId: "quality-gates-dialog",
+    providerSessionId: null,
+  });
+
+  assert.deepEqual(resolved, {
+    runtimeSessionId: "managed-boundary-session",
+    hasRuntimeSession: true,
+  });
 });
 
 test("dialog snapshot replay reconciles optimistic stop-resend user bubble with canonical tail history", () => {

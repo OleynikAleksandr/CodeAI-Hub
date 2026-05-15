@@ -376,7 +376,7 @@ test("technical root stage starts use skeleton and quality gate input artifacts"
   ]);
 });
 
-test("startVirtualSimulation reuses active continuity session instead of sending a fresh draft prompt", async () => {
+test("technical stage start reuses active boundary session instead of sending a fresh draft prompt", async () => {
   installWindowStub();
   const { WorkflowStepStartService } = await import("./workflow-step-start-service");
 
@@ -386,16 +386,16 @@ test("startVirtualSimulation reuses active continuity session instead of sending
         continuity: {
           chains: [
             {
-              rootSessionId: "vs-root",
+              rootSessionId: "qg-root",
               workspaceSlug: "demo-workspace",
-              stage: "virtual_simulation",
+              stage: "quality_gates",
               updatedAt: "2026-03-18T11:00:00.000Z",
               segments: [
                 {
                   createdAt: "2026-03-18T11:00:00.000Z",
                   providerId: "codexCli",
-                  providerSessionId: "provider-vs",
-                  sessionId: "existing-vs-session",
+                  providerSessionId: "managed-preview-boundary",
+                  sessionId: "existing-qg-boundary-session",
                 },
               ],
             },
@@ -410,7 +410,7 @@ test("startVirtualSimulation reuses active continuity session instead of sending
   });
 
   let createdSessionId: string | null = null;
-  const sessionId = await service.startVirtualSimulation({
+  const sessionId = await service.startQualityGates({
     workspaceName: "Demo Workspace",
     workspacePath: "/tmp/demo",
     workspaceSlug: "demo-workspace",
@@ -420,8 +420,8 @@ test("startVirtualSimulation reuses active continuity session instead of sending
     },
   });
 
-  assert.equal(sessionId, "existing-vs-session");
-  assert.equal(createdSessionId, "existing-vs-session");
+  assert.equal(sessionId, "existing-qg-boundary-session");
+  assert.equal(createdSessionId, "existing-qg-boundary-session");
 });
 
 test("workflow starts persist selected model defaults for supported providers", async () => {
