@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "baa7d29af",
+  "lastRecordedCommit": "dad89d17f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase13.repair-prompt.task1",
-  "expectedCommitMessage": "fix: dispatch diagram modules repair prompts",
+  "currentTaskId": "diagram-runtime-repair.phase13.verify.task1",
+  "expectedCommitMessage": "docs: verify diagram modules scaffold repair dispatch fix",
   "debt": {
-    "expectedCommitMessage": "fix: dispatch diagram modules repair prompts",
-    "preCommitHead": "baa7d29af",
+    "expectedCommitMessage": "docs: verify diagram modules scaffold repair dispatch fix",
+    "preCommitHead": "dad89d17f",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase13.repair-prompt.task1"
+    "taskId": "diagram-runtime-repair.phase13.verify.task1"
   }
 }
 ```
@@ -306,12 +306,24 @@ Release package evidence recorded 2026-05-15:
 63. [DONE] Git Commit: `fix: create diagram modules managed scaffold on start` (hash: baa7d29af)
 
 64. [DONE] `diagram-runtime-repair.phase13.repair-prompt.task1` Fix Product Part rejection handling so invalid current artifacts produce a provider-visible repair prompt with the exact target/diagnostics instead of only a passive Core message, and align heading validation/prompt copy with the accepted Product Part contract (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: dispatch diagram modules repair prompts`).
-65. [PENDING] Git Commit: `fix: dispatch diagram modules repair prompts` (hash: TBD)
+65. [DONE] Git Commit: `fix: dispatch diagram modules repair prompts` (hash: dad89d17f)
 
 ### Stream: Verification
 
-66. [TODO] `diagram-runtime-repair.phase13.verify.task1` Run targeted Core verification for Diagram Modules scaffold creation, Product Part validation, and provider repair-prompt dispatch, then record exact evidence before asking for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules scaffold repair dispatch fix`).
-67. [TODO] Git Commit: `docs: verify diagram modules scaffold repair dispatch fix` (hash: TBD)
+66. [DONE] `diagram-runtime-repair.phase13.verify.task1` Run targeted Core verification for Diagram Modules scaffold creation, Product Part validation, and provider repair-prompt dispatch, then record exact evidence before asking for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules scaffold repair dispatch fix`).
+67. [PENDING] Git Commit: `docs: verify diagram modules scaffold repair dispatch fix` (hash: TBD)
+
+Verification evidence recorded 2026-05-15:
+
+- `npm run build:core` — PASS.
+- `node --test packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-runtime-core.test.js packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js` — PASS, 15 tests.
+- `npm run plan:validate` — PASS.
+
+Repair coverage:
+
+- `session:create` now installs the managed workspace scaffold before provider dispatch for `diagram_modules`: `doc/TODO/workspace.plan.md`, `doc/TODO/stages/diagram-modules/todo-plan.md`, `scripts/plan-orchestrator/plan-cli.mjs`, `.husky/pre-commit`, and plan scripts.
+- Invalid current Product Part validation now sends a provider-visible repair prompt with the exact target path, deterministic diagnostics, and required `# Product Part: <part-id>` heading instead of only a passive Core message.
+- Product Part continuation prompts now include the required heading contract before the agent writes each Product Part artifact.
 
 ## Phase 14 — Release Build Reconfirmation (owner: User, updated: 2026-05-15)
 
