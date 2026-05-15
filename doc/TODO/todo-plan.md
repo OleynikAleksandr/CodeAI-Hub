@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "e0d1a7795",
+  "lastRecordedCommit": "1f03e44f3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase17.plan.task1",
-  "expectedCommitMessage": "docs: plan diagram modules managed plan lifecycle repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase17.controller.task1",
+  "expectedCommitMessage": "feat: advance diagram modules managed stage plan",
   "debt": {
-    "expectedCommitMessage": "docs: plan diagram modules managed plan lifecycle repair",
-    "preCommitHead": "e0d1a7795",
+    "expectedCommitMessage": "feat: advance diagram modules managed stage plan",
+    "preCommitHead": "1f03e44f3",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase17.plan.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase17.controller.task1"
   }
 }
 ```
@@ -377,10 +377,10 @@ Release package evidence recorded 2026-05-15:
 ### Stream: Runtime Plan Ownership
 
 76. [DONE] `diagram-plan-lifecycle-repair.phase17.plan.task1` Document the `1.2.260` acceptance finding and open a repair stream for Core-owned Diagram Modules stage-plan advancement, managed commit boundaries, and user-review phase creation (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`; expected commit: `docs: plan diagram modules managed plan lifecycle repair`).
-77. [PENDING] Git Commit: `docs: plan diagram modules managed plan lifecycle repair` (hash: TBD)
+77. [DONE] Git Commit: `docs: plan diagram modules managed plan lifecycle repair` (hash: 1f03e44f3)
 
-78. [TODO] `diagram-plan-lifecycle-repair.phase17.controller.task1` Add a Core-owned Diagram Modules stage-plan controller that commits accepted Type A subturns, records real hashes, injects the next Product Part microtask, and opens the Phase 2 review task after the final Product Part (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `feat: advance diagram modules managed stage plan`).
-79. [TODO] Git Commit: `feat: advance diagram modules managed stage plan` (hash: TBD)
+78. [DONE] `diagram-plan-lifecycle-repair.phase17.controller.task1` Add a Core-owned Diagram Modules stage-plan controller that commits accepted Type A subturns, records real hashes, injects the next Product Part microtask, and opens the Phase 2 review task after the final Product Part (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `feat: advance diagram modules managed stage plan`).
+79. [PENDING] Git Commit: `feat: advance diagram modules managed stage plan` (hash: TBD)
 
 80. [TODO] `diagram-plan-lifecycle-repair.phase17.runtime.task1` Wire the stage-plan controller into Diagram Modules post-turn arbitration so continuation/user-review messages are sent only after the accepted subturn commit boundary succeeds; include a regression for index -> Product Part -> review plan movement (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules accepted subturns`).
 81. [TODO] Git Commit: `fix: commit diagram modules accepted subturns` (hash: TBD)
