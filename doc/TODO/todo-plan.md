@@ -5,18 +5,18 @@
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "ACTIVE",
-  "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
+  "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
-  "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "a22a6bb23",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase11.closeout.task1",
-  "expectedCommitMessage": "docs: close managed workflow kernel runtime scope",
+  "baseHead": "652a4b821",
+  "lastRecordedCommit": "652a4b821",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
+  "currentTaskId": "prelim-diagram-runtime.phase0.plan.task1",
+  "expectedCommitMessage": "docs: plan preliminary and diagram modules orchestration",
   "debt": {
-    "expectedCommitMessage": "docs: close managed workflow kernel runtime scope",
-    "preCommitHead": "a22a6bb23",
+    "expectedCommitMessage": "docs: plan preliminary and diagram modules orchestration",
+    "preCommitHead": "652a4b821",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase11.closeout.task1"
+    "taskId": "prelim-diagram-runtime.phase0.plan.task1"
   }
 }
 ```
@@ -24,278 +24,121 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md`
+  - `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
+  - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
   - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Quality_Gates_Managed_Orchestration_Planning_RU.md`
-  - `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`
-  - `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md`
 - Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
 ## Execution Rules
 
 - **Required reading before each implementation fix:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`.
-- Каждая подзадача затрагивает не более 3 файлов.
+- Каждая подзадача затрагивает не более 3 файлов, кроме явно указанной регистрационной задачи, где TypeScript export/registry/test должны быть атомарны для `knip`.
 - Каждая подзадача оформляется парой пунктов: реализация/изменения и отдельный `Git Commit: ...`.
 - Commit выполняется через `npm run plan:commit -- "<expected commit message>"`; hooks не обходить.
-- Цель scope: реализовать первый визуально проверяемый срез нового `Managed Workflow Orchestration` cluster: кластерный contract/facade, общий kernel, step modules skeleton, runtime boundary и Project Manager projection.
-- Этот scope не обязан довести `Diagram Modules`, `Application Skeleton`, `Quality Gates` до end-to-end выполнения. Его релиз должен показать, что новый кластер подключён к runtime/UI вместо старого legacy orchestration path, и готов принимать следующие step-specific plans.
-- Кластер обязан проектироваться расширяемым: новые managed steps подключаются через registry/controller contract, а не через отдельные ad hoc runtime ветки.
+- Цель scope: перевести первые три trunk steps на новый orchestrator-owned runtime contract: provider-direct `Description`, provider-direct `Virtual Simulation`, managed Type A/B/Persistent `Diagram Modules`.
+- `Application Skeleton` и `Quality Gates` остаются preview/fail-closed до следующих scope.
 - Release build нельзя выполнять до отдельного подтверждения пользователя на сборку релиза.
 
 ## Phase 0 — Scope Registration (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Active Plan
 
-1. [DONE] `managed-orchestration-kernel.phase0.plan.task1` Create this active implementation todo-plan for the first combined kernel + runtime-boundary release of the new Managed Workflow Orchestration cluster (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: start managed workflow orchestration kernel runtime plan`).
-2. [DONE] Git Commit: `docs: start managed workflow orchestration kernel runtime plan` (hash: 9393ade90)
+1. [DONE] `prelim-diagram-runtime.phase0.plan.task1` Create the planning source and active todo-plan for connecting Description, Virtual Simulation, and Diagram Modules to the new orchestration cluster; update Docs Index away from the archived kernel planning path (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: plan preliminary and diagram modules orchestration`).
+2. [PENDING] Git Commit: `docs: plan preliminary and diagram modules orchestration` (hash: TBD)
 
-## Phase 1 — Cluster Contract And Facade Boundary (owner: Codex, updated: 2026-05-15)
+## Phase 1 — Orchestrator Runtime Contract For The First Three Steps (owner: Codex, updated: 2026-05-15)
 
-### Stream: Architecture Contract
+### Stream: Public Contract And Step Policy
 
-3. [DONE] `managed-orchestration-kernel.phase1.contract.task1` Add the canonical Cluster SSOT for `Managed Workflow Orchestration`, including facade boundary, module map, extension contract for future steps, and runtime ownership rules (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: define managed workflow orchestration cluster contract`).
-4. [DONE] Git Commit: `docs: define managed workflow orchestration cluster contract` (hash: d27169b06)
+3. [TODO] `prelim-diagram-runtime.phase1.contract.task1` Extend public managed workflow contracts so registered steps can return provider-direct, preview-boundary, or managed-dispatch start decisions without callers importing controller internals (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: add managed workflow start decisions`).
+4. [TODO] Git Commit: `feat: add managed workflow start decisions` (hash: TBD)
 
-### Stream: Facade Skeleton
+5. [TODO] `prelim-diagram-runtime.phase1.steps.task1` Update the first three step controllers so Description and Virtual Simulation are explicit provider-direct controllers and Diagram Modules exposes managed dispatch metadata, required artifact targets, and phase table through the registry (scope: `packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts`; expected commit: `feat: describe first trunk step orchestration policies`).
+6. [TODO] Git Commit: `feat: describe first trunk step orchestration policies` (hash: TBD)
 
-5. [DONE] `managed-orchestration-kernel.phase1.facade.task1` Create the package-local cluster folder, public facade class, public contract types, and core entrypoint export without runtime side effects (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/index.ts`; expected commit: `feat: add managed workflow orchestration facade`).
-6. [DONE] Git Commit: `feat: add managed workflow orchestration facade` (hash: ad649651b)
+### Stream: Runtime Dispatch Boundary
 
-7. [DONE] `managed-orchestration-kernel.phase1.facade.task2` Add facade construction/unit tests that prove remote-bridge code can depend only on the facade and public contracts (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover managed workflow orchestration facade`).
-8. [DONE] Git Commit: `test: cover managed workflow orchestration facade` (hash: 5a783d3b3)
+7. [TODO] `prelim-diagram-runtime.phase1.runtime.task1` Route workflow session starts through the facade start decision: provider-direct steps continue existing provider transport, preview-only technical steps keep fail-closed Core message sessions, and Diagram Modules receives managed dispatch instead of preview placeholder (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `feat: route first trunk steps through managed workflow starts`).
+8. [TODO] Git Commit: `feat: route first trunk steps through managed workflow starts` (hash: TBD)
 
-## Phase 2 — Kernel State Model And Step Registry (owner: Codex, updated: 2026-05-15)
+## Phase 2 — Diagram Modules Managed Phase Execution (owner: Codex, updated: 2026-05-15)
 
-### Stream: Typed Kernel
+### Stream: Core-Gated Prompt And Snapshot
 
-9. [DONE] `managed-orchestration-kernel.phase2.types.task1` Add typed managed workflow events, snapshots, decisions, effects, and public type exports used by the pure state machine (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-events.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-snapshot.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts`; expected commit: `feat: add managed workflow orchestration state types`).
-10. [DONE] Git Commit: `feat: add managed workflow orchestration state types` (hash: 2fbe51047)
+9. [TODO] `prelim-diagram-runtime.phase2.prompt.task1` Add a Diagram Modules managed prompt builder that composes inline upstream artifacts, target paths, and no-Git/no-plan agent instructions for Phase 1 (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, packages/core/src/managed-workflow-orchestration/index.ts`; expected commit: `feat: add diagram modules managed prompt builder`).
+10. [TODO] Git Commit: `feat: add diagram modules managed prompt builder` (hash: TBD)
 
-11. [DONE] `managed-orchestration-kernel.phase2.state-machine.task1` Implement the pure `ManagedWorkflowStateMachine` with reusable Type A, Type B, persistent-return, and blocked-preview transitions but no file writes, provider calls, or Git commands (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-phase-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.test.ts`; expected commit: `feat: add managed workflow state machine kernel`).
-12. [DONE] Git Commit: `feat: add managed workflow state machine kernel` (hash: 2f02de26f)
+11. [TODO] `prelim-diagram-runtime.phase2.snapshot.task1` Persist and project Diagram Modules managed phase snapshot for Phase 1 start and existing-session restore so PM can reopen the same managed session instead of showing a start card (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: persist diagram modules managed phase snapshot`).
+12. [TODO] Git Commit: `feat: persist diagram modules managed phase snapshot` (hash: TBD)
 
-### Stream: Step Registry And Controllers
+### Stream: Validation And Review Transition
 
-13. [DONE] `managed-orchestration-kernel.phase2.registry.task1` Add the generic step-controller contract and registry that can register any number of future managed steps without changing runtime dispatch code (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts`; expected commit: `feat: add managed workflow step registry`).
-14. [DONE] Git Commit: `feat: add managed workflow step registry` (hash: b61d57c53)
+13. [TODO] `prelim-diagram-runtime.phase2.validation.task1` Connect Diagram Modules artifact validation to provider-turn completion through the new facade, using existing deterministic artifact/progress validators without reviving retired child-plan mutators (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: validate diagram modules managed turns`).
+14. [TODO] Git Commit: `feat: validate diagram modules managed turns` (hash: TBD)
 
-15. [DONE] `managed-orchestration-kernel.phase2.steps.task1` Add initial Diagram Modules and Application Skeleton step-controller modules that expose phase metadata and preview blocking decisions only (scope: `packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/application-skeleton-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts`; expected commit: `feat: register initial managed workflow step controllers`).
-16. [DONE] Git Commit: `feat: register initial managed workflow step controllers` (hash: a5a8b9aaa)
+15. [TODO] `prelim-diagram-runtime.phase2.review.task1` Add Type B user-intent classification for Diagram Modules review messages: accept opens persistent return, revision routes to provider, ambiguous text receives Core clarification (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-intent-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.test.ts`; expected commit: `feat: add diagram modules user review transitions`).
+16. [TODO] Git Commit: `feat: add diagram modules user review transitions` (hash: TBD)
 
-17. [DONE] `managed-orchestration-kernel.phase2.steps.task2` Add Quality Gates step-controller module and tests proving all three technical trunk steps are registered through the same extension contract (scope: `packages/core/src/managed-workflow-orchestration/steps/quality-gates-step-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.test.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts`; expected commit: `feat: register quality gates managed workflow controller`).
-18. [DONE] Git Commit: `feat: register quality gates managed workflow controller` (hash: 5914a30fd)
+## Phase 3 — Project Manager Projection And Regression Coverage (owner: Codex, updated: 2026-05-15)
 
-## Phase 3 — Store, Audit, Commit Boundary, And Recovery Kernel (owner: Codex, updated: 2026-05-15)
+### Stream: PM Surface
 
-### Stream: Durable Kernel Services
+17. [TODO] `prelim-diagram-runtime.phase3.pm.task1` Update Project Manager workflow state consumption so Description/Virtual Simulation remain provider-direct, Diagram Modules managed phases are visible, and Application Skeleton/Quality Gates remain preview/fail-closed (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `feat: show diagram modules managed orchestration state`).
+18. [TODO] Git Commit: `feat: show diagram modules managed orchestration state` (hash: TBD)
 
-19. [DONE] `managed-orchestration-kernel.phase3.store.task1` Implement a minimal `ManagedWorkflowPlanStore` abstraction for current-state persistence and read-only snapshot reconstruction without reviving retired child-plan mutation logic (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-ledger-types.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-plan-store.test.ts`; expected commit: `feat: add managed workflow plan store abstraction`).
-20. [DONE] Git Commit: `feat: add managed workflow plan store abstraction` (hash: 860c04bb4)
+19. [TODO] `prelim-diagram-runtime.phase3.tests.task1` Add regression coverage for the visible three-step flow: Description session visibility, Virtual Simulation start visibility, Diagram Modules managed session start, user-review acceptance, and persistent return open projection (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts`; expected commit: `test: cover first trunk orchestration flow`).
+20. [TODO] Git Commit: `test: cover first trunk orchestration flow` (hash: TBD)
 
-21. [DONE] `managed-orchestration-kernel.phase3.audit.task1` Add `ManagedWorkflowAuditLog` and tests for Core decisions, effects, blockers, provider-visible messages, and recovery actions (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow audit log`).
-22. [DONE] Git Commit: `feat: add managed workflow audit log` (hash: 7fcdcfa16)
-
-23. [DONE] `managed-orchestration-kernel.phase3.commit.task1` Add a fail-closed `ManagedWorkflowCommitTransaction` boundary that records intended commit decisions but refuses pseudo-hashes and does not yet perform step commits (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-commit-transaction.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-commit-transaction.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow commit transaction boundary`).
-24. [DONE] Git Commit: `feat: add managed workflow commit transaction boundary` (hash: 33c27f80e)
-
-25. [DONE] `managed-orchestration-kernel.phase3.recovery.task1` Add baseline `ManagedWorkflowRecoveryArbiter` decisions for wait-user, wait-provider, retry-provider, blocked, and panic-stop states (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-recovery-arbiter.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-recovery-arbiter.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-snapshot.ts`; expected commit: `feat: add managed workflow recovery arbiter baseline`).
-26. [DONE] Git Commit: `feat: add managed workflow recovery arbiter baseline` (hash: f42a5fb08)
-
-## Phase 4 — Runtime Boundary Integration (owner: Codex, updated: 2026-05-15)
-
-### Stream: Provider And Runtime Gateway
-
-27. [DONE] `managed-orchestration-kernel.phase4.provider-gateway.task1` Add provider-neutral `ManagedWorkflowProviderGateway` preview boundary that can produce visible Core messages but cannot yet dispatch step work to providers (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-provider-gateway.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-core-message.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-provider-gateway.test.ts`; expected commit: `feat: add managed workflow provider gateway preview`).
-28. [DONE] Git Commit: `feat: add managed workflow provider gateway preview` (hash: 697503b60)
-
-29. [DONE] `managed-orchestration-kernel.phase4.runtime.task1` Route managed technical stage starts through `ManagedWorkflowOrchestrationFacade` so Diagram Modules/Application Skeleton/Quality Gates use the new preview boundary instead of a generic fail-closed message (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts`; expected commit: `feat: route managed stage starts through orchestration facade`).
-30. [DONE] Git Commit: `feat: route managed stage starts through orchestration facade` (hash: c321a5067)
-
-31. [DONE] `managed-orchestration-kernel.phase4.runtime.task2` Persist the new Core-authored preview messages into the managed session/event feed so user-visible boundary diagnostics survive refresh/restart (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts`; expected commit: `feat: persist managed workflow core boundary messages`).
-32. [DONE] Git Commit: `feat: persist managed workflow core boundary messages` (hash: bf3ff3dbe)
-
-## Phase 5 — Project Manager Projection And Visual Control Point (owner: Codex, updated: 2026-05-15)
-
-### Stream: Read Model Projection
-
-33. [DONE] `managed-orchestration-kernel.phase5.readmodel.task1` Add read-only `ManagedWorkflowReadModelProjector` and expose preview status in workflow-state snapshots without commits/provider dispatch (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project managed workflow preview state`).
-34. [DONE] Git Commit: `feat: project managed workflow preview state` (hash: 218fba394)
-
-35. [DONE] `managed-orchestration-kernel.phase5.pm.task1` Update Project Manager technical stage surfaces to show the new orchestration preview boundary, current registered controller, and user-facing reason that step execution is waiting for the next step-specific release (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat: show managed workflow orchestration preview in project manager`).
-36. [DONE] Git Commit: `feat: show managed workflow orchestration preview in project manager` (hash: 49f218020)
-
-37. [DONE] `managed-orchestration-kernel.phase5.pm.task2` Add UI/service tests for the visual control point: managed technical stages show new cluster status, no legacy accept/continue controls, and session restore prefers the existing boundary session (scope: `src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover managed workflow preview projection`).
-38. [DONE] Git Commit: `test: cover managed workflow preview projection` (hash: 87f640717)
-
-## Phase 6 — Tooling Verification (owner: Codex, updated: 2026-05-15)
+## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Targeted Verification
 
-39. [DONE] `managed-orchestration-kernel.phase6.verify.task1` Run targeted core and Project Manager builds/tests for the new cluster boundary and record exact verification evidence in this plan; verify providerless boundary snapshot typing discovered during typecheck (scope: `doc/TODO/todo-plan.md, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `docs: verify managed workflow kernel runtime slice`).
-40. [DONE] Git Commit: `docs: verify managed workflow kernel runtime slice` (hash: 5574cc648)
+21. [TODO] `prelim-diagram-runtime.phase4.verify.task1` Run targeted Core and Project Manager builds/tests for the first three orchestrated steps and record exact evidence here before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify first trunk orchestration flow`).
+22. [TODO] Git Commit: `docs: verify first trunk orchestration flow` (hash: TBD)
 
 Expected verification commands:
 
 - `npm run build:core`
-- targeted `node --test` for new `packages/core/dist/managed-workflow-orchestration/*.test.js`
-- targeted workflow-state/session-request tests touched by the runtime boundary
-- `npm run build:web-client` or the current Project Manager build command used by this repo
-- `npm run typecheck:webview` if Project Manager/shared UI types are touched
+- targeted `node --test` for new `packages/core/dist/managed-workflow-orchestration/**/*.test.js`
+- targeted session/workflow-state handler tests touched by runtime dispatch
+- `npm run typecheck:webview`
+- targeted Project Manager tests touched by stage cards/session restore
+- `npm run build:webview`
 - `npm run plan:validate`
 
-Verification evidence recorded 2026-05-15:
-
-- `npm run build:core` — passed.
-- `node --test packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-state-machine.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-step-registry.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-plan-store.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-audit-log.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-commit-transaction.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-recovery-arbiter.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-provider-gateway.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js` — 27 tests passed.
-- `npm run build:project-manager` — passed.
-- `npx tsx --test src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts` — 26 tests passed.
-- `npm run typecheck:webview` — passed after correcting the boundary snapshot fixture to omit providerSessionId instead of using `null`.
-- `npm run plan:validate` — passed.
-
-## Phase 7 — Release Build (owner: Codex + User, updated: 2026-05-15)
+## Phase 5 — Release Build (owner: Codex + User, updated: 2026-05-15)
 
 ### Stream: Release Build Confirmation
 
-41. [DONE] `managed-orchestration-kernel.phase7.release-confirmation.task1` Ask the user for explicit release build confirmation after implementation and tooling verification pass; do not prepare release notes or run build scripts before confirmation (scope: user workflow; expected commit: not required). Result: confirmed by the user request to continue through release build without pauses.
+23. [TODO] `prelim-diagram-runtime.phase5.release-confirmation.task1` Ask the user for explicit release build confirmation after implementation and tooling verification pass; do not prepare release notes or run build scripts before confirmation (scope: user workflow; expected commit: not required).
 
 ### Stream: Release Preparation And Build
 
-42. [DONE] `managed-orchestration-kernel.phase7.release.task1` After explicit confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed workflow kernel runtime release`).
-43. [DONE] Git Commit: `docs: prepare managed workflow kernel runtime release` (hash: 26d102cb3)
-44. [DONE] `managed-orchestration-kernel.phase7.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed workflow kernel runtime release`).
-45. [DONE] Git Commit: `chore: build managed workflow kernel runtime release` (hash: 0bdb372cb)
-46. [DONE] `managed-orchestration-kernel.phase7.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed workflow kernel runtime release`).
-47. [DONE] Git Commit: `docs: record managed workflow kernel runtime release` (hash: c46d10caf)
+24. [TODO] `prelim-diagram-runtime.phase5.release.task1` After explicit confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare first trunk orchestration release`).
+25. [TODO] Git Commit: `docs: prepare first trunk orchestration release` (hash: TBD)
+26. [TODO] `prelim-diagram-runtime.phase5.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: version manifests/package files generated by release script + `doc/TODO/todo-plan.md`; expected commit: `chore: build first trunk orchestration release`).
+27. [TODO] Git Commit: `chore: build first trunk orchestration release` (hash: TBD)
+28. [TODO] `prelim-diagram-runtime.phase5.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record first trunk orchestration release`).
+29. [TODO] Git Commit: `docs: record first trunk orchestration release` (hash: TBD)
 
-`build-all.sh` evidence recorded 2026-05-15:
-
-- Command: `./scripts/build-all.sh --allow-dirty`; dirty input was limited to the active plan state advanced by `plan:commit`.
-- Unified version prepared: `1.2.256`.
-- Version files updated to `1.2.256`: root package, core, Claude, Codex, Gemini, localization, translation, initiatives, unified-session, and launcher manifest.
-- Release cache and `doc/tmp/releases` contain:
-  - `claude-module-1.2.256.tar.bz2`
-  - `codex-module-1.2.256.tar.bz2`
-  - `gemini-module-1.2.256.tar.bz2`
-  - `codeai-hub-core-darwin-arm64-1.2.256.tar.bz2`
-  - `CodeAIHubLauncher-macos-arm64-1.2.256.tar.bz2`
-  - `vscode-webview-1.2.256.tar.bz2`
-  - `project-manager-1.2.256.tar.bz2`
-
-`build-release.sh` evidence recorded 2026-05-15:
-
-- Command: `./scripts/build-release.sh --use-current-version --allow-dirty`; dirty input was limited to the active plan state advanced by `plan:commit`.
-- Release version used: `1.2.256`.
-- Required release checks passed: architecture guard, root type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication check, VSIX package surface verification.
-- VSIX produced: `codeai-hub-1.2.256.vsix` (47M on disk, script summary: 48M).
-- Release tarballs remain available in `doc/tmp/releases/` and `/Users/oleksandroliinyk/.codeai-hub/releases/`.
-
-## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+## Phase 6 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
 ### Stream: User Acceptance
 
-48. [DONE] `managed-orchestration-kernel.phase8.user-acceptance.task1` User installs the release and verifies the visible control point: technical stages route through the new `Managed Workflow Orchestration` cluster preview, existing main functions still work, no legacy managed continuation/acceptance behavior returns, and any bugs are reported as a follow-up stream instead of closing this scope (scope: user workflow; expected commit: not required). Result: v1.2.256 acceptance found a blocking UI/orchestration ownership regression. Description can complete and produce `Final_Description.md`, but Project Manager hides the Description session and Virtual Simulation start card behind a false read-only placeholder because `managedWorkflowPreview.active` is treated as a downstream lock signal instead of a visual preview signal.
+30. [TODO] `prelim-diagram-runtime.phase6.user-acceptance.task1` User installs the release and verifies: Description session is visible after submit, Virtual Simulation start card appears after Description completion, Diagram Modules starts a managed provider session instead of preview placeholder, Core opens user-led review after valid artifacts, and user acceptance opens persistent return state (scope: user workflow; expected commit: not required).
 
-## Phase 9 — Preliminary Workflow Orchestration Integration (owner: Codex, updated: 2026-05-15)
-
-### Stream: Scope Extension
-
-49. [DONE] `managed-orchestration-kernel.phase9.scope.task1` Convert the failed v1.2.256 user acceptance into a focused two-phase follow-up: integrate Description and Virtual Simulation into the new orchestrator as provider-direct preliminary steps, remove duplicated start/read-only decisions from UI/service code, then rebuild a retest release (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan preliminary workflow orchestration integration`).
-50. [DONE] Git Commit: `docs: plan preliminary workflow orchestration integration` (hash: c2d9637fc)
-
-### Stream: Step Contract And Registry
-
-51. [DONE] `managed-orchestration-kernel.phase9.contract.task1` Add explicit start policy metadata, create provider-direct preliminary controllers, register all five workflow trunk steps, and keep Core preview boundary decisions limited to technical `core_preview_boundary` stages. This task intentionally absorbs the former registry-only slice because `knip` requires new controller files to be live-referenced before commit (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-step-registry.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/steps/description-step-controller.ts, packages/core/src/managed-workflow-orchestration/steps/virtual-simulation-step-controller.ts`; expected commit: `feat: add preliminary workflow step controllers`).
-52. [DONE] Git Commit: `feat: add preliminary workflow step controllers` (hash: 074606317)
-
-### Stream: Read Model And State Ownership
-
-55. [DONE] `managed-orchestration-kernel.phase9.readmodel.task1` Project orchestrator-owned state for all five trunk steps, including provider-direct stages, technical boundary stages, and real read-only upstream stages computed from downstream workflow state instead of preview availability (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project preliminary workflow orchestration state`).
-56. [DONE] Git Commit: `feat: project preliminary workflow orchestration state` (hash: 62fc7a339)
-
-### Stream: Project Manager Consumption
-
-57. [DONE] `managed-orchestration-kernel.phase9.pm.task1` Replace Project Manager's local preview-as-lock predicate with the orchestrator read-only projection so Description sessions and Virtual Simulation start cards stay visible until a real downstream technical step starts (scope: `src/client/project-manager/services/workflow-state-client.ts, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `fix: consume orchestrator read-only projection`).
-58. [DONE] Git Commit: `fix: consume orchestrator read-only projection` (hash: a3bf48b96)
-59. [DONE] `managed-orchestration-kernel.phase9.pm.task2` Route preliminary step start metadata and existing-session lookup through orchestrator-owned stage metadata while preserving current Description/Virtual Simulation provider-direct session transport (scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/workflow-stage-tool-routing.ts, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/services/workflow-step-start-service.ts`; expected commit: `feat: route preliminary step starts through orchestrator metadata`).
-60. [DONE] Git Commit: `feat: route preliminary step starts through orchestrator metadata` (hash: c80eb60b4)
-
-### Stream: Regression Coverage
-
-61. [DONE] `managed-orchestration-kernel.phase9.tests.task1` Add Project Manager regression coverage proving completed Description still shows/restores its session, Virtual Simulation card appears after Description completion, and technical stages still show the managed preview boundary (scope: `src/client/project-manager/components/layout/main-area-panel-content.test.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover preliminary workflow orchestration visibility`).
-62. [DONE] Git Commit: `test: cover preliminary workflow orchestration visibility` (hash: 327c9274a)
-63. [DONE] `managed-orchestration-kernel.phase9.tests.task2` Add Core regression coverage proving Description and Virtual Simulation are registered provider-direct steps that do not create Core preview boundary sessions, while technical stages still do (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `test: cover provider-direct preliminary step policy`).
-64. [DONE] Git Commit: `test: cover provider-direct preliminary step policy` (hash: 745fb9189)
-
-## Phase 10 — Release Build For Preliminary Workflow Retest (owner: Codex + User, updated: 2026-05-15)
-
-### Stream: Tooling Verification
-
-65. [DONE] `managed-orchestration-kernel.phase10.verify.task1` Run targeted Core and Project Manager builds/tests for the preliminary-step integration and record exact evidence before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify preliminary workflow orchestration fix`).
-
-Verification evidence recorded 2026-05-15:
-
-- `npm run build:core` — passed.
-- `node --test packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js` — passed, 8/8 tests.
-- `npm run typecheck:webview` — passed.
-- `npx tsx --test src/client/project-manager/components/layout/main-area-panel-content.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts` — passed, 18/18 tests.
-- `npm run build:webview` — passed.
-66. [DONE] Git Commit: `docs: verify preliminary workflow orchestration fix` (hash: 106edf5df)
-
-### Stream: Release Preparation And Build
-
-67. [DONE] `managed-orchestration-kernel.phase10.release.task1` Update release-facing docs for the future retest version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare preliminary workflow orchestration release`).
-
-Release preparation target recorded 2026-05-15:
-
-- Current package version before release scripts: `1.2.256`.
-- Future release prepared in `README.md` and `CHANGELOG.md`: `1.2.257`.
-- Release focus: preliminary `Description` and `Virtual Simulation` provider-direct routing through managed workflow metadata, plus `readOnlyStages` projection for Project Manager.
-68. [DONE] Git Commit: `docs: prepare preliminary workflow orchestration release` (hash: 998cf4207)
-69. [DONE] `managed-orchestration-kernel.phase10.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md, package-lock.json, package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json`; expected commit: `chore: build preliminary workflow orchestration release`).
-
-Build-all evidence recorded 2026-05-15:
-
-- Command: `./scripts/build-all.sh --allow-dirty`; dirty input was limited to active plan state advanced by the previous `plan:commit`.
-- Unified version produced: `1.2.257`.
-- Generated release tarballs copied to `doc/tmp/releases/` and `/Users/oleksandroliinyk/.codeai-hub/releases/`:
-  - `claude-module-1.2.257.tar.bz2`
-  - `codex-module-1.2.257.tar.bz2`
-  - `gemini-module-1.2.257.tar.bz2`
-  - `codeai-hub-core-darwin-arm64-1.2.257.tar.bz2`
-  - `CodeAIHubLauncher-macos-arm64-1.2.257.tar.bz2`
-  - `vscode-webview-1.2.257.tar.bz2`
-  - `project-manager-1.2.257.tar.bz2`
-70. [DONE] Git Commit: `chore: build preliminary workflow orchestration release` (hash: de99b7938)
-71. [DONE] `managed-orchestration-kernel.phase10.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record preliminary workflow orchestration release`).
-
-Release build evidence recorded 2026-05-15:
-
-- Command: `./scripts/build-release.sh --use-current-version --allow-dirty`; dirty input was limited to active plan state advanced by the previous `plan:commit`.
-- Release version used: `1.2.257`.
-- Required release checks passed: architecture guard, root type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication check, VSIX package surface verification.
-- VSIX produced: `codeai-hub-1.2.257.vsix` (47M on disk, script summary: 48M).
-- Full release tarballs are available in `doc/tmp/releases/` and `/Users/oleksandroliinyk/.codeai-hub/releases/`.
-- Expected package-size warning remains: VSIX is over 20MB because it includes runtime release assets.
-72. [DONE] Git Commit: `docs: record preliminary workflow orchestration release` (hash: a22a6bb23)
-
-## Phase 11 — User Workflow Acceptance And Scope Closeout (owner: User + Codex, updated: 2026-05-15)
-
-### Stream: User Acceptance
-
-73. [DONE] `managed-orchestration-kernel.phase11.user-acceptance.task1` User installs the retest release and verifies Description session visibility, Virtual Simulation start card visibility after Description completion, technical preview boundary behavior for Diagram Modules/Application Skeleton/Quality Gates, and absence of retired managed continuation behavior (scope: user workflow; expected commit: not required). Result: User accepted release 1.2.257 as OK without additional retest; proceed to next orchestrated-step implementation cycle.
+## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-74. [DONE] `managed-orchestration-kernel.phase11.closeout.task1` Archive this implementation plan after explicit user acceptance and leave the repository ready for the next step-specific orchestration plan, likely Diagram Modules end-to-end (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow kernel runtime scope`).
-75. [PENDING] Git Commit: `docs: close managed workflow kernel runtime scope` (hash: TBD)
-76. [TODO] `managed-orchestration-kernel.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+31. [TODO] `prelim-diagram-runtime.phase7.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close first trunk orchestration scope`).
+32. [TODO] Git Commit: `docs: close first trunk orchestration scope` (hash: TBD)
+
