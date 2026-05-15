@@ -1,3 +1,18 @@
+# Plan Closeout: managed-workflow-orchestration-kernel-runtime-2026-05-15
+
+**Created:** 2026-05-15T08:07:56.513Z
+**Acceptance:** User accepted release 1.2.257 as OK without additional retest and requested next orchestrated-step implementation cycle.
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/managed-orchestration-rewrite
+**Current Task:** managed-orchestration-kernel.phase11.closeout.task1
+**Expected Commit:** docs: close managed workflow kernel runtime scope
+**Last Recorded Commit:** a22a6bb23
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md",
   "currentTaskId": "managed-orchestration-kernel.phase11.closeout.task1",
   "expectedCommitMessage": "docs: close managed workflow kernel runtime scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed workflow kernel runtime scope",
-    "preCommitHead": "a22a6bb23",
-    "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase11.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -296,6 +306,7 @@ Release build evidence recorded 2026-05-15:
 
 ### Stream: Close Plan After User Acceptance
 
-74. [DONE] `managed-orchestration-kernel.phase11.closeout.task1` Archive this implementation plan after explicit user acceptance and leave the repository ready for the next step-specific orchestration plan, likely Diagram Modules end-to-end (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow kernel runtime scope`).
-75. [PENDING] Git Commit: `docs: close managed workflow kernel runtime scope` (hash: TBD)
+74. [IN_PROGRESS] `managed-orchestration-kernel.phase11.closeout.task1` Archive this implementation plan after explicit user acceptance and leave the repository ready for the next step-specific orchestration plan, likely Diagram Modules end-to-end (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow kernel runtime scope`).
+75. [TODO] Git Commit: `docs: close managed workflow kernel runtime scope` (hash: TBD)
 76. [TODO] `managed-orchestration-kernel.phase11.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+````
