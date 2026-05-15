@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "97fa011ea",
+  "lastRecordedCommit": "33c967bc3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase32.release.task1",
-  "expectedCommitMessage": "docs: prepare release 264 marker boundary fix",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase32.release.task2",
+  "expectedCommitMessage": "chore: build release 264 marker boundary fix",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 264 marker boundary fix",
-    "preCommitHead": "97fa011ea",
+    "expectedCommitMessage": "chore: build release 264 marker boundary fix",
+    "preCommitHead": "33c967bc3",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase32.release.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase32.release.task2"
   }
 }
 ```
@@ -622,7 +622,7 @@ Marker boundary repair verification evidence recorded 2026-05-15:
 ### Stream: Release Preparation And Build
 
 135. [DONE] `diagram-plan-lifecycle-repair.phase32.release.task1` After explicit user release-build confirmation, update release-facing docs for the future marker-boundary fix before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 264 marker boundary fix`).
-136. [PENDING] Git Commit: `docs: prepare release 264 marker boundary fix` (hash: TBD)
+136. [DONE] Git Commit: `docs: prepare release 264 marker boundary fix` (hash: 33c967bc3)
 
 Release 264 preparation target:
 
@@ -631,8 +631,15 @@ Release 264 preparation target:
 - Future release version prepared in release-facing docs: `1.2.264`.
 - Release payload: root workflow marker completion semantics for `Description`, `Virtual Simulation`, and `Diagram Modules`.
 
-137. [TODO] `diagram-plan-lifecycle-repair.phase32.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 264 marker boundary fix`).
-138. [TODO] Git Commit: `chore: build release 264 marker boundary fix` (hash: TBD)
+137. [DONE] `diagram-plan-lifecycle-repair.phase32.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 264 marker boundary fix`).
+138. [PENDING] Git Commit: `chore: build release 264 marker boundary fix` (hash: TBD)
+
+Release build-all evidence recorded 2026-05-15:
+
+- `./scripts/build-all.sh --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Unified generated version: `1.2.264`.
+- Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.264.tar.bz2`, `codex-module-1.2.264.tar.bz2`, `gemini-module-1.2.264.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.264.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.264.tar.bz2`, `vscode-webview-1.2.264.tar.bz2`, `project-manager-1.2.264.tar.bz2`.
+- Updated package versions and managed release manifests to `1.2.264`.
 
 139. [TODO] `diagram-plan-lifecycle-repair.phase32.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 264 marker boundary handoff`).
 140. [TODO] Git Commit: `docs: record release 264 marker boundary handoff` (hash: TBD)
