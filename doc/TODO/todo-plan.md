@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "b9be3b90f",
+  "lastRecordedCommit": "c35e144e6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase28.cosmetic-plan.task1",
-  "expectedCommitMessage": "docs: open release 262 cosmetic repair stream",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase28.sidebar-marker.task1",
+  "expectedCommitMessage": "fix: keep diagram modules marker active until review",
   "debt": {
-    "expectedCommitMessage": "docs: open release 262 cosmetic repair stream",
-    "preCommitHead": "b9be3b90f",
+    "expectedCommitMessage": "fix: keep diagram modules marker active until review",
+    "preCommitHead": "c35e144e6",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase28.cosmetic-plan.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase28.sidebar-marker.task1"
   }
 }
 ```
@@ -541,10 +541,10 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Sidebar Marker And Core Message Card
 
 116. [DONE] `diagram-plan-lifecycle-repair.phase28.cosmetic-plan.task1` Record the release 262 cosmetic findings and open bounded implementation streams before scope closeout (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open release 262 cosmetic repair stream`).
-117. [PENDING] Git Commit: `docs: open release 262 cosmetic repair stream` (hash: TBD)
+117. [DONE] Git Commit: `docs: open release 262 cosmetic repair stream` (hash: c35e144e6)
 
-118. [TODO] `diagram-plan-lifecycle-repair.phase28.sidebar-marker.task1` Keep the Diagram Modules sidebar marker orange while Product Part turns are still in progress and switch it to green only when Core opens the user-review phase (scope: `packages/core/src/remote-bridge/handlers/workflow-state-diagram-modules-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`; expected commit: `fix: keep diagram modules marker active until review`).
-119. [TODO] Git Commit: `fix: keep diagram modules marker active until review` (hash: TBD)
+118. [DONE] `diagram-plan-lifecycle-repair.phase28.sidebar-marker.task1` Keep the Diagram Modules sidebar marker orange while Product Part turns are still in progress and switch it to green only when Core opens the user-review phase (scope: `src/client/project-manager/components/layout/workspace-tree-model.ts, src/client/project-manager/components/layout/workspace-tree-model.test.ts`; expected commit: `fix: keep diagram modules marker active until review`).
+119. [PENDING] Git Commit: `fix: keep diagram modules marker active until review` (hash: TBD)
 
 120. [TODO] `diagram-plan-lifecycle-repair.phase28.system-card.task1` Render Core/system dialog messages in their own subtle card with symmetric dialog-panel side offsets matching the larger assistant-card side offset (scope: `src/client/ui/src/session/dialog-panel.tsx, media/session-view.css, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `fix: style core system dialog messages as cards`).
 121. [TODO] Git Commit: `fix: style core system dialog messages as cards` (hash: TBD)

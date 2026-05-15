@@ -54,8 +54,8 @@ export const resolveTreeStatus = (
       ? "outdated"
       : blocked || status === "invalid"
         ? "blocked"
-        : hasArtifact || status === "completed"
-          ? "active"
-          : status === "in_progress"
-            ? "progress"
+        : status === "in_progress"
+          ? "progress"
+          : hasArtifact || status === "completed"
+            ? "active"
             : "todo";
