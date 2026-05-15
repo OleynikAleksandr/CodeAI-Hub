@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "d2e0a1459",
+  "lastRecordedCommit": "6a62b6fa1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase42.index-dirty.task3",
-  "expectedCommitMessage": "fix: ignore nontechnical workflow metadata in dirty gate",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase42.verify.task1",
+  "expectedCommitMessage": "docs: verify diagram modules index dirty repair",
   "debt": {
-    "expectedCommitMessage": "fix: ignore nontechnical workflow metadata in dirty gate",
-    "preCommitHead": "d2e0a1459",
+    "expectedCommitMessage": "docs: verify diagram modules index dirty repair",
+    "preCommitHead": "6a62b6fa1",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase42.index-dirty.task3"
+    "taskId": "diagram-plan-lifecycle-repair.phase42.verify.task1"
   }
 }
 ```
@@ -816,12 +816,19 @@ Release VSIX evidence recorded 2026-05-15:
 175. [DONE] Git Commit: `fix: commit diagram modules index status updates` (hash: d2e0a1459)
 
 176. [DONE] `diagram-plan-lifecycle-repair.phase42.index-dirty.task3` Filter provider-direct upstream artifacts, continuity state, workspace runtime state, and `.DS_Store` files out of technical-stage dirty gating so only real technical-stage rewrite dirt can block Application Skeleton (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts`; expected commit: `fix: ignore nontechnical workflow metadata in dirty gate`).
-177. [PENDING] Git Commit: `fix: ignore nontechnical workflow metadata in dirty gate` (hash: TBD)
+177. [DONE] Git Commit: `fix: ignore nontechnical workflow metadata in dirty gate` (hash: 6a62b6fa1)
 
 ### Stream: Verification
 
-178. [TODO] `diagram-plan-lifecycle-repair.phase42.verify.task1` Run targeted Core tests/build for Diagram Modules index commit coverage and technical-stage dirty-gate metadata filtering, then record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules index dirty repair`).
-179. [TODO] Git Commit: `docs: verify diagram modules index dirty repair` (hash: TBD)
+178. [DONE] `diagram-plan-lifecycle-repair.phase42.verify.task1` Run targeted Core tests/build for Diagram Modules index commit coverage and technical-stage dirty-gate metadata filtering, then record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules index dirty repair`).
+
+Verification evidence recorded 2026-05-15:
+- `npm run build:core` — PASS.
+- `node --test packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.js packages/core/dist/remote-bridge/handlers/technical-stage-dirty-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-runtime-core.test.js` — PASS (16 tests).
+- `npm run plan:validate` — PASS.
+- Covered behavior: accepted Diagram Modules Product Part commits now stage the aggregate `product-parts.index.md` together with the Product Part artifact, so Product Part status changes from `planned` to `generated` cannot leave the Diagram Modules aggregate dirty at the user-review handoff.
+- Covered behavior: technical-stage dirty gating now filters nontechnical workflow/runtime metadata (`.DS_Store`, continuity files, provider-direct Description and Virtual Simulation artifacts, workspace workflow state, and managed ledgers) so `Application Skeleton` is blocked only by real technical-stage content dirt.
+179. [PENDING] Git Commit: `docs: verify diagram modules index dirty repair` (hash: TBD)
 
 ## Phase 43 — Release Build Gate For Index Dirty Repair (owner: Codex + User, updated: 2026-05-15)
 
