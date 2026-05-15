@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import type { CoreConfig } from "../../config";
@@ -43,6 +46,11 @@ interface RuntimeContinuityCallbackOwner {
 }
 
 const noop = (): void => undefined;
+const DIAGRAM_REPAIR_PROMPT_RE =
+  /Core rejected the current Diagram Modules subturn/u;
+const DIAGRAM_REPAIR_TARGET_RE =
+  /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md/u;
+const DIAGRAM_REPAIR_HEADING_RE = /# Product Part: project-manager/u;
 
 const readRuntimeContinuityCallbacks = (
   runtime: SessionRequestHandlerRuntimeCore
@@ -87,6 +95,8 @@ const createRuntimeCallbacks =
 
 const createRuntimeDependencies = (options: {
   readonly events: BridgeEvent[];
+  readonly providerAdapter?: ProviderAdapter;
+  readonly providerSessions?: Map<string, unknown>;
   readonly sessionManager: SessionManager;
 }): SessionRequestHandlerRuntimeDependencies =>
   ({
@@ -98,11 +108,15 @@ const createRuntimeDependencies = (options: {
     continuityRootBySessionId: new Map(),
     logger: new Logger("error"),
     providerRegistry: {
-      getAdapter: () => undefined,
+      getAdapter: (providerId: string) =>
+        providerId === "codexCli" ? options.providerAdapter : undefined,
     } as unknown as ProviderRegistry,
-    providerSessions: new Map(),
+    providerSessions: options.providerSessions ?? new Map(),
     sessionManager: options.sessionManager,
-    sessionStorage: {},
+    sessionStorage: {
+      appendMessage: async () => undefined,
+      appendMessageTranslation: async () => undefined,
+    },
     stateBroadcaster: noop,
   }) as unknown as SessionRequestHandlerRuntimeDependencies;
 
@@ -172,6 +186,86 @@ test("createSessionRequestHandlerRuntimeCore wires deferred continuity callbacks
   });
 
   assert.equal(createdSession, null);
+});
+
+test("createSessionRequestHandlerRuntimeCore dispatches repair prompt for invalid Diagram Modules Product Part", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codeai-runtime-core-diagram-repair-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sentMessages: string[] = [];
+  const events: BridgeEvent[] = [];
+  const sessionManager = new SessionManager();
+  const providerSessions = new Map<string, unknown>();
+  const adapter = {
+    sendMessage: (_providerSessionId: string, content: string) => {
+      sentMessages.push(content);
+      return Promise.resolve();
+    },
+  } as unknown as ProviderAdapter;
+
+  try {
+    const diagramRoot = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      workspaceSlug,
+      "diagram_modules"
+    );
+    await mkdir(path.join(diagramRoot, "product-parts"), { recursive: true });
+    await writeFile(
+      path.join(diagramRoot, "product-parts.index.md"),
+      [
+        "# Product Parts",
+        "",
+        "1. `project-manager` - `.codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md`",
+      ].join("\n"),
+      "utf8"
+    );
+    await writeFile(
+      path.join(diagramRoot, "product-parts/project-manager.md"),
+      "# Project Manager\n\nMissing the required Product Part heading.\n",
+      "utf8"
+    );
+
+    const session = sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      "provider-session-1",
+      { initiativeSlug: workspaceSlug, stage: "diagram_modules" }
+    );
+    providerSessions.set(session.id, {
+      providerId: "codexCli",
+      providerSessionId: "provider-session-1",
+      unsubscribe: noop,
+    });
+    const runtime = createSessionRequestHandlerRuntimeCore(
+      createRuntimeDependencies({
+        events,
+        providerAdapter: adapter,
+        providerSessions,
+        sessionManager,
+      }),
+      {
+        clearPendingState: noop,
+        clearTokenUsageSnapshot: noop,
+      }
+    );
+
+    runtime.providerEventRouter.handleProviderEvent(session.id, {
+      eventId: "invalid-product-part",
+      type: "turn_completed",
+    });
+
+    await new Promise<void>((resolve) => setTimeout(resolve, 20));
+
+    assert.equal(sentMessages.length, 1);
+    assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_PROMPT_RE);
+    assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_TARGET_RE);
+    assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_HEADING_RE);
+    assert.equal(session.messages.at(-1)?.tag, "managed-workflow-validation");
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
 });
 
 test("createSessionRequestHandlerRuntime wires rollover bridge after construction", () => {

@@ -17,6 +17,12 @@ export interface DiagramModulesProductPartContinuationPromptOptions {
   readonly expectedArtifactPath: string;
 }
 
+export interface DiagramModulesProductPartRepairPromptOptions {
+  readonly currentPartId: string | null;
+  readonly diagnostics: readonly string[];
+  readonly workspaceSlug: string;
+}
+
 const buildTargetPaths = (workspaceSlug: string): readonly string[] => [
   `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
   `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/<part-id>.md`,
@@ -88,6 +94,7 @@ export const buildDiagramModulesProductPartContinuationPrompt = (
     `\`${options.expectedArtifactPath}\``,
     "",
     `Materialize only Product Part "${options.currentPartId}".`,
+    `Required Product Part heading: \`# Product Part: ${options.currentPartId}\`.`,
     options.acceptedPartIds.length > 0
       ? `Already accepted Product Parts: ${options.acceptedPartIds.join(", ")}.`
       : "No Product Part artifacts have been accepted yet.",
@@ -96,6 +103,34 @@ export const buildDiagramModulesProductPartContinuationPrompt = (
     "Do not continue to the next Product Part by yourself.",
     "When ready, stop with a content-readiness note for Core validation.",
   ].join("\n");
+
+export const buildDiagramModulesProductPartRepairPrompt = (
+  options: DiagramModulesProductPartRepairPromptOptions
+): string => {
+  const expectedArtifactPath = options.currentPartId
+    ? `.codeai-hub/${options.workspaceSlug}/diagram_modules/product-parts/${options.currentPartId}.md`
+    : `.codeai-hub/${options.workspaceSlug}/diagram_modules/product-parts.index.md`;
+  return [
+    "Core rejected the current Diagram Modules subturn.",
+    "Repair only the artifact named below and then stop for Core validation.",
+    "",
+    "Target artifact:",
+    `\`${expectedArtifactPath}\``,
+    "",
+    "Diagnostics:",
+    ...options.diagnostics.map((diagnostic) => `- ${diagnostic}`),
+    "",
+    ...(options.currentPartId
+      ? [
+          "Required Product Part heading:",
+          `\`# Product Part: ${options.currentPartId}\``,
+          "",
+        ]
+      : []),
+    "Do not edit accepted Product Parts.",
+    "Do not continue to the next Product Part by yourself.",
+  ].join("\n");
+};
 
 export const buildDiagramModulesUserReviewMessage = (): string =>
   [

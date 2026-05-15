@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
+import { buildDiagramModulesProductPartRepairPrompt } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
 import { validateDiagramModulesManagedArtifacts } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
@@ -123,17 +124,6 @@ const persistDiagramModulesManagedDecision = async (params: {
     "utf8"
   );
 };
-
-const buildDiagramModulesRepairMessage = (
-  diagnostics: readonly string[]
-): string =>
-  [
-    "Core проверил текущий Diagram Modules subturn и нашёл ошибки.",
-    "",
-    ...diagnostics.map((diagnostic) => `- ${diagnostic}`),
-    "",
-    "Исправьте только текущий Diagram Modules artifact и остановитесь для повторной Core-проверки.",
-  ].join("\n");
 
 export const createSessionRequestHandlerRuntimeCore = (
   options: SessionRequestHandlerRuntimeDependencies,
@@ -293,10 +283,18 @@ export const createSessionRequestHandlerRuntimeCore = (
         workspaceSlug: session.initiativeSlug,
       });
       if (!decision.valid) {
+        const repairPrompt = buildDiagramModulesProductPartRepairPrompt({
+          currentPartId: decision.currentPartId,
+          diagnostics: decision.diagnostics,
+          workspaceSlug: session.initiativeSlug,
+        });
         eventMessages.appendCoreMessage(sessionId, {
-          content: buildDiagramModulesRepairMessage(decision.diagnostics),
+          content: repairPrompt,
           tag: "managed-workflow-validation",
         });
+        await messageDispatchRef
+          .get()
+          .sendInternalMessage(sessionId, repairPrompt);
         return;
       }
       if (decision.nextAction === "dispatch_next_product_part") {
