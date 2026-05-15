@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "682f39f8c",
+  "lastRecordedCommit": "1f10dde37",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase11.release.task3",
-  "expectedCommitMessage": "docs: record diagram modules continuation repair release",
+  "currentTaskId": "diagram-runtime-repair.phase13.plan.task1",
+  "expectedCommitMessage": "docs: plan diagram modules scaffold repair dispatch fix",
   "debt": {
-    "expectedCommitMessage": "docs: record diagram modules continuation repair release",
-    "preCommitHead": "682f39f8c",
+    "expectedCommitMessage": "docs: plan diagram modules scaffold repair dispatch fix",
+    "preCommitHead": "1f10dde37",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase11.release.task3"
+    "taskId": "diagram-runtime-repair.phase13.plan.task1"
   }
 }
 ```
@@ -277,7 +277,7 @@ Build-all evidence recorded 2026-05-15:
 - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.259.tar.bz2`, `codex-module-1.2.259.tar.bz2`, `gemini-module-1.2.259.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.259.tar.bz2`, `vscode-webview-1.2.259.tar.bz2`, `project-manager-1.2.259.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.259.tar.bz2`.
 
 57. [DONE] `diagram-runtime-repair.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules continuation repair release`).
-58. [PENDING] Git Commit: `docs: record diagram modules continuation repair release` (hash: TBD)
+58. [DONE] Git Commit: `docs: record diagram modules continuation repair release` (hash: 1f10dde37)
 
 Release package evidence recorded 2026-05-15:
 
@@ -291,11 +291,56 @@ Release package evidence recorded 2026-05-15:
 
 ### Stream: User Acceptance
 
-59. [TODO] `diagram-runtime-repair.phase12.user-acceptance.task1` User installs the release and verifies: Description and Virtual Simulation still pass, Diagram Modules start creates the managed workspace scaffold, Core dispatches Product Part continuation prompts after provider turns, and Core opens User-Led Review only after the last Product Part is accepted (scope: user workflow; expected commit: not required).
+59. [BLOCKED] `diagram-runtime-repair.phase12.user-acceptance.task1` User installs the release and verifies: Description and Virtual Simulation still pass, Diagram Modules start creates the managed workspace scaffold, Core dispatches Product Part continuation prompts after provider turns, and Core opens User-Led Review only after the last Product Part is accepted (scope: user workflow; expected commit: not required). Result: release 1.2.259 passed the first Diagram Modules index turn and dispatched the `project-manager` Product Part continuation, but Core did not create the managed stage/TODO scaffold at Diagram Modules start, then rejected `product-parts/project-manager.md` with `Product Part artifact has invalid heading` and left the provider/user session idle instead of dispatching an executable repair prompt.
 
-## Phase 13 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 13 — Diagram Modules Runtime Repair (owner: Codex, updated: 2026-05-15)
+
+### Stream: Failure Intake
+
+60. [DONE] `diagram-runtime-repair.phase13.plan.task1` Record the failed release 1.2.259 acceptance and expand the active repair scope for Diagram Modules startup scaffold creation plus invalid Product Part repair dispatch (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`; expected commit: `docs: plan diagram modules scaffold repair dispatch fix`).
+61. [PENDING] Git Commit: `docs: plan diagram modules scaffold repair dispatch fix` (hash: TBD)
+
+### Stream: Runtime Repair
+
+62. [TODO] `diagram-runtime-repair.phase13.scaffold.task1` Fix Diagram Modules start so Core installs the managed workspace scaffold in the actual provider workspace before the first provider prompt, and cover the created stage TODO/workspace plan structure in regression tests (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: create diagram modules managed scaffold on start`).
+63. [TODO] Git Commit: `fix: create diagram modules managed scaffold on start` (hash: TBD)
+
+64. [TODO] `diagram-runtime-repair.phase13.repair-prompt.task1` Fix Product Part rejection handling so invalid current artifacts produce a provider-visible repair prompt with the exact target/diagnostics instead of only a passive Core message, and align heading validation/prompt copy with the accepted Product Part contract (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: dispatch diagram modules repair prompts`).
+65. [TODO] Git Commit: `fix: dispatch diagram modules repair prompts` (hash: TBD)
+
+### Stream: Verification
+
+66. [TODO] `diagram-runtime-repair.phase13.verify.task1` Run targeted Core verification for Diagram Modules scaffold creation, Product Part validation, and provider repair-prompt dispatch, then record exact evidence before asking for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules scaffold repair dispatch fix`).
+67. [TODO] Git Commit: `docs: verify diagram modules scaffold repair dispatch fix` (hash: TBD)
+
+## Phase 14 — Release Build Reconfirmation (owner: User, updated: 2026-05-15)
+
+### Stream: Release Build Confirmation
+
+68. [TODO] `diagram-runtime-repair.phase14.release-confirmation.task1` After the repair stream and targeted verification pass, ask the user for a separate explicit confirmation before preparing release metadata or running release build scripts (scope: user workflow; expected commit: not required).
+
+## Phase 15 — Release Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation And Build
+
+69. [TODO] `diagram-runtime-repair.phase15.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules scaffold repair release`).
+70. [TODO] Git Commit: `docs: prepare diagram modules scaffold repair release` (hash: TBD)
+
+71. [TODO] `diagram-runtime-repair.phase15.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules scaffold repair release`).
+72. [TODO] Git Commit: `chore: build diagram modules scaffold repair release` (hash: TBD)
+
+73. [TODO] `diagram-runtime-repair.phase15.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules scaffold repair release`).
+74. [TODO] Git Commit: `docs: record diagram modules scaffold repair release` (hash: TBD)
+
+## Phase 16 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+75. [TODO] `diagram-runtime-repair.phase16.user-acceptance.task1` User installs the repaired release and verifies: Diagram Modules start creates managed stage/TODO scaffold, valid index dispatches Product Part continuations, invalid Product Part attempts trigger provider-visible repair prompts, valid Product Parts continue through the sequence, and Core opens User-Led Review only after the last Product Part is accepted (scope: user workflow; expected commit: not required).
+
+## Phase 17 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-60. [TODO] `prelim-diagram-runtime.phase13.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-61. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+76. [TODO] `prelim-diagram-runtime.phase17.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+77. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)

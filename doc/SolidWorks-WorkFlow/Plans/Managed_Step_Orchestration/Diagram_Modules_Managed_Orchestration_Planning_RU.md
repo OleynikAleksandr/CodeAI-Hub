@@ -53,6 +53,14 @@ Runtime continuation invariant:
 - Core обязан либо отправить repair diagnostics, либо отправить continuation prompt на следующий Product Part, либо открыть Phase 2;
 - молчаливое завершение provider turn в `Diagram Modules` является дефектом оркестратора.
 
+Acceptance finding from release `1.2.259`:
+
+- Core successfully accepted the index turn and dispatched the next Product Part prompt for `project-manager`;
+- Core did not create the managed workspace scaffold at Diagram Modules start in the actual provider workspace;
+- after rejecting `product-parts/project-manager.md` with invalid heading diagnostics, Core only wrote a passive visible diagnostic and did not dispatch a provider-visible repair prompt.
+
+Repair invariant: a rejected current subturn is still an active Type A attempt. Core must send the provider an executable repair prompt that includes the exact target path and deterministic diagnostics, then wait for the next provider terminal turn. The user input may be free for observation, but provider repair must not depend on the user manually copying Core diagnostics back to the agent.
+
 ## 3. Phase 2 — Diagram Modules Review
 
 **Тип фазы:** [Type B — User-Led Review](Managed_Workflow_Orchestration_Cluster_Planning.md#type-b--user-led-review).

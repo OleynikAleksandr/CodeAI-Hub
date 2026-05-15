@@ -18,6 +18,13 @@
 
 После расширения scope 2026-05-15 `Application Skeleton` и `Quality Gates` также подключены к managed-dispatch boundary, но найденный в release `1.2.258` дефект относится к первой сложной Phase 1 `Diagram Modules`: Core открыл provider session, но не создал managed scaffold и не продолжил multi-turn sequence после первого `product-parts.index.md`.
 
+Release `1.2.259` исправил первый continuation gap частично: после принятого `product-parts.index.md` Core отправил continuation prompt для `project-manager`, но пользовательский acceptance снова заблокирован. Остались два runtime-defect:
+
+- startup scaffold не появляется в фактическом provider workspace при старте `Diagram Modules`, поэтому нет `doc/TODO/workspace.plan.md`, stage `todo-plan.md` и managed task/commit структуры;
+- rejected Product Part получает только user-visible Core diagnostic (`Product Part artifact has invalid heading`) и не превращается в provider-visible repair prompt, поэтому агент останавливается и не исправляет текущий artifact.
+
+Новый repair stream обязан проверить именно runtime path, а не только unit-level scaffold installer: установка scaffold должна происходить до первого provider prompt в том workspace, где агент пишет `.codeai-hub/.../diagram_modules`. Rejection path обязан иметь одно из трех явных решений после каждого provider turn: provider repair prompt, next Product Part continuation prompt или Phase 2 review.
+
 ## 2. Архитектурное Решение
 
 Работа идет через существующий cluster:
