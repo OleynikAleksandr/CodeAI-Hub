@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.260] - 2026-05-15
+### Fixed
+- **Diagram Modules managed scaffold is now created on the real `session:create` runtime path.** Core installs `doc/TODO/workspace.plan.md`, stage TODO plans, plan scripts, and hooks before provider dispatch starts.
+- **Invalid Product Part artifacts now trigger provider-visible repair prompts.** Core sends the exact target path, deterministic diagnostics, and required `# Product Part: <part-id>` heading to the provider instead of only appending a passive visible diagnostic.
+- **Product Part continuation prompts now state the required heading contract.** This aligns provider instructions with Core validation before each Product Part artifact is written.
+
+### Tests
+- `npm run build:core`
+- Diagram Modules scaffold, runtime repair-prompt, prompt-builder, and managed facade tests passed, 15/15 tests.
+- `npm run plan:validate`
+
 ## [1.2.259] - 2026-05-15
 ### Fixed
 - **Diagram Modules no longer stops after creating only `product-parts.index.md`.** Core now creates the managed workspace scaffold at stage start and runs post-turn managed arbitration after provider completion.

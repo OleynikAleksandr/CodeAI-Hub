@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "dad89d17f",
+  "lastRecordedCommit": "bf65854dd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase13.verify.task1",
-  "expectedCommitMessage": "docs: verify diagram modules scaffold repair dispatch fix",
+  "currentTaskId": "diagram-runtime-repair.phase15.release.task1",
+  "expectedCommitMessage": "docs: prepare diagram modules scaffold repair release",
   "debt": {
-    "expectedCommitMessage": "docs: verify diagram modules scaffold repair dispatch fix",
-    "preCommitHead": "dad89d17f",
+    "expectedCommitMessage": "docs: prepare diagram modules scaffold repair release",
+    "preCommitHead": "bf65854dd",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase13.verify.task1"
+    "taskId": "diagram-runtime-repair.phase15.release.task1"
   }
 }
 ```
@@ -311,7 +311,7 @@ Release package evidence recorded 2026-05-15:
 ### Stream: Verification
 
 66. [DONE] `diagram-runtime-repair.phase13.verify.task1` Run targeted Core verification for Diagram Modules scaffold creation, Product Part validation, and provider repair-prompt dispatch, then record exact evidence before asking for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules scaffold repair dispatch fix`).
-67. [PENDING] Git Commit: `docs: verify diagram modules scaffold repair dispatch fix` (hash: TBD)
+67. [DONE] Git Commit: `docs: verify diagram modules scaffold repair dispatch fix` (hash: bf65854dd)
 
 Verification evidence recorded 2026-05-15:
 
@@ -329,14 +329,21 @@ Repair coverage:
 
 ### Stream: Release Build Confirmation
 
-68. [TODO] `diagram-runtime-repair.phase14.release-confirmation.task1` After the repair stream and targeted verification pass, ask the user for a separate explicit confirmation before preparing release metadata or running release build scripts (scope: user workflow; expected commit: not required).
+68. [DONE] `diagram-runtime-repair.phase14.release-confirmation.task1` After the repair stream and targeted verification pass, ask the user for a separate explicit confirmation before preparing release metadata or running release build scripts (scope: user workflow; expected commit: not required). Result: User explicitly confirmed release build for the Diagram Modules scaffold and repair-prompt fix.
 
 ## Phase 15 — Release Build (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Release Preparation And Build
 
-69. [TODO] `diagram-runtime-repair.phase15.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules scaffold repair release`).
-70. [TODO] Git Commit: `docs: prepare diagram modules scaffold repair release` (hash: TBD)
+69. [DONE] `diagram-runtime-repair.phase15.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules scaffold repair release`).
+70. [PENDING] Git Commit: `docs: prepare diagram modules scaffold repair release` (hash: TBD)
+
+Release preparation evidence recorded 2026-05-15:
+
+- Current package version before release scripts: `1.2.259`.
+- Future release version prepared in release-facing docs: `1.2.260`.
+- `README.md` current-release banner updated to Diagram Modules scaffold and repair-prompt fix.
+- `CHANGELOG.md` release entry `1.2.260` added with verification summary.
 
 71. [TODO] `diagram-runtime-repair.phase15.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules scaffold repair release`).
 72. [TODO] Git Commit: `chore: build diagram modules scaffold repair release` (hash: TBD)
