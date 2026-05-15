@@ -8,11 +8,14 @@ import {
   ManagedWorkflowOrchestrationFacade,
   type ManagedWorkflowOrchestrationFacadeContract,
 } from ".";
+import { validateDiagramModulesManagedArtifacts } from "./diagram-modules/diagram-modules-validator";
 import type { ManagedWorkflowStepController } from "./managed-workflow-step-controller";
 import { ManagedWorkflowStepRegistry } from "./managed-workflow-step-registry";
 
 const MANAGED_WORKFLOW_CLUSTER_MESSAGE_PATTERN =
   /Managed Workflow Orchestration cluster/u;
+const PRODUCT_PART_CONTINUATION_PROMPT_PATTERN =
+  /Materialize only Product Part "core-runtime"/u;
 const TEMP_WORKSPACE_PREFIX = "codeai-managed-workflow-";
 
 const createTempWorkspace = async (): Promise<string> => {
@@ -147,7 +150,7 @@ test("managed workflow facade accepts valid Diagram Modules provider turns", asy
   }
 });
 
-test("managed workflow facade rejects incomplete Diagram Modules provider turns", async () => {
+test("Diagram Modules validation accepts an index-only subturn and requests the first Product Part", async () => {
   const workspaceSlug = "demo-workspace";
   const workspaceRoot = await createTempWorkspace();
   try {
@@ -155,6 +158,34 @@ test("managed workflow facade rejects incomplete Diagram Modules provider turns"
       workspaceRoot,
       `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
       ["# Product Parts", "", "1. `core-runtime`"].join("\n")
+    );
+
+    const validation = await validateDiagramModulesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(validation.valid, true);
+    assert.equal(validation.nextAction, "dispatch_next_product_part");
+    assert.equal(validation.currentPartId, "core-runtime");
+    assert.deepEqual(validation.generatedPartIds, []);
+    assert.match(
+      validation.nextPrompt ?? "",
+      PRODUCT_PART_CONTINUATION_PROMPT_PATTERN
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("managed workflow facade rejects malformed Diagram Modules index turns", async () => {
+  const workspaceSlug = "demo-workspace";
+  const workspaceRoot = await createTempWorkspace();
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      ["# Product Parts", "", "No Product Part ids yet."].join("\n")
     );
     const facade = new ManagedWorkflowOrchestrationFacade();
 
@@ -174,13 +205,7 @@ test("managed workflow facade rejects incomplete Diagram Modules provider turns"
     assert.equal(decision.snapshot.blocker?.owner, "provider");
     assert.equal(
       decision.reasons.some((reason) =>
-        reason.includes("product-parts/core-runtime.md")
-      ),
-      true
-    );
-    assert.equal(
-      decision.reasons.some((reason) =>
-        reason.includes("module-map.flow.json")
+        reason.includes("does not declare Product Part ids")
       ),
       true
     );

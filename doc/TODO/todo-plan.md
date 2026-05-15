@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "f0e12b7e5",
+  "lastRecordedCommit": "467a8ecad",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase9.scaffold.task1",
-  "expectedCommitMessage": "feat: scaffold managed workspace on diagram modules start",
+  "currentTaskId": "diagram-runtime-repair.phase9.subturn.task1",
+  "expectedCommitMessage": "feat: model diagram modules managed subturns",
   "debt": {
-    "expectedCommitMessage": "feat: scaffold managed workspace on diagram modules start",
-    "preCommitHead": "f0e12b7e5",
+    "expectedCommitMessage": "feat: model diagram modules managed subturns",
+    "preCommitHead": "467a8ecad",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase9.scaffold.task1"
+    "taskId": "diagram-runtime-repair.phase9.subturn.task1"
   }
 }
 ```
@@ -221,10 +221,10 @@ Release package evidence recorded 2026-05-15:
 ### Stream: Runtime Scaffold And Subturns
 
 44. [DONE] `diagram-runtime-repair.phase9.scaffold.task1` Add a new Managed Workflow scaffold installer owned by the orchestration cluster and call it when Diagram Modules starts, creating `doc/TODO`, stage plans, workspace plan, plan script, hooks, and package scripts before the provider turn begins (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `feat: scaffold managed workspace on diagram modules start`).
-45. [PENDING] Git Commit: `feat: scaffold managed workspace on diagram modules start` (hash: TBD)
+45. [DONE] Git Commit: `feat: scaffold managed workspace on diagram modules start` (hash: 467a8ecad)
 
-46. [TODO] `diagram-runtime-repair.phase9.subturn.task1` Replace aggregate-only Diagram Modules validation with subturn-aware planning: index validation accepts the index alone, extracts Product Part ids, resolves the next missing Product Part target, and emits localized Core/user messages when all Product Parts are ready for review (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: model diagram modules managed subturns`).
-47. [TODO] Git Commit: `feat: model diagram modules managed subturns` (hash: TBD)
+46. [DONE] `diagram-runtime-repair.phase9.subturn.task1` Replace aggregate-only Diagram Modules validation with subturn-aware planning: index validation accepts the index alone, extracts Product Part ids, resolves the next missing Product Part target, and emits localized Core/user messages when all Product Parts are ready for review (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `feat: model diagram modules managed subturns`).
+47. [PENDING] Git Commit: `feat: model diagram modules managed subturns` (hash: TBD)
 
 48. [TODO] `diagram-runtime-repair.phase9.post-turn.task1` Wire managed post-turn arbitration into provider `turn_completed`: after message flush Core validates the current Diagram Modules subturn, persists the managed decision, appends visible Core feedback, and dispatches the next Product Part continuation prompt instead of leaving the session silent (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts`; expected commit: `feat: arbitrate diagram modules turns after provider completion`).
 49. [TODO] Git Commit: `feat: arbitrate diagram modules turns after provider completion` (hash: TBD)

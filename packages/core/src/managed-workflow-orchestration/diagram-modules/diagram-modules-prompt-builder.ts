@@ -11,6 +11,12 @@ export interface DiagramModulesPromptBuilderOptions {
   readonly workspaceSlug: string;
 }
 
+export interface DiagramModulesProductPartContinuationPromptOptions {
+  readonly acceptedPartIds: readonly string[];
+  readonly currentPartId: string;
+  readonly expectedArtifactPath: string;
+}
+
 const buildTargetPaths = (workspaceSlug: string): readonly string[] => [
   `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
   `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/<part-id>.md`,
@@ -70,3 +76,32 @@ export const buildDiagramModulesManagedPrompt = (
     sourceBlocks,
   ].join("\n");
 };
+
+export const buildDiagramModulesProductPartContinuationPrompt = (
+  options: DiagramModulesProductPartContinuationPromptOptions
+): string =>
+  [
+    "Core accepted the previous Diagram Modules artifact.",
+    "This Core continuation message is the authoritative scope for the current turn.",
+    "",
+    "Next target artifact:",
+    `\`${options.expectedArtifactPath}\``,
+    "",
+    `Materialize only Product Part "${options.currentPartId}".`,
+    options.acceptedPartIds.length > 0
+      ? `Already accepted Product Parts: ${options.acceptedPartIds.join(", ")}.`
+      : "No Product Part artifacts have been accepted yet.",
+    "Do not edit accepted Product Parts unless Core explicitly names them in this message.",
+    "Do not create or update any other Product Part file in this turn.",
+    "Do not continue to the next Product Part by yourself.",
+    "When ready, stop with a content-readiness note for Core validation.",
+  ].join("\n");
+
+export const buildDiagramModulesUserReviewMessage = (): string =>
+  [
+    "Core завершил проверку Diagram Modules artifacts.",
+    "",
+    "Все Product Part диаграммы созданы. Открыт этап пользовательского review: проверьте диаграммы по смыслу.",
+    "",
+    "Если всё подходит, напишите «подтверждаю». Если нужны изменения, перечислите правки, которые нужно внести перед завершением шага Diagram Modules.",
+  ].join("\n");

@@ -1,5 +1,9 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import {
+  buildDiagramModulesProductPartContinuationPrompt,
+  buildDiagramModulesUserReviewMessage,
+} from "./diagram-modules-prompt-builder";
 
 const PRODUCT_PART_ID_RE =
   /^###\s+Product Part:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
@@ -14,8 +18,14 @@ export interface DiagramModulesManagedValidationRequest {
 }
 
 export interface DiagramModulesManagedValidationResult {
+  readonly currentPartId: string | null;
   readonly diagnostics: readonly string[];
   readonly generatedPartIds: readonly string[];
+  readonly nextAction:
+    | "dispatch_next_product_part"
+    | "open_user_review"
+    | "repair_current_artifact";
+  readonly nextPrompt: string | null;
   readonly plannedPartIds: readonly string[];
   readonly valid: boolean;
 }
@@ -68,8 +78,11 @@ export const validateDiagramModulesManagedArtifacts = async (
   );
   if (!indexMarkdown) {
     return {
+      currentPartId: null,
       diagnostics: [`Missing required artifact: ${indexRelativePath}`],
       generatedPartIds: [],
+      nextAction: "repair_current_artifact",
+      nextPrompt: null,
       plannedPartIds: [],
       valid: false,
     };
@@ -92,32 +105,51 @@ export const validateDiagramModulesManagedArtifacts = async (
       path.join(request.workspaceRoot, relativePath)
     );
     if (!content) {
-      diagnostics.push(`Missing required artifact: ${relativePath}`);
-      continue;
+      return {
+        currentPartId: partId,
+        diagnostics,
+        generatedPartIds,
+        nextAction:
+          diagnostics.length === 0
+            ? "dispatch_next_product_part"
+            : "repair_current_artifact",
+        nextPrompt:
+          diagnostics.length === 0
+            ? buildDiagramModulesProductPartContinuationPrompt({
+                acceptedPartIds: generatedPartIds,
+                currentPartId: partId,
+                expectedArtifactPath: relativePath,
+              })
+            : null,
+        plannedPartIds,
+        valid: diagnostics.length === 0,
+      };
     }
     if (!productPartHasExpectedHeading(content, partId)) {
       diagnostics.push(
         `Product Part artifact has invalid heading: ${relativePath}`
       );
-      continue;
+      return {
+        currentPartId: partId,
+        diagnostics,
+        generatedPartIds,
+        nextAction: "repair_current_artifact",
+        nextPrompt: null,
+        plannedPartIds,
+        valid: false,
+      };
     }
     generatedPartIds.push(partId);
   }
 
-  const moduleMapRelativePath = relativeDiagramPath(
-    request.workspaceSlug,
-    "module-map.flow.json"
-  );
-  const moduleMap = await readRequiredFile(
-    path.join(request.workspaceRoot, moduleMapRelativePath)
-  );
-  if (!moduleMap) {
-    diagnostics.push(`Missing required artifact: ${moduleMapRelativePath}`);
-  }
-
   return {
+    currentPartId: null,
     diagnostics,
     generatedPartIds,
+    nextAction:
+      diagnostics.length === 0 ? "open_user_review" : "repair_current_artifact",
+    nextPrompt:
+      diagnostics.length === 0 ? buildDiagramModulesUserReviewMessage() : null,
     plannedPartIds,
     valid: diagnostics.length === 0,
   };
