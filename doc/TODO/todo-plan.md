@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "998cf4207",
+  "lastRecordedCommit": "de99b7938",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase10.release.task2",
-  "expectedCommitMessage": "chore: build preliminary workflow orchestration release",
+  "currentTaskId": "managed-orchestration-kernel.phase10.release.task3",
+  "expectedCommitMessage": "docs: record preliminary workflow orchestration release",
   "debt": {
-    "expectedCommitMessage": "chore: build preliminary workflow orchestration release",
-    "preCommitHead": "998cf4207",
+    "expectedCommitMessage": "docs: record preliminary workflow orchestration release",
+    "preCommitHead": "de99b7938",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase10.release.task2"
+    "taskId": "managed-orchestration-kernel.phase10.release.task3"
   }
 }
 ```
@@ -275,9 +275,18 @@ Build-all evidence recorded 2026-05-15:
   - `CodeAIHubLauncher-macos-arm64-1.2.257.tar.bz2`
   - `vscode-webview-1.2.257.tar.bz2`
   - `project-manager-1.2.257.tar.bz2`
-70. [PENDING] Git Commit: `chore: build preliminary workflow orchestration release` (hash: TBD)
-71. [TODO] `managed-orchestration-kernel.phase10.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record preliminary workflow orchestration release`).
-72. [TODO] Git Commit: `docs: record preliminary workflow orchestration release` (hash: TBD)
+70. [DONE] Git Commit: `chore: build preliminary workflow orchestration release` (hash: de99b7938)
+71. [DONE] `managed-orchestration-kernel.phase10.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record preliminary workflow orchestration release`).
+
+Release build evidence recorded 2026-05-15:
+
+- Command: `./scripts/build-release.sh --use-current-version --allow-dirty`; dirty input was limited to active plan state advanced by the previous `plan:commit`.
+- Release version used: `1.2.257`.
+- Required release checks passed: architecture guard, root type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication check, VSIX package surface verification.
+- VSIX produced: `codeai-hub-1.2.257.vsix` (47M on disk, script summary: 48M).
+- Full release tarballs are available in `doc/tmp/releases/` and `/Users/oleksandroliinyk/.codeai-hub/releases/`.
+- Expected package-size warning remains: VSIX is over 20MB because it includes runtime release assets.
+72. [PENDING] Git Commit: `docs: record preliminary workflow orchestration release` (hash: TBD)
 
 ## Phase 11 — User Workflow Acceptance And Scope Closeout (owner: User + Codex, updated: 2026-05-15)
 
