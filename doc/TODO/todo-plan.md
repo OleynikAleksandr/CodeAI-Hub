@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "eb0d10680",
+  "lastRecordedCommit": "f0b88bc07",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "remaining-technical-runtime.phase1.runtime.task1",
-  "expectedCommitMessage": "feat: route remaining technical stages through managed dispatch",
+  "currentTaskId": "remaining-technical-runtime.phase2.pm.task1",
+  "expectedCommitMessage": "feat: launch remaining technical stages through managed dispatch",
   "debt": {
-    "expectedCommitMessage": "feat: route remaining technical stages through managed dispatch",
-    "preCommitHead": "eb0d10680",
+    "expectedCommitMessage": "feat: launch remaining technical stages through managed dispatch",
+    "preCommitHead": "f0b88bc07",
     "stage": "commit_pending",
-    "taskId": "remaining-technical-runtime.phase1.runtime.task1"
+    "taskId": "remaining-technical-runtime.phase2.pm.task1"
   }
 }
 ```
@@ -139,12 +139,12 @@ Verification evidence recorded 2026-05-15:
 26. [DONE] Git Commit: `feat: enable remaining technical managed dispatch policies` (hash: eb0d10680)
 
 27. [DONE] `remaining-technical-runtime.phase1.runtime.task1` Route Application Skeleton and Quality Gates session creation/message dispatch through managed dispatch instead of preview rewrite blockers (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler.documentation-rollover.test.ts`; expected commit: `feat: route remaining technical stages through managed dispatch`).
-28. [PENDING] Git Commit: `feat: route remaining technical stages through managed dispatch` (hash: TBD)
+28. [DONE] Git Commit: `feat: route remaining technical stages through managed dispatch` (hash: f0b88bc07)
 
 ### Stream: Project Manager Launch
 
-29. [TODO] `remaining-technical-runtime.phase2.pm.task1` Allow Project Manager start service to launch Application Skeleton and Quality Gates only when their managed policy is `managed_dispatch`, preserving upstream gating and existing-session reuse (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `feat: launch remaining technical stages through managed dispatch`).
-30. [TODO] Git Commit: `feat: launch remaining technical stages through managed dispatch` (hash: TBD)
+29. [DONE] `remaining-technical-runtime.phase2.pm.task1` Allow Project Manager start service to launch Application Skeleton and Quality Gates only when their managed policy is `managed_dispatch`, preserving upstream gating and existing-session reuse (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `feat: launch remaining technical stages through managed dispatch`).
+30. [PENDING] Git Commit: `feat: launch remaining technical stages through managed dispatch` (hash: TBD)
 
 ### Stream: Verification
 

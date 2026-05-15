@@ -153,6 +153,18 @@ test("fetchWorkflowState preserves managed orchestration read-only projection", 
             runStatus: "core_gated",
             startPolicy: "managed_dispatch",
           },
+          {
+            controllerId: "application_skeleton",
+            displayName: "Application Skeleton",
+            phaseTypes: ["core_gated"],
+            startPolicy: "managed_dispatch",
+          },
+          {
+            controllerId: "quality_gates",
+            displayName: "Quality Gates Baseline",
+            phaseTypes: ["core_gated"],
+            startPolicy: "managed_dispatch",
+          },
         ],
       },
     })
@@ -181,6 +193,14 @@ test("fetchWorkflowState preserves managed orchestration read-only projection", 
   assert.equal(
     state?.managedWorkflowPreview?.stages[1]?.currentPhase?.type,
     "core_gated"
+  );
+  assert.equal(
+    state?.managedWorkflowPreview?.stages[2]?.startPolicy,
+    "managed_dispatch"
+  );
+  assert.equal(
+    state?.managedWorkflowPreview?.stages[3]?.startPolicy,
+    "managed_dispatch"
   );
 });
 

@@ -223,9 +223,7 @@ const resolveManagedStageStartPolicy = (
   resolveManagedStageMetadata(state, stage)?.startPolicy ??
   (stage === "virtual_simulation"
     ? "provider_direct"
-    : stage === "diagram_modules"
-      ? "managed_dispatch"
-    : "core_preview_boundary");
+    : "managed_dispatch");
 
 const isManagedReadOnlyStage = (
   state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,
