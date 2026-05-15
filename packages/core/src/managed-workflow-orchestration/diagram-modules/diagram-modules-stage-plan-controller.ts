@@ -137,7 +137,7 @@ const resolveAcceptedTarget = (params: {
   ) {
     return {
       partId: null,
-      relativePath: `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`,
+      relativePath: buildProductPartsIndexPath(params.workspaceSlug),
     };
   }
   const partId = params.decision.generatedPartIds.at(-1);
@@ -154,6 +154,9 @@ const buildProductPartCommitMessage = (partId: string): string =>
 
 const buildProductPartTaskId = (partId: string): string =>
   `diagram-modules.phase1.product-part.${partId}.task1`;
+
+const buildProductPartsIndexPath = (workspaceSlug: string): string =>
+  `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`;
 
 const resolveNextStep = (
   decision: DiagramModulesManagedValidationResult
@@ -330,6 +333,7 @@ export class DiagramModulesStagePlanController {
       ".husky/pre-push",
       "package.json",
       `.codeai-hub/${params.workspaceSlug}/workflow/managed/diagram_modules.json`,
+      buildProductPartsIndexPath(params.workspaceSlug),
       target.relativePath,
     ]);
 

@@ -41,6 +41,7 @@ const REVIEW_TASK_STATE_RE =
   /"currentTaskId": "diagram-modules\.phase2\.review\.task1"/u;
 const INDEX_LOCK_BLOCKER_RE =
   /could not acquire the repository index lock after retrying/u;
+const PRODUCT_PART_INDEX_PATH = `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -156,6 +157,7 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
         "# Product Parts",
         "",
         "1. `project-manager` - `.codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md`",
+        "- Status: planned",
       ].join("\n")
     );
     const indexDecision = createIndexAcceptedDecision();
@@ -190,6 +192,16 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
 
     await writeWorkspaceFile(
       workspaceRoot,
+      PRODUCT_PART_INDEX_PATH,
+      [
+        "# Product Parts",
+        "",
+        "1. `project-manager` - `.codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md`",
+        "- Status: generated",
+      ].join("\n")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
       `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/project-manager.md`,
       "# Product Part: project-manager\n\n## Modules\n"
     );
@@ -215,6 +227,15 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
     assert.match(finalPlan, REVIEW_TASK_STATE_RE);
     assert.match(finalPlan, REVIEW_EXPECTED_COMMIT_RE);
     assert.match(finalPlan, REVIEW_COMMIT_RE);
+    assert.equal(
+      await git(workspaceRoot, [
+        "status",
+        "--short",
+        "--",
+        PRODUCT_PART_INDEX_PATH,
+      ]),
+      ""
+    );
 
     const workspacePlan = await readWorkspaceFile(
       workspaceRoot,
