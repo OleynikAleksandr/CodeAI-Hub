@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "49f218020",
+  "lastRecordedCommit": "87f640717",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase5.pm.task2",
-  "expectedCommitMessage": "test: cover managed workflow preview projection",
+  "currentTaskId": "managed-orchestration-kernel.phase6.verify.task1",
+  "expectedCommitMessage": "docs: verify managed workflow kernel runtime slice",
   "debt": {
-    "expectedCommitMessage": "test: cover managed workflow preview projection",
-    "preCommitHead": "49f218020",
+    "expectedCommitMessage": "docs: verify managed workflow kernel runtime slice",
+    "preCommitHead": "87f640717",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase5.pm.task2"
+    "taskId": "managed-orchestration-kernel.phase6.verify.task1"
   }
 }
 ```
@@ -135,14 +135,14 @@
 36. [DONE] Git Commit: `feat: show managed workflow orchestration preview in project manager` (hash: 49f218020)
 
 37. [DONE] `managed-orchestration-kernel.phase5.pm.task2` Add UI/service tests for the visual control point: managed technical stages show new cluster status, no legacy accept/continue controls, and session restore prefers the existing boundary session (scope: `src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts`; expected commit: `test: cover managed workflow preview projection`).
-38. [PENDING] Git Commit: `test: cover managed workflow preview projection` (hash: TBD)
+38. [DONE] Git Commit: `test: cover managed workflow preview projection` (hash: 87f640717)
 
 ## Phase 6 — Tooling Verification (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Targeted Verification
 
-39. [TODO] `managed-orchestration-kernel.phase6.verify.task1` Run targeted core and Project Manager builds/tests for the new cluster boundary and record exact verification evidence in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed workflow kernel runtime slice`).
-40. [TODO] Git Commit: `docs: verify managed workflow kernel runtime slice` (hash: TBD)
+39. [DONE] `managed-orchestration-kernel.phase6.verify.task1` Run targeted core and Project Manager builds/tests for the new cluster boundary and record exact verification evidence in this plan; verify providerless boundary snapshot typing discovered during typecheck (scope: `doc/TODO/todo-plan.md, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts`; expected commit: `docs: verify managed workflow kernel runtime slice`).
+40. [PENDING] Git Commit: `docs: verify managed workflow kernel runtime slice` (hash: TBD)
 
 Expected verification commands:
 
@@ -152,6 +152,15 @@ Expected verification commands:
 - `npm run build:web-client` or the current Project Manager build command used by this repo
 - `npm run typecheck:webview` if Project Manager/shared UI types are touched
 - `npm run plan:validate`
+
+Verification evidence recorded 2026-05-15:
+
+- `npm run build:core` — passed.
+- `node --test packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-state-machine.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-step-registry.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-plan-store.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-audit-log.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-commit-transaction.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-recovery-arbiter.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-provider-gateway.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js` — 27 tests passed.
+- `npm run build:project-manager` — passed.
+- `npx tsx --test src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts` — 26 tests passed.
+- `npm run typecheck:webview` — passed after correcting the boundary snapshot fixture to omit providerSessionId instead of using `null`.
+- `npm run plan:validate` — passed.
 
 ## Phase 7 — Release Build (owner: Codex + User, updated: 2026-05-15)
 

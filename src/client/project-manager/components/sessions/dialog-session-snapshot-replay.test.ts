@@ -242,7 +242,6 @@ test("dialog runtime resolver prefers existing boundary runtime by preferred ses
       sessions: {
         "managed-boundary-session": {
           nodeId: "quality_gates",
-          providerSessionId: null,
           turnState: "idle",
           continuityLockActive: false,
         },
