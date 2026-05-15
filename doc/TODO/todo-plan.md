@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "9393ade90",
+  "lastRecordedCommit": "d27169b06",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase1.contract.task1",
-  "expectedCommitMessage": "docs: define managed workflow orchestration cluster contract",
+  "currentTaskId": "managed-orchestration-kernel.phase1.facade.task1",
+  "expectedCommitMessage": "feat: add managed workflow orchestration facade",
   "debt": {
-    "expectedCommitMessage": "docs: define managed workflow orchestration cluster contract",
-    "preCommitHead": "9393ade90",
+    "expectedCommitMessage": "feat: add managed workflow orchestration facade",
+    "preCommitHead": "d27169b06",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase1.contract.task1"
+    "taskId": "managed-orchestration-kernel.phase1.facade.task1"
   }
 }
 ```
@@ -64,12 +64,12 @@
 ### Stream: Architecture Contract
 
 3. [DONE] `managed-orchestration-kernel.phase1.contract.task1` Add the canonical Cluster SSOT for `Managed Workflow Orchestration`, including facade boundary, module map, extension contract for future steps, and runtime ownership rules (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: define managed workflow orchestration cluster contract`).
-4. [PENDING] Git Commit: `docs: define managed workflow orchestration cluster contract` (hash: TBD)
+4. [DONE] Git Commit: `docs: define managed workflow orchestration cluster contract` (hash: d27169b06)
 
 ### Stream: Facade Skeleton
 
-5. [TODO] `managed-orchestration-kernel.phase1.facade.task1` Create the package-local cluster folder, public facade class, and public contract types without runtime side effects (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/index.ts`; expected commit: `feat: add managed workflow orchestration facade`).
-6. [TODO] Git Commit: `feat: add managed workflow orchestration facade` (hash: TBD)
+5. [DONE] `managed-orchestration-kernel.phase1.facade.task1` Create the package-local cluster folder, public facade class, public contract types, and core entrypoint export without runtime side effects (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, packages/core/src/managed-workflow-orchestration/index.ts, packages/core/src/index.ts`; expected commit: `feat: add managed workflow orchestration facade`).
+6. [PENDING] Git Commit: `feat: add managed workflow orchestration facade` (hash: TBD)
 
 7. [TODO] `managed-orchestration-kernel.phase1.facade.task2` Add facade construction/unit tests that prove remote-bridge code can depend only on the facade and public contracts (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover managed workflow orchestration facade`).
 8. [TODO] Git Commit: `test: cover managed workflow orchestration facade` (hash: TBD)

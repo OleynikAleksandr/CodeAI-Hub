@@ -5,6 +5,13 @@ import os from "node:os";
 import path from "node:path";
 import { CoreOrchestrator } from "./orchestrator/core-orchestrator";
 
+export type {
+  ManagedWorkflowOrchestrationFacadeContract,
+  ManagedWorkflowStageStartDecision,
+  ManagedWorkflowStageStartRequest,
+} from "./managed-workflow-orchestration";
+export { ManagedWorkflowOrchestrationFacade } from "./managed-workflow-orchestration";
+
 const orchestrator = new CoreOrchestrator();
 const fatalLogPath = path.join(
   os.homedir(),
