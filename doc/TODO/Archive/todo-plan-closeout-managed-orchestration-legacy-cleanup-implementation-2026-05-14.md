@@ -1,3 +1,18 @@
+# Plan Closeout: managed-orchestration-legacy-cleanup-implementation-2026-05-14
+
+**Created:** 2026-05-15T06:09:41.174Z
+**Acceptance:** User accepted release after testing: all main functions work
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/managed-orchestration-rewrite
+**Current Task:** managed-orchestration-cleanup.phase12.closeout.task1
+**Expected Commit:** docs: close managed orchestration cleanup implementation
+**Last Recorded Commit:** 0fb2e24ba
+**Planning Source Disposition:** already_archived
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md",
   "currentTaskId": "managed-orchestration-cleanup.phase12.closeout.task1",
   "expectedCommitMessage": "docs: close managed orchestration cleanup implementation",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed orchestration cleanup implementation",
-    "preCommitHead": "0fb2e24ba",
-    "stage": "commit_pending",
-    "taskId": "managed-orchestration-cleanup.phase12.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -673,6 +683,7 @@ Verification for task 129:
 
 ### Stream: Close Cleanup Scope
 
-132. [DONE] `managed-orchestration-cleanup.phase12.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
-133. [PENDING] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
+132. [IN_PROGRESS] `managed-orchestration-cleanup.phase12.closeout.task1` Archive this cleanup implementation plan after explicit user acceptance and leave the repository ready for the next `Managed Workflow Orchestration` cluster implementation plan (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cleanup_Preparation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed orchestration cleanup implementation`).
+133. [TODO] Git Commit: `docs: close managed orchestration cleanup implementation` (hash: TBD)
 134. [TODO] `managed-orchestration-cleanup.phase12.handoff.task1` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: chat/process observation only; expected commit: not required).
+````
