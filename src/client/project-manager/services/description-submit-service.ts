@@ -13,20 +13,14 @@ import {
   resolveWorkspaceName,
   toWorkspaceSlug,
 } from "./description-questionnaire-utils";
-import {
-  buildWorkflowPromptPack,
-  resolveWorkflowChatLanguage,
-} from "./prompt-pack-builder";
+import { resolveWorkflowChatLanguage } from "./prompt-pack-builder";
 import { waitForSessionProviderBinding } from "./session-binding-waiter";
-import {
-  buildProductPartSourceArtifactDescriptors,
-  buildWorkflowSourceArtifactDescriptors,
-  type WorkflowSourceArtifactDescriptor,
-} from "./workflow-source-artifact-descriptors";
 
 const SESSION_CREATE_TIMEOUT_MS = 15000;
 const DEFAULT_ARTIFACT_LANGUAGE = "en";
 const LEGACY_SOURCE_LANGUAGE = "source";
+const WORKFLOW_PROMPT_PACK_ENDPOINT =
+  "/api/v1/orchestrator/workflow-prompt-pack";
 const WORKFLOW_CONTRACT_ENDPOINTS = {
   description: "/api/v1/orchestrator/description-contract",
   virtual_simulation: "/api/v1/orchestrator/virtual-simulation-contract",
@@ -37,7 +31,6 @@ const WORKFLOW_CONTRACT_ENDPOINTS = {
 const WORKFLOW_FILE_FIRST_FALLBACK_PROMPT =
   "Build the artifact from the questionnaire and template. " +
   "Write the result to the target file path.";
-const WORKFLOW_SOURCE_MAX_BYTES = 500_000;
 export type WorkflowStageId = keyof typeof WORKFLOW_CONTRACT_ENDPOINTS;
 
 const isRecordValue = (
@@ -115,11 +108,16 @@ type SessionErrorPayload = {
   readonly sessionId?: string;
   readonly message: string;
 };
-type WorkflowSourceArtifactPayload = {
+
+export type CoreWorkflowPromptPack = {
+  readonly absolutePath: string;
+  readonly artifactLanguage: string;
+  readonly chatLanguage: string;
   readonly content: string;
-  readonly label: string;
+  readonly inputPath: string;
+  readonly promptPath: string;
   readonly relativePath: string;
-  readonly truncated?: boolean;
+  readonly templatePath?: string;
 };
 
 const cachedWorkflowSchemas = new Map<WorkflowStageId, Record<string, unknown>>();
@@ -195,6 +193,86 @@ export const loadWorkflowContract = async (
     return fallback;
   }
 };
+
+const normalizeCoreWorkflowPromptPack = (
+  payload: unknown
+): CoreWorkflowPromptPack | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const absolutePath =
+    typeof payload.absolutePath === "string" ? payload.absolutePath : null;
+  const artifactLanguage =
+    typeof payload.artifactLanguage === "string"
+      ? payload.artifactLanguage
+      : null;
+  const chatLanguage =
+    typeof payload.chatLanguage === "string" ? payload.chatLanguage : null;
+  const content = typeof payload.content === "string" ? payload.content : null;
+  const inputPath =
+    typeof payload.inputPath === "string" ? payload.inputPath : null;
+  const promptPath =
+    typeof payload.promptPath === "string" ? payload.promptPath : null;
+  const relativePath =
+    typeof payload.relativePath === "string" ? payload.relativePath : null;
+  const templatePath =
+    typeof payload.templatePath === "string" ? payload.templatePath : undefined;
+
+  if (
+    !(
+      absolutePath &&
+      artifactLanguage &&
+      chatLanguage &&
+      content &&
+      promptPath &&
+      relativePath
+    )
+  ) {
+    return null;
+  }
+
+  return {
+    absolutePath,
+    artifactLanguage,
+    chatLanguage,
+    content,
+    inputPath: inputPath ?? "",
+    promptPath,
+    relativePath,
+    templatePath,
+  };
+};
+
+const loadCoreWorkflowPromptPack = async (params: {
+  readonly artifactLanguage: string;
+  readonly chatLanguage: string;
+  readonly stage: WorkflowStageId;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): Promise<CoreWorkflowPromptPack> => {
+  const httpUrl = resolveCoreHttpUrl();
+  const query = new URLSearchParams({
+    artifactLanguage: params.artifactLanguage,
+    chatLanguage: params.chatLanguage,
+    stage: params.stage,
+    workspacePath: params.workspacePath,
+    workspaceSlug: params.workspaceSlug,
+  });
+  const response = await fetch(
+    joinUrl(httpUrl, `${WORKFLOW_PROMPT_PACK_ENDPOINT}?${query.toString()}`)
+  );
+  if (!response.ok) {
+    throw new Error("Core workflow prompt pack is unavailable.");
+  }
+  const promptPack = normalizeCoreWorkflowPromptPack(
+    (await response.json()) as unknown
+  );
+  if (!promptPack) {
+    throw new Error("Core workflow prompt pack response is invalid.");
+  }
+  return promptPack;
+};
+
 const extractSessionCreatedPayload = (
   payload: unknown
 ): SessionCreatedPayload | null => {
@@ -251,94 +329,6 @@ export const loadWorkflowSchemaForProjectManager = async (
     });
   pendingWorkflowSchemas.set(stage, pending);
   return pending;
-};
-
-const readWorkflowSourceArtifact = async (params: {
-  readonly label: string;
-  readonly relativePath: string;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): Promise<WorkflowSourceArtifactPayload | null> => {
-  const httpUrl = resolveCoreHttpUrl();
-  if (!httpUrl) {
-    return null;
-  }
-  const query = new URLSearchParams({
-    maxBytes: String(WORKFLOW_SOURCE_MAX_BYTES),
-    path: params.relativePath,
-    workspacePath: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
-  });
-  try {
-    const response = await fetch(
-      joinUrl(httpUrl, `/api/v1/orchestrator/workflow-artifact?${query.toString()}`)
-    );
-    if (!response.ok) {
-      return null;
-    }
-    const payload = (await response.json()) as unknown;
-    if (!isRecord(payload) || typeof payload.content !== "string") {
-      return null;
-    }
-    return {
-      content: payload.content,
-      label: params.label,
-      relativePath: params.relativePath,
-      truncated: payload.truncated === true,
-    };
-  } catch {
-    return null;
-  }
-};
-
-const readWorkflowSourceArtifactList = async (params: {
-  readonly descriptors: readonly WorkflowSourceArtifactDescriptor[];
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): Promise<readonly WorkflowSourceArtifactPayload[]> => {
-  const sourceArtifacts = await Promise.all(
-    params.descriptors.map((descriptor) =>
-      readWorkflowSourceArtifact({
-        ...descriptor,
-        workspacePath: params.workspacePath,
-        workspaceSlug: params.workspaceSlug,
-      })
-    )
-  );
-  return sourceArtifacts.filter(
-    (artifact): artifact is WorkflowSourceArtifactPayload => Boolean(artifact)
-  );
-};
-
-const readWorkflowSourceArtifacts = async (params: {
-  readonly stage: WorkflowStageId;
-  readonly questionnairePath: string;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): Promise<readonly WorkflowSourceArtifactPayload[]> => {
-  const sourceArtifacts = await readWorkflowSourceArtifactList({
-    descriptors: buildWorkflowSourceArtifactDescriptors(params),
-    workspacePath: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
-  });
-  if (params.stage !== "application_skeleton") {
-    return sourceArtifacts;
-  }
-  const productPartsIndex = sourceArtifacts.find(
-    (artifact) => artifact.label === "product-parts.index.md"
-  );
-  if (!productPartsIndex) {
-    return sourceArtifacts;
-  }
-  const productPartArtifacts = await readWorkflowSourceArtifactList({
-    descriptors: buildProductPartSourceArtifactDescriptors({
-      productPartsIndexContent: productPartsIndex.content,
-      workspaceSlug: params.workspaceSlug,
-    }),
-    workspacePath: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
-  });
-  return [...sourceArtifacts, ...productPartArtifacts];
 };
 
 const createDescriptionSession = async (params: {
@@ -426,7 +416,6 @@ export class DescriptionSubmitService {
         ? params.workspaceSlug.trim()
         : toWorkspaceSlug(workspaceName);
     const stage = params.stage ?? "description";
-    const contractPromise = loadWorkflowContract(stage);
     const session = await createDescriptionSession({
       workspacePath: params.workspacePath,
       initiativeSlug,
@@ -446,27 +435,19 @@ export class DescriptionSubmitService {
       notifyMissingDescriptionContext(session.id);
       return session.id;
     }
+    const promptPackPromise = loadCoreWorkflowPromptPack({
+      artifactLanguage,
+      chatLanguage,
+      stage,
+      workspacePath: params.workspacePath,
+      workspaceSlug: resolvedInitiativeSlug,
+    });
     const bindingPromise = waitForSessionProviderBinding(session.id);
     try {
-      const contract = await contractPromise;
-      const sourceArtifacts = await readWorkflowSourceArtifacts({
-        stage,
-        questionnairePath: params.questionnairePath,
-        workspacePath: params.workspacePath,
-        workspaceSlug: resolvedInitiativeSlug,
-      });
-      const promptPack = buildWorkflowPromptPack({
-        artifactLanguage,
-        chatLanguage,
-        sourceArtifacts,
-        stage,
-        workspacePath: params.workspacePath,
-        workspaceSlug: resolvedInitiativeSlug,
-        prompt: contract.prompt,
-        templatePath: contract.paths.template,
-        questionnairePath: params.questionnairePath,
-      });
-      await bindingPromise;
+      const [promptPack] = await Promise.all([
+        promptPackPromise,
+        bindingPromise,
+      ]);
       api.sendSessionMessage(session.id, promptPack.content);
     } catch (error) {
       postSystemNotice(

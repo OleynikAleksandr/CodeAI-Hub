@@ -16,18 +16,27 @@ const PANEL_PATH = path.resolve(
 test("questionnaire submit opens session immediately after session:created", async () => {
   const source = await readFile(SERVICE_PATH, "utf8");
 
-  assert.equal(source.includes("const contractPromise = loadWorkflowContract(stage);"), true);
+  assert.equal(
+    source.includes("const promptPackPromise = loadCoreWorkflowPromptPack({"),
+    true
+  );
   assert.equal(source.includes("params.onSessionCreated?.(session.id);"), true);
 
   const callbackIndex = source.indexOf("params.onSessionCreated?.(session.id);");
-  const contractAwaitIndex = source.indexOf("await contractPromise;");
+  const promptPackLoadIndex = source.indexOf(
+    "const promptPackPromise = loadCoreWorkflowPromptPack({"
+  );
 
   assert.equal(callbackIndex >= 0, true, "expected onSessionCreated callback");
-  assert.equal(contractAwaitIndex >= 0, true, "expected contractPromise await");
   assert.equal(
-    callbackIndex < contractAwaitIndex,
+    promptPackLoadIndex >= 0,
     true,
-    "session should be opened before awaiting workflow contract"
+    "expected Core prompt pack load"
+  );
+  assert.equal(
+    callbackIndex < promptPackLoadIndex,
+    true,
+    "session should be opened before loading Core workflow prompt pack"
   );
 
   const panelSource = await readFile(PANEL_PATH, "utf8");
