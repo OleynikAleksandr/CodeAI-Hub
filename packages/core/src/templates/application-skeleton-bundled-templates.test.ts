@@ -17,6 +17,12 @@ const EMBEDDED_PLAN_CONTEXT_RE =
   /use only the workspace context, target artifact, and validation instructions embedded in the current runtime prompt/;
 const APPLICATION_SKELETON_HANDOFF_RE =
   /runtime prompt must explicitly identify the Application Skeleton stage and target artifact/;
+const CANONICAL_DRAFT_TEMPLATE_RE =
+  /Keep these headings exactly in English because Core validation treats them as canonical structural tokens/;
+const REQUIRED_MARKDOWN_HEADINGS_RE =
+  /# Application Skeleton[\s\S]*## Overview[\s\S]*## Architecture[\s\S]*## Stack[\s\S]*## Product Parts[\s\S]*## Filesystem[\s\S]*## Materialization[\s\S]*## Assumptions/;
+const DRAFT_JSON_LIFECYCLE_RE =
+  /"reviewState": "draft"[\s\S]*"accepted": false[\s\S]*"materialized": false[\s\S]*"materializationState": "not_started"/;
 const NO_LIFECYCLE_REPAIR_RE =
   /Do not create, reinstall, repair, rename, restore, revert, checkout, or replace git, hooks, plan scripts/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
@@ -109,6 +115,9 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, RUNTIME_CONTEXT_OWNER_RE);
   assert.match(prompt, EMBEDDED_PLAN_CONTEXT_RE);
   assert.match(prompt, APPLICATION_SKELETON_HANDOFF_RE);
+  assert.match(prompt, CANONICAL_DRAFT_TEMPLATE_RE);
+  assert.match(prompt, REQUIRED_MARKDOWN_HEADINGS_RE);
+  assert.match(prompt, DRAFT_JSON_LIFECYCLE_RE);
   assert.match(prompt, NO_LIFECYCLE_REPAIR_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.doesNotMatch(prompt, WORKSPACE_PLAN_PATH_RE);

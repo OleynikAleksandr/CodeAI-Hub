@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "b2b2ed8d8",
+  "lastRecordedCommit": "467346285",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-plan.task1",
-  "expectedCommitMessage": "docs: plan application skeleton runtime repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-prompt.task1",
+  "expectedCommitMessage": "fix: include application skeleton prompt template",
   "debt": {
-    "expectedCommitMessage": "docs: plan application skeleton runtime repair",
-    "preCommitHead": "b2b2ed8d8",
+    "expectedCommitMessage": "fix: include application skeleton prompt template",
+    "preCommitHead": "467346285",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-plan.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase50.application-skeleton-prompt.task1"
   }
 }
 ```
@@ -935,12 +935,12 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Repair Planning
 
 203. [DONE] `diagram-plan-lifecycle-repair.phase50.application-skeleton-plan.task1` Record the release 267 Application Skeleton failure mode and open a scoped repair stream for prompt contracts, managed start preflight, and Type A rejected-attempt lifecycle (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan application skeleton runtime repair`).
-204. [PENDING] Git Commit: `docs: plan application skeleton runtime repair` (hash: TBD)
+204. [DONE] Git Commit: `docs: plan application skeleton runtime repair` (hash: 467346285)
 
 ### Stream: Prompt Contract And Diagnostics
 
-205. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-prompt.task1` Add an explicit Application Skeleton markdown/JSON template to the provider prompt pack so canonical headings and lifecycle fields are visible before the first agent turn (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `fix: include application skeleton prompt template`).
-206. [TODO] Git Commit: `fix: include application skeleton prompt template` (hash: TBD)
+205. [DONE] `diagram-plan-lifecycle-repair.phase50.application-skeleton-prompt.task1` Add an explicit Application Skeleton markdown/JSON template to the Core-owned Application Skeleton agent template so canonical headings and lifecycle fields are visible before the first agent turn without making Project Manager a workflow-truth owner (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: include application skeleton prompt template`).
+206. [PENDING] Git Commit: `fix: include application skeleton prompt template` (hash: TBD)
 
 207. [TODO] `diagram-plan-lifecycle-repair.phase50.application-skeleton-diagnostics.task1` Expand Application Skeleton Core repair/blocker messages so validation diagnostics are actionable and Core-owned plan blockers are understandable to the user (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: clarify application skeleton core diagnostics`).
 208. [TODO] Git Commit: `fix: clarify application skeleton core diagnostics` (hash: TBD)

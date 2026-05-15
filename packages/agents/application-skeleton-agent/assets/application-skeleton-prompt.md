@@ -36,6 +36,47 @@ Create or update exactly:
 - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton.md`
 - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton-map.json`
 
+## Draft Artifact Template
+Use this Markdown section structure for every Phase 1 draft. Keep these headings exactly in English because Core validation treats them as canonical structural tokens. Localize only the prose inside each section:
+
+```markdown
+# Application Skeleton
+
+## Overview
+
+## Architecture
+
+## Stack
+
+## Product Parts
+
+## Filesystem
+
+## Materialization
+
+## Assumptions
+```
+
+`application-skeleton-map.json` draft must be valid JSON and include this lifecycle shape before user acceptance:
+
+```json
+{
+  "schema": "codeai-application-skeleton-v1",
+  "reviewState": "draft",
+  "accepted": false,
+  "materialized": false,
+  "materializationState": "not_started",
+  "sourceRoot": "product-parts",
+  "productParts": [
+    {
+      "id": "<product-part-id>",
+      "codePath": "product-parts/<product-part-id>"
+    }
+  ],
+  "plannedPaths": ["product-parts/<product-part-id>"]
+}
+```
+
 ## Phase 1: Draft Contract
 Before explicit user acceptance:
 - write both canonical artifacts;
