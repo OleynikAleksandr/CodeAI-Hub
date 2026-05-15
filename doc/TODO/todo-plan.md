@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "6a62b6fa1",
+  "lastRecordedCommit": "65fa7440e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase42.verify.task1",
-  "expectedCommitMessage": "docs: verify diagram modules index dirty repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase44.application-skeleton-intake.task1",
+  "expectedCommitMessage": "docs: open application skeleton managed module implementation",
   "debt": {
-    "expectedCommitMessage": "docs: verify diagram modules index dirty repair",
-    "preCommitHead": "6a62b6fa1",
+    "expectedCommitMessage": "docs: open application skeleton managed module implementation",
+    "preCommitHead": "65fa7440e",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase42.verify.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase44.application-skeleton-intake.task1"
   }
 }
 ```
@@ -828,17 +828,59 @@ Verification evidence recorded 2026-05-15:
 - `npm run plan:validate` — PASS.
 - Covered behavior: accepted Diagram Modules Product Part commits now stage the aggregate `product-parts.index.md` together with the Product Part artifact, so Product Part status changes from `planned` to `generated` cannot leave the Diagram Modules aggregate dirty at the user-review handoff.
 - Covered behavior: technical-stage dirty gating now filters nontechnical workflow/runtime metadata (`.DS_Store`, continuity files, provider-direct Description and Virtual Simulation artifacts, workspace workflow state, and managed ledgers) so `Application Skeleton` is blocked only by real technical-stage content dirt.
-179. [PENDING] Git Commit: `docs: verify diagram modules index dirty repair` (hash: TBD)
+179. [DONE] Git Commit: `docs: verify diagram modules index dirty repair` (hash: 65fa7440e)
 
 ## Phase 43 — Release Build Gate For Index Dirty Repair (owner: Codex + User, updated: 2026-05-15)
 
 ### Stream: Release Confirmation Gate
 
-180. [TODO] `diagram-plan-lifecycle-repair.phase43.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Diagram Modules index dirty repair (scope: user workflow; expected commit: none).
+180. [DONE] `diagram-plan-lifecycle-repair.phase43.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Diagram Modules index dirty repair (scope: user workflow; expected commit: none). Result: user opened Application Skeleton managed module implementation before the next release build; release build remains deferred until a later explicit confirmation.
 
-## Phase 44 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 44 — Application Skeleton Managed Module Intake (owner: Codex, updated: 2026-05-15)
+
+### Stream: Scope Opening
+
+181. [DONE] `diagram-plan-lifecycle-repair.phase44.application-skeleton-intake.task1` Open the Application Skeleton managed module implementation scope from the accepted planning documents and preserve the release gate until implementation verification is complete (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton managed module implementation`).
+182. [PENDING] Git Commit: `docs: open application skeleton managed module implementation` (hash: TBD)
+
+## Phase 45 — Application Skeleton Managed Runtime (owner: Codex, updated: 2026-05-15)
+
+### Stream: Contract Validation And Prompts
+
+183. [TODO] `diagram-plan-lifecycle-repair.phase45.application-skeleton-contract.task1` Add managed Application Skeleton draft/materialization validators and Core prompt/message builders for Phase 1, Phase 2 repair/review, and Phase 3 materialization (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `feat: add application skeleton managed validators`).
+184. [TODO] Git Commit: `feat: add application skeleton managed validators` (hash: TBD)
+
+### Stream: Managed Plan Boundary
+
+185. [TODO] `diagram-plan-lifecycle-repair.phase45.application-skeleton-plan.task1` Add Application Skeleton stage-plan advancement for draft commits, conditional review outcomes, materialization attempts, workspace ledger updates, and managed Git retries (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts`; expected commit: `feat: add application skeleton managed plan controller`).
+186. [TODO] Git Commit: `feat: add application skeleton managed plan controller` (hash: TBD)
+
+### Stream: Runtime Dispatch
+
+187. [TODO] `diagram-plan-lifecycle-repair.phase45.application-skeleton-runtime.task1` Wire Application Skeleton managed dispatch into workflow session scaffold/start, provider turn completion, and managed workflow facade validation without reopening the retired preview boundary (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.ts`; expected commit: `feat: route application skeleton managed turns`).
+188. [TODO] Git Commit: `feat: route application skeleton managed turns` (hash: TBD)
+
+### Stream: User Review Decisions
+
+189. [TODO] `diagram-plan-lifecycle-repair.phase45.application-skeleton-review.task1` Intercept Application Skeleton Phase 2 user decisions so acceptance opens Phase 3 without provider chatter and revision requests stay inside the current review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts`; expected commit: `feat: handle application skeleton review decisions`).
+190. [TODO] Git Commit: `feat: handle application skeleton review decisions` (hash: TBD)
+
+## Phase 46 — Application Skeleton Verification (owner: Codex, updated: 2026-05-15)
+
+### Stream: Targeted Tests
+
+191. [TODO] `diagram-plan-lifecycle-repair.phase46.application-skeleton-verify.task1` Run targeted Core tests/build for Application Skeleton managed draft, review, materialization, dirty-gate compatibility, and workflow-state readiness; record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton managed module`).
+192. [TODO] Git Commit: `docs: verify application skeleton managed module` (hash: TBD)
+
+## Phase 47 — Release Build Gate For Application Skeleton (owner: Codex + User, updated: 2026-05-15)
+
+### Stream: Release Confirmation Gate
+
+193. [TODO] `diagram-plan-lifecycle-repair.phase47.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Application Skeleton managed module and pending Diagram Modules index dirty repair (scope: user workflow; expected commit: none).
+
+## Phase 48 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-181. [TODO] `diagram-plan-lifecycle-repair.phase44.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-182. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+194. [TODO] `diagram-plan-lifecycle-repair.phase48.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+195. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
