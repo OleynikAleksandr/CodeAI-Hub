@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "141e3989f",
+  "lastRecordedCommit": "9b789c7a0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase28.verify.task1",
-  "expectedCommitMessage": "docs: verify release 262 cosmetic repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase29.release.task1",
+  "expectedCommitMessage": "docs: prepare release 263 cosmetic update",
   "debt": {
-    "expectedCommitMessage": "docs: verify release 262 cosmetic repair",
-    "preCommitHead": "141e3989f",
+    "expectedCommitMessage": "docs: prepare release 263 cosmetic update",
+    "preCommitHead": "9b789c7a0",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase28.verify.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase29.release.task1"
   }
 }
 ```
@@ -550,7 +550,7 @@ Release VSIX evidence recorded 2026-05-15:
 121. [DONE] Git Commit: `fix: style core system dialog messages as cards` (hash: 141e3989f)
 
 122. [DONE] `diagram-plan-lifecycle-repair.phase28.verify.task1` Run targeted Core/PM UI checks for the marker and system-card fixes and record evidence before the next release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 262 cosmetic repair`).
-123. [PENDING] Git Commit: `docs: verify release 262 cosmetic repair` (hash: TBD)
+123. [DONE] Git Commit: `docs: verify release 262 cosmetic repair` (hash: 9b789c7a0)
 
 Release 262 cosmetic repair verification evidence recorded 2026-05-15:
 
@@ -559,9 +559,35 @@ Release 262 cosmetic repair verification evidence recorded 2026-05-15:
 - `npm run build:webview` — PASS (`webview bundle generated successfully`).
 - `npm run plan:validate` — PASS.
 
-## Phase 29 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 29 — Release 263 Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation And Build
+
+124. [DONE] `diagram-plan-lifecycle-repair.phase29.release.task1` After explicit user release-build confirmation, update release-facing docs for the future cosmetic release before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 263 cosmetic update`).
+125. [PENDING] Git Commit: `docs: prepare release 263 cosmetic update` (hash: TBD)
+
+Release 263 preparation target:
+
+- User explicitly requested the new release after the release 262 cosmetic fixes.
+- Current package version before release scripts: `1.2.262`.
+- Future release version prepared in release-facing docs: `1.2.263`.
+- Release payload: Diagram Modules sidebar marker timing fix and Core/system dialog message card styling.
+
+126. [TODO] `diagram-plan-lifecycle-repair.phase29.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 263 cosmetic update`).
+127. [TODO] Git Commit: `chore: build release 263 cosmetic update` (hash: TBD)
+
+128. [TODO] `diagram-plan-lifecycle-repair.phase29.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 263 cosmetic handoff`).
+129. [TODO] Git Commit: `docs: record release 263 cosmetic handoff` (hash: TBD)
+
+## Phase 30 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
+
+### Stream: User Acceptance
+
+130. [TODO] `diagram-plan-lifecycle-repair.phase30.user-acceptance.task1` User installs the rebuilt release and verifies the Diagram Modules sidebar marker stays orange until Core opens user review, then switches green, and Core/system dialog messages render in their own subtle cards with symmetric side offsets (scope: user workflow; expected commit: none).
+
+## Phase 31 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-124. [TODO] `diagram-plan-lifecycle-repair.phase29.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-125. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+131. [TODO] `diagram-plan-lifecycle-repair.phase31.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+132. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)

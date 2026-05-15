@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.263] - 2026-05-15
+### Fixed
+- **Diagram Modules sidebar state now stays active until user review opens.** Product Part artifacts no longer make the left-side step marker green while the managed Product Part sequence is still running.
+- **Core/system dialog messages now render as dialog cards.** System messages use a subtle dedicated card with the shared border/shadow treatment and symmetric side offsets matching the larger assistant-card offset.
+
+### Tests
+- `npx tsx --test src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts` passed, 9/9 tests.
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run plan:validate`
+
 ## [1.2.262] - 2026-05-15
 ### Fixed
 - **Diagram Modules managed commits now retry transient Git index locks.** Core serializes the managed boundary per workspace and retries `.git/index.lock` failures before deciding whether to block continuation.
