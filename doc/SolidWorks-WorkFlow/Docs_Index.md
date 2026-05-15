@@ -32,6 +32,7 @@
 ### Clusters
 - `Clusters/Project_Manager.md` — SSOT подсистемы Project Manager.
 - `Clusters/CoreOrchestrator.md` — SSOT подсистемы Core Orchestrator.
+- `Clusters/ManagedWorkflowOrchestration.md` — SSOT replacement cluster for managed technical Documentation Tree stages: facade boundary, internal modules, reusable phase types, step-controller extension contract, runtime ownership, and first visual preview release boundary.
 
 ### Modules
 - `Modules/Claude.md` — SSOT Claude provider module, including provider-home runtime isolation and SDK isolation-mode rules for CodeAI Hub-managed turns.

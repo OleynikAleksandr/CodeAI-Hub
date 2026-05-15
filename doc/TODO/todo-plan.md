@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "ba5d1041e",
+  "lastRecordedCommit": "9393ade90",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase0.plan.task1",
-  "expectedCommitMessage": "docs: start managed workflow orchestration kernel runtime plan",
+  "currentTaskId": "managed-orchestration-kernel.phase1.contract.task1",
+  "expectedCommitMessage": "docs: define managed workflow orchestration cluster contract",
   "debt": {
-    "expectedCommitMessage": "docs: start managed workflow orchestration kernel runtime plan",
-    "preCommitHead": "ba5d1041e",
+    "expectedCommitMessage": "docs: define managed workflow orchestration cluster contract",
+    "preCommitHead": "9393ade90",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase0.plan.task1"
+    "taskId": "managed-orchestration-kernel.phase1.contract.task1"
   }
 }
 ```
@@ -57,14 +57,14 @@
 ### Stream: Active Plan
 
 1. [DONE] `managed-orchestration-kernel.phase0.plan.task1` Create this active implementation todo-plan for the first combined kernel + runtime-boundary release of the new Managed Workflow Orchestration cluster (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: start managed workflow orchestration kernel runtime plan`).
-2. [PENDING] Git Commit: `docs: start managed workflow orchestration kernel runtime plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: start managed workflow orchestration kernel runtime plan` (hash: 9393ade90)
 
 ## Phase 1 — Cluster Contract And Facade Boundary (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Architecture Contract
 
-3. [TODO] `managed-orchestration-kernel.phase1.contract.task1` Add the canonical Cluster SSOT for `Managed Workflow Orchestration`, including facade boundary, module map, extension contract for future steps, and runtime ownership rules (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: define managed workflow orchestration cluster contract`).
-4. [TODO] Git Commit: `docs: define managed workflow orchestration cluster contract` (hash: TBD)
+3. [DONE] `managed-orchestration-kernel.phase1.contract.task1` Add the canonical Cluster SSOT for `Managed Workflow Orchestration`, including facade boundary, module map, extension contract for future steps, and runtime ownership rules (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: define managed workflow orchestration cluster contract`).
+4. [PENDING] Git Commit: `docs: define managed workflow orchestration cluster contract` (hash: TBD)
 
 ### Stream: Facade Skeleton
 
