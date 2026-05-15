@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "544e7d7fb",
+  "lastRecordedCommit": "56cf937fa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase3.tests.task1",
-  "expectedCommitMessage": "test: cover first trunk orchestration flow",
+  "currentTaskId": "prelim-diagram-runtime.phase4.verify.task1",
+  "expectedCommitMessage": "docs: verify first trunk orchestration flow",
   "debt": {
-    "expectedCommitMessage": "test: cover first trunk orchestration flow",
-    "preCommitHead": "544e7d7fb",
+    "expectedCommitMessage": "docs: verify first trunk orchestration flow",
+    "preCommitHead": "56cf937fa",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase3.tests.task1"
+    "taskId": "prelim-diagram-runtime.phase4.verify.task1"
   }
 }
 ```
@@ -95,14 +95,14 @@
 18. [DONE] Git Commit: `feat: show diagram modules managed orchestration state` (hash: 544e7d7fb)
 
 19. [DONE] `prelim-diagram-runtime.phase3.tests.task1` Add regression coverage for the visible three-step flow: Description session visibility, Virtual Simulation start visibility, Diagram Modules managed session start, user-review acceptance, and persistent return open projection; include the start service because the fail-closed expectation is enforced below the UI card (scope: `src/client/project-manager/services/workflow-state-client.test.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.ts`; expected commit: `test: cover first trunk orchestration flow`).
-20. [PENDING] Git Commit: `test: cover first trunk orchestration flow` (hash: TBD)
+20. [DONE] Git Commit: `test: cover first trunk orchestration flow` (hash: 56cf937fa)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Targeted Verification
 
-21. [TODO] `prelim-diagram-runtime.phase4.verify.task1` Run targeted Core and Project Manager builds/tests for the first three orchestrated steps and record exact evidence here before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify first trunk orchestration flow`).
-22. [TODO] Git Commit: `docs: verify first trunk orchestration flow` (hash: TBD)
+21. [DONE] `prelim-diagram-runtime.phase4.verify.task1` Run targeted Core and Project Manager builds/tests for the first three orchestrated steps and record exact evidence here before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify first trunk orchestration flow`).
+22. [PENDING] Git Commit: `docs: verify first trunk orchestration flow` (hash: TBD)
 
 Expected verification commands:
 
@@ -113,6 +113,16 @@ Expected verification commands:
 - targeted Project Manager tests touched by stage cards/session restore
 - `npm run build:webview`
 - `npm run plan:validate`
+
+Verification evidence recorded 2026-05-15:
+
+- `npm run build:core` — PASS.
+- `npm run typecheck:webview` — PASS.
+- `node --test packages/core/dist/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-state-machine.test.js packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.js packages/core/dist/managed-workflow-orchestration/managed-workflow-plan-store.test.js` — PASS, 17 tests.
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.rewrite-blocker.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js packages/core/dist/remote-bridge/handlers/session-request-handler.documentation-rollover.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-managed-state.test.js` — PASS, 10 tests.
+- `npx tsx --test src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/layout/main-area-panel-content.test.ts` — PASS, 17 tests.
+- `npm run build:webview` — PASS.
+- `npm run plan:validate` — PASS.
 
 ## Phase 5 — Release Build (owner: Codex + User, updated: 2026-05-15)
 
