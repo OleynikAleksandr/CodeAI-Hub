@@ -12,6 +12,16 @@ import type { ApplicationSkeletonManagedValidationResult } from "./application-s
 const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const GIT_HASH_RE = /^[0-9a-f]{7,}$/u;
+const BOOTSTRAP_TASK_RE = /application-skeleton\.phase1\.bootstrap\.task1/u;
+const DRAFT_TASK_RE = /application-skeleton\.phase1\.draft\.task1/u;
+const DRAFT_EXPECTED_RE =
+  /"expectedCommitMessage": "docs: draft application skeleton contract"/u;
+const DRAFT_REPAIR_TASK_1_RE = /application-skeleton\.phase1\.repair\.task1/u;
+const DRAFT_REPAIR_TASK_2_RE = /application-skeleton\.phase1\.repair\.task2/u;
+const DRAFT_REPAIR_EXPECTED_2_RE =
+  /"expectedCommitMessage": "docs: repair application skeleton draft attempt 2"/u;
+const REJECTED_DRAFT_HASH_1_RE = /badc0de1/u;
+const REJECTED_DRAFT_HASH_2_RE = /badc0de2/u;
 const REVIEW_TASK_RE = /application-skeleton\.phase2\.review\.task1/u;
 const REVIEW_EXPECTED_RE =
   /"expectedCommitMessage": "docs: revise application skeleton review revision 1"/u;
@@ -20,6 +30,11 @@ const REVIEW_NO_REVISION_RE =
 const MATERIALIZE_TASK_RE = /application-skeleton\.phase3\.materialize\.task1/u;
 const MATERIALIZE_EXPECTED_RE =
   /"expectedCommitMessage": "feat: materialize application skeleton attempt 1"/u;
+const MATERIALIZATION_REPAIR_TASK_1_RE =
+  /application-skeleton\.phase3\.repair\.task1/u;
+const MATERIALIZATION_REPAIR_EXPECTED_1_RE =
+  /"expectedCommitMessage": "feat: repair application skeleton materialization attempt 1"/u;
+const REJECTED_MATERIALIZATION_HASH_RE = /feed1234/u;
 const PHASE_4_RE = /## Phase 4 — Persistent Application Skeleton User Return/u;
 const QUALITY_GATES_UNLOCKED_RE = /"quality_gates"/u;
 const APPLICATION_COMPLETED_RE =
@@ -92,6 +107,26 @@ const createMaterializedDecision =
     valid: true,
   });
 
+const createInvalidDraftDecision =
+  (): ApplicationSkeletonManagedValidationResult => ({
+    diagnostics: ["missing_map_json"],
+    mapJson: null,
+    nextAction: "repair_current_artifact",
+    nextPrompt: "repair draft",
+    phase: "draft",
+    valid: false,
+  });
+
+const createInvalidMaterializationDecision =
+  (): ApplicationSkeletonManagedValidationResult => ({
+    diagnostics: ["application-skeleton-map.json accepted must be true"],
+    mapJson: { accepted: false, materialized: false },
+    nextAction: "repair_materialization",
+    nextPrompt: "repair materialization",
+    phase: "materialization",
+    valid: false,
+  });
+
 const prepareWorkspace = async (workspaceRoot: string): Promise<void> => {
   await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
     workspaceRoot,
@@ -116,6 +151,13 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
   try {
     await prepareWorkspace(workspaceRoot);
     await controller.openDraftPhase({ workspaceRoot });
+    const draftPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    assert.match(draftPlan, DRAFT_TASK_RE);
+    assert.match(draftPlan, DRAFT_EXPECTED_RE);
+    assert.doesNotMatch(draftPlan, BOOTSTRAP_TASK_RE);
     await writeWorkspaceFile(
       workspaceRoot,
       MANAGED_DECISION_PATH,
@@ -229,6 +271,100 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
     );
     assert.match(workspacePlan, APPLICATION_COMPLETED_RE);
     assert.match(workspacePlan, QUALITY_GATES_UNLOCKED_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("ApplicationSkeletonStagePlanController records repeatable draft repair task pairs after rejected commits", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "application-skeleton-draft-repair-plan-")
+  );
+  const controller = new ApplicationSkeletonStagePlanController();
+  try {
+    await prepareWorkspace(workspaceRoot);
+    await controller.openDraftPhase({ workspaceRoot });
+
+    const firstRejected = await controller.recordRejectedTurn({
+      decision: createInvalidDraftDecision(),
+      rejectedCommitHash: "badc0de1",
+      workspaceRoot,
+    });
+    assert.equal(firstRejected.blocked, null);
+    assert.equal(
+      firstRejected.commit?.nextTaskId,
+      "application-skeleton.phase1.repair.task1"
+    );
+
+    const firstRepairPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    assert.match(firstRepairPlan, DRAFT_REPAIR_TASK_1_RE);
+    assert.match(firstRepairPlan, REJECTED_DRAFT_HASH_1_RE);
+
+    const secondRejected = await controller.recordRejectedTurn({
+      decision: createInvalidDraftDecision(),
+      rejectedCommitHash: "badc0de2",
+      workspaceRoot,
+    });
+    assert.equal(secondRejected.blocked, null);
+    assert.equal(
+      secondRejected.commit?.nextTaskId,
+      "application-skeleton.phase1.repair.task2"
+    );
+
+    const secondRepairPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    assert.match(secondRepairPlan, DRAFT_REPAIR_TASK_2_RE);
+    assert.match(secondRepairPlan, DRAFT_REPAIR_EXPECTED_2_RE);
+    assert.match(secondRepairPlan, REJECTED_DRAFT_HASH_2_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("ApplicationSkeletonStagePlanController records materialization repair task pairs after rejected commits", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "application-skeleton-materialization-repair-plan-")
+  );
+  const controller = new ApplicationSkeletonStagePlanController();
+  try {
+    await prepareWorkspace(workspaceRoot);
+    await controller.openDraftPhase({ workspaceRoot });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      MANAGED_DECISION_PATH,
+      '{"stage":"application_skeleton","phase":"draft"}\n'
+    );
+    await controller.commitManagedTurn({
+      decision: createDraftDecision(),
+      sessionId: "session-1",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await controller.acceptUserReviewWithoutRevision({ workspaceRoot });
+
+    const rejectedMaterialization = await controller.recordRejectedTurn({
+      decision: createInvalidMaterializationDecision(),
+      rejectedCommitHash: "feed1234",
+      workspaceRoot,
+    });
+    assert.equal(rejectedMaterialization.blocked, null);
+    assert.equal(
+      rejectedMaterialization.commit?.nextTaskId,
+      "application-skeleton.phase3.repair.task1"
+    );
+
+    const repairPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    assert.match(repairPlan, MATERIALIZATION_REPAIR_TASK_1_RE);
+    assert.match(repairPlan, MATERIALIZATION_REPAIR_EXPECTED_1_RE);
+    assert.match(repairPlan, REJECTED_MATERIALIZATION_HASH_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

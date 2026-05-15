@@ -14,6 +14,7 @@ import {
   type ManagedWorkspaceState,
   markReviewAcceptedWithoutRevision,
   type NextPlanStep,
+  openDraftStagePlan,
   PHASE4_TASK_ID,
   PLAN_END,
   PLAN_START,
@@ -22,6 +23,7 @@ import {
   readText,
   replaceStateBlock,
   resolveNextAfterCommit,
+  resolveNextAfterRejectedCommit,
   uniqueExistingPaths,
   updateStagePlanAfterCommit,
   WORKSPACE_END,
@@ -81,10 +83,11 @@ export class ApplicationSkeletonStagePlanController {
       currentTaskId: DRAFT_TASK_ID,
       expectedCommitMessage: DRAFT_COMMIT_MESSAGE,
     };
+    const draftPlanText = openDraftStagePlan(stagePlanText);
     await writeText(
       params.workspaceRoot,
       APPLICATION_STAGE_PLAN_PATH,
-      replaceStateBlock(stagePlanText, PLAN_START, PLAN_END, nextStageState)
+      replaceStateBlock(draftPlanText, PLAN_START, PLAN_END, nextStageState)
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
   }
@@ -189,6 +192,45 @@ export class ApplicationSkeletonStagePlanController {
     }
   }
 
+  async recordRejectedTurn(params: {
+    readonly decision: ApplicationSkeletonManagedValidationResult;
+    readonly rejectedCommitHash: string;
+    readonly workspaceRoot: string;
+  }): Promise<ApplicationSkeletonStagePlanAdvanceResult> {
+    const stagePlanText = await readText(
+      params.workspaceRoot,
+      APPLICATION_STAGE_PLAN_PATH
+    );
+    const stageState = parseStateBlock<ManagedPlanState>(
+      stagePlanText,
+      PLAN_START,
+      PLAN_END
+    );
+    if (!(stageState.currentTaskId && stageState.expectedCommitMessage)) {
+      return this.blockPlanMismatch();
+    }
+    const next = resolveNextAfterRejectedCommit({
+      content: stagePlanText,
+      decision: params.decision,
+    });
+    await this.recordRejectedCommit({
+      commitMessage: stageState.expectedCommitMessage,
+      hash: params.rejectedCommitHash,
+      next,
+      stagePlanText,
+      stageState,
+      workspaceRoot: params.workspaceRoot,
+    });
+    return {
+      blocked: null,
+      commit: {
+        expectedCommitMessage: stageState.expectedCommitMessage,
+        hash: params.rejectedCommitHash,
+        nextTaskId: next.taskId,
+      },
+    };
+  }
+
   private blockInvalidDecision(): ApplicationSkeletonStagePlanAdvanceResult {
     return {
       blocked: {
@@ -280,6 +322,40 @@ export class ApplicationSkeletonStagePlanController {
       sessionId: params.sessionId,
       taskId: params.stageState.currentTaskId,
     });
+  }
+
+  private async recordRejectedCommit(params: {
+    readonly commitMessage: string;
+    readonly hash: string;
+    readonly next: NextPlanStep;
+    readonly stagePlanText: string;
+    readonly stageState: ManagedPlanState;
+    readonly workspaceRoot: string;
+  }): Promise<void> {
+    const nextStageState: ManagedPlanState = {
+      ...params.stageState,
+      currentTaskId: params.next.taskId,
+      expectedCommitMessage: params.next.expectedCommitMessage,
+      lastRecordedCommit: params.hash,
+    };
+    const nextStagePlanText = replaceStateBlock(
+      updateStagePlanAfterCommit({
+        content: params.stagePlanText,
+        currentTaskId: params.stageState.currentTaskId ?? "",
+        expectedCommitMessage: params.commitMessage,
+        hash: params.hash,
+        next: params.next,
+      }),
+      PLAN_START,
+      PLAN_END,
+      nextStageState
+    );
+    await writeText(
+      params.workspaceRoot,
+      APPLICATION_STAGE_PLAN_PATH,
+      nextStagePlanText
+    );
+    await this.updateWorkspaceState(params.workspaceRoot, null);
   }
 
   private async updateWorkspaceState(

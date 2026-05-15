@@ -1,6 +1,20 @@
 import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  appendDraftRepairStep,
+  appendMaterializationRepairStep,
+  DRAFT_TASK_ID,
+  parseDraftRepairTaskNumber,
+  parseMaterializationRepairTaskNumber,
+} from "./application-skeleton-stage-plan-repair-model";
 import type { ApplicationSkeletonManagedValidationResult } from "./application-skeleton-validator";
+
+export {
+  DRAFT_COMMIT_MESSAGE,
+  DRAFT_TASK_ID,
+  openDraftStagePlan,
+  resolveNextAfterRejectedCommit,
+} from "./application-skeleton-stage-plan-repair-model";
 
 export const PLAN_START = "<!-- codeai-plan-state:start -->";
 export const PLAN_END = "<!-- codeai-plan-state:end -->";
@@ -10,8 +24,6 @@ export const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
 export const APPLICATION_STAGE_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
 export const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
-export const DRAFT_TASK_ID = "application-skeleton.phase1.draft.task1";
-export const DRAFT_COMMIT_MESSAGE = "docs: draft application skeleton contract";
 export const REVIEW_TASK_PREFIX = "application-skeleton.phase2.review.task";
 const MATERIALIZE_TASK_PREFIX = "application-skeleton.phase3.materialize.task";
 export const MATERIALIZE_COMMIT_MESSAGE =
@@ -148,7 +160,10 @@ export const resolveNextAfterCommit = (params: {
   readonly currentTaskId: string;
   readonly decision: ApplicationSkeletonManagedValidationResult;
 }): NextPlanStep => {
-  if (params.currentTaskId === DRAFT_TASK_ID) {
+  if (
+    params.currentTaskId === DRAFT_TASK_ID ||
+    parseDraftRepairTaskNumber(params.currentTaskId) !== null
+  ) {
     return {
       expectedCommitMessage: buildReviewCommitMessage(1),
       taskId: buildReviewTaskId(1),
@@ -256,6 +271,21 @@ export const updateStagePlanAfterCommit = (params: {
     return appendReviewStep(
       markedDone,
       Number(params.next.taskId.slice(REVIEW_TASK_PREFIX.length))
+    );
+  }
+  const draftRepairNumber = params.next.taskId
+    ? parseDraftRepairTaskNumber(params.next.taskId)
+    : null;
+  if (draftRepairNumber !== null) {
+    return appendDraftRepairStep(markedDone, draftRepairNumber);
+  }
+  const materializationRepairNumber = params.next.taskId
+    ? parseMaterializationRepairTaskNumber(params.next.taskId)
+    : null;
+  if (materializationRepairNumber !== null) {
+    return appendMaterializationRepairStep(
+      markedDone,
+      materializationRepairNumber
     );
   }
   if (params.next.taskId === PHASE4_TASK_ID) {
