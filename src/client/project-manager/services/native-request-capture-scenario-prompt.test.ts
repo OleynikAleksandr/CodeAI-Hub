@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { WorkflowContractSnapshot } from "./description-submit-service";
-import type { WorkflowStageId } from "./prompt-pack-builder";
+import type {
+  CoreWorkflowPromptPack,
+  WorkflowStageId,
+} from "./description-submit-service";
 import type { WorkflowStateSnapshot } from "./workflow-state-client";
 
 const installWindowStub = (): void => {
@@ -51,16 +53,37 @@ const createWorkflowState = (
   ...overrides,
 });
 
-const loadContract = async (
-  stage: WorkflowStageId
-): Promise<WorkflowContractSnapshot> => ({
-  prompt: `Prompt for ${stage}`,
-  schema: {},
-  template: "",
-  paths: {
-    prompt: `/contracts/${stage}.md`,
-    template: `/templates/${stage}.md`,
-  },
+const buildTargetPath = (stage: WorkflowStageId): string => {
+  if (stage === "description") {
+    return ".codeai-hub/demo-workspace/description/Final_Description.md";
+  }
+  if (stage === "virtual_simulation") {
+    return ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md";
+  }
+  if (stage === "diagram_modules") {
+    return ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md";
+  }
+  if (stage === "application_skeleton") {
+    return ".codeai-hub/demo-workspace/application_skeleton/application-skeleton.md";
+  }
+  return ".codeai-hub/demo-workspace/quality_gates/quality-gates.md";
+};
+
+const loadPromptPack = async (params: {
+  readonly artifactLanguage: string;
+  readonly chatLanguage: string;
+  readonly stage: WorkflowStageId;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): Promise<CoreWorkflowPromptPack> => ({
+  absolutePath: `${params.workspacePath}/${buildTargetPath(params.stage)}`,
+  artifactLanguage: params.artifactLanguage,
+  chatLanguage: params.chatLanguage,
+  content: `Core prompt pack for ${params.stage}`,
+  inputPath: `core-input:${params.stage}`,
+  promptPath: `/contracts/${params.stage}.md`,
+  relativePath: buildTargetPath(params.stage),
+  templatePath: `/templates/${params.stage}.md`,
 });
 
 test("scenario prompt resolver keeps upstream guard by default", async () => {
@@ -73,7 +96,7 @@ test("scenario prompt resolver keeps upstream guard by default", async () => {
     () =>
       buildNativeRequestCaptureScenarioPrompt({
         getWorkflowState: async () => createWorkflowState(),
-        loadContract,
+        loadPromptPack,
         scenarioId: "virtual_simulation",
         workspacePath: "/tmp/demo",
         workspaceSlug: "demo-workspace",
@@ -85,7 +108,7 @@ test("scenario prompt resolver keeps upstream guard by default", async () => {
     () =>
       buildNativeRequestCaptureScenarioPrompt({
         getWorkflowState: async () => createWorkflowState(),
-        loadContract,
+        loadPromptPack,
         scenarioId: "diagram_modules",
         workspacePath: "/tmp/demo",
         workspaceSlug: "demo-workspace",
@@ -103,7 +126,7 @@ test("scenario prompt resolver bypass returns canonical paths for empty workspac
   const virtualSimulation = await buildNativeRequestCaptureScenarioPrompt({
     bypassUpstreamGuard: true,
     getWorkflowState: async () => createWorkflowState(),
-    loadContract,
+    loadPromptPack,
     scenarioId: "virtual_simulation",
     workspacePath: "/tmp/demo",
     workspaceSlug: "demo-workspace",
@@ -111,13 +134,14 @@ test("scenario prompt resolver bypass returns canonical paths for empty workspac
 
   assert.equal(
     virtualSimulation.inputPath,
-    ".codeai-hub/demo-workspace/description/Final_Description.md"
+    "core-input:virtual_simulation"
   );
+  assert.equal(virtualSimulation.prompt, "Core prompt pack for virtual_simulation");
 
   const diagramModules = await buildNativeRequestCaptureScenarioPrompt({
     bypassUpstreamGuard: true,
     getWorkflowState: async () => createWorkflowState(),
-    loadContract,
+    loadPromptPack,
     scenarioId: "diagram_modules",
     workspacePath: "/tmp/demo",
     workspaceSlug: "demo-workspace",
@@ -125,7 +149,7 @@ test("scenario prompt resolver bypass returns canonical paths for empty workspac
 
   assert.equal(
     diagramModules.inputPath,
-    ".codeai-hub/demo-workspace/virtual_simulation/virtual-simulation.md"
+    "core-input:diagram_modules"
   );
 
   const diagramModulesSubstep = await buildNativeRequestCaptureScenarioPrompt({
@@ -134,7 +158,7 @@ test("scenario prompt resolver bypass returns canonical paths for empty workspac
       createWorkflowState({
         diagramModulesProgress: { substep: "part-detail" },
       }),
-    loadContract,
+    loadPromptPack,
     scenarioId: "diagram_modules",
     workspacePath: "/tmp/demo",
     workspaceSlug: "demo-workspace",
@@ -142,6 +166,6 @@ test("scenario prompt resolver bypass returns canonical paths for empty workspac
 
   assert.equal(
     diagramModulesSubstep.inputPath,
-    ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
+    "core-input:diagram_modules"
   );
 });

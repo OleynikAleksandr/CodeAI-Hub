@@ -1,13 +1,11 @@
 import type { SettingsLoadedPayload } from "../core-stream-message-types";
 import {
-  loadWorkflowContract,
+  loadCoreWorkflowPromptPack,
   resolveArtifactsForTheUserLanguage,
-  type WorkflowContractSnapshot,
-} from "./description-submit-service";
-import {
-  buildWorkflowPromptPack,
+  type CoreWorkflowPromptPack,
   type WorkflowStageId,
-} from "./prompt-pack-builder";
+} from "./description-submit-service";
+import { resolveWorkflowChatLanguage } from "./prompt-pack-builder";
 import type { WorkflowStateSnapshot } from "./workflow-state-client";
 
 export type NativeRequestCaptureScenarioId = WorkflowStageId;
@@ -21,9 +19,13 @@ type WorkflowStateGetter = (
   workspacePath?: string
 ) => Promise<WorkflowStateSnapshot | null>;
 
-type WorkflowContractLoader = (
-  stage: WorkflowStageId
-) => Promise<WorkflowContractSnapshot>;
+type WorkflowPromptPackLoader = (params: {
+  readonly artifactLanguage: string;
+  readonly chatLanguage: string;
+  readonly stage: WorkflowStageId;
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}) => Promise<CoreWorkflowPromptPack>;
 
 interface NativeRequestCaptureScenarioPromptParams<
   TScenarioId extends NativeRequestCaptureScenarioId = NativeRequestCaptureScenarioId,
@@ -31,7 +33,7 @@ interface NativeRequestCaptureScenarioPromptParams<
   readonly artifactLanguage?: string;
   readonly bypassUpstreamGuard?: boolean;
   readonly getWorkflowState: WorkflowStateGetter;
-  readonly loadContract?: WorkflowContractLoader;
+  readonly loadPromptPack?: WorkflowPromptPackLoader;
   readonly scenarioId: TScenarioId;
   readonly settingsPayload?: SettingsLoadedPayload | null;
   readonly workspaceName?: string;
@@ -157,40 +159,34 @@ export const buildNativeRequestCaptureScenarioPrompt = async <
     params.workspaceSlug,
     params.workspacePath
   );
-  const inputPath = resolveScenarioInputPath({
+  resolveScenarioInputPath({
     bypassUpstreamGuard: params.bypassUpstreamGuard,
     scenarioId: params.scenarioId,
     state,
     workspaceSlug: params.workspaceSlug,
   });
-  const contract =
-    params.loadContract === undefined
-      ? await loadWorkflowContract(
-          params.scenarioId as Parameters<typeof loadWorkflowContract>[0]
-        )
-      : await params.loadContract(params.scenarioId);
   const artifactLanguage =
     params.artifactLanguage ??
     resolveArtifactsForTheUserLanguage(params.settingsPayload);
-  const promptPack = buildWorkflowPromptPack({
+  const chatLanguage = resolveWorkflowChatLanguage(params.settingsPayload);
+  const promptPackLoader = params.loadPromptPack ?? loadCoreWorkflowPromptPack;
+  const promptPack = await promptPackLoader({
     artifactLanguage,
+    chatLanguage,
     stage: params.scenarioId,
     workspacePath: params.workspacePath,
     workspaceSlug: params.workspaceSlug,
-    prompt: contract.prompt,
-    templatePath: contract.paths.template,
-    questionnairePath: inputPath,
   });
 
   return {
     artifactLanguage,
-    inputPath,
+    inputPath: promptPack.inputPath,
     prompt: promptPack.content,
-    promptPath: contract.paths.prompt,
+    promptPath: promptPack.promptPath,
     scenarioId: params.scenarioId,
     scenarioLabel: SCENARIO_LABELS[params.scenarioId],
     targetAbsolutePath: promptPack.absolutePath,
     targetRelativePath: promptPack.relativePath,
-    templatePath: contract.paths.template,
+    templatePath: promptPack.templatePath,
   };
 };

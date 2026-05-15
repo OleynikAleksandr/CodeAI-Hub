@@ -167,7 +167,7 @@ const normalizeWorkflowContract = (
     },
   };
 };
-export const loadWorkflowContract = async (
+const loadWorkflowContract = async (
   stage: WorkflowStageId
 ): Promise<WorkflowContractSnapshot> => {
   const httpUrl = resolveCoreHttpUrl();
@@ -243,7 +243,7 @@ const normalizeCoreWorkflowPromptPack = (
   };
 };
 
-const loadCoreWorkflowPromptPack = async (params: {
+export const loadCoreWorkflowPromptPack = async (params: {
   readonly artifactLanguage: string;
   readonly chatLanguage: string;
   readonly stage: WorkflowStageId;

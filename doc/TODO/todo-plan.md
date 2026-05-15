@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "26b86415f",
+  "lastRecordedCommit": "298bb6652",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.pm-prompt-client.task1",
-  "expectedCommitMessage": "fix: use core workflow prompt packs in pm",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase50.pm-capture-prompt-client.task1",
+  "expectedCommitMessage": "fix: use core prompt packs in capture prompt",
   "debt": {
-    "expectedCommitMessage": "fix: use core workflow prompt packs in pm",
-    "preCommitHead": "26b86415f",
+    "expectedCommitMessage": "fix: use core prompt packs in capture prompt",
+    "preCommitHead": "298bb6652",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase50.pm-prompt-client.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase50.pm-capture-prompt-client.task1"
   }
 }
 ```
@@ -946,10 +946,10 @@ Release VSIX evidence recorded 2026-05-15:
 208. [DONE] Git Commit: `fix: move workflow prompt truth to core` (hash: 26b86415f)
 
 209. [DONE] `diagram-plan-lifecycle-repair.phase50.pm-prompt-client.task1` Change Project Manager workflow starts to request Core-owned prompt packs instead of building stage-specific prompts locally (scope: `src/client/project-manager/services/description-submit-service.ts, src/client/project-manager/services/idea-collector-submit-service.open-fast.test.ts`; expected commit: `fix: use core workflow prompt packs in pm`).
-210. [PENDING] Git Commit: `fix: use core workflow prompt packs in pm` (hash: TBD)
+210. [DONE] Git Commit: `fix: use core workflow prompt packs in pm` (hash: 298bb6652)
 
-211. [TODO] `diagram-plan-lifecycle-repair.phase50.pm-capture-prompt-client.task1` Change native request capture prompts to request Core-owned prompt packs instead of building stage-specific prompts locally (scope: `src/client/project-manager/services/native-request-capture-scenario-prompt.ts, src/client/project-manager/services/native-request-capture-scenario-prompt.test.ts`; expected commit: `fix: use core prompt packs in capture prompt`).
-212. [TODO] Git Commit: `fix: use core prompt packs in capture prompt` (hash: TBD)
+211. [DONE] `diagram-plan-lifecycle-repair.phase50.pm-capture-prompt-client.task1` Change native request capture prompts to request Core-owned prompt packs instead of building stage-specific prompts locally (scope: `src/client/project-manager/services/description-submit-service.ts, src/client/project-manager/services/native-request-capture-scenario-prompt.ts, src/client/project-manager/services/native-request-capture-scenario-prompt.test.ts`; expected commit: `fix: use core prompt packs in capture prompt`).
+212. [PENDING] Git Commit: `fix: use core prompt packs in capture prompt` (hash: TBD)
 
 213. [TODO] `diagram-plan-lifecycle-repair.phase50.pm-truth-cleanup.task1` Remove or reduce Project Manager prompt/source descriptor helpers so remaining PM code is transport/localization plumbing, not workflow stage truth (scope: `src/client/project-manager/services/prompt-pack-builder.ts, src/client/project-manager/services/workflow-source-artifact-descriptors.ts, src/client/project-manager/services/prompt-pack-builder.virtual-simulation.test.ts`; expected commit: `fix: remove project manager workflow prompt truth`).
 214. [TODO] Git Commit: `fix: remove project manager workflow prompt truth` (hash: TBD)
