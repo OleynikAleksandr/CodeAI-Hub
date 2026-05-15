@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "a43ae6776",
+  "lastRecordedCommit": "bd9046e49",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task2",
-  "expectedCommitMessage": "fix: refresh workflow state on derived gate changes",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase34.verify.task1",
+  "expectedCommitMessage": "docs: verify release 264 workflow snapshot refresh repair",
   "debt": {
-    "expectedCommitMessage": "fix: refresh workflow state on derived gate changes",
-    "preCommitHead": "a43ae6776",
+    "expectedCommitMessage": "docs: verify release 264 workflow snapshot refresh repair",
+    "preCommitHead": "bd9046e49",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task2"
+    "taskId": "diagram-plan-lifecycle-repair.phase34.verify.task1"
   }
 }
 ```
@@ -668,12 +668,19 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Project Manager Snapshot Refresh
 
 144. [DONE] `diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task2` Make Project Manager workflow-state subscriptions emit when derived progress/gating changes even if the root `updatedAt` timestamp is unchanged, so Diagram Modules review readiness and Application Skeleton gating refresh after Core handoff (scope: `src/client/project-manager/services/workflow-state-store.ts, src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts`; expected commit: `fix: refresh workflow state on derived gate changes`).
-145. [PENDING] Git Commit: `fix: refresh workflow state on derived gate changes` (hash: TBD)
+145. [DONE] Git Commit: `fix: refresh workflow state on derived gate changes` (hash: bd9046e49)
 
 ### Stream: Verification
 
-146. [TODO] `diagram-plan-lifecycle-repair.phase34.verify.task1` Run targeted Project Manager tests/build for the derived workflow-state refresh path and record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 264 workflow snapshot refresh repair`).
-147. [TODO] Git Commit: `docs: verify release 264 workflow snapshot refresh repair` (hash: TBD)
+146. [DONE] `diagram-plan-lifecycle-repair.phase34.verify.task1` Run targeted Project Manager tests/build for the derived workflow-state refresh path and record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 264 workflow snapshot refresh repair`).
+147. [PENDING] Git Commit: `docs: verify release 264 workflow snapshot refresh repair` (hash: TBD)
+
+Verification evidence recorded 2026-05-15:
+
+- `npx tsx --test src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` — PASS, 14 tests.
+- `npm run typecheck:webview` — PASS.
+- `npm run build:webview` — PASS (`webview bundle generated successfully`).
+- Confirmed against the release `1.2.264` test workspace: the filesystem projection for `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4` returns `diagramModulesProgress.aggregateReady: true` after all Product Parts are present, so the repaired PM store now emits the derived readiness/gating change even when root `updatedAt` is unchanged.
 
 ## Phase 35 — Release Build Gate For Workflow Snapshot Refresh Repair (owner: Codex + User, updated: 2026-05-15)
 
