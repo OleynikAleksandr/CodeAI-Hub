@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "860c04bb4",
+  "lastRecordedCommit": "7fcdcfa16",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase3.audit.task1",
-  "expectedCommitMessage": "feat: add managed workflow audit log",
+  "currentTaskId": "managed-orchestration-kernel.phase3.commit.task1",
+  "expectedCommitMessage": "feat: add managed workflow commit transaction boundary",
   "debt": {
-    "expectedCommitMessage": "feat: add managed workflow audit log",
-    "preCommitHead": "860c04bb4",
+    "expectedCommitMessage": "feat: add managed workflow commit transaction boundary",
+    "preCommitHead": "7fcdcfa16",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase3.audit.task1"
+    "taskId": "managed-orchestration-kernel.phase3.commit.task1"
   }
 }
 ```
@@ -103,10 +103,10 @@
 20. [DONE] Git Commit: `feat: add managed workflow plan store abstraction` (hash: 860c04bb4)
 
 21. [DONE] `managed-orchestration-kernel.phase3.audit.task1` Add `ManagedWorkflowAuditLog` and tests for Core decisions, effects, blockers, provider-visible messages, and recovery actions (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-audit-log.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow audit log`).
-22. [PENDING] Git Commit: `feat: add managed workflow audit log` (hash: TBD)
+22. [DONE] Git Commit: `feat: add managed workflow audit log` (hash: 7fcdcfa16)
 
-23. [TODO] `managed-orchestration-kernel.phase3.commit.task1` Add a fail-closed `ManagedWorkflowCommitTransaction` boundary that records intended commit decisions but refuses pseudo-hashes and does not yet perform step commits (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-commit-transaction.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-commit-transaction.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow commit transaction boundary`).
-24. [TODO] Git Commit: `feat: add managed workflow commit transaction boundary` (hash: TBD)
+23. [DONE] `managed-orchestration-kernel.phase3.commit.task1` Add a fail-closed `ManagedWorkflowCommitTransaction` boundary that records intended commit decisions but refuses pseudo-hashes and does not yet perform step commits (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-commit-transaction.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-commit-transaction.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow commit transaction boundary`).
+24. [PENDING] Git Commit: `feat: add managed workflow commit transaction boundary` (hash: TBD)
 
 25. [TODO] `managed-orchestration-kernel.phase3.recovery.task1` Add baseline `ManagedWorkflowRecoveryArbiter` decisions for wait-user, wait-provider, retry-provider, blocked, and panic-stop states (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-recovery-arbiter.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-recovery-arbiter.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-snapshot.ts`; expected commit: `feat: add managed workflow recovery arbiter baseline`).
 26. [TODO] Git Commit: `feat: add managed workflow recovery arbiter baseline` (hash: TBD)
