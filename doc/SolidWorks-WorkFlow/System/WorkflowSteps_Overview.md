@@ -77,6 +77,12 @@ Core Runtime является самостоятельным `Product Part`, а 
 - Provider adapters являются transport/runtime boundary и сообщают Core о ходе turn-а через SDK/provider events; они не принимают решений о workflow acceptance.
 - Settings, workflow state, provider SDK terminal events и Git state являются отдельными canonical sources; UI-карточки и status panels только записывают или отображают эти источники, но не создают параллельную правду.
 
+### Client Projection Boundary
+
+Every workflow step is evaluated from Core-owned state. Project Manager, VS Code surfaces, future mobile clients, and Wi-Fi/remote clients are replaceable projections only: they may collect user input and display Core snapshots, but they must never be the source of truth for stage phase, active microtask, expected commit, prompt/template selection, source-artifact selection, artifact validity, gating, localization target, Core/system messages, managed state, or commit lifecycle.
+
+A trunk or managed step must keep running while all clients are closed until Core reaches an explicit user gate. If opening Project Manager is required for `Diagram Modules`, `Application Skeleton`, `Quality Gates Baseline`, or any future workflow step to advance before that gate, the workflow contract is broken and must be repaired in Core/orchestrator logic, not by duplicating truth in the client.
+
 Во время rewrite активный runtime не имеет старого post-turn arbitration contract. Любой код, который читает workflow state для Project Manager, sidebar, cards, status panel или artifact panes, обязан оставаться side-effect free относительно provider-visible messages. Read-path может возвращать snapshot и diagnostics, но не должен запускать acceptance, Git mutation, plan advancement или continuation. Если будущему Core cluster понадобятся session summary, commit owner, continuation orchestrator или stage validator, они должны войти в один новый orchestration cluster с общим contract envelope и детерминированным order of operations.
 
 Continuity chains remain stage-family agnostic. The same load/persistence rules apply to `description`, `virtual_simulation`, `diagram_modules`, `application_skeleton`, `quality_gates`, and all nested `development_tree/...` sessions; no step may depend on a separate card-only fallback once a recoverable chain exists.

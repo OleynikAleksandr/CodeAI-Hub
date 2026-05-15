@@ -19,6 +19,14 @@ The cluster owns lifecycle decisions for:
 
 The first implementation release exposes a runtime-visible preview boundary only. End-to-end execution of the three managed steps is added later one step at a time.
 
+## Client Projection Boundary
+
+Managed Workflow Orchestration is Core-owned. Project Manager, VS Code UI surfaces, future mobile clients, and any future Wi-Fi/remote clients are replaceable projections over Core state; they are not workflow authority.
+
+Clients may submit raw user intent and render Core-owned snapshots, but they must never own or infer managed workflow truth: stage phase, active microtask, expected commit, prompt/template selection, source-artifact selection, artifact validity, gating decisions, localization target for Core/system messages, provider continuation policy, managed state, or Git commit lifecycle.
+
+Every Type A, Type B, and Persistent Return managed flow must continue with all clients closed until Core explicitly opens a user review, revision, acceptance, or configuration gate. If a managed step depends on an open Project Manager window to advance before such a user gate, the step contract is invalid and the defect belongs in Core orchestration.
+
 ## 2. Facade Contract
 
 External code may depend only on `ManagedWorkflowOrchestrationFacade` and exported public contract types.

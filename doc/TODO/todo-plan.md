@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "4b053a24a",
+  "lastRecordedCommit": "5973b0e14",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase52a.client-authority-startup.task1",
-  "expectedCommitMessage": "docs: record client projection authority invariant",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase52a.client-authority-orchestrator.task1",
+  "expectedCommitMessage": "docs: record orchestrator client projection authority",
   "debt": {
-    "expectedCommitMessage": "docs: record client projection authority invariant",
-    "preCommitHead": "4b053a24a",
+    "expectedCommitMessage": "docs: record orchestrator client projection authority",
+    "preCommitHead": "5973b0e14",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase52a.client-authority-startup.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase52a.client-authority-orchestrator.task1"
   }
 }
 ```
@@ -1006,10 +1006,10 @@ Repair coverage:
 ### Stream: Startup And Orchestrator Invariants
 
 228. [DONE] `diagram-plan-lifecycle-repair.phase52a.client-authority-startup.task1` Record the hard invariant that Project Manager and future clients are replaceable projections, never workflow truth owners, in startup/system documents (scope: `AGENTS.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: record client projection authority invariant`).
-229. [PENDING] Git Commit: `docs: record client projection authority invariant` (hash: TBD)
+229. [DONE] Git Commit: `docs: record client projection authority invariant` (hash: 5973b0e14)
 
-230. [TODO] `diagram-plan-lifecycle-repair.phase52a.client-authority-orchestrator.task1` Record the same invariant in orchestrator and workflow-step documentation so managed workflow modules keep Core as the authority for state, prompts, artifacts, plans, validation, and localization (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: record orchestrator client projection authority`).
-231. [TODO] Git Commit: `docs: record orchestrator client projection authority` (hash: TBD)
+230. [DONE] `diagram-plan-lifecycle-repair.phase52a.client-authority-orchestrator.task1` Record the same invariant in orchestrator and workflow-step documentation so managed workflow modules keep Core as the authority for state, prompts, artifacts, plans, validation, and localization (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: record orchestrator client projection authority`).
+231. [PENDING] Git Commit: `docs: record orchestrator client projection authority` (hash: TBD)
 
 ## Phase 53 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
