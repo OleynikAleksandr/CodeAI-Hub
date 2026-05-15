@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "bf3ff3dbe",
+  "lastRecordedCommit": "218fba394",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase5.readmodel.task1",
-  "expectedCommitMessage": "feat: project managed workflow preview state",
+  "currentTaskId": "managed-orchestration-kernel.phase5.pm.task1",
+  "expectedCommitMessage": "feat: show managed workflow orchestration preview in project manager",
   "debt": {
-    "expectedCommitMessage": "feat: project managed workflow preview state",
-    "preCommitHead": "bf3ff3dbe",
+    "expectedCommitMessage": "feat: show managed workflow orchestration preview in project manager",
+    "preCommitHead": "218fba394",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase5.readmodel.task1"
+    "taskId": "managed-orchestration-kernel.phase5.pm.task1"
   }
 }
 ```
@@ -129,10 +129,10 @@
 ### Stream: Read Model Projection
 
 33. [DONE] `managed-orchestration-kernel.phase5.readmodel.task1` Add read-only `ManagedWorkflowReadModelProjector` and expose preview status in workflow-state snapshots without commits/provider dispatch (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-read-model-projector.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `feat: project managed workflow preview state`).
-34. [PENDING] Git Commit: `feat: project managed workflow preview state` (hash: TBD)
+34. [DONE] Git Commit: `feat: project managed workflow preview state` (hash: 218fba394)
 
-35. [TODO] `managed-orchestration-kernel.phase5.pm.task1` Update Project Manager technical stage surfaces to show the new orchestration preview boundary, current registered controller, and user-facing reason that step execution is waiting for the next step-specific release (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat: show managed workflow orchestration preview in project manager`).
-36. [TODO] Git Commit: `feat: show managed workflow orchestration preview in project manager` (hash: TBD)
+35. [DONE] `managed-orchestration-kernel.phase5.pm.task1` Update Project Manager technical stage surfaces to show the new orchestration preview boundary, current registered controller, and user-facing reason that step execution is waiting for the next step-specific release (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat: show managed workflow orchestration preview in project manager`).
+36. [PENDING] Git Commit: `feat: show managed workflow orchestration preview in project manager` (hash: TBD)
 
 37. [TODO] `managed-orchestration-kernel.phase5.pm.task2` Add UI/service tests for the visual control point: managed technical stages show new cluster status, no legacy accept/continue controls, and session restore prefers the existing boundary session (scope: `src/client/project-manager/services/workflow-step-start-service.gating.test.ts, src/client/project-manager/components/sessions/dialog-session-snapshot-replay.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.tsx`; expected commit: `test: cover managed workflow preview projection`).
 38. [TODO] Git Commit: `test: cover managed workflow preview projection` (hash: TBD)

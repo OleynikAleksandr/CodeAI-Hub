@@ -67,6 +67,19 @@ export type TechnicalStageRewriteBoundarySnapshot = {
   readonly readOnlyStages: readonly string[];
 };
 
+export type ManagedWorkflowPreviewStageSnapshot = {
+  readonly controllerId: string;
+  readonly displayName: string;
+  readonly phaseTypes: readonly string[];
+};
+
+export type ManagedWorkflowPreviewSnapshot = {
+  readonly active: true;
+  readonly mode: "preview";
+  readonly reason: string;
+  readonly stages: readonly ManagedWorkflowPreviewStageSnapshot[];
+};
+
 export type DiagramModulesSubturnSnapshot =
   | {
       readonly kind: "index";
@@ -110,6 +123,7 @@ export type WorkflowStateSnapshot = {
   readonly description: DescriptionBranchSnapshot | null;
   readonly gating: WorkflowGatingSnapshot;
   readonly technicalStageRewriteBoundary?: TechnicalStageRewriteBoundarySnapshot | null;
+  readonly managedWorkflowPreview?: ManagedWorkflowPreviewSnapshot | null;
   readonly diagramModulesProgress?: DiagramModulesProgressSnapshot | null;
   readonly applicationSkeletonProgress?: Record<string, unknown> | null;
   readonly qualityGatesProgress?: Record<string, unknown> | null;
@@ -123,6 +137,7 @@ type WorkflowStateResponse = {
   readonly description?: unknown;
   readonly gating?: unknown;
   readonly technicalStageRewriteBoundary?: unknown;
+  readonly managedWorkflowPreview?: unknown;
   readonly diagramModulesProgress?: unknown;
   readonly applicationSkeletonProgress?: unknown;
   readonly qualityGatesProgress?: unknown;
@@ -307,6 +322,41 @@ const parseTechnicalStageRewriteBoundary = (
   };
 };
 
+const parseManagedWorkflowPreviewStage = (
+  payload: unknown
+): ManagedWorkflowPreviewStageSnapshot | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const controllerId = readNonEmptyString(payload.controllerId);
+  const displayName = readNonEmptyString(payload.displayName);
+  if (!(controllerId && displayName)) {
+    return null;
+  }
+  return {
+    controllerId,
+    displayName,
+    phaseTypes: parseStringArray(payload.phaseTypes),
+  };
+};
+
+const parseManagedWorkflowPreview = (
+  payload: unknown
+): ManagedWorkflowPreviewSnapshot | null => {
+  if (!isRecord(payload) || payload.active !== true || payload.mode !== "preview") {
+    return null;
+  }
+  const reason = readNonEmptyString(payload.reason);
+  const stages = Array.isArray(payload.stages)
+    ? payload.stages
+        .map(parseManagedWorkflowPreviewStage)
+        .filter((stage): stage is ManagedWorkflowPreviewStageSnapshot =>
+          Boolean(stage)
+        )
+    : [];
+  return reason ? { active: true, mode: "preview", reason, stages } : null;
+};
+
 const parseWorkflowState = (
   payload: unknown
 ): WorkflowStateSnapshot | null => {
@@ -328,6 +378,9 @@ const parseWorkflowState = (
   const gating = parseWorkflowGating({ payload: response?.gating, stageOrder: STAGE_ORDER });
   const technicalStageRewriteBoundary = parseTechnicalStageRewriteBoundary(
     response?.technicalStageRewriteBoundary
+  );
+  const managedWorkflowPreview = parseManagedWorkflowPreview(
+    response?.managedWorkflowPreview
   );
   const diagramModulesProgress = isRecord(response?.diagramModulesProgress)
     ? (response.diagramModulesProgress as DiagramModulesProgressSnapshot)
@@ -365,6 +418,7 @@ const parseWorkflowState = (
     description,
     gating,
     technicalStageRewriteBoundary,
+    managedWorkflowPreview,
     diagramModulesProgress,
     applicationSkeletonProgress,
     qualityGatesProgress,

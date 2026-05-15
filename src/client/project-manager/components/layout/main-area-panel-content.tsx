@@ -97,7 +97,7 @@ const renderLocalizationSyncBlockedState = (
 
 const isTechnicalStageRewriteBoundaryActive = (
   snapshot: WorkflowStateSnapshot | null
-): boolean => snapshot?.stages.diagram_modules !== undefined && snapshot.stages.diagram_modules !== "idle";
+): boolean => snapshot?.managedWorkflowPreview?.active === true;
 
 const isReadOnlyUpstreamTool = (activeTool: string | null): boolean =>
   activeTool === "Description" || activeTool === VIRTUAL_SIMULATION_TOOL_LABEL;
@@ -461,7 +461,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
         {t(
           "ui_interface",
           "pm.workflow.upstream_readonly.body",
-          "Technical stage rewrite boundary has started at Diagram Modules. Existing artifacts remain available from the tree, but this upstream stage can no longer be edited."
+          "Managed Workflow Orchestration preview is active for technical stages. Existing upstream artifacts remain available from the tree while step execution is routed through the new Core boundary."
         )}
       </div>
     );
