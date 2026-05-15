@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "318fc1220",
+  "lastRecordedCommit": "8ee9ad8b7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase26.release.task2",
-  "expectedCommitMessage": "chore: build managed boundary and localization release",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase26.release.task3",
+  "expectedCommitMessage": "docs: record managed boundary and localization release",
   "debt": {
-    "expectedCommitMessage": "chore: build managed boundary and localization release",
-    "preCommitHead": "318fc1220",
+    "expectedCommitMessage": "docs: record managed boundary and localization release",
+    "preCommitHead": "8ee9ad8b7",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase26.release.task2"
+    "taskId": "diagram-plan-lifecycle-repair.phase26.release.task3"
   }
 }
 ```
@@ -510,7 +510,7 @@ Release preparation recorded 2026-05-15:
 - `CHANGELOG.md` release entry `1.2.262` added with verification summary.
 
 111. [DONE] `diagram-plan-lifecycle-repair.phase26.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build managed boundary and localization release`).
-112. [PENDING] Git Commit: `chore: build managed boundary and localization release` (hash: TBD)
+112. [DONE] Git Commit: `chore: build managed boundary and localization release` (hash: 8ee9ad8b7)
 
 Release build-all evidence recorded 2026-05-15:
 
@@ -519,8 +519,16 @@ Release build-all evidence recorded 2026-05-15:
 - Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.262.tar.bz2`, `codex-module-1.2.262.tar.bz2`, `gemini-module-1.2.262.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.262.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.262.tar.bz2`, `vscode-webview-1.2.262.tar.bz2`, `project-manager-1.2.262.tar.bz2`.
 - Updated package versions and managed release manifests to `1.2.262`.
 
-113. [TODO] `diagram-plan-lifecycle-repair.phase26.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed boundary and localization release`).
-114. [TODO] Git Commit: `docs: record managed boundary and localization release` (hash: TBD)
+113. [DONE] `diagram-plan-lifecycle-repair.phase26.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record managed boundary and localization release`).
+114. [PENDING] Git Commit: `docs: record managed boundary and localization release` (hash: TBD)
+
+Release VSIX evidence recorded 2026-05-15:
+
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Verified release-script milestones: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
+- Advisory release-script diagnostics: `check:links` reported 17 existing broken Markdown anchors in managed-step planning docs; the release script treated them as advisory and completed.
+- VSIX package: `codeai-hub-1.2.262.vsix` (`47M`; script package-size check reported `48M`).
+- Release runtime archives remain available in `doc/tmp/releases/` for version `1.2.262`.
 
 ## Phase 27 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
