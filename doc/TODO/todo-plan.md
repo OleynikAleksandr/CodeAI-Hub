@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "affecc5ba",
+  "lastRecordedCommit": "682f39f8c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase11.release.task2",
-  "expectedCommitMessage": "chore: build diagram modules continuation repair release",
+  "currentTaskId": "diagram-runtime-repair.phase11.release.task3",
+  "expectedCommitMessage": "docs: record diagram modules continuation repair release",
   "debt": {
-    "expectedCommitMessage": "chore: build diagram modules continuation repair release",
-    "preCommitHead": "affecc5ba",
+    "expectedCommitMessage": "docs: record diagram modules continuation repair release",
+    "preCommitHead": "682f39f8c",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase11.release.task2"
+    "taskId": "diagram-runtime-repair.phase11.release.task3"
   }
 }
 ```
@@ -267,7 +267,7 @@ Release preparation evidence recorded 2026-05-15:
 - `CHANGELOG.md` release entry `1.2.259` added with verification summary.
 
 55. [DONE] `diagram-runtime-repair.phase11.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules continuation repair release`).
-56. [PENDING] Git Commit: `chore: build diagram modules continuation repair release` (hash: TBD)
+56. [DONE] Git Commit: `chore: build diagram modules continuation repair release` (hash: 682f39f8c)
 
 Build-all evidence recorded 2026-05-15:
 
@@ -276,8 +276,16 @@ Build-all evidence recorded 2026-05-15:
 - Updated package/version manifests for root package, provider modules, Core, shared packages, UI, and CEF launcher.
 - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.259.tar.bz2`, `codex-module-1.2.259.tar.bz2`, `gemini-module-1.2.259.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.259.tar.bz2`, `vscode-webview-1.2.259.tar.bz2`, `project-manager-1.2.259.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.259.tar.bz2`.
 
-57. [TODO] `diagram-runtime-repair.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules continuation repair release`).
-58. [TODO] Git Commit: `docs: record diagram modules continuation repair release` (hash: TBD)
+57. [DONE] `diagram-runtime-repair.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram modules continuation repair release`).
+58. [PENDING] Git Commit: `docs: record diagram modules continuation repair release` (hash: TBD)
+
+Release package evidence recorded 2026-05-15:
+
+- `./scripts/build-release.sh --use-current-version` — PASS.
+- Required release-build output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`.
+- VSIX package: `codeai-hub-1.2.259.vsix` (`47M`).
+- Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.259.tar.bz2`, `codex-module-1.2.259.tar.bz2`, `gemini-module-1.2.259.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.259.tar.bz2`, `vscode-webview-1.2.259.tar.bz2`, `project-manager-1.2.259.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.259.tar.bz2`.
+- Advisory release warnings: markdown link checker reported 17 planning-document anchor issues; package size warning reported `48M`. Neither warning blocked packaging or runtime surface verification.
 
 ## Phase 12 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
