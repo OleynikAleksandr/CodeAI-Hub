@@ -26,6 +26,7 @@ import type {
 } from "./system-request-handler";
 import { handleWorkflowArtifactRead } from "./workflow-artifact-http-handler";
 import type { WorkflowEventsService } from "./workflow-events-service";
+import { handleWorkflowPromptPackRead } from "./workflow-prompt-pack-service";
 import type { WorkflowStateService } from "./workflow-state-service";
 
 const INITIATIVES_ENDPOINT = "/api/v1/orchestrator/initiatives";
@@ -33,6 +34,8 @@ const LOCALIZATION_BOOTSTRAP_ENDPOINT = "/api/v1/localization/bootstrap";
 const WORKFLOW_STATE_ENDPOINT = "/api/v1/orchestrator/workflow-state";
 const WORKFLOW_EVENTS_ENDPOINT = "/api/v1/orchestrator/workflow-events";
 const WORKFLOW_ARTIFACT_ENDPOINT = "/api/v1/orchestrator/workflow-artifact";
+const WORKFLOW_PROMPT_PACK_ENDPOINT =
+  "/api/v1/orchestrator/workflow-prompt-pack";
 
 export interface RouterDependencies {
   readonly app: Express;
@@ -166,6 +169,12 @@ export class HttpApiRouter {
     app.get(WORKFLOW_ARTIFACT_ENDPOINT, async (req: Request, res: Response) => {
       await handleWorkflowArtifactRead(req, res);
     });
+    app.get(
+      WORKFLOW_PROMPT_PACK_ENDPOINT,
+      async (req: Request, res: Response) => {
+        await handleWorkflowPromptPackRead(req, res);
+      }
+    );
     this.sessionRoutes.registerRoutes();
   }
 
