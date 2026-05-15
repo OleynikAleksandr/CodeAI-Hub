@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "b32494ffd",
+  "lastRecordedCommit": "5d1741d48",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase40.release.task1",
-  "expectedCommitMessage": "docs: prepare release 266 review boundary fix",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase40.release.task2",
+  "expectedCommitMessage": "chore: build release 266 review boundary fix",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 266 review boundary fix",
-    "preCommitHead": "b32494ffd",
+    "expectedCommitMessage": "chore: build release 266 review boundary fix",
+    "preCommitHead": "5d1741d48",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase40.release.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase40.release.task2"
   }
 }
 ```
@@ -767,7 +767,7 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Release Preparation And Build
 
 165. [DONE] `diagram-plan-lifecycle-repair.phase40.release.task1` After explicit release-build confirmation, update release-facing docs for the future review-boundary fix before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 266 review boundary fix`).
-166. [PENDING] Git Commit: `docs: prepare release 266 review boundary fix` (hash: TBD)
+166. [DONE] Git Commit: `docs: prepare release 266 review boundary fix` (hash: 5d1741d48)
 
 Release 266 preparation target:
 
@@ -776,8 +776,15 @@ Release 266 preparation target:
 - Future release version prepared in release-facing docs: `1.2.266`.
 - Release payload: Diagram Modules Phase 2 user review receives a paired managed `Git Commit` item, and Core-managed `doc/TODO` ledger dirt no longer blocks `Application Skeleton` after Diagram Modules aggregate readiness.
 
-167. [TODO] `diagram-plan-lifecycle-repair.phase40.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 266 review boundary fix`).
-168. [TODO] Git Commit: `chore: build release 266 review boundary fix` (hash: TBD)
+167. [DONE] `diagram-plan-lifecycle-repair.phase40.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 266 review boundary fix`).
+168. [PENDING] Git Commit: `chore: build release 266 review boundary fix` (hash: TBD)
+
+Release build-all evidence recorded 2026-05-15:
+
+- `./scripts/build-all.sh --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Unified generated version: `1.2.266`.
+- Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.266.tar.bz2`, `codex-module-1.2.266.tar.bz2`, `gemini-module-1.2.266.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.266.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.266.tar.bz2`, `vscode-webview-1.2.266.tar.bz2`, `project-manager-1.2.266.tar.bz2`.
+- Updated package versions and managed release manifests to `1.2.266`.
 
 169. [TODO] `diagram-plan-lifecycle-repair.phase40.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 266 review boundary handoff`).
 170. [TODO] Git Commit: `docs: record release 266 review boundary handoff` (hash: TBD)
