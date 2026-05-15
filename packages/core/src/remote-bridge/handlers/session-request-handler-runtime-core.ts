@@ -1,17 +1,6 @@
-import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
-import {
-  buildDiagramModulesManagedCommitBoundaryBlockedMessage as buildBoundaryBlockedMessage,
-  buildDiagramModulesManagedContinuationMessage as buildContinuationMessage,
-  buildDiagramModulesProductPartRepairPrompt,
-} from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
-import { DiagramModulesStagePlanController } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller";
-import {
-  type DiagramModulesManagedValidationResult,
-  validateDiagramModulesManagedArtifacts,
-} from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import {
   type SessionModelBinding,
@@ -29,6 +18,7 @@ import { SessionRequestHandlerAppliedTurnConfig } from "./session-request-handle
 import { SessionRequestHandlerContinuityRoot } from "./session-request-handler-continuity-root";
 import { SessionRequestHandlerDialogSegmentMeta } from "./session-request-handler-dialog-segment-meta";
 import { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
+import { SessionRequestHandlerManagedWorkflowTurn } from "./session-request-handler-managed-workflow-turn";
 import { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import { SessionRequestHandlerResumeLifecycle } from "./session-request-handler-resume-lifecycle";
 import { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
@@ -65,8 +55,6 @@ interface ClaudeTranslationServiceOwner {
   readonly getHaikuTranslationService?: () => ClaudeHaikuTranslationService;
 }
 
-const DIAGRAM_MODULES_STAGE = "diagram_modules";
-
 const createDeferredRuntimeRef = <TDependency>(name: string) => {
   let value: TDependency | undefined;
   return {
@@ -91,28 +79,6 @@ export const resolveClaudeHaikuTranslationServiceForRuntime = (
     | ClaudeTranslationServiceOwner
     | undefined;
   return adapter?.getHaikuTranslationService?.();
-};
-
-const persistDiagramModulesManagedDecision = async (params: {
-  readonly decision: DiagramModulesManagedValidationResult;
-  readonly sessionId: string;
-  readonly workspaceRoot: string;
-  readonly workspaceSlug: string;
-}): Promise<void> => {
-  const relativePath = `.codeai-hub/${params.workspaceSlug}/workflow/managed/diagram_modules.json`;
-  const absolutePath = path.join(params.workspaceRoot, relativePath);
-  const snapshot = {
-    schema: "codeai-managed-workflow-diagram-modules-v1",
-    stage: DIAGRAM_MODULES_STAGE,
-    sessionId: params.sessionId,
-    updatedAt: new Date().toISOString(),
-    ...params.decision,
-    diagnostics: undefined,
-    nextPrompt: undefined,
-  };
-  const content = `${JSON.stringify(snapshot, null, 2)}\n`;
-  await mkdir(path.dirname(absolutePath), { recursive: true });
-  await writeFile(absolutePath, content, "utf8");
 };
 
 export const createSessionRequestHandlerRuntimeCore = (
@@ -205,7 +171,11 @@ export const createSessionRequestHandlerRuntimeCore = (
     sessionStorage: options.sessionStorage,
     sessionTranslation,
   });
-  const diagramStagePlan = new DiagramModulesStagePlanController();
+  const managedWorkflowTurn = new SessionRequestHandlerManagedWorkflowTurn({
+    eventMessages,
+    getMessageDispatch: () => messageDispatchRef.get(),
+    sessionManager: options.sessionManager,
+  });
   const retryState = new SessionRequestHandlerRetryState({
     broadcaster: options.broadcaster,
     logger: options.logger,
@@ -252,74 +222,8 @@ export const createSessionRequestHandlerRuntimeCore = (
       continuity.handleProviderEvent(sessionId, event),
     handleFlowNodeContinuityProviderEvent:
       options.callbacks.handleFlowNodeContinuityProviderEvent,
-    handleManagedWorkflowTurnCompleted: async (sessionId) => {
-      const session = options.sessionManager.getSession(sessionId);
-      if (
-        !(
-          session?.stage === DIAGRAM_MODULES_STAGE &&
-          session.workspacePath &&
-          session.initiativeSlug
-        )
-      ) {
-        return;
-      }
-      const decision = await validateDiagramModulesManagedArtifacts({
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      });
-      await persistDiagramModulesManagedDecision({
-        decision,
-        sessionId,
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      });
-      const messageDispatch = messageDispatchRef.get();
-      if (!decision.valid) {
-        const repairPrompt = buildDiagramModulesProductPartRepairPrompt({
-          currentPartId: decision.currentPartId,
-          diagnostics: decision.diagnostics,
-          workspaceSlug: session.initiativeSlug,
-        });
-        eventMessages.appendCoreMessage(sessionId, {
-          content: repairPrompt,
-          tag: "managed-workflow-validation",
-        });
-        await messageDispatch.sendInternalMessage(sessionId, repairPrompt);
-        return;
-      }
-      const planAdvance = await diagramStagePlan.commitAcceptedTurn({
-        decision,
-        sessionId,
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      });
-      if (planAdvance.blocked) {
-        eventMessages.appendCoreMessage(sessionId, {
-          content: buildBoundaryBlockedMessage(planAdvance.blocked.message),
-          tag: "managed-workflow-validation",
-        });
-        return;
-      }
-      if (decision.nextAction === "dispatch_next_product_part") {
-        eventMessages.appendCoreMessage(sessionId, {
-          content: buildContinuationMessage(decision.currentPartId),
-          tag: "managed-workflow-continuation",
-        });
-        if (decision.nextPrompt) {
-          await messageDispatch.sendInternalMessage(
-            sessionId,
-            decision.nextPrompt
-          );
-        }
-        return;
-      }
-      if (decision.nextAction === "open_user_review" && decision.nextPrompt) {
-        eventMessages.appendCoreMessage(sessionId, {
-          content: decision.nextPrompt,
-          tag: "managed-workflow-user-review",
-        });
-      }
-    },
+    handleManagedWorkflowTurnCompleted: async (sessionId) =>
+      await managedWorkflowTurn.handleTurnCompleted(sessionId),
     updateBindingWithResolvedId: (sessionId, providerSessionId) =>
       providerBindingService.updateBindingWithResolvedId(
         sessionId,

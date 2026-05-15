@@ -1,4 +1,7 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { ManagedWorkflowOrchestrationFacade } from "../../managed-workflow-orchestration";
+import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
 import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
@@ -13,6 +16,15 @@ export const TECHNICAL_STAGE_REWRITE_BLOCKER_CODE =
 
 const defaultManagedWorkflowOrchestration =
   new ManagedWorkflowOrchestrationFacade();
+const APPLICATION_SKELETON_STAGE = "application_skeleton";
+const APPLICATION_SKELETON_BOOTSTRAP_TASK_ID =
+  "application-skeleton.phase1.bootstrap.task1";
+const APPLICATION_SKELETON_STAGE_PLAN_PATH =
+  "doc/TODO/stages/application-skeleton/todo-plan.md";
+const FENCED_JSON_END_RE = /\s*```$/u;
+const FENCED_JSON_START_RE = /^```json\s*/u;
+const PLAN_START = "<!-- codeai-plan-state:start -->";
+const PLAN_END = "<!-- codeai-plan-state:end -->";
 
 export const isTechnicalStageRewriteBlockedStage = (stage: string): boolean =>
   defaultManagedWorkflowOrchestration.resolveStageStart({
@@ -23,6 +35,7 @@ export const isTechnicalStageRewriteBlockedStage = (stage: string): boolean =>
   })?.code === TECHNICAL_STAGE_REWRITE_BLOCKER_CODE;
 
 interface SessionRequestHandlerWorkflowSessionDependencies {
+  readonly applicationSkeletonStagePlan?: ApplicationSkeletonStagePlanController;
   readonly createAndRegisterSession: (
     options: CreateAndRegisterSessionOptions
   ) => Promise<Session | null>;
@@ -40,11 +53,15 @@ interface SessionRequestHandlerWorkflowSessionDependencies {
 
 export class SessionRequestHandlerWorkflowSession {
   private readonly deps: SessionRequestHandlerWorkflowSessionDependencies;
+  private readonly applicationSkeletonStagePlan: ApplicationSkeletonStagePlanController;
   private readonly managedWorkflowOrchestration: ManagedWorkflowOrchestrationFacade;
   private readonly scaffoldInstaller: ManagedWorkflowScaffoldInstaller;
 
   constructor(deps: SessionRequestHandlerWorkflowSessionDependencies) {
     this.deps = deps;
+    this.applicationSkeletonStagePlan =
+      deps.applicationSkeletonStagePlan ??
+      new ApplicationSkeletonStagePlanController();
     this.managedWorkflowOrchestration =
       deps.managedWorkflowOrchestration ?? defaultManagedWorkflowOrchestration;
     this.scaffoldInstaller =
@@ -97,13 +114,18 @@ export class SessionRequestHandlerWorkflowSession {
       );
       return session;
     }
-    if (
-      managedDecision?.mode === "managed_dispatch" &&
-      options.context.stage === "diagram_modules"
-    ) {
+    if (managedDecision?.mode === "managed_dispatch") {
       await this.scaffoldInstaller.installDiagramModulesScaffold({
         workspaceRoot: options.workspacePath,
       });
+      if (
+        options.context.stage === APPLICATION_SKELETON_STAGE &&
+        (await this.shouldOpenApplicationSkeletonDraft(options.workspacePath))
+      ) {
+        await this.applicationSkeletonStagePlan.openDraftPhase({
+          workspaceRoot: options.workspacePath,
+        });
+      }
     }
 
     const adapter = this.deps.providerRegistry.getAdapter(options.providerId);
@@ -136,5 +158,31 @@ export class SessionRequestHandlerWorkflowSession {
       );
       return null;
     }
+  }
+
+  private async shouldOpenApplicationSkeletonDraft(
+    workspaceRoot: string
+  ): Promise<boolean> {
+    const planText = await readFile(
+      path.join(workspaceRoot, APPLICATION_SKELETON_STAGE_PLAN_PATH),
+      "utf8"
+    ).catch(() => null);
+    if (!planText) {
+      return true;
+    }
+    const rawState = planText.split(PLAN_START)[1]?.split(PLAN_END)[0];
+    const json = rawState
+      ?.trim()
+      .replace(FENCED_JSON_START_RE, "")
+      .replace(FENCED_JSON_END_RE, "")
+      .trim();
+    if (!json) {
+      return true;
+    }
+    const state = JSON.parse(json) as { readonly currentTaskId?: unknown };
+    return (
+      state.currentTaskId === null ||
+      state.currentTaskId === APPLICATION_SKELETON_BOOTSTRAP_TASK_ID
+    );
   }
 }

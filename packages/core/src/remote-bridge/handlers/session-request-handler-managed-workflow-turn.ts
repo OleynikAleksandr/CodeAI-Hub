@@ -1,0 +1,254 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+import {
+  buildApplicationSkeletonBoundaryBlockedMessage,
+  buildApplicationSkeletonDraftRepairPrompt,
+} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
+import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
+import {
+  type ApplicationSkeletonManagedValidationResult,
+  validateApplicationSkeletonManagedArtifacts,
+} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-validator";
+import {
+  buildDiagramModulesManagedCommitBoundaryBlockedMessage as buildDiagramBoundaryBlockedMessage,
+  buildDiagramModulesManagedContinuationMessage,
+  buildDiagramModulesProductPartRepairPrompt,
+} from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
+import { DiagramModulesStagePlanController } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller";
+import {
+  type DiagramModulesManagedValidationResult,
+  validateDiagramModulesManagedArtifacts,
+} from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
+import type { SessionManager } from "../../session-manager";
+import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
+import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
+
+const DIAGRAM_MODULES_STAGE = "diagram_modules";
+const APPLICATION_SKELETON_STAGE = "application_skeleton";
+
+interface ManagedWorkflowTurnSession {
+  readonly initiativeSlug?: string | null;
+  readonly stage?: string | null;
+  readonly workspacePath?: string | null;
+}
+
+interface SessionRequestHandlerManagedWorkflowTurnOptions {
+  readonly applicationStagePlan?: ApplicationSkeletonStagePlanController;
+  readonly diagramStagePlan?: DiagramModulesStagePlanController;
+  readonly eventMessages: Pick<
+    SessionRequestHandlerEventMessages,
+    "appendCoreMessage"
+  >;
+  readonly getMessageDispatch: () => SessionRequestHandlerMessageDispatch;
+  readonly sessionManager: Pick<SessionManager, "getSession">;
+}
+
+const persistManagedDecision = async (params: {
+  readonly decision:
+    | ApplicationSkeletonManagedValidationResult
+    | DiagramModulesManagedValidationResult;
+  readonly schema: string;
+  readonly sessionId: string;
+  readonly stage:
+    | typeof APPLICATION_SKELETON_STAGE
+    | typeof DIAGRAM_MODULES_STAGE;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<void> => {
+  const relativePath = `.codeai-hub/${params.workspaceSlug}/workflow/managed/${params.stage}.json`;
+  const absolutePath = path.join(params.workspaceRoot, relativePath);
+  const snapshot = {
+    schema: params.schema,
+    stage: params.stage,
+    sessionId: params.sessionId,
+    updatedAt: new Date().toISOString(),
+    ...params.decision,
+    diagnostics: undefined,
+    nextPrompt: undefined,
+  };
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, `${JSON.stringify(snapshot, null, 2)}\n`);
+};
+
+export class SessionRequestHandlerManagedWorkflowTurn {
+  private readonly applicationStagePlan: ApplicationSkeletonStagePlanController;
+  private readonly diagramStagePlan: DiagramModulesStagePlanController;
+  private readonly options: SessionRequestHandlerManagedWorkflowTurnOptions;
+
+  constructor(options: SessionRequestHandlerManagedWorkflowTurnOptions) {
+    this.options = options;
+    this.applicationStagePlan =
+      options.applicationStagePlan ??
+      new ApplicationSkeletonStagePlanController();
+    this.diagramStagePlan =
+      options.diagramStagePlan ?? new DiagramModulesStagePlanController();
+  }
+
+  async handleTurnCompleted(sessionId: string): Promise<void> {
+    const session = this.options.sessionManager.getSession(sessionId) as
+      | ManagedWorkflowTurnSession
+      | null
+      | undefined;
+    if (!(session?.workspacePath && session.initiativeSlug && session.stage)) {
+      return;
+    }
+    if (session.stage === DIAGRAM_MODULES_STAGE) {
+      await this.handleDiagramModulesTurn({
+        sessionId,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+      return;
+    }
+    if (session.stage === APPLICATION_SKELETON_STAGE) {
+      await this.handleApplicationSkeletonTurn({
+        sessionId,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+    }
+  }
+
+  private async handleDiagramModulesTurn(params: {
+    readonly sessionId: string;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    const decision = await validateDiagramModulesManagedArtifacts(params);
+    await persistManagedDecision({
+      decision,
+      schema: "codeai-managed-workflow-diagram-modules-v1",
+      sessionId: params.sessionId,
+      stage: DIAGRAM_MODULES_STAGE,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    const messageDispatch = this.options.getMessageDispatch();
+    if (!decision.valid) {
+      const repairPrompt = buildDiagramModulesProductPartRepairPrompt({
+        currentPartId: decision.currentPartId,
+        diagnostics: decision.diagnostics,
+        workspaceSlug: params.workspaceSlug,
+      });
+      this.appendCoreMessage(params.sessionId, {
+        content: repairPrompt,
+        tag: "managed-workflow-validation",
+      });
+      await messageDispatch.sendInternalMessage(params.sessionId, repairPrompt);
+      return;
+    }
+    const planAdvance = await this.diagramStagePlan.commitAcceptedTurn({
+      decision,
+      sessionId: params.sessionId,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    if (planAdvance.blocked) {
+      this.appendCoreMessage(params.sessionId, {
+        content: buildDiagramBoundaryBlockedMessage(
+          planAdvance.blocked.message
+        ),
+        tag: "managed-workflow-validation",
+      });
+      return;
+    }
+    if (decision.nextAction === "dispatch_next_product_part") {
+      this.appendCoreMessage(params.sessionId, {
+        content: buildDiagramModulesManagedContinuationMessage(
+          decision.currentPartId
+        ),
+        tag: "managed-workflow-continuation",
+      });
+      if (decision.nextPrompt) {
+        await messageDispatch.sendInternalMessage(
+          params.sessionId,
+          decision.nextPrompt
+        );
+      }
+      return;
+    }
+    if (decision.nextAction === "open_user_review" && decision.nextPrompt) {
+      this.appendCoreMessage(params.sessionId, {
+        content: decision.nextPrompt,
+        tag: "managed-workflow-user-review",
+      });
+    }
+  }
+
+  private async handleApplicationSkeletonTurn(params: {
+    readonly sessionId: string;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    const decision = await validateApplicationSkeletonManagedArtifacts(params);
+    await persistManagedDecision({
+      decision,
+      schema: "codeai-managed-workflow-application-skeleton-v1",
+      sessionId: params.sessionId,
+      stage: APPLICATION_SKELETON_STAGE,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    if (!decision.valid) {
+      await this.dispatchApplicationRepairPrompt(params, decision);
+      return;
+    }
+    const planAdvance = await this.applicationStagePlan.commitManagedTurn({
+      decision,
+      sessionId: params.sessionId,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+    if (planAdvance.blocked) {
+      this.appendCoreMessage(params.sessionId, {
+        content: buildApplicationSkeletonBoundaryBlockedMessage(
+          planAdvance.blocked.message
+        ),
+        tag: "managed-workflow-validation",
+      });
+      return;
+    }
+    if (
+      (decision.nextAction === "open_user_review" ||
+        decision.nextAction === "open_persistent_return") &&
+      decision.nextPrompt
+    ) {
+      this.appendCoreMessage(params.sessionId, {
+        content: decision.nextPrompt,
+        tag:
+          decision.nextAction === "open_user_review"
+            ? "managed-workflow-user-review"
+            : "managed-workflow-complete",
+      });
+    }
+  }
+
+  private async dispatchApplicationRepairPrompt(
+    params: {
+      readonly sessionId: string;
+      readonly workspaceSlug: string;
+    },
+    decision: ApplicationSkeletonManagedValidationResult
+  ): Promise<void> {
+    const repairPrompt =
+      decision.nextPrompt ??
+      buildApplicationSkeletonDraftRepairPrompt({
+        diagnostics: decision.diagnostics,
+        workspaceSlug: params.workspaceSlug,
+      });
+    this.appendCoreMessage(params.sessionId, {
+      content: repairPrompt,
+      tag: "managed-workflow-validation",
+    });
+    await this.options
+      .getMessageDispatch()
+      .sendInternalMessage(params.sessionId, repairPrompt);
+  }
+
+  private appendCoreMessage(
+    sessionId: string,
+    payload: { readonly content: string; readonly tag: string }
+  ): void {
+    this.options.eventMessages.appendCoreMessage(sessionId, payload);
+  }
+}
