@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "8fb6f6fdd",
+  "lastRecordedCommit": "be23e4f28",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase31.marker-boundary.task1",
-  "expectedCommitMessage": "fix: restore workflow marker review boundary",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase31.verify.task1",
+  "expectedCommitMessage": "docs: verify workflow marker review boundary",
   "debt": {
-    "expectedCommitMessage": "fix: restore workflow marker review boundary",
-    "preCommitHead": "8fb6f6fdd",
+    "expectedCommitMessage": "docs: verify workflow marker review boundary",
+    "preCommitHead": "be23e4f28",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase31.marker-boundary.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase31.verify.task1"
   }
 }
 ```
@@ -605,10 +605,17 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Workflow Marker Completion Trigger
 
 131. [DONE] `diagram-plan-lifecycle-repair.phase31.marker-boundary.task1` Restore workflow marker completion semantics so provider-direct `Description` and `Virtual Simulation` turn green once their draft artifact exists, while managed `Diagram Modules` stays orange until Core opens the user-review/aggregate-ready phase (scope: `src/client/project-manager/components/layout/workspace-tree-model.ts, src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-model.test.ts`; expected commit: `fix: restore workflow marker review boundary`).
-132. [PENDING] Git Commit: `fix: restore workflow marker review boundary` (hash: TBD)
+132. [DONE] Git Commit: `fix: restore workflow marker review boundary` (hash: be23e4f28)
 
-133. [TODO] `diagram-plan-lifecycle-repair.phase31.verify.task1` Run targeted Project Manager marker tests plus webview typecheck/build and record evidence before the next release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify workflow marker review boundary`).
-134. [TODO] Git Commit: `docs: verify workflow marker review boundary` (hash: TBD)
+133. [DONE] `diagram-plan-lifecycle-repair.phase31.verify.task1` Run targeted Project Manager marker tests plus webview typecheck/build and record evidence before the next release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify workflow marker review boundary`).
+134. [PENDING] Git Commit: `docs: verify workflow marker review boundary` (hash: TBD)
+
+Marker boundary repair verification evidence recorded 2026-05-15:
+
+- `npx tsx --test src/client/project-manager/components/layout/workspace-tree-model.test.ts` — PASS (4 tests).
+- `npm run typecheck:webview` — PASS.
+- `npm run build:webview` — PASS (`webview bundle generated successfully`).
+- `npm run plan:validate` — PASS.
 
 ## Phase 32 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
