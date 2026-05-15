@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "60eb69c57",
+  "lastRecordedCommit": "e7a9b1f89",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase4.verify.task1",
-  "expectedCommitMessage": "docs: verify quality gates managed runtime",
+  "currentTaskId": "quality-gates-runtime.phase55.release.task1",
+  "expectedCommitMessage": "docs: prepare quality gates managed runtime release",
   "debt": {
-    "expectedCommitMessage": "docs: verify quality gates managed runtime",
-    "preCommitHead": "60eb69c57",
+    "expectedCommitMessage": "docs: prepare quality gates managed runtime release",
+    "preCommitHead": "e7a9b1f89",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase4.verify.task1"
+    "taskId": "quality-gates-runtime.phase55.release.task1"
   }
 }
 ```
@@ -1051,11 +1051,38 @@ Repair coverage:
     - PASS: `npm run build:core`.
     - PASS: `npm run build:project-manager`.
     - Release build intentionally not run in this task; user explicitly requested implementation without a new release build.
-247. [PENDING] Git Commit: `docs: verify quality gates managed runtime` (hash: TBD)
+247. [DONE] Git Commit: `docs: verify quality gates managed runtime` (hash: e7a9b1f89)
 
-## Phase 54 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 54 — Quality Gates Release Build Gate (owner: User, updated: 2026-05-15)
+
+### Stream: Release Build Confirmation
+
+248. [DONE] `quality-gates-runtime.phase54.release-confirmation.task1` User explicitly confirmed that the Quality Gates managed runtime plan should proceed to a new release build without another confirmation question (scope: user workflow; expected commit: none). Result: release build authorized for the release that includes all five trunk steps.
+
+## Phase 55 — Release Build (owner: Codex, updated: 2026-05-15)
+
+### Stream: Release Preparation
+
+249. [DONE] `quality-gates-runtime.phase55.release.task1` Update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates managed runtime release`).
+    - Current package version before release scripts: `1.2.267`.
+    - Future release version prepared in release-facing docs: `1.2.268`.
+    - `README.md` current-release banner updated to full trunk managed orchestration.
+    - `CHANGELOG.md` release entry `1.2.268` added with Quality Gates managed runtime verification summary.
+250. [PENDING] Git Commit: `docs: prepare quality gates managed runtime release` (hash: TBD)
+
+### Stream: Build All Runtime Packages
+
+251. [TODO] `quality-gates-runtime.phase55.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build quality gates managed runtime release`).
+252. [TODO] Git Commit: `chore: build quality gates managed runtime release` (hash: TBD)
+
+### Stream: Package VSIX
+
+253. [TODO] `quality-gates-runtime.phase55.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record quality gates managed runtime release`).
+254. [TODO] Git Commit: `docs: record quality gates managed runtime release` (hash: TBD)
+
+## Phase 56 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-248. [TODO] `diagram-plan-lifecycle-repair.phase54.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-249. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+255. [TODO] `diagram-plan-lifecycle-repair.phase56.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+256. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)

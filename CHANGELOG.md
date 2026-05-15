@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.268] - 2026-05-15
+### Added
+- **Quality Gates now runs through the managed orchestration module.** Core creates the managed stage plan, validates `quality-gates.md` and `quality-gates.json`, records managed decision snapshots, opens user review, routes acceptance or review corrections, and opens accepted-only integration before persistent return.
+- **All five trunk steps are now covered by the replacement orchestration boundary.** `Description` and `Virtual Simulation` remain provider-direct, while `Diagram Modules`, `Application Skeleton`, and `Quality Gates` run through Core-owned managed dispatch, validation, Git commit boundaries, review gates, and continuation prompts.
+
+### Fixed
+- **Quality Gates integration is guarded by concrete executable evidence.** Core requires `accepted: true`, `integrated: true`, `integrationState: "integrated"`, required package scripts, and direct hook calls for required commit/push gates before completing the step.
+- **Review acceptance is no longer treated as provider-visible work.** User acceptance advances the Quality Gates stage plan to integration without forwarding the acceptance text to the agent; requested corrections stay in the active review task as scoped Core prompts.
+
+### Tests
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts` passed, 14/14 tests.
+- `npm run build:core`
+- `npm run build:project-manager`
+- `npm run plan:validate`
+
 ## [1.2.267] - 2026-05-15
 ### Added
 - **Application Skeleton now runs through the managed orchestration module.** Core creates the managed scaffold, validates draft/materialized contract artifacts, records managed decision snapshots, and advances the stage plan through review, materialization, and persistent return phases.
