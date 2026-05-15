@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "e7a9b1f89",
+  "lastRecordedCommit": "528c45ae0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase55.release.task1",
-  "expectedCommitMessage": "docs: prepare quality gates managed runtime release",
+  "currentTaskId": "quality-gates-runtime.phase55.release.task2",
+  "expectedCommitMessage": "chore: build quality gates managed runtime release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates managed runtime release",
-    "preCommitHead": "e7a9b1f89",
+    "expectedCommitMessage": "chore: build quality gates managed runtime release",
+    "preCommitHead": "528c45ae0",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase55.release.task1"
+    "taskId": "quality-gates-runtime.phase55.release.task2"
   }
 }
 ```
@@ -1068,12 +1068,16 @@ Repair coverage:
     - Future release version prepared in release-facing docs: `1.2.268`.
     - `README.md` current-release banner updated to full trunk managed orchestration.
     - `CHANGELOG.md` release entry `1.2.268` added with Quality Gates managed runtime verification summary.
-250. [PENDING] Git Commit: `docs: prepare quality gates managed runtime release` (hash: TBD)
+250. [DONE] Git Commit: `docs: prepare quality gates managed runtime release` (hash: 528c45ae0)
 
 ### Stream: Build All Runtime Packages
 
-251. [TODO] `quality-gates-runtime.phase55.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build quality gates managed runtime release`).
-252. [TODO] Git Commit: `chore: build quality gates managed runtime release` (hash: TBD)
+251. [DONE] `quality-gates-runtime.phase55.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build quality gates managed runtime release`).
+    - `./scripts/build-all.sh --allow-dirty` — PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start.
+    - Unified version after build: `1.2.268`.
+    - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.268.tar.bz2`, `codex-module-1.2.268.tar.bz2`, `gemini-module-1.2.268.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.268.tar.bz2`, `vscode-webview-1.2.268.tar.bz2`, `project-manager-1.2.268.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.268.tar.bz2`.
+    - Matching runtime tarballs present in `~/.codeai-hub/releases/` for providers, core, UI, and launcher.
+252. [PENDING] Git Commit: `chore: build quality gates managed runtime release` (hash: TBD)
 
 ### Stream: Package VSIX
 
