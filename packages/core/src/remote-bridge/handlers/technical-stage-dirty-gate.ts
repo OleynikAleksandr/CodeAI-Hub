@@ -40,10 +40,15 @@ const isVolatileCoreMetadataPath = (
   file: string,
   workspaceSlug: string
 ): boolean =>
+  file === ".DS_Store" ||
+  file.endsWith("/.DS_Store") ||
   file.startsWith(".codeai-hub/state/") ||
   MANAGED_WORKSPACE_LEDGER_RE.test(file) ||
   file.startsWith("node_modules/") ||
-  file === `.codeai-hub/${workspaceSlug}/description/description-step.json`;
+  file.startsWith(`.codeai-hub/${workspaceSlug}/continuity/`) ||
+  file.startsWith(`.codeai-hub/${workspaceSlug}/description/`) ||
+  file.startsWith(`.codeai-hub/${workspaceSlug}/virtual_simulation/`) ||
+  file === `.codeai-hub/${workspaceSlug}/workflow/state.json`;
 
 const parseGitStatusPath = (line: string): string | null => {
   const rawPath = line.slice(3).trim();

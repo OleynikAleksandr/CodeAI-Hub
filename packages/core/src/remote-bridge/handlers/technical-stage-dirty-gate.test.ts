@@ -321,6 +321,37 @@ test("technical stage dirty status ignores volatile Core metadata after restart"
         2
       )}\n`
     );
+    await writeWorkspaceFile(workspaceRoot, ".DS_Store", "ignored\n");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/.DS_Store`,
+      "ignored\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/continuity/index.json`,
+      "{}\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+      "# Final Description\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/questionnaire.md`,
+      "# Questionnaire\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+      "# Virtual Simulation\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/workflow/state.json`,
+      "{}\n"
+    );
     await writeWorkspaceFile(
       workspaceRoot,
       "doc/TODO/workspace.plan.md",
