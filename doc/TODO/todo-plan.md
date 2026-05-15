@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "b46529c01",
+  "lastRecordedCommit": "a51fca8e5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase3.turn.task1",
-  "expectedCommitMessage": "feat: route quality gates managed turns",
+  "currentTaskId": "quality-gates-runtime.phase3.review.task1",
+  "expectedCommitMessage": "feat: route quality gates review decisions",
   "debt": {
-    "expectedCommitMessage": "feat: route quality gates managed turns",
-    "preCommitHead": "b46529c01",
+    "expectedCommitMessage": "feat: route quality gates review decisions",
+    "preCommitHead": "a51fca8e5",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase3.turn.task1"
+    "taskId": "quality-gates-runtime.phase3.review.task1"
   }
 }
 ```
@@ -1032,10 +1032,10 @@ Repair coverage:
 ### Stream: Runtime Dispatch
 
 238. [DONE] `quality-gates-runtime.phase3.turn.task1` Connect Quality Gates managed start preflight and provider-turn validation/commit handling to the Core runtime path, without using Project Manager as state authority (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `feat: route quality gates managed turns`).
-239. [PENDING] Git Commit: `feat: route quality gates managed turns` (hash: TBD)
+239. [DONE] Git Commit: `feat: route quality gates managed turns` (hash: a51fca8e5)
 
-240. [TODO] `quality-gates-runtime.phase3.review.task1` Route Quality Gates Type B user review decisions through Core-owned intent classification, including direct acceptance to integration and revision prompts that stay in the active review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `feat: route quality gates review decisions`).
-241. [TODO] Git Commit: `feat: route quality gates review decisions` (hash: TBD)
+240. [DONE] `quality-gates-runtime.phase3.review.task1` Route Quality Gates Type B user review decisions through Core-owned intent classification, including direct acceptance to integration and revision prompts that stay in the active review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `feat: route quality gates review decisions`).
+241. [PENDING] Git Commit: `feat: route quality gates review decisions` (hash: TBD)
 
 ### Stream: Documentation And Verification
 

@@ -1,13 +1,3 @@
-import {
-  buildApplicationSkeletonBoundaryBlockedMessage,
-  buildApplicationSkeletonMaterializationPrompt,
-} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
-import {
-  buildApplicationSkeletonReviewRevisionPrompt,
-  classifyApplicationSkeletonReviewIntent,
-  isApplicationSkeletonReviewOpen,
-} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent";
-import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -26,13 +16,12 @@ import type {
   MessageContentPayload,
   SessionRequestHandlerEventMessages,
 } from "./session-request-handler-event-messages";
+import { SessionRequestHandlerManagedReviewDecisions } from "./session-request-handler-managed-review-decisions";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import type { SessionRequestHandlerResumeLifecycle } from "./session-request-handler-resume-lifecycle";
 import type { ProviderSessionBindingLike } from "./session-request-handler-runtime-types";
 import type { SessionRequestHandlerStopRebind } from "./session-request-handler-stop-rebind";
 import { shouldHideUserMessage } from "./workflow-turn-control";
-
-const APPLICATION_SKELETON_STAGE = "application_skeleton";
 
 interface SessionRequestHandlerSessionActionsOptions {
   readonly appliedTurnConfig: SessionRequestHandlerAppliedTurnConfig;
@@ -57,12 +46,16 @@ interface SessionRequestHandlerSessionActionsOptions {
 }
 
 export class SessionRequestHandlerSessionActions {
-  private readonly applicationSkeletonStagePlan =
-    new ApplicationSkeletonStagePlanController();
   private readonly deps: SessionRequestHandlerSessionActionsOptions;
+  private readonly managedReviewDecisions: SessionRequestHandlerManagedReviewDecisions;
 
   constructor(options: SessionRequestHandlerSessionActionsOptions) {
     this.deps = options;
+    this.managedReviewDecisions =
+      new SessionRequestHandlerManagedReviewDecisions({
+        eventMessages: options.eventMessages,
+        messageDispatch: options.messageDispatch,
+      });
   }
 
   async handleSwitchRequest(options: {
@@ -245,7 +238,7 @@ export class SessionRequestHandlerSessionActions {
     }
     const hiddenUserMessage = shouldHideUserMessage(turnOptions);
     if (
-      await this.handleApplicationSkeletonReviewDecision({
+      await this.managedReviewDecisions.handleReviewDecision({
         content,
         hiddenUserMessage,
         session,
@@ -301,90 +294,6 @@ export class SessionRequestHandlerSessionActions {
     this.deps.logger.warn("Session not found for incoming message", {
       sessionId,
     });
-  }
-
-  private async handleApplicationSkeletonReviewDecision(options: {
-    readonly content: string;
-    readonly hiddenUserMessage: boolean;
-    readonly session: Session;
-    readonly sessionId: string;
-  }): Promise<boolean> {
-    const { content, hiddenUserMessage, session, sessionId } = options;
-    if (
-      !(
-        session.stage === APPLICATION_SKELETON_STAGE &&
-        session.workspacePath &&
-        session.initiativeSlug
-      )
-    ) {
-      return false;
-    }
-    if (!(await isApplicationSkeletonReviewOpen(session.workspacePath))) {
-      return false;
-    }
-    const intent = classifyApplicationSkeletonReviewIntent(content);
-    if (intent === "none") {
-      return false;
-    }
-    if (!hiddenUserMessage) {
-      this.deps.eventMessages.appendDialogMessage(sessionId, {
-        content,
-        role: "user",
-      });
-    }
-    if (intent === "accept") {
-      await this.openApplicationSkeletonMaterialization(session);
-      return true;
-    }
-    await this.dispatchApplicationSkeletonReviewRevision(session, content);
-    return true;
-  }
-
-  private async openApplicationSkeletonMaterialization(
-    session: Session
-  ): Promise<void> {
-    if (!(session.workspacePath && session.initiativeSlug)) {
-      return;
-    }
-    try {
-      await this.applicationSkeletonStagePlan.acceptUserReviewWithoutRevision({
-        workspaceRoot: session.workspacePath,
-      });
-    } catch (error) {
-      this.deps.eventMessages.appendCoreMessage(session.id, {
-        content: buildApplicationSkeletonBoundaryBlockedMessage(
-          error instanceof Error ? error.message : String(error)
-        ),
-        tag: "managed-workflow-validation",
-      });
-      return;
-    }
-    const prompt = buildApplicationSkeletonMaterializationPrompt({
-      workspaceSlug: session.initiativeSlug,
-    });
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: prompt,
-      tag: "managed-workflow-continuation",
-    });
-    await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
-  }
-
-  private async dispatchApplicationSkeletonReviewRevision(
-    session: Session,
-    content: string
-  ): Promise<void> {
-    if (!session.initiativeSlug) {
-      return;
-    }
-    const prompt = buildApplicationSkeletonReviewRevisionPrompt({
-      userFeedback: content,
-      workspaceSlug: session.initiativeSlug,
-    });
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: prompt,
-      tag: "managed-workflow-user-review",
-    });
-    await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
   }
 
   private resolveFlowNodeRolloverSendGuard(

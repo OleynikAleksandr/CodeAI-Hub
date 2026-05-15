@@ -6,6 +6,8 @@ import test from "node:test";
 import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
 import type { ApplicationSkeletonManagedValidationResult } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-validator";
 import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
+import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
+import type { QualityGatesManagedValidationResult } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import type { BridgeEvent } from "../types";
@@ -16,11 +18,19 @@ const REVIEW_TASK_STATE_RE =
   /"currentTaskId": "application-skeleton\.phase2\.review\.task1"/u;
 const MATERIALIZE_TASK_STATE_RE =
   /"currentTaskId": "application-skeleton\.phase3\.materialize\.task1"/u;
+const QUALITY_GATES_REVIEW_TASK_STATE_RE =
+  /"currentTaskId": "quality-gates\.phase2\.review\.task1"/u;
+const QUALITY_GATES_INTEGRATION_TASK_STATE_RE =
+  /"currentTaskId": "quality-gates\.phase3\.integrate\.task1"/u;
 const NO_REVISION_RE = /not-created-user-accepted-without-review-revision/u;
 const MATERIALIZATION_PROMPT_RE =
   /Core opens Phase 3 Application Skeleton Materialization/u;
+const QUALITY_GATES_INTEGRATION_PROMPT_RE =
+  /Core opens Phase 3 Quality Gates Integration/u;
+const QUALITY_GATES_REVIEW_CORRECTIONS_RE = /Quality Gates review corrections/u;
 const REVIEW_CORRECTIONS_RE = /review corrections/u;
 const RUNTIME_MODULE_RE = /core runtime module/u;
+const SMOKE_GATE_RE = /smoke gate/u;
 const USER_ACCEPTANCE_RE = /подтверждаю/u;
 
 interface CapturedMessage {
@@ -46,6 +56,34 @@ const createDraftDecision = (): ApplicationSkeletonManagedValidationResult => ({
   phase: "draft",
   valid: true,
 });
+
+const createQualityGatesDraftDecision =
+  (): QualityGatesManagedValidationResult => ({
+    contractJson: {
+      accepted: false,
+      advisory: [],
+      commands: {
+        "qg-smoke": {
+          command: "npm run qg:smoke",
+          desiredStatus: "required",
+          summary: "Smoke gate",
+        },
+      },
+      deferred: [],
+      integrated: false,
+      integrationState: "not_started",
+      requiredBeforeCommit: ["qg-smoke"],
+      requiredBeforeModuleExecution: [],
+      requiredBeforePush: [],
+      requiredBeforeRelease: [],
+      schema: "codeai-quality-gates-v1",
+    },
+    diagnostics: [],
+    nextAction: "open_user_review",
+    nextPrompt: "review",
+    phase: "draft",
+    valid: true,
+  });
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -80,6 +118,33 @@ const prepareReviewWorkspace = async (workspaceRoot: string): Promise<void> => {
   await controller.openDraftPhase({ workspaceRoot });
   const committed = await controller.commitManagedTurn({
     decision: createDraftDecision(),
+    sessionId: "setup-session",
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  assert.equal(committed.blocked, null);
+};
+
+const prepareQualityGatesReviewWorkspace = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
+    workspaceRoot,
+  });
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`,
+    "# Quality Gates\n\nDraft contract.\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.json`,
+    `${JSON.stringify(createQualityGatesDraftDecision().contractJson, null, 2)}\n`
+  );
+  const controller = new QualityGatesStagePlanController();
+  await controller.openDraftPhase({ workspaceRoot });
+  const committed = await controller.commitManagedTurn({
+    decision: createQualityGatesDraftDecision(),
     sessionId: "setup-session",
     workspaceRoot,
     workspaceSlug: WORKSPACE_SLUG,
@@ -232,6 +297,95 @@ test("Application Skeleton review corrections stay in the active review task", a
     );
     assert.match(plan, REVIEW_TASK_STATE_RE);
     assert.doesNotMatch(plan, MATERIALIZE_TASK_STATE_RE);
+    assert.deepEqual(harness.events, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates review acceptance opens integration without forwarding user text", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "quality-gates-review-accept-")
+  );
+  try {
+    await prepareQualityGatesReviewWorkspace(workspaceRoot);
+    const sessionManager = new SessionManager();
+    const session = sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      "provider-session-1",
+      { initiativeSlug: WORKSPACE_SLUG, stage: "quality_gates" }
+    );
+    const harness = createActions(sessionManager);
+
+    await harness.actions.handleMessage(session.id, "подтверждаю");
+
+    assert.deepEqual(harness.dispatchedUserMessages, []);
+    assert.equal(harness.dialogMessages.at(-1)?.role, "user");
+    assert.equal(harness.dialogMessages.at(-1)?.content, "подтверждаю");
+    assert.equal(harness.sentInternalMessages.length, 1);
+    assert.match(
+      harness.sentInternalMessages[0] ?? "",
+      QUALITY_GATES_INTEGRATION_PROMPT_RE
+    );
+    assert.doesNotMatch(
+      harness.sentInternalMessages[0] ?? "",
+      USER_ACCEPTANCE_RE
+    );
+    assert.equal(
+      harness.coreMessages.at(-1)?.tag,
+      "managed-workflow-continuation"
+    );
+
+    const plan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/quality-gates/todo-plan.md"
+    );
+    assert.match(plan, QUALITY_GATES_INTEGRATION_TASK_STATE_RE);
+    assert.match(plan, NO_REVISION_RE);
+    assert.deepEqual(harness.events, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates review corrections stay in the active review task", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "quality-gates-review-revision-")
+  );
+  try {
+    await prepareQualityGatesReviewWorkspace(workspaceRoot);
+    const sessionManager = new SessionManager();
+    const session = sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      "provider-session-1",
+      { initiativeSlug: WORKSPACE_SLUG, stage: "quality_gates" }
+    );
+    const harness = createActions(sessionManager);
+    const feedback = "Добавь smoke gate.";
+
+    await harness.actions.handleMessage(session.id, feedback);
+
+    assert.deepEqual(harness.dispatchedUserMessages, []);
+    assert.equal(harness.dialogMessages.at(-1)?.content, feedback);
+    assert.equal(harness.sentInternalMessages.length, 1);
+    assert.match(
+      harness.sentInternalMessages[0] ?? "",
+      QUALITY_GATES_REVIEW_CORRECTIONS_RE
+    );
+    assert.match(harness.sentInternalMessages[0] ?? "", SMOKE_GATE_RE);
+    assert.equal(
+      harness.coreMessages.at(-1)?.tag,
+      "managed-workflow-user-review"
+    );
+
+    const plan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/quality-gates/todo-plan.md"
+    );
+    assert.match(plan, QUALITY_GATES_REVIEW_TASK_STATE_RE);
+    assert.doesNotMatch(plan, QUALITY_GATES_INTEGRATION_TASK_STATE_RE);
     assert.deepEqual(harness.events, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
