@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "f829a6ca5",
+  "lastRecordedCommit": "4b053a24a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1",
-  "expectedCommitMessage": "docs: verify application skeleton runtime repair",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase52a.client-authority-startup.task1",
+  "expectedCommitMessage": "docs: record client projection authority invariant",
   "debt": {
-    "expectedCommitMessage": "docs: verify application skeleton runtime repair",
-    "preCommitHead": "f829a6ca5",
+    "expectedCommitMessage": "docs: record client projection authority invariant",
+    "preCommitHead": "4b053a24a",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase52a.client-authority-startup.task1"
   }
 }
 ```
@@ -976,7 +976,7 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Targeted Verification
 
 225. [DONE] `diagram-plan-lifecycle-repair.phase51.application-skeleton-verify.task1` Run targeted Core and Project Manager tests/builds for Application Skeleton prompt, managed start preflight, rejected-attempt commits, and plan validation; record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton runtime repair`).
-226. [PENDING] Git Commit: `docs: verify application skeleton runtime repair` (hash: TBD)
+226. [DONE] Git Commit: `docs: verify application skeleton runtime repair` (hash: 4b053a24a)
 
 Verification evidence recorded 2026-05-15:
 
@@ -999,11 +999,21 @@ Repair coverage:
 
 ### Stream: Release Build Confirmation
 
-227. [TODO] `diagram-plan-lifecycle-repair.phase52.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Application Skeleton runtime repair (scope: user workflow; expected commit: none).
+227. [DONE] `diagram-plan-lifecycle-repair.phase52.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the Application Skeleton runtime repair (scope: user workflow; expected commit: none). Result: Release build remains deferred; user requested hard client-projection authority documentation before any release build.
+
+## Phase 52A — Client Projection Authority Documentation (owner: Codex, updated: 2026-05-15)
+
+### Stream: Startup And Orchestrator Invariants
+
+228. [DONE] `diagram-plan-lifecycle-repair.phase52a.client-authority-startup.task1` Record the hard invariant that Project Manager and future clients are replaceable projections, never workflow truth owners, in startup/system documents (scope: `AGENTS.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: record client projection authority invariant`).
+229. [PENDING] Git Commit: `docs: record client projection authority invariant` (hash: TBD)
+
+230. [TODO] `diagram-plan-lifecycle-repair.phase52a.client-authority-orchestrator.task1` Record the same invariant in orchestrator and workflow-step documentation so managed workflow modules keep Core as the authority for state, prompts, artifacts, plans, validation, and localization (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: record orchestrator client projection authority`).
+231. [TODO] Git Commit: `docs: record orchestrator client projection authority` (hash: TBD)
 
 ## Phase 53 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-228. [TODO] `diagram-plan-lifecycle-repair.phase53.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-229. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+232. [TODO] `diagram-plan-lifecycle-repair.phase53.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+233. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)

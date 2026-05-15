@@ -36,6 +36,8 @@
 5. В конце работы не оставляй `.git/codeai-plan-debt`; если он существует, сначала выполни `npm run plan:repair`.
 
 ## 2. Архитектурные принципы (Подход "Кластерно-Модульный")
+- **Клиенты не являются источником правды**: Project Manager, будущий мобильный клиент, VS Code surface или любой другой UI-клиент являются только replaceable projections и transport/input surfaces. Они могут принять сырой user intent и показать Core-owned snapshot, но не имеют права владеть workflow truth: stage phase, active microtask, expected commit, prompt/template/source-artifact selection, artifact validity, gating, localization target, Core/system messages или managed commit lifecycle.
+- **Core/оркестратор является authority**: любой workflow шаг обязан продолжать работать после закрытия всех клиентов до ближайшего user gate. Если поведение ломается без открытого Project Manager, это архитектурный дефект. Новые web/mobile/Wi-Fi клиенты должны подключаться к Core API и читать тот же Core-owned state, а не наследовать или дублировать логику Project Manager.
 - **Микро-классы**: Никаких файлов > 500 строк. Логика должна быть разбита на маленькие классы с единственной ответственностью.
 - **Фасады**: Каждый модуль должен иметь Фасад (`*facade.ts`), который выступает ЕДИНСТВЕННОЙ точкой входа для внешнего взаимодействия.
 - **Закрытые модули**: Если модуль работает и проверен, **НЕ ТРОГАЙ ЕГО**. Новый функционал = Новый модуль (или строго аддитивные изменения).
