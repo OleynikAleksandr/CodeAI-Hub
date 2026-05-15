@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "357a475aa",
+  "lastRecordedCommit": "a96ea4965",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase18.release-gate.task1",
-  "expectedCommitMessage": "docs: open diagram modules managed plan lifecycle release gate",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase19.release.task1",
+  "expectedCommitMessage": "docs: prepare diagram modules managed plan lifecycle release",
   "debt": {
-    "expectedCommitMessage": "docs: open diagram modules managed plan lifecycle release gate",
-    "preCommitHead": "357a475aa",
+    "expectedCommitMessage": "docs: prepare diagram modules managed plan lifecycle release",
+    "preCommitHead": "a96ea4965",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase18.release-gate.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase19.release.task1"
   }
 }
 ```
@@ -400,16 +400,23 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Release Confirmation Gate
 
 84. [DONE] `diagram-plan-lifecycle-repair.phase18.release-gate.task1` Add the required post-repair release gate and retest path before closeout; closeout remains blocked until a new release is built and explicitly accepted by the user (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open diagram modules managed plan lifecycle release gate`).
-85. [PENDING] Git Commit: `docs: open diagram modules managed plan lifecycle release gate` (hash: TBD)
+85. [DONE] Git Commit: `docs: open diagram modules managed plan lifecycle release gate` (hash: a96ea4965)
 
-86. [TODO] `diagram-plan-lifecycle-repair.phase18.release-confirmation.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the managed plan lifecycle repair (scope: user workflow; expected commit: none).
+86. [DONE] `diagram-plan-lifecycle-repair.phase18.release-confirmation.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the managed plan lifecycle repair (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for the Diagram Modules managed plan lifecycle repair.
 
 ## Phase 19 — Release Build (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Release Preparation And Build
 
-87. [TODO] `diagram-plan-lifecycle-repair.phase19.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules managed plan lifecycle release`).
-88. [TODO] Git Commit: `docs: prepare diagram modules managed plan lifecycle release` (hash: TBD)
+87. [DONE] `diagram-plan-lifecycle-repair.phase19.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules managed plan lifecycle release`).
+88. [PENDING] Git Commit: `docs: prepare diagram modules managed plan lifecycle release` (hash: TBD)
+
+Release preparation evidence recorded 2026-05-15:
+
+- Current package version before release scripts: `1.2.260`.
+- Future release version prepared in release-facing docs: `1.2.261`.
+- `README.md` current-release banner updated to the Diagram Modules managed plan lifecycle fix.
+- `CHANGELOG.md` release entry `1.2.261` added with verification summary.
 
 89. [TODO] `diagram-plan-lifecycle-repair.phase19.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram modules managed plan lifecycle release`).
 90. [TODO] Git Commit: `chore: build diagram modules managed plan lifecycle release` (hash: TBD)

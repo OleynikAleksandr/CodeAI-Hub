@@ -2,15 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.260** (Diagram Modules scaffold and repair-prompt fix)
+**Current Release — v1.2.261** (Diagram Modules managed plan lifecycle fix)
 
-This release repairs the managed `Diagram Modules` runtime sequence after
-release `1.2.259` exposed two acceptance blockers. `session:create` now installs
-the managed workspace scaffold before provider dispatch, including stage TODO
-plans and plan scripts. Invalid Product Part artifacts now receive a
-provider-visible Core repair prompt with the exact target path, diagnostics, and
-required `# Product Part: <part-id>` heading instead of stopping after a passive
-Core message.
+This release repairs the Core-owned managed plan lifecycle for `Diagram Modules`.
+After each accepted index or Product Part subturn, Core now commits the bounded
+managed changes, records the real hash in the stage/workspace plans, injects the
+next Product Part microtask, and opens Phase 2 user review only after the final
+Product Part commit succeeds. Greenfield workspaces without `.git` are
+initialized by Core, while staging remains limited to managed Diagram Modules
+and scaffold paths.
 
 All five documentation trunk steps remain routed through the replacement
 Managed Workflow Orchestration cluster boundary. `Description` and

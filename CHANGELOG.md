@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.261] - 2026-05-15
+### Fixed
+- **Diagram Modules now advances the managed stage plan after accepted subturns.** Core records real Git hashes in `doc/TODO/stages/diagram-modules/todo-plan.md`, injects Product Part microtasks, and opens the Phase 2 review task only after the final Product Part commit boundary succeeds.
+- **Greenfield Diagram Modules workspaces now get a Core-owned local Git boundary.** If the workspace has no `.git`, Core initializes it before the managed commit and stages only managed Diagram Modules/scaffold paths.
+- **Continuation and review prompts now wait for the managed commit boundary.** Core no longer opens the next Product Part or user review over an uncommitted accepted artifact.
+
+### Tests
+- `npm run build:core`
+- Diagram Modules stage-plan controller, runtime post-turn arbitration, scaffold, prompt-builder, and managed facade tests passed, 17/17 tests.
+- `npm run plan:validate`
+
 ## [1.2.260] - 2026-05-15
 ### Fixed
 - **Diagram Modules managed scaffold is now created on the real `session:create` runtime path.** Core installs `doc/TODO/workspace.plan.md`, stage TODO plans, plan scripts, and hooks before provider dispatch starts.
