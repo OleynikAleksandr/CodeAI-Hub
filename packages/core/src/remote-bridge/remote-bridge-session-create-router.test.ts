@@ -1,19 +1,15 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
-import { TECHNICAL_STAGE_REWRITE_BLOCKER_CODE } from "./handlers/session-request-handler-workflow-session";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 
-const TECHNICAL_STAGES = [
-  "diagram_modules",
-  "application_skeleton",
-  "quality_gates",
-] as const;
+const ACTIVE_DIAGRAM_MODULES_RE = /"activeStage": "diagram_modules"/u;
+const DIAGRAM_MODULES_INDEX_TASK_RE = /diagram-modules\.phase1\.index\.task1/u;
 
 const assertMissing = async (targetPath: string): Promise<void> => {
   await assert.rejects(access(targetPath));
@@ -26,26 +22,38 @@ const createLogger = (warnings: unknown[] = []): Logger =>
     },
   }) as unknown as Logger;
 
-test("session:create skips technical stage preflight while rewrite is active", async () => {
+test("session:create installs Diagram Modules managed scaffold before provider dispatch", async () => {
   const workspacePath = await mkdtemp(
-    path.join(tmpdir(), "codeai-technical-preflight-skipped-")
+    path.join(tmpdir(), "codeai-diagram-scaffold-preflight-")
   );
   const workspaceSlug = "demo-workspace";
-  const seenStages: string[] = [];
   const warnings: unknown[] = [];
+  let handleCreateCalled = false;
 
   try {
     const sessionHandler = {
-      handleCreate(
+      async handleCreate(
         providerId: string | undefined,
         workspaceRoot: string | undefined,
         context: { readonly stage?: string | null } | undefined
       ): Promise<void> {
         assert.equal(providerId, "codexCli");
         assert.equal(workspaceRoot, workspacePath);
-        assert.ok(typeof context?.stage === "string");
-        seenStages.push(context.stage);
-        return Promise.resolve();
+        assert.equal(context?.stage, "diagram_modules");
+        const workspacePlan = await readFile(
+          path.join(workspacePath, "doc/TODO/workspace.plan.md"),
+          "utf8"
+        );
+        const diagramPlan = await readFile(
+          path.join(
+            workspacePath,
+            "doc/TODO/stages/diagram-modules/todo-plan.md"
+          ),
+          "utf8"
+        );
+        assert.match(workspacePlan, ACTIVE_DIAGRAM_MODULES_RE);
+        assert.match(diagramPlan, DIAGRAM_MODULES_INDEX_TASK_RE);
+        handleCreateCalled = true;
       },
     } as unknown as SessionRequestHandler;
     const router = new RemoteBridgeSessionCreateRouter({
@@ -57,36 +65,23 @@ test("session:create skips technical stage preflight while rewrite is active", a
       } as unknown as WorkflowRuntime,
     });
 
-    for (const stage of TECHNICAL_STAGES) {
-      await router.handle("client-1", {
-        type: "session:create",
-        payload: {
-          initiativeSlug: workspaceSlug,
-          providerId: "codexCli",
-          runSlug: "run-1",
-          stage,
-          workspacePath,
-        },
-      });
-    }
+    await router.handle("client-1", {
+      type: "session:create",
+      payload: {
+        initiativeSlug: workspaceSlug,
+        providerId: "codexCli",
+        runSlug: "run-1",
+        stage: "diagram_modules",
+        workspacePath,
+      },
+    });
 
-    assert.deepEqual(seenStages, [...TECHNICAL_STAGES]);
-    assert.deepEqual(
-      warnings.map((warning) =>
-        typeof warning === "object" && warning !== null
-          ? (warning as { readonly code?: string }).code
-          : null
-      ),
-      [
-        TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
-        TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
-        TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
-      ]
+    assert.equal(handleCreateCalled, true);
+    assert.deepEqual(warnings, []);
+    await access(path.join(workspacePath, ".husky", "pre-commit"));
+    await access(
+      path.join(workspacePath, ".codeai-hub", workspaceSlug, "diagram_modules")
     );
-    await assertMissing(path.join(workspacePath, ".git"));
-    await assertMissing(path.join(workspacePath, ".husky"));
-    await assertMissing(path.join(workspacePath, "doc", "TODO"));
-    await assertMissing(path.join(workspacePath, ".codeai-hub", workspaceSlug));
   } finally {
     await rm(workspacePath, { force: true, recursive: true });
   }

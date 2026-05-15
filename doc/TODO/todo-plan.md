@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "1f10dde37",
+  "lastRecordedCommit": "8040a6367",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-runtime-repair.phase13.plan.task1",
-  "expectedCommitMessage": "docs: plan diagram modules scaffold repair dispatch fix",
+  "currentTaskId": "diagram-runtime-repair.phase13.scaffold.task1",
+  "expectedCommitMessage": "fix: create diagram modules managed scaffold on start",
   "debt": {
-    "expectedCommitMessage": "docs: plan diagram modules scaffold repair dispatch fix",
-    "preCommitHead": "1f10dde37",
+    "expectedCommitMessage": "fix: create diagram modules managed scaffold on start",
+    "preCommitHead": "8040a6367",
     "stage": "commit_pending",
-    "taskId": "diagram-runtime-repair.phase13.plan.task1"
+    "taskId": "diagram-runtime-repair.phase13.scaffold.task1"
   }
 }
 ```
@@ -298,12 +298,12 @@ Release package evidence recorded 2026-05-15:
 ### Stream: Failure Intake
 
 60. [DONE] `diagram-runtime-repair.phase13.plan.task1` Record the failed release 1.2.259 acceptance and expand the active repair scope for Diagram Modules startup scaffold creation plus invalid Product Part repair dispatch (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`; expected commit: `docs: plan diagram modules scaffold repair dispatch fix`).
-61. [PENDING] Git Commit: `docs: plan diagram modules scaffold repair dispatch fix` (hash: TBD)
+61. [DONE] Git Commit: `docs: plan diagram modules scaffold repair dispatch fix` (hash: 8040a6367)
 
 ### Stream: Runtime Repair
 
-62. [TODO] `diagram-runtime-repair.phase13.scaffold.task1` Fix Diagram Modules start so Core installs the managed workspace scaffold in the actual provider workspace before the first provider prompt, and cover the created stage TODO/workspace plan structure in regression tests (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: create diagram modules managed scaffold on start`).
-63. [TODO] Git Commit: `fix: create diagram modules managed scaffold on start` (hash: TBD)
+62. [DONE] `diagram-runtime-repair.phase13.scaffold.task1` Fix Diagram Modules start so Core installs the managed workspace scaffold in the actual `session:create` runtime path before the first provider prompt, and cover the created stage TODO/workspace plan structure in regression tests (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts`; expected commit: `fix: create diagram modules managed scaffold on start`).
+63. [PENDING] Git Commit: `fix: create diagram modules managed scaffold on start` (hash: TBD)
 
 64. [TODO] `diagram-runtime-repair.phase13.repair-prompt.task1` Fix Product Part rejection handling so invalid current artifacts produce a provider-visible repair prompt with the exact target/diagnostics instead of only a passive Core message, and align heading validation/prompt copy with the accepted Product Part contract (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: dispatch diagram modules repair prompts`).
 65. [TODO] Git Commit: `fix: dispatch diagram modules repair prompts` (hash: TBD)
