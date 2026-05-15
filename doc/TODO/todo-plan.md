@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "9846fc6b1",
+  "lastRecordedCommit": "9e7795072",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase38.review-boundary.task3",
-  "expectedCommitMessage": "fix: ignore managed plan ledger in technical dirty gate",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase38.verify.task1",
+  "expectedCommitMessage": "docs: verify diagram modules review boundary repair",
   "debt": {
-    "expectedCommitMessage": "fix: ignore managed plan ledger in technical dirty gate",
-    "preCommitHead": "9846fc6b1",
+    "expectedCommitMessage": "docs: verify diagram modules review boundary repair",
+    "preCommitHead": "9e7795072",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase38.review-boundary.task3"
+    "taskId": "diagram-plan-lifecycle-repair.phase38.verify.task1"
   }
 }
 ```
@@ -742,12 +742,19 @@ Release VSIX evidence recorded 2026-05-15:
 159. [DONE] Git Commit: `fix: add diagram modules review commit partner` (hash: 9846fc6b1)
 
 160. [DONE] `diagram-plan-lifecycle-repair.phase38.review-boundary.task3` Keep Core-managed workspace/stage plan ledger updates out of technical-stage dirty gating so a completed Diagram Modules aggregate can unlock Application Skeleton even when only review-ledger metadata is dirty (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts`; expected commit: `fix: ignore managed plan ledger in technical dirty gate`).
-161. [PENDING] Git Commit: `fix: ignore managed plan ledger in technical dirty gate` (hash: TBD)
+161. [DONE] Git Commit: `fix: ignore managed plan ledger in technical dirty gate` (hash: 9e7795072)
 
 ### Stream: Verification
 
-162. [TODO] `diagram-plan-lifecycle-repair.phase38.verify.task1` Run targeted Core tests/build for the Diagram Modules review commit partner and technical-stage dirty-gate repair, then record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules review boundary repair`).
-163. [TODO] Git Commit: `docs: verify diagram modules review boundary repair` (hash: TBD)
+162. [DONE] `diagram-plan-lifecycle-repair.phase38.verify.task1` Run targeted Core tests/build for the Diagram Modules review commit partner and technical-stage dirty-gate repair, then record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules review boundary repair`).
+163. [PENDING] Git Commit: `docs: verify diagram modules review boundary repair` (hash: TBD)
+
+Verification evidence recorded 2026-05-15:
+
+- `npm run build:core` — PASS.
+- `node --test packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.js packages/core/dist/remote-bridge/handlers/technical-stage-dirty-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-runtime-core.test.js` — PASS, 16 tests.
+- `npm run plan:validate` — PASS.
+- Covered behavior: Diagram Modules Phase 2 user review now gets an explicit `Git Commit: docs: open diagram modules user review` partner in `doc/TODO/stages/diagram-modules/todo-plan.md`; the review handoff state carries a non-null `expectedCommitMessage`; Core-managed `doc/TODO/workspace.plan.md` and stage todo-plan ledger dirt no longer makes the technical-stage dirty gate block Application Skeleton after Diagram Modules aggregate readiness.
 
 ## Phase 39 — Release Build Gate For Review Boundary Repair (owner: Codex + User, updated: 2026-05-15)
 
