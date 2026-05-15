@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "bfbd67ee7",
+  "lastRecordedCommit": "94e0b8b12",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-contract.task1",
-  "expectedCommitMessage": "feat: add application skeleton managed validators",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-plan.task1",
+  "expectedCommitMessage": "feat: add application skeleton managed plan controller",
   "debt": {
-    "expectedCommitMessage": "feat: add application skeleton managed validators",
-    "preCommitHead": "bfbd67ee7",
+    "expectedCommitMessage": "feat: add application skeleton managed plan controller",
+    "preCommitHead": "94e0b8b12",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-contract.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-plan.task1"
   }
 }
 ```
@@ -848,12 +848,12 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Contract Validation And Prompts
 
 183. [DONE] `diagram-plan-lifecycle-repair.phase45.application-skeleton-contract.task1` Add managed Application Skeleton draft/materialization validators and Core prompt/message builders for Phase 1, Phase 2 repair/review, and Phase 3 materialization (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `feat: add application skeleton managed validators`).
-184. [PENDING] Git Commit: `feat: add application skeleton managed validators` (hash: TBD)
+184. [DONE] Git Commit: `feat: add application skeleton managed validators` (hash: 94e0b8b12)
 
 ### Stream: Managed Plan Boundary
 
-185. [TODO] `diagram-plan-lifecycle-repair.phase45.application-skeleton-plan.task1` Add Application Skeleton stage-plan advancement for draft commits, conditional review outcomes, materialization attempts, workspace ledger updates, and managed Git retries (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts`; expected commit: `feat: add application skeleton managed plan controller`).
-186. [TODO] Git Commit: `feat: add application skeleton managed plan controller` (hash: TBD)
+185. [DONE] `diagram-plan-lifecycle-repair.phase45.application-skeleton-plan.task1` Add Application Skeleton stage-plan advancement for draft commits, conditional review outcomes, materialization attempts, workspace ledger updates, and managed Git retries (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `feat: add application skeleton managed plan controller`).
+186. [PENDING] Git Commit: `feat: add application skeleton managed plan controller` (hash: TBD)
 
 ### Stream: Runtime Dispatch
 
