@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "c761273e7",
+  "lastRecordedCommit": "e8dc8fae5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase48.release.task1",
-  "expectedCommitMessage": "docs: prepare release 267 application skeleton module",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase48.release.task2",
+  "expectedCommitMessage": "chore: build release 267 application skeleton module",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 267 application skeleton module",
-    "preCommitHead": "c761273e7",
+    "expectedCommitMessage": "chore: build release 267 application skeleton module",
+    "preCommitHead": "e8dc8fae5",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase48.release.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase48.release.task2"
   }
 }
 ```
@@ -894,7 +894,7 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Release Preparation And Build
 
 196. [DONE] `diagram-plan-lifecycle-repair.phase48.release.task1` After explicit release-build confirmation, update release-facing docs for the future Application Skeleton managed module release before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 267 application skeleton module`).
-197. [PENDING] Git Commit: `docs: prepare release 267 application skeleton module` (hash: TBD)
+197. [DONE] Git Commit: `docs: prepare release 267 application skeleton module` (hash: e8dc8fae5)
 
 Release 267 preparation target:
 
@@ -903,8 +903,15 @@ Release 267 preparation target:
 - Future release version prepared in release-facing docs: `1.2.267`.
 - Release payload: Application Skeleton managed draft validation, user review decision handling, materialization boundary, managed decision snapshot commits, and the pending Diagram Modules index dirty repair from this scope.
 
-198. [TODO] `diagram-plan-lifecycle-repair.phase48.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 267 application skeleton module`).
-199. [TODO] Git Commit: `chore: build release 267 application skeleton module` (hash: TBD)
+198. [DONE] `diagram-plan-lifecycle-repair.phase48.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 267 application skeleton module`).
+
+Release build-all evidence recorded 2026-05-15:
+
+- `./scripts/build-all.sh --allow-dirty` — PASS. Dirty input was limited to the active plan transition for this release task.
+- Unified generated version: `1.2.267`.
+- Generated release archives in `doc/tmp/releases/`: `claude-module-1.2.267.tar.bz2`, `codex-module-1.2.267.tar.bz2`, `gemini-module-1.2.267.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.267.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.267.tar.bz2`, `vscode-webview-1.2.267.tar.bz2`, `project-manager-1.2.267.tar.bz2`.
+- Updated package versions and managed release manifests to `1.2.267`.
+199. [PENDING] Git Commit: `chore: build release 267 application skeleton module` (hash: TBD)
 
 200. [TODO] `diagram-plan-lifecycle-repair.phase48.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 267 application skeleton handoff`).
 201. [TODO] Git Commit: `docs: record release 267 application skeleton handoff` (hash: TBD)
