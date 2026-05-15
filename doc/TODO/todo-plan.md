@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "d7c3998b0",
+  "lastRecordedCommit": "3e370e974",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase24.docs.task1",
-  "expectedCommitMessage": "docs: document managed boundary and core message localization",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase24.verify.task1",
+  "expectedCommitMessage": "docs: verify managed boundary and localization repair",
   "debt": {
-    "expectedCommitMessage": "docs: document managed boundary and core message localization",
-    "preCommitHead": "d7c3998b0",
+    "expectedCommitMessage": "docs: verify managed boundary and localization repair",
+    "preCommitHead": "3e370e974",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase24.docs.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase24.verify.task1"
   }
 }
 ```
@@ -477,10 +477,17 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Architecture Sync And Targeted Checks
 
 104. [DONE] `diagram-plan-lifecycle-repair.phase24.docs.task1` Document the managed Git boundary retry contract and Core message localization policy in system workflow docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document managed boundary and core message localization`).
-105. [PENDING] Git Commit: `docs: document managed boundary and core message localization` (hash: TBD)
+105. [DONE] Git Commit: `docs: document managed boundary and core message localization` (hash: 3e370e974)
 
-106. [TODO] `diagram-plan-lifecycle-repair.phase24.verify.task1` Run targeted core/session translation tests plus `npm run build:core` and record evidence before release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed boundary and localization repair`).
-107. [TODO] Git Commit: `docs: verify managed boundary and localization repair` (hash: TBD)
+106. [DONE] `diagram-plan-lifecycle-repair.phase24.verify.task1` Run targeted core/session translation tests plus `npm run build:core` and record evidence before release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed boundary and localization repair`).
+107. [PENDING] Git Commit: `docs: verify managed boundary and localization repair` (hash: TBD)
+
+Verification evidence recorded 2026-05-15:
+
+- `npm run build:core` — PASS.
+- `node --test packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.js packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.js packages/core/dist/session-translation/session-translation-policy-resolver.test.js packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-runtime-core.test.js` — PASS, 24 tests.
+- `npm run plan:validate` — PASS.
+- Covered behavior: transient Diagram Modules managed `.git/index.lock` retries, persistent lock blocks without plan advancement, Core/system messages use the `Messages for the User` session translation policy, source dialog content remains unchanged while overlays persist localized patches, and Diagram Modules continuation/review messages are emitted after the managed commit boundary.
 
 ## Phase 25 — Release Build Confirmation For Managed Boundary Repair (owner: Codex + User, updated: 2026-05-15)
 
