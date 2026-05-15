@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "a7bf5dedd",
+  "lastRecordedCommit": "183c0a8e2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "prelim-diagram-runtime.phase5.release.task2",
-  "expectedCommitMessage": "chore: build full trunk orchestration release",
+  "currentTaskId": "prelim-diagram-runtime.phase5.release.task3",
+  "expectedCommitMessage": "docs: record full trunk orchestration release",
   "debt": {
-    "expectedCommitMessage": "chore: build full trunk orchestration release",
-    "preCommitHead": "a7bf5dedd",
+    "expectedCommitMessage": "docs: record full trunk orchestration release",
+    "preCommitHead": "183c0a8e2",
     "stage": "commit_pending",
-    "taskId": "prelim-diagram-runtime.phase5.release.task2"
+    "taskId": "prelim-diagram-runtime.phase5.release.task3"
   }
 }
 ```
@@ -185,7 +185,7 @@ Release preparation evidence recorded 2026-05-15:
 - `CHANGELOG.md` release entry `1.2.258` added with verification summary.
 
 37. [DONE] `prelim-diagram-runtime.phase5.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build full trunk orchestration release`).
-38. [PENDING] Git Commit: `chore: build full trunk orchestration release` (hash: TBD)
+38. [DONE] Git Commit: `chore: build full trunk orchestration release` (hash: 183c0a8e2)
 
 Build-all evidence recorded 2026-05-15:
 
@@ -194,8 +194,16 @@ Build-all evidence recorded 2026-05-15:
 - Updated package/version manifests for root package, provider modules, Core, shared packages, UI, and CEF launcher.
 - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.258.tar.bz2`, `codex-module-1.2.258.tar.bz2`, `gemini-module-1.2.258.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.258.tar.bz2`, `vscode-webview-1.2.258.tar.bz2`, `project-manager-1.2.258.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.258.tar.bz2`.
 
-39. [TODO] `prelim-diagram-runtime.phase5.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record full trunk orchestration release`).
-40. [TODO] Git Commit: `docs: record full trunk orchestration release` (hash: TBD)
+39. [DONE] `prelim-diagram-runtime.phase5.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record full trunk orchestration release`).
+40. [PENDING] Git Commit: `docs: record full trunk orchestration release` (hash: TBD)
+
+Release package evidence recorded 2026-05-15:
+
+- `./scripts/build-release.sh --use-current-version` — PASS.
+- Required release-build output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`.
+- VSIX package: `codeai-hub-1.2.258.vsix` (`47M`).
+- Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.258.tar.bz2`, `codex-module-1.2.258.tar.bz2`, `gemini-module-1.2.258.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.258.tar.bz2`, `vscode-webview-1.2.258.tar.bz2`, `project-manager-1.2.258.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.258.tar.bz2`.
+- Advisory release warnings: markdown link checker reported 17 planning-document anchor issues; package size warning reported `48M`. Neither warning blocked packaging or runtime surface verification.
 
 ## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-15)
 
