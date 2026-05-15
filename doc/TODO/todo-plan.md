@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "5553f3933",
+  "lastRecordedCommit": "141e3989f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase28.system-card.task1",
-  "expectedCommitMessage": "fix: style core system dialog messages as cards",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase28.verify.task1",
+  "expectedCommitMessage": "docs: verify release 262 cosmetic repair",
   "debt": {
-    "expectedCommitMessage": "fix: style core system dialog messages as cards",
-    "preCommitHead": "5553f3933",
+    "expectedCommitMessage": "docs: verify release 262 cosmetic repair",
+    "preCommitHead": "141e3989f",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase28.system-card.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase28.verify.task1"
   }
 }
 ```
@@ -547,10 +547,17 @@ Release VSIX evidence recorded 2026-05-15:
 119. [DONE] Git Commit: `fix: keep diagram modules marker active until review` (hash: 5553f3933)
 
 120. [DONE] `diagram-plan-lifecycle-repair.phase28.system-card.task1` Render Core/system dialog messages in their own subtle card with symmetric dialog-panel side offsets matching the larger assistant-card side offset (scope: `src/client/ui/src/session/dialog-panel.tsx, media/session-view.css, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `fix: style core system dialog messages as cards`).
-121. [PENDING] Git Commit: `fix: style core system dialog messages as cards` (hash: TBD)
+121. [DONE] Git Commit: `fix: style core system dialog messages as cards` (hash: 141e3989f)
 
-122. [TODO] `diagram-plan-lifecycle-repair.phase28.verify.task1` Run targeted Core/PM UI checks for the marker and system-card fixes and record evidence before the next release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 262 cosmetic repair`).
-123. [TODO] Git Commit: `docs: verify release 262 cosmetic repair` (hash: TBD)
+122. [DONE] `diagram-plan-lifecycle-repair.phase28.verify.task1` Run targeted Core/PM UI checks for the marker and system-card fixes and record evidence before the next release gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 262 cosmetic repair`).
+123. [PENDING] Git Commit: `docs: verify release 262 cosmetic repair` (hash: TBD)
+
+Release 262 cosmetic repair verification evidence recorded 2026-05-15:
+
+- `npx tsx --test src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts` — PASS (9 tests; React SSR `useLayoutEffect` warning expected for static DialogPanel render tests).
+- `npm run typecheck:webview` — PASS.
+- `npm run build:webview` — PASS (`webview bundle generated successfully`).
+- `npm run plan:validate` — PASS.
 
 ## Phase 29 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
