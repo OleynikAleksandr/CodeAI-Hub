@@ -141,6 +141,7 @@ test("SessionTranslationPolicyResolver enables translation through the dedicated
     const policy = resolver.resolve(settingsPath);
 
     assert.deepEqual(policy, {
+      category: "reasoning",
       enabled: true,
       engineId: "google-gtx",
       skipReason: null,
@@ -168,6 +169,7 @@ test("SessionTranslationPolicyResolver keeps translation disabled while the pers
     const policy = resolver.resolve(settingsPath);
 
     assert.deepEqual(policy, {
+      category: "reasoning",
       enabled: false,
       engineId: "google-gtx",
       skipReason: "localization_sync_pending",
@@ -212,9 +214,16 @@ test("SessionTranslationPolicyResolver decouples reasoning language from Message
 
     const resolver = new SessionTranslationPolicyResolver();
     const policy = resolver.resolve(settingsPath);
+    const messagesPolicy = resolver.resolve(
+      settingsPath,
+      "messages_for_the_user"
+    );
 
     assert.equal(policy.targetLanguage, "fr");
     assert.equal(policy.engineId, "google-gtx");
+    assert.equal(messagesPolicy.category, "messages_for_the_user");
+    assert.equal(messagesPolicy.targetLanguage, "ru");
+    assert.equal(messagesPolicy.engineId, "codex-gpt-5.3-codex-spark");
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }
@@ -249,9 +258,15 @@ test("SessionTranslationPolicyResolver falls back to the Messages for the User l
 
     const resolver = new SessionTranslationPolicyResolver();
     const policy = resolver.resolve(settingsPath);
+    const messagesPolicy = resolver.resolve(
+      settingsPath,
+      "messages_for_the_user"
+    );
 
     assert.equal(policy.targetLanguage, "ru");
     assert.equal(policy.engineId, "google-gtx");
+    assert.equal(messagesPolicy.targetLanguage, "ru");
+    assert.equal(messagesPolicy.engineId, "codex-gpt-5.3-codex-spark");
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }

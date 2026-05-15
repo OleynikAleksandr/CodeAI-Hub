@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "bd341d526",
+  "lastRecordedCommit": "865986248",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase22.git-boundary.task1",
-  "expectedCommitMessage": "fix: retry diagram modules managed git lock boundary",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase23.localization-policy.task1",
+  "expectedCommitMessage": "feat: add messages-for-user session translation policy",
   "debt": {
-    "expectedCommitMessage": "fix: retry diagram modules managed git lock boundary",
-    "preCommitHead": "bd341d526",
+    "expectedCommitMessage": "feat: add messages-for-user session translation policy",
+    "preCommitHead": "865986248",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase22.git-boundary.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase23.localization-policy.task1"
   }
 }
 ```
@@ -457,14 +457,14 @@ Release VSIX evidence recorded 2026-05-15:
 ### Stream: Git Lock Retry And Commit Boundary
 
 96. [DONE] `diagram-plan-lifecycle-repair.phase22.git-boundary.task1` Add a workspace-scoped managed Git boundary with retry/backoff for transient `.git/index.lock` failures and keep Diagram Modules continuation blocked until the commit hash is recorded (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `fix: retry diagram modules managed git lock boundary`).
-97. [PENDING] Git Commit: `fix: retry diagram modules managed git lock boundary` (hash: TBD)
+97. [DONE] Git Commit: `fix: retry diagram modules managed git lock boundary` (hash: 865986248)
 
 ## Phase 23 — Core Message Localization (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Messages For The User Pipeline
 
-98. [TODO] `diagram-plan-lifecycle-repair.phase23.localization-policy.task1` Extend session translation policy so Core/system dialog messages resolve target language from Settings > General > Messages for the User instead of the reasoning category (scope: `packages/core/src/session-translation/session-translation-policy-resolver.ts, packages/core/src/session-translation/session-translation-policy-resolver.test.ts, packages/core/src/session-translation/session-translation-dispatcher.ts`; expected commit: `feat: add messages-for-user session translation policy`).
-99. [TODO] Git Commit: `feat: add messages-for-user session translation policy` (hash: TBD)
+98. [DONE] `diagram-plan-lifecycle-repair.phase23.localization-policy.task1` Extend session translation policy so Core/system dialog messages resolve target language from Settings > General > Messages for the User instead of the reasoning category (scope: `packages/core/src/session-translation/session-translation-policy-resolver.ts, packages/core/src/session-translation/session-translation-policy-resolver.test.ts, packages/core/src/session-translation/session-translation-dispatcher.ts`; expected commit: `feat: add messages-for-user session translation policy`).
+99. [PENDING] Git Commit: `feat: add messages-for-user session translation policy` (hash: TBD)
 
 100. [TODO] `diagram-plan-lifecycle-repair.phase23.localization-runtime.task1` Route Core/system dialog messages through the session translation overlay while preserving source text, message ids, tags, and persisted translation patches (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/session-translation/session-translation-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`; expected commit: `feat: translate core system dialog messages`).
 101. [TODO] Git Commit: `feat: translate core system dialog messages` (hash: TBD)

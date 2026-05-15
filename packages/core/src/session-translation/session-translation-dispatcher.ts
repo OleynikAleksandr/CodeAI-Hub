@@ -25,6 +25,7 @@ export class SessionTranslationDispatcher {
     }
 
     return (
+      candidate.role === "system" ||
       candidate.role === "thinking" ||
       (candidate.role === "assistant" && candidate.tag === "thinking")
     );

@@ -18,6 +18,9 @@ import {
 } from "../config/provider-settings-snapshot";
 
 export type SessionThinkingVisibilityProviderId = "claude" | "codex" | "gemini";
+export type SessionTranslationPolicyCategory =
+  | "messages_for_the_user"
+  | "reasoning";
 
 const resolveThinkingVisibilityEnabled = (value: unknown): boolean =>
   value !== false;
@@ -34,6 +37,7 @@ type SessionTranslationPolicySkipReason =
   | null;
 
 export interface SessionTranslationPolicy {
+  readonly category: SessionTranslationPolicyCategory;
   readonly enabled: boolean;
   readonly engineId: string;
   readonly skipReason: SessionTranslationPolicySkipReason;
@@ -160,20 +164,26 @@ export class SessionTranslationPolicyResolver {
     );
   }
 
-  resolve(settingsPath: string): SessionTranslationPolicy {
+  resolve(
+    settingsPath: string,
+    category: SessionTranslationPolicyCategory = "reasoning"
+  ): SessionTranslationPolicy {
     const runtimeSettings = this.createRuntimeSettingsSnapshot(settingsPath);
-    const reasoningEngineId = loadReasoningTranslationEngineId(settingsPath);
-    const resolvedTargetLanguage = loadReasoningLanguage(settingsPath)
-      .trim()
-      .toLowerCase();
+    const engineId = this.resolveTranslationEngineId(settingsPath, category);
+    const resolvedTargetLanguage = this.resolveTargetLanguage(
+      settingsPath,
+      runtimeSettings,
+      category
+    );
     const targetLanguage =
       resolvedTargetLanguage === SOURCE_LANGUAGE
         ? null
         : resolvedTargetLanguage;
     if (!targetLanguage) {
       return {
+        category,
         enabled: false,
-        engineId: reasoningEngineId,
+        engineId,
         skipReason: "missing_target_language",
         sourceLanguage: SOURCE_LANGUAGE,
         targetLanguage: null,
@@ -188,8 +198,9 @@ export class SessionTranslationPolicyResolver {
       persistedSnapshot.systemFeedbackSource === "materialized";
     if (!matchingBootstrap) {
       return {
+        category,
         enabled: false,
-        engineId: reasoningEngineId,
+        engineId,
         skipReason: "localization_sync_pending",
         sourceLanguage: SOURCE_LANGUAGE,
         targetLanguage,
@@ -197,12 +208,34 @@ export class SessionTranslationPolicyResolver {
     }
 
     return {
+      category,
       enabled: true,
-      engineId: reasoningEngineId,
+      engineId,
       skipReason: null,
       sourceLanguage: SOURCE_LANGUAGE,
       targetLanguage,
     };
+  }
+
+  private resolveTargetLanguage(
+    settingsPath: string,
+    runtimeSettings: LocalizationRuntimeSettingsSnapshot,
+    category: SessionTranslationPolicyCategory
+  ): string {
+    if (category === "messages_for_the_user") {
+      return runtimeSettings.categories.system_feedback.trim().toLowerCase();
+    }
+    return loadReasoningLanguage(settingsPath).trim().toLowerCase();
+  }
+
+  private resolveTranslationEngineId(
+    settingsPath: string,
+    category: SessionTranslationPolicyCategory
+  ): string {
+    if (category === "messages_for_the_user") {
+      return loadUITranslationEngineId(settingsPath);
+    }
+    return loadReasoningTranslationEngineId(settingsPath);
   }
 
   private createRuntimeSettingsSnapshot(
