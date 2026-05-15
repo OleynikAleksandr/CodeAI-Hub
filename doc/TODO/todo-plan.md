@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "805ce7b47",
+  "lastRecordedCommit": "63e1c6472",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-ledger.task1",
-  "expectedCommitMessage": "fix: commit application skeleton managed decision snapshot",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-review.task1",
+  "expectedCommitMessage": "feat: handle application skeleton review decisions",
   "debt": {
-    "expectedCommitMessage": "fix: commit application skeleton managed decision snapshot",
-    "preCommitHead": "805ce7b47",
+    "expectedCommitMessage": "feat: handle application skeleton review decisions",
+    "preCommitHead": "63e1c6472",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-ledger.task1"
+    "taskId": "diagram-plan-lifecycle-repair.phase45.application-skeleton-review.task1"
   }
 }
 ```
@@ -863,12 +863,12 @@ Verification evidence recorded 2026-05-15:
 ### Stream: Managed Decision Ledger
 
 189. [DONE] `diagram-plan-lifecycle-repair.phase45.application-skeleton-ledger.task1` Include the Application Skeleton managed workflow decision snapshot in the Core-owned commit boundary so provider-turn validation does not leave a dirty workspace ledger file (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `fix: commit application skeleton managed decision snapshot`).
-190. [PENDING] Git Commit: `fix: commit application skeleton managed decision snapshot` (hash: TBD)
+190. [DONE] Git Commit: `fix: commit application skeleton managed decision snapshot` (hash: 63e1c6472)
 
 ### Stream: User Review Decisions
 
-191. [TODO] `diagram-plan-lifecycle-repair.phase45.application-skeleton-review.task1` Intercept Application Skeleton Phase 2 user decisions so acceptance opens Phase 3 without provider chatter and revision requests stay inside the current review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts`; expected commit: `feat: handle application skeleton review decisions`).
-192. [TODO] Git Commit: `feat: handle application skeleton review decisions` (hash: TBD)
+191. [DONE] `diagram-plan-lifecycle-repair.phase45.application-skeleton-review.task1` Intercept Application Skeleton Phase 2 user decisions so acceptance opens Phase 3 without provider chatter and revision requests stay inside the current review task (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts`; expected commit: `feat: handle application skeleton review decisions`).
+192. [PENDING] Git Commit: `feat: handle application skeleton review decisions` (hash: TBD)
 
 ## Phase 46 — Application Skeleton Verification (owner: Codex, updated: 2026-05-15)
 
