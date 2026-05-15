@@ -1,6 +1,11 @@
 import type { ManagedWorkflowStageId } from "./managed-workflow-orchestration-contracts";
 import type { ManagedWorkflowStepController } from "./managed-workflow-step-controller";
 import { assertControllerStageMatch } from "./managed-workflow-step-controller";
+import { applicationSkeletonStepController } from "./steps/application-skeleton-step-controller";
+import { diagramModulesStepController } from "./steps/diagram-modules-step-controller";
+
+const DEFAULT_MANAGED_WORKFLOW_CONTROLLERS: readonly ManagedWorkflowStepController[] =
+  [diagramModulesStepController, applicationSkeletonStepController];
 
 export class ManagedWorkflowStepRegistry {
   readonly #controllers = new Map<
@@ -8,7 +13,9 @@ export class ManagedWorkflowStepRegistry {
     ManagedWorkflowStepController
   >();
 
-  constructor(controllers: readonly ManagedWorkflowStepController[] = []) {
+  constructor(
+    controllers: readonly ManagedWorkflowStepController[] = DEFAULT_MANAGED_WORKFLOW_CONTROLLERS
+  ) {
     for (const controller of controllers) {
       this.register(controller);
     }
