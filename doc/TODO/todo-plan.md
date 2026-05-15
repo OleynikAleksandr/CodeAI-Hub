@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "559b27702",
+  "lastRecordedCommit": "6888c075a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "diagram-plan-lifecycle-repair.phase32.release.task3",
-  "expectedCommitMessage": "docs: record release 264 marker boundary handoff",
+  "currentTaskId": "diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task1",
+  "expectedCommitMessage": "docs: open release 264 workflow snapshot refresh repair",
   "debt": {
-    "expectedCommitMessage": "docs: record release 264 marker boundary handoff",
-    "preCommitHead": "559b27702",
+    "expectedCommitMessage": "docs: open release 264 workflow snapshot refresh repair",
+    "preCommitHead": "6888c075a",
     "stage": "commit_pending",
-    "taskId": "diagram-plan-lifecycle-repair.phase32.release.task3"
+    "taskId": "diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task1"
   }
 }
 ```
@@ -642,7 +642,7 @@ Release build-all evidence recorded 2026-05-15:
 - Updated package versions and managed release manifests to `1.2.264`.
 
 139. [DONE] `diagram-plan-lifecycle-repair.phase32.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 264 marker boundary handoff`).
-140. [PENDING] Git Commit: `docs: record release 264 marker boundary handoff` (hash: TBD)
+140. [DONE] Git Commit: `docs: record release 264 marker boundary handoff` (hash: 6888c075a)
 
 Release VSIX evidence recorded 2026-05-15:
 
@@ -656,11 +656,34 @@ Release VSIX evidence recorded 2026-05-15:
 
 ### Stream: User Acceptance
 
-141. [TODO] `diagram-plan-lifecycle-repair.phase33.user-acceptance.task1` User installs the rebuilt release and verifies `Description` and `Virtual Simulation` turn green after their draft artifacts are created, while `Diagram Modules` stays orange during Product Part turns and turns green only after Core opens user review (scope: user workflow; expected commit: none).
+141. [BLOCKED] `diagram-plan-lifecycle-repair.phase33.user-acceptance.task1` User installs the rebuilt release and verifies `Description` and `Virtual Simulation` turn green after their draft artifacts are created, while `Diagram Modules` stays orange during Product Part turns and turns green only after Core opens user review (scope: user workflow; expected commit: none). **BLOCKED 2026-05-15:** release `1.2.264` fixed `Description` and `Virtual Simulation`; `Diagram Modules` still stays yellow after Core opens user review, and `Application Skeleton` remains blocked with `product-parts.index.md not found` even though the filesystem artifacts are valid.
 
-## Phase 34 — Scope Closeout (owner: Codex, updated: 2026-05-15)
+## Phase 34 — Release 264 Diagram Modules Review Snapshot Repair (owner: Codex, updated: 2026-05-15)
+
+### Stream: Acceptance Finding
+
+142. [DONE] `diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task1` Record the release `1.2.264` acceptance finding and open a bounded repair stream for stale Project Manager workflow snapshots after the Diagram Modules Core user-review handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open release 264 workflow snapshot refresh repair`).
+143. [PENDING] Git Commit: `docs: open release 264 workflow snapshot refresh repair` (hash: TBD)
+
+### Stream: Project Manager Snapshot Refresh
+
+144. [TODO] `diagram-plan-lifecycle-repair.phase34.snapshot-refresh.task2` Make Project Manager workflow-state subscriptions emit when derived progress/gating changes even if the root `updatedAt` timestamp is unchanged, so Diagram Modules review readiness and Application Skeleton gating refresh after Core handoff (scope: `src/client/project-manager/services/workflow-state-store.ts, src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts`; expected commit: `fix: refresh workflow state on derived gate changes`).
+145. [TODO] Git Commit: `fix: refresh workflow state on derived gate changes` (hash: TBD)
+
+### Stream: Verification
+
+146. [TODO] `diagram-plan-lifecycle-repair.phase34.verify.task1` Run targeted Project Manager tests/build for the derived workflow-state refresh path and record exact evidence before release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 264 workflow snapshot refresh repair`).
+147. [TODO] Git Commit: `docs: verify release 264 workflow snapshot refresh repair` (hash: TBD)
+
+## Phase 35 — Release Build Gate For Workflow Snapshot Refresh Repair (owner: Codex + User, updated: 2026-05-15)
+
+### Stream: Release Confirmation Gate
+
+148. [TODO] `diagram-plan-lifecycle-repair.phase35.release-gate.task1` Stop for explicit user confirmation before preparing release notes, running `build-all.sh`, or packaging a new VSIX for the workflow snapshot refresh repair (scope: user workflow; expected commit: none).
+
+## Phase 36 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-142. [TODO] `diagram-plan-lifecycle-repair.phase34.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
-143. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+149. [TODO] `diagram-plan-lifecycle-repair.phase36.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+150. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
