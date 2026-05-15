@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "a7c37b416",
+  "lastRecordedCommit": "62c781c3c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase1.validation.task1",
-  "expectedCommitMessage": "feat: add quality gates managed validation",
+  "currentTaskId": "quality-gates-runtime.phase2.stage-plan.task1",
+  "expectedCommitMessage": "feat: add quality gates stage plan lifecycle",
   "debt": {
-    "expectedCommitMessage": "feat: add quality gates managed validation",
-    "preCommitHead": "a7c37b416",
+    "expectedCommitMessage": "feat: add quality gates stage plan lifecycle",
+    "preCommitHead": "62c781c3c",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase1.validation.task1"
+    "taskId": "quality-gates-runtime.phase2.stage-plan.task1"
   }
 }
 ```
@@ -1022,12 +1022,12 @@ Repair coverage:
 ### Stream: Core Contract And Validation
 
 234. [DONE] `quality-gates-runtime.phase1.validation.task1` Add Quality Gates managed prompt/validation logic for draft, review handoff, integration acceptance, actionable repair diagnostics, and persistent-return user message (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `feat: add quality gates managed validation`).
-235. [PENDING] Git Commit: `feat: add quality gates managed validation` (hash: TBD)
+235. [DONE] Git Commit: `feat: add quality gates managed validation` (hash: 62c781c3c)
 
 ### Stream: Stage Plan Lifecycle
 
-236. [TODO] `quality-gates-runtime.phase2.stage-plan.task1` Add the Quality Gates stage-plan controller with draft opening, review acceptance, revision cycles, integration attempts, rejected-attempt repair pairs, and workspace ledger advancement (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`; expected commit: `feat: add quality gates stage plan lifecycle`).
-237. [TODO] Git Commit: `feat: add quality gates stage plan lifecycle` (hash: TBD)
+236. [DONE] `quality-gates-runtime.phase2.stage-plan.task1` Add the Quality Gates stage-plan controller with draft opening, review acceptance, revision cycles, integration attempts, rejected-attempt repair pairs, and workspace ledger advancement (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`; expected commit: `feat: add quality gates stage plan lifecycle`).
+237. [PENDING] Git Commit: `feat: add quality gates stage plan lifecycle` (hash: TBD)
 
 ### Stream: Runtime Dispatch
 
