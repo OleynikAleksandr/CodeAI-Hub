@@ -41,3 +41,16 @@ export interface ManagedWorkflowOrchestrationFacadeContract {
     request: ManagedWorkflowStageStartRequest
   ): ManagedWorkflowStageStartDecision | null;
 }
+
+export type {
+  ManagedWorkflowEffect,
+  ManagedWorkflowEffectKind,
+} from "./managed-workflow-effects";
+export type {
+  ManagedWorkflowEvent,
+  ManagedWorkflowEventKind,
+} from "./managed-workflow-events";
+export type {
+  ManagedWorkflowRunStatus,
+  ManagedWorkflowSnapshot,
+} from "./managed-workflow-snapshot";

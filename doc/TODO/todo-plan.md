@@ -8,15 +8,15 @@
   "planId": "managed-workflow-orchestration-kernel-runtime-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "ba5d1041e",
-  "lastRecordedCommit": "ad649651b",
+  "lastRecordedCommit": "5a783d3b3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Managed_Workflow_Orchestration_Cluster_Planning.md",
-  "currentTaskId": "managed-orchestration-kernel.phase1.facade.task2",
-  "expectedCommitMessage": "test: cover managed workflow orchestration facade",
+  "currentTaskId": "managed-orchestration-kernel.phase2.types.task1",
+  "expectedCommitMessage": "feat: add managed workflow orchestration state types",
   "debt": {
-    "expectedCommitMessage": "test: cover managed workflow orchestration facade",
-    "preCommitHead": "ad649651b",
+    "expectedCommitMessage": "feat: add managed workflow orchestration state types",
+    "preCommitHead": "5a783d3b3",
     "stage": "commit_pending",
-    "taskId": "managed-orchestration-kernel.phase1.facade.task2"
+    "taskId": "managed-orchestration-kernel.phase2.types.task1"
   }
 }
 ```
@@ -72,14 +72,14 @@
 6. [DONE] Git Commit: `feat: add managed workflow orchestration facade` (hash: ad649651b)
 
 7. [DONE] `managed-orchestration-kernel.phase1.facade.task2` Add facade construction/unit tests that prove remote-bridge code can depend only on the facade and public contracts (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover managed workflow orchestration facade`).
-8. [PENDING] Git Commit: `test: cover managed workflow orchestration facade` (hash: TBD)
+8. [DONE] Git Commit: `test: cover managed workflow orchestration facade` (hash: 5a783d3b3)
 
 ## Phase 2 — Kernel State Model And Step Registry (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Typed Kernel
 
-9. [TODO] `managed-orchestration-kernel.phase2.types.task1` Add typed managed workflow events, snapshots, decisions, and effects used by the pure state machine (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-events.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-snapshot.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts`; expected commit: `feat: add managed workflow orchestration state types`).
-10. [TODO] Git Commit: `feat: add managed workflow orchestration state types` (hash: TBD)
+9. [DONE] `managed-orchestration-kernel.phase2.types.task1` Add typed managed workflow events, snapshots, decisions, effects, and public type exports used by the pure state machine (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-events.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-snapshot.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-effects.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-contracts.ts`; expected commit: `feat: add managed workflow orchestration state types`).
+10. [PENDING] Git Commit: `feat: add managed workflow orchestration state types` (hash: TBD)
 
 11. [TODO] `managed-orchestration-kernel.phase2.state-machine.task1` Implement the pure `ManagedWorkflowStateMachine` with reusable Type A, Type B, persistent-return, and blocked-preview transitions but no file writes, provider calls, or Git commands (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-phase-contracts.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-state-machine.test.ts`; expected commit: `feat: add managed workflow state machine kernel`).
 12. [TODO] Git Commit: `feat: add managed workflow state machine kernel` (hash: TBD)
