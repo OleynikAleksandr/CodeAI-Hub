@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "47b06881a",
+  "lastRecordedCommit": "f3c21daf4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase66.diagram-completion.task1",
-  "expectedCommitMessage": "fix: complete diagram modules from review progress",
+  "currentTaskId": "artifact-contract-repair.phase66.verify.task1",
+  "expectedCommitMessage": "docs: verify diagram modules review gating repair",
   "debt": {
-    "expectedCommitMessage": "fix: complete diagram modules from review progress",
-    "preCommitHead": "47b06881a",
+    "expectedCommitMessage": "docs: verify diagram modules review gating repair",
+    "preCommitHead": "f3c21daf4",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase66.diagram-completion.task1"
+    "taskId": "artifact-contract-repair.phase66.verify.task1"
   }
 }
 ```
@@ -1196,12 +1196,19 @@ Verification evidence recorded 2026-05-16:
 283. [DONE] `artifact-contract-repair.phase66.diagram-completion.task1` Fix the Core-owned Diagram Modules workflow read-model so aggregate-ready user-review handoff can promote an already in-progress stage to completed, unlock Application Skeleton, and remain client-agnostic for Project Manager, mobile, and future clients; also add regression coverage and audit the other trunk stages for the same terminal-transition class (scope: `packages/core/src/remote-bridge/handlers/workflow-state-diagram-modules-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete diagram modules from review progress`).
     - Audit result: `Application Skeleton` and `Quality Gates` already use the Core-owned `applyTechnicalRootProgressToState` terminal updater, which completes stages from any current status when `materialized` / `integrated` is true. `Description` and `Virtual Simulation` are provider-direct artifact stages and their root marker path is covered by artifact presence plus existing gating. The isolated defect is Diagram Modules' separate progress hydration returning early when the stage is already `in_progress`.
     - Repair result: Diagram Modules progress hydration now accepts `idle` and `in_progress` as hydratable source states, promotes `aggregateReady=true` to `completed`, and keeps non-terminal in-progress state stable while preserving invalid/outdated protection.
-284. [PENDING] Git Commit: `fix: complete diagram modules from review progress` (hash: TBD)
+284. [DONE] Git Commit: `fix: complete diagram modules from review progress` (hash: f3c21daf4)
 
 ### Stream: Verification
 
-285. [TODO] `artifact-contract-repair.phase66.verify.task1` Run targeted Core/PM workflow gating checks plus package builds, record evidence, and keep release scope active for the new build requested by the user (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules review gating repair`).
-286. [TODO] Git Commit: `docs: verify diagram modules review gating repair` (hash: TBD)
+285. [DONE] `artifact-contract-repair.phase66.verify.task1` Run targeted Core/PM workflow gating checks plus package builds, record evidence, and keep release scope active for the new build requested by the user (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules review gating repair`).
+    - PASS: `node --test --import tsx packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress-state.test.ts packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts` (19 tests).
+    - PASS: `npx tsx --test src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/services/workflow-state-change-token.test.ts` (14 tests).
+    - PASS: `npm run build --workspace=@codeai-hub/core`.
+    - PASS: `npm run typecheck:webview`.
+    - PASS: `npm run build:webview`.
+    - PASS: `npm run plan:validate`.
+    - Coverage note: Diagram Modules now completes from `in_progress` when Core progress reports `aggregateReady=true`; Application Skeleton and Quality Gates terminal progress paths were rechecked and remain Core-owned terminal transitions from progress state rather than Project Manager logic.
+286. [PENDING] Git Commit: `docs: verify diagram modules review gating repair` (hash: TBD)
 
 ## Phase 67 — Release 270 Build (owner: Codex, updated: 2026-05-16)
 
