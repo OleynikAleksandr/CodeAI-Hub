@@ -1,3 +1,18 @@
+# Plan Closeout: application-skeleton-project-foundation-implementation-2026-05-16
+
+**Created:** 2026-05-16T18:36:37.475Z
+**Acceptance:** User accepted the Application Skeleton / Diagram Modules / Quality Gates retest flow and requested closing the session and the whole plan after the final Quality Gates return marker fix.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** app-skeleton-foundation.phase8.closeout.task1
+**Expected Commit:** docs: close application skeleton foundation implementation
+**Last Recorded Commit:** dbfb0c271
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_ProjectFoundation_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
   "currentTaskId": "app-skeleton-foundation.phase8.closeout.task1",
   "expectedCommitMessage": "docs: close application skeleton foundation implementation",
-  "debt": {
-    "expectedCommitMessage": "docs: close application skeleton foundation implementation",
-    "preCommitHead": "dbfb0c271",
-    "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase8.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -343,6 +353,7 @@
 
 ### Stream: Closeout
 
-152. [DONE] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-153. [PENDING] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+152. [IN_PROGRESS] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+153. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
 154. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+````
