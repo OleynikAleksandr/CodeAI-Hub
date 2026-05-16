@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "0048ef10c",
+  "lastRecordedCommit": "be4900f81",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase67.release.task3",
-  "expectedCommitMessage": "docs: record release 270 diagram review gating handoff",
+  "currentTaskId": "artifact-contract-repair.phase69.sidecar-dirty.plan.task1",
+  "expectedCommitMessage": "docs: open diagram modules sidecar dirty gate repair",
   "debt": {
-    "expectedCommitMessage": "docs: record release 270 diagram review gating handoff",
-    "preCommitHead": "0048ef10c",
+    "expectedCommitMessage": "docs: open diagram modules sidecar dirty gate repair",
+    "preCommitHead": "be4900f81",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase67.release.task3"
+    "taskId": "artifact-contract-repair.phase69.sidecar-dirty.plan.task1"
   }
 }
 ```
@@ -1232,10 +1232,39 @@ Verification evidence recorded 2026-05-16:
     - VSIX package: `codeai-hub-1.2.270.vsix` (`48M`; package-size warning reported `48M`).
     - Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.270.tar.bz2`, `codex-module-1.2.270.tar.bz2`, `gemini-module-1.2.270.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.270.tar.bz2`, `vscode-webview-1.2.270.tar.bz2`, `project-manager-1.2.270.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.270.tar.bz2`.
     - Advisory release warnings: markdown link checker reported 17 pre-existing planning-document anchor issues; package size warning remained expected for the current VSIX surface. Neither warning blocked packaging or runtime surface verification.
-292. [PENDING] Git Commit: `docs: record release 270 diagram review gating handoff` (hash: TBD)
+292. [DONE] Git Commit: `docs: record release 270 diagram review gating handoff` (hash: be4900f81)
 
 ## Phase 68 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
 
 ### Stream: Release Retest Handoff
 
-293. [TODO] `artifact-contract-repair.phase68.user-acceptance.task1` User installs and retests release `1.2.270`: Diagram Modules must turn green after Core opens user review, Application Skeleton must become available from the same Core-owned snapshot, and downstream Application Skeleton / Quality Gates completion gates must still rely only on Core-owned progress state (scope: `user workflow`; expected commit: none).
+293. [BLOCKED] `artifact-contract-repair.phase68.user-acceptance.task1` User installs and retests release `1.2.270`: Diagram Modules must turn green after Core opens user review, Application Skeleton must become available from the same Core-owned snapshot, and downstream Application Skeleton / Quality Gates completion gates must still rely only on Core-owned progress state (scope: `user workflow`; expected commit: none). **BLOCKED 2026-05-16:** release `1.2.270` still leaves Diagram Modules yellow and Application Skeleton blocked. Retest workspace shows raw Diagram Modules progress is `aggregateReady=true`, all Product Part files are valid and committed, but Core dirty-gate attaches untracked `.codeai-hub/<workspace>/diagram_modules/module-map.flow.json` as Diagram Modules semantic dirt and resets `aggregateReady=false`. The file is a graph layout sidecar, not a workflow semantic artifact.
+
+## Phase 69 — Diagram Modules Flow Sidecar Dirty-Gate Repair (owner: Codex, updated: 2026-05-16)
+
+### Stream: Repair Intake
+
+294. [DONE] `artifact-contract-repair.phase69.sidecar-dirty.plan.task1` Record the release `1.2.270` retest failure and open a bounded Core dirty-gate repair stream for Diagram Modules graph layout sidecars (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open diagram modules sidecar dirty gate repair`).
+295. [PENDING] Git Commit: `docs: open diagram modules sidecar dirty gate repair` (hash: TBD)
+
+### Stream: Core Dirty Gate
+
+296. [TODO] `artifact-contract-repair.phase69.sidecar-dirty.task1` Keep `module-map.flow.json` out of Diagram Modules technical-stage dirty gating so graph layout/UI sidecars cannot reset Core aggregate readiness or block Application Skeleton after valid Product Parts are accepted (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore diagram modules flow sidecar dirt`).
+297. [TODO] Git Commit: `fix: ignore diagram modules flow sidecar dirt` (hash: TBD)
+
+### Stream: Verification And Release
+
+298. [TODO] `artifact-contract-repair.phase69.verify.task1` Run targeted dirty-gate/workflow-state checks plus Core/PM builds, then prepare and build a replacement release after verification because user explicitly requested the retest fix flow (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules sidecar dirty gate repair`).
+299. [TODO] Git Commit: `docs: verify diagram modules sidecar dirty gate repair` (hash: TBD)
+300. [TODO] `artifact-contract-repair.phase69.release.task1` Update release-facing docs for future version `1.2.271` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 271 diagram sidecar dirty gate fix`).
+301. [TODO] Git Commit: `docs: prepare release 271 diagram sidecar dirty gate fix` (hash: TBD)
+302. [TODO] `artifact-contract-repair.phase69.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 271 diagram sidecar dirty gate fix`).
+303. [TODO] Git Commit: `chore: build release 271 diagram sidecar dirty gate fix` (hash: TBD)
+304. [TODO] `artifact-contract-repair.phase69.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 271 diagram sidecar dirty gate handoff`).
+305. [TODO] Git Commit: `docs: record release 271 diagram sidecar dirty gate handoff` (hash: TBD)
+
+## Phase 70 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
+
+### Stream: Release Retest Handoff
+
+306. [TODO] `artifact-contract-repair.phase70.user-acceptance.task1` User installs and retests release `1.2.271`: Diagram Modules graph sidecar presence must not keep the root step yellow, Application Skeleton must be available after Core opens user review, and graph layout state must remain a non-semantic UI sidecar (scope: user workflow; expected commit: none).
