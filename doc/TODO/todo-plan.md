@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "7cdeac417",
+  "lastRecordedCommit": "a2afd5a39",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase74.phase0.task1",
-  "expectedCommitMessage": "fix: close diagram modules checkpoint git pair",
+  "currentTaskId": "managed-git-checkpoint.phase74.runtime-metadata.task1",
+  "expectedCommitMessage": "fix: commit managed runtime metadata ledgers",
   "debt": {
-    "expectedCommitMessage": "fix: close diagram modules checkpoint git pair",
-    "preCommitHead": "7cdeac417",
+    "expectedCommitMessage": "fix: commit managed runtime metadata ledgers",
+    "preCommitHead": "a2afd5a39",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase74.phase0.task1"
+    "taskId": "managed-git-checkpoint.phase74.runtime-metadata.task1"
   }
 }
 ```
@@ -1334,12 +1334,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Phase 0 Git Pair And macOS Metadata
 
 329. [DONE] `managed-git-checkpoint.phase74.phase0.task1` Mark the Diagram Modules Phase 0 paired Git Commit line as `DONE` when Core records the checkpoint hash, and remove `.DS_Store` files before managed Git commits so macOS metadata cannot remain dirty or enter managed commits (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: close diagram modules checkpoint git pair`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts` — PASS, 3 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression proves Phase 0 checkpoint writes a `[DONE] Git Commit: docs: checkpoint managed workflow inputs` line and managed Git cleanup removes `.DS_Store` from root, `.codeai-hub`, and workspace artifact directories before commit.
-330. [PENDING] Git Commit: `fix: close diagram modules checkpoint git pair` (hash: TBD)
+330. [DONE] Git Commit: `fix: close diagram modules checkpoint git pair` (hash: a2afd5a39)
 
 ### Stream: Managed Runtime Metadata Ledger
 
-331. [TODO] `managed-git-checkpoint.phase74.runtime-metadata.task1` Include Core-owned continuity and workflow state metadata in managed ledger commits so Diagram Modules accepted turns leave Git clean after provider/session metadata updates (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit managed runtime metadata ledgers`).
-332. [TODO] Git Commit: `fix: commit managed runtime metadata ledgers` (hash: TBD)
+331. [DONE] `managed-git-checkpoint.phase74.runtime-metadata.task1` Include Core-owned continuity and workflow state metadata in managed ledger commits so Diagram Modules accepted turns leave Git clean after provider/session metadata updates (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit managed runtime metadata ledgers`). Evidence: `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` — PASS, 3 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression creates continuity chain/index and workflow state changes between checkpoint and Product Parts index acceptance; the Core ledger commit tracks those runtime metadata files and leaves full `git status --short` clean after the accepted turn.
+332. [PENDING] Git Commit: `fix: commit managed runtime metadata ledgers` (hash: TBD)
 
 ### Stream: Verification
 

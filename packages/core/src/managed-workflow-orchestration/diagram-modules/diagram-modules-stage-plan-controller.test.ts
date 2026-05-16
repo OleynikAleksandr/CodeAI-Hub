@@ -29,6 +29,8 @@ const LEDGER_SUBJECT_RE = /chore: advance managed workflow ledger/u;
 const LAST_ACCEPTED_HASH_RE = /"lastAcceptedCommitHash": "[0-9a-f]{7,}"/u;
 const PRODUCT_PART_INDEX_TRACKED_RE =
   /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\.index\.md/u;
+const RUNTIME_METADATA_TRACKED_RE =
+  /\.codeai-hub\/demo-workspace\/continuity\/diagram_modules\/session-1\/chain\.json/u;
 const PROJECT_MANAGER_PRODUCT_PART_SUBJECT_RE =
   /docs: update diagram modules project-manager product part/u;
 const PROJECT_MANAGER_TASK_RE =
@@ -176,6 +178,21 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
 
     await writeWorkspaceFile(
       workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/continuity/diagram_modules/session-1/chain.json`,
+      '{"stage":"diagram_modules","sessionId":"session-1"}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/continuity/index.json`,
+      '{"chains":["session-1"]}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`,
+      '{"activeStage":"diagram_modules","updated":true}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
       `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
       [
         "# Product Parts",
@@ -214,6 +231,7 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
     const trackedAfterIndex = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedAfterIndex, PRODUCT_PART_INDEX_TRACKED_RE);
     assert.match(trackedAfterIndex, FINAL_DESCRIPTION_TRACKED_RE);
+    assert.match(trackedAfterIndex, RUNTIME_METADATA_TRACKED_RE);
 
     await writeWorkspaceFile(
       workspaceRoot,
