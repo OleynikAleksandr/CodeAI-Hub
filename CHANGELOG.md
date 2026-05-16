@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.284] - 2026-05-16
+### Fixed
+- **Diagram Modules confirmation is now Core-intercepted.** When the stage is in `User-Led Review`, user `подтверждаю` is accepted by Core, is not forwarded to the agent, and opens the persistent `User Return And Revisions` stream.
+- **Diagram Modules completion unlocks the next managed stage.** The review acceptance path marks Diagram Modules complete, updates the workspace plan to Application Skeleton, and emits the stable Core completion message for future user revisions.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.283] - 2026-05-16
 ### Fixed
 - **Core now owns managed user-review handoff messages.** Diagram Modules, Application Skeleton, and Quality Gates use a shared Core message when user review opens, so the user sees the same instruction after each agent turn: answer the agent, ask for corrections, or type `подтверждаю` to accept the current result.

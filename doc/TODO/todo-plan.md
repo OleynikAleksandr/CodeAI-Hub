@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "a37fb22a5",
+  "lastRecordedCommit": "486c08fb9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.task2",
-  "expectedCommitMessage": "fix: intercept diagram modules review confirmation",
+  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.release-docs.task8",
+  "expectedCommitMessage": "docs: prepare diagram review confirmation release",
   "debt": {
-    "expectedCommitMessage": "fix: intercept diagram modules review confirmation",
-    "preCommitHead": "a37fb22a5",
+    "expectedCommitMessage": "docs: prepare diagram review confirmation release",
+    "preCommitHead": "486c08fb9",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.diagram-review.task2"
+    "taskId": "app-skeleton-foundation.phase7.diagram-review.release-docs.task8"
   }
 }
 ```
@@ -316,13 +316,22 @@
 140. [DONE] Git Commit: `fix: complete diagram modules review confirmation` (hash: a37fb22a5)
 141. [DONE] `app-skeleton-foundation.phase7.diagram-review.task2` Route Diagram Modules user-review acceptance through Core, emit the persistent return message, and add session-action regressions proving `подтверждаю` is intercepted instead of sent to the agent (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: intercept diagram modules review confirmation`).
    - Verification (2026-05-16): `npx ultracite check packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts` passed; `npm run build --workspace @codeai-hub/core` passed.
-142. [PENDING] Git Commit: `fix: intercept diagram modules review confirmation` (hash: TBD)
-143. [TODO] `app-skeleton-foundation.phase7.diagram-review.release-confirmation.task8` Stop after green verification and ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none.
+142. [DONE] Git Commit: `fix: intercept diagram modules review confirmation` (hash: 486c08fb9)
+143. [DONE] `app-skeleton-foundation.phase7.diagram-review.release-confirmation.task8` Stop after green verification and ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none. Result: User explicitly confirmed release build in this turn: "Собери новый релиз."
+
+### Stream: Diagram Modules Confirmation Release
+
+144. [DONE] `app-skeleton-foundation.phase7.diagram-review.release-docs.task8` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram review confirmation release`).
+145. [PENDING] Git Commit: `docs: prepare diagram review confirmation release` (hash: TBD)
+146. [TODO] `app-skeleton-foundation.phase7.diagram-review.release-build.task8` Run `./scripts/build-all.sh` from a clean tree or with only active plan state dirtiness, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Diagram Modules confirmation release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram review confirmation release artifacts`).
+147. [TODO] Git Commit: `chore: build diagram review confirmation release artifacts` (hash: TBD)
+148. [TODO] `app-skeleton-foundation.phase7.diagram-review.release-package.task8` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram review confirmation release package`).
+149. [TODO] Git Commit: `docs: record diagram review confirmation release package` (hash: TBD)
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-144. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-145. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-146. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+150. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+151. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+152. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
