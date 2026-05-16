@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "5c48d37f9",
+  "lastRecordedCommit": "373a4048e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task7",
-  "expectedCommitMessage": "docs: record core handoff release package",
+  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.task1",
+  "expectedCommitMessage": "fix: complete diagram modules review confirmation",
   "debt": {
-    "expectedCommitMessage": "docs: record core handoff release package",
-    "preCommitHead": "5c48d37f9",
+    "expectedCommitMessage": "fix: complete diagram modules review confirmation",
+    "preCommitHead": "373a4048e",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-package.task7"
+    "taskId": "app-skeleton-foundation.phase7.diagram-review.task1"
   }
 }
 ```
@@ -307,12 +307,21 @@
 137. [DONE] `app-skeleton-foundation.phase7.release-package.task7` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core handoff release package`).
    - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.283`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
    - User handoff artifact: `codeai-hub-1.2.283.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-138. [PENDING] Git Commit: `docs: record core handoff release package` (hash: TBD)
+138. [DONE] Git Commit: `docs: record core handoff release package` (hash: 373a4048e)
+
+### Stream: Diagram Modules Review Confirmation Repair
+
+139. [DONE] `app-skeleton-foundation.phase7.diagram-review.task1` Add Diagram Modules stage-plan acceptance so user `подтверждаю` creates the persistent `User Return And Revisions` phase, marks Diagram Modules complete, and unlocks Application Skeleton without dispatching the confirmation to the agent (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete diagram modules review confirmation`).
+   - Verification (2026-05-16): `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts` passed; `npm run build --workspace @codeai-hub/core` passed.
+140. [PENDING] Git Commit: `fix: complete diagram modules review confirmation` (hash: TBD)
+141. [TODO] `app-skeleton-foundation.phase7.diagram-review.task2` Route Diagram Modules user-review acceptance through Core, emit the persistent return message, and add session-action regressions proving `подтверждаю` is intercepted instead of sent to the agent (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: intercept diagram modules review confirmation`).
+142. [TODO] Git Commit: `fix: intercept diagram modules review confirmation` (hash: TBD)
+143. [TODO] `app-skeleton-foundation.phase7.diagram-review.release-confirmation.task8` Stop after green verification and ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-139. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-140. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-141. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+144. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+145. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+146. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
