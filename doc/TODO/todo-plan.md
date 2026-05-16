@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "cff4b7713",
+  "lastRecordedCommit": "d37c682b9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task5",
-  "expectedCommitMessage": "docs: record skeleton git hygiene release package",
+  "currentTaskId": "app-skeleton-foundation.phase7.review-ownership.task1",
+  "expectedCommitMessage": "fix: keep skeleton review dialogue agent-owned",
   "debt": {
-    "expectedCommitMessage": "docs: record skeleton git hygiene release package",
-    "preCommitHead": "cff4b7713",
+    "expectedCommitMessage": "fix: keep skeleton review dialogue agent-owned",
+    "preCommitHead": "d37c682b9",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-package.task5"
+    "taskId": "app-skeleton-foundation.phase7.review-ownership.task1"
   }
 }
 ```
@@ -258,13 +258,26 @@
 101. [DONE] `app-skeleton-foundation.phase7.release-package.task5` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton git hygiene release package`).
    - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.281`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
    - User handoff artifact: `codeai-hub-1.2.281.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-102. [PENDING] Git Commit: `docs: record skeleton git hygiene release package` (hash: TBD)
-103. [TODO] `app-skeleton-foundation.phase7.acceptance.task6` User installs the next patched release and retests that Application Skeleton materialization creates ignored local install outputs, does not commit build outputs, preserves a nested Product Part tree in JSON, and leaves downstream work unlocked only after clean validation. Scope: user workflow acceptance only; expected commit: none.
+102. [DONE] Git Commit: `docs: record skeleton git hygiene release package` (hash: d37c682b9)
+103. [BLOCKED] `app-skeleton-foundation.phase7.acceptance.task6` User installs the next patched release and retests that Application Skeleton materialization creates ignored local install outputs, does not commit build outputs, preserves a nested Product Part tree in JSON, and leaves downstream work unlocked only after clean validation. Scope: user workflow acceptance only; expected commit: none.
+   - Acceptance defect found in release `1.2.281`: Core duplicates Application Skeleton `openQuestions` to the user during review and appears as the dialogue owner; when materialization succeeds, managed Git staging still includes ignored `node_modules` in the pathspec and blocks commit boundary.
+
+### Stream: Review Ownership And Commit Boundary Repair
+
+107. [DONE] `app-skeleton-foundation.phase7.review-ownership.task1` Keep Application Skeleton review dialogue agent-owned while Core continues validation, managed microtask advancement, and commits behind the scenes (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep skeleton review dialogue agent-owned`).
+108. [PENDING] Git Commit: `fix: keep skeleton review dialogue agent-owned` (hash: TBD)
+109. [TODO] `app-skeleton-foundation.phase7.review-ownership.task2` Add review routing regressions proving Core does not duplicate Application Skeleton questions and routes user answers back to the agent until `openQuestions` are cleared (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover agent-owned skeleton review dialogue`).
+110. [TODO] Git Commit: `test: cover agent-owned skeleton review dialogue` (hash: TBD)
+111. [TODO] `app-skeleton-foundation.phase7.review-ownership.task3` Repair managed Git pathspec filtering so ignored generated outputs are not passed as positive `git add` paths and do not block Application Skeleton materialization commits (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: filter ignored outputs before managed git add`).
+112. [TODO] Git Commit: `fix: filter ignored outputs before managed git add` (hash: TBD)
+113. [TODO] `app-skeleton-foundation.phase7.review-ownership.task4` Run targeted review/Git-boundary tests plus core build and stop for release confirmation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify skeleton review ownership repair`).
+114. [TODO] Git Commit: `test: verify skeleton review ownership repair` (hash: TBD)
+115. [TODO] `app-skeleton-foundation.phase7.release-confirmation.task6` Ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-104. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-105. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-106. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+116. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+117. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+118. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.

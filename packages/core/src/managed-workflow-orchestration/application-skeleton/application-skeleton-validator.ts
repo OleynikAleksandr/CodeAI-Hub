@@ -10,7 +10,6 @@ import {
   buildApplicationSkeletonDraftRepairPrompt,
   buildApplicationSkeletonMaterializationRepairPrompt,
   buildApplicationSkeletonPersistentReturnMessage,
-  buildApplicationSkeletonUserReviewMessage,
 } from "./application-skeleton-prompt-builder";
 import {
   collectApplicationSkeletonCodePaths,
@@ -138,29 +137,6 @@ const readStringArray = (
     ? raw.filter((entry): entry is string => typeof entry === "string")
     : [];
 };
-
-const formatOpenQuestion = (entry: unknown, index: number): string => {
-  if (typeof entry === "string") {
-    return entry.trim() || `Open question #${index + 1}`;
-  }
-  if (!isRecord(entry)) {
-    return `Open question #${index + 1}`;
-  }
-  const question =
-    typeof entry.question === "string" ? entry.question.trim() : "";
-  const id = typeof entry.id === "string" ? entry.id.trim() : "";
-  if (question && id) {
-    return `${id}: ${question}`;
-  }
-  return question || id || `Open question #${index + 1}`;
-};
-
-const readOpenQuestions = (
-  value: Record<string, unknown> | null
-): readonly string[] =>
-  Array.isArray(value?.openQuestions)
-    ? value.openQuestions.map(formatOpenQuestion)
-    : [];
 
 const collectDeclaredPaths = (
   value: Record<string, unknown> | null
@@ -326,9 +302,7 @@ export const validateApplicationSkeletonManagedArtifacts = async (
           diagnostics: [],
           mapJson,
           nextAction: "open_user_review",
-          nextPrompt: buildApplicationSkeletonUserReviewMessage({
-            questions: readOpenQuestions(mapJson),
-          }),
+          nextPrompt: null,
           phase,
           valid: true,
         };

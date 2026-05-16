@@ -3,7 +3,6 @@ import path from "node:path";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
   buildApplicationSkeletonMaterializationPrompt,
-  buildApplicationSkeletonOpenQuestionsBlockedMessage,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
 import {
   buildApplicationSkeletonReviewRevisionPrompt,
@@ -208,7 +207,10 @@ export class SessionRequestHandlerManagedReviewDecisions {
     }
     this.appendUserReviewMessage(options);
     if (options.intent === "accept") {
-      await this.openApplicationSkeletonMaterialization(options.session);
+      await this.openApplicationSkeletonMaterialization(
+        options.session,
+        options.content
+      );
       return true;
     }
     await this.dispatchApplicationSkeletonReviewRevision(
@@ -261,7 +263,8 @@ export class SessionRequestHandlerManagedReviewDecisions {
   }
 
   private async openApplicationSkeletonMaterialization(
-    session: Session
+    session: Session,
+    userMessage: string
   ): Promise<void> {
     if (!(session.workspacePath && session.initiativeSlug)) {
       return;
@@ -271,12 +274,16 @@ export class SessionRequestHandlerManagedReviewDecisions {
       session.initiativeSlug
     );
     if (openQuestions.length > 0) {
-      this.deps.eventMessages.appendCoreMessage(session.id, {
-        content: buildApplicationSkeletonOpenQuestionsBlockedMessage({
-          questions: openQuestions,
-        }),
-        tag: "managed-workflow-user-review",
-      });
+      await this.dispatchApplicationSkeletonReviewRevision(
+        session,
+        [
+          "User attempted to confirm the Application Skeleton contract while `openQuestions` remain.",
+          "Treat the latest user message as review feedback, reconcile it with the existing open questions, update only the canonical Application Skeleton artifacts, and ask any still-blocking question yourself in the final response.",
+          "",
+          "Latest user message:",
+          userMessage.trim(),
+        ].join("\n")
+      );
       return;
     }
     try {
@@ -339,10 +346,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     const prompt = buildApplicationSkeletonReviewRevisionPrompt({
       userFeedback: content,
       workspaceSlug: session.initiativeSlug,
-    });
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: prompt,
-      tag: "managed-workflow-user-review",
     });
     await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
   }
