@@ -115,6 +115,18 @@ export const buildApplicationSkeletonUserReviewMessage = (): string =>
     'Review the Application Skeleton contract semantically, including stack choices, package/workspace layout, install metadata, required scripts, first-wave entrypoints, and the absence of unresolved `openQuestions`. If everything is acceptable, reply with "подтверждаю". If changes are needed, list the corrections before materialization.',
   ].join("\n");
 
+export const buildApplicationSkeletonOpenQuestionsBlockedMessage = (options: {
+  readonly questions: readonly string[];
+}): string =>
+  [
+    "Core cannot open Application Skeleton materialization yet.",
+    "",
+    "Unresolved `openQuestions` remain in the contract:",
+    ...options.questions.map((question) => `- ${question}`),
+    "",
+    "Reply with the missing decisions or correction instructions. Core will keep the Application Skeleton review task open until the contract is revised and `openQuestions` is empty.",
+  ].join("\n");
+
 export const buildApplicationSkeletonMaterializationPrompt = (options: {
   readonly workspaceSlug: string;
 }): string =>

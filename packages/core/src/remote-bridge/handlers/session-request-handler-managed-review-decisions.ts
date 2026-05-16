@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
   buildApplicationSkeletonMaterializationPrompt,
+  buildApplicationSkeletonOpenQuestionsBlockedMessage,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
 import {
   buildApplicationSkeletonReviewRevisionPrompt,
@@ -104,6 +105,54 @@ const isQualityGatesReviewOpen = async (
     );
   } catch {
     return false;
+  }
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const formatOpenQuestion = (entry: unknown, index: number): string => {
+  if (typeof entry === "string" && entry.trim().length > 0) {
+    return entry.trim();
+  }
+  if (!isRecord(entry)) {
+    return `Open question #${index + 1}`;
+  }
+  const question =
+    typeof entry.question === "string" ? entry.question.trim() : "";
+  const id = typeof entry.id === "string" ? entry.id.trim() : "";
+  if (question && id) {
+    return `${id}: ${question}`;
+  }
+  if (question) {
+    return question;
+  }
+  return id || `Open question #${index + 1}`;
+};
+
+const readApplicationSkeletonOpenQuestions = async (
+  workspaceRoot: string,
+  workspaceSlug: string
+): Promise<readonly string[]> => {
+  const mapPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    workspaceSlug,
+    "application_skeleton",
+    "application-skeleton-map.json"
+  );
+  const content = await readFile(mapPath, "utf8").catch(() => null);
+  if (!content) {
+    return ["Application Skeleton map is missing or unreadable."];
+  }
+  try {
+    const parsed = JSON.parse(content) as unknown;
+    if (!(isRecord(parsed) && Array.isArray(parsed.openQuestions))) {
+      return ["Application Skeleton map does not declare `openQuestions`."];
+    }
+    return parsed.openQuestions.map(formatOpenQuestion);
+  } catch {
+    return ["Application Skeleton map is not valid JSON."];
   }
 };
 
@@ -215,6 +264,19 @@ export class SessionRequestHandlerManagedReviewDecisions {
     session: Session
   ): Promise<void> {
     if (!(session.workspacePath && session.initiativeSlug)) {
+      return;
+    }
+    const openQuestions = await readApplicationSkeletonOpenQuestions(
+      session.workspacePath,
+      session.initiativeSlug
+    );
+    if (openQuestions.length > 0) {
+      this.deps.eventMessages.appendCoreMessage(session.id, {
+        content: buildApplicationSkeletonOpenQuestionsBlockedMessage({
+          questions: openQuestions,
+        }),
+        tag: "managed-workflow-user-review",
+      });
       return;
     }
     try {

@@ -25,6 +25,9 @@ const QUALITY_GATES_INTEGRATION_TASK_STATE_RE =
 const NO_REVISION_RE = /not-created-user-accepted-without-review-revision/u;
 const MATERIALIZATION_PROMPT_RE =
   /Core opens Phase 3 Application Skeleton Materialization/u;
+const OPEN_QUESTIONS_BLOCKED_RE =
+  /cannot open Application Skeleton materialization yet/u;
+const STACK_CHOICE_QUESTION_RE = /stack-choice: React or vanilla UI\?/u;
 const QUALITY_GATES_INTEGRATION_PROMPT_RE =
   /Core opens Phase 3 Quality Gates Integration/u;
 const QUALITY_GATES_REVIEW_CORRECTIONS_RE = /Quality Gates review corrections/u;
@@ -44,6 +47,7 @@ const createDraftDecision = (): ApplicationSkeletonManagedValidationResult => ({
   mapJson: {
     accepted: false,
     materialized: false,
+    openQuestions: [],
     productParts: [
       {
         codePath: "product-parts/core-runtime",
@@ -100,7 +104,12 @@ const readWorkspaceFile = (
   relativePath: string
 ): Promise<string> => readFile(path.join(workspaceRoot, relativePath), "utf8");
 
-const prepareReviewWorkspace = async (workspaceRoot: string): Promise<void> => {
+const prepareReviewWorkspace = async (
+  workspaceRoot: string,
+  options: {
+    readonly mapJson?: Record<string, unknown>;
+  } = {}
+): Promise<void> => {
   await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
     workspaceRoot,
   });
@@ -112,7 +121,7 @@ const prepareReviewWorkspace = async (workspaceRoot: string): Promise<void> => {
   await writeWorkspaceFile(
     workspaceRoot,
     `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
-    `${JSON.stringify(createDraftDecision().mapJson, null, 2)}\n`
+    `${JSON.stringify(options.mapJson ?? createDraftDecision().mapJson, null, 2)}\n`
   );
   const controller = new ApplicationSkeletonStagePlanController();
   await controller.openDraftPhase({ workspaceRoot });
@@ -257,6 +266,61 @@ test("Application Skeleton review acceptance opens materialization without forwa
     );
     assert.match(plan, MATERIALIZE_TASK_STATE_RE);
     assert.match(plan, NO_REVISION_RE);
+    assert.deepEqual(harness.events, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Application Skeleton review acceptance stays blocked while openQuestions remain", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "application-skeleton-review-open-questions-")
+  );
+  try {
+    await prepareReviewWorkspace(workspaceRoot, {
+      mapJson: {
+        ...createDraftDecision().mapJson,
+        openQuestions: [
+          {
+            id: "stack-choice",
+            question: "React or vanilla UI?",
+          },
+        ],
+      },
+    });
+    const sessionManager = new SessionManager();
+    const session = sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      "provider-session-1",
+      { initiativeSlug: WORKSPACE_SLUG, stage: "application_skeleton" }
+    );
+    const harness = createActions(sessionManager);
+
+    await harness.actions.handleMessage(session.id, "подтверждаю");
+
+    assert.deepEqual(harness.dispatchedUserMessages, []);
+    assert.equal(harness.dialogMessages.at(-1)?.content, "подтверждаю");
+    assert.equal(harness.sentInternalMessages.length, 0);
+    assert.equal(
+      harness.coreMessages.at(-1)?.tag,
+      "managed-workflow-user-review"
+    );
+    assert.match(
+      String(harness.coreMessages.at(-1)?.content ?? ""),
+      OPEN_QUESTIONS_BLOCKED_RE
+    );
+    assert.match(
+      String(harness.coreMessages.at(-1)?.content ?? ""),
+      STACK_CHOICE_QUESTION_RE
+    );
+
+    const plan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    assert.match(plan, REVIEW_TASK_STATE_RE);
+    assert.doesNotMatch(plan, MATERIALIZE_TASK_STATE_RE);
     assert.deepEqual(harness.events, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

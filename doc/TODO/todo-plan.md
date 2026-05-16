@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "aefa4440c",
+  "lastRecordedCommit": "6fe28563b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.repair.task1",
-  "expectedCommitMessage": "fix: route skeleton open questions to review gate",
+  "currentTaskId": "app-skeleton-foundation.phase7.repair.task2",
+  "expectedCommitMessage": "fix: block skeleton acceptance with open questions",
   "debt": {
-    "expectedCommitMessage": "fix: route skeleton open questions to review gate",
-    "preCommitHead": "aefa4440c",
+    "expectedCommitMessage": "fix: block skeleton acceptance with open questions",
+    "preCommitHead": "6fe28563b",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.repair.task1"
+    "taskId": "app-skeleton-foundation.phase7.repair.task2"
   }
 }
 ```
@@ -142,9 +142,9 @@
 ### Stream: Acceptance Defect Repair
 
 29. [DONE] `app-skeleton-foundation.phase7.repair.task1` Route Application Skeleton draft `openQuestions` to the user review gate instead of draft repair while keeping structural foundation validation strict (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: route skeleton open questions to review gate`).
-30. [PENDING] Git Commit: `fix: route skeleton open questions to review gate` (hash: TBD)
-31. [TODO] `app-skeleton-foundation.phase7.repair.task2` Block Application Skeleton review acceptance/materialization while `openQuestions` remain unresolved and surface a user-facing correction request (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts`; expected commit: `fix: block skeleton acceptance with open questions`).
-32. [TODO] Git Commit: `fix: block skeleton acceptance with open questions` (hash: TBD)
+30. [DONE] Git Commit: `fix: route skeleton open questions to review gate` (hash: 6fe28563b)
+31. [DONE] `app-skeleton-foundation.phase7.repair.task2` Block Application Skeleton review acceptance/materialization while `openQuestions` remain unresolved and surface a user-facing correction request (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts`; expected commit: `fix: block skeleton acceptance with open questions`).
+32. [PENDING] Git Commit: `fix: block skeleton acceptance with open questions` (hash: TBD)
 33. [TODO] `app-skeleton-foundation.phase7.repair.task3` Run targeted Application Skeleton review/validator tests and core build after the repair, then restore user acceptance testing for the next release candidate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton open questions repair verification`).
 34. [TODO] Git Commit: `docs: record skeleton open questions repair verification` (hash: TBD)
 
