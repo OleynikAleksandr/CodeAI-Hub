@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "2d1d67508",
+  "lastRecordedCommit": "aefa4440c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase6.package.task1",
-  "expectedCommitMessage": "docs: record application skeleton foundation release package",
+  "currentTaskId": "app-skeleton-foundation.phase7.repair.task1",
+  "expectedCommitMessage": "fix: route skeleton open questions to review gate",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton foundation release package",
-    "preCommitHead": "2d1d67508",
+    "expectedCommitMessage": "fix: route skeleton open questions to review gate",
+    "preCommitHead": "aefa4440c",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase6.package.task1"
+    "taskId": "app-skeleton-foundation.phase7.repair.task1"
   }
 }
 ```
@@ -130,18 +130,28 @@
 26. [DONE] `app-skeleton-foundation.phase6.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton foundation release package`).
    - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version` completed for version `1.2.276`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface.
    - User handoff artifact: `codeai-hub-1.2.276.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-27. [PENDING] Git Commit: `docs: record application skeleton foundation release package` (hash: TBD)
+27. [DONE] Git Commit: `docs: record application skeleton foundation release package` (hash: aefa4440c)
 
 ## Phase 7 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-16)
 
 ### Stream: User Retest
 
-28. [TODO] `app-skeleton-foundation.phase7.acceptance.task1` User installs the produced release and retests the Application Skeleton workflow: draft foundation proposal, unresolved-question behavior, accepted materialization, Core validation failure for incomplete foundation, and Quality Gates unlock only after valid foundation. Scope: user workflow acceptance only; expected commit: none.
+28. [BLOCKED] `app-skeleton-foundation.phase7.acceptance.task1` User installs the produced release and retests the Application Skeleton workflow: draft foundation proposal, unresolved-question behavior, accepted materialization, Core validation failure for incomplete foundation, and Quality Gates unlock only after valid foundation. Scope: user workflow acceptance only; expected commit: none.
+   - Acceptance defect found in release `1.2.276`: Application Skeleton draft artifacts with unresolved `openQuestions` are repeatedly rejected as repairable artifact failures (`open_questions_block_materialization`) instead of opening a user question/review gate.
+
+### Stream: Acceptance Defect Repair
+
+29. [DONE] `app-skeleton-foundation.phase7.repair.task1` Route Application Skeleton draft `openQuestions` to the user review gate instead of draft repair while keeping structural foundation validation strict (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: route skeleton open questions to review gate`).
+30. [PENDING] Git Commit: `fix: route skeleton open questions to review gate` (hash: TBD)
+31. [TODO] `app-skeleton-foundation.phase7.repair.task2` Block Application Skeleton review acceptance/materialization while `openQuestions` remain unresolved and surface a user-facing correction request (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts`; expected commit: `fix: block skeleton acceptance with open questions`).
+32. [TODO] Git Commit: `fix: block skeleton acceptance with open questions` (hash: TBD)
+33. [TODO] `app-skeleton-foundation.phase7.repair.task3` Run targeted Application Skeleton review/validator tests and core build after the repair, then restore user acceptance testing for the next release candidate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton open questions repair verification`).
+34. [TODO] Git Commit: `docs: record skeleton open questions repair verification` (hash: TBD)
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-29. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-30. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-31. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+35. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+36. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+37. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.

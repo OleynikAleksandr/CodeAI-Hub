@@ -44,8 +44,6 @@ const CANONICAL_MARKDOWN_STRUCTURE_RE = /canonical Markdown section structure/u;
 const MATERIALIZE_WORKSPACE_RE =
   /Materialize the installable project foundation/u;
 const PROJECT_FOUNDATION_RE = /projectFoundation/u;
-const OPEN_QUESTIONS_RE = /open_questions_block_materialization/u;
-
 const createDraftFoundation = (): Record<string, unknown> => ({
   packageManager: "npm",
   projectFoundation: {
@@ -308,7 +306,7 @@ test("Application Skeleton validator blocks incomplete foundation draft", async 
   }
 });
 
-test("Application Skeleton validator blocks draft with unresolved questions", async () => {
+test("Application Skeleton validator routes draft open questions to user review", async () => {
   const workspaceRoot = await createWorkspace();
   try {
     await writeApplicationSkeletonArtifacts(workspaceRoot, {
@@ -333,9 +331,10 @@ test("Application Skeleton validator blocks draft with unresolved questions", as
       workspaceSlug: WORKSPACE_SLUG,
     });
 
-    assert.equal(result.valid, false);
-    assert.equal(result.nextAction, "repair_current_artifact");
-    assert.match(result.diagnostics.join("\n"), OPEN_QUESTIONS_RE);
+    assert.equal(result.valid, true);
+    assert.deepEqual(result.diagnostics, []);
+    assert.equal(result.nextAction, "open_user_review");
+    assert.match(result.nextPrompt ?? "", USER_REVIEW_OPEN_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

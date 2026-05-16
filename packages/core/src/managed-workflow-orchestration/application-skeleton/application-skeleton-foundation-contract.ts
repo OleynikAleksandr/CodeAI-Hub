@@ -39,9 +39,7 @@ const validateOpenQuestions = (
   if (!Array.isArray(mapJson.openQuestions)) {
     return ["missing_foundation_field: openQuestions"];
   }
-  return mapJson.openQuestions.length === 0
-    ? []
-    : ["open_questions_block_materialization"];
+  return [];
 };
 
 const validateProjectFoundation = (
