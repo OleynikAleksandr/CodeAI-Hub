@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "e120ca774",
+  "lastRecordedCommit": "07f2454e7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task1",
-  "expectedCommitMessage": "chore: build skeleton open questions repair release artifacts",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task1",
+  "expectedCommitMessage": "docs: record skeleton open questions repair release package",
   "debt": {
-    "expectedCommitMessage": "chore: build skeleton open questions repair release artifacts",
-    "preCommitHead": "e120ca774",
+    "expectedCommitMessage": "docs: record skeleton open questions repair release package",
+    "preCommitHead": "07f2454e7",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-build.task1"
+    "taskId": "app-skeleton-foundation.phase7.release-package.task1"
   }
 }
 ```
@@ -157,9 +157,11 @@
 37. [DONE] Git Commit: `docs: prepare skeleton open questions repair release` (hash: e120ca774)
 38. [DONE] `app-skeleton-foundation.phase7.release-build.task1` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton open questions repair release artifacts`).
    - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.277`; the only pre-existing dirty file was active plan state advanced by the previous no-commit gate. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-39. [PENDING] Git Commit: `chore: build skeleton open questions repair release artifacts` (hash: TBD)
-40. [TODO] `app-skeleton-foundation.phase7.release-package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton open questions repair release package`).
-41. [TODO] Git Commit: `docs: record skeleton open questions repair release package` (hash: TBD)
+39. [DONE] Git Commit: `chore: build skeleton open questions repair release artifacts` (hash: 07f2454e7)
+40. [DONE] `app-skeleton-foundation.phase7.release-package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton open questions repair release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.277`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous no-commit gate.
+   - User handoff artifact: `codeai-hub-1.2.277.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+41. [PENDING] Git Commit: `docs: record skeleton open questions repair release package` (hash: TBD)
 42. [TODO] `app-skeleton-foundation.phase7.acceptance.task2` User installs the patched release and retests the Application Skeleton unresolved-question review gate and accepted materialization flow. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
