@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.272] - 2026-05-16
+### Fixed
+- **Diagram Modules now checkpoints managed inputs before the first provider prompt.** Core commits Description, Virtual Simulation, continuity/workflow scaffold, managed stage plans, and plan hook files before opening the Product Parts index microtask, so the first commit-backed Diagram Modules task starts from clean Git.
+- **Managed workflow ledgers no longer leak as dirty state between microtasks.** Diagram Modules, Application Skeleton, and Quality Gates now create a Core-owned `chore: advance managed workflow ledger` commit after artifact commits and user-review state transitions, keeping `doc/TODO/stages/**/todo-plan.md` and `doc/TODO/workspace.plan.md` out of the next agent task's dirty set.
+- **Downstream transitions were rechecked as Core-owned state, not Project Manager logic.** Application Skeleton remains available after Diagram Modules, Quality Gates remains available after Application Skeleton materialization, and Quality Gates completion unlocks development tree cards from Core-owned workflow state.
+
+### Tests
+- `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`
+- `node --test --import tsx src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
 ## [1.2.271] - 2026-05-16
 ### Fixed
 - **Diagram Modules graph sidecars no longer block workflow progress.** Core technical-stage dirty gating ignores the non-semantic `.codeai-hub/<workspace>/diagram_modules/module-map.flow.json` layout file, so a valid Product Parts aggregate remains ready even when Project Manager graph layout state is untracked.

@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "dda6c8dd0",
+  "lastRecordedCommit": "cee2b4af5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase71.verify.task1",
-  "expectedCommitMessage": "docs: verify managed git checkpoint repair",
+  "currentTaskId": "managed-git-checkpoint.phase72.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 272 managed git checkpoint repair",
   "debt": {
-    "expectedCommitMessage": "docs: verify managed git checkpoint repair",
-    "preCommitHead": "dda6c8dd0",
+    "expectedCommitMessage": "docs: prepare release 272 managed git checkpoint repair",
+    "preCommitHead": "cee2b4af5",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase71.verify.task1"
+    "taskId": "managed-git-checkpoint.phase72.release-docs.task1"
   }
 }
 ```
@@ -1295,8 +1295,31 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Verification
 
 317. [DONE] `managed-git-checkpoint.phase71.verify.task1` Run targeted managed workflow checkpoint/ledger tests plus Core/PM gating builds, then stop for release-build confirmation because this changes managed workflow commit sequencing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed git checkpoint repair`). Evidence: `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts` — PASS, 23 tests; `node --test --import tsx src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts` — PASS, 21 tests; `npm run build --workspace=@codeai-hub/core` — PASS; `npm run build:webview` — PASS; `npm run typecheck:webview` — PASS.
-318. [PENDING] Git Commit: `docs: verify managed git checkpoint repair` (hash: TBD)
+318. [DONE] Git Commit: `docs: verify managed git checkpoint repair` (hash: cee2b4af5)
 
 ### Stream: Release Build Confirmation
 
-319. [TODO] `managed-git-checkpoint.phase71.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none).
+319. [DONE] `managed-git-checkpoint.phase71.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for the managed Git checkpoint and ledger-boundary repair.
+
+## Phase 72 — Release 272 Managed Git Checkpoint Repair (owner: Codex, updated: 2026-05-16)
+
+### Stream: Release Metadata
+
+320. [DONE] `managed-git-checkpoint.phase72.release-docs.task1` Update release-facing docs for future version `1.2.272` before build scripts mutate package versions, including the managed Git checkpoint and ledger-boundary fix summary (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 272 managed git checkpoint repair`). Evidence: current package version before release scripts is `1.2.271`; release-facing docs prepared for future version `1.2.272` with managed workflow input checkpoint, Core-owned ledger commit, and downstream Application Skeleton / Quality Gates / development tree transition notes.
+321. [PENDING] Git Commit: `docs: prepare release 272 managed git checkpoint repair` (hash: TBD)
+
+### Stream: Runtime Build
+
+322. [TODO] `managed-git-checkpoint.phase72.build-all.task1` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 272 managed git checkpoint repair`).
+323. [TODO] Git Commit: `chore: build release 272 managed git checkpoint repair` (hash: TBD)
+
+### Stream: VSIX Package
+
+324. [TODO] `managed-git-checkpoint.phase72.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 272 managed git checkpoint repair`).
+325. [TODO] Git Commit: `docs: record release 272 managed git checkpoint repair` (hash: TBD)
+
+## Phase 73 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
+
+### Stream: Release Retest Handoff
+
+326. [TODO] `managed-git-checkpoint.phase73.user-acceptance.task1` User installs and retests release `1.2.272`: Diagram Modules must checkpoint initial managed inputs, each Diagram Modules/Application Skeleton/Quality Gates managed artifact or review transition must leave Core-owned ledgers committed, Application Skeleton must stay available after Diagram Modules, and Quality Gates completion must unlock development tree cards without dirty managed ledger blockers (scope: user workflow; expected commit: none).
