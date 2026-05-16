@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { stat } from "node:fs/promises";
 import path from "node:path";
+import { auditApplicationSkeletonGitignore } from "./application-skeleton-output-hygiene";
 
 const COMMAND_TIMEOUT_MS = 120_000;
 const COMMAND_OUTPUT_LIMIT = 1024 * 1024;
@@ -125,6 +126,14 @@ export const auditApplicationSkeletonEnvironmentReadiness = async (params: {
   } else {
     errors.push("application skeleton install command is missing");
   }
+  const requiredScripts = readStringArray(foundation, "requiredScripts");
+  errors.push(
+    ...(await auditApplicationSkeletonGitignore({
+      packageManager,
+      requiredScripts,
+      workspaceRoot: params.workspaceRoot,
+    }))
+  );
   for (const expectedPath of expectedInstallOutputPaths(packageManager)) {
     if (!(await relativePathExists(params.workspaceRoot, expectedPath))) {
       errors.push(
@@ -132,7 +141,7 @@ export const auditApplicationSkeletonEnvironmentReadiness = async (params: {
       );
     }
   }
-  for (const script of readStringArray(foundation, "requiredScripts")) {
+  for (const script of requiredScripts) {
     const scriptCommand = toScriptCommand(packageManager, script);
     if (!scriptCommand) {
       errors.push(

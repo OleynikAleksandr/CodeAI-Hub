@@ -4,6 +4,7 @@ import {
   collectApplicationSkeletonCodePaths,
   validateApplicationSkeletonProductTree,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-tree-shape-validator";
+import { validateGeneratedOutputMaterializedPaths } from "./application-skeleton-output-hygiene";
 import type { ApplicationSkeletonSubstep } from "./application-skeleton-progress";
 
 export interface ApplicationSkeletonMaterializationValidation {
@@ -320,6 +321,7 @@ export const validateApplicationSkeletonMaterialization = async (params: {
   const validationErrors = [
     ...validateMapLifecycle({ mapJson: params.mapJson, sourceRoot }),
     ...validateApplicationSkeletonProductTree(params.mapJson),
+    ...validateGeneratedOutputMaterializedPaths(materializedPaths),
     ...(await validateDeclaredPaths({
       codePaths,
       materializedPaths,
