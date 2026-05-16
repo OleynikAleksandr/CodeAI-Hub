@@ -1,6 +1,6 @@
 # Application Skeleton Phase 2 — Contract Review Planning
 
-**Статус:** черновик принятого сценария для будущей реализации.
+**Статус:** архивный принятый planning source; реализован и принят в релизе `1.2.274`.
 **Создан:** 2026-05-14.
 **Scope:** точная спецификация Phase 2 шага `Application Skeleton` для нового managed orchestration cluster.
 **Тип фазы:** [Type B — User-Led Review](Managed_Workflow_Orchestration_Cluster_Planning.md#type-b--user-led-review).

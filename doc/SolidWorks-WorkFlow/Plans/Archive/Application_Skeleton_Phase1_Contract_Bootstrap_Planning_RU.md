@@ -1,8 +1,8 @@
 # Application Skeleton Phase 1 — Contract Bootstrap Planning
 
-**Статус:** черновик для обсуждения.
+**Статус:** архивный принятый planning source; реализован и принят в релизе `1.2.274`.
 **Создан:** 2026-05-14.
-**Scope:** точная спецификация Phase 1 шага `Application Skeleton` для будущей реализации в новом managed orchestration cluster.
+**Scope:** точная спецификация Phase 1 шага `Application Skeleton` для нового managed orchestration cluster.
 **Тип фазы:** [Type A — Core-Gated Agent Work](Managed_Workflow_Orchestration_Cluster_Planning.md#type-a--core-gated-agent-work).
 **Следующая тема обсуждения:** Phase 2 `Application Skeleton Contract Review`.
 

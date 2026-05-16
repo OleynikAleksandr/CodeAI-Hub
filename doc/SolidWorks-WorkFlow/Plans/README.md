@@ -21,4 +21,4 @@
 
 ## Active Subfolders
 
-- `Managed_Step_Orchestration/` — текущая рабочая папка для настройки managed workflow steps. В ней находятся сценарии `Diagram Modules` и `Application Skeleton`, а также перенесённые актуальные planning sources по managed lifecycle / phase types. Устаревший top-level `Application_Skeleton_Phase_B_Orchestration.md` удалён из активных planning-доков.
+- `Managed_Step_Orchestration/` — inactive marker folder after the `1.2.274` managed workflow orchestration closeout. Completed planning sources were moved to `Plans/Archive/`; new managed workflow work must begin with a fresh planning document and an active `doc/TODO/todo-plan.md`.

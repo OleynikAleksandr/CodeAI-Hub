@@ -1,15 +1,12 @@
 # Managed Step Orchestration Planning
 
-**Status:** active planning folder for the managed workflow orchestration redesign.
-**Reopened:** 2026-05-14.
+**Status:** inactive marker folder.
+**Closed:** 2026-05-16 by release `1.2.274`.
 
-This folder contains the new planning sources for rebuilding managed step orchestration as an explicit Core-owned state machine. The previous release `1.2.249` planning wave remains closed and archived; the current work is a new redesign scope opened after repeated post-release orchestration failures across Application Skeleton and Quality Gates.
-
-## Active Planning Sources
-
-- `Managed_Workflow_Orchestration_Cluster_Planning.md`
-- `Managed_Workflow_Orchestration_Cluster_Planning_RU.md`
-- `Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`
+This folder has no active planning sources after the managed workflow
+orchestration closeout. The completed redesign and implementation documents
+were moved to `doc/SolidWorks-WorkFlow/Plans/Archive/`; stable behavior is now
+owned by the canonical System, Cluster, Module, and Contract documents.
 
 ## Previous Closed Baseline
 
@@ -24,6 +21,12 @@ Historical planning sources for this wave were moved to `doc/SolidWorks-WorkFlow
 
 ## Closed Planning Sources
 
+- `Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md`
+- `Diagram_Modules_Managed_Orchestration_Planning_RU.md`
+- `Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`
+- `Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`
+- `Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md`
+- `Quality_Gates_Managed_Orchestration_Planning_RU.md`
 - `Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md`
 - `Managed_Step_Orchestration_Application_Skeleton_Scenario_1.2.238.md`
 - `Managed_Step_Orchestration_Application_Skeleton_Architecture_1.2.238.md`
@@ -31,4 +34,5 @@ Historical planning sources for this wave were moved to `doc/SolidWorks-WorkFlow
 - `Managed_Workspace_Lifecycle_From_Diagram_Modules_1.2.249.md`
 - `Managed_Workflow_Phase_Types_And_Corrective_Operations_Design_1.2.249.md`
 
-New work in this folder must be tied to the active `doc/TODO/todo-plan.md` scope and discussed phase by phase before implementation.
+New work in this area must start from a fresh planning document and active
+`doc/TODO/todo-plan.md` scope.

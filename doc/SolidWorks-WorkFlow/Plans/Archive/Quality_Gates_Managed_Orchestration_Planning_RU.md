@@ -1,6 +1,6 @@
 # Quality Gates — Managed Orchestration Planning
 
-**Статус:** черновик принятого сценария для будущей реализации.
+**Статус:** архивный принятый planning source; реализован и принят в релизе `1.2.274`.
 **Создан:** 2026-05-14.
 **Scope:** сценарий managed orchestration для шага `Quality Gates`.
 **Опорные типы фаз:** [Type A — Core-Gated Agent Work](Managed_Workflow_Orchestration_Cluster_Planning.md#type-a--core-gated-agent-work), [Type B — User-Led Review](Managed_Workflow_Orchestration_Cluster_Planning.md#type-b--user-led-review), [Persistent Return Open Boundary](Managed_Workflow_Orchestration_Cluster_Planning.md#persistent-return-open-boundary).

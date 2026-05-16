@@ -1,6 +1,6 @@
 # Preliminary Steps And Diagram Modules Runtime Orchestration Planning
 
-**Status:** active planning source for the next implementation scope.
+**Status:** archived accepted planning source; implemented and accepted in release `1.2.274`.
 **Created:** 2026-05-15.
 **Owner:** Oleksandr + Codex.
 **Scope:** подключить к новому `Managed Workflow Orchestration` cluster первые три trunk steps: `Description`, `Virtual Simulation`, `Diagram Modules`.
@@ -137,5 +137,5 @@ Core:
 - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md`
 - `doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md`
-- `doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Diagram_Modules_Managed_Orchestration_Planning_RU.md`
+- `doc/SolidWorks-WorkFlow/Plans/Archive/Diagram_Modules_Managed_Orchestration_Planning_RU.md`
 - `doc/SolidWorks-WorkFlow/Plans/Archive/Managed_Workflow_Orchestration_Cluster_Planning.md`

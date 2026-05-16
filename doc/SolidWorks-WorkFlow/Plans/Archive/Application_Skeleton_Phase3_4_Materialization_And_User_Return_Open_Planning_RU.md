@@ -1,6 +1,6 @@
 # Application Skeleton Phase 3/4 — Materialization And User Return Open Planning
 
-**Статус:** черновик принятого сценария для будущей реализации.
+**Статус:** архивный принятый planning source; реализован и принят в релизе `1.2.274`.
 **Создан:** 2026-05-14.
 **Scope:** точная спецификация Phase 3 materialization и открытия Phase 4 `Persistent Application Skeleton User Return` для нового managed orchestration cluster.
 **Тип фазы:** Phase 3 — [Type A — Core-Gated Agent Work](Managed_Workflow_Orchestration_Cluster_Planning.md#type-a--core-gated-agent-work); Phase 4 opening — [Persistent Return Open Boundary](Managed_Workflow_Orchestration_Cluster_Planning.md#persistent-return-open-boundary).

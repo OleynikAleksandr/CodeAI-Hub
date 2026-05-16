@@ -1,3 +1,18 @@
+# Plan Closeout: preliminary-and-diagram-modules-runtime-orchestration-2026-05-15
+
+**Created:** 2026-05-16T09:39:56.609Z
+**Acceptance:** User accepted release 1.2.274 and explicitly requested closing the current plan as completed.
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/managed-orchestration-rewrite
+**Current Task:** application-skeleton-retouch.phase80.closeout.task1
+**Expected Commit:** docs: close managed workflow orchestration scope
+**Last Recorded Commit:** e11ba5a95
+**Planning Source Disposition:** already_archived
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
   "currentTaskId": "application-skeleton-retouch.phase80.closeout.task1",
   "expectedCommitMessage": "docs: close managed workflow orchestration scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed workflow orchestration scope",
-    "preCommitHead": "e11ba5a95",
-    "stage": "commit_pending",
-    "taskId": "application-skeleton-retouch.phase80.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -1420,6 +1430,7 @@ Verification evidence recorded 2026-05-16:
 
 ### Stream: Close Plan After User Acceptance
 
-359. [DONE] `application-skeleton-retouch.phase80.closeout.task1` Archive this accepted todo plan, dispose the completed Managed Step Orchestration planning sources, update Docs Index/Plans folder state, and leave active `todo-plan.md` in terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow orchestration scope`). Evidence: `npm run plan:closeout -- "User accepted release 1.2.274 and explicitly requested closing the current plan as completed."` wrote `doc/TODO/Archive/todo-plan-closeout-preliminary-and-diagram-modules-runtime-orchestration-2026-05-15.md` and moved the primary planning source to `doc/SolidWorks-WorkFlow/Plans/Archive/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md`. Additional completed phase-level planning sources moved to `Plans/Archive/`: `Diagram_Modules_Managed_Orchestration_Planning_RU.md`, `Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`, `Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`, `Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md`, and `Quality_Gates_Managed_Orchestration_Planning_RU.md`. `Docs_Index.md`, `Plans/README.md`, and `Plans/Managed_Step_Orchestration/README.md` now mark this wave closed by release `1.2.274`.
-360. [PENDING] Git Commit: `docs: close managed workflow orchestration scope` (hash: TBD)
+359. [IN_PROGRESS] `application-skeleton-retouch.phase80.closeout.task1` Archive this accepted todo plan, dispose the completed Managed Step Orchestration planning sources, update Docs Index/Plans folder state, and leave active `todo-plan.md` in terminal `NONE` state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed workflow orchestration scope`). Evidence: `npm run plan:closeout -- "User accepted release 1.2.274 and explicitly requested closing the current plan as completed."` wrote `doc/TODO/Archive/todo-plan-closeout-preliminary-and-diagram-modules-runtime-orchestration-2026-05-15.md` and moved the primary planning source to `doc/SolidWorks-WorkFlow/Plans/Archive/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md`. Additional completed phase-level planning sources moved to `Plans/Archive/`: `Diagram_Modules_Managed_Orchestration_Planning_RU.md`, `Application_Skeleton_Phase1_Contract_Bootstrap_Planning_RU.md`, `Application_Skeleton_Phase2_Contract_Review_Planning_RU.md`, `Application_Skeleton_Phase3_4_Materialization_And_User_Return_Open_Planning_RU.md`, and `Quality_Gates_Managed_Orchestration_Planning_RU.md`. `Docs_Index.md`, `Plans/README.md`, and `Plans/Managed_Step_Orchestration/README.md` now mark this wave closed by release `1.2.274`.
+360. [TODO] Git Commit: `docs: close managed workflow orchestration scope` (hash: TBD)
 361. [TODO] `application-skeleton-retouch.phase80.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
