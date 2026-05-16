@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "38869987d",
+  "lastRecordedCommit": "2b928021e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task3",
-  "expectedCommitMessage": "chore: build skeleton foundation baseline release artifacts",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task3",
+  "expectedCommitMessage": "docs: record skeleton foundation baseline release package",
   "debt": {
-    "expectedCommitMessage": "chore: build skeleton foundation baseline release artifacts",
-    "preCommitHead": "38869987d",
+    "expectedCommitMessage": "docs: record skeleton foundation baseline release package",
+    "preCommitHead": "2b928021e",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-build.task3"
+    "taskId": "app-skeleton-foundation.phase7.release-package.task3"
   }
 }
 ```
@@ -204,9 +204,11 @@
 64. [DONE] Git Commit: `docs: prepare skeleton foundation baseline release` (hash: 38869987d)
 65. [DONE] `app-skeleton-foundation.phase7.release-build.task3` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton foundation baseline release artifacts`).
    - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.279`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-66. [PENDING] Git Commit: `chore: build skeleton foundation baseline release artifacts` (hash: TBD)
-67. [TODO] `app-skeleton-foundation.phase7.release-package.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton foundation baseline release package`).
-68. [TODO] Git Commit: `docs: record skeleton foundation baseline release package` (hash: TBD)
+66. [DONE] Git Commit: `chore: build skeleton foundation baseline release artifacts` (hash: 2b928021e)
+67. [DONE] `app-skeleton-foundation.phase7.release-package.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton foundation baseline release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.279`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
+   - User handoff artifact: `codeai-hub-1.2.279.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+68. [PENDING] Git Commit: `docs: record skeleton foundation baseline release package` (hash: TBD)
 69. [TODO] `app-skeleton-foundation.phase7.acceptance.task4` User installs the next patched release and retests that Application Skeleton proposes concrete shell/frontend/framework baselines, preserves the Project Manager Development Tree mirror, and blocks materialization only through dialogue questions for real unresolved decisions. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
