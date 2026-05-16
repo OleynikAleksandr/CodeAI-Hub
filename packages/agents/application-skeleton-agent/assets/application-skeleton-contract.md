@@ -39,7 +39,7 @@
   "projectFoundation": {
     "installCommand": "npm ci",
     "requiredScripts": ["build", "typecheck", "test:smoke"],
-    "configFiles": ["tsconfig.json"],
+    "configFiles": [".gitignore", "tsconfig.json"],
     "firstWaveEntrypoints": [
       "product-parts/product-part-id/src/index.ts"
     ]
@@ -84,6 +84,7 @@
 - When `openQuestions` is non-empty, `application-skeleton.md` must not become a questionnaire. It should record the current proposed/agreed foundation state and make clear that confirmation is not ready until dialogue decisions are resolved, without listing the questions as Markdown prompts.
 - User-facing prose in Markdown and `openQuestions` must use the artifact prose language from the runtime language contract. Canonical headings, JSON field names, ids, statuses, paths, and code tokens remain structural and are not localized.
 - Product Part entries must use `partId`, Cluster entries must use `clusterId`, and Module entries must use `moduleId`. Do not replace these canonical fields with a generic `id`.
+- `productParts` must be a nested tree, not a flat list. The top-level `productParts` array may contain only Product Part entries. Cluster entries must appear only inside their owning Product Part `clusters` array. Cluster-owned Module entries must appear only inside their owning Cluster `modules` array. Standalone Module entries must appear only inside their owning Product Part `standaloneModules` array.
 - Every generated Product Part must have a mapping or an explicit deferred disposition.
 - Every mapped path must be relative, normalized, and inside the workspace.
 - `sourceRoot` must point to the production source/scaffold root and must not point under `.codeai-hub/`.
@@ -98,6 +99,8 @@
 - Package manifests/workspace entries should exist only at the root workspace and Product Part roots unless the accepted contract explicitly declares a Cluster or Module as its own package.
 - `node_modules` and other install outputs must not be listed as materialized output, but tracked package metadata and lockfiles must be sufficient for a deterministic clean install.
 - `node_modules` and other install outputs must not be committed or listed as `materializedPaths`, but they must exist locally after materialization when the selected package manager creates them. For npm foundations, `npm ci` must be executed and root `node_modules` must exist before readiness is claimed.
+- Root `.gitignore` must exist after materialization and must ignore dependency install outputs and build outputs. For npm/TypeScript foundations it must cover `node_modules/` and package `dist/` outputs before `npm ci`, build, typecheck, or smoke commands are reported as successful readiness evidence.
+- Build outputs such as `dist/`, `build/`, `coverage/`, framework caches, generated maps, and package output files must not be committed and must not be listed in `materializedPaths`.
 - When TypeScript is selected, a tracked TypeScript config must exist after materialization.
 - Required build/typecheck/smoke scripts must point to real config and source targets. They must not pass only because no source files or compiler targets exist.
 - Every script listed in `projectFoundation.requiredScripts` must be executed successfully after the clean install. For npm foundations, run these as `npm run <script>` from the workspace root.

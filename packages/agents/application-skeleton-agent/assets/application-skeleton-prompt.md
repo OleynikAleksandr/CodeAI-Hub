@@ -90,14 +90,32 @@ Use this Markdown section structure for every Phase 1 draft. Keep these headings
   "projectFoundation": {
     "installCommand": "<package-manager clean install command>",
     "requiredScripts": ["build", "typecheck", "test:smoke"],
-    "configFiles": ["tsconfig.json"],
+    "configFiles": [".gitignore", "tsconfig.json"],
     "firstWaveEntrypoints": ["product-parts/<product-part-id>/src/index.ts"]
   },
   "openQuestions": [],
   "productParts": [
     {
       "id": "<product-part-id>",
-      "codePath": "product-parts/<product-part-id>"
+      "codePath": "product-parts/<product-part-id>",
+      "clusters": [
+        {
+          "id": "<cluster-id>",
+          "codePath": "product-parts/<product-part-id>/clusters/<cluster-id>",
+          "modules": [
+            {
+              "id": "<module-id>",
+              "codePath": "product-parts/<product-part-id>/clusters/<cluster-id>/modules/<module-id>"
+            }
+          ]
+        }
+      ],
+      "standaloneModules": [
+        {
+          "id": "<module-id>",
+          "codePath": "product-parts/<product-part-id>/modules/<module-id>"
+        }
+      ]
     }
   ],
   "plannedPaths": ["product-parts/<product-part-id>"]
@@ -134,6 +152,7 @@ You must:
 - re-read the accepted `application-skeleton-map.json`;
 - create the minimal conventional installable project foundation for the accepted stack and repo shape;
 - create root package manager metadata, lockfile or equivalent deterministic install artifact, Product Part package manifests when the accepted repo shape requires them, TypeScript config when TypeScript is selected, and build/typecheck/smoke scripts that point to real project targets;
+- create or update root `.gitignore` before running install/build commands so dependency install outputs and build outputs stay local and untracked; for npm/TypeScript foundations this must include `node_modules/` and `dist/` coverage, including workspace package `dist/` output;
 - create minimal source entrypoints/facades for packages selected for the first implementation wave, so compiler/build gates have actual targets instead of empty folders;
 - create the Product Part / Cluster / Module filesystem projection as an exact filesystem mirror of the Project Manager Development Tree;
 - create only minimal placeholders declared by the contract;
@@ -153,11 +172,13 @@ Before the materialization readiness response, run a runtime-observable self-aud
 - `application-skeleton.md` reports the same materialized status fields and no longer describes a draft or future filesystem state;
 - `openQuestions` is absent or empty;
 - deterministic install metadata exists for the accepted package manager;
+- root `.gitignore` exists and ignores install/build outputs such as `node_modules/` and `dist/`;
 - the accepted clean install command has succeeded in the workspace and the local install output expected by that package manager exists, such as `node_modules` for npm;
 - required TypeScript/build/test/smoke scripts declared by the accepted foundation point to real config/source targets;
 - every script listed in `projectFoundation.requiredScripts` has been executed successfully after the clean install;
 - every declared Product Part, Cluster, and Module `codePath` exists on disk;
 - every path listed in `materializedPaths` exists on disk;
+- no generated install/build output path such as `node_modules`, `dist`, package `dist/index.js`, coverage, cache, or similar runtime/build output is listed in `materializedPaths`;
 - every materialized Product Part, Cluster, and Module directory contains a tracked `README.md` placeholder so Git records the skeleton;
 - `deferredMaterialization` contains only intentional skips that are also explained in the Markdown artifact.
 
@@ -166,7 +187,7 @@ If install, build, typecheck, or smoke verification fails, keep `materialized: f
 
 Before the final response after materialization:
 - ensure the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any required recovery artifacts are ready for runtime/user review;
-- do not create or change ignored runtime/cache/log files or `.DS_Store`; package-manager install outputs such as `node_modules` are allowed as local environment output but must not be committed or listed in `materializedPaths`;
+- do not create or change ignored runtime/cache/log files or `.DS_Store`; package-manager install outputs such as `node_modules` and build outputs such as package `dist/` directories are allowed as local environment output but must be ignored by Git, must not be committed, and must not be listed in `materializedPaths`;
 - respond with materialization readiness, the paths changed, and the install/script verification commands that succeeded. Do not stage, commit, advance plans, or claim completion beyond readiness.
 
 Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
@@ -178,11 +199,13 @@ Final response after materialization: tell the user, in the chat language, that 
 - Use an industry-aligned scaffold for the accepted ecosystem, but keep Development Tree ownership visible in the production tree.
 - Unless the user explicitly accepts another root, use `sourceRoot: "product-parts"` and `product-parts/<product-part-id>` as each Product Part root.
 - The production filesystem tree must preserve the Project Manager Development Tree identity and hierarchy. Do not flatten, rename, regroup, or split Product Parts, Clusters, or Modules to fit a framework convention.
+- The JSON `productParts` array must also preserve this hierarchy. It must contain only top-level Product Part objects. Each Product Part object owns its `clusters` array and its `standaloneModules` array. Cluster objects own their `modules` array. Do not write a flat top-level list where clusters or modules appear as separate `productParts` entries with `kind: "cluster"` or `kind: "module"`.
 - Cluster modules go under `product-parts/<product-part-id>/clusters/<cluster-id>/modules/<module-id>`.
 - Standalone Product Part modules go under `product-parts/<product-part-id>/modules/<module-id>`.
 - Do not split Product Part roots by implementation category such as `apps/`, `packages/`, or `extensions` when that breaks the Product Part -> Cluster -> Module mirror.
 - Keep ordinary module folders lightweight. Package manifests/workspace entries belong only at the root workspace and Product Part roots unless the accepted contract explicitly declares a Cluster or Module as a standalone package.
 - `node_modules` and other dependency install outputs must not be committed and must not be listed as `materializedPaths`, but they must be created locally by the accepted clean install command before the stage claims readiness. Tracked package metadata and lockfiles must be sufficient for a deterministic clean install command such as `npm ci` or the selected package-manager equivalent.
+- Build outputs such as `dist/`, `build/`, `coverage/`, framework caches, generated maps, and package output files must not be committed and must not be listed as `materializedPaths`. They must be ignored by `.gitignore` before running build/typecheck/smoke commands.
 - Do not leave materialized Product Part, Cluster, or Module directories empty. Empty directories are not Git-tracked and do not count as committed materialization.
 - Never use `.codeai-hub/...` as `sourceRoot` or production `codePath`.
 - If an upstream artifact lacks module detail, do not invent modules. Record the missing input and the path pattern to use later.
@@ -196,7 +219,7 @@ Final response after materialization: tell the user, in the chat language, that 
 - `stack.languages`, `stack.frameworks`, and `stack.runtimes` arrays;
 - `projectFoundation` with the accepted implementation foundation decisions: package/workspace layout, install command, required scripts, config files, and first-wave source/facade entrypoints;
 - `openQuestions` as an array that must be empty before materialization;
-- `productParts` with stable canonical `id` values and deterministic `codePath` values for every mapped Product Part, Cluster, and Module; legacy aliases `partId`, `clusterId`, and `moduleId` are optional, not required;
+- `productParts` as a nested tree with stable canonical `id` values and deterministic `codePath` values: top-level entries are Product Parts only; Product Part entries contain `clusters` and `standaloneModules`; Cluster entries contain `modules`; legacy aliases `partId`, `clusterId`, and `moduleId` are optional, not required;
 - `materializedPaths` after materialization;
 - `deferredMaterialization` only for entries intentionally skipped in the current state.
 

@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "45e0e014b",
+  "lastRecordedCommit": "70cff76dc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task4",
-  "expectedCommitMessage": "docs: record skeleton environment readiness release package",
+  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task1",
+  "expectedCommitMessage": "fix: require clean skeleton git hygiene and nested map",
   "debt": {
-    "expectedCommitMessage": "docs: record skeleton environment readiness release package",
-    "preCommitHead": "45e0e014b",
+    "expectedCommitMessage": "fix: require clean skeleton git hygiene and nested map",
+    "preCommitHead": "70cff76dc",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-package.task4"
+    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task1"
   }
 }
 ```
@@ -233,13 +233,36 @@
 82. [DONE] `app-skeleton-foundation.phase7.release-package.task4` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton environment readiness release package`).
    - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.280`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
    - User handoff artifact: `codeai-hub-1.2.280.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-83. [PENDING] Git Commit: `docs: record skeleton environment readiness release package` (hash: TBD)
-84. [TODO] `app-skeleton-foundation.phase7.acceptance.task5` User installs the next patched release and retests that Application Skeleton materialization creates local install outputs, proves declared scripts pass, preserves the Project Manager Development Tree mirror, and only then unlocks downstream work. Scope: user workflow acceptance only; expected commit: none.
+83. [DONE] Git Commit: `docs: record skeleton environment readiness release package` (hash: 70cff76dc)
+84. [BLOCKED] `app-skeleton-foundation.phase7.acceptance.task5` User installs the next patched release and retests that Application Skeleton materialization creates local install outputs, proves declared scripts pass, preserves the Project Manager Development Tree mirror, and only then unlocks downstream work. Scope: user workflow acceptance only; expected commit: none.
+   - Acceptance defect found in release `1.2.280`: Application Skeleton creates local `node_modules` but leaves it unignored/untracked, build output `product-parts/*/dist/**` is captured by managed commits, and the machine-readable `productParts` map can be flattened into top-level Product Part / Cluster / Module entries instead of preserving the nested Product Part -> Cluster -> Module tree.
+
+### Stream: Git Hygiene And Nested Map Repair
+
+85. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task1` Strengthen Application Skeleton prompt/contract so materialization must create/maintain `.gitignore` for install/build outputs, keep generated outputs such as `node_modules` and `dist` local and untracked, and encode `productParts` as a nested Product Part -> clusters -> modules / standaloneModules tree (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, doc/TODO/todo-plan.md`; expected commit: `fix: require clean skeleton git hygiene and nested map`).
+86. [PENDING] Git Commit: `fix: require clean skeleton git hygiene and nested map` (hash: TBD)
+87. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task2` Add Core validation for nested Application Skeleton Product Part tree shape in both draft and materialized artifacts (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-tree-shape-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: validate skeleton nested product tree`).
+88. [TODO] Git Commit: `fix: validate skeleton nested product tree` (hash: TBD)
+89. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task3` Add Core validation for Application Skeleton output hygiene: `.gitignore` must ignore install/build outputs and `materializedPaths` must not contain generated output paths (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: validate skeleton output hygiene`).
+90. [TODO] Git Commit: `fix: validate skeleton output hygiene` (hash: TBD)
+91. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task4` Exclude generated install/build outputs from managed Git commits even when a materialized directory path is staged (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: exclude generated outputs from managed commits`).
+92. [TODO] Git Commit: `fix: exclude generated outputs from managed commits` (hash: TBD)
+93. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task5` Add regression coverage for nested tree validation and output hygiene validation (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts`; expected commit: `test: cover skeleton git hygiene validation`).
+94. [TODO] Git Commit: `test: cover skeleton git hygiene validation` (hash: TBD)
+95. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task6` Sync bundled Application Skeleton templates and run targeted Application Skeleton tests plus core build before release (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton git hygiene repair`).
+96. [TODO] Git Commit: `docs: verify skeleton git hygiene repair` (hash: TBD)
+97. [TODO] `app-skeleton-foundation.phase7.release-docs.task5` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton git hygiene release`).
+98. [TODO] Git Commit: `docs: prepare skeleton git hygiene release` (hash: TBD)
+99. [TODO] `app-skeleton-foundation.phase7.release-build.task5` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton git hygiene release artifacts`).
+100. [TODO] Git Commit: `chore: build skeleton git hygiene release artifacts` (hash: TBD)
+101. [TODO] `app-skeleton-foundation.phase7.release-package.task5` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton git hygiene release package`).
+102. [TODO] Git Commit: `docs: record skeleton git hygiene release package` (hash: TBD)
+103. [TODO] `app-skeleton-foundation.phase7.acceptance.task6` User installs the next patched release and retests that Application Skeleton materialization creates ignored local install outputs, does not commit build outputs, preserves a nested Product Part tree in JSON, and leaves downstream work unlocked only after clean validation. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-85. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-86. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-87. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+104. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+105. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+106. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
