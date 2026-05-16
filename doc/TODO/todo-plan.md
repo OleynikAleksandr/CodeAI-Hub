@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "353060e3e",
+  "lastRecordedCommit": "20330b89a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase60.verify.task1",
-  "expectedCommitMessage": "docs: verify core artifact contract repair",
+  "currentTaskId": "artifact-contract-repair.phase61.user-retest.task1",
+  "expectedCommitMessage": "docs: record core artifact contract retest result",
   "debt": {
-    "expectedCommitMessage": "docs: verify core artifact contract repair",
-    "preCommitHead": "353060e3e",
+    "expectedCommitMessage": "docs: record core artifact contract retest result",
+    "preCommitHead": "20330b89a",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase60.verify.task1"
+    "taskId": "artifact-contract-repair.phase61.user-retest.task1"
   }
 }
 ```
@@ -1130,7 +1130,7 @@ Repair coverage:
 ### Stream: Verification
 
 271. [DONE] `artifact-contract-repair.phase60.verify.task1` Run targeted Core/PM tests and builds for prompt inline-template coverage, shared artifact parser diagnostics, Diagram Modules graph renderability after Core acceptance, and repair microtask/commit insertion; record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify core artifact contract repair`).
-272. [PENDING] Git Commit: `docs: verify core artifact contract repair` (hash: TBD)
+272. [DONE] Git Commit: `docs: verify core artifact contract repair` (hash: 20330b89a)
 
 Verification evidence recorded 2026-05-16:
 - `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts` — passed; verifies inline Diagram Modules template appendices in managed prompt pack.
@@ -1140,3 +1140,38 @@ Verification evidence recorded 2026-05-16:
 - `npm run build --workspace=@codeai-hub/core` — passed.
 - `npm run plan:validate` — passed.
 - `npm run plan:commit -- "fix: route artifact repairs through core lifecycle"` — passed hooks: architecture check, `npx ultracite check`, `npm run check:knip`, staged Ultracite formatting, and plan post-commit finalization.
+
+## Phase 61 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-16)
+
+### Stream: Retest Fixed Artifact Contract Flow
+
+273. [DONE] `artifact-contract-repair.phase61.user-retest.task1` User retests the fixed Diagram Modules artifact contract flow in the next build or local run before release acceptance is considered; no release build is allowed until the user explicitly confirms the Release Build Confirmation Gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core artifact contract retest result`). Result: user explicitly requested a new release build on 2026-05-16, satisfying the Release Build Confirmation Gate for the fixed Core artifact contract flow.
+274. [PENDING] Git Commit: `docs: record core artifact contract retest result` (hash: TBD)
+
+## Phase 62 — Release Preparation (owner: Codex, updated: 2026-05-16)
+
+### Stream: Release Docs For v1.2.269
+
+275. [TODO] `artifact-contract-repair.phase62.release-docs.task1` Update release-facing docs for future version `1.2.269` before build scripts mutate package versions, including the Core artifact contract repair summary (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare core artifact contract repair release`).
+276. [TODO] Git Commit: `docs: prepare core artifact contract repair release` (hash: TBD)
+
+## Phase 63 — Build All Runtime Packages (owner: Codex, updated: 2026-05-16)
+
+### Stream: Runtime Tarballs
+
+277. [TODO] `artifact-contract-repair.phase63.build-all.task1` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build core artifact contract repair release`).
+278. [TODO] Git Commit: `chore: build core artifact contract repair release` (hash: TBD)
+
+## Phase 64 — Package VSIX (owner: Codex, updated: 2026-05-16)
+
+### Stream: VSIX Package
+
+279. [TODO] `artifact-contract-repair.phase64.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core artifact contract repair release`).
+280. [TODO] Git Commit: `docs: record core artifact contract repair release` (hash: TBD)
+
+## Phase 65 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
+
+### Stream: Release Retest Handoff
+
+281. [TODO] `artifact-contract-repair.phase65.user-acceptance.task1` User installs and retests the `1.2.269` release package; scope stays ACTIVE until explicit release acceptance or new failure report (scope: `user workflow`; expected commit: `docs: record core artifact contract release acceptance`).
+282. [TODO] Git Commit: `docs: record core artifact contract release acceptance` (hash: TBD)
