@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "3edeef0f0",
+  "lastRecordedCommit": "dda6c8dd0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase71.diagram-ledger.task1",
-  "expectedCommitMessage": "feat: commit diagram modules ledger advancement",
+  "currentTaskId": "managed-git-checkpoint.phase71.verify.task1",
+  "expectedCommitMessage": "docs: verify managed git checkpoint repair",
   "debt": {
-    "expectedCommitMessage": "feat: commit diagram modules ledger advancement",
-    "preCommitHead": "3edeef0f0",
+    "expectedCommitMessage": "docs: verify managed git checkpoint repair",
+    "preCommitHead": "dda6c8dd0",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase71.diagram-ledger.task1"
+    "taskId": "managed-git-checkpoint.phase71.verify.task1"
   }
 }
 ```
@@ -1290,12 +1290,12 @@ Verification evidence recorded 2026-05-16:
 314. [DONE] Git Commit: `feat: commit managed workflow ledger advancement` (hash: 3edeef0f0)
 
 315. [DONE] `managed-git-checkpoint.phase71.diagram-ledger.task1` Apply the same Core-owned ledger advancement boundary to Diagram Modules accepted artifact turns and prove its stage/workspace ledgers do not remain dirty after Product Part commits (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: commit diagram modules ledger advancement`). Evidence: `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` — PASS, 3 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression proves Diagram Modules accepted artifact turns leave full `git status --short` clean after the Product Parts index commit and after the final Product Part commit.
-316. [PENDING] Git Commit: `feat: commit diagram modules ledger advancement` (hash: TBD)
+316. [DONE] Git Commit: `feat: commit diagram modules ledger advancement` (hash: dda6c8dd0)
 
 ### Stream: Verification
 
-317. [TODO] `managed-git-checkpoint.phase71.verify.task1` Run targeted managed workflow checkpoint/ledger tests plus Core/PM gating builds, then stop for release-build confirmation because this changes managed workflow commit sequencing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed git checkpoint repair`).
-318. [TODO] Git Commit: `docs: verify managed git checkpoint repair` (hash: TBD)
+317. [DONE] `managed-git-checkpoint.phase71.verify.task1` Run targeted managed workflow checkpoint/ledger tests plus Core/PM gating builds, then stop for release-build confirmation because this changes managed workflow commit sequencing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed git checkpoint repair`). Evidence: `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts` — PASS, 23 tests; `node --test --import tsx src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts` — PASS, 21 tests; `npm run build --workspace=@codeai-hub/core` — PASS; `npm run build:webview` — PASS; `npm run typecheck:webview` — PASS.
+318. [PENDING] Git Commit: `docs: verify managed git checkpoint repair` (hash: TBD)
 
 ### Stream: Release Build Confirmation
 
