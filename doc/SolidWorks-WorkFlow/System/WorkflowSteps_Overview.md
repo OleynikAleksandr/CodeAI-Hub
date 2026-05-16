@@ -65,6 +65,7 @@ Diagram Modules
 - Project Manager может показывать artifacts/status и отправлять пользовательский текст в Core, но не отправляет provider-visible continuation/acceptance messages самостоятельно;
 - provider prompts получают только текущий assigned scope и не обещают Git ownership, automatic acceptance, managed commits или downstream unlock без Core;
 - user review gates являются Core фазами: принятие или правки пользователя классифицируются по stage plan, а не по UI state.
+- Artifact parsing, graph/read-model validation, and repair diagnostics for managed technical stages are Core-owned contract outputs. Project Manager, VS Code, future mobile clients, and Wi-Fi clients may render the parsed projection and submit user repair intent, but they must not own a separate parser schema or decide which artifact failed.
 
 Практическое следствие: если `Diagram Modules`, `Application Skeleton` или `Quality Gates Baseline` не могут продолжить работу без открытого Project Manager до явного user gate, контракт нарушен и должен чиниться в Core/orchestrator logic, а не в клиенте.
 
@@ -82,6 +83,8 @@ Core Runtime является самостоятельным `Product Part`, а 
 Every workflow step is evaluated from Core-owned state. Project Manager, VS Code surfaces, future mobile clients, and Wi-Fi/remote clients are replaceable projections only: they may collect user input and display Core snapshots, but they must never be the source of truth for stage phase, active microtask, expected commit, prompt/template selection, source-artifact selection, artifact validity, gating, localization target, Core/system messages, managed state, or commit lifecycle.
 
 A trunk or managed step must keep running while all clients are closed until Core reaches an explicit user gate. If opening Project Manager is required for `Diagram Modules`, `Application Skeleton`, `Quality Gates Baseline`, or any future workflow step to advance before that gate, the workflow contract is broken and must be repaired in Core/orchestrator logic, not by duplicating truth in the client.
+
+Any client-side artifact parser for a managed step is transitional implementation debt unless it consumes a Core-owned parser module or a Core-produced parse result. If the Project Manager graph, a future mobile graph, or another client needs Product Part / Cluster / Module data, Core must expose the canonical parsed projection plus diagnostics. Client repair buttons send only raw user intent and Core diagnostics back to Core; Core owns failing-artifact selection, repair microtask creation, paired `Git Commit` insertion, provider-visible repair prompt composition, validation, and accepted/rejected attempt commits.
 
 Во время rewrite активный runtime не имеет старого post-turn arbitration contract. Любой код, который читает workflow state для Project Manager, sidebar, cards, status panel или artifact panes, обязан оставаться side-effect free относительно provider-visible messages. Read-path может возвращать snapshot и diagnostics, но не должен запускать acceptance, Git mutation, plan advancement или continuation. Если будущему Core cluster понадобятся session summary, commit owner, continuation orchestrator или stage validator, они должны войти в один новый orchestration cluster с общим contract envelope и детерминированным order of operations.
 
@@ -228,7 +231,7 @@ Manual start из sidebar Workflow Tree:
 Каждый такой файл materialize-ит один ownership subtree `Product Part -> Cluster -> Module`.
 
 `module-map.flow.json` хранит layout/view state визуального редактора — placeholder positions, viewport и (в формате v2) опциональную секцию `layoutParams` с declarative CSS Grid overrides (`columns`/`targetAspectRatio` на ProductPart, `moduleColumns` на Cluster).
-Visual diagram materialize-ится runtime из index + part artifacts и не требует отдельного raw semantic map-файла в workspace.
+Visual diagram materialize-ится runtime из Core-owned parsed projection of index + part artifacts и не требует отдельного raw semantic map-файла в workspace. Parser requirements for `part_id`, Product Part identity, Cluster/Module fields, graph diagnostics, and renderability belong to the Core/shared artifact contract; Project Manager renders the projection and layout sidecar only.
 
 ### User-facing baseline
 
@@ -335,6 +338,7 @@ Provider-visible instructions for this step stay content-scoped: write/update th
 Шаг `Diagram Modules` работает через agent asset pack:
 - prompt, field reference и merge rules живут в `packages/agents/diagram-modules-agent/assets/` (`diagram-modules-prompt.md`, `diagram-modules-field-reference.md`, `diagram-modules-merge-rules.md`);
 - runtime отправляет агенту current target identity, generated `Change Summary` и full inline upstream sources (`Final_Description.md` + `virtual-simulation.md`) in the first prompt; file paths are Core-owned write targets/fallback diagnostics and must not be presented as documents the agent should re-read when the text is already embedded;
+- first and repair prompts must embed the exact Product Part index template, Product Part artifact template, field reference, required identity fields, and parser-visible examples as inline text. Referencing asset paths is not enough because the provider must receive the full artifact contract before its first write turn;
 - after each provider turn Core validates the current artifact and advances the managed stage plan through a Git commit boundary. Transient `.git/index.lock` failures are retried under a workspace-scoped queue; persistent lock failures block continuation and surface as Core/user-visible status instead of silently leaving the session idle;
 - Mermaid `.mmd` больше не является workflow SSOT.
 

@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "8340e837a",
+  "lastRecordedCommit": "2f4d7c757",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase57.docs.task1",
-  "expectedCommitMessage": "docs: define core artifact contract authority",
+  "currentTaskId": "artifact-contract-repair.phase57.docs.task2",
+  "expectedCommitMessage": "docs: document core artifact parser ownership",
   "debt": {
-    "expectedCommitMessage": "docs: define core artifact contract authority",
-    "preCommitHead": "8340e837a",
+    "expectedCommitMessage": "docs: document core artifact parser ownership",
+    "preCommitHead": "2f4d7c757",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase57.docs.task1"
+    "taskId": "artifact-contract-repair.phase57.docs.task2"
   }
 }
 ```
@@ -1106,10 +1106,10 @@ Repair coverage:
 ### Stream: Architecture Authority Documentation
 
 259. [DONE] `artifact-contract-repair.phase57.docs.task1` Strengthen startup/system/orchestration docs: every required text template must be embedded inline in first prompts, Core owns artifact schema/parser/validation/read-model contracts, clients are projections only, and client-side parsers must either move to Core/shared contract modules or consume Core-owned parse results (scope: `AGENTS.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: define core artifact contract authority`).
-260. [PENDING] Git Commit: `docs: define core artifact contract authority` (hash: TBD)
+260. [DONE] Git Commit: `docs: define core artifact contract authority` (hash: 2f4d7c757)
 
-261. [TODO] `artifact-contract-repair.phase57.docs.task2` Update workflow/Core/Project Manager SSOT docs so Diagram Modules graph parsing, artifact repair buttons, and future mobile/Wi-Fi clients all use Core-owned artifact diagnostics instead of Project Manager-owned parser truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document core artifact parser ownership`).
-262. [TODO] Git Commit: `docs: document core artifact parser ownership` (hash: TBD)
+261. [DONE] `artifact-contract-repair.phase57.docs.task2` Update workflow/Core/Project Manager SSOT docs so Diagram Modules graph parsing, artifact repair buttons, and future mobile/Wi-Fi clients all use Core-owned artifact diagnostics instead of Project Manager-owned parser truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document core artifact parser ownership`).
+262. [PENDING] Git Commit: `docs: document core artifact parser ownership` (hash: TBD)
 
 ### Stream: Diagram Modules Contract Unification
 

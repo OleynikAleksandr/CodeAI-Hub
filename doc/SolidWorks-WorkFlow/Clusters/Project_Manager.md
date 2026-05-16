@@ -25,15 +25,16 @@ Project Manager — основной UI‑клиент CodeAI Hub (CEF bundle), 
 - управляет выбором/открытием диалогов через intent `pm:dialog:open`;
 - гидратирует историю (cold start) и live tail (WS);
 - отображает lock/continuity/usage и обеспечивает recovery UX;
-- является единственной user-facing runtime bootstrap authority для живого Core workflow.
+- является user-facing runtime bootstrap surface для живого Core workflow.
 
 Project Manager не является владельцем managed workflow acceptance или
-automatic provider continuation. During the orchestration rewrite, managed
-technical stages are fail-closed: PM отправляет только пользовательские intents
-и отображает Core snapshots/read-model. Automatic repair/acceptance/continuation
-сообщения агенту не должны исходить ни из PM read path, ни из retired Core
-post-turn shims; их новый владелец появится только в dedicated orchestration
-cluster.
+automatic provider continuation. PM отправляет только пользовательские intents
+и отображает Core snapshots/read-model. Artifact schemas, parser diagnostics,
+graph/read-model projections, prompt/template/source selection, repair target
+selection, managed plan advancement, and Git commit lifecycle belong to Core or
+to shared contract modules under Core authority. Automatic
+repair/acceptance/continuation сообщения агенту не должны исходить ни из PM
+read path, ни из client-owned helpers.
 
 ## 2) Где живёт код
 
@@ -57,7 +58,9 @@ cluster.
   - как только continuity session уже существует, selector исчезает вместе с confirmation card и PM возвращается к обычному resume/open-session поведению.
 - В Description UI не допускаются термины/ветвления `description.md` и auto-reviewer.
 - Для `Diagram Modules` правая панель использует контракт `Artifacts/Help` (Source mode убран):
-  - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов через nested CSS Grid (React Flow удалён в релизе `1.1.921`);
+  - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из Core-owned Product Part / Cluster / Module parsed projection через nested CSS Grid (React Flow удалён в релизе `1.1.921`);
+  - PM не владеет Diagram Modules parser truth: требования к `part_id`, identity table/fields, Product Part / Cluster / Module fields, renderability checks и repair diagnostics должны приходить из Core/shared artifact contract. Любой локальный parser в PM является временным adapter debt и не должен расходиться с Core validation;
+  - `Fix with agent` / artifact repair actions send raw user intent plus Core diagnostics to Core. PM never builds a provider-visible repair prompt, never chooses a different failing artifact than Core, and never mutates stage todo-plan or managed Git commit state;
   - `*.flow.json` не показывается пользователю как артефакт; с релиза `1.1.922` sidecar v2 хранит также declarative CSS Grid layout params;
   - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel("pm:diagram:sidecar-sync")` после write;
   - detached diagram popup не является owner-window приложения: его закрытие не должно завершать main PM window;
