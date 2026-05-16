@@ -31,7 +31,6 @@ materialized: true
 materializationState: materialized
 `;
 
-const USER_REVIEW_OPEN_RE = /user review is now open/u;
 const ACCEPTED_REQUIRED_RE = /accepted must be true/u;
 const REVIEW_STATE_MATERIALIZED_RE = /reviewState must be materialized/u;
 const MATERIALIZATION_RE = /materialization/u;
@@ -44,10 +43,6 @@ const CANONICAL_MARKDOWN_STRUCTURE_RE = /canonical Markdown section structure/u;
 const MATERIALIZE_WORKSPACE_RE =
   /Materialize the installable project foundation/u;
 const PROJECT_FOUNDATION_RE = /projectFoundation/u;
-const OPEN_DIALOG_QUESTIONS_RE =
-  /Остаются открытые вопросы|React or vanilla UI\?/u;
-const FRAMEWORK_DIALOG_QUESTION_RE =
-  /project-manager-launcher-ui: Подтверждаете React \+ CEF/u;
 const PLACEHOLDER_STACK_RE = /placeholder_foundation_field: stack\.frameworks/u;
 const createDraftFoundation = (): Record<string, unknown> => ({
   packageManager: "npm",
@@ -122,6 +117,10 @@ const writeInstallableFoundationFiles = async (
     '{"lockfileVersion":3,"requires":true,"packages":{"":{"devDependencies":{"local-fixture":"file:./local-fixture"}},"local-fixture":{"version":"1.0.0","dev":true},"node_modules/local-fixture":{"resolved":"local-fixture","link":true}}}\n'
   );
   await writeFile(path.join(workspaceRoot, "tsconfig.json"), "{}\n");
+  await writeFile(
+    path.join(workspaceRoot, ".gitignore"),
+    "node_modules/\ndist/\n"
+  );
 };
 
 test("Application Skeleton validator opens user review for a valid draft contract", async () => {
@@ -164,7 +163,7 @@ test("Application Skeleton validator opens user review for a valid draft contrac
     assert.equal(result.valid, true);
     assert.equal(result.phase, "draft");
     assert.equal(result.nextAction, "open_user_review");
-    assert.match(result.nextPrompt ?? "", USER_REVIEW_OPEN_RE);
+    assert.equal(result.nextPrompt, null);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -348,8 +347,7 @@ test("Application Skeleton validator routes draft open questions to user review"
     assert.equal(result.valid, true);
     assert.deepEqual(result.diagnostics, []);
     assert.equal(result.nextAction, "open_user_review");
-    assert.match(result.nextPrompt ?? "", USER_REVIEW_OPEN_RE);
-    assert.match(result.nextPrompt ?? "", OPEN_DIALOG_QUESTIONS_RE);
+    assert.equal(result.nextPrompt, null);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -392,7 +390,7 @@ test("Application Skeleton validator allows unresolved framework choice only as 
 
     assert.equal(result.valid, true);
     assert.equal(result.nextAction, "open_user_review");
-    assert.match(result.nextPrompt ?? "", FRAMEWORK_DIALOG_QUESTION_RE);
+    assert.equal(result.nextPrompt, null);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
