@@ -8,15 +8,15 @@
   "planId": "quality-gates-return-marker-release-2026-05-16",
   "branch": "main",
   "baseHead": "8254f5c4e",
-  "lastRecordedCommit": "71c00f50e",
+  "lastRecordedCommit": "43578b948",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "quality-gates-return-release.phase1.docs.task1",
-  "expectedCommitMessage": "docs: prepare quality gates return marker release",
+  "currentTaskId": "quality-gates-return-release.phase1.build.task1",
+  "expectedCommitMessage": "chore: build quality gates return marker release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates return marker release",
-    "preCommitHead": "71c00f50e",
+    "expectedCommitMessage": "chore: build quality gates return marker release artifacts",
+    "preCommitHead": "43578b948",
     "stage": "commit_pending",
-    "taskId": "quality-gates-return-release.phase1.docs.task1"
+    "taskId": "quality-gates-return-release.phase1.build.task1"
   }
 }
 ```
@@ -54,12 +54,13 @@
 
 3. [DONE] `quality-gates-return-release.phase1.docs.task1` Update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates return marker release`).
    - Release docs target (2026-05-16): prepared README/CHANGELOG for version `1.2.285`.
-4. [PENDING] Git Commit: `docs: prepare quality gates return marker release` (hash: TBD)
+4. [DONE] Git Commit: `docs: prepare quality gates return marker release` (hash: 43578b948)
 
 ### Stream: Unified Artifact Build
 
-5. [TODO] `quality-gates-return-release.phase1.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build quality gates return marker release artifacts`).
-6. [TODO] Git Commit: `chore: build quality gates return marker release artifacts` (hash: TBD)
+5. [DONE] `quality-gates-return-release.phase1.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build quality gates return marker release artifacts`).
+   - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.285`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+6. [PENDING] Git Commit: `chore: build quality gates return marker release artifacts` (hash: TBD)
 
 ### Stream: VSIX Packaging
 
