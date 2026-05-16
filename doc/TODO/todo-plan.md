@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "6f816c83b",
+  "lastRecordedCommit": "069dd6806",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase58.diagram-contract.task1",
-  "expectedCommitMessage": "fix: centralize diagram modules artifact validation",
+  "currentTaskId": "artifact-contract-repair.phase58.diagram-contract.task2",
+  "expectedCommitMessage": "fix: validate diagram modules with core parser",
   "debt": {
-    "expectedCommitMessage": "fix: centralize diagram modules artifact validation",
-    "preCommitHead": "6f816c83b",
+    "expectedCommitMessage": "fix: validate diagram modules with core parser",
+    "preCommitHead": "069dd6806",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase58.diagram-contract.task1"
+    "taskId": "artifact-contract-repair.phase58.diagram-contract.task2"
   }
 }
 ```
@@ -1114,10 +1114,10 @@ Repair coverage:
 ### Stream: Diagram Modules Contract Unification
 
 263. [DONE] `artifact-contract-repair.phase58.diagram-contract.task1` Move the staged Product Part markdown parser out of Project Manager into the Core-owned diagram DSL contract and make PM graph loading import that parser through a thin adapter only (scope: `packages/core/src/workflow/diagram-dsl/staged-product-part-parser.ts, src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts, src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser-shared.ts, doc/TODO/todo-plan.md`; expected commit: `fix: centralize diagram modules artifact validation`).
-264. [PENDING] Git Commit: `fix: centralize diagram modules artifact validation` (hash: TBD)
+264. [DONE] Git Commit: `fix: centralize diagram modules artifact validation` (hash: 069dd6806)
 
-265. [TODO] `artifact-contract-repair.phase58.diagram-contract.task2` Route Core Diagram Modules artifact validation through the Core-owned staged Product Part parser so Core acceptance and graph renderability use the same required fields and diagnostics (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`; expected commit: `fix: validate diagram modules with core parser`).
-266. [TODO] Git Commit: `fix: validate diagram modules with core parser` (hash: TBD)
+265. [DONE] `artifact-contract-repair.phase58.diagram-contract.task2` Route Core Diagram Modules artifact validation through the Core-owned staged Product Part parser so Core acceptance and graph renderability use the same required fields and diagnostics (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: validate diagram modules with core parser`).
+266. [PENDING] Git Commit: `fix: validate diagram modules with core parser` (hash: TBD)
 
 267. [TODO] `artifact-contract-repair.phase58.diagram-prompts.task1` Embed exact Diagram Modules index/product-part templates and field reference text directly into first and repair prompts, then add prompt tests proving the text is inline rather than path-only; also audit Application Skeleton and Quality Gates prompt builders for the same first-prompt inline-template rule (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/quality-gates/**`; expected commit: `fix: embed managed artifact templates in prompts`).
 268. [TODO] Git Commit: `fix: embed managed artifact templates in prompts` (hash: TBD)

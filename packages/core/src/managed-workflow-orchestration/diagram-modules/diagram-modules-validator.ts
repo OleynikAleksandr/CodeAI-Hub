@@ -1,5 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { materializeModuleMapFromStagedProductPart } from "../../workflow/diagram-dsl/staged-product-part-parser";
 import {
   buildDiagramModulesProductPartContinuationPrompt,
   buildDiagramModulesUserReviewMessage,
@@ -60,10 +61,20 @@ const collectPlannedPartIds = (markdown: string): readonly string[] => {
   return partIds;
 };
 
-const productPartHasExpectedHeading = (
-  content: string,
-  partId: string
-): boolean => content.includes(`Product Part: ${partId}`);
+const validateGeneratedProductPart = (params: {
+  readonly content: string;
+  readonly partId: string;
+  readonly relativePath: string;
+}): string | null => {
+  const parsedPart = materializeModuleMapFromStagedProductPart(params.content);
+  if (!parsedPart.ok) {
+    return `Product Part artifact is not graph-renderable: ${params.relativePath}: line ${parsedPart.error.line}, ${parsedPart.error.message}`;
+  }
+  const actualPartId = parsedPart.value.productParts?.[0]?.id;
+  return actualPartId === params.partId
+    ? null
+    : `Product Part artifact id does not match planned id ${params.partId}: ${params.relativePath}`;
+};
 
 export const validateDiagramModulesManagedArtifacts = async (
   request: DiagramModulesManagedValidationRequest
@@ -125,10 +136,13 @@ export const validateDiagramModulesManagedArtifacts = async (
         valid: diagnostics.length === 0,
       };
     }
-    if (!productPartHasExpectedHeading(content, partId)) {
-      diagnostics.push(
-        `Product Part artifact has invalid heading: ${relativePath}`
-      );
+    const validationError = validateGeneratedProductPart({
+      content,
+      partId,
+      relativePath,
+    });
+    if (validationError) {
+      diagnostics.push(validationError);
       return {
         currentPartId: partId,
         diagnostics,

@@ -391,7 +391,26 @@ test("createSessionRequestHandlerRuntimeCore commits accepted Diagram Modules su
 
     await writeFile(
       path.join(diagramRoot, "product-parts/project-manager.md"),
-      "# Product Part: project-manager\n\n## Modules\n",
+      [
+        "# Product Part: Project Manager",
+        "",
+        "## Identity",
+        "",
+        "| Field | Value |",
+        "| --- | --- |",
+        "| Part ID | `project-manager` |",
+        "| Product Part | Project Manager |",
+        "",
+        "## Purpose",
+        "",
+        "Hosts the Project Manager UI.",
+        "",
+        "## Standalone Modules",
+        "",
+        "| `module-id` | Responsibility |",
+        "| --- | --- |",
+        "| `workflow-tree` | Renders workflow navigation. |",
+      ].join("\n"),
       "utf8"
     );
     runtime.providerEventRouter.handleProviderEvent(session.id, {

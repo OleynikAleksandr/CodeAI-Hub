@@ -1,25 +1,11 @@
+import { materializeModuleMapFromStagedProductPart } from "../../workflow/diagram-dsl/staged-product-part-parser";
+
 const DESCRIPTION_TITLE_RE = /^#\s+Description:/m;
 const VIRTUAL_SIMULATION_TITLE_RE = /^#\s+Virtual Simulation:/m;
-const DIAGRAM_MODULES_TITLE_RE = /^#\s+(?:Module Inventory|Product Part:)/m;
 const PRODUCT_PARTS_INDEX_TITLE_RE = /^#\s+Product Parts Index/m;
 const APPLICATION_SKELETON_TITLE_RE = /^#\s+Application Skeleton/m;
 const QUALITY_GATES_TITLE_RE = /^#\s+Quality Gates/m;
 const VIRTUAL_SIMULATION_SCENARIO_RE = /^##\s+(?:Сценарий|Scenario)\s+\d+\b/gm;
-const PRODUCT_PART_ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const PRODUCT_PART_FRONTMATTER_ID_RE =
-  /^-\s+`part_id`:\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/m;
-const PRODUCT_PART_FIELD_TABLE_ID_RE =
-  /^\|\s*Part ID\s*\|\s*`?([a-z0-9]+(?:-[a-z0-9]+)*)`?\s*\|$/m;
-const PRODUCT_PART_LEGACY_FIELD_ID_RE =
-  /^-\s+Part ID:\s*`?([a-z0-9]+(?:-[a-z0-9]+)*)`?\s*$/m;
-const PRODUCT_PART_CLUSTER_NODE_RE =
-  /^###\s+(?:Cluster(?:\s+\d+\.)?:?\s+)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
-const PRODUCT_PART_LEGACY_CLUSTER_NODE_RE =
-  /^###\s+Cluster(?:\s+\d+\.)?:?\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
-const PRODUCT_PART_MODULE_ROW_RE =
-  /^\|\s*(?:\d+\s*\|\s*)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*[^|\n]+?\s*\|[ \t]*$/gm;
-const PRODUCT_PART_LEGACY_MODULE_NODE_RE =
-  /^###\s+Module:\s+([a-z0-9]+(?:-[a-z0-9]+)*)\s*$/gm;
 const REQUIRED_QUALITY_GATE_ARRAY_KEYS = [
   "requiredBeforeCommit",
   "requiredBeforeModuleExecution",
@@ -126,65 +112,22 @@ const validateVirtualSimulation = (content: string): string | null => {
     : null;
 };
 
-const extractProductPartId = (content: string): string | null => {
-  for (const pattern of [
-    PRODUCT_PART_FRONTMATTER_ID_RE,
-    PRODUCT_PART_FIELD_TABLE_ID_RE,
-    PRODUCT_PART_LEGACY_FIELD_ID_RE,
-  ]) {
-    const partId = pattern.exec(content)?.[1]?.trim();
-    if (partId) {
-      return partId;
-    }
-  }
-  return null;
-};
-
-const countProductPartNodes = (content: string): number => {
-  let count = 0;
-  for (const pattern of [
-    PRODUCT_PART_CLUSTER_NODE_RE,
-    PRODUCT_PART_LEGACY_CLUSTER_NODE_RE,
-    PRODUCT_PART_MODULE_ROW_RE,
-    PRODUCT_PART_LEGACY_MODULE_NODE_RE,
-  ]) {
-    for (const match of content.matchAll(pattern)) {
-      const nodeId = match[1]?.trim();
-      if (nodeId && nodeId !== "module-id") {
-        count += 1;
-      }
-    }
-  }
-  return count;
-};
-
 const validateProductPartArtifact = (
   content: string,
   expectedPartId: string | undefined
 ): string | null => {
-  const headerError = validateRequiredHeader({
-    content,
-    emptyError: "Module inventory markdown is empty",
-    headerError:
-      "Module inventory markdown is missing '# Module Inventory' or '# Product Part:' header",
-    headerPattern: DIAGRAM_MODULES_TITLE_RE,
-  });
-  if (headerError) {
-    return headerError;
+  const parseResult = materializeModuleMapFromStagedProductPart(content);
+  if (!parseResult.ok) {
+    return parseResult.error.message;
   }
-  const partId = extractProductPartId(content);
+  const partId = parseResult.value.productParts?.[0]?.id;
   if (!partId) {
-    return "Product part markdown is missing required Part ID";
-  }
-  if (!PRODUCT_PART_ID_RE.test(partId)) {
-    return "Product part markdown has invalid Part ID";
+    return "Product part markdown did not materialize a Product Part identity";
   }
   if (expectedPartId && partId !== expectedPartId) {
     return `Product part markdown Part ID must match artifact path: ${expectedPartId}`;
   }
-  return countProductPartNodes(content) < 1
-    ? "Product part markdown must include at least one valid Cluster or Module node"
-    : null;
+  return null;
 };
 
 const validateApplicationSkeletonMap = (content: string): string | null => {
