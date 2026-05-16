@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "104a4460d",
+  "lastRecordedCommit": "537fc1bb7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.foundation-baseline.task3",
-  "expectedCommitMessage": "docs: verify skeleton foundation baseline repair",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-docs.task3",
+  "expectedCommitMessage": "docs: prepare skeleton foundation baseline release",
   "debt": {
-    "expectedCommitMessage": "docs: verify skeleton foundation baseline repair",
-    "preCommitHead": "104a4460d",
+    "expectedCommitMessage": "docs: prepare skeleton foundation baseline release",
+    "preCommitHead": "537fc1bb7",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.foundation-baseline.task3"
+    "taskId": "app-skeleton-foundation.phase7.release-docs.task3"
   }
 }
 ```
@@ -198,9 +198,10 @@
 61. [DONE] `app-skeleton-foundation.phase7.foundation-baseline.task3` Sync bundled Application Skeleton templates, run targeted validator/template/review tests plus core build, and record verification before the next release build (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton foundation baseline repair`).
    - Verification result (2026-05-16): regenerated bundled templates with `node scripts/generate-bundled-templates.js`; targeted Application Skeleton bundled-template, validator, framework-baseline, and managed review tests passed `20/20`.
    - Build result (2026-05-16): `npm run build --workspace @codeai-hub/core` passed.
-62. [PENDING] Git Commit: `docs: verify skeleton foundation baseline repair` (hash: TBD)
-63. [TODO] `app-skeleton-foundation.phase7.release-docs.task3` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton foundation baseline release`).
-64. [TODO] Git Commit: `docs: prepare skeleton foundation baseline release` (hash: TBD)
+62. [DONE] Git Commit: `docs: verify skeleton foundation baseline repair` (hash: 537fc1bb7)
+63. [DONE] `app-skeleton-foundation.phase7.release-docs.task3` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton foundation baseline release`).
+   - Release docs target (2026-05-16): prepared README/CHANGELOG for version `1.2.279`.
+64. [PENDING] Git Commit: `docs: prepare skeleton foundation baseline release` (hash: TBD)
 65. [TODO] `app-skeleton-foundation.phase7.release-build.task3` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton foundation baseline release artifacts`).
 66. [TODO] Git Commit: `chore: build skeleton foundation baseline release artifacts` (hash: TBD)
 67. [TODO] `app-skeleton-foundation.phase7.release-package.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton foundation baseline release package`).

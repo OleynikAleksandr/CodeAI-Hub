@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.279] - 2026-05-16
+### Fixed
+- **Application Skeleton now has a code-ready foundation baseline as its primary outcome.** The prompt and contract tell the agent to prepare the workspace for real implementation work, including concrete language/runtime/framework/package/build decisions and minimal source/config targets after acceptance.
+- **Framework decisions can no longer disappear behind empty arrays.** Core rejects `stack.frameworks: []` unless the draft also carries a framework/shell-specific dialogue question with a recommended option first.
+- **Unresolved framework prose is no longer accepted in Markdown.** Drafts that say the framework is not fixed, pending, TBD, unknown, or equivalent now fail validation instead of reaching review as a valid stack decision.
+- **The Product Part / Cluster / Module tree remains a Project Manager Development Tree mirror.** The prompt and contract preserve the exact Development Tree identity and hierarchy while still allowing conventional package metadata at accepted roots.
+
+### Tests
+- `npx tsx --test packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-framework-baseline-validator.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.278] - 2026-05-16
 ### Fixed
 - **Application Skeleton questions now belong to dialogue, not Markdown.** The provider prompt and contract define Markdown as the proposed/agreed decision artifact, keep JSON `openQuestions` as a Core signal, and require all unresolved decisions to be asked in chat.
