@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.270] - 2026-05-16
+### Fixed
+- **Diagram Modules review readiness now completes the Core workflow stage.** The Core-owned workflow read-model promotes `diagram_modules` from `in_progress` to `completed` when Diagram Modules progress reports `aggregateReady=true`, so Project Manager, future mobile clients, and any other client projection read the same completed state.
+- **Application Skeleton unlocks from the same Core snapshot.** The downstream gate now sees the aggregate-ready Diagram Modules handoff even when the stage was already running before the final Product Part was accepted.
+- **Adjacent managed terminal gates were rechecked.** Application Skeleton and Quality Gates continue to complete from Core-owned progress state (`materialized` / `integrated`) rather than Project Manager logic.
+
+### Tests
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress-state.test.ts packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts`
+- `npx tsx --test src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/services/workflow-state-change-token.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run plan:validate`
+
 ## [1.2.269] - 2026-05-16
 ### Fixed
 - **Diagram Modules prompts now carry the full artifact contract inline.** Core embeds the Product Parts index template, Product Part template, field reference, and merge rules directly into first/continuation/repair prompts instead of relying on path-only references.

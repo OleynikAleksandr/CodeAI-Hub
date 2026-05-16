@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "f3c21daf4",
+  "lastRecordedCommit": "e7181e95f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase66.verify.task1",
-  "expectedCommitMessage": "docs: verify diagram modules review gating repair",
+  "currentTaskId": "artifact-contract-repair.phase67.release.task1",
+  "expectedCommitMessage": "docs: prepare release 270 diagram review gating fix",
   "debt": {
-    "expectedCommitMessage": "docs: verify diagram modules review gating repair",
-    "preCommitHead": "f3c21daf4",
+    "expectedCommitMessage": "docs: prepare release 270 diagram review gating fix",
+    "preCommitHead": "e7181e95f",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase66.verify.task1"
+    "taskId": "artifact-contract-repair.phase67.release.task1"
   }
 }
 ```
@@ -1208,14 +1208,18 @@ Verification evidence recorded 2026-05-16:
     - PASS: `npm run build:webview`.
     - PASS: `npm run plan:validate`.
     - Coverage note: Diagram Modules now completes from `in_progress` when Core progress reports `aggregateReady=true`; Application Skeleton and Quality Gates terminal progress paths were rechecked and remain Core-owned terminal transitions from progress state rather than Project Manager logic.
-286. [PENDING] Git Commit: `docs: verify diagram modules review gating repair` (hash: TBD)
+286. [DONE] Git Commit: `docs: verify diagram modules review gating repair` (hash: e7181e95f)
 
 ## Phase 67 — Release 270 Build (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Release Preparation And Build
 
-287. [TODO] `artifact-contract-repair.phase67.release.task1` User explicitly requested a new release build after the Diagram Modules review gating repair; update release-facing docs for future version `1.2.270` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 270 diagram review gating fix`).
-288. [TODO] Git Commit: `docs: prepare release 270 diagram review gating fix` (hash: TBD)
+287. [DONE] `artifact-contract-repair.phase67.release.task1` User explicitly requested a new release build after the Diagram Modules review gating repair; update release-facing docs for future version `1.2.270` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 270 diagram review gating fix`).
+    - Current package version before release scripts: `1.2.269`.
+    - Future release version prepared in release-facing docs: `1.2.270`.
+    - `README.md` current-release banner updated to the Diagram Modules review gating repair.
+    - `CHANGELOG.md` release entry `1.2.270` added with Core read-model/gating fix and verification summary.
+288. [PENDING] Git Commit: `docs: prepare release 270 diagram review gating fix` (hash: TBD)
 289. [TODO] `artifact-contract-repair.phase67.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 270 diagram review gating fix`).
 290. [TODO] Git Commit: `chore: build release 270 diagram review gating fix` (hash: TBD)
 291. [TODO] `artifact-contract-repair.phase67.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 270 diagram review gating handoff`).
