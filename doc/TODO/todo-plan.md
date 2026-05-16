@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "0f8040b2c",
+  "lastRecordedCommit": "09f8ca9c0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase5.verify.task1",
-  "expectedCommitMessage": "docs: record application skeleton foundation verification",
+  "currentTaskId": "app-skeleton-foundation.phase6.docs.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton foundation release",
   "debt": {
-    "expectedCommitMessage": "docs: record application skeleton foundation verification",
-    "preCommitHead": "0f8040b2c",
+    "expectedCommitMessage": "docs: prepare application skeleton foundation release",
+    "preCommitHead": "09f8ca9c0",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase5.verify.task1"
+    "taskId": "app-skeleton-foundation.phase6.docs.task1"
   }
 }
 ```
@@ -105,18 +105,19 @@
 19. [DONE] `app-skeleton-foundation.phase5.verify.task1` Run targeted Application Skeleton managed workflow tests and `npm run build --workspace @codeai-hub/core`; record results and repair verification-only fixture drift if the new foundation contract exposes stale tests (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/application-skeleton-completion-observer.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`; expected commit: `docs: record application skeleton foundation verification`).
    - Verification result (2026-05-16): `npx tsx --test` across Application Skeleton managed workflow/progress/materialization/session/downstream suites passed `41/41`; initial run exposed stale progress/completion fixtures, which were updated to include the required installable foundation evidence.
    - Build result (2026-05-16): `npm run build --workspace @codeai-hub/core` passed after the Application Skeleton phase-state test fixture included `foundationReady`.
-20. [PENDING] Git Commit: `docs: record application skeleton foundation verification` (hash: TBD)
+20. [DONE] Git Commit: `docs: record application skeleton foundation verification` (hash: 09f8ca9c0)
 
 ## Phase 6 — Release Build (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Release Confirmation
 
-21. [TODO] `app-skeleton-foundation.phase6.confirm.task1` Stop after green targeted verification and ask the user for explicit release build confirmation. Do not update README/CHANGELOG for a future version and do not run release scripts until the user confirms. Scope: release confirmation gate only; expected commit: none.
+21. [DONE] `app-skeleton-foundation.phase6.confirm.task1` Stop after green targeted verification and ask the user for explicit release build confirmation. Do not update README/CHANGELOG for a future version and do not run release scripts until the user confirms. Scope: release confirmation gate only; expected commit: none. Result: User explicitly requested release build in this turn: Реализуй планы, собери новый релиз и после этого отчитайся передо мной.
 
 ### Stream: Release Notes Preparation
 
-22. [TODO] `app-skeleton-foundation.phase6.docs.task1` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton foundation release`).
-23. [TODO] Git Commit: `docs: prepare application skeleton foundation release` (hash: TBD)
+22. [DONE] `app-skeleton-foundation.phase6.docs.task1` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton foundation release`).
+   - Release docs prepared for future version `1.2.276` before running `./scripts/build-all.sh`.
+23. [PENDING] Git Commit: `docs: prepare application skeleton foundation release` (hash: TBD)
 
 ### Stream: Unified Artifact Build
 

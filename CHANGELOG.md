@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.276] - 2026-05-16
+### Changed
+- **Application Skeleton now requires an installable project foundation.** The provider-facing prompt and Core validators require stack/package/workspace decisions, empty `openQuestions`, deterministic install metadata, required scripts, config files, and first-wave production entrypoints before materialization can complete.
+- **Downstream readiness now depends on `foundationReady`.** Quality Gates and Development Tree readiness stay locked when Application Skeleton output is only a folder outline or has incomplete foundation evidence.
+
+### Tests
+- `npx tsx --test packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress-state.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-premature-materialization-validator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-completion-observer.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-in-progress-materialization.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.275] - 2026-05-16
 ### Changed
 - **Fresh retest release for the merged Core managed orchestrator baseline.** Rebuilds the current `main` branch after the large orchestrator merge under a new package version so the merged workflow can be installed and tested without reusing the previous release identity.

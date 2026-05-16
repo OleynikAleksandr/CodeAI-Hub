@@ -2,17 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.275** (Merged orchestrator retest build)
+**Current Release — v1.2.276** (Application Skeleton foundation gate)
 
-This release rebuilds the current `main` baseline after the large Core managed
-orchestrator merge under a fresh version so the merged workflow can be installed
-and retested from a clean package identity.
+This release hardens the Application Skeleton managed workflow so the step
+produces and validates an installable project foundation before Quality Gates or
+Development Tree work can proceed.
 
-All five documentation trunk steps are now routed through the replacement
-Managed Workflow Orchestration boundary. `Description` and `Virtual Simulation`
-remain provider-direct, while `Diagram Modules`, `Application Skeleton`, and
-`Quality Gates` run through Core-owned managed dispatch, validation, commit,
-review, and continuation flow.
+Application Skeleton drafts now require explicit stack/package/workspace
+decisions, a closed `openQuestions` list, deterministic install metadata,
+required scripts, config files, and first-wave production entrypoints. Core
+validates the materialized filesystem evidence before marking the skeleton
+ready, and downstream gates stay locked on incomplete foundations instead of
+trusting `materialized: true` alone.
 
 Repository lifecycle tooling under `scripts/plan-orchestrator/**` remains in
 place because it powers `npm run plan:*` and the Husky plan hooks for this code
