@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "27b2f7d02",
+  "lastRecordedCommit": "568206e10",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase72.package.task1",
-  "expectedCommitMessage": "docs: record release 272 managed git checkpoint repair",
+  "currentTaskId": "managed-git-checkpoint.phase74.plan.task1",
+  "expectedCommitMessage": "docs: open release 272 checkpoint hygiene repair",
   "debt": {
-    "expectedCommitMessage": "docs: record release 272 managed git checkpoint repair",
-    "preCommitHead": "27b2f7d02",
+    "expectedCommitMessage": "docs: open release 272 checkpoint hygiene repair",
+    "preCommitHead": "568206e10",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase72.package.task1"
+    "taskId": "managed-git-checkpoint.phase74.plan.task1"
   }
 }
 ```
@@ -1316,10 +1316,36 @@ Verification evidence recorded 2026-05-16:
 ### Stream: VSIX Package
 
 324. [DONE] `managed-git-checkpoint.phase72.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 272 managed git checkpoint repair`). Evidence: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`. VSIX package: `codeai-hub-1.2.272.vsix` (`48M`). Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.272.tar.bz2`, `codex-module-1.2.272.tar.bz2`, `gemini-module-1.2.272.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.272.tar.bz2`, `vscode-webview-1.2.272.tar.bz2`, `project-manager-1.2.272.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.272.tar.bz2`. Advisory warnings: markdown link checker reported 17 existing planning-document anchor issues; package size warning reported `48M`; neither warning blocked packaging or runtime surface verification.
-325. [PENDING] Git Commit: `docs: record release 272 managed git checkpoint repair` (hash: TBD)
+325. [DONE] Git Commit: `docs: record release 272 managed git checkpoint repair` (hash: 568206e10)
 
 ## Phase 73 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
 
 ### Stream: Release Retest Handoff
 
-326. [TODO] `managed-git-checkpoint.phase73.user-acceptance.task1` User installs and retests release `1.2.272`: Diagram Modules must checkpoint initial managed inputs, each Diagram Modules/Application Skeleton/Quality Gates managed artifact or review transition must leave Core-owned ledgers committed, Application Skeleton must stay available after Diagram Modules, and Quality Gates completion must unlock development tree cards without dirty managed ledger blockers (scope: user workflow; expected commit: none).
+326. [BLOCKED] `managed-git-checkpoint.phase73.user-acceptance.task1` User installs and retests release `1.2.272`: Diagram Modules must checkpoint initial managed inputs, each Diagram Modules/Application Skeleton/Quality Gates managed artifact or review transition must leave Core-owned ledgers committed, Application Skeleton must stay available after Diagram Modules, and Quality Gates completion must unlock development tree cards without dirty managed ledger blockers (scope: user workflow; expected commit: none). **BLOCKED 2026-05-16:** Phase 0 checkpoint appeared, but its paired `Git Commit: docs: checkpoint managed workflow inputs` line stayed `[TODO]` despite hash `b04ed59`; the retest workspace also kept dirty `.DS_Store`, continuity chain/index, and `.codeai-hub/<workspace>/workflow/state.json` files after Diagram Modules reached review.
+
+## Phase 74 — Release 272 Checkpoint Hygiene Repair (owner: Codex, updated: 2026-05-16)
+
+### Stream: Retest Intake
+
+327. [DONE] `managed-git-checkpoint.phase74.plan.task1` Record the `1.2.272` retest blocker and open a bounded Core repair stream for Phase 0 commit-pair status, macOS `.DS_Store` cleanup, and managed continuity/workflow-state Git hygiene (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open release 272 checkpoint hygiene repair`).
+328. [PENDING] Git Commit: `docs: open release 272 checkpoint hygiene repair` (hash: TBD)
+
+### Stream: Phase 0 Git Pair And macOS Metadata
+
+329. [TODO] `managed-git-checkpoint.phase74.phase0.task1` Mark the Diagram Modules Phase 0 paired Git Commit line as `DONE` when Core records the checkpoint hash, and remove `.DS_Store` files before managed Git commits so macOS metadata cannot remain dirty or enter managed commits (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: close diagram modules checkpoint git pair`).
+330. [TODO] Git Commit: `fix: close diagram modules checkpoint git pair` (hash: TBD)
+
+### Stream: Managed Runtime Metadata Ledger
+
+331. [TODO] `managed-git-checkpoint.phase74.runtime-metadata.task1` Include Core-owned continuity and workflow state metadata in managed ledger commits so Diagram Modules accepted turns leave Git clean after provider/session metadata updates (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit managed runtime metadata ledgers`).
+332. [TODO] Git Commit: `fix: commit managed runtime metadata ledgers` (hash: TBD)
+
+### Stream: Verification
+
+333. [TODO] `managed-git-checkpoint.phase74.verify.task1` Run targeted checkpoint/metadata Git hygiene regressions plus Core and Project Manager gating checks, then stop for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 272 checkpoint hygiene repair`).
+334. [TODO] Git Commit: `docs: verify release 272 checkpoint hygiene repair` (hash: TBD)
+
+### Stream: Release Build Confirmation
+
+335. [TODO] `managed-git-checkpoint.phase74.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none).
