@@ -8,15 +8,15 @@
   "planId": "main-merge-release-retest-1.2.275",
   "branch": "main",
   "baseHead": "39d486a8d",
-  "lastRecordedCommit": "716722ab8",
+  "lastRecordedCommit": "4606dab88",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Main_Merge_Release_Verification_1.2.275.md",
-  "currentTaskId": "main-merge-release.phase2.build.task1",
-  "expectedCommitMessage": "chore: build 1.2.275 release artifacts",
+  "currentTaskId": "main-merge-release.phase2.package.task1",
+  "expectedCommitMessage": "docs: record 1.2.275 release package",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.275 release artifacts",
-    "preCommitHead": "716722ab8",
+    "expectedCommitMessage": "docs: record 1.2.275 release package",
+    "preCommitHead": "4606dab88",
     "stage": "commit_pending",
-    "taskId": "main-merge-release.phase2.build.task1"
+    "taskId": "main-merge-release.phase2.package.task1"
   }
 }
 ```
@@ -60,12 +60,12 @@
 ### Stream: Unified Artifact Build
 
 5. [DONE] `main-merge-release.phase2.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify version and runtime tarball outputs, and commit generated version and manifest changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.275 release artifacts`). Result: `./scripts/build-all.sh --allow-dirty --version 1.2.275` passed with only machine-managed active plan state dirty before the build; root, Core, and provider package versions report `1.2.275`; generated tarballs exist under `doc/tmp/releases/` and `~/.codeai-hub/releases/` for Claude, Codex, Gemini, Core darwin-arm64, CEF launcher macos-arm64, vscode-webview, and project-manager.
-6. [PENDING] Git Commit: `chore: build 1.2.275 release artifacts` (hash: TBD)
+6. [DONE] Git Commit: `chore: build 1.2.275 release artifacts` (hash: 4606dab88)
 
 ### Stream: VSIX Packaging
 
-7. [TODO] `main-merge-release.phase2.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions, dev dependency prune/restore, VSIX creation, and record release handoff evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.275 release package`).
-8. [TODO] Git Commit: `docs: record 1.2.275 release package` (hash: TBD)
+7. [DONE] `main-merge-release.phase2.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions, dev dependency prune/restore, VSIX creation, and record release handoff evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.275 release package`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.275`; the only pre-build dirty file was the machine-managed active `doc/TODO/todo-plan.md` transition after the release artifact commit. Required release markers were present: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`. Release gates passed inside `build-release`: bundled template generation/coverage, `npm run build:webview`, `./scripts/check-architecture.sh`, `npx tsc -p . --noEmit`, `npm run compile`, SDK exclusions, local artifact validation, `npm run check:links`, duplication check at 2.7%, production dependency prune/restore, and VSIX runtime package surface verification. Generated VSIX: `codeai-hub-1.2.275.vsix` (48M). Fresh local tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+8. [PENDING] Git Commit: `docs: record 1.2.275 release package` (hash: TBD)
 
 ## Phase 3 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-16)
 
