@@ -19,6 +19,7 @@ const APPLICATION_SKELETON_BOOTSTRAP_TASK_ID =
   "application-skeleton.phase1.bootstrap.task1";
 const APPLICATION_SKELETON_STAGE_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
+const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const QUALITY_GATES_STAGE = "quality_gates";
 const QUALITY_GATES_BOOTSTRAP_TASK_ID = "quality-gates.phase1.bootstrap.task1";
 const QUALITY_GATES_STAGE_PLAN_PATH =
@@ -339,6 +340,12 @@ export class SessionRequestHandlerSessionResolution {
     await this.scaffoldInstaller.installDiagramModulesScaffold({
       workspaceRoot: options.workspacePath,
     });
+    if (stageId === DIAGRAM_MODULES_STAGE) {
+      await this.scaffoldInstaller.checkpointDiagramModulesInputs({
+        workspaceRoot: options.workspacePath,
+        workspaceSlug,
+      });
+    }
     if (
       stageId === APPLICATION_SKELETON_STAGE &&
       (await this.shouldOpenApplicationSkeletonDraft(options.workspacePath))

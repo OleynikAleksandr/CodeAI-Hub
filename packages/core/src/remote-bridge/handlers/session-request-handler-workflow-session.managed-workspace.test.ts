@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session } from "../../session-manager";
 import { SessionManager } from "../../session-manager";
@@ -10,6 +12,8 @@ import type { Logger } from "../../telemetry/logger";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 import { SessionRequestHandlerSessionResolution } from "./session-request-handler-session-resolution";
 import { SessionRequestHandlerWorkflowSession } from "./session-request-handler-workflow-session";
+
+const execFileAsync = promisify(execFile);
 
 type CreateAndRegisterSessionArgs = Parameters<
   SessionRequestHandlerSessionBootstrap["createAndRegisterSession"]
@@ -25,6 +29,8 @@ const APPLICATION_SKELETON_DRAFT_TASK_RE =
 const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /"expectedCommitMessage": "docs: draft application skeleton contract"/u;
 const DIAGRAM_MODULES_INDEX_TASK_RE = /diagram-modules\.phase1\.index\.task1/u;
+const INPUT_CHECKPOINT_SUBJECT_RE = /docs: checkpoint managed workflow inputs/u;
+const LEDGER_SUBJECT_RE = /chore: advance managed workflow ledger/u;
 const MANAGED_WORKSPACE_PLAN_RE = /Managed workspace plan/u;
 
 const createLogger = (warnings: unknown[] = []): Logger =>
@@ -147,6 +153,19 @@ test("Diagram Modules managed start creates workspace scaffold before provider d
       "node ./scripts/plan-orchestrator/plan-cli.mjs validate"
     );
     await readFile(path.join(workspacePath, ".husky/pre-commit"), "utf8");
+    const { stdout: status } = await execFileAsync(
+      "git",
+      ["status", "--short"],
+      { cwd: workspacePath }
+    );
+    const { stdout: subjects } = await execFileAsync(
+      "git",
+      ["log", "--format=%s"],
+      { cwd: workspacePath }
+    );
+    assert.equal(status.trim(), "");
+    assert.match(subjects, INPUT_CHECKPOINT_SUBJECT_RE);
+    assert.match(subjects, LEDGER_SUBJECT_RE);
   } finally {
     await rm(workspacePath, { force: true, recursive: true });
   }

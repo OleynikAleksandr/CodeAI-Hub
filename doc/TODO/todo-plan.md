@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "a79d74f3b",
+  "lastRecordedCommit": "aa7e7ad5a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase71.diagram.task1",
-  "expectedCommitMessage": "feat: checkpoint managed workflow inputs before diagram modules",
+  "currentTaskId": "managed-git-checkpoint.phase71.start.task1",
+  "expectedCommitMessage": "feat: enforce clean git before managed workflow starts",
   "debt": {
-    "expectedCommitMessage": "feat: checkpoint managed workflow inputs before diagram modules",
-    "preCommitHead": "a79d74f3b",
+    "expectedCommitMessage": "feat: enforce clean git before managed workflow starts",
+    "preCommitHead": "aa7e7ad5a",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase71.diagram.task1"
+    "taskId": "managed-git-checkpoint.phase71.start.task1"
   }
 }
 ```
@@ -1279,10 +1279,10 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Diagram Modules Input Checkpoint
 
 309. [DONE] `managed-git-checkpoint.phase71.diagram.task1` Add a Core-owned Diagram Modules Phase 0 input checkpoint that commits Description/Virtual Simulation artifacts plus Core scaffold before the first Product Parts index prompt is dispatched (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: checkpoint managed workflow inputs before diagram modules`). Evidence: `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` — PASS, 3 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression proves the generated Diagram Modules plan starts with Phase 0 `docs: checkpoint managed workflow inputs`, commits Description/Virtual Simulation plus scaffold, then Core commits `chore: advance managed workflow ledger`, leaves Git clean, and only then advances to `diagram-modules.phase1.index.task1`.
-310. [PENDING] Git Commit: `feat: checkpoint managed workflow inputs before diagram modules` (hash: TBD)
+310. [DONE] Git Commit: `feat: checkpoint managed workflow inputs before diagram modules` (hash: aa7e7ad5a)
 
-311. [TODO] `managed-git-checkpoint.phase71.start.task1` Invoke the Diagram Modules input checkpoint from both managed workflow session start paths before provider dispatch or continuity session reuse can send the first agent prompt (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `feat: enforce clean git before managed workflow starts`).
-312. [TODO] Git Commit: `feat: enforce clean git before managed workflow starts` (hash: TBD)
+311. [DONE] `managed-git-checkpoint.phase71.start.task1` Invoke the Diagram Modules input checkpoint from both managed workflow session start paths before provider dispatch or continuity session reuse can send the first agent prompt (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `feat: enforce clean git before managed workflow starts`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` — PASS, 6 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression proves Diagram Modules managed start runs the checkpoint before provider dispatch, creates `docs: checkpoint managed workflow inputs` and `chore: advance managed workflow ledger`, and leaves the workspace Git clean before the session is created.
+312. [PENDING] Git Commit: `feat: enforce clean git before managed workflow starts` (hash: TBD)
 
 ### Stream: Ledger Advancement Boundary
 
