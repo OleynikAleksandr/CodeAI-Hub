@@ -8,15 +8,15 @@
   "planId": "main-merge-release-retest-1.2.275",
   "branch": "main",
   "baseHead": "39d486a8d",
-  "lastRecordedCommit": "abb776146",
+  "lastRecordedCommit": "716722ab8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Main_Merge_Release_Verification_1.2.275.md",
-  "currentTaskId": "main-merge-release.phase1.docs.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.275 merged orchestrator retest release",
+  "currentTaskId": "main-merge-release.phase2.build.task1",
+  "expectedCommitMessage": "chore: build 1.2.275 release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.275 merged orchestrator retest release",
-    "preCommitHead": "abb776146",
+    "expectedCommitMessage": "chore: build 1.2.275 release artifacts",
+    "preCommitHead": "716722ab8",
     "stage": "commit_pending",
-    "taskId": "main-merge-release.phase1.docs.task1"
+    "taskId": "main-merge-release.phase2.build.task1"
   }
 }
 ```
@@ -53,14 +53,14 @@
 ### Stream: User-Facing Release Docs
 
 3. [DONE] `main-merge-release.phase1.docs.task1` Update README and CHANGELOG for the future `1.2.275` retest release before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.275 merged orchestrator retest release`). Result: README and CHANGELOG now describe `1.2.275` as a fresh merged orchestrator retest build before release automation bumps package manifests.
-4. [PENDING] Git Commit: `docs: prepare 1.2.275 merged orchestrator retest release` (hash: TBD)
+4. [DONE] Git Commit: `docs: prepare 1.2.275 merged orchestrator retest release` (hash: 716722ab8)
 
 ## Phase 2 — Release Build (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Unified Artifact Build
 
-5. [TODO] `main-merge-release.phase2.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify version and runtime tarball outputs, and commit generated version and manifest changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.275 release artifacts`).
-6. [TODO] Git Commit: `chore: build 1.2.275 release artifacts` (hash: TBD)
+5. [DONE] `main-merge-release.phase2.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify version and runtime tarball outputs, and commit generated version and manifest changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.275 release artifacts`). Result: `./scripts/build-all.sh --allow-dirty --version 1.2.275` passed with only machine-managed active plan state dirty before the build; root, Core, and provider package versions report `1.2.275`; generated tarballs exist under `doc/tmp/releases/` and `~/.codeai-hub/releases/` for Claude, Codex, Gemini, Core darwin-arm64, CEF launcher macos-arm64, vscode-webview, and project-manager.
+6. [PENDING] Git Commit: `chore: build 1.2.275 release artifacts` (hash: TBD)
 
 ### Stream: VSIX Packaging
 
