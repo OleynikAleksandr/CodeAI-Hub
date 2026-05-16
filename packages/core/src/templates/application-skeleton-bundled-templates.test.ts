@@ -10,7 +10,8 @@ const BEFORE_ACCEPTANCE_RE = /Before explicit user acceptance/;
 const NO_PRODUCTION_FILES_RE = /Do not create production files/;
 const MATERIALIZED_TRUE_RE = /materialized: true/;
 const QUALITY_GATES_START_RE = /ready for Quality Gates Baseline/;
-const INSTALLABLE_FOUNDATION_RE = /complete installable project foundation/;
+const INSTALLABLE_FOUNDATION_RE =
+  /complete installable and buildable project foundation/;
 const NO_QUALITY_GATE_PRODUCTS_RE =
   /(?:Do not choose or integrate quality-gate products|quality-gate product selection or integration)/;
 const NO_MATERIALIZE_WITH_OPEN_QUESTIONS_RE =
@@ -40,6 +41,12 @@ const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
 const PLAN_STATUS_COMMAND_RE = /npm run plan:status/;
 const NO_AD_HOC_DIAGNOSTICS_RE =
   /Do not run Python, Node, jq, git, plan, or other ad hoc diagnostic commands/;
+const CODE_WRITING_WORKSPACE_RE =
+  /prepare the workspace for real code writing/u;
+const DEVELOPMENT_TREE_MIRROR_RE =
+  /mirrors the Project Manager Development Tree exactly/u;
+const CONCRETE_FRAMEWORK_BASELINE_RE =
+  /propose concrete framework\/runtime baselines/u;
 const MARKDOWN_IS_DECISION_ARTIFACT_RE =
   /The Markdown artifact is for the proposed and agreed project foundation/;
 const QUESTIONS_ONLY_IN_DIALOGUE_RE =
@@ -49,7 +56,7 @@ const NO_MARKDOWN_QUESTIONNAIRE_RE =
 const RECOMMENDED_BASELINE_RE =
   /Use upstream facts to propose a recommended baseline/;
 const TECHNOLOGY_HINTS_RE =
-  /Treat explicit upstream technology hints, such as a named shell, launcher, runtime, framework, package format, or deployment target, as strong baseline evidence/;
+  /Treat explicit upstream technology hints, such as a named shell, launcher, runtime, framework, package format, client surface, desktop shell, webview, UI, frontend, API server, or deployment target, as strong baseline evidence/;
 const CONFIRMATION_STYLE_RE =
   /confirmation question with the recommended option first/;
 const LOCALIZED_DRAFT_RESPONSE_RE =
@@ -106,6 +113,11 @@ const CONTRACT_TECHNOLOGY_HINTS_RE =
   /Explicit upstream technology hints, such as named shell, launcher, runtime, framework, package format, or deployment target, must be treated as strong baseline evidence/;
 const CONTRACT_CORE_LIFECYCLE_OWNER_RE =
   /Git, hooks, workspace plan state, active stage todo-plan state.*are not skeleton materialization output/;
+const CONTRACT_CODE_READY_RE = /code-ready installable project foundation/u;
+const CONTRACT_FRAMEWORK_SURFACES_RE =
+  /visible implementation surfaces such as Project Manager, launcher, desktop shell, webview, frontend/u;
+const CONTRACT_DEVELOPMENT_TREE_MIRROR_RE =
+  /filesystem must mirror the Project Manager Development Tree/u;
 const CONTRACT_MARKDOWN_DECISION_ARTIFACT_RE =
   /Markdown records the proposed and agreed project foundation/;
 const CONTRACT_QUESTIONS_IN_DIALOGUE_RE =
@@ -157,6 +169,9 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.doesNotMatch(prompt, WORKSPACE_PLAN_PATH_RE);
   assert.doesNotMatch(prompt, PLAN_STATUS_COMMAND_RE);
   assert.match(prompt, NO_AD_HOC_DIAGNOSTICS_RE);
+  assert.match(prompt, CODE_WRITING_WORKSPACE_RE);
+  assert.match(prompt, DEVELOPMENT_TREE_MIRROR_RE);
+  assert.match(prompt, CONCRETE_FRAMEWORK_BASELINE_RE);
   assert.match(prompt, MARKDOWN_IS_DECISION_ARTIFACT_RE);
   assert.match(prompt, QUESTIONS_ONLY_IN_DIALOGUE_RE);
   assert.match(prompt, NO_MARKDOWN_QUESTIONNAIRE_RE);
@@ -211,6 +226,9 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, PRODUCT_PARTS_ROOT_RE);
   assert.match(contract, CONTRACT_TECHNOLOGY_HINTS_RE);
   assert.match(contract, CONTRACT_CORE_LIFECYCLE_OWNER_RE);
+  assert.match(contract, CONTRACT_CODE_READY_RE);
+  assert.match(contract, CONTRACT_FRAMEWORK_SURFACES_RE);
+  assert.match(contract, CONTRACT_DEVELOPMENT_TREE_MIRROR_RE);
   assert.match(contract, CONTRACT_MARKDOWN_DECISION_ARTIFACT_RE);
   assert.match(contract, CONTRACT_QUESTIONS_IN_DIALOGUE_RE);
   assert.match(contract, CONTRACT_NO_QUESTIONNAIRE_RE);

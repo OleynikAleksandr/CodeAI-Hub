@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "68bdd9b8e",
+  "lastRecordedCommit": "104a4460d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.foundation-baseline.task2",
-  "expectedCommitMessage": "fix: validate skeleton framework baseline decisions",
+  "currentTaskId": "app-skeleton-foundation.phase7.foundation-baseline.task3",
+  "expectedCommitMessage": "docs: verify skeleton foundation baseline repair",
   "debt": {
-    "expectedCommitMessage": "fix: validate skeleton framework baseline decisions",
-    "preCommitHead": "68bdd9b8e",
+    "expectedCommitMessage": "docs: verify skeleton foundation baseline repair",
+    "preCommitHead": "104a4460d",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.foundation-baseline.task2"
+    "taskId": "app-skeleton-foundation.phase7.foundation-baseline.task3"
   }
 }
 ```
@@ -194,9 +194,11 @@
 57. [DONE] `app-skeleton-foundation.phase7.foundation-baseline.task1` Strengthen Application Skeleton prompt/contract around the primary outcome: prepare a code-ready installable workspace foundation, propose concrete framework/runtime baselines for visible shell/frontend/launcher surfaces, and keep the materialized filesystem as a mirror of the Project Manager Development Tree Product Part / Cluster / Module structure (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md`; expected commit: `fix: require concrete application skeleton foundation baseline`).
 58. [DONE] Git Commit: `fix: require concrete application skeleton foundation baseline` (hash: 68bdd9b8e)
 59. [DONE] `app-skeleton-foundation.phase7.foundation-baseline.task2` Tighten Core draft validation so empty framework lists require a framework/shell-specific dialogue question and Markdown cannot present unresolved framework placeholders as a valid stack decision (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/*framework-baseline*.test.ts`; expected commit: `fix: validate skeleton framework baseline decisions`).
-60. [PENDING] Git Commit: `fix: validate skeleton framework baseline decisions` (hash: TBD)
-61. [TODO] `app-skeleton-foundation.phase7.foundation-baseline.task3` Sync bundled Application Skeleton templates, run targeted validator/template/review tests plus core build, and record verification before the next release build (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton foundation baseline repair`).
-62. [TODO] Git Commit: `docs: verify skeleton foundation baseline repair` (hash: TBD)
+60. [DONE] Git Commit: `fix: validate skeleton framework baseline decisions` (hash: 104a4460d)
+61. [DONE] `app-skeleton-foundation.phase7.foundation-baseline.task3` Sync bundled Application Skeleton templates, run targeted validator/template/review tests plus core build, and record verification before the next release build (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton foundation baseline repair`).
+   - Verification result (2026-05-16): regenerated bundled templates with `node scripts/generate-bundled-templates.js`; targeted Application Skeleton bundled-template, validator, framework-baseline, and managed review tests passed `20/20`.
+   - Build result (2026-05-16): `npm run build --workspace @codeai-hub/core` passed.
+62. [PENDING] Git Commit: `docs: verify skeleton foundation baseline repair` (hash: TBD)
 63. [TODO] `app-skeleton-foundation.phase7.release-docs.task3` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton foundation baseline release`).
 64. [TODO] Git Commit: `docs: prepare skeleton foundation baseline release` (hash: TBD)
 65. [TODO] `app-skeleton-foundation.phase7.release-build.task3` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton foundation baseline release artifacts`).
