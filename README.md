@@ -2,17 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.281** (Application Skeleton Git hygiene and nested map audit)
+**Current Release — v1.2.282** (Application Skeleton agent-owned review and Git boundary repair)
 
-This release fixes the Application Skeleton Git hygiene and nested map issues
-found during the `1.2.280` acceptance retest.
+This release fixes the Application Skeleton review ownership and managed Git
+boundary issues found during the `1.2.281` acceptance retest.
 
-Application Skeleton now requires a root `.gitignore` before install/build
-readiness can be claimed, keeps generated outputs such as `node_modules/` and
-package `dist/` directories local and untracked, and rejects
-`materializedPaths` that list generated install/build output. Core also rejects a
-flat `productParts` map: the JSON must preserve the Product Part -> Cluster ->
-Module tree that Project Manager owns.
+Application Skeleton review dialogue now stays agent-owned: Core validates the
+contract and dispatches repair/review prompts internally without posting
+duplicate user-facing question messages. Managed Git staging also filters
+generated output paths such as `node_modules/`, `dist/`, `build/`, and
+`coverage/` before `git add`, so ignored install/build outputs do not block
+materialization commits.
 
 Repository lifecycle tooling under `scripts/plan-orchestrator/**` remains in
 place because it powers `npm run plan:*` and the Husky plan hooks for this code

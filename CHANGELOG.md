@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.282] - 2026-05-16
+### Fixed
+- **Application Skeleton review dialogue remains agent-owned.** Core no longer publishes duplicate visible review-question messages while the agent is clarifying `openQuestions`; user answers are routed back to the active review task through an internal repair/review prompt.
+- **Managed Git commits no longer stage ignored generated outputs as positive paths.** The commit boundary filters `node_modules`, `dist`, `build`, and `coverage` before `git add` and keeps safe glob excludes for broad managed roots.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.281] - 2026-05-16
 ### Fixed
 - **Application Skeleton now enforces Git hygiene for generated outputs.** The prompt and contract require a root `.gitignore` before install/build readiness, and Core rejects missing ignore coverage for npm install output and TypeScript build output.
