@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "0fb97255b",
+  "lastRecordedCommit": "f829f443d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase64.package.task1",
-  "expectedCommitMessage": "docs: record core artifact contract repair release",
+  "currentTaskId": "artifact-contract-repair.phase65.user-acceptance.task1",
+  "expectedCommitMessage": "docs: record core artifact contract release acceptance",
   "debt": {
-    "expectedCommitMessage": "docs: record core artifact contract repair release",
-    "preCommitHead": "0fb97255b",
+    "expectedCommitMessage": "docs: record core artifact contract release acceptance",
+    "preCommitHead": "f829f443d",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase64.package.task1"
+    "taskId": "artifact-contract-repair.phase65.user-acceptance.task1"
   }
 }
 ```
@@ -1180,11 +1180,40 @@ Verification evidence recorded 2026-05-16:
     - VSIX package: `codeai-hub-1.2.269.vsix` (`48M`).
     - Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.269.tar.bz2`, `codex-module-1.2.269.tar.bz2`, `gemini-module-1.2.269.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.269.tar.bz2`, `vscode-webview-1.2.269.tar.bz2`, `project-manager-1.2.269.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.269.tar.bz2`.
     - Advisory release warnings: markdown link checker reported 17 planning-document anchor issues; package size warning reported `48M`. Neither warning blocked packaging or runtime surface verification.
-280. [PENDING] Git Commit: `docs: record core artifact contract repair release` (hash: TBD)
+280. [DONE] Git Commit: `docs: record core artifact contract repair release` (hash: f829f443d)
 
 ## Phase 65 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
 
 ### Stream: Release Retest Handoff
 
-281. [TODO] `artifact-contract-repair.phase65.user-acceptance.task1` User installs and retests the `1.2.269` release package; scope stays ACTIVE until explicit release acceptance or new failure report (scope: `user workflow`; expected commit: `docs: record core artifact contract release acceptance`).
-282. [TODO] Git Commit: `docs: record core artifact contract release acceptance` (hash: TBD)
+281. [DONE] `artifact-contract-repair.phase65.user-acceptance.task1` User installs and retests the `1.2.269` release package; scope stays ACTIVE until explicit release acceptance or new failure report (scope: `user workflow`; expected commit: `docs: record core artifact contract release acceptance`). Result: release `1.2.269` is not accepted. Diagram Modules now reaches the Core user-review handoff with valid Product Part artifacts and a correct managed stage plan, but the Core-owned workflow read-model still leaves the root stage effectively incomplete for downstream gating, so Application Skeleton remains blocked.
+282. [PENDING] Git Commit: `docs: record core artifact contract release acceptance` (hash: TBD)
+
+## Phase 66 — Diagram Modules Review Completion Gating Repair (owner: Codex, updated: 2026-05-16)
+
+### Stream: Core Read-Model And Gating Projection
+
+283. [TODO] `artifact-contract-repair.phase66.diagram-completion.task1` Fix the Core-owned Diagram Modules workflow read-model so aggregate-ready user-review handoff can promote an already in-progress stage to completed, unlock Application Skeleton, and remain client-agnostic for Project Manager, mobile, and future clients; also add regression coverage and audit the other trunk stages for the same terminal-transition class (scope: `packages/core/src/remote-bridge/handlers/workflow-state-diagram-modules-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete diagram modules from review progress`).
+284. [TODO] Git Commit: `fix: complete diagram modules from review progress` (hash: TBD)
+
+### Stream: Verification
+
+285. [TODO] `artifact-contract-repair.phase66.verify.task1` Run targeted Core/PM workflow gating checks plus package builds, record evidence, and keep release scope active for the new build requested by the user (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules review gating repair`).
+286. [TODO] Git Commit: `docs: verify diagram modules review gating repair` (hash: TBD)
+
+## Phase 67 — Release 270 Build (owner: Codex, updated: 2026-05-16)
+
+### Stream: Release Preparation And Build
+
+287. [TODO] `artifact-contract-repair.phase67.release.task1` User explicitly requested a new release build after the Diagram Modules review gating repair; update release-facing docs for future version `1.2.270` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 270 diagram review gating fix`).
+288. [TODO] Git Commit: `docs: prepare release 270 diagram review gating fix` (hash: TBD)
+289. [TODO] `artifact-contract-repair.phase67.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 270 diagram review gating fix`).
+290. [TODO] Git Commit: `chore: build release 270 diagram review gating fix` (hash: TBD)
+291. [TODO] `artifact-contract-repair.phase67.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 270 diagram review gating handoff`).
+292. [TODO] Git Commit: `docs: record release 270 diagram review gating handoff` (hash: TBD)
+
+## Phase 68 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
+
+### Stream: Release Retest Handoff
+
+293. [TODO] `artifact-contract-repair.phase68.user-acceptance.task1` User installs and retests release `1.2.270`: Diagram Modules must turn green after Core opens user review, Application Skeleton must become available from the same Core-owned snapshot, and downstream Application Skeleton / Quality Gates completion gates must still rely only on Core-owned progress state (scope: `user workflow`; expected commit: none).
