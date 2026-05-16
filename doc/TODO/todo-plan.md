@@ -6,7 +6,7 @@
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "NONE",
   "planId": "solidworks-workflow-docs-relevance-audit-2026-05-16",
-  "branch": "codex/managed-orchestration-rewrite",
+  "branch": "main",
   "baseHead": "fe3743d0a",
   "lastRecordedCommit": "97aaa8187",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Documentation_Relevance_Audit_2026-05-16.md",
