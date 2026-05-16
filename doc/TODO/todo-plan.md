@@ -4,79 +4,31 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "ACTIVE",
+  "executionScopeStatus": "NONE",
   "planId": "main-merge-release-retest-1.2.275",
   "branch": "main",
   "baseHead": "39d486a8d",
-  "lastRecordedCommit": "50e6607b0",
+  "lastRecordedCommit": "4365982ae",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Main_Merge_Release_Verification_1.2.275.md",
-  "currentTaskId": "main-merge-release.phase4.closeout.task1",
-  "expectedCommitMessage": "docs: close merged orchestrator release retest",
-  "debt": {
-    "expectedCommitMessage": "docs: close merged orchestrator release retest",
-    "preCommitHead": "50e6607b0",
-    "stage": "commit_pending",
-    "taskId": "main-merge-release.phase4.closeout.task1"
-  }
+  "currentTaskId": null,
+  "expectedCommitMessage": null,
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## Context Pack For This Cycle
+## No Active Execution Scope
 
+- **Execution Scope Status:** NONE
+- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-main-merge-release-retest-1.2.275.md`
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Main_Merge_Release_Verification_1.2.275.md`
-- **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
-  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Only this list is the recovery context for this execution cycle.
+- **Last recorded commit:** `4365982ae`
 
-## Execution Rules
+## Start Next Scope
 
-- Required reading before code or architecture changes: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`.
-- Scope: build a fresh release after the merge of the rewritten Core managed orchestration work into `main`.
-- User already requested the release build in chat on 2026-05-16; this satisfies the Release Build Confirmation Gate for this scope.
-- No product-code edits are planned. If build or verification exposes a defect, add a new investigation stream before changing code.
-- Use `npm run plan:commit -- "<expected commit message>"` for tracked changes; do not bypass hooks.
-- Keep the scope `ACTIVE` after packaging until the user finishes workflow retest and explicitly accepts the release.
+There is no active execution scope. Before starting new implementation work:
 
-## Phase 0 — Release Retest Intake (owner: Codex, updated: 2026-05-16)
-
-### Stream: Scope Registration
-
-1. [DONE] `main-merge-release.phase0.plan.task1` Create the planning source, active todo-plan, and docs index entry for the merged orchestrator release retest scope (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Main_Merge_Release_Verification_1.2.275.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: open merged orchestrator release retest`).
-2. [DONE] Git Commit: `docs: open merged orchestrator release retest` (hash: abb776146)
-
-## Phase 1 — Release Notes Preparation (owner: Codex, updated: 2026-05-16)
-
-### Stream: User-Facing Release Docs
-
-3. [DONE] `main-merge-release.phase1.docs.task1` Update README and CHANGELOG for the future `1.2.275` retest release before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.275 merged orchestrator retest release`). Result: README and CHANGELOG now describe `1.2.275` as a fresh merged orchestrator retest build before release automation bumps package manifests.
-4. [DONE] Git Commit: `docs: prepare 1.2.275 merged orchestrator retest release` (hash: 716722ab8)
-
-## Phase 2 — Release Build (owner: Codex, updated: 2026-05-16)
-
-### Stream: Unified Artifact Build
-
-5. [DONE] `main-merge-release.phase2.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify version and runtime tarball outputs, and commit generated version and manifest changes (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.275 release artifacts`). Result: `./scripts/build-all.sh --allow-dirty --version 1.2.275` passed with only machine-managed active plan state dirty before the build; root, Core, and provider package versions report `1.2.275`; generated tarballs exist under `doc/tmp/releases/` and `~/.codeai-hub/releases/` for Claude, Codex, Gemini, Core darwin-arm64, CEF launcher macos-arm64, vscode-webview, and project-manager.
-6. [DONE] Git Commit: `chore: build 1.2.275 release artifacts` (hash: 4606dab88)
-
-### Stream: VSIX Packaging
-
-7. [DONE] `main-merge-release.phase2.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions, dev dependency prune/restore, VSIX creation, and record release handoff evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.275 release package`). Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed for `1.2.275`; the only pre-build dirty file was the machine-managed active `doc/TODO/todo-plan.md` transition after the release artifact commit. Required release markers were present: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`. Release gates passed inside `build-release`: bundled template generation/coverage, `npm run build:webview`, `./scripts/check-architecture.sh`, `npx tsc -p . --noEmit`, `npm run compile`, SDK exclusions, local artifact validation, `npm run check:links`, duplication check at 2.7%, production dependency prune/restore, and VSIX runtime package surface verification. Generated VSIX: `codeai-hub-1.2.275.vsix` (48M). Fresh local tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-8. [DONE] Git Commit: `docs: record 1.2.275 release package` (hash: 50e6607b0)
-
-## Phase 3 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-16)
-
-### Stream: User Retest
-
-9. [DONE] `main-merge-release.phase3.acceptance.task1` User installs `codeai-hub-1.2.275.vsix` and retests the merged Core managed orchestration workflow. Scope: user workflow acceptance only; expected commit: none. Result: User accepted release 1.2.275 after retest: merged Core managed orchestrator work functions correctly.
-
-## Phase 4 — Scope Closeout (owner: Codex, updated: 2026-05-16)
-
-### Stream: Closeout
-
-10. [DONE] `main-merge-release.phase4.closeout.task1` After explicit user acceptance, archive this todo-plan and planning source, update Docs Index disposition, and close the release retest scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close merged orchestrator release retest`). Result: closeout archive created, planning source moved to `Plans/Archive/`, Docs Index disposition updated, and user acceptance recorded for release `1.2.275`.
-11. [PENDING] Git Commit: `docs: close merged orchestrator release retest` (hash: TBD)
-12. [TODO] `main-merge-release.phase4.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
+- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
+- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
+- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
