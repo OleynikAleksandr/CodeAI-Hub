@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "2f4d7c757",
+  "lastRecordedCommit": "6f816c83b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase57.docs.task2",
-  "expectedCommitMessage": "docs: document core artifact parser ownership",
+  "currentTaskId": "artifact-contract-repair.phase58.diagram-contract.task1",
+  "expectedCommitMessage": "fix: centralize diagram modules artifact validation",
   "debt": {
-    "expectedCommitMessage": "docs: document core artifact parser ownership",
-    "preCommitHead": "2f4d7c757",
+    "expectedCommitMessage": "fix: centralize diagram modules artifact validation",
+    "preCommitHead": "6f816c83b",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase57.docs.task2"
+    "taskId": "artifact-contract-repair.phase58.diagram-contract.task1"
   }
 }
 ```
@@ -1109,22 +1109,25 @@ Repair coverage:
 260. [DONE] Git Commit: `docs: define core artifact contract authority` (hash: 2f4d7c757)
 
 261. [DONE] `artifact-contract-repair.phase57.docs.task2` Update workflow/Core/Project Manager SSOT docs so Diagram Modules graph parsing, artifact repair buttons, and future mobile/Wi-Fi clients all use Core-owned artifact diagnostics instead of Project Manager-owned parser truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document core artifact parser ownership`).
-262. [PENDING] Git Commit: `docs: document core artifact parser ownership` (hash: TBD)
+262. [DONE] Git Commit: `docs: document core artifact parser ownership` (hash: 6f816c83b)
 
 ### Stream: Diagram Modules Contract Unification
 
-263. [TODO] `artifact-contract-repair.phase58.diagram-contract.task1` Move Diagram Modules staged artifact parsing/validation to a Core-owned/shared contract boundary and make PM graph loading consume the same parser result/diagnostics, preserving PM as a projection only (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, src/client/project-manager/components/diagram-editor/**, packages/core/src/remote-bridge/handlers/**`; expected commit: `fix: centralize diagram modules artifact validation`).
-264. [TODO] Git Commit: `fix: centralize diagram modules artifact validation` (hash: TBD)
+263. [DONE] `artifact-contract-repair.phase58.diagram-contract.task1` Move the staged Product Part markdown parser out of Project Manager into the Core-owned diagram DSL contract and make PM graph loading import that parser through a thin adapter only (scope: `packages/core/src/workflow/diagram-dsl/staged-product-part-parser.ts, src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.ts, src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser-shared.ts, doc/TODO/todo-plan.md`; expected commit: `fix: centralize diagram modules artifact validation`).
+264. [PENDING] Git Commit: `fix: centralize diagram modules artifact validation` (hash: TBD)
 
-265. [TODO] `artifact-contract-repair.phase58.diagram-prompts.task1` Embed exact Diagram Modules index/product-part templates and field reference text directly into first and repair prompts, then add prompt tests proving the text is inline rather than path-only; also audit Application Skeleton and Quality Gates prompt builders for the same first-prompt inline-template rule (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/quality-gates/**`; expected commit: `fix: embed managed artifact templates in prompts`).
-266. [TODO] Git Commit: `fix: embed managed artifact templates in prompts` (hash: TBD)
+265. [TODO] `artifact-contract-repair.phase58.diagram-contract.task2` Route Core Diagram Modules artifact validation through the Core-owned staged Product Part parser so Core acceptance and graph renderability use the same required fields and diagnostics (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`; expected commit: `fix: validate diagram modules with core parser`).
+266. [TODO] Git Commit: `fix: validate diagram modules with core parser` (hash: TBD)
+
+267. [TODO] `artifact-contract-repair.phase58.diagram-prompts.task1` Embed exact Diagram Modules index/product-part templates and field reference text directly into first and repair prompts, then add prompt tests proving the text is inline rather than path-only; also audit Application Skeleton and Quality Gates prompt builders for the same first-prompt inline-template rule (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/quality-gates/**`; expected commit: `fix: embed managed artifact templates in prompts`).
+268. [TODO] Git Commit: `fix: embed managed artifact templates in prompts` (hash: TBD)
 
 ### Stream: Managed Repair Lifecycle
 
-267. [TODO] `artifact-contract-repair.phase59.repair-lifecycle.task1` Route artifact repair requests through Core-owned managed repair intake instead of PM-built session messages: Core chooses the failing artifact, creates a repair microtask plus paired Git Commit, dispatches the provider-visible repair prompt, and commits/rejects every repair attempt with real hashes (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit: `fix: route artifact repairs through core lifecycle`).
-268. [TODO] Git Commit: `fix: route artifact repairs through core lifecycle` (hash: TBD)
+269. [TODO] `artifact-contract-repair.phase59.repair-lifecycle.task1` Route artifact repair requests through Core-owned managed repair intake instead of PM-built session messages: Core chooses the failing artifact, creates a repair microtask plus paired Git Commit, dispatches the provider-visible repair prompt, and commits/rejects every repair attempt with real hashes (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit: `fix: route artifact repairs through core lifecycle`).
+270. [TODO] Git Commit: `fix: route artifact repairs through core lifecycle` (hash: TBD)
 
 ### Stream: Verification
 
-269. [TODO] `artifact-contract-repair.phase60.verify.task1` Run targeted Core/PM tests and builds for prompt inline-template coverage, shared artifact parser diagnostics, Diagram Modules graph renderability after Core acceptance, and repair microtask/commit insertion; record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify core artifact contract repair`).
-270. [TODO] Git Commit: `docs: verify core artifact contract repair` (hash: TBD)
+271. [TODO] `artifact-contract-repair.phase60.verify.task1` Run targeted Core/PM tests and builds for prompt inline-template coverage, shared artifact parser diagnostics, Diagram Modules graph renderability after Core acceptance, and repair microtask/commit insertion; record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify core artifact contract repair`).
+272. [TODO] Git Commit: `docs: verify core artifact contract repair` (hash: TBD)
