@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "ae3b759e1",
+  "lastRecordedCommit": "e093ec5ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "quality-gates-runtime.phase55.release.task3",
-  "expectedCommitMessage": "docs: record quality gates managed runtime release",
+  "currentTaskId": "artifact-contract-repair.phase57.plan.task1",
+  "expectedCommitMessage": "docs: open core artifact contract repair stream",
   "debt": {
-    "expectedCommitMessage": "docs: record quality gates managed runtime release",
-    "preCommitHead": "ae3b759e1",
+    "expectedCommitMessage": "docs: open core artifact contract repair stream",
+    "preCommitHead": "e093ec5ea",
     "stage": "commit_pending",
-    "taskId": "quality-gates-runtime.phase55.release.task3"
+    "taskId": "artifact-contract-repair.phase57.plan.task1"
   }
 }
 ```
@@ -1087,11 +1087,44 @@ Repair coverage:
     - VSIX package: `codeai-hub-1.2.268.vsix` (`48M`).
     - Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.268.tar.bz2`, `codex-module-1.2.268.tar.bz2`, `gemini-module-1.2.268.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.268.tar.bz2`, `vscode-webview-1.2.268.tar.bz2`, `project-manager-1.2.268.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.268.tar.bz2`.
     - Advisory release warnings: markdown link checker reported 17 planning-document anchor issues; package size warning reported `48M`. Neither warning blocked packaging or runtime surface verification.
-254. [PENDING] Git Commit: `docs: record quality gates managed runtime release` (hash: TBD)
+254. [DONE] Git Commit: `docs: record quality gates managed runtime release` (hash: e093ec5ea)
 
 ## Phase 56 — Scope Closeout (owner: Codex, updated: 2026-05-15)
 
 ### Stream: Close Plan After User Acceptance
 
-255. [TODO] `diagram-plan-lifecycle-repair.phase56.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`).
+255. [BLOCKED] `diagram-plan-lifecycle-repair.phase56.closeout.task1` After explicit user acceptance, archive this todo plan and dispose planning documents according to the plan lifecycle rules (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close full trunk orchestration scope`). Result: release `1.2.268` is not accepted. User retest found a global artifact-contract authority defect: Diagram Modules first prompt omitted exact inline templates, Core accepted artifacts that PM graph parser could not render, and PM repair button sent client-owned repair prompts that did not create Core-owned repair microtasks/commits.
 256. [TODO] Git Commit: `docs: close full trunk orchestration scope` (hash: TBD)
+
+## Phase 57 — Core Artifact Contract Authority Repair (owner: Codex, updated: 2026-05-16)
+
+### Stream: Repair Intake
+
+257. [DONE] `artifact-contract-repair.phase57.plan.task1` Record the rejected release finding and open a global repair stream so Core owns inline prompt templates, artifact parser/validation truth, and repair microtask/commit lifecycle for Diagram Modules first, then the remaining managed steps by the same contract (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open core artifact contract repair stream`).
+258. [PENDING] Git Commit: `docs: open core artifact contract repair stream` (hash: TBD)
+
+### Stream: Architecture Authority Documentation
+
+259. [TODO] `artifact-contract-repair.phase57.docs.task1` Strengthen startup/system/orchestration docs: every required text template must be embedded inline in first prompts, Core owns artifact schema/parser/validation/read-model contracts, clients are projections only, and client-side parsers must either move to Core/shared contract modules or consume Core-owned parse results (scope: `AGENTS.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `docs: define core artifact contract authority`).
+260. [TODO] Git Commit: `docs: define core artifact contract authority` (hash: TBD)
+
+261. [TODO] `artifact-contract-repair.phase57.docs.task2` Update workflow/Core/Project Manager SSOT docs so Diagram Modules graph parsing, artifact repair buttons, and future mobile/Wi-Fi clients all use Core-owned artifact diagnostics instead of Project Manager-owned parser truth (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document core artifact parser ownership`).
+262. [TODO] Git Commit: `docs: document core artifact parser ownership` (hash: TBD)
+
+### Stream: Diagram Modules Contract Unification
+
+263. [TODO] `artifact-contract-repair.phase58.diagram-contract.task1` Move Diagram Modules staged artifact parsing/validation to a Core-owned/shared contract boundary and make PM graph loading consume the same parser result/diagnostics, preserving PM as a projection only (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, src/client/project-manager/components/diagram-editor/**, packages/core/src/remote-bridge/handlers/**`; expected commit: `fix: centralize diagram modules artifact validation`).
+264. [TODO] Git Commit: `fix: centralize diagram modules artifact validation` (hash: TBD)
+
+265. [TODO] `artifact-contract-repair.phase58.diagram-prompts.task1` Embed exact Diagram Modules index/product-part templates and field reference text directly into first and repair prompts, then add prompt tests proving the text is inline rather than path-only; also audit Application Skeleton and Quality Gates prompt builders for the same first-prompt inline-template rule (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/quality-gates/**`; expected commit: `fix: embed managed artifact templates in prompts`).
+266. [TODO] Git Commit: `fix: embed managed artifact templates in prompts` (hash: TBD)
+
+### Stream: Managed Repair Lifecycle
+
+267. [TODO] `artifact-contract-repair.phase59.repair-lifecycle.task1` Route artifact repair requests through Core-owned managed repair intake instead of PM-built session messages: Core chooses the failing artifact, creates a repair microtask plus paired Git Commit, dispatches the provider-visible repair prompt, and commits/rejects every repair attempt with real hashes (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit: `fix: route artifact repairs through core lifecycle`).
+268. [TODO] Git Commit: `fix: route artifact repairs through core lifecycle` (hash: TBD)
+
+### Stream: Verification
+
+269. [TODO] `artifact-contract-repair.phase60.verify.task1` Run targeted Core/PM tests and builds for prompt inline-template coverage, shared artifact parser diagnostics, Diagram Modules graph renderability after Core acceptance, and repair microtask/commit insertion; record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify core artifact contract repair`).
+270. [TODO] Git Commit: `docs: verify core artifact contract repair` (hash: TBD)
