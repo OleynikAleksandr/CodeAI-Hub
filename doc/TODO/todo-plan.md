@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "b2429a3ea",
+  "lastRecordedCommit": "76bd62a3e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.env-readiness.task3",
-  "expectedCommitMessage": "test: cover skeleton environment readiness audit",
+  "currentTaskId": "app-skeleton-foundation.phase7.env-readiness.task4",
+  "expectedCommitMessage": "docs: verify skeleton environment readiness repair",
   "debt": {
-    "expectedCommitMessage": "test: cover skeleton environment readiness audit",
-    "preCommitHead": "b2429a3ea",
+    "expectedCommitMessage": "docs: verify skeleton environment readiness repair",
+    "preCommitHead": "76bd62a3e",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.env-readiness.task3"
+    "taskId": "app-skeleton-foundation.phase7.env-readiness.task4"
   }
 }
 ```
@@ -220,9 +220,10 @@
 73. [DONE] Git Commit: `fix: validate skeleton install and script execution` (hash: b2429a3ea)
 74. [DONE] `app-skeleton-foundation.phase7.env-readiness.task3` Add focused regression coverage for the Application Skeleton environment readiness audit rejecting missing installs and failed scripts, and accepting a real local install plus passing scripts (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover skeleton environment readiness audit`).
    - Verification result (2026-05-16): `npx tsx --test packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts` passed `3/3`, covering missing install output, failed required script, and clean install plus passing scripts.
-75. [PENDING] Git Commit: `test: cover skeleton environment readiness audit` (hash: TBD)
-76. [TODO] `app-skeleton-foundation.phase7.env-readiness.task4` Sync bundled Application Skeleton templates, run targeted materialization/template tests plus core build, and record verification before the next release build (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton environment readiness repair`).
-77. [TODO] Git Commit: `docs: verify skeleton environment readiness repair` (hash: TBD)
+75. [DONE] Git Commit: `test: cover skeleton environment readiness audit` (hash: 76bd62a3e)
+76. [DONE] `app-skeleton-foundation.phase7.env-readiness.task4` Sync bundled Application Skeleton templates, run targeted materialization/template tests plus core build, and record verification before the next release build (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton environment readiness repair`).
+   - Verification result (2026-05-16): `node scripts/generate-bundled-templates.js`, targeted `npx tsx --test` for environment audit, bundled-template, managed validator, and materialization validator tests (20/20), and `npm run build --workspace @codeai-hub/core` all passed.
+77. [PENDING] Git Commit: `docs: verify skeleton environment readiness repair` (hash: TBD)
 78. [TODO] `app-skeleton-foundation.phase7.release-docs.task4` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton environment readiness release`).
 79. [TODO] Git Commit: `docs: prepare skeleton environment readiness release` (hash: TBD)
 80. [TODO] `app-skeleton-foundation.phase7.release-build.task4` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton environment readiness release artifacts`).

@@ -43,6 +43,15 @@ const NO_AD_HOC_DIAGNOSTICS_RE =
   /Do not run Python, Node, jq, git, plan, or other ad hoc diagnostic commands/;
 const CODE_WRITING_WORKSPACE_RE =
   /prepare the workspace for real code writing/u;
+const LOCALLY_INSTALLED_ENVIRONMENT_RE =
+  /locally installed development environment/u;
+const RUN_CLEAN_INSTALL_RE = /run the accepted clean install command/u;
+const NODE_MODULES_MUST_EXIST_RE =
+  /local `node_modules` install output must exist/u;
+const RUN_REQUIRED_SCRIPTS_RE =
+  /run every script listed in `projectFoundation\.requiredScripts`/u;
+const INSTALL_SCRIPT_VERIFICATION_RE =
+  /install\/script verification commands that succeeded/u;
 const DEVELOPMENT_TREE_MIRROR_RE =
   /mirrors the Project Manager Development Tree exactly/u;
 const CONCRETE_FRAMEWORK_BASELINE_RE =
@@ -113,7 +122,15 @@ const CONTRACT_TECHNOLOGY_HINTS_RE =
   /Explicit upstream technology hints, such as named shell, launcher, runtime, framework, package format, or deployment target, must be treated as strong baseline evidence/;
 const CONTRACT_CORE_LIFECYCLE_OWNER_RE =
   /Git, hooks, workspace plan state, active stage todo-plan state.*are not skeleton materialization output/;
-const CONTRACT_CODE_READY_RE = /code-ready installable project foundation/u;
+const CONTRACT_CODE_READY_RE =
+  /code-ready (?:installable|locally installed) project foundation/u;
+const CONTRACT_CODE_READY_LOCAL_RE =
+  /code-ready locally installed project foundation/u;
+const CONTRACT_LOCAL_INSTALL_RE = /local clean install execution/u;
+const CONTRACT_NPM_CI_RE =
+  /npm ci` must be executed and root `node_modules` must exist/u;
+const CONTRACT_REQUIRED_SCRIPTS_RE =
+  /Every script listed in `projectFoundation\.requiredScripts` must be executed successfully/u;
 const CONTRACT_FRAMEWORK_SURFACES_RE =
   /visible implementation surfaces such as Project Manager, launcher, desktop shell, webview, frontend/u;
 const CONTRACT_DEVELOPMENT_TREE_MIRROR_RE =
@@ -170,6 +187,11 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.doesNotMatch(prompt, PLAN_STATUS_COMMAND_RE);
   assert.match(prompt, NO_AD_HOC_DIAGNOSTICS_RE);
   assert.match(prompt, CODE_WRITING_WORKSPACE_RE);
+  assert.match(prompt, LOCALLY_INSTALLED_ENVIRONMENT_RE);
+  assert.match(prompt, RUN_CLEAN_INSTALL_RE);
+  assert.match(prompt, NODE_MODULES_MUST_EXIST_RE);
+  assert.match(prompt, RUN_REQUIRED_SCRIPTS_RE);
+  assert.match(prompt, INSTALL_SCRIPT_VERIFICATION_RE);
   assert.match(prompt, DEVELOPMENT_TREE_MIRROR_RE);
   assert.match(prompt, CONCRETE_FRAMEWORK_BASELINE_RE);
   assert.match(prompt, MARKDOWN_IS_DECISION_ARTIFACT_RE);
@@ -227,6 +249,10 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, CONTRACT_TECHNOLOGY_HINTS_RE);
   assert.match(contract, CONTRACT_CORE_LIFECYCLE_OWNER_RE);
   assert.match(contract, CONTRACT_CODE_READY_RE);
+  assert.match(contract, CONTRACT_CODE_READY_LOCAL_RE);
+  assert.match(contract, CONTRACT_LOCAL_INSTALL_RE);
+  assert.match(contract, CONTRACT_NPM_CI_RE);
+  assert.match(contract, CONTRACT_REQUIRED_SCRIPTS_RE);
   assert.match(contract, CONTRACT_FRAMEWORK_SURFACES_RE);
   assert.match(contract, CONTRACT_DEVELOPMENT_TREE_MIRROR_RE);
   assert.match(contract, CONTRACT_MARKDOWN_DECISION_ARTIFACT_RE);

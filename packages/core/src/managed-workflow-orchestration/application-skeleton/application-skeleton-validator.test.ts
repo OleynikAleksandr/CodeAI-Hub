@@ -106,12 +106,21 @@ const writeInstallableFoundationFiles = async (
     "export {};\n",
     "utf8"
   );
+  await mkdir(path.join(workspaceRoot, "local-fixture"), { recursive: true });
   await writeFile(
-    path.join(workspaceRoot, "package.json"),
-    '{"scripts":{"build":"tsc","typecheck":"tsc --noEmit","test:smoke":"node smoke.js"}}\n',
+    path.join(workspaceRoot, "local-fixture/package.json"),
+    '{"name":"local-fixture","version":"1.0.0"}\n',
     "utf8"
   );
-  await writeFile(path.join(workspaceRoot, "package-lock.json"), "{}\n");
+  await writeFile(
+    path.join(workspaceRoot, "package.json"),
+    '{"devDependencies":{"local-fixture":"file:./local-fixture"},"scripts":{"build":"node -e \\"process.exit(0)\\"","test:smoke":"node -e \\"process.exit(0)\\"","typecheck":"node -e \\"process.exit(0)\\""}}\n',
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, "package-lock.json"),
+    '{"lockfileVersion":3,"requires":true,"packages":{"":{"devDependencies":{"local-fixture":"file:./local-fixture"}},"local-fixture":{"version":"1.0.0","dev":true},"node_modules/local-fixture":{"resolved":"local-fixture","link":true}}}\n'
+  );
   await writeFile(path.join(workspaceRoot, "tsconfig.json"), "{}\n");
 };
 
