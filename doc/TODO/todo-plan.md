@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "a2afd5a39",
+  "lastRecordedCommit": "31c0482c5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase74.runtime-metadata.task1",
-  "expectedCommitMessage": "fix: commit managed runtime metadata ledgers",
+  "currentTaskId": "managed-git-checkpoint.phase74.verify.task1",
+  "expectedCommitMessage": "docs: verify release 272 checkpoint hygiene repair",
   "debt": {
-    "expectedCommitMessage": "fix: commit managed runtime metadata ledgers",
-    "preCommitHead": "a2afd5a39",
+    "expectedCommitMessage": "docs: verify release 272 checkpoint hygiene repair",
+    "preCommitHead": "31c0482c5",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase74.runtime-metadata.task1"
+    "taskId": "managed-git-checkpoint.phase74.verify.task1"
   }
 }
 ```
@@ -1339,12 +1339,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Managed Runtime Metadata Ledger
 
 331. [DONE] `managed-git-checkpoint.phase74.runtime-metadata.task1` Include Core-owned continuity and workflow state metadata in managed ledger commits so Diagram Modules accepted turns leave Git clean after provider/session metadata updates (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit managed runtime metadata ledgers`). Evidence: `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` — PASS, 3 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression creates continuity chain/index and workflow state changes between checkpoint and Product Parts index acceptance; the Core ledger commit tracks those runtime metadata files and leaves full `git status --short` clean after the accepted turn.
-332. [PENDING] Git Commit: `fix: commit managed runtime metadata ledgers` (hash: TBD)
+332. [DONE] Git Commit: `fix: commit managed runtime metadata ledgers` (hash: 31c0482c5)
 
 ### Stream: Verification
 
-333. [TODO] `managed-git-checkpoint.phase74.verify.task1` Run targeted checkpoint/metadata Git hygiene regressions plus Core and Project Manager gating checks, then stop for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 272 checkpoint hygiene repair`).
-334. [TODO] Git Commit: `docs: verify release 272 checkpoint hygiene repair` (hash: TBD)
+333. [DONE] `managed-git-checkpoint.phase74.verify.task1` Run targeted checkpoint/metadata Git hygiene regressions plus Core and Project Manager gating checks, then stop for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 272 checkpoint hygiene repair`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` — PASS, 6 tests; `node --test --import tsx packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts` — PASS, 6 tests; `npm run build --workspace=@codeai-hub/core` — PASS; `npm run build:webview` — PASS; `npm run typecheck:webview` — PASS.
+334. [PENDING] Git Commit: `docs: verify release 272 checkpoint hygiene repair` (hash: TBD)
 
 ### Stream: Release Build Confirmation
 
