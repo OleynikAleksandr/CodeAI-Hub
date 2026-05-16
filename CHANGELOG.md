@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.281] - 2026-05-16
+### Fixed
+- **Application Skeleton now enforces Git hygiene for generated outputs.** The prompt and contract require a root `.gitignore` before install/build readiness, and Core rejects missing ignore coverage for npm install output and TypeScript build output.
+- **Generated install/build outputs no longer count as materialized skeleton.** Core rejects `materializedPaths` entries such as `node_modules` and package `dist`, while managed Git commits exclude generated output directories even when a broad materialized directory is staged.
+- **Application Skeleton JSON must preserve the nested Product Part tree.** Core rejects flat top-level Cluster/Module entries in `productParts`; the map must keep Product Parts at the top, Clusters under their owning Product Part, and Modules under their owning Cluster or `standaloneModules`.
+
+### Tests
+- `npx tsx --test packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.280] - 2026-05-16
 ### Fixed
 - **Application Skeleton materialization now proves local environment readiness.** The prompt and contract require the accepted clean install command to run after package metadata and lockfiles exist, require local install outputs such as `node_modules` for npm foundations, and require every declared `projectFoundation.requiredScripts` command to pass before readiness is claimed.

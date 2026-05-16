@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "dd149afa0",
+  "lastRecordedCommit": "b7d5bb2c9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task6",
-  "expectedCommitMessage": "docs: verify skeleton git hygiene repair",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-docs.task5",
+  "expectedCommitMessage": "docs: prepare skeleton git hygiene release",
   "debt": {
-    "expectedCommitMessage": "docs: verify skeleton git hygiene repair",
-    "preCommitHead": "dd149afa0",
+    "expectedCommitMessage": "docs: prepare skeleton git hygiene release",
+    "preCommitHead": "b7d5bb2c9",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task6"
+    "taskId": "app-skeleton-foundation.phase7.release-docs.task5"
   }
 }
 ```
@@ -250,9 +250,9 @@
 93. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task5` Add regression coverage for nested tree validation and output hygiene validation (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts`; expected commit: `test: cover skeleton git hygiene validation`).
 94. [DONE] Git Commit: `test: cover skeleton git hygiene validation` (hash: dd149afa0)
 95. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task6` Sync bundled Application Skeleton templates and run targeted Application Skeleton tests plus core build before release (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton git hygiene repair`).
-96. [PENDING] Git Commit: `docs: verify skeleton git hygiene repair` (hash: TBD)
-97. [TODO] `app-skeleton-foundation.phase7.release-docs.task5` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton git hygiene release`).
-98. [TODO] Git Commit: `docs: prepare skeleton git hygiene release` (hash: TBD)
+96. [DONE] Git Commit: `docs: verify skeleton git hygiene repair` (hash: b7d5bb2c9)
+97. [DONE] `app-skeleton-foundation.phase7.release-docs.task5` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton git hygiene release`).
+98. [PENDING] Git Commit: `docs: prepare skeleton git hygiene release` (hash: TBD)
 99. [TODO] `app-skeleton-foundation.phase7.release-build.task5` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton git hygiene release artifacts`).
 100. [TODO] Git Commit: `chore: build skeleton git hygiene release artifacts` (hash: TBD)
 101. [TODO] `app-skeleton-foundation.phase7.release-package.task5` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton git hygiene release package`).
