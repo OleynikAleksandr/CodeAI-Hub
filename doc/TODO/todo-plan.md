@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "9256a6390",
+  "lastRecordedCommit": "b3a02274e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase2.draft-validator.task1",
-  "expectedCommitMessage": "feat: validate application skeleton foundation draft",
+  "currentTaskId": "app-skeleton-foundation.phase2.materialized-validator.task1",
+  "expectedCommitMessage": "feat: validate materialized application skeleton foundation",
   "debt": {
-    "expectedCommitMessage": "feat: validate application skeleton foundation draft",
-    "preCommitHead": "9256a6390",
+    "expectedCommitMessage": "feat: validate materialized application skeleton foundation",
+    "preCommitHead": "b3a02274e",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase2.draft-validator.task1"
+    "taskId": "app-skeleton-foundation.phase2.materialized-validator.task1"
   }
 }
 ```
@@ -67,12 +67,12 @@
 ### Stream: Draft Foundation Completeness
 
 7. [DONE] `app-skeleton-foundation.phase2.draft-validator.task1` Add Core-owned draft contract validation for project foundation decisions: accepted stack completeness, package manager/repo shape, unresolved-question list, and implementation-wave entrypoint intent (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `feat: validate application skeleton foundation draft`).
-8. [PENDING] Git Commit: `feat: validate application skeleton foundation draft` (hash: TBD)
+8. [DONE] Git Commit: `feat: validate application skeleton foundation draft` (hash: b3a02274e)
 
 ### Stream: Materialized Foundation Completeness
 
-9. [TODO] `app-skeleton-foundation.phase2.materialized-validator.task1` Extend materialization validation so `materialized: true` requires deterministic install metadata, package/workspace metadata, TypeScript config when TypeScript is selected, build/typecheck/smoke scripts where applicable, and real minimal source/facade entrypoints for the selected implementation wave (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `feat: validate materialized application skeleton foundation`).
-10. [TODO] Git Commit: `feat: validate materialized application skeleton foundation` (hash: TBD)
+9. [DONE] `app-skeleton-foundation.phase2.materialized-validator.task1` Extend materialization validation so `materialized: true` requires deterministic install metadata, package/workspace metadata, TypeScript config when TypeScript is selected, build/typecheck/smoke scripts where applicable, and real minimal source/facade entrypoints for the selected implementation wave (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `feat: validate materialized application skeleton foundation`).
+10. [PENDING] Git Commit: `feat: validate materialized application skeleton foundation` (hash: TBD)
 
 ## Phase 3 — Managed Materialization Boundary (owner: Codex, updated: 2026-05-16)
 

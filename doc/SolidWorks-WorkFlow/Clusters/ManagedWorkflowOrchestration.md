@@ -49,6 +49,17 @@ The facade owns these ingress points:
 
 The facade returns typed decisions/effects. It does not let callers mutate managed state directly.
 
+### Application Skeleton Foundation Gate
+
+Application Skeleton materialization is valid only when the provider has produced a real project foundation, not a folder-only outline. Core validates the accepted map and filesystem evidence before downstream stages may continue:
+
+- all unresolved `openQuestions` are closed before materialization;
+- the root package manifest, deterministic package-manager lockfile, required scripts, declared config files, and first-wave entrypoints exist;
+- first-wave entrypoints are production paths, never `.codeai-hub` or dependency cache paths;
+- product-part, cluster, module, `codePath`, and `materializedPath` checks remain part of the same materialization gate.
+
+Quality Gates Baseline and later implementation stages may depend on this foundation evidence instead of re-negotiating the Application Skeleton environment.
+
 Forbidden external access:
 
 - importing step controller internals from `remote-bridge`;

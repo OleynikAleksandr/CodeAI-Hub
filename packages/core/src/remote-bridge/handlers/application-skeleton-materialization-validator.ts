@@ -1,4 +1,4 @@
-import { stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import type { ApplicationSkeletonSubstep } from "./application-skeleton-progress";
 
@@ -7,69 +7,40 @@ export interface ApplicationSkeletonMaterializationValidation {
   readonly validationErrors: readonly string[];
 }
 
-const STALE_MATERIALIZED_MARKDOWN_PATTERNS: readonly {
-  readonly label: string;
-  readonly pattern: RegExp;
-}[] = [
-  { label: "draft-only", pattern: /draft-only/i },
-  { label: "not materialized", pattern: /not materialized/i },
-  { label: "will be created", pattern: /will be created/i },
-  { label: "planned but not yet", pattern: /planned but not yet/i },
-  { label: "after confirmation", pattern: /after confirmation/i },
-  {
-    label: "after explicit user acceptance",
-    pattern: /after explicit user acceptance/i,
-  },
-  {
-    label: "filesystem materialization is pending",
-    pattern: /filesystem materialization is pending/i,
-  },
-  {
-    label: "draft wording",
-    pattern: /\u0427\u0435\u0440\u043d\u043e\u0432\u0438\u043a/i,
-  },
-  {
-    label: "after explicit confirmation",
-    pattern:
-      /\u043f\u043e\u0441\u043b\u0435\s+\u044f\u0432\u043d\u043e\u0433\u043e\s+\u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u044f/i,
-  },
-  {
-    label: "future creation wording",
-    pattern: /\u0431\u0443\u0434\u0435\u0442\s+\u0441\u043e\u0437\u0434\u0430/i,
-  },
-];
+const STALE_MATERIALIZED_MARKDOWN_PATTERNS = Object.entries({
+  "after confirmation": /after confirmation/i,
+  "after explicit confirmation":
+    /\u043f\u043e\u0441\u043b\u0435\s+\u044f\u0432\u043d\u043e\u0433\u043e\s+\u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u044f/i,
+  "after explicit user acceptance": /after explicit user acceptance/i,
+  "draft wording": /\u0427\u0435\u0440\u043d\u043e\u0432\u0438\u043a/i,
+  "draft-only": /draft-only/i,
+  "filesystem materialization is pending":
+    /filesystem materialization is pending/i,
+  "future creation wording":
+    /\u0431\u0443\u0434\u0435\u0442\s+\u0441\u043e\u0437\u0434\u0430/i,
+  "not materialized": /not materialized/i,
+  "planned but not yet": /planned but not yet/i,
+  "will be created": /will be created/i,
+}).map(([label, pattern]) => ({ label, pattern }));
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 const readAcceptedFlag = (value: Record<string, unknown> | null): boolean => {
-  if (!value) {
-    return false;
-  }
-  if (value.accepted === true) {
-    return true;
-  }
-  const acceptance = value.acceptance;
+  const acceptance = value?.acceptance;
   return (
-    typeof acceptance === "object" &&
-    acceptance !== null &&
-    !Array.isArray(acceptance) &&
-    (acceptance as Record<string, unknown>).accepted === true
+    value?.accepted === true ||
+    (isRecord(acceptance) && acceptance.accepted === true)
   );
 };
 
 const readMaterializedFlag = (
   value: Record<string, unknown> | null
 ): boolean => {
-  if (!value) {
-    return false;
-  }
-  if (value.materialized === true) {
-    return true;
-  }
-  const materialization = value.materialization;
+  const materialization = value?.materialization;
   return (
-    typeof materialization === "object" &&
-    materialization !== null &&
-    !Array.isArray(materialization) &&
-    (materialization as Record<string, unknown>).materialized === true
+    value?.materialized === true ||
+    (isRecord(materialization) && materialization.materialized === true)
   );
 };
 
@@ -106,12 +77,6 @@ const readStringArray = (
 
 const TRAILING_SLASH_RE = /\/+$/u;
 
-// Normalize `materializedPaths` shape so agent variations (directories with
-// trailing slashes, whitespace, duplicates from listing both a directory and
-// a file under it) do not produce spurious validation errors. The validator
-// downstream verifies each entry with `relativePathExists`, which accepts
-// both file and directory targets; normalization here just removes shape
-// noise and deduplicates.
 const normalizeMaterializedPaths = (
   paths: readonly string[]
 ): readonly string[] => {
@@ -133,9 +98,6 @@ const readSourceRoot = (value: Record<string, unknown> | null): string =>
     ? value.sourceRoot.trim()
     : "product-parts";
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
 const collectCodePathsFromNode = (node: Record<string, unknown>): string[] => {
   const paths: string[] = [];
   if (typeof node.codePath === "string") {
@@ -155,9 +117,6 @@ const collectCodePathsFromNode = (node: Record<string, unknown>): string[] => {
   return paths;
 };
 
-// Public helper for downstream gates (premature-materialization validator).
-// Returns the union of explicitly declared `materializedPaths` and any
-// `codePath` entries from the productParts tree, deduplicated.
 export const extractApplicationSkeletonMaterializedPaths = (
   mapJson: Record<string, unknown> | null
 ): readonly string[] => {
@@ -279,14 +238,14 @@ const relativePathExists = async (
 const anyRelativePathExists = async (
   workspaceRoot: string,
   relativePaths: readonly string[]
-): Promise<boolean> => {
-  for (const relativePath of relativePaths) {
-    if (await relativePathExists(workspaceRoot, relativePath)) {
-      return true;
-    }
-  }
-  return false;
-};
+): Promise<boolean> =>
+  (
+    await Promise.all(
+      relativePaths.map((relativePath) =>
+        relativePathExists(workspaceRoot, relativePath)
+      )
+    )
+  ).some(Boolean);
 
 const resolveMissingPaths = async (
   workspaceRoot: string,
@@ -299,6 +258,103 @@ const resolveMissingPaths = async (
     }
   }
   return missing;
+};
+
+const LOCKFILES_BY_PACKAGE_MANAGER: Record<string, readonly string[]> = {
+  bun: ["bun.lock", "bun.lockb"],
+  npm: ["package-lock.json", "npm-shrinkwrap.json"],
+  pnpm: ["pnpm-lock.yaml"],
+  yarn: ["yarn.lock"],
+};
+
+const toMissingPathErrors = async (
+  workspaceRoot: string,
+  paths: readonly string[],
+  message: string
+): Promise<readonly string[]> =>
+  (await resolveMissingPaths(workspaceRoot, paths)).map(
+    (missingPath) => `${message}: ${missingPath}`
+  );
+
+const isNonProductionEntrypoint = (entrypoint: string): boolean =>
+  entrypoint.startsWith(".codeai-hub") || entrypoint.startsWith("node_modules");
+
+const validateMaterializedFoundation = async (
+  mapJson: Record<string, unknown> | null,
+  workspaceRoot: string
+): Promise<readonly string[]> => {
+  const foundation = isRecord(mapJson?.projectFoundation)
+    ? mapJson.projectFoundation
+    : null;
+  if (!foundation) {
+    return ["application skeleton projectFoundation is missing"];
+  }
+  const errors: string[] = [];
+  if (
+    !Array.isArray(mapJson?.openQuestions) ||
+    mapJson.openQuestions.length > 0
+  ) {
+    errors.push(
+      "application skeleton openQuestions must be empty before materialization"
+    );
+  }
+  if (!(await relativePathExists(workspaceRoot, "package.json"))) {
+    errors.push("application skeleton root package.json is missing");
+  }
+  const packageManager =
+    typeof mapJson?.packageManager === "string"
+      ? mapJson.packageManager.toLowerCase()
+      : "";
+  const lockfiles = LOCKFILES_BY_PACKAGE_MANAGER[packageManager] ?? [];
+  if (
+    lockfiles.length > 0 &&
+    !(await anyRelativePathExists(workspaceRoot, lockfiles))
+  ) {
+    errors.push(
+      `application skeleton lockfile is missing for packageManager ${packageManager}`
+    );
+  }
+  errors.push(
+    ...(await toMissingPathErrors(
+      workspaceRoot,
+      readStringArray(foundation, "configFiles"),
+      "application skeleton config file is missing"
+    ))
+  );
+  const entrypoints = readStringArray(foundation, "firstWaveEntrypoints");
+  errors.push(
+    ...entrypoints
+      .filter(isNonProductionEntrypoint)
+      .map(
+        (entrypoint) =>
+          `application skeleton first-wave entrypoint must be production path: ${entrypoint}`
+      ),
+    ...(await toMissingPathErrors(
+      workspaceRoot,
+      entrypoints.filter(
+        (entrypoint) => !isNonProductionEntrypoint(entrypoint)
+      ),
+      "application skeleton first-wave entrypoint is missing"
+    ))
+  );
+  const rawPackage = await readFile(
+    path.join(workspaceRoot, "package.json"),
+    "utf8"
+  )
+    .then((content) => JSON.parse(content) as unknown)
+    .catch(() => null);
+  const scripts =
+    isRecord(rawPackage) && isRecord(rawPackage.scripts)
+      ? rawPackage.scripts
+      : null;
+  errors.push(
+    ...readStringArray(foundation, "requiredScripts")
+      .filter((script) => !scripts || typeof scripts[script] !== "string")
+      .map(
+        (script) => `application skeleton required script is missing: ${script}`
+      )
+  );
+  return errors;
 };
 
 const hasMarkdownStatus = (
@@ -373,6 +429,10 @@ export const validateApplicationSkeletonMaterialization = async (params: {
       materializedPaths,
       workspaceRoot: params.workspaceRoot,
     })),
+    ...(await validateMaterializedFoundation(
+      params.mapJson,
+      params.workspaceRoot
+    )),
     ...validateMaterializedMarkdown(params.markdown),
   ];
   return { observedMaterialization, validationErrors };
