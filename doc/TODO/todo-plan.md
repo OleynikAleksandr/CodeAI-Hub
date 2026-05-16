@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "cba0c458f",
+  "lastRecordedCommit": "e03471516",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.review-ownership.task3",
-  "expectedCommitMessage": "fix: filter ignored outputs before managed git add",
+  "currentTaskId": "app-skeleton-foundation.phase7.review-ownership.task4",
+  "expectedCommitMessage": "test: verify skeleton review ownership repair",
   "debt": {
-    "expectedCommitMessage": "fix: filter ignored outputs before managed git add",
-    "preCommitHead": "cba0c458f",
+    "expectedCommitMessage": "test: verify skeleton review ownership repair",
+    "preCommitHead": "e03471516",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.review-ownership.task3"
+    "taskId": "app-skeleton-foundation.phase7.review-ownership.task4"
   }
 }
 ```
@@ -269,9 +269,11 @@
 109. [DONE] `app-skeleton-foundation.phase7.review-ownership.task2` Add review routing regressions proving Core does not duplicate Application Skeleton questions and routes user answers back to the agent until `openQuestions` are cleared (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover agent-owned skeleton review dialogue`).
 110. [DONE] Git Commit: `test: cover agent-owned skeleton review dialogue` (hash: cba0c458f)
 111. [DONE] `app-skeleton-foundation.phase7.review-ownership.task3` Repair managed Git pathspec filtering so ignored generated outputs are not passed as positive `git add` paths and do not block Application Skeleton materialization commits (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: filter ignored outputs before managed git add`).
-112. [PENDING] Git Commit: `fix: filter ignored outputs before managed git add` (hash: TBD)
-113. [TODO] `app-skeleton-foundation.phase7.review-ownership.task4` Run targeted review/Git-boundary tests plus core build and stop for release confirmation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify skeleton review ownership repair`).
-114. [TODO] Git Commit: `test: verify skeleton review ownership repair` (hash: TBD)
+112. [DONE] Git Commit: `fix: filter ignored outputs before managed git add` (hash: e03471516)
+113. [DONE] `app-skeleton-foundation.phase7.review-ownership.task4` Run targeted review/Git-boundary tests plus core build and stop for release confirmation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify skeleton review ownership repair`).
+   - Verification result (2026-05-16): `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` passed 19/19 tests.
+   - Build result (2026-05-16): `npm run build --workspace @codeai-hub/core` passed.
+114. [PENDING] Git Commit: `test: verify skeleton review ownership repair` (hash: TBD)
 115. [TODO] `app-skeleton-foundation.phase7.release-confirmation.task6` Ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
