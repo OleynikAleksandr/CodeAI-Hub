@@ -8,6 +8,7 @@ import {
   ManagedWorkflowPlanStore,
   ManagedWorkflowReadModelProjector,
 } from "../../managed-workflow-orchestration";
+import { ContinuityChainStore } from "../../session-continuity/continuity-store";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
@@ -132,6 +133,44 @@ test("workflow-state projects managed read-only upstream stages from downstream 
       "description",
       "virtual_simulation",
     ]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state promotes active Application Skeleton continuity to in-progress", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-workflow-application-continuity-")
+  );
+  const workspaceSlug = "demo-workspace";
+  try {
+    const store = new ContinuityChainStore({
+      clock: () => "2026-05-16T09:20:00.000Z",
+      rootSessionId: "application-skeleton-session",
+      stage: "application_skeleton",
+      workspaceRoot,
+      workspaceSlug,
+    });
+    await store.appendSegment({
+      createdAt: "2026-05-16T09:20:00.000Z",
+      providerId: "codexCli",
+      providerSessionId: "codex-provider-session",
+      sessionId: "application-skeleton-session",
+    });
+
+    const service = new WorkflowStateService({ logger: new Logger("error") });
+    const payload = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+    const state = payload.state as {
+      readonly stages?: {
+        readonly application_skeleton?: { readonly status?: string };
+      };
+    };
+
+    assert.equal(state.stages?.application_skeleton?.status, "in_progress");
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

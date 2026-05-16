@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "f92ddbf56",
+  "lastRecordedCommit": "124dcfaa2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "application-skeleton-retouch.phase77.plan.task1",
-  "expectedCommitMessage": "docs: open application skeleton retest repair",
+  "currentTaskId": "application-skeleton-retouch.phase77.running-state.task1",
+  "expectedCommitMessage": "fix: mark active application skeleton sessions in progress",
   "debt": {
-    "expectedCommitMessage": "docs: open application skeleton retest repair",
-    "preCommitHead": "f92ddbf56",
+    "expectedCommitMessage": "fix: mark active application skeleton sessions in progress",
+    "preCommitHead": "124dcfaa2",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-retouch.phase77.plan.task1"
+    "taskId": "application-skeleton-retouch.phase77.running-state.task1"
   }
 }
 ```
@@ -1378,12 +1378,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Retest Intake
 
 343. [DONE] `application-skeleton-retouch.phase77.plan.task1` Record the `1.2.273` retest result and open a bounded Application Skeleton repair stream for Core-owned running-state projection and first-prompt materialization root instructions (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton retest repair`). Evidence: user accepted Diagram Modules and Application Skeleton functionally, then reported that Application Skeleton stays grey while the session is already running; jsonl analysis shows the draft prompt included templates but did not make `workspaceRoot` / production root unambiguous enough, so the agent first materialized under `.codeai-hub/...` and Core had to reject/repair.
-344. [PENDING] Git Commit: `docs: open application skeleton retest repair` (hash: TBD)
+344. [DONE] Git Commit: `docs: open application skeleton retest repair` (hash: 124dcfaa2)
 
 ### Stream: Core Running State Projection
 
-345. [TODO] `application-skeleton-retouch.phase77.running-state.task1` Promote Core workflow state to `in_progress` from active continuity chains so Application Skeleton shows a yellow/progress marker immediately after session creation, before artifacts exist (scope: `packages/core/src/remote-bridge/handlers/workflow-state-continuity-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: mark active application skeleton sessions in progress`).
-346. [TODO] Git Commit: `fix: mark active application skeleton sessions in progress` (hash: TBD)
+345. [DONE] `application-skeleton-retouch.phase77.running-state.task1` Promote Core workflow state to `in_progress` from active continuity chains so Application Skeleton shows a yellow/progress marker immediately after session creation, before artifacts exist (scope: `packages/core/src/remote-bridge/handlers/workflow-state-continuity-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: mark active application skeleton sessions in progress`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts` — PASS, 4 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression proves a persisted `application_skeleton` continuity chain with a provider segment promotes the Core workflow stage to `in_progress` before draft artifacts exist.
+346. [PENDING] Git Commit: `fix: mark active application skeleton sessions in progress` (hash: TBD)
 
 ### Stream: Prompt Materialization Root Contract
 

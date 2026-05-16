@@ -29,6 +29,7 @@ import {
   attachValidationDirtyGate,
   readTechnicalStageDirtyStatus,
 } from "./technical-stage-dirty-gate";
+import { hydrateWorkflowStateFromContinuity } from "./workflow-state-continuity-hydration";
 import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
 import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
@@ -210,6 +211,12 @@ export class WorkflowStateService {
                 workspaceSlug: workspaceSlugResult.value,
                 diagramModulesProgress:
                   technicalStageProgress.diagramModulesProgress,
+              })
+            )
+            .then((validatedState) =>
+              hydrateWorkflowStateFromContinuity({
+                chains,
+                state: validatedState,
               })
             )
             .then((validatedState) =>
