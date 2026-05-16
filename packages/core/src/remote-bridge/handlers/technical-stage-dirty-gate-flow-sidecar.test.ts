@@ -125,7 +125,7 @@ const readWorkflowStatePayload = async (params: {
         resolve(payload as WorkflowStatePayload);
         return this;
       },
-    } as Response;
+    } as unknown as Response;
     params.service.handleWorkflowStateRead(req, res);
   });
 

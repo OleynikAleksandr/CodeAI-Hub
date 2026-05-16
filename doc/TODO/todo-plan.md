@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "e9999c287",
+  "lastRecordedCommit": "59a6c53f7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase69.sidecar-dirty.task1",
-  "expectedCommitMessage": "fix: ignore diagram modules flow sidecar dirt",
+  "currentTaskId": "artifact-contract-repair.phase69.verify.task1",
+  "expectedCommitMessage": "docs: verify diagram modules sidecar dirty gate repair",
   "debt": {
-    "expectedCommitMessage": "fix: ignore diagram modules flow sidecar dirt",
-    "preCommitHead": "e9999c287",
+    "expectedCommitMessage": "docs: verify diagram modules sidecar dirty gate repair",
+    "preCommitHead": "59a6c53f7",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase69.sidecar-dirty.task1"
+    "taskId": "artifact-contract-repair.phase69.verify.task1"
   }
 }
 ```
@@ -1250,12 +1250,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Core Dirty Gate
 
 296. [DONE] `artifact-contract-repair.phase69.sidecar-dirty.task1` Keep `module-map.flow.json` out of Diagram Modules technical-stage dirty gating so graph layout/UI sidecars cannot reset Core aggregate readiness or block Application Skeleton after valid Product Parts are accepted (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore diagram modules flow sidecar dirt`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts` — PASS, 14 tests; added full Core payload regression where committed Product Parts plus untracked `module-map.flow.json` keep `diagram_modules.status=completed` and `gating.blocked.application_skeleton=false`.
-297. [PENDING] Git Commit: `fix: ignore diagram modules flow sidecar dirt` (hash: TBD)
+297. [DONE] Git Commit: `fix: ignore diagram modules flow sidecar dirt` (hash: 59a6c53f7)
 
 ### Stream: Verification And Release
 
-298. [TODO] `artifact-contract-repair.phase69.verify.task1` Run targeted dirty-gate/workflow-state checks plus Core/PM builds, then prepare and build a replacement release after verification because user explicitly requested the retest fix flow (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify diagram modules sidecar dirty gate repair`).
-299. [TODO] Git Commit: `docs: verify diagram modules sidecar dirty gate repair` (hash: TBD)
+298. [DONE] `artifact-contract-repair.phase69.verify.task1` Run targeted dirty-gate/workflow-state checks plus Core/PM builds, then prepare and build a replacement release after verification because user explicitly requested the retest fix flow (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts`; expected commit: `docs: verify diagram modules sidecar dirty gate repair`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts` — PASS, 14 tests; `npx tsx --test src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/components/layout/workspace-tree.test.ts` — PASS, 12 tests; `npm run build --workspace=@codeai-hub/core` — PASS after tightening the new test response mock typing; `npm run typecheck:webview` — PASS; `npm run build:webview` — PASS; `npm run plan:validate` — PASS. Cross-step check: existing dirty-gate regressions still classify Application Skeleton and Quality Gates semantic files by owning stage and do not re-block completed upstream Application Skeleton from technical-stage Git dirt.
+299. [PENDING] Git Commit: `docs: verify diagram modules sidecar dirty gate repair` (hash: TBD)
 300. [TODO] `artifact-contract-repair.phase69.release.task1` Update release-facing docs for future version `1.2.271` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 271 diagram sidecar dirty gate fix`).
 301. [TODO] Git Commit: `docs: prepare release 271 diagram sidecar dirty gate fix` (hash: TBD)
 302. [TODO] `artifact-contract-repair.phase69.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 271 diagram sidecar dirty gate fix`).
