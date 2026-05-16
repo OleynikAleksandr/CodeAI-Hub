@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "93702c5f7",
+  "lastRecordedCommit": "cff4b7713",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task5",
-  "expectedCommitMessage": "chore: build skeleton git hygiene release artifacts",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task5",
+  "expectedCommitMessage": "docs: record skeleton git hygiene release package",
   "debt": {
-    "expectedCommitMessage": "chore: build skeleton git hygiene release artifacts",
-    "preCommitHead": "93702c5f7",
+    "expectedCommitMessage": "docs: record skeleton git hygiene release package",
+    "preCommitHead": "cff4b7713",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-build.task5"
+    "taskId": "app-skeleton-foundation.phase7.release-package.task5"
   }
 }
 ```
@@ -254,9 +254,11 @@
 97. [DONE] `app-skeleton-foundation.phase7.release-docs.task5` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton git hygiene release`).
 98. [DONE] Git Commit: `docs: prepare skeleton git hygiene release` (hash: 93702c5f7)
 99. [DONE] `app-skeleton-foundation.phase7.release-build.task5` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton git hygiene release artifacts`).
-100. [PENDING] Git Commit: `chore: build skeleton git hygiene release artifacts` (hash: TBD)
-101. [TODO] `app-skeleton-foundation.phase7.release-package.task5` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton git hygiene release package`).
-102. [TODO] Git Commit: `docs: record skeleton git hygiene release package` (hash: TBD)
+100. [DONE] Git Commit: `chore: build skeleton git hygiene release artifacts` (hash: cff4b7713)
+101. [DONE] `app-skeleton-foundation.phase7.release-package.task5` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton git hygiene release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.281`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
+   - User handoff artifact: `codeai-hub-1.2.281.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+102. [PENDING] Git Commit: `docs: record skeleton git hygiene release package` (hash: TBD)
 103. [TODO] `app-skeleton-foundation.phase7.acceptance.task6` User installs the next patched release and retests that Application Skeleton materialization creates ignored local install outputs, does not commit build outputs, preserves a nested Product Part tree in JSON, and leaves downstream work unlocked only after clean validation. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
