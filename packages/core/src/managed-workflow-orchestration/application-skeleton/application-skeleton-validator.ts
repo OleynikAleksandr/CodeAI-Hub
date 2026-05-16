@@ -1,5 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { auditApplicationSkeletonEnvironmentReadiness } from "../../remote-bridge/handlers/application-skeleton-environment-readiness-audit";
 import { validateApplicationSkeletonMaterialization } from "../../remote-bridge/handlers/application-skeleton-materialization-validator";
 import {
   isRecord,
@@ -361,7 +362,17 @@ export const validateApplicationSkeletonManagedArtifacts = async (
     markdown,
     workspaceRoot: request.workspaceRoot,
   });
-  const diagnostics = materialization.validationErrors;
+  const environmentDiagnostics =
+    materialization.validationErrors.length === 0
+      ? await auditApplicationSkeletonEnvironmentReadiness({
+          mapJson,
+          workspaceRoot: request.workspaceRoot,
+        })
+      : [];
+  const diagnostics = [
+    ...materialization.validationErrors,
+    ...environmentDiagnostics,
+  ];
   return diagnostics.length > 0
     ? buildInvalidResult({
         diagnostics,

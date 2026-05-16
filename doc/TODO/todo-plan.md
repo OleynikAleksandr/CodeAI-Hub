@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "efa8d6509",
+  "lastRecordedCommit": "7fe770e24",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.env-readiness.task1",
-  "expectedCommitMessage": "fix: require skeleton environment readiness audit",
+  "currentTaskId": "app-skeleton-foundation.phase7.env-readiness.task2",
+  "expectedCommitMessage": "fix: validate skeleton install and script execution",
   "debt": {
-    "expectedCommitMessage": "fix: require skeleton environment readiness audit",
-    "preCommitHead": "efa8d6509",
+    "expectedCommitMessage": "fix: validate skeleton install and script execution",
+    "preCommitHead": "7fe770e24",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.env-readiness.task1"
+    "taskId": "app-skeleton-foundation.phase7.env-readiness.task2"
   }
 }
 ```
@@ -215,23 +215,25 @@
 ### Stream: Environment Readiness Audit Repair
 
 70. [DONE] `app-skeleton-foundation.phase7.env-readiness.task1` Strengthen Application Skeleton prompt/contract so post-acceptance materialization must run the accepted clean install command, create local install outputs such as `node_modules` without committing or listing them in `materializedPaths`, run declared build/typecheck/smoke scripts, and report failure instead of readiness if any command fails (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md`; expected commit: `fix: require skeleton environment readiness audit`).
-71. [PENDING] Git Commit: `fix: require skeleton environment readiness audit` (hash: TBD)
-72. [TODO] `app-skeleton-foundation.phase7.env-readiness.task2` Tighten Core materialization validation so accepted Application Skeleton foundations are not ready until the package-manager install command and declared required scripts have actually succeeded in the workspace (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts`; expected commit: `fix: validate skeleton install and script execution`).
-73. [TODO] Git Commit: `fix: validate skeleton install and script execution` (hash: TBD)
-74. [TODO] `app-skeleton-foundation.phase7.env-readiness.task3` Sync bundled Application Skeleton templates, run targeted materialization/template tests plus core build, and record verification before the next release build (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton environment readiness repair`).
-75. [TODO] Git Commit: `docs: verify skeleton environment readiness repair` (hash: TBD)
-76. [TODO] `app-skeleton-foundation.phase7.release-docs.task4` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton environment readiness release`).
-77. [TODO] Git Commit: `docs: prepare skeleton environment readiness release` (hash: TBD)
-78. [TODO] `app-skeleton-foundation.phase7.release-build.task4` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton environment readiness release artifacts`).
-79. [TODO] Git Commit: `chore: build skeleton environment readiness release artifacts` (hash: TBD)
-80. [TODO] `app-skeleton-foundation.phase7.release-package.task4` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton environment readiness release package`).
-81. [TODO] Git Commit: `docs: record skeleton environment readiness release package` (hash: TBD)
-82. [TODO] `app-skeleton-foundation.phase7.acceptance.task5` User installs the next patched release and retests that Application Skeleton materialization creates local install outputs, proves declared scripts pass, preserves the Project Manager Development Tree mirror, and only then unlocks downstream work. Scope: user workflow acceptance only; expected commit: none.
+71. [DONE] Git Commit: `fix: require skeleton environment readiness audit` (hash: 7fe770e24)
+72. [DONE] `app-skeleton-foundation.phase7.env-readiness.task2` Tighten Core materialization validation so accepted Application Skeleton foundations are not ready until the package-manager install command and declared required scripts have actually succeeded in the workspace, while progress polling stays read-only (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts`; expected commit: `fix: validate skeleton install and script execution`).
+73. [PENDING] Git Commit: `fix: validate skeleton install and script execution` (hash: TBD)
+74. [TODO] `app-skeleton-foundation.phase7.env-readiness.task3` Add focused regression coverage for the Application Skeleton environment readiness audit rejecting missing installs and failed scripts, and accepting a real local install plus passing scripts (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover skeleton environment readiness audit`).
+75. [TODO] Git Commit: `test: cover skeleton environment readiness audit` (hash: TBD)
+76. [TODO] `app-skeleton-foundation.phase7.env-readiness.task4` Sync bundled Application Skeleton templates, run targeted materialization/template tests plus core build, and record verification before the next release build (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton environment readiness repair`).
+77. [TODO] Git Commit: `docs: verify skeleton environment readiness repair` (hash: TBD)
+78. [TODO] `app-skeleton-foundation.phase7.release-docs.task4` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton environment readiness release`).
+79. [TODO] Git Commit: `docs: prepare skeleton environment readiness release` (hash: TBD)
+80. [TODO] `app-skeleton-foundation.phase7.release-build.task4` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton environment readiness release artifacts`).
+81. [TODO] Git Commit: `chore: build skeleton environment readiness release artifacts` (hash: TBD)
+82. [TODO] `app-skeleton-foundation.phase7.release-package.task4` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton environment readiness release package`).
+83. [TODO] Git Commit: `docs: record skeleton environment readiness release package` (hash: TBD)
+84. [TODO] `app-skeleton-foundation.phase7.acceptance.task5` User installs the next patched release and retests that Application Skeleton materialization creates local install outputs, proves declared scripts pass, preserves the Project Manager Development Tree mirror, and only then unlocks downstream work. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-83. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-84. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-85. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+85. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+86. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+87. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
