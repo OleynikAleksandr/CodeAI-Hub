@@ -8,15 +8,15 @@
   "planId": "solidworks-workflow-docs-relevance-audit-2026-05-16",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "fe3743d0a",
-  "lastRecordedCommit": "fabfafba4",
+  "lastRecordedCommit": "91b1441fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Documentation_Relevance_Audit_2026-05-16.md",
-  "currentTaskId": "docs-relevance-audit.phase3.contracts.task1",
-  "expectedCommitMessage": "docs: sync active workflow contracts with managed runtime",
+  "currentTaskId": "docs-relevance-audit.phase3.plans.task1",
+  "expectedCommitMessage": "docs: archive completed workflow planning artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: sync active workflow contracts with managed runtime",
-    "preCommitHead": "fabfafba4",
+    "expectedCommitMessage": "docs: archive completed workflow planning artifacts",
+    "preCommitHead": "91b1441fb",
     "stage": "commit_pending",
-    "taskId": "docs-relevance-audit.phase3.contracts.task1"
+    "taskId": "docs-relevance-audit.phase3.plans.task1"
   }
 }
 ```
@@ -75,12 +75,12 @@
 ### Stream: Active Contracts
 
 9. [DONE] `docs-relevance-audit.phase3.contracts.task1` Promote implemented scenario/contract details into active contracts and mark suspended historical contracts correctly (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/Contracts/Workflow_Revision_Graph.md`; expected commit: `docs: sync active workflow contracts with managed runtime`). Evidence: navigation SSOT now includes `Application Skeleton` and `Quality Gates Baseline`, Core-owned startup/auto-select state, and Core parser projections; `Managed_Workspace_Lifecycle` is explicitly retired with Managed Workflow Orchestration as replacement authority; `Workflow_Revision_Graph` is marked partially implemented with current runtime support and future snapshot/migration boundaries separated.
-10. [PENDING] Git Commit: `docs: sync active workflow contracts with managed runtime` (hash: TBD)
+10. [DONE] Git Commit: `docs: sync active workflow contracts with managed runtime` (hash: 91b1441fb)
 
 ### Stream: Plans And Index
 
-11. [TODO] `docs-relevance-audit.phase3.plans.task1` Move or mark completed planning artifacts and refresh navigation docs so active Plans contain only genuinely open future scopes (scope: `doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive completed workflow planning artifacts`).
-12. [TODO] Git Commit: `docs: archive completed workflow planning artifacts` (hash: TBD)
+11. [DONE] `docs-relevance-audit.phase3.plans.task1` Move or mark completed planning artifacts and refresh navigation docs so active Plans contain only genuinely open future scopes (scope: `doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive completed workflow planning artifacts`). Evidence: active plan inventory found no completed managed-orchestration source left outside `Plans/Archive/`; `Plans/Managed_Step_Orchestration/README.md` now points active behavior to `ManagedWorkflowOrchestration.md` and keeps retired lifecycle docs historical; `Docs_Index.md` now lists the managed cluster as active runtime, marks the relevance audit plan as currently active, and describes revision graph implementation boundaries accurately.
+12. [PENDING] Git Commit: `docs: archive completed workflow planning artifacts` (hash: TBD)
 
 ## Phase 4 — Verification And Closeout (owner: Codex, updated: 2026-05-16)
 

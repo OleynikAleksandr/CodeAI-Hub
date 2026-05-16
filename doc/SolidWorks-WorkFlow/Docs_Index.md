@@ -21,18 +21,18 @@
 ## 1) Канонические документы (этот каталог)
 
 ### Workflow Overview
-- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→5 + Development Tree branches), артефактов, OUTDATED propagation, technical-stage rewrite boundary, and Core Runtime continuity/read-model contracts.
+- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→5 + Development Tree branches), артефактов, OUTDATED propagation, managed technical-stage runtime boundary, and Core Runtime continuity/read-model contracts.
 
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics and model invocation profile boundaries.
-- `System/ManagedDocumentationCommitOwnership.md` — suspended historical pointer for the removed pre-rewrite documentation-stage ownership model. It is not an active runtime contract; replacement ownership must come from the new orchestration cluster.
+- `System/ManagedDocumentationCommitOwnership.md` — suspended historical pointer for the removed pre-rewrite documentation-stage ownership model. It is not an active runtime contract; replacement ownership comes from `Clusters/ManagedWorkflowOrchestration.md`.
 - `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, release-time regressions, or managed-stage terminal-anchor drift.
 - `System/WorkflowStep_PromptTesting_Methodology.md` — SSOT methodology for live-testing any workflow step agent prompt, identifying prompt-level defects, and turning observed behavior into an ideal step front contract.
 
 ### Clusters
 - `Clusters/Project_Manager.md` — SSOT подсистемы Project Manager.
 - `Clusters/CoreOrchestrator.md` — SSOT подсистемы Core Orchestrator.
-- `Clusters/ManagedWorkflowOrchestration.md` — SSOT replacement cluster for managed technical Documentation Tree stages: facade boundary, internal modules, reusable phase types, step-controller extension contract, runtime ownership, and first visual preview release boundary.
+- `Clusters/ManagedWorkflowOrchestration.md` — SSOT active runtime cluster for managed technical Documentation Tree stages: facade boundary, internal modules, reusable phase types, step-controller extension contract, prompt/artifact/parser authority, managed commits, user review gates, and downstream unlock.
 
 ### Modules
 - `Modules/Claude.md` — SSOT Claude provider module, including provider-home runtime isolation and SDK isolation-mode rules for CodeAI Hub-managed turns.
@@ -50,8 +50,8 @@
 - `Contracts/DescriptionStep_SingleAgent.md` — канонический контракт шага `Description` (single-agent, file-first).
 - `Contracts/VirtualSimulation_Step.md` — контракт шага `Virtual Simulation`.
 - `Contracts/Workflow_CLI.md` — state machine шагов + watcher.
-- `Contracts/Managed_Workspace_Lifecycle.md` — suspended historical pointer for the removed managed workspace lifecycle. It is retained only to prevent old links from implying an active contract; the new cluster must replace it before any future lifecycle depends on it.
-- `Contracts/Workflow_Revision_Graph.md` — revision graph contract for Diagram/Skeleton/Quality Gates/Development Tree snapshots, stable ids, diff classes, and downstream migration tasks.
+- `Contracts/Managed_Workspace_Lifecycle.md` — retired historical pointer for the removed generated-script/child-plan managed workspace lifecycle. Active lifecycle authority is `Clusters/ManagedWorkflowOrchestration.md`.
+- `Contracts/Workflow_Revision_Graph.md` — active future contract for Diagram/Skeleton/Quality Gates/Development Tree revisions; current runtime implements stable ids, content revision hashes, managed review revision tasks, and dirty-gate path reservation, while full snapshot writing/migration planning remains future scope.
 - `Contracts/ProjectManager_DescriptionEntry_CopyRefactor.md` — UI-контракт pre-submit/post-submit для Description.
 - `Contracts/Dialogs_And_Continuity_Routing.md` — routing диалогов + continuity.
 - `Contracts/SessionContinuity.md` — continuity handoff/rollover contract.
@@ -93,6 +93,7 @@
 - `Plans/Archive/DevelopmentTree_Orchestration_Architecture.md` — archived planning-doc закрытого Development Tree orchestration planning scope: user-driven Development Tree documentation sessions after Quality Gates, contract-only Implementation Planner inputs, implementation waves, deterministic node micro-plans, and Core-orchestrated parallel/serial code execution.
 - `Plans/Archive/DevelopmentTree_Phase1_UserStartedDocumentation.md` — archived child planning-doc закрытого Development Tree orchestration planning scope (`doc/TODO/Archive/todo-plan-closeout-development-tree-orchestration-planning-2026-05-08.md`): Phase 1 Development Tree behavior with no automatic branch-session fan-out, user-started Product Part / Cluster / Module node cards, per-node provider/model/reasoning binding, node-scoped draft artifacts, commits, Core feedback, and user acceptance.
 - `Plans/Managed_Step_Orchestration/README.md` — inactive folder marker for completed managed-step orchestration planning waves. Active implementation sources were archived after releases `1.2.249` and `1.2.274`; new managed orchestration work must start from a fresh planning document and active TODO plan.
+- `Plans/Documentation_Relevance_Audit_2026-05-16.md` — active planning source for the current documentation relevance audit; archive at scope closeout after user acceptance.
 - `Plans/Archive/Managed_Step_Orchestration_Quality_Gates_Scenario_1.2.249.md` — archived accepted scenario source for Quality Gates Baseline managed orchestration: draft contract, user acceptance commit, integration commit, Core rejection/repair evidence commits, post-completion user-return revisions, single stage-light truth, and Development Tree unlock requirements. Closed by release `1.2.249`.
 - `Plans/Archive/Managed_Step_Orchestration_Diagram_Modules_Scenario_1.2.229.md` — archived accepted scenario contract for incremental Diagram Modules orchestration, correction-turn microtasks, and the post-completion `revisionN` user-return commit loop. Closed by release `1.2.229`.
 - `Plans/Archive/Managed_Step_Orchestration_Application_Skeleton_Scenario_1.2.238.md` — archived accepted scenario contract replacing the superseded static Application Skeleton Phase B orchestration plan; defines dynamic draft/review/accept/materialize growth, repair microtasks with failed-attempt evidence commits, Quality Gates handoff, post-completion `revisionN` user-return commits, and completed-stage LED boundary. Closed by release `1.2.238`.

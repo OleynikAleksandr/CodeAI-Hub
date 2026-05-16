@@ -12,10 +12,15 @@ owned by the canonical System, Cluster, Module, and Contract documents.
 
 The accepted managed orchestration baseline is now canonical in:
 
-- `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`
-- `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`
+- `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`
 - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`
+- `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md`
+
+Historical retired lifecycle pointers remain in:
+
+- `doc/SolidWorks-WorkFlow/System/ManagedDocumentationCommitOwnership.md`
+- `doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md`
 
 Historical planning sources for this wave were moved to `doc/SolidWorks-WorkFlow/Plans/Archive/`.
 
