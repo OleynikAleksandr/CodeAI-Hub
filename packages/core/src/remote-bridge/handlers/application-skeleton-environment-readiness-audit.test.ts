@@ -7,6 +7,8 @@ import test from "node:test";
 import { auditApplicationSkeletonEnvironmentReadiness } from "./application-skeleton-environment-readiness-audit";
 
 const MISSING_INSTALL_OUTPUT_RE = /install output is missing: node_modules/;
+const MISSING_GITIGNORE_RE = /gitignore is missing: \.gitignore/;
+const MISSING_DIST_IGNORE_RE = /gitignore must ignore build output: dist/;
 const FAILED_SCRIPT_RE = /required script failed: build/;
 
 const makeWorkspace = async (): Promise<string> =>
@@ -97,6 +99,43 @@ test("environment readiness audit rejects failed required scripts", async () => 
   }
 });
 
+test("environment readiness audit rejects missing gitignore", async () => {
+  const workspaceRoot = await makeWorkspace();
+  try {
+    await writePackageJson(workspaceRoot, {
+      build: 'node -e "process.exit(0)"',
+    });
+
+    const errors = await auditApplicationSkeletonEnvironmentReadiness({
+      mapJson: makeMap(),
+      workspaceRoot,
+    });
+
+    assert.match(errors.join("\n"), MISSING_GITIGNORE_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("environment readiness audit rejects gitignore without dist output coverage", async () => {
+  const workspaceRoot = await makeWorkspace();
+  try {
+    await writePackageJson(workspaceRoot, {
+      build: 'node -e "process.exit(0)"',
+    });
+    await writeFile(path.join(workspaceRoot, ".gitignore"), "node_modules/\n");
+
+    const errors = await auditApplicationSkeletonEnvironmentReadiness({
+      mapJson: makeMap(),
+      workspaceRoot,
+    });
+
+    assert.match(errors.join("\n"), MISSING_DIST_IGNORE_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("environment readiness audit accepts clean install and passing scripts", async () => {
   const workspaceRoot = await makeWorkspace();
   try {
@@ -105,6 +144,10 @@ test("environment readiness audit accepts clean install and passing scripts", as
       "test:smoke": 'node -e "process.exit(0)"',
       typecheck: 'node -e "process.exit(0)"',
     });
+    await writeFile(
+      path.join(workspaceRoot, ".gitignore"),
+      "node_modules/\ndist/\n"
+    );
 
     const errors = await auditApplicationSkeletonEnvironmentReadiness({
       mapJson: makeMap(["build", "typecheck", "test:smoke"]),

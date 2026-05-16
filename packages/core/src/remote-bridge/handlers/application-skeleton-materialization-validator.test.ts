@@ -34,6 +34,12 @@ const MISSING_FIRST_WAVE_ENTRYPOINT_RE =
 const INVALID_FIRST_WAVE_ENTRYPOINT_RE =
   /first-wave entrypoint must be production path: \.codeai-hub\/tmp\/generated\.ts/;
 const MISSING_LINT_SCRIPT_RE = /required script is missing: lint/;
+const FLAT_CLUSTER_RE = /Cluster must be nested under its Product Part/;
+const FLAT_MODULE_RE = /Module must be nested under its Product Part tree/;
+const GENERATED_NODE_MODULES_RE =
+  /generated output must not be listed as materializedPath: node_modules/;
+const GENERATED_DIST_RE =
+  /generated output must not be listed as materializedPath: product-parts\/project-manager\/dist/;
 
 const makeWorkspace = async (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "codeai-skeleton-validator-"));
@@ -305,6 +311,61 @@ test("materialized skeleton validation requires project foundation evidence", as
     assert.match(errors, MISSING_FIRST_WAVE_ENTRYPOINT_RE);
     assert.match(errors, INVALID_FIRST_WAVE_ENTRYPOINT_RE);
     assert.match(errors, MISSING_LINT_SCRIPT_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("materialized skeleton rejects flat product tree and generated materialized paths", async () => {
+  const workspaceRoot = await makeWorkspace();
+  try {
+    const paths = [
+      "product-parts/project-manager",
+      "product-parts/project-manager/clusters/workflow-ui",
+      "product-parts/project-manager/clusters/workflow-ui/modules/navigation",
+      "product-parts/project-manager/dist",
+      "node_modules",
+    ];
+    await createDirs(workspaceRoot, paths);
+    await createFoundationFiles(workspaceRoot);
+
+    const result = await validateApplicationSkeletonMaterialization({
+      markdown: MATERIALIZED_MARKDOWN,
+      workspaceRoot,
+      mapJson: {
+        accepted: true,
+        materialized: true,
+        materializationState: "materialized",
+        materializedPaths: paths,
+        ...FOUNDATION_FIELDS,
+        reviewState: "materialized",
+        sourceRoot: "product-parts",
+        productParts: [
+          {
+            id: "project-manager",
+            codePath: "product-parts/project-manager",
+          },
+          {
+            clusterId: "workflow-ui",
+            codePath: "product-parts/project-manager/clusters/workflow-ui",
+            kind: "cluster",
+          },
+          {
+            codePath:
+              "product-parts/project-manager/clusters/workflow-ui/modules/navigation",
+            kind: "module",
+            moduleId: "navigation",
+          },
+        ],
+      },
+    });
+
+    assert.equal(result.observedMaterialization, true);
+    const errors = result.validationErrors.join("\n");
+    assert.match(errors, FLAT_CLUSTER_RE);
+    assert.match(errors, FLAT_MODULE_RE);
+    assert.match(errors, GENERATED_NODE_MODULES_RE);
+    assert.match(errors, GENERATED_DIST_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

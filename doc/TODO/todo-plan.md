@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "567bf2ac6",
+  "lastRecordedCommit": "d1dc52652",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task4",
-  "expectedCommitMessage": "fix: exclude generated outputs from managed commits",
+  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task5",
+  "expectedCommitMessage": "test: cover skeleton git hygiene validation",
   "debt": {
-    "expectedCommitMessage": "fix: exclude generated outputs from managed commits",
-    "preCommitHead": "567bf2ac6",
+    "expectedCommitMessage": "test: cover skeleton git hygiene validation",
+    "preCommitHead": "d1dc52652",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task4"
+    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task5"
   }
 }
 ```
@@ -246,9 +246,9 @@
 89. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task3` Add Core validation for Application Skeleton output hygiene: `.gitignore` must ignore install/build outputs and `materializedPaths` must not contain generated output paths (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: validate skeleton output hygiene`).
 90. [DONE] Git Commit: `fix: validate skeleton output hygiene` (hash: 567bf2ac6)
 91. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task4` Exclude generated install/build outputs from managed Git commits even when a materialized directory path is staged (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: exclude generated outputs from managed commits`).
-92. [PENDING] Git Commit: `fix: exclude generated outputs from managed commits` (hash: TBD)
-93. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task5` Add regression coverage for nested tree validation and output hygiene validation (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts`; expected commit: `test: cover skeleton git hygiene validation`).
-94. [TODO] Git Commit: `test: cover skeleton git hygiene validation` (hash: TBD)
+92. [DONE] Git Commit: `fix: exclude generated outputs from managed commits` (hash: d1dc52652)
+93. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task5` Add regression coverage for nested tree validation and output hygiene validation (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts`; expected commit: `test: cover skeleton git hygiene validation`).
+94. [PENDING] Git Commit: `test: cover skeleton git hygiene validation` (hash: TBD)
 95. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task6` Sync bundled Application Skeleton templates and run targeted Application Skeleton tests plus core build before release (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton git hygiene repair`).
 96. [TODO] Git Commit: `docs: verify skeleton git hygiene repair` (hash: TBD)
 97. [TODO] `app-skeleton-foundation.phase7.release-docs.task5` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton git hygiene release`).
