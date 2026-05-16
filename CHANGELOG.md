@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.271] - 2026-05-16
+### Fixed
+- **Diagram Modules graph sidecars no longer block workflow progress.** Core technical-stage dirty gating ignores the non-semantic `.codeai-hub/<workspace>/diagram_modules/module-map.flow.json` layout file, so a valid Product Parts aggregate remains ready even when Project Manager graph layout state is untracked.
+- **Application Skeleton stays unlocked after Diagram Modules review opens.** The Core workflow state regression now covers committed Product Parts plus an untracked graph sidecar and still returns `diagram_modules.status=completed` with `gating.blocked.application_skeleton=false`.
+- **Adjacent technical-stage gates were rechecked.** Application Skeleton and Quality Gates still classify their semantic dirty files by owning stage, while completed upstream Application Skeleton is not re-blocked by unrelated technical-stage Git dirt.
+
+### Tests
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts`
+- `npx tsx --test src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/components/layout/workspace-tree.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run plan:validate`
+
 ## [1.2.270] - 2026-05-16
 ### Fixed
 - **Diagram Modules review readiness now completes the Core workflow stage.** The Core-owned workflow read-model promotes `diagram_modules` from `in_progress` to `completed` when Diagram Modules progress reports `aggregateReady=true`, so Project Manager, future mobile clients, and any other client projection read the same completed state.
