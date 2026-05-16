@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "7300d75d6",
+  "lastRecordedCommit": "0f8040b2c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase4.docs.task1",
-  "expectedCommitMessage": "docs: sync application skeleton foundation contract",
+  "currentTaskId": "app-skeleton-foundation.phase5.verify.task1",
+  "expectedCommitMessage": "docs: record application skeleton foundation verification",
   "debt": {
-    "expectedCommitMessage": "docs: sync application skeleton foundation contract",
-    "preCommitHead": "7300d75d6",
+    "expectedCommitMessage": "docs: record application skeleton foundation verification",
+    "preCommitHead": "0f8040b2c",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase4.docs.task1"
+    "taskId": "app-skeleton-foundation.phase5.verify.task1"
   }
 }
 ```
@@ -96,14 +96,16 @@
 ### Stream: SSOT Sync
 
 17. [DONE] `app-skeleton-foundation.phase4.docs.task1` Synchronize System/cluster SSOT with the implemented Application Skeleton foundation contract, parser authority, user-question gate, downstream unlock rule, and Quality Gates responsibility boundary (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `docs: sync application skeleton foundation contract`).
-18. [PENDING] Git Commit: `docs: sync application skeleton foundation contract` (hash: TBD)
+18. [DONE] Git Commit: `docs: sync application skeleton foundation contract` (hash: 0f8040b2c)
 
 ## Phase 5 — Tooling Verification (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Targeted Verification
 
-19. [TODO] `app-skeleton-foundation.phase5.verify.task1` Run targeted Application Skeleton managed workflow tests and `npm run build --workspace @codeai-hub/core`; record results and any required follow-up in the active plan (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton foundation verification`).
-20. [TODO] Git Commit: `docs: record application skeleton foundation verification` (hash: TBD)
+19. [DONE] `app-skeleton-foundation.phase5.verify.task1` Run targeted Application Skeleton managed workflow tests and `npm run build --workspace @codeai-hub/core`; record results and repair verification-only fixture drift if the new foundation contract exposes stale tests (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/application-skeleton-completion-observer.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`; expected commit: `docs: record application skeleton foundation verification`).
+   - Verification result (2026-05-16): `npx tsx --test` across Application Skeleton managed workflow/progress/materialization/session/downstream suites passed `41/41`; initial run exposed stale progress/completion fixtures, which were updated to include the required installable foundation evidence.
+   - Build result (2026-05-16): `npm run build --workspace @codeai-hub/core` passed after the Application Skeleton phase-state test fixture included `foundationReady`.
+20. [PENDING] Git Commit: `docs: record application skeleton foundation verification` (hash: TBD)
 
 ## Phase 6 — Release Build (owner: Codex, updated: 2026-05-16)
 

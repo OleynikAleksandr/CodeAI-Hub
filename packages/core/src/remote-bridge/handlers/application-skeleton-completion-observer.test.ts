@@ -34,6 +34,24 @@ const writeSkeletonArtifacts = async (params: {
   );
 };
 
+const writeFoundationFiles = async (workspaceRoot: string): Promise<void> => {
+  await mkdir(path.join(workspaceRoot, "product-parts/demo/src"), {
+    recursive: true,
+  });
+  await writeFile(
+    path.join(workspaceRoot, "product-parts/demo/src/index.ts"),
+    "export {};\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, "package.json"),
+    '{"scripts":{"build":"tsc","lint":"biome check ."}}\n',
+    "utf8"
+  );
+  await writeFile(path.join(workspaceRoot, "package-lock.json"), "{}\n");
+  await writeFile(path.join(workspaceRoot, "tsconfig.json"), "{}\n");
+};
+
 test("completion observer detects materialized flag flipping to true between turns", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "application-skeleton-completion-observer-")
@@ -60,6 +78,7 @@ test("completion observer detects materialized flag flipping to true between tur
     });
     assert.equal(before?.materialized, false);
 
+    await writeFoundationFiles(workspaceRoot);
     await writeSkeletonArtifacts({
       workspaceRoot,
       workspaceSlug,
@@ -68,9 +87,18 @@ test("completion observer detects materialized flag flipping to true between tur
         accepted: true,
         materialized: true,
         materializationState: "materialized",
+        openQuestions: [],
+        packageManager: "npm",
+        projectFoundation: {
+          configFiles: ["tsconfig.json"],
+          firstWaveEntrypoints: ["product-parts/demo/src/index.ts"],
+          installCommand: "npm ci",
+          requiredScripts: ["build", "lint"],
+        },
         reviewState: "materialized",
-        productParts: [],
-        materializedPaths: [],
+        productParts: [{ codePath: "product-parts/demo", id: "demo" }],
+        materializedPaths: ["product-parts/demo/src/index.ts"],
+        sourceRoot: "product-parts",
       },
     });
     const after = await readApplicationSkeletonProgressSnapshot({

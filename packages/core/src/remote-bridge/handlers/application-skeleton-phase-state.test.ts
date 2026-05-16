@@ -7,6 +7,7 @@ const buildProgressSnapshot = (
   override: Partial<ApplicationSkeletonProgressSnapshot>
 ): ApplicationSkeletonProgressSnapshot => ({
   accepted: false,
+  foundationReady: false,
   mapExists: false,
   mappingReady: false,
   markdownExists: false,
@@ -91,6 +92,7 @@ test("classifyApplicationSkeletonPhase maps progress snapshots to orchestration 
         mappingReady: true,
         materializationState: "materialized",
         materialized: true,
+        foundationReady: true,
         observedMaterialization: true,
         substep: "materialized",
       })

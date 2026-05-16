@@ -100,6 +100,17 @@ const writeSkeleton = async (params: {
   );
 };
 
+const writeFoundationFiles = async (workspaceRoot: string): Promise<void> => {
+  for (const [relativePath, content] of [
+    ["product-parts/project-manager/src/index.ts", "export {};\n"],
+    ["package.json", '{"scripts":{"build":"tsc","lint":"biome check ."}}\n'],
+    ["package-lock.json", "{}\n"],
+    ["tsconfig.json", "{}\n"],
+  ] as const) {
+    await writeWorkspaceFile(workspaceRoot, relativePath, content);
+  }
+};
+
 test("accepted application skeleton remains in progress until materialized", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "application-skeleton-progress-accepted-")
@@ -173,6 +184,7 @@ test("materialized application skeleton completes stage and unlocks quality gate
       ),
       { recursive: true }
     );
+    await writeFoundationFiles(workspaceRoot);
     await writeSkeleton({
       markdown: MATERIALIZED_MARKDOWN,
       workspaceRoot,
@@ -184,6 +196,8 @@ test("materialized application skeleton completes stage and unlocks quality gate
         materialized: true,
         materializationState: "materialized",
         materializedPaths: ["product-parts/project-manager"],
+        openQuestions: [],
+        packageManager: "npm",
         productParts: [
           {
             clusters: [
@@ -203,6 +217,13 @@ test("materialized application skeleton completes stage and unlocks quality gate
             id: "project-manager",
           },
         ],
+        projectFoundation: {
+          configFiles: ["tsconfig.json"],
+          firstWaveEntrypoints: ["product-parts/project-manager/src/index.ts"],
+          installCommand: "npm ci",
+          requiredScripts: ["build", "lint"],
+        },
+        sourceRoot: "product-parts",
       },
     });
 
