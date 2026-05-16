@@ -5,12 +5,14 @@
 - `application-skeleton-map.json`: machine-readable mapping from Development Tree ownership to production code paths and materialization state.
 
 ## Step Outcome
-- Application Skeleton materialization must produce an installable project foundation, not only a Product Part folder map.
-- The step owns stack, package/workspace layout, deterministic install metadata, minimal source/facade entrypoints, and build/typecheck/smoke script targets needed before Quality Gates can run.
+- Application Skeleton materialization must produce a code-ready installable project foundation, not only a Product Part folder map.
+- The step owns stack, package/workspace layout, deterministic install metadata, minimal source/facade entrypoints, and build/typecheck/smoke script targets needed before implementation agents can write code and Quality Gates can run.
+- The step owns concrete framework/runtime baseline decisions for visible implementation surfaces such as Project Manager, launcher, desktop shell, webview, frontend, VS Code extension UI, mobile client, browser client, and API server.
 - The step does not own quality-gate product selection or integration. Ultracite, Biome, ESLint, Playwright, Vitest, dependency scanners, secret scanners, hooks, CI policy, and similar gate tooling belong to Quality Gates Baseline.
 - The agent must not materialize while any stack, runtime, package, build, test, source-layout, or first-wave entrypoint ambiguity remains unresolved.
 - The user-visible review artifact is `application-skeleton.md`. JSON is a machine-readable mirror, not the discussion surface. Markdown records the proposed and agreed project foundation: recommendations, incorporated user corrections, answered decisions, agreement status, and unresolved decision status.
 - All clarification, questions, and discussion happen in dialogue. A question written into Markdown or `application-skeleton-map.json` is not considered asked.
+- The materialized filesystem must mirror the Project Manager Development Tree: Product Parts remain Product Part roots, Clusters remain under their owning Product Part, Cluster Modules remain under their owning Cluster, and standalone Modules remain under their owning Product Part.
 
 ## Rewrite Boundary
 - Application Skeleton must not assume that child plans, plan scripts, hooks, or automatic commit ownership exist from the `Diagram Modules` entrypoint.
@@ -86,7 +88,10 @@
 - Every mapped path must be relative, normalized, and inside the workspace.
 - `sourceRoot` must point to the production source/scaffold root and must not point under `.codeai-hub/`.
 - Unless the user explicitly accepts another root, `sourceRoot` must be `product-parts` and every Product Part root must be `product-parts/<product-part-id>`.
+- The production filesystem tree must preserve the Project Manager Development Tree hierarchy exactly. Do not flatten, rename, regroup, or split Product Parts, Clusters, or Modules to fit a framework convention.
 - Explicit upstream technology hints, such as named shell, launcher, runtime, framework, package format, or deployment target, must be treated as strong baseline evidence and either used in the recommended baseline or explicitly explained as a rejected alternative.
+- If upstream artifacts include shell, UI, frontend, desktop, webview, launcher, extension UI, mobile client, browser client, or API server surfaces, `stack.frameworks` must include concrete recommended framework/runtime decisions for those surfaces, or `openQuestions` must include a framework/shell-specific dialogue question with the recommended option first.
+- Do not represent unresolved framework decisions as accepted prose such as "frameworks are not selected", "not fixed", "pending", "TBD", "unknown", or equivalent wording.
 - Do not split Product Part roots across implementation-category folders such as `apps/`, `packages/`, or `extensions/` when the Development Tree is organized by Product Part.
 - Clustered module paths must be nested under their owning cluster path: `<productPartPath>/clusters/<cluster-id>/modules/<module-id>`.
 - Standalone modules must use `standaloneModules`; do not mix cluster-owned modules into a Product Part-level `modules` array.
