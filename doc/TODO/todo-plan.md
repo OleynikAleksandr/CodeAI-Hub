@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "cb554c1da",
+  "lastRecordedCommit": "567bf2ac6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task3",
-  "expectedCommitMessage": "fix: validate skeleton output hygiene",
+  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task4",
+  "expectedCommitMessage": "fix: exclude generated outputs from managed commits",
   "debt": {
-    "expectedCommitMessage": "fix: validate skeleton output hygiene",
-    "preCommitHead": "cb554c1da",
+    "expectedCommitMessage": "fix: exclude generated outputs from managed commits",
+    "preCommitHead": "567bf2ac6",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task3"
+    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task4"
   }
 }
 ```
@@ -244,9 +244,9 @@
 87. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task2` Add Core validation for nested Application Skeleton Product Part tree shape in both draft and materialized artifacts (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-tree-shape-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: validate skeleton nested product tree`).
 88. [DONE] Git Commit: `fix: validate skeleton nested product tree` (hash: cb554c1da)
 89. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task3` Add Core validation for Application Skeleton output hygiene: `.gitignore` must ignore install/build outputs and `materializedPaths` must not contain generated output paths (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: validate skeleton output hygiene`).
-90. [PENDING] Git Commit: `fix: validate skeleton output hygiene` (hash: TBD)
-91. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task4` Exclude generated install/build outputs from managed Git commits even when a materialized directory path is staged (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: exclude generated outputs from managed commits`).
-92. [TODO] Git Commit: `fix: exclude generated outputs from managed commits` (hash: TBD)
+90. [DONE] Git Commit: `fix: validate skeleton output hygiene` (hash: 567bf2ac6)
+91. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task4` Exclude generated install/build outputs from managed Git commits even when a materialized directory path is staged (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: exclude generated outputs from managed commits`).
+92. [PENDING] Git Commit: `fix: exclude generated outputs from managed commits` (hash: TBD)
 93. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task5` Add regression coverage for nested tree validation and output hygiene validation (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts`; expected commit: `test: cover skeleton git hygiene validation`).
 94. [TODO] Git Commit: `test: cover skeleton git hygiene validation` (hash: TBD)
 95. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task6` Sync bundled Application Skeleton templates and run targeted Application Skeleton tests plus core build before release (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton git hygiene repair`).

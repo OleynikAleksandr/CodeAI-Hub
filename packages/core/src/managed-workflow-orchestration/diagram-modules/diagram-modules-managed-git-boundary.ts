@@ -7,6 +7,24 @@ const execFileAsync = promisify(execFile);
 const DEFAULT_RETRY_DELAYS_MS = [100, 250, 500, 1000, 2000, 4000] as const;
 const GIT_AUTHOR_EMAIL = "codeai-hub@example.local";
 const GIT_AUTHOR_NAME = "CodeAI Hub";
+const MANAGED_GIT_EXCLUDED_PATHS = [
+  ":(exclude)node_modules",
+  ":(exclude)node_modules/**",
+  ":(exclude)**/node_modules",
+  ":(exclude)**/node_modules/**",
+  ":(exclude)dist",
+  ":(exclude)dist/**",
+  ":(exclude)**/dist",
+  ":(exclude)**/dist/**",
+  ":(exclude)build",
+  ":(exclude)build/**",
+  ":(exclude)**/build",
+  ":(exclude)**/build/**",
+  ":(exclude)coverage",
+  ":(exclude)coverage/**",
+  ":(exclude)**/coverage",
+  ":(exclude)**/coverage/**",
+] as const;
 const GIT_INDEX_LOCK_RE =
   /index\.lock|Unable to create .*\.git\/index\.lock|Another git process seems to be running/iu;
 
@@ -97,6 +115,7 @@ export class DiagramModulesManagedGitBoundary {
         "add",
         "--",
         ...params.managedPaths,
+        ...MANAGED_GIT_EXCLUDED_PATHS,
       ]);
       const diff = await this.runGitCommand(
         params.workspaceRoot,

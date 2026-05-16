@@ -29,6 +29,10 @@ const LEDGER_SUBJECT_RE = /chore: advance managed workflow ledger/u;
 const LAST_ACCEPTED_HASH_RE = /"lastAcceptedCommitHash": "[0-9a-f]{7,}"/u;
 const PRODUCT_PART_INDEX_TRACKED_RE =
   /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\.index\.md/u;
+const GENERATED_DIST_TRACKED_RE = /product-parts\/project-manager\/dist/u;
+const GENERATED_NODE_MODULES_TRACKED_RE = /node_modules/u;
+const PROJECT_MANAGER_README_TRACKED_RE =
+  /product-parts\/project-manager\/README\.md/u;
 const RUNTIME_METADATA_TRACKED_RE =
   /\.codeai-hub\/demo-workspace\/continuity\/diagram_modules\/session-1\/chain\.json/u;
 const PROJECT_MANAGER_PRODUCT_PART_SUBJECT_RE =
@@ -293,6 +297,47 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
     assert.match(subjects, LEDGER_SUBJECT_RE);
     assert.match(subjects, INDEX_SUBJECT_RE);
     assert.match(subjects, PROJECT_MANAGER_PRODUCT_PART_SUBJECT_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("DiagramModulesManagedGitBoundary excludes generated outputs from managed commits", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "diagram-managed-git-output-exclude-")
+  );
+  const gitBoundary = new DiagramModulesManagedGitBoundary();
+
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "product-parts/project-manager/README.md",
+      "# Project Manager\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "product-parts/project-manager/dist/index.js",
+      "export {};\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "node_modules/demo-package/index.js",
+      "module.exports = {};\n"
+    );
+
+    const commit = await gitBoundary.commitManagedChanges({
+      commitMessage: "test: managed output exclude",
+      managedPaths: ["product-parts", "node_modules"],
+      workspaceRoot,
+    });
+
+    assert.equal(commit.noStagedChanges, false);
+    assert.match(commit.hash ?? "", GIT_HASH_RE);
+
+    const trackedFiles = await git(workspaceRoot, ["ls-files"]);
+    assert.match(trackedFiles, PROJECT_MANAGER_README_TRACKED_RE);
+    assert.doesNotMatch(trackedFiles, GENERATED_NODE_MODULES_TRACKED_RE);
+    assert.doesNotMatch(trackedFiles, GENERATED_DIST_TRACKED_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
