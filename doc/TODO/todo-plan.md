@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "655c001a6",
+  "lastRecordedCommit": "49cb4c310",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase62.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare core artifact contract repair release",
+  "currentTaskId": "artifact-contract-repair.phase63.build-all.task1",
+  "expectedCommitMessage": "chore: build core artifact contract repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare core artifact contract repair release",
-    "preCommitHead": "655c001a6",
+    "expectedCommitMessage": "chore: build core artifact contract repair release",
+    "preCommitHead": "49cb4c310",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase62.release-docs.task1"
+    "taskId": "artifact-contract-repair.phase63.build-all.task1"
   }
 }
 ```
@@ -1157,14 +1157,18 @@ Verification evidence recorded 2026-05-16:
     - Future release version prepared in release-facing docs: `1.2.269`.
     - `README.md` current-release banner updated to the Core artifact contract repair release.
     - `CHANGELOG.md` release entry `1.2.269` added with prompt, parser, validation, and repair lifecycle fixes.
-276. [PENDING] Git Commit: `docs: prepare core artifact contract repair release` (hash: TBD)
+276. [DONE] Git Commit: `docs: prepare core artifact contract repair release` (hash: 49cb4c310)
 
 ## Phase 63 — Build All Runtime Packages (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Runtime Tarballs
 
-277. [TODO] `artifact-contract-repair.phase63.build-all.task1` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build core artifact contract repair release`).
-278. [TODO] Git Commit: `chore: build core artifact contract repair release` (hash: TBD)
+277. [DONE] `artifact-contract-repair.phase63.build-all.task1` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build core artifact contract repair release`).
+    - `./scripts/build-all.sh --allow-dirty` — PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start.
+    - Unified version after build: `1.2.269`.
+    - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.269.tar.bz2`, `codex-module-1.2.269.tar.bz2`, `gemini-module-1.2.269.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.269.tar.bz2`, `vscode-webview-1.2.269.tar.bz2`, `project-manager-1.2.269.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.269.tar.bz2`.
+    - Matching runtime tarballs present in `~/.codeai-hub/releases/` for providers, core, UI, and launcher.
+278. [PENDING] Git Commit: `chore: build core artifact contract repair release` (hash: TBD)
 
 ## Phase 64 — Package VSIX (owner: Codex, updated: 2026-05-16)
 
