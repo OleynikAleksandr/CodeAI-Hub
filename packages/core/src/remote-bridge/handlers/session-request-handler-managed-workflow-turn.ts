@@ -23,6 +23,10 @@ import {
   validateDiagramModulesManagedArtifacts,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import {
+  buildManagedPersistentReturnHandoffMessage,
+  buildManagedUserLedReviewHandoffMessage,
+} from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
+import {
   buildQualityGatesBoundaryBlockedMessage,
   buildQualityGatesDraftRepairPrompt,
   buildQualityGatesIntegrationRepairPrompt,
@@ -239,9 +243,9 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       }
       return;
     }
-    if (decision.nextAction === "open_user_review" && decision.nextPrompt) {
+    if (decision.nextAction === "open_user_review") {
       this.appendCoreMessage(params.sessionId, {
-        content: decision.nextPrompt,
+        content: buildManagedUserLedReviewHandoffMessage("Diagram Modules"),
         tag: "managed-workflow-user-review",
       });
     }
@@ -298,12 +302,16 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       return;
     }
     if (
-      (decision.nextAction === "open_user_review" ||
-        decision.nextAction === "open_persistent_return") &&
-      decision.nextPrompt
+      decision.nextAction === "open_user_review" ||
+      decision.nextAction === "open_persistent_return"
     ) {
       this.appendCoreMessage(params.sessionId, {
-        content: decision.nextPrompt,
+        content:
+          decision.nextAction === "open_user_review"
+            ? buildManagedUserLedReviewHandoffMessage("Application Skeleton")
+            : buildManagedPersistentReturnHandoffMessage(
+                "Application Skeleton"
+              ),
         tag:
           decision.nextAction === "open_user_review"
             ? "managed-workflow-user-review"
@@ -398,12 +406,14 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       return;
     }
     if (
-      (decision.nextAction === "open_user_review" ||
-        decision.nextAction === "open_persistent_return") &&
-      decision.nextPrompt
+      decision.nextAction === "open_user_review" ||
+      decision.nextAction === "open_persistent_return"
     ) {
       this.appendCoreMessage(params.sessionId, {
-        content: decision.nextPrompt,
+        content:
+          decision.nextAction === "open_user_review"
+            ? buildManagedUserLedReviewHandoffMessage("Quality Gates")
+            : buildManagedPersistentReturnHandoffMessage("Quality Gates"),
         tag:
           decision.nextAction === "open_user_review"
             ? "managed-workflow-user-review"

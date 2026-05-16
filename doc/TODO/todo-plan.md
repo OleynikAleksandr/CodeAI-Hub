@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "c058d43d7",
+  "lastRecordedCommit": "903ae79b0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task6",
-  "expectedCommitMessage": "docs: record skeleton review ownership release package",
+  "currentTaskId": "app-skeleton-foundation.phase7.core-handoff.task1",
+  "expectedCommitMessage": "fix: add core-owned managed review handoff messages",
   "debt": {
-    "expectedCommitMessage": "docs: record skeleton review ownership release package",
-    "preCommitHead": "c058d43d7",
+    "expectedCommitMessage": "fix: add core-owned managed review handoff messages",
+    "preCommitHead": "903ae79b0",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-package.task6"
+    "taskId": "app-skeleton-foundation.phase7.core-handoff.task1"
   }
 }
 ```
@@ -284,13 +284,24 @@
 120. [DONE] `app-skeleton-foundation.phase7.release-package.task6` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review ownership release package`).
    - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.282`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
    - User handoff artifact: `codeai-hub-1.2.282.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-121. [PENDING] Git Commit: `docs: record skeleton review ownership release package` (hash: TBD)
-122. [TODO] `app-skeleton-foundation.phase7.acceptance.task7` User installs the produced release and retests that Application Skeleton review dialogue remains agent-owned and materialized `node_modules` does not dirty/block managed Git commits. Scope: user workflow acceptance only; expected commit: none.
+121. [DONE] Git Commit: `docs: record skeleton review ownership release package` (hash: 903ae79b0)
+122. [BLOCKED] `app-skeleton-foundation.phase7.acceptance.task7` User installs the produced release and retests that Application Skeleton review dialogue remains agent-owned and materialized `node_modules` does not dirty/block managed Git commits. Scope: user workflow acceptance only; expected commit: none.
+   - Acceptance defect found in release `1.2.282`: User-Led Review handoff remains ambiguous because agent wording can imply Core is the next actor. Core must own the user-input handoff messages for managed review/return phases, and `подтверждаю` must mean accepting the current contract as-is even when draft `openQuestions` remain.
+
+### Stream: Core-Owned Review Handoff Repair
+
+126. [DONE] `app-skeleton-foundation.phase7.core-handoff.task1` Add Core-owned managed review and persistent-return handoff messages shared by managed todo-plan stages, and use them when provider turns return control to the user (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-handoff-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, doc/TODO/todo-plan.md`; expected commit: `fix: add core-owned managed review handoff messages`).
+127. [PENDING] Git Commit: `fix: add core-owned managed review handoff messages` (hash: TBD)
+128. [TODO] `app-skeleton-foundation.phase7.core-handoff.task2` Make managed review acceptance a hard Core trigger: `подтверждаю` accepts the current contract as-is, does not require Application Skeleton `openQuestions` cleanup, and applies consistently to Application Skeleton and Quality Gates review decisions (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `fix: treat managed review confirmation as acceptance`).
+129. [TODO] Git Commit: `fix: treat managed review confirmation as acceptance` (hash: TBD)
+130. [TODO] `app-skeleton-foundation.phase7.core-handoff.task3` Update managed workflow turn regressions for Diagram Modules, Application Skeleton, and Quality Gates handoff messages, then run targeted managed review tests plus core build (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify core-owned review handoff flow`).
+131. [TODO] Git Commit: `test: verify core-owned review handoff flow` (hash: TBD)
+132. [TODO] `app-skeleton-foundation.phase7.release-confirmation.task7` Stop after green verification and ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-123. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-124. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-125. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+133. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+134. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+135. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
