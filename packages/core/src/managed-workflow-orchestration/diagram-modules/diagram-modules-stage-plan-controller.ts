@@ -6,6 +6,7 @@ import {
   parseDiagramModulesRepairTaskNumber,
 } from "./diagram-modules-stage-plan-repair-model";
 import type { DiagramModulesManagedValidationResult } from "./diagram-modules-validator";
+import { commitManagedWorkflowLedger } from "./managed-workflow-ledger-git-boundary";
 
 const PLAN_START = "<!-- codeai-plan-state:start -->";
 const PLAN_END = "<!-- codeai-plan-state:end -->";
@@ -470,5 +471,10 @@ export class DiagramModulesStagePlanController {
         nextWorkspaceState
       )
     );
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, DIAGRAM_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
   }
 }

@@ -209,6 +209,7 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
     assert.match(afterIndexPlan, INDEX_COMMIT_HASH_RE);
     assert.match(afterIndexPlan, PROJECT_MANAGER_TASK_RE);
     assert.match(afterIndexPlan, PROJECT_MANAGER_TASK_STATE_RE);
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
 
     const trackedAfterIndex = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedAfterIndex, PRODUCT_PART_INDEX_TRACKED_RE);
@@ -260,6 +261,7 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
       ]),
       ""
     );
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
 
     const workspacePlan = await readWorkspaceFile(
       workspaceRoot,

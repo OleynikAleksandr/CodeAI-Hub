@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "34683d1d2",
+  "lastRecordedCommit": "3edeef0f0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase71.ledger.task1",
-  "expectedCommitMessage": "feat: commit managed workflow ledger advancement",
+  "currentTaskId": "managed-git-checkpoint.phase71.diagram-ledger.task1",
+  "expectedCommitMessage": "feat: commit diagram modules ledger advancement",
   "debt": {
-    "expectedCommitMessage": "feat: commit managed workflow ledger advancement",
-    "preCommitHead": "34683d1d2",
+    "expectedCommitMessage": "feat: commit diagram modules ledger advancement",
+    "preCommitHead": "3edeef0f0",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase71.ledger.task1"
+    "taskId": "managed-git-checkpoint.phase71.diagram-ledger.task1"
   }
 }
 ```
@@ -1287,10 +1287,10 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Ledger Advancement Boundary
 
 313. [DONE] `managed-git-checkpoint.phase71.ledger.task1` Commit Core-owned managed ledger advancement after Application Skeleton and Quality Gates artifact commits and user-review state transitions so `doc/TODO/stages/**/todo-plan.md` and `doc/TODO/workspace.plan.md` do not remain dirty for the next microtask (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts`; expected commit: `feat: commit managed workflow ledger advancement`). Evidence: `node --test --import tsx packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts` — PASS, 6 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression covers Core-owned ledger commits after Application Skeleton and Quality Gates draft opens, review acceptances, accepted artifact commits, and rejected repair transitions.
-314. [PENDING] Git Commit: `feat: commit managed workflow ledger advancement` (hash: TBD)
+314. [DONE] Git Commit: `feat: commit managed workflow ledger advancement` (hash: 3edeef0f0)
 
-315. [TODO] `managed-git-checkpoint.phase71.diagram-ledger.task1` Apply the same Core-owned ledger advancement boundary to Diagram Modules accepted artifact turns and prove its stage/workspace ledgers do not remain dirty after Product Part commits (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: commit diagram modules ledger advancement`).
-316. [TODO] Git Commit: `feat: commit diagram modules ledger advancement` (hash: TBD)
+315. [DONE] `managed-git-checkpoint.phase71.diagram-ledger.task1` Apply the same Core-owned ledger advancement boundary to Diagram Modules accepted artifact turns and prove its stage/workspace ledgers do not remain dirty after Product Part commits (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: commit diagram modules ledger advancement`). Evidence: `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` — PASS, 3 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression proves Diagram Modules accepted artifact turns leave full `git status --short` clean after the Product Parts index commit and after the final Product Part commit.
+316. [PENDING] Git Commit: `feat: commit diagram modules ledger advancement` (hash: TBD)
 
 ### Stream: Verification
 
