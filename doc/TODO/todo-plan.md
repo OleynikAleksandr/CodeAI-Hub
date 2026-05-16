@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "546b392e9",
+  "lastRecordedCommit": "353060e3e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase59.repair-lifecycle.task1",
-  "expectedCommitMessage": "fix: route artifact repairs through core lifecycle",
+  "currentTaskId": "artifact-contract-repair.phase60.verify.task1",
+  "expectedCommitMessage": "docs: verify core artifact contract repair",
   "debt": {
-    "expectedCommitMessage": "fix: route artifact repairs through core lifecycle",
-    "preCommitHead": "546b392e9",
+    "expectedCommitMessage": "docs: verify core artifact contract repair",
+    "preCommitHead": "353060e3e",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase59.repair-lifecycle.task1"
+    "taskId": "artifact-contract-repair.phase60.verify.task1"
   }
 }
 ```
@@ -1125,9 +1125,18 @@ Repair coverage:
 ### Stream: Managed Repair Lifecycle
 
 269. [DONE] `artifact-contract-repair.phase59.repair-lifecycle.task1` Route artifact repair requests through Core-owned managed repair intake instead of PM-built session messages: Core chooses the failing artifact, creates a repair microtask plus paired Git Commit, dispatches the provider-visible repair prompt, and commits/rejects every repair attempt with real hashes (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx, src/client/project-manager/components/shared/stage-artifact-content-view.tsx, src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`; expected commit: `fix: route artifact repairs through core lifecycle`).
-270. [PENDING] Git Commit: `fix: route artifact repairs through core lifecycle` (hash: TBD)
+270. [DONE] Git Commit: `fix: route artifact repairs through core lifecycle` (hash: 353060e3e)
 
 ### Stream: Verification
 
-271. [TODO] `artifact-contract-repair.phase60.verify.task1` Run targeted Core/PM tests and builds for prompt inline-template coverage, shared artifact parser diagnostics, Diagram Modules graph renderability after Core acceptance, and repair microtask/commit insertion; record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify core artifact contract repair`).
-272. [TODO] Git Commit: `docs: verify core artifact contract repair` (hash: TBD)
+271. [DONE] `artifact-contract-repair.phase60.verify.task1` Run targeted Core/PM tests and builds for prompt inline-template coverage, shared artifact parser diagnostics, Diagram Modules graph renderability after Core acceptance, and repair microtask/commit insertion; record exact evidence before any release consideration (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify core artifact contract repair`).
+272. [PENDING] Git Commit: `docs: verify core artifact contract repair` (hash: TBD)
+
+Verification evidence recorded 2026-05-16:
+- `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts` — passed; verifies inline Diagram Modules template appendices in managed prompt pack.
+- `node --test --import tsx src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.test.ts` — passed; verifies PM graph path consumes the Core-owned staged Product Part parser through the adapter.
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts` — passed; verifies invalid Diagram Modules Product Part turns now create a repair task/commit before Core dispatches the repair prompt.
+- `npm run typecheck:webview` — passed.
+- `npm run build --workspace=@codeai-hub/core` — passed.
+- `npm run plan:validate` — passed.
+- `npm run plan:commit -- "fix: route artifact repairs through core lifecycle"` — passed hooks: architecture check, `npx ultracite check`, `npm run check:knip`, staged Ultracite formatting, and plan post-commit finalization.
