@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "a373e82e4",
+  "lastRecordedCommit": "1d560fbd7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-docs.task4",
-  "expectedCommitMessage": "docs: prepare skeleton environment readiness release",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task4",
+  "expectedCommitMessage": "chore: build skeleton environment readiness release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare skeleton environment readiness release",
-    "preCommitHead": "a373e82e4",
+    "expectedCommitMessage": "chore: build skeleton environment readiness release artifacts",
+    "preCommitHead": "1d560fbd7",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-docs.task4"
+    "taskId": "app-skeleton-foundation.phase7.release-build.task4"
   }
 }
 ```
@@ -226,9 +226,10 @@
 77. [DONE] Git Commit: `docs: verify skeleton environment readiness repair` (hash: a373e82e4)
 78. [DONE] `app-skeleton-foundation.phase7.release-docs.task4` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton environment readiness release`).
    - Release docs result (2026-05-16): README and CHANGELOG prepared for v1.2.280 with Application Skeleton local install, `node_modules`, and required-script readiness audit notes.
-79. [PENDING] Git Commit: `docs: prepare skeleton environment readiness release` (hash: TBD)
-80. [TODO] `app-skeleton-foundation.phase7.release-build.task4` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton environment readiness release artifacts`).
-81. [TODO] Git Commit: `chore: build skeleton environment readiness release artifacts` (hash: TBD)
+79. [DONE] Git Commit: `docs: prepare skeleton environment readiness release` (hash: 1d560fbd7)
+80. [DONE] `app-skeleton-foundation.phase7.release-build.task4` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton environment readiness release artifacts`).
+   - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.280`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+81. [PENDING] Git Commit: `chore: build skeleton environment readiness release artifacts` (hash: TBD)
 82. [TODO] `app-skeleton-foundation.phase7.release-package.task4` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton environment readiness release package`).
 83. [TODO] Git Commit: `docs: record skeleton environment readiness release package` (hash: TBD)
 84. [TODO] `app-skeleton-foundation.phase7.acceptance.task5` User installs the next patched release and retests that Application Skeleton materialization creates local install outputs, proves declared scripts pass, preserves the Project Manager Development Tree mirror, and only then unlocks downstream work. Scope: user workflow acceptance only; expected commit: none.
