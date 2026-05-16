@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.283] - 2026-05-16
+### Fixed
+- **Core now owns managed user-review handoff messages.** Diagram Modules, Application Skeleton, and Quality Gates use a shared Core message when user review opens, so the user sees the same instruction after each agent turn: answer the agent, ask for corrections, or type `подтверждаю` to accept the current result.
+- **`подтверждаю` is a hard acceptance trigger.** Application Skeleton and Quality Gates no longer reinterpret confirmation as review feedback just because `openQuestions` or wording such as `но` remain in the message; confirmation accepts the current contract as-is and opens the next managed materialization/integration phase.
+- **Persistent return messages are Core-owned.** Completed Application Skeleton and Quality Gates materialization/integration now use a stable Core message that says the step is complete and the user can return later with changes.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.282] - 2026-05-16
 ### Fixed
 - **Application Skeleton review dialogue remains agent-owned.** Core no longer publishes duplicate visible review-question messages while the agent is clarifying `openQuestions`; user answers are routed back to the active review task through an internal repair/review prompt.
