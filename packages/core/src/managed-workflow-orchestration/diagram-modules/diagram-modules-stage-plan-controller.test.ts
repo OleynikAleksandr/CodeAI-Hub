@@ -311,6 +311,11 @@ test("DiagramModulesManagedGitBoundary excludes generated outputs from managed c
   try {
     await writeWorkspaceFile(
       workspaceRoot,
+      ".gitignore",
+      "node_modules/\ndist/\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
       "product-parts/project-manager/README.md",
       "# Project Manager\n"
     );
@@ -327,7 +332,11 @@ test("DiagramModulesManagedGitBoundary excludes generated outputs from managed c
 
     const commit = await gitBoundary.commitManagedChanges({
       commitMessage: "test: managed output exclude",
-      managedPaths: ["product-parts", "node_modules"],
+      managedPaths: [
+        "product-parts",
+        "product-parts/project-manager/dist",
+        "node_modules",
+      ],
       workspaceRoot,
     });
 

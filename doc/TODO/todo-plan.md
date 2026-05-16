@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "fa6d5895c",
+  "lastRecordedCommit": "cba0c458f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.review-ownership.task2",
-  "expectedCommitMessage": "test: cover agent-owned skeleton review dialogue",
+  "currentTaskId": "app-skeleton-foundation.phase7.review-ownership.task3",
+  "expectedCommitMessage": "fix: filter ignored outputs before managed git add",
   "debt": {
-    "expectedCommitMessage": "test: cover agent-owned skeleton review dialogue",
-    "preCommitHead": "fa6d5895c",
+    "expectedCommitMessage": "fix: filter ignored outputs before managed git add",
+    "preCommitHead": "cba0c458f",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.review-ownership.task2"
+    "taskId": "app-skeleton-foundation.phase7.review-ownership.task3"
   }
 }
 ```
@@ -267,9 +267,9 @@
 107. [DONE] `app-skeleton-foundation.phase7.review-ownership.task1` Keep Application Skeleton review dialogue agent-owned while Core continues validation, managed microtask advancement, and commits behind the scenes (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep skeleton review dialogue agent-owned`).
 108. [DONE] Git Commit: `fix: keep skeleton review dialogue agent-owned` (hash: fa6d5895c)
 109. [DONE] `app-skeleton-foundation.phase7.review-ownership.task2` Add review routing regressions proving Core does not duplicate Application Skeleton questions and routes user answers back to the agent until `openQuestions` are cleared (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover agent-owned skeleton review dialogue`).
-110. [PENDING] Git Commit: `test: cover agent-owned skeleton review dialogue` (hash: TBD)
-111. [TODO] `app-skeleton-foundation.phase7.review-ownership.task3` Repair managed Git pathspec filtering so ignored generated outputs are not passed as positive `git add` paths and do not block Application Skeleton materialization commits (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: filter ignored outputs before managed git add`).
-112. [TODO] Git Commit: `fix: filter ignored outputs before managed git add` (hash: TBD)
+110. [DONE] Git Commit: `test: cover agent-owned skeleton review dialogue` (hash: cba0c458f)
+111. [DONE] `app-skeleton-foundation.phase7.review-ownership.task3` Repair managed Git pathspec filtering so ignored generated outputs are not passed as positive `git add` paths and do not block Application Skeleton materialization commits (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: filter ignored outputs before managed git add`).
+112. [PENDING] Git Commit: `fix: filter ignored outputs before managed git add` (hash: TBD)
 113. [TODO] `app-skeleton-foundation.phase7.review-ownership.task4` Run targeted review/Git-boundary tests plus core build and stop for release confirmation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify skeleton review ownership repair`).
 114. [TODO] Git Commit: `test: verify skeleton review ownership repair` (hash: TBD)
 115. [TODO] `app-skeleton-foundation.phase7.release-confirmation.task6` Ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none.

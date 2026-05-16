@@ -7,26 +7,23 @@ const execFileAsync = promisify(execFile);
 const DEFAULT_RETRY_DELAYS_MS = [100, 250, 500, 1000, 2000, 4000] as const;
 const GIT_AUTHOR_EMAIL = "codeai-hub@example.local";
 const GIT_AUTHOR_NAME = "CodeAI Hub";
+const GENERATED_OUTPUT_SEGMENTS = new Set([
+  "build",
+  "coverage",
+  "dist",
+  "node_modules",
+]);
 const MANAGED_GIT_EXCLUDED_PATHS = [
-  ":(exclude)node_modules",
-  ":(exclude)node_modules/**",
-  ":(exclude)**/node_modules",
-  ":(exclude)**/node_modules/**",
-  ":(exclude)dist",
-  ":(exclude)dist/**",
-  ":(exclude)**/dist",
-  ":(exclude)**/dist/**",
-  ":(exclude)build",
-  ":(exclude)build/**",
-  ":(exclude)**/build",
-  ":(exclude)**/build/**",
-  ":(exclude)coverage",
-  ":(exclude)coverage/**",
-  ":(exclude)**/coverage",
-  ":(exclude)**/coverage/**",
+  ":(exclude,glob)**/node_modules/**",
+  ":(exclude,glob)**/dist/**",
+  ":(exclude,glob)**/build/**",
+  ":(exclude,glob)**/coverage/**",
 ] as const;
 const GIT_INDEX_LOCK_RE =
   /index\.lock|Unable to create .*\.git\/index\.lock|Another git process seems to be running/iu;
+const BACKSLASH_RE = /\\/gu;
+const LEADING_DOT_SLASH_RE = /^\.\//u;
+const TRAILING_SLASH_RE = /\/+$/u;
 
 interface GitCommandResult {
   readonly exitCode: number;
@@ -54,6 +51,25 @@ const sleep = (ms: number): Promise<void> =>
 
 const normalizeWorkspaceRoot = (workspaceRoot: string): string =>
   path.resolve(workspaceRoot);
+
+const normalizeManagedPath = (value: string): string =>
+  value
+    .trim()
+    .replace(BACKSLASH_RE, "/")
+    .replace(LEADING_DOT_SLASH_RE, "")
+    .replace(TRAILING_SLASH_RE, "");
+
+const isGeneratedOutputPath = (value: string): boolean => {
+  const normalized = normalizeManagedPath(value);
+  return normalized
+    .split("/")
+    .some((segment) => GENERATED_OUTPUT_SEGMENTS.has(segment));
+};
+
+const filterManagedPaths = (
+  managedPaths: readonly string[]
+): readonly string[] =>
+  managedPaths.filter((managedPath) => !isGeneratedOutputPath(managedPath));
 
 const extractGitErrorText = (error: unknown): string => {
   if (!(error instanceof Error)) {
@@ -107,14 +123,15 @@ export class DiagramModulesManagedGitBoundary {
     return await this.runExclusive(params.workspaceRoot, async () => {
       await this.ensureGitRepository(params.workspaceRoot);
       await removeMacMetadata(params.workspaceRoot);
-      if (params.managedPaths.length === 0) {
+      const managedPaths = filterManagedPaths(params.managedPaths);
+      if (managedPaths.length === 0) {
         return { hash: null, noStagedChanges: true };
       }
 
       await this.git(params.workspaceRoot, [
         "add",
         "--",
-        ...params.managedPaths,
+        ...managedPaths,
         ...MANAGED_GIT_EXCLUDED_PATHS,
       ]);
       const diff = await this.runGitCommand(
