@@ -40,14 +40,18 @@ const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
 const PLAN_STATUS_COMMAND_RE = /npm run plan:status/;
 const NO_AD_HOC_DIAGNOSTICS_RE =
   /Do not run Python, Node, jq, git, plan, or other ad hoc diagnostic commands/;
-const DO_NOT_START_WITH_STACK_QUESTIONS_RE =
-  /Do not start with blank-choice questions about language, framework, repo shape, or package manager/;
+const MARKDOWN_IS_DECISION_ARTIFACT_RE =
+  /The Markdown artifact is for the proposed and agreed project foundation/;
+const QUESTIONS_ONLY_IN_DIALOGUE_RE =
+  /All clarification, questions, and discussion happen only in dialogue/;
+const NO_MARKDOWN_QUESTIONNAIRE_RE =
+  /Do not turn `application-skeleton\.md` into a questionnaire/;
 const RECOMMENDED_BASELINE_RE =
-  /infer a recommended baseline from the project needs/;
+  /Use upstream facts to propose a recommended baseline/;
 const TECHNOLOGY_HINTS_RE =
   /Treat explicit upstream technology hints, such as a named shell, launcher, runtime, framework, package format, or deployment target, as strong baseline evidence/;
 const CONFIRMATION_STYLE_RE =
-  /confirmation questions with your recommended option first/;
+  /confirmation question with the recommended option first/;
 const LOCALIZED_DRAFT_RESPONSE_RE =
   /tell the user, in the chat language, that the draft Application Skeleton contract is ready for review/;
 const EXACT_REVIEW_CLOSING_PHRASE_RE =
@@ -102,6 +106,12 @@ const CONTRACT_TECHNOLOGY_HINTS_RE =
   /Explicit upstream technology hints, such as named shell, launcher, runtime, framework, package format, or deployment target, must be treated as strong baseline evidence/;
 const CONTRACT_CORE_LIFECYCLE_OWNER_RE =
   /Git, hooks, workspace plan state, active stage todo-plan state.*are not skeleton materialization output/;
+const CONTRACT_MARKDOWN_DECISION_ARTIFACT_RE =
+  /Markdown records the proposed and agreed project foundation/;
+const CONTRACT_QUESTIONS_IN_DIALOGUE_RE =
+  /Any non-empty entry blocks materialization and must be asked to the user in dialogue/;
+const CONTRACT_NO_QUESTIONNAIRE_RE =
+  /application-skeleton\.md` must not become a questionnaire/;
 const LEGACY_LIFECYCLE_PROMISE_RE = new RegExp(
   [
     ["managed workspace", "lifecycle"].join(" "),
@@ -147,7 +157,9 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.doesNotMatch(prompt, WORKSPACE_PLAN_PATH_RE);
   assert.doesNotMatch(prompt, PLAN_STATUS_COMMAND_RE);
   assert.match(prompt, NO_AD_HOC_DIAGNOSTICS_RE);
-  assert.match(prompt, DO_NOT_START_WITH_STACK_QUESTIONS_RE);
+  assert.match(prompt, MARKDOWN_IS_DECISION_ARTIFACT_RE);
+  assert.match(prompt, QUESTIONS_ONLY_IN_DIALOGUE_RE);
+  assert.match(prompt, NO_MARKDOWN_QUESTIONNAIRE_RE);
   assert.match(prompt, RECOMMENDED_BASELINE_RE);
   assert.match(prompt, TECHNOLOGY_HINTS_RE);
   assert.match(prompt, CONFIRMATION_STYLE_RE);
@@ -199,6 +211,9 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, PRODUCT_PARTS_ROOT_RE);
   assert.match(contract, CONTRACT_TECHNOLOGY_HINTS_RE);
   assert.match(contract, CONTRACT_CORE_LIFECYCLE_OWNER_RE);
+  assert.match(contract, CONTRACT_MARKDOWN_DECISION_ARTIFACT_RE);
+  assert.match(contract, CONTRACT_QUESTIONS_IN_DIALOGUE_RE);
+  assert.match(contract, CONTRACT_NO_QUESTIONNAIRE_RE);
   assert.doesNotMatch(contract, LEGACY_LIFECYCLE_PROMISE_RE);
   assert.doesNotMatch(contract, NO_ROOT_TODO_RE);
   assert.doesNotMatch(contract, WORKSPACE_PLAN_PATH_RE);

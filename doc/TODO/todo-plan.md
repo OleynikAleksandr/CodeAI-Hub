@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "cf77e60a7",
+  "lastRecordedCommit": "24e220ba7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.review-contract.task2",
-  "expectedCommitMessage": "fix: validate visible skeleton review questions",
+  "currentTaskId": "app-skeleton-foundation.phase7.review-contract.task3",
+  "expectedCommitMessage": "docs: record skeleton review question contract verification",
   "debt": {
-    "expectedCommitMessage": "fix: validate visible skeleton review questions",
-    "preCommitHead": "cf77e60a7",
+    "expectedCommitMessage": "docs: record skeleton review question contract verification",
+    "preCommitHead": "24e220ba7",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.review-contract.task2"
+    "taskId": "app-skeleton-foundation.phase7.review-contract.task3"
   }
 }
 ```
@@ -170,9 +170,11 @@
 43. [DONE] `app-skeleton-foundation.phase7.review-contract.task1` Make the Application Skeleton prompt/contract and Core review message explicit: the user reads Markdown as the decision artifact, questions and clarification happen only in dialogue, JSON is only a machine signal for Core, and unresolved decisions must be asked as confirmation questions before materialization (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts`; expected commit: `fix: clarify skeleton review question contract`).
 44. [DONE] Git Commit: `fix: clarify skeleton review question contract` (hash: cf77e60a7)
 45. [DONE] `app-skeleton-foundation.phase7.review-contract.task2` Enforce the review-question contract in Core validation and regression tests: non-empty `openQuestions` must be surfaced by Core in the dialogue/review message and draft framework placeholders must not be used as fake accepted stack decisions (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: validate visible skeleton review questions`).
-46. [PENDING] Git Commit: `fix: validate visible skeleton review questions` (hash: TBD)
-47. [TODO] `app-skeleton-foundation.phase7.review-contract.task3` Update bundled-template regression coverage and run targeted Application Skeleton validator/review tests plus core build; record results before next release decision (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract verification`).
-48. [TODO] Git Commit: `docs: record skeleton review question contract verification` (hash: TBD)
+46. [DONE] Git Commit: `fix: validate visible skeleton review questions` (hash: 24e220ba7)
+47. [DONE] `app-skeleton-foundation.phase7.review-contract.task3` Update bundled-template regression coverage and generated bundle, then run targeted Application Skeleton validator/review tests plus core build; record results before next release decision (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract verification`).
+   - Verification result (2026-05-16): `npx tsx --test packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts` passed 18/18 tests.
+   - Build result (2026-05-16): `npm run build --workspace @codeai-hub/core` passed.
+48. [PENDING] Git Commit: `docs: record skeleton review question contract verification` (hash: TBD)
 49. [TODO] `app-skeleton-foundation.phase7.release-confirm.task2` Stop after green verification and ask the user for explicit confirmation before preparing or building the next patched release. Scope: release confirmation gate only; expected commit: none.
 50. [TODO] `app-skeleton-foundation.phase7.acceptance.task3` User installs the next patched release and retests that Application Skeleton questions are asked in dialogue, Markdown records proposed/agreed decisions rather than questionnaire prompts, all artifact prose is localized, and materialization remains blocked while questions remain. Scope: user workflow acceptance only; expected commit: none.
 
