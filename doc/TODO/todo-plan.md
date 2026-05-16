@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "835fa20e8",
+  "lastRecordedCommit": "d210cf389",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase3.stage-plan.task1",
-  "expectedCommitMessage": "feat: track application skeleton foundation materialization paths",
+  "currentTaskId": "app-skeleton-foundation.phase3.downstream-gate.task1",
+  "expectedCommitMessage": "feat: gate downstream stages on skeleton foundation readiness",
   "debt": {
-    "expectedCommitMessage": "feat: track application skeleton foundation materialization paths",
-    "preCommitHead": "835fa20e8",
+    "expectedCommitMessage": "feat: gate downstream stages on skeleton foundation readiness",
+    "preCommitHead": "d210cf389",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase3.stage-plan.task1"
+    "taskId": "app-skeleton-foundation.phase3.downstream-gate.task1"
   }
 }
 ```
@@ -79,12 +79,12 @@
 ### Stream: Commit Scope And Stage Plan
 
 11. [DONE] `app-skeleton-foundation.phase3.stage-plan.task1` Expand Application Skeleton materialization stage-plan scope and managed-path collection to include accepted project foundation files such as package manifests, lockfiles, tsconfig/build configs, minimal source entrypoints, and Product Part package roots without granting Quality Gates ownership (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `feat: track application skeleton foundation materialization paths`).
-12. [PENDING] Git Commit: `feat: track application skeleton foundation materialization paths` (hash: TBD)
+12. [DONE] Git Commit: `feat: track application skeleton foundation materialization paths` (hash: d210cf389)
 
 ### Stream: Downstream Readiness Gates
 
-13. [TODO] `app-skeleton-foundation.phase3.downstream-gate.task1` Block Quality Gates and Development Tree readiness on Core-validated Application Skeleton foundation completeness rather than only `materialized: true`/path existence (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `feat: gate downstream stages on skeleton foundation readiness`).
-14. [TODO] Git Commit: `feat: gate downstream stages on skeleton foundation readiness` (hash: TBD)
+13. [DONE] `app-skeleton-foundation.phase3.downstream-gate.task1` Block Quality Gates and Development Tree readiness on Core-validated Application Skeleton foundation completeness rather than only `materialized: true`/path existence (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `feat: gate downstream stages on skeleton foundation readiness`).
+14. [PENDING] Git Commit: `feat: gate downstream stages on skeleton foundation readiness` (hash: TBD)
 
 ## Phase 4 — Regression Coverage And Documentation Sync (owner: Codex, updated: 2026-05-16)
 

@@ -165,6 +165,18 @@ test("development tree unlocks from application skeleton and quality gates progr
       "product-parts/demo/README.md",
       "# Demo Product Part\n"
     );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "product-parts/demo/src/index.ts",
+      "export {};\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "package.json",
+      '{"scripts":{"build":"tsc","lint":"biome check ."}}\n'
+    );
+    await writeWorkspaceFile(workspaceRoot, "package-lock.json", "{}\n");
+    await writeWorkspaceFile(workspaceRoot, "tsconfig.json", "{}\n");
     await writeJsonArtifact({
       fileName: "application-skeleton-map.json",
       stage: "application_skeleton",
@@ -175,7 +187,15 @@ test("development tree unlocks from application skeleton and quality gates progr
         materializedPaths: ["product-parts/demo/README.md"],
         materialized: true,
         materializationState: "materialized",
+        openQuestions: [],
+        packageManager: "npm",
         productParts: [{ codePath: "product-parts/demo", partId: "demo" }],
+        projectFoundation: {
+          configFiles: ["tsconfig.json"],
+          firstWaveEntrypoints: ["product-parts/demo/src/index.ts"],
+          installCommand: "npm ci",
+          requiredScripts: ["build", "lint"],
+        },
         reviewState: "materialized",
         schema: "codeai-application-skeleton-v1",
         sourceRoot: "product-parts",
@@ -236,6 +256,87 @@ test("development tree unlocks from application skeleton and quality gates progr
     assert.deepEqual(integrated.applicationSkeletonReadiness.blockers, []);
     assert.deepEqual(integrated.qualityGatesReadiness.blockers, []);
     assert.equal(integrated.unlocked, true);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("development tree blocks downstream stages when application skeleton foundation is incomplete", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "development-tree-foundation-gate-")
+  );
+  const workspaceSlug = "demo";
+
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton.md`,
+      [
+        "# Application Skeleton",
+        "- `reviewState`: `materialized`",
+        "- `accepted`: `true`",
+        "- `materialized`: `true`",
+        "- `materializationState`: `materialized`",
+      ].join("\n")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "product-parts/demo/README.md",
+      "# Demo Product Part\n"
+    );
+    await writeJsonArtifact({
+      fileName: "application-skeleton-map.json",
+      stage: "application_skeleton",
+      workspaceRoot,
+      workspaceSlug,
+      content: {
+        accepted: true,
+        materialized: true,
+        materializationState: "materialized",
+        materializedPaths: ["product-parts/demo/README.md"],
+        productParts: [{ codePath: "product-parts/demo", partId: "demo" }],
+        reviewState: "materialized",
+        schema: "codeai-application-skeleton-v1",
+        sourceRoot: "product-parts",
+      },
+    });
+    await writeMarkdownArtifact({
+      fileName: "quality-gates.md",
+      heading: "Quality Gates Baseline",
+      stage: "quality_gates",
+      workspaceRoot,
+      workspaceSlug,
+    });
+    await writeJsonArtifact({
+      fileName: "quality-gates.json",
+      stage: "quality_gates",
+      workspaceRoot,
+      workspaceSlug,
+      content: {
+        accepted: true,
+        commands: {},
+        integrated: true,
+        integratedPaths: ["package.json"],
+        integrationState: "integrated",
+        schema: "codeai-quality-gates-v1",
+      },
+    });
+
+    const gated = await readDevelopmentTreeBootstrapGate({
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(gated.applicationSkeletonProgress?.foundationReady, false);
+    assert.equal(gated.qualityGatesReadiness.ready, true);
+    assert.equal(gated.applicationSkeletonReadiness.ready, false);
+    assert.equal(
+      gated.applicationSkeletonReadiness.blockers.some((blocker) =>
+        blocker.includes("projectFoundation")
+      ),
+      true
+    );
+    assert.equal(gated.unlocked, false);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

@@ -26,10 +26,23 @@ const blockedStage = (
 
 const resolveApplicationSkeletonReadiness = (
   progress: ApplicationSkeletonProgressSnapshot | null
-): DevelopmentTreeStageReadinessSnapshot =>
-  progress?.materialized
+): DevelopmentTreeStageReadinessSnapshot => {
+  if (!progress) {
+    return blockedStage("Application Skeleton progress is missing");
+  }
+  if (!progress.foundationReady) {
+    return {
+      blockers:
+        progress.validationErrors.length > 0
+          ? progress.validationErrors
+          : ["Application Skeleton project foundation is not ready"],
+      ready: false,
+    };
+  }
+  return progress.materialized
     ? readyStage()
     : blockedStage("Application Skeleton artifacts are not materialized");
+};
 
 const resolveQualityGatesReadiness = (
   progress: QualityGatesProgressSnapshot | null

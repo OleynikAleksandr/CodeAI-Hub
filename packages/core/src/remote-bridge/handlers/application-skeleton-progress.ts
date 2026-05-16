@@ -13,6 +13,7 @@ export type ApplicationSkeletonSubstep =
 
 export interface ApplicationSkeletonProgressSnapshot {
   readonly accepted: boolean;
+  readonly foundationReady: boolean;
   readonly mapExists: boolean;
   readonly mappingReady: boolean;
   readonly markdownExists: boolean;
@@ -168,12 +169,13 @@ export const readApplicationSkeletonProgressSnapshot = async (params: {
       markdown,
       workspaceRoot: params.workspaceRoot,
     });
+  const foundationReady =
+    accepted && observedMaterialization && validationErrors.length === 0;
   const materialized =
-    accepted &&
+    foundationReady &&
     markdownExists &&
     mapExists &&
-    readMaterializedFlag(mapJson) &&
-    validationErrors.length === 0;
+    readMaterializedFlag(mapJson);
   let materializationState = readMaterializationState(mapJson);
   if (materialized) {
     materializationState = "materialized";
@@ -182,6 +184,7 @@ export const readApplicationSkeletonProgressSnapshot = async (params: {
   }
   return {
     accepted,
+    foundationReady,
     materializationState,
     materialized,
     mapExists,
