@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "b88694945",
+  "lastRecordedCommit": "0048ef10c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase67.release.task2",
-  "expectedCommitMessage": "chore: build release 270 diagram review gating fix",
+  "currentTaskId": "artifact-contract-repair.phase67.release.task3",
+  "expectedCommitMessage": "docs: record release 270 diagram review gating handoff",
   "debt": {
-    "expectedCommitMessage": "chore: build release 270 diagram review gating fix",
-    "preCommitHead": "b88694945",
+    "expectedCommitMessage": "docs: record release 270 diagram review gating handoff",
+    "preCommitHead": "0048ef10c",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase67.release.task2"
+    "taskId": "artifact-contract-repair.phase67.release.task3"
   }
 }
 ```
@@ -1225,9 +1225,14 @@ Verification evidence recorded 2026-05-16:
     - Unified version after build: `1.2.270`.
     - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.270.tar.bz2`, `codex-module-1.2.270.tar.bz2`, `gemini-module-1.2.270.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.270.tar.bz2`, `vscode-webview-1.2.270.tar.bz2`, `project-manager-1.2.270.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.270.tar.bz2`.
     - Matching runtime tarballs present in `~/.codeai-hub/releases/` for providers, core, UI, and launcher.
-290. [PENDING] Git Commit: `chore: build release 270 diagram review gating fix` (hash: TBD)
-291. [TODO] `artifact-contract-repair.phase67.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 270 diagram review gating handoff`).
-292. [TODO] Git Commit: `docs: record release 270 diagram review gating handoff` (hash: TBD)
+290. [DONE] Git Commit: `chore: build release 270 diagram review gating fix` (hash: 0048ef10c)
+291. [DONE] `artifact-contract-repair.phase67.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 270 diagram review gating handoff`).
+    - `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before packaging.
+    - Required release-build output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`.
+    - VSIX package: `codeai-hub-1.2.270.vsix` (`48M`; package-size warning reported `48M`).
+    - Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.270.tar.bz2`, `codex-module-1.2.270.tar.bz2`, `gemini-module-1.2.270.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.270.tar.bz2`, `vscode-webview-1.2.270.tar.bz2`, `project-manager-1.2.270.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.270.tar.bz2`.
+    - Advisory release warnings: markdown link checker reported 17 pre-existing planning-document anchor issues; package size warning remained expected for the current VSIX surface. Neither warning blocked packaging or runtime surface verification.
+292. [PENDING] Git Commit: `docs: record release 270 diagram review gating handoff` (hash: TBD)
 
 ## Phase 68 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
 
