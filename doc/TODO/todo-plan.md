@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "87cd14f69",
+  "lastRecordedCommit": "5a464ebec",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase69.release.task3",
-  "expectedCommitMessage": "docs: record release 271 diagram sidecar dirty gate handoff",
+  "currentTaskId": "managed-git-checkpoint.phase71.plan.task1",
+  "expectedCommitMessage": "docs: open managed git checkpoint repair",
   "debt": {
-    "expectedCommitMessage": "docs: record release 271 diagram sidecar dirty gate handoff",
-    "preCommitHead": "87cd14f69",
+    "expectedCommitMessage": "docs: open managed git checkpoint repair",
+    "preCommitHead": "5a464ebec",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase69.release.task3"
+    "taskId": "managed-git-checkpoint.phase71.plan.task1"
   }
 }
 ```
@@ -1261,10 +1261,39 @@ Verification evidence recorded 2026-05-16:
 302. [DONE] `artifact-contract-repair.phase69.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 271 diagram sidecar dirty gate fix`). Evidence: `./scripts/build-all.sh --allow-dirty` — PASS; unified generated version is `1.2.271`; runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.271.tar.bz2`, `codex-module-1.2.271.tar.bz2`, `gemini-module-1.2.271.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.271.tar.bz2`, `vscode-webview-1.2.271.tar.bz2`, `project-manager-1.2.271.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.271.tar.bz2`.
 303. [DONE] Git Commit: `chore: build release 271 diagram sidecar dirty gate fix` (hash: 87cd14f69)
 304. [DONE] `artifact-contract-repair.phase69.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 271 diagram sidecar dirty gate handoff`). Evidence: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`; VSIX package: `codeai-hub-1.2.271.vsix` (`48M`); runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.271.tar.bz2`, `codex-module-1.2.271.tar.bz2`, `gemini-module-1.2.271.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.271.tar.bz2`, `vscode-webview-1.2.271.tar.bz2`, `project-manager-1.2.271.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.271.tar.bz2`. Advisory warnings: markdown link checker reported 17 existing planning-document anchor issues; package size warning reported `48M`; neither warning blocked packaging or runtime surface verification.
-305. [PENDING] Git Commit: `docs: record release 271 diagram sidecar dirty gate handoff` (hash: TBD)
+305. [DONE] Git Commit: `docs: record release 271 diagram sidecar dirty gate handoff` (hash: 5a464ebec)
 
 ## Phase 70 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
 
 ### Stream: Release Retest Handoff
 
-306. [TODO] `artifact-contract-repair.phase70.user-acceptance.task1` User installs and retests release `1.2.271`: Diagram Modules graph sidecar presence must not keep the root step yellow, Application Skeleton must be available after Core opens user review, and graph layout state must remain a non-semantic UI sidecar (scope: user workflow; expected commit: none).
+306. [DONE] `artifact-contract-repair.phase70.user-acceptance.task1` User installs and retests release `1.2.271`: Diagram Modules graph sidecar presence must not keep the root step yellow, Application Skeleton must be available after Core opens user review, and graph layout state must remain a non-semantic UI sidecar (scope: user workflow; expected commit: none). Result: user confirmed `1.2.271` fixes the Diagram Modules green marker and unlocks Application Skeleton.
+
+## Phase 71 — Managed Git Checkpoint And Ledger Boundary (owner: Codex, updated: 2026-05-16)
+
+### Stream: Repair Intake
+
+307. [DONE] `managed-git-checkpoint.phase71.plan.task1` Record the accepted `1.2.271` retest and open a bounded Core repair stream for managed workflow Git hygiene: Diagram Modules must first checkpoint provider-direct inputs and Core scaffold, then Core must advance managed ledgers in a separate system commit so the next microtask starts from clean Git (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open managed git checkpoint repair`).
+308. [PENDING] Git Commit: `docs: open managed git checkpoint repair` (hash: TBD)
+
+### Stream: Diagram Modules Input Checkpoint
+
+309. [TODO] `managed-git-checkpoint.phase71.diagram.task1` Add a Core-owned Diagram Modules Phase 0 input checkpoint that commits Description/Virtual Simulation artifacts plus Core scaffold before the first Product Parts index prompt is dispatched (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `feat: checkpoint managed workflow inputs before diagram modules`).
+310. [TODO] Git Commit: `feat: checkpoint managed workflow inputs before diagram modules` (hash: TBD)
+
+311. [TODO] `managed-git-checkpoint.phase71.start.task1` Invoke the Diagram Modules input checkpoint from both managed workflow session start paths before provider dispatch or continuity session reuse can send the first agent prompt (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-resolution.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `feat: enforce clean git before managed workflow starts`).
+312. [TODO] Git Commit: `feat: enforce clean git before managed workflow starts` (hash: TBD)
+
+### Stream: Ledger Advancement Boundary
+
+313. [TODO] `managed-git-checkpoint.phase71.ledger.task1` Commit Core-owned managed ledger advancement after artifact commits and user-review state transitions so `doc/TODO/stages/**/todo-plan.md` and `doc/TODO/workspace.plan.md` do not remain dirty for the next microtask (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts`; expected commit: `feat: commit managed workflow ledger advancement`).
+314. [TODO] Git Commit: `feat: commit managed workflow ledger advancement` (hash: TBD)
+
+### Stream: Verification
+
+315. [TODO] `managed-git-checkpoint.phase71.verify.task1` Run targeted managed workflow checkpoint/ledger tests plus Core/PM gating builds, then stop for release-build confirmation because this changes managed workflow commit sequencing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify managed git checkpoint repair`).
+316. [TODO] Git Commit: `docs: verify managed git checkpoint repair` (hash: TBD)
+
+### Stream: Release Build Confirmation
+
+317. [TODO] `managed-git-checkpoint.phase71.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none).
