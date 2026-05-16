@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "486c08fb9",
+  "lastRecordedCommit": "64af464d2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.release-docs.task8",
-  "expectedCommitMessage": "docs: prepare diagram review confirmation release",
+  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.release-build.task8",
+  "expectedCommitMessage": "chore: build diagram review confirmation release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare diagram review confirmation release",
-    "preCommitHead": "486c08fb9",
+    "expectedCommitMessage": "chore: build diagram review confirmation release artifacts",
+    "preCommitHead": "64af464d2",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.diagram-review.release-docs.task8"
+    "taskId": "app-skeleton-foundation.phase7.diagram-review.release-build.task8"
   }
 }
 ```
@@ -322,9 +322,10 @@
 ### Stream: Diagram Modules Confirmation Release
 
 144. [DONE] `app-skeleton-foundation.phase7.diagram-review.release-docs.task8` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram review confirmation release`).
-145. [PENDING] Git Commit: `docs: prepare diagram review confirmation release` (hash: TBD)
-146. [TODO] `app-skeleton-foundation.phase7.diagram-review.release-build.task8` Run `./scripts/build-all.sh` from a clean tree or with only active plan state dirtiness, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Diagram Modules confirmation release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram review confirmation release artifacts`).
-147. [TODO] Git Commit: `chore: build diagram review confirmation release artifacts` (hash: TBD)
+145. [DONE] Git Commit: `docs: prepare diagram review confirmation release` (hash: 64af464d2)
+146. [DONE] `app-skeleton-foundation.phase7.diagram-review.release-build.task8` Run `./scripts/build-all.sh` from a clean tree or with only active plan state dirtiness, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Diagram Modules confirmation release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram review confirmation release artifacts`).
+   - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.284`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+147. [PENDING] Git Commit: `chore: build diagram review confirmation release artifacts` (hash: TBD)
 148. [TODO] `app-skeleton-foundation.phase7.diagram-review.release-package.task8` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram review confirmation release package`).
 149. [TODO] Git Commit: `docs: record diagram review confirmation release package` (hash: TBD)
 
