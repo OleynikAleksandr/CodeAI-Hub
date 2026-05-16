@@ -8,15 +8,15 @@
   "planId": "main-merge-release-retest-1.2.275",
   "branch": "main",
   "baseHead": "39d486a8d",
-  "lastRecordedCommit": "39d486a8d",
+  "lastRecordedCommit": "abb776146",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Main_Merge_Release_Verification_1.2.275.md",
-  "currentTaskId": "main-merge-release.phase0.plan.task1",
-  "expectedCommitMessage": "docs: open merged orchestrator release retest",
+  "currentTaskId": "main-merge-release.phase1.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.275 merged orchestrator retest release",
   "debt": {
-    "expectedCommitMessage": "docs: open merged orchestrator release retest",
-    "preCommitHead": "39d486a8d",
+    "expectedCommitMessage": "docs: prepare 1.2.275 merged orchestrator retest release",
+    "preCommitHead": "abb776146",
     "stage": "commit_pending",
-    "taskId": "main-merge-release.phase0.plan.task1"
+    "taskId": "main-merge-release.phase1.docs.task1"
   }
 }
 ```
@@ -46,14 +46,14 @@
 ### Stream: Scope Registration
 
 1. [DONE] `main-merge-release.phase0.plan.task1` Create the planning source, active todo-plan, and docs index entry for the merged orchestrator release retest scope (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Main_Merge_Release_Verification_1.2.275.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: open merged orchestrator release retest`).
-2. [PENDING] Git Commit: `docs: open merged orchestrator release retest` (hash: TBD)
+2. [DONE] Git Commit: `docs: open merged orchestrator release retest` (hash: abb776146)
 
 ## Phase 1 — Release Notes Preparation (owner: Codex, updated: 2026-05-16)
 
 ### Stream: User-Facing Release Docs
 
-3. [TODO] `main-merge-release.phase1.docs.task1` Update README and CHANGELOG for the future `1.2.275` retest release before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.275 merged orchestrator retest release`).
-4. [TODO] Git Commit: `docs: prepare 1.2.275 merged orchestrator retest release` (hash: TBD)
+3. [DONE] `main-merge-release.phase1.docs.task1` Update README and CHANGELOG for the future `1.2.275` retest release before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.275 merged orchestrator retest release`). Result: README and CHANGELOG now describe `1.2.275` as a fresh merged orchestrator retest build before release automation bumps package manifests.
+4. [PENDING] Git Commit: `docs: prepare 1.2.275 merged orchestrator retest release` (hash: TBD)
 
 ## Phase 2 — Release Build (owner: Codex, updated: 2026-05-16)
 

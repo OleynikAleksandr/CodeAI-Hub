@@ -2,14 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.274** (Application Skeleton running-state repair)
+**Current Release — v1.2.275** (Merged orchestrator retest build)
 
-This release fixes the Application Skeleton retest path after the managed
-workflow rollout. Core now projects active Application Skeleton continuity
-chains as `in_progress`, so Project Manager shows the yellow running marker as
-soon as the session is active, and the first Application Skeleton prompt now
-states that production scaffold paths are workspace-root relative while
-`.codeai-hub/**` remains workflow-artifact-only.
+This release rebuilds the current `main` baseline after the large Core managed
+orchestrator merge under a fresh version so the merged workflow can be installed
+and retested from a clean package identity.
 
 All five documentation trunk steps are now routed through the replacement
 Managed Workflow Orchestration boundary. `Description` and `Virtual Simulation`

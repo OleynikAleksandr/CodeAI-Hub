@@ -8,6 +8,10 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.275] - 2026-05-16
+### Changed
+- **Fresh retest release for the merged Core managed orchestrator baseline.** Rebuilds the current `main` branch after the large orchestrator merge under a new package version so the merged workflow can be installed and tested without reusing the previous release identity.
+
 ## [1.2.274] - 2026-05-16
 ### Fixed
 - **Application Skeleton now shows active work in the documentation tree.** Core hydrates workflow state from the active Application Skeleton continuity chain, so Project Manager receives `in_progress` while the provider session is running instead of leaving the step grey until artifacts appear.
