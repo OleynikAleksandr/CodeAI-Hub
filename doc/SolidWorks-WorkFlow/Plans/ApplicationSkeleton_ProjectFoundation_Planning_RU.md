@@ -1,6 +1,6 @@
 # Application Skeleton Project Foundation Planning
 
-**Status:** Draft planning intake
+**Status:** Accepted planning source for the next Application Skeleton implementation scope
 **Owner:** Oleksandr / Codex
 **Created:** 2026-05-16
 **Scope:** future modification of the `Application Skeleton` managed agent and Core validation so the step materializes an installable project foundation, not only a Product Part filesystem skeleton.

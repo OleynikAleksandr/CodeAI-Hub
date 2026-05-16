@@ -1,6 +1,6 @@
 # Quality Gates Working Baseline Planning
 
-**Status:** Draft planning intake
+**Status:** Accepted deferred planning source for the later Quality Gates implementation scope
 **Owner:** Oleksandr / Codex
 **Created:** 2026-05-16
 **Scope:** future modification of the `Quality Gates Baseline` managed agent and Core validation so the step researches, proposes, accepts, and integrates real working quality gates for the already materialized project foundation.
