@@ -4,93 +4,31 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "ACTIVE",
+  "executionScopeStatus": "NONE",
   "planId": "solidworks-workflow-docs-relevance-audit-2026-05-16",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "fe3743d0a",
-  "lastRecordedCommit": "e25d13a26",
+  "lastRecordedCommit": "97aaa8187",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Documentation_Relevance_Audit_2026-05-16.md",
-  "currentTaskId": "docs-relevance-audit.phase4.closeout.task1",
-  "expectedCommitMessage": "docs: close solidworks workflow docs relevance audit",
-  "debt": {
-    "expectedCommitMessage": "docs: close solidworks workflow docs relevance audit",
-    "preCommitHead": "e25d13a26",
-    "stage": "commit_pending",
-    "taskId": "docs-relevance-audit.phase4.closeout.task1"
-  }
+  "currentTaskId": null,
+  "expectedCommitMessage": null,
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## Context Pack For This Cycle
+## No Active Execution Scope
 
+- **Execution Scope Status:** NONE
+- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-solidworks-workflow-docs-relevance-audit-2026-05-16.md`
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Documentation_Relevance_Audit_2026-05-16.md`
-- **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
-  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-  - `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`
-  - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
-  - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
-- Только этот список является источником документов для восстановления контекста текущего execution cycle.
+- **Last recorded commit:** `97aaa8187`
 
-## Execution Rules
+## Start Next Scope
 
-- Required reading before each docs fix: `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`.
-- Scope: audit `doc/SolidWorks-WorkFlow/**` against current code and the completed managed workflow fixes through release `1.2.274`.
-- Each implementation task touches no more than 3 files unless the task is an inventory-only `doc/TODO/todo-plan.md` evidence update.
-- Every tracked docs change is committed through `npm run plan:commit -- "<expected commit message>"`.
-- Do not archive active future planning docs that describe unimplemented/deferred future work; only completed artifacts from the managed workflow implementation wave are moved or marked archived.
-- Release build is out of scope. This is documentation and plan/archive hygiene only.
+There is no active execution scope. Before starting new implementation work:
 
-## Phase 0 — Audit Intake (owner: Codex, updated: 2026-05-16)
-
-### Stream: Scope Registration
-
-1. [DONE] `docs-relevance-audit.phase0.plan.task1` Create the planning source and active todo-plan for the full SolidWorks-WorkFlow documentation relevance audit after the accepted managed workflow release (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/Documentation_Relevance_Audit_2026-05-16.md`; expected commit: `docs: open solidworks workflow docs relevance audit`).
-2. [DONE] Git Commit: `docs: open solidworks workflow docs relevance audit` (hash: f20c66d3d)
-
-## Phase 1 — Inventory And Relevance Findings (owner: Codex, updated: 2026-05-16)
-
-### Stream: Repository-To-Docs Audit
-
-3. [DONE] `docs-relevance-audit.phase1.inventory.task1` Run repository-wide docs inventory and stale-reference scans, then record findings and disposition decisions before edits (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record solidworks workflow docs audit findings`). Evidence: `find doc/SolidWorks-WorkFlow -type f` found 221 docs, including 149 archived planning docs, 11 active/deferred `Plans/*.md`, 1 inactive `Plans/Managed_Step_Orchestration/README.md`, and active System/Cluster/Contract/Module docs. Code inventory confirmed implemented Core-owned managed workflow modules under `packages/core/src/managed-workflow-orchestration/**` for `diagram_modules`, `application_skeleton`, and `quality_gates`; provider-direct policy remains for `description` and `virtual_simulation`; Project Manager consumes `workflow-state` and a thin staged Product Part parser adapter imported from Core. Stale active-doc classes found: `Docs_Index.md` and `Clusters/ManagedWorkflowOrchestration.md` still describe the cluster as first-preview/preview-boundary instead of accepted managed runtime; `System/Workflow_NewStep_Rollout_Guardrails.md` still says future managed trunk steps starting with Diagram Modules must be redefined/re-enabled; active SSOT needs a clearer statement that first prompts embed complete templates and Core/shared parser diagnostics are the only artifact truth; `Plans/Managed_Step_Orchestration/README.md` is correctly inactive, while active `Plans/*.md` are future/deferred work and should remain active. Disposition: update System/Workflow guardrails, cluster ownership docs, active contracts, and Docs Index; keep archived planning docs historical, only correcting headers/links when they are presented as current; do not archive active future work such as Development Tree branch workflow, Capture Workbench, provider capability analysis, or deterministic continuity snapshot.
-4. [DONE] Git Commit: `docs: record solidworks workflow docs audit findings` (hash: 85dd4fd4c)
-
-## Phase 2 — Active SSOT Relevance Repairs (owner: Codex, updated: 2026-05-16)
-
-### Stream: System And Workflow SSOT
-
-5. [DONE] `docs-relevance-audit.phase2.system.task1` Synchronize core system/workflow SSOT docs with the implemented managed workflow state, Core-owned artifact truth, and release `1.2.274` behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`; expected commit: `docs: sync workflow system ssot with managed runtime`). Evidence: system SSOT now states the accepted managed cluster baseline for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`; provider first/repair prompts must embed complete templates and parser-visible examples inline; Application Skeleton in-progress LED state is Core-owned; and the stale "Diagram Modules is final trunk step" wording is replaced with the current Skeleton -> Quality Gates -> Development Tree gate sequence.
-6. [DONE] Git Commit: `docs: sync workflow system ssot with managed runtime` (hash: e289ce4ff)
-
-### Stream: Cluster Ownership SSOT
-
-7. [DONE] `docs-relevance-audit.phase2.clusters.task1` Synchronize cluster docs so Core/Managed Workflow own parser, validation, prompts, read-model, and commit lifecycle while Project Manager remains a replaceable client projection (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: sync cluster ownership contracts`). Evidence: cluster docs now describe Managed Workflow Orchestration as the active runtime boundary, not preview-only design; Core Orchestrator no longer says managed stages are fail-closed pending a future cluster; Project Manager explicitly renders Application Skeleton active/completed indicators from Core workflow-state and remains a parser/read-model projection only.
-8. [DONE] Git Commit: `docs: sync cluster ownership contracts` (hash: fabfafba4)
-
-## Phase 3 — Contracts And Planning Disposition (owner: Codex, updated: 2026-05-16)
-
-### Stream: Active Contracts
-
-9. [DONE] `docs-relevance-audit.phase3.contracts.task1` Promote implemented scenario/contract details into active contracts and mark suspended historical contracts correctly (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/Contracts/Workflow_Revision_Graph.md`; expected commit: `docs: sync active workflow contracts with managed runtime`). Evidence: navigation SSOT now includes `Application Skeleton` and `Quality Gates Baseline`, Core-owned startup/auto-select state, and Core parser projections; `Managed_Workspace_Lifecycle` is explicitly retired with Managed Workflow Orchestration as replacement authority; `Workflow_Revision_Graph` is marked partially implemented with current runtime support and future snapshot/migration boundaries separated.
-10. [DONE] Git Commit: `docs: sync active workflow contracts with managed runtime` (hash: 91b1441fb)
-
-### Stream: Plans And Index
-
-11. [DONE] `docs-relevance-audit.phase3.plans.task1` Move or mark completed planning artifacts and refresh navigation docs so active Plans contain only genuinely open future scopes (scope: `doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive completed workflow planning artifacts`). Evidence: active plan inventory found no completed managed-orchestration source left outside `Plans/Archive/`; `Plans/Managed_Step_Orchestration/README.md` now points active behavior to `ManagedWorkflowOrchestration.md` and keeps retired lifecycle docs historical; `Docs_Index.md` now lists the managed cluster as active runtime, marks the relevance audit plan as currently active, and describes revision graph implementation boundaries accurately.
-12. [DONE] Git Commit: `docs: archive completed workflow planning artifacts` (hash: e7e780617)
-
-## Phase 4 — Verification And Closeout (owner: Codex, updated: 2026-05-16)
-
-### Stream: Documentation Verification
-
-13. [DONE] `docs-relevance-audit.phase4.verify.task1` Run docs navigation/stale-reference verification and plan validation, then record remaining deferred/future-doc boundaries (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify solidworks workflow docs audit`). Evidence: `npm run plan:validate` passed; `npm run check:links` passed with 415 Markdown files checked; targeted stale scan no longer finds the old preview/fail-closed/future-managed wording, and remaining matches for "workflow authority" / "source of truth" are the intended Core-authority invariants. Deferred boundaries left active: provider capability research/backlog docs, Capture Workbench future phases, Development Tree branch/session implementation, and future full Workflow Revision Graph snapshot/migration planner.
-14. [DONE] Git Commit: `docs: verify solidworks workflow docs audit` (hash: e25d13a26)
-
-### Stream: Scope Closeout
-
-15. [DONE] `docs-relevance-audit.phase4.closeout.task1` After verification, archive this documentation-audit plan and planning source if no follow-up implementation scope remains open (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close solidworks workflow docs relevance audit`).
-16. [PENDING] Git Commit: `docs: close solidworks workflow docs relevance audit` (hash: TBD)
-17. [TODO] `docs-relevance-audit.phase4.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
+- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
+- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
+- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
