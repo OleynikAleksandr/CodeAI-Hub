@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "07f2454e7",
+  "lastRecordedCommit": "88846a964",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task1",
-  "expectedCommitMessage": "docs: record skeleton open questions repair release package",
+  "currentTaskId": "app-skeleton-foundation.phase7.review-contract.task1",
+  "expectedCommitMessage": "fix: clarify skeleton review question contract",
   "debt": {
-    "expectedCommitMessage": "docs: record skeleton open questions repair release package",
-    "preCommitHead": "07f2454e7",
+    "expectedCommitMessage": "fix: clarify skeleton review question contract",
+    "preCommitHead": "88846a964",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-package.task1"
+    "taskId": "app-skeleton-foundation.phase7.review-contract.task1"
   }
 }
 ```
@@ -161,13 +161,25 @@
 40. [DONE] `app-skeleton-foundation.phase7.release-package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton open questions repair release package`).
    - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.277`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous no-commit gate.
    - User handoff artifact: `codeai-hub-1.2.277.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-41. [PENDING] Git Commit: `docs: record skeleton open questions repair release package` (hash: TBD)
-42. [TODO] `app-skeleton-foundation.phase7.acceptance.task2` User installs the patched release and retests the Application Skeleton unresolved-question review gate and accepted materialization flow. Scope: user workflow acceptance only; expected commit: none.
+41. [DONE] Git Commit: `docs: record skeleton open questions repair release package` (hash: 88846a964)
+42. [BLOCKED] `app-skeleton-foundation.phase7.acceptance.task2` User installs the patched release and retests the Application Skeleton unresolved-question review gate and accepted materialization flow. Scope: user workflow acceptance only; expected commit: none.
+   - Acceptance defect found in release `1.2.277`: Application Skeleton questions can be hidden in `application-skeleton-map.json` without appearing in the user-visible Markdown review artifact; prompt wording is still contradictory about inferred defaults vs blocking questions; Core review message does not surface the open questions before user acceptance.
+
+### Stream: Review Question Contract Repair
+
+43. [DONE] `app-skeleton-foundation.phase7.review-contract.task1` Make the Application Skeleton prompt/contract and Core review message explicit: the user reads Markdown as the decision artifact, questions and clarification happen only in dialogue, JSON is only a machine signal for Core, and unresolved decisions must be asked as confirmation questions before materialization (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts`; expected commit: `fix: clarify skeleton review question contract`).
+44. [PENDING] Git Commit: `fix: clarify skeleton review question contract` (hash: TBD)
+45. [TODO] `app-skeleton-foundation.phase7.review-contract.task2` Enforce the review-question contract in Core validation and regression tests: non-empty `openQuestions` must be surfaced by Core in the dialogue/review message and draft framework placeholders must not be used as fake accepted stack decisions (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: validate visible skeleton review questions`).
+46. [TODO] Git Commit: `fix: validate visible skeleton review questions` (hash: TBD)
+47. [TODO] `app-skeleton-foundation.phase7.review-contract.task3` Update bundled-template regression coverage and run targeted Application Skeleton validator/review tests plus core build; record results before next release decision (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract verification`).
+48. [TODO] Git Commit: `docs: record skeleton review question contract verification` (hash: TBD)
+49. [TODO] `app-skeleton-foundation.phase7.release-confirm.task2` Stop after green verification and ask the user for explicit confirmation before preparing or building the next patched release. Scope: release confirmation gate only; expected commit: none.
+50. [TODO] `app-skeleton-foundation.phase7.acceptance.task3` User installs the next patched release and retests that Application Skeleton questions are asked in dialogue, Markdown records proposed/agreed decisions rather than questionnaire prompts, all artifact prose is localized, and materialization remains blocked while questions remain. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-43. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-44. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-45. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+51. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+52. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+53. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.

@@ -9,6 +9,8 @@
 - The step owns stack, package/workspace layout, deterministic install metadata, minimal source/facade entrypoints, and build/typecheck/smoke script targets needed before Quality Gates can run.
 - The step does not own quality-gate product selection or integration. Ultracite, Biome, ESLint, Playwright, Vitest, dependency scanners, secret scanners, hooks, CI policy, and similar gate tooling belong to Quality Gates Baseline.
 - The agent must not materialize while any stack, runtime, package, build, test, source-layout, or first-wave entrypoint ambiguity remains unresolved.
+- The user-visible review artifact is `application-skeleton.md`. JSON is a machine-readable mirror, not the discussion surface. Markdown records the proposed and agreed project foundation: recommendations, incorporated user corrections, answered decisions, agreement status, and unresolved decision status.
+- All clarification, questions, and discussion happen in dialogue. A question written into Markdown or `application-skeleton-map.json` is not considered asked.
 
 ## Rewrite Boundary
 - Application Skeleton must not assume that child plans, plan scripts, hooks, or automatic commit ownership exist from the `Diagram Modules` entrypoint.
@@ -76,7 +78,9 @@
 - `reviewState` must be `draft`, `accepted`, or `materialized`; it must not be `null`.
 - `stack.languages`, `stack.frameworks`, and `stack.runtimes` must be arrays. Do not replace them with scalar fields such as `stack.language`, `stack.framework`, or `stack.runtime`.
 - `projectFoundation` must describe the accepted implementation foundation: install command, required scripts, config files, workspace/package layout decisions, and first-wave source/facade entrypoints.
-- `openQuestions` must be an array. It must be empty before materialization. Any non-empty entry blocks materialization and requires user discussion.
+- `openQuestions` must be an array. It must be empty before materialization. Any non-empty entry blocks materialization and must be asked to the user in dialogue.
+- When `openQuestions` is non-empty, `application-skeleton.md` must not become a questionnaire. It should record the current proposed/agreed foundation state and make clear that confirmation is not ready until dialogue decisions are resolved, without listing the questions as Markdown prompts.
+- User-facing prose in Markdown and `openQuestions` must use the artifact prose language from the runtime language contract. Canonical headings, JSON field names, ids, statuses, paths, and code tokens remain structural and are not localized.
 - Product Part entries must use `partId`, Cluster entries must use `clusterId`, and Module entries must use `moduleId`. Do not replace these canonical fields with a generic `id`.
 - Every generated Product Part must have a mapping or an explicit deferred disposition.
 - Every mapped path must be relative, normalized, and inside the workspace.

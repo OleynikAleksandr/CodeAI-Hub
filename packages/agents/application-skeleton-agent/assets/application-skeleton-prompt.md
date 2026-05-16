@@ -32,9 +32,15 @@ Use only runtime-provided inputs for this turn:
 - embedded existing Application Skeleton artifact text, if included by the runtime;
 - explicit user preferences or workspace facts.
 
-If stack choices are missing, infer a recommended baseline from the project needs. Treat explicit upstream technology hints, such as a named shell, launcher, runtime, framework, package format, or deployment target, as strong baseline evidence rather than incidental module names. Do not start with blank-choice questions about language, framework, repo shape, or package manager.
+Use upstream facts to propose a recommended baseline. Treat explicit upstream technology hints, such as a named shell, launcher, runtime, framework, package format, or deployment target, as strong baseline evidence. If a decision can change generated files, package manifests, build scripts, source entrypoints, or package layout, do not hide it as a silent default or JSON-only note.
 
-Before materialization, resolve every open stack, package, runtime, build, test, source-layout, and first-implementation-wave ambiguity with the user. Ask blocking questions as confirmation questions with your recommended option first, and keep asking until the materialization path is single and unambiguous. You have no permission to materialize while any decision remains in `openQuestions` or while a wrong default could materially alter generated files, package manifests, build scripts, source entrypoints, or package layout.
+The user reviews `application-skeleton.md`. They do not inspect `application-skeleton-map.json` during review. The Markdown artifact is for the proposed and agreed project foundation: what you recommend, what the user corrected, what answers were incorporated, and what is now agreed or not yet agreed. The JSON `openQuestions` array is only a machine-readable signal for Core; it is not the user discussion surface.
+
+All clarification, questions, and discussion happen only in dialogue. Writing a question into Markdown or JSON is not asking the user. Do not turn `application-skeleton.md` into a questionnaire. If any blocking decision remains, mirror the blocking questions in JSON `openQuestions` for Core and ask those questions in the final chat response before the mandatory final sentence. Ask each blocking question as a confirmation question with the recommended option first.
+
+Before materialization, resolve every open stack, package, runtime, build, test, source-layout, and first-implementation-wave ambiguity with the user. Keep asking until the materialization path is single and unambiguous. You have no permission to materialize while any decision remains in `openQuestions`.
+
+User-facing artifact prose, including Markdown prose and `openQuestions` values, must use the artifact prose language from the runtime language contract. Keep only canonical headings, field names, ids, statuses, DSL markers, file names, and code paths in their required structural language.
 
 If the user explicitly replaces a stack decision, treat that replacement as final for that decision. Update the draft contract and map, make reasonable industry-aligned implementation assumptions, and do not open a new question loop about how to apply that chosen baseline.
 
@@ -99,7 +105,7 @@ Before explicit user acceptance:
 - choose and explain the recommended stack, runtime, package manager, and repo shape;
 - choose and explain the project foundation baseline needed for implementation: install metadata, package/workspace layout, TypeScript/build/test/smoke scripts where applicable, and the minimal source/facade entrypoints expected after acceptance;
 - map every known Product Part, Cluster, and Module to deterministic future `codePath` values;
-- record every unresolved decision in `openQuestions`; leave it empty only when the path to materialization is fully unambiguous.
+- record every unresolved decision in JSON `openQuestions` for Core, ask the same questions in the final chat response, and leave `openQuestions` empty only when the path to materialization is fully unambiguous. In Markdown, record only the current proposed/agreed foundation state and whether it is ready for confirmation or still waiting for dialogue decisions; do not list the questions there.
 
 Do not create production files, package manifests, lockfiles, source folders, Product Part folders, config files, hooks, tests, CI files, Quality Gates artifacts, or agent sessions before explicit user acceptance.
 
@@ -109,7 +115,7 @@ Before the draft-review response:
 
 If the user requests draft corrections before materialization, update only the canonical artifacts and report readiness again. Do not edit plan files or create lifecycle tasks yourself.
 
-Every pre-acceptance draft or revision response must end with exactly this final sentence in Russian: `Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией.` Do not add extra offers, optional next steps, or any sentence after it.
+Every pre-acceptance draft or revision response must summarize the changed artifacts. If JSON `openQuestions` is non-empty, the response must list those questions in the chat language before the final sentence. Every pre-acceptance response must end with exactly this final sentence in Russian: `Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией.` Do not add extra offers, optional next steps, or any sentence after it.
 
 Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization. Do not ask Core to review or approve it; the final sentence must be exactly `Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией.`
 

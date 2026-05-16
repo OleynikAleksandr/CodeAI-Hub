@@ -106,14 +106,29 @@ export const buildApplicationSkeletonDraftRepairPrompt = (
     "Do not run Git commands or edit managed plan files.",
   ].join("\n");
 
-export const buildApplicationSkeletonUserReviewMessage = (): string =>
-  [
+export const buildApplicationSkeletonUserReviewMessage = (
+  options: { readonly questions?: readonly string[] } = {}
+): string => {
+  const questions = options.questions ?? [];
+  return [
     "Core completed Application Skeleton draft validation.",
     "",
     "The artifact shape and project-foundation decision record are valid, so user review is now open.",
     "",
-    'Review the Application Skeleton contract semantically, including stack choices, package/workspace layout, install metadata, required scripts, first-wave entrypoints, and the absence of unresolved `openQuestions`. If everything is acceptable, reply with "подтверждаю". If changes are needed, list the corrections before materialization.',
+    "The user-visible review surface is `application-skeleton.md`; `application-skeleton-map.json` is only the machine-readable mirror.",
+    "",
+    ...(questions.length > 0
+      ? [
+          "Остаются открытые вопросы. Их нужно ответить в диалоге до открытия материализации:",
+          ...questions.map((question) => `- ${question}`),
+          "",
+          "Проверьте Markdown-контракт и ответьте недостающими решениями или инструкциями по исправлению. Простое подтверждение останется заблокированным, пока эти вопросы не закрыты.",
+        ]
+      : [
+          'Review the Application Skeleton contract semantically, including stack choices, package/workspace layout, install metadata, required scripts, first-wave entrypoints, and the absence of unresolved `openQuestions`. If everything is acceptable, reply with "подтверждаю". If changes are needed, list the corrections before materialization.',
+        ]),
   ].join("\n");
+};
 
 export const buildApplicationSkeletonOpenQuestionsBlockedMessage = (options: {
   readonly questions: readonly string[];
