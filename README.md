@@ -2,15 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.284** (Diagram Modules review confirmation)
+**Current Release — v1.2.285** (Quality Gates return marker)
 
-This release fixes the Diagram Modules acceptance loop found during the
-`1.2.283` acceptance retest.
+This release packages the final Quality Gates completion marker repair found
+during the `1.2.284` acceptance retest.
 
-When Diagram Modules is in Core-owned user review, the word `подтверждаю` is
-now intercepted by Core instead of being forwarded to the agent. Core closes the
-review, creates the persistent `User Return And Revisions` stream, marks Diagram
-Modules complete, and unlocks the next managed stage without an extra agent turn.
+When Quality Gates creates the persistent `User Return And Revisions` stream,
+the synthetic Git Commit line is now marked `DONE` immediately, matching Diagram
+Modules and Application Skeleton. A completed Quality Gates stage should no
+longer remain red only because the return stream was left with a pending
+sentinel commit.
 
 Repository lifecycle tooling under `scripts/plan-orchestrator/**` remains in
 place because it powers `npm run plan:*` and the Husky plan hooks for this code

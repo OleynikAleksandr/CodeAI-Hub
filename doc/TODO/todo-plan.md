@@ -8,15 +8,15 @@
   "planId": "quality-gates-return-marker-release-2026-05-16",
   "branch": "main",
   "baseHead": "8254f5c4e",
-  "lastRecordedCommit": "8254f5c4e",
+  "lastRecordedCommit": "71c00f50e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "quality-gates-return-release.phase0.plan.task1",
-  "expectedCommitMessage": "docs: open quality gates return marker release",
+  "currentTaskId": "quality-gates-return-release.phase1.docs.task1",
+  "expectedCommitMessage": "docs: prepare quality gates return marker release",
   "debt": {
-    "expectedCommitMessage": "docs: open quality gates return marker release",
-    "preCommitHead": "8254f5c4e",
+    "expectedCommitMessage": "docs: prepare quality gates return marker release",
+    "preCommitHead": "71c00f50e",
     "stage": "commit_pending",
-    "taskId": "quality-gates-return-release.phase0.plan.task1"
+    "taskId": "quality-gates-return-release.phase1.docs.task1"
   }
 }
 ```
@@ -46,14 +46,15 @@
 ### Stream: Active Plan Creation
 
 1. [DONE] `quality-gates-return-release.phase0.plan.task1` Create the active release todo-plan for packaging the Quality Gates return marker fix (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open quality gates return marker release`).
-2. [PENDING] Git Commit: `docs: open quality gates return marker release` (hash: TBD)
+2. [DONE] Git Commit: `docs: open quality gates return marker release` (hash: 71c00f50e)
 
 ## Phase 1 — Release Build (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Release Notes Preparation
 
-3. [TODO] `quality-gates-return-release.phase1.docs.task1` Update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates return marker release`).
-4. [TODO] Git Commit: `docs: prepare quality gates return marker release` (hash: TBD)
+3. [DONE] `quality-gates-return-release.phase1.docs.task1` Update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates return marker release`).
+   - Release docs target (2026-05-16): prepared README/CHANGELOG for version `1.2.285`.
+4. [PENDING] Git Commit: `docs: prepare quality gates return marker release` (hash: TBD)
 
 ### Stream: Unified Artifact Build
 

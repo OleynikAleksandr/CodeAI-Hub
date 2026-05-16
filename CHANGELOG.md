@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.285] - 2026-05-16
+### Fixed
+- **Quality Gates completion marker now matches the other managed stages.** The persistent `User Return And Revisions` synthetic Git Commit line is created as `DONE` with its sentinel hash, so a completed Quality Gates stage does not stay red after integration succeeds.
+
+### Tests
+- `npx ultracite check packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.284] - 2026-05-16
 ### Fixed
 - **Diagram Modules confirmation is now Core-intercepted.** When the stage is in `User-Led Review`, user `подтверждаю` is accepted by Core, is not forwarded to the agent, and opens the persistent `User Return And Revisions` stream.
