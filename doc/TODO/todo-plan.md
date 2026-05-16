@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "d210cf389",
+  "lastRecordedCommit": "1f215e032",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase3.downstream-gate.task1",
-  "expectedCommitMessage": "feat: gate downstream stages on skeleton foundation readiness",
+  "currentTaskId": "app-skeleton-foundation.phase4.regression.task1",
+  "expectedCommitMessage": "test: cover application skeleton foundation lifecycle",
   "debt": {
-    "expectedCommitMessage": "feat: gate downstream stages on skeleton foundation readiness",
-    "preCommitHead": "d210cf389",
+    "expectedCommitMessage": "test: cover application skeleton foundation lifecycle",
+    "preCommitHead": "1f215e032",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase3.downstream-gate.task1"
+    "taskId": "app-skeleton-foundation.phase4.regression.task1"
   }
 }
 ```
@@ -84,14 +84,14 @@
 ### Stream: Downstream Readiness Gates
 
 13. [DONE] `app-skeleton-foundation.phase3.downstream-gate.task1` Block Quality Gates and Development Tree readiness on Core-validated Application Skeleton foundation completeness rather than only `materialized: true`/path existence (scope: `packages/core/src/development-tree/development-tree-bootstrap-gate.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.ts`; expected commit: `feat: gate downstream stages on skeleton foundation readiness`).
-14. [PENDING] Git Commit: `feat: gate downstream stages on skeleton foundation readiness` (hash: TBD)
+14. [DONE] Git Commit: `feat: gate downstream stages on skeleton foundation readiness` (hash: 1f215e032)
 
 ## Phase 4 — Regression Coverage And Documentation Sync (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Managed Workflow Regression Tests
 
-15. [TODO] `app-skeleton-foundation.phase4.regression.task1` Add focused regression coverage for rejected incomplete foundations, ambiguity/open-question blockers, and accepted installable foundation materialization flow (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `test: cover application skeleton foundation lifecycle`).
-16. [TODO] Git Commit: `test: cover application skeleton foundation lifecycle` (hash: TBD)
+15. [DONE] `app-skeleton-foundation.phase4.regression.task1` Add focused regression coverage for rejected incomplete foundations, ambiguity/open-question blockers, and accepted installable foundation materialization flow (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `test: cover application skeleton foundation lifecycle`).
+16. [PENDING] Git Commit: `test: cover application skeleton foundation lifecycle` (hash: TBD)
 
 ### Stream: SSOT Sync
 

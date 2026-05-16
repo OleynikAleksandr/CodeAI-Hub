@@ -92,6 +92,26 @@ const writeApplicationSkeletonArtifacts = async (
   );
 };
 
+const writeInstallableFoundationFiles = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await mkdir(path.join(workspaceRoot, "product-parts/core-runtime/src"), {
+    recursive: true,
+  });
+  await writeFile(
+    path.join(workspaceRoot, "product-parts/core-runtime/src/index.ts"),
+    "export {};\n",
+    "utf8"
+  );
+  await writeFile(
+    path.join(workspaceRoot, "package.json"),
+    '{"scripts":{"build":"tsc","typecheck":"tsc --noEmit","test:smoke":"node smoke.js"}}\n',
+    "utf8"
+  );
+  await writeFile(path.join(workspaceRoot, "package-lock.json"), "{}\n");
+  await writeFile(path.join(workspaceRoot, "tsconfig.json"), "{}\n");
+};
+
 test("Application Skeleton validator opens user review for a valid draft contract", async () => {
   const workspaceRoot = await createWorkspace();
   try {
@@ -183,6 +203,7 @@ test("Application Skeleton validator accepts materialized scaffold when declared
       "export const runtime = true;\n",
       "utf8"
     );
+    await writeInstallableFoundationFiles(workspaceRoot);
     await writeApplicationSkeletonArtifacts(workspaceRoot, {
       markdown: MATERIALIZED_MARKDOWN,
       mapJson: {
