@@ -110,9 +110,9 @@ export const buildApplicationSkeletonUserReviewMessage = (): string =>
   [
     "Core completed Application Skeleton draft validation.",
     "",
-    "The artifact shape is valid, so user review is now open.",
+    "The artifact shape and project-foundation decision record are valid, so user review is now open.",
     "",
-    'Review the Application Skeleton contract semantically. If everything is acceptable, reply with "подтверждаю". If changes are needed, list the corrections before materialization.',
+    'Review the Application Skeleton contract semantically, including stack choices, package/workspace layout, install metadata, required scripts, first-wave entrypoints, and the absence of unresolved `openQuestions`. If everything is acceptable, reply with "подтверждаю". If changes are needed, list the corrections before materialization.',
   ].join("\n");
 
 export const buildApplicationSkeletonMaterializationPrompt = (options: {
@@ -121,14 +121,15 @@ export const buildApplicationSkeletonMaterializationPrompt = (options: {
   [
     "Core opens Phase 3 Application Skeleton Materialization.",
     "",
-    "The user accepted the Application Skeleton contract. Materialize it into the workspace filesystem.",
+    "The user accepted the Application Skeleton contract. Materialize the installable project foundation and workspace filesystem projection.",
     "",
     "Allowed artifacts and paths:",
     ...buildContractArtifactPaths(options.workspaceSlug).map(
       (artifactPath) => `- \`${artifactPath}\``
     ),
     "- production scaffold paths declared by `application-skeleton-map.json`",
-    "- `package.json`, lockfiles, and `tsconfig*.json` only when required by the accepted skeleton",
+    "- package manifests, lockfiles, package-manager metadata, and `tsconfig*.json` required by the accepted foundation",
+    "- minimal source entrypoints/facades declared by `projectFoundation.firstWaveEntrypoints`",
     "",
     "Update the canonical Application Skeleton artifacts so they reflect materialized state.",
     "Required lifecycle state after successful materialization:",
@@ -136,6 +137,7 @@ export const buildApplicationSkeletonMaterializationPrompt = (options: {
     "- `materialized: true`",
     '- `materializationState: "materialized"`',
     '- `reviewState: "materialized"`',
+    "- `openQuestions` absent or empty",
     "",
     "Do not run Git commands or edit managed plan files.",
     "When materialization is ready, stop with a content-readiness note for Core validation.",
@@ -179,7 +181,7 @@ export const buildApplicationSkeletonPersistentReturnMessage = (): string =>
   [
     "Core accepted Application Skeleton materialization.",
     "",
-    "The workspace filesystem scaffold has been created and recorded in Git. The Application Skeleton step is complete, and a persistent return phase is open for later corrections.",
+    "The installable project foundation and workspace filesystem scaffold have been created and recorded in Git. The Application Skeleton step is complete, and a persistent return phase is open for later corrections.",
     "",
     "The input field is available for future Application Skeleton changes. If no changes are needed now, continue to the next workflow step.",
   ].join("\n");

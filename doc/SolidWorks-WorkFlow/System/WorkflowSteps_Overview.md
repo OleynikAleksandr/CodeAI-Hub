@@ -254,18 +254,21 @@ Visual diagram materialize-ится runtime из Core-owned parsed projection of
 
 ### Цель
 
-Зафиксировать технологический каркас приложения до появления кода Development Tree.
+Зафиксировать и материализовать технологический каркас приложения до появления кода Development Tree.
 
-Этот шаг выбирает языки, фреймворки, package layout, build/runtime assumptions и создаёт `application-skeleton-map.json`, который связывает `Product Part -> Cluster -> Module` с production `codePath` внутри workspace. После explicit acceptance тот же агент материализует real project scaffold и Product Part / Cluster / Module folder projection. Основные папки будущего кода должны быть аналогичны Development Tree, но оставаться совместимыми с индустриальным skeleton выбранного стека.
+Этот шаг выбирает языки, фреймворки, package/workspace layout, build/runtime assumptions и создаёт `application-skeleton-map.json`, который связывает `Product Part -> Cluster -> Module` с production `codePath` внутри workspace. После explicit acceptance тот же агент материализует не только папки, а полноценный installable project foundation: package-manager metadata, deterministic install path, required scripts, TypeScript config when selected, минимальные first-wave source/facade entrypoints и Product Part / Cluster / Module folder projection. Основные папки будущего кода должны быть аналогичны Development Tree, но оставаться совместимыми с индустриальным skeleton выбранного стека.
 
-`Application Skeleton` uses the Core-owned managed lifecycle implemented by the replacement cluster. Phase 1 drafts `application-skeleton.md` and `application-skeleton-map.json` only. Phase 2 opens user review from Core state. A direct acceptance advances the stage plan to accepted-only materialization without forwarding the user acceptance text as an agent task; requested corrections stay in the active review task and are sent as a scoped revision prompt. Phase 3 materializes the real project scaffold and Product Part / Cluster / Module folder projection only after acceptance, then Core validates and records the managed commit.
+Application Skeleton не выбирает и не интегрирует quality-gate продукты. Ultracite/Biome/ESLint/test runners/secret scanners/hooks/CI policy принадлежат следующему шагу `Quality Gates Baseline`. Его входом должен быть уже installable foundation, а не пустая структура папок.
+
+`Application Skeleton` uses the Core-owned managed lifecycle implemented by the replacement cluster. Phase 1 drafts `application-skeleton.md` and `application-skeleton-map.json` only. The draft must include `projectFoundation` decisions and an `openQuestions` list; materialization is illegal while that list is non-empty or while stack/package/build/test/source-layout ambiguity remains. Phase 2 opens user review from Core state. A direct acceptance advances the stage plan to accepted-only materialization without forwarding the user acceptance text as an agent task; requested corrections stay in the active review task and are sent as a scoped revision prompt. Phase 3 materializes the accepted installable project foundation and Product Part / Cluster / Module folder projection only after acceptance, then Core validates and records the managed commit.
 
 The stage indicator is Core-owned: when the Application Skeleton continuity chain/session is active, workflow-state must project the step as in progress before final artifacts exist, so Project Manager and future clients render the orange active marker from Core state instead of inferring status locally.
 
 The stable artifact contract remains:
 - draft/review artifacts are `application-skeleton.md` and `application-skeleton-map.json`;
 - materialization state is represented in `application-skeleton-map.json`;
-- Development Tree bootstrap remains locked until Core has committed materialized skeleton output and Quality Gates integration evidence.
+- Quality Gates Baseline remains locked until Core validates that Application Skeleton materialization includes the accepted project foundation, not just `materialized: true`;
+- Development Tree bootstrap remains locked until Core has committed validated materialized skeleton output and Quality Gates integration evidence.
 
 Provider-visible instructions for this step stay content-scoped: write/update the canonical artifacts requested by the current Core prompt and stop with a readiness/update note. They must not promise PM Accept Contract shortcuts, typed acceptance commands, direct UI-owned commits, unmanaged child-plan mutation, or Git ownership.
 

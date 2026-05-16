@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "2f0e0c497",
+  "lastRecordedCommit": "43faf568a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase1.prompt.task1",
-  "expectedCommitMessage": "feat: require installable application skeleton foundation prompt",
+  "currentTaskId": "app-skeleton-foundation.phase1.surface.task1",
+  "expectedCommitMessage": "feat: surface application skeleton foundation review gate",
   "debt": {
-    "expectedCommitMessage": "feat: require installable application skeleton foundation prompt",
-    "preCommitHead": "2f0e0c497",
+    "expectedCommitMessage": "feat: surface application skeleton foundation review gate",
+    "preCommitHead": "43faf568a",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase1.prompt.task1"
+    "taskId": "app-skeleton-foundation.phase1.surface.task1"
   }
 }
 ```
@@ -58,9 +58,9 @@
 ### Stream: Provider-Facing Application Skeleton Instructions
 
 3. [DONE] `app-skeleton-foundation.phase1.prompt.task1` Update the Application Skeleton agent prompt, contract reference, bundled-template registry, and bundled-template regression test so the first prompt requires an installable project foundation, explicit unresolved-question handling, no materialization under ambiguity, and no Quality Gates tool ownership (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/core/src/templates/**`; expected commit: `feat: require installable application skeleton foundation prompt`).
-4. [PENDING] Git Commit: `feat: require installable application skeleton foundation prompt` (hash: TBD)
-5. [TODO] `app-skeleton-foundation.phase1.surface.task1` Sync Core/user-facing Application Skeleton review language with the new foundation outcome and ambiguity gate (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, src/client/project-manager/components/application-skeleton/application-skeleton-help.tsx, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `feat: surface application skeleton foundation review gate`).
-6. [TODO] Git Commit: `feat: surface application skeleton foundation review gate` (hash: TBD)
+4. [DONE] Git Commit: `feat: require installable application skeleton foundation prompt` (hash: 43faf568a)
+5. [DONE] `app-skeleton-foundation.phase1.surface.task1` Sync Core/user-facing Application Skeleton review language with the new foundation outcome and ambiguity gate (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, src/client/project-manager/components/application-skeleton/application-skeleton-help.tsx, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `feat: surface application skeleton foundation review gate`).
+6. [PENDING] Git Commit: `feat: surface application skeleton foundation review gate` (hash: TBD)
 
 ## Phase 2 — Core Artifact Contract Parser (owner: Codex, updated: 2026-05-16)
 
