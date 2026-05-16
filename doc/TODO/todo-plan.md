@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "5ea8ef26b",
+  "lastRecordedCommit": "87cd14f69",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase69.release.task2",
-  "expectedCommitMessage": "chore: build release 271 diagram sidecar dirty gate fix",
+  "currentTaskId": "artifact-contract-repair.phase69.release.task3",
+  "expectedCommitMessage": "docs: record release 271 diagram sidecar dirty gate handoff",
   "debt": {
-    "expectedCommitMessage": "chore: build release 271 diagram sidecar dirty gate fix",
-    "preCommitHead": "5ea8ef26b",
+    "expectedCommitMessage": "docs: record release 271 diagram sidecar dirty gate handoff",
+    "preCommitHead": "87cd14f69",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase69.release.task2"
+    "taskId": "artifact-contract-repair.phase69.release.task3"
   }
 }
 ```
@@ -1259,9 +1259,9 @@ Verification evidence recorded 2026-05-16:
 300. [DONE] `artifact-contract-repair.phase69.release.task1` Update release-facing docs for future version `1.2.271` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 271 diagram sidecar dirty gate fix`). Evidence: current package version before release scripts is `1.2.270`; release-facing docs prepared for future version `1.2.271` with Diagram Modules graph sidecar dirty-gate fix notes and verification summary.
 301. [DONE] Git Commit: `docs: prepare release 271 diagram sidecar dirty gate fix` (hash: 5ea8ef26b)
 302. [DONE] `artifact-contract-repair.phase69.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 271 diagram sidecar dirty gate fix`). Evidence: `./scripts/build-all.sh --allow-dirty` — PASS; unified generated version is `1.2.271`; runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.271.tar.bz2`, `codex-module-1.2.271.tar.bz2`, `gemini-module-1.2.271.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.271.tar.bz2`, `vscode-webview-1.2.271.tar.bz2`, `project-manager-1.2.271.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.271.tar.bz2`.
-303. [PENDING] Git Commit: `chore: build release 271 diagram sidecar dirty gate fix` (hash: TBD)
-304. [TODO] `artifact-contract-repair.phase69.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 271 diagram sidecar dirty gate handoff`).
-305. [TODO] Git Commit: `docs: record release 271 diagram sidecar dirty gate handoff` (hash: TBD)
+303. [DONE] Git Commit: `chore: build release 271 diagram sidecar dirty gate fix` (hash: 87cd14f69)
+304. [DONE] `artifact-contract-repair.phase69.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 271 diagram sidecar dirty gate handoff`). Evidence: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS; required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`; VSIX package: `codeai-hub-1.2.271.vsix` (`48M`); runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.271.tar.bz2`, `codex-module-1.2.271.tar.bz2`, `gemini-module-1.2.271.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.271.tar.bz2`, `vscode-webview-1.2.271.tar.bz2`, `project-manager-1.2.271.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.271.tar.bz2`. Advisory warnings: markdown link checker reported 17 existing planning-document anchor issues; package size warning reported `48M`; neither warning blocked packaging or runtime surface verification.
+305. [PENDING] Git Commit: `docs: record release 271 diagram sidecar dirty gate handoff` (hash: TBD)
 
 ## Phase 70 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
 
