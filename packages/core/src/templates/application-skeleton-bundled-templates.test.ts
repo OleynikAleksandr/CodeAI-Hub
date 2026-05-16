@@ -20,6 +20,14 @@ const PROJECT_FOUNDATION_JSON_RE = /"projectFoundation": \{/;
 const OPEN_QUESTIONS_JSON_RE = /"openQuestions": \[\]/;
 const NODE_MODULES_NOT_COMMITTED_RE =
   /`node_modules` and other (?:dependency )?install outputs? must not be (?:committed|listed as materialized output)/;
+const GITIGNORE_CONFIG_RE =
+  /"configFiles": \["\.gitignore", "tsconfig\.json"\]/;
+const GITIGNORE_OUTPUTS_RE =
+  /root `\.gitignore` exists and ignores install\/build outputs such as `node_modules\/?` and `dist\/?`/;
+const GENERATED_OUTPUT_NOT_MATERIALIZED_RE =
+  /(?:no generated install\/build output path such as `node_modules`, `dist`|Build outputs such as `dist\/`, `build\/`, `coverage\/`[\s\S]*must not be listed in `materializedPaths`)/;
+const NESTED_PRODUCT_TREE_RE =
+  /(?:top-level entries are Product Parts only; Product Part entries contain `clusters` and `standaloneModules`; Cluster entries contain `modules`|top-level `productParts` array may contain only Product Part entries[\s\S]*Cluster-owned Module entries must appear only inside their owning Cluster `modules` array)/;
 const REAL_TARGETS_RE = /real config(?:\/| and )source targets/;
 const REWRITE_BOUNDARY_RE = /Rewrite Boundary/;
 const RUNTIME_CONTEXT_OWNER_RE =
@@ -173,6 +181,10 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, PROJECT_FOUNDATION_JSON_RE);
   assert.match(prompt, OPEN_QUESTIONS_JSON_RE);
   assert.match(prompt, NODE_MODULES_NOT_COMMITTED_RE);
+  assert.match(prompt, GITIGNORE_CONFIG_RE);
+  assert.match(prompt, GITIGNORE_OUTPUTS_RE);
+  assert.match(prompt, GENERATED_OUTPUT_NOT_MATERIALIZED_RE);
+  assert.match(prompt, NESTED_PRODUCT_TREE_RE);
   assert.match(prompt, REAL_TARGETS_RE);
   assert.match(prompt, REWRITE_BOUNDARY_RE);
   assert.match(prompt, RUNTIME_CONTEXT_OWNER_RE);
@@ -240,6 +252,9 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, OPEN_QUESTIONS_JSON_RE);
   assert.match(contract, NO_QUALITY_GATE_PRODUCTS_RE);
   assert.match(contract, NODE_MODULES_NOT_COMMITTED_RE);
+  assert.match(contract, GITIGNORE_CONFIG_RE);
+  assert.match(contract, GENERATED_OUTPUT_NOT_MATERIALIZED_RE);
+  assert.match(contract, NESTED_PRODUCT_TREE_RE);
   assert.match(contract, REAL_TARGETS_RE);
   assert.match(contract, ACCEPTED_AND_MATERIALIZED_RE);
   assert.match(contract, CODEAI_HUB_SOURCE_ROOT_RE);

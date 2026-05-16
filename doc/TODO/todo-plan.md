@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "d1dc52652",
+  "lastRecordedCommit": "dd149afa0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task5",
-  "expectedCommitMessage": "test: cover skeleton git hygiene validation",
+  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task6",
+  "expectedCommitMessage": "docs: verify skeleton git hygiene repair",
   "debt": {
-    "expectedCommitMessage": "test: cover skeleton git hygiene validation",
-    "preCommitHead": "d1dc52652",
+    "expectedCommitMessage": "docs: verify skeleton git hygiene repair",
+    "preCommitHead": "dd149afa0",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task5"
+    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task6"
   }
 }
 ```
@@ -248,9 +248,9 @@
 91. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task4` Exclude generated install/build outputs from managed Git commits even when a materialized directory path is staged (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: exclude generated outputs from managed commits`).
 92. [DONE] Git Commit: `fix: exclude generated outputs from managed commits` (hash: d1dc52652)
 93. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task5` Add regression coverage for nested tree validation and output hygiene validation (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts`; expected commit: `test: cover skeleton git hygiene validation`).
-94. [PENDING] Git Commit: `test: cover skeleton git hygiene validation` (hash: TBD)
-95. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task6` Sync bundled Application Skeleton templates and run targeted Application Skeleton tests plus core build before release (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton git hygiene repair`).
-96. [TODO] Git Commit: `docs: verify skeleton git hygiene repair` (hash: TBD)
+94. [DONE] Git Commit: `test: cover skeleton git hygiene validation` (hash: dd149afa0)
+95. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task6` Sync bundled Application Skeleton templates and run targeted Application Skeleton tests plus core build before release (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton git hygiene repair`).
+96. [PENDING] Git Commit: `docs: verify skeleton git hygiene repair` (hash: TBD)
 97. [TODO] `app-skeleton-foundation.phase7.release-docs.task5` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton git hygiene release`).
 98. [TODO] Git Commit: `docs: prepare skeleton git hygiene release` (hash: TBD)
 99. [TODO] `app-skeleton-foundation.phase7.release-build.task5` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton git hygiene release artifacts`).
