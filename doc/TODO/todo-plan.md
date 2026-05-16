@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "88846a964",
+  "lastRecordedCommit": "cf77e60a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.review-contract.task1",
-  "expectedCommitMessage": "fix: clarify skeleton review question contract",
+  "currentTaskId": "app-skeleton-foundation.phase7.review-contract.task2",
+  "expectedCommitMessage": "fix: validate visible skeleton review questions",
   "debt": {
-    "expectedCommitMessage": "fix: clarify skeleton review question contract",
-    "preCommitHead": "88846a964",
+    "expectedCommitMessage": "fix: validate visible skeleton review questions",
+    "preCommitHead": "cf77e60a7",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.review-contract.task1"
+    "taskId": "app-skeleton-foundation.phase7.review-contract.task2"
   }
 }
 ```
@@ -168,9 +168,9 @@
 ### Stream: Review Question Contract Repair
 
 43. [DONE] `app-skeleton-foundation.phase7.review-contract.task1` Make the Application Skeleton prompt/contract and Core review message explicit: the user reads Markdown as the decision artifact, questions and clarification happen only in dialogue, JSON is only a machine signal for Core, and unresolved decisions must be asked as confirmation questions before materialization (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts`; expected commit: `fix: clarify skeleton review question contract`).
-44. [PENDING] Git Commit: `fix: clarify skeleton review question contract` (hash: TBD)
-45. [TODO] `app-skeleton-foundation.phase7.review-contract.task2` Enforce the review-question contract in Core validation and regression tests: non-empty `openQuestions` must be surfaced by Core in the dialogue/review message and draft framework placeholders must not be used as fake accepted stack decisions (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: validate visible skeleton review questions`).
-46. [TODO] Git Commit: `fix: validate visible skeleton review questions` (hash: TBD)
+44. [DONE] Git Commit: `fix: clarify skeleton review question contract` (hash: cf77e60a7)
+45. [DONE] `app-skeleton-foundation.phase7.review-contract.task2` Enforce the review-question contract in Core validation and regression tests: non-empty `openQuestions` must be surfaced by Core in the dialogue/review message and draft framework placeholders must not be used as fake accepted stack decisions (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `fix: validate visible skeleton review questions`).
+46. [PENDING] Git Commit: `fix: validate visible skeleton review questions` (hash: TBD)
 47. [TODO] `app-skeleton-foundation.phase7.review-contract.task3` Update bundled-template regression coverage and run targeted Application Skeleton validator/review tests plus core build; record results before next release decision (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract verification`).
 48. [TODO] Git Commit: `docs: record skeleton review question contract verification` (hash: TBD)
 49. [TODO] `app-skeleton-foundation.phase7.release-confirm.task2` Stop after green verification and ask the user for explicit confirmation before preparing or building the next patched release. Scope: release confirmation gate only; expected commit: none.

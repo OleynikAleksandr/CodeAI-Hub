@@ -19,15 +19,43 @@ const hasNonEmptyStringArray = (
     (entry) => typeof entry === "string" && entry.trim().length > 0
   );
 
+const STACK_PLACEHOLDER_RE =
+  /pending|placeholder|tbd|todo|unknown|unresolved|not selected|not chosen|ожида|не\s+выбран|не\s+выбрано|не\s+определ|не\s+зафикс|уточн/iu;
+
+const hasOpenQuestions = (mapJson: Record<string, unknown>): boolean =>
+  Array.isArray(mapJson.openQuestions) && mapJson.openQuestions.length > 0;
+
+const findPlaceholderStackEntries = (
+  stack: Record<string, unknown>,
+  key: string
+): readonly string[] =>
+  Array.isArray(stack[key])
+    ? stack[key].filter(
+        (entry): entry is string =>
+          typeof entry === "string" && STACK_PLACEHOLDER_RE.test(entry)
+      )
+    : [];
+
 const validateStack = (mapJson: Record<string, unknown>): readonly string[] => {
   const stack = mapJson.stack;
   if (!isRecord(stack)) {
     return ["missing_foundation_field: stack"];
   }
   const errors: string[] = [];
-  for (const key of ["languages", "frameworks", "runtimes"]) {
+  const unresolvedQuestionsExist = hasOpenQuestions(mapJson);
+  for (const key of ["languages", "runtimes"]) {
     if (!hasNonEmptyStringArray(stack, key)) {
       errors.push(`missing_foundation_field: stack.${key}`);
+    }
+  }
+  if (
+    !(unresolvedQuestionsExist || hasNonEmptyStringArray(stack, "frameworks"))
+  ) {
+    errors.push("missing_foundation_field: stack.frameworks");
+  }
+  for (const key of ["languages", "frameworks", "runtimes"]) {
+    for (const entry of findPlaceholderStackEntries(stack, key)) {
+      errors.push(`placeholder_foundation_field: stack.${key}: ${entry}`);
     }
   }
   return errors;
@@ -38,6 +66,23 @@ const validateOpenQuestions = (
 ): readonly string[] => {
   if (!Array.isArray(mapJson.openQuestions)) {
     return ["missing_foundation_field: openQuestions"];
+  }
+  const invalidEntry = mapJson.openQuestions.some((entry) => {
+    if (typeof entry === "string") {
+      return entry.trim().length === 0;
+    }
+    if (isRecord(entry)) {
+      const question = entry.question;
+      const id = entry.id;
+      return !(
+        (typeof question === "string" && question.trim().length > 0) ||
+        (typeof id === "string" && id.trim().length > 0)
+      );
+    }
+    return true;
+  });
+  if (invalidEntry) {
+    return ["invalid_foundation_field: openQuestions"];
   }
   return [];
 };

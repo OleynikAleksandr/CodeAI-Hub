@@ -132,6 +132,29 @@ const readStringArray = (
     : [];
 };
 
+const formatOpenQuestion = (entry: unknown, index: number): string => {
+  if (typeof entry === "string") {
+    return entry.trim() || `Open question #${index + 1}`;
+  }
+  if (!isRecord(entry)) {
+    return `Open question #${index + 1}`;
+  }
+  const question =
+    typeof entry.question === "string" ? entry.question.trim() : "";
+  const id = typeof entry.id === "string" ? entry.id.trim() : "";
+  if (question && id) {
+    return `${id}: ${question}`;
+  }
+  return question || id || `Open question #${index + 1}`;
+};
+
+const readOpenQuestions = (
+  value: Record<string, unknown> | null
+): readonly string[] =>
+  Array.isArray(value?.openQuestions)
+    ? value.openQuestions.map(formatOpenQuestion)
+    : [];
+
 const collectCodePathsFromNode = (node: Record<string, unknown>): string[] => {
   const paths: string[] = [];
   if (typeof node.codePath === "string") {
@@ -316,7 +339,9 @@ export const validateApplicationSkeletonManagedArtifacts = async (
           diagnostics: [],
           mapJson,
           nextAction: "open_user_review",
-          nextPrompt: buildApplicationSkeletonUserReviewMessage(),
+          nextPrompt: buildApplicationSkeletonUserReviewMessage({
+            questions: readOpenQuestions(mapJson),
+          }),
           phase,
           valid: true,
         };

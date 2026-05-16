@@ -44,6 +44,11 @@ const CANONICAL_MARKDOWN_STRUCTURE_RE = /canonical Markdown section structure/u;
 const MATERIALIZE_WORKSPACE_RE =
   /Materialize the installable project foundation/u;
 const PROJECT_FOUNDATION_RE = /projectFoundation/u;
+const OPEN_DIALOG_QUESTIONS_RE =
+  /Остаются открытые вопросы|React or vanilla UI\?/u;
+const FRAMEWORK_DIALOG_QUESTION_RE =
+  /project-manager-launcher-ui: Подтверждаете React \+ CEF/u;
+const PLACEHOLDER_STACK_RE = /placeholder_foundation_field: stack\.frameworks/u;
 const createDraftFoundation = (): Record<string, unknown> => ({
   packageManager: "npm",
   projectFoundation: {
@@ -335,6 +340,88 @@ test("Application Skeleton validator routes draft open questions to user review"
     assert.deepEqual(result.diagnostics, []);
     assert.equal(result.nextAction, "open_user_review");
     assert.match(result.nextPrompt ?? "", USER_REVIEW_OPEN_RE);
+    assert.match(result.nextPrompt ?? "", OPEN_DIALOG_QUESTIONS_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Application Skeleton validator allows unresolved framework choice only as a dialogue question", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    await writeApplicationSkeletonArtifacts(workspaceRoot, {
+      mapJson: {
+        ...createDraftFoundation(),
+        schema: "codeai-application-skeleton-v1",
+        accepted: false,
+        materialized: false,
+        materializationState: "not_started",
+        openQuestions: [
+          {
+            id: "project-manager-launcher-ui",
+            question: "Подтверждаете React + CEF для лаунчера Project Manager?",
+          },
+        ],
+        productParts: [
+          {
+            partId: "project-manager",
+            codePath: "product-parts/project-manager",
+          },
+        ],
+        stack: {
+          frameworks: [],
+          languages: ["TypeScript"],
+          runtimes: ["Node.js"],
+        },
+      },
+    });
+
+    const result = await validateApplicationSkeletonManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, true);
+    assert.equal(result.nextAction, "open_user_review");
+    assert.match(result.nextPrompt ?? "", FRAMEWORK_DIALOG_QUESTION_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Application Skeleton validator rejects placeholder framework choices", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    await writeApplicationSkeletonArtifacts(workspaceRoot, {
+      mapJson: {
+        ...createDraftFoundation(),
+        schema: "codeai-application-skeleton-v1",
+        accepted: false,
+        materialized: false,
+        materializationState: "not_started",
+        openQuestions: [],
+        productParts: [
+          {
+            partId: "project-manager",
+            codePath: "product-parts/project-manager",
+          },
+        ],
+        stack: {
+          frameworks: ["launcher/ui/frontend stack pending"],
+          languages: ["TypeScript"],
+          runtimes: ["Node.js"],
+        },
+      },
+    });
+
+    const result = await validateApplicationSkeletonManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_current_artifact");
+    assert.match(result.diagnostics.join("\n"), PLACEHOLDER_STACK_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
