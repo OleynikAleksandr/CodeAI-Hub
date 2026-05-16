@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "bc1931e32",
+  "lastRecordedCommit": "2d1d67508",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase6.build.task1",
-  "expectedCommitMessage": "chore: build application skeleton foundation release artifacts",
+  "currentTaskId": "app-skeleton-foundation.phase6.package.task1",
+  "expectedCommitMessage": "docs: record application skeleton foundation release package",
   "debt": {
-    "expectedCommitMessage": "chore: build application skeleton foundation release artifacts",
-    "preCommitHead": "bc1931e32",
+    "expectedCommitMessage": "docs: record application skeleton foundation release package",
+    "preCommitHead": "2d1d67508",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase6.build.task1"
+    "taskId": "app-skeleton-foundation.phase6.package.task1"
   }
 }
 ```
@@ -123,12 +123,14 @@
 
 24. [DONE] `app-skeleton-foundation.phase6.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build application skeleton foundation release artifacts`).
    - Build result (2026-05-16): `./scripts/build-all.sh` completed version `1.2.276` and produced provider/core/UI/CEF tarballs in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-25. [PENDING] Git Commit: `chore: build application skeleton foundation release artifacts` (hash: TBD)
+25. [DONE] Git Commit: `chore: build application skeleton foundation release artifacts` (hash: 2d1d67508)
 
 ### Stream: VSIX Packaging
 
-26. [TODO] `app-skeleton-foundation.phase6.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton foundation release package`).
-27. [TODO] Git Commit: `docs: record application skeleton foundation release package` (hash: TBD)
+26. [DONE] `app-skeleton-foundation.phase6.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton foundation release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version` completed for version `1.2.276`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface.
+   - User handoff artifact: `codeai-hub-1.2.276.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+27. [PENDING] Git Commit: `docs: record application skeleton foundation release package` (hash: TBD)
 
 ## Phase 7 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-16)
 
