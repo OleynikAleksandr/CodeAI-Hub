@@ -1,7 +1,8 @@
 # Main Merge Release Verification 1.2.275
 
-**Status:** Active planning source
+**Status:** Archived after user acceptance
 **Created:** 2026-05-16
+**Closed:** 2026-05-16
 **Owner:** Oleksandr / Codex
 
 ## Trigger
@@ -34,3 +35,9 @@ Build and package CodeAI Hub `1.2.275` from the current `main` branch without in
 - Product-code fixes unless the release pipeline exposes a blocker.
 - Closing or archiving the active scope before user acceptance.
 - Manual package version edits outside the release scripts.
+
+## Closeout
+
+- Release `1.2.275` was built and packaged successfully.
+- User tested the release and accepted the merged Core managed orchestrator work.
+- Active worktree cleanup was requested after acceptance: keep `main` and the primary repository, remove the auxiliary managed-orchestrator worktree and branch.

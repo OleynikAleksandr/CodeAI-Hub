@@ -1,3 +1,18 @@
+# Plan Closeout: main-merge-release-retest-1.2.275
+
+**Created:** 2026-05-16
+**Acceptance:** user tested release `1.2.275` and confirmed that the merged Core managed orchestrator work functions correctly.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** main-merge-release.phase4.closeout.task1
+**Expected Commit:** docs: close merged orchestrator release retest
+**Last Recorded Commit:** 50e6607b0
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Main_Merge_Release_Verification_1.2.275.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -9,22 +24,17 @@
   "branch": "main",
   "baseHead": "39d486a8d",
   "lastRecordedCommit": "50e6607b0",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Main_Merge_Release_Verification_1.2.275.md",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Main_Merge_Release_Verification_1.2.275.md",
   "currentTaskId": "main-merge-release.phase4.closeout.task1",
   "expectedCommitMessage": "docs: close merged orchestrator release retest",
-  "debt": {
-    "expectedCommitMessage": "docs: close merged orchestrator release retest",
-    "preCommitHead": "50e6607b0",
-    "stage": "commit_pending",
-    "taskId": "main-merge-release.phase4.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Main_Merge_Release_Verification_1.2.275.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Main_Merge_Release_Verification_1.2.275.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
@@ -77,6 +87,7 @@
 
 ### Stream: Closeout
 
-10. [DONE] `main-merge-release.phase4.closeout.task1` After explicit user acceptance, archive this todo-plan and planning source, update Docs Index disposition, and close the release retest scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close merged orchestrator release retest`). Result: closeout archive created, planning source moved to `Plans/Archive/`, Docs Index disposition updated, and user acceptance recorded for release `1.2.275`.
-11. [PENDING] Git Commit: `docs: close merged orchestrator release retest` (hash: TBD)
+10. [IN_PROGRESS] `main-merge-release.phase4.closeout.task1` After explicit user acceptance, archive this todo-plan and planning source, update Docs Index disposition, and close the release retest scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close merged orchestrator release retest`).
+11. [TODO] Git Commit: `docs: close merged orchestrator release retest` (hash: TBD)
 12. [TODO] `main-merge-release.phase4.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+````
