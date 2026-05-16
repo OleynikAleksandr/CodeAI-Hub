@@ -1,3 +1,18 @@
+# Plan Closeout: solidworks-workflow-docs-relevance-audit-2026-05-16
+
+**Created:** 2026-05-16T09:56:51.628Z
+**Acceptance:** user accepted documentation relevance audit and requested merge into main
+**Execution Scope Status:** ACTIVE
+**Branch:** codex/managed-orchestration-rewrite
+**Current Task:** docs-relevance-audit.phase4.closeout.task1
+**Expected Commit:** docs: close solidworks workflow docs relevance audit
+**Last Recorded Commit:** e25d13a26
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Documentation_Relevance_Audit_2026-05-16.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Documentation_Relevance_Audit_2026-05-16.md",
   "currentTaskId": "docs-relevance-audit.phase4.closeout.task1",
   "expectedCommitMessage": "docs: close solidworks workflow docs relevance audit",
-  "debt": {
-    "expectedCommitMessage": "docs: close solidworks workflow docs relevance audit",
-    "preCommitHead": "e25d13a26",
-    "stage": "commit_pending",
-    "taskId": "docs-relevance-audit.phase4.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -91,6 +101,7 @@
 
 ### Stream: Scope Closeout
 
-15. [DONE] `docs-relevance-audit.phase4.closeout.task1` After verification, archive this documentation-audit plan and planning source if no follow-up implementation scope remains open (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close solidworks workflow docs relevance audit`).
-16. [PENDING] Git Commit: `docs: close solidworks workflow docs relevance audit` (hash: TBD)
+15. [IN_PROGRESS] `docs-relevance-audit.phase4.closeout.task1` After verification, archive this documentation-audit plan and planning source if no follow-up implementation scope remains open (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close solidworks workflow docs relevance audit`).
+16. [TODO] Git Commit: `docs: close solidworks workflow docs relevance audit` (hash: TBD)
 17. [TODO] `docs-relevance-audit.phase4.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
