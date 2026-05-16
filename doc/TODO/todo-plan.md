@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "9c0db4e80",
+  "lastRecordedCommit": "5ea8ef26b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase69.release.task1",
-  "expectedCommitMessage": "docs: prepare release 271 diagram sidecar dirty gate fix",
+  "currentTaskId": "artifact-contract-repair.phase69.release.task2",
+  "expectedCommitMessage": "chore: build release 271 diagram sidecar dirty gate fix",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 271 diagram sidecar dirty gate fix",
-    "preCommitHead": "9c0db4e80",
+    "expectedCommitMessage": "chore: build release 271 diagram sidecar dirty gate fix",
+    "preCommitHead": "5ea8ef26b",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase69.release.task1"
+    "taskId": "artifact-contract-repair.phase69.release.task2"
   }
 }
 ```
@@ -1257,9 +1257,9 @@ Verification evidence recorded 2026-05-16:
 298. [DONE] `artifact-contract-repair.phase69.verify.task1` Run targeted dirty-gate/workflow-state checks plus Core/PM builds, then prepare and build a replacement release after verification because user explicitly requested the retest fix flow (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts`; expected commit: `docs: verify diagram modules sidecar dirty gate repair`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts` — PASS, 14 tests; `npx tsx --test src/client/project-manager/services/workflow-step-start-service.gating.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/components/layout/workspace-tree.test.ts` — PASS, 12 tests; `npm run build --workspace=@codeai-hub/core` — PASS after tightening the new test response mock typing; `npm run typecheck:webview` — PASS; `npm run build:webview` — PASS; `npm run plan:validate` — PASS. Cross-step check: existing dirty-gate regressions still classify Application Skeleton and Quality Gates semantic files by owning stage and do not re-block completed upstream Application Skeleton from technical-stage Git dirt.
 299. [DONE] Git Commit: `docs: verify diagram modules sidecar dirty gate repair` (hash: 9c0db4e80)
 300. [DONE] `artifact-contract-repair.phase69.release.task1` Update release-facing docs for future version `1.2.271` before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 271 diagram sidecar dirty gate fix`). Evidence: current package version before release scripts is `1.2.270`; release-facing docs prepared for future version `1.2.271` with Diagram Modules graph sidecar dirty-gate fix notes and verification summary.
-301. [PENDING] Git Commit: `docs: prepare release 271 diagram sidecar dirty gate fix` (hash: TBD)
-302. [TODO] `artifact-contract-repair.phase69.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 271 diagram sidecar dirty gate fix`).
-303. [TODO] Git Commit: `chore: build release 271 diagram sidecar dirty gate fix` (hash: TBD)
+301. [DONE] Git Commit: `docs: prepare release 271 diagram sidecar dirty gate fix` (hash: 5ea8ef26b)
+302. [DONE] `artifact-contract-repair.phase69.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 271 diagram sidecar dirty gate fix`). Evidence: `./scripts/build-all.sh --allow-dirty` — PASS; unified generated version is `1.2.271`; runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.271.tar.bz2`, `codex-module-1.2.271.tar.bz2`, `gemini-module-1.2.271.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.271.tar.bz2`, `vscode-webview-1.2.271.tar.bz2`, `project-manager-1.2.271.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.271.tar.bz2`.
+303. [PENDING] Git Commit: `chore: build release 271 diagram sidecar dirty gate fix` (hash: TBD)
 304. [TODO] `artifact-contract-repair.phase69.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 271 diagram sidecar dirty gate handoff`).
 305. [TODO] Git Commit: `docs: record release 271 diagram sidecar dirty gate handoff` (hash: TBD)
 
