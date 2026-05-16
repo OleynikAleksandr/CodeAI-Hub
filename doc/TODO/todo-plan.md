@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "3faf7d9b2",
+  "lastRecordedCommit": "c058d43d7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task6",
-  "expectedCommitMessage": "chore: build skeleton review ownership release artifacts",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task6",
+  "expectedCommitMessage": "docs: record skeleton review ownership release package",
   "debt": {
-    "expectedCommitMessage": "chore: build skeleton review ownership release artifacts",
-    "preCommitHead": "3faf7d9b2",
+    "expectedCommitMessage": "docs: record skeleton review ownership release package",
+    "preCommitHead": "c058d43d7",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-build.task6"
+    "taskId": "app-skeleton-foundation.phase7.release-package.task6"
   }
 }
 ```
@@ -280,9 +280,11 @@
 117. [DONE] Git Commit: `docs: prepare skeleton review ownership release` (hash: 3faf7d9b2)
 118. [DONE] `app-skeleton-foundation.phase7.release-build.task6` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton review ownership release artifacts`).
    - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.282`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-119. [PENDING] Git Commit: `chore: build skeleton review ownership release artifacts` (hash: TBD)
-120. [TODO] `app-skeleton-foundation.phase7.release-package.task6` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review ownership release package`).
-121. [TODO] Git Commit: `docs: record skeleton review ownership release package` (hash: TBD)
+119. [DONE] Git Commit: `chore: build skeleton review ownership release artifacts` (hash: c058d43d7)
+120. [DONE] `app-skeleton-foundation.phase7.release-package.task6` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review ownership release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.282`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
+   - User handoff artifact: `codeai-hub-1.2.282.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+121. [PENDING] Git Commit: `docs: record skeleton review ownership release package` (hash: TBD)
 122. [TODO] `app-skeleton-foundation.phase7.acceptance.task7` User installs the produced release and retests that Application Skeleton review dialogue remains agent-owned and materialized `node_modules` does not dirty/block managed Git commits. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
