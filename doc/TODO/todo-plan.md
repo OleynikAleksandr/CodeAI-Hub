@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "0695ff44e",
+  "lastRecordedCommit": "6e8e340ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "application-skeleton-retouch.phase77.prompt-root.task1",
-  "expectedCommitMessage": "fix: clarify application skeleton production root prompt",
+  "currentTaskId": "application-skeleton-retouch.phase77.verify.task1",
+  "expectedCommitMessage": "docs: verify application skeleton retest repair",
   "debt": {
-    "expectedCommitMessage": "fix: clarify application skeleton production root prompt",
-    "preCommitHead": "0695ff44e",
+    "expectedCommitMessage": "docs: verify application skeleton retest repair",
+    "preCommitHead": "6e8e340ea",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-retouch.phase77.prompt-root.task1"
+    "taskId": "application-skeleton-retouch.phase77.verify.task1"
   }
 }
 ```
@@ -1388,12 +1388,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Prompt Materialization Root Contract
 
 347. [DONE] `application-skeleton-retouch.phase77.prompt-root.task1` Tighten Application Skeleton prompt/templates so production scaffold paths are always workspace-root relative and `.codeai-hub/**` is only for workflow artifacts, with no ad hoc Python/file diagnostics unless explicitly requested by Core (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/application-skeleton-bundled-templates.test.ts`; expected commit: `fix: clarify application skeleton production root prompt`). Evidence: `node --test --import tsx packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts` — PASS, 9 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Prompt now states that `workspaceRoot` is `.` by default, production `codePath`/`materializedPaths` are workspace-root relative, `.codeai-hub/**` is workflow-artifact-only, and ad hoc Python/Node/jq diagnostics are disallowed unless Core explicitly requests them.
-348. [PENDING] Git Commit: `fix: clarify application skeleton production root prompt` (hash: TBD)
+348. [DONE] Git Commit: `fix: clarify application skeleton production root prompt` (hash: 6e8e340ea)
 
 ### Stream: Verification
 
-349. [TODO] `application-skeleton-retouch.phase77.verify.task1` Run targeted Core/PM Application Skeleton regressions and stop for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton retest repair`).
-350. [TODO] Git Commit: `docs: verify application skeleton retest repair` (hash: TBD)
+349. [DONE] `application-skeleton-retouch.phase77.verify.task1` Run targeted Core/PM Application Skeleton regressions and stop for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton retest repair`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts` — PASS, 19 tests; `node --test --import tsx packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts` — PASS, 11 tests; `node --test --import tsx src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` — PASS, 19 tests; `npm run build --workspace=@codeai-hub/core` — PASS; `npm run build:webview` — PASS; `npm run typecheck:webview` — PASS.
+350. [PENDING] Git Commit: `docs: verify application skeleton retest repair` (hash: TBD)
 
 ### Stream: Release Build Confirmation
 
