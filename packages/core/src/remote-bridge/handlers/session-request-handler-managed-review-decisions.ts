@@ -50,13 +50,10 @@ const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const QUALITY_GATES_STAGE = "quality_gates";
 const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
-const BUT_RE = /\b(?:but|однако|але|но)\b/iu;
 const FENCED_JSON_END_RE = /\s*```$/u;
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const NEGATED_ACCEPT_RE =
   /(?:\b(?:do\s+not|don't|not)\s+(?:accept|approve|confirm)\b|(?:^|[\s,.;:!?])(?:не|не\s+надо|не\s+нужно)\s+(?:подтверждаю|п[іi]дтверджую)(?:$|[\s,.;:!?]))/iu;
-const REVISION_HINT_RE =
-  /\b(?:add|change|fix|remove|rename|revise|update|добав|измени|исправ|переимен|поменя|правк|убери)\b/iu;
 
 const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   const normalized = content.trim();
@@ -66,11 +63,7 @@ const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   if (NEGATED_ACCEPT_RE.test(normalized)) {
     return "revision";
   }
-  if (
-    ACCEPT_RE.test(normalized) &&
-    !BUT_RE.test(normalized) &&
-    !REVISION_HINT_RE.test(normalized)
-  ) {
+  if (ACCEPT_RE.test(normalized)) {
     return "accept";
   }
   return "revision";
@@ -104,54 +97,6 @@ const isQualityGatesReviewOpen = async (
     );
   } catch {
     return false;
-  }
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const formatOpenQuestion = (entry: unknown, index: number): string => {
-  if (typeof entry === "string" && entry.trim().length > 0) {
-    return entry.trim();
-  }
-  if (!isRecord(entry)) {
-    return `Open question #${index + 1}`;
-  }
-  const question =
-    typeof entry.question === "string" ? entry.question.trim() : "";
-  const id = typeof entry.id === "string" ? entry.id.trim() : "";
-  if (question && id) {
-    return `${id}: ${question}`;
-  }
-  if (question) {
-    return question;
-  }
-  return id || `Open question #${index + 1}`;
-};
-
-const readApplicationSkeletonOpenQuestions = async (
-  workspaceRoot: string,
-  workspaceSlug: string
-): Promise<readonly string[]> => {
-  const mapPath = path.join(
-    workspaceRoot,
-    ".codeai-hub",
-    workspaceSlug,
-    "application_skeleton",
-    "application-skeleton-map.json"
-  );
-  const content = await readFile(mapPath, "utf8").catch(() => null);
-  if (!content) {
-    return ["Application Skeleton map is missing or unreadable."];
-  }
-  try {
-    const parsed = JSON.parse(content) as unknown;
-    if (!(isRecord(parsed) && Array.isArray(parsed.openQuestions))) {
-      return ["Application Skeleton map does not declare `openQuestions`."];
-    }
-    return parsed.openQuestions.map(formatOpenQuestion);
-  } catch {
-    return ["Application Skeleton map is not valid JSON."];
   }
 };
 
@@ -207,10 +152,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
     }
     this.appendUserReviewMessage(options);
     if (options.intent === "accept") {
-      await this.openApplicationSkeletonMaterialization(
-        options.session,
-        options.content
-      );
+      await this.openApplicationSkeletonMaterialization(options.session);
       return true;
     }
     await this.dispatchApplicationSkeletonReviewRevision(
@@ -263,27 +205,9 @@ export class SessionRequestHandlerManagedReviewDecisions {
   }
 
   private async openApplicationSkeletonMaterialization(
-    session: Session,
-    userMessage: string
+    session: Session
   ): Promise<void> {
     if (!(session.workspacePath && session.initiativeSlug)) {
-      return;
-    }
-    const openQuestions = await readApplicationSkeletonOpenQuestions(
-      session.workspacePath,
-      session.initiativeSlug
-    );
-    if (openQuestions.length > 0) {
-      await this.dispatchApplicationSkeletonReviewRevision(
-        session,
-        [
-          "User attempted to confirm the Application Skeleton contract while `openQuestions` remain.",
-          "Treat the latest user message as review feedback, reconcile it with the existing open questions, update only the canonical Application Skeleton artifacts, and ask any still-blocking question yourself in the final response.",
-          "",
-          "Latest user message:",
-          userMessage.trim(),
-        ].join("\n")
-      );
       return;
     }
     try {

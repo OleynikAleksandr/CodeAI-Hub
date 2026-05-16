@@ -269,7 +269,7 @@ test("Application Skeleton review acceptance opens materialization without forwa
   }
 });
 
-test("Application Skeleton review acceptance stays blocked while openQuestions remain", async () => {
+test("Application Skeleton review acceptance opens materialization even with openQuestions", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "application-skeleton-review-open-questions-")
   );
@@ -294,21 +294,32 @@ test("Application Skeleton review acceptance stays blocked while openQuestions r
     );
     const harness = createActions(sessionManager);
 
-    await harness.actions.handleMessage(session.id, "подтверждаю");
+    const acceptance = "подтверждаю, но на вопросы больше не отвечаю";
+
+    await harness.actions.handleMessage(session.id, acceptance);
 
     assert.deepEqual(harness.dispatchedUserMessages, []);
-    assert.equal(harness.dialogMessages.at(-1)?.content, "подтверждаю");
+    assert.equal(harness.dialogMessages.at(-1)?.content, acceptance);
     assert.equal(harness.sentInternalMessages.length, 1);
-    assert.match(harness.sentInternalMessages[0] ?? "", REVIEW_CORRECTIONS_RE);
-    assert.match(harness.sentInternalMessages[0] ?? "", USER_ACCEPTANCE_RE);
-    assert.deepEqual(harness.coreMessages, []);
+    assert.match(
+      harness.sentInternalMessages[0] ?? "",
+      MATERIALIZATION_PROMPT_RE
+    );
+    assert.doesNotMatch(
+      harness.sentInternalMessages[0] ?? "",
+      USER_ACCEPTANCE_RE
+    );
+    assert.equal(
+      harness.coreMessages.at(-1)?.tag,
+      "managed-workflow-continuation"
+    );
 
     const plan = await readWorkspaceFile(
       workspaceRoot,
       "doc/TODO/stages/application-skeleton/todo-plan.md"
     );
-    assert.match(plan, REVIEW_TASK_STATE_RE);
-    assert.doesNotMatch(plan, MATERIALIZE_TASK_STATE_RE);
+    assert.match(plan, MATERIALIZE_TASK_STATE_RE);
+    assert.match(plan, NO_REVISION_RE);
     assert.deepEqual(harness.events, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
@@ -367,11 +378,13 @@ test("Quality Gates review acceptance opens integration without forwarding user 
     );
     const harness = createActions(sessionManager);
 
-    await harness.actions.handleMessage(session.id, "подтверждаю");
+    const acceptance = "подтверждаю, но принимаю текущий контракт как есть";
+
+    await harness.actions.handleMessage(session.id, acceptance);
 
     assert.deepEqual(harness.dispatchedUserMessages, []);
     assert.equal(harness.dialogMessages.at(-1)?.role, "user");
-    assert.equal(harness.dialogMessages.at(-1)?.content, "подтверждаю");
+    assert.equal(harness.dialogMessages.at(-1)?.content, acceptance);
     assert.equal(harness.sentInternalMessages.length, 1);
     assert.match(
       harness.sentInternalMessages[0] ?? "",

@@ -11,13 +11,10 @@ export type ApplicationSkeletonReviewIntent = "accept" | "none" | "revision";
 
 const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
-const BUT_RE = /\b(?:but|однако|але|но)\b/iu;
 const FENCED_JSON_END_RE = /\s*```$/u;
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const NEGATED_ACCEPT_RE =
   /(?:\b(?:do\s+not|don't|not)\s+(?:accept|approve|confirm)\b|(?:^|[\s,.;:!?])(?:не|не\s+надо|не\s+нужно)\s+(?:подтверждаю|п[іi]дтверджую)(?:$|[\s,.;:!?]))/iu;
-const REVISION_HINT_RE =
-  /\b(?:add|change|fix|remove|rename|revise|update|добав|измени|исправ|переимен|поменя|правк|убери)\b/iu;
 
 export const classifyApplicationSkeletonReviewIntent = (
   content: string
@@ -29,11 +26,7 @@ export const classifyApplicationSkeletonReviewIntent = (
   if (NEGATED_ACCEPT_RE.test(normalized)) {
     return "revision";
   }
-  if (
-    ACCEPT_RE.test(normalized) &&
-    !BUT_RE.test(normalized) &&
-    !REVISION_HINT_RE.test(normalized)
-  ) {
+  if (ACCEPT_RE.test(normalized)) {
     return "accept";
   }
   return "revision";
