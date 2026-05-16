@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.278] - 2026-05-16
+### Fixed
+- **Application Skeleton questions now belong to dialogue, not Markdown.** The provider prompt and contract define Markdown as the proposed/agreed decision artifact, keep JSON `openQuestions` as a Core signal, and require all unresolved decisions to be asked in chat.
+- **Application Skeleton review now surfaces draft questions before acceptance.** Core passes `openQuestions` into the user-review message and keeps confirmation blocked until those dialogue decisions are resolved.
+- **Placeholder stack choices no longer count as real framework decisions.** Draft validation rejects values such as pending/unknown/unresolved framework placeholders while allowing an empty framework list only when a blocking dialogue question is open.
+
+### Tests
+- `npx tsx --test packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.277] - 2026-05-16
 ### Fixed
 - **Application Skeleton unresolved questions now open user review instead of repair loops.** Draft contracts with `openQuestions` remain structurally valid for review, so Core no longer repeatedly sends `open_questions_block_materialization` repair prompts to the agent.

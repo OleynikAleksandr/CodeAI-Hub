@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "24e220ba7",
+  "lastRecordedCommit": "2efb07d0a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.review-contract.task3",
-  "expectedCommitMessage": "docs: record skeleton review question contract verification",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-docs.task2",
+  "expectedCommitMessage": "docs: prepare skeleton review question contract release",
   "debt": {
-    "expectedCommitMessage": "docs: record skeleton review question contract verification",
-    "preCommitHead": "24e220ba7",
+    "expectedCommitMessage": "docs: prepare skeleton review question contract release",
+    "preCommitHead": "2efb07d0a",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.review-contract.task3"
+    "taskId": "app-skeleton-foundation.phase7.release-docs.task2"
   }
 }
 ```
@@ -174,14 +174,21 @@
 47. [DONE] `app-skeleton-foundation.phase7.review-contract.task3` Update bundled-template regression coverage and generated bundle, then run targeted Application Skeleton validator/review tests plus core build; record results before next release decision (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract verification`).
    - Verification result (2026-05-16): `npx tsx --test packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts` passed 18/18 tests.
    - Build result (2026-05-16): `npm run build --workspace @codeai-hub/core` passed.
-48. [PENDING] Git Commit: `docs: record skeleton review question contract verification` (hash: TBD)
-49. [TODO] `app-skeleton-foundation.phase7.release-confirm.task2` Stop after green verification and ask the user for explicit confirmation before preparing or building the next patched release. Scope: release confirmation gate only; expected commit: none.
-50. [TODO] `app-skeleton-foundation.phase7.acceptance.task3` User installs the next patched release and retests that Application Skeleton questions are asked in dialogue, Markdown records proposed/agreed decisions rather than questionnaire prompts, all artifact prose is localized, and materialization remains blocked while questions remain. Scope: user workflow acceptance only; expected commit: none.
+48. [DONE] Git Commit: `docs: record skeleton review question contract verification` (hash: 2efb07d0a)
+49. [DONE] `app-skeleton-foundation.phase7.release-confirm.task2` Stop after green verification and ask the user for explicit confirmation before preparing or building the next patched release. Scope: release confirmation gate only; expected commit: none. Result: User explicitly confirmed release build in this turn: "Да, собери новый релиз."
+50. [DONE] `app-skeleton-foundation.phase7.release-docs.task2` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton review question contract release`).
+   - Release docs target (2026-05-16): prepared README/CHANGELOG for version `1.2.278`.
+51. [PENDING] Git Commit: `docs: prepare skeleton review question contract release` (hash: TBD)
+52. [TODO] `app-skeleton-foundation.phase7.release-build.task2` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton review question contract release artifacts`).
+53. [TODO] Git Commit: `chore: build skeleton review question contract release artifacts` (hash: TBD)
+54. [TODO] `app-skeleton-foundation.phase7.release-package.task2` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract release package`).
+55. [TODO] Git Commit: `docs: record skeleton review question contract release package` (hash: TBD)
+56. [TODO] `app-skeleton-foundation.phase7.acceptance.task3` User installs the next patched release and retests that Application Skeleton questions are asked in dialogue, Markdown records proposed/agreed decisions rather than questionnaire prompts, all artifact prose is localized, and materialization remains blocked while questions remain. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-51. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-52. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-53. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+57. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+58. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+59. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
