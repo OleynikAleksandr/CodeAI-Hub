@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "09f8ca9c0",
+  "lastRecordedCommit": "bc1931e32",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase6.docs.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton foundation release",
+  "currentTaskId": "app-skeleton-foundation.phase6.build.task1",
+  "expectedCommitMessage": "chore: build application skeleton foundation release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton foundation release",
-    "preCommitHead": "09f8ca9c0",
+    "expectedCommitMessage": "chore: build application skeleton foundation release artifacts",
+    "preCommitHead": "bc1931e32",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase6.docs.task1"
+    "taskId": "app-skeleton-foundation.phase6.build.task1"
   }
 }
 ```
@@ -117,12 +117,13 @@
 
 22. [DONE] `app-skeleton-foundation.phase6.docs.task1` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton foundation release`).
    - Release docs prepared for future version `1.2.276` before running `./scripts/build-all.sh`.
-23. [PENDING] Git Commit: `docs: prepare application skeleton foundation release` (hash: TBD)
+23. [DONE] Git Commit: `docs: prepare application skeleton foundation release` (hash: bc1931e32)
 
 ### Stream: Unified Artifact Build
 
-24. [TODO] `app-skeleton-foundation.phase6.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build application skeleton foundation release artifacts`).
-25. [TODO] Git Commit: `chore: build application skeleton foundation release artifacts` (hash: TBD)
+24. [DONE] `app-skeleton-foundation.phase6.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build application skeleton foundation release artifacts`).
+   - Build result (2026-05-16): `./scripts/build-all.sh` completed version `1.2.276` and produced provider/core/UI/CEF tarballs in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+25. [PENDING] Git Commit: `chore: build application skeleton foundation release artifacts` (hash: TBD)
 
 ### Stream: VSIX Packaging
 
