@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "6e8e340ea",
+  "lastRecordedCommit": "47c47b95a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "application-skeleton-retouch.phase77.verify.task1",
-  "expectedCommitMessage": "docs: verify application skeleton retest repair",
+  "currentTaskId": "application-skeleton-retouch.phase78.release.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton retest repair release",
   "debt": {
-    "expectedCommitMessage": "docs: verify application skeleton retest repair",
-    "preCommitHead": "6e8e340ea",
+    "expectedCommitMessage": "docs: prepare application skeleton retest repair release",
+    "preCommitHead": "47c47b95a",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-retouch.phase77.verify.task1"
+    "taskId": "application-skeleton-retouch.phase78.release.task1"
   }
 }
 ```
@@ -1393,8 +1393,25 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Verification
 
 349. [DONE] `application-skeleton-retouch.phase77.verify.task1` Run targeted Core/PM Application Skeleton regressions and stop for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton retest repair`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts` — PASS, 19 tests; `node --test --import tsx packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts` — PASS, 11 tests; `node --test --import tsx src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` — PASS, 19 tests; `npm run build --workspace=@codeai-hub/core` — PASS; `npm run build:webview` — PASS; `npm run typecheck:webview` — PASS.
-350. [PENDING] Git Commit: `docs: verify application skeleton retest repair` (hash: TBD)
+350. [DONE] Git Commit: `docs: verify application skeleton retest repair` (hash: 47c47b95a)
 
 ### Stream: Release Build Confirmation
 
-351. [TODO] `application-skeleton-retouch.phase77.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none).
+351. [DONE] `application-skeleton-retouch.phase77.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for the Application Skeleton running-state and prompt-root repair.
+
+## Phase 78 — Application Skeleton Repair Release Build (owner: Codex, updated: 2026-05-16)
+
+### Stream: Release Build
+
+352. [DONE] `application-skeleton-retouch.phase78.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton retest repair release`). Evidence: current package version before release scripts is `1.2.273`; future release version prepared in release-facing docs is `1.2.274`; README/CHANGELOG now describe the Application Skeleton running-state projection and production-root prompt repair.
+353. [PENDING] Git Commit: `docs: prepare application skeleton retest repair release` (hash: TBD)
+354. [TODO] `application-skeleton-retouch.phase78.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build application skeleton retest repair release`).
+355. [TODO] Git Commit: `chore: build application skeleton retest repair release` (hash: TBD)
+356. [TODO] `application-skeleton-retouch.phase78.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton retest repair release`).
+357. [TODO] Git Commit: `docs: record application skeleton retest repair release` (hash: TBD)
+
+## Phase 79 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-16)
+
+### Stream: User Retest
+
+358. [TODO] `application-skeleton-retouch.phase79.user-acceptance.task1` User installs the release and verifies that Diagram Modules remains accepted, Application Skeleton turns yellow while a session is active, Application Skeleton completion still unlocks Quality Gates, and the first Application Skeleton prompt prevents `.codeai-hub/**` production materialization mistakes (scope: user workflow; expected commit: none).

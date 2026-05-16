@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.274] - 2026-05-16
+### Fixed
+- **Application Skeleton now shows active work in the documentation tree.** Core hydrates workflow state from the active Application Skeleton continuity chain, so Project Manager receives `in_progress` while the provider session is running instead of leaving the step grey until artifacts appear.
+- **Application Skeleton prompts now pin production scaffold paths to the workspace root.** The bundled prompt states `workspaceRoot: "."`, forbids `.codeai-hub/**` as a production `codePath` or `materializedPaths` root, and leaves structural validation to Core unless Core explicitly asks for extra diagnostics.
+
+### Tests
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`
+- `node --test --import tsx packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`
+- `node --test --import tsx src/client/project-manager/components/layout/workspace-tree-model.test.ts src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/services/workflow-state-change-token.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
 ## [1.2.273] - 2026-05-16
 ### Fixed
 - **Diagram Modules Phase 0 now closes its commit pair.** When Core records the managed input checkpoint hash, the paired `Git Commit: docs: checkpoint managed workflow inputs` line is marked `DONE` instead of remaining `TODO` in the stage plan.
