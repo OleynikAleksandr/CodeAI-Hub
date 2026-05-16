@@ -16,12 +16,16 @@ const ACCEPTED_COMMITS_RE = /"acceptedCommits": \[/u;
 const FINAL_DESCRIPTION_TRACKED_RE =
   /\.codeai-hub\/demo-workspace\/description\/Final_Description\.md/u;
 const GIT_HASH_RE = /^[0-9a-f]{7,}$/u;
+const INPUT_CHECKPOINT_COMMIT_RE =
+  /Git Commit: `docs: checkpoint managed workflow inputs` \(hash: [0-9a-f]{7,}\)/u;
+const INPUT_CHECKPOINT_SUBJECT_RE = /docs: checkpoint managed workflow inputs/u;
 const INDEX_COMMIT_HASH_RE =
   /Git Commit: `docs: update diagram modules product part index` \(hash: [0-9a-f]{7,}\)/u;
 const INDEX_SUBJECT_RE = /docs: update diagram modules product part index/u;
 const INDEX_TASK_RE = /diagram-modules\.phase1\.index\.task1`/u;
 const INDEX_TASK_STATE_RE =
   /"currentTaskId": "diagram-modules\.phase1\.index\.task1"/u;
+const LEDGER_SUBJECT_RE = /chore: advance managed workflow ledger/u;
 const LAST_ACCEPTED_HASH_RE = /"lastAcceptedCommitHash": "[0-9a-f]{7,}"/u;
 const PRODUCT_PART_INDEX_TRACKED_RE =
   /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\.index\.md/u;
@@ -118,8 +122,11 @@ const createRetryingController = (): DiagramModulesStagePlanController =>
 const prepareAcceptedIndexWorkspace = async (
   workspaceRoot: string
 ): Promise<DiagramModulesManagedValidationResult> => {
-  await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
+  const scaffoldInstaller = new ManagedWorkflowScaffoldInstaller();
+  await scaffoldInstaller.installDiagramModulesScaffold({ workspaceRoot });
+  await scaffoldInstaller.checkpointDiagramModulesInputs({
     workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
   });
   await writeWorkspaceFile(
     workspaceRoot,
@@ -142,14 +149,31 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
   const controller = new DiagramModulesStagePlanController();
 
   try {
-    await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
-      workspaceRoot,
-    });
+    const scaffoldInstaller = new ManagedWorkflowScaffoldInstaller();
+    await scaffoldInstaller.installDiagramModulesScaffold({ workspaceRoot });
     await writeWorkspaceFile(
       workspaceRoot,
       `.codeai-hub/${WORKSPACE_SLUG}/description/Final_Description.md`,
       "# Upstream description\n"
     );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/virtual_simulation/virtual-simulation.md`,
+      "# Virtual Simulation\n"
+    );
+    await scaffoldInstaller.checkpointDiagramModulesInputs({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    const checkpointPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md"
+    );
+    assert.match(checkpointPlan, INPUT_CHECKPOINT_COMMIT_RE);
+    assert.match(checkpointPlan, INDEX_TASK_STATE_RE);
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
+
     await writeWorkspaceFile(
       workspaceRoot,
       `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
@@ -188,7 +212,7 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
 
     const trackedAfterIndex = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedAfterIndex, PRODUCT_PART_INDEX_TRACKED_RE);
-    assert.doesNotMatch(trackedAfterIndex, FINAL_DESCRIPTION_TRACKED_RE);
+    assert.match(trackedAfterIndex, FINAL_DESCRIPTION_TRACKED_RE);
 
     await writeWorkspaceFile(
       workspaceRoot,
@@ -245,6 +269,8 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
     assert.match(workspacePlan, ACCEPTED_COMMITS_RE);
 
     const subjects = await git(workspaceRoot, ["log", "--format=%s"]);
+    assert.match(subjects, INPUT_CHECKPOINT_SUBJECT_RE);
+    assert.match(subjects, LEDGER_SUBJECT_RE);
     assert.match(subjects, INDEX_SUBJECT_RE);
     assert.match(subjects, PROJECT_MANAGER_PRODUCT_PART_SUBJECT_RE);
   } finally {
