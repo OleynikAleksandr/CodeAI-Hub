@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 
@@ -54,6 +55,22 @@ const readExitCode = (error: unknown): number | null => {
   return typeof code === "number" ? code : null;
 };
 
+const removeMacMetadata = async (directory: string): Promise<void> => {
+  const entries = await readdir(directory, { withFileTypes: true }).catch(
+    () => []
+  );
+  for (const entry of entries) {
+    const absolutePath = path.join(directory, entry.name);
+    if (entry.name === ".DS_Store") {
+      await rm(absolutePath, { force: true });
+      continue;
+    }
+    if (entry.isDirectory() && entry.name !== ".git") {
+      await removeMacMetadata(absolutePath);
+    }
+  }
+};
+
 export class DiagramModulesManagedGitBoundary {
   private static readonly workspaceQueues = new Map<string, Promise<void>>();
   private readonly retryDelaysMs: readonly number[];
@@ -71,6 +88,7 @@ export class DiagramModulesManagedGitBoundary {
   }): Promise<DiagramModulesManagedGitCommitResult> {
     return await this.runExclusive(params.workspaceRoot, async () => {
       await this.ensureGitRepository(params.workspaceRoot);
+      await removeMacMetadata(params.workspaceRoot);
       if (params.managedPaths.length === 0) {
         return { hash: null, noStagedChanges: true };
       }

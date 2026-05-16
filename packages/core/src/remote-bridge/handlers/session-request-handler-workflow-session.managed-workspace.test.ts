@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -30,8 +30,11 @@ const APPLICATION_SKELETON_DRAFT_COMMIT_RE =
   /"expectedCommitMessage": "docs: draft application skeleton contract"/u;
 const DIAGRAM_MODULES_INDEX_TASK_RE = /diagram-modules\.phase1\.index\.task1/u;
 const INPUT_CHECKPOINT_SUBJECT_RE = /docs: checkpoint managed workflow inputs/u;
+const INPUT_CHECKPOINT_DONE_RE =
+  /\[DONE\] Git Commit: `docs: checkpoint managed workflow inputs` \(hash: [0-9a-f]{7,}\)/u;
 const LEDGER_SUBJECT_RE = /chore: advance managed workflow ledger/u;
 const MANAGED_WORKSPACE_PLAN_RE = /Managed workspace plan/u;
+const MAC_METADATA_RE = /\.DS_Store/u;
 
 const createLogger = (warnings: unknown[] = []): Logger =>
   ({
@@ -115,6 +118,26 @@ test("Diagram Modules managed start creates workspace scaffold before provider d
   });
 
   try {
+    await writeFile(path.join(workspacePath, ".DS_Store"), "mac\n", "utf8");
+    await mkdir(path.join(workspacePath, ".codeai-hub"), { recursive: true });
+    await writeFile(
+      path.join(workspacePath, ".codeai-hub/.DS_Store"),
+      "mac\n",
+      "utf8"
+    );
+    await mkdir(
+      path.join(workspacePath, ".codeai-hub/demo-workspace/description"),
+      { recursive: true }
+    );
+    await writeFile(
+      path.join(
+        workspacePath,
+        ".codeai-hub/demo-workspace/description/.DS_Store"
+      ),
+      "mac\n",
+      "utf8"
+    );
+
     const session = await service.createSessionForWorkflow({
       providerId: "codexCli",
       workspacePath,
@@ -147,6 +170,7 @@ test("Diagram Modules managed start creates workspace scaffold before provider d
 
     assert.match(workspacePlan, ACTIVE_DIAGRAM_MODULES_RE);
     assert.match(diagramPlan, DIAGRAM_MODULES_INDEX_TASK_RE);
+    assert.match(diagramPlan, INPUT_CHECKPOINT_DONE_RE);
     assert.match(planScript, MANAGED_WORKSPACE_PLAN_RE);
     assert.equal(
       packageJson.scripts?.["plan:validate"],
@@ -163,7 +187,11 @@ test("Diagram Modules managed start creates workspace scaffold before provider d
       ["log", "--format=%s"],
       { cwd: workspacePath }
     );
+    const { stdout: tracked } = await execFileAsync("git", ["ls-files"], {
+      cwd: workspacePath,
+    });
     assert.equal(status.trim(), "");
+    assert.doesNotMatch(tracked, MAC_METADATA_RE);
     assert.match(subjects, INPUT_CHECKPOINT_SUBJECT_RE);
     assert.match(subjects, LEDGER_SUBJECT_RE);
   } finally {

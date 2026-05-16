@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "568206e10",
+  "lastRecordedCommit": "7cdeac417",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase74.plan.task1",
-  "expectedCommitMessage": "docs: open release 272 checkpoint hygiene repair",
+  "currentTaskId": "managed-git-checkpoint.phase74.phase0.task1",
+  "expectedCommitMessage": "fix: close diagram modules checkpoint git pair",
   "debt": {
-    "expectedCommitMessage": "docs: open release 272 checkpoint hygiene repair",
-    "preCommitHead": "568206e10",
+    "expectedCommitMessage": "fix: close diagram modules checkpoint git pair",
+    "preCommitHead": "7cdeac417",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase74.plan.task1"
+    "taskId": "managed-git-checkpoint.phase74.phase0.task1"
   }
 }
 ```
@@ -1329,12 +1329,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Retest Intake
 
 327. [DONE] `managed-git-checkpoint.phase74.plan.task1` Record the `1.2.272` retest blocker and open a bounded Core repair stream for Phase 0 commit-pair status, macOS `.DS_Store` cleanup, and managed continuity/workflow-state Git hygiene (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open release 272 checkpoint hygiene repair`).
-328. [PENDING] Git Commit: `docs: open release 272 checkpoint hygiene repair` (hash: TBD)
+328. [DONE] Git Commit: `docs: open release 272 checkpoint hygiene repair` (hash: 7cdeac417)
 
 ### Stream: Phase 0 Git Pair And macOS Metadata
 
-329. [TODO] `managed-git-checkpoint.phase74.phase0.task1` Mark the Diagram Modules Phase 0 paired Git Commit line as `DONE` when Core records the checkpoint hash, and remove `.DS_Store` files before managed Git commits so macOS metadata cannot remain dirty or enter managed commits (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: close diagram modules checkpoint git pair`).
-330. [TODO] Git Commit: `fix: close diagram modules checkpoint git pair` (hash: TBD)
+329. [DONE] `managed-git-checkpoint.phase74.phase0.task1` Mark the Diagram Modules Phase 0 paired Git Commit line as `DONE` when Core records the checkpoint hash, and remove `.DS_Store` files before managed Git commits so macOS metadata cannot remain dirty or enter managed commits (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: close diagram modules checkpoint git pair`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts` — PASS, 3 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression proves Phase 0 checkpoint writes a `[DONE] Git Commit: docs: checkpoint managed workflow inputs` line and managed Git cleanup removes `.DS_Store` from root, `.codeai-hub`, and workspace artifact directories before commit.
+330. [PENDING] Git Commit: `fix: close diagram modules checkpoint git pair` (hash: TBD)
 
 ### Stream: Managed Runtime Metadata Ledger
 

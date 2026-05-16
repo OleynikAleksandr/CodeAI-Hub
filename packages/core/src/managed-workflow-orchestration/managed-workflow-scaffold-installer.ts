@@ -283,8 +283,8 @@ const markInputCheckpointDone = (content: string, hash: string): string =>
       `[DONE] \`${INPUT_CHECKPOINT_TASK_ID}\``
     )
     .replace(
-      `Git Commit: \`${INPUT_CHECKPOINT_COMMIT_MESSAGE}\` (hash: TBD)`,
-      `Git Commit: \`${INPUT_CHECKPOINT_COMMIT_MESSAGE}\` (hash: ${hash})`
+      `[TODO] Git Commit: \`${INPUT_CHECKPOINT_COMMIT_MESSAGE}\` (hash: TBD)`,
+      `[DONE] Git Commit: \`${INPUT_CHECKPOINT_COMMIT_MESSAGE}\` (hash: ${hash})`
     )
     .replace(
       `[TODO] \`${INDEX_TASK_ID}\``,
