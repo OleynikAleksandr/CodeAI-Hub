@@ -10,6 +10,16 @@ const BEFORE_ACCEPTANCE_RE = /Before explicit user acceptance/;
 const NO_PRODUCTION_FILES_RE = /Do not create production files/;
 const MATERIALIZED_TRUE_RE = /materialized: true/;
 const QUALITY_GATES_START_RE = /ready for Quality Gates Baseline/;
+const INSTALLABLE_FOUNDATION_RE = /complete installable project foundation/;
+const NO_QUALITY_GATE_PRODUCTS_RE =
+  /(?:Do not choose or integrate quality-gate products|quality-gate product selection or integration)/;
+const NO_MATERIALIZE_WITH_OPEN_QUESTIONS_RE =
+  /no permission to materialize while any decision remains in `openQuestions`/;
+const PROJECT_FOUNDATION_JSON_RE = /"projectFoundation": \{/;
+const OPEN_QUESTIONS_JSON_RE = /"openQuestions": \[\]/;
+const NODE_MODULES_NOT_COMMITTED_RE =
+  /`node_modules` and other (?:dependency )?install outputs? must not be (?:committed|listed as materialized output)/;
+const REAL_TARGETS_RE = /real config(?:\/| and )source targets/;
 const REWRITE_BOUNDARY_RE = /Rewrite Boundary/;
 const RUNTIME_CONTEXT_OWNER_RE =
   /The runtime provides the current target, upstream evidence, and validation context/;
@@ -118,6 +128,13 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, NO_PRODUCTION_FILES_RE);
   assert.match(prompt, MATERIALIZED_TRUE_RE);
   assert.match(prompt, QUALITY_GATES_START_RE);
+  assert.match(prompt, INSTALLABLE_FOUNDATION_RE);
+  assert.match(prompt, NO_QUALITY_GATE_PRODUCTS_RE);
+  assert.match(prompt, NO_MATERIALIZE_WITH_OPEN_QUESTIONS_RE);
+  assert.match(prompt, PROJECT_FOUNDATION_JSON_RE);
+  assert.match(prompt, OPEN_QUESTIONS_JSON_RE);
+  assert.match(prompt, NODE_MODULES_NOT_COMMITTED_RE);
+  assert.match(prompt, REAL_TARGETS_RE);
   assert.match(prompt, REWRITE_BOUNDARY_RE);
   assert.match(prompt, RUNTIME_CONTEXT_OWNER_RE);
   assert.match(prompt, EMBEDDED_PLAN_CONTEXT_RE);
@@ -170,6 +187,11 @@ test("application skeleton bundled contract exposes materialization state fields
   assert.match(contract, MATERIALIZED_FALSE_RE);
   assert.match(contract, MATERIALIZATION_STATE_RE);
   assert.match(contract, MATERIALIZED_PATHS_RE);
+  assert.match(contract, PROJECT_FOUNDATION_JSON_RE);
+  assert.match(contract, OPEN_QUESTIONS_JSON_RE);
+  assert.match(contract, NO_QUALITY_GATE_PRODUCTS_RE);
+  assert.match(contract, NODE_MODULES_NOT_COMMITTED_RE);
+  assert.match(contract, REAL_TARGETS_RE);
   assert.match(contract, ACCEPTED_AND_MATERIALIZED_RE);
   assert.match(contract, CODEAI_HUB_SOURCE_ROOT_RE);
   assert.match(contract, STANDALONE_MODULES_RE);

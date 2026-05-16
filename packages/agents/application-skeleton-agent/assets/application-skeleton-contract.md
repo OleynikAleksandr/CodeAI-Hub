@@ -4,6 +4,12 @@
 - `application-skeleton.md`: human-readable technical scaffold decision record and materialization checklist.
 - `application-skeleton-map.json`: machine-readable mapping from Development Tree ownership to production code paths and materialization state.
 
+## Step Outcome
+- Application Skeleton materialization must produce an installable project foundation, not only a Product Part folder map.
+- The step owns stack, package/workspace layout, deterministic install metadata, minimal source/facade entrypoints, and build/typecheck/smoke script targets needed before Quality Gates can run.
+- The step does not own quality-gate product selection or integration. Ultracite, Biome, ESLint, Playwright, Vitest, dependency scanners, secret scanners, hooks, CI policy, and similar gate tooling belong to Quality Gates Baseline.
+- The agent must not materialize while any stack, runtime, package, build, test, source-layout, or first-wave entrypoint ambiguity remains unresolved.
+
 ## Rewrite Boundary
 - Application Skeleton must not assume that child plans, plan scripts, hooks, or automatic commit ownership exist from the `Diagram Modules` entrypoint.
 - Git, hooks, workspace plan state, active stage todo-plan state, plan scripts, workflow lifecycle ledgers, and upstream read-only policy are not skeleton materialization output.
@@ -26,6 +32,15 @@
     "runtimes": ["runtime-id"]
   },
   "sourceRoot": "product-parts",
+  "projectFoundation": {
+    "installCommand": "npm ci",
+    "requiredScripts": ["build", "typecheck", "test:smoke"],
+    "configFiles": ["tsconfig.json"],
+    "firstWaveEntrypoints": [
+      "product-parts/product-part-id/src/index.ts"
+    ]
+  },
+  "openQuestions": [],
   "productParts": [
     {
       "partId": "product-part-id",
@@ -60,6 +75,8 @@
 - `productParts` must be an array.
 - `reviewState` must be `draft`, `accepted`, or `materialized`; it must not be `null`.
 - `stack.languages`, `stack.frameworks`, and `stack.runtimes` must be arrays. Do not replace them with scalar fields such as `stack.language`, `stack.framework`, or `stack.runtime`.
+- `projectFoundation` must describe the accepted implementation foundation: install command, required scripts, config files, workspace/package layout decisions, and first-wave source/facade entrypoints.
+- `openQuestions` must be an array. It must be empty before materialization. Any non-empty entry blocks materialization and requires user discussion.
 - Product Part entries must use `partId`, Cluster entries must use `clusterId`, and Module entries must use `moduleId`. Do not replace these canonical fields with a generic `id`.
 - Every generated Product Part must have a mapping or an explicit deferred disposition.
 - Every mapped path must be relative, normalized, and inside the workspace.
@@ -70,6 +87,10 @@
 - Clustered module paths must be nested under their owning cluster path: `<productPartPath>/clusters/<cluster-id>/modules/<module-id>`.
 - Standalone modules must use `standaloneModules`; do not mix cluster-owned modules into a Product Part-level `modules` array.
 - Package manifests/workspace entries should exist only at the root workspace and Product Part roots unless the accepted contract explicitly declares a Cluster or Module as its own package.
+- `node_modules` and other install outputs must not be listed as materialized output, but tracked package metadata and lockfiles must be sufficient for a deterministic clean install.
+- When TypeScript is selected, a tracked TypeScript config must exist after materialization.
+- Required build/typecheck/smoke scripts must point to real config and source targets. They must not pass only because no source files or compiler targets exist.
+- First-wave implementation packages must expose minimal source entrypoints/facades after materialization so later quality gates validate real targets.
 - `accepted` must stay `false` until the user explicitly accepts the skeleton.
 - `materialized` must stay `false` until the workspace filesystem skeleton has actually been created.
 - `materializationState` must be one of `not_started`, `in_progress`, `materialized`, `failed`, or `outdated`.
@@ -79,4 +100,4 @@
 - `deferredMaterialization` must explain any mapped folder or scaffold element that was intentionally not created.
 - After materialization, `application-skeleton.md` must describe the current materialized state and must not keep draft-only/future-tense claims such as "will be created after confirmation".
 - Before the final materialization response, the stage must leave the materialized artifacts ready for runtime/user review. Do not stage, commit, advance plans, or claim completion beyond readiness.
-- Quality gate commands may be proposed in Markdown, but the dedicated Quality Gates stage owns the accepted command contract and gate integration.
+- Quality gate commands may be mentioned only as downstream examples. The dedicated Quality Gates stage owns current-tooling research, accepted command contract, dependencies for gate tools, hook wiring, CI policy, and gate integration.
