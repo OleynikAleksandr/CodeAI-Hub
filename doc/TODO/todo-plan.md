@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "47c47b95a",
+  "lastRecordedCommit": "8782fb17e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "application-skeleton-retouch.phase78.release.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton retest repair release",
+  "currentTaskId": "application-skeleton-retouch.phase78.release.task2",
+  "expectedCommitMessage": "chore: build application skeleton retest repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton retest repair release",
-    "preCommitHead": "47c47b95a",
+    "expectedCommitMessage": "chore: build application skeleton retest repair release",
+    "preCommitHead": "8782fb17e",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-retouch.phase78.release.task1"
+    "taskId": "application-skeleton-retouch.phase78.release.task2"
   }
 }
 ```
@@ -1404,9 +1404,9 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Release Build
 
 352. [DONE] `application-skeleton-retouch.phase78.release.task1` After explicit release-build confirmation, update release-facing docs for the future version before build scripts mutate package versions (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton retest repair release`). Evidence: current package version before release scripts is `1.2.273`; future release version prepared in release-facing docs is `1.2.274`; README/CHANGELOG now describe the Application Skeleton running-state projection and production-root prompt repair.
-353. [PENDING] Git Commit: `docs: prepare application skeleton retest repair release` (hash: TBD)
-354. [TODO] `application-skeleton-retouch.phase78.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build application skeleton retest repair release`).
-355. [TODO] Git Commit: `chore: build application skeleton retest repair release` (hash: TBD)
+353. [DONE] Git Commit: `docs: prepare application skeleton retest repair release` (hash: 8782fb17e)
+354. [DONE] `application-skeleton-retouch.phase78.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build application skeleton retest repair release`). Evidence: `./scripts/build-all.sh --allow-dirty` — PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition; code/package paths were clean before build start. Unified version prepared: `1.2.274`. Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.274.tar.bz2`, `codex-module-1.2.274.tar.bz2`, `gemini-module-1.2.274.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.274.tar.bz2`, `vscode-webview-1.2.274.tar.bz2`, `project-manager-1.2.274.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.274.tar.bz2`.
+355. [PENDING] Git Commit: `chore: build application skeleton retest repair release` (hash: TBD)
 356. [TODO] `application-skeleton-retouch.phase78.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record application skeleton retest repair release`).
 357. [TODO] Git Commit: `docs: record application skeleton retest repair release` (hash: TBD)
 
