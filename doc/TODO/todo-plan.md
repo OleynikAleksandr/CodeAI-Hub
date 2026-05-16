@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "64af464d2",
+  "lastRecordedCommit": "8200d27fe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.release-build.task8",
-  "expectedCommitMessage": "chore: build diagram review confirmation release artifacts",
+  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.release-package.task8",
+  "expectedCommitMessage": "docs: record diagram review confirmation release package",
   "debt": {
-    "expectedCommitMessage": "chore: build diagram review confirmation release artifacts",
-    "preCommitHead": "64af464d2",
+    "expectedCommitMessage": "docs: record diagram review confirmation release package",
+    "preCommitHead": "8200d27fe",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.diagram-review.release-build.task8"
+    "taskId": "app-skeleton-foundation.phase7.diagram-review.release-package.task8"
   }
 }
 ```
@@ -325,9 +325,11 @@
 145. [DONE] Git Commit: `docs: prepare diagram review confirmation release` (hash: 64af464d2)
 146. [DONE] `app-skeleton-foundation.phase7.diagram-review.release-build.task8` Run `./scripts/build-all.sh` from a clean tree or with only active plan state dirtiness, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Diagram Modules confirmation release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build diagram review confirmation release artifacts`).
    - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.284`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-147. [PENDING] Git Commit: `chore: build diagram review confirmation release artifacts` (hash: TBD)
-148. [TODO] `app-skeleton-foundation.phase7.diagram-review.release-package.task8` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram review confirmation release package`).
-149. [TODO] Git Commit: `docs: record diagram review confirmation release package` (hash: TBD)
+147. [DONE] Git Commit: `chore: build diagram review confirmation release artifacts` (hash: 8200d27fe)
+148. [DONE] `app-skeleton-foundation.phase7.diagram-review.release-package.task8` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram review confirmation release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.284`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
+   - User handoff artifact: `codeai-hub-1.2.284.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+149. [PENDING] Git Commit: `docs: record diagram review confirmation release package` (hash: TBD)
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
