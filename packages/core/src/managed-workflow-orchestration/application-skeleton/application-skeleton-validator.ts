@@ -2,6 +2,10 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { validateApplicationSkeletonMaterialization } from "../../remote-bridge/handlers/application-skeleton-materialization-validator";
 import {
+  isRecord,
+  validateApplicationSkeletonFoundationDraft,
+} from "./application-skeleton-foundation-contract";
+import {
   buildApplicationSkeletonDraftRepairPrompt,
   buildApplicationSkeletonMaterializationRepairPrompt,
   buildApplicationSkeletonPersistentReturnMessage,
@@ -80,9 +84,6 @@ const parseJsonObject = (
     };
   }
 };
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
 
 const readAcceptedFlag = (value: Record<string, unknown> | null): boolean => {
   if (!value) {
@@ -231,6 +232,7 @@ const validateDraftShape = (params: {
       errors.push(pathError);
     }
   }
+  errors.push(...validateApplicationSkeletonFoundationDraft(params.mapJson));
   return errors;
 };
 

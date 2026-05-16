@@ -42,7 +42,26 @@ const PLAN_STATE_PROBLEM_RE = /orchestrator plan-state problem/u;
 const PAIRED_COMMIT_ITEM_RE = /paired `Git Commit: \.\.\.` item/u;
 const CANONICAL_MARKDOWN_STRUCTURE_RE = /canonical Markdown section structure/u;
 const MATERIALIZE_WORKSPACE_RE =
-  /Materialize it into the workspace filesystem/u;
+  /Materialize the installable project foundation/u;
+const PROJECT_FOUNDATION_RE = /projectFoundation/u;
+const OPEN_QUESTIONS_RE = /open_questions_block_materialization/u;
+
+const createDraftFoundation = (): Record<string, unknown> => ({
+  packageManager: "npm",
+  projectFoundation: {
+    configFiles: ["tsconfig.json"],
+    firstWaveEntrypoints: ["product-parts/core-runtime/src/index.ts"],
+    installCommand: "npm ci",
+    requiredScripts: ["build", "typecheck", "test:smoke"],
+  },
+  repoShape: "workspace-monorepo",
+  stack: {
+    frameworks: ["node"],
+    languages: ["TypeScript"],
+    runtimes: ["Node.js"],
+  },
+  openQuestions: [],
+});
 
 const createWorkspace = async (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "application-skeleton-validator-"));
@@ -78,6 +97,7 @@ test("Application Skeleton validator opens user review for a valid draft contrac
   try {
     await writeApplicationSkeletonArtifacts(workspaceRoot, {
       mapJson: {
+        ...createDraftFoundation(),
         schema: "codeai-application-skeleton-v1",
         accepted: false,
         materialized: false,
@@ -123,6 +143,7 @@ test("Application Skeleton validator rejects premature draft acceptance and mate
   try {
     await writeApplicationSkeletonArtifacts(workspaceRoot, {
       mapJson: {
+        ...createDraftFoundation(),
         schema: "codeai-application-skeleton-v1",
         accepted: false,
         materialized: true,
@@ -165,6 +186,7 @@ test("Application Skeleton validator accepts materialized scaffold when declared
     await writeApplicationSkeletonArtifacts(workspaceRoot, {
       markdown: MATERIALIZED_MARKDOWN,
       mapJson: {
+        ...createDraftFoundation(),
         schema: "codeai-application-skeleton-v1",
         reviewState: "materialized",
         accepted: true,
@@ -212,6 +234,7 @@ test("Application Skeleton validator blocks unsafe draft paths", async () => {
   try {
     await writeApplicationSkeletonArtifacts(workspaceRoot, {
       mapJson: {
+        ...createDraftFoundation(),
         schema: "codeai-application-skeleton-v1",
         accepted: false,
         materialized: false,
@@ -228,6 +251,70 @@ test("Application Skeleton validator blocks unsafe draft paths", async () => {
     assert.equal(result.nextAction, "repair_current_artifact");
     assert.match(result.diagnostics.join("\n"), PARENT_TRAVERSAL_RE);
     assert.match(result.diagnostics.join("\n"), NODE_MODULES_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Application Skeleton validator blocks incomplete foundation draft", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    await writeApplicationSkeletonArtifacts(workspaceRoot, {
+      mapJson: {
+        schema: "codeai-application-skeleton-v1",
+        accepted: false,
+        materialized: false,
+        materializationState: "not_started",
+        productParts: [
+          {
+            partId: "core-runtime",
+            codePath: "product-parts/core-runtime",
+          },
+        ],
+      },
+    });
+
+    const result = await validateApplicationSkeletonManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_current_artifact");
+    assert.match(result.diagnostics.join("\n"), PROJECT_FOUNDATION_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Application Skeleton validator blocks draft with unresolved questions", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    await writeApplicationSkeletonArtifacts(workspaceRoot, {
+      mapJson: {
+        ...createDraftFoundation(),
+        schema: "codeai-application-skeleton-v1",
+        accepted: false,
+        materialized: false,
+        materializationState: "not_started",
+        openQuestions: ["React or vanilla UI?"],
+        productParts: [
+          {
+            partId: "project-manager",
+            codePath: "product-parts/project-manager",
+          },
+        ],
+      },
+    });
+
+    const result = await validateApplicationSkeletonManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_current_artifact");
+    assert.match(result.diagnostics.join("\n"), OPEN_QUESTIONS_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

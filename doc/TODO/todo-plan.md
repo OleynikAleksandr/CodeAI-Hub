@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "43faf568a",
+  "lastRecordedCommit": "9256a6390",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase1.surface.task1",
-  "expectedCommitMessage": "feat: surface application skeleton foundation review gate",
+  "currentTaskId": "app-skeleton-foundation.phase2.draft-validator.task1",
+  "expectedCommitMessage": "feat: validate application skeleton foundation draft",
   "debt": {
-    "expectedCommitMessage": "feat: surface application skeleton foundation review gate",
-    "preCommitHead": "43faf568a",
+    "expectedCommitMessage": "feat: validate application skeleton foundation draft",
+    "preCommitHead": "9256a6390",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase1.surface.task1"
+    "taskId": "app-skeleton-foundation.phase2.draft-validator.task1"
   }
 }
 ```
@@ -60,14 +60,14 @@
 3. [DONE] `app-skeleton-foundation.phase1.prompt.task1` Update the Application Skeleton agent prompt, contract reference, bundled-template registry, and bundled-template regression test so the first prompt requires an installable project foundation, explicit unresolved-question handling, no materialization under ambiguity, and no Quality Gates tool ownership (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/core/src/templates/**`; expected commit: `feat: require installable application skeleton foundation prompt`).
 4. [DONE] Git Commit: `feat: require installable application skeleton foundation prompt` (hash: 43faf568a)
 5. [DONE] `app-skeleton-foundation.phase1.surface.task1` Sync Core/user-facing Application Skeleton review language with the new foundation outcome and ambiguity gate (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, src/client/project-manager/components/application-skeleton/application-skeleton-help.tsx, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `feat: surface application skeleton foundation review gate`).
-6. [PENDING] Git Commit: `feat: surface application skeleton foundation review gate` (hash: TBD)
+6. [DONE] Git Commit: `feat: surface application skeleton foundation review gate` (hash: 9256a6390)
 
 ## Phase 2 — Core Artifact Contract Parser (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Draft Foundation Completeness
 
-7. [TODO] `app-skeleton-foundation.phase2.draft-validator.task1` Add Core-owned draft contract validation for project foundation decisions: accepted stack completeness, package manager/repo shape, unresolved-question list, and implementation-wave entrypoint intent (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `feat: validate application skeleton foundation draft`).
-8. [TODO] Git Commit: `feat: validate application skeleton foundation draft` (hash: TBD)
+7. [DONE] `app-skeleton-foundation.phase2.draft-validator.task1` Add Core-owned draft contract validation for project foundation decisions: accepted stack completeness, package manager/repo shape, unresolved-question list, and implementation-wave entrypoint intent (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-foundation-contract.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`; expected commit: `feat: validate application skeleton foundation draft`).
+8. [PENDING] Git Commit: `feat: validate application skeleton foundation draft` (hash: TBD)
 
 ### Stream: Materialized Foundation Completeness
 
