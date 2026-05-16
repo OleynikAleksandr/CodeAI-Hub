@@ -1,7 +1,7 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-05-15
+**Updated:** 2026-05-16
 **Owner:** Oleksandr
 
 **2026-05-15 orchestration rewrite note:** the previous managed workflow orchestration runtime for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline` is removed from active code paths. The replacement cluster now owns the active managed lifecycles for all three technical trunk stages: `Diagram Modules` runs Product Part Type A subturns and then opens user review, `Application Skeleton` runs draft review followed by accepted-only materialization, and `Quality Gates Baseline` runs draft contract review followed by accepted-only gate integration and persistent user return. Core creates managed stage plans, validates provider turns, records Git commits, and dispatches continuations only after the commit boundary completes. Project Manager and future clients are projections only: they may collect user decisions and display Core state, but they are never the source of truth for stage phase, prompt selection, validation, Git, or unlock state.
@@ -92,7 +92,7 @@ Continuity chains remain stage-family agnostic. The same load/persistence rules 
 
 Текущий статус реализации Development Tree:
 - Read model: workflow-state API отдаёт `developmentTree` snapshot из product-part artifacts; sidebar проецирует Product Part / Cluster / Module как collapsible branch nodes в секции Development Tree.
-- Materialization gate: Core держит Development Tree sessions disabled, пока `application-skeleton-map.json` не содержит committed `materialized: true`, а `quality-gates.json` не содержит committed `integrated: true`. Sidebar показывает locked-row вместо раннего session bootstrap.
+- Materialization gate: Core держит Quality Gates/Development Tree readiness disabled, пока `application-skeleton-map.json` не содержит committed `materialized: true` with `foundationReady: true`, а `quality-gates.json` не содержит committed `integrated: true`. `foundationReady` requires empty `openQuestions`, package manager metadata, package manifest/lockfile, required scripts, config files, and first-wave production entrypoints. Sidebar показывает locked-row вместо раннего session bootstrap.
 - Materialization: Application Skeleton Agent создаёт project skeleton и production code folder projection, Quality Gates Agent интегрирует gate tooling, затем Core создаёт neutral filesystem tree under `.codeai-hub/<workspaceSlug>/development_tree/materialized/`. Core больше не pre-creates все node draft files и не bootstraps все Product Part / Cluster / Module sessions автоматически.
 - User-started node lifecycle: каждый Product Part / Cluster / Module node получает `lifecycle.startState = "not_started"` и `startable: true`, пока у него нет node session. Пользователь выбирает нужный node, provider/model/reasoning на Start card и запускает только этот node. Core проверяет clean Git, materialized node folder, пишет draft artifacts только выбранного node и создаёт session с `runSlug: "development-tree"`.
 - Branch-node selection: `pm:branch:selected` opens the real working surface: left node session pane and right draft artifact pane.
@@ -267,6 +267,7 @@ The stage indicator is Core-owned: when the Application Skeleton continuity chai
 The stable artifact contract remains:
 - draft/review artifacts are `application-skeleton.md` and `application-skeleton-map.json`;
 - materialization state is represented in `application-skeleton-map.json`;
+- `projectFoundation`, empty `openQuestions`, package manifest/lockfile, required scripts, config files, and first-wave source/facade entrypoints are validated by Core before downstream unlock;
 - Quality Gates Baseline remains locked until Core validates that Application Skeleton materialization includes the accepted project foundation, not just `materialized: true`;
 - Development Tree bootstrap remains locked until Core has committed validated materialized skeleton output and Quality Gates integration evidence.
 
@@ -292,7 +293,7 @@ Provider-visible instructions for this step stay content-scoped: write/update th
 
 Без этого шага Development Tree sessions не стартуют: агентам нельзя писать код, пока project skeleton не создан и quality gates не интегрированы в реальную файловую систему.
 
-`Quality Gates Baseline` uses the Core-owned managed lifecycle implemented by the replacement cluster. Phase 1 drafts the quality contract only. Phase 2 opens user review from Core state. A direct acceptance advances the stage plan to accepted-only integration without forwarding the user acceptance text as an agent task; requested corrections stay in the active review task and are sent as a scoped revision prompt. Phase 3 integrates the accepted gate baseline into package scripts, hook wiring, and accepted gate infrastructure, then Core validates `accepted: true`, `integrated: true`, `integrationState: "integrated"`, required scripts, and required hook calls before committing and opening persistent user return.
+`Quality Gates Baseline` uses the Core-owned managed lifecycle implemented by the replacement cluster. Phase 1 drafts the quality contract only after Application Skeleton has a Core-validated installable foundation; it must not compensate for missing package/workspace metadata that belonged to Application Skeleton. Phase 2 opens user review from Core state. A direct acceptance advances the stage plan to accepted-only integration without forwarding the user acceptance text as an agent task; requested corrections stay in the active review task and are sent as a scoped revision prompt. Phase 3 integrates the accepted gate baseline into package scripts, hook wiring, and accepted gate infrastructure, then Core validates `accepted: true`, `integrated: true`, `integrationState: "integrated"`, required scripts, and required hook calls before committing and opening persistent user return.
 
 ### Входы
 

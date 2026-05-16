@@ -60,6 +60,8 @@ Application Skeleton materialization is valid only when the provider has produce
 
 Quality Gates Baseline and later implementation stages may depend on this foundation evidence instead of re-negotiating the Application Skeleton environment.
 
+The boundary is strict: Application Skeleton owns stack/package/workspace decisions and the first installable project foundation, while Quality Gates Baseline owns research, selection, and integration of quality tooling after that foundation is available. Quality Gates must not be used as a repair layer for an incomplete Application Skeleton foundation.
+
 Forbidden external access:
 
 - importing step controller internals from `remote-bridge`;

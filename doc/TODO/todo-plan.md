@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "1f215e032",
+  "lastRecordedCommit": "7300d75d6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase4.regression.task1",
-  "expectedCommitMessage": "test: cover application skeleton foundation lifecycle",
+  "currentTaskId": "app-skeleton-foundation.phase4.docs.task1",
+  "expectedCommitMessage": "docs: sync application skeleton foundation contract",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton foundation lifecycle",
-    "preCommitHead": "1f215e032",
+    "expectedCommitMessage": "docs: sync application skeleton foundation contract",
+    "preCommitHead": "7300d75d6",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase4.regression.task1"
+    "taskId": "app-skeleton-foundation.phase4.docs.task1"
   }
 }
 ```
@@ -91,12 +91,12 @@
 ### Stream: Managed Workflow Regression Tests
 
 15. [DONE] `app-skeleton-foundation.phase4.regression.task1` Add focused regression coverage for rejected incomplete foundations, ambiguity/open-question blockers, and accepted installable foundation materialization flow (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `test: cover application skeleton foundation lifecycle`).
-16. [PENDING] Git Commit: `test: cover application skeleton foundation lifecycle` (hash: TBD)
+16. [DONE] Git Commit: `test: cover application skeleton foundation lifecycle` (hash: 7300d75d6)
 
 ### Stream: SSOT Sync
 
-17. [TODO] `app-skeleton-foundation.phase4.docs.task1` Synchronize System/cluster SSOT with the implemented Application Skeleton foundation contract, parser authority, user-question gate, downstream unlock rule, and Quality Gates responsibility boundary (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `docs: sync application skeleton foundation contract`).
-18. [TODO] Git Commit: `docs: sync application skeleton foundation contract` (hash: TBD)
+17. [DONE] `app-skeleton-foundation.phase4.docs.task1` Synchronize System/cluster SSOT with the implemented Application Skeleton foundation contract, parser authority, user-question gate, downstream unlock rule, and Quality Gates responsibility boundary (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `docs: sync application skeleton foundation contract`).
+18. [PENDING] Git Commit: `docs: sync application skeleton foundation contract` (hash: TBD)
 
 ## Phase 5 — Tooling Verification (owner: Codex, updated: 2026-05-16)
 
