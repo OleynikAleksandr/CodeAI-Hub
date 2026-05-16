@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "2efb07d0a",
+  "lastRecordedCommit": "831b44824",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-docs.task2",
-  "expectedCommitMessage": "docs: prepare skeleton review question contract release",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task2",
+  "expectedCommitMessage": "chore: build skeleton review question contract release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare skeleton review question contract release",
-    "preCommitHead": "2efb07d0a",
+    "expectedCommitMessage": "chore: build skeleton review question contract release artifacts",
+    "preCommitHead": "831b44824",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-docs.task2"
+    "taskId": "app-skeleton-foundation.phase7.release-build.task2"
   }
 }
 ```
@@ -178,9 +178,10 @@
 49. [DONE] `app-skeleton-foundation.phase7.release-confirm.task2` Stop after green verification and ask the user for explicit confirmation before preparing or building the next patched release. Scope: release confirmation gate only; expected commit: none. Result: User explicitly confirmed release build in this turn: "Да, собери новый релиз."
 50. [DONE] `app-skeleton-foundation.phase7.release-docs.task2` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton review question contract release`).
    - Release docs target (2026-05-16): prepared README/CHANGELOG for version `1.2.278`.
-51. [PENDING] Git Commit: `docs: prepare skeleton review question contract release` (hash: TBD)
-52. [TODO] `app-skeleton-foundation.phase7.release-build.task2` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton review question contract release artifacts`).
-53. [TODO] Git Commit: `chore: build skeleton review question contract release artifacts` (hash: TBD)
+51. [DONE] Git Commit: `docs: prepare skeleton review question contract release` (hash: 831b44824)
+52. [DONE] `app-skeleton-foundation.phase7.release-build.task2` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton review question contract release artifacts`).
+   - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.278`; the only pre-existing dirty file was active plan state advanced by the previous no-commit gate. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+53. [PENDING] Git Commit: `chore: build skeleton review question contract release artifacts` (hash: TBD)
 54. [TODO] `app-skeleton-foundation.phase7.release-package.task2` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract release package`).
 55. [TODO] Git Commit: `docs: record skeleton review question contract release package` (hash: TBD)
 56. [TODO] `app-skeleton-foundation.phase7.acceptance.task3` User installs the next patched release and retests that Application Skeleton questions are asked in dialogue, Markdown records proposed/agreed decisions rather than questionnaire prompts, all artifact prose is localized, and materialization remains blocked while questions remain. Scope: user workflow acceptance only; expected commit: none.
