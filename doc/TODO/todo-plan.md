@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "49cb4c310",
+  "lastRecordedCommit": "0fb97255b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase63.build-all.task1",
-  "expectedCommitMessage": "chore: build core artifact contract repair release",
+  "currentTaskId": "artifact-contract-repair.phase64.package.task1",
+  "expectedCommitMessage": "docs: record core artifact contract repair release",
   "debt": {
-    "expectedCommitMessage": "chore: build core artifact contract repair release",
-    "preCommitHead": "49cb4c310",
+    "expectedCommitMessage": "docs: record core artifact contract repair release",
+    "preCommitHead": "0fb97255b",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase63.build-all.task1"
+    "taskId": "artifact-contract-repair.phase64.package.task1"
   }
 }
 ```
@@ -1168,14 +1168,19 @@ Verification evidence recorded 2026-05-16:
     - Unified version after build: `1.2.269`.
     - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.269.tar.bz2`, `codex-module-1.2.269.tar.bz2`, `gemini-module-1.2.269.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.269.tar.bz2`, `vscode-webview-1.2.269.tar.bz2`, `project-manager-1.2.269.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.269.tar.bz2`.
     - Matching runtime tarballs present in `~/.codeai-hub/releases/` for providers, core, UI, and launcher.
-278. [PENDING] Git Commit: `chore: build core artifact contract repair release` (hash: TBD)
+278. [DONE] Git Commit: `chore: build core artifact contract repair release` (hash: 0fb97255b)
 
 ## Phase 64 — Package VSIX (owner: Codex, updated: 2026-05-16)
 
 ### Stream: VSIX Package
 
-279. [TODO] `artifact-contract-repair.phase64.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core artifact contract repair release`).
-280. [TODO] Git Commit: `docs: record core artifact contract repair release` (hash: TBD)
+279. [DONE] `artifact-contract-repair.phase64.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core artifact contract repair release`).
+    - `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start.
+    - Required release-build output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`.
+    - VSIX package: `codeai-hub-1.2.269.vsix` (`48M`).
+    - Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.269.tar.bz2`, `codex-module-1.2.269.tar.bz2`, `gemini-module-1.2.269.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.269.tar.bz2`, `vscode-webview-1.2.269.tar.bz2`, `project-manager-1.2.269.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.269.tar.bz2`.
+    - Advisory release warnings: markdown link checker reported 17 planning-document anchor issues; package size warning reported `48M`. Neither warning blocked packaging or runtime surface verification.
+280. [PENDING] Git Commit: `docs: record core artifact contract repair release` (hash: TBD)
 
 ## Phase 65 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
 
