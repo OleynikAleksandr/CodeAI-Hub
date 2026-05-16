@@ -44,7 +44,9 @@ export const hydrateDiagramModulesStateFromProgress = async (params: {
   }
 
   const currentStage = params.state.stages.diagram_modules;
-  if (currentStage.status !== "idle") {
+  const canHydrateFromProgress =
+    currentStage.status === "idle" || currentStage.status === "in_progress";
+  if (!canHydrateFromProgress) {
     return params.state;
   }
 
@@ -66,10 +68,12 @@ export const hydrateDiagramModulesStateFromProgress = async (params: {
   }
 
   const artifactUpdatedAt = artifactStat.mtime.toISOString();
-  const nextStatus: WorkflowStageStatus = params.diagramModulesProgress
-    .aggregateReady
-    ? "completed"
-    : "in_progress";
+  let nextStatus: WorkflowStageStatus = currentStage.status;
+  if (params.diagramModulesProgress.aggregateReady) {
+    nextStatus = "completed";
+  } else if (currentStage.status === "idle") {
+    nextStatus = "in_progress";
+  }
   const nextStage = {
     ...currentStage,
     status: nextStatus,

@@ -235,6 +235,62 @@ test("workflow-state cold start keeps development tree preview side-effect free 
   }
 });
 
+test("workflow-state completes in-progress diagram modules after review opens", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-service-diagram-review-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+      "# Final Description\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/description-step.json`,
+      `${createDescriptionStepJson({ workspaceRoot, workspaceSlug })}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+      "# Virtual Simulation: Demo Workspace\n\n## Scenario 1\nReady.\n\n## Scenario 2\nReady.\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+      createProductPartsIndex(["local-core-runtime"])
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-core-runtime.md`,
+      createProductPartMarkdown("local-core-runtime")
+    );
+    const service = new WorkflowStateService({ logger: new Logger("error") });
+    service.record({
+      stage: "diagram_modules",
+      timestamp: "2026-05-16T06:30:00.000Z",
+      type: "workflow.run.created",
+      workspaceSlug,
+    });
+    const result = await readWorkflowStatePayload({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(result.statusCode, 200);
+    const payload = result.payload as WorkflowStatePayload;
+
+    assert.equal(payload.diagramModulesProgress?.aggregateReady, true);
+    assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
+    assert.equal(payload.gating.blocked.application_skeleton, false);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("workflow-state tracks diagram modules progress when not all product parts are ready", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-service-product-parts-")

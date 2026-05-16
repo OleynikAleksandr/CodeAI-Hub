@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "f829f443d",
+  "lastRecordedCommit": "47b06881a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase65.user-acceptance.task1",
-  "expectedCommitMessage": "docs: record core artifact contract release acceptance",
+  "currentTaskId": "artifact-contract-repair.phase66.diagram-completion.task1",
+  "expectedCommitMessage": "fix: complete diagram modules from review progress",
   "debt": {
-    "expectedCommitMessage": "docs: record core artifact contract release acceptance",
-    "preCommitHead": "f829f443d",
+    "expectedCommitMessage": "fix: complete diagram modules from review progress",
+    "preCommitHead": "47b06881a",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase65.user-acceptance.task1"
+    "taskId": "artifact-contract-repair.phase66.diagram-completion.task1"
   }
 }
 ```
@@ -1187,14 +1187,16 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Release Retest Handoff
 
 281. [DONE] `artifact-contract-repair.phase65.user-acceptance.task1` User installs and retests the `1.2.269` release package; scope stays ACTIVE until explicit release acceptance or new failure report (scope: `user workflow`; expected commit: `docs: record core artifact contract release acceptance`). Result: release `1.2.269` is not accepted. Diagram Modules now reaches the Core user-review handoff with valid Product Part artifacts and a correct managed stage plan, but the Core-owned workflow read-model still leaves the root stage effectively incomplete for downstream gating, so Application Skeleton remains blocked.
-282. [PENDING] Git Commit: `docs: record core artifact contract release acceptance` (hash: TBD)
+282. [DONE] Git Commit: `docs: record core artifact contract release acceptance` (hash: 47b06881a)
 
 ## Phase 66 — Diagram Modules Review Completion Gating Repair (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Core Read-Model And Gating Projection
 
-283. [TODO] `artifact-contract-repair.phase66.diagram-completion.task1` Fix the Core-owned Diagram Modules workflow read-model so aggregate-ready user-review handoff can promote an already in-progress stage to completed, unlock Application Skeleton, and remain client-agnostic for Project Manager, mobile, and future clients; also add regression coverage and audit the other trunk stages for the same terminal-transition class (scope: `packages/core/src/remote-bridge/handlers/workflow-state-diagram-modules-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete diagram modules from review progress`).
-284. [TODO] Git Commit: `fix: complete diagram modules from review progress` (hash: TBD)
+283. [DONE] `artifact-contract-repair.phase66.diagram-completion.task1` Fix the Core-owned Diagram Modules workflow read-model so aggregate-ready user-review handoff can promote an already in-progress stage to completed, unlock Application Skeleton, and remain client-agnostic for Project Manager, mobile, and future clients; also add regression coverage and audit the other trunk stages for the same terminal-transition class (scope: `packages/core/src/remote-bridge/handlers/workflow-state-diagram-modules-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete diagram modules from review progress`).
+    - Audit result: `Application Skeleton` and `Quality Gates` already use the Core-owned `applyTechnicalRootProgressToState` terminal updater, which completes stages from any current status when `materialized` / `integrated` is true. `Description` and `Virtual Simulation` are provider-direct artifact stages and their root marker path is covered by artifact presence plus existing gating. The isolated defect is Diagram Modules' separate progress hydration returning early when the stage is already `in_progress`.
+    - Repair result: Diagram Modules progress hydration now accepts `idle` and `in_progress` as hydratable source states, promotes `aggregateReady=true` to `completed`, and keeps non-terminal in-progress state stable while preserving invalid/outdated protection.
+284. [PENDING] Git Commit: `fix: complete diagram modules from review progress` (hash: TBD)
 
 ### Stream: Verification
 
