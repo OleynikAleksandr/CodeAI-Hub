@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.277] - 2026-05-16
+### Fixed
+- **Application Skeleton unresolved questions now open user review instead of repair loops.** Draft contracts with `openQuestions` remain structurally valid for review, so Core no longer repeatedly sends `open_questions_block_materialization` repair prompts to the agent.
+- **Application Skeleton acceptance stays blocked while questions remain open.** A user `подтверждаю` response no longer opens materialization until `openQuestions` is empty; Core keeps review active and shows the unresolved decisions.
+
+### Tests
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-completion-observer.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-phase-state.test.ts packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.276] - 2026-05-16
 ### Changed
 - **Application Skeleton now requires an installable project foundation.** The provider-facing prompt and Core validators require stack/package/workspace decisions, empty `openQuestions`, deterministic install metadata, required scripts, config files, and first-wave production entrypoints before materialization can complete.

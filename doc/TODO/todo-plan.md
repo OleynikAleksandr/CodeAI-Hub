@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "186b7439c",
+  "lastRecordedCommit": "db842d4fa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.repair.task3",
-  "expectedCommitMessage": "docs: record skeleton open questions repair verification",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare skeleton open questions repair release",
   "debt": {
-    "expectedCommitMessage": "docs: record skeleton open questions repair verification",
-    "preCommitHead": "186b7439c",
+    "expectedCommitMessage": "docs: prepare skeleton open questions repair release",
+    "preCommitHead": "db842d4fa",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.repair.task3"
+    "taskId": "app-skeleton-foundation.phase7.release-docs.task1"
   }
 }
 ```
@@ -148,13 +148,13 @@
 33. [DONE] `app-skeleton-foundation.phase7.repair.task3` Run targeted Application Skeleton review/validator tests and core build after the repair, then restore user acceptance testing for the next release candidate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton open questions repair verification`).
    - Verification result (2026-05-16): targeted Application Skeleton validator/review/stage-plan/materialization/progress/completion/downstream suite passed `32/32`.
    - Build result (2026-05-16): `npm run build --workspace @codeai-hub/core` passed.
-34. [PENDING] Git Commit: `docs: record skeleton open questions repair verification` (hash: TBD)
+34. [DONE] Git Commit: `docs: record skeleton open questions repair verification` (hash: db842d4fa)
 
 ### Stream: Patched Release Gate
 
-35. [TODO] `app-skeleton-foundation.phase7.release-confirm.task1` Stop after green repair verification and ask the user for explicit confirmation before preparing or building a patched release. Scope: release confirmation gate only; expected commit: none.
-36. [TODO] `app-skeleton-foundation.phase7.release-docs.task1` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton open questions repair release`).
-37. [TODO] Git Commit: `docs: prepare skeleton open questions repair release` (hash: TBD)
+35. [DONE] `app-skeleton-foundation.phase7.release-confirm.task1` Stop after green repair verification and ask the user for explicit confirmation before preparing or building a patched release. Scope: release confirmation gate only; expected commit: none. Result: User explicitly confirmed release build in this turn: "Собери новый релиз."
+36. [DONE] `app-skeleton-foundation.phase7.release-docs.task1` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton open questions repair release`).
+37. [PENDING] Git Commit: `docs: prepare skeleton open questions repair release` (hash: TBD)
 38. [TODO] `app-skeleton-foundation.phase7.release-build.task1` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton open questions repair release artifacts`).
 39. [TODO] Git Commit: `chore: build skeleton open questions repair release artifacts` (hash: TBD)
 40. [TODO] `app-skeleton-foundation.phase7.release-package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton open questions repair release package`).

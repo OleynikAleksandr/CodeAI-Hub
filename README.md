@@ -2,18 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.276** (Application Skeleton foundation gate)
+**Current Release — v1.2.277** (Application Skeleton open-question review gate)
 
-This release hardens the Application Skeleton managed workflow so the step
-produces and validates an installable project foundation before Quality Gates or
-Development Tree work can proceed.
+This release fixes the Application Skeleton unresolved-question review path
+found during the `1.2.276` acceptance retest.
 
-Application Skeleton drafts now require explicit stack/package/workspace
-decisions, a closed `openQuestions` list, deterministic install metadata,
-required scripts, config files, and first-wave production entrypoints. Core
-validates the materialized filesystem evidence before marking the skeleton
-ready, and downstream gates stay locked on incomplete foundations instead of
-trusting `materialized: true` alone.
+Application Skeleton drafts may now surface unresolved `openQuestions` to the
+user review gate instead of falling into a repeated agent repair loop. Core still
+blocks materialization while questions remain unresolved, keeps the review task
+open, and lists the decisions that must be answered before acceptance can
+continue.
 
 Repository lifecycle tooling under `scripts/plan-orchestrator/**` remains in
 place because it powers `npm run plan:*` and the Husky plan hooks for this code
