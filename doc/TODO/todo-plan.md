@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "bc7f2a532",
+  "lastRecordedCommit": "f92ddbf56",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase75.package.task1",
-  "expectedCommitMessage": "docs: record release 273 checkpoint hygiene repair",
+  "currentTaskId": "application-skeleton-retouch.phase77.plan.task1",
+  "expectedCommitMessage": "docs: open application skeleton retest repair",
   "debt": {
-    "expectedCommitMessage": "docs: record release 273 checkpoint hygiene repair",
-    "preCommitHead": "bc7f2a532",
+    "expectedCommitMessage": "docs: open application skeleton retest repair",
+    "preCommitHead": "f92ddbf56",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase75.package.task1"
+    "taskId": "application-skeleton-retouch.phase77.plan.task1"
   }
 }
 ```
@@ -1365,10 +1365,36 @@ Verification evidence recorded 2026-05-16:
 ### Stream: VSIX Package
 
 340. [DONE] `managed-git-checkpoint.phase75.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 273 checkpoint hygiene repair`). Evidence: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before packaging. Required output observed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, `VSIX runtime package surface verified`. VSIX package: `codeai-hub-1.2.273.vsix` (`48M`). Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.273.tar.bz2`, `codex-module-1.2.273.tar.bz2`, `gemini-module-1.2.273.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.273.tar.bz2`, `vscode-webview-1.2.273.tar.bz2`, `project-manager-1.2.273.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.273.tar.bz2`. Advisory warnings: markdown link checker reported 17 existing planning-document anchor issues; package size warning reported `48M`; neither warning blocked packaging or runtime surface verification.
-341. [PENDING] Git Commit: `docs: record release 273 checkpoint hygiene repair` (hash: TBD)
+341. [DONE] Git Commit: `docs: record release 273 checkpoint hygiene repair` (hash: f92ddbf56)
 
 ## Phase 76 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
 
 ### Stream: Release Retest Handoff
 
-342. [TODO] `managed-git-checkpoint.phase76.user-acceptance.task1` User installs and retests release `1.2.273`: Diagram Modules Phase 0 must show both checkpoint task and paired Git Commit as `DONE`; managed commits must remove `.DS_Store`; Core-owned continuity/workflow runtime metadata must be committed by managed ledgers; Diagram Modules/Application Skeleton/Quality Gates transitions and development tree cards must stay unlocked from Core-owned workflow state (scope: user workflow; expected commit: none).
+342. [BLOCKED] `managed-git-checkpoint.phase76.user-acceptance.task1` User installs and retests release `1.2.273`: Diagram Modules Phase 0 must show both checkpoint task and paired Git Commit as `DONE`; managed commits must remove `.DS_Store`; Core-owned continuity/workflow runtime metadata must be committed by managed ledgers; Diagram Modules/Application Skeleton/Quality Gates transitions and development tree cards must stay unlocked from Core-owned workflow state (scope: user workflow; expected commit: none). **Retest 2026-05-16:** Diagram Modules and Application Skeleton are accepted as functionally implemented, but the release still needs a small Application Skeleton repair: the left tree indicator stays grey while an Application Skeleton session is running, and the first prompt/materialization contract allowed the agent to put production scaffold under `.codeai-hub/...` before Core repair corrected it.
+
+## Phase 77 — Application Skeleton Retest Repair (owner: Codex, updated: 2026-05-16)
+
+### Stream: Retest Intake
+
+343. [DONE] `application-skeleton-retouch.phase77.plan.task1` Record the `1.2.273` retest result and open a bounded Application Skeleton repair stream for Core-owned running-state projection and first-prompt materialization root instructions (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open application skeleton retest repair`). Evidence: user accepted Diagram Modules and Application Skeleton functionally, then reported that Application Skeleton stays grey while the session is already running; jsonl analysis shows the draft prompt included templates but did not make `workspaceRoot` / production root unambiguous enough, so the agent first materialized under `.codeai-hub/...` and Core had to reject/repair.
+344. [PENDING] Git Commit: `docs: open application skeleton retest repair` (hash: TBD)
+
+### Stream: Core Running State Projection
+
+345. [TODO] `application-skeleton-retouch.phase77.running-state.task1` Promote Core workflow state to `in_progress` from active continuity chains so Application Skeleton shows a yellow/progress marker immediately after session creation, before artifacts exist (scope: `packages/core/src/remote-bridge/handlers/workflow-state-continuity-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: mark active application skeleton sessions in progress`).
+346. [TODO] Git Commit: `fix: mark active application skeleton sessions in progress` (hash: TBD)
+
+### Stream: Prompt Materialization Root Contract
+
+347. [TODO] `application-skeleton-retouch.phase77.prompt-root.task1` Tighten Application Skeleton prompt/templates so production scaffold paths are always workspace-root relative and `.codeai-hub/**` is only for workflow artifacts, with no ad hoc Python/file diagnostics unless explicitly requested by Core (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/application-skeleton-bundled-templates.test.ts`; expected commit: `fix: clarify application skeleton production root prompt`).
+348. [TODO] Git Commit: `fix: clarify application skeleton production root prompt` (hash: TBD)
+
+### Stream: Verification
+
+349. [TODO] `application-skeleton-retouch.phase77.verify.task1` Run targeted Core/PM Application Skeleton regressions and stop for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify application skeleton retest repair`).
+350. [TODO] Git Commit: `docs: verify application skeleton retest repair` (hash: TBD)
+
+### Stream: Release Build Confirmation
+
+351. [TODO] `application-skeleton-retouch.phase77.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none).
