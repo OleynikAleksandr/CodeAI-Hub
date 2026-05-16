@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.269] - 2026-05-16
+### Fixed
+- **Diagram Modules prompts now carry the full artifact contract inline.** Core embeds the Product Parts index template, Product Part template, field reference, and merge rules directly into first/continuation/repair prompts instead of relying on path-only references.
+- **Diagram Modules validation and graph rendering now share the Core-owned Product Part parser.** Core rejects artifacts that Project Manager cannot render, including missing Product Part identity fields, before stage acceptance.
+- **Artifact repair attempts now stay inside the managed commit lifecycle.** Rejected Diagram Modules turns are committed with real hashes, new repair microtasks plus paired `Git Commit` items are appended, and Core dispatches the provider-visible repair prompt only after that boundary succeeds.
+- **Project Manager no longer authors repair prompts for managed artifacts.** The UI opens the managed stage session, while Core owns target selection, diagnostics, prompt text, and repair lifecycle state.
+
+### Tests
+- `node --test --import tsx packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts`
+- `node --test --import tsx src/client/project-manager/components/diagram-editor/diagram-modules-staged-part-parser.test.ts`
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts`
+- `npm run typecheck:webview`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.268] - 2026-05-15
 ### Added
 - **Quality Gates now runs through the managed orchestration module.** Core creates the managed stage plan, validates `quality-gates.md` and `quality-gates.json`, records managed decision snapshots, opens user review, routes acceptance or review corrections, and opens accepted-only integration before persistent return.

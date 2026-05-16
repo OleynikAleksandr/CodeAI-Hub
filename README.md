@@ -2,13 +2,13 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.268** (full trunk managed orchestration)
+**Current Release — v1.2.269** (Core artifact contract repair)
 
-This release completes the managed `Quality Gates` module on top of the
-Diagram Modules and Application Skeleton managed lifecycles. Core now validates
-the Quality Gates contract, opens user review, routes acceptance or review
-corrections through the stage plan, commits managed decision snapshots, and
-opens accepted-only gate integration before Development Tree unlock.
+This release repairs the managed artifact contract boundary found during
+Diagram Modules retesting. Core now embeds the required Diagram Modules artifact
+templates directly in managed prompts, owns the staged Product Part parser used
+by both validation and graph rendering, and records rejected repair attempts as
+commit-backed microtasks before dispatching the next Core-owned repair prompt.
 
 All five documentation trunk steps are now routed through the replacement
 Managed Workflow Orchestration boundary. `Description` and `Virtual Simulation`

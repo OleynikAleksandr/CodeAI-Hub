@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "20330b89a",
+  "lastRecordedCommit": "655c001a6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase61.user-retest.task1",
-  "expectedCommitMessage": "docs: record core artifact contract retest result",
+  "currentTaskId": "artifact-contract-repair.phase62.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare core artifact contract repair release",
   "debt": {
-    "expectedCommitMessage": "docs: record core artifact contract retest result",
-    "preCommitHead": "20330b89a",
+    "expectedCommitMessage": "docs: prepare core artifact contract repair release",
+    "preCommitHead": "655c001a6",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase61.user-retest.task1"
+    "taskId": "artifact-contract-repair.phase62.release-docs.task1"
   }
 }
 ```
@@ -1146,14 +1146,18 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Retest Fixed Artifact Contract Flow
 
 273. [DONE] `artifact-contract-repair.phase61.user-retest.task1` User retests the fixed Diagram Modules artifact contract flow in the next build or local run before release acceptance is considered; no release build is allowed until the user explicitly confirms the Release Build Confirmation Gate (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core artifact contract retest result`). Result: user explicitly requested a new release build on 2026-05-16, satisfying the Release Build Confirmation Gate for the fixed Core artifact contract flow.
-274. [PENDING] Git Commit: `docs: record core artifact contract retest result` (hash: TBD)
+274. [DONE] Git Commit: `docs: record core artifact contract retest result` (hash: 655c001a6)
 
 ## Phase 62 — Release Preparation (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Release Docs For v1.2.269
 
-275. [TODO] `artifact-contract-repair.phase62.release-docs.task1` Update release-facing docs for future version `1.2.269` before build scripts mutate package versions, including the Core artifact contract repair summary (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare core artifact contract repair release`).
-276. [TODO] Git Commit: `docs: prepare core artifact contract repair release` (hash: TBD)
+275. [DONE] `artifact-contract-repair.phase62.release-docs.task1` Update release-facing docs for future version `1.2.269` before build scripts mutate package versions, including the Core artifact contract repair summary (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare core artifact contract repair release`).
+    - Current package version before release scripts: `1.2.268`.
+    - Future release version prepared in release-facing docs: `1.2.269`.
+    - `README.md` current-release banner updated to the Core artifact contract repair release.
+    - `CHANGELOG.md` release entry `1.2.269` added with prompt, parser, validation, and repair lifecycle fixes.
+276. [PENDING] Git Commit: `docs: prepare core artifact contract repair release` (hash: TBD)
 
 ## Phase 63 — Build All Runtime Packages (owner: Codex, updated: 2026-05-16)
 
