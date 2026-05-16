@@ -8,15 +8,15 @@
   "planId": "quality-gates-return-marker-release-2026-05-16",
   "branch": "main",
   "baseHead": "8254f5c4e",
-  "lastRecordedCommit": "43578b948",
+  "lastRecordedCommit": "1ba597615",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "quality-gates-return-release.phase1.build.task1",
-  "expectedCommitMessage": "chore: build quality gates return marker release artifacts",
+  "currentTaskId": "quality-gates-return-release.phase1.package.task1",
+  "expectedCommitMessage": "docs: record quality gates return marker release package",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates return marker release artifacts",
-    "preCommitHead": "43578b948",
+    "expectedCommitMessage": "docs: record quality gates return marker release package",
+    "preCommitHead": "1ba597615",
     "stage": "commit_pending",
-    "taskId": "quality-gates-return-release.phase1.build.task1"
+    "taskId": "quality-gates-return-release.phase1.package.task1"
   }
 }
 ```
@@ -60,12 +60,14 @@
 
 5. [DONE] `quality-gates-return-release.phase1.build.task1` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build quality gates return marker release artifacts`).
    - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.285`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-6. [PENDING] Git Commit: `chore: build quality gates return marker release artifacts` (hash: TBD)
+6. [DONE] Git Commit: `chore: build quality gates return marker release artifacts` (hash: 1ba597615)
 
 ### Stream: VSIX Packaging
 
-7. [TODO] `quality-gates-return-release.phase1.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record quality gates return marker release package`).
-8. [TODO] Git Commit: `docs: record quality gates return marker release package` (hash: TBD)
+7. [DONE] `quality-gates-return-release.phase1.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record quality gates return marker release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.285`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
+   - User handoff artifact: `codeai-hub-1.2.285.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+8. [PENDING] Git Commit: `docs: record quality gates return marker release package` (hash: TBD)
 
 ## Phase 2 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-16)
 
