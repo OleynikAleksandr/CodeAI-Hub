@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "12421a7b7",
+  "lastRecordedCommit": "fee47eb1e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-docs.task7",
-  "expectedCommitMessage": "docs: prepare core handoff release",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task7",
+  "expectedCommitMessage": "chore: build core handoff release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare core handoff release",
-    "preCommitHead": "12421a7b7",
+    "expectedCommitMessage": "chore: build core handoff release artifacts",
+    "preCommitHead": "fee47eb1e",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-docs.task7"
+    "taskId": "app-skeleton-foundation.phase7.release-build.task7"
   }
 }
 ```
@@ -300,9 +300,10 @@
 132. [DONE] `app-skeleton-foundation.phase7.release-confirmation.task7` Stop after green verification and ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none. Result: User explicitly confirmed the next patched release build in this turn: Сделаешь фикс, собери, пожалуйста, новый релиз.
 133. [DONE] `app-skeleton-foundation.phase7.release-docs.task7` After explicit release confirmation, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare core handoff release`).
    - Release docs target (2026-05-16): prepared README/CHANGELOG for version `1.2.283`.
-134. [PENDING] Git Commit: `docs: prepare core handoff release` (hash: TBD)
-135. [TODO] `app-skeleton-foundation.phase7.release-build.task7` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched managed review handoff release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build core handoff release artifacts`).
-136. [TODO] Git Commit: `chore: build core handoff release artifacts` (hash: TBD)
+134. [DONE] Git Commit: `docs: prepare core handoff release` (hash: fee47eb1e)
+135. [DONE] `app-skeleton-foundation.phase7.release-build.task7` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched managed review handoff release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build core handoff release artifacts`).
+   - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.283`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+136. [PENDING] Git Commit: `chore: build core handoff release artifacts` (hash: TBD)
 137. [TODO] `app-skeleton-foundation.phase7.release-package.task7` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core handoff release package`).
 138. [TODO] Git Commit: `docs: record core handoff release package` (hash: TBD)
 
