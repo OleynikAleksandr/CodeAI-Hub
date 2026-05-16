@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.280] - 2026-05-16
+### Fixed
+- **Application Skeleton materialization now proves local environment readiness.** The prompt and contract require the accepted clean install command to run after package metadata and lockfiles exist, require local install outputs such as `node_modules` for npm foundations, and require every declared `projectFoundation.requiredScripts` command to pass before readiness is claimed.
+- **Core now rejects folder-only or lockfile-only foundations.** Materialization validation runs the declared install command and required scripts from the workspace root after static artifact validation; missing install output or failed build/typecheck/smoke scripts keep the step in repair instead of unlocking downstream work.
+- **Generated bundled templates carry the same readiness contract.** The bundled-template regression now asserts the clean-install, `node_modules`, and required-script requirements so installed releases cannot drift from the agent assets.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.279] - 2026-05-16
 ### Fixed
 - **Application Skeleton now has a code-ready foundation baseline as its primary outcome.** The prompt and contract tell the agent to prepare the workspace for real implementation work, including concrete language/runtime/framework/package/build decisions and minimal source/config targets after acceptance.
