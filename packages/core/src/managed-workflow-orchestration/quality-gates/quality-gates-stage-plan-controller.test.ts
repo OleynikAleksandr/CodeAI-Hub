@@ -18,6 +18,10 @@ const INTEGRATE_TASK_RE = /quality-gates\.phase3\.integrate\.task1/u;
 const INTEGRATION_REPAIR_TASK_RE = /quality-gates\.phase3\.repair\.task1/u;
 const NO_REVISION_RE = /not-created-user-accepted-without-review-revision/u;
 const PHASE_4_RE = /## Phase 4 — Persistent Quality Gates User Return/u;
+const PERSISTENT_RETURN_COMMIT_DONE_RE =
+  /\[DONE\] Git Commit: `not-created-persistent-user-return-open` \(hash: not-created-persistent-user-return-open\)/u;
+const PERSISTENT_RETURN_COMMIT_TODO_RE =
+  /\[TODO\] Git Commit: `not-created-persistent-user-return-open`/u;
 const QUALITY_GATES_COMPLETED_RE =
   /"completedStages": \[\n {4}"quality_gates"/u;
 const REJECTED_INTEGRATION_HASH_RE = /feed1234/u;
@@ -210,6 +214,8 @@ test("QualityGatesStagePlanController commits draft, accepts review, and commits
       "doc/TODO/stages/quality-gates/todo-plan.md"
     );
     assert.match(finalPlan, PHASE_4_RE);
+    assert.match(finalPlan, PERSISTENT_RETURN_COMMIT_DONE_RE);
+    assert.doesNotMatch(finalPlan, PERSISTENT_RETURN_COMMIT_TODO_RE);
     const workspacePlan = await readWorkspaceFile(
       workspaceRoot,
       "doc/TODO/workspace.plan.md"

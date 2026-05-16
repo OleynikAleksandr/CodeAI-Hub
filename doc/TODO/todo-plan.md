@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "8200d27fe",
+  "lastRecordedCommit": "b33e21024",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.release-package.task8",
-  "expectedCommitMessage": "docs: record diagram review confirmation release package",
+  "currentTaskId": "app-skeleton-foundation.phase7.quality-gates-return.task1",
+  "expectedCommitMessage": "fix: mark quality gates return commit done",
   "debt": {
-    "expectedCommitMessage": "docs: record diagram review confirmation release package",
-    "preCommitHead": "8200d27fe",
+    "expectedCommitMessage": "fix: mark quality gates return commit done",
+    "preCommitHead": "b33e21024",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.diagram-review.release-package.task8"
+    "taskId": "app-skeleton-foundation.phase7.quality-gates-return.task1"
   }
 }
 ```
@@ -329,12 +329,20 @@
 148. [DONE] `app-skeleton-foundation.phase7.diagram-review.release-package.task8` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record diagram review confirmation release package`).
    - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.284`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
    - User handoff artifact: `codeai-hub-1.2.284.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-149. [PENDING] Git Commit: `docs: record diagram review confirmation release package` (hash: TBD)
+149. [DONE] Git Commit: `docs: record diagram review confirmation release package` (hash: b33e21024)
+
+## Phase 7 — Quality Gates Completion Repair (owner: Codex, updated: 2026-05-16)
+
+### Stream: Quality Gates Return Marker
+
+150. [DONE] `app-skeleton-foundation.phase7.quality-gates-return.task1` Fix Quality Gates stage-plan completion so the persistent `User Return And Revisions` synthetic Git Commit line is immediately `DONE`, matching Diagram Modules and Application Skeleton and preventing a completed Quality Gates stage from remaining red (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: mark quality gates return commit done`).
+   - Verification (2026-05-16): `npx ultracite check packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts` passed; `npx tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts` passed; `npm run build --workspace @codeai-hub/core` passed; `npm run plan:validate` passed.
+151. [PENDING] Git Commit: `fix: mark quality gates return commit done` (hash: TBD)
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-150. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-151. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-152. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+152. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+153. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+154. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.

@@ -317,8 +317,8 @@ const appendPersistentReturnStep = (content: string): string =>
     taskLine:
       "Persistent Quality Gates return phase is open for future user revisions after accepted integration (scope: user workflow;",
   }).replace(
-    "Git Commit: `not-created-persistent-user-return-open` (hash: TBD)",
-    "Git Commit: `not-created-persistent-user-return-open` (hash: not-created-persistent-user-return-open)"
+    "[TODO] Git Commit: `not-created-persistent-user-return-open` (hash: TBD)",
+    "[DONE] Git Commit: `not-created-persistent-user-return-open` (hash: not-created-persistent-user-return-open)"
   );
 
 export const resolveNextAfterCommit = (params: {
