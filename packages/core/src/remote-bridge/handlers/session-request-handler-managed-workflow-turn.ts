@@ -16,6 +16,8 @@ import {
   buildDiagramModulesProductPartRepairPrompt,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder";
 import { DiagramModulesStagePlanController } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller";
+import { commitDiagramModulesRejectedTurn } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller";
+import { parseDiagramModulesRepairTaskNumber } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-model";
 import {
   type DiagramModulesManagedValidationResult,
   validateDiagramModulesManagedArtifacts,
@@ -107,6 +109,10 @@ const resolveQualityGatesIntegrationRepairAttemptNumber = (
   return Number.isInteger(value) && value > 0 ? value : 1;
 };
 
+const resolveDiagramModulesRepairAttemptNumber = (
+  taskId: string | null
+): number => parseDiagramModulesRepairTaskNumber(taskId ?? "") ?? 1;
+
 export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly applicationStagePlan: ApplicationSkeletonStagePlanController;
   private readonly diagramStagePlan: DiagramModulesStagePlanController;
@@ -173,9 +179,27 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     });
     const messageDispatch = this.options.getMessageDispatch();
     if (!decision.valid) {
+      const planAdvance = await commitDiagramModulesRejectedTurn({
+        decision,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      });
+      if (planAdvance.blocked) {
+        this.appendCoreMessage(params.sessionId, {
+          content: buildDiagramBoundaryBlockedMessage(
+            planAdvance.blocked.message
+          ),
+          tag: "managed-workflow-validation",
+        });
+        return;
+      }
       const repairPrompt = buildDiagramModulesProductPartRepairPrompt({
+        attemptNumber: resolveDiagramModulesRepairAttemptNumber(
+          planAdvance.commit.nextTaskId
+        ),
         currentPartId: decision.currentPartId,
         diagnostics: decision.diagnostics,
+        rejectedCommitHash: planAdvance.commit.hash,
         workspaceSlug: params.workspaceSlug,
       });
       this.appendCoreMessage(params.sessionId, {

@@ -1,6 +1,10 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { DiagramModulesManagedGitBoundary } from "./diagram-modules-managed-git-boundary";
+import {
+  appendDiagramModulesRepairStep,
+  parseDiagramModulesRepairTaskNumber,
+} from "./diagram-modules-stage-plan-repair-model";
 import type { DiagramModulesManagedValidationResult } from "./diagram-modules-validator";
 
 const PLAN_START = "<!-- codeai-plan-state:start -->";
@@ -35,7 +39,7 @@ interface AcceptedTarget {
   readonly relativePath: string;
 }
 
-interface NextPlanStep {
+export interface NextPlanStep {
   readonly expectedCommitMessage: string | null;
   readonly taskId: string | null;
 }
@@ -252,6 +256,16 @@ const updateStagePlanAfterCommit = (params: {
   const markedDone = params.content
     .replace(taskPattern, "$1DONE$2")
     .replace(commitPattern, `$1DONE$2${params.hash}$3`);
+  const repairAttemptNumber = params.next.taskId
+    ? parseDiagramModulesRepairTaskNumber(params.next.taskId)
+    : null;
+  if (repairAttemptNumber !== null) {
+    return appendDiagramModulesRepairStep({
+      attemptNumber: repairAttemptNumber,
+      content: markedDone,
+      workspaceSlug: params.workspaceSlug,
+    });
+  }
   return appendNextStep({
     content: markedDone,
     next: params.next,

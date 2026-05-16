@@ -12,56 +12,6 @@ type RepairableStageId =
 
 const USER_MESSAGES_CATEGORY = "system_feedback";
 
-const resolveLatestRepairStageSessionId = (
-  state: Awaited<ReturnType<typeof api.getWorkflowState>> | null,
-  stage: RepairableStageId
-): string | null => {
-  const chains = state?.continuity?.chains ?? [];
-  let best: { readonly updatedAt: string; readonly sessionId: string } | null = null;
-
-  for (const chain of chains) {
-    if (chain.stage !== stage) {
-      continue;
-    }
-    const sessionId = chain.segments.at(-1)?.sessionId ?? null;
-    if (!sessionId) {
-      continue;
-    }
-    if (!best || chain.updatedAt.localeCompare(best.updatedAt) > 0) {
-      best = { updatedAt: chain.updatedAt, sessionId };
-    }
-  }
-
-  return best?.sessionId ?? null;
-};
-
-const sleep = async (milliseconds: number): Promise<void> =>
-  new Promise((resolve) => {
-    window.setTimeout(resolve, milliseconds);
-  });
-
-const waitForRepairStageSessionId = async (params: {
-  readonly stage: RepairableStageId;
-  readonly workspacePath: string;
-  readonly workspaceSlug: string;
-}): Promise<string | null> => {
-  for (let attempt = 0; attempt < 10; attempt += 1) {
-    const workflowState = await api.getWorkflowState(
-      params.workspaceSlug,
-      params.workspacePath
-    );
-    const sessionId = resolveLatestRepairStageSessionId(
-      workflowState,
-      params.stage
-    );
-    if (sessionId) {
-      return sessionId;
-    }
-    await sleep(150);
-  }
-  return null;
-};
-
 const openDialogSession = (params: {
   readonly providerId: string;
   readonly stage: RepairableStageId;
@@ -90,7 +40,6 @@ const openDialogSession = (params: {
  */
 export const StageArtifactFixButton: React.FC<{
   readonly stage: RepairableStageId;
-  readonly repairPrompt?: string | null;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
   readonly onStart: (params: {
@@ -117,11 +66,6 @@ export const StageArtifactFixButton: React.FC<{
     USER_MESSAGES_CATEGORY,
     "pm.stage_artifact.repair.error.no_provider",
     "No provider available for the agent."
-  );
-  const waitForSessionMessage = t(
-    USER_MESSAGES_CATEGORY,
-    "pm.stage_artifact.repair.error.session_wait_failed",
-    "Could not wait for an active dialog session for repair."
   );
   const fixIdleLabel = t(
     USER_MESSAGES_CATEGORY,
@@ -169,18 +113,6 @@ export const StageArtifactFixButton: React.FC<{
               workspaceSlug: props.workspaceSlug,
               providerId,
             });
-            const repairPrompt = props.repairPrompt?.trim() ?? "";
-            if (repairPrompt.length > 0) {
-              const sessionId = await waitForRepairStageSessionId({
-                stage: props.stage,
-                workspacePath: props.workspacePath,
-                workspaceSlug: props.workspaceSlug,
-              });
-              if (!sessionId) {
-                throw new Error(waitForSessionMessage);
-              }
-              api.sendSessionMessage(sessionId, repairPrompt);
-            }
           })()
             .catch((startError: unknown) => {
               if (mountedRef.current) {

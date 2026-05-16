@@ -55,6 +55,10 @@ const DIAGRAM_REPAIR_PROMPT_RE =
 const DIAGRAM_REPAIR_TARGET_RE =
   /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md/u;
 const DIAGRAM_REPAIR_HEADING_RE = /# Product Part: project-manager/u;
+const DIAGRAM_REPAIR_TASK_STATE_RE =
+  /"currentTaskId": "diagram-modules\.phase1\.repair\.task1"/u;
+const DIAGRAM_REPAIR_COMMIT_RE =
+  /docs: update diagram modules product part index/u;
 const DIAGRAM_REVIEW_PHASE_RE = /## Phase 2 — Diagram Modules User Review/u;
 const DIAGRAM_REVIEW_TASK_STATE_RE =
   /"currentTaskId": "diagram-modules\.phase2\.review\.task1"/u;
@@ -242,6 +246,9 @@ test("createSessionRequestHandlerRuntimeCore dispatches repair prompt for invali
   } as unknown as ProviderAdapter;
 
   try {
+    await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
+      workspaceRoot,
+    });
     const diagramRoot = path.join(
       workspaceRoot,
       ".codeai-hub",
@@ -293,13 +300,20 @@ test("createSessionRequestHandlerRuntimeCore dispatches repair prompt for invali
       type: "turn_completed",
     });
 
-    await new Promise<void>((resolve) => setTimeout(resolve, 20));
+    await waitForManagedTurn();
 
     assert.equal(sentMessages.length, 1);
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_PROMPT_RE);
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_TARGET_RE);
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_HEADING_RE);
     assert.equal(session.messages.at(-1)?.tag, "managed-workflow-validation");
+    const repairPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md"
+    );
+    assert.match(repairPlan, DIAGRAM_REPAIR_TASK_STATE_RE);
+    const subjects = await git(workspaceRoot, ["log", "--format=%s"]);
+    assert.match(subjects, DIAGRAM_REPAIR_COMMIT_RE);
   } finally {
     await rm(workspaceRoot, {
       force: true,

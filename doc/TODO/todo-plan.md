@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "37e06b82f",
+  "lastRecordedCommit": "546b392e9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase58.diagram-prompts.task1",
-  "expectedCommitMessage": "fix: embed managed artifact templates in prompts",
+  "currentTaskId": "artifact-contract-repair.phase59.repair-lifecycle.task1",
+  "expectedCommitMessage": "fix: route artifact repairs through core lifecycle",
   "debt": {
-    "expectedCommitMessage": "fix: embed managed artifact templates in prompts",
-    "preCommitHead": "37e06b82f",
+    "expectedCommitMessage": "fix: route artifact repairs through core lifecycle",
+    "preCommitHead": "546b392e9",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase58.diagram-prompts.task1"
+    "taskId": "artifact-contract-repair.phase59.repair-lifecycle.task1"
   }
 }
 ```
@@ -1120,12 +1120,12 @@ Repair coverage:
 266. [DONE] Git Commit: `fix: validate diagram modules with core parser` (hash: 37e06b82f)
 
 267. [DONE] `artifact-contract-repair.phase58.diagram-prompts.task1` Embed exact Diagram Modules index/product-part templates and field reference text directly into first and repair prompts, then add prompt tests proving the text is inline rather than path-only; also audit Application Skeleton and Quality Gates prompt builders for the same first-prompt inline-template rule (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.ts, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: embed managed artifact templates in prompts`).
-268. [PENDING] Git Commit: `fix: embed managed artifact templates in prompts` (hash: TBD)
+268. [DONE] Git Commit: `fix: embed managed artifact templates in prompts` (hash: 546b392e9)
 
 ### Stream: Managed Repair Lifecycle
 
-269. [TODO] `artifact-contract-repair.phase59.repair-lifecycle.task1` Route artifact repair requests through Core-owned managed repair intake instead of PM-built session messages: Core chooses the failing artifact, creates a repair microtask plus paired Git Commit, dispatches the provider-visible repair prompt, and commits/rejects every repair attempt with real hashes (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit: `fix: route artifact repairs through core lifecycle`).
-270. [TODO] Git Commit: `fix: route artifact repairs through core lifecycle` (hash: TBD)
+269. [DONE] `artifact-contract-repair.phase59.repair-lifecycle.task1` Route artifact repair requests through Core-owned managed repair intake instead of PM-built session messages: Core chooses the failing artifact, creates a repair microtask plus paired Git Commit, dispatches the provider-visible repair prompt, and commits/rejects every repair attempt with real hashes (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx, src/client/project-manager/components/shared/stage-artifact-content-view.tsx, src/client/project-manager/components/diagram-editor/diagram-stage-panel-scaffold.tsx`; expected commit: `fix: route artifact repairs through core lifecycle`).
+270. [PENDING] Git Commit: `fix: route artifact repairs through core lifecycle` (hash: TBD)
 
 ### Stream: Verification
 

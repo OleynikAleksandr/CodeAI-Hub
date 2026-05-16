@@ -20,8 +20,10 @@ export interface DiagramModulesProductPartContinuationPromptOptions {
 }
 
 export interface DiagramModulesProductPartRepairPromptOptions {
+  readonly attemptNumber?: number;
   readonly currentPartId: string | null;
   readonly diagnostics: readonly string[];
+  readonly rejectedCommitHash?: string | null;
   readonly workspaceSlug: string;
 }
 
@@ -166,6 +168,10 @@ export const buildDiagramModulesProductPartRepairPrompt = (
     : `.codeai-hub/${options.workspaceSlug}/diagram_modules/product-parts.index.md`;
   return [
     "Core rejected the current Diagram Modules subturn.",
+    `Repair attempt: ${options.attemptNumber ?? 1}.`,
+    options.rejectedCommitHash
+      ? `Rejected attempt commit: ${options.rejectedCommitHash}.`
+      : "Rejected attempt commit: not recorded.",
     "Repair only the artifact named below and then stop for Core validation.",
     "",
     "Target artifact:",
