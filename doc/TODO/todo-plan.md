@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "be4900f81",
+  "lastRecordedCommit": "e9999c287",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase69.sidecar-dirty.plan.task1",
-  "expectedCommitMessage": "docs: open diagram modules sidecar dirty gate repair",
+  "currentTaskId": "artifact-contract-repair.phase69.sidecar-dirty.task1",
+  "expectedCommitMessage": "fix: ignore diagram modules flow sidecar dirt",
   "debt": {
-    "expectedCommitMessage": "docs: open diagram modules sidecar dirty gate repair",
-    "preCommitHead": "be4900f81",
+    "expectedCommitMessage": "fix: ignore diagram modules flow sidecar dirt",
+    "preCommitHead": "e9999c287",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase69.sidecar-dirty.plan.task1"
+    "taskId": "artifact-contract-repair.phase69.sidecar-dirty.task1"
   }
 }
 ```
@@ -1245,12 +1245,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Repair Intake
 
 294. [DONE] `artifact-contract-repair.phase69.sidecar-dirty.plan.task1` Record the release `1.2.270` retest failure and open a bounded Core dirty-gate repair stream for Diagram Modules graph layout sidecars (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open diagram modules sidecar dirty gate repair`).
-295. [PENDING] Git Commit: `docs: open diagram modules sidecar dirty gate repair` (hash: TBD)
+295. [DONE] Git Commit: `docs: open diagram modules sidecar dirty gate repair` (hash: e9999c287)
 
 ### Stream: Core Dirty Gate
 
-296. [TODO] `artifact-contract-repair.phase69.sidecar-dirty.task1` Keep `module-map.flow.json` out of Diagram Modules technical-stage dirty gating so graph layout/UI sidecars cannot reset Core aggregate readiness or block Application Skeleton after valid Product Parts are accepted (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore diagram modules flow sidecar dirt`).
-297. [TODO] Git Commit: `fix: ignore diagram modules flow sidecar dirt` (hash: TBD)
+296. [DONE] `artifact-contract-repair.phase69.sidecar-dirty.task1` Keep `module-map.flow.json` out of Diagram Modules technical-stage dirty gating so graph layout/UI sidecars cannot reset Core aggregate readiness or block Application Skeleton after valid Product Parts are accepted (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore diagram modules flow sidecar dirt`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate-flow-sidecar.test.ts packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts` — PASS, 14 tests; added full Core payload regression where committed Product Parts plus untracked `module-map.flow.json` keep `diagram_modules.status=completed` and `gating.blocked.application_skeleton=false`.
+297. [PENDING] Git Commit: `fix: ignore diagram modules flow sidecar dirt` (hash: TBD)
 
 ### Stream: Verification And Release
 

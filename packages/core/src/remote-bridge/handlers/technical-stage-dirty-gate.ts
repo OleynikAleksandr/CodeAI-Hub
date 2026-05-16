@@ -36,6 +36,12 @@ const MANAGED_WORKSPACE_LEDGER_RE =
   /^doc\/TODO\/(?:workspace\.plan\.md|stages\/(?:application-skeleton|diagram-modules|quality-gates)\/todo-plan\.md)$/u;
 const PATH_SEGMENT_SEPARATOR_RE = /[\\/]+/u;
 
+const isNonSemanticDiagramModulesSidecar = (
+  file: string,
+  workspaceSlug: string
+): boolean =>
+  file === `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`;
+
 const isVolatileCoreMetadataPath = (
   file: string,
   workspaceSlug: string
@@ -48,6 +54,7 @@ const isVolatileCoreMetadataPath = (
   file.startsWith(`.codeai-hub/${workspaceSlug}/continuity/`) ||
   file.startsWith(`.codeai-hub/${workspaceSlug}/description/`) ||
   file.startsWith(`.codeai-hub/${workspaceSlug}/virtual_simulation/`) ||
+  isNonSemanticDiagramModulesSidecar(file, workspaceSlug) ||
   file === `.codeai-hub/${workspaceSlug}/workflow/state.json`;
 
 const parseGitStatusPath = (line: string): string | null => {
