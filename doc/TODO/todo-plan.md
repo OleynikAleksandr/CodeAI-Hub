@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "70cff76dc",
+  "lastRecordedCommit": "5d8dbe088",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task1",
-  "expectedCommitMessage": "fix: require clean skeleton git hygiene and nested map",
+  "currentTaskId": "app-skeleton-foundation.phase7.git-hygiene.task2",
+  "expectedCommitMessage": "fix: validate skeleton nested product tree",
   "debt": {
-    "expectedCommitMessage": "fix: require clean skeleton git hygiene and nested map",
-    "preCommitHead": "70cff76dc",
+    "expectedCommitMessage": "fix: validate skeleton nested product tree",
+    "preCommitHead": "5d8dbe088",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task1"
+    "taskId": "app-skeleton-foundation.phase7.git-hygiene.task2"
   }
 }
 ```
@@ -240,9 +240,9 @@
 ### Stream: Git Hygiene And Nested Map Repair
 
 85. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task1` Strengthen Application Skeleton prompt/contract so materialization must create/maintain `.gitignore` for install/build outputs, keep generated outputs such as `node_modules` and `dist` local and untracked, and encode `productParts` as a nested Product Part -> clusters -> modules / standaloneModules tree (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, doc/TODO/todo-plan.md`; expected commit: `fix: require clean skeleton git hygiene and nested map`).
-86. [PENDING] Git Commit: `fix: require clean skeleton git hygiene and nested map` (hash: TBD)
-87. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task2` Add Core validation for nested Application Skeleton Product Part tree shape in both draft and materialized artifacts (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-tree-shape-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: validate skeleton nested product tree`).
-88. [TODO] Git Commit: `fix: validate skeleton nested product tree` (hash: TBD)
+86. [DONE] Git Commit: `fix: require clean skeleton git hygiene and nested map` (hash: 5d8dbe088)
+87. [DONE] `app-skeleton-foundation.phase7.git-hygiene.task2` Add Core validation for nested Application Skeleton Product Part tree shape in both draft and materialized artifacts (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-tree-shape-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: validate skeleton nested product tree`).
+88. [PENDING] Git Commit: `fix: validate skeleton nested product tree` (hash: TBD)
 89. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task3` Add Core validation for Application Skeleton output hygiene: `.gitignore` must ignore install/build outputs and `materializedPaths` must not contain generated output paths (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts`; expected commit: `fix: validate skeleton output hygiene`).
 90. [TODO] Git Commit: `fix: validate skeleton output hygiene` (hash: TBD)
 91. [TODO] `app-skeleton-foundation.phase7.git-hygiene.task4` Exclude generated install/build outputs from managed Git commits even when a materialized directory path is staged (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: exclude generated outputs from managed commits`).

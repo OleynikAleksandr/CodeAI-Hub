@@ -12,6 +12,10 @@ import {
   buildApplicationSkeletonPersistentReturnMessage,
   buildApplicationSkeletonUserReviewMessage,
 } from "./application-skeleton-prompt-builder";
+import {
+  collectApplicationSkeletonCodePaths,
+  validateApplicationSkeletonProductTree,
+} from "./application-skeleton-tree-shape-validator";
 
 export type ApplicationSkeletonManagedPhase = "draft" | "materialization";
 
@@ -158,40 +162,12 @@ const readOpenQuestions = (
     ? value.openQuestions.map(formatOpenQuestion)
     : [];
 
-const collectCodePathsFromNode = (node: Record<string, unknown>): string[] => {
-  const paths: string[] = [];
-  if (typeof node.codePath === "string") {
-    paths.push(node.codePath);
-  }
-  for (const key of ["clusters", "modules", "standaloneModules"]) {
-    const children = node[key];
-    if (!Array.isArray(children)) {
-      continue;
-    }
-    for (const child of children) {
-      if (isRecord(child)) {
-        paths.push(...collectCodePathsFromNode(child));
-      }
-    }
-  }
-  return paths;
-};
-
-const collectCodePaths = (
-  value: Record<string, unknown> | null
-): readonly string[] =>
-  Array.isArray(value?.productParts)
-    ? value.productParts.flatMap((part) =>
-        isRecord(part) ? collectCodePathsFromNode(part) : []
-      )
-    : [];
-
 const collectDeclaredPaths = (
   value: Record<string, unknown> | null
 ): readonly string[] => [
   ...readStringArray(value, "plannedPaths"),
   ...readStringArray(value, "materializedPaths"),
-  ...collectCodePaths(value),
+  ...collectApplicationSkeletonCodePaths(value),
 ];
 
 const validateRelativePath = (value: string): string | null => {
@@ -265,6 +241,7 @@ const validateDraftShape = (params: {
       errors.push(pathError);
     }
   }
+  errors.push(...validateApplicationSkeletonProductTree(params.mapJson));
   errors.push(...validateApplicationSkeletonFoundationDraft(params.mapJson));
   return errors;
 };
