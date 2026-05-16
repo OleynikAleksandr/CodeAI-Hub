@@ -1,11 +1,11 @@
 # Workflow New Step Rollout Guardrails (SSOT)
 
 **Status:** Active
-**Updated:** 2026-05-14
+**Updated:** 2026-05-16
 **Owner:** Oleksandr + Codex
 **Scope:** minimum rules for adding a new workflow step or retrofitting an already released one without split truth, asymmetry, or restart regressions.
 
-**2026-05-14 rewrite suspension:** release `1.2.249` managed-orchestration retrofit is retired as active runtime guidance during the orchestration-cluster rewrite. Generated child-plan lifecycle, `workspace.plan.md` `acceptedCommits`, Core post-turn repair/acceptance dispatch, and provider-visible managed feedback are not canonical truth for new work. Technical Documentation Tree stages remain fail-closed until the new cluster provides the replacement lifecycle.
+**2026-05-16 accepted replacement:** the active managed orchestration cluster now owns the technical trunk lifecycle for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`. The retired generated child-plan lifecycle, `workspace.plan.md` `acceptedCommits`, hidden post-turn arbitration, and Project Manager-owned continuation/acceptance behavior remain historical only. New or retrofitted managed steps must extend the Core-owned cluster contract, not revive the retired lifecycle.
 
 ---
 
@@ -27,7 +27,7 @@ Workflow step считается поддерживаемым только ка�
 
 Если хотя бы один слой отсутствует, шаг считается `INCOMPLETE`.
 
-For future managed trunk steps starting with `Diagram Modules`, the full contract must be redefined by the new orchestration cluster before those steps are re-enabled. The retired generated child-plan/post-turn lifecycle must not be treated as the current implementation contract.
+For managed trunk steps, the full contract must be implemented in Core/Managed Workflow Orchestration before the client exposes the step as startable. `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline` are the accepted baseline for this contract: Core owns first prompts, inline templates, artifact validation, repair diagnostics, stage-plan microtasks, managed commits, user review gates, and downstream unlock.
 
 Это правило одинаково действует:
 
@@ -129,7 +129,7 @@ Continuity хранит историю диалога. Workflow-state храни
 - workspace auto-select (last active non-idle stage);
 - startup restore.
 
-For future managed technical root stages, the green indicator must mean completed state from canonical workflow-state, not "some artifact exists". During the rewrite, these stages remain fail-closed until the new cluster owns their lifecycle.
+For managed technical root stages, the indicator is a projection of canonical Core workflow-state: gray means idle/not startable, orange means active/in progress or user review is open, and green means Core has completed the stage and released the next gate. It must never be derived from "some artifact exists" or from Project Manager-local parsing.
 
 Инвариант навигации:
 
@@ -166,7 +166,7 @@ Trunk stages являются leaf nodes в sidebar (секция Documentation 
 - `Application Skeleton`
 - `Quality Gates Baseline`
 
-For the future managed orchestration cluster, regression matrix must also cover:
+For the managed orchestration cluster, regression matrix must also cover:
 
 1. bootstrap creates only the current executable microtask plus paired `Git Commit:`;
 2. Core rejection creates a repair microtask plus paired `Git Commit:` before provider-visible feedback;

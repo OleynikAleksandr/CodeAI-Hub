@@ -8,15 +8,15 @@
   "planId": "solidworks-workflow-docs-relevance-audit-2026-05-16",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "fe3743d0a",
-  "lastRecordedCommit": "f20c66d3d",
+  "lastRecordedCommit": "85dd4fd4c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Documentation_Relevance_Audit_2026-05-16.md",
-  "currentTaskId": "docs-relevance-audit.phase1.inventory.task1",
-  "expectedCommitMessage": "docs: record solidworks workflow docs audit findings",
+  "currentTaskId": "docs-relevance-audit.phase2.system.task1",
+  "expectedCommitMessage": "docs: sync workflow system ssot with managed runtime",
   "debt": {
-    "expectedCommitMessage": "docs: record solidworks workflow docs audit findings",
-    "preCommitHead": "f20c66d3d",
+    "expectedCommitMessage": "docs: sync workflow system ssot with managed runtime",
+    "preCommitHead": "85dd4fd4c",
     "stage": "commit_pending",
-    "taskId": "docs-relevance-audit.phase1.inventory.task1"
+    "taskId": "docs-relevance-audit.phase2.system.task1"
   }
 }
 ```
@@ -56,14 +56,14 @@
 ### Stream: Repository-To-Docs Audit
 
 3. [DONE] `docs-relevance-audit.phase1.inventory.task1` Run repository-wide docs inventory and stale-reference scans, then record findings and disposition decisions before edits (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record solidworks workflow docs audit findings`). Evidence: `find doc/SolidWorks-WorkFlow -type f` found 221 docs, including 149 archived planning docs, 11 active/deferred `Plans/*.md`, 1 inactive `Plans/Managed_Step_Orchestration/README.md`, and active System/Cluster/Contract/Module docs. Code inventory confirmed implemented Core-owned managed workflow modules under `packages/core/src/managed-workflow-orchestration/**` for `diagram_modules`, `application_skeleton`, and `quality_gates`; provider-direct policy remains for `description` and `virtual_simulation`; Project Manager consumes `workflow-state` and a thin staged Product Part parser adapter imported from Core. Stale active-doc classes found: `Docs_Index.md` and `Clusters/ManagedWorkflowOrchestration.md` still describe the cluster as first-preview/preview-boundary instead of accepted managed runtime; `System/Workflow_NewStep_Rollout_Guardrails.md` still says future managed trunk steps starting with Diagram Modules must be redefined/re-enabled; active SSOT needs a clearer statement that first prompts embed complete templates and Core/shared parser diagnostics are the only artifact truth; `Plans/Managed_Step_Orchestration/README.md` is correctly inactive, while active `Plans/*.md` are future/deferred work and should remain active. Disposition: update System/Workflow guardrails, cluster ownership docs, active contracts, and Docs Index; keep archived planning docs historical, only correcting headers/links when they are presented as current; do not archive active future work such as Development Tree branch workflow, Capture Workbench, provider capability analysis, or deterministic continuity snapshot.
-4. [PENDING] Git Commit: `docs: record solidworks workflow docs audit findings` (hash: TBD)
+4. [DONE] Git Commit: `docs: record solidworks workflow docs audit findings` (hash: 85dd4fd4c)
 
 ## Phase 2 — Active SSOT Relevance Repairs (owner: Codex, updated: 2026-05-16)
 
 ### Stream: System And Workflow SSOT
 
-5. [TODO] `docs-relevance-audit.phase2.system.task1` Synchronize core system/workflow SSOT docs with the implemented managed workflow state, Core-owned artifact truth, and release `1.2.274` behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`; expected commit: `docs: sync workflow system ssot with managed runtime`).
-6. [TODO] Git Commit: `docs: sync workflow system ssot with managed runtime` (hash: TBD)
+5. [DONE] `docs-relevance-audit.phase2.system.task1` Synchronize core system/workflow SSOT docs with the implemented managed workflow state, Core-owned artifact truth, and release `1.2.274` behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`; expected commit: `docs: sync workflow system ssot with managed runtime`). Evidence: system SSOT now states the accepted managed cluster baseline for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`; provider first/repair prompts must embed complete templates and parser-visible examples inline; Application Skeleton in-progress LED state is Core-owned; and the stale "Diagram Modules is final trunk step" wording is replaced with the current Skeleton -> Quality Gates -> Development Tree gate sequence.
+6. [PENDING] Git Commit: `docs: sync workflow system ssot with managed runtime` (hash: TBD)
 
 ### Stream: Cluster Ownership SSOT
 
