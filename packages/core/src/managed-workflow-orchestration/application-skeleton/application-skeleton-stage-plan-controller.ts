@@ -1,4 +1,5 @@
 import { DiagramModulesManagedGitBoundary } from "../diagram-modules/diagram-modules-managed-git-boundary";
+import { commitManagedWorkflowLedger } from "../diagram-modules/managed-workflow-ledger-git-boundary";
 import {
   APPLICATION_STAGE_PLAN_PATH,
   addUnique,
@@ -90,6 +91,11 @@ export class ApplicationSkeletonStagePlanController {
       replaceStateBlock(draftPlanText, PLAN_START, PLAN_END, nextStageState)
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
   }
 
   async acceptUserReviewWithoutRevision(params: {
@@ -124,6 +130,11 @@ export class ApplicationSkeletonStagePlanController {
       APPLICATION_STAGE_PLAN_PATH,
       replaceStateBlock(acceptedPlan, PLAN_START, PLAN_END, nextStageState)
     );
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
     return MATERIALIZE_COMMIT_MESSAGE;
   }
 
@@ -368,6 +379,11 @@ export class ApplicationSkeletonStagePlanController {
       sessionId: params.sessionId,
       taskId: params.stageState.currentTaskId,
     });
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
   }
 
   private async recordRejectedCommit(params: {
@@ -402,6 +418,11 @@ export class ApplicationSkeletonStagePlanController {
       nextStagePlanText
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
   }
 
   private async updateWorkspaceState(

@@ -1,4 +1,5 @@
 import { DiagramModulesManagedGitBoundary } from "../diagram-modules/diagram-modules-managed-git-boundary";
+import { commitManagedWorkflowLedger } from "../diagram-modules/managed-workflow-ledger-git-boundary";
 import {
   addUnique,
   appendIntegrationStep,
@@ -88,6 +89,11 @@ export class QualityGatesStagePlanController {
       )
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, QUALITY_GATES_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
   }
 
   async acceptUserReviewWithoutRevision(params: {
@@ -123,6 +129,11 @@ export class QualityGatesStagePlanController {
       replaceStateBlock(acceptedPlan, PLAN_START, PLAN_END, nextState)
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, QUALITY_GATES_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
     return INTEGRATE_COMMIT_MESSAGE;
   }
 
@@ -333,6 +344,11 @@ export class QualityGatesStagePlanController {
           }
         : null
     );
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, QUALITY_GATES_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
   }
 
   private async updateWorkspaceState(
