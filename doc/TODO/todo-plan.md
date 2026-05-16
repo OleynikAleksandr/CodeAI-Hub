@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "831b44824",
+  "lastRecordedCommit": "dde338096",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task2",
-  "expectedCommitMessage": "chore: build skeleton review question contract release artifacts",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task2",
+  "expectedCommitMessage": "docs: record skeleton review question contract release package",
   "debt": {
-    "expectedCommitMessage": "chore: build skeleton review question contract release artifacts",
-    "preCommitHead": "831b44824",
+    "expectedCommitMessage": "docs: record skeleton review question contract release package",
+    "preCommitHead": "dde338096",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-build.task2"
+    "taskId": "app-skeleton-foundation.phase7.release-package.task2"
   }
 }
 ```
@@ -181,9 +181,11 @@
 51. [DONE] Git Commit: `docs: prepare skeleton review question contract release` (hash: 831b44824)
 52. [DONE] `app-skeleton-foundation.phase7.release-build.task2` Run `./scripts/build-all.sh` from a clean tree, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton review question contract release artifacts`).
    - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.278`; the only pre-existing dirty file was active plan state advanced by the previous no-commit gate. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-53. [PENDING] Git Commit: `chore: build skeleton review question contract release artifacts` (hash: TBD)
-54. [TODO] `app-skeleton-foundation.phase7.release-package.task2` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract release package`).
-55. [TODO] Git Commit: `docs: record skeleton review question contract release package` (hash: TBD)
+53. [DONE] Git Commit: `chore: build skeleton review question contract release artifacts` (hash: dde338096)
+54. [DONE] `app-skeleton-foundation.phase7.release-package.task2` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton review question contract release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.278`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous no-commit gate.
+   - User handoff artifact: `codeai-hub-1.2.278.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+55. [PENDING] Git Commit: `docs: record skeleton review question contract release package` (hash: TBD)
 56. [TODO] `app-skeleton-foundation.phase7.acceptance.task3` User installs the next patched release and retests that Application Skeleton questions are asked in dialogue, Markdown records proposed/agreed decisions rather than questionnaire prompts, all artifact prose is localized, and materialization remains blocked while questions remain. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
