@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "31c0482c5",
+  "lastRecordedCommit": "4a239287d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase74.verify.task1",
-  "expectedCommitMessage": "docs: verify release 272 checkpoint hygiene repair",
+  "currentTaskId": "managed-git-checkpoint.phase75.release-docs.task1",
+  "expectedCommitMessage": "docs: prepare release 273 checkpoint hygiene repair",
   "debt": {
-    "expectedCommitMessage": "docs: verify release 272 checkpoint hygiene repair",
-    "preCommitHead": "31c0482c5",
+    "expectedCommitMessage": "docs: prepare release 273 checkpoint hygiene repair",
+    "preCommitHead": "4a239287d",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase74.verify.task1"
+    "taskId": "managed-git-checkpoint.phase75.release-docs.task1"
   }
 }
 ```
@@ -1344,8 +1344,31 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Verification
 
 333. [DONE] `managed-git-checkpoint.phase74.verify.task1` Run targeted checkpoint/metadata Git hygiene regressions plus Core and Project Manager gating checks, then stop for release-build confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify release 272 checkpoint hygiene repair`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` — PASS, 6 tests; `node --test --import tsx packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts` — PASS, 6 tests; `npm run build --workspace=@codeai-hub/core` — PASS; `npm run build:webview` — PASS; `npm run typecheck:webview` — PASS.
-334. [PENDING] Git Commit: `docs: verify release 272 checkpoint hygiene repair` (hash: TBD)
+334. [DONE] Git Commit: `docs: verify release 272 checkpoint hygiene repair` (hash: 4a239287d)
 
 ### Stream: Release Build Confirmation
 
-335. [TODO] `managed-git-checkpoint.phase74.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none).
+335. [DONE] `managed-git-checkpoint.phase74.release-confirmation.task1` Ask the user for explicit release-build confirmation after verification; do not prepare release metadata or run release scripts until the user confirms (scope: user workflow; expected commit: none). Result: User explicitly confirmed release build for the release 272 checkpoint hygiene repair.
+
+## Phase 75 — Release 273 Checkpoint Hygiene Repair (owner: Codex, updated: 2026-05-16)
+
+### Stream: Release Metadata
+
+336. [DONE] `managed-git-checkpoint.phase75.release-docs.task1` Update release-facing docs for future version `1.2.273` before build scripts mutate package versions, including Phase 0 commit-pair closure, macOS metadata cleanup, and Core-owned runtime metadata ledger commits (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 273 checkpoint hygiene repair`). Evidence: current package version before release scripts is `1.2.272`; release-facing docs prepared for future version `1.2.273`.
+337. [PENDING] Git Commit: `docs: prepare release 273 checkpoint hygiene repair` (hash: TBD)
+
+### Stream: Runtime Build
+
+338. [TODO] `managed-git-checkpoint.phase75.build-all.task1` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 273 checkpoint hygiene repair`).
+339. [TODO] Git Commit: `chore: build release 273 checkpoint hygiene repair` (hash: TBD)
+
+### Stream: VSIX Package
+
+340. [TODO] `managed-git-checkpoint.phase75.package.task1` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 273 checkpoint hygiene repair`).
+341. [TODO] Git Commit: `docs: record release 273 checkpoint hygiene repair` (hash: TBD)
+
+## Phase 76 — User Visual Acceptance Testing (owner: User, updated: 2026-05-16)
+
+### Stream: Release Retest Handoff
+
+342. [TODO] `managed-git-checkpoint.phase76.user-acceptance.task1` User installs and retests release `1.2.273`: Diagram Modules Phase 0 must show both checkpoint task and paired Git Commit as `DONE`; managed commits must remove `.DS_Store`; Core-owned continuity/workflow runtime metadata must be committed by managed ledgers; Diagram Modules/Application Skeleton/Quality Gates transitions and development tree cards must stay unlocked from Core-owned workflow state (scope: user workflow; expected commit: none).

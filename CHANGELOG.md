@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.273] - 2026-05-16
+### Fixed
+- **Diagram Modules Phase 0 now closes its commit pair.** When Core records the managed input checkpoint hash, the paired `Git Commit: docs: checkpoint managed workflow inputs` line is marked `DONE` instead of remaining `TODO` in the stage plan.
+- **Managed commits clean macOS metadata before staging.** Core removes `.DS_Store` files from the workspace tree before managed Git commits, preventing Finder metadata from being committed or left as dirty workspace state.
+- **Runtime metadata ledgers are committed with managed stage ledgers.** Core includes `.codeai-hub/<workspace>/continuity/**` and `.codeai-hub/<workspace>/workflow/state.json` in ledger commits, so Diagram Modules provider/session metadata updates do not leave Git dirty after accepted turns.
+
+### Tests
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`
+- `node --test --import tsx packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
 ## [1.2.272] - 2026-05-16
 ### Fixed
 - **Diagram Modules now checkpoints managed inputs before the first provider prompt.** Core commits Description, Virtual Simulation, continuity/workflow scaffold, managed stage plans, and plan hook files before opening the Product Parts index microtask, so the first commit-backed Diagram Modules task starts from clean Git.

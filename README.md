@@ -2,15 +2,13 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.272** (Managed workflow Git checkpoint and ledger repair)
+**Current Release — v1.2.273** (Managed workflow Git hygiene repair)
 
-This release repairs managed workflow Git hygiene across the technical trunk.
-Diagram Modules now starts with a Core-owned input checkpoint that commits
-Description/Virtual Simulation artifacts plus Core scaffold before the first
-Product Parts prompt. Diagram Modules, Application Skeleton, and Quality Gates
-also commit Core-owned stage/workspace ledgers after managed artifact and
-review transitions, so the next microtask starts from clean Git instead of
-carrying dirty `todo-plan.md` metadata forward.
+This release tightens managed workflow Git hygiene after the Diagram Modules
+checkpoint rollout. Core now closes the Phase 0 checkpoint task/commit pair in
+the stage plan, removes macOS `.DS_Store` files before managed commits, and
+includes Core-owned continuity/workflow runtime metadata in ledger commits so
+managed steps leave Git clean after provider/session updates.
 
 All five documentation trunk steps are now routed through the replacement
 Managed Workflow Orchestration boundary. `Description` and `Virtual Simulation`
