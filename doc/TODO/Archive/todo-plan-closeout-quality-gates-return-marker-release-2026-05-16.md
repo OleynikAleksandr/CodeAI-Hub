@@ -1,3 +1,18 @@
+# Plan Closeout: quality-gates-return-marker-release-2026-05-16
+
+**Created:** 2026-05-16T18:45:04.050Z
+**Acceptance:** User requested closing the release-only scope after successful 1.2.285 build and VSIX packaging.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** quality-gates-return-release.phase3.closeout.task1
+**Expected Commit:** docs: close quality gates return marker release
+**Last Recorded Commit:** 8c78dd793
+**Planning Source Disposition:** already_archived
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_ProjectFoundation_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
   "currentTaskId": "quality-gates-return-release.phase3.closeout.task1",
   "expectedCommitMessage": "docs: close quality gates return marker release",
-  "debt": {
-    "expectedCommitMessage": "docs: close quality gates return marker release",
-    "preCommitHead": "8c78dd793",
-    "stage": "commit_pending",
-    "taskId": "quality-gates-return-release.phase3.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -79,5 +89,6 @@
 
 ### Stream: Closeout
 
-10. [DONE] `quality-gates-return-release.phase3.closeout.task1` After explicit user acceptance, archive this todo-plan and close the release scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close quality gates return marker release`).
-11. [PENDING] Git Commit: `docs: close quality gates return marker release` (hash: TBD)
+10. [IN_PROGRESS] `quality-gates-return-release.phase3.closeout.task1` After explicit user acceptance, archive this todo-plan and close the release scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close quality gates return marker release`).
+11. [TODO] Git Commit: `docs: close quality gates return marker release` (hash: TBD)
+````
