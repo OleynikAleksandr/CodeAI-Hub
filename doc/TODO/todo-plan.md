@@ -8,15 +8,15 @@
   "planId": "solidworks-workflow-docs-relevance-audit-2026-05-16",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "fe3743d0a",
-  "lastRecordedCommit": "91b1441fb",
+  "lastRecordedCommit": "e7e780617",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Documentation_Relevance_Audit_2026-05-16.md",
-  "currentTaskId": "docs-relevance-audit.phase3.plans.task1",
-  "expectedCommitMessage": "docs: archive completed workflow planning artifacts",
+  "currentTaskId": "docs-relevance-audit.phase4.verify.task1",
+  "expectedCommitMessage": "docs: verify solidworks workflow docs audit",
   "debt": {
-    "expectedCommitMessage": "docs: archive completed workflow planning artifacts",
-    "preCommitHead": "91b1441fb",
+    "expectedCommitMessage": "docs: verify solidworks workflow docs audit",
+    "preCommitHead": "e7e780617",
     "stage": "commit_pending",
-    "taskId": "docs-relevance-audit.phase3.plans.task1"
+    "taskId": "docs-relevance-audit.phase4.verify.task1"
   }
 }
 ```
@@ -80,14 +80,14 @@
 ### Stream: Plans And Index
 
 11. [DONE] `docs-relevance-audit.phase3.plans.task1` Move or mark completed planning artifacts and refresh navigation docs so active Plans contain only genuinely open future scopes (scope: `doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: archive completed workflow planning artifacts`). Evidence: active plan inventory found no completed managed-orchestration source left outside `Plans/Archive/`; `Plans/Managed_Step_Orchestration/README.md` now points active behavior to `ManagedWorkflowOrchestration.md` and keeps retired lifecycle docs historical; `Docs_Index.md` now lists the managed cluster as active runtime, marks the relevance audit plan as currently active, and describes revision graph implementation boundaries accurately.
-12. [PENDING] Git Commit: `docs: archive completed workflow planning artifacts` (hash: TBD)
+12. [DONE] Git Commit: `docs: archive completed workflow planning artifacts` (hash: e7e780617)
 
 ## Phase 4 — Verification And Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Documentation Verification
 
-13. [TODO] `docs-relevance-audit.phase4.verify.task1` Run docs navigation/stale-reference verification and plan validation, then record remaining deferred/future-doc boundaries (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify solidworks workflow docs audit`).
-14. [TODO] Git Commit: `docs: verify solidworks workflow docs audit` (hash: TBD)
+13. [DONE] `docs-relevance-audit.phase4.verify.task1` Run docs navigation/stale-reference verification and plan validation, then record remaining deferred/future-doc boundaries (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: verify solidworks workflow docs audit`). Evidence: `npm run plan:validate` passed; `npm run check:links` passed with 415 Markdown files checked; targeted stale scan no longer finds the old preview/fail-closed/future-managed wording, and remaining matches for "workflow authority" / "source of truth" are the intended Core-authority invariants. Deferred boundaries left active: provider capability research/backlog docs, Capture Workbench future phases, Development Tree branch/session implementation, and future full Workflow Revision Graph snapshot/migration planner.
+14. [PENDING] Git Commit: `docs: verify solidworks workflow docs audit` (hash: TBD)
 
 ### Stream: Scope Closeout
 
