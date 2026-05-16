@@ -27,6 +27,14 @@ Clients may submit raw user intent and render Core-owned snapshots, but they mus
 
 Every Type A, Type B, and Persistent Return managed flow must continue with all clients closed until Core explicitly opens a user review, revision, acceptance, or configuration gate. If a managed step depends on an open Project Manager window to advance before such a user gate, the step contract is invalid and the defect belongs in Core orchestration.
 
+## Prompt, Artifact, And Repair Authority
+
+Managed Workflow Orchestration owns the executable artifact contract for managed steps. The first provider prompt and every Core-authored repair prompt must include the full text of all required templates, field references, examples, schema fragments, and authoring rules. A prompt that names a template path without embedding the required text is incomplete; provider agents must not have to inspect `.codeai-hub/templates`, parser implementations, Project Manager code, tests, or internal docs to discover the artifact format.
+
+The canonical parser/validator/read-model contract for a managed artifact belongs in Core or a provider-neutral shared contract module consumed by Core. Project Manager, VS Code surfaces, future mobile clients, and Wi-Fi/web clients may render Core-owned parse output and diagnostics, but they must not maintain a second parser truth that can accept/reject artifacts differently from Core. If a UI needs graph nodes, artifact cards, or validation messages, Core must expose the parsed projection or the exact canonical diagnostics that produced it.
+
+All artifact repair entrypoints are Core-owned. A client button such as "Fix with agent" may submit only raw repair intent and user-visible diagnostic context. Core must resolve the failing artifact, create or advance the managed stage-plan microtask with a paired Git Commit line, dispatch the provider-visible repair prompt, validate the next turn through the canonical parser, and commit accepted or safe rejected attempts with real hashes. Direct client-built repair prompts sent to provider sessions bypass the managed lifecycle and are forbidden.
+
 ## 2. Facade Contract
 
 External code may depend only on `ManagedWorkflowOrchestrationFacade` and exported public contract types.
