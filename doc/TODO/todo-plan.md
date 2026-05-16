@@ -8,15 +8,15 @@
   "planId": "solidworks-workflow-docs-relevance-audit-2026-05-16",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "fe3743d0a",
-  "lastRecordedCommit": "85dd4fd4c",
+  "lastRecordedCommit": "e289ce4ff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Documentation_Relevance_Audit_2026-05-16.md",
-  "currentTaskId": "docs-relevance-audit.phase2.system.task1",
-  "expectedCommitMessage": "docs: sync workflow system ssot with managed runtime",
+  "currentTaskId": "docs-relevance-audit.phase2.clusters.task1",
+  "expectedCommitMessage": "docs: sync cluster ownership contracts",
   "debt": {
-    "expectedCommitMessage": "docs: sync workflow system ssot with managed runtime",
-    "preCommitHead": "85dd4fd4c",
+    "expectedCommitMessage": "docs: sync cluster ownership contracts",
+    "preCommitHead": "e289ce4ff",
     "stage": "commit_pending",
-    "taskId": "docs-relevance-audit.phase2.system.task1"
+    "taskId": "docs-relevance-audit.phase2.clusters.task1"
   }
 }
 ```
@@ -63,12 +63,12 @@
 ### Stream: System And Workflow SSOT
 
 5. [DONE] `docs-relevance-audit.phase2.system.task1` Synchronize core system/workflow SSOT docs with the implemented managed workflow state, Core-owned artifact truth, and release `1.2.274` behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/Workflow_NewStep_Rollout_Guardrails.md`; expected commit: `docs: sync workflow system ssot with managed runtime`). Evidence: system SSOT now states the accepted managed cluster baseline for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline`; provider first/repair prompts must embed complete templates and parser-visible examples inline; Application Skeleton in-progress LED state is Core-owned; and the stale "Diagram Modules is final trunk step" wording is replaced with the current Skeleton -> Quality Gates -> Development Tree gate sequence.
-6. [PENDING] Git Commit: `docs: sync workflow system ssot with managed runtime` (hash: TBD)
+6. [DONE] Git Commit: `docs: sync workflow system ssot with managed runtime` (hash: e289ce4ff)
 
 ### Stream: Cluster Ownership SSOT
 
-7. [TODO] `docs-relevance-audit.phase2.clusters.task1` Synchronize cluster docs so Core/Managed Workflow own parser, validation, prompts, read-model, and commit lifecycle while Project Manager remains a replaceable client projection (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: sync cluster ownership contracts`).
-8. [TODO] Git Commit: `docs: sync cluster ownership contracts` (hash: TBD)
+7. [DONE] `docs-relevance-audit.phase2.clusters.task1` Synchronize cluster docs so Core/Managed Workflow own parser, validation, prompts, read-model, and commit lifecycle while Project Manager remains a replaceable client projection (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: sync cluster ownership contracts`). Evidence: cluster docs now describe Managed Workflow Orchestration as the active runtime boundary, not preview-only design; Core Orchestrator no longer says managed stages are fail-closed pending a future cluster; Project Manager explicitly renders Application Skeleton active/completed indicators from Core workflow-state and remains a parser/read-model projection only.
+8. [PENDING] Git Commit: `docs: sync cluster ownership contracts` (hash: TBD)
 
 ## Phase 3 — Contracts And Planning Disposition (owner: Codex, updated: 2026-05-16)
 

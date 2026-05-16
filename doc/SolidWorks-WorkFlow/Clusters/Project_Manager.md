@@ -67,7 +67,8 @@ read path, ни из client-owned helpers.
   - detached diagram popup не должен наследовать autosaved frame главного PM окна; PM отправляет popup-sized open hint, а launcher не применяет main-window restore/persist path к popup browser.
 - Для `Application Skeleton` и `Quality Gates Baseline` правая панель использует тот же `Artifacts/Help` contract:
   - `Artifacts` показывает `application-skeleton.md` / `quality-gates.md` через stage artifact panel, а companion JSON (`application-skeleton-map.json`, `quality-gates.json`) остаётся contract sidecar для Core/gates;
-  - `Help` объясняет technical root purpose и почему Development Tree sessions заблокированы до acceptance.
+  - `Help` объясняет technical root purpose и почему Development Tree sessions заблокированы до acceptance;
+  - active/in-progress and completed indicators come from Core workflow-state. PM must not infer that `Application Skeleton` is idle just because final artifacts are not materialized yet; an active continuity/session for the stage projects the orange marker from Core.
 - Settings surface belongs to PM:
   - footer status bar больше не дублирует workspace identity: левая часть футера пустая, workspace selector остаётся единственной visible surface в левом sidebar;
   - footer status bar action `Open Settings` использует выделенный CSS-класс `pm-status-open-settings` (accent-colored default/hover/active фазы + focus-visible outline) и переключает правую панель PM в отдельный in-shell settings mode без второго окна;

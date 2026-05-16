@@ -1,6 +1,6 @@
 # Managed Workflow Orchestration — Cluster (SSOT)
 
-**Status:** Active design/runtime boundary for the replacement cluster.
+**Status:** Active runtime boundary for managed technical trunk steps.
 **Created:** 2026-05-15.
 **Owner:** Core Runtime.
 **Code boundary:** `packages/core/src/managed-workflow-orchestration/`.
@@ -8,7 +8,7 @@
 
 ## 1. Purpose
 
-`Managed Workflow Orchestration` is the Core-owned cluster that will replace the retired generated-script/post-turn managed orchestration for technical Documentation Tree stages.
+`Managed Workflow Orchestration` is the Core-owned cluster that replaced the retired generated-script/post-turn managed orchestration for technical Documentation Tree stages.
 
 The cluster owns lifecycle decisions for:
 
@@ -17,7 +17,7 @@ The cluster owns lifecycle decisions for:
 - `Quality Gates Baseline`;
 - future managed documentation steps registered through the same step-controller contract.
 
-The first implementation release exposes a runtime-visible preview boundary only. End-to-end execution of the three managed steps is added later one step at a time.
+The accepted runtime baseline covers end-to-end managed execution for the three current technical trunk steps. Future managed documentation steps must extend the same controller/facade contract instead of adding client-owned continuation logic or reviving retired generated child-plan behavior.
 
 ## Client Projection Boundary
 
@@ -162,16 +162,20 @@ Runtime ownership rules:
 - Provider gateway owns provider-visible Core messages.
 - Read-model projector cannot run commits, send provider messages, or advance phases.
 
-## 7. First Release Boundary
+## 7. Accepted Runtime Boundary
 
-The first implementation release must show a visual control point:
+The active implementation must provide the complete managed lifecycle:
 
 - technical managed stages route through `ManagedWorkflowOrchestrationFacade`;
-- the registered controller for the selected stage is visible in Project Manager state/surface;
-- the user sees a Core-authored message that the new cluster boundary is active and step-specific execution is intentionally waiting for the next release;
-- no old accept-contract, continuation, repair, post-turn commit, generated child-plan, or pseudo-hash behavior returns.
+- the registered controller for the selected stage is visible in Core workflow-state and client projections;
+- the first prompt embeds all required source artifacts, templates, field references, examples, schema fragments, and authoring rules as provider-visible text;
+- Core validates every provider output through the canonical parser/validator and writes diagnostics as Core-owned feedback;
+- every repair, revision, acceptance, materialization, integration, and persistent-return transition creates or advances a concrete stage-plan microtask with a paired `Git Commit:` item;
+- managed Git hygiene keeps the workspace clean at stage boundaries, including pre-stage cleanup and ignored/generated OS file handling;
+- completed upstream stage LEDs remain green after downstream blockers, while active downstream stages render in progress from Core state;
+- no old accept-contract, generated child-plan, hidden post-turn dispatch, direct PM repair prompt, or pseudo-hash behavior returns.
 
-This is a valid intermediate release even though the three managed steps are not yet end-to-end.
+The historical preview-only release boundary is retired and must not be used as active guidance.
 
 ## 8. Hard Invariants
 
