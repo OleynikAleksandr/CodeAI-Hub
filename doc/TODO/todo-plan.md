@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "fee47eb1e",
+  "lastRecordedCommit": "5c48d37f9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-build.task7",
-  "expectedCommitMessage": "chore: build core handoff release artifacts",
+  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task7",
+  "expectedCommitMessage": "docs: record core handoff release package",
   "debt": {
-    "expectedCommitMessage": "chore: build core handoff release artifacts",
-    "preCommitHead": "fee47eb1e",
+    "expectedCommitMessage": "docs: record core handoff release package",
+    "preCommitHead": "5c48d37f9",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-build.task7"
+    "taskId": "app-skeleton-foundation.phase7.release-package.task7"
   }
 }
 ```
@@ -303,9 +303,11 @@
 134. [DONE] Git Commit: `docs: prepare core handoff release` (hash: fee47eb1e)
 135. [DONE] `app-skeleton-foundation.phase7.release-build.task7` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched managed review handoff release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build core handoff release artifacts`).
    - Build result (2026-05-16): `./scripts/build-all.sh --allow-dirty` completed version `1.2.283`; the only pre-existing dirty file was active plan state advanced by the previous commit. Provider/core/UI/CEF tarballs were produced in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-136. [PENDING] Git Commit: `chore: build core handoff release artifacts` (hash: TBD)
-137. [TODO] `app-skeleton-foundation.phase7.release-package.task7` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core handoff release package`).
-138. [TODO] Git Commit: `docs: record core handoff release package` (hash: TBD)
+136. [DONE] Git Commit: `chore: build core handoff release artifacts` (hash: 5c48d37f9)
+137. [DONE] `app-skeleton-foundation.phase7.release-package.task7` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record core handoff release package`).
+   - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.283`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
+   - User handoff artifact: `codeai-hub-1.2.283.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+138. [PENDING] Git Commit: `docs: record core handoff release package` (hash: TBD)
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
