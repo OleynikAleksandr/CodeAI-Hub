@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "e7181e95f",
+  "lastRecordedCommit": "b88694945",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase67.release.task1",
-  "expectedCommitMessage": "docs: prepare release 270 diagram review gating fix",
+  "currentTaskId": "artifact-contract-repair.phase67.release.task2",
+  "expectedCommitMessage": "chore: build release 270 diagram review gating fix",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 270 diagram review gating fix",
-    "preCommitHead": "e7181e95f",
+    "expectedCommitMessage": "chore: build release 270 diagram review gating fix",
+    "preCommitHead": "b88694945",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase67.release.task1"
+    "taskId": "artifact-contract-repair.phase67.release.task2"
   }
 }
 ```
@@ -1219,9 +1219,13 @@ Verification evidence recorded 2026-05-16:
     - Future release version prepared in release-facing docs: `1.2.270`.
     - `README.md` current-release banner updated to the Diagram Modules review gating repair.
     - `CHANGELOG.md` release entry `1.2.270` added with Core read-model/gating fix and verification summary.
-288. [PENDING] Git Commit: `docs: prepare release 270 diagram review gating fix` (hash: TBD)
-289. [TODO] `artifact-contract-repair.phase67.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 270 diagram review gating fix`).
-290. [TODO] Git Commit: `chore: build release 270 diagram review gating fix` (hash: TBD)
+288. [DONE] Git Commit: `docs: prepare release 270 diagram review gating fix` (hash: b88694945)
+289. [DONE] `artifact-contract-repair.phase67.release.task2` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 270 diagram review gating fix`).
+    - `./scripts/build-all.sh --allow-dirty` — PASS. Dirty input was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start.
+    - Unified version after build: `1.2.270`.
+    - Release tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.270.tar.bz2`, `codex-module-1.2.270.tar.bz2`, `gemini-module-1.2.270.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.270.tar.bz2`, `vscode-webview-1.2.270.tar.bz2`, `project-manager-1.2.270.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.270.tar.bz2`.
+    - Matching runtime tarballs present in `~/.codeai-hub/releases/` for providers, core, UI, and launcher.
+290. [PENDING] Git Commit: `chore: build release 270 diagram review gating fix` (hash: TBD)
 291. [TODO] `artifact-contract-repair.phase67.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs, and record final artifact paths for user installation/testing (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record release 270 diagram review gating handoff`).
 292. [TODO] Git Commit: `docs: record release 270 diagram review gating handoff` (hash: TBD)
 
