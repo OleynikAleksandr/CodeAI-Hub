@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "2b928021e",
+  "lastRecordedCommit": "efa8d6509",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.release-package.task3",
-  "expectedCommitMessage": "docs: record skeleton foundation baseline release package",
+  "currentTaskId": "app-skeleton-foundation.phase7.env-readiness.task1",
+  "expectedCommitMessage": "fix: require skeleton environment readiness audit",
   "debt": {
-    "expectedCommitMessage": "docs: record skeleton foundation baseline release package",
-    "preCommitHead": "2b928021e",
+    "expectedCommitMessage": "fix: require skeleton environment readiness audit",
+    "preCommitHead": "efa8d6509",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.release-package.task3"
+    "taskId": "app-skeleton-foundation.phase7.env-readiness.task1"
   }
 }
 ```
@@ -208,13 +208,30 @@
 67. [DONE] `app-skeleton-foundation.phase7.release-package.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton foundation baseline release package`).
    - Package result (2026-05-16): `./scripts/build-release.sh --use-current-version --allow-dirty` completed for version `1.2.279`; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and VSIX runtime package surface. The only pre-existing dirty file was active plan state advanced by the previous commit.
    - User handoff artifact: `codeai-hub-1.2.279.vsix` in the repository root; runtime tarballs are available in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-68. [PENDING] Git Commit: `docs: record skeleton foundation baseline release package` (hash: TBD)
-69. [TODO] `app-skeleton-foundation.phase7.acceptance.task4` User installs the next patched release and retests that Application Skeleton proposes concrete shell/frontend/framework baselines, preserves the Project Manager Development Tree mirror, and blocks materialization only through dialogue questions for real unresolved decisions. Scope: user workflow acceptance only; expected commit: none.
+68. [DONE] Git Commit: `docs: record skeleton foundation baseline release package` (hash: efa8d6509)
+69. [BLOCKED] `app-skeleton-foundation.phase7.acceptance.task4` User installs the next patched release and retests that Application Skeleton proposes concrete shell/frontend/framework baselines, preserves the Project Manager Development Tree mirror, and blocks materialization only through dialogue questions for real unresolved decisions. Scope: user workflow acceptance only; expected commit: none.
+   - Acceptance defect found in release `1.2.279`: Application Skeleton materialized package metadata and lockfile but did not install the local development environment (`node_modules`) and did not prove readiness by running declared `build`, `typecheck`, and `test:smoke` scripts. Core accepted the materialization because it only validated file/path/script presence, not executable environment readiness.
+
+### Stream: Environment Readiness Audit Repair
+
+70. [DONE] `app-skeleton-foundation.phase7.env-readiness.task1` Strengthen Application Skeleton prompt/contract so post-acceptance materialization must run the accepted clean install command, create local install outputs such as `node_modules` without committing or listing them in `materializedPaths`, run declared build/typecheck/smoke scripts, and report failure instead of readiness if any command fails (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md`; expected commit: `fix: require skeleton environment readiness audit`).
+71. [PENDING] Git Commit: `fix: require skeleton environment readiness audit` (hash: TBD)
+72. [TODO] `app-skeleton-foundation.phase7.env-readiness.task2` Tighten Core materialization validation so accepted Application Skeleton foundations are not ready until the package-manager install command and declared required scripts have actually succeeded in the workspace (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts`; expected commit: `fix: validate skeleton install and script execution`).
+73. [TODO] Git Commit: `fix: validate skeleton install and script execution` (hash: TBD)
+74. [TODO] `app-skeleton-foundation.phase7.env-readiness.task3` Sync bundled Application Skeleton templates, run targeted materialization/template tests plus core build, and record verification before the next release build (scope: `packages/core/src/templates/application-skeleton-bundled-templates.test.ts, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `docs: verify skeleton environment readiness repair`).
+75. [TODO] Git Commit: `docs: verify skeleton environment readiness repair` (hash: TBD)
+76. [TODO] `app-skeleton-foundation.phase7.release-docs.task4` After explicit release request in this turn, update README and CHANGELOG for the next release version before build automation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare skeleton environment readiness release`).
+77. [TODO] Git Commit: `docs: prepare skeleton environment readiness release` (hash: TBD)
+78. [TODO] `app-skeleton-foundation.phase7.release-build.task4` Run `./scripts/build-all.sh`, verify package/runtime artifact outputs, and commit generated version/manifest/release artifact metadata for the patched Application Skeleton release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build skeleton environment readiness release artifacts`).
+79. [TODO] Git Commit: `chore: build skeleton environment readiness release artifacts` (hash: TBD)
+80. [TODO] `app-skeleton-foundation.phase7.release-package.task4` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/dev dependency prune/package creation markers, and record the produced patched VSIX/tarballs for user handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record skeleton environment readiness release package`).
+81. [TODO] Git Commit: `docs: record skeleton environment readiness release package` (hash: TBD)
+82. [TODO] `app-skeleton-foundation.phase7.acceptance.task5` User installs the next patched release and retests that Application Skeleton materialization creates local install outputs, proves declared scripts pass, preserves the Project Manager Development Tree mirror, and only then unlocks downstream work. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Closeout
 
-70. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
-71. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
-72. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+83. [TODO] `app-skeleton-foundation.phase8.closeout.task1` After explicit user acceptance, archive this todo-plan, disposition the Application Skeleton planning document, update Docs Index and related SSOT links, and close the scope (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton foundation implementation`).
+84. [TODO] Git Commit: `docs: close application skeleton foundation implementation` (hash: TBD)
+85. [TODO] `app-skeleton-foundation.phase8.closeout.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.

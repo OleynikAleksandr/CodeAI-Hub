@@ -13,7 +13,7 @@ Turn the accepted module map of the current project into:
 Do not implement product features and do not create downstream agent sessions.
 Do not choose or integrate quality-gate products. The Quality Gates Baseline stage owns tools such as Ultracite, Biome, ESLint, Playwright, Vitest, dependency scanners, secret scanners, hooks, and CI policy.
 
-The final outcome of this step is not a folder-only scaffold and not an abstract architecture note. After materialization, the repository must contain enough tracked project foundation metadata and minimal source/config surface for implementation agents to write code and for the next Quality Gates Baseline stage to install the environment and run real gates against real targets.
+The final outcome of this step is not a folder-only scaffold and not an abstract architecture note. After materialization, the repository must contain enough tracked project foundation metadata, minimal source/config surface, and a locally installed development environment for implementation agents to write code immediately and for the next Quality Gates Baseline stage to run real gates against real targets.
 
 ## Rewrite Boundary
 This stage must not assume that child plans, plan scripts, hooks, or automatic commit ownership from `Diagram Modules` are active.
@@ -138,6 +138,8 @@ You must:
 - create the Product Part / Cluster / Module filesystem projection as an exact filesystem mirror of the Project Manager Development Tree;
 - create only minimal placeholders declared by the contract;
 - create a tracked `README.md` placeholder in every materialized Product Part, Cluster, and Module directory, so Git records the skeleton structure;
+- run the accepted clean install command from `projectFoundation.installCommand` after package metadata and lockfiles exist; for npm this means `npm ci` and a local `node_modules` install output must exist in the workspace after materialization;
+- run every script listed in `projectFoundation.requiredScripts` from the workspace root, for example `npm run build`, `npm run typecheck`, and `npm run test:smoke` for npm foundations;
 - keep `.codeai-hub/...` workflow artifacts separate from production code;
 - update `application-skeleton-map.json` to `reviewState: "materialized"`, `accepted: true`, `materialized: true`, `materializationState: "materialized"`, and list real `materializedPaths`;
 - update `application-skeleton.md` so it describes the current materialized state, not a draft plan.
@@ -151,18 +153,21 @@ Before the materialization readiness response, run a runtime-observable self-aud
 - `application-skeleton.md` reports the same materialized status fields and no longer describes a draft or future filesystem state;
 - `openQuestions` is absent or empty;
 - deterministic install metadata exists for the accepted package manager;
+- the accepted clean install command has succeeded in the workspace and the local install output expected by that package manager exists, such as `node_modules` for npm;
 - required TypeScript/build/test/smoke scripts declared by the accepted foundation point to real config/source targets;
+- every script listed in `projectFoundation.requiredScripts` has been executed successfully after the clean install;
 - every declared Product Part, Cluster, and Module `codePath` exists on disk;
 - every path listed in `materializedPaths` exists on disk;
 - every materialized Product Part, Cluster, and Module directory contains a tracked `README.md` placeholder so Git records the skeleton;
 - `deferredMaterialization` contains only intentional skips that are also explained in the Markdown artifact.
 
 If any script, patch, or file write fails during materialization, do not report readiness for a partial result and do not mark the stage complete. Inspect the actual artifacts, repair Markdown/JSON/filesystem consistency, repeat the self-audit, then report readiness for runtime/user review.
+If install, build, typecheck, or smoke verification fails, keep `materialized: false` or set `materializationState: "failed"`, explain the failure in the final chat response, and do not claim the workspace is ready for Quality Gates Baseline.
 
 Before the final response after materialization:
 - ensure the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any required recovery artifacts are ready for runtime/user review;
-- do not create or change ignored runtime/cache/log files or `.DS_Store`;
-- respond with materialization readiness and the paths changed. Do not stage, commit, advance plans, or claim completion beyond readiness.
+- do not create or change ignored runtime/cache/log files or `.DS_Store`; package-manager install outputs such as `node_modules` are allowed as local environment output but must not be committed or listed in `materializedPaths`;
+- respond with materialization readiness, the paths changed, and the install/script verification commands that succeeded. Do not stage, commit, advance plans, or claim completion beyond readiness.
 
 Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
 
@@ -177,7 +182,7 @@ Final response after materialization: tell the user, in the chat language, that 
 - Standalone Product Part modules go under `product-parts/<product-part-id>/modules/<module-id>`.
 - Do not split Product Part roots by implementation category such as `apps/`, `packages/`, or `extensions` when that breaks the Product Part -> Cluster -> Module mirror.
 - Keep ordinary module folders lightweight. Package manifests/workspace entries belong only at the root workspace and Product Part roots unless the accepted contract explicitly declares a Cluster or Module as a standalone package.
-- `node_modules` and other dependency install output must not be committed, but tracked package metadata must be sufficient for a clean install command such as `npm ci` or the selected package-manager equivalent.
+- `node_modules` and other dependency install outputs must not be committed and must not be listed as `materializedPaths`, but they must be created locally by the accepted clean install command before the stage claims readiness. Tracked package metadata and lockfiles must be sufficient for a deterministic clean install command such as `npm ci` or the selected package-manager equivalent.
 - Do not leave materialized Product Part, Cluster, or Module directories empty. Empty directories are not Git-tracked and do not count as committed materialization.
 - Never use `.codeai-hub/...` as `sourceRoot` or production `codePath`.
 - If an upstream artifact lacks module detail, do not invent modules. Record the missing input and the path pattern to use later.
@@ -196,3 +201,4 @@ Final response after materialization: tell the user, in the chat language, that 
 - `deferredMaterialization` only for entries intentionally skipped in the current state.
 
 The stage is complete only when the contract is explicitly accepted, the workspace skeleton is created, the map reports `materialized: true`, and the Markdown no longer describes unmaterialized draft state.
+The stage is not complete if the accepted install command or any required build/typecheck/smoke script has not been run successfully in the workspace after materialization.
