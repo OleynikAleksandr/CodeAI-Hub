@@ -8,15 +8,15 @@
   "planId": "solidworks-workflow-docs-relevance-audit-2026-05-16",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "fe3743d0a",
-  "lastRecordedCommit": "fe3743d0a",
+  "lastRecordedCommit": "f20c66d3d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Documentation_Relevance_Audit_2026-05-16.md",
-  "currentTaskId": "docs-relevance-audit.phase0.plan.task1",
-  "expectedCommitMessage": "docs: open solidworks workflow docs relevance audit",
+  "currentTaskId": "docs-relevance-audit.phase1.inventory.task1",
+  "expectedCommitMessage": "docs: record solidworks workflow docs audit findings",
   "debt": {
-    "expectedCommitMessage": "docs: open solidworks workflow docs relevance audit",
-    "preCommitHead": "fe3743d0a",
+    "expectedCommitMessage": "docs: record solidworks workflow docs audit findings",
+    "preCommitHead": "f20c66d3d",
     "stage": "commit_pending",
-    "taskId": "docs-relevance-audit.phase0.plan.task1"
+    "taskId": "docs-relevance-audit.phase1.inventory.task1"
   }
 }
 ```
@@ -49,14 +49,14 @@
 ### Stream: Scope Registration
 
 1. [DONE] `docs-relevance-audit.phase0.plan.task1` Create the planning source and active todo-plan for the full SolidWorks-WorkFlow documentation relevance audit after the accepted managed workflow release (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Documentation_Relevance_Audit_2026-05-16.md`; expected commit: `docs: open solidworks workflow docs relevance audit`).
-2. [PENDING] Git Commit: `docs: open solidworks workflow docs relevance audit` (hash: TBD)
+2. [DONE] Git Commit: `docs: open solidworks workflow docs relevance audit` (hash: f20c66d3d)
 
 ## Phase 1 — Inventory And Relevance Findings (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Repository-To-Docs Audit
 
-3. [TODO] `docs-relevance-audit.phase1.inventory.task1` Run repository-wide docs inventory and stale-reference scans, then record findings and disposition decisions before edits (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record solidworks workflow docs audit findings`).
-4. [TODO] Git Commit: `docs: record solidworks workflow docs audit findings` (hash: TBD)
+3. [DONE] `docs-relevance-audit.phase1.inventory.task1` Run repository-wide docs inventory and stale-reference scans, then record findings and disposition decisions before edits (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record solidworks workflow docs audit findings`). Evidence: `find doc/SolidWorks-WorkFlow -type f` found 221 docs, including 149 archived planning docs, 11 active/deferred `Plans/*.md`, 1 inactive `Plans/Managed_Step_Orchestration/README.md`, and active System/Cluster/Contract/Module docs. Code inventory confirmed implemented Core-owned managed workflow modules under `packages/core/src/managed-workflow-orchestration/**` for `diagram_modules`, `application_skeleton`, and `quality_gates`; provider-direct policy remains for `description` and `virtual_simulation`; Project Manager consumes `workflow-state` and a thin staged Product Part parser adapter imported from Core. Stale active-doc classes found: `Docs_Index.md` and `Clusters/ManagedWorkflowOrchestration.md` still describe the cluster as first-preview/preview-boundary instead of accepted managed runtime; `System/Workflow_NewStep_Rollout_Guardrails.md` still says future managed trunk steps starting with Diagram Modules must be redefined/re-enabled; active SSOT needs a clearer statement that first prompts embed complete templates and Core/shared parser diagnostics are the only artifact truth; `Plans/Managed_Step_Orchestration/README.md` is correctly inactive, while active `Plans/*.md` are future/deferred work and should remain active. Disposition: update System/Workflow guardrails, cluster ownership docs, active contracts, and Docs Index; keep archived planning docs historical, only correcting headers/links when they are presented as current; do not archive active future work such as Development Tree branch workflow, Capture Workbench, provider capability analysis, or deterministic continuity snapshot.
+4. [PENDING] Git Commit: `docs: record solidworks workflow docs audit findings` (hash: TBD)
 
 ## Phase 2 — Active SSOT Relevance Repairs (owner: Codex, updated: 2026-05-16)
 
