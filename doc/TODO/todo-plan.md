@@ -8,15 +8,15 @@
   "planId": "solidworks-workflow-docs-relevance-audit-2026-05-16",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "fe3743d0a",
-  "lastRecordedCommit": "e289ce4ff",
+  "lastRecordedCommit": "fabfafba4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Documentation_Relevance_Audit_2026-05-16.md",
-  "currentTaskId": "docs-relevance-audit.phase2.clusters.task1",
-  "expectedCommitMessage": "docs: sync cluster ownership contracts",
+  "currentTaskId": "docs-relevance-audit.phase3.contracts.task1",
+  "expectedCommitMessage": "docs: sync active workflow contracts with managed runtime",
   "debt": {
-    "expectedCommitMessage": "docs: sync cluster ownership contracts",
-    "preCommitHead": "e289ce4ff",
+    "expectedCommitMessage": "docs: sync active workflow contracts with managed runtime",
+    "preCommitHead": "fabfafba4",
     "stage": "commit_pending",
-    "taskId": "docs-relevance-audit.phase2.clusters.task1"
+    "taskId": "docs-relevance-audit.phase3.contracts.task1"
   }
 }
 ```
@@ -68,14 +68,14 @@
 ### Stream: Cluster Ownership SSOT
 
 7. [DONE] `docs-relevance-audit.phase2.clusters.task1` Synchronize cluster docs so Core/Managed Workflow own parser, validation, prompts, read-model, and commit lifecycle while Project Manager remains a replaceable client projection (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: sync cluster ownership contracts`). Evidence: cluster docs now describe Managed Workflow Orchestration as the active runtime boundary, not preview-only design; Core Orchestrator no longer says managed stages are fail-closed pending a future cluster; Project Manager explicitly renders Application Skeleton active/completed indicators from Core workflow-state and remains a parser/read-model projection only.
-8. [PENDING] Git Commit: `docs: sync cluster ownership contracts` (hash: TBD)
+8. [DONE] Git Commit: `docs: sync cluster ownership contracts` (hash: fabfafba4)
 
 ## Phase 3 — Contracts And Planning Disposition (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Active Contracts
 
-9. [TODO] `docs-relevance-audit.phase3.contracts.task1` Promote implemented scenario/contract details into active contracts and mark suspended historical contracts correctly (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/Contracts/Workflow_Revision_Graph.md`; expected commit: `docs: sync active workflow contracts with managed runtime`).
-10. [TODO] Git Commit: `docs: sync active workflow contracts with managed runtime` (hash: TBD)
+9. [DONE] `docs-relevance-audit.phase3.contracts.task1` Promote implemented scenario/contract details into active contracts and mark suspended historical contracts correctly (scope: `doc/SolidWorks-WorkFlow/Contracts/ProjectManager_WorkflowNavigation_SSOT.md, doc/SolidWorks-WorkFlow/Contracts/Managed_Workspace_Lifecycle.md, doc/SolidWorks-WorkFlow/Contracts/Workflow_Revision_Graph.md`; expected commit: `docs: sync active workflow contracts with managed runtime`). Evidence: navigation SSOT now includes `Application Skeleton` and `Quality Gates Baseline`, Core-owned startup/auto-select state, and Core parser projections; `Managed_Workspace_Lifecycle` is explicitly retired with Managed Workflow Orchestration as replacement authority; `Workflow_Revision_Graph` is marked partially implemented with current runtime support and future snapshot/migration boundaries separated.
+10. [PENDING] Git Commit: `docs: sync active workflow contracts with managed runtime` (hash: TBD)
 
 ### Stream: Plans And Index
 

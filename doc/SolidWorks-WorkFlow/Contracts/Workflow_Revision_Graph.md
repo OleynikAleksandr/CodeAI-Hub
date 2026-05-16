@@ -1,12 +1,13 @@
 # Workflow Revision Graph
 
-**Status:** Active contract
+**Status:** Active future contract; partially implemented in current runtime
 **Created:** 2026-05-07
+**Updated:** 2026-05-16
 **Owner:** Oleksandr + Codex
 
 ## 1. Purpose
 
-After managed mode starts, workflow progress is revision-based, not memory-based.
+Managed workflow progress must be revision-based, not memory-based. Current runtime implements the foundation for this contract through stable Diagram Modules ids, content revision hashing for diagram DSL/parser projections, review revision task numbering in managed stage plans, and technical-stage dirty-gate classification for future revision snapshot paths. Full revision snapshot writing and downstream migration planning remain future scope.
 
 Canonical chain:
 
@@ -17,7 +18,7 @@ diagramRevision N
   -> developmentTreeRevision N
 ```
 
-Each accepted revision must be recoverable from tracked workspace state, not from provider chat memory.
+Each accepted revision must be recoverable from tracked workspace state, not from provider chat memory. Until full revision snapshots are implemented, the active recovery truth is the committed stage artifacts, managed stage plans, Git history, and Core parser/validator outputs.
 
 ## 2. Stable Identity
 
@@ -32,7 +33,7 @@ Display names, descriptions, ordering, and paths may change. Stable ids are the 
 
 ## 3. Revision Storage
 
-Core stores revision snapshots under tracked `.codeai-hub/workflow/revisions/`:
+Target storage for future revision snapshots is tracked `.codeai-hub/<workspaceSlug>/workflow/revisions/`:
 
 ```text
 .codeai-hub/workflow/revisions/
@@ -41,11 +42,11 @@ Core stores revision snapshots under tracked `.codeai-hub/workflow/revisions/`:
   quality-gates/
 ```
 
-Snapshots should include schema version, source artifact paths, stable ids, content hash, timestamp, and parent revision reference.
+Current code already reserves these paths in technical-stage dirty-gate classification, but does not yet write full snapshot objects there. Future snapshots should include schema version, source artifact paths, stable ids, content hash, timestamp, and parent revision reference.
 
 ## 4. Diff Classes
 
-When a user changes `Diagram Modules`, Core classifies the new revision against the previous accepted one:
+When a user changes `Diagram Modules`, future Core migration planning will classify the new revision against the previous accepted one:
 
 - `added`: create downstream tasks for new ids;
 - `changed`: create refactor tasks for affected contracts, skeleton paths, gates, and drafts;
@@ -57,7 +58,7 @@ Core must not silently mutate downstream application files based only on a seman
 
 ## 5. Migration Tasks
 
-Diff output becomes plan work:
+Future diff output becomes plan work:
 
 - deterministic lifecycle repair can be auto-applied by Core;
 - semantic changes become explicit `todo-plan.md` streams;

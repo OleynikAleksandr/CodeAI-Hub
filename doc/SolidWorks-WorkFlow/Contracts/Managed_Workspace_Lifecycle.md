@@ -1,30 +1,32 @@
 # Managed Workspace Lifecycle
 
-**Status:** Suspended during Managed Workflow Orchestration rewrite  
-**Updated:** 2026-05-14  
+**Status:** Retired historical contract; active replacement is Managed Workflow Orchestration  
+**Updated:** 2026-05-16  
 **Owner:** Oleksandr + Codex
 
 ## Boundary
 
 The previous workspace lifecycle contract is not active in the current codebase.
-It is retained only as a named historical contract until the replacement
-orchestration cluster is designed and implemented.
+It is retained only as a named historical contract for migration context. The
+active replacement is `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`
+and `packages/core/src/managed-workflow-orchestration/`.
 
-Active runtime behavior during the rewrite:
+Active runtime behavior:
 
 - workflow step cards must not bootstrap child plans, hook shims, workflow
   ledgers, provider feedback loops, or automatic stage transitions through this
-  contract;
+  retired contract;
 - provider sessions must not be started from this contract;
 - read-model APIs and Project Manager refresh paths must stay side-effect free;
 - artifacts may be viewed and edited only through the ordinary step/session
-  surfaces that remain available;
-- any future workspace lifecycle must be introduced by the new cluster design
-  and covered by fresh tests and SSOT documentation.
+  surfaces and Core-owned managed workflow commands;
+- any future workspace lifecycle extension must be introduced through the active
+  managed orchestration cluster, covered by tests, and linked from
+  `Docs_Index.md`.
 
-## Non-Goals During Rewrite
+## Non-Goals
 
-This suspended contract does not define:
+This retired contract does not define:
 
 - Git ownership;
 - task generation;
@@ -36,6 +38,7 @@ This suspended contract does not define:
 
 ## Replacement Rule
 
-Before the new Managed Workflow Orchestration cluster can rely on a workspace
-lifecycle, a new active contract must replace this suspended placeholder and be
-linked from `doc/SolidWorks-WorkFlow/Docs_Index.md`.
+No code or new documentation may cite this file as active runtime authority.
+The replacement authority is the Managed Workflow Orchestration cluster and its
+step controller contracts for `Diagram Modules`, `Application Skeleton`, and
+`Quality Gates Baseline`.

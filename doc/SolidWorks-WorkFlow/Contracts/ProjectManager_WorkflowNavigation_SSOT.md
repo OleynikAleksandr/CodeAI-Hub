@@ -1,7 +1,7 @@
 # Project Manager — Workflow Navigation SSOT
 
 **Status:** Active SSOT  
-**Updated:** 2026-04-21
+**Updated:** 2026-05-16
 **Owner:** Oleksandr + Codex
 
 > **Note:** Top stage toolbar был удалён в релизе `1.1.924`. Sidebar (Workflow Tree) — единственный source активации stage. Упоминания "Toolbar" ниже в §1 "Проблема" сохранены как исторический контекст; в инвариантах §4–§7 toolbar заменён на sidebar.
@@ -25,6 +25,8 @@
 - `description`
 - `virtual_simulation`
 - `diagram_modules`
+- `application_skeleton`
+- `quality_gates`
 
 ## 3) Источники активации stage
 
@@ -35,15 +37,15 @@
 
 Cold-start restore rule:
 - startup restore для Session panel не имеет права читать отдельный browser-local stage/dialog truth;
-- при открытии workspace `activeStage` временно фиксирован в `description`;
-- `workflow-state.lastActive` и continuity могут использоваться как reference/history внутри stage-scoped restore path, но не как startup stage selector;
+- startup stage выбирается из Core-owned `workflow-state`: active/in-progress or completed technical stage truth, `lastActive`, blocked state, and canonical artifact availability;
+- если все trunk stages idle и нет recoverable Core-owned stage truth, fallback остаётся `description`;
 - любые browser-local кэши допустимы только как ephemeral UI cache и не могут определять `dialogIntent`, `activeStage` или startup session selection.
 
 Канонический route:
-1. При workspace open/switch/reconnect сначала фиксируем `activeStage=description`.
-2. Затем строим Description-scoped artifact/session payload через тот же shared router, что и для обычного stage click.
-3. Правая панель открывает `Final_Description.md`, если файл уже существует, иначе `questionnaire.md`.
-4. Левая панель открывает только Description session, если она существует; иначе остаётся в Description help/pre-session state.
+1. При workspace open/switch/reconnect PM получает Core workflow-state snapshot.
+2. PM выбирает startup `activeStage` тем же resolver, что и sidebar auto-select/stage click.
+3. Правая панель открывает canonical artifact выбранного stage; для idle `description` без `Final_Description.md` открывается `questionnaire.md`.
+4. Левая панель открывает session выбранного stage, если она существует; иначе показывает соответствующий Help/confirmation surface.
 
 ## 4) Контракт синхронизации
 
@@ -62,9 +64,11 @@ Cold-start restore rule:
 | `description` | `Description` row highlighted; only `Description` branch expanded | `Description` | `Artifacts/Help` | `stage=description` |
 | `virtual_simulation` | `Virtual Simulation` row highlighted; only `Virtual Simulation` branch expanded | `Virtual Simulation` | `Artifacts/Help` | `stage=virtual_simulation` |
 | `diagram_modules` | `Diagram Modules` row highlighted; only `Diagram Modules` branch expanded | `Diagram Modules` | `Artifacts/Help` | `stage=diagram_modules` |
+| `application_skeleton` | `Application Skeleton` row highlighted; only `Application Skeleton` branch expanded | `Application Skeleton` | `Artifacts/Help` | `stage=application_skeleton` |
+| `quality_gates` | `Quality Gates Baseline` row highlighted; only `Quality Gates Baseline` branch expanded | `Quality Gates Baseline` | `Artifacts/Help` | `stage=quality_gates` |
 
 Для `Diagram Modules` правая панель использует `Artifacts/Help` (Source mode был удалён):
-- `Artifacts` открывает визуальный Module Graph, построенный из staged product-part файлов;
+- `Artifacts` открывает визуальный Module Graph, построенный из Core-owned staged Product Part parsed projection/diagnostics;
 - `Help` — guidance panel.
 
 ## 5) Инварианты
@@ -73,8 +77,8 @@ Cold-start restore rule:
 2. Нельзя рендерить header правой панели по старому stage после маршрутизации на новый.
 3. Если route идёт через `pm:dialog:open` для workflow-stage, активный stage должен быть установлен до/в момент route.
 4. Для stage-узла не допускается stage-specific поведение вида `skipSession`, если это ломает консистентность с другими route.
-5. Session panel startup restore обязан быть Description-scoped; automatic startup restore не имеет права показывать `virtual_simulation` или `diagram_modules` sessions.
-6. Startup auto-select и обычный stage click обязаны использовать один и тот же stage-to-artifact/session resolver; cold-start не имеет права держать отдельный recency-based selector.
+5. Session panel startup restore обязан быть Core-workflow-state scoped; automatic startup restore не имеет права выбирать stage по browser-local recency или PM-only parser result.
+6. Startup auto-select и обычный stage click обязаны использовать один и тот же stage-to-artifact/session resolver; cold-start не имеет права держать отдельный selector.
 7. Левое дерево не имеет права хранить отдельный persistent expanded-state truth для workflow stage branches; раскрытие stage-веток должно следовать за `activeStage`.
 
 ## 6) Особый случай Description pre-submit
@@ -90,8 +94,8 @@ Cold-start restore rule:
 
 1. Любой клик в sidebar / auto-select приводит к одному и тому же stage-состоянию UI.
 2. Header правой панели всегда соответствует текущему stage.
-3. Для всех active stage доступен `Help`; для `Diagram Modules` доступен `Artifacts/Help` (Source mode был удалён).
-4. При workspace open/switch/reconnect PM всегда стартует в `Description`.
+3. Для всех active stage доступен `Help`; для `Diagram Modules`, `Application Skeleton` и `Quality Gates Baseline` доступен `Artifacts/Help` (Source mode был удалён для Diagram Modules).
+4. При workspace open/switch/reconnect PM стартует с Core-selected stage; fallback к `Description` допустим только когда все trunk stages idle и Core не сообщает recoverable later-stage truth.
 5. Левое дерево всегда подсвечивает текущий `activeStage` и оставляет раскрытой только его ветку.
 6. Startup restore не оставляет «залипших» артефактов/сессий позднего шага.
 
