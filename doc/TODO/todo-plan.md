@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "069dd6806",
+  "lastRecordedCommit": "37e06b82f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "artifact-contract-repair.phase58.diagram-contract.task2",
-  "expectedCommitMessage": "fix: validate diagram modules with core parser",
+  "currentTaskId": "artifact-contract-repair.phase58.diagram-prompts.task1",
+  "expectedCommitMessage": "fix: embed managed artifact templates in prompts",
   "debt": {
-    "expectedCommitMessage": "fix: validate diagram modules with core parser",
-    "preCommitHead": "069dd6806",
+    "expectedCommitMessage": "fix: embed managed artifact templates in prompts",
+    "preCommitHead": "37e06b82f",
     "stage": "commit_pending",
-    "taskId": "artifact-contract-repair.phase58.diagram-contract.task2"
+    "taskId": "artifact-contract-repair.phase58.diagram-prompts.task1"
   }
 }
 ```
@@ -1117,10 +1117,10 @@ Repair coverage:
 264. [DONE] Git Commit: `fix: centralize diagram modules artifact validation` (hash: 069dd6806)
 
 265. [DONE] `artifact-contract-repair.phase58.diagram-contract.task2` Route Core Diagram Modules artifact validation through the Core-owned staged Product Part parser so Core acceptance and graph renderability use the same required fields and diagnostics (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/http-api-artifact-validation.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: validate diagram modules with core parser`).
-266. [PENDING] Git Commit: `fix: validate diagram modules with core parser` (hash: TBD)
+266. [DONE] Git Commit: `fix: validate diagram modules with core parser` (hash: 37e06b82f)
 
-267. [TODO] `artifact-contract-repair.phase58.diagram-prompts.task1` Embed exact Diagram Modules index/product-part templates and field reference text directly into first and repair prompts, then add prompt tests proving the text is inline rather than path-only; also audit Application Skeleton and Quality Gates prompt builders for the same first-prompt inline-template rule (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/quality-gates/**`; expected commit: `fix: embed managed artifact templates in prompts`).
-268. [TODO] Git Commit: `fix: embed managed artifact templates in prompts` (hash: TBD)
+267. [DONE] `artifact-contract-repair.phase58.diagram-prompts.task1` Embed exact Diagram Modules index/product-part templates and field reference text directly into first and repair prompts, then add prompt tests proving the text is inline rather than path-only; also audit Application Skeleton and Quality Gates prompt builders for the same first-prompt inline-template rule (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/**, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.ts, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: embed managed artifact templates in prompts`).
+268. [PENDING] Git Commit: `fix: embed managed artifact templates in prompts` (hash: TBD)
 
 ### Stream: Managed Repair Lifecycle
 

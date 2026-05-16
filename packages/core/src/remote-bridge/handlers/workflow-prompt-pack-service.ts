@@ -99,6 +99,8 @@ const PROMPT_APPENDIX_TEMPLATE_IDS: Partial<
   Record<WorkflowStageId, readonly string[]>
 > = {
   diagram_modules: [
+    "product-parts-index-template",
+    "product-part-template",
     "diagram-modules-field-reference",
     "diagram-modules-merge-rules",
   ],
@@ -127,13 +129,18 @@ const decodeBundledTemplate = (id: string): string | null => {
   }
 };
 
+const formatBundledAppendix = (id: string): string | null => {
+  const content = decodeBundledTemplate(id);
+  return content ? [`### ${id}`, "", content].join("\n") : null;
+};
+
 const buildBundledPrompt = (stage: WorkflowStageId): string | null => {
   const prompt = decodeBundledTemplate(PROMPT_TEMPLATE_IDS[stage]);
   if (!prompt) {
     return null;
   }
   const appendices = (PROMPT_APPENDIX_TEMPLATE_IDS[stage] ?? [])
-    .map((id) => decodeBundledTemplate(id))
+    .map(formatBundledAppendix)
     .filter((entry): entry is string => Boolean(entry));
   return [prompt, ...appendices].join("\n\n");
 };

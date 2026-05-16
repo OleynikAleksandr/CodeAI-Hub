@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { buildDiagramModulesManagedPrompt } from "../index";
+import {
+  buildDiagramModulesProductPartContinuationPrompt,
+  buildDiagramModulesProductPartRepairPrompt,
+} from "./diagram-modules-prompt-builder";
 
 const assertIncludes = (content: string, expected: string): void => {
   assert.equal(content.includes(expected), true);
@@ -46,4 +50,43 @@ test("diagram modules managed prompt embeds upstream sources and target artifact
   assertIncludes(prompt, "Система управляет проектами");
   assertIncludes(prompt, "### virtual-simulation.md");
   assertIncludes(prompt, "## Сценарий 1");
+  assertIncludes(prompt, "## Embedded artifact contract templates");
+  assertIncludes(prompt, "### product-parts-index-template");
+  assertIncludes(prompt, "### product-part-template");
+  assertIncludes(prompt, "### diagram-modules-field-reference");
+  assertIncludes(prompt, "### diagram-modules-merge-rules");
+  assertIncludes(prompt, "Canonical authoring rules:");
+  assertIncludes(prompt, "| Part ID | `example-local-runtime` |");
+  assertIncludes(prompt, "Fields in `product-parts.index.md`");
+});
+
+test("diagram modules continuation prompt embeds product part artifact contract", () => {
+  const prompt = buildDiagramModulesProductPartContinuationPrompt({
+    acceptedPartIds: [],
+    currentPartId: "project-manager",
+    expectedArtifactPath:
+      ".codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md",
+  });
+
+  assertIncludes(prompt, "### product-part-template");
+  assertIncludes(prompt, "### diagram-modules-field-reference");
+  assertIncludes(prompt, "Identity table must include Part ID");
+});
+
+test("diagram modules repair prompt embeds the target artifact contract", () => {
+  const productPartRepair = buildDiagramModulesProductPartRepairPrompt({
+    currentPartId: "project-manager",
+    diagnostics: ["Missing required field: part_id"],
+    workspaceSlug: "demo-workspace",
+  });
+  const indexRepair = buildDiagramModulesProductPartRepairPrompt({
+    currentPartId: null,
+    diagnostics: ["Diagram Modules index does not declare Product Part ids."],
+    workspaceSlug: "demo-workspace",
+  });
+
+  assertIncludes(productPartRepair, "### product-part-template");
+  assertIncludes(productPartRepair, "Missing required field: part_id");
+  assertIncludes(indexRepair, "### product-parts-index-template");
+  assertIncludes(indexRepair, "Every entry uses `### Product Part: <part-id>`");
 });

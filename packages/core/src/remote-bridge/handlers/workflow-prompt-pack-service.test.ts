@@ -15,6 +15,8 @@ const CORE_RUNTIME_LANGUAGE_RE =
   /Workflow runtime language contract:[\s\S]*Chat language code: `ru`/u;
 const PRODUCT_PART_ARTIFACT_RE = /### Product Part: core-runtime/u;
 const PRODUCT_PARTS_INDEX_RE = /### product-parts\.index\.md/u;
+const DIAGRAM_INDEX_TEMPLATE_RE = /### product-parts-index-template/u;
+const DIAGRAM_PART_TEMPLATE_RE = /### product-part-template/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -118,6 +120,10 @@ test("Core workflow prompt pack targets every workflow stage without PM rules", 
         `.codeai-hub/${WORKSPACE_SLUG}/${target}`
       );
       assert.match(promptPack.content, ARTIFACT_MODE_RE);
+      if (stage === "diagram_modules") {
+        assert.match(promptPack.content, DIAGRAM_INDEX_TEMPLATE_RE);
+        assert.match(promptPack.content, DIAGRAM_PART_TEMPLATE_RE);
+      }
     }
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

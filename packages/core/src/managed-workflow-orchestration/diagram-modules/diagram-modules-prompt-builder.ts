@@ -1,3 +1,5 @@
+import { BUNDLED_TEMPLATE_SOURCES } from "../../templates/bundled-templates";
+
 export interface DiagramModulesPromptSource {
   readonly absolutePath: string;
   readonly content: string;
@@ -27,6 +29,51 @@ const buildTargetPaths = (workspaceSlug: string): readonly string[] => [
   `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
   `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/<part-id>.md`,
   `.codeai-hub/${workspaceSlug}/diagram_modules/module-map.flow.json`,
+];
+
+const DIAGRAM_MODULES_ARTIFACT_CONTRACT_TEMPLATE_IDS = [
+  "product-parts-index-template",
+  "product-part-template",
+  "diagram-modules-field-reference",
+  "diagram-modules-merge-rules",
+] as const;
+
+const PRODUCT_PART_TURN_TEMPLATE_IDS = [
+  "product-part-template",
+  "diagram-modules-field-reference",
+  "diagram-modules-merge-rules",
+] as const;
+
+const INDEX_TURN_TEMPLATE_IDS = [
+  "product-parts-index-template",
+  "diagram-modules-field-reference",
+  "diagram-modules-merge-rules",
+] as const;
+
+const decodeBundledTemplate = (id: string): string => {
+  const source = BUNDLED_TEMPLATE_SOURCES.find((entry) => entry.id === id);
+  if (!source) {
+    throw new Error(`Missing bundled Diagram Modules template: ${id}`);
+  }
+  return Buffer.from(source.base64, "base64").toString("utf8").trim();
+};
+
+const formatEmbeddedTemplate = (id: string): readonly string[] => [
+  `### ${id}`,
+  "",
+  "```md",
+  decodeBundledTemplate(id),
+  "```",
+];
+
+const buildEmbeddedArtifactContract = (
+  templateIds: readonly string[]
+): readonly string[] => [
+  "## Embedded artifact contract templates",
+  "",
+  "The following templates and field references are part of this prompt. Use this inline text as the authoritative artifact contract; do not search for template files on disk.",
+  "",
+  ...templateIds.flatMap(formatEmbeddedTemplate),
 ];
 
 const formatSource = (source: DiagramModulesPromptSource): string =>
@@ -72,6 +119,10 @@ export const buildDiagramModulesManagedPrompt = (
     "- `product-parts/<part-id>.md` describes each Product Part with clusters, modules, responsibilities, and dependencies.",
     "- `module-map.flow.json` is a layout/view sidecar only; Markdown artifacts remain semantic SSOT.",
     "",
+    ...buildEmbeddedArtifactContract(
+      DIAGRAM_MODULES_ARTIFACT_CONTRACT_TEMPLATE_IDS
+    ),
+    "",
     "## Runtime workspace",
     "",
     `Workspace slug: \`${options.workspaceSlug}\``,
@@ -101,6 +152,9 @@ export const buildDiagramModulesProductPartContinuationPrompt = (
     "Do not edit accepted Product Parts unless Core explicitly names them in this message.",
     "Do not create or update any other Product Part file in this turn.",
     "Do not continue to the next Product Part by yourself.",
+    "",
+    ...buildEmbeddedArtifactContract(PRODUCT_PART_TURN_TEMPLATE_IDS),
+    "",
     "When ready, stop with a content-readiness note for Core validation.",
   ].join("\n");
 
@@ -127,6 +181,12 @@ export const buildDiagramModulesProductPartRepairPrompt = (
           "",
         ]
       : []),
+    ...buildEmbeddedArtifactContract(
+      options.currentPartId
+        ? PRODUCT_PART_TURN_TEMPLATE_IDS
+        : INDEX_TURN_TEMPLATE_IDS
+    ),
+    "",
     "Do not edit accepted Product Parts.",
     "Do not continue to the next Product Part by yourself.",
   ].join("\n");
