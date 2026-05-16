@@ -21,9 +21,28 @@ const hasNonEmptyStringArray = (
 
 const STACK_PLACEHOLDER_RE =
   /pending|placeholder|tbd|todo|unknown|unresolved|not selected|not chosen|ожида|не\s+выбран|не\s+выбрано|не\s+определ|не\s+зафикс|уточн/iu;
+const FRAMEWORK_DECISION_QUESTION_RE =
+  /framework|frontend|front-end|ui|desktop|shell|launcher|webview|electron|cef|react|vue|svelte|angular|next|vite|фреймворк|фронтенд|интерфейс|оболоч|лаунчер|десктоп|вебвью/iu;
 
-const hasOpenQuestions = (mapJson: Record<string, unknown>): boolean =>
-  Array.isArray(mapJson.openQuestions) && mapJson.openQuestions.length > 0;
+const collectQuestionText = (entry: unknown): string => {
+  if (typeof entry === "string") {
+    return entry;
+  }
+  if (!isRecord(entry)) {
+    return "";
+  }
+  return Object.values(entry)
+    .filter((value): value is string => typeof value === "string")
+    .join(" ");
+};
+
+const hasFrameworkDecisionQuestion = (
+  mapJson: Record<string, unknown>
+): boolean =>
+  Array.isArray(mapJson.openQuestions) &&
+  mapJson.openQuestions.some((entry) =>
+    FRAMEWORK_DECISION_QUESTION_RE.test(collectQuestionText(entry))
+  );
 
 const findPlaceholderStackEntries = (
   stack: Record<string, unknown>,
@@ -42,14 +61,14 @@ const validateStack = (mapJson: Record<string, unknown>): readonly string[] => {
     return ["missing_foundation_field: stack"];
   }
   const errors: string[] = [];
-  const unresolvedQuestionsExist = hasOpenQuestions(mapJson);
+  const frameworkQuestionExists = hasFrameworkDecisionQuestion(mapJson);
   for (const key of ["languages", "runtimes"]) {
     if (!hasNonEmptyStringArray(stack, key)) {
       errors.push(`missing_foundation_field: stack.${key}`);
     }
   }
   if (
-    !(unresolvedQuestionsExist || hasNonEmptyStringArray(stack, "frameworks"))
+    !(frameworkQuestionExists || hasNonEmptyStringArray(stack, "frameworks"))
   ) {
     errors.push("missing_foundation_field: stack.frameworks");
   }

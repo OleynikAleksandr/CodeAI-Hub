@@ -40,6 +40,8 @@ const REQUIRED_SECTION_RE =
 const UNSAFE_PATH_SEGMENT_RE = /(^|\/)\.\.(\/|$)/u;
 const MARKDOWN_ACCEPTED_TRUE_RE = /\baccepted\s*:\s*true\b/iu;
 const MARKDOWN_MATERIALIZED_TRUE_RE = /\bmaterialized\s*:\s*true\b/iu;
+const MARKDOWN_UNRESOLVED_FRAMEWORK_RE =
+  /^.*frameworks?.*(?:не\s+зафикс|не\s+выбран|не\s+выбрано|not\s+(?:selected|fixed|chosen)|pending|tbd|unknown|unresolved).*$/imu;
 
 const relativeApplicationSkeletonPath = (
   workspaceSlug: string,
@@ -208,27 +210,34 @@ const validateRelativePath = (value: string): string | null => {
   return null;
 };
 
+const validateDraftMarkdown = (markdown: string | null): readonly string[] => {
+  if (!markdown) {
+    return ["missing_markdown"];
+  }
+  const errors: string[] = [];
+  if (!APPLICATION_SKELETON_TITLE_RE.test(markdown)) {
+    errors.push("markdown_wrong_stage");
+  }
+  if (!REQUIRED_SECTION_RE.test(markdown)) {
+    errors.push("markdown_missing_required_section");
+  }
+  if (MARKDOWN_ACCEPTED_TRUE_RE.test(markdown)) {
+    errors.push("markdown_premature_acceptance");
+  }
+  if (MARKDOWN_MATERIALIZED_TRUE_RE.test(markdown)) {
+    errors.push("markdown_premature_materialization");
+  }
+  if (MARKDOWN_UNRESOLVED_FRAMEWORK_RE.test(markdown)) {
+    errors.push("markdown_unresolved_framework_decision");
+  }
+  return errors;
+};
+
 const validateDraftShape = (params: {
   readonly mapJson: Record<string, unknown> | null;
   readonly markdown: string | null;
 }): readonly string[] => {
-  const errors: string[] = [];
-  if (params.markdown) {
-    if (!APPLICATION_SKELETON_TITLE_RE.test(params.markdown)) {
-      errors.push("markdown_wrong_stage");
-    }
-    if (!REQUIRED_SECTION_RE.test(params.markdown)) {
-      errors.push("markdown_missing_required_section");
-    }
-    if (MARKDOWN_ACCEPTED_TRUE_RE.test(params.markdown)) {
-      errors.push("markdown_premature_acceptance");
-    }
-    if (MARKDOWN_MATERIALIZED_TRUE_RE.test(params.markdown)) {
-      errors.push("markdown_premature_materialization");
-    }
-  } else {
-    errors.push("missing_markdown");
-  }
+  const errors: string[] = [...validateDraftMarkdown(params.markdown)];
   if (!params.mapJson) {
     return errors;
   }
