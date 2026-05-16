@@ -34,6 +34,12 @@ const NO_REVISION_DISPOSITION =
   "not-created-user-accepted-without-review-revision";
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const FENCED_JSON_END_RE = /\s*```$/u;
+const LOCKFILES_BY_PACKAGE_MANAGER: Record<string, readonly string[]> = {
+  bun: ["bun.lock", "bun.lockb"],
+  npm: ["package-lock.json", "npm-shrinkwrap.json"],
+  pnpm: ["pnpm-lock.yaml"],
+  yarn: ["yarn.lock"],
+};
 const TSCONFIG_RE = /^tsconfig(?:\..+)?\.json$/u;
 
 export interface ManagedPlanState {
@@ -338,6 +344,16 @@ const collectCodePathsFromNode = (node: Record<string, unknown>): string[] => {
   return paths;
 };
 
+const readStringArray = (
+  value: Record<string, unknown> | null,
+  key: string
+): readonly string[] => {
+  const raw = value?.[key];
+  return Array.isArray(raw)
+    ? raw.filter((entry): entry is string => typeof entry === "string")
+    : [];
+};
+
 export const collectMaterializedPaths = (
   mapJson: Record<string, unknown> | null
 ): readonly string[] => {
@@ -361,7 +377,29 @@ export const collectMaterializedPaths = (
   return Array.from(new Set([...direct, ...codePaths, ...sourceRoot]));
 };
 
-export const collectRootConfigPaths = async (
+export const collectFoundationPaths = async (
+  workspaceRoot: string,
+  mapJson: Record<string, unknown> | null
+): Promise<readonly string[]> => {
+  const foundation = isRecord(mapJson?.projectFoundation)
+    ? mapJson.projectFoundation
+    : null;
+  const packageManager =
+    typeof mapJson?.packageManager === "string"
+      ? mapJson.packageManager.toLowerCase()
+      : "";
+  return Array.from(
+    new Set([
+      "package.json",
+      ...(LOCKFILES_BY_PACKAGE_MANAGER[packageManager] ?? []),
+      ...readStringArray(foundation, "configFiles"),
+      ...readStringArray(foundation, "firstWaveEntrypoints"),
+      ...(await collectRootConfigPaths(workspaceRoot)),
+    ])
+  );
+};
+
+const collectRootConfigPaths = async (
   workspaceRoot: string
 ): Promise<readonly string[]> => {
   const entries = await readdir(workspaceRoot).catch(() => []);

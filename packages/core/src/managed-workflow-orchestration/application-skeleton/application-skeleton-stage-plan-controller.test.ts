@@ -94,12 +94,20 @@ const createMaterializedDecision =
       materialized: true,
       materializationState: "materialized",
       materializedPaths: ["product-parts/core-runtime"],
+      openQuestions: [],
+      packageManager: "npm",
       productParts: [
         {
           partId: "core-runtime",
           codePath: "product-parts/core-runtime",
         },
       ],
+      projectFoundation: {
+        configFiles: ["tsconfig.json"],
+        firstWaveEntrypoints: ["product-parts/core-runtime/src/index.ts"],
+        installCommand: "npm ci",
+        requiredScripts: ["build", "lint"],
+      },
       reviewState: "materialized",
       sourceRoot: "product-parts",
     },
@@ -210,6 +218,18 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
     );
     await writeWorkspaceFile(
       workspaceRoot,
+      "product-parts/core-runtime/src/index.ts",
+      "export {};\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "package.json",
+      '{"scripts":{"build":"tsc","lint":"biome check ."}}\n'
+    );
+    await writeWorkspaceFile(workspaceRoot, "package-lock.json", "{}\n");
+    await writeWorkspaceFile(workspaceRoot, "tsconfig.json", "{}\n");
+    await writeWorkspaceFile(
+      workspaceRoot,
       APPLICATION_MARKDOWN_PATH,
       [
         "# Application Skeleton",
@@ -248,6 +268,10 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
         "--short",
         "--",
         "product-parts/core-runtime/README.md",
+        "product-parts/core-runtime/src/index.ts",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json",
       ]),
       ""
     );

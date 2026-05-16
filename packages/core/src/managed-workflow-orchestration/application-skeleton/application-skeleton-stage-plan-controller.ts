@@ -6,8 +6,8 @@ import {
   appendMaterializationStep,
   buildContractArtifactPaths,
   buildMaterializeTaskId,
+  collectFoundationPaths,
   collectMaterializedPaths,
-  collectRootConfigPaths,
   DRAFT_COMMIT_MESSAGE,
   DRAFT_TASK_ID,
   MATERIALIZE_COMMIT_MESSAGE,
@@ -324,16 +324,19 @@ export class ApplicationSkeletonStagePlanController {
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
   }): Promise<readonly string[]> {
-    const rootConfigPaths =
+    const foundationPaths =
       params.decision.phase === "materialization"
-        ? await collectRootConfigPaths(params.workspaceRoot)
+        ? await collectFoundationPaths(
+            params.workspaceRoot,
+            params.decision.mapJson
+          )
         : [];
     return uniqueExistingPaths(params.workspaceRoot, [
       WORKSPACE_PLAN_PATH,
       APPLICATION_STAGE_PLAN_PATH,
       ...buildContractArtifactPaths(params.workspaceSlug),
       `.codeai-hub/${params.workspaceSlug}/workflow/managed/application_skeleton.json`,
-      ...rootConfigPaths,
+      ...foundationPaths,
       ...(params.decision.phase === "materialization"
         ? collectMaterializedPaths(params.decision.mapJson)
         : []),

@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "b3a02274e",
+  "lastRecordedCommit": "835fa20e8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase2.materialized-validator.task1",
-  "expectedCommitMessage": "feat: validate materialized application skeleton foundation",
+  "currentTaskId": "app-skeleton-foundation.phase3.stage-plan.task1",
+  "expectedCommitMessage": "feat: track application skeleton foundation materialization paths",
   "debt": {
-    "expectedCommitMessage": "feat: validate materialized application skeleton foundation",
-    "preCommitHead": "b3a02274e",
+    "expectedCommitMessage": "feat: track application skeleton foundation materialization paths",
+    "preCommitHead": "835fa20e8",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase2.materialized-validator.task1"
+    "taskId": "app-skeleton-foundation.phase3.stage-plan.task1"
   }
 }
 ```
@@ -72,14 +72,14 @@
 ### Stream: Materialized Foundation Completeness
 
 9. [DONE] `app-skeleton-foundation.phase2.materialized-validator.task1` Extend materialization validation so `materialized: true` requires deterministic install metadata, package/workspace metadata, TypeScript config when TypeScript is selected, build/typecheck/smoke scripts where applicable, and real minimal source/facade entrypoints for the selected implementation wave (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.test.ts, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `feat: validate materialized application skeleton foundation`).
-10. [PENDING] Git Commit: `feat: validate materialized application skeleton foundation` (hash: TBD)
+10. [DONE] Git Commit: `feat: validate materialized application skeleton foundation` (hash: 835fa20e8)
 
 ## Phase 3 — Managed Materialization Boundary (owner: Codex, updated: 2026-05-16)
 
 ### Stream: Commit Scope And Stage Plan
 
-11. [TODO] `app-skeleton-foundation.phase3.stage-plan.task1` Expand Application Skeleton materialization stage-plan scope and managed-path collection to include accepted project foundation files such as package manifests, lockfiles, tsconfig/build configs, minimal source entrypoints, and Product Part package roots without granting Quality Gates ownership (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `feat: track application skeleton foundation materialization paths`).
-12. [TODO] Git Commit: `feat: track application skeleton foundation materialization paths` (hash: TBD)
+11. [DONE] `app-skeleton-foundation.phase3.stage-plan.task1` Expand Application Skeleton materialization stage-plan scope and managed-path collection to include accepted project foundation files such as package manifests, lockfiles, tsconfig/build configs, minimal source entrypoints, and Product Part package roots without granting Quality Gates ownership (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `feat: track application skeleton foundation materialization paths`).
+12. [PENDING] Git Commit: `feat: track application skeleton foundation materialization paths` (hash: TBD)
 
 ### Stream: Downstream Readiness Gates
 
