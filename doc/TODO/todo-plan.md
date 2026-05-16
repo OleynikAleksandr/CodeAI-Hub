@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "cee2b4af5",
+  "lastRecordedCommit": "af6101ca1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "managed-git-checkpoint.phase72.release-docs.task1",
-  "expectedCommitMessage": "docs: prepare release 272 managed git checkpoint repair",
+  "currentTaskId": "managed-git-checkpoint.phase72.build-all.task1",
+  "expectedCommitMessage": "chore: build release 272 managed git checkpoint repair",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 272 managed git checkpoint repair",
-    "preCommitHead": "cee2b4af5",
+    "expectedCommitMessage": "chore: build release 272 managed git checkpoint repair",
+    "preCommitHead": "af6101ca1",
     "stage": "commit_pending",
-    "taskId": "managed-git-checkpoint.phase72.release-docs.task1"
+    "taskId": "managed-git-checkpoint.phase72.build-all.task1"
   }
 }
 ```
@@ -1306,12 +1306,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Release Metadata
 
 320. [DONE] `managed-git-checkpoint.phase72.release-docs.task1` Update release-facing docs for future version `1.2.272` before build scripts mutate package versions, including the managed Git checkpoint and ledger-boundary fix summary (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 272 managed git checkpoint repair`). Evidence: current package version before release scripts is `1.2.271`; release-facing docs prepared for future version `1.2.272` with managed workflow input checkpoint, Core-owned ledger commit, and downstream Application Skeleton / Quality Gates / development tree transition notes.
-321. [PENDING] Git Commit: `docs: prepare release 272 managed git checkpoint repair` (hash: TBD)
+321. [DONE] Git Commit: `docs: prepare release 272 managed git checkpoint repair` (hash: af6101ca1)
 
 ### Stream: Runtime Build
 
-322. [TODO] `managed-git-checkpoint.phase72.build-all.task1` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 272 managed git checkpoint repair`).
-323. [TODO] Git Commit: `chore: build release 272 managed git checkpoint repair` (hash: TBD)
+322. [DONE] `managed-git-checkpoint.phase72.build-all.task1` Run `./scripts/build-all.sh`, capture generated version/tarball evidence, and record release handoff details in this plan (scope: `assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, package.json, package-lock.json, packages/*/package.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 272 managed git checkpoint repair`). Evidence: `./scripts/build-all.sh --allow-dirty` — PASS. Dirty tree allowance was limited to the active `doc/TODO/todo-plan.md` post-commit task transition before build start. Unified version after build: `1.2.272`. Runtime tarballs staged in `doc/tmp/releases/`: `claude-module-1.2.272.tar.bz2`, `codex-module-1.2.272.tar.bz2`, `gemini-module-1.2.272.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.272.tar.bz2`, `vscode-webview-1.2.272.tar.bz2`, `project-manager-1.2.272.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.272.tar.bz2`.
+323. [PENDING] Git Commit: `chore: build release 272 managed git checkpoint repair` (hash: TBD)
 
 ### Stream: VSIX Package
 
