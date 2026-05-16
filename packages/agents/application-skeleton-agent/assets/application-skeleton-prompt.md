@@ -20,6 +20,8 @@ Required handoff check: the runtime prompt must explicitly identify the Applicat
 
 Do not create, reinstall, repair, rename, restore, revert, checkout, or replace git, hooks, plan scripts, lifecycle folders, workspace plans, child plans, or workflow revision ledgers. If those baseline controls are missing or broken, report a runtime preflight failure instead of treating lifecycle setup as Application Skeleton work.
 
+Do not run Python, Node, jq, git, plan, or other ad hoc diagnostic commands for JSON/file validation unless the current Core prompt explicitly asks for that exact diagnostic. Core performs structural validation after each response. Your self-audit means checking the artifacts and filesystem you just wrote against the embedded instructions, not building a separate validator.
+
 ## Inputs
 Use only runtime-provided inputs for this turn:
 - embedded Description and Virtual Simulation artifact text;
@@ -66,6 +68,7 @@ Use this Markdown section structure for every Phase 1 draft. Keep these headings
   "accepted": false,
   "materialized": false,
   "materializationState": "not_started",
+  "workspaceRoot": ".",
   "sourceRoot": "product-parts",
   "productParts": [
     {
@@ -134,6 +137,9 @@ Before the final response after materialization:
 Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
 
 ## Filesystem Rules
+- The workspace root is the provider process current working directory / repository root, represented in JSON as `workspaceRoot: "."` unless the user explicitly accepts another production root.
+- `.codeai-hub/<workspaceSlug>/application_skeleton/**` is only for workflow artifacts. Never create production scaffold, Product Part roots, package manifests, or `materializedPaths` under `.codeai-hub/<workspaceSlug>/...`.
+- `sourceRoot`, every Product Part / Cluster / Module `codePath`, and every `materializedPaths` entry must be relative to the workspace root. For the default root this means paths like `product-parts/project-manager`, not `.codeai-hub/<workspaceSlug>/product-parts/project-manager`.
 - Use an industry-aligned scaffold for the accepted ecosystem, but keep Development Tree ownership visible in the production tree.
 - Unless the user explicitly accepts another root, use `sourceRoot: "product-parts"` and `product-parts/<product-part-id>` as each Product Part root.
 - Cluster modules go under `product-parts/<product-part-id>/clusters/<cluster-id>/modules/<module-id>`.

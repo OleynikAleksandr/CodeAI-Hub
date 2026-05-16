@@ -28,6 +28,8 @@ const NO_LIFECYCLE_REPAIR_RE =
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
 const PLAN_STATUS_COMMAND_RE = /npm run plan:status/;
+const NO_AD_HOC_DIAGNOSTICS_RE =
+  /Do not run Python, Node, jq, git, plan, or other ad hoc diagnostic commands/;
 const DO_NOT_START_WITH_STACK_QUESTIONS_RE =
   /Do not start with blank-choice questions about language, framework, repo shape, or package manager/;
 const RECOMMENDED_BASELINE_RE =
@@ -58,6 +60,11 @@ const NO_STACK_DETAIL_LOOP_RE =
   /do not open a new question loop about how to apply that chosen baseline/;
 const PRODUCTION_SOURCE_ROOT_RE =
   /Never use `\.codeai-hub\/\.\.\.` as `sourceRoot` or production `codePath`/;
+const WORKSPACE_ROOT_CURRENT_DIRECTORY_RE =
+  /workspace root is the provider process current working directory \/ repository root/;
+const WORKSPACE_ROOT_JSON_RE = /workspaceRoot: "\."/;
+const NO_CODEAI_HUB_PRODUCTION_ROOT_RE =
+  /Never create production scaffold, Product Part roots, package manifests, or `materializedPaths` under `\.codeai-hub\/<workspaceSlug>\/\.\.\.`/;
 const CLUSTERED_MODULE_PATH_RE = /clusters\/<cluster-id>\/modules\/<module-id>/;
 const PRODUCT_PARTS_ROOT_RE = /product-parts\/<product-part-id>/;
 const SOURCE_ROOT_PRODUCT_PARTS_RE = /sourceRoot: "product-parts"/;
@@ -122,6 +129,7 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.doesNotMatch(prompt, WORKSPACE_PLAN_PATH_RE);
   assert.doesNotMatch(prompt, PLAN_STATUS_COMMAND_RE);
+  assert.match(prompt, NO_AD_HOC_DIAGNOSTICS_RE);
   assert.match(prompt, DO_NOT_START_WITH_STACK_QUESTIONS_RE);
   assert.match(prompt, RECOMMENDED_BASELINE_RE);
   assert.match(prompt, TECHNOLOGY_HINTS_RE);
@@ -141,6 +149,9 @@ test("application skeleton bundled prompt requires draft and post-acceptance mat
   assert.match(prompt, USER_STACK_REPLACEMENT_RE);
   assert.match(prompt, NO_STACK_DETAIL_LOOP_RE);
   assert.match(prompt, PRODUCTION_SOURCE_ROOT_RE);
+  assert.match(prompt, WORKSPACE_ROOT_CURRENT_DIRECTORY_RE);
+  assert.match(prompt, WORKSPACE_ROOT_JSON_RE);
+  assert.match(prompt, NO_CODEAI_HUB_PRODUCTION_ROOT_RE);
   assert.match(prompt, CLUSTERED_MODULE_PATH_RE);
   assert.match(prompt, PRODUCT_PARTS_ROOT_RE);
   assert.match(prompt, SOURCE_ROOT_PRODUCT_PARTS_RE);

@@ -8,15 +8,15 @@
   "planId": "preliminary-and-diagram-modules-runtime-orchestration-2026-05-15",
   "branch": "codex/managed-orchestration-rewrite",
   "baseHead": "652a4b821",
-  "lastRecordedCommit": "124dcfaa2",
+  "lastRecordedCommit": "0695ff44e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Managed_Step_Orchestration/Preliminary_And_Diagram_Modules_Runtime_Orchestration_Planning_RU.md",
-  "currentTaskId": "application-skeleton-retouch.phase77.running-state.task1",
-  "expectedCommitMessage": "fix: mark active application skeleton sessions in progress",
+  "currentTaskId": "application-skeleton-retouch.phase77.prompt-root.task1",
+  "expectedCommitMessage": "fix: clarify application skeleton production root prompt",
   "debt": {
-    "expectedCommitMessage": "fix: mark active application skeleton sessions in progress",
-    "preCommitHead": "124dcfaa2",
+    "expectedCommitMessage": "fix: clarify application skeleton production root prompt",
+    "preCommitHead": "0695ff44e",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-retouch.phase77.running-state.task1"
+    "taskId": "application-skeleton-retouch.phase77.prompt-root.task1"
   }
 }
 ```
@@ -1383,12 +1383,12 @@ Verification evidence recorded 2026-05-16:
 ### Stream: Core Running State Projection
 
 345. [DONE] `application-skeleton-retouch.phase77.running-state.task1` Promote Core workflow state to `in_progress` from active continuity chains so Application Skeleton shows a yellow/progress marker immediately after session creation, before artifacts exist (scope: `packages/core/src/remote-bridge/handlers/workflow-state-continuity-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: mark active application skeleton sessions in progress`). Evidence: `node --test --import tsx packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts` — PASS, 4 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Regression proves a persisted `application_skeleton` continuity chain with a provider segment promotes the Core workflow stage to `in_progress` before draft artifacts exist.
-346. [PENDING] Git Commit: `fix: mark active application skeleton sessions in progress` (hash: TBD)
+346. [DONE] Git Commit: `fix: mark active application skeleton sessions in progress` (hash: 0695ff44e)
 
 ### Stream: Prompt Materialization Root Contract
 
-347. [TODO] `application-skeleton-retouch.phase77.prompt-root.task1` Tighten Application Skeleton prompt/templates so production scaffold paths are always workspace-root relative and `.codeai-hub/**` is only for workflow artifacts, with no ad hoc Python/file diagnostics unless explicitly requested by Core (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/application-skeleton-bundled-templates.test.ts`; expected commit: `fix: clarify application skeleton production root prompt`).
-348. [TODO] Git Commit: `fix: clarify application skeleton production root prompt` (hash: TBD)
+347. [DONE] `application-skeleton-retouch.phase77.prompt-root.task1` Tighten Application Skeleton prompt/templates so production scaffold paths are always workspace-root relative and `.codeai-hub/**` is only for workflow artifacts, with no ad hoc Python/file diagnostics unless explicitly requested by Core (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/application-skeleton-bundled-templates.test.ts`; expected commit: `fix: clarify application skeleton production root prompt`). Evidence: `node --test --import tsx packages/core/src/templates/application-skeleton-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts` — PASS, 9 tests; `npm run build --workspace=@codeai-hub/core` — PASS. Prompt now states that `workspaceRoot` is `.` by default, production `codePath`/`materializedPaths` are workspace-root relative, `.codeai-hub/**` is workflow-artifact-only, and ad hoc Python/Node/jq diagnostics are disallowed unless Core explicitly requests them.
+348. [PENDING] Git Commit: `fix: clarify application skeleton production root prompt` (hash: TBD)
 
 ### Stream: Verification
 
