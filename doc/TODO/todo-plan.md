@@ -8,15 +8,15 @@
   "planId": "application-skeleton-project-foundation-implementation-2026-05-16",
   "branch": "main",
   "baseHead": "da6d1ba50",
-  "lastRecordedCommit": "373a4048e",
+  "lastRecordedCommit": "a37fb22a5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md",
-  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.task1",
-  "expectedCommitMessage": "fix: complete diagram modules review confirmation",
+  "currentTaskId": "app-skeleton-foundation.phase7.diagram-review.task2",
+  "expectedCommitMessage": "fix: intercept diagram modules review confirmation",
   "debt": {
-    "expectedCommitMessage": "fix: complete diagram modules review confirmation",
-    "preCommitHead": "373a4048e",
+    "expectedCommitMessage": "fix: intercept diagram modules review confirmation",
+    "preCommitHead": "a37fb22a5",
     "stage": "commit_pending",
-    "taskId": "app-skeleton-foundation.phase7.diagram-review.task1"
+    "taskId": "app-skeleton-foundation.phase7.diagram-review.task2"
   }
 }
 ```
@@ -313,9 +313,10 @@
 
 139. [DONE] `app-skeleton-foundation.phase7.diagram-review.task1` Add Diagram Modules stage-plan acceptance so user `подтверждаю` creates the persistent `User Return And Revisions` phase, marks Diagram Modules complete, and unlocks Application Skeleton without dispatching the confirmation to the agent (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete diagram modules review confirmation`).
    - Verification (2026-05-16): `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts` passed; `npm run build --workspace @codeai-hub/core` passed.
-140. [PENDING] Git Commit: `fix: complete diagram modules review confirmation` (hash: TBD)
-141. [TODO] `app-skeleton-foundation.phase7.diagram-review.task2` Route Diagram Modules user-review acceptance through Core, emit the persistent return message, and add session-action regressions proving `подтверждаю` is intercepted instead of sent to the agent (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: intercept diagram modules review confirmation`).
-142. [TODO] Git Commit: `fix: intercept diagram modules review confirmation` (hash: TBD)
+140. [DONE] Git Commit: `fix: complete diagram modules review confirmation` (hash: a37fb22a5)
+141. [DONE] `app-skeleton-foundation.phase7.diagram-review.task2` Route Diagram Modules user-review acceptance through Core, emit the persistent return message, and add session-action regressions proving `подтверждаю` is intercepted instead of sent to the agent (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: intercept diagram modules review confirmation`).
+   - Verification (2026-05-16): `npx ultracite check packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts` passed; `npm run build --workspace @codeai-hub/core` passed.
+142. [PENDING] Git Commit: `fix: intercept diagram modules review confirmation` (hash: TBD)
 143. [TODO] `app-skeleton-foundation.phase7.diagram-review.release-confirmation.task8` Stop after green verification and ask the user for explicit confirmation before building the next patched release. Scope: release confirmation only; expected commit: none.
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-16)

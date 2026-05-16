@@ -11,6 +11,11 @@ import {
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent";
 import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
 import {
+  acceptDiagramModulesReviewWithoutRevision,
+  isDiagramModulesReviewOpen,
+} from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
+import { buildManagedPersistentReturnHandoffMessage } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
+import {
   buildQualityGatesBoundaryBlockedMessage,
   buildQualityGatesIntegrationPrompt,
   buildQualityGatesReviewRevisionPrompt,
@@ -47,6 +52,7 @@ interface ManagedReviewDecisionDeps {
 }
 
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
+const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const QUALITY_GATES_STAGE = "quality_gates";
 const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
@@ -122,6 +128,14 @@ export class SessionRequestHandlerManagedReviewDecisions {
     ) {
       return true;
     }
+    if (
+      await this.handleDiagramModulesReviewDecision({
+        ...options,
+        intent: classifyManagedReviewIntent(options.content),
+      })
+    ) {
+      return true;
+    }
     return this.handleQualityGatesReviewDecision({
       ...options,
       intent: classifyManagedReviewIntent(options.content),
@@ -159,6 +173,31 @@ export class SessionRequestHandlerManagedReviewDecisions {
       options.session,
       options.content
     );
+    return true;
+  }
+
+  private async handleDiagramModulesReviewDecision(
+    options: ManagedReviewDecisionOptions & {
+      readonly intent: ManagedReviewIntent;
+    }
+  ): Promise<boolean> {
+    if (
+      !(
+        options.session.stage === DIAGRAM_MODULES_STAGE &&
+        options.session.workspacePath &&
+        options.session.initiativeSlug
+      )
+    ) {
+      return false;
+    }
+    if (!(await isDiagramModulesReviewOpen(options.session.workspacePath))) {
+      return false;
+    }
+    if (options.intent !== "accept") {
+      return false;
+    }
+    this.appendUserReviewMessage(options);
+    await this.completeDiagramModulesReview(options.session);
     return true;
   }
 
@@ -258,6 +297,29 @@ export class SessionRequestHandlerManagedReviewDecisions {
       tag: "managed-workflow-continuation",
     });
     await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
+  }
+
+  private async completeDiagramModulesReview(session: Session): Promise<void> {
+    if (!(session.workspacePath && session.initiativeSlug)) {
+      return;
+    }
+    try {
+      await acceptDiagramModulesReviewWithoutRevision({
+        workspaceRoot: session.workspacePath,
+      });
+    } catch (error) {
+      this.deps.eventMessages.appendCoreMessage(session.id, {
+        content: `Core validation blocked Diagram Modules review completion:\n${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        tag: "managed-workflow-validation",
+      });
+      return;
+    }
+    this.deps.eventMessages.appendCoreMessage(session.id, {
+      content: buildManagedPersistentReturnHandoffMessage("Diagram Modules"),
+      tag: "managed-workflow-complete",
+    });
   }
 
   private async dispatchApplicationSkeletonReviewRevision(
