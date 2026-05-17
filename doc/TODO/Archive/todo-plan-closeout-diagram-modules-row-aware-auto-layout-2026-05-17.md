@@ -1,3 +1,18 @@
+# Plan Closeout: diagram-modules-row-aware-auto-layout-2026-05-17
+
+**Created:** 2026-05-17T17:40:26.242Z
+**Acceptance:** User accepted v1.2.295 visual retest on 2026-05-17: Product Part rows with adjacent Clusters and standalone Modules now fit correctly; scope can be closed.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** diagram-row-layout.phase5.closeout.task1
+**Expected Commit:** docs: close diagram row auto layout scope
+**Last Recorded Commit:** 2a7ffd7f1
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_RowAwareAutoLayout_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_RowAwareAutoLayout_Planning.md",
   "currentTaskId": "diagram-row-layout.phase5.closeout.task1",
   "expectedCommitMessage": "docs: close diagram row auto layout scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close diagram row auto layout scope",
-    "preCommitHead": "2a7ffd7f1",
-    "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase5.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -305,6 +315,7 @@
 
 ### Stream: Closeout
 
-80. [DONE] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-81. [PENDING] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+80. [IN_PROGRESS] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+81. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
 82. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+````
