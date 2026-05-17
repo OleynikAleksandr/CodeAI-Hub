@@ -5,12 +5,18 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
+import { formatManagedTerminalDirtyBlocker } from "./managed-terminal-clean-git-boundary";
 import {
   classifyManagedTerminalDirtyEntries,
   classifyManagedTerminalDirtyTree,
 } from "./managed-terminal-dirty-classifier";
 
 const WORKSPACE_SLUG = "codeai-hub-codex-5-4";
+const COMMIT_AND_FINISH_RE = /Commit and finish step/u;
+const SHOW_FILES_RE = /Show files/u;
+const MANUAL_NOTES_RE = /manual-notes\.md/u;
+const CORE_INTERNALS_RE =
+  /Core|classified|unclassified|managed terminal|dirty-tree/u;
 const execFileAsync = promisify(execFile);
 
 const git = async (
@@ -53,6 +59,30 @@ test("terminal dirty classifier treats Diagram Modules sidecars and runtime meta
   assert.deepEqual(result.unclassifiedPaths, [
     "product-parts/project-manager/src/index.ts",
   ]);
+});
+
+test("terminal dirty classifier accepts Diagram Modules sidecars when workspace slug is unresolved", () => {
+  const result = classifyManagedTerminalDirtyEntries({
+    entries: [
+      `?? .codeai-hub/${WORKSPACE_SLUG}/diagram_modules/module-map.flow.json`,
+    ],
+    stage: "diagram_modules",
+    workspaceSlug: "__unknown_workspace__",
+  });
+
+  assert.deepEqual(result.committablePaths, [
+    `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/module-map.flow.json`,
+  ]);
+  assert.deepEqual(result.unclassifiedPaths, []);
+});
+
+test("terminal dirty blocker text gives user actions without core internals", () => {
+  const message = formatManagedTerminalDirtyBlocker(["manual-notes.md"]);
+
+  assert.match(message, COMMIT_AND_FINISH_RE);
+  assert.match(message, SHOW_FILES_RE);
+  assert.match(message, MANUAL_NOTES_RE);
+  assert.doesNotMatch(message, CORE_INTERNALS_RE);
 });
 
 test("terminal dirty classifier allows application skeleton generated root files", () => {

@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "5148f8cef",
+  "lastRecordedCommit": "d3b6766ef",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase6.direct-markers.task1",
-  "expectedCommitMessage": "fix: complete direct step markers",
+  "currentTaskId": "managed-clean-markers.phase6.dirty-ux.task1",
+  "expectedCommitMessage": "fix: make dirty tree completion actionable",
   "debt": {
-    "expectedCommitMessage": "fix: complete direct step markers",
-    "preCommitHead": "5148f8cef",
+    "expectedCommitMessage": "fix: make dirty tree completion actionable",
+    "preCommitHead": "d3b6766ef",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase6.direct-markers.task1"
+    "taskId": "managed-clean-markers.phase6.dirty-ux.task1"
   }
 }
 ```
@@ -153,12 +153,13 @@
 
 32. [DONE] `managed-clean-markers.phase6.direct-markers.task1` Make Description and Virtual Simulation turn green when their next step becomes available after an active session (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete direct step markers`).
     - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts` passed.
-33. [PENDING] Git Commit: `fix: complete direct step markers` (hash: TBD)
+33. [DONE] Git Commit: `fix: complete direct step markers` (hash: d3b6766ef)
 
 ### Stream: Dirty Tree Resolution UX
 
-34. [TODO] `managed-clean-markers.phase6.dirty-ux.task1` Classify Diagram Modules flow sidecars robustly and replace terminal dirty-tree blocker text with clear user actions (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, doc/TODO/todo-plan.md`; expected commit: `fix: make dirty tree completion actionable`).
-35. [TODO] Git Commit: `fix: make dirty tree completion actionable` (hash: TBD)
+34. [DONE] `managed-clean-markers.phase6.dirty-ux.task1` Classify Diagram Modules flow sidecars robustly and replace terminal dirty-tree blocker text with clear user actions (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: make dirty tree completion actionable`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts` passed.
+35. [PENDING] Git Commit: `fix: make dirty tree completion actionable` (hash: TBD)
 
 ### Stream: Retest Fix Verification
 

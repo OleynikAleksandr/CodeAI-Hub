@@ -19,7 +19,7 @@ const USER_RETURN_STREAM_RE = /### Stream: User Return And Revisions/u;
 const DIAGRAM_COMPLETED_RE = /"completedStages": \[\n {4}"diagram_modules"/u;
 const APP_UNLOCKED_RE = /"application_skeleton"/u;
 const APP_ACTIVE_RE = /"activeStage": "application_skeleton"/u;
-const DIRTY_BLOCKED_RE = /unclassified dirty files/u;
+const DIRTY_BLOCKED_RE = /Commit and finish step/u;
 const MANUAL_NOTES_DIRTY_RE = /manual-notes\.md/u;
 const REVIEW_DISPOSITION_RE =
   /Git Commit: `docs: open diagram modules user review` \(hash: [0-9a-f]{7,}\)/u;

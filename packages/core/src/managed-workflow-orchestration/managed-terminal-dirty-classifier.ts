@@ -5,6 +5,7 @@ const execFileAsync = promisify(execFile);
 const BACKSLASH_RE = /\\/gu;
 const LEADING_DOT_SLASH_RE = /^\.\//u;
 const RENAME_SEPARATOR = " -> ";
+const CODEAI_HUB_ROOT = ".codeai-hub";
 
 export type ManagedTerminalStage =
   | "application_skeleton"
@@ -60,6 +61,25 @@ const matchesExactOrPrefix = (
       ? pathValue.startsWith(pattern)
       : pathValue === pattern
   );
+
+const STAGE_DIRECTORY_BY_STAGE: Record<ManagedTerminalStage, string> = {
+  application_skeleton: "application_skeleton",
+  diagram_modules: "diagram_modules",
+  quality_gates: "quality_gates",
+};
+
+const matchesAnyWorkspaceStageDirectory = (
+  pathValue: string,
+  stage: ManagedTerminalStage
+): boolean => {
+  const [root, workspaceSlug, stageDirectory] = pathValue.split("/");
+  return (
+    root === CODEAI_HUB_ROOT &&
+    Boolean(workspaceSlug) &&
+    workspaceSlug !== "state" &&
+    stageDirectory === STAGE_DIRECTORY_BY_STAGE[stage]
+  );
+};
 
 const resolveStageOwnedPatterns = (params: {
   readonly stage: ManagedTerminalStage;
@@ -124,6 +144,9 @@ const classifyKind = (params: {
   if (
     matchesExactOrPrefix(params.pathValue, resolveStageOwnedPatterns(params))
   ) {
+    return "stage_owned";
+  }
+  if (matchesAnyWorkspaceStageDirectory(params.pathValue, params.stage)) {
     return "stage_owned";
   }
   if (

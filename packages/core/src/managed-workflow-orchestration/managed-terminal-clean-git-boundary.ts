@@ -22,12 +22,14 @@ const resolveWorkspaceSlug = async (
   return workspaceSlugs.length === 1 ? workspaceSlugs[0] : null;
 };
 
-const formatDirtyBlocker = (paths: readonly string[]): string =>
+export const formatManagedTerminalDirtyBlocker = (
+  paths: readonly string[]
+): string =>
   [
-    "Managed terminal completion is blocked by unclassified dirty files.",
-    "Core can commit only classified managed stage, runtime, gate, or formatter residue.",
-    "Project Manager must send a Core-approved dirty-tree resolution before this step can turn green.",
+    "To finish this step, choose how to handle the files still open in Git.",
+    'Select "Commit and finish step" to save them and complete the step, or "Show files" to review them first.',
     "",
+    "Files:",
     ...paths.map((filePath) => `- ${filePath}`),
   ].join("\n");
 
@@ -50,7 +52,9 @@ export const ensureManagedTerminalGitClean = async (params: {
     return;
   }
   if (classification.unclassifiedPaths.length > 0) {
-    throw new Error(formatDirtyBlocker(classification.unclassifiedPaths));
+    throw new Error(
+      formatManagedTerminalDirtyBlocker(classification.unclassifiedPaths)
+    );
   }
   await params.gitBoundary.commitManagedChanges({
     commitMessage: TERMINAL_RESIDUE_COMMIT_MESSAGE,
@@ -65,5 +69,7 @@ export const ensureManagedTerminalGitClean = async (params: {
   if (afterCommit.clean) {
     return;
   }
-  throw new Error(formatDirtyBlocker(afterCommit.unclassifiedPaths));
+  throw new Error(
+    formatManagedTerminalDirtyBlocker(afterCommit.unclassifiedPaths)
+  );
 };
