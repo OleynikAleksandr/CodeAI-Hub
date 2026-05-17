@@ -15,6 +15,7 @@ export type ManagedTerminalStage =
 export type ManagedTerminalDirtyKind =
   | "core_runtime"
   | "gate_or_formatter_residue"
+  | "local_volatile"
   | "stage_owned"
   | "unclassified";
 
@@ -110,11 +111,16 @@ const resolveStageOwnedPatterns = (params: {
 const resolveCoreRuntimePatterns = (
   workspaceSlug: string
 ): readonly string[] => [
+  ".gitignore",
   "doc/TODO/workspace.plan.md",
   "doc/TODO/stages/",
   `.codeai-hub/${workspaceSlug}/continuity/`,
+  `.codeai-hub/${workspaceSlug}/description/description-step.json`,
   `.codeai-hub/${workspaceSlug}/workflow/state.json`,
 ];
+
+const isLocalVolatileRuntimePath = (pathValue: string): boolean =>
+  pathValue.startsWith(".codeai-hub/state/");
 
 const isGateOrFormatterResidue = (
   stage: ManagedTerminalStage,
@@ -157,6 +163,9 @@ const classifyKind = (params: {
   ) {
     return "core_runtime";
   }
+  if (isLocalVolatileRuntimePath(params.pathValue)) {
+    return "local_volatile";
+  }
   return isGateOrFormatterResidue(params.stage, params.pathValue)
     ? "gate_or_formatter_residue"
     : "unclassified";
@@ -179,14 +188,17 @@ export const classifyManagedTerminalDirtyEntries = (params: {
       }),
     }));
   const committablePaths = entries
-    .filter((entry) => entry.kind !== "unclassified")
+    .filter(
+      (entry) =>
+        entry.kind !== "local_volatile" && entry.kind !== "unclassified"
+    )
     .map((entry) => entry.path);
   const unclassifiedPaths = entries
     .filter((entry) => entry.kind === "unclassified")
     .map((entry) => entry.path);
 
   return {
-    clean: entries.length === 0,
+    clean: committablePaths.length === 0 && unclassifiedPaths.length === 0,
     committablePaths,
     entries,
     unclassifiedPaths,

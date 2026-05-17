@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
+import { DiagramModulesManagedGitBoundary } from "./diagram-modules/diagram-modules-managed-git-boundary";
 import {
+  ensureManagedTerminalGitClean,
   formatManagedTerminalAutoCommitFailure,
   formatManagedTerminalDirtyBlocker,
 } from "./managed-terminal-clean-git-boundary";
@@ -24,6 +26,7 @@ const MANUAL_NOTES_RE = /manual-notes\.md/u;
 const NO_FILE_PATH_RE = /No file path was reported/u;
 const CORE_INTERNALS_RE =
   /Core|classified|unclassified|managed terminal|dirty-tree/u;
+const LOCAL_STATE_IGNORE_RE = /\.codeai-hub\/state\//u;
 const execFileAsync = promisify(execFile);
 
 const git = async (
@@ -66,6 +69,22 @@ test("terminal dirty classifier treats Diagram Modules sidecars and runtime meta
   assert.deepEqual(result.unclassifiedPaths, [
     "product-parts/project-manager/src/index.ts",
   ]);
+});
+
+test("terminal dirty classifier treats local runtime state as volatile clean state", () => {
+  const result = classifyManagedTerminalDirtyEntries({
+    entries: ["?? .codeai-hub/state/task-timers.json"],
+    stage: "quality_gates",
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+
+  assert.equal(result.clean, true);
+  assert.deepEqual(result.committablePaths, []);
+  assert.deepEqual(result.unclassifiedPaths, []);
+  assert.deepEqual(
+    result.entries.map((entry) => entry.kind),
+    ["local_volatile"]
+  );
 });
 
 test("terminal dirty classifier accepts Diagram Modules sidecars when workspace slug is unresolved", () => {
@@ -176,6 +195,53 @@ test("terminal dirty classifier reads the current git tree", async () => {
       "doc/TODO/stages/diagram-modules/todo-plan.md",
     ]);
     assert.deepEqual(result.unclassifiedPaths, ["manual-notes.md"]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("terminal clean boundary ignores local runtime state and commits metadata gitignore", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "managed-terminal-local-state-clean-")
+  );
+  try {
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
+    await writeWorkspaceFile(workspaceRoot, "README.md", "# demo\n");
+    await writeWorkspaceFile(workspaceRoot, ".gitignore", "node_modules/\n");
+    await git(workspaceRoot, ["add", "."]);
+    await git(workspaceRoot, ["commit", "-m", "test: initial"]);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".codeai-hub/state/task-timers.json",
+      '{"schemaVersion":2,"totals":{"quality_gates":10}}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`,
+      '{"workspaceSlug":"codeai-hub-codex-5-4"}\n'
+    );
+
+    await ensureManagedTerminalGitClean({
+      gitBoundary: new DiagramModulesManagedGitBoundary(),
+      stage: "quality_gates",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(
+      await git(workspaceRoot, ["status", "--short", "--untracked-files=all"]),
+      ""
+    );
+    assert.match(
+      await readFile(path.join(workspaceRoot, ".gitignore"), "utf8"),
+      LOCAL_STATE_IGNORE_RE
+    );
+    assert.equal(
+      await git(workspaceRoot, ["log", "-1", "--pretty=%s"]),
+      "chore: commit managed terminal residue"
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

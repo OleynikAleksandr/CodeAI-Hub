@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "2bdab0f86",
+  "lastRecordedCommit": "5a679badb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase10.metadata-plan.task1",
-  "expectedCommitMessage": "docs: plan terminal metadata cleanup fix",
+  "currentTaskId": "managed-clean-markers.phase10.metadata-clean.task1",
+  "expectedCommitMessage": "fix: clean terminal metadata residue",
   "debt": {
-    "expectedCommitMessage": "docs: plan terminal metadata cleanup fix",
-    "preCommitHead": "2bdab0f86",
+    "expectedCommitMessage": "fix: clean terminal metadata residue",
+    "preCommitHead": "5a679badb",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase10.metadata-plan.task1"
+    "taskId": "managed-clean-markers.phase10.metadata-clean.task1"
   }
 }
 ```
@@ -243,12 +243,12 @@
 ### Stream: Retest Bugfix Intake
 
 56. [DONE] `managed-clean-markers.phase10.metadata-plan.task1` Add the final retest bugfix stream for Core-owned metadata and local runtime state that can dirty Git after a managed step reaches the user-return boundary (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan terminal metadata cleanup fix`).
-57. [PENDING] Git Commit: `docs: plan terminal metadata cleanup fix` (hash: TBD)
+57. [DONE] Git Commit: `docs: plan terminal metadata cleanup fix` (hash: 5a679badb)
 
 ### Stream: Terminal Metadata Classifier
 
-58. [TODO] `managed-clean-markers.phase10.metadata-clean.task1` Make terminal completion ignore local volatile timer state through Git ignore enforcement, auto-commit classified Core metadata, and keep unclassified files blocking completion (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `fix: clean terminal metadata residue`).
-59. [TODO] Git Commit: `fix: clean terminal metadata residue` (hash: TBD)
+58. [DONE] `managed-clean-markers.phase10.metadata-clean.task1` Make terminal completion ignore local volatile timer state through Git ignore enforcement, auto-commit classified Core metadata, and keep unclassified files blocking completion (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `fix: clean terminal metadata residue`).
+59. [PENDING] Git Commit: `fix: clean terminal metadata residue` (hash: TBD)
 
 ### Stream: Local State Ignore Contract
 

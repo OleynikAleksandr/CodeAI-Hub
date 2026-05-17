@@ -1,4 +1,4 @@
-import { readdir } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { DiagramModulesManagedGitBoundary } from "./diagram-modules/diagram-modules-managed-git-boundary";
 import {
@@ -10,6 +10,10 @@ const TERMINAL_RESIDUE_COMMIT_MESSAGE =
   "chore: commit managed terminal residue";
 const TERMINAL_RESIDUE_COMMIT_ATTEMPTS = 3;
 const UNKNOWN_WORKSPACE_SLUG = "__unknown_workspace__";
+const GITIGNORE_PATH = ".gitignore";
+const LOCAL_STATE_IGNORE_PATTERN = ".codeai-hub/state/";
+const NEWLINE_RE = /\r?\n/u;
+const TRAILING_SLASHES_RE = /\/+$/u;
 
 const resolveWorkspaceSlug = async (
   workspaceRoot: string
@@ -27,6 +31,31 @@ const formatPathList = (paths: readonly string[]): readonly string[] =>
   paths.length > 0
     ? paths.map((filePath) => `- ${filePath}`)
     : ["- No file path was reported."];
+
+const normalizesToLocalStateIgnore = (line: string): boolean => {
+  const normalized = line.trim().replace(TRAILING_SLASHES_RE, "");
+  return normalized === ".codeai-hub/state";
+};
+
+const ensureLocalStateIgnored = async (
+  workspaceRoot: string
+): Promise<void> => {
+  const gitignorePath = path.join(workspaceRoot, GITIGNORE_PATH);
+  const existingContent = await readFile(gitignorePath, "utf8").catch(() => "");
+  const lines = existingContent.split(NEWLINE_RE);
+  if (lines.some(normalizesToLocalStateIgnore)) {
+    return;
+  }
+  const prefix =
+    existingContent.length === 0 || existingContent.endsWith("\n")
+      ? existingContent
+      : `${existingContent}\n`;
+  await writeFile(
+    gitignorePath,
+    `${prefix}${LOCAL_STATE_IGNORE_PATTERN}\n`,
+    "utf8"
+  );
+};
 
 export const formatManagedTerminalDirtyBlocker = (
   paths: readonly string[]
@@ -60,6 +89,7 @@ export const ensureManagedTerminalGitClean = async (params: {
     params.workspaceSlug ??
     (await resolveWorkspaceSlug(params.workspaceRoot)) ??
     UNKNOWN_WORKSPACE_SLUG;
+  await ensureLocalStateIgnored(params.workspaceRoot);
   let classification = await classifyManagedTerminalDirtyTree({
     stage: params.stage,
     workspaceRoot: params.workspaceRoot,
