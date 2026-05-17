@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "3ad97771b",
+  "lastRecordedCommit": "5d606fc9a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase0.plan.task1",
-  "expectedCommitMessage": "docs: plan pm sidebar settings action",
+  "currentTaskId": "pm-sidebar-settings.phase1.layout.task1",
+  "expectedCommitMessage": "feat: move pm settings action to sidebar",
   "debt": {
-    "expectedCommitMessage": "docs: plan pm sidebar settings action",
-    "preCommitHead": "3ad97771b",
+    "expectedCommitMessage": "feat: move pm settings action to sidebar",
+    "preCommitHead": "5d606fc9a",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase0.plan.task1"
+    "taskId": "pm-sidebar-settings.phase1.layout.task1"
   }
 }
 ```
@@ -49,15 +49,15 @@
 ### Stream: Active Scope Creation
 
 1. [DONE] `pm-sidebar-settings.phase0.plan.task1` Create planning source, register it in Docs_Index, and open the active todo-plan (scope: `doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan pm sidebar settings action`).
-2. [PENDING] Git Commit: `docs: plan pm sidebar settings action` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan pm sidebar settings action` (hash: 5d606fc9a)
 
 ## Phase 1 - Project Manager Layout Update (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Sidebar Settings Action
 
-3. [TODO] `pm-sidebar-settings.phase1.layout.task1` Move `Open Settings` into the bottom of the left sidebar and remove the footer render path from the main area (scope: `src/client/project-manager/components/layout/sidebar.tsx, src/client/project-manager/components/layout/main-area.tsx, packages/ui/project-manager/styles.css`; expected commit: `feat: move pm settings action to sidebar`).
-4. [TODO] Git Commit: `feat: move pm settings action to sidebar` (hash: TBD)
-5. [TODO] `pm-sidebar-settings.phase1.cleanup.task1` Remove the obsolete footer component after the main layout no longer imports it (scope: `src/client/project-manager/components/layout/status-bar.tsx`; expected commit: `refactor: remove pm status bar component`).
+3. [DONE] `pm-sidebar-settings.phase1.layout.task1` Move `Open Settings` into the bottom of the left sidebar and remove the visible footer output (scope: `src/client/project-manager/components/layout/sidebar.tsx, src/client/project-manager/components/layout/status-bar.tsx, packages/ui/project-manager/styles.css`; expected commit: `feat: move pm settings action to sidebar`).
+4. [PENDING] Git Commit: `feat: move pm settings action to sidebar` (hash: TBD)
+5. [TODO] `pm-sidebar-settings.phase1.cleanup.task1` Remove the obsolete footer component after the main layout no longer needs it (scope: `src/client/project-manager/components/layout/main-area.tsx, src/client/project-manager/components/layout/status-bar.tsx`; expected commit: `refactor: remove pm status bar component`).
 6. [TODO] Git Commit: `refactor: remove pm status bar component` (hash: TBD)
 
 ## Phase 2 - Documentation And Verification (owner: Codex, updated: 2026-05-17)

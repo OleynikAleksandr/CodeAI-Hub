@@ -7,6 +7,10 @@ import { WorkspaceTree } from "./workspace-tree";
 const UI_LABELS_CATEGORY = "ui_interface";
 const USER_MESSAGES_CATEGORY = "system_feedback";
 
+const openProjectManagerSettings = (): void => {
+  window.dispatchEvent(new CustomEvent("pm:settings:open"));
+};
+
 interface SidebarProps {
   workspaces?: WorkspaceProject[];
   selectedWorkspaceId?: string;
@@ -72,6 +76,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     USER_MESSAGES_CATEGORY,
     "pm.sidebar.workspace.menu_empty_label",
     "No workspaces yet."
+  );
+  const openSettingsLabel = t(
+    UI_LABELS_CATEGORY,
+    "pm.status_bar.open_settings_label",
+    "Open Settings"
   );
 
   useEffect(() => {
@@ -222,6 +231,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         workspacePath={activeWorkspace?.path}
         workspaceSlug={activeWorkspace?.slug}
       />
+      <div className="pm-sidebar__footer">
+        <button
+          className="pm-sidebar__settings-button"
+          onClick={openProjectManagerSettings}
+          type="button"
+        >
+          {openSettingsLabel}
+        </button>
+      </div>
     </aside>
   );
 };

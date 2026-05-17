@@ -7,7 +7,6 @@
     "Space Grotesk", "Sora", "IBM Plex Sans", "Segoe UI", sans-serif;
   --pm-sidebar-min-width: 220px;
   --pm-sidebar-max-width: 420px;
-  --pm-status-bar-height: 44px;
   --pm-resizer-width: 6px;
   --pm-panel-min-width: 240px;
   --pm-bg-primary: #0f1216;
@@ -415,6 +414,48 @@ body {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
+}
+
+.pm-sidebar__footer {
+  padding: 10px 12px 12px;
+  border-top: 1px solid var(--pm-border-color);
+}
+
+.pm-sidebar__settings-button {
+  width: 100%;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pm-accent-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  background: rgba(66, 201, 162, 0.12);
+  border: 1px solid rgba(66, 201, 162, 0.45);
+  border-radius: 8px;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+    transform 80ms ease;
+}
+
+.pm-sidebar__settings-button:hover {
+  color: var(--pm-text-primary);
+  background: rgba(66, 201, 162, 0.22);
+  border-color: var(--pm-accent-strong);
+}
+
+.pm-sidebar__settings-button:active {
+  background: rgba(66, 201, 162, 0.32);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  transform: translateY(1px);
+}
+
+.pm-sidebar__settings-button:focus-visible {
+  outline: 2px solid var(--pm-accent-strong);
+  outline-offset: 2px;
 }
 
 .pm-tree__header {
@@ -895,83 +936,6 @@ body {
 .pm-resizer:hover,
 .pm-resizer--active {
   background: var(--pm-accent);
-}
-
-/* ========== Status Bar ========== */
-.pm-status-bar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  height: var(--pm-status-bar-height);
-  min-height: var(--pm-status-bar-height);
-  padding: 0 16px;
-  font-size: 12px;
-  color: var(--pm-text-primary);
-  background: var(--pm-bg-secondary);
-  border-top: 1px solid var(--pm-border-color);
-}
-
-.pm-status-bar__right {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-}
-
-.pm-status-zoom {
-  padding: 2px 8px;
-  font-size: 11px;
-  color: var(--pm-text-muted);
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--pm-border-color);
-  border-radius: 6px;
-}
-
-.pm-status-zoom:hover {
-  color: var(--pm-text-primary);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.pm-status-hint {
-  color: var(--pm-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.pm-status-open-settings {
-  padding: 8px 14px;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--pm-accent-strong);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-  background: rgba(66, 201, 162, 0.12);
-  border: 1px solid rgba(66, 201, 162, 0.45);
-  border-radius: 8px;
-  transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    color 120ms ease,
-    transform 80ms ease;
-}
-
-.pm-status-open-settings:hover {
-  color: var(--pm-text-primary);
-  background: rgba(66, 201, 162, 0.22);
-  border-color: var(--pm-accent-strong);
-}
-
-.pm-status-open-settings:active {
-  background: rgba(66, 201, 162, 0.32);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
-  transform: translateY(1px);
-}
-
-.pm-status-open-settings:focus-visible {
-  outline: 2px solid var(--pm-accent-strong);
-  outline-offset: 2px;
 }
 
 /* ========== Questionnaire Provider Picker ========== */
