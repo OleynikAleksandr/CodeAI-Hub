@@ -30,6 +30,28 @@ test("resolveProductPartColumns returns 2 for two slots with landscape ratio", (
   );
 });
 
+test("resolveProductPartColumns makes aspect ratio choices visible for auto layout", () => {
+  const slots: SlotDescriptor[] = [
+    { kind: "standaloneModule" },
+    { kind: "standaloneModule" },
+  ];
+
+  assert.equal(
+    resolveProductPartColumns(slots, {
+      columns: "auto",
+      targetAspectRatio: "square",
+    }),
+    1
+  );
+  assert.equal(
+    resolveProductPartColumns(slots, {
+      columns: "auto",
+      targetAspectRatio: "wide",
+    }),
+    2
+  );
+});
+
 test("resolveProductPartColumns keeps adjacent clusters while capping row module slots", () => {
   const slots: SlotDescriptor[] = [
     { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
@@ -83,6 +105,15 @@ test("resolveProductPartColumns respects explicit column override", () => {
 test("resolveRowAwareModuleColumns respects explicit cluster module override", () => {
   const slots: SlotDescriptor[] = [
     { kind: "cluster", moduleCount: 3, moduleColumns: 2 },
+    { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
+  ];
+
+  assert.deepEqual(resolveRowAwareModuleColumns(slots, 2), [2, 1]);
+});
+
+test("resolveRowAwareModuleColumns caps auto clusters when product part columns are explicit", () => {
+  const slots: SlotDescriptor[] = [
+    { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
     { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
   ];
 

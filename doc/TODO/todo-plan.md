@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "bf22e18e7",
+  "lastRecordedCommit": "daab00599",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase2.verify.task1",
-  "expectedCommitMessage": "test: verify diagram row auto layout",
+  "currentTaskId": "diagram-row-layout.phase3.fix.task1",
+  "expectedCommitMessage": "fix: enforce diagram row module budget",
   "debt": {
-    "expectedCommitMessage": "test: verify diagram row auto layout",
-    "preCommitHead": "bf22e18e7",
+    "expectedCommitMessage": "fix: enforce diagram row module budget",
+    "preCommitHead": "daab00599",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase2.verify.task1"
+    "taskId": "diagram-row-layout.phase3.fix.task1"
   }
 }
 ```
@@ -75,18 +75,37 @@
    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 11/11.
    - Verification 2026-05-17: `npm run typecheck:webview` passed.
    - Verification 2026-05-17: `npm run build:webview` passed.
-8. [PENDING] Git Commit: `test: verify diagram row auto layout` (hash: TBD)
+8. [DONE] Git Commit: `test: verify diagram row auto layout` (hash: daab00599)
 
 ## Phase 3 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
 ### Stream: Diagram Retest
 
-9. [TODO] `diagram-row-layout.phase3.acceptance.task1` User retests Diagram Modules visual layout in Project Manager and confirms automatic rows no longer overflow the right panel for adjacent clusters/modules (scope: user workflow acceptance only; expected commit: none).
+9. [BLOCKED] `diagram-row-layout.phase3.acceptance.task1` User retests Diagram Modules visual layout in Project Manager and confirms automatic rows no longer overflow the right panel for adjacent clusters/modules (scope: user workflow acceptance only; expected commit: none). Result: User clarified on 2026-05-17 that the horizontal budget applies to actual module cards across one row regardless of cluster/standalone boundaries, and reported that `targetAspectRatio` does not visibly change auto layout.
+
+### Stream: Retest Fixes
+
+10. [DONE] `diagram-row-layout.phase3.fix.task1` Enforce the row module budget for actual auto module slots and make Product Part aspect-ratio choices visibly affect auto column selection (scope: `src/client/project-manager/components/diagram-editor/**`; expected commit: `fix: enforce diagram row module budget`).
+11. [PENDING] Git Commit: `fix: enforce diagram row module budget` (hash: TBD)
+
+### Stream: Retest Documentation
+
+12. [TODO] `diagram-row-layout.phase3.docs.task1` Update the Diagram Modules visual-shell SSOT with the clarified actual-module row budget and aspect-ratio behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify diagram row budget`).
+13. [TODO] Git Commit: `docs: clarify diagram row budget` (hash: TBD)
+
+### Stream: Retest Verification
+
+14. [TODO] `diagram-row-layout.phase3.verify.task1` Re-run targeted layout tests and webview checks after the retest fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram row budget fix`).
+15. [TODO] Git Commit: `test: verify diagram row budget fix` (hash: TBD)
+
+### Stream: Diagram Retest
+
+16. [TODO] `diagram-row-layout.phase3.acceptance.task2` User retests Diagram Modules visual layout again and confirms the clarified row budget and aspect-ratio behavior (scope: user workflow acceptance only; expected commit: none).
 
 ## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-10. [TODO] `diagram-row-layout.phase4.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-11. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-12. [TODO] `diagram-row-layout.phase4.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+17. [TODO] `diagram-row-layout.phase4.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+18. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+19. [TODO] `diagram-row-layout.phase4.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).

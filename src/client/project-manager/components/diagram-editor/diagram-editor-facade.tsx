@@ -173,10 +173,7 @@ const ProductPartNode = ({
     })),
   ];
   const columns = resolveProductPartColumns(slots, data.layoutParams);
-  const rowAwareModuleColumns =
-    data.layoutParams.columns === "auto"
-      ? resolveRowAwareModuleColumns(slots, columns)
-      : [];
+  const rowAwareModuleColumns = resolveRowAwareModuleColumns(slots, columns);
 
   return (
     <div

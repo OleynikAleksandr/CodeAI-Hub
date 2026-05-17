@@ -137,12 +137,14 @@ export const resolveProductPartColumns = (
   if (slots.length <= 1) return 1;
 
   const targetRatio = ASPECT_RATIOS[params.targetAspectRatio];
-  let bestCols = 2;
+  let bestCols = 1;
   let bestDistance = Number.POSITIVE_INFINITY;
+  let foundCandidate = false;
 
   const maxCols = Math.min(5, slots.length);
-  for (let n = 2; n <= maxCols; n++) {
+  for (let n = 1; n <= maxCols; n++) {
     if (!rowMinimumFootprintFitsBudget(slots, n)) continue;
+    foundCandidate = true;
     const columnHeights = new Array<number>(n).fill(0);
     const columnWidths = new Array<number>(n).fill(0);
     const rowAwareColumns = resolveRowAwareModuleColumns(slots, n);
@@ -166,6 +168,7 @@ export const resolveProductPartColumns = (
     }
   }
 
+  if (!foundCandidate) return 1;
   return bestCols;
 };
 
