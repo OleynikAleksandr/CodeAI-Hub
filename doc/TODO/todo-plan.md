@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "cb43494dc",
+  "lastRecordedCommit": "1c0fb28f1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase5.release.task3",
-  "expectedCommitMessage": "docs: record 1.2.286 release package",
+  "currentTaskId": "managed-clean-markers.phase6.retest-plan.task1",
+  "expectedCommitMessage": "docs: plan release retest fixes",
   "debt": {
-    "expectedCommitMessage": "docs: record 1.2.286 release package",
-    "preCommitHead": "cb43494dc",
+    "expectedCommitMessage": "docs: plan release retest fixes",
+    "preCommitHead": "1c0fb28f1",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase5.release.task3"
+    "taskId": "managed-clean-markers.phase6.retest-plan.task1"
   }
 }
 ```
@@ -140,11 +140,33 @@
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version` completed for v1.2.286.
     - Release checks 2026-05-17: output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
     - Release package 2026-05-17: `codeai-hub-1.2.286.vsix` generated in the repository root (48M).
-29. [PENDING] Git Commit: `docs: record 1.2.286 release package` (hash: TBD)
+29. [DONE] Git Commit: `docs: record 1.2.286 release package` (hash: 1c0fb28f1)
 
-## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 6 - Release Retest Fixes (owner: Codex, updated: 2026-05-17)
+
+### Stream: Retest Fix Intake
+
+30. [DONE] `managed-clean-markers.phase6.retest-plan.task1` Add retest bugfix streams for direct stage completion markers and actionable dirty-tree completion UX (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan release retest fixes`).
+31. [PENDING] Git Commit: `docs: plan release retest fixes` (hash: TBD)
+
+### Stream: Direct Stage Completion Markers
+
+32. [TODO] `managed-clean-markers.phase6.direct-markers.task1` Make Description and Virtual Simulation turn green when their next step becomes available after an active session (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete direct step markers`).
+33. [TODO] Git Commit: `fix: complete direct step markers` (hash: TBD)
+
+### Stream: Dirty Tree Resolution UX
+
+34. [TODO] `managed-clean-markers.phase6.dirty-ux.task1` Classify Diagram Modules flow sidecars robustly and replace terminal dirty-tree blocker text with clear user actions (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, doc/TODO/todo-plan.md`; expected commit: `fix: make dirty tree completion actionable`).
+35. [TODO] Git Commit: `fix: make dirty tree completion actionable` (hash: TBD)
+
+### Stream: Retest Fix Verification
+
+36. [TODO] `managed-clean-markers.phase6.verify.task1` Run targeted tests and builds for release retest fixes, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify release retest fixes`).
+37. [TODO] Git Commit: `test: verify release retest fixes` (hash: TBD)
+
+## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-30. [TODO] `managed-clean-markers.phase6.closeout.task1` After explicit user acceptance of the installed v1.2.286 package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-31. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+38. [TODO] `managed-clean-markers.phase7.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+39. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
