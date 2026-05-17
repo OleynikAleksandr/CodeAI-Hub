@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "53411230e",
+  "lastRecordedCommit": "d1770a2ad",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase12.qg-consistency-plan.task1",
-  "expectedCommitMessage": "docs: plan quality gates artifact consistency fix",
+  "currentTaskId": "managed-clean-markers.phase12.qg-consistency.task1",
+  "expectedCommitMessage": "fix: validate quality gates artifact consistency",
   "debt": {
-    "expectedCommitMessage": "docs: plan quality gates artifact consistency fix",
-    "preCommitHead": "53411230e",
+    "expectedCommitMessage": "fix: validate quality gates artifact consistency",
+    "preCommitHead": "d1770a2ad",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase12.qg-consistency-plan.task1"
+    "taskId": "managed-clean-markers.phase12.qg-consistency.task1"
   }
 }
 ```
@@ -293,12 +293,12 @@
 ### Stream: Planning Update
 
 72. [DONE] `managed-clean-markers.phase12.qg-consistency-plan.task1` Record the post-release Quality Gates artifact consistency bug and implementation scope before code changes (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan quality gates artifact consistency fix`).
-73. [PENDING] Git Commit: `docs: plan quality gates artifact consistency fix` (hash: TBD)
+73. [DONE] Git Commit: `docs: plan quality gates artifact consistency fix` (hash: d1770a2ad)
 
 ### Stream: Core Validator
 
-74. [TODO] `managed-clean-markers.phase12.qg-consistency.task1` Enforce Quality Gates integrated-state consistency across JSON required gates, Markdown projection, package scripts, and hook wiring (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `fix: validate quality gates artifact consistency`).
-75. [TODO] Git Commit: `fix: validate quality gates artifact consistency` (hash: TBD)
+74. [DONE] `managed-clean-markers.phase12.qg-consistency.task1` Enforce Quality Gates integrated-state consistency across JSON required gates, Markdown projection, package scripts, and hook wiring (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `fix: validate quality gates artifact consistency`).
+75. [PENDING] Git Commit: `fix: validate quality gates artifact consistency` (hash: TBD)
 
 ### Stream: Architecture Docs
 

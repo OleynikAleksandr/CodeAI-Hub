@@ -60,14 +60,27 @@ const buildQualityGatesJson = (
   ...overrides,
 });
 
+const buildExecutableCommands = (): Record<string, unknown> => ({
+  "qg-secret-scan": {
+    availability: "executable",
+    baseline: ["recommended"],
+    blockingIn: ["beforeCommit"],
+    desiredStatus: "active",
+    id: "qg-secret-scan",
+    integrationRequired: true,
+    proposedCommand: "npm run qg:secret-scan",
+  },
+});
+
 const writeQualityGatesArtifacts = async (
   workspaceRoot: string,
-  contract: Record<string, unknown>
+  contract: Record<string, unknown>,
+  markdown = "# Quality Gates Baseline\n\n## Overview\n\nGate contract.\n"
 ): Promise<void> => {
   await writeWorkspaceFile(
     workspaceRoot,
     `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`,
-    "# Quality Gates Baseline\n\n## Overview\n\nGate contract.\n"
+    markdown
   );
   await writeWorkspaceFile(
     workspaceRoot,
@@ -130,6 +143,7 @@ test("Quality Gates validator accepts integrated contract with scripts and hooks
       workspaceRoot,
       buildQualityGatesJson({
         accepted: true,
+        commands: buildExecutableCommands(),
         integrated: true,
         integratedPaths: [
           "package.json",
@@ -157,6 +171,11 @@ test("Quality Gates validator accepts integrated contract with scripts and hooks
       ".husky/pre-commit",
       "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
     );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/quality-gates/secret-scan.mjs",
+      "console.log('ok');\n"
+    );
 
     const result = await validateQualityGatesManagedArtifacts({
       workspaceRoot,
@@ -167,6 +186,133 @@ test("Quality Gates validator accepts integrated contract with scripts and hooks
     assert.equal(result.phase, "integration");
     assert.equal(result.nextAction, "open_persistent_return");
     assert.match(result.nextPrompt ?? "", INTEGRATION_ACCEPTED_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates validator rejects integrated JSON that keeps a required gate not_integrated", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-not-integrated-json-")
+  );
+  try {
+    await writeQualityGatesArtifacts(
+      workspaceRoot,
+      buildQualityGatesJson({
+        accepted: true,
+        integrated: true,
+        integratedPaths: [
+          "package.json",
+          ".husky/pre-commit",
+          "scripts/quality-gates/secret-scan.mjs",
+        ],
+        integrationState: "integrated",
+      })
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "package.json",
+      `${JSON.stringify(
+        {
+          scripts: {
+            "qg:secret-scan": "node scripts/quality-gates/secret-scan.mjs",
+          },
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/quality-gates/secret-scan.mjs",
+      "console.log('ok');\n"
+    );
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_integration");
+    assert.ok(
+      result.diagnostics.includes(
+        'quality-gates.json keeps required gate "qg-secret-scan" as not_integrated after integration'
+      )
+    );
+    assert.match(result.nextPrompt ?? "", INTEGRATION_REJECTED_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates validator rejects integrated Markdown that says a required gate is not_integrated", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-not-integrated-markdown-")
+  );
+  try {
+    await writeQualityGatesArtifacts(
+      workspaceRoot,
+      buildQualityGatesJson({
+        accepted: true,
+        commands: buildExecutableCommands(),
+        integrated: true,
+        integratedPaths: [
+          "package.json",
+          ".husky/pre-commit",
+          "scripts/quality-gates/secret-scan.mjs",
+        ],
+        integrationState: "integrated",
+      }),
+      [
+        "# Quality Gates Baseline",
+        "",
+        "| id | availability |",
+        "|---|---|",
+        "| `qg-secret-scan` | `not_integrated` |",
+      ].join("\n")
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "package.json",
+      `${JSON.stringify(
+        {
+          scripts: {
+            "qg:secret-scan": "node scripts/quality-gates/secret-scan.mjs",
+          },
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/quality-gates/secret-scan.mjs",
+      "console.log('ok');\n"
+    );
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_integration");
+    assert.ok(
+      result.diagnostics.includes(
+        'quality-gates.md keeps required gate "qg-secret-scan" as not_integrated after integration'
+      )
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

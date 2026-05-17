@@ -1,5 +1,6 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import { collectQualityGatesIntegrationConsistencyDiagnostics } from "./quality-gates-consistency-validator";
 import {
   buildQualityGatesDraftRepairPrompt,
   buildQualityGatesIntegrationRepairPrompt,
@@ -370,6 +371,13 @@ const validateIntegrationShape = async (params: {
     ...(await collectRequiredHookDiagnostics({
       contract: params.contractJson,
       packageScripts: await readPackageScripts(params.workspaceRoot),
+      workspaceRoot: params.workspaceRoot,
+    }))
+  );
+  errors.push(
+    ...(await collectQualityGatesIntegrationConsistencyDiagnostics({
+      contractJson: params.contractJson,
+      markdown: params.markdown,
       workspaceRoot: params.workspaceRoot,
     }))
   );
