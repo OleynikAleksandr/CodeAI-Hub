@@ -1,5 +1,10 @@
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { buildWorkflowStateChangeToken } from "../../services/workflow-state-change-token";
+import {
+  useWorkflowStateSnapshot,
+  workflowStateStore,
+} from "../../services/workflow-state-store";
 import { useDiagramLoader } from "./use-diagram-loader";
 import { useDiagramPersistence } from "./use-diagram-persistence";
 import { DiagramEditorShell } from "./diagram-editor-shell";
@@ -15,6 +20,8 @@ export const DetachedDiagramView: React.FC<DetachedDiagramViewProps> = ({
   workspaceSlug,
 }) => {
   const [refreshKey, setRefreshKey] = useState(0);
+  const workflowStoreState = useWorkflowStateSnapshot();
+  const lastWorkflowChangeTokenRef = useRef<string | null>(null);
 
   useEffect(() => {
     const handler = () => setRefreshKey((k) => k + 1);
@@ -23,6 +30,38 @@ export const DetachedDiagramView: React.FC<DetachedDiagramViewProps> = ({
     try { bc = new BroadcastChannel("pm:diagram:sidecar-sync"); bc.onmessage = handler; } catch { /* unsupported */ }
     return () => { window.removeEventListener("pm:diagram:refresh", handler); bc?.close(); };
   }, []);
+
+  useEffect(() => {
+    lastWorkflowChangeTokenRef.current = null;
+    workflowStateStore.activate(workspaceSlug, workspacePath);
+    return () => workflowStateStore.deactivate();
+  }, [workspacePath, workspaceSlug]);
+
+  const workflowChangeToken = useMemo(() => {
+    if (
+      !workflowStoreState.loaded ||
+      workflowStoreState.workspaceSlug !== workspaceSlug ||
+      workflowStoreState.workspacePath !== workspacePath
+    ) {
+      return null;
+    }
+    return buildWorkflowStateChangeToken(workflowStoreState.snapshot);
+  }, [workflowStoreState, workspacePath, workspaceSlug]);
+
+  useEffect(() => {
+    if (!workflowChangeToken) {
+      return;
+    }
+    if (lastWorkflowChangeTokenRef.current === null) {
+      lastWorkflowChangeTokenRef.current = workflowChangeToken;
+      return;
+    }
+    if (lastWorkflowChangeTokenRef.current === workflowChangeToken) {
+      return;
+    }
+    lastWorkflowChangeTokenRef.current = workflowChangeToken;
+    setRefreshKey((k) => k + 1);
+  }, [workflowChangeToken]);
 
   const {
     status,

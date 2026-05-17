@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "63488ea77",
+  "lastRecordedCommit": "bab253b3c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase3.verify.task1",
-  "expectedCommitMessage": "test: verify diagram row budget fix",
+  "currentTaskId": "diagram-row-layout.phase3.detach.task1",
+  "expectedCommitMessage": "fix: refresh detached diagram view",
   "debt": {
-    "expectedCommitMessage": "test: verify diagram row budget fix",
-    "preCommitHead": "63488ea77",
+    "expectedCommitMessage": "fix: refresh detached diagram view",
+    "preCommitHead": "bab253b3c",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase3.verify.task1"
+    "taskId": "diagram-row-layout.phase3.detach.task1"
   }
 }
 ```
@@ -99,16 +99,31 @@
     - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13, including aspect-ratio visibility and explicit Product Part columns with auto cluster row capping.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
     - Verification 2026-05-17: `npm run build:webview` passed.
-15. [PENDING] Git Commit: `test: verify diagram row budget fix` (hash: TBD)
+15. [DONE] Git Commit: `test: verify diagram row budget fix` (hash: bab253b3c)
 
 ### Stream: Diagram Retest
 
-16. [TODO] `diagram-row-layout.phase3.acceptance.task2` User retests Diagram Modules visual layout again and confirms the clarified row budget and aspect-ratio behavior (scope: user workflow acceptance only; expected commit: none).
+16. [BLOCKED] `diagram-row-layout.phase3.acceptance.task2` User retests Diagram Modules visual layout again and confirms the clarified row budget and aspect-ratio behavior (scope: user workflow acceptance only; expected commit: none). Result: User reported on 2026-05-17 that the detached Diagram Modules window opens with the current graph but does not live-refresh when later Product Parts materialize in the main Project Manager workflow.
+
+### Stream: Detached Diagram Live Refresh
+
+17. [DONE] `diagram-row-layout.phase3.detach.task1` Subscribe the detached Diagram Modules view to workflow-state changes so newly materialized Product Parts reload without closing and reopening the detached window (scope: `src/client/project-manager/components/diagram-editor/detached-diagram-view.tsx, src/client/project-manager/components/diagram-editor/detached-diagram-view.test.ts`; expected commit: `fix: refresh detached diagram view`).
+18. [PENDING] Git Commit: `fix: refresh detached diagram view` (hash: TBD)
+
+### Stream: Detached Diagram Docs
+
+19. [TODO] `diagram-row-layout.phase3.detach.docs.task1` Document the detached Diagram Modules live-refresh contract in the Project Manager and system workflow SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document detached diagram refresh`).
+20. [TODO] Git Commit: `docs: document detached diagram refresh` (hash: TBD)
+
+### Stream: Detached Diagram Verification
+
+21. [TODO] `diagram-row-layout.phase3.detach.verify.task1` Re-run targeted detached/layout tests and webview checks after the detached refresh fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify detached diagram refresh`).
+22. [TODO] Git Commit: `test: verify detached diagram refresh` (hash: TBD)
 
 ## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-17. [TODO] `diagram-row-layout.phase4.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-18. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-19. [TODO] `diagram-row-layout.phase4.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+23. [TODO] `diagram-row-layout.phase4.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+24. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+25. [TODO] `diagram-row-layout.phase4.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
