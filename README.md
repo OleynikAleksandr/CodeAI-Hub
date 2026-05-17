@@ -2,15 +2,14 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.296** (Managed review confirmation button)
+**Current Release — v1.2.297** (Project Manager sidebar Settings action)
 
-This release packages the managed review confirmation UX update. Core-owned
-review handoff cards for Diagram Modules, Application Skeleton, and Quality
-Gates now tell the user to press the inline `Подтверждаю` button instead of
-typing the acceptance phrase manually. The button appears at the bottom of the
-same system card and sends the normal acceptance intent back to Core, so Core
-still owns managed review classification, materialization/integration
-transitions, and terminal `User Return And Revisions` completion.
+This release removes the Project Manager bottom footer/status bar. The
+`Workflow Tree MVP` label no longer renders, and the `Open Settings` action now
+lives at the bottom of the left sidebar beneath the Documentation Tree and
+Development Tree. The action still opens the same PM-owned in-shell Settings
+takeover in the right panel, while the session and artifact panes reclaim the
+vertical space previously reserved by the footer.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the

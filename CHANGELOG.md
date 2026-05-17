@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.297] - 2026-05-17
+### Changed
+- **Project Manager Settings moved into the sidebar.** The `Open Settings` action now sits at the bottom of the left sidebar below the workflow trees and still opens the existing in-shell Settings takeover in the right panel.
+- **Project Manager footer removed.** The bottom footer/status bar and `Workflow Tree MVP` label are gone, allowing the session and artifact panes to use the reclaimed vertical space.
+
+### Tests
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.296] - 2026-05-17
 ### Changed
 - **Managed review handoff cards now use an inline confirmation button.** Core review messages for managed stages no longer instruct the user to type `подтверждаю`; the Session UI renders a `Подтверждаю` button on the same system card and sends the existing Core acceptance intent.

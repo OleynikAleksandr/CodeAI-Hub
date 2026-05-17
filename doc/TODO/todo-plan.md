@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "df9ac14d8",
+  "lastRecordedCommit": "6b133cc33",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase2.verify.task1",
-  "expectedCommitMessage": "test: verify pm sidebar settings action",
+  "currentTaskId": "pm-sidebar-settings.phase3.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.297 release",
   "debt": {
-    "expectedCommitMessage": "test: verify pm sidebar settings action",
-    "preCommitHead": "df9ac14d8",
+    "expectedCommitMessage": "docs: prepare 1.2.297 release",
+    "preCommitHead": "6b133cc33",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase2.verify.task1"
+    "taskId": "pm-sidebar-settings.phase3.release.docs.task1"
   }
 }
 ```
@@ -76,18 +76,32 @@
     - Verification 2026-05-17: `npm run build:webview` passed.
     - Verification 2026-05-17: static search found no remaining PM source references to `StatusBar`, `status-bar`, `pm-status-bar`, `pm-status-open-settings`, `pm-status-hint`, `pm-status-zoom`, or visible `Workflow Tree MVP`.
     - Browser note 2026-05-17: in-app Browser blocked direct `file://` navigation to the generated Project Manager bundle by URL policy, so no browser screenshot was taken.
-10. [PENDING] Git Commit: `test: verify pm sidebar settings action` (hash: TBD)
+10. [DONE] Git Commit: `test: verify pm sidebar settings action` (hash: 6b133cc33)
 
-## Phase 3 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
+## Phase 3 - Release Build (owner: Codex, updated: 2026-05-17)
+
+### Stream: Release Preparation
+
+11. [DONE] `pm-sidebar-settings.phase3.release.docs.task1` Update release notes for v1.2.297 before version bump/build so packaged README/CHANGELOG include the Project Manager sidebar Settings action change (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.297 release`).
+12. [PENDING] Git Commit: `docs: prepare 1.2.297 release` (hash: TBD)
+
+### Stream: Release Automation
+
+13. [TODO] `pm-sidebar-settings.phase3.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.297 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.297 artifacts`).
+14. [TODO] Git Commit: `chore: build release 1.2.297 artifacts` (hash: TBD)
+15. [TODO] `pm-sidebar-settings.phase3.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.297 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.297 vsix`).
+16. [TODO] Git Commit: `chore: package release 1.2.297 vsix` (hash: TBD)
+
+## Phase 4 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
 ### Stream: User Retest
 
-11. [TODO] `pm-sidebar-settings.phase3.acceptance.task1` User tests Project Manager and confirms the bottom footer is gone, `Workflow Tree MVP` is not visible, `Open Settings` sits at the bottom of the left sidebar, and session/artifact panes have the reclaimed vertical space (scope: user visual acceptance only; expected commit: none).
+17. [TODO] `pm-sidebar-settings.phase4.acceptance.task1` User installs and tests v1.2.297, then confirms the bottom footer is gone, `Workflow Tree MVP` is not visible, `Open Settings` sits at the bottom of the left sidebar, and session/artifact panes have the reclaimed vertical space (scope: user visual acceptance only; expected commit: none).
 
-## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Scope Closeout
 
-12. [TODO] `pm-sidebar-settings.phase4.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-13. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-14. [TODO] `pm-sidebar-settings.phase4.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+18. [TODO] `pm-sidebar-settings.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+19. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+20. [TODO] `pm-sidebar-settings.phase5.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
