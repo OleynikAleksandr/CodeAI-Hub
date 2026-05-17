@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "9789d1235",
+  "lastRecordedCommit": "53411230e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase11.release.task3",
-  "expectedCommitMessage": "docs: record 1.2.289 release package",
+  "currentTaskId": "managed-clean-markers.phase12.qg-consistency-plan.task1",
+  "expectedCommitMessage": "docs: plan quality gates artifact consistency fix",
   "debt": {
-    "expectedCommitMessage": "docs: record 1.2.289 release package",
-    "preCommitHead": "9789d1235",
+    "expectedCommitMessage": "docs: plan quality gates artifact consistency fix",
+    "preCommitHead": "53411230e",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase11.release.task3"
+    "taskId": "managed-clean-markers.phase12.qg-consistency-plan.task1"
   }
 }
 ```
@@ -286,11 +286,50 @@
 70. [DONE] `managed-clean-markers.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.289 release package`).
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version` completed for v1.2.289 with `Step 7: Verifying SDK exclusions`, production dependency pruning, `Package created`, and VSIX runtime package surface verification.
     - Release handoff 2026-05-17: generated `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.289.vsix`.
-71. [PENDING] Git Commit: `docs: record 1.2.289 release package` (hash: TBD)
+71. [DONE] Git Commit: `docs: record 1.2.289 release package` (hash: 53411230e)
 
-## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 12 - Quality Gates Artifact Consistency Fix (owner: Codex, updated: 2026-05-17)
+
+### Stream: Planning Update
+
+72. [DONE] `managed-clean-markers.phase12.qg-consistency-plan.task1` Record the post-release Quality Gates artifact consistency bug and implementation scope before code changes (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan quality gates artifact consistency fix`).
+73. [PENDING] Git Commit: `docs: plan quality gates artifact consistency fix` (hash: TBD)
+
+### Stream: Core Validator
+
+74. [TODO] `managed-clean-markers.phase12.qg-consistency.task1` Enforce Quality Gates integrated-state consistency across JSON required gates, Markdown projection, package scripts, and hook wiring (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `fix: validate quality gates artifact consistency`).
+75. [TODO] Git Commit: `fix: validate quality gates artifact consistency` (hash: TBD)
+
+### Stream: Architecture Docs
+
+76. [TODO] `managed-clean-markers.phase12.qg-consistency-docs.task1` Document the Quality Gates artifact consistency rule in the managed workflow SSOT (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates artifact consistency`).
+77. [TODO] Git Commit: `docs: document quality gates artifact consistency` (hash: TBD)
+
+### Stream: Tooling Verification
+
+78. [TODO] `managed-clean-markers.phase12.qg-consistency-verify.task1` Run targeted Quality Gates validator tests and core/typecheck builds, then record verification evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates artifact consistency`).
+79. [TODO] Git Commit: `test: verify quality gates artifact consistency` (hash: TBD)
+
+## Phase 13 - Release Build For Quality Gates Consistency Fix (owner: Codex, updated: 2026-05-17)
+
+### Stream: Release Preparation
+
+80. [TODO] `managed-clean-markers.phase13.release.task1` Update release-facing README/CHANGELOG for v1.2.290 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.290 release`).
+81. [TODO] Git Commit: `docs: prepare 1.2.290 release` (hash: TBD)
+
+### Stream: Unified Release Artifacts
+
+82. [TODO] `managed-clean-markers.phase13.release.task2` Run `./scripts/build-all.sh`, commit the v1.2.290 version bump and release manifests, then keep the tree clean for VSIX packaging (scope: `package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.290 release artifacts`).
+83. [TODO] Git Commit: `chore: build 1.2.290 release artifacts` (hash: TBD)
+
+### Stream: VSIX Packaging
+
+84. [TODO] `managed-clean-markers.phase13.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.290 release package`).
+85. [TODO] Git Commit: `docs: record 1.2.290 release package` (hash: TBD)
+
+## Phase 14 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-72. [TODO] `managed-clean-markers.phase12.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-73. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+86. [TODO] `managed-clean-markers.phase14.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+87. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
