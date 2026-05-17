@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "728e18590",
+  "lastRecordedCommit": "df9ac14d8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase2.docs.task1",
-  "expectedCommitMessage": "docs: document pm sidebar settings action",
+  "currentTaskId": "pm-sidebar-settings.phase2.verify.task1",
+  "expectedCommitMessage": "test: verify pm sidebar settings action",
   "debt": {
-    "expectedCommitMessage": "docs: document pm sidebar settings action",
-    "preCommitHead": "728e18590",
+    "expectedCommitMessage": "test: verify pm sidebar settings action",
+    "preCommitHead": "df9ac14d8",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase2.docs.task1"
+    "taskId": "pm-sidebar-settings.phase2.verify.task1"
   }
 }
 ```
@@ -65,12 +65,18 @@
 ### Stream: SSOT Documentation
 
 7. [DONE] `pm-sidebar-settings.phase2.docs.task1` Update PM/UI bundle SSOT docs for sidebar-owned Settings action and removed bottom footer (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: document pm sidebar settings action`).
-8. [PENDING] Git Commit: `docs: document pm sidebar settings action` (hash: TBD)
+8. [DONE] Git Commit: `docs: document pm sidebar settings action` (hash: df9ac14d8)
 
 ### Stream: Tooling Verification
 
-9. [TODO] `pm-sidebar-settings.phase2.verify.task1` Run targeted PM layout verification and webview build/typecheck, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify pm sidebar settings action`).
-10. [TODO] Git Commit: `test: verify pm sidebar settings action` (hash: TBD)
+9. [DONE] `pm-sidebar-settings.phase2.verify.task1` Run targeted PM layout verification and webview build/typecheck, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify pm sidebar settings action`).
+    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts` passed 1/1.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+    - Verification 2026-05-17: `npm run build:project-manager` passed.
+    - Verification 2026-05-17: `npm run build:webview` passed.
+    - Verification 2026-05-17: static search found no remaining PM source references to `StatusBar`, `status-bar`, `pm-status-bar`, `pm-status-open-settings`, `pm-status-hint`, `pm-status-zoom`, or visible `Workflow Tree MVP`.
+    - Browser note 2026-05-17: in-app Browser blocked direct `file://` navigation to the generated Project Manager bundle by URL policy, so no browser screenshot was taken.
+10. [PENDING] Git Commit: `test: verify pm sidebar settings action` (hash: TBD)
 
 ## Phase 3 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
