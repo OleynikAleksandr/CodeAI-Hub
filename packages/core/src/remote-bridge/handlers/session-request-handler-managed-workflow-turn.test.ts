@@ -138,6 +138,15 @@ const qualityDraftDecision = (): QualityGatesManagedValidationResult => ({
 const qualityIntegratedDecision = (): QualityGatesManagedValidationResult => ({
   contractJson: qualityContract({
     accepted: true,
+    commands: {
+      "qg-secret-scan": {
+        availability: "executable",
+        desiredStatus: "active",
+        id: "qg-secret-scan",
+        integrationRequired: true,
+        proposedCommand: "npm run qg:secret-scan",
+      },
+    },
     integrated: true,
     integratedPaths: [
       "package.json",
@@ -222,25 +231,21 @@ const prepareApplicationMaterialization = async (
   await controller.acceptUserReviewWithoutRevision({ workspaceRoot });
   await writeWorkspaceFile(
     workspaceRoot,
-    "local-fixture/package.json",
-    '{"name":"local-fixture","version":"1.0.0"}\n'
-  );
-  await writeWorkspaceFile(
-    workspaceRoot,
     "package.json",
-    '{"devDependencies":{"local-fixture":"file:./local-fixture"},"scripts":{"build":"node -e \\"process.exit(0)\\"","test:smoke":"node -e \\"process.exit(0)\\"","typecheck":"node -e \\"process.exit(0)\\""}}\n'
+    '{"scripts":{"build":"node -e \\"process.exit(0)\\"","test:smoke":"node -e \\"process.exit(0)\\"","typecheck":"node -e \\"process.exit(0)\\""}}\n'
   );
   await writeWorkspaceFile(
     workspaceRoot,
     "package-lock.json",
-    '{"lockfileVersion":3,"requires":true,"packages":{"":{"devDependencies":{"local-fixture":"file:./local-fixture"}},"local-fixture":{"version":"1.0.0","dev":true},"node_modules/local-fixture":{"resolved":"local-fixture","link":true}}}\n'
+    '{"lockfileVersion":3,"requires":true,"packages":{"":{}}}\n'
   );
   await writeWorkspaceFile(workspaceRoot, "tsconfig.json", "{}\n");
   await writeWorkspaceFile(
     workspaceRoot,
     ".gitignore",
-    "node_modules/\ndist/\n"
+    "node_modules/\ndist/\n.codeai-hub/state/\n"
   );
+  await writeWorkspaceFile(workspaceRoot, "node_modules/.keep", "");
   await writeWorkspaceFile(
     workspaceRoot,
     "product-parts/core-runtime/src/index.ts",

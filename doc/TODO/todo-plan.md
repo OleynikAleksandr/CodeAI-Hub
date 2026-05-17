@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "475e6694e",
+  "lastRecordedCommit": "1ffde32a1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase12.qg-consistency-docs.task1",
-  "expectedCommitMessage": "docs: document quality gates artifact consistency",
+  "currentTaskId": "managed-clean-markers.phase12.qg-consistency-verify.task1",
+  "expectedCommitMessage": "test: verify quality gates artifact consistency",
   "debt": {
-    "expectedCommitMessage": "docs: document quality gates artifact consistency",
-    "preCommitHead": "475e6694e",
+    "expectedCommitMessage": "test: verify quality gates artifact consistency",
+    "preCommitHead": "1ffde32a1",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase12.qg-consistency-docs.task1"
+    "taskId": "managed-clean-markers.phase12.qg-consistency-verify.task1"
   }
 }
 ```
@@ -303,12 +303,16 @@
 ### Stream: Architecture Docs
 
 76. [DONE] `managed-clean-markers.phase12.qg-consistency-docs.task1` Document the Quality Gates artifact consistency rule in the managed workflow SSOT (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates artifact consistency`).
-77. [PENDING] Git Commit: `docs: document quality gates artifact consistency` (hash: TBD)
+77. [DONE] Git Commit: `docs: document quality gates artifact consistency` (hash: 1ffde32a1)
 
 ### Stream: Tooling Verification
 
-78. [TODO] `managed-clean-markers.phase12.qg-consistency-verify.task1` Run targeted Quality Gates validator tests and core/typecheck builds, then record verification evidence (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates artifact consistency`).
-79. [TODO] Git Commit: `test: verify quality gates artifact consistency` (hash: TBD)
+78. [DONE] `managed-clean-markers.phase12.qg-consistency-verify.task1` Run targeted Quality Gates validator tests and core/typecheck builds, then record verification evidence (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates artifact consistency`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts` passed 17/17.
+    - Verification 2026-05-17: `npm exec -- ultracite check packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` passed.
+    - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+79. [PENDING] Git Commit: `test: verify quality gates artifact consistency` (hash: TBD)
 
 ## Phase 13 - Release Build For Quality Gates Consistency Fix (owner: Codex, updated: 2026-05-17)
 
