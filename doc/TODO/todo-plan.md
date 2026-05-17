@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "f9227f49a",
+  "lastRecordedCommit": "5ffaaf4ca",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.release292.docs.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.292 release",
+  "currentTaskId": "diagram-row-layout.phase4.release292.buildall.task1",
+  "expectedCommitMessage": "chore: build release 1.2.292 artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.292 release",
-    "preCommitHead": "f9227f49a",
+    "expectedCommitMessage": "chore: build release 1.2.292 artifacts",
+    "preCommitHead": "5ffaaf4ca",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.release292.docs.task1"
+    "taskId": "diagram-row-layout.phase4.release292.buildall.task1"
   }
 }
 ```
@@ -177,12 +177,14 @@
 ### Stream: Compact Fix Release Preparation
 
 38. [DONE] `diagram-row-layout.phase4.release292.docs.task1` Update release notes for v1.2.292 before version bump/build so packaged README/CHANGELOG include the compact spacing fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.292 release`).
-39. [PENDING] Git Commit: `docs: prepare 1.2.292 release` (hash: TBD)
+39. [DONE] Git Commit: `docs: prepare 1.2.292 release` (hash: 5ffaaf4ca)
 
 ### Stream: Compact Fix Release Automation
 
-40. [TODO] `diagram-row-layout.phase4.release292.buildall.task1` Run `./scripts/build-all.sh` for v1.2.292 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.292 artifacts`).
-41. [TODO] Git Commit: `chore: build release 1.2.292 artifacts` (hash: TBD)
+40. [DONE] `diagram-row-layout.phase4.release292.buildall.task1` Run `./scripts/build-all.sh` for v1.2.292 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.292 artifacts`).
+    - Verification 2026-05-17: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
+    - Generated release artifacts: `claude-module-1.2.292.tar.bz2`, `codex-module-1.2.292.tar.bz2`, `gemini-module-1.2.292.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.292.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.292.tar.bz2`, `vscode-webview-1.2.292.tar.bz2`, `project-manager-1.2.292.tar.bz2`.
+41. [PENDING] Git Commit: `chore: build release 1.2.292 artifacts` (hash: TBD)
 42. [TODO] `diagram-row-layout.phase4.release292.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.292 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.292 vsix`).
 43. [TODO] Git Commit: `chore: package release 1.2.292 vsix` (hash: TBD)
 
