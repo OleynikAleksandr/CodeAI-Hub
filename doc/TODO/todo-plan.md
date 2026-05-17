@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "6995e9d64",
+  "lastRecordedCommit": "e665d93ff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase3.detach.verify.task1",
-  "expectedCommitMessage": "test: verify detached diagram refresh",
+  "currentTaskId": "diagram-row-layout.phase4.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.291 release",
   "debt": {
-    "expectedCommitMessage": "test: verify detached diagram refresh",
-    "preCommitHead": "6995e9d64",
+    "expectedCommitMessage": "docs: prepare 1.2.291 release",
+    "preCommitHead": "e665d93ff",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase3.detach.verify.task1"
+    "taskId": "diagram-row-layout.phase4.release.docs.task1"
   }
 }
 ```
@@ -122,12 +122,32 @@
     - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
     - Verification 2026-05-17: `npm run build:webview` passed.
-22. [PENDING] Git Commit: `test: verify detached diagram refresh` (hash: TBD)
+22. [DONE] Git Commit: `test: verify detached diagram refresh` (hash: e665d93ff)
 
-## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+### Stream: Detached Diagram Retest
+
+23. [DONE] `diagram-row-layout.phase3.detach.acceptance.task1` User retests the detached Diagram Modules popup and confirms that newly materialized Product Parts appear without closing and reopening the detached window (scope: user workflow acceptance only; expected commit: none). Result: User accepted the scope for release build on 2026-05-17 by requesting a new release.
+
+## Phase 4 - Release Build (owner: Codex, updated: 2026-05-17)
+
+### Stream: Release Preparation
+
+24. [DONE] `diagram-row-layout.phase4.release.docs.task1` Update release notes for v1.2.291 before version bump/build so packaged README/CHANGELOG match the release identity (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.291 release`).
+25. [PENDING] Git Commit: `docs: prepare 1.2.291 release` (hash: TBD)
+
+### Stream: Release Automation
+
+26. [TODO] `diagram-row-layout.phase4.release.build.task1` Run full release automation for v1.2.291 and record generated VSIX/tarball artifacts (scope: package/version manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.291`).
+27. [TODO] Git Commit: `chore: build release 1.2.291` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+28. [TODO] `diagram-row-layout.phase4.release.acceptance.task1` User installs and retests v1.2.291 release package for Diagram Modules row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
+
+## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-23. [TODO] `diagram-row-layout.phase4.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-24. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-25. [TODO] `diagram-row-layout.phase4.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+29. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+30. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+31. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).

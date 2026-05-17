@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.291] - 2026-05-17
+### Fixed
+- **Diagram Modules auto layout now respects the visible row budget.** Automatic layout caps one horizontal Product Part row to three actual module cards across adjacent clusters and standalone modules, while preserving explicit user sidecar overrides.
+- **Product Part aspect-ratio selection is visible in auto layout.** `targetAspectRatio` now influences automatic column selection, including square layouts that can choose a more vertical one-column composition.
+- **Detached Diagram Modules windows live-refresh semantic updates.** The detached popup subscribes to Core-owned workflow-state changes and reloads the graph when later Product Parts materialize, without requiring the user to close and detach again.
+
+### Tests
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/detached-diagram-view.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.290] - 2026-05-17
 ### Fixed
 - **Quality Gates completion now requires artifact/runtime consistency.** Core rejects integrated Quality Gates artifacts when required gates remain `not_integrated` in JSON or Markdown, when required package scripts or hooks are missing, or when declared integrated paths do not exist in the workspace.
