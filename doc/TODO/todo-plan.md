@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "856fb2a5c",
+  "lastRecordedCommit": "96225dee5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.compact.docs.task1",
-  "expectedCommitMessage": "docs: document compact diagram spacing",
+  "currentTaskId": "diagram-row-layout.phase4.compact.verify.task1",
+  "expectedCommitMessage": "test: verify compact diagram spacing",
   "debt": {
-    "expectedCommitMessage": "docs: document compact diagram spacing",
-    "preCommitHead": "856fb2a5c",
+    "expectedCommitMessage": "test: verify compact diagram spacing",
+    "preCommitHead": "96225dee5",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.compact.docs.task1"
+    "taskId": "diagram-row-layout.phase4.compact.verify.task1"
   }
 }
 ```
@@ -159,12 +159,16 @@
 ### Stream: Release Retest Compact Layout Docs
 
 33. [DONE] `diagram-row-layout.phase4.compact.docs.task1` Document the compact spacing contract for Diagram Modules visual layout (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document compact diagram spacing`).
-34. [PENDING] Git Commit: `docs: document compact diagram spacing` (hash: TBD)
+34. [DONE] Git Commit: `docs: document compact diagram spacing` (hash: 96225dee5)
 
 ### Stream: Release Retest Compact Layout Verification
 
-35. [TODO] `diagram-row-layout.phase4.compact.verify.task1` Run targeted compact layout tests plus webview typecheck/build after the spacing fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify compact diagram spacing`).
-36. [TODO] Git Commit: `test: verify compact diagram spacing` (hash: TBD)
+35. [DONE] `diagram-row-layout.phase4.compact.verify.task1` Run targeted compact layout tests plus webview typecheck/build after the spacing fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify compact diagram spacing`).
+    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx` passed 3/3.
+    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+    - Verification 2026-05-17: `npm run build:webview` passed.
+36. [PENDING] Git Commit: `test: verify compact diagram spacing` (hash: TBD)
 
 ### Stream: User Visual Acceptance Testing
 
