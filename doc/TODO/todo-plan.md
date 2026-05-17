@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "d3b6766ef",
+  "lastRecordedCommit": "3bf25487d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase6.dirty-ux.task1",
-  "expectedCommitMessage": "fix: make dirty tree completion actionable",
+  "currentTaskId": "managed-clean-markers.phase6.verify.task1",
+  "expectedCommitMessage": "test: verify release retest fixes",
   "debt": {
-    "expectedCommitMessage": "fix: make dirty tree completion actionable",
-    "preCommitHead": "d3b6766ef",
+    "expectedCommitMessage": "test: verify release retest fixes",
+    "preCommitHead": "3bf25487d",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase6.dirty-ux.task1"
+    "taskId": "managed-clean-markers.phase6.verify.task1"
   }
 }
 ```
@@ -159,12 +159,15 @@
 
 34. [DONE] `managed-clean-markers.phase6.dirty-ux.task1` Classify Diagram Modules flow sidecars robustly and replace terminal dirty-tree blocker text with clear user actions (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: make dirty tree completion actionable`).
     - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts` passed.
-35. [PENDING] Git Commit: `fix: make dirty tree completion actionable` (hash: TBD)
+35. [DONE] Git Commit: `fix: make dirty tree completion actionable` (hash: 3bf25487d)
 
 ### Stream: Retest Fix Verification
 
-36. [TODO] `managed-clean-markers.phase6.verify.task1` Run targeted tests and builds for release retest fixes, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify release retest fixes`).
-37. [TODO] Git Commit: `test: verify release retest fixes` (hash: TBD)
+36. [DONE] `managed-clean-markers.phase6.verify.task1` Run targeted tests and builds for release retest fixes, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify release retest fixes`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts` passed 29 tests.
+    - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+37. [PENDING] Git Commit: `test: verify release retest fixes` (hash: TBD)
 
 ## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
