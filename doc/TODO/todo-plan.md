@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "fabcb21fd",
+  "lastRecordedCommit": "9789d1235",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase11.release.task2",
-  "expectedCommitMessage": "chore: build 1.2.289 release artifacts",
+  "currentTaskId": "managed-clean-markers.phase11.release.task3",
+  "expectedCommitMessage": "docs: record 1.2.289 release package",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.289 release artifacts",
-    "preCommitHead": "fabcb21fd",
+    "expectedCommitMessage": "docs: record 1.2.289 release package",
+    "preCommitHead": "9789d1235",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase11.release.task2"
+    "taskId": "managed-clean-markers.phase11.release.task3"
   }
 }
 ```
@@ -279,12 +279,14 @@
 
 68. [DONE] `managed-clean-markers.phase11.release.task2` Run `./scripts/build-all.sh`, commit the v1.2.289 version bump and release manifests, then keep the tree clean for VSIX packaging (scope: `package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.289 release artifacts`).
     - Verification 2026-05-17: `./scripts/build-all.sh` completed for v1.2.289 and produced provider, core, launcher, vscode-webview, and project-manager archives in `doc/tmp/releases/`.
-69. [PENDING] Git Commit: `chore: build 1.2.289 release artifacts` (hash: TBD)
+69. [DONE] Git Commit: `chore: build 1.2.289 release artifacts` (hash: 9789d1235)
 
 ### Stream: VSIX Packaging
 
-70. [TODO] `managed-clean-markers.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.289 release package`).
-71. [TODO] Git Commit: `docs: record 1.2.289 release package` (hash: TBD)
+70. [DONE] `managed-clean-markers.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.289 release package`).
+    - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version` completed for v1.2.289 with `Step 7: Verifying SDK exclusions`, production dependency pruning, `Package created`, and VSIX runtime package surface verification.
+    - Release handoff 2026-05-17: generated `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.289.vsix`.
+71. [PENDING] Git Commit: `docs: record 1.2.289 release package` (hash: TBD)
 
 ## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
