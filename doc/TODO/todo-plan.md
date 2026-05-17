@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "e0373dde8",
+  "lastRecordedCommit": "25171dd87",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase0.plan.task1",
-  "expectedCommitMessage": "docs: open clean stage marker planning",
+  "currentTaskId": "managed-clean-markers.phase0.plan.task2",
+  "expectedCommitMessage": "docs: plan clean stage markers",
   "debt": {
-    "expectedCommitMessage": "docs: open clean stage marker planning",
-    "preCommitHead": "e0373dde8",
+    "expectedCommitMessage": "docs: plan clean stage markers",
+    "preCommitHead": "25171dd87",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase0.plan.task1"
+    "taskId": "managed-clean-markers.phase0.plan.task2"
   }
 }
 ```
@@ -51,12 +51,12 @@
 ### Stream: Active Plan Creation
 
 1. [DONE] `managed-clean-markers.phase0.plan.task1` Create the active todo-plan for the clean Git and stage marker fix (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open clean stage marker planning`).
-2. [PENDING] Git Commit: `docs: open clean stage marker planning` (hash: TBD)
+2. [DONE] Git Commit: `docs: open clean stage marker planning` (hash: 25171dd87)
 
 ### Stream: Planning Source
 
-3. [TODO] `managed-clean-markers.phase0.plan.task2` Create the planning source and register the active scope in the documentation index (scope: `doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan clean stage markers`).
-4. [TODO] Git Commit: `docs: plan clean stage markers` (hash: TBD)
+3. [DONE] `managed-clean-markers.phase0.plan.task2` Create the planning source and register the active scope in the documentation index (scope: `doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan clean stage markers`).
+4. [PENDING] Git Commit: `docs: plan clean stage markers` (hash: TBD)
 
 ## Phase 1 - Terminal Clean Git Guard (owner: Codex, updated: 2026-05-17)
 
