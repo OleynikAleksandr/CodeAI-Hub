@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "6ac43b9ea",
+  "lastRecordedCommit": "63488ea77",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase3.docs.task1",
-  "expectedCommitMessage": "docs: clarify diagram row budget",
+  "currentTaskId": "diagram-row-layout.phase3.verify.task1",
+  "expectedCommitMessage": "test: verify diagram row budget fix",
   "debt": {
-    "expectedCommitMessage": "docs: clarify diagram row budget",
-    "preCommitHead": "6ac43b9ea",
+    "expectedCommitMessage": "test: verify diagram row budget fix",
+    "preCommitHead": "63488ea77",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase3.docs.task1"
+    "taskId": "diagram-row-layout.phase3.verify.task1"
   }
 }
 ```
@@ -91,12 +91,15 @@
 ### Stream: Retest Documentation
 
 12. [DONE] `diagram-row-layout.phase3.docs.task1` Update the Diagram Modules visual-shell SSOT with the clarified actual-module row budget and aspect-ratio behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify diagram row budget`).
-13. [PENDING] Git Commit: `docs: clarify diagram row budget` (hash: TBD)
+13. [DONE] Git Commit: `docs: clarify diagram row budget` (hash: 63488ea77)
 
 ### Stream: Retest Verification
 
-14. [TODO] `diagram-row-layout.phase3.verify.task1` Re-run targeted layout tests and webview checks after the retest fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram row budget fix`).
-15. [TODO] Git Commit: `test: verify diagram row budget fix` (hash: TBD)
+14. [DONE] `diagram-row-layout.phase3.verify.task1` Re-run targeted layout tests and webview checks after the retest fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram row budget fix`).
+    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13, including aspect-ratio visibility and explicit Product Part columns with auto cluster row capping.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+    - Verification 2026-05-17: `npm run build:webview` passed.
+15. [PENDING] Git Commit: `test: verify diagram row budget fix` (hash: TBD)
 
 ### Stream: Diagram Retest
 
