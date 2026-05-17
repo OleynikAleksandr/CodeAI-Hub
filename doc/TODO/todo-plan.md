@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "abe67b6e3",
+  "lastRecordedCommit": "728e18590",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase1.cleanup.task1",
-  "expectedCommitMessage": "refactor: remove pm status bar component",
+  "currentTaskId": "pm-sidebar-settings.phase2.docs.task1",
+  "expectedCommitMessage": "docs: document pm sidebar settings action",
   "debt": {
-    "expectedCommitMessage": "refactor: remove pm status bar component",
-    "preCommitHead": "abe67b6e3",
+    "expectedCommitMessage": "docs: document pm sidebar settings action",
+    "preCommitHead": "728e18590",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase1.cleanup.task1"
+    "taskId": "pm-sidebar-settings.phase2.docs.task1"
   }
 }
 ```
@@ -58,14 +58,14 @@
 3. [DONE] `pm-sidebar-settings.phase1.layout.task1` Move `Open Settings` into the bottom of the left sidebar and remove the visible footer output (scope: `src/client/project-manager/components/layout/sidebar.tsx, src/client/project-manager/components/layout/status-bar.tsx, packages/ui/project-manager/styles.css`; expected commit: `feat: move pm settings action to sidebar`).
 4. [DONE] Git Commit: `feat: move pm settings action to sidebar` (hash: abe67b6e3)
 5. [DONE] `pm-sidebar-settings.phase1.cleanup.task1` Remove the obsolete footer component after the main layout no longer needs it (scope: `src/client/project-manager/components/layout/main-area.tsx, src/client/project-manager/components/layout/status-bar.tsx`; expected commit: `refactor: remove pm status bar component`).
-6. [PENDING] Git Commit: `refactor: remove pm status bar component` (hash: TBD)
+6. [DONE] Git Commit: `refactor: remove pm status bar component` (hash: 728e18590)
 
 ## Phase 2 - Documentation And Verification (owner: Codex, updated: 2026-05-17)
 
 ### Stream: SSOT Documentation
 
-7. [TODO] `pm-sidebar-settings.phase2.docs.task1` Update PM/UI bundle SSOT docs for sidebar-owned Settings action and removed bottom footer (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md, doc/TODO/todo-plan.md`; expected commit: `docs: document pm sidebar settings action`).
-8. [TODO] Git Commit: `docs: document pm sidebar settings action` (hash: TBD)
+7. [DONE] `pm-sidebar-settings.phase2.docs.task1` Update PM/UI bundle SSOT docs for sidebar-owned Settings action and removed bottom footer (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: document pm sidebar settings action`).
+8. [PENDING] Git Commit: `docs: document pm sidebar settings action` (hash: TBD)
 
 ### Stream: Tooling Verification
 
