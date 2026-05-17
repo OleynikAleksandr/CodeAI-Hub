@@ -8,6 +8,7 @@
   --pm-sidebar-min-width: 220px;
   --pm-sidebar-max-width: 420px;
   --pm-resizer-width: 6px;
+  --pm-panel-gap: 8px;
   --pm-panel-min-width: 240px;
   --pm-bg-primary: #0f1216;
   --pm-bg-secondary: #151a20;
@@ -766,6 +767,8 @@ body {
   flex: 1;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
+  padding: 0 var(--pm-panel-gap) var(--pm-panel-gap) 0;
   background: var(--pm-bg-primary);
 }
 
@@ -774,6 +777,7 @@ body {
   display: flex;
   flex: 1;
   min-width: 0;
+  min-height: 0;
   overflow: hidden;
   background: var(--pm-bg-primary);
 }

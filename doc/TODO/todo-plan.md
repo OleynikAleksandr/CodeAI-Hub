@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "bd4aafa1d",
+  "lastRecordedCommit": "b4e8935cd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase3.release.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.297 vsix",
+  "currentTaskId": "pm-sidebar-settings.phase4.feedback.gutter.task1",
+  "expectedCommitMessage": "fix: add pm main area edge gutter",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.297 vsix",
-    "preCommitHead": "bd4aafa1d",
+    "expectedCommitMessage": "fix: add pm main area edge gutter",
+    "preCommitHead": "b4e8935cd",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase3.release.vsix.task1"
+    "taskId": "pm-sidebar-settings.phase4.feedback.gutter.task1"
   }
 }
 ```
@@ -95,18 +95,45 @@
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated package 2026-05-17: `codeai-hub-1.2.297.vsix` (48M).
     - Release confirmations 2026-05-17: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, `Release build complete`.
-16. [PENDING] Git Commit: `chore: package release 1.2.297 vsix` (hash: TBD)
+16. [DONE] Git Commit: `chore: package release 1.2.297 vsix` (hash: b4e8935cd)
 
-## Phase 4 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
+## Phase 4 - Acceptance Feedback Fix (owner: Codex, updated: 2026-05-17)
+
+### Stream: Edge Gutter Fix
+
+17. [DONE] `pm-sidebar-settings.phase4.feedback.gutter.task1` Add an unhighlighted bottom/right gutter around the Project Manager main panel area so session status controls and artifact/settings controls do not touch the outer PM edge (scope: `packages/ui/project-manager/styles.css, doc/TODO/todo-plan.md`; expected commit: `fix: add pm main area edge gutter`).
+18. [PENDING] Git Commit: `fix: add pm main area edge gutter` (hash: TBD)
+19. [TODO] `pm-sidebar-settings.phase4.feedback.verify.task1` Run targeted Project Manager build/typecheck verification and record the result (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify pm main area edge gutter`).
+20. [TODO] Git Commit: `test: verify pm main area edge gutter` (hash: TBD)
+
+## Phase 5 - Release Build For Retest (owner: Codex, updated: 2026-05-17)
+
+### Stream: Release Confirmation Gate
+
+21. [TODO] `pm-sidebar-settings.phase5.release.confirm.task1` Wait for explicit user confirmation before preparing or building the next retest release after the gutter fix (scope: user release confirmation only; expected commit: none).
+
+### Stream: Release Preparation
+
+22. [TODO] `pm-sidebar-settings.phase5.release.docs.task1` After release confirmation, update release notes for v1.2.298 before version bump/build so packaged README/CHANGELOG include the Project Manager edge gutter fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.298 release`).
+23. [TODO] Git Commit: `docs: prepare 1.2.298 release` (hash: TBD)
+
+### Stream: Release Automation
+
+24. [TODO] `pm-sidebar-settings.phase5.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.298 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.298 artifacts`).
+25. [TODO] Git Commit: `chore: build release 1.2.298 artifacts` (hash: TBD)
+26. [TODO] `pm-sidebar-settings.phase5.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.298 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.298 vsix`).
+27. [TODO] Git Commit: `chore: package release 1.2.298 vsix` (hash: TBD)
+
+## Phase 6 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
 ### Stream: User Retest
 
-17. [TODO] `pm-sidebar-settings.phase4.acceptance.task1` User installs and tests v1.2.297, then confirms the bottom footer is gone, `Workflow Tree MVP` is not visible, `Open Settings` sits at the bottom of the left sidebar, and session/artifact panes have the reclaimed vertical space (scope: user visual acceptance only; expected commit: none).
+28. [TODO] `pm-sidebar-settings.phase6.acceptance.task1` User installs and tests the next release, then confirms the bottom footer is gone, `Workflow Tree MVP` is not visible, `Open Settings` sits at the bottom of the left sidebar, and the main area has matching bottom/right gutters (scope: user visual acceptance only; expected commit: none).
 
-## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Scope Closeout
 
-18. [TODO] `pm-sidebar-settings.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-19. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-20. [TODO] `pm-sidebar-settings.phase5.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+29. [TODO] `pm-sidebar-settings.phase7.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+30. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+31. [TODO] `pm-sidebar-settings.phase7.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
