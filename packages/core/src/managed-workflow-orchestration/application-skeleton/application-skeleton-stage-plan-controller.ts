@@ -1,5 +1,6 @@
 import { DiagramModulesManagedGitBoundary } from "../diagram-modules/diagram-modules-managed-git-boundary";
 import { commitManagedWorkflowLedger } from "../diagram-modules/managed-workflow-ledger-git-boundary";
+import { ensureManagedTerminalGitClean } from "../managed-terminal-clean-git-boundary";
 import {
   APPLICATION_STAGE_PLAN_PATH,
   addUnique,
@@ -39,12 +40,10 @@ export interface ApplicationSkeletonStagePlanCommit {
   readonly hash: string;
   readonly nextTaskId: string | null;
 }
-
 export interface ApplicationSkeletonStagePlanBlocked {
   readonly message: string;
   readonly reason: "commit_failed" | "invalid_decision" | "plan_mismatch";
 }
-
 export type ApplicationSkeletonStagePlanAdvanceResult =
   | {
       readonly blocked: null;
@@ -54,10 +53,16 @@ export type ApplicationSkeletonStagePlanAdvanceResult =
       readonly blocked: ApplicationSkeletonStagePlanBlocked;
       readonly commit: null;
     };
-
 export interface ApplicationSkeletonStagePlanControllerOptions {
   readonly gitBoundary?: DiagramModulesManagedGitBoundary;
 }
+const buildBlockedResult = (
+  message: string,
+  reason: ApplicationSkeletonStagePlanBlocked["reason"]
+): ApplicationSkeletonStagePlanAdvanceResult => ({
+  blocked: { message, reason },
+  commit: null,
+});
 
 export class ApplicationSkeletonStagePlanController {
   private readonly gitBoundary: DiagramModulesManagedGitBoundary;
@@ -289,34 +294,23 @@ export class ApplicationSkeletonStagePlanController {
   }
 
   private blockInvalidDecision(): ApplicationSkeletonStagePlanAdvanceResult {
-    return {
-      blocked: {
-        message:
-          "Application Skeleton validation did not accept the current managed artifact.",
-        reason: "invalid_decision",
-      },
-      commit: null,
-    };
+    return buildBlockedResult(
+      "Application Skeleton validation did not accept the current managed artifact.",
+      "invalid_decision"
+    );
   }
 
   private blockPlanMismatch(): ApplicationSkeletonStagePlanAdvanceResult {
-    return {
-      blocked: {
-        message:
-          "Application Skeleton stage plan does not point to an active commit-backed microtask.",
-        reason: "plan_mismatch",
-      },
-      commit: null,
-    };
+    return buildBlockedResult(
+      "Application Skeleton stage plan does not point to an active commit-backed microtask.",
+      "plan_mismatch"
+    );
   }
 
   private blockCommitFailed(
     message: string
   ): ApplicationSkeletonStagePlanAdvanceResult {
-    return {
-      blocked: { message, reason: "commit_failed" },
-      commit: null,
-    };
+    return buildBlockedResult(message, "commit_failed");
   }
 
   private async collectManagedPaths(params: {
@@ -352,6 +346,13 @@ export class ApplicationSkeletonStagePlanController {
     readonly stageState: ManagedPlanState;
     readonly workspaceRoot: string;
   }): Promise<void> {
+    if (params.next.taskId === PHASE4_TASK_ID) {
+      await ensureManagedTerminalGitClean({
+        gitBoundary: this.gitBoundary,
+        stage: "application_skeleton",
+        workspaceRoot: params.workspaceRoot,
+      });
+    }
     const nextStageState: ManagedPlanState = {
       ...params.stageState,
       currentTaskId: params.next.taskId,

@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "3965c697a",
+  "lastRecordedCommit": "e510bfd2f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase1.clean.task2",
-  "expectedCommitMessage": "fix: enforce clean git before managed stage completion",
+  "currentTaskId": "managed-clean-markers.phase1.clean.task3",
+  "expectedCommitMessage": "fix: enforce clean git before application skeleton completion",
   "debt": {
-    "expectedCommitMessage": "fix: enforce clean git before managed stage completion",
-    "preCommitHead": "3965c697a",
+    "expectedCommitMessage": "fix: enforce clean git before application skeleton completion",
+    "preCommitHead": "e510bfd2f",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase1.clean.task2"
+    "taskId": "managed-clean-markers.phase1.clean.task3"
   }
 }
 ```
@@ -68,12 +68,12 @@
 ### Stream: Terminal Commit Boundary
 
 7. [DONE] `managed-clean-markers.phase1.clean.task2` Wire the classifier into managed terminal/user-return transitions so green completion requires a clean tree or a Core commit of classified residue (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before managed stage completion`).
-8. [PENDING] Git Commit: `fix: enforce clean git before managed stage completion` (hash: TBD)
+8. [DONE] Git Commit: `fix: enforce clean git before managed stage completion` (hash: e510bfd2f)
 
 ### Stream: Application Skeleton Terminal Boundary
 
-9. [TODO] `managed-clean-markers.phase1.clean.task3` Apply the terminal clean-Git checkpoint before Application Skeleton opens persistent user return (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before application skeleton completion`).
-10. [TODO] Git Commit: `fix: enforce clean git before application skeleton completion` (hash: TBD)
+9. [DONE] `managed-clean-markers.phase1.clean.task3` Apply the terminal clean-Git checkpoint before Application Skeleton opens persistent user return (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before application skeleton completion`).
+10. [PENDING] Git Commit: `fix: enforce clean git before application skeleton completion` (hash: TBD)
 
 ### Stream: Quality Gates Terminal Boundary
 

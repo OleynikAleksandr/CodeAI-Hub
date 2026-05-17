@@ -230,6 +230,11 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
     await writeWorkspaceFile(workspaceRoot, "tsconfig.json", "{}\n");
     await writeWorkspaceFile(
       workspaceRoot,
+      "scripts/application-skeleton-smoke.cjs",
+      "console.log('ok');\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
       APPLICATION_MARKDOWN_PATH,
       [
         "# Application Skeleton",
@@ -272,6 +277,7 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
         "package.json",
         "package-lock.json",
         "tsconfig.json",
+        "scripts/application-skeleton-smoke.cjs",
       ]),
       ""
     );

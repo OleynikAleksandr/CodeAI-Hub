@@ -91,6 +91,7 @@ const resolveCoreRuntimePatterns = (
   workspaceSlug: string
 ): readonly string[] => [
   "doc/TODO/workspace.plan.md",
+  "doc/TODO/stages/",
   `.codeai-hub/${workspaceSlug}/continuity/`,
   `.codeai-hub/${workspaceSlug}/workflow/state.json`,
 ];
