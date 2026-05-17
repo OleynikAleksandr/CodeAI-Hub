@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.286] - 2026-05-17
+### Fixed
+- **Managed trunk markers are now Core-owned and deterministic.** Project Manager renders gray/yellow/green only from Core workflow-state and no longer promotes stages to green from artifacts, sidecars, `reviewReady`, or local parser success.
+- **Managed stages now finish through a clean terminal Git boundary.** Diagram Modules, Application Skeleton, and Quality Gates run a terminal dirty-tree checkpoint before publishing green completion; Core commits classified managed residue and blocks unclassified files.
+- **Marker state survives Core and Project Manager restart.** Yellow markers recover from persisted continuity chains, and green managed markers recover from the managed workspace `completedStages` ledger.
+
+### Tests
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+
 ## [1.2.285] - 2026-05-16
 ### Fixed
 - **Quality Gates completion marker now matches the other managed stages.** The persistent `User Return And Revisions` synthetic Git Commit line is created as `DONE` with its sentinel hash, so a completed Quality Gates stage does not stay red after integration succeeds.

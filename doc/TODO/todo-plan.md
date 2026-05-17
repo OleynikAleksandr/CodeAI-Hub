@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "2b6d53316",
+  "lastRecordedCommit": "1a1d627ed",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase4.persistence.task1",
-  "expectedCommitMessage": "test: verify marker restart persistence",
+  "currentTaskId": "managed-clean-markers.phase5.release.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.286 release",
   "debt": {
-    "expectedCommitMessage": "test: verify marker restart persistence",
-    "preCommitHead": "2b6d53316",
+    "expectedCommitMessage": "docs: prepare 1.2.286 release",
+    "preCommitHead": "1a1d627ed",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase4.persistence.task1"
+    "taskId": "managed-clean-markers.phase5.release.task1"
   }
 }
 ```
@@ -114,15 +114,32 @@
 21. [DONE] `managed-clean-markers.phase4.persistence.task1` Verify marker state recovery after Core or Project Manager restart from persisted Core-owned state (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify marker restart persistence`).
     - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts` passed 6/6, including persisted continuity yellow markers and completed ledger green markers after a fresh `WorkflowStateService` instance.
     - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
-22. [PENDING] Git Commit: `test: verify marker restart persistence` (hash: TBD)
+22. [DONE] Git Commit: `test: verify marker restart persistence` (hash: 1a1d627ed)
 
 ### Stream: User Retest
 
-23. [TODO] `managed-clean-markers.phase4.acceptance.task1` User retests the managed workflow: each step becomes yellow on first Core-started session, becomes green only at the terminal User Return And Revisions boundary, and the Git tree stays clean after each step. Scope: user workflow acceptance only; expected commit: none.
+23. [DONE] `managed-clean-markers.phase4.acceptance.task1` User retests the managed workflow: each step becomes yellow on first Core-started session, becomes green only at the terminal User Return And Revisions boundary, and the Git tree stays clean after each step. Scope: user workflow acceptance only; expected commit: none. Disposition: user requested a new release build on 2026-05-17.
 
-## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 5 - Release Build (owner: Codex, updated: 2026-05-17)
+
+### Stream: Release Preparation
+
+24. [DONE] `managed-clean-markers.phase5.release.task1` Update release-facing README/CHANGELOG for v1.2.286 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.286 release`).
+25. [PENDING] Git Commit: `docs: prepare 1.2.286 release` (hash: TBD)
+
+### Stream: Unified Release Artifacts
+
+26. [TODO] `managed-clean-markers.phase5.release.task2` Run `./scripts/build-all.sh`, commit the v1.2.286 version bump and release manifests, then keep the tree clean for VSIX packaging (scope: release automation outputs; expected commit: `chore: build 1.2.286 release artifacts`).
+27. [TODO] Git Commit: `chore: build 1.2.286 release artifacts` (hash: TBD)
+
+### Stream: VSIX Packaging
+
+28. [TODO] `managed-clean-markers.phase5.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.286 release package`).
+29. [TODO] Git Commit: `docs: record 1.2.286 release package` (hash: TBD)
+
+## Phase 6 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-24. [TODO] `managed-clean-markers.phase5.closeout.task1` After explicit user acceptance, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-25. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+30. [TODO] `managed-clean-markers.phase6.closeout.task1` After explicit user acceptance of the installed v1.2.286 package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+31. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)

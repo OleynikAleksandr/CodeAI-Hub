@@ -2,16 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.285** (Quality Gates return marker)
+**Current Release — v1.2.286** (Clean managed markers)
 
-This release packages the final Quality Gates completion marker repair found
-during the `1.2.284` acceptance retest.
+This release packages the managed workflow marker and terminal clean-Git fixes.
 
-When Quality Gates creates the persistent `User Return And Revisions` stream,
-the synthetic Git Commit line is now marked `DONE` immediately, matching Diagram
-Modules and Application Skeleton. A completed Quality Gates stage should no
-longer remain red only because the return stream was left with a pending
-sentinel commit.
+Project Manager trunk step markers now come from Core-owned workflow state:
+gray before a step starts, yellow after Core opens the step session or sends the
+first provider prompt, and green only after the stage reaches its terminal
+completion boundary. Managed technical stages also pass a terminal clean-Git
+checkpoint before publishing green completion; classified residue is committed by
+Core, while unclassified dirty files block the next stage until resolved.
 
 Repository lifecycle tooling under `scripts/plan-orchestrator/**` remains in
 place because it powers `npm run plan:*` and the Husky plan hooks for this code
