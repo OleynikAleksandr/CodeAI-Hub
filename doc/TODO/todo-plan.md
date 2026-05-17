@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "8e5994770",
+  "lastRecordedCommit": "db82d6c8b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase2.markers.task1",
-  "expectedCommitMessage": "fix: make stage markers core owned",
+  "currentTaskId": "managed-clean-markers.phase2.markers.task2",
+  "expectedCommitMessage": "fix: render deterministic project manager step markers",
   "debt": {
-    "expectedCommitMessage": "fix: make stage markers core owned",
-    "preCommitHead": "8e5994770",
+    "expectedCommitMessage": "fix: render deterministic project manager step markers",
+    "preCommitHead": "db82d6c8b",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase2.markers.task1"
+    "taskId": "managed-clean-markers.phase2.markers.task2"
   }
 }
 ```
@@ -85,12 +85,12 @@
 ### Stream: Status Projection
 
 13. [DONE] `managed-clean-markers.phase2.markers.task1` Make Core project trunk stage status from explicit start and terminal completion signals instead of artifact/review side effects (scope: `packages/core/src/workflow/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: make stage markers core owned`).
-14. [PENDING] Git Commit: `fix: make stage markers core owned` (hash: TBD)
+14. [DONE] Git Commit: `fix: make stage markers core owned` (hash: db82d6c8b)
 
 ### Stream: Project Manager Rendering
 
-15. [TODO] `managed-clean-markers.phase2.markers.task2` Restrict Project Manager tree marker rendering to the Core-provided gray/yellow/green stage status contract (scope: `src/client/project-manager/components/layout/**, src/client/project-manager/services/**, src/client/project-manager/**/*.test.*`; expected commit: `fix: render deterministic project manager step markers`).
-16. [TODO] Git Commit: `fix: render deterministic project manager step markers` (hash: TBD)
+15. [DONE] `managed-clean-markers.phase2.markers.task2` Restrict Project Manager tree marker rendering to the Core-provided gray/yellow/green stage status contract (scope: `src/client/project-manager/components/layout/**, src/client/project-manager/services/**, src/client/project-manager/**/*.test.*`; expected commit: `fix: render deterministic project manager step markers`).
+16. [PENDING] Git Commit: `fix: render deterministic project manager step markers` (hash: TBD)
 
 ## Phase 3 - Documentation And Verification (owner: Codex, updated: 2026-05-17)
 

@@ -2,45 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { resolveTreeStatus } from "./workspace-tree-model";
 
-test("resolveTreeStatus marks provider-direct stages active once a draft artifact exists", () => {
-  assert.equal(
-    resolveTreeStatus("in_progress", false, {
-      hasArtifact: true,
-      stage: "description",
-    }),
-    "active"
-  );
-  assert.equal(
-    resolveTreeStatus("in_progress", false, {
-      hasArtifact: true,
-      stage: "virtual_simulation",
-    }),
-    "active"
-  );
+test("resolveTreeStatus keeps started stages in progress until Core marks completed", () => {
+  assert.equal(resolveTreeStatus("in_progress", false), "progress");
+  assert.equal(resolveTreeStatus("completed", false), "active");
+  assert.equal(resolveTreeStatus("idle", false), "todo");
 });
 
-test("resolveTreeStatus keeps Diagram Modules orange until Core opens user review", () => {
-  assert.equal(
-    resolveTreeStatus("in_progress", false, {
-      hasArtifact: true,
-      reviewReady: false,
-      stage: "diagram_modules",
-    }),
-    "progress"
-  );
-});
-
-test("resolveTreeStatus marks Diagram Modules active after aggregate review opens", () => {
-  assert.equal(
-    resolveTreeStatus("in_progress", false, {
-      hasArtifact: true,
-      reviewReady: true,
-      stage: "diagram_modules",
-    }),
-    "active"
-  );
-});
-
-test("resolveTreeStatus marks completed artifact stages active", () => {
-  assert.equal(resolveTreeStatus("completed", false, true), "active");
+test("resolveTreeStatus preserves warning states before completion visuals", () => {
+  assert.equal(resolveTreeStatus("completed", true), "blocked");
+  assert.equal(resolveTreeStatus("invalid", false), "blocked");
+  assert.equal(resolveTreeStatus("outdated", false), "outdated");
 });

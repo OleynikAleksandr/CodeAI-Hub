@@ -18,26 +18,17 @@ import {
   type SessionResumeIntent,
 } from "./workspace-tree-auto-select";
 import { useWorkspaceTreeActiveStage } from "./use-workspace-tree-active-stage";
-import {
-  resolveTreeStatus,
-  type TreeNode,
-} from "./workspace-tree-model";
+import { resolveTreeStatus, type TreeNode } from "./workspace-tree-model";
 import {
   resolveStageLabel,
   resolveStageTitle,
 } from "./workspace-tree-stage-labels";
-import { useDescriptionArtifactAvailability } from "./use-description-artifact-availability";
 import { useVirtualSimulationArtifactAvailability } from "./use-virtual-simulation-artifact-availability";
 import { useDiagramModulesArtifactAvailability } from "./use-diagram-modules-artifact-availability";
 import { useStepProviderResolver } from "./use-step-provider-resolver";
 import { renderTypeMarker } from "./workspace-tree-type-marker";
 
 const USER_MESSAGES_CATEGORY = "system_feedback";
-
-const readProgressFlag = (
-  progress: Record<string, unknown> | null | undefined,
-  key: string
-): boolean => progress?.[key] === true;
 
 const isTechnicalStageRewriteBoundaryActive = (
   workflowState: WorkflowStateSnapshot | null
@@ -85,11 +76,6 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       ? toWorkflowWorkspaceSlug(workspaceName)
       : null);
 
-  const descriptionArtifactAvailable = useDescriptionArtifactAvailability({
-    enabled: Boolean(selectedWorkspaceId),
-    workspacePath,
-    workspaceSlug,
-  });
   const virtualSimulationArtifactAvailable =
     useVirtualSimulationArtifactAvailability({
       enabled: Boolean(selectedWorkspaceId),
@@ -214,29 +200,9 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       }));
     }
 
-    const stageArtifactAvailable: Record<WorkflowStageId, boolean> = {
-      description: descriptionArtifactAvailable,
-      virtual_simulation: virtualSimulationArtifactAvailable,
-      diagram_modules: diagramModulesArtifactAvailable,
-      application_skeleton:
-        readProgressFlag(
-          workflowState.applicationSkeletonProgress,
-          "markdownExists"
-        ) ||
-        readProgressFlag(workflowState.applicationSkeletonProgress, "mapExists"),
-      quality_gates:
-        readProgressFlag(workflowState.qualityGatesProgress, "markdownExists") ||
-        readProgressFlag(workflowState.qualityGatesProgress, "jsonExists"),
-    };
-    const diagramModulesReviewReady = readProgressFlag(
-      workflowState.diagramModulesProgress,
-      "aggregateReady"
-    );
-
     return WORKFLOW_STAGE_ORDER.map((stage) => {
       const status = workflowState.stages[stage] ?? "idle";
       const blocked = workflowState.gating.blocked[stage] ?? false;
-      const hasArtifact = stageArtifactAvailable[stage];
       const readOnly =
         technicalStageRewriteBoundaryActive && isReadOnlyUpstreamStage(stage);
       const title = resolveStageTitle(stage, status, blocked, t);
@@ -248,11 +214,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           ? `${title} Rewrite boundary active: read-only upstream stage.`
           : title,
         isSelected: stage === activeStage,
-        status: resolveTreeStatus(status, blocked, {
-          hasArtifact,
-          reviewReady: stage === "diagram_modules" && diagramModulesReviewReady,
-          stage,
-        }),
+        status: resolveTreeStatus(status, blocked),
         visualDepth: 0,
         onSelect: () => dispatchStageActivated(stage),
       };
