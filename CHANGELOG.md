@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.287] - 2026-05-17
+### Fixed
+- **Description and Virtual Simulation completion markers now finish during retest.** If either direct stage was already yellow and its final artifact exists, filesystem hydration promotes it to green when the next step becomes available.
+- **Diagram Modules terminal cleanup now accepts generated flow sidecars robustly.** `.codeai-hub/<workspace>/diagram_modules/module-map.flow.json` is treated as stage-owned output even when the runtime has to recover the workspace slug.
+- **Dirty Git blockers now tell the user what to do.** If truly unknown files remain, the message presents clear actions instead of Core/classifier internals.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+
 ## [1.2.286] - 2026-05-17
 ### Fixed
 - **Managed trunk markers are now Core-owned and deterministic.** Project Manager renders gray/yellow/green only from Core workflow-state and no longer promotes stages to green from artifacts, sidecars, `reviewReady`, or local parser success.

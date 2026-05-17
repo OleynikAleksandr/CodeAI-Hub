@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "3bf25487d",
+  "lastRecordedCommit": "4a7f37ed4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase6.verify.task1",
-  "expectedCommitMessage": "test: verify release retest fixes",
+  "currentTaskId": "managed-clean-markers.phase7.release.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.287 release",
   "debt": {
-    "expectedCommitMessage": "test: verify release retest fixes",
-    "preCommitHead": "3bf25487d",
+    "expectedCommitMessage": "docs: prepare 1.2.287 release",
+    "preCommitHead": "4a7f37ed4",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase6.verify.task1"
+    "taskId": "managed-clean-markers.phase7.release.task1"
   }
 }
 ```
@@ -44,7 +44,7 @@
 - A managed stage marker has exactly three visible states: gray means not started, yellow means Core has sent the first agent prompt or opened the step session, and green means the step has reached its terminal user-return/revision boundary.
 - Description and Virtual Simulation do not use managed todo-plans, but they still become yellow when Core starts their session. Their existing green completion behavior must stay intact.
 - A green marker must not be published for a managed step while Core-owned or stage-owned Git changes remain uncommitted. Classified managed residue is committed by Core; unclassified residue blocks completion and next-stage transition until resolved through a Core command.
-- Release build is out of scope for this fix unless the user explicitly requests it later.
+- Release build is in scope for v1.2.287 after the explicit user request on 2026-05-17.
 
 ## Phase 0 - Planning Intake (owner: Codex, updated: 2026-05-17)
 
@@ -167,11 +167,28 @@
     - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts` passed 29 tests.
     - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
-37. [PENDING] Git Commit: `test: verify release retest fixes` (hash: TBD)
+37. [DONE] Git Commit: `test: verify release retest fixes` (hash: 4a7f37ed4)
 
-## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 7 - Release Build For Retest (owner: Codex, updated: 2026-05-17)
+
+### Stream: Release Preparation
+
+38. [DONE] `managed-clean-markers.phase7.release.task1` Update release-facing README/CHANGELOG for v1.2.287 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.287 release`).
+39. [PENDING] Git Commit: `docs: prepare 1.2.287 release` (hash: TBD)
+
+### Stream: Unified Release Artifacts
+
+40. [TODO] `managed-clean-markers.phase7.release.task2` Run `./scripts/build-all.sh`, commit the v1.2.287 version bump and release manifests, then keep the tree clean for VSIX packaging (scope: `package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.287 release artifacts`).
+41. [TODO] Git Commit: `chore: build 1.2.287 release artifacts` (hash: TBD)
+
+### Stream: VSIX Packaging
+
+42. [TODO] `managed-clean-markers.phase7.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.287 release package`).
+43. [TODO] Git Commit: `docs: record 1.2.287 release package` (hash: TBD)
+
+## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-38. [TODO] `managed-clean-markers.phase7.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-39. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+44. [TODO] `managed-clean-markers.phase8.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+45. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
