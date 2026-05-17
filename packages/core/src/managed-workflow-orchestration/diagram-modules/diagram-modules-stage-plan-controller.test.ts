@@ -29,6 +29,8 @@ const LEDGER_SUBJECT_RE = /chore: advance managed workflow ledger/u;
 const LAST_ACCEPTED_HASH_RE = /"lastAcceptedCommitHash": "[0-9a-f]{7,}"/u;
 const PRODUCT_PART_INDEX_TRACKED_RE =
   /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\.index\.md/u;
+const MODULE_MAP_SIDECAR_TRACKED_RE =
+  /\.codeai-hub\/demo-workspace\/diagram_modules\/module-map\.flow\.json/u;
 const GENERATED_DIST_TRACKED_RE = /product-parts\/project-manager\/dist/u;
 const GENERATED_NODE_MODULES_TRACKED_RE = /node_modules/u;
 const PROJECT_MANAGER_README_TRACKED_RE =
@@ -347,6 +349,33 @@ test("DiagramModulesManagedGitBoundary excludes generated outputs from managed c
     assert.match(trackedFiles, PROJECT_MANAGER_README_TRACKED_RE);
     assert.doesNotMatch(trackedFiles, GENERATED_NODE_MODULES_TRACKED_RE);
     assert.doesNotMatch(trackedFiles, GENERATED_DIST_TRACKED_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("DiagramModulesManagedGitBoundary commits generated dot-directory sidecars", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "diagram-managed-git-dot-sidecar-")
+  );
+  const gitBoundary = new DiagramModulesManagedGitBoundary();
+  const sidecarPath = `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/module-map.flow.json`;
+
+  try {
+    await writeWorkspaceFile(workspaceRoot, sidecarPath, '{"nodes":[]}\n');
+
+    const commit = await gitBoundary.commitManagedChanges({
+      commitMessage: "test: managed dot sidecar",
+      managedPaths: [sidecarPath],
+      workspaceRoot,
+    });
+
+    assert.equal(commit.noStagedChanges, false);
+    assert.match(commit.hash ?? "", GIT_HASH_RE);
+
+    const trackedFiles = await git(workspaceRoot, ["ls-files"]);
+    assert.match(trackedFiles, MODULE_MAP_SIDECAR_TRACKED_RE);
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

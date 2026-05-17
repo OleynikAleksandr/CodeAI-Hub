@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "d6163ae97",
+  "lastRecordedCommit": "b3760a129",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase7.release.task3",
-  "expectedCommitMessage": "docs: record 1.2.287 release package",
+  "currentTaskId": "managed-clean-markers.phase8.sidecar.task1",
+  "expectedCommitMessage": "fix: stage managed dot-directory sidecars",
   "debt": {
-    "expectedCommitMessage": "docs: record 1.2.287 release package",
-    "preCommitHead": "d6163ae97",
+    "expectedCommitMessage": "fix: stage managed dot-directory sidecars",
+    "preCommitHead": "b3760a129",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase7.release.task3"
+    "taskId": "managed-clean-markers.phase8.sidecar.task1"
   }
 }
 ```
@@ -189,11 +189,30 @@
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version` completed for v1.2.287.
     - Release checks 2026-05-17: output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
     - Release package 2026-05-17: `codeai-hub-1.2.287.vsix` generated in the repository root (48M).
-43. [PENDING] Git Commit: `docs: record 1.2.287 release package` (hash: TBD)
+43. [DONE] Git Commit: `docs: record 1.2.287 release package` (hash: b3760a129)
 
-## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 8 - Diagram Modules Sidecar Completion Fix (owner: Codex, updated: 2026-05-17)
+
+### Stream: Hidden Sidecar Commit
+
+44. [DONE] `managed-clean-markers.phase8.sidecar.task1` Stage managed dot-directory sidecars without Git exclude pathspecs so Diagram Modules `module-map.flow.json` is committed automatically (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: stage managed dot-directory sidecars`).
+    - Root cause 2026-05-17: `git add -- .codeai-hub/.../module-map.flow.json :(exclude,glob)**/dist/**` did not stage nested files under a dot-prefixed managed directory, so Core saw a standard sidecar but committed no staged changes.
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` passed, including the generated dot-directory sidecar commit regression.
+45. [PENDING] Git Commit: `fix: stage managed dot-directory sidecars` (hash: TBD)
+
+### Stream: Classified Residue Retry UX
+
+46. [TODO] `managed-clean-markers.phase8.sidecar.task2` Retry classified terminal residue commits and replace empty dirty-tree blockers with a generated-file auto-save failure message (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prevent empty managed dirty blockers`).
+47. [TODO] Git Commit: `fix: prevent empty managed dirty blockers` (hash: TBD)
+
+### Stream: Sidecar Retest Verification
+
+48. [TODO] `managed-clean-markers.phase8.verify.task1` Run targeted tests/builds for Diagram Modules terminal sidecar completion, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram modules sidecar completion`).
+49. [TODO] Git Commit: `test: verify diagram modules sidecar completion` (hash: TBD)
+
+## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-44. [TODO] `managed-clean-markers.phase8.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-45. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+50. [TODO] `managed-clean-markers.phase9.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+51. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)

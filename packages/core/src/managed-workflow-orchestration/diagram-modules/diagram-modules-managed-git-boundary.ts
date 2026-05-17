@@ -24,6 +24,7 @@ const GIT_INDEX_LOCK_RE =
 const BACKSLASH_RE = /\\/gu;
 const LEADING_DOT_SLASH_RE = /^\.\//u;
 const TRAILING_SLASH_RE = /\/+$/u;
+const DOT_PREFIX = ".";
 
 interface GitCommandResult {
   readonly exitCode: number;
@@ -70,6 +71,9 @@ const filterManagedPaths = (
   managedPaths: readonly string[]
 ): readonly string[] =>
   managedPaths.filter((managedPath) => !isGeneratedOutputPath(managedPath));
+
+const isDotPrefixedManagedPath = (value: string): boolean =>
+  normalizeManagedPath(value).startsWith(DOT_PREFIX);
 
 const extractGitErrorText = (error: unknown): string => {
   if (!(error instanceof Error)) {
@@ -128,12 +132,7 @@ export class DiagramModulesManagedGitBoundary {
         return { hash: null, noStagedChanges: true };
       }
 
-      await this.git(params.workspaceRoot, [
-        "add",
-        "--",
-        ...managedPaths,
-        ...MANAGED_GIT_EXCLUDED_PATHS,
-      ]);
+      await this.stageManagedPaths(params.workspaceRoot, managedPaths);
       const diff = await this.runGitCommand(
         params.workspaceRoot,
         ["diff", "--cached", "--quiet", "--"],
@@ -155,6 +154,27 @@ export class DiagramModulesManagedGitBoundary {
       ]);
       return { hash, noStagedChanges: false };
     });
+  }
+
+  private async stageManagedPaths(
+    workspaceRoot: string,
+    managedPaths: readonly string[]
+  ): Promise<void> {
+    const dotPrefixedPaths = managedPaths.filter(isDotPrefixedManagedPath);
+    const regularPaths = managedPaths.filter(
+      (managedPath) => !isDotPrefixedManagedPath(managedPath)
+    );
+    if (dotPrefixedPaths.length > 0) {
+      await this.git(workspaceRoot, ["add", "--", ...dotPrefixedPaths]);
+    }
+    if (regularPaths.length > 0) {
+      await this.git(workspaceRoot, [
+        "add",
+        "--",
+        ...regularPaths,
+        ...MANAGED_GIT_EXCLUDED_PATHS,
+      ]);
+    }
   }
 
   private async ensureGitRepository(workspaceRoot: string): Promise<void> {
