@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "329cb9879",
+  "lastRecordedCommit": "ee79ce858",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.release292.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.292 vsix",
+  "currentTaskId": "diagram-row-layout.phase4.release293.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.293 release",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.292 vsix",
-    "preCommitHead": "329cb9879",
+    "expectedCommitMessage": "docs: prepare 1.2.293 release",
+    "preCommitHead": "ee79ce858",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.release292.vsix.task1"
+    "taskId": "diagram-row-layout.phase4.release293.docs.task1"
   }
 }
 ```
@@ -189,16 +189,32 @@
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Release package: `codeai-hub-1.2.292.vsix` (48M on disk, script-reported package size 49M).
     - Release script confirmed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, and `Release build complete`.
-43. [PENDING] Git Commit: `chore: package release 1.2.292 vsix` (hash: TBD)
+43. [DONE] Git Commit: `chore: package release 1.2.292 vsix` (hash: ee79ce858)
 
 ### Stream: User Visual Acceptance Testing
 
-44. [TODO] `diagram-row-layout.phase4.release292.acceptance.task1` User installs and retests v1.2.292 release package for Diagram Modules compact spacing, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
+44. [DONE] `diagram-row-layout.phase4.release292.acceptance.task1` User installs and retests v1.2.292 release package for Diagram Modules compact spacing, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User requested another release on 2026-05-17 without reporting a new defect, so v1.2.292 is treated as handed off and the next package will rebuild the current accepted state.
+
+### Stream: Compact Fix Rebuild Release Preparation
+
+45. [DONE] `diagram-row-layout.phase4.release293.docs.task1` Update release notes for v1.2.293 before version bump/build so packaged README/CHANGELOG identify the rebuilt compact Diagram Modules release (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.293 release`).
+46. [PENDING] Git Commit: `docs: prepare 1.2.293 release` (hash: TBD)
+
+### Stream: Compact Fix Rebuild Release Automation
+
+47. [TODO] `diagram-row-layout.phase4.release293.buildall.task1` Run `./scripts/build-all.sh` for v1.2.293 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.293 artifacts`).
+48. [TODO] Git Commit: `chore: build release 1.2.293 artifacts` (hash: TBD)
+49. [TODO] `diagram-row-layout.phase4.release293.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.293 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.293 vsix`).
+50. [TODO] Git Commit: `chore: package release 1.2.293 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+51. [TODO] `diagram-row-layout.phase4.release293.acceptance.task1` User installs and retests v1.2.293 release package for Diagram Modules compact spacing, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-45. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-46. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-47. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+52. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+53. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+54. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).

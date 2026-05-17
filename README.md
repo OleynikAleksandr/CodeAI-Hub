@@ -2,7 +2,7 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.292** (Diagram Modules compact visual layout refresh)
+**Current Release — v1.2.293** (Diagram Modules compact visual layout refresh)
 
 This release packages the Diagram Modules visual layout retest fixes. Automatic
 CSS Grid layout now caps one horizontal Product Part row to three actual module

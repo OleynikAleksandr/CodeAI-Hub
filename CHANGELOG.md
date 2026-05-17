@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.293] - 2026-05-17
+### Changed
+- **Rebuilt the Diagram Modules compact layout release package.** This release republishes the current accepted compact visual layout state with fresh provider, core, launcher, webview, Project Manager, and VSIX artifacts.
+
+### Tests
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
+
 ## [1.2.292] - 2026-05-17
 ### Fixed
 - **Single-cluster Diagram Modules layouts no longer stretch across the viewport.** Cluster cards now size to occupied content, module tracks use compact card bounds, and free horizontal space is no longer distributed into huge gaps between module cards.
