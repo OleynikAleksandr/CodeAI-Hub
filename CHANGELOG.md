@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.294] - 2026-05-17
+### Fixed
+- **Diagram Modules Cluster boundaries now stay tight to their module grid.** Long Cluster titles or purpose text wrap inside the compact module-grid width instead of inflating the dashed Cluster container and leaving excessive right-side empty space.
+
+### Tests
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.293] - 2026-05-17
 ### Changed
 - **Rebuilt the Diagram Modules compact layout release package.** This release republishes the current accepted compact visual layout state with fresh provider, core, launcher, webview, Project Manager, and VSIX artifacts.

@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "1b6d02306",
+  "lastRecordedCommit": "141b63d65",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.cluster.bounds.verify.task1",
-  "expectedCommitMessage": "test: verify diagram cluster bounds",
+  "currentTaskId": "diagram-row-layout.phase4.release294.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.294 release",
   "debt": {
-    "expectedCommitMessage": "test: verify diagram cluster bounds",
-    "preCommitHead": "1b6d02306",
+    "expectedCommitMessage": "docs: prepare 1.2.294 release",
+    "preCommitHead": "141b63d65",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.cluster.bounds.verify.task1"
+    "taskId": "diagram-row-layout.phase4.release294.docs.task1"
   }
 }
 ```
@@ -233,16 +233,32 @@
     - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
     - Verification 2026-05-17: `npm run build:webview` passed.
-57. [PENDING] Git Commit: `test: verify diagram cluster bounds` (hash: TBD)
+57. [DONE] Git Commit: `test: verify diagram cluster bounds` (hash: 141b63d65)
 
 ### Stream: User Visual Acceptance Testing
 
-58. [TODO] `diagram-row-layout.phase4.cluster.bounds.acceptance.task1` User installs and retests the next release package for compact Cluster boundaries, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
+58. [DONE] `diagram-row-layout.phase4.cluster.bounds.acceptance.task1` User installs and retests the next release package for compact Cluster boundaries, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User requested a new release on 2026-05-17 after the cluster-boundary fix and verification, so v1.2.294 will package the corrected compact Cluster boundary behavior.
+
+### Stream: Cluster Bounds Release Preparation
+
+59. [DONE] `diagram-row-layout.phase4.release294.docs.task1` Update release notes for v1.2.294 before version bump/build so packaged README/CHANGELOG include the Cluster boundary fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.294 release`).
+60. [PENDING] Git Commit: `docs: prepare 1.2.294 release` (hash: TBD)
+
+### Stream: Cluster Bounds Release Automation
+
+61. [TODO] `diagram-row-layout.phase4.release294.buildall.task1` Run `./scripts/build-all.sh` for v1.2.294 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.294 artifacts`).
+62. [TODO] Git Commit: `chore: build release 1.2.294 artifacts` (hash: TBD)
+63. [TODO] `diagram-row-layout.phase4.release294.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.294 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.294 vsix`).
+64. [TODO] Git Commit: `chore: package release 1.2.294 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+65. [TODO] `diagram-row-layout.phase4.release294.acceptance.task1` User installs and retests v1.2.294 release package for compact Cluster boundaries, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-59. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-60. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-61. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+66. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+67. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+68. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).

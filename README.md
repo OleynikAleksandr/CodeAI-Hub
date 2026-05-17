@@ -2,7 +2,7 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.293** (Diagram Modules compact visual layout refresh)
+**Current Release — v1.2.294** (Diagram Modules compact visual layout refresh)
 
 This release packages the Diagram Modules visual layout retest fixes. Automatic
 CSS Grid layout now caps one horizontal Product Part row to three actual module
@@ -12,6 +12,9 @@ Modules popup windows when later Product Parts materialize in the main workflow.
 Single-cluster rows now keep compact module spacing instead of stretching cards
 across the full Project Manager panel, and auto-fit can scale further down for
 narrow detached or docked views before horizontal scrolling is needed.
+Cluster boundaries now derive their width from the resolved module grid, so long
+cluster titles or purpose text wrap inside compact bounds instead of creating
+large empty right-side padding.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the
