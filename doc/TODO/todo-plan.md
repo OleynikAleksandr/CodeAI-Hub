@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "b4e8935cd",
+  "lastRecordedCommit": "21c99219a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase4.feedback.gutter.task1",
-  "expectedCommitMessage": "fix: add pm main area edge gutter",
+  "currentTaskId": "pm-sidebar-settings.phase4.feedback.verify.task1",
+  "expectedCommitMessage": "test: verify pm main area edge gutter",
   "debt": {
-    "expectedCommitMessage": "fix: add pm main area edge gutter",
-    "preCommitHead": "b4e8935cd",
+    "expectedCommitMessage": "test: verify pm main area edge gutter",
+    "preCommitHead": "21c99219a",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase4.feedback.gutter.task1"
+    "taskId": "pm-sidebar-settings.phase4.feedback.verify.task1"
   }
 }
 ```
@@ -102,9 +102,11 @@
 ### Stream: Edge Gutter Fix
 
 17. [DONE] `pm-sidebar-settings.phase4.feedback.gutter.task1` Add an unhighlighted bottom/right gutter around the Project Manager main panel area so session status controls and artifact/settings controls do not touch the outer PM edge (scope: `packages/ui/project-manager/styles.css, doc/TODO/todo-plan.md`; expected commit: `fix: add pm main area edge gutter`).
-18. [PENDING] Git Commit: `fix: add pm main area edge gutter` (hash: TBD)
-19. [TODO] `pm-sidebar-settings.phase4.feedback.verify.task1` Run targeted Project Manager build/typecheck verification and record the result (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify pm main area edge gutter`).
-20. [TODO] Git Commit: `test: verify pm main area edge gutter` (hash: TBD)
+18. [DONE] Git Commit: `fix: add pm main area edge gutter` (hash: 21c99219a)
+19. [DONE] `pm-sidebar-settings.phase4.feedback.verify.task1` Run targeted Project Manager build/typecheck verification and record the result (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify pm main area edge gutter`).
+    - Verification 2026-05-17: `npm run build:project-manager` passed.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+20. [PENDING] Git Commit: `test: verify pm main area edge gutter` (hash: TBD)
 
 ## Phase 5 - Release Build For Retest (owner: Codex, updated: 2026-05-17)
 
