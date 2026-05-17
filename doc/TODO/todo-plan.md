@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "7de441992",
+  "lastRecordedCommit": "8e5994770",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase1.clean.task4",
-  "expectedCommitMessage": "fix: enforce clean git before quality gates completion",
+  "currentTaskId": "managed-clean-markers.phase2.markers.task1",
+  "expectedCommitMessage": "fix: make stage markers core owned",
   "debt": {
-    "expectedCommitMessage": "fix: enforce clean git before quality gates completion",
-    "preCommitHead": "7de441992",
+    "expectedCommitMessage": "fix: make stage markers core owned",
+    "preCommitHead": "8e5994770",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase1.clean.task4"
+    "taskId": "managed-clean-markers.phase2.markers.task1"
   }
 }
 ```
@@ -78,14 +78,14 @@
 ### Stream: Quality Gates Terminal Boundary
 
 11. [DONE] `managed-clean-markers.phase1.clean.task4` Apply the terminal clean-Git checkpoint before Quality Gates opens persistent user return (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/**, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before quality gates completion`).
-12. [PENDING] Git Commit: `fix: enforce clean git before quality gates completion` (hash: TBD)
+12. [DONE] Git Commit: `fix: enforce clean git before quality gates completion` (hash: 8e5994770)
 
 ## Phase 2 - Core-Owned Stage Markers (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Status Projection
 
-13. [TODO] `managed-clean-markers.phase2.markers.task1` Make Core project trunk stage status from explicit start and terminal completion signals instead of artifact/review side effects (scope: `packages/core/src/workflow/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: make stage markers core owned`).
-14. [TODO] Git Commit: `fix: make stage markers core owned` (hash: TBD)
+13. [DONE] `managed-clean-markers.phase2.markers.task1` Make Core project trunk stage status from explicit start and terminal completion signals instead of artifact/review side effects (scope: `packages/core/src/workflow/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: make stage markers core owned`).
+14. [PENDING] Git Commit: `fix: make stage markers core owned` (hash: TBD)
 
 ### Stream: Project Manager Rendering
 

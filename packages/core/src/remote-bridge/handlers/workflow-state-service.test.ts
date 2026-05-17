@@ -210,7 +210,7 @@ test("workflow-state cold start keeps development tree preview side-effect free 
     assert.equal(result.statusCode, 200);
     const payload = result.payload as WorkflowStatePayload;
 
-    assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
+    assert.equal(payload.state?.stages.diagram_modules?.status, "in_progress");
     assert.equal(payload.diagramModulesProgress?.substep, "awaiting_review");
     assert.equal(payload.developmentTree?.parts.length, 1);
     assert.equal(payload.developmentTree?.parts[0]?.id, "local-core-runtime");
@@ -235,7 +235,7 @@ test("workflow-state cold start keeps development tree preview side-effect free 
   }
 });
 
-test("workflow-state completes in-progress diagram modules after review opens", async () => {
+test("workflow-state keeps diagram modules in progress until managed completion ledger", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-service-diagram-review-")
   );
@@ -284,7 +284,7 @@ test("workflow-state completes in-progress diagram modules after review opens", 
     const payload = result.payload as WorkflowStatePayload;
 
     assert.equal(payload.diagramModulesProgress?.aggregateReady, true);
-    assert.equal(payload.state?.stages.diagram_modules?.status, "completed");
+    assert.equal(payload.state?.stages.diagram_modules?.status, "in_progress");
     assert.equal(payload.gating.blocked.application_skeleton, false);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

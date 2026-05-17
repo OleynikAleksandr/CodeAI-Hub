@@ -34,6 +34,7 @@ import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-developme
 import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
 import { hydrateWorkflowStateFromFilesystem } from "./workflow-state-filesystem-hydration";
 import { resolveCanonicalLastActive } from "./workflow-state-last-active-resolver";
+import { hydrateTechnicalStageCompletionFromManagedWorkspace } from "./workflow-state-managed-stage-hydration";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
@@ -226,6 +227,12 @@ export class WorkflowStateService {
                   technicalStageProgress.applicationSkeletonProgress,
                 qualityGatesProgress:
                   technicalStageProgress.qualityGatesProgress,
+              })
+            )
+            .then((validatedState) =>
+              hydrateTechnicalStageCompletionFromManagedWorkspace({
+                state: validatedState,
+                workspaceRoot,
               })
             )
             .then((validatedState) =>
