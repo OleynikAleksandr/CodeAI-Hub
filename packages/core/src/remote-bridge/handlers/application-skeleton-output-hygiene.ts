@@ -13,6 +13,7 @@ const GENERATED_OUTPUT_SEGMENTS = new Set([
 ]);
 
 const INSTALL_OUTPUT_PACKAGE_MANAGERS = new Set(["bun", "npm", "pnpm", "yarn"]);
+const LOCAL_RUNTIME_STATE_DIR = ".codeai-hub/state";
 const BACKSLASH_RE = /\\/g;
 const LEADING_DOT_SLASH_RE = /^\.\//u;
 const NEGATED_PATTERN_RE = /^!/u;
@@ -63,6 +64,19 @@ const ignoresSegment = (
     );
   }) ?? false;
 
+const ignoresPath = (
+  lines: readonly string[] | null,
+  pathValue: string
+): boolean =>
+  lines?.some((line) => {
+    const normalized = normalizePath(line.replace(NEGATED_PATTERN_RE, ""));
+    return (
+      normalized === pathValue ||
+      normalized === `${pathValue}/**` ||
+      normalized.startsWith(`${pathValue}/`)
+    );
+  }) ?? false;
+
 const requiresBuildOutputIgnore = (
   requiredScripts: readonly string[]
 ): boolean => requiredScripts.some((script) => script === "build");
@@ -101,6 +115,11 @@ export const auditApplicationSkeletonGitignore = async (params: {
   ) {
     errors.push(
       "application skeleton gitignore must ignore build output: dist"
+    );
+  }
+  if (!ignoresPath(lines, LOCAL_RUNTIME_STATE_DIR)) {
+    errors.push(
+      "application skeleton gitignore must ignore local runtime state: .codeai-hub/state"
     );
   }
   return errors;

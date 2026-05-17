@@ -9,6 +9,8 @@ import { auditApplicationSkeletonEnvironmentReadiness } from "./application-skel
 const MISSING_INSTALL_OUTPUT_RE = /install output is missing: node_modules/;
 const MISSING_GITIGNORE_RE = /gitignore is missing: \.gitignore/;
 const MISSING_DIST_IGNORE_RE = /gitignore must ignore build output: dist/;
+const MISSING_LOCAL_STATE_IGNORE_RE =
+  /gitignore must ignore local runtime state: \.codeai-hub\/state/;
 const FAILED_SCRIPT_RE = /required script failed: build/;
 
 const makeWorkspace = async (): Promise<string> =>
@@ -136,6 +138,28 @@ test("environment readiness audit rejects gitignore without dist output coverage
   }
 });
 
+test("environment readiness audit rejects gitignore without local runtime state coverage", async () => {
+  const workspaceRoot = await makeWorkspace();
+  try {
+    await writePackageJson(workspaceRoot, {
+      build: 'node -e "process.exit(0)"',
+    });
+    await writeFile(
+      path.join(workspaceRoot, ".gitignore"),
+      "node_modules/\ndist/\n"
+    );
+
+    const errors = await auditApplicationSkeletonEnvironmentReadiness({
+      mapJson: makeMap(),
+      workspaceRoot,
+    });
+
+    assert.match(errors.join("\n"), MISSING_LOCAL_STATE_IGNORE_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("environment readiness audit accepts clean install and passing scripts", async () => {
   const workspaceRoot = await makeWorkspace();
   try {
@@ -146,7 +170,7 @@ test("environment readiness audit accepts clean install and passing scripts", as
     });
     await writeFile(
       path.join(workspaceRoot, ".gitignore"),
-      "node_modules/\ndist/\n"
+      "node_modules/\ndist/\n.codeai-hub/state/\n"
     );
 
     const errors = await auditApplicationSkeletonEnvironmentReadiness({
