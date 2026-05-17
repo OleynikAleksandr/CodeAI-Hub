@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "40620b901",
+  "lastRecordedCommit": "bf22e18e7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase1.docs.task1",
-  "expectedCommitMessage": "docs: document diagram row auto layout",
+  "currentTaskId": "diagram-row-layout.phase2.verify.task1",
+  "expectedCommitMessage": "test: verify diagram row auto layout",
   "debt": {
-    "expectedCommitMessage": "docs: document diagram row auto layout",
-    "preCommitHead": "40620b901",
+    "expectedCommitMessage": "test: verify diagram row auto layout",
+    "preCommitHead": "bf22e18e7",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase1.docs.task1"
+    "taskId": "diagram-row-layout.phase2.verify.task1"
   }
 }
 ```
@@ -65,14 +65,17 @@
 ### Stream: Project Manager Contract Docs
 
 5. [DONE] `diagram-row-layout.phase1.docs.task1` Mirror the row-aware auto layout contract in Project Manager documentation (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram row auto layout`).
-6. [PENDING] Git Commit: `docs: document diagram row auto layout` (hash: TBD)
+6. [DONE] Git Commit: `docs: document diagram row auto layout` (hash: bf22e18e7)
 
 ## Phase 2 - Tooling Verification (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Targeted Checks
 
-7. [TODO] `diagram-row-layout.phase2.verify.task1` Run targeted Diagram Modules layout tests plus webview typecheck/build and record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram row auto layout`).
-8. [TODO] Git Commit: `test: verify diagram row auto layout` (hash: TBD)
+7. [DONE] `diagram-row-layout.phase2.verify.task1` Run targeted Diagram Modules layout tests plus webview typecheck/build and record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram row auto layout`).
+   - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 11/11.
+   - Verification 2026-05-17: `npm run typecheck:webview` passed.
+   - Verification 2026-05-17: `npm run build:webview` passed.
+8. [PENDING] Git Commit: `test: verify diagram row auto layout` (hash: TBD)
 
 ## Phase 3 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
