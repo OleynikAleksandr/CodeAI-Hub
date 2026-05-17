@@ -24,10 +24,14 @@ type DiagramEditorFacadeProps = {
 type ContextMenuCallback = (target: ContextMenuTarget, position: { x: number; y: number }) => void;
 const ContextMenuContext = createContext<ContextMenuCallback | null>(null);
 
+const MODULE_CARD_MIN_WIDTH = 220;
+const MODULE_CARD_MAX_WIDTH = 260;
+const MODULE_GRID_GAP = 10;
+
 // -- Module card styles --
 const nodeCardStyle: React.CSSProperties = {
-  minWidth: 220,
-  maxWidth: 260,
+  minWidth: MODULE_CARD_MIN_WIDTH,
+  maxWidth: MODULE_CARD_MAX_WIDTH,
   borderRadius: 16,
   border: "1px solid var(--pm-border-color)",
   background:
@@ -55,6 +59,9 @@ const productPartCardStyle: React.CSSProperties = {
 
 // -- Cluster card styles --
 const clusterCardStyle: React.CSSProperties = {
+  justifySelf: "start",
+  width: "fit-content",
+  maxWidth: "100%",
   borderRadius: 22,
   border: "1px dashed rgba(66, 201, 162, 0.48)",
   background:
@@ -141,9 +148,10 @@ const ClusterCard = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${moduleCols}, 1fr)`,
-          gap: 12,
-          marginTop: 12,
+          gridTemplateColumns: `repeat(${moduleCols}, minmax(${MODULE_CARD_MIN_WIDTH}px, ${MODULE_CARD_MAX_WIDTH}px))`,
+          gap: MODULE_GRID_GAP,
+          justifyContent: "start",
+          marginTop: MODULE_GRID_GAP,
         }}
       >
         {data.modules.map((m) => (
@@ -209,8 +217,9 @@ const ProductPartNode = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${columns}, 1fr)`,
-          gap: 12,
+          gridTemplateColumns: `repeat(${columns}, max-content)`,
+          gap: MODULE_GRID_GAP,
+          justifyContent: "start",
           marginTop: 12,
         }}
       >
@@ -235,7 +244,7 @@ const ZOOM_STEP = 0.01;
 // Floor for the auto-fit scale so extremely narrow panels don't collapse the
 // composition into an unreadable sliver; below this threshold we allow
 // horizontal overflow (container.overflow-x: auto) as a last resort.
-const AUTO_FIT_MIN = 0.25;
+const AUTO_FIT_MIN = 0.12;
 
 export const DiagramEditorFacade: React.FC<DiagramEditorFacadeProps> = ({
   nodes,

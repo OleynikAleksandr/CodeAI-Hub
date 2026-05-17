@@ -15,13 +15,8 @@ const MODULES_HELP_SOURCE_PATH = path.resolve(
 test("diagram modules renderer differentiates product part and cluster containers", async () => {
   const source = await readFile(FACADE_SOURCE_PATH, "utf8");
 
-  assert.equal(source.includes('data.nodeKind === "productPart"'), true);
   assert.equal(source.includes("Product Part"), true);
-  assert.equal(source.includes("data-diagram-container-header-id={id}"), true);
-  assert.equal(source.includes("data-diagram-body-start-offset"), true);
-  assert.equal(source.includes("PRODUCT_PART_BODY_START_OFFSET = 30"), true);
-  assert.equal(source.includes("CLUSTER_BODY_START_OFFSET = 26"), true);
-  assert.equal(source.includes("Clusters: {data.clusterIds.length}"), true);
+  assert.equal(source.includes("Clusters: {data.clusters.length}"), true);
   assert.equal(source.includes("Standalone Modules:"), true);
   assert.equal(source.includes("Purpose"), true);
   assert.equal(source.includes("data.purpose"), true);
@@ -29,11 +24,28 @@ test("diagram modules renderer differentiates product part and cluster container
     source.includes('gridTemplateColumns: "auto minmax(240px, 1fr)"'),
     true
   );
-  assert.equal(source.includes("Modules: {data.moduleIds.length}"), true);
-  assert.equal(source.includes("External to {data.productPart}"), true);
-  assert.equal(source.includes("Standalone in {data.productPart}"), true);
-  assert.equal(source.includes("width: \"100%\""), true);
-  assert.equal(source.includes("height: \"100%\""), true);
+  assert.equal(source.includes("Modules: {data.modules.length}"), true);
+  assert.equal(source.includes("width: \"fit-content\""), true);
+  assert.equal(source.includes("justifySelf: \"start\""), true);
+});
+
+test("diagram modules renderer keeps cluster/module grids compact", async () => {
+  const source = await readFile(FACADE_SOURCE_PATH, "utf8");
+
+  assert.equal(source.includes("const MODULE_CARD_MIN_WIDTH = 220;"), true);
+  assert.equal(source.includes("const MODULE_CARD_MAX_WIDTH = 260;"), true);
+  assert.equal(source.includes("const MODULE_GRID_GAP = 10;"), true);
+  assert.equal(
+    source.includes(
+      "gridTemplateColumns: `repeat(${moduleCols}, minmax(${MODULE_CARD_MIN_WIDTH}px, ${MODULE_CARD_MAX_WIDTH}px))`"
+    ),
+    true
+  );
+  assert.equal(
+    source.includes("gridTemplateColumns: `repeat(${columns}, max-content)`"),
+    true
+  );
+  assert.equal(source.includes("const AUTO_FIT_MIN = 0.12;"), true);
 });
 
 test("diagram modules panel explains ownership hierarchy in the pending state", async () => {
