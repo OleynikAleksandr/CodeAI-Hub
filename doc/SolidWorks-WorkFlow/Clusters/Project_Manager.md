@@ -69,6 +69,11 @@ read path, ни из client-owned helpers.
   - `Artifacts` показывает `application-skeleton.md` / `quality-gates.md` через stage artifact panel, а companion JSON (`application-skeleton-map.json`, `quality-gates.json`) остаётся contract sidecar для Core/gates;
   - `Help` объясняет technical root purpose и почему Development Tree sessions заблокированы до acceptance;
   - active/in-progress and completed indicators come from Core workflow-state. PM must not infer that `Application Skeleton` is idle just because final artifacts are not materialized yet; an active continuity/session for the stage projects the orange marker from Core.
+- Workflow Tree status markers are a Core-state projection, not a PM readiness heuristic:
+  - `idle` renders as gray/todo, `in_progress` renders as yellow/progress, and `completed` renders as green/active;
+  - `blocked`, `invalid`, and `outdated` may add warning visuals or prevent downstream actions, but they are not completion signals;
+  - PM must not promote a trunk stage to green from `hasArtifact`, `reviewReady`, `aggregateReady`, Markdown/JSON sidecar presence, local parser success, or generated root files;
+  - if Core blocks terminal completion on an unclassified dirty Git tree, PM may show the resolution surface and submit the user's decision back to Core, but PM must not stage, commit, or mutate managed plan state itself.
 - Settings surface belongs to PM:
   - footer status bar больше не дублирует workspace identity: левая часть футера пустая, workspace selector остаётся единственной visible surface в левом sidebar;
   - footer status bar action `Open Settings` использует выделенный CSS-класс `pm-status-open-settings` (accent-colored default/hover/active фазы + focus-visible outline) и переключает правую панель PM в отдельный in-shell settings mode без второго окна;

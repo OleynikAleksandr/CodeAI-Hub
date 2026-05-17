@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "db82d6c8b",
+  "lastRecordedCommit": "4f73fb75b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase2.markers.task2",
-  "expectedCommitMessage": "fix: render deterministic project manager step markers",
+  "currentTaskId": "managed-clean-markers.phase3.docs.task1",
+  "expectedCommitMessage": "docs: document clean stage marker contract",
   "debt": {
-    "expectedCommitMessage": "fix: render deterministic project manager step markers",
-    "preCommitHead": "db82d6c8b",
+    "expectedCommitMessage": "docs: document clean stage marker contract",
+    "preCommitHead": "4f73fb75b",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase2.markers.task2"
+    "taskId": "managed-clean-markers.phase3.docs.task1"
   }
 }
 ```
@@ -90,14 +90,14 @@
 ### Stream: Project Manager Rendering
 
 15. [DONE] `managed-clean-markers.phase2.markers.task2` Restrict Project Manager tree marker rendering to the Core-provided gray/yellow/green stage status contract (scope: `src/client/project-manager/components/layout/**, src/client/project-manager/services/**, src/client/project-manager/**/*.test.*`; expected commit: `fix: render deterministic project manager step markers`).
-16. [PENDING] Git Commit: `fix: render deterministic project manager step markers` (hash: TBD)
+16. [DONE] Git Commit: `fix: render deterministic project manager step markers` (hash: 4f73fb75b)
 
 ## Phase 3 - Documentation And Verification (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Architecture Docs
 
-17. [TODO] `managed-clean-markers.phase3.docs.task1` Document the clean Git completion boundary and the three-state stage marker contract (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clean stage marker contract`).
-18. [TODO] Git Commit: `docs: document clean stage marker contract` (hash: TBD)
+17. [DONE] `managed-clean-markers.phase3.docs.task1` Document the clean Git completion boundary and the three-state stage marker contract (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clean stage marker contract`).
+18. [PENDING] Git Commit: `docs: document clean stage marker contract` (hash: TBD)
 
 ### Stream: Tooling Verification
 

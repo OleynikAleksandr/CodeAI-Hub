@@ -27,6 +27,18 @@ Clients may submit raw user intent and render Core-owned snapshots, but they mus
 
 Every Type A, Type B, and Persistent Return managed flow must continue with all clients closed until Core explicitly opens a user review, revision, acceptance, or configuration gate. If a managed step depends on an open Project Manager window to advance before such a user gate, the step contract is invalid and the defect belongs in Core orchestration.
 
+## Stage Marker And Terminal Git Boundary
+
+Core owns the trunk step marker state for every managed technical stage. `Diagram Modules`, `Application Skeleton`, `Quality Gates Baseline`, and future registered managed documentation steps use this contract:
+
+- `idle` / gray until Core starts the continuity step session;
+- `in_progress` / yellow from the first provider prompt or equivalent Core session-start effect through review, repair, acceptance, materialization, and integration;
+- `completed` / green only after Core reaches the terminal `### Stream: User Return And Revisions` boundary, records the stage in the managed workspace `completedStages` ledger, and passes the terminal clean-Git checkpoint.
+
+Artifact presence is not completion truth. `aggregateReady`, `reviewReady`, Markdown/JSON sidecars, local Project Manager parser results, or generated root files cannot promote a managed trunk marker to green. Clients render the Core workflow-state snapshot only.
+
+At the terminal user-return boundary, Core checks the Git tree before publishing completion. Classified managed residue, including stage-owned artifacts, Core runtime metadata, quality-gate/formatter residue, and managed continuity files, is committed by Core through the managed commit transaction. Unclassified residue becomes a Core-owned blocker: Core must not write the completed-stage ledger, publish a green marker, or transition to the next stage until the user resolves the dirty tree through a Core command. Provider agents and Project Manager never run managed Git commits directly.
+
 ## Prompt, Artifact, And Repair Authority
 
 Managed Workflow Orchestration owns the executable artifact contract for managed steps. The first provider prompt and every Core-authored repair prompt must include the full text of all required templates, field references, examples, schema fragments, and authoring rules. A prompt that names a template path without embedding the required text is incomplete; provider agents must not have to inspect `.codeai-hub/templates`, parser implementations, Project Manager code, tests, or internal docs to discover the artifact format.
@@ -184,8 +196,8 @@ The active implementation must provide the complete managed lifecycle:
 - the first prompt embeds all required source artifacts, templates, field references, examples, schema fragments, and authoring rules as provider-visible text;
 - Core validates every provider output through the canonical parser/validator and writes diagnostics as Core-owned feedback;
 - every repair, revision, acceptance, materialization, integration, and persistent-return transition creates or advances a concrete stage-plan microtask with a paired `Git Commit:` item;
-- managed Git hygiene keeps the workspace clean at stage boundaries, including pre-stage cleanup and ignored/generated OS file handling;
-- completed upstream stage LEDs remain green after downstream blockers, while active downstream stages render in progress from Core state;
+- managed Git hygiene keeps the workspace clean at stage boundaries, including pre-stage cleanup, terminal dirty-tree classification, Core commits for classified residue, and blockers for unclassified residue;
+- completed upstream stage LEDs remain green after downstream blockers, while active downstream stages render in progress from Core state and only terminal `User Return And Revisions` completion can publish a green managed marker;
 - no old accept-contract, generated child-plan, hidden post-turn dispatch, direct PM repair prompt, or pseudo-hash behavior returns.
 
 The historical preview-only release boundary is retired and must not be used as active guidance.
