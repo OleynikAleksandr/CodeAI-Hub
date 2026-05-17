@@ -37,7 +37,9 @@ Core owns the trunk step marker state for every managed technical stage. `Diagra
 
 Artifact presence is not completion truth. `aggregateReady`, `reviewReady`, Markdown/JSON sidecars, local Project Manager parser results, or generated root files cannot promote a managed trunk marker to green. Clients render the Core workflow-state snapshot only.
 
-At the terminal user-return boundary, Core checks the Git tree before publishing completion. Classified managed residue, including stage-owned artifacts, Core runtime metadata, quality-gate/formatter residue, and managed continuity files, is committed by Core through the managed commit transaction. Unclassified residue becomes a Core-owned blocker: Core must not write the completed-stage ledger, publish a green marker, or transition to the next stage until the user resolves the dirty tree through a Core command. Provider agents and Project Manager never run managed Git commits directly.
+At the terminal user-return boundary, Core checks the Git tree before publishing completion. Classified managed residue, including stage-owned artifacts, Core runtime metadata, quality-gate/formatter residue, and managed continuity files, is committed by Core through the managed commit transaction. Core runtime metadata includes the managed workspace ledger, stage todo-plans, continuity chains, `workflow/state.json`, and non-semantic step state such as `description-step.json`; it does not include semantic artifacts such as `Final_Description.md` unless the current step explicitly owns that artifact. Unclassified residue becomes a Core-owned blocker: Core must not write the completed-stage ledger, publish a green marker, or transition to the next stage until the user resolves the dirty tree through a Core command. Provider agents and Project Manager never run managed Git commits directly.
+
+Local runtime telemetry is not a managed artifact. Files under `.codeai-hub/state/`, including task timer state, must be ignored by generated workspaces and must not be committed as workflow history. Before a managed step reaches the terminal clean-Git checkpoint, Core ensures `.gitignore` contains `.codeai-hub/state/`; that `.gitignore` update is classified Core metadata and may be committed by Core together with other terminal residue. The terminal checkpoint is successful only when a follow-up Git status has no committable or unclassified residue.
 
 ## Prompt, Artifact, And Repair Authority
 
@@ -73,6 +75,8 @@ Application Skeleton materialization is valid only when the provider has produce
 Quality Gates Baseline and later implementation stages may depend on this foundation evidence instead of re-negotiating the Application Skeleton environment.
 
 The boundary is strict: Application Skeleton owns stack/package/workspace decisions and the first installable project foundation, while Quality Gates Baseline owns research, selection, and integration of quality tooling after that foundation is available. Quality Gates must not be used as a repair layer for an incomplete Application Skeleton foundation.
+
+The generated project foundation must also separate tracked managed artifacts from local runtime state. `.gitignore` must cover install output, build output, and `.codeai-hub/state/` so Project Manager/Core telemetry cannot dirty Git after a step has completed.
 
 Forbidden external access:
 
@@ -196,7 +200,7 @@ The active implementation must provide the complete managed lifecycle:
 - the first prompt embeds all required source artifacts, templates, field references, examples, schema fragments, and authoring rules as provider-visible text;
 - Core validates every provider output through the canonical parser/validator and writes diagnostics as Core-owned feedback;
 - every repair, revision, acceptance, materialization, integration, and persistent-return transition creates or advances a concrete stage-plan microtask with a paired `Git Commit:` item;
-- managed Git hygiene keeps the workspace clean at stage boundaries, including pre-stage cleanup, terminal dirty-tree classification, Core commits for classified residue, and blockers for unclassified residue;
+- managed Git hygiene keeps the workspace clean at stage boundaries, including pre-stage cleanup, terminal dirty-tree classification, `.codeai-hub/state/` ignore enforcement, Core commits for classified residue, and blockers for unclassified residue;
 - completed upstream stage LEDs remain green after downstream blockers, while active downstream stages render in progress from Core state and only terminal `User Return And Revisions` completion can publish a green managed marker;
 - no old accept-contract, generated child-plan, hidden post-turn dispatch, direct PM repair prompt, or pseudo-hash behavior returns.
 

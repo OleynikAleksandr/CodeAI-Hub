@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "b090cc2f5",
+  "lastRecordedCommit": "863bb0715",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase10.metadata-clean.task2",
-  "expectedCommitMessage": "fix: require local runtime state ignore",
+  "currentTaskId": "managed-clean-markers.phase10.docs.task1",
+  "expectedCommitMessage": "docs: document terminal metadata cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: require local runtime state ignore",
-    "preCommitHead": "b090cc2f5",
+    "expectedCommitMessage": "docs: document terminal metadata cleanup",
+    "preCommitHead": "863bb0715",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase10.metadata-clean.task2"
+    "taskId": "managed-clean-markers.phase10.docs.task1"
   }
 }
 ```
@@ -253,12 +253,12 @@
 ### Stream: Local State Ignore Contract
 
 60. [DONE] `managed-clean-markers.phase10.metadata-clean.task2` Enforce `.codeai-hub/state/` as ignored local runtime state in Application Skeleton environment readiness checks (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require local runtime state ignore`).
-61. [PENDING] Git Commit: `fix: require local runtime state ignore` (hash: TBD)
+61. [DONE] Git Commit: `fix: require local runtime state ignore` (hash: 863bb0715)
 
 ### Stream: Architecture Docs
 
-62. [TODO] `managed-clean-markers.phase10.docs.task1` Document the terminal metadata cleanup rule and the `.codeai-hub/state/` local-state boundary (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document terminal metadata cleanup`).
-63. [TODO] Git Commit: `docs: document terminal metadata cleanup` (hash: TBD)
+62. [DONE] `managed-clean-markers.phase10.docs.task1` Document the terminal metadata cleanup rule and the `.codeai-hub/state/` local-state boundary (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document terminal metadata cleanup`).
+63. [PENDING] Git Commit: `docs: document terminal metadata cleanup` (hash: TBD)
 
 ### Stream: Tooling Verification
 
