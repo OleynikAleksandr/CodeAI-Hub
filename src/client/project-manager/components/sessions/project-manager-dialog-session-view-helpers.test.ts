@@ -38,6 +38,18 @@ const createAssistantMessage = (
   ...(localizedContent ? { localizedContent } : {}),
 });
 
+const createSystemMessage = (
+  id: string,
+  content: string,
+  tag?: string
+): SessionMessage => ({
+  id,
+  role: "system",
+  content,
+  createdAt: Date.parse("2026-05-05T18:00:00.000Z"),
+  ...(tag ? { tag } : {}),
+});
+
 (globalThis as typeof globalThis & { React?: unknown }).React = React;
 
 const SYSTEM_MESSAGE_CARD_RULE_REGEX =
@@ -204,6 +216,39 @@ test("DialogPanel keeps Speak button available for assistant thinking bubbles", 
   assert.equal(
     html.includes('aria-label="Speak: Codex · Thinking"'),
     true
+  );
+});
+
+test("DialogPanel renders managed review confirm action only for review handoff", () => {
+  const reviewHtml = renderToStaticMarkup(
+    createElement(DialogPanel, {
+      messages: [
+        createSystemMessage(
+          "review-1",
+          "Core: Diagram Modules перешёл в пользовательскую проверку.",
+          "managed-workflow-user-review"
+        ),
+      ],
+      onManagedReviewAccept: () => undefined,
+      speakingMessageId: null,
+    })
+  );
+  const ordinaryHtml = renderToStaticMarkup(
+    createElement(DialogPanel, {
+      messages: [createSystemMessage("system-1", "Core: validation complete.")],
+      onManagedReviewAccept: () => undefined,
+      speakingMessageId: null,
+    })
+  );
+
+  assert.equal(
+    reviewHtml.includes("session-dialog__managed-review-confirm"),
+    true
+  );
+  assert.equal(reviewHtml.includes("Подтверждаю"), true);
+  assert.equal(
+    ordinaryHtml.includes("session-dialog__managed-review-confirm"),
+    false
   );
 });
 

@@ -8,15 +8,15 @@
   "planId": "managed-review-confirm-button-2026-05-17",
   "branch": "main",
   "baseHead": "e7b5f78e0",
-  "lastRecordedCommit": "9e57d51f5",
+  "lastRecordedCommit": "4fc0202eb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md",
-  "currentTaskId": "managed-review-confirm.phase1.ui.task1",
-  "expectedCommitMessage": "feat: add managed review confirm button",
+  "currentTaskId": "managed-review-confirm.phase1.test.task1",
+  "expectedCommitMessage": "test: cover managed review confirm button",
   "debt": {
-    "expectedCommitMessage": "feat: add managed review confirm button",
-    "preCommitHead": "9e57d51f5",
+    "expectedCommitMessage": "test: cover managed review confirm button",
+    "preCommitHead": "4fc0202eb",
     "stage": "commit_pending",
-    "taskId": "managed-review-confirm.phase1.ui.task1"
+    "taskId": "managed-review-confirm.phase1.test.task1"
   }
 }
 ```
@@ -62,12 +62,12 @@
 ### Stream: Session UI Button
 
 5. [DONE] `managed-review-confirm.phase1.ui.task1` Render an inline `Подтверждаю` action on `managed-workflow-user-review` system cards and route it through the existing send path (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/session-view.tsx, media/session-view.css`; expected commit: `feat: add managed review confirm button`).
-6. [PENDING] Git Commit: `feat: add managed review confirm button` (hash: TBD)
+6. [DONE] Git Commit: `feat: add managed review confirm button` (hash: 4fc0202eb)
 
 ### Stream: UI Regression Coverage
 
-7. [TODO] `managed-review-confirm.phase1.test.task1` Add render coverage for the managed review confirm button on the system dialog card (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `test: cover managed review confirm button`).
-8. [TODO] Git Commit: `test: cover managed review confirm button` (hash: TBD)
+7. [DONE] `managed-review-confirm.phase1.test.task1` Add render coverage for the managed review confirm button on the system dialog card (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `test: cover managed review confirm button`).
+8. [PENDING] Git Commit: `test: cover managed review confirm button` (hash: TBD)
 
 ## Phase 2 - Documentation And Verification (owner: Codex, updated: 2026-05-17)
 
