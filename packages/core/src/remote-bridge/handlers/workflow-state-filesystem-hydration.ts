@@ -26,8 +26,26 @@ const FILESYSTEM_HYDRATION_TARGETS: readonly {
 
 const VIRTUAL_SIMULATION_ALIAS_DIR = "virtual-simulation";
 
+const DIRECT_ARTIFACT_COMPLETION_STAGES = new Set<WorkflowStageId>([
+  "description",
+  "virtual_simulation",
+]);
+
 const isDisposableAliasEntry = (entry: string): boolean =>
   entry === ".DS_Store";
+
+const resolveHydratedStageStatus = (
+  stage: WorkflowStageId,
+  stageState: WorkflowStageState
+): WorkflowStageState["status"] => {
+  if (
+    stageState.status === "in_progress" &&
+    DIRECT_ARTIFACT_COMPLETION_STAGES.has(stage)
+  ) {
+    return "completed";
+  }
+  return stageState.status === "idle" ? "completed" : stageState.status;
+};
 
 const upsertArtifact = (
   artifacts: readonly WorkflowArtifactState[],
@@ -77,10 +95,7 @@ const hydrateStageFromFilesystem = async (params: {
   const relativeArtifactPath = `${params.stage}/${params.fileName}`;
   return {
     ...params.stageState,
-    status:
-      params.stageState.status === "idle"
-        ? "completed"
-        : params.stageState.status,
+    status: resolveHydratedStageStatus(params.stage, params.stageState),
     artifacts: upsertArtifact(
       params.stageState.artifacts,
       relativeArtifactPath,

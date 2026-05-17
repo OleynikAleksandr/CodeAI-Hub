@@ -63,3 +63,48 @@ test("filesystem hydration moves provider virtual-simulation alias into canonica
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("filesystem hydration completes direct stages that were already started", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-direct-completion-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+      "# Description\n\nReady."
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/virtual_simulation/virtual-simulation.md`,
+      ["# Virtual Simulation: Demo", "", "## Scenario 1", "Ready."].join("\n")
+    );
+
+    const state = new WorkflowStateFacade({ workspaceSlug }).snapshot();
+    const hydratedState = await hydrateWorkflowStateFromFilesystem({
+      state: {
+        ...state,
+        stages: {
+          ...state.stages,
+          description: {
+            ...state.stages.description,
+            status: "in_progress",
+          },
+          virtual_simulation: {
+            ...state.stages.virtual_simulation,
+            status: "in_progress",
+          },
+        },
+      },
+      workspaceRoot,
+      workspaceSlug,
+    });
+
+    assert.equal(hydratedState.stages.description.status, "completed");
+    assert.equal(hydratedState.stages.virtual_simulation.status, "completed");
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});

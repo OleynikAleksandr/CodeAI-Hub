@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "1c0fb28f1",
+  "lastRecordedCommit": "5148f8cef",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase6.retest-plan.task1",
-  "expectedCommitMessage": "docs: plan release retest fixes",
+  "currentTaskId": "managed-clean-markers.phase6.direct-markers.task1",
+  "expectedCommitMessage": "fix: complete direct step markers",
   "debt": {
-    "expectedCommitMessage": "docs: plan release retest fixes",
-    "preCommitHead": "1c0fb28f1",
+    "expectedCommitMessage": "fix: complete direct step markers",
+    "preCommitHead": "5148f8cef",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase6.retest-plan.task1"
+    "taskId": "managed-clean-markers.phase6.direct-markers.task1"
   }
 }
 ```
@@ -147,12 +147,13 @@
 ### Stream: Retest Fix Intake
 
 30. [DONE] `managed-clean-markers.phase6.retest-plan.task1` Add retest bugfix streams for direct stage completion markers and actionable dirty-tree completion UX (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan release retest fixes`).
-31. [PENDING] Git Commit: `docs: plan release retest fixes` (hash: TBD)
+31. [DONE] Git Commit: `docs: plan release retest fixes` (hash: 5148f8cef)
 
 ### Stream: Direct Stage Completion Markers
 
-32. [TODO] `managed-clean-markers.phase6.direct-markers.task1` Make Description and Virtual Simulation turn green when their next step becomes available after an active session (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete direct step markers`).
-33. [TODO] Git Commit: `fix: complete direct step markers` (hash: TBD)
+32. [DONE] `managed-clean-markers.phase6.direct-markers.task1` Make Description and Virtual Simulation turn green when their next step becomes available after an active session (scope: `packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.ts, packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: complete direct step markers`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-filesystem-hydration.test.ts` passed.
+33. [PENDING] Git Commit: `fix: complete direct step markers` (hash: TBD)
 
 ### Stream: Dirty Tree Resolution UX
 
