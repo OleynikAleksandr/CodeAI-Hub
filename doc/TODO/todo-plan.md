@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "4a7f37ed4",
+  "lastRecordedCommit": "fbc5d5d54",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase7.release.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.287 release",
+  "currentTaskId": "managed-clean-markers.phase7.release.task2",
+  "expectedCommitMessage": "chore: build 1.2.287 release artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.287 release",
-    "preCommitHead": "4a7f37ed4",
+    "expectedCommitMessage": "chore: build 1.2.287 release artifacts",
+    "preCommitHead": "fbc5d5d54",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase7.release.task1"
+    "taskId": "managed-clean-markers.phase7.release.task2"
   }
 }
 ```
@@ -174,12 +174,14 @@
 ### Stream: Release Preparation
 
 38. [DONE] `managed-clean-markers.phase7.release.task1` Update release-facing README/CHANGELOG for v1.2.287 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.287 release`).
-39. [PENDING] Git Commit: `docs: prepare 1.2.287 release` (hash: TBD)
+39. [DONE] Git Commit: `docs: prepare 1.2.287 release` (hash: fbc5d5d54)
 
 ### Stream: Unified Release Artifacts
 
-40. [TODO] `managed-clean-markers.phase7.release.task2` Run `./scripts/build-all.sh`, commit the v1.2.287 version bump and release manifests, then keep the tree clean for VSIX packaging (scope: `package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.287 release artifacts`).
-41. [TODO] Git Commit: `chore: build 1.2.287 release artifacts` (hash: TBD)
+40. [DONE] `managed-clean-markers.phase7.release.task2` Run `./scripts/build-all.sh`, commit the v1.2.287 version bump and release manifests, then keep the tree clean for VSIX packaging (scope: `package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.287 release artifacts`).
+    - Verification 2026-05-17: `./scripts/build-all.sh` completed for v1.2.287.
+    - Release artifacts 2026-05-17: `claude-module-1.2.287.tar.bz2`, `codex-module-1.2.287.tar.bz2`, `gemini-module-1.2.287.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.287.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.287.tar.bz2`, `vscode-webview-1.2.287.tar.bz2`, and `project-manager-1.2.287.tar.bz2` were written to `~/.codeai-hub/releases/` and `doc/tmp/releases/`.
+41. [PENDING] Git Commit: `chore: build 1.2.287 release artifacts` (hash: TBD)
 
 ### Stream: VSIX Packaging
 
