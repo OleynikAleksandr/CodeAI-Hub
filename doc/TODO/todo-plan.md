@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "daab00599",
+  "lastRecordedCommit": "6ac43b9ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase3.fix.task1",
-  "expectedCommitMessage": "fix: enforce diagram row module budget",
+  "currentTaskId": "diagram-row-layout.phase3.docs.task1",
+  "expectedCommitMessage": "docs: clarify diagram row budget",
   "debt": {
-    "expectedCommitMessage": "fix: enforce diagram row module budget",
-    "preCommitHead": "daab00599",
+    "expectedCommitMessage": "docs: clarify diagram row budget",
+    "preCommitHead": "6ac43b9ea",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase3.fix.task1"
+    "taskId": "diagram-row-layout.phase3.docs.task1"
   }
 }
 ```
@@ -86,12 +86,12 @@
 ### Stream: Retest Fixes
 
 10. [DONE] `diagram-row-layout.phase3.fix.task1` Enforce the row module budget for actual auto module slots and make Product Part aspect-ratio choices visibly affect auto column selection (scope: `src/client/project-manager/components/diagram-editor/**`; expected commit: `fix: enforce diagram row module budget`).
-11. [PENDING] Git Commit: `fix: enforce diagram row module budget` (hash: TBD)
+11. [DONE] Git Commit: `fix: enforce diagram row module budget` (hash: 6ac43b9ea)
 
 ### Stream: Retest Documentation
 
-12. [TODO] `diagram-row-layout.phase3.docs.task1` Update the Diagram Modules visual-shell SSOT with the clarified actual-module row budget and aspect-ratio behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify diagram row budget`).
-13. [TODO] Git Commit: `docs: clarify diagram row budget` (hash: TBD)
+12. [DONE] `diagram-row-layout.phase3.docs.task1` Update the Diagram Modules visual-shell SSOT with the clarified actual-module row budget and aspect-ratio behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify diagram row budget`).
+13. [PENDING] Git Commit: `docs: clarify diagram row budget` (hash: TBD)
 
 ### Stream: Retest Verification
 
