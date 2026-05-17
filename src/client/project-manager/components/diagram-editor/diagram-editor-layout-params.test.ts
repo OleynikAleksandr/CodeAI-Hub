@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   resolveProductPartColumns,
   resolveClusterModuleColumns,
+  resolveRowAwareModuleColumns,
   defaultProductPartLayout,
   defaultClusterLayout,
   type SlotDescriptor,
@@ -29,6 +30,32 @@ test("resolveProductPartColumns returns 2 for two slots with landscape ratio", (
   );
 });
 
+test("resolveProductPartColumns keeps adjacent clusters while capping row module slots", () => {
+  const slots: SlotDescriptor[] = [
+    { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
+    { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
+  ];
+
+  const columns = resolveProductPartColumns(slots, defaultProductPartLayout());
+
+  assert.equal(columns, 2);
+  assert.deepEqual(resolveRowAwareModuleColumns(slots, columns), [2, 1]);
+});
+
+test("resolveProductPartColumns avoids four standalone modules in one automatic row", () => {
+  const slots: SlotDescriptor[] = [
+    { kind: "standaloneModule" },
+    { kind: "standaloneModule" },
+    { kind: "standaloneModule" },
+    { kind: "standaloneModule" },
+  ];
+
+  assert.equal(
+    resolveProductPartColumns(slots, defaultProductPartLayout()),
+    3
+  );
+});
+
 test("resolveProductPartColumns prefers wider layout with 5 slots and landscape", () => {
   const slots: SlotDescriptor[] = [
     { kind: "cluster", moduleCount: 2, moduleColumns: "auto" },
@@ -51,6 +78,15 @@ test("resolveProductPartColumns respects explicit column override", () => {
     resolveProductPartColumns(slots, { columns: 3, targetAspectRatio: "landscape" }),
     3
   );
+});
+
+test("resolveRowAwareModuleColumns respects explicit cluster module override", () => {
+  const slots: SlotDescriptor[] = [
+    { kind: "cluster", moduleCount: 3, moduleColumns: 2 },
+    { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
+  ];
+
+  assert.deepEqual(resolveRowAwareModuleColumns(slots, 2), [2, 1]);
 });
 
 test("resolveClusterModuleColumns returns 1 for 1-2 modules auto", () => {

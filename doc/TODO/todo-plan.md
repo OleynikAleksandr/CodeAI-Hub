@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "39e4388a7",
+  "lastRecordedCommit": "ce4c40cc7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase0.plan.task1",
-  "expectedCommitMessage": "docs: plan diagram module row-aware layout",
+  "currentTaskId": "diagram-row-layout.phase1.layout.task1",
+  "expectedCommitMessage": "fix: cap diagram module row auto layout",
   "debt": {
-    "expectedCommitMessage": "docs: plan diagram module row-aware layout",
-    "preCommitHead": "39e4388a7",
+    "expectedCommitMessage": "fix: cap diagram module row auto layout",
+    "preCommitHead": "ce4c40cc7",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase0.plan.task1"
+    "taskId": "diagram-row-layout.phase1.layout.task1"
   }
 }
 ```
@@ -53,14 +53,14 @@
 ### Stream: Active Scope Creation
 
 1. [DONE] `diagram-row-layout.phase0.plan.task1` Create the planning source, register it in Docs_Index, and open the active todo-plan (scope: `doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan diagram module row-aware layout`).
-2. [PENDING] Git Commit: `docs: plan diagram module row-aware layout` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan diagram module row-aware layout` (hash: ce4c40cc7)
 
 ## Phase 1 - Row-Aware Auto Layout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Default Layout Algorithm
 
-3. [TODO] `diagram-row-layout.phase1.layout.task1` Add row-aware Diagram Modules auto layout and regression coverage for the three-module horizontal row budget (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.ts, src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: cap diagram module row auto layout`).
-4. [TODO] Git Commit: `fix: cap diagram module row auto layout` (hash: TBD)
+3. [DONE] `diagram-row-layout.phase1.layout.task1` Add row-aware Diagram Modules auto layout and regression coverage for the three-module horizontal row budget (scope: `src/client/project-manager/components/diagram-editor/**, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: cap diagram module row auto layout`).
+4. [PENDING] Git Commit: `fix: cap diagram module row auto layout` (hash: TBD)
 
 ### Stream: Project Manager Contract Docs
 

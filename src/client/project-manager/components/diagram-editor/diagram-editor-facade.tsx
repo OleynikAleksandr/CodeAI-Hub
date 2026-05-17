@@ -10,6 +10,7 @@ import type { ContextMenuTarget } from "./diagram-editor-context-menu";
 import {
   resolveClusterModuleColumns,
   resolveProductPartColumns,
+  resolveRowAwareModuleColumns,
   type SlotDescriptor,
 } from "./diagram-editor-layout-params";
 
@@ -105,12 +106,17 @@ const ModuleCard = ({ data }: { readonly data: ModuleProjectionNodeData }) => (
   </div>
 );
 
-const ClusterCard = ({ data }: { readonly data: ClusterProjectionNodeData }) => {
+const ClusterCard = ({
+  data,
+  resolvedModuleColumns,
+}: {
+  readonly data: ClusterProjectionNodeData;
+  readonly resolvedModuleColumns?: number;
+}) => {
   const onContextMenuCb = useContext(ContextMenuContext);
-  const moduleCols = resolveClusterModuleColumns(
-    data.modules.length,
-    data.layoutParams,
-  );
+  const moduleCols =
+    resolvedModuleColumns
+    ?? resolveClusterModuleColumns(data.modules.length, data.layoutParams);
   return (
     <div
       style={clusterCardStyle}
@@ -167,6 +173,10 @@ const ProductPartNode = ({
     })),
   ];
   const columns = resolveProductPartColumns(slots, data.layoutParams);
+  const rowAwareModuleColumns =
+    data.layoutParams.columns === "auto"
+      ? resolveRowAwareModuleColumns(slots, columns)
+      : [];
 
   return (
     <div
@@ -207,8 +217,12 @@ const ProductPartNode = ({
           marginTop: 12,
         }}
       >
-        {data.clusters.map((c) => (
-          <ClusterCard data={c} key={c.clusterId} />
+        {data.clusters.map((c, index) => (
+          <ClusterCard
+            data={c}
+            key={c.clusterId}
+            resolvedModuleColumns={rowAwareModuleColumns[index]}
+          />
         ))}
         {data.standaloneModules.map((m) => (
           <ModuleCard data={m} key={m.moduleId} />
