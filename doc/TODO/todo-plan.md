@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "d8593fed3",
+  "lastRecordedCommit": "b4826c56d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.rowpacking.task1",
-  "expectedCommitMessage": "fix: keep diagram product rows within module budget",
+  "currentTaskId": "diagram-row-layout.phase4.rowpacking.docs.task1",
+  "expectedCommitMessage": "docs: document diagram product row packing",
   "debt": {
-    "expectedCommitMessage": "fix: keep diagram product rows within module budget",
-    "preCommitHead": "d8593fed3",
+    "expectedCommitMessage": "docs: document diagram product row packing",
+    "preCommitHead": "b4826c56d",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.rowpacking.task1"
+    "taskId": "diagram-row-layout.phase4.rowpacking.docs.task1"
   }
 }
 ```
@@ -262,12 +262,12 @@
 ### Stream: Release Retest Product Row Packing Fix
 
 66. [DONE] `diagram-row-layout.phase4.rowpacking.task1` Make Product Part auto column selection reject rows whose resolved cluster module columns plus standalone modules exceed the three-module horizontal budget (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.ts, src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep diagram product rows within module budget`).
-67. [PENDING] Git Commit: `fix: keep diagram product rows within module budget` (hash: TBD)
+67. [DONE] Git Commit: `fix: keep diagram product rows within module budget` (hash: b4826c56d)
 
 ### Stream: Release Retest Product Row Packing Docs
 
-68. [TODO] `diagram-row-layout.phase4.rowpacking.docs.task1` Document the resolved Product Part row packing contract for adjacent Clusters and standalone Modules (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram product row packing`).
-69. [TODO] Git Commit: `docs: document diagram product row packing` (hash: TBD)
+68. [DONE] `diagram-row-layout.phase4.rowpacking.docs.task1` Document the resolved Product Part row packing contract for adjacent Clusters and standalone Modules (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram product row packing`).
+69. [PENDING] Git Commit: `docs: document diagram product row packing` (hash: TBD)
 
 ### Stream: Release Retest Product Row Packing Verification
 
