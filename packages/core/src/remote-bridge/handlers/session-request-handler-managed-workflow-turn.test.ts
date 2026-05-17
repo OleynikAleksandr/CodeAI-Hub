@@ -17,7 +17,8 @@ const DIAGRAM_STAGE = "diagram_modules";
 const QUALITY_STAGE = "quality_gates";
 const USER_REVIEW_RE =
   /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
-const CONFIRMATION_RE = /напишите `подтверждаю`/u;
+const CONFIRMATION_RE = /нажмите кнопку «Подтверждаю» ниже/u;
+const TYPE_CONFIRMATION_RE = /напишите `подтверждаю`/u;
 const RETURN_RE = /Можно переходить к следующему шагу/u;
 const APP_REVIEW_RE =
   /Core: Application Skeleton перешёл в пользовательскую проверку/u;
@@ -385,6 +386,10 @@ test("managed workflow turn emits Core-owned user review handoff messages", asyn
       assert.match(coreMessages.at(-1)?.content ?? "", testCase.expected);
       assert.match(coreMessages.at(-1)?.content ?? "", USER_REVIEW_RE);
       assert.match(coreMessages.at(-1)?.content ?? "", CONFIRMATION_RE);
+      assert.doesNotMatch(
+        coreMessages.at(-1)?.content ?? "",
+        TYPE_CONFIRMATION_RE
+      );
     } finally {
       await rm(workspaceRoot, { force: true, recursive: true });
     }
@@ -410,6 +415,10 @@ test("managed workflow turn emits Core-owned Diagram Modules review handoff", as
     assert.match(coreMessages.at(-1)?.content ?? "", DIAGRAM_REVIEW_RE);
     assert.match(coreMessages.at(-1)?.content ?? "", USER_REVIEW_RE);
     assert.match(coreMessages.at(-1)?.content ?? "", CONFIRMATION_RE);
+    assert.doesNotMatch(
+      coreMessages.at(-1)?.content ?? "",
+      TYPE_CONFIRMATION_RE
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

@@ -8,15 +8,15 @@
   "planId": "managed-review-confirm-button-2026-05-17",
   "branch": "main",
   "baseHead": "e7b5f78e0",
-  "lastRecordedCommit": "e7b5f78e0",
+  "lastRecordedCommit": "8cab9d7cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md",
-  "currentTaskId": "managed-review-confirm.phase0.plan.task1",
-  "expectedCommitMessage": "docs: plan managed review confirmation button",
+  "currentTaskId": "managed-review-confirm.phase1.core.task1",
+  "expectedCommitMessage": "fix: update managed review handoff copy",
   "debt": {
-    "expectedCommitMessage": "docs: plan managed review confirmation button",
-    "preCommitHead": "e7b5f78e0",
+    "expectedCommitMessage": "fix: update managed review handoff copy",
+    "preCommitHead": "8cab9d7cc",
     "stage": "commit_pending",
-    "taskId": "managed-review-confirm.phase0.plan.task1"
+    "taskId": "managed-review-confirm.phase1.core.task1"
   }
 }
 ```
@@ -50,14 +50,14 @@
 ### Stream: Active Scope Creation
 
 1. [DONE] `managed-review-confirm.phase0.plan.task1` Create planning source, register it in Docs_Index, and open the active todo-plan (scope: `doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan managed review confirmation button`).
-2. [PENDING] Git Commit: `docs: plan managed review confirmation button` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan managed review confirmation button` (hash: 8cab9d7cc)
 
 ## Phase 1 - Managed Review Confirmation UX (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Core Handoff Copy
 
-3. [TODO] `managed-review-confirm.phase1.core.task1` Replace managed user-review handoff copy so it points to the inline button instead of instructing users to type `подтверждаю`, and update Core handoff tests (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-handoff-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: update managed review handoff copy`).
-4. [TODO] Git Commit: `fix: update managed review handoff copy` (hash: TBD)
+3. [DONE] `managed-review-confirm.phase1.core.task1` Replace managed user-review handoff copy so it points to the inline button instead of instructing users to type `подтверждаю`, and update Core handoff tests (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-handoff-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: update managed review handoff copy`).
+4. [PENDING] Git Commit: `fix: update managed review handoff copy` (hash: TBD)
 
 ### Stream: Session UI Button
 
