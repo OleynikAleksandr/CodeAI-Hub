@@ -1,5 +1,6 @@
 import { DiagramModulesManagedGitBoundary } from "../diagram-modules/diagram-modules-managed-git-boundary";
 import { commitManagedWorkflowLedger } from "../diagram-modules/managed-workflow-ledger-git-boundary";
+import { ensureManagedTerminalGitClean } from "../managed-terminal-clean-git-boundary";
 import {
   addUnique,
   appendIntegrationStep,
@@ -309,6 +310,13 @@ export class QualityGatesStagePlanController {
     readonly stageState: ManagedPlanState;
     readonly workspaceRoot: string;
   }): Promise<void> {
+    if (params.next.taskId === PHASE4_TASK_ID) {
+      await ensureManagedTerminalGitClean({
+        gitBoundary: this.gitBoundary,
+        stage: "quality_gates",
+        workspaceRoot: params.workspaceRoot,
+      });
+    }
     const nextStageState: ManagedPlanState = {
       ...params.stageState,
       currentTaskId: params.next.taskId,

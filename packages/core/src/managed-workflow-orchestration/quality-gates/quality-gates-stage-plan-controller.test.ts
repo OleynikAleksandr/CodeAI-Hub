@@ -194,6 +194,7 @@ test("QualityGatesStagePlanController commits draft, accepts review, and commits
       ".husky/pre-commit",
       "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
     );
+    await writeWorkspaceFile(workspaceRoot, "tsconfig.base.json", "{}\n");
     await writeWorkspaceFile(
       workspaceRoot,
       MANAGED_DECISION_PATH,
@@ -230,6 +231,7 @@ test("QualityGatesStagePlanController commits draft, accepts review, and commits
         QUALITY_GATES_JSON_PATH,
         MANAGED_DECISION_PATH,
         "package.json",
+        "tsconfig.base.json",
         ".husky/pre-commit",
         "scripts/quality-gates/secret-scan.mjs",
       ]),

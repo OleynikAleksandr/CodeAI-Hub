@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "e510bfd2f",
+  "lastRecordedCommit": "7de441992",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase1.clean.task3",
-  "expectedCommitMessage": "fix: enforce clean git before application skeleton completion",
+  "currentTaskId": "managed-clean-markers.phase1.clean.task4",
+  "expectedCommitMessage": "fix: enforce clean git before quality gates completion",
   "debt": {
-    "expectedCommitMessage": "fix: enforce clean git before application skeleton completion",
-    "preCommitHead": "e510bfd2f",
+    "expectedCommitMessage": "fix: enforce clean git before quality gates completion",
+    "preCommitHead": "7de441992",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase1.clean.task3"
+    "taskId": "managed-clean-markers.phase1.clean.task4"
   }
 }
 ```
@@ -73,12 +73,12 @@
 ### Stream: Application Skeleton Terminal Boundary
 
 9. [DONE] `managed-clean-markers.phase1.clean.task3` Apply the terminal clean-Git checkpoint before Application Skeleton opens persistent user return (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before application skeleton completion`).
-10. [PENDING] Git Commit: `fix: enforce clean git before application skeleton completion` (hash: TBD)
+10. [DONE] Git Commit: `fix: enforce clean git before application skeleton completion` (hash: 7de441992)
 
 ### Stream: Quality Gates Terminal Boundary
 
-11. [TODO] `managed-clean-markers.phase1.clean.task4` Apply the terminal clean-Git checkpoint before Quality Gates opens persistent user return (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/**, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before quality gates completion`).
-12. [TODO] Git Commit: `fix: enforce clean git before quality gates completion` (hash: TBD)
+11. [DONE] `managed-clean-markers.phase1.clean.task4` Apply the terminal clean-Git checkpoint before Quality Gates opens persistent user return (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/**, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before quality gates completion`).
+12. [PENDING] Git Commit: `fix: enforce clean git before quality gates completion` (hash: TBD)
 
 ## Phase 2 - Core-Owned Stage Markers (owner: Codex, updated: 2026-05-17)
 
