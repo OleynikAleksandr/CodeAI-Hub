@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "bab253b3c",
+  "lastRecordedCommit": "70a0603bf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase3.detach.task1",
-  "expectedCommitMessage": "fix: refresh detached diagram view",
+  "currentTaskId": "diagram-row-layout.phase3.detach.docs.task1",
+  "expectedCommitMessage": "docs: document detached diagram refresh",
   "debt": {
-    "expectedCommitMessage": "fix: refresh detached diagram view",
-    "preCommitHead": "bab253b3c",
+    "expectedCommitMessage": "docs: document detached diagram refresh",
+    "preCommitHead": "70a0603bf",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase3.detach.task1"
+    "taskId": "diagram-row-layout.phase3.detach.docs.task1"
   }
 }
 ```
@@ -108,12 +108,12 @@
 ### Stream: Detached Diagram Live Refresh
 
 17. [DONE] `diagram-row-layout.phase3.detach.task1` Subscribe the detached Diagram Modules view to workflow-state changes so newly materialized Product Parts reload without closing and reopening the detached window (scope: `src/client/project-manager/components/diagram-editor/detached-diagram-view.tsx, src/client/project-manager/components/diagram-editor/detached-diagram-view.test.ts`; expected commit: `fix: refresh detached diagram view`).
-18. [PENDING] Git Commit: `fix: refresh detached diagram view` (hash: TBD)
+18. [DONE] Git Commit: `fix: refresh detached diagram view` (hash: 70a0603bf)
 
 ### Stream: Detached Diagram Docs
 
-19. [TODO] `diagram-row-layout.phase3.detach.docs.task1` Document the detached Diagram Modules live-refresh contract in the Project Manager and system workflow SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document detached diagram refresh`).
-20. [TODO] Git Commit: `docs: document detached diagram refresh` (hash: TBD)
+19. [DONE] `diagram-row-layout.phase3.detach.docs.task1` Document the detached Diagram Modules live-refresh contract in the Project Manager and system workflow SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document detached diagram refresh`).
+20. [PENDING] Git Commit: `docs: document detached diagram refresh` (hash: TBD)
 
 ### Stream: Detached Diagram Verification
 

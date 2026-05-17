@@ -62,7 +62,8 @@ read path, ни из client-owned helpers.
   - PM не владеет Diagram Modules parser truth: требования к `part_id`, identity table/fields, Product Part / Cluster / Module fields, renderability checks и repair diagnostics должны приходить из Core/shared artifact contract. Любой локальный parser в PM является временным adapter debt и не должен расходиться с Core validation;
   - `Fix with agent` / artifact repair actions send raw user intent plus Core diagnostics to Core. PM never builds a provider-visible repair prompt, never chooses a different failing artifact than Core, and never mutates stage todo-plan or managed Git commit state;
   - `*.flow.json` не показывается пользователю как артефакт; с релиза `1.1.922` sidecar v2 хранит также declarative CSS Grid layout params;
-  - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel("pm:diagram:sidecar-sync")` после write;
+  - кнопка `Detach` в artifact header (слева от `Artifacts`) открывает граф в отдельном CEF popup; оба окна используют один sidecar файл и синхронизируются через `BroadcastChannel("pm:diagram:sidecar-sync")` после layout write;
+  - detached diagram popup обязан сам подписываться на Core-owned `workflow-state` snapshot для своего workspace и перезагружать Module Graph при изменении Diagram Modules progress/materialized Product Parts; sidecar BroadcastChannel не является сигналом появления новых semantic artifacts;
   - detached diagram popup не является owner-window приложения: его закрытие не должно завершать main PM window;
   - detached diagram popup не должен наследовать autosaved frame главного PM окна; PM отправляет popup-sized open hint, а launcher не применяет main-window restore/persist path к popup browser.
 - Для `Application Skeleton` и `Quality Gates Baseline` правая панель использует тот же `Artifacts/Help` contract:

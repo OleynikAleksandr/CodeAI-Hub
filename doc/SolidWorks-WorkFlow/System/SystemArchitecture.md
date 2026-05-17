@@ -481,7 +481,9 @@ Workflow artifact edit contract:
 - Detachable diagram window:
   - кнопка `Detach` в artifact header (слева от `Artifacts` toggle) открывает popup-sized CSS Grid view в отдельном CEF popup через `window.open()`;
   - detached окно использует тот же sidecar файл (`module-map.flow.json`), что и основной PM — layout params v2 синхронизированы;
-  - `BroadcastChannel("pm:diagram:sidecar-sync")` уведомляет второе окно о перезагрузке sidecar после write;
+  - `BroadcastChannel("pm:diagram:sidecar-sync")` уведомляет второе окно о перезагрузке sidecar после layout write;
+  - detached окно является отдельной projection surface и обязано само активировать `workflow-state-store` для своего workspace: изменения Core-owned workflow snapshot / Diagram Modules progress / generated Product Part ids должны вызывать reload projection без закрытия и повторного Detach;
+  - semantic artifact refresh не должен зависеть от sidecar write channel: `module-map.flow.json` синхронизирует только user-authored layout params, а появление новых `product-parts/<part-id>.md` приходит через workflow-state/read-model polling;
   - detached popup не является owner-window приложения: его закрытие не должно завершать main PM window и не должно reuse-ить autosaved frame главного PM окна;
   - реализация: `detached-diagram-view.tsx`, `detach-diagram-button.tsx`, `stage-artifact-header-toggle.tsx` (`extraActions` slot).
 - Workspace auto-select (обновлено в 1.1.931): при открытии workspace sidebar автоматически выбирает последний non-idle stage (diagram_modules → virtual_simulation → description) на основе `resolveLastActiveStage` и `resolveStartupTool`. Трёхцветные индикаторы (gray/orange/green) показывают состояние каждого trunk stage.
