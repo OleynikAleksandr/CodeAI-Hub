@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "e13e67248",
+  "lastRecordedCommit": "185026633",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase8.sidecar.task2",
-  "expectedCommitMessage": "fix: prevent empty managed dirty blockers",
+  "currentTaskId": "managed-clean-markers.phase8.verify.task1",
+  "expectedCommitMessage": "test: verify diagram modules sidecar completion",
   "debt": {
-    "expectedCommitMessage": "fix: prevent empty managed dirty blockers",
-    "preCommitHead": "e13e67248",
+    "expectedCommitMessage": "test: verify diagram modules sidecar completion",
+    "preCommitHead": "185026633",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase8.sidecar.task2"
+    "taskId": "managed-clean-markers.phase8.verify.task1"
   }
 }
 ```
@@ -205,12 +205,15 @@
 46. [DONE] `managed-clean-markers.phase8.sidecar.task2` Retry classified terminal residue commits and replace empty dirty-tree blockers with a generated-file auto-save failure message (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prevent empty managed dirty blockers`).
     - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts` passed.
     - Verification 2026-05-17: `npm exec -- ultracite check packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts` passed.
-47. [PENDING] Git Commit: `fix: prevent empty managed dirty blockers` (hash: TBD)
+47. [DONE] Git Commit: `fix: prevent empty managed dirty blockers` (hash: 185026633)
 
 ### Stream: Sidecar Retest Verification
 
-48. [TODO] `managed-clean-markers.phase8.verify.task1` Run targeted tests/builds for Diagram Modules terminal sidecar completion, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram modules sidecar completion`).
-49. [TODO] Git Commit: `test: verify diagram modules sidecar completion` (hash: TBD)
+48. [DONE] `managed-clean-markers.phase8.verify.task1` Run targeted tests/builds for Diagram Modules terminal sidecar completion, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram modules sidecar completion`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts` passed 20 tests.
+    - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+49. [PENDING] Git Commit: `test: verify diagram modules sidecar completion` (hash: TBD)
 
 ## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
