@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "21c99219a",
+  "lastRecordedCommit": "3c71d5b25",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase4.feedback.verify.task1",
-  "expectedCommitMessage": "test: verify pm main area edge gutter",
+  "currentTaskId": "pm-sidebar-settings.phase5.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.298 release",
   "debt": {
-    "expectedCommitMessage": "test: verify pm main area edge gutter",
-    "preCommitHead": "21c99219a",
+    "expectedCommitMessage": "docs: prepare 1.2.298 release",
+    "preCommitHead": "3c71d5b25",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase4.feedback.verify.task1"
+    "taskId": "pm-sidebar-settings.phase5.release.docs.task1"
   }
 }
 ```
@@ -106,18 +106,19 @@
 19. [DONE] `pm-sidebar-settings.phase4.feedback.verify.task1` Run targeted Project Manager build/typecheck verification and record the result (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify pm main area edge gutter`).
     - Verification 2026-05-17: `npm run build:project-manager` passed.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
-20. [PENDING] Git Commit: `test: verify pm main area edge gutter` (hash: TBD)
+20. [DONE] Git Commit: `test: verify pm main area edge gutter` (hash: 3c71d5b25)
 
 ## Phase 5 - Release Build For Retest (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Release Confirmation Gate
 
-21. [TODO] `pm-sidebar-settings.phase5.release.confirm.task1` Wait for explicit user confirmation before preparing or building the next retest release after the gutter fix (scope: user release confirmation only; expected commit: none).
+21. [DONE] `pm-sidebar-settings.phase5.release.confirm.task1` Wait for explicit user confirmation before preparing or building the next retest release after the gutter fix (scope: user release confirmation only; expected commit: none). Result: User confirmed release build for v1.2.298 after the Project Manager edge gutter fix.
 
 ### Stream: Release Preparation
 
-22. [TODO] `pm-sidebar-settings.phase5.release.docs.task1` After release confirmation, update release notes for v1.2.298 before version bump/build so packaged README/CHANGELOG include the Project Manager edge gutter fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.298 release`).
-23. [TODO] Git Commit: `docs: prepare 1.2.298 release` (hash: TBD)
+22. [DONE] `pm-sidebar-settings.phase5.release.docs.task1` After release confirmation, update release notes for v1.2.298 before version bump/build so packaged README/CHANGELOG include the Project Manager edge gutter fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.298 release`).
+    - Release docs 2026-05-17: `README.md` Current Release and `CHANGELOG.md` now describe v1.2.298 Project Manager edge gutter polish.
+23. [PENDING] Git Commit: `docs: prepare 1.2.298 release` (hash: TBD)
 
 ### Stream: Release Automation
 

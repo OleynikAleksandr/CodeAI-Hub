@@ -2,14 +2,13 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.297** (Project Manager sidebar Settings action)
+**Current Release — v1.2.298** (Project Manager edge gutter polish)
 
-This release removes the Project Manager bottom footer/status bar. The
-`Workflow Tree MVP` label no longer renders, and the `Open Settings` action now
-lives at the bottom of the left sidebar beneath the Documentation Tree and
-Development Tree. The action still opens the same PM-owned in-shell Settings
-takeover in the right panel, while the session and artifact panes reclaim the
-vertical space previously reserved by the footer.
+This release keeps the Project Manager sidebar Settings action from v1.2.297 and
+adds a matching unhighlighted right/bottom gutter around the main working area.
+Session status controls, artifact viewers, and the Settings takeover no longer
+press directly against the outer Project Manager edge; they keep the same
+8-pixel visual rhythm used between the session UI panels.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the

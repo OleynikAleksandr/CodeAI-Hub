@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.298] - 2026-05-17
+### Changed
+- **Project Manager main area keeps a matching edge gutter.** The session/artifact working area now reserves the same unhighlighted 8px bottom/right breathing room as the internal panel rhythm, so session status controls and Settings footer buttons do not touch the outer PM edge.
+
+### Tests
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+
 ## [1.2.297] - 2026-05-17
 ### Changed
 - **Project Manager Settings moved into the sidebar.** The `Open Settings` action now sits at the bottom of the left sidebar below the workflow trees and still opens the existing in-shell Settings takeover in the right panel.
