@@ -8,15 +8,15 @@
   "planId": "managed-review-confirm-button-2026-05-17",
   "branch": "main",
   "baseHead": "e7b5f78e0",
-  "lastRecordedCommit": "e98742edc",
+  "lastRecordedCommit": "cc315beb6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md",
-  "currentTaskId": "managed-review-confirm.phase3.release.docs.task1",
-  "expectedCommitMessage": "docs: prepare 1.2.296 release",
+  "currentTaskId": "managed-review-confirm.phase3.release.buildall.task1",
+  "expectedCommitMessage": "chore: build release 1.2.296 artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.296 release",
-    "preCommitHead": "e98742edc",
+    "expectedCommitMessage": "chore: build release 1.2.296 artifacts",
+    "preCommitHead": "cc315beb6",
     "stage": "commit_pending",
-    "taskId": "managed-review-confirm.phase3.release.docs.task1"
+    "taskId": "managed-review-confirm.phase3.release.buildall.task1"
   }
 }
 ```
@@ -91,12 +91,14 @@
 ### Stream: Release Preparation
 
 13. [DONE] `managed-review-confirm.phase3.release.docs.task1` Update release notes for v1.2.296 before version bump/build so packaged README/CHANGELOG include the managed review confirm button (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.296 release`).
-14. [PENDING] Git Commit: `docs: prepare 1.2.296 release` (hash: TBD)
+14. [DONE] Git Commit: `docs: prepare 1.2.296 release` (hash: cc315beb6)
 
 ### Stream: Release Automation
 
-15. [TODO] `managed-review-confirm.phase3.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.296 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.296 artifacts`).
-16. [TODO] Git Commit: `chore: build release 1.2.296 artifacts` (hash: TBD)
+15. [DONE] `managed-review-confirm.phase3.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.296 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.296 artifacts`).
+    - Verification 2026-05-17: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
+    - Generated release artifacts: `claude-module-1.2.296.tar.bz2`, `codex-module-1.2.296.tar.bz2`, `gemini-module-1.2.296.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.296.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.296.tar.bz2`, `vscode-webview-1.2.296.tar.bz2`, `project-manager-1.2.296.tar.bz2`.
+16. [PENDING] Git Commit: `chore: build release 1.2.296 artifacts` (hash: TBD)
 17. [TODO] `managed-review-confirm.phase3.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.296 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.296 vsix`).
 18. [TODO] Git Commit: `chore: package release 1.2.296 vsix` (hash: TBD)
 
