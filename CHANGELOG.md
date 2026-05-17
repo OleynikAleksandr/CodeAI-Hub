@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.295] - 2026-05-17
+### Fixed
+- **Diagram Modules Product Part rows now count resolved visible module cards.** Automatic Product Part columns reject rows where adjacent Clusters plus standalone Modules would render more than three horizontal module cards, so standalone Modules wrap instead of appearing as a fourth card on the right.
+
+### Tests
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.294] - 2026-05-17
 ### Fixed
 - **Diagram Modules Cluster boundaries now stay tight to their module grid.** Long Cluster titles or purpose text wrap inside the compact module-grid width instead of inflating the dashed Cluster container and leaving excessive right-side empty space.

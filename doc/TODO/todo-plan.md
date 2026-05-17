@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "f91805a37",
+  "lastRecordedCommit": "34fa1f81a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.rowpacking.verify.task1",
-  "expectedCommitMessage": "test: verify diagram product row packing",
+  "currentTaskId": "diagram-row-layout.phase4.release295.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.295 release",
   "debt": {
-    "expectedCommitMessage": "test: verify diagram product row packing",
-    "preCommitHead": "f91805a37",
+    "expectedCommitMessage": "docs: prepare 1.2.295 release",
+    "preCommitHead": "34fa1f81a",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.rowpacking.verify.task1"
+    "taskId": "diagram-row-layout.phase4.release295.docs.task1"
   }
 }
 ```
@@ -275,16 +275,32 @@
     - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 14/14, including adjacent two-Cluster plus standalone row packing.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
     - Verification 2026-05-17: `npm run build:webview` passed.
-71. [PENDING] Git Commit: `test: verify diagram product row packing` (hash: TBD)
+71. [DONE] Git Commit: `test: verify diagram product row packing` (hash: 34fa1f81a)
 
 ### Stream: User Visual Acceptance Testing
 
-72. [TODO] `diagram-row-layout.phase4.rowpacking.acceptance.task1` User installs and retests the next release package for Product Part rows with adjacent Clusters and standalone Modules (scope: user visual acceptance only; expected commit: none).
+72. [DONE] `diagram-row-layout.phase4.rowpacking.acceptance.task1` User installs and retests the next release package for Product Part rows with adjacent Clusters and standalone Modules (scope: user visual acceptance only; expected commit: none). Result: User requested a new release on 2026-05-17 after the row-packing fix and verification, so v1.2.295 will package the corrected Product Part resolved-row behavior.
+
+### Stream: Product Row Packing Release Preparation
+
+73. [DONE] `diagram-row-layout.phase4.release295.docs.task1` Update release notes for v1.2.295 before version bump/build so packaged README/CHANGELOG include the resolved Product Part row-packing fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.295 release`).
+74. [PENDING] Git Commit: `docs: prepare 1.2.295 release` (hash: TBD)
+
+### Stream: Product Row Packing Release Automation
+
+75. [TODO] `diagram-row-layout.phase4.release295.buildall.task1` Run `./scripts/build-all.sh` for v1.2.295 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.295 artifacts`).
+76. [TODO] Git Commit: `chore: build release 1.2.295 artifacts` (hash: TBD)
+77. [TODO] `diagram-row-layout.phase4.release295.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.295 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.295 vsix`).
+78. [TODO] Git Commit: `chore: package release 1.2.295 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+79. [TODO] `diagram-row-layout.phase4.release295.acceptance.task1` User installs and retests v1.2.295 release package for Product Part rows with adjacent Clusters and standalone Modules (scope: user visual acceptance only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-73. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-74. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-75. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+80. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+81. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+82. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
