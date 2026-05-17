@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.292] - 2026-05-17
+### Fixed
+- **Single-cluster Diagram Modules layouts no longer stretch across the viewport.** Cluster cards now size to occupied content, module tracks use compact card bounds, and free horizontal space is no longer distributed into huge gaps between module cards.
+- **Diagram Modules auto-fit supports narrower Project Manager panels.** The visual graph can scale further down before horizontal scrolling, so compact docked and detached windows keep the graph inside the visible area more reliably.
+
+### Tests
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`
+- `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.291] - 2026-05-17
 ### Fixed
 - **Diagram Modules auto layout now respects the visible row budget.** Automatic layout caps one horizontal Product Part row to three actual module cards across adjacent clusters and standalone modules, while preserving explicit user sidecar overrides.

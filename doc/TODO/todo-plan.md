@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "96225dee5",
+  "lastRecordedCommit": "f9227f49a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.compact.verify.task1",
-  "expectedCommitMessage": "test: verify compact diagram spacing",
+  "currentTaskId": "diagram-row-layout.phase4.release292.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.292 release",
   "debt": {
-    "expectedCommitMessage": "test: verify compact diagram spacing",
-    "preCommitHead": "96225dee5",
+    "expectedCommitMessage": "docs: prepare 1.2.292 release",
+    "preCommitHead": "f9227f49a",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.compact.verify.task1"
+    "taskId": "diagram-row-layout.phase4.release292.docs.task1"
   }
 }
 ```
@@ -168,16 +168,32 @@
     - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
     - Verification 2026-05-17: `npm run build:webview` passed.
-36. [PENDING] Git Commit: `test: verify compact diagram spacing` (hash: TBD)
+36. [DONE] Git Commit: `test: verify compact diagram spacing` (hash: f9227f49a)
 
 ### Stream: User Visual Acceptance Testing
 
-37. [TODO] `diagram-row-layout.phase4.compact.acceptance.task1` User retests Diagram Modules visual layout after the compact spacing fix and confirms single-cluster rows no longer stretch module gaps or overflow the visible panel (scope: user visual acceptance only; expected commit: none).
+37. [DONE] `diagram-row-layout.phase4.compact.acceptance.task1` User retests Diagram Modules visual layout after the compact spacing fix and confirms single-cluster rows no longer stretch module gaps or overflow the visible panel (scope: user visual acceptance only; expected commit: none). Result: User accepted the compact spacing fix for release on 2026-05-17 by requesting a new release.
+
+### Stream: Compact Fix Release Preparation
+
+38. [DONE] `diagram-row-layout.phase4.release292.docs.task1` Update release notes for v1.2.292 before version bump/build so packaged README/CHANGELOG include the compact spacing fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.292 release`).
+39. [PENDING] Git Commit: `docs: prepare 1.2.292 release` (hash: TBD)
+
+### Stream: Compact Fix Release Automation
+
+40. [TODO] `diagram-row-layout.phase4.release292.buildall.task1` Run `./scripts/build-all.sh` for v1.2.292 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.292 artifacts`).
+41. [TODO] Git Commit: `chore: build release 1.2.292 artifacts` (hash: TBD)
+42. [TODO] `diagram-row-layout.phase4.release292.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.292 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.292 vsix`).
+43. [TODO] Git Commit: `chore: package release 1.2.292 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+44. [TODO] `diagram-row-layout.phase4.release292.acceptance.task1` User installs and retests v1.2.292 release package for Diagram Modules compact spacing, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-38. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-39. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-40. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+45. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+46. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+47. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
