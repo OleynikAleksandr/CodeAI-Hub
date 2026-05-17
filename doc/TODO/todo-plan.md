@@ -8,15 +8,15 @@
   "planId": "managed-review-confirm-button-2026-05-17",
   "branch": "main",
   "baseHead": "e7b5f78e0",
-  "lastRecordedCommit": "b1cf221b0",
+  "lastRecordedCommit": "59f06a1c8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md",
-  "currentTaskId": "managed-review-confirm.phase2.docs.task1",
-  "expectedCommitMessage": "docs: document managed review confirm button",
+  "currentTaskId": "managed-review-confirm.phase2.verify.task1",
+  "expectedCommitMessage": "test: verify managed review confirm button",
   "debt": {
-    "expectedCommitMessage": "docs: document managed review confirm button",
-    "preCommitHead": "b1cf221b0",
+    "expectedCommitMessage": "test: verify managed review confirm button",
+    "preCommitHead": "59f06a1c8",
     "stage": "commit_pending",
-    "taskId": "managed-review-confirm.phase2.docs.task1"
+    "taskId": "managed-review-confirm.phase2.verify.task1"
   }
 }
 ```
@@ -74,12 +74,17 @@
 ### Stream: SSOT Documentation
 
 9. [DONE] `managed-review-confirm.phase2.docs.task1` Document that managed review acceptance may be submitted from the inline system-card button while Core remains acceptance authority (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document managed review confirm button`).
-10. [PENDING] Git Commit: `docs: document managed review confirm button` (hash: TBD)
+10. [DONE] Git Commit: `docs: document managed review confirm button` (hash: 59f06a1c8)
 
 ### Stream: Tooling Verification
 
-11. [TODO] `managed-review-confirm.phase2.verify.task1` Run targeted Core/UI tests plus webview typecheck and record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify managed review confirm button`).
-12. [TODO] Git Commit: `test: verify managed review confirm button` (hash: TBD)
+11. [DONE] `managed-review-confirm.phase2.verify.task1` Run targeted Core/UI tests plus webview typecheck and record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify managed review confirm button`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` passed 3/3.
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts` passed 2/2, including terminal `### Stream: User Return And Revisions`.
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts` passed 5/5.
+    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts` passed 8/8; React emitted existing SSR `useLayoutEffect` warnings for static markup rendering.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+12. [PENDING] Git Commit: `test: verify managed review confirm button` (hash: TBD)
 
 ## Phase 3 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
