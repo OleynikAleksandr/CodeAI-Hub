@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "71667a0e0",
+  "lastRecordedCommit": "2bdab0f86",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase9.release.task3",
-  "expectedCommitMessage": "docs: record 1.2.288 release package",
+  "currentTaskId": "managed-clean-markers.phase10.metadata-plan.task1",
+  "expectedCommitMessage": "docs: plan terminal metadata cleanup fix",
   "debt": {
-    "expectedCommitMessage": "docs: record 1.2.288 release package",
-    "preCommitHead": "71667a0e0",
+    "expectedCommitMessage": "docs: plan terminal metadata cleanup fix",
+    "preCommitHead": "2bdab0f86",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase9.release.task3"
+    "taskId": "managed-clean-markers.phase10.metadata-plan.task1"
   }
 }
 ```
@@ -45,6 +45,7 @@
 - Description and Virtual Simulation do not use managed todo-plans, but they still become yellow when Core starts their session. Their existing green completion behavior must stay intact.
 - A green marker must not be published for a managed step while Core-owned or stage-owned Git changes remain uncommitted. Classified managed residue is committed by Core; unclassified residue blocks completion and next-stage transition until resolved through a Core command.
 - Release build is in scope for v1.2.288 after the explicit user request on 2026-05-17.
+- Release build is in scope for v1.2.289 after the explicit user request on 2026-05-17.
 
 ## Phase 0 - Planning Intake (owner: Codex, updated: 2026-05-17)
 
@@ -235,11 +236,55 @@
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version` completed for v1.2.288.
     - Release output confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
     - Handoff artifact: `codeai-hub-1.2.288.vsix` in the repository root (49M package, 48.32MB VSIX payload).
-55. [PENDING] Git Commit: `docs: record 1.2.288 release package` (hash: TBD)
+55. [DONE] Git Commit: `docs: record 1.2.288 release package` (hash: 2bdab0f86)
 
-## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 10 - Terminal Metadata Cleanup Fix (owner: Codex, updated: 2026-05-17)
+
+### Stream: Retest Bugfix Intake
+
+56. [DONE] `managed-clean-markers.phase10.metadata-plan.task1` Add the final retest bugfix stream for Core-owned metadata and local runtime state that can dirty Git after a managed step reaches the user-return boundary (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan terminal metadata cleanup fix`).
+57. [PENDING] Git Commit: `docs: plan terminal metadata cleanup fix` (hash: TBD)
+
+### Stream: Terminal Metadata Classifier
+
+58. [TODO] `managed-clean-markers.phase10.metadata-clean.task1` Make terminal completion ignore local volatile timer state through Git ignore enforcement, auto-commit classified Core metadata, and keep unclassified files blocking completion (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`; expected commit: `fix: clean terminal metadata residue`).
+59. [TODO] Git Commit: `fix: clean terminal metadata residue` (hash: TBD)
+
+### Stream: Local State Ignore Contract
+
+60. [TODO] `managed-clean-markers.phase10.metadata-clean.task2` Enforce `.codeai-hub/state/` as ignored local runtime state in Application Skeleton environment readiness checks (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-output-hygiene.ts, packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require local runtime state ignore`).
+61. [TODO] Git Commit: `fix: require local runtime state ignore` (hash: TBD)
+
+### Stream: Architecture Docs
+
+62. [TODO] `managed-clean-markers.phase10.docs.task1` Document the terminal metadata cleanup rule and the `.codeai-hub/state/` local-state boundary (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document terminal metadata cleanup`).
+63. [TODO] Git Commit: `docs: document terminal metadata cleanup` (hash: TBD)
+
+### Stream: Tooling Verification
+
+64. [TODO] `managed-clean-markers.phase10.verify.task1` Run targeted tests and builds for terminal metadata cleanup, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify terminal metadata cleanup`).
+65. [TODO] Git Commit: `test: verify terminal metadata cleanup` (hash: TBD)
+
+## Phase 11 - Release Build For Terminal Metadata Fix (owner: Codex, updated: 2026-05-17)
+
+### Stream: Release Preparation
+
+66. [TODO] `managed-clean-markers.phase11.release.task1` Update release-facing README/CHANGELOG for v1.2.289 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.289 release`).
+67. [TODO] Git Commit: `docs: prepare 1.2.289 release` (hash: TBD)
+
+### Stream: Unified Release Artifacts
+
+68. [TODO] `managed-clean-markers.phase11.release.task2` Run `./scripts/build-all.sh`, commit the v1.2.289 version bump and release manifests, then keep the tree clean for VSIX packaging (scope: `package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.289 release artifacts`).
+69. [TODO] Git Commit: `chore: build 1.2.289 release artifacts` (hash: TBD)
+
+### Stream: VSIX Packaging
+
+70. [TODO] `managed-clean-markers.phase11.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.289 release package`).
+71. [TODO] Git Commit: `docs: record 1.2.289 release package` (hash: TBD)
+
+## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-56. [TODO] `managed-clean-markers.phase10.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-57. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+72. [TODO] `managed-clean-markers.phase12.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+73. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
