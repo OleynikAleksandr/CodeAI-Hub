@@ -76,6 +76,8 @@ Quality Gates Baseline and later implementation stages may depend on this founda
 
 The boundary is strict: Application Skeleton owns stack/package/workspace decisions and the first installable project foundation, while Quality Gates Baseline owns research, selection, and integration of quality tooling after that foundation is available. Quality Gates must not be used as a repair layer for an incomplete Application Skeleton foundation.
 
+Quality Gates integration has an additional artifact consistency gate. In the integration phase, `quality-gates.json` is the machine-readable source of truth and `quality-gates.md` is the user-facing projection of the same state. Core must reject an integrated Quality Gates result when any required gate remains marked `not_integrated` in JSON or Markdown, when required package scripts or lifecycle hook calls are missing, or when declared `integratedPaths` do not exist in the workspace. Draft/proposal phases may describe planned or not-yet-integrated gates, but terminal integration cannot open persistent return or publish a green marker until JSON, Markdown, package scripts, hooks, and filesystem evidence agree.
+
 The generated project foundation must also separate tracked managed artifacts from local runtime state. `.gitignore` must cover install output, build output, and `.codeai-hub/state/` so Project Manager/Core telemetry cannot dirty Git after a step has completed.
 
 Forbidden external access:
@@ -199,6 +201,7 @@ The active implementation must provide the complete managed lifecycle:
 - the registered controller for the selected stage is visible in Core workflow-state and client projections;
 - the first prompt embeds all required source artifacts, templates, field references, examples, schema fragments, and authoring rules as provider-visible text;
 - Core validates every provider output through the canonical parser/validator and writes diagnostics as Core-owned feedback;
+- Quality Gates integration validates artifact consistency across JSON, Markdown, package scripts, lifecycle hooks, and declared integration paths before persistent return opens;
 - every repair, revision, acceptance, materialization, integration, and persistent-return transition creates or advances a concrete stage-plan microtask with a paired `Git Commit:` item;
 - managed Git hygiene keeps the workspace clean at stage boundaries, including pre-stage cleanup, terminal dirty-tree classification, `.codeai-hub/state/` ignore enforcement, Core commits for classified residue, and blockers for unclassified residue;
 - completed upstream stage LEDs remain green after downstream blockers, while active downstream stages render in progress from Core state and only terminal `User Return And Revisions` completion can publish a green managed marker;

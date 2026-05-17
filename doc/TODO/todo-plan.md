@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "d1770a2ad",
+  "lastRecordedCommit": "475e6694e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase12.qg-consistency.task1",
-  "expectedCommitMessage": "fix: validate quality gates artifact consistency",
+  "currentTaskId": "managed-clean-markers.phase12.qg-consistency-docs.task1",
+  "expectedCommitMessage": "docs: document quality gates artifact consistency",
   "debt": {
-    "expectedCommitMessage": "fix: validate quality gates artifact consistency",
-    "preCommitHead": "d1770a2ad",
+    "expectedCommitMessage": "docs: document quality gates artifact consistency",
+    "preCommitHead": "475e6694e",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase12.qg-consistency.task1"
+    "taskId": "managed-clean-markers.phase12.qg-consistency-docs.task1"
   }
 }
 ```
@@ -298,12 +298,12 @@
 ### Stream: Core Validator
 
 74. [DONE] `managed-clean-markers.phase12.qg-consistency.task1` Enforce Quality Gates integrated-state consistency across JSON required gates, Markdown projection, package scripts, and hook wiring (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `fix: validate quality gates artifact consistency`).
-75. [PENDING] Git Commit: `fix: validate quality gates artifact consistency` (hash: TBD)
+75. [DONE] Git Commit: `fix: validate quality gates artifact consistency` (hash: 475e6694e)
 
 ### Stream: Architecture Docs
 
-76. [TODO] `managed-clean-markers.phase12.qg-consistency-docs.task1` Document the Quality Gates artifact consistency rule in the managed workflow SSOT (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates artifact consistency`).
-77. [TODO] Git Commit: `docs: document quality gates artifact consistency` (hash: TBD)
+76. [DONE] `managed-clean-markers.phase12.qg-consistency-docs.task1` Document the Quality Gates artifact consistency rule in the managed workflow SSOT (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document quality gates artifact consistency`).
+77. [PENDING] Git Commit: `docs: document quality gates artifact consistency` (hash: TBD)
 
 ### Stream: Tooling Verification
 
