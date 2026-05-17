@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "25171dd87",
+  "lastRecordedCommit": "b9794c24a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase0.plan.task2",
-  "expectedCommitMessage": "docs: plan clean stage markers",
+  "currentTaskId": "managed-clean-markers.phase1.clean.task1",
+  "expectedCommitMessage": "fix: classify managed terminal git residue",
   "debt": {
-    "expectedCommitMessage": "docs: plan clean stage markers",
-    "preCommitHead": "25171dd87",
+    "expectedCommitMessage": "fix: classify managed terminal git residue",
+    "preCommitHead": "b9794c24a",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase0.plan.task2"
+    "taskId": "managed-clean-markers.phase1.clean.task1"
   }
 }
 ```
@@ -56,14 +56,14 @@
 ### Stream: Planning Source
 
 3. [DONE] `managed-clean-markers.phase0.plan.task2` Create the planning source and register the active scope in the documentation index (scope: `doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan clean stage markers`).
-4. [PENDING] Git Commit: `docs: plan clean stage markers` (hash: TBD)
+4. [DONE] Git Commit: `docs: plan clean stage markers` (hash: b9794c24a)
 
 ## Phase 1 - Terminal Clean Git Guard (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Managed Residue Classification
 
-5. [TODO] `managed-clean-markers.phase1.clean.task1` Add a Core-owned terminal dirty-tree classifier for managed stage outputs and runtime metadata (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: classify managed terminal git residue`).
-6. [TODO] Git Commit: `fix: classify managed terminal git residue` (hash: TBD)
+5. [DONE] `managed-clean-markers.phase1.clean.task1` Add a Core-owned terminal dirty-tree classifier for managed stage outputs and runtime metadata (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: classify managed terminal git residue`).
+6. [PENDING] Git Commit: `fix: classify managed terminal git residue` (hash: TBD)
 
 ### Stream: Terminal Commit Boundary
 
