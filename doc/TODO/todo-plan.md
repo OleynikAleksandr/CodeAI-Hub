@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "1c1dbdf84",
+  "lastRecordedCommit": "2b6d53316",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase3.verify.task1",
-  "expectedCommitMessage": "test: verify clean stage marker workflow",
+  "currentTaskId": "managed-clean-markers.phase4.persistence.task1",
+  "expectedCommitMessage": "test: verify marker restart persistence",
   "debt": {
-    "expectedCommitMessage": "test: verify clean stage marker workflow",
-    "preCommitHead": "1c1dbdf84",
+    "expectedCommitMessage": "test: verify marker restart persistence",
+    "preCommitHead": "2b6d53316",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase3.verify.task1"
+    "taskId": "managed-clean-markers.phase4.persistence.task1"
   }
 }
 ```
@@ -105,17 +105,24 @@
     - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts` passed 23/23.
     - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
-20. [PENDING] Git Commit: `test: verify clean stage marker workflow` (hash: TBD)
+20. [DONE] Git Commit: `test: verify clean stage marker workflow` (hash: 2b6d53316)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
+### Stream: Restart Persistence Verification
+
+21. [DONE] `managed-clean-markers.phase4.persistence.task1` Verify marker state recovery after Core or Project Manager restart from persisted Core-owned state (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify marker restart persistence`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts` passed 6/6, including persisted continuity yellow markers and completed ledger green markers after a fresh `WorkflowStateService` instance.
+    - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
+22. [PENDING] Git Commit: `test: verify marker restart persistence` (hash: TBD)
+
 ### Stream: User Retest
 
-21. [TODO] `managed-clean-markers.phase4.acceptance.task1` User retests the managed workflow: each step becomes yellow on first Core-started session, becomes green only at the terminal User Return And Revisions boundary, and the Git tree stays clean after each step. Scope: user workflow acceptance only; expected commit: none.
+23. [TODO] `managed-clean-markers.phase4.acceptance.task1` User retests the managed workflow: each step becomes yellow on first Core-started session, becomes green only at the terminal User Return And Revisions boundary, and the Git tree stays clean after each step. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-22. [TODO] `managed-clean-markers.phase5.closeout.task1` After explicit user acceptance, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-23. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+24. [TODO] `managed-clean-markers.phase5.closeout.task1` After explicit user acceptance, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+25. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)

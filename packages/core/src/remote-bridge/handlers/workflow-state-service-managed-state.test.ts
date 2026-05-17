@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -32,6 +32,53 @@ const readWorkflowState = async (params: {
     } as unknown as Response;
     params.service.handleWorkflowStateRead(req, res);
   });
+
+const writeWorkspaceFile = async (
+  workspaceRoot: string,
+  relativePath: string,
+  content: string
+): Promise<void> => {
+  const absolutePath = path.join(workspaceRoot, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, content, "utf8");
+};
+
+const readStageStatuses = (
+  payload: Record<string, unknown>
+): Record<string, { readonly status?: string }> => {
+  const state = payload.state as {
+    readonly stages?: Record<string, { readonly status?: string }>;
+  };
+  return state.stages ?? {};
+};
+
+const writeManagedWorkspacePlan = async (
+  workspaceRoot: string,
+  completedStages: readonly string[]
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "doc/TODO/workspace.plan.md",
+    [
+      "# Managed Workspace Plan",
+      "",
+      "<!-- codeai-workspace-plan-state:start -->",
+      "```json",
+      JSON.stringify(
+        {
+          schema: "codeai-workspace-plan-v1",
+          executionScopeStatus: "ACTIVE",
+          completedStages,
+        },
+        null,
+        2
+      ),
+      "```",
+      "<!-- codeai-workspace-plan-state:end -->",
+      "",
+    ].join("\n")
+  );
+};
 
 test("workflow-state projects managed workflow preview state read-only", async () => {
   const workspaceRoot = await mkdtemp(
@@ -171,6 +218,82 @@ test("workflow-state promotes active Application Skeleton continuity to in-progr
     };
 
     assert.equal(state.stages?.application_skeleton?.status, "in_progress");
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state restores yellow markers from persisted continuity after Core restart", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-workflow-marker-continuity-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const stages = [
+    "description",
+    "virtual_simulation",
+    "diagram_modules",
+    "application_skeleton",
+    "quality_gates",
+  ] as const;
+
+  try {
+    for (const stage of stages) {
+      const store = new ContinuityChainStore({
+        clock: () => "2026-05-17T09:00:00.000Z",
+        rootSessionId: `${stage}-session`,
+        stage,
+        workspaceRoot,
+        workspaceSlug,
+      });
+      await store.appendSegment({
+        createdAt: "2026-05-17T09:00:00.000Z",
+        providerId: "codexCli",
+        providerSessionId: `${stage}-provider-session`,
+        sessionId: `${stage}-session`,
+      });
+    }
+
+    const service = new WorkflowStateService({ logger: new Logger("error") });
+    const payload = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+    const restoredStages = readStageStatuses(payload);
+
+    for (const stage of stages) {
+      assert.equal(restoredStages[stage]?.status, "in_progress");
+    }
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state restores green managed markers from completed workspace ledger after Core restart", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-workflow-marker-ledger-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const managedStages = [
+    "diagram_modules",
+    "application_skeleton",
+    "quality_gates",
+  ] as const;
+
+  try {
+    await writeManagedWorkspacePlan(workspaceRoot, managedStages);
+
+    const service = new WorkflowStateService({ logger: new Logger("error") });
+    const payload = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+    const restoredStages = readStageStatuses(payload);
+
+    for (const stage of managedStages) {
+      assert.equal(restoredStages[stage]?.status, "completed");
+    }
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
