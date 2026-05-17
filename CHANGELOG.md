@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.288] - 2026-05-17
+### Fixed
+- **Diagram Modules completion now saves generated flow sidecars.** Managed Git commits stage dot-directory sidecars such as `.codeai-hub/<workspace>/diagram_modules/module-map.flow.json` without Git exclude pathspecs, so the standard Module Graph layout file is committed automatically.
+- **Terminal dirty-tree errors no longer produce empty file lists.** If classified generated files fail to auto-save after retries, the user sees a clear retry message instead of an empty `Files:` block or a manual commit choice for standard Core-generated files.
+
+### Tests
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+
 ## [1.2.287] - 2026-05-17
 ### Fixed
 - **Description and Virtual Simulation completion markers now finish during retest.** If either direct stage was already yellow and its final artifact exists, filesystem hydration promotes it to green when the next step becomes available.
