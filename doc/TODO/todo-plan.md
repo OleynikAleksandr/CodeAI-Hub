@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "70a0603bf",
+  "lastRecordedCommit": "6995e9d64",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase3.detach.docs.task1",
-  "expectedCommitMessage": "docs: document detached diagram refresh",
+  "currentTaskId": "diagram-row-layout.phase3.detach.verify.task1",
+  "expectedCommitMessage": "test: verify detached diagram refresh",
   "debt": {
-    "expectedCommitMessage": "docs: document detached diagram refresh",
-    "preCommitHead": "70a0603bf",
+    "expectedCommitMessage": "test: verify detached diagram refresh",
+    "preCommitHead": "6995e9d64",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase3.detach.docs.task1"
+    "taskId": "diagram-row-layout.phase3.detach.verify.task1"
   }
 }
 ```
@@ -113,12 +113,16 @@
 ### Stream: Detached Diagram Docs
 
 19. [DONE] `diagram-row-layout.phase3.detach.docs.task1` Document the detached Diagram Modules live-refresh contract in the Project Manager and system workflow SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document detached diagram refresh`).
-20. [PENDING] Git Commit: `docs: document detached diagram refresh` (hash: TBD)
+20. [DONE] Git Commit: `docs: document detached diagram refresh` (hash: 6995e9d64)
 
 ### Stream: Detached Diagram Verification
 
-21. [TODO] `diagram-row-layout.phase3.detach.verify.task1` Re-run targeted detached/layout tests and webview checks after the detached refresh fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify detached diagram refresh`).
-22. [TODO] Git Commit: `test: verify detached diagram refresh` (hash: TBD)
+21. [DONE] `diagram-row-layout.phase3.detach.verify.task1` Re-run targeted detached/layout tests and webview checks after the detached refresh fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify detached diagram refresh`).
+    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/detached-diagram-view.test.ts` passed 1/1.
+    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+    - Verification 2026-05-17: `npm run build:webview` passed.
+22. [PENDING] Git Commit: `test: verify detached diagram refresh` (hash: TBD)
 
 ## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
