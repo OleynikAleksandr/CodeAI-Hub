@@ -1,22 +1,22 @@
-# Development TODO Plan
+# План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
 ```json
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "ACTIVE",
-  "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
+  "planId": "managed-review-confirm-button-2026-05-17",
   "branch": "main",
-  "baseHead": "39e4388a7",
-  "lastRecordedCommit": "2a7ffd7f1",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase5.closeout.task1",
-  "expectedCommitMessage": "docs: close diagram row auto layout scope",
+  "baseHead": "e7b5f78e0",
+  "lastRecordedCommit": "e7b5f78e0",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md",
+  "currentTaskId": "managed-review-confirm.phase0.plan.task1",
+  "expectedCommitMessage": "docs: plan managed review confirmation button",
   "debt": {
-    "expectedCommitMessage": "docs: close diagram row auto layout scope",
-    "preCommitHead": "2a7ffd7f1",
+    "expectedCommitMessage": "docs: plan managed review confirmation button",
+    "preCommitHead": "e7b5f78e0",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase5.closeout.task1"
+    "taskId": "managed-review-confirm.phase0.plan.task1"
   }
 }
 ```
@@ -24,27 +24,24 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_RowAwareAutoLayout_Planning.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
-  - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
-  - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
   - `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_DevTreeParser_And_AutoFitZoom_Architecture.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_AutoFitZoom_NaturalWidthHotfix_Architecture.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_TwoColumnModuleTable_Cleanup_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
+  - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
+  - `doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-- Only this list is the recovery context for this execution cycle.
+- Только этот список является источником документов для восстановления контекста текущего execution cycle.
 
-## Execution Rules
+## Правила выполнения (Execution Rules)
 
-- Scope: make Diagram Modules CSS Grid auto layout row-aware so default placement does not exceed three horizontal module-card slots across adjacent clusters and standalone modules.
-- Do not change Diagram Modules semantic artifact formats.
-- Do not reintroduce React Flow or JS pixel placement.
-- Manual `module-map.flow.json` sidecar overrides remain authoritative.
-- Each implementation task must touch no more than 3 files unless this plan is first split into smaller tasks.
+- Scope: replace managed user-review prose acceptance with a visible `Подтверждаю` action button on the Core/system review card.
+- Core remains workflow authority: the UI button submits user intent only; Core classifies acceptance and advances managed stage plans.
+- Do not add Project Manager-owned acceptance state or direct plan mutation.
+- Keep microtasks to no more than 3 files each.
 - Use `npm run plan:commit -- "<expected commit message>"` for commit-backed tasks. Do not bypass hooks.
 - Release build requires separate explicit user confirmation.
 
@@ -52,259 +49,47 @@
 
 ### Stream: Active Scope Creation
 
-1. [DONE] `diagram-row-layout.phase0.plan.task1` Create the planning source, register it in Docs_Index, and open the active todo-plan (scope: `doc/SolidWorks-WorkFlow/Plans/Archive/DiagramModules_RowAwareAutoLayout_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan diagram module row-aware layout`).
-2. [DONE] Git Commit: `docs: plan diagram module row-aware layout` (hash: ce4c40cc7)
+1. [DONE] `managed-review-confirm.phase0.plan.task1` Create planning source, register it in Docs_Index, and open the active todo-plan (scope: `doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan managed review confirmation button`).
+2. [PENDING] Git Commit: `docs: plan managed review confirmation button` (hash: TBD)
 
-## Phase 1 - Row-Aware Auto Layout (owner: Codex, updated: 2026-05-17)
+## Phase 1 - Managed Review Confirmation UX (owner: Codex, updated: 2026-05-17)
 
-### Stream: Default Layout Algorithm
+### Stream: Core Handoff Copy
 
-3. [DONE] `diagram-row-layout.phase1.layout.task1` Add row-aware Diagram Modules auto layout and regression coverage for the three-module horizontal row budget (scope: `src/client/project-manager/components/diagram-editor/**, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: cap diagram module row auto layout`).
-4. [DONE] Git Commit: `fix: cap diagram module row auto layout` (hash: 40620b901)
+3. [TODO] `managed-review-confirm.phase1.core.task1` Replace managed user-review handoff copy so it points to the inline button instead of instructing users to type `подтверждаю`, and update Core handoff tests (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-handoff-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: update managed review handoff copy`).
+4. [TODO] Git Commit: `fix: update managed review handoff copy` (hash: TBD)
 
-### Stream: Project Manager Contract Docs
+### Stream: Session UI Button
 
-5. [DONE] `diagram-row-layout.phase1.docs.task1` Mirror the row-aware auto layout contract in Project Manager documentation (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram row auto layout`).
-6. [DONE] Git Commit: `docs: document diagram row auto layout` (hash: bf22e18e7)
+5. [TODO] `managed-review-confirm.phase1.ui.task1` Render an inline `Подтверждаю` action on `managed-workflow-user-review` system cards and route it through the existing send path (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/session-view.tsx, media/session-view.css`; expected commit: `feat: add managed review confirm button`).
+6. [TODO] Git Commit: `feat: add managed review confirm button` (hash: TBD)
 
-## Phase 2 - Tooling Verification (owner: Codex, updated: 2026-05-17)
+### Stream: UI Regression Coverage
 
-### Stream: Targeted Checks
+7. [TODO] `managed-review-confirm.phase1.test.task1` Add render coverage for the managed review confirm button on the system dialog card (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `test: cover managed review confirm button`).
+8. [TODO] Git Commit: `test: cover managed review confirm button` (hash: TBD)
 
-7. [DONE] `diagram-row-layout.phase2.verify.task1` Run targeted Diagram Modules layout tests plus webview typecheck/build and record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram row auto layout`).
-   - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 11/11.
-   - Verification 2026-05-17: `npm run typecheck:webview` passed.
-   - Verification 2026-05-17: `npm run build:webview` passed.
-8. [DONE] Git Commit: `test: verify diagram row auto layout` (hash: daab00599)
+## Phase 2 - Documentation And Verification (owner: Codex, updated: 2026-05-17)
+
+### Stream: SSOT Documentation
+
+9. [TODO] `managed-review-confirm.phase2.docs.task1` Document that managed review acceptance may be submitted from the inline system-card button while Core remains acceptance authority (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document managed review confirm button`).
+10. [TODO] Git Commit: `docs: document managed review confirm button` (hash: TBD)
+
+### Stream: Tooling Verification
+
+11. [TODO] `managed-review-confirm.phase2.verify.task1` Run targeted Core/UI tests plus webview typecheck and record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify managed review confirm button`).
+12. [TODO] Git Commit: `test: verify managed review confirm button` (hash: TBD)
 
 ## Phase 3 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
-### Stream: Diagram Retest
+### Stream: User Retest
 
-9. [BLOCKED] `diagram-row-layout.phase3.acceptance.task1` User retests Diagram Modules visual layout in Project Manager and confirms automatic rows no longer overflow the right panel for adjacent clusters/modules (scope: user workflow acceptance only; expected commit: none). Result: User clarified on 2026-05-17 that the horizontal budget applies to actual module cards across one row regardless of cluster/standalone boundaries, and reported that `targetAspectRatio` does not visibly change auto layout.
+13. [TODO] `managed-review-confirm.phase3.acceptance.task1` User retests a managed user-review card and confirms the inline `Подтверждаю` button submits acceptance and advances the Core-owned stage lifecycle (scope: user workflow acceptance only; expected commit: none).
 
-### Stream: Retest Fixes
+## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
-10. [DONE] `diagram-row-layout.phase3.fix.task1` Enforce the row module budget for actual auto module slots and make Product Part aspect-ratio choices visibly affect auto column selection (scope: `src/client/project-manager/components/diagram-editor/**`; expected commit: `fix: enforce diagram row module budget`).
-11. [DONE] Git Commit: `fix: enforce diagram row module budget` (hash: 6ac43b9ea)
+### Stream: Scope Closeout
 
-### Stream: Retest Documentation
-
-12. [DONE] `diagram-row-layout.phase3.docs.task1` Update the Diagram Modules visual-shell SSOT with the clarified actual-module row budget and aspect-ratio behavior (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify diagram row budget`).
-13. [DONE] Git Commit: `docs: clarify diagram row budget` (hash: 63488ea77)
-
-### Stream: Retest Verification
-
-14. [DONE] `diagram-row-layout.phase3.verify.task1` Re-run targeted layout tests and webview checks after the retest fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram row budget fix`).
-    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13, including aspect-ratio visibility and explicit Product Part columns with auto cluster row capping.
-    - Verification 2026-05-17: `npm run typecheck:webview` passed.
-    - Verification 2026-05-17: `npm run build:webview` passed.
-15. [DONE] Git Commit: `test: verify diagram row budget fix` (hash: bab253b3c)
-
-### Stream: Diagram Retest
-
-16. [BLOCKED] `diagram-row-layout.phase3.acceptance.task2` User retests Diagram Modules visual layout again and confirms the clarified row budget and aspect-ratio behavior (scope: user workflow acceptance only; expected commit: none). Result: User reported on 2026-05-17 that the detached Diagram Modules window opens with the current graph but does not live-refresh when later Product Parts materialize in the main Project Manager workflow.
-
-### Stream: Detached Diagram Live Refresh
-
-17. [DONE] `diagram-row-layout.phase3.detach.task1` Subscribe the detached Diagram Modules view to workflow-state changes so newly materialized Product Parts reload without closing and reopening the detached window (scope: `src/client/project-manager/components/diagram-editor/detached-diagram-view.tsx, src/client/project-manager/components/diagram-editor/detached-diagram-view.test.ts`; expected commit: `fix: refresh detached diagram view`).
-18. [DONE] Git Commit: `fix: refresh detached diagram view` (hash: 70a0603bf)
-
-### Stream: Detached Diagram Docs
-
-19. [DONE] `diagram-row-layout.phase3.detach.docs.task1` Document the detached Diagram Modules live-refresh contract in the Project Manager and system workflow SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document detached diagram refresh`).
-20. [DONE] Git Commit: `docs: document detached diagram refresh` (hash: 6995e9d64)
-
-### Stream: Detached Diagram Verification
-
-21. [DONE] `diagram-row-layout.phase3.detach.verify.task1` Re-run targeted detached/layout tests and webview checks after the detached refresh fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify detached diagram refresh`).
-    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/detached-diagram-view.test.ts` passed 1/1.
-    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13.
-    - Verification 2026-05-17: `npm run typecheck:webview` passed.
-    - Verification 2026-05-17: `npm run build:webview` passed.
-22. [DONE] Git Commit: `test: verify detached diagram refresh` (hash: e665d93ff)
-
-### Stream: Detached Diagram Retest
-
-23. [DONE] `diagram-row-layout.phase3.detach.acceptance.task1` User retests the detached Diagram Modules popup and confirms that newly materialized Product Parts appear without closing and reopening the detached window (scope: user workflow acceptance only; expected commit: none). Result: User accepted the scope for release build on 2026-05-17 by requesting a new release.
-
-## Phase 4 - Release Build (owner: Codex, updated: 2026-05-17)
-
-### Stream: Release Preparation
-
-24. [DONE] `diagram-row-layout.phase4.release.docs.task1` Update release notes for v1.2.291 before version bump/build so packaged README/CHANGELOG match the release identity (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.291 release`).
-25. [DONE] Git Commit: `docs: prepare 1.2.291 release` (hash: b3a536e49)
-
-### Stream: Release Automation
-
-26. [DONE] `diagram-row-layout.phase4.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.291 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.291 artifacts`).
-    - Verification 2026-05-17: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Generated release artifacts: `claude-module-1.2.291.tar.bz2`, `codex-module-1.2.291.tar.bz2`, `gemini-module-1.2.291.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.291.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.291.tar.bz2`, `vscode-webview-1.2.291.tar.bz2`, `project-manager-1.2.291.tar.bz2`.
-27. [DONE] Git Commit: `chore: build release 1.2.291 artifacts` (hash: e73894660)
-28. [DONE] `diagram-row-layout.phase4.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.291 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.291 vsix`).
-    - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Release package: `codeai-hub-1.2.291.vsix` (48M on disk, script-reported package size 49M).
-    - Release script confirmed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, and `Release build complete`.
-29. [DONE] Git Commit: `chore: package release 1.2.291 vsix` (hash: 37d56fc61)
-
-### Stream: User Visual Acceptance Testing
-
-30. [BLOCKED] `diagram-row-layout.phase4.release.acceptance.task1` User installs and retests v1.2.291 release package for Diagram Modules row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User reported on 2026-05-17 that a single cluster stretches to the full Product Part width, producing huge horizontal gaps between module cards and excess empty space to cluster boundaries.
-
-### Stream: Release Retest Compact Layout Fix
-
-31. [DONE] `diagram-row-layout.phase4.compact.task1` Make Diagram Modules cluster/module grid sizing compact so single clusters do not stretch module spacing across the viewport (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx, src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`; expected commit: `fix: compact diagram module spacing`).
-32. [DONE] Git Commit: `fix: compact diagram module spacing` (hash: 856fb2a5c)
-
-### Stream: Release Retest Compact Layout Docs
-
-33. [DONE] `diagram-row-layout.phase4.compact.docs.task1` Document the compact spacing contract for Diagram Modules visual layout (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document compact diagram spacing`).
-34. [DONE] Git Commit: `docs: document compact diagram spacing` (hash: 96225dee5)
-
-### Stream: Release Retest Compact Layout Verification
-
-35. [DONE] `diagram-row-layout.phase4.compact.verify.task1` Run targeted compact layout tests plus webview typecheck/build after the spacing fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify compact diagram spacing`).
-    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx` passed 3/3.
-    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13.
-    - Verification 2026-05-17: `npm run typecheck:webview` passed.
-    - Verification 2026-05-17: `npm run build:webview` passed.
-36. [DONE] Git Commit: `test: verify compact diagram spacing` (hash: f9227f49a)
-
-### Stream: User Visual Acceptance Testing
-
-37. [DONE] `diagram-row-layout.phase4.compact.acceptance.task1` User retests Diagram Modules visual layout after the compact spacing fix and confirms single-cluster rows no longer stretch module gaps or overflow the visible panel (scope: user visual acceptance only; expected commit: none). Result: User accepted the compact spacing fix for release on 2026-05-17 by requesting a new release.
-
-### Stream: Compact Fix Release Preparation
-
-38. [DONE] `diagram-row-layout.phase4.release292.docs.task1` Update release notes for v1.2.292 before version bump/build so packaged README/CHANGELOG include the compact spacing fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.292 release`).
-39. [DONE] Git Commit: `docs: prepare 1.2.292 release` (hash: 5ffaaf4ca)
-
-### Stream: Compact Fix Release Automation
-
-40. [DONE] `diagram-row-layout.phase4.release292.buildall.task1` Run `./scripts/build-all.sh` for v1.2.292 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.292 artifacts`).
-    - Verification 2026-05-17: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Generated release artifacts: `claude-module-1.2.292.tar.bz2`, `codex-module-1.2.292.tar.bz2`, `gemini-module-1.2.292.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.292.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.292.tar.bz2`, `vscode-webview-1.2.292.tar.bz2`, `project-manager-1.2.292.tar.bz2`.
-41. [DONE] Git Commit: `chore: build release 1.2.292 artifacts` (hash: 329cb9879)
-42. [DONE] `diagram-row-layout.phase4.release292.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.292 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.292 vsix`).
-    - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Release package: `codeai-hub-1.2.292.vsix` (48M on disk, script-reported package size 49M).
-    - Release script confirmed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, and `Release build complete`.
-43. [DONE] Git Commit: `chore: package release 1.2.292 vsix` (hash: ee79ce858)
-
-### Stream: User Visual Acceptance Testing
-
-44. [DONE] `diagram-row-layout.phase4.release292.acceptance.task1` User installs and retests v1.2.292 release package for Diagram Modules compact spacing, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User requested another release on 2026-05-17 without reporting a new defect, so v1.2.292 is treated as handed off and the next package will rebuild the current accepted state.
-
-### Stream: Compact Fix Rebuild Release Preparation
-
-45. [DONE] `diagram-row-layout.phase4.release293.docs.task1` Update release notes for v1.2.293 before version bump/build so packaged README/CHANGELOG identify the rebuilt compact Diagram Modules release (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.293 release`).
-46. [DONE] Git Commit: `docs: prepare 1.2.293 release` (hash: 03d22d9e6)
-
-### Stream: Compact Fix Rebuild Release Automation
-
-47. [DONE] `diagram-row-layout.phase4.release293.buildall.task1` Run `./scripts/build-all.sh` for v1.2.293 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.293 artifacts`).
-    - Verification 2026-05-17: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Generated release artifacts: `claude-module-1.2.293.tar.bz2`, `codex-module-1.2.293.tar.bz2`, `gemini-module-1.2.293.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.293.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.293.tar.bz2`, `vscode-webview-1.2.293.tar.bz2`, `project-manager-1.2.293.tar.bz2`.
-48. [DONE] Git Commit: `chore: build release 1.2.293 artifacts` (hash: abc92d226)
-49. [DONE] `diagram-row-layout.phase4.release293.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.293 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.293 vsix`).
-    - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Release package: `codeai-hub-1.2.293.vsix` (48M on disk, script-reported package size 49M).
-    - Release script confirmed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, and `Release build complete`.
-50. [DONE] Git Commit: `chore: package release 1.2.293 vsix` (hash: b641f459c)
-
-### Stream: User Visual Acceptance Testing
-
-51. [BLOCKED] `diagram-row-layout.phase4.release293.acceptance.task1` User installs and retests v1.2.293 release package for Diagram Modules compact spacing, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User reported on 2026-05-17 that `Workflow And Artifact Runtime` keeps excessive right-side empty space inside the Cluster boundary because Cluster width is still inflated beyond its module grid.
-
-### Stream: Release Retest Cluster Bounds Fix
-
-52. [DONE] `diagram-row-layout.phase4.cluster.bounds.task1` Bind Cluster card width to its resolved internal module grid so long titles/purpose text wrap inside compact bounds instead of inflating the right boundary (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx, src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`; expected commit: `fix: bound diagram cluster content width`).
-53. [DONE] Git Commit: `fix: bound diagram cluster content width` (hash: 05c02b646)
-
-### Stream: Release Retest Cluster Bounds Docs
-
-54. [DONE] `diagram-row-layout.phase4.cluster.bounds.docs.task1` Document the Cluster boundary compact-width contract after the v1.2.293 retest (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram cluster bounds`).
-55. [DONE] Git Commit: `docs: document diagram cluster bounds` (hash: 1b6d02306)
-
-### Stream: Release Retest Cluster Bounds Verification
-
-56. [DONE] `diagram-row-layout.phase4.cluster.bounds.verify.task1` Run targeted cluster-bound layout tests plus webview typecheck/build after the boundary fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram cluster bounds`).
-    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx` passed 3/3.
-    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 13/13.
-    - Verification 2026-05-17: `npm run typecheck:webview` passed.
-    - Verification 2026-05-17: `npm run build:webview` passed.
-57. [DONE] Git Commit: `test: verify diagram cluster bounds` (hash: 141b63d65)
-
-### Stream: User Visual Acceptance Testing
-
-58. [DONE] `diagram-row-layout.phase4.cluster.bounds.acceptance.task1` User installs and retests the next release package for compact Cluster boundaries, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User requested a new release on 2026-05-17 after the cluster-boundary fix and verification, so v1.2.294 will package the corrected compact Cluster boundary behavior.
-
-### Stream: Cluster Bounds Release Preparation
-
-59. [DONE] `diagram-row-layout.phase4.release294.docs.task1` Update release notes for v1.2.294 before version bump/build so packaged README/CHANGELOG include the Cluster boundary fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.294 release`).
-60. [DONE] Git Commit: `docs: prepare 1.2.294 release` (hash: fa275bce2)
-
-### Stream: Cluster Bounds Release Automation
-
-61. [DONE] `diagram-row-layout.phase4.release294.buildall.task1` Run `./scripts/build-all.sh` for v1.2.294 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.294 artifacts`).
-    - Verification 2026-05-17: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Generated release artifacts: `claude-module-1.2.294.tar.bz2`, `codex-module-1.2.294.tar.bz2`, `gemini-module-1.2.294.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.294.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.294.tar.bz2`, `vscode-webview-1.2.294.tar.bz2`, `project-manager-1.2.294.tar.bz2`.
-62. [DONE] Git Commit: `chore: build release 1.2.294 artifacts` (hash: a6300f9be)
-63. [DONE] `diagram-row-layout.phase4.release294.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.294 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.294 vsix`).
-    - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Generated VSIX package: `codeai-hub-1.2.294.vsix` (49M). Confirmed release build steps included SDK exclusions, local artefact validation, markdown links, duplication check, production dependency pruning, VSIX runtime package surface verification, and `Release build complete`.
-64. [DONE] Git Commit: `chore: package release 1.2.294 vsix` (hash: d8593fed3)
-
-### Stream: User Visual Acceptance Testing
-
-65. [BLOCKED] `diagram-row-layout.phase4.release294.acceptance.task1` User installs and retests v1.2.294 release package for compact Cluster boundaries, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User reported on 2026-05-17 that a Product Part row can still contain two Clusters plus a standalone Module, producing four visible module-card slots across one horizontal line.
-
-### Stream: Release Retest Product Row Packing Fix
-
-66. [DONE] `diagram-row-layout.phase4.rowpacking.task1` Make Product Part auto column selection reject rows whose resolved cluster module columns plus standalone modules exceed the three-module horizontal budget (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.ts, src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep diagram product rows within module budget`).
-67. [DONE] Git Commit: `fix: keep diagram product rows within module budget` (hash: b4826c56d)
-
-### Stream: Release Retest Product Row Packing Docs
-
-68. [DONE] `diagram-row-layout.phase4.rowpacking.docs.task1` Document the resolved Product Part row packing contract for adjacent Clusters and standalone Modules (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram product row packing`).
-69. [DONE] Git Commit: `docs: document diagram product row packing` (hash: f91805a37)
-
-### Stream: Release Retest Product Row Packing Verification
-
-70. [DONE] `diagram-row-layout.phase4.rowpacking.verify.task1` Run targeted layout tests plus webview typecheck/build after the product row packing fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram product row packing`).
-    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 14/14, including adjacent two-Cluster plus standalone row packing.
-    - Verification 2026-05-17: `npm run typecheck:webview` passed.
-    - Verification 2026-05-17: `npm run build:webview` passed.
-71. [DONE] Git Commit: `test: verify diagram product row packing` (hash: 34fa1f81a)
-
-### Stream: User Visual Acceptance Testing
-
-72. [DONE] `diagram-row-layout.phase4.rowpacking.acceptance.task1` User installs and retests the next release package for Product Part rows with adjacent Clusters and standalone Modules (scope: user visual acceptance only; expected commit: none). Result: User requested a new release on 2026-05-17 after the row-packing fix and verification, so v1.2.295 will package the corrected Product Part resolved-row behavior.
-
-### Stream: Product Row Packing Release Preparation
-
-73. [DONE] `diagram-row-layout.phase4.release295.docs.task1` Update release notes for v1.2.295 before version bump/build so packaged README/CHANGELOG include the resolved Product Part row-packing fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.295 release`).
-74. [DONE] Git Commit: `docs: prepare 1.2.295 release` (hash: 3e7c6605c)
-
-### Stream: Product Row Packing Release Automation
-
-75. [DONE] `diagram-row-layout.phase4.release295.buildall.task1` Run `./scripts/build-all.sh` for v1.2.295 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.295 artifacts`).
-    - Verification 2026-05-17: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Generated release artifacts: `claude-module-1.2.295.tar.bz2`, `codex-module-1.2.295.tar.bz2`, `gemini-module-1.2.295.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.295.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.295.tar.bz2`, `vscode-webview-1.2.295.tar.bz2`, `project-manager-1.2.295.tar.bz2`.
-76. [DONE] Git Commit: `chore: build release 1.2.295 artifacts` (hash: 55d17e84f)
-77. [DONE] `diagram-row-layout.phase4.release295.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.295 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.295 vsix`).
-    - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
-    - Generated VSIX package: `codeai-hub-1.2.295.vsix` (49M). Confirmed release build steps included SDK exclusions, local artefact validation, markdown links, duplication check, production dependency pruning, VSIX runtime package surface verification, and `Release build complete`.
-78. [DONE] Git Commit: `chore: package release 1.2.295 vsix` (hash: 2a7ffd7f1)
-
-### Stream: User Visual Acceptance Testing
-
-79. [DONE] `diagram-row-layout.phase4.release295.acceptance.task1` User installs and retests v1.2.295 release package for Product Part rows with adjacent Clusters and standalone Modules (scope: user visual acceptance only; expected commit: none). Result: User accepted v1.2.295 visual retest on 2026-05-17: Product Part rows with adjacent Clusters and standalone Modules now fit correctly; scope can be closed.
-
-## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
-
-### Stream: Closeout
-
-80. [DONE] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-81. [PENDING] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-82. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+14. [TODO] `managed-review-confirm.phase4.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed review confirm button scope`).
+15. [TODO] Git Commit: `docs: close managed review confirm button scope` (hash: TBD)
