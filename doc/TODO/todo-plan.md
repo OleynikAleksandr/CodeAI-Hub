@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "abc92d226",
+  "lastRecordedCommit": "b641f459c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.release293.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.293 vsix",
+  "currentTaskId": "diagram-row-layout.phase4.cluster.bounds.task1",
+  "expectedCommitMessage": "fix: bound diagram cluster content width",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.293 vsix",
-    "preCommitHead": "abc92d226",
+    "expectedCommitMessage": "fix: bound diagram cluster content width",
+    "preCommitHead": "b641f459c",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.release293.vsix.task1"
+    "taskId": "diagram-row-layout.phase4.cluster.bounds.task1"
   }
 }
 ```
@@ -210,16 +210,35 @@
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Release package: `codeai-hub-1.2.293.vsix` (48M on disk, script-reported package size 49M).
     - Release script confirmed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, and `Release build complete`.
-50. [PENDING] Git Commit: `chore: package release 1.2.293 vsix` (hash: TBD)
+50. [DONE] Git Commit: `chore: package release 1.2.293 vsix` (hash: b641f459c)
 
 ### Stream: User Visual Acceptance Testing
 
-51. [TODO] `diagram-row-layout.phase4.release293.acceptance.task1` User installs and retests v1.2.293 release package for Diagram Modules compact spacing, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
+51. [BLOCKED] `diagram-row-layout.phase4.release293.acceptance.task1` User installs and retests v1.2.293 release package for Diagram Modules compact spacing, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User reported on 2026-05-17 that `Workflow And Artifact Runtime` keeps excessive right-side empty space inside the Cluster boundary because Cluster width is still inflated beyond its module grid.
+
+### Stream: Release Retest Cluster Bounds Fix
+
+52. [DONE] `diagram-row-layout.phase4.cluster.bounds.task1` Bind Cluster card width to its resolved internal module grid so long titles/purpose text wrap inside compact bounds instead of inflating the right boundary (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx, src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`; expected commit: `fix: bound diagram cluster content width`).
+53. [PENDING] Git Commit: `fix: bound diagram cluster content width` (hash: TBD)
+
+### Stream: Release Retest Cluster Bounds Docs
+
+54. [TODO] `diagram-row-layout.phase4.cluster.bounds.docs.task1` Document the Cluster boundary compact-width contract after the v1.2.293 retest (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram cluster bounds`).
+55. [TODO] Git Commit: `docs: document diagram cluster bounds` (hash: TBD)
+
+### Stream: Release Retest Cluster Bounds Verification
+
+56. [TODO] `diagram-row-layout.phase4.cluster.bounds.verify.task1` Run targeted cluster-bound layout tests plus webview typecheck/build after the boundary fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram cluster bounds`).
+57. [TODO] Git Commit: `test: verify diagram cluster bounds` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+58. [TODO] `diagram-row-layout.phase4.cluster.bounds.acceptance.task1` User installs and retests the next release package for compact Cluster boundaries, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-52. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-53. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-54. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+59. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+60. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+61. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).

@@ -35,6 +35,14 @@ test("diagram modules renderer keeps cluster/module grids compact", async () => 
   assert.equal(source.includes("const MODULE_CARD_MIN_WIDTH = 220;"), true);
   assert.equal(source.includes("const MODULE_CARD_MAX_WIDTH = 260;"), true);
   assert.equal(source.includes("const MODULE_GRID_GAP = 10;"), true);
+  assert.equal(source.includes("const CLUSTER_CARD_PADDING = 10;"), true);
+  assert.equal(source.includes("const getClusterContentWidth ="), true);
+  assert.equal(
+    source.includes("style={{ ...clusterCardStyle, width: clusterContentWidth }}"),
+    true
+  );
+  assert.equal(source.includes("const clusterHeaderStyle"), true);
+  assert.equal(source.includes('overflowWrap: "anywhere"'), true);
   assert.equal(
     source.includes(
       "gridTemplateColumns: `repeat(${moduleCols}, minmax(${MODULE_CARD_MIN_WIDTH}px, ${MODULE_CARD_MAX_WIDTH}px))`"

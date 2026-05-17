@@ -27,9 +27,15 @@ const ContextMenuContext = createContext<ContextMenuCallback | null>(null);
 const MODULE_CARD_MIN_WIDTH = 220;
 const MODULE_CARD_MAX_WIDTH = 260;
 const MODULE_GRID_GAP = 10;
+const CLUSTER_CARD_PADDING = 10;
+
+const getClusterContentWidth = (moduleColumns: number): number =>
+  moduleColumns * MODULE_CARD_MAX_WIDTH
+  + Math.max(0, moduleColumns - 1) * MODULE_GRID_GAP;
 
 // -- Module card styles --
 const nodeCardStyle: React.CSSProperties = {
+  boxSizing: "border-box",
   minWidth: MODULE_CARD_MIN_WIDTH,
   maxWidth: MODULE_CARD_MAX_WIDTH,
   borderRadius: 16,
@@ -67,7 +73,15 @@ const clusterCardStyle: React.CSSProperties = {
   background:
     "linear-gradient(180deg, rgba(11, 41, 36, 0.18), rgba(9, 20, 24, 0.1))",
   boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.02)",
-  padding: "14px 14px 18px",
+  padding: CLUSTER_CARD_PADDING,
+};
+
+const clusterHeaderStyle: React.CSSProperties = {
+  display: "grid",
+  gap: 4,
+  alignContent: "start",
+  minWidth: 0,
+  width: "100%",
 };
 
 const productPartHeaderStyle: React.CSSProperties = {
@@ -90,6 +104,7 @@ const purposeTextStyle: React.CSSProperties = {
   fontSize: 11,
   lineHeight: 1.4,
   color: "var(--pm-text-muted)",
+  overflowWrap: "anywhere",
 };
 
 // -- Sub-components (plain React components rendered inside CSS Grid cells) --
@@ -124,9 +139,10 @@ const ClusterCard = ({
   const moduleCols =
     resolvedModuleColumns
     ?? resolveClusterModuleColumns(data.modules.length, data.layoutParams);
+  const clusterContentWidth = getClusterContentWidth(moduleCols);
   return (
     <div
-      style={clusterCardStyle}
+      style={{ ...clusterCardStyle, width: clusterContentWidth }}
       onContextMenu={(e) => {
         if (!onContextMenuCb) return;
         e.preventDefault();
@@ -137,9 +153,18 @@ const ClusterCard = ({
         );
       }}
     >
-      <div style={{ display: "grid", gap: 4, alignContent: "start" }}>
+      <div style={clusterHeaderStyle}>
         <div style={nodeCaptionStyle}>Cluster</div>
-        <strong style={{ fontSize: 13, color: "var(--pm-accent-strong)" }}>{data.title}</strong>
+        <strong
+          style={{
+            display: "block",
+            fontSize: 13,
+            color: "var(--pm-accent-strong)",
+            overflowWrap: "anywhere",
+          }}
+        >
+          {data.title}
+        </strong>
         <div style={{ fontSize: 11, color: "var(--pm-text-muted)" }}>
           Modules: {data.modules.length}
         </div>
