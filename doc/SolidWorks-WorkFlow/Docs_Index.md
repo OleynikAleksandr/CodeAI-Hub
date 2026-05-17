@@ -79,6 +79,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/PM_Sidebar_Settings_Action_Planning.md` — active implementation planning source for removing the Project Manager bottom footer/status bar, dropping the `Workflow Tree MVP` hint, and moving `Open Settings` to the bottom of the left sidebar while preserving PM-owned in-shell Settings behavior.
 - `Plans/Archive/ManagedReview_ConfirmButton_Planning.md` — archived implementation planning source for replacing managed user-review prose acceptance (`напишите подтверждаю`) with an inline `Подтверждаю` button on the Core/system review card while preserving Core-owned managed review acceptance and `User Return And Revisions` transitions. Closed by user acceptance of release `1.2.296`.
 - `Plans/Archive/ManagedWorkflow_CleanStageMarkers_Planning.md` — archived planning source for deterministic Core-owned workflow step markers, managed terminal clean-Git completion boundaries, and the Quality Gates artifact consistency guard closed by release `1.2.290`.
 - `Plans/Archive/DiagramModules_RowAwareAutoLayout_Planning.md` — archived planning source for Diagram Modules row-aware CSS Grid auto layout, closed by user acceptance of release `1.2.295`: default rows must not exceed three horizontal module-card slots across adjacent clusters and standalone modules, while manual sidecar layout overrides remain authoritative.
