@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "b4826c56d",
+  "lastRecordedCommit": "f91805a37",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.rowpacking.docs.task1",
-  "expectedCommitMessage": "docs: document diagram product row packing",
+  "currentTaskId": "diagram-row-layout.phase4.rowpacking.verify.task1",
+  "expectedCommitMessage": "test: verify diagram product row packing",
   "debt": {
-    "expectedCommitMessage": "docs: document diagram product row packing",
-    "preCommitHead": "b4826c56d",
+    "expectedCommitMessage": "test: verify diagram product row packing",
+    "preCommitHead": "f91805a37",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.rowpacking.docs.task1"
+    "taskId": "diagram-row-layout.phase4.rowpacking.verify.task1"
   }
 }
 ```
@@ -267,12 +267,15 @@
 ### Stream: Release Retest Product Row Packing Docs
 
 68. [DONE] `diagram-row-layout.phase4.rowpacking.docs.task1` Document the resolved Product Part row packing contract for adjacent Clusters and standalone Modules (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram product row packing`).
-69. [PENDING] Git Commit: `docs: document diagram product row packing` (hash: TBD)
+69. [DONE] Git Commit: `docs: document diagram product row packing` (hash: f91805a37)
 
 ### Stream: Release Retest Product Row Packing Verification
 
-70. [TODO] `diagram-row-layout.phase4.rowpacking.verify.task1` Run targeted layout tests plus webview typecheck/build after the product row packing fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram product row packing`).
-71. [TODO] Git Commit: `test: verify diagram product row packing` (hash: TBD)
+70. [DONE] `diagram-row-layout.phase4.rowpacking.verify.task1` Run targeted layout tests plus webview typecheck/build after the product row packing fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram product row packing`).
+    - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts` passed 14/14, including adjacent two-Cluster plus standalone row packing.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+    - Verification 2026-05-17: `npm run build:webview` passed.
+71. [PENDING] Git Commit: `test: verify diagram product row packing` (hash: TBD)
 
 ### Stream: User Visual Acceptance Testing
 
