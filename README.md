@@ -2,12 +2,13 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.288** (Diagram Modules sidecar completion)
+**Current Release — v1.2.289** (Terminal metadata cleanup)
 
 This release packages the managed workflow marker and terminal clean-Git fixes,
-plus the retest fixes for direct-stage completion markers and Diagram Modules
-sidecar cleanup. It also fixes the final Diagram Modules completion boundary for
-generated sidecars inside `.codeai-hub`.
+plus the retest fixes for direct-stage completion markers, Diagram Modules
+sidecar cleanup, and Core-owned terminal metadata cleanup. It also fixes the
+final Diagram Modules completion boundary for generated sidecars inside
+`.codeai-hub`.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the
@@ -20,6 +21,9 @@ final artifacts make the next step available, and Diagram Modules flow sidecars
 are committed automatically at terminal completion.
 Managed commits now stage dot-directory sidecars without Git exclude pathspecs,
 so `module-map.flow.json` is saved by Core instead of blocking the user.
+Terminal completion now also treats non-semantic Core metadata as managed
+residue, ensures `.codeai-hub/state/` is ignored as local runtime state, and
+keeps task timer telemetry out of Git history.
 
 Repository lifecycle tooling under `scripts/plan-orchestrator/**` remains in
 place because it powers `npm run plan:*` and the Husky plan hooks for this code

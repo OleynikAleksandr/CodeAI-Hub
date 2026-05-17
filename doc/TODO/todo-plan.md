@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "0115940c2",
+  "lastRecordedCommit": "3a680625b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase10.verify.task1",
-  "expectedCommitMessage": "test: verify terminal metadata cleanup",
+  "currentTaskId": "managed-clean-markers.phase11.release.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.289 release",
   "debt": {
-    "expectedCommitMessage": "test: verify terminal metadata cleanup",
-    "preCommitHead": "0115940c2",
+    "expectedCommitMessage": "docs: prepare 1.2.289 release",
+    "preCommitHead": "3a680625b",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase10.verify.task1"
+    "taskId": "managed-clean-markers.phase11.release.task1"
   }
 }
 ```
@@ -266,14 +266,14 @@
     - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts` passed 23 tests.
     - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
-65. [PENDING] Git Commit: `test: verify terminal metadata cleanup` (hash: TBD)
+65. [DONE] Git Commit: `test: verify terminal metadata cleanup` (hash: 3a680625b)
 
 ## Phase 11 - Release Build For Terminal Metadata Fix (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Release Preparation
 
-66. [TODO] `managed-clean-markers.phase11.release.task1` Update release-facing README/CHANGELOG for v1.2.289 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.289 release`).
-67. [TODO] Git Commit: `docs: prepare 1.2.289 release` (hash: TBD)
+66. [DONE] `managed-clean-markers.phase11.release.task1` Update release-facing README/CHANGELOG for v1.2.289 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.289 release`).
+67. [PENDING] Git Commit: `docs: prepare 1.2.289 release` (hash: TBD)
 
 ### Stream: Unified Release Artifacts
 

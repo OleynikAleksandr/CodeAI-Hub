@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.289] - 2026-05-17
+### Fixed
+- **Terminal completion now cleans Core metadata residue before opening persistent user return.** Core auto-commits classified metadata such as continuity chains, workflow state, stage ledgers, and non-semantic step state while still blocking unclassified files.
+- **Local runtime timer state no longer dirties managed Git.** Terminal cleanup ensures `.codeai-hub/state/` is ignored, and Application Skeleton environment checks now require that local runtime state boundary in generated workspaces.
+
+### Tests
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+
 ## [1.2.288] - 2026-05-17
 ### Fixed
 - **Diagram Modules completion now saves generated flow sidecars.** Managed Git commits stage dot-directory sidecars such as `.codeai-hub/<workspace>/diagram_modules/module-map.flow.json` without Git exclude pathspecs, so the standard Module Graph layout file is committed automatically.
