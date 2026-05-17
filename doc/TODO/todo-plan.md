@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "ce4c40cc7",
+  "lastRecordedCommit": "40620b901",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase1.layout.task1",
-  "expectedCommitMessage": "fix: cap diagram module row auto layout",
+  "currentTaskId": "diagram-row-layout.phase1.docs.task1",
+  "expectedCommitMessage": "docs: document diagram row auto layout",
   "debt": {
-    "expectedCommitMessage": "fix: cap diagram module row auto layout",
-    "preCommitHead": "ce4c40cc7",
+    "expectedCommitMessage": "docs: document diagram row auto layout",
+    "preCommitHead": "40620b901",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase1.layout.task1"
+    "taskId": "diagram-row-layout.phase1.docs.task1"
   }
 }
 ```
@@ -60,12 +60,12 @@
 ### Stream: Default Layout Algorithm
 
 3. [DONE] `diagram-row-layout.phase1.layout.task1` Add row-aware Diagram Modules auto layout and regression coverage for the three-module horizontal row budget (scope: `src/client/project-manager/components/diagram-editor/**, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: cap diagram module row auto layout`).
-4. [PENDING] Git Commit: `fix: cap diagram module row auto layout` (hash: TBD)
+4. [DONE] Git Commit: `fix: cap diagram module row auto layout` (hash: 40620b901)
 
 ### Stream: Project Manager Contract Docs
 
-5. [TODO] `diagram-row-layout.phase1.docs.task1` Mirror the row-aware auto layout contract in Project Manager documentation (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram row auto layout`).
-6. [TODO] Git Commit: `docs: document diagram row auto layout` (hash: TBD)
+5. [DONE] `diagram-row-layout.phase1.docs.task1` Mirror the row-aware auto layout contract in Project Manager documentation (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram row auto layout`).
+6. [PENDING] Git Commit: `docs: document diagram row auto layout` (hash: TBD)
 
 ## Phase 2 - Tooling Verification (owner: Codex, updated: 2026-05-17)
 
