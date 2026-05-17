@@ -1,3 +1,18 @@
+# Plan Closeout: managed-review-confirm-button-2026-05-17
+
+**Created:** 2026-05-17T18:16:06.528Z
+**Acceptance:** User accepted v1.2.296 retest: managed review card shows Подтверждаю button in the requested position and behavior is correct.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** managed-review-confirm.phase5.closeout.task1
+**Expected Commit:** docs: close managed review confirm button scope
+**Last Recorded Commit:** 02df981b7
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/ManagedReview_ConfirmButton_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/ManagedReview_ConfirmButton_Planning.md",
   "currentTaskId": "managed-review-confirm.phase5.closeout.task1",
   "expectedCommitMessage": "docs: close managed review confirm button scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close managed review confirm button scope",
-    "preCommitHead": "02df981b7",
-    "stage": "commit_pending",
-    "taskId": "managed-review-confirm.phase5.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -115,5 +125,6 @@
 
 ### Stream: Scope Closeout
 
-20. [DONE] `managed-review-confirm.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed review confirm button scope`).
-21. [PENDING] Git Commit: `docs: close managed review confirm button scope` (hash: TBD)
+20. [IN_PROGRESS] `managed-review-confirm.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed review confirm button scope`).
+21. [TODO] Git Commit: `docs: close managed review confirm button scope` (hash: TBD)
+````
