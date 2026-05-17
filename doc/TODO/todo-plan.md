@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "26391b25c",
+  "lastRecordedCommit": "71667a0e0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase9.release.task2",
-  "expectedCommitMessage": "chore: build 1.2.288 release artifacts",
+  "currentTaskId": "managed-clean-markers.phase9.release.task3",
+  "expectedCommitMessage": "docs: record 1.2.288 release package",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.288 release artifacts",
-    "preCommitHead": "26391b25c",
+    "expectedCommitMessage": "docs: record 1.2.288 release package",
+    "preCommitHead": "71667a0e0",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase9.release.task2"
+    "taskId": "managed-clean-markers.phase9.release.task3"
   }
 }
 ```
@@ -227,12 +227,15 @@
 52. [DONE] `managed-clean-markers.phase9.release.task2` Run `./scripts/build-all.sh`, commit the v1.2.288 version bump and release manifests, then keep the tree clean for VSIX packaging (scope: `package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build 1.2.288 release artifacts`).
     - Verification 2026-05-17: `./scripts/build-all.sh` completed for v1.2.288.
     - Artifacts staged in `doc/tmp/releases/` and `~/.codeai-hub/releases/`: `claude-module-1.2.288.tar.bz2`, `codex-module-1.2.288.tar.bz2`, `gemini-module-1.2.288.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.288.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.288.tar.bz2`, `vscode-webview-1.2.288.tar.bz2`, `project-manager-1.2.288.tar.bz2`.
-53. [PENDING] Git Commit: `chore: build 1.2.288 release artifacts` (hash: TBD)
+53. [DONE] Git Commit: `chore: build 1.2.288 release artifacts` (hash: 71667a0e0)
 
 ### Stream: VSIX Packaging
 
-54. [TODO] `managed-clean-markers.phase9.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.288 release package`).
-55. [TODO] Git Commit: `docs: record 1.2.288 release package` (hash: TBD)
+54. [DONE] `managed-clean-markers.phase9.release.task3` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/pruned dependencies/package creation, and record the generated VSIX handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record 1.2.288 release package`).
+    - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version` completed for v1.2.288.
+    - Release output confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
+    - Handoff artifact: `codeai-hub-1.2.288.vsix` in the repository root (49M package, 48.32MB VSIX payload).
+55. [PENDING] Git Commit: `docs: record 1.2.288 release package` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
