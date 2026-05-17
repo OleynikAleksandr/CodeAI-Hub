@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "4f73fb75b",
+  "lastRecordedCommit": "1c1dbdf84",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase3.docs.task1",
-  "expectedCommitMessage": "docs: document clean stage marker contract",
+  "currentTaskId": "managed-clean-markers.phase3.verify.task1",
+  "expectedCommitMessage": "test: verify clean stage marker workflow",
   "debt": {
-    "expectedCommitMessage": "docs: document clean stage marker contract",
-    "preCommitHead": "4f73fb75b",
+    "expectedCommitMessage": "test: verify clean stage marker workflow",
+    "preCommitHead": "1c1dbdf84",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase3.docs.task1"
+    "taskId": "managed-clean-markers.phase3.verify.task1"
   }
 }
 ```
@@ -97,12 +97,15 @@
 ### Stream: Architecture Docs
 
 17. [DONE] `managed-clean-markers.phase3.docs.task1` Document the clean Git completion boundary and the three-state stage marker contract (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clean stage marker contract`).
-18. [PENDING] Git Commit: `docs: document clean stage marker contract` (hash: TBD)
+18. [DONE] Git Commit: `docs: document clean stage marker contract` (hash: 1c1dbdf84)
 
 ### Stream: Tooling Verification
 
-19. [TODO] `managed-clean-markers.phase3.verify.task1` Run targeted tests/builds for managed workflow Core and Project Manager marker behavior, then record the verification result (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify clean stage marker workflow`).
-20. [TODO] Git Commit: `test: verify clean stage marker workflow` (hash: TBD)
+19. [DONE] `managed-clean-markers.phase3.verify.task1` Run targeted tests/builds for managed workflow Core and Project Manager marker behavior, then record the verification result (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify clean stage marker workflow`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts src/client/project-manager/components/layout/workspace-tree-model.test.ts` passed 23/23.
+    - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+20. [PENDING] Git Commit: `test: verify clean stage marker workflow` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
