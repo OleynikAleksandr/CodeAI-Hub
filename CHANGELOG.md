@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.290] - 2026-05-17
+### Fixed
+- **Quality Gates completion now requires artifact/runtime consistency.** Core rejects integrated Quality Gates artifacts when required gates remain `not_integrated` in JSON or Markdown, when required package scripts or hooks are missing, or when declared integrated paths do not exist in the workspace.
+- **Managed workflow return tests now cover the stricter Quality Gates contract.** The persistent return fixture exercises executable Quality Gates wiring and keeps Application Skeleton test scaffolds inside managed or ignored paths.
+
+### Tests
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `npm exec -- ultracite check packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run typecheck:webview`
+
 ## [1.2.289] - 2026-05-17
 ### Fixed
 - **Terminal completion now cleans Core metadata residue before opening persistent user return.** Core auto-commits classified metadata such as continuity chains, workflow state, stage ledgers, and non-semantic step state while still blocking unclassified files.

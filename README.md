@@ -2,13 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.289** (Terminal metadata cleanup)
+**Current Release — v1.2.290** (Quality Gates consistency guard)
 
 This release packages the managed workflow marker and terminal clean-Git fixes,
 plus the retest fixes for direct-stage completion markers, Diagram Modules
 sidecar cleanup, and Core-owned terminal metadata cleanup. It also fixes the
 final Diagram Modules completion boundary for generated sidecars inside
-`.codeai-hub`.
+`.codeai-hub`, and adds a Core validation guard that rejects completed Quality
+Gates artifacts when required gates still appear as `not_integrated` or when the
+declared integration files are missing from the workspace.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the

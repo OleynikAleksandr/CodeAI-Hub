@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "1ffde32a1",
+  "lastRecordedCommit": "1541756de",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase12.qg-consistency-verify.task1",
-  "expectedCommitMessage": "test: verify quality gates artifact consistency",
+  "currentTaskId": "managed-clean-markers.phase13.release.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.290 release",
   "debt": {
-    "expectedCommitMessage": "test: verify quality gates artifact consistency",
-    "preCommitHead": "1ffde32a1",
+    "expectedCommitMessage": "docs: prepare 1.2.290 release",
+    "preCommitHead": "1541756de",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase12.qg-consistency-verify.task1"
+    "taskId": "managed-clean-markers.phase13.release.task1"
   }
 }
 ```
@@ -312,14 +312,15 @@
     - Verification 2026-05-17: `npm exec -- ultracite check packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` passed.
     - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
-79. [PENDING] Git Commit: `test: verify quality gates artifact consistency` (hash: TBD)
+79. [DONE] Git Commit: `test: verify quality gates artifact consistency` (hash: 1541756de)
 
 ## Phase 13 - Release Build For Quality Gates Consistency Fix (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Release Preparation
 
-80. [TODO] `managed-clean-markers.phase13.release.task1` Update release-facing README/CHANGELOG for v1.2.290 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.290 release`).
-81. [TODO] Git Commit: `docs: prepare 1.2.290 release` (hash: TBD)
+80. [DONE] `managed-clean-markers.phase13.release.task1` Update release-facing README/CHANGELOG for v1.2.290 before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.290 release`).
+    - Release docs 2026-05-17: README and CHANGELOG now describe v1.2.290 as the Quality Gates consistency guard release before the version bump.
+81. [PENDING] Git Commit: `docs: prepare 1.2.290 release` (hash: TBD)
 
 ### Stream: Unified Release Artifacts
 
