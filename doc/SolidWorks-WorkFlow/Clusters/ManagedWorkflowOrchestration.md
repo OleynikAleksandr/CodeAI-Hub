@@ -25,6 +25,8 @@ Managed Workflow Orchestration is Core-owned. Project Manager, VS Code UI surfac
 
 Clients may submit raw user intent and render Core-owned snapshots, but they must never own or infer managed workflow truth: stage phase, active microtask, expected commit, prompt/template selection, source-artifact selection, artifact validity, gating decisions, localization target for Core/system messages, provider continuation policy, managed state, or Git commit lifecycle.
 
+User-review acceptance can be submitted through a client-rendered inline button on the Core/system `managed-workflow-user-review` dialog card. The button label and placement are UI projection details; the submitted acceptance intent enters the same Core-managed review decision path as typed acceptance. Clients must not mark the stage accepted, open materialization/integration, write `### Stream: User Return And Revisions`, or publish a green marker on their own.
+
 Every Type A, Type B, and Persistent Return managed flow must continue with all clients closed until Core explicitly opens a user review, revision, acceptance, or configuration gate. If a managed step depends on an open Project Manager window to advance before such a user gate, the step contract is invalid and the defect belongs in Core orchestration.
 
 ## Stage Marker And Terminal Git Boundary

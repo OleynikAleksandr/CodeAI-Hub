@@ -8,15 +8,15 @@
   "planId": "managed-review-confirm-button-2026-05-17",
   "branch": "main",
   "baseHead": "e7b5f78e0",
-  "lastRecordedCommit": "4fc0202eb",
+  "lastRecordedCommit": "b1cf221b0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md",
-  "currentTaskId": "managed-review-confirm.phase1.test.task1",
-  "expectedCommitMessage": "test: cover managed review confirm button",
+  "currentTaskId": "managed-review-confirm.phase2.docs.task1",
+  "expectedCommitMessage": "docs: document managed review confirm button",
   "debt": {
-    "expectedCommitMessage": "test: cover managed review confirm button",
-    "preCommitHead": "4fc0202eb",
+    "expectedCommitMessage": "docs: document managed review confirm button",
+    "preCommitHead": "b1cf221b0",
     "stage": "commit_pending",
-    "taskId": "managed-review-confirm.phase1.test.task1"
+    "taskId": "managed-review-confirm.phase2.docs.task1"
   }
 }
 ```
@@ -67,14 +67,14 @@
 ### Stream: UI Regression Coverage
 
 7. [DONE] `managed-review-confirm.phase1.test.task1` Add render coverage for the managed review confirm button on the system dialog card (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `test: cover managed review confirm button`).
-8. [PENDING] Git Commit: `test: cover managed review confirm button` (hash: TBD)
+8. [DONE] Git Commit: `test: cover managed review confirm button` (hash: b1cf221b0)
 
 ## Phase 2 - Documentation And Verification (owner: Codex, updated: 2026-05-17)
 
 ### Stream: SSOT Documentation
 
-9. [TODO] `managed-review-confirm.phase2.docs.task1` Document that managed review acceptance may be submitted from the inline system-card button while Core remains acceptance authority (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document managed review confirm button`).
-10. [TODO] Git Commit: `docs: document managed review confirm button` (hash: TBD)
+9. [DONE] `managed-review-confirm.phase2.docs.task1` Document that managed review acceptance may be submitted from the inline system-card button while Core remains acceptance authority (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document managed review confirm button`).
+10. [PENDING] Git Commit: `docs: document managed review confirm button` (hash: TBD)
 
 ### Stream: Tooling Verification
 

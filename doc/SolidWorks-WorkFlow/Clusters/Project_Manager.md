@@ -36,6 +36,12 @@ to shared contract modules under Core authority. Automatic
 repair/acceptance/continuation сообщения агенту не должны исходить ни из PM
 read path, ни из client-owned helpers.
 
+PM/shared Session UI may render an inline `Подтверждаю` button at the end of a
+Core/system dialog card tagged `managed-workflow-user-review`. This button sends
+the normal user acceptance intent back to Core; it is not a PM-owned acceptance
+decision and it must not mutate managed plan state, Git state, stage markers, or
+provider continuation directly.
+
 ## 2) Где живёт код
 
 - PM bundle: `src/client/project-manager/`
@@ -75,6 +81,10 @@ read path, ни из client-owned helpers.
   - `blocked`, `invalid`, and `outdated` may add warning visuals or prevent downstream actions, but they are not completion signals;
   - PM must not promote a trunk stage to green from `hasArtifact`, `reviewReady`, `aggregateReady`, Markdown/JSON sidecar presence, local parser success, or generated root files;
   - if Core blocks terminal completion on an unclassified dirty Git tree, PM may show the resolution surface and submit the user's decision back to Core, but PM must not stage, commit, or mutate managed plan state itself.
+- Managed user-review system cards:
+  - cards tagged `managed-workflow-user-review` render the Core review handoff plus an inline `Подтверждаю` action at the bottom of the same card;
+  - clicking it sends the same acceptance intent as the old typed `подтверждаю` path through the existing session/dialog send transport;
+  - PM does not decide whether that acceptance is valid, does not open the next phase locally, and does not infer completion from the click.
 - Settings surface belongs to PM:
   - footer status bar больше не дублирует workspace identity: левая часть футера пустая, workspace selector остаётся единственной visible surface в левом sidebar;
   - footer status bar action `Open Settings` использует выделенный CSS-класс `pm-status-open-settings` (accent-colored default/hover/active фазы + focus-visible outline) и переключает правую панель PM в отдельный in-shell settings mode без второго окна;
