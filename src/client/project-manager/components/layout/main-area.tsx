@@ -26,7 +26,6 @@ import {
 import { useDetachDiagramButton } from "./detach-diagram-button";
 import { PanelContainer } from "./panel-container";
 import { StageArtifactHeaderToggle } from "./stage-artifact-header-toggle";
-import { StatusBar } from "./status-bar";
 import { resolveWorkflowToolHeaderTitle } from "./workflow-stage-tool-routing";
 
 const resolveWorkflowPollingMode = (): WorkflowStatePollingMode => {
@@ -458,7 +457,6 @@ export const MainArea: React.FC<MainAreaProps> = ({
         }
         sizes={sizes}
       />
-      <StatusBar />
     </main>
   );
 };
