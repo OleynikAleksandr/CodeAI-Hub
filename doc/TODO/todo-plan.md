@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "b3a536e49",
+  "lastRecordedCommit": "e73894660",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.release.buildall.task1",
-  "expectedCommitMessage": "chore: build release 1.2.291 artifacts",
+  "currentTaskId": "diagram-row-layout.phase4.release.vsix.task1",
+  "expectedCommitMessage": "chore: package release 1.2.291 vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.291 artifacts",
-    "preCommitHead": "b3a536e49",
+    "expectedCommitMessage": "chore: package release 1.2.291 vsix",
+    "preCommitHead": "e73894660",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.release.buildall.task1"
+    "taskId": "diagram-row-layout.phase4.release.vsix.task1"
   }
 }
 ```
@@ -140,9 +140,12 @@
 26. [DONE] `diagram-row-layout.phase4.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.291 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.291 artifacts`).
     - Verification 2026-05-17: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated release artifacts: `claude-module-1.2.291.tar.bz2`, `codex-module-1.2.291.tar.bz2`, `gemini-module-1.2.291.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.291.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.291.tar.bz2`, `vscode-webview-1.2.291.tar.bz2`, `project-manager-1.2.291.tar.bz2`.
-27. [PENDING] Git Commit: `chore: build release 1.2.291 artifacts` (hash: TBD)
-28. [TODO] `diagram-row-layout.phase4.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.291 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.291 vsix`).
-29. [TODO] Git Commit: `chore: package release 1.2.291 vsix` (hash: TBD)
+27. [DONE] Git Commit: `chore: build release 1.2.291 artifacts` (hash: e73894660)
+28. [DONE] `diagram-row-layout.phase4.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.291 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.291 vsix`).
+    - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
+    - Release package: `codeai-hub-1.2.291.vsix` (48M on disk, script-reported package size 49M).
+    - Release script confirmed: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, and `Release build complete`.
+29. [PENDING] Git Commit: `chore: package release 1.2.291 vsix` (hash: TBD)
 
 ### Stream: User Visual Acceptance Testing
 
