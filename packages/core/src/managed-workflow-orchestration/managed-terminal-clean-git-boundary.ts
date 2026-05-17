@@ -8,6 +8,7 @@ import {
 
 const TERMINAL_RESIDUE_COMMIT_MESSAGE =
   "chore: commit managed terminal residue";
+const TERMINAL_RESIDUE_COMMIT_ATTEMPTS = 3;
 const UNKNOWN_WORKSPACE_SLUG = "__unknown_workspace__";
 
 const resolveWorkspaceSlug = async (
@@ -22,6 +23,11 @@ const resolveWorkspaceSlug = async (
   return workspaceSlugs.length === 1 ? workspaceSlugs[0] : null;
 };
 
+const formatPathList = (paths: readonly string[]): readonly string[] =>
+  paths.length > 0
+    ? paths.map((filePath) => `- ${filePath}`)
+    : ["- No file path was reported."];
+
 export const formatManagedTerminalDirtyBlocker = (
   paths: readonly string[]
 ): string =>
@@ -30,7 +36,18 @@ export const formatManagedTerminalDirtyBlocker = (
     'Select "Commit and finish step" to save them and complete the step, or "Show files" to review them first.',
     "",
     "Files:",
-    ...paths.map((filePath) => `- ${filePath}`),
+    ...formatPathList(paths),
+  ].join("\n");
+
+export const formatManagedTerminalAutoCommitFailure = (
+  paths: readonly string[]
+): string =>
+  [
+    "This step could not finish because generated files were not saved automatically.",
+    "Confirm the step again. If this repeats, restart Project Manager and try again.",
+    "",
+    "Files:",
+    ...formatPathList(paths),
   ].join("\n");
 
 export const ensureManagedTerminalGitClean = async (params: {
@@ -43,11 +60,37 @@ export const ensureManagedTerminalGitClean = async (params: {
     params.workspaceSlug ??
     (await resolveWorkspaceSlug(params.workspaceRoot)) ??
     UNKNOWN_WORKSPACE_SLUG;
-  const classification = await classifyManagedTerminalDirtyTree({
+  let classification = await classifyManagedTerminalDirtyTree({
     stage: params.stage,
     workspaceRoot: params.workspaceRoot,
     workspaceSlug,
   });
+
+  for (
+    let attempt = 0;
+    attempt < TERMINAL_RESIDUE_COMMIT_ATTEMPTS;
+    attempt += 1
+  ) {
+    if (classification.clean) {
+      return;
+    }
+    if (classification.unclassifiedPaths.length > 0) {
+      throw new Error(
+        formatManagedTerminalDirtyBlocker(classification.unclassifiedPaths)
+      );
+    }
+    await params.gitBoundary.commitManagedChanges({
+      commitMessage: TERMINAL_RESIDUE_COMMIT_MESSAGE,
+      managedPaths: classification.committablePaths,
+      workspaceRoot: params.workspaceRoot,
+    });
+    classification = await classifyManagedTerminalDirtyTree({
+      stage: params.stage,
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug,
+    });
+  }
+
   if (classification.clean) {
     return;
   }
@@ -56,20 +99,7 @@ export const ensureManagedTerminalGitClean = async (params: {
       formatManagedTerminalDirtyBlocker(classification.unclassifiedPaths)
     );
   }
-  await params.gitBoundary.commitManagedChanges({
-    commitMessage: TERMINAL_RESIDUE_COMMIT_MESSAGE,
-    managedPaths: classification.committablePaths,
-    workspaceRoot: params.workspaceRoot,
-  });
-  const afterCommit = await classifyManagedTerminalDirtyTree({
-    stage: params.stage,
-    workspaceRoot: params.workspaceRoot,
-    workspaceSlug,
-  });
-  if (afterCommit.clean) {
-    return;
-  }
   throw new Error(
-    formatManagedTerminalDirtyBlocker(afterCommit.unclassifiedPaths)
+    formatManagedTerminalAutoCommitFailure(classification.committablePaths)
   );
 };

@@ -5,7 +5,10 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
-import { formatManagedTerminalDirtyBlocker } from "./managed-terminal-clean-git-boundary";
+import {
+  formatManagedTerminalAutoCommitFailure,
+  formatManagedTerminalDirtyBlocker,
+} from "./managed-terminal-clean-git-boundary";
 import {
   classifyManagedTerminalDirtyEntries,
   classifyManagedTerminalDirtyTree,
@@ -13,8 +16,12 @@ import {
 
 const WORKSPACE_SLUG = "codeai-hub-codex-5-4";
 const COMMIT_AND_FINISH_RE = /Commit and finish step/u;
+const CONFIRM_AGAIN_RE = /Confirm the step again/u;
+const GENERATED_FILES_NOT_SAVED_RE =
+  /generated files were not saved automatically/u;
 const SHOW_FILES_RE = /Show files/u;
 const MANUAL_NOTES_RE = /manual-notes\.md/u;
+const NO_FILE_PATH_RE = /No file path was reported/u;
 const CORE_INTERNALS_RE =
   /Core|classified|unclassified|managed terminal|dirty-tree/u;
 const execFileAsync = promisify(execFile);
@@ -82,6 +89,17 @@ test("terminal dirty blocker text gives user actions without core internals", ()
   assert.match(message, COMMIT_AND_FINISH_RE);
   assert.match(message, SHOW_FILES_RE);
   assert.match(message, MANUAL_NOTES_RE);
+  assert.doesNotMatch(message, CORE_INTERNALS_RE);
+});
+
+test("terminal auto-commit failure text avoids empty file lists and user commit choices", () => {
+  const message = formatManagedTerminalAutoCommitFailure([]);
+
+  assert.match(message, GENERATED_FILES_NOT_SAVED_RE);
+  assert.match(message, CONFIRM_AGAIN_RE);
+  assert.match(message, NO_FILE_PATH_RE);
+  assert.doesNotMatch(message, COMMIT_AND_FINISH_RE);
+  assert.doesNotMatch(message, SHOW_FILES_RE);
   assert.doesNotMatch(message, CORE_INTERNALS_RE);
 });
 

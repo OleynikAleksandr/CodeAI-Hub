@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "b3760a129",
+  "lastRecordedCommit": "e13e67248",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase8.sidecar.task1",
-  "expectedCommitMessage": "fix: stage managed dot-directory sidecars",
+  "currentTaskId": "managed-clean-markers.phase8.sidecar.task2",
+  "expectedCommitMessage": "fix: prevent empty managed dirty blockers",
   "debt": {
-    "expectedCommitMessage": "fix: stage managed dot-directory sidecars",
-    "preCommitHead": "b3760a129",
+    "expectedCommitMessage": "fix: prevent empty managed dirty blockers",
+    "preCommitHead": "e13e67248",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase8.sidecar.task1"
+    "taskId": "managed-clean-markers.phase8.sidecar.task2"
   }
 }
 ```
@@ -198,12 +198,14 @@
 44. [DONE] `managed-clean-markers.phase8.sidecar.task1` Stage managed dot-directory sidecars without Git exclude pathspecs so Diagram Modules `module-map.flow.json` is committed automatically (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: stage managed dot-directory sidecars`).
     - Root cause 2026-05-17: `git add -- .codeai-hub/.../module-map.flow.json :(exclude,glob)**/dist/**` did not stage nested files under a dot-prefixed managed directory, so Core saw a standard sidecar but committed no staged changes.
     - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts` passed, including the generated dot-directory sidecar commit regression.
-45. [PENDING] Git Commit: `fix: stage managed dot-directory sidecars` (hash: TBD)
+45. [DONE] Git Commit: `fix: stage managed dot-directory sidecars` (hash: e13e67248)
 
 ### Stream: Classified Residue Retry UX
 
-46. [TODO] `managed-clean-markers.phase8.sidecar.task2` Retry classified terminal residue commits and replace empty dirty-tree blockers with a generated-file auto-save failure message (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prevent empty managed dirty blockers`).
-47. [TODO] Git Commit: `fix: prevent empty managed dirty blockers` (hash: TBD)
+46. [DONE] `managed-clean-markers.phase8.sidecar.task2` Retry classified terminal residue commits and replace empty dirty-tree blockers with a generated-file auto-save failure message (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prevent empty managed dirty blockers`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts` passed.
+    - Verification 2026-05-17: `npm exec -- ultracite check packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts` passed.
+47. [PENDING] Git Commit: `fix: prevent empty managed dirty blockers` (hash: TBD)
 
 ### Stream: Sidecar Retest Verification
 
