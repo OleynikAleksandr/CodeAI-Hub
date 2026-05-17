@@ -1,3 +1,18 @@
+# Plan Closeout: managed-workflow-clean-stage-markers-2026-05-17
+
+**Created:** 2026-05-17T12:48:47.033Z
+**Acceptance:** User accepted v1.2.290 release and requested closing this plan on 2026-05-17.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** managed-clean-markers.phase14.closeout.task1
+**Expected Commit:** docs: close clean stage marker scope
+**Last Recorded Commit:** 243c7a23f
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/ManagedWorkflow_CleanStageMarkers_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/ManagedWorkflow_CleanStageMarkers_Planning.md",
   "currentTaskId": "managed-clean-markers.phase14.closeout.task1",
   "expectedCommitMessage": "docs: close clean stage marker scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close clean stage marker scope",
-    "preCommitHead": "243c7a23f",
-    "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase14.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -341,5 +351,6 @@
 
 ### Stream: Closeout
 
-86. [DONE] `managed-clean-markers.phase14.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-87. [PENDING] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+86. [IN_PROGRESS] `managed-clean-markers.phase14.closeout.task1` After explicit user acceptance of the retested package, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+87. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+````
