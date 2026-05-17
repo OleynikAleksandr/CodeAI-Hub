@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "863bb0715",
+  "lastRecordedCommit": "0115940c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase10.docs.task1",
-  "expectedCommitMessage": "docs: document terminal metadata cleanup",
+  "currentTaskId": "managed-clean-markers.phase10.verify.task1",
+  "expectedCommitMessage": "test: verify terminal metadata cleanup",
   "debt": {
-    "expectedCommitMessage": "docs: document terminal metadata cleanup",
-    "preCommitHead": "863bb0715",
+    "expectedCommitMessage": "test: verify terminal metadata cleanup",
+    "preCommitHead": "0115940c2",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase10.docs.task1"
+    "taskId": "managed-clean-markers.phase10.verify.task1"
   }
 }
 ```
@@ -258,12 +258,15 @@
 ### Stream: Architecture Docs
 
 62. [DONE] `managed-clean-markers.phase10.docs.task1` Document the terminal metadata cleanup rule and the `.codeai-hub/state/` local-state boundary (scope: `doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/TODO/todo-plan.md`; expected commit: `docs: document terminal metadata cleanup`).
-63. [PENDING] Git Commit: `docs: document terminal metadata cleanup` (hash: TBD)
+63. [DONE] Git Commit: `docs: document terminal metadata cleanup` (hash: 0115940c2)
 
 ### Stream: Tooling Verification
 
-64. [TODO] `managed-clean-markers.phase10.verify.task1` Run targeted tests and builds for terminal metadata cleanup, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify terminal metadata cleanup`).
-65. [TODO] Git Commit: `test: verify terminal metadata cleanup` (hash: TBD)
+64. [DONE] `managed-clean-markers.phase10.verify.task1` Run targeted tests and builds for terminal metadata cleanup, then record verification results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify terminal metadata cleanup`).
+    - Verification 2026-05-17: `npx tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/remote-bridge/handlers/application-skeleton-environment-readiness-audit.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts` passed 23 tests.
+    - Verification 2026-05-17: `npm run build --workspace=@codeai-hub/core` passed.
+    - Verification 2026-05-17: `npm run typecheck:webview` passed.
+65. [PENDING] Git Commit: `test: verify terminal metadata cleanup` (hash: TBD)
 
 ## Phase 11 - Release Build For Terminal Metadata Fix (owner: Codex, updated: 2026-05-17)
 
