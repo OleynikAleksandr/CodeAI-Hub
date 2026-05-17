@@ -66,26 +66,6 @@ const getSlotHeightWithColumns = (
   return rows * MODULE_CARD_HEIGHT_ESTIMATE;
 };
 
-const getMinimumRowFootprint = (slot: SlotDescriptor): number => {
-  if (slot.kind === "standaloneModule") return 1;
-  return slot.moduleColumns === "auto" ? 1 : slot.moduleColumns;
-};
-
-const rowMinimumFootprintFitsBudget = (
-  slots: readonly SlotDescriptor[],
-  columns: number,
-): boolean => {
-  for (let rowStart = 0; rowStart < slots.length; rowStart += columns) {
-    const row = slots.slice(rowStart, rowStart + columns);
-    const rowFootprint = row.reduce(
-      (sum, slot) => sum + getMinimumRowFootprint(slot),
-      0,
-    );
-    if (rowFootprint > MODULE_ROW_BUDGET) return false;
-  }
-  return true;
-};
-
 export const resolveRowAwareModuleColumns = (
   slots: readonly SlotDescriptor[],
   productPartColumns: number,
@@ -123,11 +103,34 @@ export const resolveRowAwareModuleColumns = (
   return resolved;
 };
 
+const getResolvedRowFootprint = (
+  row: readonly SlotDescriptor[],
+  rowAwareColumns: readonly number[],
+  rowStart: number,
+): number => row.reduce((sum, slot, offset) => {
+  if (slot.kind === "standaloneModule") return sum + 1;
+  return sum + (rowAwareColumns[rowStart + offset] ?? 1);
+}, 0);
+
+const rowResolvedFootprintFitsBudget = (
+  slots: readonly SlotDescriptor[],
+  columns: number,
+): boolean => {
+  const rowAwareColumns = resolveRowAwareModuleColumns(slots, columns);
+  for (let rowStart = 0; rowStart < slots.length; rowStart += columns) {
+    const row = slots.slice(rowStart, rowStart + columns);
+    if (getResolvedRowFootprint(row, rowAwareColumns, rowStart) > MODULE_ROW_BUDGET) {
+      return false;
+    }
+  }
+  return true;
+};
+
 /**
  * Resolve the number of CSS Grid columns for a ProductPart body.
  * When `columns` is "auto", tries 2..5 and picks the one whose
- * resulting aspect ratio is closest to the target while keeping automatic
- * rows within the module-card budget.
+ * resulting aspect ratio is closest to the target while keeping resolved
+ * automatic rows within the module-card budget.
  */
 export const resolveProductPartColumns = (
   slots: readonly SlotDescriptor[],
@@ -143,7 +146,7 @@ export const resolveProductPartColumns = (
 
   const maxCols = Math.min(5, slots.length);
   for (let n = 1; n <= maxCols; n++) {
-    if (!rowMinimumFootprintFitsBudget(slots, n)) continue;
+    if (!rowResolvedFootprintFitsBudget(slots, n)) continue;
     foundCandidate = true;
     const columnHeights = new Array<number>(n).fill(0);
     const columnWidths = new Array<number>(n).fill(0);

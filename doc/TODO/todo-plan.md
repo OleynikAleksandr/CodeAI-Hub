@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "a6300f9be",
+  "lastRecordedCommit": "d8593fed3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.release294.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.294 vsix",
+  "currentTaskId": "diagram-row-layout.phase4.rowpacking.task1",
+  "expectedCommitMessage": "fix: keep diagram product rows within module budget",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.294 vsix",
-    "preCommitHead": "a6300f9be",
+    "expectedCommitMessage": "fix: keep diagram product rows within module budget",
+    "preCommitHead": "d8593fed3",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.release294.vsix.task1"
+    "taskId": "diagram-row-layout.phase4.rowpacking.task1"
   }
 }
 ```
@@ -253,16 +253,35 @@
 63. [DONE] `diagram-row-layout.phase4.release294.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.294 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.294 vsix`).
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated VSIX package: `codeai-hub-1.2.294.vsix` (49M). Confirmed release build steps included SDK exclusions, local artefact validation, markdown links, duplication check, production dependency pruning, VSIX runtime package surface verification, and `Release build complete`.
-64. [PENDING] Git Commit: `chore: package release 1.2.294 vsix` (hash: TBD)
+64. [DONE] Git Commit: `chore: package release 1.2.294 vsix` (hash: d8593fed3)
 
 ### Stream: User Visual Acceptance Testing
 
-65. [TODO] `diagram-row-layout.phase4.release294.acceptance.task1` User installs and retests v1.2.294 release package for compact Cluster boundaries, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none).
+65. [BLOCKED] `diagram-row-layout.phase4.release294.acceptance.task1` User installs and retests v1.2.294 release package for compact Cluster boundaries, row budget, aspect-ratio behavior, and detached live refresh (scope: user visual acceptance only; expected commit: none). Result: User reported on 2026-05-17 that a Product Part row can still contain two Clusters plus a standalone Module, producing four visible module-card slots across one horizontal line.
+
+### Stream: Release Retest Product Row Packing Fix
+
+66. [DONE] `diagram-row-layout.phase4.rowpacking.task1` Make Product Part auto column selection reject rows whose resolved cluster module columns plus standalone modules exceed the three-module horizontal budget (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.ts, src/client/project-manager/components/diagram-editor/diagram-editor-layout-params.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep diagram product rows within module budget`).
+67. [PENDING] Git Commit: `fix: keep diagram product rows within module budget` (hash: TBD)
+
+### Stream: Release Retest Product Row Packing Docs
+
+68. [TODO] `diagram-row-layout.phase4.rowpacking.docs.task1` Document the resolved Product Part row packing contract for adjacent Clusters and standalone Modules (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document diagram product row packing`).
+69. [TODO] Git Commit: `docs: document diagram product row packing` (hash: TBD)
+
+### Stream: Release Retest Product Row Packing Verification
+
+70. [TODO] `diagram-row-layout.phase4.rowpacking.verify.task1` Run targeted layout tests plus webview typecheck/build after the product row packing fix (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify diagram product row packing`).
+71. [TODO] Git Commit: `test: verify diagram product row packing` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+
+72. [TODO] `diagram-row-layout.phase4.rowpacking.acceptance.task1` User installs and retests the next release package for Product Part rows with adjacent Clusters and standalone Modules (scope: user visual acceptance only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-66. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
-67. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
-68. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).
+73. [TODO] `diagram-row-layout.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close diagram row auto layout scope`).
+74. [TODO] Git Commit: `docs: close diagram row auto layout scope` (hash: TBD)
+75. [TODO] `diagram-row-layout.phase5.closeout.anchor` Reserved post-closeout handoff anchor (scope: none; expected commit: none).

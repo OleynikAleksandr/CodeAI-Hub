@@ -78,6 +78,19 @@ test("resolveProductPartColumns avoids four standalone modules in one automatic 
   );
 });
 
+test("resolveProductPartColumns keeps standalone modules out of a full cluster row", () => {
+  const slots: SlotDescriptor[] = [
+    { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
+    { kind: "cluster", moduleCount: 3, moduleColumns: "auto" },
+    { kind: "standaloneModule" },
+  ];
+
+  const columns = resolveProductPartColumns(slots, defaultProductPartLayout());
+
+  assert.equal(columns, 2);
+  assert.deepEqual(resolveRowAwareModuleColumns(slots, columns), [2, 1, 1]);
+});
+
 test("resolveProductPartColumns prefers wider layout with 5 slots and landscape", () => {
   const slots: SlotDescriptor[] = [
     { kind: "cluster", moduleCount: 2, moduleColumns: "auto" },
