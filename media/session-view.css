@@ -422,6 +422,39 @@
   max-width: 100%;
 }
 
+.session-dialog__review-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.session-dialog__managed-review-confirm {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: #d7ffef;
+  cursor: pointer;
+  background: rgba(39, 168, 124, 0.18);
+  border: 1px solid rgba(66, 201, 162, 0.68);
+  border-radius: 4px;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.session-dialog__managed-review-confirm:hover,
+.session-dialog__managed-review-confirm:focus-visible {
+  color: #f3fff9;
+  background: rgba(39, 168, 124, 0.26);
+  border-color: rgba(66, 201, 162, 0.92);
+}
+
 .session-dialog__content--thinking {
   margin-top: 4px;
   font-size: 12px;

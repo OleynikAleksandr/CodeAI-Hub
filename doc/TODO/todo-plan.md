@@ -8,15 +8,15 @@
   "planId": "managed-review-confirm-button-2026-05-17",
   "branch": "main",
   "baseHead": "e7b5f78e0",
-  "lastRecordedCommit": "8cab9d7cc",
+  "lastRecordedCommit": "9e57d51f5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md",
-  "currentTaskId": "managed-review-confirm.phase1.core.task1",
-  "expectedCommitMessage": "fix: update managed review handoff copy",
+  "currentTaskId": "managed-review-confirm.phase1.ui.task1",
+  "expectedCommitMessage": "feat: add managed review confirm button",
   "debt": {
-    "expectedCommitMessage": "fix: update managed review handoff copy",
-    "preCommitHead": "8cab9d7cc",
+    "expectedCommitMessage": "feat: add managed review confirm button",
+    "preCommitHead": "9e57d51f5",
     "stage": "commit_pending",
-    "taskId": "managed-review-confirm.phase1.core.task1"
+    "taskId": "managed-review-confirm.phase1.ui.task1"
   }
 }
 ```
@@ -57,12 +57,12 @@
 ### Stream: Core Handoff Copy
 
 3. [DONE] `managed-review-confirm.phase1.core.task1` Replace managed user-review handoff copy so it points to the inline button instead of instructing users to type `подтверждаю`, and update Core handoff tests (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-handoff-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: update managed review handoff copy`).
-4. [PENDING] Git Commit: `fix: update managed review handoff copy` (hash: TBD)
+4. [DONE] Git Commit: `fix: update managed review handoff copy` (hash: 9e57d51f5)
 
 ### Stream: Session UI Button
 
-5. [TODO] `managed-review-confirm.phase1.ui.task1` Render an inline `Подтверждаю` action on `managed-workflow-user-review` system cards and route it through the existing send path (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/session-view.tsx, media/session-view.css`; expected commit: `feat: add managed review confirm button`).
-6. [TODO] Git Commit: `feat: add managed review confirm button` (hash: TBD)
+5. [DONE] `managed-review-confirm.phase1.ui.task1` Render an inline `Подтверждаю` action on `managed-workflow-user-review` system cards and route it through the existing send path (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/session-view.tsx, media/session-view.css`; expected commit: `feat: add managed review confirm button`).
+6. [PENDING] Git Commit: `feat: add managed review confirm button` (hash: TBD)
 
 ### Stream: UI Regression Coverage
 

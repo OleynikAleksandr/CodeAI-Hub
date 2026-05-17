@@ -28,6 +28,7 @@ import {
 
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
+const MANAGED_REVIEW_ACCEPTANCE_CONTENT = "подтверждаю";
 
 const RESUMING_LOCK_REASONS = new Set([
   "context_check_pending",
@@ -225,6 +226,9 @@ const SessionViewBody = ({
           <DialogPanel
             messages={virtualConversationMessages}
             onFileLinkActivate={onFileLinkActivate}
+            onManagedReviewAccept={() =>
+              submitMessage(MANAGED_REVIEW_ACCEPTANCE_CONTENT)
+            }
             onSpeakMessage={
               onSpeakMessage
                 ? (message) =>

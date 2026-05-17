@@ -21,6 +21,7 @@ const USER_MESSAGES_CATEGORY = "system_feedback";
 interface DialogPanelProps {
   readonly messages: readonly SessionMessage[];
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
+  readonly onManagedReviewAccept?: () => void;
   readonly onSpeakMessage?: (message: SessionMessage) => void;
   readonly providerLabel?: string | null;
   readonly providerTheme?: ProviderTheme | null;
@@ -43,6 +44,7 @@ interface StandardMessageProps {
   readonly label: string;
   readonly message: SessionMessage;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
+  readonly onManagedReviewAccept?: () => void;
   readonly onSpeakMessage?: (message: SessionMessage) => void;
   readonly speakingMessageId?: string | null;
 }
@@ -55,6 +57,7 @@ interface SpeakMessageButtonProps {
 
 const DialogPanel = ({
   messages,
+  onManagedReviewAccept,
   onSpeakMessage,
   onFileLinkActivate,
   providerTheme = null,
@@ -199,6 +202,7 @@ const DialogPanel = ({
               label={label}
               message={message}
               onFileLinkActivate={onFileLinkActivate}
+              onManagedReviewAccept={onManagedReviewAccept}
               onSpeakMessage={onSpeakMessage}
               speakingMessageId={speakingMessageId}
             />
@@ -274,11 +278,22 @@ const StandardMessage = ({
   message,
   label,
   className,
+  onManagedReviewAccept,
   onSpeakMessage,
   onFileLinkActivate,
   speakingMessageId,
 }: StandardMessageProps) => {
+  const { t } = useLocalization();
   const messageDate = new Date(message.createdAt);
+  const showManagedReviewAccept =
+    message.role === "system" &&
+    message.tag === "managed-workflow-user-review" &&
+    typeof onManagedReviewAccept === "function";
+  const confirmLabel = t(
+    "ui_interface",
+    "session.dialog.managed_review_confirm_label",
+    "Подтверждаю"
+  );
   return (
     <article className={className}>
       <header className="session-dialog__message-header">
@@ -300,6 +315,18 @@ const StandardMessage = ({
         content={resolveDisplayContent(message)}
         onFileLinkActivate={onFileLinkActivate}
       />
+      {showManagedReviewAccept ? (
+        <footer className="session-dialog__review-actions">
+          <button
+            aria-label={confirmLabel}
+            className="session-dialog__managed-review-confirm"
+            onClick={onManagedReviewAccept}
+            type="button"
+          >
+            {confirmLabel}
+          </button>
+        </footer>
+      ) : null}
     </article>
   );
 };
