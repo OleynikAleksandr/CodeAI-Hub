@@ -8,15 +8,15 @@
   "planId": "managed-review-confirm-button-2026-05-17",
   "branch": "main",
   "baseHead": "e7b5f78e0",
-  "lastRecordedCommit": "59f06a1c8",
+  "lastRecordedCommit": "e98742edc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedReview_ConfirmButton_Planning.md",
-  "currentTaskId": "managed-review-confirm.phase2.verify.task1",
-  "expectedCommitMessage": "test: verify managed review confirm button",
+  "currentTaskId": "managed-review-confirm.phase3.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.296 release",
   "debt": {
-    "expectedCommitMessage": "test: verify managed review confirm button",
-    "preCommitHead": "59f06a1c8",
+    "expectedCommitMessage": "docs: prepare 1.2.296 release",
+    "preCommitHead": "e98742edc",
     "stage": "commit_pending",
-    "taskId": "managed-review-confirm.phase2.verify.task1"
+    "taskId": "managed-review-confirm.phase3.release.docs.task1"
   }
 }
 ```
@@ -84,17 +84,31 @@
     - Verification 2026-05-17: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts` passed 5/5.
     - Verification 2026-05-17: `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts` passed 8/8; React emitted existing SSR `useLayoutEffect` warnings for static markup rendering.
     - Verification 2026-05-17: `npm run typecheck:webview` passed.
-12. [PENDING] Git Commit: `test: verify managed review confirm button` (hash: TBD)
+12. [DONE] Git Commit: `test: verify managed review confirm button` (hash: e98742edc)
 
-## Phase 3 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
+## Phase 3 - Release Build (owner: Codex, updated: 2026-05-17)
+
+### Stream: Release Preparation
+
+13. [DONE] `managed-review-confirm.phase3.release.docs.task1` Update release notes for v1.2.296 before version bump/build so packaged README/CHANGELOG include the managed review confirm button (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.296 release`).
+14. [PENDING] Git Commit: `docs: prepare 1.2.296 release` (hash: TBD)
+
+### Stream: Release Automation
+
+15. [TODO] `managed-review-confirm.phase3.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.296 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.296 artifacts`).
+16. [TODO] Git Commit: `chore: build release 1.2.296 artifacts` (hash: TBD)
+17. [TODO] `managed-review-confirm.phase3.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.296 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.296 vsix`).
+18. [TODO] Git Commit: `chore: package release 1.2.296 vsix` (hash: TBD)
+
+## Phase 4 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
 ### Stream: User Retest
 
-13. [TODO] `managed-review-confirm.phase3.acceptance.task1` User retests a managed user-review card and confirms the inline `Подтверждаю` button submits acceptance and advances the Core-owned stage lifecycle (scope: user workflow acceptance only; expected commit: none).
+19. [TODO] `managed-review-confirm.phase4.acceptance.task1` User installs and retests v1.2.296, then confirms a managed user-review card shows the inline `Подтверждаю` button and that the button submits acceptance and advances the Core-owned stage lifecycle (scope: user workflow acceptance only; expected commit: none).
 
-## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Scope Closeout
 
-14. [TODO] `managed-review-confirm.phase4.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed review confirm button scope`).
-15. [TODO] Git Commit: `docs: close managed review confirm button scope` (hash: TBD)
+20. [TODO] `managed-review-confirm.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close managed review confirm button scope`).
+21. [TODO] Git Commit: `docs: close managed review confirm button scope` (hash: TBD)

@@ -2,23 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.295** (Diagram Modules resolved row packing refresh)
+**Current Release — v1.2.296** (Managed review confirmation button)
 
-This release packages the Diagram Modules visual layout retest fixes. Automatic
-CSS Grid layout now caps one horizontal Product Part row to three actual module
-cards across adjacent clusters and standalone modules, makes `targetAspectRatio`
-visible when Product Part columns are automatic, and refreshes detached Diagram
-Modules popup windows when later Product Parts materialize in the main workflow.
-Single-cluster rows now keep compact module spacing instead of stretching cards
-across the full Project Manager panel, and auto-fit can scale further down for
-narrow detached or docked views before horizontal scrolling is needed.
-Cluster boundaries now derive their width from the resolved module grid, so long
-cluster titles or purpose text wrap inside compact bounds instead of creating
-large empty right-side padding.
-Product Part automatic row packing now rejects resolved rows that would contain
-more than three visible module cards after adjacent Cluster module columns and
-standalone Modules are counted together, so standalone Modules wrap instead of
-appearing as a fourth card on the right.
+This release packages the managed review confirmation UX update. Core-owned
+review handoff cards for Diagram Modules, Application Skeleton, and Quality
+Gates now tell the user to press the inline `Подтверждаю` button instead of
+typing the acceptance phrase manually. The button appears at the bottom of the
+same system card and sends the normal acceptance intent back to Core, so Core
+still owns managed review classification, materialization/integration
+transitions, and terminal `User Return And Revisions` completion.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the

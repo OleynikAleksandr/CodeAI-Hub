@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.296] - 2026-05-17
+### Changed
+- **Managed review handoff cards now use an inline confirmation button.** Core review messages for managed stages no longer instruct the user to type `подтверждаю`; the Session UI renders a `Подтверждаю` button on the same system card and sends the existing Core acceptance intent.
+- **Managed acceptance authority stays in Core.** The button path reuses the existing review decision flow, so Diagram Modules still reaches terminal `User Return And Revisions`, while Application Skeleton and Quality Gates advance through their Core-owned next phases.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `npx tsx --test src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.295] - 2026-05-17
 ### Fixed
 - **Diagram Modules Product Part rows now count resolved visible module cards.** Automatic Product Part columns reject rows where adjacent Clusters plus standalone Modules would render more than three horizontal module cards, so standalone Modules wrap instead of appearing as a fourth card on the right.
