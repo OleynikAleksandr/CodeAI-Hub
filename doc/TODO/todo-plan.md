@@ -8,15 +8,15 @@
   "planId": "diagram-modules-row-aware-auto-layout-2026-05-17",
   "branch": "main",
   "baseHead": "39e4388a7",
-  "lastRecordedCommit": "37d56fc61",
+  "lastRecordedCommit": "856fb2a5c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DiagramModules_RowAwareAutoLayout_Planning.md",
-  "currentTaskId": "diagram-row-layout.phase4.compact.task1",
-  "expectedCommitMessage": "fix: compact diagram module spacing",
+  "currentTaskId": "diagram-row-layout.phase4.compact.docs.task1",
+  "expectedCommitMessage": "docs: document compact diagram spacing",
   "debt": {
-    "expectedCommitMessage": "fix: compact diagram module spacing",
-    "preCommitHead": "37d56fc61",
+    "expectedCommitMessage": "docs: document compact diagram spacing",
+    "preCommitHead": "856fb2a5c",
     "stage": "commit_pending",
-    "taskId": "diagram-row-layout.phase4.compact.task1"
+    "taskId": "diagram-row-layout.phase4.compact.docs.task1"
   }
 }
 ```
@@ -154,12 +154,12 @@
 ### Stream: Release Retest Compact Layout Fix
 
 31. [DONE] `diagram-row-layout.phase4.compact.task1` Make Diagram Modules cluster/module grid sizing compact so single clusters do not stretch module spacing across the viewport (scope: `src/client/project-manager/components/diagram-editor/diagram-editor-facade.tsx, src/client/project-manager/components/diagram-editor/diagram-editor-ownership-renderer.test.tsx`; expected commit: `fix: compact diagram module spacing`).
-32. [PENDING] Git Commit: `fix: compact diagram module spacing` (hash: TBD)
+32. [DONE] Git Commit: `fix: compact diagram module spacing` (hash: 856fb2a5c)
 
 ### Stream: Release Retest Compact Layout Docs
 
-33. [TODO] `diagram-row-layout.phase4.compact.docs.task1` Document the compact spacing contract for Diagram Modules visual layout (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document compact diagram spacing`).
-34. [TODO] Git Commit: `docs: document compact diagram spacing` (hash: TBD)
+33. [DONE] `diagram-row-layout.phase4.compact.docs.task1` Document the compact spacing contract for Diagram Modules visual layout (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/TODO/todo-plan.md`; expected commit: `docs: document compact diagram spacing`).
+34. [PENDING] Git Commit: `docs: document compact diagram spacing` (hash: TBD)
 
 ### Stream: Release Retest Compact Layout Verification
 
