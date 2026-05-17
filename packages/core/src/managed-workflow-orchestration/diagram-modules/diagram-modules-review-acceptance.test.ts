@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import { ManagedWorkflowScaffoldInstaller } from "../managed-workflow-scaffold-installer";
 import {
   acceptDiagramModulesReviewWithoutRevision,
@@ -17,8 +19,22 @@ const USER_RETURN_STREAM_RE = /### Stream: User Return And Revisions/u;
 const DIAGRAM_COMPLETED_RE = /"completedStages": \[\n {4}"diagram_modules"/u;
 const APP_UNLOCKED_RE = /"application_skeleton"/u;
 const APP_ACTIVE_RE = /"activeStage": "application_skeleton"/u;
+const DIRTY_BLOCKED_RE = /unclassified dirty files/u;
+const MANUAL_NOTES_DIRTY_RE = /manual-notes\.md/u;
 const REVIEW_DISPOSITION_RE =
   /Git Commit: `docs: open diagram modules user review` \(hash: [0-9a-f]{7,}\)/u;
+const WORKSPACE_SLUG = "demo-workspace";
+const execFileAsync = promisify(execFile);
+
+const git = async (
+  workspaceRoot: string,
+  args: readonly string[]
+): Promise<string> => {
+  const { stdout } = await execFileAsync("git", args, {
+    cwd: workspaceRoot,
+  });
+  return stdout.trim();
+};
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -36,9 +52,14 @@ const readWorkspaceFile = (
 ): Promise<string> => readFile(path.join(workspaceRoot, relativePath), "utf8");
 
 const prepareReviewWorkspace = async (workspaceRoot: string): Promise<void> => {
+  await git(workspaceRoot, ["init"]);
+  await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+  await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
   await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
     workspaceRoot,
   });
+  await git(workspaceRoot, ["add", "."]);
+  await git(workspaceRoot, ["commit", "-m", "chore: scaffold"]);
   await writeWorkspaceFile(
     workspaceRoot,
     "doc/TODO/stages/diagram-modules/todo-plan.md",
@@ -98,6 +119,39 @@ test("Diagram Modules review acceptance opens persistent return and unlocks Appl
     assert.match(workspacePlan, DIAGRAM_COMPLETED_RE);
     assert.match(workspacePlan, APP_UNLOCKED_RE);
     assert.match(workspacePlan, APP_ACTIVE_RE);
+    assert.equal(await git(workspaceRoot, ["status", "--short"]), "");
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Diagram Modules review acceptance blocks unclassified dirty files before opening persistent return", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "diagram-review-dirty-block-")
+  );
+  try {
+    await prepareReviewWorkspace(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/module-map.flow.json`,
+      '{"nodes":[]}\n'
+    );
+    await writeWorkspaceFile(workspaceRoot, "manual-notes.md", "# notes\n");
+
+    await assert.rejects(
+      () => acceptDiagramModulesReviewWithoutRevision({ workspaceRoot }),
+      DIRTY_BLOCKED_RE
+    );
+
+    const stagePlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md"
+    );
+    assert.doesNotMatch(stagePlan, USER_RETURN_STREAM_RE);
+    assert.match(
+      await git(workspaceRoot, ["status", "--short"]),
+      MANUAL_NOTES_DIRTY_RE
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

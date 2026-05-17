@@ -8,15 +8,15 @@
   "planId": "managed-workflow-clean-stage-markers-2026-05-17",
   "branch": "main",
   "baseHead": "e0373dde8",
-  "lastRecordedCommit": "b9794c24a",
+  "lastRecordedCommit": "3965c697a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ManagedWorkflow_CleanStageMarkers_Planning.md",
-  "currentTaskId": "managed-clean-markers.phase1.clean.task1",
-  "expectedCommitMessage": "fix: classify managed terminal git residue",
+  "currentTaskId": "managed-clean-markers.phase1.clean.task2",
+  "expectedCommitMessage": "fix: enforce clean git before managed stage completion",
   "debt": {
-    "expectedCommitMessage": "fix: classify managed terminal git residue",
-    "preCommitHead": "b9794c24a",
+    "expectedCommitMessage": "fix: enforce clean git before managed stage completion",
+    "preCommitHead": "3965c697a",
     "stage": "commit_pending",
-    "taskId": "managed-clean-markers.phase1.clean.task1"
+    "taskId": "managed-clean-markers.phase1.clean.task2"
   }
 }
 ```
@@ -63,46 +63,56 @@
 ### Stream: Managed Residue Classification
 
 5. [DONE] `managed-clean-markers.phase1.clean.task1` Add a Core-owned terminal dirty-tree classifier for managed stage outputs and runtime metadata (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: classify managed terminal git residue`).
-6. [PENDING] Git Commit: `fix: classify managed terminal git residue` (hash: TBD)
+6. [DONE] Git Commit: `fix: classify managed terminal git residue` (hash: 3965c697a)
 
 ### Stream: Terminal Commit Boundary
 
-7. [TODO] `managed-clean-markers.phase1.clean.task2` Wire the classifier into managed terminal/user-return transitions so green completion requires a clean tree or a Core commit of classified residue (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before managed stage completion`).
-8. [TODO] Git Commit: `fix: enforce clean git before managed stage completion` (hash: TBD)
+7. [DONE] `managed-clean-markers.phase1.clean.task2` Wire the classifier into managed terminal/user-return transitions so green completion requires a clean tree or a Core commit of classified residue (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before managed stage completion`).
+8. [PENDING] Git Commit: `fix: enforce clean git before managed stage completion` (hash: TBD)
+
+### Stream: Application Skeleton Terminal Boundary
+
+9. [TODO] `managed-clean-markers.phase1.clean.task3` Apply the terminal clean-Git checkpoint before Application Skeleton opens persistent user return (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/**, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before application skeleton completion`).
+10. [TODO] Git Commit: `fix: enforce clean git before application skeleton completion` (hash: TBD)
+
+### Stream: Quality Gates Terminal Boundary
+
+11. [TODO] `managed-clean-markers.phase1.clean.task4` Apply the terminal clean-Git checkpoint before Quality Gates opens persistent user return (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/**, packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts, packages/core/src/**/*.test.ts`; expected commit: `fix: enforce clean git before quality gates completion`).
+12. [TODO] Git Commit: `fix: enforce clean git before quality gates completion` (hash: TBD)
 
 ## Phase 2 - Core-Owned Stage Markers (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Status Projection
 
-9. [TODO] `managed-clean-markers.phase2.markers.task1` Make Core project trunk stage status from explicit start and terminal completion signals instead of artifact/review side effects (scope: `packages/core/src/workflow/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: make stage markers core owned`).
-10. [TODO] Git Commit: `fix: make stage markers core owned` (hash: TBD)
+13. [TODO] `managed-clean-markers.phase2.markers.task1` Make Core project trunk stage status from explicit start and terminal completion signals instead of artifact/review side effects (scope: `packages/core/src/workflow/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/**/*.test.ts`; expected commit: `fix: make stage markers core owned`).
+14. [TODO] Git Commit: `fix: make stage markers core owned` (hash: TBD)
 
 ### Stream: Project Manager Rendering
 
-11. [TODO] `managed-clean-markers.phase2.markers.task2` Restrict Project Manager tree marker rendering to the Core-provided gray/yellow/green stage status contract (scope: `src/client/project-manager/components/layout/**, src/client/project-manager/services/**, src/client/project-manager/**/*.test.*`; expected commit: `fix: render deterministic project manager step markers`).
-12. [TODO] Git Commit: `fix: render deterministic project manager step markers` (hash: TBD)
+15. [TODO] `managed-clean-markers.phase2.markers.task2` Restrict Project Manager tree marker rendering to the Core-provided gray/yellow/green stage status contract (scope: `src/client/project-manager/components/layout/**, src/client/project-manager/services/**, src/client/project-manager/**/*.test.*`; expected commit: `fix: render deterministic project manager step markers`).
+16. [TODO] Git Commit: `fix: render deterministic project manager step markers` (hash: TBD)
 
 ## Phase 3 - Documentation And Verification (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Architecture Docs
 
-13. [TODO] `managed-clean-markers.phase3.docs.task1` Document the clean Git completion boundary and the three-state stage marker contract (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clean stage marker contract`).
-14. [TODO] Git Commit: `docs: document clean stage marker contract` (hash: TBD)
+17. [TODO] `managed-clean-markers.phase3.docs.task1` Document the clean Git completion boundary and the three-state stage marker contract (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clean stage marker contract`).
+18. [TODO] Git Commit: `docs: document clean stage marker contract` (hash: TBD)
 
 ### Stream: Tooling Verification
 
-15. [TODO] `managed-clean-markers.phase3.verify.task1` Run targeted tests/builds for managed workflow Core and Project Manager marker behavior, then record the verification result (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify clean stage marker workflow`).
-16. [TODO] Git Commit: `test: verify clean stage marker workflow` (hash: TBD)
+19. [TODO] `managed-clean-markers.phase3.verify.task1` Run targeted tests/builds for managed workflow Core and Project Manager marker behavior, then record the verification result (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify clean stage marker workflow`).
+20. [TODO] Git Commit: `test: verify clean stage marker workflow` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
 ### Stream: User Retest
 
-17. [TODO] `managed-clean-markers.phase4.acceptance.task1` User retests the managed workflow: each step becomes yellow on first Core-started session, becomes green only at the terminal User Return And Revisions boundary, and the Git tree stays clean after each step. Scope: user workflow acceptance only; expected commit: none.
+21. [TODO] `managed-clean-markers.phase4.acceptance.task1` User retests the managed workflow: each step becomes yellow on first Core-started session, becomes green only at the terminal User Return And Revisions boundary, and the Git tree stays clean after each step. Scope: user workflow acceptance only; expected commit: none.
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-17)
 
 ### Stream: Closeout
 
-18. [TODO] `managed-clean-markers.phase5.closeout.task1` After explicit user acceptance, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
-19. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)
+22. [TODO] `managed-clean-markers.phase5.closeout.task1` After explicit user acceptance, archive this todo-plan and dispose of the planning source according to the docs lifecycle (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close clean stage marker scope`).
+23. [TODO] Git Commit: `docs: close clean stage marker scope` (hash: TBD)

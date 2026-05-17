@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { ensureManagedTerminalGitClean } from "../managed-terminal-clean-git-boundary";
 import { DiagramModulesManagedGitBoundary } from "./diagram-modules-managed-git-boundary";
 import { commitManagedWorkflowLedger } from "./managed-workflow-ledger-git-boundary";
 
@@ -192,6 +193,8 @@ export const acceptDiagramModulesReviewWithoutRevision = async (params: {
   readonly gitBoundary?: DiagramModulesManagedGitBoundary;
   readonly workspaceRoot: string;
 }): Promise<void> => {
+  const gitBoundary =
+    params.gitBoundary ?? new DiagramModulesManagedGitBoundary();
   const stagePlanText = await readText(
     params.workspaceRoot,
     DIAGRAM_STAGE_PLAN_PATH
@@ -204,6 +207,11 @@ export const acceptDiagramModulesReviewWithoutRevision = async (params: {
   if (!stageState.currentTaskId?.startsWith(REVIEW_TASK_PREFIX)) {
     throw new Error("Diagram Modules stage plan is not in review.");
   }
+  await ensureManagedTerminalGitClean({
+    gitBoundary,
+    stage: "diagram_modules",
+    workspaceRoot: params.workspaceRoot,
+  });
   const nextStageState: ManagedPlanState = {
     ...stageState,
     currentTaskId: PHASE3_TASK_ID,
@@ -222,7 +230,7 @@ export const acceptDiagramModulesReviewWithoutRevision = async (params: {
   );
   await updateWorkspacePlan(params.workspaceRoot);
   await commitManagedWorkflowLedger({
-    gitBoundary: params.gitBoundary ?? new DiagramModulesManagedGitBoundary(),
+    gitBoundary,
     ledgerPaths: [WORKSPACE_PLAN_PATH, DIAGRAM_STAGE_PLAN_PATH],
     workspaceRoot: params.workspaceRoot,
   });
