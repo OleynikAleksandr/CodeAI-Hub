@@ -8000,7 +8000,10 @@
   });
   var mapKimiSettings = (value) => ({
     autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-    defaultModel: DEFAULT_KIMI_MODEL_ID
+    defaultModel: DEFAULT_KIMI_MODEL_ID,
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+      value?.thinkingDisplaySyncEnabled
+    )
   });
   var mapSettingsSnapshot = (value) => ({
     general: mapGeneralSettings(value?.general),
