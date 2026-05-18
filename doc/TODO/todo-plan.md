@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "9bf591d5f",
+  "lastRecordedCommit": "21bdf918b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase4.release.docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.304",
+  "currentTaskId": "application-skeleton-final-review.phase4.release.buildall.task1",
+  "expectedCommitMessage": "chore: build release 1.2.304 artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.304",
-    "preCommitHead": "9bf591d5f",
+    "expectedCommitMessage": "chore: build release 1.2.304 artifacts",
+    "preCommitHead": "21bdf918b",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase4.release.docs.task1"
+    "taskId": "application-skeleton-final-review.phase4.release.buildall.task1"
   }
 }
 ```
@@ -117,9 +117,11 @@
 ### Stream: Corrective Release Build
 
 26. [DONE] `application-skeleton-final-review.phase4.release.docs.task1` Update release-facing README/CHANGELOG for v1.2.304 before the version bump/build so the VSIX contains the corrective Application Skeleton navigation release notes (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.304`).
-27. [PENDING] Git Commit: `docs: prepare release 1.2.304` (hash: TBD)
-28. [TODO] `application-skeleton-final-review.phase4.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.304 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/*/manifest.json, assets/providers/*/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.304 artifacts`).
-29. [TODO] Git Commit: `chore: build release 1.2.304 artifacts` (hash: TBD)
+27. [DONE] Git Commit: `docs: prepare release 1.2.304` (hash: 21bdf918b)
+28. [DONE] `application-skeleton-final-review.phase4.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.304 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/*/manifest.json, assets/providers/*/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.304 artifacts`).
+    - Build result (2026-05-18): `./scripts/build-all.sh --allow-dirty` completed successfully and bumped the unified version to `1.2.304`.
+    - Generated artifacts in `doc/tmp/releases/`: `claude-module-1.2.304.tar.bz2`, `codex-module-1.2.304.tar.bz2`, `gemini-module-1.2.304.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.304.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.304.tar.bz2`, `vscode-webview-1.2.304.tar.bz2`, `project-manager-1.2.304.tar.bz2`.
+29. [PENDING] Git Commit: `chore: build release 1.2.304 artifacts` (hash: TBD)
 30. [TODO] `application-skeleton-final-review.phase4.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.304 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.304 vsix`).
 31. [TODO] Git Commit: `chore: package release 1.2.304 vsix` (hash: TBD)
 
