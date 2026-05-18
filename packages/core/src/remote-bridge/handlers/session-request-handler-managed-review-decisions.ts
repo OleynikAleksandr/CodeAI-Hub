@@ -47,6 +47,7 @@ interface ManagedReviewDecisionOptions {
 }
 
 interface ManagedReviewDecisionDeps {
+  readonly broadcaster: (event: unknown) => void;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
     "appendCoreMessage" | "appendDialogMessage"
@@ -389,11 +390,9 @@ export class SessionRequestHandlerManagedReviewDecisions {
       });
       return;
     }
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: buildManagedPersistentReturnHandoffMessage(
-        "Application Skeleton"
-      ),
-      tag: "managed-workflow-complete",
+    this.deps.broadcaster({
+      payload: { stage: QUALITY_GATES_STAGE },
+      type: "workflow:stage:activate",
     });
   }
 

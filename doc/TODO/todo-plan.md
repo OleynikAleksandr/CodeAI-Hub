@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "d9a9bf992",
+  "lastRecordedCommit": "38e4c0422",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase3.release.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.303 vsix",
+  "currentTaskId": "application-skeleton-final-review.phase4.retest-fix.core.task1",
+  "expectedCommitMessage": "fix: route application skeleton final acceptance to quality gates",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.303 vsix",
-    "preCommitHead": "d9a9bf992",
+    "expectedCommitMessage": "fix: route application skeleton final acceptance to quality gates",
+    "preCommitHead": "38e4c0422",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase3.release.vsix.task1"
+    "taskId": "application-skeleton-final-review.phase4.retest-fix.core.task1"
   }
 }
 ```
@@ -98,17 +98,25 @@
     - Verification 2026-05-18: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Output confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
     - VSIX: `codeai-hub-1.2.303.vsix` (`48M`, sha256 `81f80294f7c6bed21ce32e180a097a97d7e5ede4a15425ad23156fcc16d16e7a`).
-19. [PENDING] Git Commit: `chore: package release 1.2.303 vsix` (hash: TBD)
+19. [DONE] Git Commit: `chore: package release 1.2.303 vsix` (hash: 38e4c0422)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
 ### Stream: User Retest
 
-20. [TODO] `application-skeleton-final-review.phase4.acceptance.task1` User installs/retests the release and confirms Application Skeleton shows the final `Подтверждаю` gate before Quality Gates unlocks (scope: user workflow acceptance only; expected commit: none).
+20. [BLOCKED] `application-skeleton-final-review.phase4.acceptance.task1` User installs/retests the release and confirms Application Skeleton shows the final `Подтверждаю` gate before Quality Gates unlocks (scope: user workflow acceptance only; expected commit: none). Result: v1.2.303 retest failed on 2026-05-18; final `Подтверждаю` still leaves the user in the Application Skeleton dialog with a completion message instead of moving to the Quality Gates card.
+
+### Stream: Retest Failure Fix
+
+21. [DONE] `application-skeleton-final-review.phase4.retest-fix.core.task1` Emit a Core-owned stage activation event after final Application Skeleton acceptance and stop appending the stale Application Skeleton persistent-return message (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/types.ts, doc/TODO/todo-plan.md`; expected commit: `fix: route application skeleton final acceptance to quality gates`).
+22. [PENDING] Git Commit: `fix: route application skeleton final acceptance to quality gates` (hash: TBD)
+23. [TODO] `application-skeleton-final-review.phase4.retest-fix.client.task1` Route the Project Manager stage-activation bridge event to the existing Quality Gates card navigation and cover the regression (scope: `src/client/project-manager/components/layout/main-area.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton final acceptance navigation`).
+24. [TODO] Git Commit: `test: cover application skeleton final acceptance navigation` (hash: TBD)
+25. [TODO] `application-skeleton-final-review.phase4.release.gate.task1` Ask the user for explicit corrective release confirmation before preparing v1.2.304 release notes or running release scripts (scope: user confirmation only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-21. [TODO] `application-skeleton-final-review.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton final review gate scope`).
-22. [TODO] Git Commit: `docs: close application skeleton final review gate scope` (hash: TBD)
+26. [TODO] `application-skeleton-final-review.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton final review gate scope`).
+27. [TODO] Git Commit: `docs: close application skeleton final review gate scope` (hash: TBD)

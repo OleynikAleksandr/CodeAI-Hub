@@ -53,6 +53,7 @@ export class SessionRequestHandlerSessionActions {
     this.deps = options;
     this.managedReviewDecisions =
       new SessionRequestHandlerManagedReviewDecisions({
+        broadcaster: (event) => options.broadcaster(event as BridgeEvent),
         eventMessages: options.eventMessages,
         messageDispatch: options.messageDispatch,
       });
