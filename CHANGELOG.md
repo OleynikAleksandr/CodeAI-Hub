@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.302] - 2026-05-18
+### Fixed
+- **Description and Virtual Simulation now show the post-turn Core review card again.** After the provider finishes and asks follow-up questions, Core appends the `managed-workflow-user-review` system message with the inline `Подтверждаю` button.
+- **Preliminary acceptance is gated and exact.** Startup prompts that mention `подтверждаю` still go to the provider; Core consumes only a short explicit confirmation while its preliminary review gate is already open, so edits or answers containing the word continue to reach the agent.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.301] - 2026-05-18
 ### Fixed
 - **Description and Virtual Simulation startup prompts now reach the provider even when they mention `подтверждаю`.** Core no longer runs provider-direct preliminary stages through the managed review acceptance classifier, so the initial complex prompt is not consumed as a false user confirmation.

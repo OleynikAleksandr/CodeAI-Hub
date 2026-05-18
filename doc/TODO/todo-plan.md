@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "ed45b8132",
+  "lastRecordedCommit": "12fb51f82",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase13.feedback.verify.task1",
-  "expectedCommitMessage": "test: verify preliminary review gate",
+  "currentTaskId": "pm-sidebar-settings.phase14.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.302 release",
   "debt": {
-    "expectedCommitMessage": "test: verify preliminary review gate",
-    "preCommitHead": "ed45b8132",
+    "expectedCommitMessage": "docs: prepare 1.2.302 release",
+    "preCommitHead": "12fb51f82",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase13.feedback.verify.task1"
+    "taskId": "pm-sidebar-settings.phase14.release.docs.task1"
   }
 }
 ```
@@ -273,7 +273,7 @@
     - Verification 2026-05-18: `npm run typecheck:webview` passed.
     - Verification 2026-05-18: `npm run build:webview` passed.
     - Verification 2026-05-18: `npm run build:project-manager` passed.
-67. [PENDING] Git Commit: `test: verify preliminary review gate` (hash: TBD)
+67. [DONE] Git Commit: `test: verify preliminary review gate` (hash: 12fb51f82)
 
 ## Phase 14 - Release Build For Retest (owner: Codex, updated: 2026-05-18)
 
@@ -283,8 +283,9 @@
 
 ### Stream: Release Preparation
 
-69. [TODO] `pm-sidebar-settings.phase14.release.docs.task1` After release confirmation, update release notes for v1.2.302 before version bump/build so packaged README/CHANGELOG include the preliminary review gate fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.302 release`).
-70. [TODO] Git Commit: `docs: prepare 1.2.302 release` (hash: TBD)
+69. [DONE] `pm-sidebar-settings.phase14.release.docs.task1` After release confirmation, update release notes for v1.2.302 before version bump/build so packaged README/CHANGELOG include the preliminary review gate fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.302 release`).
+    - Release docs 2026-05-18: `README.md` Current Release and `CHANGELOG.md` now describe v1.2.302 preliminary review gate fix.
+70. [PENDING] Git Commit: `docs: prepare 1.2.302 release` (hash: TBD)
 
 ### Stream: Release Automation
 

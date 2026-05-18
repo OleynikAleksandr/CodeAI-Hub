@@ -2,18 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.301** (provider-direct preliminary routing fix)
+**Current Release — v1.2.302** (preliminary review gate fix)
 
 This release keeps the Project Manager step-card polish from v1.2.299 and fixes
-the preliminary workflow routing regression found during the v1.2.300 retest.
-Description and Virtual Simulation now remain provider-direct steps at session
-start even when the initial prompt text mentions `подтверждаю`: Core no longer
-classifies that startup prompt as a managed review acceptance, so the prompt is
-sent to the provider and the agent starts normally.
+the preliminary workflow review gate regression found during the v1.2.301
+retest. Description and Virtual Simulation remain provider-direct at session
+start, then after the provider turn completes Core adds the same user review
+card pattern: answer the agent's questions, ask more questions, request edits,
+or press `Подтверждаю` to accept and open the next step card.
 
-Managed technical review stages keep the inline `Подтверждаю` acceptance button,
-so Diagram Modules and later managed stages still use the Core-owned acceptance
-flow and next-step card navigation.
+Startup prompts that mention `подтверждаю` are still dispatched to the provider;
+Core only consumes a short explicit confirmation while its preliminary review
+gate is already open. Managed technical review stages keep their existing
+Core-owned acceptance flow.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the
