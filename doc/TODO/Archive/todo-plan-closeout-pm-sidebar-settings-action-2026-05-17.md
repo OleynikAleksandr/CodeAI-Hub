@@ -1,3 +1,18 @@
+# Plan Closeout: pm-sidebar-settings-action-2026-05-17
+
+**Created:** 2026-05-18T11:17:39.146Z
+**Acceptance:** User accepted release v1.2.302 after retest; plan can be archived and scope closed.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** pm-sidebar-settings.phase18.closeout.task1
+**Expected Commit:** docs: close pm sidebar settings action scope
+**Last Recorded Commit:** 6cfe56c10
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/PM_Sidebar_Settings_Action_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/PM_Sidebar_Settings_Action_Planning.md",
   "currentTaskId": "pm-sidebar-settings.phase18.closeout.task1",
   "expectedCommitMessage": "docs: close pm sidebar settings action scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close pm sidebar settings action scope",
-    "preCommitHead": "6cfe56c10",
-    "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase18.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -325,6 +335,7 @@
 
 ### Stream: Scope Closeout
 
-82. [DONE] `pm-sidebar-settings.phase18.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-83. [PENDING] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+82. [IN_PROGRESS] `pm-sidebar-settings.phase18.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+83. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
 84. [TODO] `pm-sidebar-settings.phase18.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
