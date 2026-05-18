@@ -8,15 +8,15 @@
   "planId": "provider-candidates-documentation-intake-2026-05-18",
   "branch": "main",
   "baseHead": "ab135d06e",
-  "lastRecordedCommit": "ab135d06e",
+  "lastRecordedCommit": "799fc777f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_Candidates/Agent_Runtime_Provider_Candidates_Analysis_RU.md",
-  "currentTaskId": "phase1-provider-candidates-doc",
-  "expectedCommitMessage": "docs: add provider candidate analysis",
+  "currentTaskId": "phase1-provider-candidates-verification",
+  "expectedCommitMessage": "docs: record provider candidate analysis verification",
   "debt": {
-    "expectedCommitMessage": "docs: add provider candidate analysis",
-    "preCommitHead": "ab135d06e",
+    "expectedCommitMessage": "docs: record provider candidate analysis verification",
+    "preCommitHead": "799fc777f",
     "stage": "commit_pending",
-    "taskId": "phase1-provider-candidates-doc"
+    "taskId": "phase1-provider-candidates-verification"
   }
 }
 ```
@@ -42,11 +42,11 @@
 ## Phase 1 — Provider Candidates Documentation Intake (owner: Codex, updated: 2026-05-18)
 ### Stream: Provider Candidates Analysis
 1. [DONE] `phase1-provider-candidates-doc` Создать папку `doc/SolidWorks-WorkFlow/Plans/Provider_Candidates/` и первый анализ candidate provider runtime/subscription моделей (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Provider_Candidates/Agent_Runtime_Provider_Candidates_Analysis_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: add provider candidate analysis`).
-2. [PENDING] Git Commit: `docs: add provider candidate analysis` (hash: TBD)
+2. [DONE] Git Commit: `docs: add provider candidate analysis` (hash: 799fc777f)
 
 ### Stream: Tooling Verification
-1. [TODO] `phase1-provider-candidates-verification` Проверить UTF-8/readback, `git status`, и плановый статус после документационного изменения — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record provider candidate analysis verification`.
-2. [TODO] Git Commit: `docs: record provider candidate analysis verification` (hash: TBD)
+1. [DONE] `phase1-provider-candidates-verification` Проверить UTF-8/readback, `git status`, и плановый статус после документационного изменения — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record provider candidate analysis verification`.
+2. [PENDING] Git Commit: `docs: record provider candidate analysis verification` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 1. [TODO] `phase1-provider-candidates-acceptance` Передать документ пользователю на review и дождаться явного acceptance или правок — scope: без изменения файлов; expected commit: none.
