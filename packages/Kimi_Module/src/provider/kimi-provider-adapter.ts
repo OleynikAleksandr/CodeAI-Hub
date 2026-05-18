@@ -89,6 +89,7 @@ interface KimiCliEnvironment {
 
 interface KimiCliEnvironmentOptions extends KimiRuntimeHomeOptions {
   readonly env?: NodeJS.ProcessEnv;
+  readonly workspacePath?: string;
 }
 
 const resolveHomeDir = (homeDir?: string): string => {
@@ -173,8 +174,13 @@ const buildKimiCliEnvironment = (
   const runtimeHome = resolveKimiRuntimeHome(options);
   const homeDir = resolveHomeDir(options.homeDir);
   const candidateBinDirs = getKimiCandidateBinDirs(homeDir);
+  const workspacePath = options.workspacePath?.trim();
+  const args = ["--config-file", runtimeHome.userConfigPath, "--yolo"];
+  if (workspacePath) {
+    args.push("--work-dir", workspacePath);
+  }
   return {
-    args: ["--config-file", runtimeHome.userConfigPath],
+    args,
     command: resolveKimiCliCommand(baseEnv, homeDir),
     env: {
       ...baseEnv,
@@ -204,6 +210,7 @@ export class KimiProviderAdapter {
     const cliEnvironment = buildKimiCliEnvironment({
       providerHomePath: this.options.workspace.providerHomePath,
       userConfigPath: this.options.workspace.configPath,
+      workspacePath: this.options.workspace.workspacePath,
     });
     this.cliEnvironment = cliEnvironment;
     this.runtimeHome = await ensureKimiProviderHome(cliEnvironment.runtimeHome);
@@ -374,7 +381,7 @@ export class KimiProviderAdapter {
       },
       onRequest: (request) => ({
         request_id: this.handleProviderRequest(request),
-        response: "deny",
+        response: "reject",
       }),
       sendJson: (message) => this.requireWireProcessBridge().sendJson(message),
     });

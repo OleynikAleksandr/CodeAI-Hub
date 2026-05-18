@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "fb71d920a",
+  "lastRecordedCommit": "6f8b7e8ca",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-subscribe-hotfix-release-build",
-  "expectedCommitMessage": "chore: release kimi subscribe hotfix build",
+  "currentTaskId": "phase8-kimi-workdir-approval-fix",
+  "expectedCommitMessage": "fix: align kimi managed workflow runtime",
   "debt": {
-    "expectedCommitMessage": "chore: release kimi subscribe hotfix build",
-    "preCommitHead": "fb71d920a",
+    "expectedCommitMessage": "fix: align kimi managed workflow runtime",
+    "preCommitHead": "6f8b7e8ca",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-subscribe-hotfix-release-build"
+    "taskId": "phase8-kimi-workdir-approval-fix"
   }
 }
 ```
@@ -238,7 +238,18 @@
 2. [DONE] Git Commit: `fix: add kimi provider subscribe contract` (hash: 5f4903552)
 
 ### Stream: User Workflow Acceptance Testing
-1. [BLOCKED] `phase8-kimi-user-acceptance` Передать пользователю release/working build для установки и проверки Kimi provider workflow; дождаться явного acceptance или bug report — scope: без изменения файлов; expected commit: none. Retest build `codeai-hub-1.2.306.vsix` blocked by installed-runtime bug: Kimi provider session closes before first prompt because adapter lacks Core `subscribe(...)` method.
+1. [BLOCKED] `phase8-kimi-user-acceptance` Передать пользователю release/working build для установки и проверки Kimi provider workflow; дождаться явного acceptance или bug report — scope: без изменения файлов; expected commit: none. Retest build `codeai-hub-1.2.307.vsix` blocked by installed-runtime bug: Kimi starts and answers, but the dialog remains locked because provider messages/tool approvals are not aligned with Core workflow contracts.
+
+### Stream: Acceptance Bug Fix — Kimi Managed Workflow Runtime
+1. [DONE] `phase8-kimi-workdir-approval-fix` Исправить Kimi runtime alignment для managed workflow: запускать Wire с workspace `--work-dir`, managed auto-approval для artifact-writing turns, и протокольно корректный approval rejection literal `reject` вместо `deny` — scope: `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: align kimi managed workflow runtime`.
+   - Log diagnosis: Kimi context reports working directory `/` despite Core workspace `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub kimi`; the agent then calls `mkdir -p .codeai-hub/...` relative to `/`.
+   - Log diagnosis: Kimi Wire rejects our approval response: `ApprovalResponse.response` must be `approve`, `approve_for_session`, or `reject`, but adapter returns `deny`.
+   - Implementation note: Kimi Wire startup now includes `--work-dir <workspace>` and `--yolo`, while fallback approval responses use protocol literal `reject`.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts Kimi CLI args include `--yolo --work-dir <workspace>`.
+2. [PENDING] Git Commit: `fix: align kimi managed workflow runtime` (hash: TBD)
+3. [TODO] `phase8-kimi-message-normalization-fix` Исправить Kimi event normalization: Core должен получать `assistant`/`thinking` events instead of ignored `assistant_delta`, so provider text appears in dialog history and message flush can complete before turn completion — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: materialize kimi assistant messages`.
+4. [TODO] Git Commit: `fix: materialize kimi assistant messages` (hash: TBD)
 
 ### Stream: Subscribe Contract Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».
@@ -253,7 +264,7 @@
    - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.307.vsix`, package size `49M`.
    - Result: release tarballs copied to `doc/tmp/releases/`: `kimi-module-1.2.307.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.307.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.307.tar.bz2`, provider/UI tarballs.
    - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
-6. [PENDING] Git Commit: `chore: release kimi subscribe hotfix build` (hash: TBD)
+6. [DONE] Git Commit: `chore: release kimi subscribe hotfix build` (hash: 6f8b7e8ca)
 
 ### Stream: Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-hotfix-release-confirmation` Остановиться после фикса Kimi startup bug и запросить у пользователя отдельное подтверждение на hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».
