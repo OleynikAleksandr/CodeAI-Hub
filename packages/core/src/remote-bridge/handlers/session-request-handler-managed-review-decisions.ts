@@ -14,10 +14,7 @@ import {
   acceptDiagramModulesReviewWithoutRevision,
   isDiagramModulesReviewOpen,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
-import {
-  buildManagedPersistentReturnHandoffMessage,
-  type ManagedWorkflowHandoffStage,
-} from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
+import { buildManagedPersistentReturnHandoffMessage } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
 import {
   buildQualityGatesBoundaryBlockedMessage,
   buildQualityGatesIntegrationPrompt,
@@ -55,10 +52,8 @@ interface ManagedReviewDecisionDeps {
 }
 
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
-const DESCRIPTION_STAGE = "description";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const QUALITY_GATES_STAGE = "quality_gates";
-const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
 const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
 const FENCED_JSON_END_RE = /\s*```$/u;
@@ -126,14 +121,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     options: ManagedReviewDecisionOptions
   ): Promise<boolean> {
     if (
-      this.handlePreliminaryReviewDecision({
-        ...options,
-        intent: classifyManagedReviewIntent(options.content),
-      })
-    ) {
-      return true;
-    }
-    if (
       await this.handleApplicationSkeletonReviewDecision({
         ...options,
         intent: classifyApplicationSkeletonReviewIntent(options.content),
@@ -153,23 +140,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       ...options,
       intent: classifyManagedReviewIntent(options.content),
     });
-  }
-
-  private handlePreliminaryReviewDecision(
-    options: ManagedReviewDecisionOptions & {
-      readonly intent: ManagedReviewIntent;
-    }
-  ): boolean {
-    const stageLabel = this.resolvePreliminaryStageLabel(options.session.stage);
-    if (!stageLabel || options.intent !== "accept") {
-      return false;
-    }
-    this.appendUserReviewMessage(options);
-    this.deps.eventMessages.appendCoreMessage(options.sessionId, {
-      content: buildManagedPersistentReturnHandoffMessage(stageLabel),
-      tag: "managed-workflow-complete",
-    });
-    return true;
   }
 
   private async handleApplicationSkeletonReviewDecision(
@@ -271,18 +241,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       content: options.content,
       role: "user",
     });
-  }
-
-  private resolvePreliminaryStageLabel(
-    stage: string | null
-  ): ManagedWorkflowHandoffStage | null {
-    if (stage === DESCRIPTION_STAGE) {
-      return "Description";
-    }
-    if (stage === VIRTUAL_SIMULATION_STAGE) {
-      return "Virtual Simulation";
-    }
-    return null;
   }
 
   private async openApplicationSkeletonMaterialization(

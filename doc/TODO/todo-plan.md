@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "93680509f",
+  "lastRecordedCommit": "2a4491eca",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase10.release.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.300 vsix",
+  "currentTaskId": "pm-sidebar-settings.phase11.feedback.preliminary-router.task1",
+  "expectedCommitMessage": "fix: route preliminary prompts to providers",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.300 vsix",
-    "preCommitHead": "93680509f",
+    "expectedCommitMessage": "fix: route preliminary prompts to providers",
+    "preCommitHead": "2a4491eca",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase10.release.vsix.task1"
+    "taskId": "pm-sidebar-settings.phase11.feedback.preliminary-router.task1"
   }
 }
 ```
@@ -221,18 +221,27 @@
     - Verification 2026-05-18: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated package 2026-05-18: `codeai-hub-1.2.300.vsix` (49M reported by release script; filesystem size 48M).
     - Release confirmations 2026-05-18: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, `Release build complete`.
-52. [PENDING] Git Commit: `chore: package release 1.2.300 vsix` (hash: TBD)
+52. [DONE] Git Commit: `chore: package release 1.2.300 vsix` (hash: 2a4491eca)
 
-## Phase 11 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
+## Phase 11 - Acceptance Feedback Fix (owner: Codex, updated: 2026-05-18)
+
+### Stream: Preliminary Step Router Separation
+
+53. [DONE] `pm-sidebar-settings.phase11.feedback.preliminary-router.task1` Remove Description/Virtual Simulation from managed review decision interception and turn-completion hooks so startup prompts containing confirmation instructions are dispatched to providers instead of being consumed as Core acceptance (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, packages/core/src/managed-workflow-orchestration, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: route preliminary prompts to providers`). Regression source: v1.2.300 user retest still showed `Core: Description completed` immediately after the start prompt because the generic managed review classifier intercepted preliminary stage text containing `подтверждаю`.
+54. [PENDING] Git Commit: `fix: route preliminary prompts to providers` (hash: TBD)
+55. [TODO] `pm-sidebar-settings.phase11.feedback.verify.task1` Run targeted preliminary router regression tests and affected Core/UI builds, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify preliminary provider routing`).
+56. [TODO] Git Commit: `test: verify preliminary provider routing` (hash: TBD)
+
+## Phase 12 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
 ### Stream: User Retest
 
-53. [TODO] `pm-sidebar-settings.phase11.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, Diagram Modules confirmation still opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
+57. [TODO] `pm-sidebar-settings.phase12.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, Diagram Modules confirmation still opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
 
-## Phase 12 - Scope Closeout (owner: Codex, updated: 2026-05-18)
+## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-54. [TODO] `pm-sidebar-settings.phase12.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-55. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-56. [TODO] `pm-sidebar-settings.phase12.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+58. [TODO] `pm-sidebar-settings.phase13.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+59. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+60. [TODO] `pm-sidebar-settings.phase13.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
