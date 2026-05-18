@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "70d2927ca",
+  "lastRecordedCommit": "19c5a2f2b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-hotfix-release-notes",
-  "expectedCommitMessage": "docs: prepare kimi hotfix release notes",
+  "currentTaskId": "phase8-kimi-hotfix-release-build-start",
+  "expectedCommitMessage": "docs: mark kimi hotfix release build started",
   "debt": {
-    "expectedCommitMessage": "docs: prepare kimi hotfix release notes",
-    "preCommitHead": "70d2927ca",
+    "expectedCommitMessage": "docs: mark kimi hotfix release build started",
+    "preCommitHead": "19c5a2f2b",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-hotfix-release-notes"
+    "taskId": "phase8-kimi-hotfix-release-build-start"
   }
 }
 ```
@@ -237,9 +237,9 @@
 
 ### Stream: Hotfix Release Build
 1. [DONE] `phase8-kimi-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.306 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi hotfix release notes`.
-2. [PENDING] Git Commit: `docs: prepare kimi hotfix release notes` (hash: TBD)
-3. [TODO] `phase8-kimi-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi hotfix release build started`.
-4. [TODO] Git Commit: `docs: mark kimi hotfix release build started` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare kimi hotfix release notes` (hash: 19c5a2f2b)
+3. [DONE] `phase8-kimi-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi hotfix release build started`.
+4. [PENDING] Git Commit: `docs: mark kimi hotfix release build started` (hash: TBD)
 5. [TODO] `phase8-kimi-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi provider hotfix build`.
 6. [TODO] Git Commit: `chore: release kimi provider hotfix build` (hash: TBD)
 
