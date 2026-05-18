@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "e500a17c5",
+  "lastRecordedCommit": "eeaecfff7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase2-kimi-wire-router",
-  "expectedCommitMessage": "feat: add kimi wire protocol router",
+  "currentTaskId": "phase2-kimi-session-lifecycle",
+  "expectedCommitMessage": "feat: add kimi session lifecycle",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi wire protocol router",
-    "preCommitHead": "e500a17c5",
+    "expectedCommitMessage": "feat: add kimi session lifecycle",
+    "preCommitHead": "eeaecfff7",
     "stage": "commit_pending",
-    "taskId": "phase2-kimi-wire-router"
+    "taskId": "phase2-kimi-session-lifecycle"
   }
 }
 ```
@@ -95,11 +95,11 @@
 
 ### Stream: Wire Protocol Router
 1. [DONE] `phase2-kimi-wire-router` Реализовать JSON-RPC/Wire request-response router, event/request dispatch и malformed-frame handling с unit tests — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi wire protocol router`.
-2. [PENDING] Git Commit: `feat: add kimi wire protocol router` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi wire protocol router` (hash: eeaecfff7)
 
 ### Stream: Session Lifecycle
-1. [TODO] `phase2-kimi-session-lifecycle` Реализовать create/resume/send/cancel/close lifecycle поверх Wire, capture/restore providerSessionId и typed stale-binding error `KIMI_SESSION_STALE_BINDING` — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi session lifecycle`.
-2. [TODO] Git Commit: `feat: add kimi session lifecycle` (hash: TBD)
+1. [DONE] `phase2-kimi-session-lifecycle` Реализовать create/resume/send/cancel/close lifecycle поверх Wire, capture/restore providerSessionId и typed stale-binding error `KIMI_SESSION_STALE_BINDING` — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi session lifecycle`.
+2. [PENDING] Git Commit: `feat: add kimi session lifecycle` (hash: TBD)
 
 ## Phase 3 — Provider Event Normalization (owner: Codex, updated: 2026-05-18)
 ### Stream: Lifecycle And Message Events

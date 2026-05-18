@@ -1,6 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { KimiSessionLifecycle } from "../session/kimi-session-lifecycle";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
 import { KimiWireRouter } from "../wire/kimi-wire-router";
 
@@ -115,6 +116,7 @@ export class KimiProviderAdapter {
   private readonly options: KimiModuleOptions;
   private cliEnvironment: KimiCliEnvironment | null = null;
   private runtimeHome: KimiRuntimeHome | null = null;
+  private sessionLifecycle: KimiSessionLifecycle | null = null;
   private wireProcessBridge: KimiWireProcessBridge | null = null;
   private wireRouter: KimiWireRouter | null = null;
   private initialized = false;
@@ -132,6 +134,10 @@ export class KimiProviderAdapter {
     this.runtimeHome = await ensureKimiProviderHome(cliEnvironment.runtimeHome);
     this.wireRouter = this.createWireRouter();
     this.wireProcessBridge = this.createWireProcessBridge();
+    this.sessionLifecycle = new KimiSessionLifecycle({
+      processBridge: this.wireProcessBridge,
+      router: this.wireRouter,
+    });
     this.initialized = true;
     this.options.reporter?.info?.("Kimi provider scaffold initialized", {
       cliArgs: cliEnvironment.args,
@@ -145,16 +151,17 @@ export class KimiProviderAdapter {
 
   createSession(workspacePath?: string): Promise<string> {
     this.assertInitialized();
-    return Promise.resolve(this.createScaffoldSessionId(workspacePath));
+    if (workspacePath) {
+      this.options.reporter?.info?.("Kimi session workspace override", {
+        workspacePath,
+      });
+    }
+    return this.requireSessionLifecycle().create();
   }
 
   resumeSession(sessionId: string): Promise<string> {
     this.assertInitialized();
-    const normalizedSessionId = sessionId.trim();
-    if (normalizedSessionId.length === 0) {
-      throw new Error("Cannot resume Kimi session with an empty session id.");
-    }
-    return Promise.resolve(normalizedSessionId);
+    return this.requireSessionLifecycle().resume(sessionId);
   }
 
   onSessionEvent(sessionId: string, listener: SessionListener): () => void {
@@ -176,26 +183,17 @@ export class KimiProviderAdapter {
     if (trimmedContent.length === 0) {
       throw new Error("Cannot send an empty Kimi message.");
     }
-    this.dispatchMessage(sessionId, {
-      type: "kimi_scaffold_message_rejected",
-      payload: {
-        reason: "wire_transport_not_implemented",
-      },
-    });
-    return Promise.resolve();
+    return this.requireSessionLifecycle().send(sessionId, trimmedContent);
   }
 
   cancel(sessionId: string): Promise<void> {
     this.assertInitialized();
-    this.dispatchMessage(sessionId, {
-      type: "kimi_scaffold_cancelled",
-    });
-    return Promise.resolve();
+    return this.requireSessionLifecycle().cancel(sessionId);
   }
 
-  closeSession(sessionId: string): Promise<void> {
+  async closeSession(sessionId: string): Promise<void> {
     this.listeners.delete(sessionId);
-    return Promise.resolve();
+    await this.requireSessionLifecycle().close(sessionId);
   }
 
   private createWireProcessBridge(): KimiWireProcessBridge {
@@ -221,6 +219,12 @@ export class KimiProviderAdapter {
         this.options.reporter?.info?.("Kimi Wire event received", {
           params,
         });
+        for (const sessionId of this.listeners.keys()) {
+          this.dispatchMessage(sessionId, {
+            payload: params,
+            type: "kimi_wire_event",
+          });
+        }
       },
       onMalformedFrame: (line, error) => {
         this.options.reporter?.warn?.("Malformed Kimi Wire frame received", {
@@ -237,14 +241,6 @@ export class KimiProviderAdapter {
       }),
       sendJson: (message) => this.requireWireProcessBridge().sendJson(message),
     });
-  }
-
-  private createScaffoldSessionId(workspacePath?: string): string {
-    const resolvedWorkspacePath =
-      workspacePath ?? this.options.workspace.workspacePath ?? "workspace";
-    return `kimi-scaffold:${Buffer.from(resolvedWorkspacePath).toString(
-      "base64url"
-    )}`;
   }
 
   private dispatchMessage(sessionId: string, payload: KimiSessionEvent): void {
@@ -268,6 +264,13 @@ export class KimiProviderAdapter {
       throw new Error("Kimi CLI environment is not initialized.");
     }
     return this.cliEnvironment;
+  }
+
+  private requireSessionLifecycle(): KimiSessionLifecycle {
+    if (!this.sessionLifecycle) {
+      throw new Error("Kimi session lifecycle is not initialized.");
+    }
+    return this.sessionLifecycle;
   }
 
   private requireWireProcessBridge(): KimiWireProcessBridge {
