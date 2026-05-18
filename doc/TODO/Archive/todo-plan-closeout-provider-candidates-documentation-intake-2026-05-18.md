@@ -1,3 +1,18 @@
+# Plan Closeout: provider-candidates-documentation-intake-2026-05-18
+
+**Created:** 2026-05-18T15:48:21.452Z
+**Acceptance:** User accepted provider candidates analysis on 2026-05-18 and requested next Kimi 2.6 module implementation planning intake
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase1-provider-candidates-closeout
+**Expected Commit:** docs: close provider candidates documentation intake
+**Last Recorded Commit:** b3a7faca3
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Agent_Runtime_Provider_Candidates_Analysis_RU.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Agent_Runtime_Provider_Candidates_Analysis_RU.md",
   "currentTaskId": "phase1-provider-candidates-closeout",
   "expectedCommitMessage": "docs: close provider candidates documentation intake",
-  "debt": {
-    "expectedCommitMessage": "docs: close provider candidates documentation intake",
-    "preCommitHead": "b3a7faca3",
-    "stage": "commit_pending",
-    "taskId": "phase1-provider-candidates-closeout"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -52,5 +62,6 @@
 1. [DONE] `phase1-provider-candidates-acceptance` Передать документ пользователю на review и дождаться явного acceptance или правок — scope: без изменения файлов; expected commit: none. Result: User accepted provider candidates analysis and requested next Kimi 2.6 implementation planning intake
 
 ### Stream: Scope Closeout
-1. [DONE] `phase1-provider-candidates-closeout` После явного acceptance закрыть scope: архивировать active `todo-plan.md`, проверить disposition planning-документа, обновить индекс при необходимости — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close provider candidates documentation intake`.
-2. [PENDING] Git Commit: `docs: close provider candidates documentation intake` (hash: TBD)
+1. [IN_PROGRESS] `phase1-provider-candidates-closeout` После явного acceptance закрыть scope: архивировать active `todo-plan.md`, проверить disposition planning-документа, обновить индекс при необходимости — scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close provider candidates documentation intake`.
+2. [TODO] Git Commit: `docs: close provider candidates documentation intake` (hash: TBD)
+````
