@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "4cac3da6c",
+  "lastRecordedCommit": "1dccfc65b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-create-session-workspace-fix",
-  "expectedCommitMessage": "fix: apply kimi session workspace override",
+  "currentTaskId": "phase8-kimi-workspace-hotfix-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi workspace hotfix release notes",
   "debt": {
-    "expectedCommitMessage": "fix: apply kimi session workspace override",
-    "preCommitHead": "4cac3da6c",
+    "expectedCommitMessage": "docs: prepare kimi workspace hotfix release notes",
+    "preCommitHead": "1dccfc65b",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-create-session-workspace-fix"
+    "taskId": "phase8-kimi-workspace-hotfix-release-notes"
   }
 }
 ```
@@ -293,7 +293,18 @@
    - Verification: architecture line limit repaired by extracting `KimiWorkspaceOverrideState`; `kimi-provider-adapter.ts` is 488 lines.
    - Verification: source-runtime override smoke passed: adapter initialized with a wrong workspace, `createSession(actualWorkspace)` rebuilt Kimi CLI args to `--work-dir /Users/oleksandroliinyk/VSCODE/CodeAI-Hub kimi`.
    - Verification: source-runtime Kimi turn smoke passed after workspace override: emitted `turn_started`, aggregated `thinking`, aggregated `assistant`, `turn_completed`.
-2. [PENDING] Git Commit: `fix: apply kimi session workspace override` (hash: TBD)
+2. [DONE] Git Commit: `fix: apply kimi session workspace override` (hash: 1dccfc65b)
+
+### Stream: Workspace Override Hotfix Release Confirmation Gate
+1. [DONE] `phase8-kimi-workspace-hotfix-release-confirmation` Остановиться после фикса Kimi session workspace override и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «После фикса собери новый релиз».
+
+### Stream: Workspace Override Hotfix Release Build
+1. [DONE] `phase8-kimi-workspace-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.309 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi workspace hotfix release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi workspace hotfix release notes` (hash: TBD)
+3. [TODO] `phase8-kimi-workspace-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi workspace hotfix release build started`.
+4. [TODO] Git Commit: `docs: mark kimi workspace hotfix release build started` (hash: TBD)
+5. [TODO] `phase8-kimi-workspace-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi workspace hotfix build`.
+6. [TODO] Git Commit: `chore: release kimi workspace hotfix build` (hash: TBD)
 
 ### Stream: Subscribe Contract Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».

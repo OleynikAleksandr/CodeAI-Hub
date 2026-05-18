@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.309] - 2026-05-18
+### Fixed
+- **Installed Kimi sessions now apply the Core-provided workspace before Wire startup.** When Core creates a Kimi session with `createSession(workspacePath)`, the adapter rebuilds its Wire runtime config before the first process starts, so `--work-dir` and process `cwd` use the actual project workspace instead of the early Core launcher directory.
+- **Kimi workspace override handling is isolated in a micro-class.** The adapter delegates override decisions to `KimiWorkspaceOverrideState`, keeping the facade under the architecture line limit while preserving a single public provider entrypoint.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run test --workspace=@codeai-hub/kimi-module`
+- `./scripts/check-architecture.sh`
+- Source-runtime workspace override smoke: adapter initialized with a wrong workspace and rebuilt Kimi CLI args to `--work-dir /Users/oleksandroliinyk/VSCODE/CodeAI-Hub kimi`.
+- Source-runtime Kimi turn smoke after workspace override: emitted `turn_started`, aggregated `thinking`, aggregated `assistant`, then `turn_completed`.
+
 ## [1.2.308] - 2026-05-18
 ### Fixed
 - **Kimi responses now appear in the dialog history.** Kimi Wire `ContentPart` records are normalized into Core-compatible root `assistant.content` and `thinking.content` events instead of ignored `assistant_delta` events.
