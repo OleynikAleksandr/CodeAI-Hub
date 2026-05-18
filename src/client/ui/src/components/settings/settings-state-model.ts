@@ -53,7 +53,7 @@ export type {
   GeneralResponsePolicySettings,
 } from "./general-response-mode/response-mode-state";
 
-export type ProviderId = "claude" | "codex" | "gemini";
+export type ProviderId = "claude" | "codex" | "gemini" | "kimi";
 
 export type { ProviderVersions, VersionEntry } from "./provider-versions-model";
 export type { RawSettingsSnapshot } from "./settings-state-raw";
@@ -116,6 +116,7 @@ interface GeminiSettingsWithDisplaySync extends GeminiSettings {
 interface KimiSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: typeof DEFAULT_KIMI_MODEL_ID;
+  readonly thinkingDisplaySyncEnabled: boolean;
 }
 export interface Settings {
   readonly general: GeneralSettings;
@@ -151,7 +152,6 @@ const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce<
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
-
 const mapLocalizationString = (value: unknown, fallback: string): string => {
   const normalized = typeof value === "string" ? value.trim() : "";
   if (normalized.length === 0) {
@@ -162,7 +162,6 @@ const mapLocalizationString = (value: unknown, fallback: string): string => {
     ? DEFAULT_LOCALIZATION_LANGUAGE
     : normalized;
 };
-
 const resolveLocalizationCategory = (
   value: RawLocalizationCategorySettings | undefined,
   candidateKeys: readonly (keyof RawLocalizationCategorySettings)[],
@@ -177,7 +176,6 @@ const resolveLocalizationCategory = (
 
   return fallback;
 };
-
 const deriveWorkflowTermsPolicy = (
   uiLabelsLanguage: string
 ): LocalizationWorkflowTermsPolicy =>
@@ -187,7 +185,6 @@ const deriveWorkflowTermsPolicy = (
 
 const mapThinkingDisplaySyncEnabled = (value: unknown): boolean =>
   typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
-
 const mapCodexReasoningSummaryEnabled = (
   value: unknown,
   legacyValue: unknown
@@ -198,7 +195,6 @@ const mapCodexReasoningSummaryEnabled = (
 
   return mapThinkingDisplaySyncEnabled(legacyValue);
 };
-
 const mapAutoUpdateSettings = (
   value: RawAutoUpdateSettings | undefined
 ): AutoUpdateSettings => ({
@@ -386,6 +382,9 @@ const mapCodexSettings = (
 const mapKimiSettings = (value: RawKimiSettings | undefined): KimiSettings => ({
   autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
   defaultModel: DEFAULT_KIMI_MODEL_ID,
+  thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
+    value?.thinkingDisplaySyncEnabled
+  ),
 });
 
 export const mapSettingsSnapshot = (

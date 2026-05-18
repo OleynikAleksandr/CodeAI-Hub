@@ -43,6 +43,7 @@ export interface RawGeminiSettings {
 export interface RawKimiSettings {
   readonly autoUpdate?: RawAutoUpdateSettings;
   readonly defaultModel?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
 }
 export interface RawCoreControlsSettings {
   readonly allowRestart?: unknown;
