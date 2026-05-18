@@ -17,10 +17,12 @@ interface ActiveKimiSession {
 
 export class KimiSessionStaleBindingError extends Error {
   readonly code = KIMI_SESSION_STALE_BINDING_ERROR_CODE;
+  readonly providerSessionId: string;
 
-  constructor(sessionId: string) {
-    super(`Kimi session binding is stale: ${sessionId}`);
+  constructor(providerSessionId: string) {
+    super(`Kimi session binding is stale: ${providerSessionId}`);
     this.name = "KimiSessionStaleBindingError";
+    this.providerSessionId = providerSessionId;
   }
 }
 

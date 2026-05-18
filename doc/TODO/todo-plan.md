@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "690657037",
+  "lastRecordedCommit": "246468527",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase4-kimi-model-identity",
-  "expectedCommitMessage": "feat: add kimi model identity settings",
+  "currentTaskId": "phase4-kimi-stale-binding-core",
+  "expectedCommitMessage": "feat: add kimi stale binding recovery",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi model identity settings",
-    "preCommitHead": "690657037",
+    "expectedCommitMessage": "feat: add kimi stale binding recovery",
+    "preCommitHead": "246468527",
     "stage": "commit_pending",
-    "taskId": "phase4-kimi-model-identity"
+    "taskId": "phase4-kimi-stale-binding-core"
   }
 }
 ```
@@ -117,11 +117,11 @@
 
 ### Stream: Effective Model Identity
 1. [DONE] `phase4-kimi-model-identity` Добавить Kimi default model identity (`kimi-for-coding`) и settings/applied-turn-config path без перезаписи существующих sessions — scope: `packages/core/src/config, packages/core/src/session-model-binding, src/types`; expected commit: `feat: add kimi model identity settings`.
-2. [PENDING] Git Commit: `feat: add kimi model identity settings` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi model identity settings` (hash: 246468527)
 
 ### Stream: Core Stale-Binding Recovery
-1. [TODO] `phase4-kimi-stale-binding-core` Подключить `KIMI_SESSION_STALE_BINDING` к Core one-shot stale-binding recovery path и post-rebind lifecycle без silent drop — scope: `packages/core/src/remote-bridge/handlers, packages/Kimi_Module`; expected commit: `feat: add kimi stale binding recovery`.
-2. [TODO] Git Commit: `feat: add kimi stale binding recovery` (hash: TBD)
+1. [DONE] `phase4-kimi-stale-binding-core` Подключить `KIMI_SESSION_STALE_BINDING` к Core one-shot stale-binding recovery path и post-rebind lifecycle без silent drop — scope: `packages/core/src/remote-bridge/handlers, packages/Kimi_Module`; expected commit: `feat: add kimi stale binding recovery`.
+2. [PENDING] Git Commit: `feat: add kimi stale binding recovery` (hash: TBD)
 
 ## Phase 5 — Project Manager And Settings Integration (owner: Codex, updated: 2026-05-18)
 ### Stream: Shared Provider Catalog

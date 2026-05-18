@@ -36,6 +36,23 @@ const createCodexBinding = (
   updatedAt: "2026-05-03T08:45:00.000Z",
 });
 
+const createKimiBinding = (
+  sessionId: string,
+  workspacePath: string
+): SessionModelBinding => ({
+  key: buildSessionModelBindingKey({
+    providerId: "kimiCode",
+    sessionId,
+    workspacePath,
+  }),
+  providerId: "kimiCode",
+  baseModelId: "kimi-for-coding",
+  modelId: "kimi-for-coding",
+  source: "start_step_selection",
+  boundAt: "2026-05-18T08:45:00.000Z",
+  updatedAt: "2026-05-18T08:45:00.000Z",
+});
+
 const createCodexStaleBindingError = (
   providerSessionId: string
 ): Error & { code: string; providerSessionId: string } => {
@@ -44,6 +61,18 @@ const createCodexStaleBindingError = (
     providerSessionId: string;
   };
   error.code = "CODEX_SESSION_STALE_BINDING";
+  error.providerSessionId = providerSessionId;
+  return error;
+};
+
+const createKimiStaleBindingError = (
+  providerSessionId: string
+): Error & { code: string; providerSessionId: string } => {
+  const error = new Error("Kimi session binding is stale") as Error & {
+    code: string;
+    providerSessionId: string;
+  };
+  error.code = "KIMI_SESSION_STALE_BINDING";
   error.providerSessionId = providerSessionId;
   return error;
 };
@@ -157,6 +186,101 @@ test("Codex stale-binding retry preserves workflow context and applied turn conf
       false
     );
     assert.equal(reboundSession?.pendingModelSwitchInjection, false);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Kimi stale-binding retry rebinds and resends with model identity", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "kimi-stale-rebind-")
+  );
+  try {
+    const harness = createHarness();
+    stubDescriptionDialogSync(harness);
+    const oldProviderSessionId = "kimi-session-stale";
+    const newProviderSessionId = "kimi-session-rebound";
+    const session = harness.sessionManager.createSession(
+      "kimiCode",
+      workspaceRoot,
+      oldProviderSessionId,
+      {
+        initiativeSlug: "workflow-context",
+        runSlug: null,
+        stage: "diagram_modules",
+      }
+    );
+    harness.sessionManager.setModelBinding(
+      session.id,
+      createKimiBinding(session.id, workspaceRoot)
+    );
+    harness.providerSessions.set(session.id, {
+      providerId: "kimiCode",
+      providerSessionId: oldProviderSessionId,
+      unsubscribe: noop,
+    });
+
+    const createCalls: string[] = [];
+    const subscribeCalls: string[] = [];
+    const sendCalls: SendCall[] = [];
+    const adapter = {
+      createSession: (requestedWorkspacePath: string) => {
+        createCalls.push(requestedWorkspacePath);
+        return Promise.resolve(newProviderSessionId);
+      },
+      sendMessage: (
+        providerSessionId: string,
+        content: string,
+        turnOptions?: Record<string, unknown>
+      ) => {
+        sendCalls.push({ content, providerSessionId, turnOptions });
+        if (providerSessionId === oldProviderSessionId) {
+          return Promise.reject(createKimiStaleBindingError(providerSessionId));
+        }
+        return Promise.resolve();
+      },
+      subscribe: (providerSessionId: string) => {
+        subscribeCalls.push(providerSessionId);
+        return noop;
+      },
+    };
+    harness.providerRegistry.getAdapter = () => adapter;
+    (
+      harness.providerRegistry as unknown as {
+        getDescriptor: () => {
+          readonly capabilities: { readonly requiresPostStopResume: false };
+        };
+      }
+    ).getDescriptor = () => ({
+      capabilities: { requiresPostStopResume: false },
+    });
+
+    await harness.handler.handleMessage(session.id, "continue with kimi");
+
+    assert.deepEqual(createCalls, [workspaceRoot]);
+    assert.deepEqual(subscribeCalls, [newProviderSessionId]);
+    assert.deepEqual(
+      sendCalls.map((call) => call.providerSessionId),
+      [oldProviderSessionId, newProviderSessionId]
+    );
+
+    const retryTurnConfig = readAppliedProviderTurnConfig(
+      sendCalls[1]?.turnOptions
+    );
+    assert.equal(retryTurnConfig?.providerId, "kimiCode");
+    assert.equal(retryTurnConfig?.source, "session_binding");
+    assert.equal(retryTurnConfig?.baseModelId, "kimi-for-coding");
+    assert.equal(retryTurnConfig?.effectiveModelId, "kimi-for-coding");
+
+    const reboundSession = harness.sessionManager.getSession(session.id);
+    assert.equal(reboundSession?.initiativeSlug, "workflow-context");
+    assert.equal(reboundSession?.stage, "diagram_modules");
+    assert.equal(reboundSession?.runSlug, null);
+    assert.equal(reboundSession?.providerSessionId, newProviderSessionId);
+    assert.equal(
+      harness.sessionManager.hasStopInvalidatedBinding(session.id),
+      false
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
