@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.308] - 2026-05-18
+### Fixed
+- **Kimi responses now appear in the dialog history.** Kimi Wire `ContentPart` records are normalized into Core-compatible root `assistant.content` and `thinking.content` events instead of ignored `assistant_delta` events.
+- **Kimi streaming chunks are aggregated per turn.** The adapter buffers Kimi `think` and `text` chunks and flushes one thinking message and one assistant message before `turn_completed`, preventing token-sized dialog bubbles while preserving Core message persistence order.
+- **Managed Kimi turns run in the intended workspace.** Kimi Wire startup now includes `--work-dir <workspace>` and uses protocol-compatible approval response literals, so artifact-writing managed workflow prompts no longer run relative to `/`.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run test --workspace=@codeai-hub/kimi-module`
+- `npm run check:knip`
+- Live Kimi Wire smoke: a short prompt emitted one aggregated `thinking`, one aggregated `assistant`, then `turn_completed`.
+
 ## [1.2.307] - 2026-05-18
 ### Fixed
 - **Kimi sessions bind to Core session shells correctly.** The Kimi provider facade now implements the required `ProviderAdapter.subscribe(...)` method, preventing installed Kimi sessions from closing before the first prompt is displayed or dispatched.

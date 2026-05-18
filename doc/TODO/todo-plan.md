@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "30d19b106",
+  "lastRecordedCommit": "cdebcef13",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-content-part-aggregation-fix",
-  "expectedCommitMessage": "fix: aggregate kimi wire content parts",
+  "currentTaskId": "phase8-kimi-message-hotfix-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi message hotfix release notes",
   "debt": {
-    "expectedCommitMessage": "fix: aggregate kimi wire content parts",
-    "preCommitHead": "30d19b106",
+    "expectedCommitMessage": "docs: prepare kimi message hotfix release notes",
+    "preCommitHead": "cdebcef13",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-content-part-aggregation-fix"
+    "taskId": "phase8-kimi-message-hotfix-release-notes"
   }
 }
 ```
@@ -265,7 +265,18 @@
    - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
    - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed.
    - Verification: source-runtime Kimi smoke passed; a live short prompt emitted one aggregated `thinking`, one aggregated `assistant`, then `turn_completed`.
-2. [PENDING] Git Commit: `fix: aggregate kimi wire content parts` (hash: TBD)
+2. [DONE] Git Commit: `fix: aggregate kimi wire content parts` (hash: cdebcef13)
+
+### Stream: Message Hotfix Release Confirmation Gate
+1. [DONE] `phase8-kimi-message-hotfix-release-confirmation` Остановиться после фиксов Kimi managed runtime/message materialization/content aggregation и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «И собери новый релиз».
+
+### Stream: Message Hotfix Release Build
+1. [DONE] `phase8-kimi-message-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.308 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi message hotfix release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi message hotfix release notes` (hash: TBD)
+3. [TODO] `phase8-kimi-message-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi message hotfix release build started`.
+4. [TODO] Git Commit: `docs: mark kimi message hotfix release build started` (hash: TBD)
+5. [TODO] `phase8-kimi-message-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi message hotfix build`.
+6. [TODO] Git Commit: `chore: release kimi message hotfix build` (hash: TBD)
 
 ### Stream: Subscribe Contract Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».
