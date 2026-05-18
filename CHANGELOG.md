@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.301] - 2026-05-18
+### Fixed
+- **Description and Virtual Simulation startup prompts now reach the provider even when they mention `подтверждаю`.** Core no longer runs provider-direct preliminary stages through the managed review acceptance classifier, so the initial complex prompt is not consumed as a false user confirmation.
+- **Preliminary steps stay separate from managed technical orchestration.** The old preliminary handoff hook was removed; Diagram Modules and later managed stages keep their Core-owned `Подтверждаю` acceptance flow, while Description and Virtual Simulation start as direct provider work.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.300] - 2026-05-18
 ### Fixed
 - **Description and Virtual Simulation no longer show a premature Core completion card at session start.** Core suppresses the preliminary review handoff for these provider-direct steps even when canonical artifacts already exist on disk, so the agent starts normally after the initial prompt.

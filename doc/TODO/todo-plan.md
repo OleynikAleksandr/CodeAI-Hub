@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "7827efdfb",
+  "lastRecordedCommit": "f185a940d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase11.feedback.verify.task1",
-  "expectedCommitMessage": "test: verify preliminary provider routing",
+  "currentTaskId": "pm-sidebar-settings.phase12.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.301 release",
   "debt": {
-    "expectedCommitMessage": "test: verify preliminary provider routing",
-    "preCommitHead": "7827efdfb",
+    "expectedCommitMessage": "docs: prepare 1.2.301 release",
+    "preCommitHead": "f185a940d",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase11.feedback.verify.task1"
+    "taskId": "pm-sidebar-settings.phase12.release.docs.task1"
   }
 }
 ```
@@ -235,18 +235,37 @@
     - Verification 2026-05-18: `npm run typecheck:webview` passed.
     - Verification 2026-05-18: `npm run build:webview` passed.
     - Verification 2026-05-18: `npm run build:project-manager` passed.
-56. [PENDING] Git Commit: `test: verify preliminary provider routing` (hash: TBD)
+56. [DONE] Git Commit: `test: verify preliminary provider routing` (hash: f185a940d)
 
-## Phase 12 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
+## Phase 12 - Release Build For Retest (owner: Codex, updated: 2026-05-18)
+
+### Stream: Release Confirmation Gate
+
+57. [DONE] `pm-sidebar-settings.phase12.release.confirm.task1` Wait for explicit user confirmation before preparing or building the next retest release after the preliminary router separation fix (scope: user release confirmation only; expected commit: none). Result: User confirmed release build for v1.2.301 after the v1.2.300 retest still showed premature Description completion.
+
+### Stream: Release Preparation
+
+58. [DONE] `pm-sidebar-settings.phase12.release.docs.task1` After release confirmation, update release notes for v1.2.301 before version bump/build so packaged README/CHANGELOG include the provider-direct preliminary routing fix (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.301 release`).
+    - Release docs 2026-05-18: `README.md` Current Release and `CHANGELOG.md` now describe v1.2.301 provider-direct preliminary routing fix.
+59. [PENDING] Git Commit: `docs: prepare 1.2.301 release` (hash: TBD)
+
+### Stream: Release Automation
+
+60. [TODO] `pm-sidebar-settings.phase12.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.301 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.301 artifacts`).
+61. [TODO] Git Commit: `chore: build release 1.2.301 artifacts` (hash: TBD)
+62. [TODO] `pm-sidebar-settings.phase12.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.301 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.301 vsix`).
+63. [TODO] Git Commit: `chore: package release 1.2.301 vsix` (hash: TBD)
+
+## Phase 13 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
 ### Stream: User Retest
 
-57. [TODO] `pm-sidebar-settings.phase12.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, Diagram Modules confirmation still opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
+64. [TODO] `pm-sidebar-settings.phase13.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, Diagram Modules confirmation still opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
 
-## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-05-18)
+## Phase 14 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-58. [TODO] `pm-sidebar-settings.phase13.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-59. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-60. [TODO] `pm-sidebar-settings.phase13.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+65. [TODO] `pm-sidebar-settings.phase14.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+66. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+67. [TODO] `pm-sidebar-settings.phase14.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
