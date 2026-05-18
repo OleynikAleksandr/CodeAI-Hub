@@ -39,6 +39,9 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 ## Event normalization
 - Wire `TurnBegin` / `TurnEnd` becomes Core provider lifecycle events.
 - Wire content/progress notifications become normalized assistant/progress events on the same provider event surface used by the existing providers.
+- Wire `ContentPart(type="think")` materializes as Core `thinking` messages tagged `thinking`; visibility is decided by Core at emission time from `providers.kimi.thinkingDisplaySyncEnabled`, the same user-facing dialog policy used by other providers.
+- Reasoning/thinking messages render as expanded dialog bubbles when visible; the old collapsed disclosure UI is not part of the current provider UX contract.
+- Stateful Kimi normalization buffers small `think` chunks, flushes them at tool/step boundaries, and also emits bounded intermediate thinking blocks once accumulated reasoning reaches a safe text boundary or size threshold. It must not forward token-level reasoning fragments as separate dialog messages.
 - Wire provider `request` envelopes are normalized before they reach Core. First release policy is deny-by-default for provider requests until a provider-neutral approval/tool contract is explicitly implemented.
 - Auth, quota, service, unsupported-model and stale-session failures must be classified before binding teardown so Core can retry/rebind once or show a provider recovery surface instead of silently dropping the user message.
 
@@ -50,9 +53,10 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 
 ## Effective model identity and settings
 - Kimi default model belongs to shared provider settings, not to Project Manager local state.
-- Settings persist `providers.kimi.defaultModel` and `providers.kimi.autoUpdate`; UI cards and workflow start cards read/write through the shared settings contract.
+- Settings persist `providers.kimi.defaultModel`, `providers.kimi.autoUpdate`, and `providers.kimi.thinkingDisplaySyncEnabled`; UI cards and workflow start cards read/write through the shared settings contract.
 - Core-applied turn config remains authoritative for outbound sends. Provider-local defaults are only bootstrap fallback.
 - Kimi has no reasoning/thinking effort dimension in the current release. UI surfaces must not synthesize a hidden effort field.
+- Prompt/system-instruction cadence can ask Kimi for visible progress updates, but it is not a reliable substitute for Wire event handling: during a long tool call the model may emit no new text, so the adapter must rely on Wire `think` chunks and progress events for live UX.
 
 ## Project Manager surfaces
 - Kimi must be visible anywhere users choose or inspect a provider: Settings provider card, Description submit provider picker, workflow start cards, Development Tree start/fix cards, Session UI status-line/model chip, provider labels, and provider color/theme mapping.

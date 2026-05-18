@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
 import { useLocalization } from "../app-host/use-localization";
 import {
@@ -30,12 +30,10 @@ interface DialogPanelProps {
 
 interface ThinkingMessageProps {
   readonly className: string;
-  readonly expanded: boolean;
   readonly label: string;
   readonly message: SessionMessage;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly onSpeakMessage?: (message: SessionMessage) => void;
-  readonly onToggle: (messageId: string) => void;
   readonly speakingMessageId?: string | null;
 }
 
@@ -70,34 +68,7 @@ const DialogPanel = ({
     () => mergeLiveAssistantMessages(mergeThinkingMessages(messages)),
     [messages]
   );
-  const [expandedThinking, setExpandedThinking] = useState<
-    Record<string, boolean>
-  >({});
   const [pinnedToBottom, setPinnedToBottom] = useState(true);
-
-  useEffect(() => {
-    setExpandedThinking((previous) => {
-      let hasChanges = false;
-      const nextState = { ...previous };
-      for (const message of displayMessages) {
-        if (
-          message.role === "thinking" &&
-          nextState[message.id] === undefined
-        ) {
-          nextState[message.id] = false;
-          hasChanges = true;
-        }
-      }
-      return hasChanges ? nextState : previous;
-    });
-  }, [displayMessages]);
-
-  const toggleThinking = (messageId: string) => {
-    setExpandedThinking((previous) => ({
-      ...previous,
-      [messageId]: !previous[messageId],
-    }));
-  };
 
   const updatePinnedState = () => {
     const container = scrollContainerRef.current;
@@ -179,17 +150,14 @@ const DialogPanel = ({
             : classNameBase;
           const label = resolveRoleLabel(message, providerLabel);
           if (message.role === "thinking") {
-            const expanded = expandedThinking[message.id] ?? false;
             return (
               <ThinkingMessage
                 className={className}
-                expanded={expanded}
                 key={message.id}
                 label={label}
                 message={message}
                 onFileLinkActivate={onFileLinkActivate}
                 onSpeakMessage={onSpeakMessage}
-                onToggle={toggleThinking}
                 speakingMessageId={speakingMessageId}
               />
             );
@@ -217,62 +185,30 @@ export default DialogPanel;
 
 const ThinkingMessage = ({
   message,
-  expanded,
-  onToggle,
   onFileLinkActivate,
   onSpeakMessage,
   speakingMessageId,
   label,
   className,
-}: ThinkingMessageProps) => {
-  const { t } = useLocalization();
-  const hideReasoningLabel = t(
-    "ui_interface",
-    "session.dialog.hide_reasoning_label",
-    "Hide reasoning"
-  );
-  const showReasoningLabel = t(
-    "ui_interface",
-    "session.dialog.show_reasoning_label",
-    "Show reasoning"
-  );
-
-  return (
-    <article className={className}>
-      <header className="session-dialog__message-header session-dialog__message-header--thinking">
-        <button
-          aria-controls={`thinking-${message.id}`}
-          aria-expanded={expanded}
-          className={
-            expanded
-              ? "session-dialog__thinking-toggle session-dialog__thinking-toggle--expanded"
-              : "session-dialog__thinking-toggle"
-          }
-          onClick={() => onToggle(message.id)}
-          title={expanded ? hideReasoningLabel : showReasoningLabel}
-          type="button"
-        >
-          {expanded ? "▾" : "▸"}
-        </button>
-        <span className="session-dialog__role">{label}</span>
-        <SpeakMessageButton
-          active={speakingMessageId === message.id}
-          label={label}
-          onClick={() => onSpeakMessage?.(message)}
-        />
-      </header>
-      {expanded ? (
-        <MarkdownContent
-          allowEmphasis={false}
-          className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
-          content={resolveDisplayContent(message)}
-          id={`thinking-${message.id}`}
-          onFileLinkActivate={onFileLinkActivate}
-        />
-      ) : null}
-    </article>
-  );
-};
+}: ThinkingMessageProps) => (
+  <article className={className}>
+    <header className="session-dialog__message-header session-dialog__message-header--thinking">
+      <span className="session-dialog__role">{label}</span>
+      <SpeakMessageButton
+        active={speakingMessageId === message.id}
+        label={label}
+        onClick={() => onSpeakMessage?.(message)}
+      />
+    </header>
+    <MarkdownContent
+      allowEmphasis={false}
+      className="session-dialog__content session-dialog__content--thinking session-dialog__content--thinking-expanded"
+      content={resolveDisplayContent(message)}
+      id={`thinking-${message.id}`}
+      onFileLinkActivate={onFileLinkActivate}
+    />
+  </article>
+);
 
 const StandardMessage = ({
   message,

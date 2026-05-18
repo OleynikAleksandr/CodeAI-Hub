@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "b65b18080",
+  "lastRecordedCommit": "068b483a4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-reasoning-streaming",
-  "expectedCommitMessage": "fix: stream kimi reasoning chunks earlier",
+  "currentTaskId": "phase8-kimi-reasoning-panel-expanded",
+  "expectedCommitMessage": "fix: expand reasoning dialog panel",
   "debt": {
-    "expectedCommitMessage": "fix: stream kimi reasoning chunks earlier",
-    "preCommitHead": "b65b18080",
+    "expectedCommitMessage": "fix: expand reasoning dialog panel",
+    "preCommitHead": "068b483a4",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-reasoning-streaming"
+    "taskId": "phase8-kimi-reasoning-panel-expanded"
   }
 }
 ```
@@ -393,9 +393,9 @@
 11. [DONE] `phase8-kimi-reasoning-translation-visibility` Добавить Kimi в Core translation/visibility provider mapping, чтобы hidden/visible-at-emission и translation skip подчинялись Kimi checkbox — scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/session-translation/session-translation-policy-resolver.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`; expected commit: `fix: route kimi reasoning visibility through core translation`.
 12. [DONE] Git Commit: `fix: route kimi reasoning visibility through core translation` (hash: b65b18080)
 13. [DONE] `phase8-kimi-reasoning-streaming` Улучшить Kimi reasoning streaming: flush accumulated `ContentPart(type=think)` по bounded chunks до tool/turn boundaries, сохраняя Core-compatible thinking bubbles и не создавая token-level message spam — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: stream kimi reasoning chunks earlier`.
-14. [PENDING] Git Commit: `fix: stream kimi reasoning chunks earlier` (hash: TBD)
-15. [TODO] `phase8-kimi-reasoning-docs` Синхронизировать Kimi SSOT: reasoning toggle contract, bounded streaming behavior и ограничение system-instruction cadence для Kimi Wire — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi reasoning display behavior`.
-16. [TODO] Git Commit: `docs: document kimi reasoning display behavior` (hash: TBD)
+14. [DONE] Git Commit: `fix: stream kimi reasoning chunks earlier` (hash: 068b483a4)
+15. [DONE] `phase8-kimi-reasoning-panel-expanded` Исправить устаревшее свернутое поведение reasoning/thinking плашки: содержимое должно быть видно сразу, а Kimi SSOT должен фиксировать тот же dialog behavior — scope: `src/client/ui/src/session/dialog-panel.tsx, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: expand reasoning dialog panel`.
+16. [PENDING] Git Commit: `fix: expand reasoning dialog panel` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
