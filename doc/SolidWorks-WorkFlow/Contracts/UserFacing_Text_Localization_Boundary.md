@@ -183,5 +183,5 @@ If any answer is unclear, the task is not complete.
 ## 7. Related SSOT
 
 - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
+- `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
 - `doc/SolidWorks-WorkFlow/Modules/Localization.md`
-- `doc/SolidWorks-WorkFlow/Plans/Workflow_Prompt_Language_Contract_Architecture.md`

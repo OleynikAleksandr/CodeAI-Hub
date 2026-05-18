@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "4f455ddb3",
+  "lastRecordedCommit": "618f446db",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase15.docs.step-contracts.task1",
-  "expectedCommitMessage": "docs: document preliminary review gate contracts",
+  "currentTaskId": "pm-sidebar-settings.phase16.plans-audit.task1",
+  "expectedCommitMessage": "docs: clean stale plans references",
   "debt": {
-    "expectedCommitMessage": "docs: document preliminary review gate contracts",
-    "preCommitHead": "4f455ddb3",
+    "expectedCommitMessage": "docs: clean stale plans references",
+    "preCommitHead": "618f446db",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase15.docs.step-contracts.task1"
+    "taskId": "pm-sidebar-settings.phase16.plans-audit.task1"
   }
 }
 ```
@@ -306,18 +306,25 @@
 75. [DONE] `pm-sidebar-settings.phase15.docs.review-gate.task1` Clarify the Core-owned preliminary review gate in system/session workflow SSOT docs, including repeated post-turn gate behavior and UI button acceptance (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `docs: clarify preliminary review gate behavior`).
 76. [DONE] Git Commit: `docs: clarify preliminary review gate behavior` (hash: 4f455ddb3)
 77. [DONE] `pm-sidebar-settings.phase15.docs.step-contracts.task1` Clarify Description, Virtual Simulation, and orchestration boundary contracts for the same repeated review-card and `Подтверждаю` button semantics (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md, doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `docs: document preliminary review gate contracts`).
-78. [PENDING] Git Commit: `docs: document preliminary review gate contracts` (hash: TBD)
+78. [DONE] Git Commit: `docs: document preliminary review gate contracts` (hash: 618f446db)
 
-## Phase 16 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
+## Phase 16 - Plans Relevance Audit (owner: Codex, updated: 2026-05-18)
+
+### Stream: Active Plans Reference Cleanup
+
+79. [DONE] `pm-sidebar-settings.phase16.plans-audit.task1` Audit active `doc/SolidWorks-WorkFlow/Plans/` entries, fix stale `Plans/` references that already moved to archive or SSOT, and record which active plans remain deferred/reference sources (scope: `doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Contracts/UserFacing_Text_Localization_Boundary.md`; expected commit: `docs: clean stale plans references`).
+80. [PENDING] Git Commit: `docs: clean stale plans references` (hash: TBD)
+
+## Phase 17 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
 ### Stream: User Retest
 
-79. [TODO] `pm-sidebar-settings.phase16.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, show the post-turn Core review card with `Подтверждаю`, repeat that review card after agent revisions, and the confirmation button opens the next step card (scope: user visual acceptance only; expected commit: none).
+81. [TODO] `pm-sidebar-settings.phase17.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, show the post-turn Core review card with `Подтверждаю`, repeat that review card after agent revisions, and the confirmation button opens the next step card (scope: user visual acceptance only; expected commit: none).
 
-## Phase 17 - Scope Closeout (owner: Codex, updated: 2026-05-18)
+## Phase 18 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-80. [TODO] `pm-sidebar-settings.phase17.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-81. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-82. [TODO] `pm-sidebar-settings.phase17.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+82. [TODO] `pm-sidebar-settings.phase18.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+83. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+84. [TODO] `pm-sidebar-settings.phase18.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
