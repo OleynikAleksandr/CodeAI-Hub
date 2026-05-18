@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import type { KimiModelId } from "../../../../types/kimi-model-registry";
 import { useLocalization } from "../app-host/use-localization";
 import vscode from "../vscode";
 import ClaudeDefaultModelCard from "./settings/claude-default-model/claude-default-model-card";
@@ -6,6 +7,7 @@ import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-
 import GeminiDefaultModelCard from "./settings/gemini-default-model/gemini-default-model-card";
 import GeneralResponseModeFacade from "./settings/general-response-mode/general-response-mode-facade";
 import GeneralSettings from "./settings/general-settings";
+import KimiDefaultModelCard from "./settings/kimi-default-model-card";
 import LocalizationSettingsCard from "./settings/localization-settings-card";
 import ProviderVersions from "./settings/provider-versions";
 import SessionContinuityCard from "./settings/session-continuity-card";
@@ -24,6 +26,7 @@ import type { UseSettingsStateResult } from "./settings/use-settings-state";
 type SettingsMode = "full" | "project-manager" | "settings-only";
 
 type SettingsViewState = UseSettingsStateResult & {
+  readonly handleKimiDefaultModelChange?: (modelId: KimiModelId) => void;
   readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
   readonly hostPostMessage?: (message: unknown) => void;
   readonly supportsCoreRestart?: boolean;
@@ -35,7 +38,7 @@ interface SettingsViewProps {
   readonly state: SettingsViewState;
 }
 
-type SettingsTab = "claude" | "codex" | "gemini" | "general";
+type SettingsTab = "claude" | "codex" | "gemini" | "kimi" | "general";
 
 const containerStyles: React.CSSProperties = {
   height: "100%",
@@ -136,6 +139,7 @@ const settingsTabs: ReadonlyArray<{
   { id: "claude", label: "Claude" },
   { id: "codex", label: "Codex" },
   { id: "gemini", label: "Gemini" },
+  { id: "kimi", label: "Kimi" },
   { id: "general", label: "General" },
 ];
 
@@ -161,6 +165,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleCodexDefaultModelChange,
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
+    handleKimiDefaultModelChange,
     handleGeminiThinkingChange,
     handleClaudeThinkingDisplaySyncChange,
     handleCodexThinkingDisplaySyncChange,
@@ -398,6 +403,16 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                       .remainingPercentThreshold
                   }
                   title="Codex Session Continuity"
+                />
+              </div>
+            );
+          }
+          if (activeTab === "kimi") {
+            return (
+              <div style={stackStyles}>
+                <KimiDefaultModelCard
+                  defaultModel={settings.providers.kimi?.defaultModel}
+                  onDefaultModelChange={handleKimiDefaultModelChange}
                 />
               </div>
             );

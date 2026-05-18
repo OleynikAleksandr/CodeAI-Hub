@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "24bba8665",
+  "lastRecordedCommit": "d4625d96d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-settings-state",
-  "expectedCommitMessage": "feat: add kimi settings state",
+  "currentTaskId": "phase5-kimi-settings-card",
+  "expectedCommitMessage": "feat: add kimi settings card",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi settings state",
-    "preCommitHead": "24bba8665",
+    "expectedCommitMessage": "feat: add kimi settings card",
+    "preCommitHead": "d4625d96d",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-settings-state"
+    "taskId": "phase5-kimi-settings-card"
   }
 }
 ```
@@ -134,11 +134,11 @@
 
 ### Stream: Settings State And Persistence
 1. [DONE] `phase5-kimi-settings-state` Добавить Kimi в settings schema/default mapping/raw snapshot без ломки существующих Claude/Codex/Gemini settings — scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/settings-state-helpers.ts`; expected commit: `feat: add kimi settings state`.
-2. [PENDING] Git Commit: `feat: add kimi settings state` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi settings state` (hash: d4625d96d)
 
 ### Stream: Settings UI Card
-1. [TODO] `phase5-kimi-settings-card` Добавить отдельную Kimi settings card/tab для default model, provider-home note и availability/update controls — scope: `src/client/ui/src/components/settings/kimi-default-model-card.tsx, src/client/ui/src/components/settings/settings-view.tsx, src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; expected commit: `feat: add kimi settings card`.
-2. [TODO] Git Commit: `feat: add kimi settings card` (hash: TBD)
+1. [DONE] `phase5-kimi-settings-card` Добавить отдельную Kimi settings card/tab для default model, provider-home note и availability/update controls — scope: `src/client/ui/src/components/settings/kimi-default-model-card.tsx, src/client/ui/src/components/settings-view.tsx, src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; expected commit: `feat: add kimi settings card`.
+2. [PENDING] Git Commit: `feat: add kimi settings card` (hash: TBD)
 
 ### Stream: Description Submit Provider Picker
 1. [TODO] `phase5-kimi-description-submit-picker` Убедиться, что Description submit provider picker принимает `kimiCode`, показывает Kimi label/model и передаёт providerId в Core без отдельной client authority — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, src/client/project-manager/services/description-submit-service.ts`; expected commit: `feat: add kimi description provider picker`.

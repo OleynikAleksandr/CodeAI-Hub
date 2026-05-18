@@ -7,6 +7,7 @@ import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../types/gemini-model-registry";
+import type { KimiModelId } from "../../../../types/kimi-model-registry";
 import type {
   UseSettingsStateResult,
   CoreControlState,
@@ -66,7 +67,6 @@ import {
 } from "./project-manager-settings-host-message";
 import { startProjectManagerNativeRequestCapture } from "./native-request-capture-runner";
 import { useProjectManagerSettings } from "./use-project-manager-settings";
-
 const PM_CORE_CONTROL_STATE: CoreControlState = {
   busy: false,
   message: null,
@@ -104,6 +104,7 @@ const isNativeRequestCaptureResultPayload = (
 export type UseProjectManagerSettingsStateResult =
   UseSettingsStateResult &
     TemplateUpdateSettingsControls & {
+      readonly handleKimiDefaultModelChange: (modelId: KimiModelId) => void;
       readonly handleNativeRequestCaptureWorkbenchOpen: () => void;
       readonly hostPostMessage: (message: unknown) => void;
       readonly supportsCoreRestart: false;
@@ -147,13 +148,6 @@ export const useProjectManagerSettingsState =
       const payload = transport.userGlossaryFile;
       const glossaryPath = payload?.path ?? null;
       if (!glossaryPath) {
-        lastOpenedGlossaryPathRef.current = null;
-        if (typeof payload?.error === "string" && payload.error.trim().length > 0) {
-          console.warn(
-            "[ProjectManagerSettings] Failed to open user glossary file",
-            payload.error
-          );
-        }
         return;
       }
       if (glossaryPath === lastOpenedGlossaryPathRef.current) {
@@ -373,6 +367,18 @@ export const useProjectManagerSettingsState =
       [settings, updateSettings]
     );
 
+    const handleKimiDefaultModelChange = (defaultModel: KimiModelId) =>
+      updateSettings({
+        ...settings,
+        providers: {
+          ...settings.providers,
+          kimi: {
+            autoUpdate: settings.providers.kimi?.autoUpdate ?? { enabled: false },
+            defaultModel,
+          },
+        },
+      });
+
     const handleGeminiThinkingChange = useCallback(
       (modelId: GeminiModelId, level: GeminiThinkingLevel) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
@@ -421,11 +427,7 @@ export const useProjectManagerSettingsState =
           setNativeRequestCapture,
         });
       },
-      [
-        context.activeWorkspaceName,
-        context.activeWorkspacePath,
-        context.activeWorkspaceSlug,
-      ]
+      [context]
     );
 
     const handleNativeRequestCaptureWorkbenchOpen = useCallback(() => {
@@ -465,6 +467,7 @@ export const useProjectManagerSettingsState =
       handleClaudeDefaultModelChange,
       handleCodexDefaultModelChange,
       handleGeminiDefaultModelChange,
+      handleKimiDefaultModelChange,
       handleGeminiThinkingChange,
       handleClaudeThinkingDisplaySyncChange,
       handleCodexReasoningChange,
