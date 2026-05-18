@@ -1,4 +1,9 @@
-export type ProviderStackId = "claudeCodeCli" | "codexCli" | "geminiCli";
+export type KnownProviderStackId =
+  | "claudeCodeCli"
+  | "codexCli"
+  | "geminiCli"
+  | "kimiCode";
+export type ProviderStackId = string;
 
 export interface ProviderStackDescriptor {
   readonly connected: boolean;
@@ -8,18 +13,20 @@ export interface ProviderStackDescriptor {
   readonly title: string;
 }
 
-const PROVIDER_TITLE_MAP: Record<ProviderStackId, string> = {
+const PROVIDER_TITLE_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Claude",
   codexCli: "Codex",
   geminiCli: "Gemini",
+  kimiCode: "Kimi",
 };
 
 export const getDefaultProviderTitle = (providerId: ProviderStackId): string =>
   PROVIDER_TITLE_MAP[providerId] ?? providerId;
-const PROVIDER_DESCRIPTION_MAP: Record<ProviderStackId, string> = {
+const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Using your authentication Claude Code CLI",
   codexCli: "Using your authentication Codex CLI",
   geminiCli: "Using your authentication Gemini CLI",
+  kimiCode: "Using your authentication Kimi CLI",
 };
 
 export const getDefaultProviderDescription = (

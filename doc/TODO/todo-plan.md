@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "246468527",
+  "lastRecordedCommit": "265cb98b2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase4-kimi-stale-binding-core",
-  "expectedCommitMessage": "feat: add kimi stale binding recovery",
+  "currentTaskId": "phase5-kimi-provider-types",
+  "expectedCommitMessage": "feat: add kimi shared provider catalog",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi stale binding recovery",
-    "preCommitHead": "246468527",
+    "expectedCommitMessage": "feat: add kimi shared provider catalog",
+    "preCommitHead": "265cb98b2",
     "stage": "commit_pending",
-    "taskId": "phase4-kimi-stale-binding-core"
+    "taskId": "phase5-kimi-provider-types"
   }
 }
 ```
@@ -121,12 +121,12 @@
 
 ### Stream: Core Stale-Binding Recovery
 1. [DONE] `phase4-kimi-stale-binding-core` Подключить `KIMI_SESSION_STALE_BINDING` к Core one-shot stale-binding recovery path и post-rebind lifecycle без silent drop — scope: `packages/core/src/remote-bridge/handlers, packages/Kimi_Module`; expected commit: `feat: add kimi stale binding recovery`.
-2. [PENDING] Git Commit: `feat: add kimi stale binding recovery` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi stale binding recovery` (hash: 265cb98b2)
 
 ## Phase 5 — Project Manager And Settings Integration (owner: Codex, updated: 2026-05-18)
 ### Stream: Shared Provider Catalog
-1. [TODO] `phase5-kimi-provider-types` Добавить `kimiCode` в shared provider type/catalog и Session UI provider allowlist, чтобы Kimi records/provider catalog не отбрасывались клиентом — scope: `src/types/provider.ts, src/client/ui/src/session/session-candidates.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: add kimi shared provider catalog`.
-2. [TODO] Git Commit: `feat: add kimi shared provider catalog` (hash: TBD)
+1. [DONE] `phase5-kimi-provider-types` Добавить `kimiCode` в shared provider type/catalog и Session UI provider allowlist, чтобы Kimi records/provider catalog не отбрасывались клиентом — scope: `src/types/provider.ts, src/client/ui/src/session/session-candidates.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: add kimi shared provider catalog`.
+2. [PENDING] Git Commit: `feat: add kimi shared provider catalog` (hash: TBD)
 
 ### Stream: Kimi Model Registry
 1. [TODO] `phase5-kimi-model-registry` Создать shared Kimi model registry для UI/settings/start cards/status display (`kimi-for-coding`, label `Kimi 2.6 / Kimi Code`) — scope: `src/types/kimi-model-registry.ts, src/client/project-manager/services/kimi-model-registry-alignment.test.ts, packages/Kimi_Module/src/types/kimi-model-capabilities.ts`; expected commit: `feat: add kimi model registry`.

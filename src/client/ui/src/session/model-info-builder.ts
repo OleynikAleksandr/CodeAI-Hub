@@ -7,8 +7,12 @@ import type {
 import type { Settings } from "../components/settings/settings-state-model";
 
 type ProviderKey = "claude" | "codex" | "gemini";
+type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
-const PROVIDER_ID_TO_KEY: Record<ProviderStackId, ProviderKey> = {
+const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi Code";
+const KIMI_DEFAULT_MODEL_ID = "kimi-for-coding";
+
+const PROVIDER_ID_TO_KEY: Record<SettingsBackedProviderId, ProviderKey> = {
   claudeCodeCli: "claude",
   codexCli: "codex",
   geminiCli: "gemini",
@@ -38,6 +42,34 @@ const parseEffectiveModelId = (modelId: string): EffectiveModelDescriptor => {
     label: modifier === "thinking" ? `thinking ${value}` : value,
   };
 };
+
+const isSettingsBackedProviderId = (
+  providerId: ProviderStackId
+): providerId is SettingsBackedProviderId =>
+  providerId === "claudeCodeCli" ||
+  providerId === "codexCli" ||
+  providerId === "geminiCli";
+
+const formatKimiSessionModelDisplayName = (modelId: string): string =>
+  resolveKimiBaseModelId(modelId) === KIMI_DEFAULT_MODEL_ID
+    ? KIMI_DEFAULT_MODEL_DISPLAY_NAME
+    : formatModelDisplayName(resolveKimiBaseModelId(modelId));
+
+const resolveFallbackModelDisplayName = (
+  providerId: ProviderStackId,
+  modelId: string
+): string => {
+  if (providerId === "kimiCode") {
+    return formatKimiSessionModelDisplayName(modelId);
+  }
+  if (!isSettingsBackedProviderId(providerId)) {
+    return formatModelDisplayName(parseEffectiveModelId(modelId).baseModelId);
+  }
+  return resolveModelDisplayName(PROVIDER_ID_TO_KEY[providerId], modelId);
+};
+
+const resolveKimiBaseModelId = (modelId: string): string =>
+  parseEffectiveModelId(modelId).baseModelId;
 
 const formatClaudeSessionModelDisplayName = (modelId: string): string => {
   const { baseModelId } = parseEffectiveModelId(modelId);
@@ -123,12 +155,32 @@ export const buildModelInfo = (
       providerName: getDefaultProviderTitle(providerId),
       modelId: fallbackModelId,
       modelDisplayName: effectiveModelId
-        ? resolveModelDisplayName(
-            PROVIDER_ID_TO_KEY[providerId],
-            fallbackModelId
-          )
+        ? resolveFallbackModelDisplayName(providerId, fallbackModelId)
         : getDefaultProviderTitle(providerId),
       ...(effectiveModel.label ? { reasoning: effectiveModel.label } : {}),
+      source,
+    };
+  }
+
+  if (providerId === "kimiCode") {
+    const modelId = effectiveModelId ?? KIMI_DEFAULT_MODEL_ID;
+    return {
+      providerId,
+      providerName: getDefaultProviderTitle(providerId),
+      modelId,
+      modelDisplayName: formatKimiSessionModelDisplayName(modelId),
+      source,
+    };
+  }
+  if (!isSettingsBackedProviderId(providerId)) {
+    const modelId = effectiveModelId ?? "unknown";
+    return {
+      providerId,
+      providerName: getDefaultProviderTitle(providerId),
+      modelId,
+      modelDisplayName: formatModelDisplayName(
+        parseEffectiveModelId(modelId).baseModelId
+      ),
       source,
     };
   }
