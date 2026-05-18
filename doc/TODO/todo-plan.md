@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "fa6ac261a",
+  "lastRecordedCommit": "45bf72b93",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase7.feedback.start-card.task1",
-  "expectedCommitMessage": "fix: polish workflow start card controls",
+  "currentTaskId": "pm-sidebar-settings.phase7.feedback.verify.task1",
+  "expectedCommitMessage": "test: verify workflow step progression polish",
   "debt": {
-    "expectedCommitMessage": "fix: polish workflow start card controls",
-    "preCommitHead": "fa6ac261a",
+    "expectedCommitMessage": "test: verify workflow step progression polish",
+    "preCommitHead": "45bf72b93",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase7.feedback.start-card.task1"
+    "taskId": "pm-sidebar-settings.phase7.feedback.verify.task1"
   }
 }
 ```
@@ -148,12 +148,18 @@
 ### Stream: Next Step Card Polish
 
 31. [DONE] `pm-sidebar-settings.phase7.feedback.start-card.task1` Remove the managed orchestration preview block from the next-step card and widen listbox options so model names fit horizontally (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/capture-workbench/dom-listbox-selector.tsx, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `fix: polish workflow start card controls`).
-32. [PENDING] Git Commit: `fix: polish workflow start card controls` (hash: TBD)
+32. [DONE] Git Commit: `fix: polish workflow start card controls` (hash: 45bf72b93)
 
 ### Stream: Tooling Verification
 
-33. [TODO] `pm-sidebar-settings.phase7.feedback.verify.task1` Run targeted Core/PM tests and webview checks for the step progression usability fixes, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify workflow step progression polish`).
-34. [TODO] Git Commit: `test: verify workflow step progression polish` (hash: TBD)
+33. [DONE] `pm-sidebar-settings.phase7.feedback.verify.task1` Run targeted Core/PM tests and webview checks for the step progression usability fixes, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify workflow step progression polish`).
+    - Verification 2026-05-18: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts` passed 13/13.
+    - Verification 2026-05-18: `npm run typecheck:webview` passed.
+    - Verification 2026-05-18: `npm run build --workspace @codeai-hub/core` passed.
+    - Verification 2026-05-18: `npm run build:project-manager` passed.
+    - Verification 2026-05-18: `npm run build:webview` passed.
+    - Browser note 2026-05-18: Project Manager is packaged as a VS Code/CEF webview bundle and this repo has no standalone PM dev-server target for direct Browser inspection.
+34. [PENDING] Git Commit: `test: verify workflow step progression polish` (hash: TBD)
 
 ## Phase 8 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
