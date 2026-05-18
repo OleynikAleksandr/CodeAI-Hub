@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "e14cd6701",
+  "lastRecordedCommit": "9bf591d5f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase4.retest-fix.client.task1",
-  "expectedCommitMessage": "test: cover application skeleton final acceptance navigation",
+  "currentTaskId": "application-skeleton-final-review.phase4.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.304",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton final acceptance navigation",
-    "preCommitHead": "e14cd6701",
+    "expectedCommitMessage": "docs: prepare release 1.2.304",
+    "preCommitHead": "9bf591d5f",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase4.retest-fix.client.task1"
+    "taskId": "application-skeleton-final-review.phase4.release.docs.task1"
   }
 }
 ```
@@ -111,12 +111,25 @@
 21. [DONE] `application-skeleton-final-review.phase4.retest-fix.core.task1` Emit a Core-owned stage activation event after final Application Skeleton acceptance and stop appending the stale Application Skeleton persistent-return message (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/types.ts, doc/TODO/todo-plan.md`; expected commit: `fix: route application skeleton final acceptance to quality gates`).
 22. [DONE] Git Commit: `fix: route application skeleton final acceptance to quality gates` (hash: e14cd6701)
 23. [DONE] `application-skeleton-final-review.phase4.retest-fix.client.task1` Route the Project Manager stage-activation bridge event to the existing Quality Gates card navigation and cover the regression (scope: `src/client/project-manager/components/layout/main-area.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton final acceptance navigation`).
-24. [PENDING] Git Commit: `test: cover application skeleton final acceptance navigation` (hash: TBD)
-25. [TODO] `application-skeleton-final-review.phase4.release.gate.task1` Ask the user for explicit corrective release confirmation before preparing v1.2.304 release notes or running release scripts (scope: user confirmation only; expected commit: none).
+24. [DONE] Git Commit: `test: cover application skeleton final acceptance navigation` (hash: 9bf591d5f)
+25. [DONE] `application-skeleton-final-review.phase4.release.gate.task1` Ask the user for explicit corrective release confirmation before preparing v1.2.304 release notes or running release scripts (scope: user confirmation only; expected commit: none). Result: user confirmed corrective release build on 2026-05-18.
+
+### Stream: Corrective Release Build
+
+26. [DONE] `application-skeleton-final-review.phase4.release.docs.task1` Update release-facing README/CHANGELOG for v1.2.304 before the version bump/build so the VSIX contains the corrective Application Skeleton navigation release notes (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.304`).
+27. [PENDING] Git Commit: `docs: prepare release 1.2.304` (hash: TBD)
+28. [TODO] `application-skeleton-final-review.phase4.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.304 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/*/manifest.json, assets/providers/*/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.304 artifacts`).
+29. [TODO] Git Commit: `chore: build release 1.2.304 artifacts` (hash: TBD)
+30. [TODO] `application-skeleton-final-review.phase4.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.304 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.304 vsix`).
+31. [TODO] Git Commit: `chore: package release 1.2.304 vsix` (hash: TBD)
+
+### Stream: Corrective User Retest
+
+32. [TODO] `application-skeleton-final-review.phase4.acceptance.v304.task1` User installs/retests v1.2.304 and confirms final Application Skeleton `Подтверждаю` moves to the Quality Gates card (scope: user workflow acceptance only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-26. [TODO] `application-skeleton-final-review.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton final review gate scope`).
-27. [TODO] Git Commit: `docs: close application skeleton final review gate scope` (hash: TBD)
+33. [TODO] `application-skeleton-final-review.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton final review gate scope`).
+34. [TODO] Git Commit: `docs: close application skeleton final review gate scope` (hash: TBD)

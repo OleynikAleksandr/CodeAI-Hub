@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.304] - 2026-05-18
+### Fixed
+- **Application Skeleton final acceptance now navigates to Quality Gates.** After the user presses `Подтверждаю` on the final Application Skeleton review card, Core emits `workflow:stage:activate` for `quality_gates`, and Project Manager routes it through the existing `pm:stage:activated` path so the visible card moves to `Quality Gates Baseline`.
+- **The stale Application Skeleton completion message is no longer shown after final acceptance.** Final acceptance records the Core-managed stage boundary and activates the next technical stage instead of appending the old `managed-workflow-complete` handoff.
+
+### Tests
+- `npx tsc --noEmit --pretty false -p packages/core/tsconfig.json`
+- `npm run typecheck:webview`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts src/client/project-manager/components/layout/workflow-navigation.test.ts`
+
 ## [1.2.303] - 2026-05-18
 ### Fixed
 - **Application Skeleton now opens a final post-materialization review gate.** After Core validates and commits materialization, it sends the `managed-workflow-user-review` card with the inline `Подтверждаю` action instead of publishing `managed-workflow-complete`.
