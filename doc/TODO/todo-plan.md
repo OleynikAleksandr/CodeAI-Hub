@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "8f4e933cb",
+  "lastRecordedCommit": "cda5b8c8c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-message-hotfix-release-build-start",
-  "expectedCommitMessage": "docs: mark kimi message hotfix release build started",
+  "currentTaskId": "phase8-kimi-message-hotfix-release-build",
+  "expectedCommitMessage": "chore: release kimi message hotfix build",
   "debt": {
-    "expectedCommitMessage": "docs: mark kimi message hotfix release build started",
-    "preCommitHead": "8f4e933cb",
+    "expectedCommitMessage": "chore: release kimi message hotfix build",
+    "preCommitHead": "cda5b8c8c",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-message-hotfix-release-build-start"
+    "taskId": "phase8-kimi-message-hotfix-release-build"
   }
 }
 ```
@@ -274,9 +274,13 @@
 1. [DONE] `phase8-kimi-message-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.308 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi message hotfix release notes`.
 2. [DONE] Git Commit: `docs: prepare kimi message hotfix release notes` (hash: 8f4e933cb)
 3. [DONE] `phase8-kimi-message-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi message hotfix release build started`.
-4. [PENDING] Git Commit: `docs: mark kimi message hotfix release build started` (hash: TBD)
-5. [TODO] `phase8-kimi-message-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi message hotfix build`.
-6. [TODO] Git Commit: `chore: release kimi message hotfix build` (hash: TBD)
+4. [DONE] Git Commit: `docs: mark kimi message hotfix release build started` (hash: cda5b8c8c)
+5. [DONE] `phase8-kimi-message-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi message hotfix build`.
+   - Result: `./scripts/build-all.sh --allow-dirty` passed for version `1.2.308`; `--allow-dirty` used because the only pre-build dirty file was machine-managed `doc/TODO/todo-plan.md` after post-commit advancement to the active release task.
+   - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.308.vsix`, package size `49M`.
+   - Result: release tarballs copied to `doc/tmp/releases/`: `kimi-module-1.2.308.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.308.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.308.tar.bz2`, provider/UI tarballs.
+   - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
+6. [PENDING] Git Commit: `chore: release kimi message hotfix build` (hash: TBD)
 
 ### Stream: Subscribe Contract Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».
