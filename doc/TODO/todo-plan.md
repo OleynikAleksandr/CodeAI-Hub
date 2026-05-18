@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "e92afd940",
+  "lastRecordedCommit": "4f919ea71",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-workspace-hotfix-release-build",
-  "expectedCommitMessage": "chore: release kimi workspace hotfix build",
+  "currentTaskId": "phase8-kimi-live-progress-fix",
+  "expectedCommitMessage": "fix: surface kimi live progress before turn completion",
   "debt": {
-    "expectedCommitMessage": "chore: release kimi workspace hotfix build",
-    "preCommitHead": "e92afd940",
+    "expectedCommitMessage": "fix: surface kimi live progress before turn completion",
+    "preCommitHead": "4f919ea71",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-workspace-hotfix-release-build"
+    "taskId": "phase8-kimi-live-progress-fix"
   }
 }
 ```
@@ -295,6 +295,18 @@
    - Verification: source-runtime Kimi turn smoke passed after workspace override: emitted `turn_started`, aggregated `thinking`, aggregated `assistant`, `turn_completed`.
 2. [DONE] Git Commit: `fix: apply kimi session workspace override` (hash: 1dccfc65b)
 
+### Stream: Acceptance Bug Fix — Kimi Live Progress Visibility
+1. [DONE] `phase8-kimi-live-progress-fix` Исправить UX regression 1.2.309: Kimi может несколько минут генерировать большой `WriteFile` tool call, а adapter буферизует `thinking`/`assistant` до `TurnEnd`, поэтому UI показывает только `Agent is working`; нужно flush-ить накопленный thinking/assistant на Wire tool/step boundaries и отправлять `stream_event` heartbeats для Core — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: surface kimi live progress before turn completion`.
+   - Log diagnosis: installed runtime 1.2.309 created Kimi session and dispatched the 46K Description prompt successfully; Kimi wrote `Final_Description.md` after a 138s second LLM step and finished at 21:40:27, but UI had no visible provider message during the long turn.
+   - Native evidence: `wire.jsonl` shows `ContentPart(type=think)` before a `ToolCall(Shell)`, then a long `WriteFile` tool call, then final assistant text and `TurnEnd`.
+   - Root cause: `KimiWireEventNormalizer` buffers `ContentPart` chunks until `TurnEnd`; intermediate `ToolCall`, `ToolResult`, `StepBegin`, and `StatusUpdate` are ignored or provider-private, so Core receives neither visible thinking nor stream heartbeat while Kimi is still working.
+   - Implementation note: Kimi now flushes buffered `thinking`/`assistant` at `ToolCall` and `StepBegin` boundaries, while `ToolCall`, `ToolResult`, `StepBegin`, and `StatusUpdate` emit `stream_event` heartbeats with `data.kind="kimi_wire_progress"`.
+   - Verification: `npm run plan:validate` passed.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts live boundary flush plus Kimi progress stream events.
+   - Verification: `./scripts/check-architecture.sh` passed with existing warnings only; no non-allowlisted file exceeds 500 lines.
+2. [PENDING] Git Commit: `fix: surface kimi live progress before turn completion` (hash: TBD)
+
 ### Stream: Workspace Override Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-workspace-hotfix-release-confirmation` Остановиться после фикса Kimi session workspace override и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «После фикса собери новый релиз».
 
@@ -308,7 +320,7 @@
    - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.309.vsix`, package size `48M`.
    - Result: release tarballs copied to `doc/tmp/releases/`: `kimi-module-1.2.309.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.309.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.309.tar.bz2`, provider/UI tarballs.
    - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
-6. [PENDING] Git Commit: `chore: release kimi workspace hotfix build` (hash: TBD)
+6. [DONE] Git Commit: `chore: release kimi workspace hotfix build` (hash: 4f919ea71)
 
 ### Stream: Subscribe Contract Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».

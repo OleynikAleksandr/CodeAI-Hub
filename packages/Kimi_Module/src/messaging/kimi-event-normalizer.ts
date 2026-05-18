@@ -28,6 +28,11 @@ type KimiMessageEvent = KimiSessionEvent & {
   readonly timestamp: string;
 };
 
+type KimiStreamEvent = KimiSessionEvent & {
+  readonly data: Record<string, unknown>;
+  readonly timestamp: string;
+};
+
 const createMessageEvent = (
   eventType: "assistant" | "thinking",
   content: string,
@@ -52,6 +57,26 @@ const createMessageEvent = (
   };
 };
 
+const createStreamEvent = (
+  phase: string,
+  payload?: Record<string, unknown>
+): KimiStreamEvent => {
+  const timestamp = new Date().toISOString();
+  const data = {
+    kind: "kimi_wire_progress",
+    phase,
+    provider: "kimi",
+    timestamp,
+    ...(payload ?? {}),
+  };
+  return {
+    data,
+    payload: data,
+    timestamp,
+    type: "stream_event",
+  };
+};
+
 export const normalizeKimiWireEvent = (
   params: unknown
 ): readonly KimiSessionEvent[] => {
@@ -66,9 +91,26 @@ export const normalizeKimiWireEvent = (
     case "TurnEnd":
       return [createEvent("turn_completed")];
     case "StepBegin":
-      return [createEvent("step_started")];
+      return [
+        createEvent("step_started"),
+        createStreamEvent("step_started", readStepPayload(envelope.payload)),
+      ];
     case "StatusUpdate":
-      return [createEvent("status_update", { raw: envelope.payload })];
+      return [
+        createEvent("status_update", { raw: envelope.payload }),
+        createStreamEvent("status_update", { raw: envelope.payload }),
+      ];
+    case "ToolCall":
+      return [
+        createStreamEvent("tool_call", readToolPayload(envelope.payload)),
+      ];
+    case "ToolResult":
+      return [
+        createStreamEvent(
+          "tool_result",
+          readToolResultPayload(envelope.payload)
+        ),
+      ];
     case "ContentPart":
       return normalizeContentPart(envelope.payload);
     default:
@@ -100,6 +142,39 @@ const normalizeContentPart = (
   return [createEvent("kimi_wire_event", { raw: payload })];
 };
 
+const readStepPayload = (payload: unknown): Record<string, unknown> => {
+  if (!isRecord(payload)) {
+    return {};
+  }
+  return typeof payload.n === "number" ? { step: payload.n } : {};
+};
+
+const readToolPayload = (payload: unknown): Record<string, unknown> => {
+  if (!isRecord(payload)) {
+    return {};
+  }
+  const toolType = typeof payload.type === "string" ? payload.type : undefined;
+  const functionRecord = isRecord(payload.function) ? payload.function : null;
+  const toolName =
+    typeof functionRecord?.name === "string" ? functionRecord.name : undefined;
+  return {
+    ...(toolName ? { toolName } : {}),
+    ...(toolType ? { toolType } : {}),
+  };
+};
+
+const readToolResultPayload = (payload: unknown): Record<string, unknown> => {
+  if (!isRecord(payload)) {
+    return {};
+  }
+  const returnValue = isRecord(payload.return_value)
+    ? payload.return_value
+    : null;
+  return {
+    isError: returnValue?.is_error === true,
+  };
+};
+
 type KimiWireFallbackNormalizer = (
   params: unknown
 ) => readonly KimiSessionEvent[];
@@ -128,8 +203,28 @@ export class KimiWireEventNormalizer {
       case "TurnEnd":
         return [...this.flushMessages(), createEvent("turn_completed")];
       case "StepBegin":
+        return [
+          ...this.flushMessages(),
+          createEvent("step_started"),
+          createStreamEvent("step_started", readStepPayload(envelope.payload)),
+        ];
       case "StatusUpdate":
-        return this.fallbackNormalizer(params);
+        return [
+          createEvent("status_update", { raw: envelope.payload }),
+          createStreamEvent("status_update", { raw: envelope.payload }),
+        ];
+      case "ToolCall":
+        return [
+          ...this.flushMessages(),
+          createStreamEvent("tool_call", readToolPayload(envelope.payload)),
+        ];
+      case "ToolResult":
+        return [
+          createStreamEvent(
+            "tool_result",
+            readToolResultPayload(envelope.payload)
+          ),
+        ];
       case "ContentPart":
         return this.bufferContentPart(envelope.payload);
       default:
