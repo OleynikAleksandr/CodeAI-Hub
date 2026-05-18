@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "1b00386db",
+  "lastRecordedCommit": "65fe00aa9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase6-kimi-usage-boundary",
-  "expectedCommitMessage": "feat: add kimi usage limits boundary",
+  "currentTaskId": "phase6-kimi-module-docs",
+  "expectedCommitMessage": "docs: add kimi provider module ssot",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi usage limits boundary",
-    "preCommitHead": "1b00386db",
+    "expectedCommitMessage": "docs: add kimi provider module ssot",
+    "preCommitHead": "65fe00aa9",
     "stage": "commit_pending",
-    "taskId": "phase6-kimi-usage-boundary"
+    "taskId": "phase6-kimi-module-docs"
   }
 }
 ```
@@ -175,11 +175,11 @@
 
 ### Stream: Usage Limits Boundary
 1. [DONE] `phase6-kimi-usage-boundary` Добавить Kimi usage-limits facade stub или real reader только при стабильном official endpoint; UI должен показывать unavailable state без stuck loading — scope: `packages/core/src/provider-usage-limits, src/client/ui/src/session, packages/Kimi_Module`; expected commit: `feat: add kimi usage limits boundary`.
-2. [PENDING] Git Commit: `feat: add kimi usage limits boundary` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi usage limits boundary` (hash: 65fe00aa9)
 
 ### Stream: Module SSOT Documentation
-1. [TODO] `phase6-kimi-module-docs` Создать `doc/SolidWorks-WorkFlow/Modules/Kimi.md`, обновить `Docs_Index.md` и синхронизировать SystemArchitecture provider list/invariants — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: add kimi provider module ssot`.
-2. [TODO] Git Commit: `docs: add kimi provider module ssot` (hash: TBD)
+1. [DONE] `phase6-kimi-module-docs` Создать `doc/SolidWorks-WorkFlow/Modules/Kimi.md`, обновить `Docs_Index.md` и синхронизировать SystemArchitecture provider list/invariants — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: add kimi provider module ssot`.
+2. [PENDING] Git Commit: `docs: add kimi provider module ssot` (hash: TBD)
 
 ## Phase 7 — Packaging And Targeted Verification (owner: Codex, updated: 2026-05-18)
 ### Stream: Build And Packaging Integration

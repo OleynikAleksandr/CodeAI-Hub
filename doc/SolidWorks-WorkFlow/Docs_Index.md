@@ -13,7 +13,7 @@
 3. `System/ManagedDocumentationCommitOwnership.md` (suspended historical pointer)
 4. `Clusters/Project_Manager.md`
 5. `Clusters/CoreOrchestrator.md`
-6. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
+6. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Kimi.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
 7. `Contracts/` (только по ссылкам из документов выше)
 8. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
 9. `Plans/` (только при запуске нового scope, deferred work или design intake перед `todo-plan.md`)
@@ -39,6 +39,7 @@
 - `Modules/Codex.md` — SSOT Codex provider module, including reasoning summary settings, provider-home config policy, workflow-agent App Server profile, and provider-owned Codex GPT translation engine path.
 - `Modules/Codex_ProviderInvocationFlags.md` — SSOT actual Codex App Server startup flags, JSON-RPC `initialize` / `thread/start` / `thread/resume` / `turn/start` payloads, model/reasoning resolution, provider-home env, and native request capture parity.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
+- `Modules/Kimi.md` — SSOT Kimi Code / Kimi 2.6 provider module, including Wire transport, `KIMI_SHARE_DIR=~/.codeai-hub/providers/kimi/home`, `~/.kimi/config.toml` auth reference, stale-binding recovery, unavailable usage-limits boundary, UI/provider surfaces, and Wire-evidence diagnostic capture.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
 - `Modules/Localization.md` — SSOT persistent UI localization module, including user-facing categories and the code-owned internal-instructions boundary with explicit localized prompt materialization exceptions.
 - `Plans/Archive/Localization_TranslationEngine_AnthropicHaiku_Architecture.md` — archived Anthropic Claude Haiku 4.5 translation engine architecture (closed by release `1.1.986`; canonical SSOT lives in `Modules/Claude.md`, `Modules/Shared_RuntimeTranslation_Module.md`, and `Modules/Localization.md`).
@@ -79,7 +80,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/Kimi/Kimi_2_6_Module_Implementation_Planning_RU.md` — active planning source for implementing the Kimi Code / Kimi 2.6 provider module: Wire transport, provider-home isolation, session lifecycle, Core registry/settings integration, diagnostics, packaging, and phased execution slicing.
+- `Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md` — archived accepted planning source for implementing the Kimi Code / Kimi 2.6 provider module: Wire transport, provider-home isolation, session lifecycle, Core registry/settings integration, diagnostics, packaging, and phased execution slicing.
 - `Plans/Archive/Agent_Runtime_Provider_Candidates_Analysis_RU.md` — archived accepted planning analysis for provider candidates after Claude/Codex/Gemini: Kimi, Qwen Code, GLM, DeepSeek, MiniMax; compares native agent runtime surfaces, backend-provider options, and subscription-vs-token access.
 - `Plans/Archive/PM_Sidebar_Settings_Action_Planning.md` — archived implementation planning source for Project Manager sidebar Settings action and the follow-up workflow review-gate usability fixes, closed after user acceptance of release `1.2.302`.
 - `Plans/Archive/ApplicationSkeleton_FinalReviewGate_Planning.md` — archived planning source for the Application Skeleton final review gate and corrective `v1.2.304` navigation fix: Core keeps `Application Skeleton` active after materialization validation, shows a `managed-workflow-user-review` card with `Подтверждаю`, and after final acceptance activates the `Quality Gates` card through Core-owned stage activation.
