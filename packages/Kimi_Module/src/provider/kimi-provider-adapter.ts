@@ -253,6 +253,13 @@ export class KimiProviderAdapter {
     };
   }
 
+  subscribe(
+    sessionId: string,
+    listener: (payload: unknown) => void
+  ): () => void {
+    return this.onSessionEvent(sessionId, (payload) => listener(payload));
+  }
+
   sendMessage(sessionId: string, content: string): Promise<void> {
     this.assertInitialized();
     const trimmedContent = content.trim();

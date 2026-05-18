@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "31d758a5d",
+  "lastRecordedCommit": "469735675",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-hotfix-release-build",
-  "expectedCommitMessage": "chore: release kimi provider hotfix build",
+  "currentTaskId": "phase8-kimi-subscribe-contract-fix",
+  "expectedCommitMessage": "fix: add kimi provider subscribe contract",
   "debt": {
-    "expectedCommitMessage": "chore: release kimi provider hotfix build",
-    "preCommitHead": "31d758a5d",
+    "expectedCommitMessage": "fix: add kimi provider subscribe contract",
+    "preCommitHead": "469735675",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-hotfix-release-build"
+    "taskId": "phase8-kimi-subscribe-contract-fix"
   }
 }
 ```
@@ -229,8 +229,16 @@
    - Verification: restricted-PATH runtime smoke passed: adapter resolved `/Users/oleksandroliinyk/.local/bin/kimi`, `createSession()` returned `kimi:*`, and a short `prompt` emitted `turn_started`, `step_started`, `assistant_delta`, `status_update`, `turn_completed`.
 2. [DONE] Git Commit: `fix: resolve kimi cli from provider runtime path` (hash: 70d2927ca)
 
+### Stream: Acceptance Bug Fix — Kimi Provider Subscribe Contract
+1. [DONE] `phase8-kimi-subscribe-contract-fix` Исправить отказ старта Kimi Description session в установленном релизе 1.2.306: Core binding вызывает обязательный `ProviderAdapter.subscribe(...)`, а Kimi facade предоставил только legacy `onSessionEvent(...)`; добавить `subscribe` без изменения Core contract и закрепить smoke-test — scope: `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: add kimi provider subscribe contract`.
+   - Log diagnosis: Core `core.log` shows `TypeError: options.options.adapter.subscribe is not a function` during `SessionShellFactory.attachBoundProviderSession`; Kimi CLI/Wire already starts and creates provider session before this failure.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts that `KimiProviderAdapter.subscribe` exists and returns an unsubscribe function.
+   - Verification: restricted-PATH runtime smoke passed: adapter resolved `/Users/oleksandroliinyk/.local/bin/kimi`, `createSession()` returned `kimi:*`, subscribed via Core-compatible `subscribe(...)`, and a short prompt emitted `turn_started`, `step_started`, `assistant_delta`, `status_update`, `turn_completed`.
+2. [PENDING] Git Commit: `fix: add kimi provider subscribe contract` (hash: TBD)
+
 ### Stream: User Workflow Acceptance Testing
-1. [BLOCKED] `phase8-kimi-user-acceptance` Передать пользователю release/working build для установки и проверки Kimi provider workflow; дождаться явного acceptance или bug report — scope: без изменения файлов; expected commit: none. Blocked by bug report: installed release cannot start Description session with Kimi because Core runtime cannot resolve user-local `kimi` CLI from launcher PATH.
+1. [BLOCKED] `phase8-kimi-user-acceptance` Передать пользователю release/working build для установки и проверки Kimi provider workflow; дождаться явного acceptance или bug report — scope: без изменения файлов; expected commit: none. Retest build `codeai-hub-1.2.306.vsix` blocked by installed-runtime bug: Kimi provider session closes before first prompt because adapter lacks Core `subscribe(...)` method.
 
 ### Stream: Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-hotfix-release-confirmation` Остановиться после фикса Kimi startup bug и запросить у пользователя отдельное подтверждение на hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».
@@ -245,7 +253,7 @@
    - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.306.vsix`, package size `49M`.
    - Result: release tarballs copied to `doc/tmp/releases/`: `kimi-module-1.2.306.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.306.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.306.tar.bz2`, provider/UI tarballs.
    - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
-6. [PENDING] Git Commit: `chore: release kimi provider hotfix build` (hash: TBD)
+6. [DONE] Git Commit: `chore: release kimi provider hotfix build` (hash: 469735675)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
