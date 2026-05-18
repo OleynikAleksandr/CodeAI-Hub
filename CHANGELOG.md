@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.305] - 2026-05-18
+### Added
+- **Kimi Code / Kimi 2.6 is now a first-class provider module.** The new `packages/Kimi_Module` exposes a `KimiProviderAdapter` facade over `kimi --wire`, uses `KIMI_SHARE_DIR=~/.codeai-hub/providers/kimi/home`, and references the authenticated `~/.kimi/config.toml` without writing CodeAI runtime state into the user Kimi home.
+- **Kimi appears across the main provider surfaces.** Settings, Description submit provider selection, workflow start/fix cards, provider theme colors, and Session UI status/model display all understand `kimiCode` with default model `kimi-for-coding`.
+- **Kimi release packaging is wired end to end.** `build-all.sh`, `build-core.sh`, `build-release.sh`, provider manifests, runtime validation, and VSIX exclusions now include `kimi-module-<version>.tar.bz2`.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run test --workspace=@codeai-hub/kimi-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `bash -n scripts/build-kimi-module.sh`
+- `bash -n scripts/build-all.sh`
+- `bash -n scripts/build-release.sh`
+
 ## [1.2.304] - 2026-05-18
 ### Fixed
 - **Application Skeleton final acceptance now navigates to Quality Gates.** After the user presses `Подтверждаю` on the final Application Skeleton review card, Core emits `workflow:stage:activate` for `quality_gates`, and Project Manager routes it through the existing `pm:stage:activated` path so the visible card moves to `Quality Gates Baseline`.

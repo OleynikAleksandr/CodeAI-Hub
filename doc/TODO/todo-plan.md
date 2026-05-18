@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "6a760bf59",
+  "lastRecordedCommit": "258e93401",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase7-kimi-targeted-builds",
-  "expectedCommitMessage": "docs: record kimi targeted verification",
+  "currentTaskId": "phase7-kimi-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record kimi targeted verification",
-    "preCommitHead": "6a760bf59",
+    "expectedCommitMessage": "docs: prepare kimi release notes",
+    "preCommitHead": "258e93401",
     "stage": "commit_pending",
-    "taskId": "phase7-kimi-targeted-builds"
+    "taskId": "phase7-kimi-release-notes"
   }
 }
 ```
@@ -192,7 +192,7 @@
 
 ### Stream: Targeted Builds
 1. [DONE] `phase7-kimi-targeted-builds` Выполнить targeted verification для затронутых пакетов/клиентов (`packages/Kimi_Module`, `packages/core`, UI/PM если затронуты) и зафиксировать результаты в плане — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi targeted verification`.
-2. [PENDING] Git Commit: `docs: record kimi targeted verification` (hash: TBD)
+2. [DONE] Git Commit: `docs: record kimi targeted verification` (hash: 258e93401)
 
 #### Targeted verification evidence (2026-05-18)
 - `npm run build --workspace=@codeai-hub/kimi-module` — passed.
@@ -205,11 +205,13 @@
 - `npm run typecheck:webview` — passed.
 
 ### Stream: Release Build Confirmation Gate
-1. [TODO] `phase7-kimi-release-confirmation` Остановиться после targeted verification и запросить у пользователя отдельное подтверждение на release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none.
+1. [DONE] `phase7-kimi-release-confirmation` Остановиться после targeted verification и запросить у пользователя отдельное подтверждение на release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Продолжаем вплоть до сборки нового релиза».
 
 ### Stream: Release Build
-1. [TODO] `phase7-kimi-release-build` После явного подтверждения пользователя выполнить release checklist: future version docs update, clean tree, `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `README.md, CHANGELOG.md, package manifests, doc/TODO/todo-plan.md, doc/tmp/releases`; expected commit: `chore: release kimi provider module build`.
-2. [TODO] Git Commit: `chore: release kimi provider module build` (hash: TBD)
+1. [DONE] `phase7-kimi-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.305 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi release notes` (hash: TBD)
+3. [TODO] `phase7-kimi-release-build` После явного подтверждения пользователя выполнить release checklist: clean tree, `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package manifests, assets manifests, README.md, CHANGELOG.md, media/react-chat.js, doc/TODO/todo-plan.md, doc/tmp/releases`; expected commit: `chore: release kimi provider module build`.
+4. [TODO] Git Commit: `chore: release kimi provider module build` (hash: TBD)
 
 ## Phase 8 — User Workflow Acceptance And Closeout (owner: Codex, updated: 2026-05-18)
 ### Stream: User Workflow Acceptance Testing

@@ -2,20 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.304** (Application Skeleton final acceptance navigation)
+**Current Release — v1.2.305** (Kimi provider module)
 
-This release fixes the final `Application Skeleton` acceptance route. After the
-user presses `Подтверждаю` on the post-materialization review card, Core records
-the final acceptance and emits a Core-owned stage activation event for
-`quality_gates`; Project Manager now consumes that bridge event through the
-same `pm:stage:activated` route used by sidebar navigation, so the visible card
-moves to `Quality Gates Baseline` instead of staying in the Application Skeleton
-dialog.
+This release adds the Kimi Code / Kimi 2.6 provider module to CodeAI Hub. Kimi
+uses Wire mode through the standalone `packages/Kimi_Module` facade, keeps
+CodeAI-managed runtime state under `~/.codeai-hub/providers/kimi/home` via
+`KIMI_SHARE_DIR`, and references the already authorized Kimi config through
+`~/.kimi/config.toml`.
 
-Application Skeleton corrections at that final gate are routed back through
-Core as materialized-scope revision prompts, then validated and committed again
-before the final review card reopens. The completed marker and Quality Gates
-unlock happen only after explicit final acceptance.
+Kimi is now available in Project Manager settings, Description provider
+selection, workflow start/fix cards, provider color mapping, and Session UI
+status/model display. The first release exposes `kimi-for-coding` as the default
+model and treats live model switching as display-only until a provider-native
+Wire switch contract is verified.
+
+Release packaging now builds `kimi-module-<version>.tar.bz2`, includes Kimi in
+the Core runtime dependency bundle, validates installed Kimi artifacts during
+release, and keeps Kimi provider workspace files out of the VSIX. Kimi usage
+limits intentionally degrade to explicit unavailable state until a stable
+official usage endpoint exists.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the
@@ -47,7 +52,7 @@ If you want to try the product today, clone the repository, build the release ar
 - Node.js per the project `.nvmrc` (currently `22.17.0`) + `npm`
 - Visual Studio Code
 - `cmake` (required for the standalone CEF launcher / Project Manager build)
-- the provider CLIs or SDK access you plan to use (`Claude`, `Codex`, `Gemini`) installed and authenticated separately
+- the provider CLIs or SDK access you plan to use (`Claude`, `Codex`, `Gemini`, `Kimi`) installed and authenticated separately
 
 ### Build from Source
 ```bash
