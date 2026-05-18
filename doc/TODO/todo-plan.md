@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "36744ae38",
+  "lastRecordedCommit": "383154504",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase12.release.buildall.task1",
-  "expectedCommitMessage": "chore: build release 1.2.301 artifacts",
+  "currentTaskId": "pm-sidebar-settings.phase12.release.vsix.task1",
+  "expectedCommitMessage": "chore: package release 1.2.301 vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.301 artifacts",
-    "preCommitHead": "36744ae38",
+    "expectedCommitMessage": "chore: package release 1.2.301 vsix",
+    "preCommitHead": "383154504",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase12.release.buildall.task1"
+    "taskId": "pm-sidebar-settings.phase12.release.vsix.task1"
   }
 }
 ```
@@ -254,9 +254,12 @@
 60. [DONE] `pm-sidebar-settings.phase12.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.301 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.301 artifacts`).
     - Verification 2026-05-18: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated artifacts 2026-05-18: `claude-module-1.2.301.tar.bz2`, `codex-module-1.2.301.tar.bz2`, `gemini-module-1.2.301.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.301.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.301.tar.bz2`, `vscode-webview-1.2.301.tar.bz2`, `project-manager-1.2.301.tar.bz2`.
-61. [PENDING] Git Commit: `chore: build release 1.2.301 artifacts` (hash: TBD)
-62. [TODO] `pm-sidebar-settings.phase12.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.301 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.301 vsix`).
-63. [TODO] Git Commit: `chore: package release 1.2.301 vsix` (hash: TBD)
+61. [DONE] Git Commit: `chore: build release 1.2.301 artifacts` (hash: 383154504)
+62. [DONE] `pm-sidebar-settings.phase12.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.301 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.301 vsix`).
+    - Verification 2026-05-18: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
+    - Generated package 2026-05-18: `codeai-hub-1.2.301.vsix` (49M reported by release script; filesystem size 48M).
+    - Release confirmations 2026-05-18: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, `Release build complete`.
+63. [PENDING] Git Commit: `chore: package release 1.2.301 vsix` (hash: TBD)
 
 ## Phase 13 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
