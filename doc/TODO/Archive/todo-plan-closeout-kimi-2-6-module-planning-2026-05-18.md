@@ -1,3 +1,18 @@
+# Plan Closeout: kimi-2-6-module-planning-2026-05-18
+
+**Created:** 2026-05-18T16:11:37.900Z
+**Acceptance:** User accepted Russian Kimi 2.6 module implementation planning document on 2026-05-18 and requested implementation todo-plan
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase1-kimi-planning-closeout
+**Expected Commit:** docs: close kimi 2.6 module planning intake
+**Last Recorded Commit:** 7309631a4
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
   "currentTaskId": "phase1-kimi-planning-closeout",
   "expectedCommitMessage": "docs: close kimi 2.6 module planning intake",
-  "debt": {
-    "expectedCommitMessage": "docs: close kimi 2.6 module planning intake",
-    "preCommitHead": "7309631a4",
-    "stage": "commit_pending",
-    "taskId": "phase1-kimi-planning-closeout"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -60,6 +70,7 @@
 1. [DONE] `phase1-kimi-planning-acceptance` Передать Kimi 2.6 planning-документ пользователю на review и дождаться явного acceptance или правок — scope: без изменения файлов; expected commit: none. Result: User accepted Russian Kimi 2.6 module implementation planning document and requested new implementation todo-plan
 
 ### Stream: Scope Closeout
-1. [DONE] `phase1-kimi-planning-closeout` После явного acceptance закрыть scope: архивировать active `todo-plan.md`, определить disposition planning-документа и обновить индекс при необходимости — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi 2.6 module planning intake`.
-2. [PENDING] Git Commit: `docs: close kimi 2.6 module planning intake` (hash: TBD)
+1. [IN_PROGRESS] `phase1-kimi-planning-closeout` После явного acceptance закрыть scope: архивировать active `todo-plan.md`, определить disposition planning-документа и обновить индекс при необходимости — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi 2.6 module planning intake`.
+2. [TODO] Git Commit: `docs: close kimi 2.6 module planning intake` (hash: TBD)
 3. [TODO] `phase1-kimi-planning-post-closeout-handoff` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md`; expected commit: none.
+````
