@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "d4625d96d",
+  "lastRecordedCommit": "bcb060f4d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-settings-card",
-  "expectedCommitMessage": "feat: add kimi settings card",
+  "currentTaskId": "phase5-kimi-description-submit-picker",
+  "expectedCommitMessage": "feat: add kimi description provider picker",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi settings card",
-    "preCommitHead": "d4625d96d",
+    "expectedCommitMessage": "feat: add kimi description provider picker",
+    "preCommitHead": "bcb060f4d",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-settings-card"
+    "taskId": "phase5-kimi-description-submit-picker"
   }
 }
 ```
@@ -138,11 +138,11 @@
 
 ### Stream: Settings UI Card
 1. [DONE] `phase5-kimi-settings-card` Добавить отдельную Kimi settings card/tab для default model, provider-home note и availability/update controls — scope: `src/client/ui/src/components/settings/kimi-default-model-card.tsx, src/client/ui/src/components/settings-view.tsx, src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; expected commit: `feat: add kimi settings card`.
-2. [PENDING] Git Commit: `feat: add kimi settings card` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi settings card` (hash: bcb060f4d)
 
 ### Stream: Description Submit Provider Picker
-1. [TODO] `phase5-kimi-description-submit-picker` Убедиться, что Description submit provider picker принимает `kimiCode`, показывает Kimi label/model и передаёт providerId в Core без отдельной client authority — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, src/client/project-manager/services/description-submit-service.ts`; expected commit: `feat: add kimi description provider picker`.
-2. [TODO] Git Commit: `feat: add kimi description provider picker` (hash: TBD)
+1. [DONE] `phase5-kimi-description-submit-picker` Убедиться, что Description submit provider picker принимает `kimiCode`, показывает Kimi label/model и передаёт providerId в Core без отдельной client authority — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, src/client/project-manager/services/provider-snapshot.ts`; expected commit: `feat: add kimi description provider picker`.
+2. [PENDING] Git Commit: `feat: add kimi description provider picker` (hash: TBD)
 
 ### Stream: Workflow Start Cards Model Selection
 1. [TODO] `phase5-kimi-start-card-models` Добавить Kimi model/reasoning options в workflow start cards и settings persistence barrier для Virtual Simulation, Diagram Modules, Application Skeleton, Quality Gates — scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `feat: add kimi workflow start model selection`.
