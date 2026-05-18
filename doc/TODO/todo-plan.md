@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "34b946b2b",
+  "lastRecordedCommit": "a0fc8f156",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase9.feedback.preliminary-handoff.task1",
-  "expectedCommitMessage": "fix: suppress preliminary workflow handoff",
+  "currentTaskId": "pm-sidebar-settings.phase9.feedback.verify.task1",
+  "expectedCommitMessage": "test: verify preliminary workflow handoff fix",
   "debt": {
-    "expectedCommitMessage": "fix: suppress preliminary workflow handoff",
-    "preCommitHead": "34b946b2b",
+    "expectedCommitMessage": "test: verify preliminary workflow handoff fix",
+    "preCommitHead": "a0fc8f156",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase9.feedback.preliminary-handoff.task1"
+    "taskId": "pm-sidebar-settings.phase9.feedback.verify.task1"
   }
 }
 ```
@@ -190,9 +190,14 @@
 ### Stream: Preliminary Step Handoff Regression
 
 42. [DONE] `pm-sidebar-settings.phase9.feedback.preliminary-handoff.task1` Remove the premature Core-owned review handoff from Description and Virtual Simulation so these provider-direct preliminary steps start normally and do not show a system completion card at session start (scope: `packages/core/src/managed-workflow-orchestration/preliminary-review-handoff.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: suppress preliminary workflow handoff`). Regression source: v1.2.299 user retest showed `Core: Description completed` immediately after the initial provider prompt, before the agent worked.
-43. [PENDING] Git Commit: `fix: suppress preliminary workflow handoff` (hash: TBD)
-44. [TODO] `pm-sidebar-settings.phase9.feedback.verify.task1` Run targeted Core preliminary handoff regression tests and affected builds/typechecks, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify preliminary workflow handoff fix`).
-45. [TODO] Git Commit: `test: verify preliminary workflow handoff fix` (hash: TBD)
+43. [DONE] Git Commit: `fix: suppress preliminary workflow handoff` (hash: a0fc8f156)
+44. [DONE] `pm-sidebar-settings.phase9.feedback.verify.task1` Run targeted Core preliminary handoff regression tests and affected builds/typechecks, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify preliminary workflow handoff fix`).
+    - Verification 2026-05-18: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts` passed 6/6.
+    - Verification 2026-05-18: `npm run build --workspace @codeai-hub/core` passed.
+    - Verification 2026-05-18: `npm run typecheck:webview` passed.
+    - Verification 2026-05-18: `npm run build:webview` passed.
+    - Verification 2026-05-18: `npm run build:project-manager` passed.
+45. [PENDING] Git Commit: `test: verify preliminary workflow handoff fix` (hash: TBD)
 
 ## Phase 10 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
