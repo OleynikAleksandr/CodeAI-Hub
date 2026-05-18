@@ -1,4 +1,5 @@
 import type { ModuleReporter } from "@codeai-hub/claude-module";
+import type { KimiModuleOptions } from "@codeai-hub/kimi-module";
 import type { CoreConfig } from "../config";
 import {
   CLAUDE_INSTALLER_PATHS,
@@ -36,15 +37,6 @@ interface ProviderDescriptorFactoryOptions {
 export type KimiAdapterCtor = new (
   options: KimiModuleOptions
 ) => ProviderAdapter;
-
-interface KimiModuleOptions {
-  readonly reporter?: ModuleReporter;
-  readonly workspace: {
-    readonly defaultModel?: string;
-    readonly providerHomePath?: string;
-    readonly workspacePath?: string;
-  };
-}
 
 interface GeminiAdapterFactoryOptions {
   readonly adapterCtor: GeminiAdapterCtor;
