@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "19c5a2f2b",
+  "lastRecordedCommit": "31d758a5d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-hotfix-release-build-start",
-  "expectedCommitMessage": "docs: mark kimi hotfix release build started",
+  "currentTaskId": "phase8-kimi-hotfix-release-build",
+  "expectedCommitMessage": "chore: release kimi provider hotfix build",
   "debt": {
-    "expectedCommitMessage": "docs: mark kimi hotfix release build started",
-    "preCommitHead": "19c5a2f2b",
+    "expectedCommitMessage": "chore: release kimi provider hotfix build",
+    "preCommitHead": "31d758a5d",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-hotfix-release-build-start"
+    "taskId": "phase8-kimi-hotfix-release-build"
   }
 }
 ```
@@ -239,9 +239,13 @@
 1. [DONE] `phase8-kimi-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.306 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi hotfix release notes`.
 2. [DONE] Git Commit: `docs: prepare kimi hotfix release notes` (hash: 19c5a2f2b)
 3. [DONE] `phase8-kimi-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi hotfix release build started`.
-4. [PENDING] Git Commit: `docs: mark kimi hotfix release build started` (hash: TBD)
-5. [TODO] `phase8-kimi-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi provider hotfix build`.
-6. [TODO] Git Commit: `chore: release kimi provider hotfix build` (hash: TBD)
+4. [DONE] Git Commit: `docs: mark kimi hotfix release build started` (hash: 31d758a5d)
+5. [DONE] `phase8-kimi-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi provider hotfix build`.
+   - Result: `./scripts/build-all.sh --allow-dirty` passed for version `1.2.306`; `--allow-dirty` used because the only pre-build dirty file was machine-managed `doc/TODO/todo-plan.md` after post-commit advancement to the active release task.
+   - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.306.vsix`, package size `49M`.
+   - Result: release tarballs copied to `doc/tmp/releases/`: `kimi-module-1.2.306.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.306.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.306.tar.bz2`, provider/UI tarballs.
+   - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
+6. [PENDING] Git Commit: `chore: release kimi provider hotfix build` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
