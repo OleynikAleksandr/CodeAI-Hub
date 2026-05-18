@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "a2327cf44",
+  "lastRecordedCommit": "8962d0a66",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase2.docs.task1",
-  "expectedCommitMessage": "docs: document application skeleton final review gate",
+  "currentTaskId": "application-skeleton-final-review.phase2.verify.task1",
+  "expectedCommitMessage": "test: verify application skeleton final review gate",
   "debt": {
-    "expectedCommitMessage": "docs: document application skeleton final review gate",
-    "preCommitHead": "a2327cf44",
+    "expectedCommitMessage": "test: verify application skeleton final review gate",
+    "preCommitHead": "8962d0a66",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase2.docs.task1"
+    "taskId": "application-skeleton-final-review.phase2.verify.task1"
   }
 }
 ```
@@ -72,12 +72,13 @@
 ### Stream: SSOT Documentation
 
 9. [DONE] `application-skeleton-final-review.phase2.docs.task1` Document the Application Skeleton post-materialization user review gate in managed workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md, doc/TODO/todo-plan.md`; expected commit: `docs: document application skeleton final review gate`).
-10. [PENDING] Git Commit: `docs: document application skeleton final review gate` (hash: TBD)
+10. [DONE] Git Commit: `docs: document application skeleton final review gate` (hash: 8962d0a66)
 
 ### Stream: Tooling Verification
 
-11. [TODO] `application-skeleton-final-review.phase2.verify.task1` Run targeted Core tests and record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton final review gate`).
-12. [TODO] Git Commit: `test: verify application skeleton final review gate` (hash: TBD)
+11. [DONE] `application-skeleton-final-review.phase2.verify.task1` Run targeted Core tests and record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton final review gate`).
+    - Verification results (2026-05-18): `npx tsc --noEmit --pretty false -p packages/core/tsconfig.json` passed; `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts` passed (`12/12`).
+12. [PENDING] Git Commit: `test: verify application skeleton final review gate` (hash: TBD)
 
 ## Phase 3 - Release Build (owner: Codex, updated: 2026-05-18)
 
