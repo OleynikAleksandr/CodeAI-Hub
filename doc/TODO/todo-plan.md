@@ -8,15 +8,15 @@
   "planId": "kimi-2-6-module-planning-2026-05-18",
   "branch": "main",
   "baseHead": "823c2105f",
-  "lastRecordedCommit": "44349baff",
+  "lastRecordedCommit": "b83169333",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase1-kimi-planning-verification",
-  "expectedCommitMessage": "docs: record kimi 2.6 planning verification",
+  "currentTaskId": "phase1-kimi-planning-russian-revision",
+  "expectedCommitMessage": "docs: translate kimi 2.6 implementation plan to russian",
   "debt": {
-    "expectedCommitMessage": "docs: record kimi 2.6 planning verification",
-    "preCommitHead": "44349baff",
+    "expectedCommitMessage": "docs: translate kimi 2.6 implementation plan to russian",
+    "preCommitHead": "b83169333",
     "stage": "commit_pending",
-    "taskId": "phase1-kimi-planning-verification"
+    "taskId": "phase1-kimi-planning-russian-revision"
   }
 }
 ```
@@ -50,7 +50,11 @@
 
 ### Stream: Tooling Verification
 1. [DONE] `phase1-kimi-planning-verification` Проверить UTF-8/readback, `git status`, `npm run plan:validate` и `npm run plan:status` после документационного изменения — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi 2.6 planning verification`.
-2. [PENDING] Git Commit: `docs: record kimi 2.6 planning verification` (hash: TBD)
+2. [DONE] Git Commit: `docs: record kimi 2.6 planning verification` (hash: b83169333)
+
+### Stream: Planning Document Revision
+1. [DONE] `phase1-kimi-planning-russian-revision` Перевести Kimi 2.6 planning-документ на русский язык без изменения архитектурного смысла — scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Kimi/Kimi_2_6_Module_Implementation_Planning_RU.md`; expected commit: `docs: translate kimi 2.6 implementation plan to russian`.
+2. [PENDING] Git Commit: `docs: translate kimi 2.6 implementation plan to russian` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 1. [TODO] `phase1-kimi-planning-acceptance` Передать Kimi 2.6 planning-документ пользователю на review и дождаться явного acceptance или правок — scope: без изменения файлов; expected commit: none.
