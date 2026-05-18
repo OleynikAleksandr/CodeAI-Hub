@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "cb93c430b",
+  "lastRecordedCommit": "e62d93710",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase0-kimi-implementation-plan",
-  "expectedCommitMessage": "docs: add kimi provider implementation todo plan",
+  "currentTaskId": "phase0-kimi-plan-ui-surface-revision",
+  "expectedCommitMessage": "docs: detail kimi ui integration surfaces",
   "debt": {
-    "expectedCommitMessage": "docs: add kimi provider implementation todo plan",
-    "preCommitHead": "cb93c430b",
+    "expectedCommitMessage": "docs: detail kimi ui integration surfaces",
+    "preCommitHead": "e62d93710",
     "stage": "commit_pending",
-    "taskId": "phase0-kimi-implementation-plan"
+    "taskId": "phase0-kimi-plan-ui-surface-revision"
   }
 }
 ```
@@ -52,6 +52,8 @@
 ## Правила выполнения (Execution Rules)
 - **Required reading перед каждым фиксом:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`.
 - Каждая подзадача должна затрагивать не более 3 файлов/пакетов. Если фактический scope шире — сначала разбить задачу и обновить план отдельной microtask.
+- Для Kimi module обязательно создать самостоятельный facade class/entrypoint (`KimiProviderAdapter` + public `src/index.ts` export); внешняя интеграция Core не должна обращаться к внутренним Wire/process/session классам напрямую.
+- UI/Project Manager integration нельзя считать завершённой, пока Kimi явно не появился во всех provider surfaces: Settings provider tab/card, Description submit provider picker, workflow start cards, Development Tree start/fix cards, Session UI status-line/model chips, provider labels/colors, native capture/workbench where applicable.
 - Каждая подзадача оформляется парой пунктов: реализация/изменения и отдельный `Git Commit: ...`.
 - Kimi provider-home isolation является blocking requirement: любой runtime/probe/test должен явно использовать `KIMI_SHARE_DIR=~/.codeai-hub/providers/kimi/home` или CodeAI-owned equivalent resolver.
 - До production интеграции Kimi Wire сначала должен быть получен runtime proof: старт, terminal prompt, resume, cancel и raw Wire evidence.
@@ -63,7 +65,9 @@
 ## Phase 0 — Plan Activation (owner: Codex, updated: 2026-05-18)
 ### Stream: Implementation Plan Activation
 1. [DONE] `phase0-kimi-implementation-plan` Создать active `doc/TODO/todo-plan.md` под реализацию Kimi provider module и Core/Project Manager integration — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: add kimi provider implementation todo plan`.
-2. [PENDING] Git Commit: `docs: add kimi provider implementation todo plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: add kimi provider implementation todo plan` (hash: e62d93710)
+3. [DONE] `phase0-kimi-plan-ui-surface-revision` Детализировать Kimi UI/PM/settings/status surfaces и facade requirement в active plan до начала runtime implementation — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: detail kimi ui integration surfaces`.
+4. [PENDING] Git Commit: `docs: detail kimi ui integration surfaces` (hash: TBD)
 
 ## Phase 1 — Runtime Proof And Module Scaffold (owner: Codex, updated: 2026-05-18)
 ### Stream: Kimi Wire Runtime Proof
@@ -71,7 +75,7 @@
 2. [TODO] Git Commit: `docs: capture kimi wire runtime proof` (hash: TBD)
 
 ### Stream: Kimi Module Package Scaffold
-1. [TODO] `phase1-kimi-package-scaffold` Создать `packages/Kimi_Module` с package metadata, public facade export и минимальным provider adapter skeleton без Core registry integration — scope: `packages/Kimi_Module`; expected commit: `feat: scaffold kimi provider module`.
+1. [TODO] `phase1-kimi-package-scaffold` Создать `packages/Kimi_Module` с package metadata, public facade export и минимальным provider adapter skeleton без Core registry integration; `KimiProviderAdapter` является самостоятельным facade class — scope: `packages/Kimi_Module/package.json, packages/Kimi_Module/src/index.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `feat: scaffold kimi provider module`.
 2. [TODO] Git Commit: `feat: scaffold kimi provider module` (hash: TBD)
 
 ### Stream: Kimi Runtime Home Contract
@@ -114,13 +118,45 @@
 2. [TODO] Git Commit: `feat: add kimi stale binding recovery` (hash: TBD)
 
 ## Phase 5 — Project Manager And Settings Integration (owner: Codex, updated: 2026-05-18)
-### Stream: Provider Settings Surface
-1. [TODO] `phase5-kimi-settings-ui` Добавить Kimi в provider settings/default selection и provider availability display без новых client-owned workflow truths — scope: `src/client/ui/src/components/settings, src/client/project-manager/components/settings, packages/core/src/remote-bridge/handlers`; expected commit: `feat: expose kimi provider settings`.
-2. [TODO] Git Commit: `feat: expose kimi provider settings` (hash: TBD)
+### Stream: Shared Provider Catalog
+1. [TODO] `phase5-kimi-provider-types` Добавить `kimiCode` в shared provider type/catalog и Session UI provider allowlist, чтобы Kimi records/provider catalog не отбрасывались клиентом — scope: `src/types/provider.ts, src/client/ui/src/session/session-candidates.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: add kimi shared provider catalog`.
+2. [TODO] Git Commit: `feat: add kimi shared provider catalog` (hash: TBD)
 
-### Stream: Session Provider Selection
-1. [TODO] `phase5-kimi-session-selection` Подключить Kimi к Project Manager provider picker/session start surfaces и shared Session UI provider labeling/color token fallback — scope: `src/client/project-manager, src/client/ui/src/session, doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html`; expected commit: `feat: add kimi project manager provider selection`.
-2. [TODO] Git Commit: `feat: add kimi project manager provider selection` (hash: TBD)
+### Stream: Kimi Model Registry
+1. [TODO] `phase5-kimi-model-registry` Создать shared Kimi model registry для UI/settings/start cards/status display (`kimi-for-coding`, label `Kimi 2.6 / Kimi Code`) — scope: `src/types/kimi-model-registry.ts, src/client/project-manager/services/kimi-model-registry-alignment.test.ts, packages/Kimi_Module/src/types/kimi-model-capabilities.ts`; expected commit: `feat: add kimi model registry`.
+2. [TODO] Git Commit: `feat: add kimi model registry` (hash: TBD)
+
+### Stream: Settings State And Persistence
+1. [TODO] `phase5-kimi-settings-state` Добавить Kimi в settings schema/default mapping/raw snapshot без ломки существующих Claude/Codex/Gemini settings — scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/settings-state-helpers.ts`; expected commit: `feat: add kimi settings state`.
+2. [TODO] Git Commit: `feat: add kimi settings state` (hash: TBD)
+
+### Stream: Settings UI Card
+1. [TODO] `phase5-kimi-settings-card` Добавить отдельную Kimi settings card/tab для default model, provider-home note и availability/update controls — scope: `src/client/ui/src/components/settings/kimi-default-model-card.tsx, src/client/ui/src/components/settings/settings-view.tsx, src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; expected commit: `feat: add kimi settings card`.
+2. [TODO] Git Commit: `feat: add kimi settings card` (hash: TBD)
+
+### Stream: Description Submit Provider Picker
+1. [TODO] `phase5-kimi-description-submit-picker` Убедиться, что Description submit provider picker принимает `kimiCode`, показывает Kimi label/model и передаёт providerId в Core без отдельной client authority — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, src/client/project-manager/services/description-submit-service.ts`; expected commit: `feat: add kimi description provider picker`.
+2. [TODO] Git Commit: `feat: add kimi description provider picker` (hash: TBD)
+
+### Stream: Workflow Start Cards Model Selection
+1. [TODO] `phase5-kimi-start-card-models` Добавить Kimi model/reasoning options в workflow start cards и settings persistence barrier для Virtual Simulation, Diagram Modules, Application Skeleton, Quality Gates — scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `feat: add kimi workflow start model selection`.
+2. [TODO] Git Commit: `feat: add kimi workflow start model selection` (hash: TBD)
+
+### Stream: Workflow Start Cards Provider UI
+1. [TODO] `phase5-kimi-start-card-provider-ui` Добавить Kimi tint/disabled/selected rendering в common workflow start/fix cards, включая Development Tree start/fix surfaces через общий provider picker path — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit: `feat: add kimi workflow provider card ui`.
+2. [TODO] Git Commit: `feat: add kimi workflow provider card ui` (hash: TBD)
+
+### Stream: Status Line Model Display
+1. [TODO] `phase5-kimi-status-line-display` Добавить Kimi provider button class, model display name и `kimi-for-coding` status-line rendering в Session UI — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `feat: add kimi session status line`.
+2. [TODO] Git Commit: `feat: add kimi session status line` (hash: TBD)
+
+### Stream: Runtime Model Sync And Switch Callbacks
+1. [TODO] `phase5-kimi-runtime-model-sync` Подключить Kimi model update/switch callback path для runtime/dialog session views; если Kimi model switch не поддержан в first release, status chip остаётся display-only с явным no-op contract — scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/project-manager/services/switch-api.ts`; expected commit: `feat: add kimi runtime model sync hooks`.
+2. [TODO] Git Commit: `feat: add kimi runtime model sync hooks` (hash: TBD)
+
+### Stream: Provider Design Tokens
+1. [TODO] `phase5-kimi-provider-design-tokens` Добавить Kimi provider color tokens для Session UI/Project Manager tree/cards/status chips без изменения существующих Claude/Codex/Gemini цветов — scope: `doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html, packages/ui/project-manager/styles.css, src/client/ui/src/session/session.css`; expected commit: `feat: add kimi provider design tokens`.
+2. [TODO] Git Commit: `feat: add kimi provider design tokens` (hash: TBD)
 
 ## Phase 6 — Diagnostics, Usage And Documentation (owner: Codex, updated: 2026-05-18)
 ### Stream: Native Wire Capture
