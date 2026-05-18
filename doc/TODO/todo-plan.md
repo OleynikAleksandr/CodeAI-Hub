@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "2a3070737",
+  "lastRecordedCommit": "6a760bf59",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase7-kimi-release-validation",
-  "expectedCommitMessage": "feat: validate kimi release packaging",
+  "currentTaskId": "phase7-kimi-targeted-builds",
+  "expectedCommitMessage": "docs: record kimi targeted verification",
   "debt": {
-    "expectedCommitMessage": "feat: validate kimi release packaging",
-    "preCommitHead": "2a3070737",
+    "expectedCommitMessage": "docs: record kimi targeted verification",
+    "preCommitHead": "6a760bf59",
     "stage": "commit_pending",
-    "taskId": "phase7-kimi-release-validation"
+    "taskId": "phase7-kimi-targeted-builds"
   }
 }
 ```
@@ -188,11 +188,21 @@
 3. [DONE] `phase7-kimi-core-packaging` Подключить Kimi module к unified build/core runtime packaging и Core runtime dependency rewrite — scope: `scripts/build-all.sh, scripts/build-core.sh, packages/core/package.json, packages/core/src/provider-registry/provider-descriptor-factory.ts, package-lock.json`; expected commit: `feat: bundle kimi provider in core runtime`.
 4. [DONE] Git Commit: `feat: bundle kimi provider in core runtime` (hash: 2a3070737)
 5. [DONE] `phase7-kimi-release-validation` Подключить Kimi provider artifact к release validation, VSIX exclusions и manifest version checks — scope: `scripts/build-release.sh, .vscodeignore`; expected commit: `feat: validate kimi release packaging`.
-6. [PENDING] Git Commit: `feat: validate kimi release packaging` (hash: TBD)
+6. [DONE] Git Commit: `feat: validate kimi release packaging` (hash: 6a760bf59)
 
 ### Stream: Targeted Builds
-1. [TODO] `phase7-kimi-targeted-builds` Выполнить targeted verification для затронутых пакетов/клиентов (`packages/Kimi_Module`, `packages/core`, UI/PM если затронуты) и зафиксировать результаты в плане — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi targeted verification`.
-2. [TODO] Git Commit: `docs: record kimi targeted verification` (hash: TBD)
+1. [DONE] `phase7-kimi-targeted-builds` Выполнить targeted verification для затронутых пакетов/клиентов (`packages/Kimi_Module`, `packages/core`, UI/PM если затронуты) и зафиксировать результаты в плане — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi targeted verification`.
+2. [PENDING] Git Commit: `docs: record kimi targeted verification` (hash: TBD)
+
+#### Targeted verification evidence (2026-05-18)
+- `npm run build --workspace=@codeai-hub/kimi-module` — passed.
+- `npm run test --workspace=@codeai-hub/kimi-module` — passed.
+- `npm run build --workspace=@codeai-hub/core` — passed after serializing behind Kimi build; an earlier parallel run raced against Kimi `dist` cleanup and was not a code failure.
+- `bash -n scripts/build-kimi-module.sh` — passed.
+- `bash -n scripts/build-all.sh` — passed.
+- `bash -n scripts/build-release.sh` — passed.
+- `npm run build:webview` — passed; generated `media/react-chat.js` diff was intentionally left for release-build commit because this stream is doc-only.
+- `npm run typecheck:webview` — passed.
 
 ### Stream: Release Build Confirmation Gate
 1. [TODO] `phase7-kimi-release-confirmation` Остановиться после targeted verification и запросить у пользователя отдельное подтверждение на release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none.
