@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "4327515c5",
+  "lastRecordedCommit": "34b946b2b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase8.release.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.299 vsix",
+  "currentTaskId": "pm-sidebar-settings.phase9.feedback.preliminary-handoff.task1",
+  "expectedCommitMessage": "fix: suppress preliminary workflow handoff",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.299 vsix",
-    "preCommitHead": "4327515c5",
+    "expectedCommitMessage": "fix: suppress preliminary workflow handoff",
+    "preCommitHead": "34b946b2b",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase8.release.vsix.task1"
+    "taskId": "pm-sidebar-settings.phase9.feedback.preliminary-handoff.task1"
   }
 }
 ```
@@ -183,18 +183,27 @@
     - Verification 2026-05-18: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated package 2026-05-18: `codeai-hub-1.2.299.vsix` (48M).
     - Release confirmations 2026-05-18: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, `Release build complete`.
-41. [PENDING] Git Commit: `chore: package release 1.2.299 vsix` (hash: TBD)
+41. [DONE] Git Commit: `chore: package release 1.2.299 vsix` (hash: 34b946b2b)
 
-## Phase 9 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
+## Phase 9 - Acceptance Feedback Fix (owner: Codex, updated: 2026-05-18)
+
+### Stream: Preliminary Step Handoff Regression
+
+42. [DONE] `pm-sidebar-settings.phase9.feedback.preliminary-handoff.task1` Remove the premature Core-owned review handoff from Description and Virtual Simulation so these provider-direct preliminary steps start normally and do not show a system completion card at session start (scope: `packages/core/src/managed-workflow-orchestration/preliminary-review-handoff.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: suppress preliminary workflow handoff`). Regression source: v1.2.299 user retest showed `Core: Description completed` immediately after the initial provider prompt, before the agent worked.
+43. [PENDING] Git Commit: `fix: suppress preliminary workflow handoff` (hash: TBD)
+44. [TODO] `pm-sidebar-settings.phase9.feedback.verify.task1` Run targeted Core preliminary handoff regression tests and affected builds/typechecks, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify preliminary workflow handoff fix`).
+45. [TODO] Git Commit: `test: verify preliminary workflow handoff fix` (hash: TBD)
+
+## Phase 10 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
 ### Stream: User Retest
 
-42. [TODO] `pm-sidebar-settings.phase9.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation show the Core `Подтверждаю` handoff, confirmation opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
+46. [TODO] `pm-sidebar-settings.phase10.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, Diagram Modules confirmation still opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
 
-## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-18)
+## Phase 11 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-43. [TODO] `pm-sidebar-settings.phase10.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-44. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-45. [TODO] `pm-sidebar-settings.phase10.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+47. [TODO] `pm-sidebar-settings.phase11.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+48. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+49. [TODO] `pm-sidebar-settings.phase11.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

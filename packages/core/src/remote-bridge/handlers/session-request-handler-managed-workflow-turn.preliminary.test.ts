@@ -9,14 +9,6 @@ import { SessionRequestHandlerManagedWorkflowTurn } from "./session-request-hand
 const WORKSPACE_SLUG = "demo-workspace";
 const DESCRIPTION_STAGE = "description";
 const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
-const USER_REVIEW_RE =
-  /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
-const CONFIRMATION_RE = /нажмите кнопку «Подтверждаю» ниже/u;
-const DESCRIPTION_REVIEW_RE =
-  /Core: Description перешёл в пользовательскую проверку/u;
-const VIRTUAL_SIMULATION_REVIEW_RE =
-  /Core: Virtual Simulation перешёл в пользовательскую проверку/u;
-
 interface CapturedCoreMessage {
   readonly content: string;
   readonly tag: string;
@@ -63,10 +55,9 @@ const createHandler = (params: {
   return { coreMessages, handler, sessionId: session.id };
 };
 
-test("managed workflow turn emits preliminary review handoffs", async () => {
+test("managed workflow turn does not emit preliminary review handoffs", async () => {
   const cases = [
     {
-      expected: DESCRIPTION_REVIEW_RE,
       prepare: (workspaceRoot: string) =>
         writeWorkspaceFile(
           workspaceRoot,
@@ -76,7 +67,6 @@ test("managed workflow turn emits preliminary review handoffs", async () => {
       stage: DESCRIPTION_STAGE,
     },
     {
-      expected: VIRTUAL_SIMULATION_REVIEW_RE,
       prepare: (workspaceRoot: string) =>
         writeWorkspaceFile(
           workspaceRoot,
@@ -100,10 +90,7 @@ test("managed workflow turn emits preliminary review handoffs", async () => {
 
       await handler.handleTurnCompleted(sessionId);
 
-      assert.equal(coreMessages.at(-1)?.tag, "managed-workflow-user-review");
-      assert.match(coreMessages.at(-1)?.content ?? "", testCase.expected);
-      assert.match(coreMessages.at(-1)?.content ?? "", USER_REVIEW_RE);
-      assert.match(coreMessages.at(-1)?.content ?? "", CONFIRMATION_RE);
+      assert.deepEqual(coreMessages, []);
     } finally {
       await rm(workspaceRoot, { force: true, recursive: true });
     }
