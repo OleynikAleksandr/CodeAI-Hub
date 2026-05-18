@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "469735675",
+  "lastRecordedCommit": "5f4903552",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-subscribe-contract-fix",
-  "expectedCommitMessage": "fix: add kimi provider subscribe contract",
+  "currentTaskId": "phase8-kimi-subscribe-hotfix-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi subscribe hotfix release notes",
   "debt": {
-    "expectedCommitMessage": "fix: add kimi provider subscribe contract",
-    "preCommitHead": "469735675",
+    "expectedCommitMessage": "docs: prepare kimi subscribe hotfix release notes",
+    "preCommitHead": "5f4903552",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-subscribe-contract-fix"
+    "taskId": "phase8-kimi-subscribe-hotfix-release-notes"
   }
 }
 ```
@@ -235,10 +235,21 @@
    - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
    - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts that `KimiProviderAdapter.subscribe` exists and returns an unsubscribe function.
    - Verification: restricted-PATH runtime smoke passed: adapter resolved `/Users/oleksandroliinyk/.local/bin/kimi`, `createSession()` returned `kimi:*`, subscribed via Core-compatible `subscribe(...)`, and a short prompt emitted `turn_started`, `step_started`, `assistant_delta`, `status_update`, `turn_completed`.
-2. [PENDING] Git Commit: `fix: add kimi provider subscribe contract` (hash: TBD)
+2. [DONE] Git Commit: `fix: add kimi provider subscribe contract` (hash: 5f4903552)
 
 ### Stream: User Workflow Acceptance Testing
 1. [BLOCKED] `phase8-kimi-user-acceptance` Передать пользователю release/working build для установки и проверки Kimi provider workflow; дождаться явного acceptance или bug report — scope: без изменения файлов; expected commit: none. Retest build `codeai-hub-1.2.306.vsix` blocked by installed-runtime bug: Kimi provider session closes before first prompt because adapter lacks Core `subscribe(...)` method.
+
+### Stream: Subscribe Contract Hotfix Release Confirmation Gate
+1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».
+
+### Stream: Subscribe Contract Hotfix Release Build
+1. [DONE] `phase8-kimi-subscribe-hotfix-release-notes` После явного подтверждения подготовить README/CHANGELOG под будущую версию 1.2.307 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi subscribe hotfix release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi subscribe hotfix release notes` (hash: TBD)
+3. [TODO] `phase8-kimi-subscribe-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi subscribe hotfix release build started`.
+4. [TODO] Git Commit: `docs: mark kimi subscribe hotfix release build started` (hash: TBD)
+5. [TODO] `phase8-kimi-subscribe-hotfix-release-build` После явного подтверждения выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi subscribe hotfix build`.
+6. [TODO] Git Commit: `chore: release kimi subscribe hotfix build` (hash: TBD)
 
 ### Stream: Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-hotfix-release-confirmation` Остановиться после фикса Kimi startup bug и запросить у пользователя отдельное подтверждение на hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».

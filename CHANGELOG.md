@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.307] - 2026-05-18
+### Fixed
+- **Kimi sessions bind to Core session shells correctly.** The Kimi provider facade now implements the required `ProviderAdapter.subscribe(...)` method, preventing installed Kimi sessions from closing before the first prompt is displayed or dispatched.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run test --workspace=@codeai-hub/kimi-module`
+- Restricted-PATH Kimi runtime smoke: adapter resolved `/Users/oleksandroliinyk/.local/bin/kimi`, created a `kimi:*` session, subscribed through the Core-compatible `subscribe(...)` method, and emitted lifecycle events through `turn_completed`.
+
 ## [1.2.306] - 2026-05-18
 ### Fixed
 - **Kimi starts correctly from the installed Core runtime.** The Kimi module now resolves the user-local CLI from `KIMI_CLI_PATH`, `~/.local/bin/kimi`, Homebrew locations, or the inherited `PATH`, so launcher-managed Core no longer fails when its PATH does not include the user's shell bins.
