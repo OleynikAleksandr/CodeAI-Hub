@@ -60,7 +60,10 @@ const SELECT_GRID_STYLE: React.CSSProperties = {
   gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
 };
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
-  value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
+  value === "claudeCodeCli" ||
+  value === "codexCli" ||
+  value === "geminiCli" ||
+  value === "kimiCode";
 
 const startService = new WorkflowStepStartService();
 

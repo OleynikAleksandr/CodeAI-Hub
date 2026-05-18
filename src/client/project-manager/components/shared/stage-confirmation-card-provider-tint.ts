@@ -30,4 +30,10 @@ export const PROVIDER_TINT_TOKENS: Record<ProviderStackId, ProviderTintTokens> =
       border: "rgba(171, 52, 203, 0.30)",
       badgeBackground: "rgba(171, 52, 203, 0.13)",
     },
+    kimiCode: {
+      accent: "rgba(119, 214, 255, 0.64)",
+      fill: "rgba(76, 181, 255, 0.10)",
+      border: "rgba(76, 181, 255, 0.36)",
+      badgeBackground: "rgba(76, 181, 255, 0.15)",
+    },
   };

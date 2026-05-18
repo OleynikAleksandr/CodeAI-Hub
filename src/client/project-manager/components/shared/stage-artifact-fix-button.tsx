@@ -61,7 +61,8 @@ export const StageArtifactFixButton: React.FC<{
   );
 
   const providers = api.getDescriptionProviders();
-  const hasProviders = providers.length > 0;
+  const connectedProviders = providers.filter((provider) => provider.connected);
+  const hasConnectedProviders = connectedProviders.length > 0;
   const noProviderMessage = t(
     USER_MESSAGES_CATEGORY,
     "pm.stage_artifact.repair.error.no_provider",
@@ -82,9 +83,9 @@ export const StageArtifactFixButton: React.FC<{
     <>
       <button
         className="pm-provider-picker__button pm-provider-picker__button--primary"
-        disabled={fixInFlight || !hasProviders}
+        disabled={fixInFlight || !hasConnectedProviders}
         onClick={() => {
-          if (!hasProviders || fixInFlight) {
+          if (!hasConnectedProviders || fixInFlight) {
             return;
           }
           setFixInFlight(true);
@@ -97,8 +98,8 @@ export const StageArtifactFixButton: React.FC<{
             const providerId =
               resolvePreferredWorkflowProviderId({
                 workflowState,
-                providers,
-              }) ?? providers.at(0)?.id;
+                providers: connectedProviders,
+              }) ?? connectedProviders.at(0)?.id;
             if (!providerId) {
               throw new Error(noProviderMessage);
             }
@@ -132,7 +133,7 @@ export const StageArtifactFixButton: React.FC<{
         {fixInFlight ? fixPendingLabel : fixIdleLabel}
       </button>
       {fixError ? <div style={{ marginTop: 10 }}>{fixError}</div> : null}
-      {!hasProviders ? (
+      {!hasConnectedProviders ? (
         <div style={{ marginTop: 10 }}>{noProviderMessage}</div>
       ) : null}
     </>
