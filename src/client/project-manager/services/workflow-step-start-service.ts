@@ -17,6 +17,10 @@ import {
   type GeminiModelId,
   type GeminiThinkingLevel,
 } from "../../../types/gemini-model-registry";
+import {
+  KIMI_MODEL_ID_SET,
+  type KimiModelId,
+} from "../../../types/kimi-model-registry";
 import { api } from "../api";
 import {
   DescriptionSubmitService,
@@ -100,6 +104,9 @@ const isGeminiModelId = (value: string): value is GeminiModelId =>
 const isGeminiThinkingLevel = (value: string): value is GeminiThinkingLevel =>
   GEMINI_THINKING_LEVEL_SET.has(value);
 
+const isKimiModelId = (value: string): value is KimiModelId =>
+  KIMI_MODEL_ID_SET.has(value as KimiModelId);
+
 const normalizeStartCardSelection = (value: string | null | undefined): string | null => {
   const normalized = typeof value === "string" ? value.trim() : "";
   return normalized.length > 0 ? normalized : null;
@@ -141,6 +148,22 @@ const applyStartCardModelDefaults = (
       nextSettings = updateCodexReasoning(nextSettings, modelId, reasoning);
     }
     return nextSettings;
+  }
+
+  if (params.providerId === "kimiCode") {
+    if (!modelId || !isKimiModelId(modelId)) {
+      return null;
+    }
+    return {
+      ...settings,
+      providers: {
+        ...settings.providers,
+        kimi: {
+          autoUpdate: settings.providers.kimi?.autoUpdate ?? { enabled: false },
+          defaultModel: modelId,
+        },
+      },
+    };
   }
 
   if (!modelId || !isGeminiModelId(modelId)) {

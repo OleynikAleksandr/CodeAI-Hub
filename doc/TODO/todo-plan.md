@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "bcb060f4d",
+  "lastRecordedCommit": "7add207a5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-description-submit-picker",
-  "expectedCommitMessage": "feat: add kimi description provider picker",
+  "currentTaskId": "phase5-kimi-start-card-models",
+  "expectedCommitMessage": "feat: add kimi workflow start model selection",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi description provider picker",
-    "preCommitHead": "bcb060f4d",
+    "expectedCommitMessage": "feat: add kimi workflow start model selection",
+    "preCommitHead": "7add207a5",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-description-submit-picker"
+    "taskId": "phase5-kimi-start-card-models"
   }
 }
 ```
@@ -142,11 +142,11 @@
 
 ### Stream: Description Submit Provider Picker
 1. [DONE] `phase5-kimi-description-submit-picker` Убедиться, что Description submit provider picker принимает `kimiCode`, показывает Kimi label/model и передаёт providerId в Core без отдельной client authority — scope: `src/client/project-manager/components/description/description-questionnaire-panel.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, src/client/project-manager/services/provider-snapshot.ts`; expected commit: `feat: add kimi description provider picker`.
-2. [PENDING] Git Commit: `feat: add kimi description provider picker` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi description provider picker` (hash: 7add207a5)
 
 ### Stream: Workflow Start Cards Model Selection
-1. [TODO] `phase5-kimi-start-card-models` Добавить Kimi model/reasoning options в workflow start cards и settings persistence barrier для Virtual Simulation, Diagram Modules, Application Skeleton, Quality Gates — scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `feat: add kimi workflow start model selection`.
-2. [TODO] Git Commit: `feat: add kimi workflow start model selection` (hash: TBD)
+1. [DONE] `phase5-kimi-start-card-models` Добавить Kimi model/reasoning options в workflow start cards и settings persistence barrier для Virtual Simulation, Diagram Modules, Application Skeleton, Quality Gates — scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `feat: add kimi workflow start model selection`.
+2. [PENDING] Git Commit: `feat: add kimi workflow start model selection` (hash: TBD)
 
 ### Stream: Workflow Start Cards Provider UI
 1. [TODO] `phase5-kimi-start-card-provider-ui` Добавить Kimi tint/disabled/selected rendering в common workflow start/fix cards, включая Development Tree start/fix surfaces через общий provider picker path — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit: `feat: add kimi workflow provider card ui`.

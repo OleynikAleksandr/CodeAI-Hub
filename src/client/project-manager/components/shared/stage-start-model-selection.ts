@@ -13,6 +13,10 @@ import {
   DEFAULT_GEMINI_THINKING_LEVEL,
   GEMINI_RECOMMENDED_MODELS,
 } from "../../../../types/gemini-model-registry";
+import {
+  DEFAULT_KIMI_MODEL_ID,
+  KIMI_RECOMMENDED_MODELS,
+} from "../../../../types/kimi-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
 import type { SettingsLoadedPayload } from "../../core-stream-message-types";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
@@ -53,6 +57,13 @@ export const getStartCardModelOptions = (
       label: model.displayName,
     }));
   }
+  if (providerId === "kimiCode") {
+    return KIMI_RECOMMENDED_MODELS.map((model) => ({
+      description: model.description,
+      id: model.id,
+      label: model.displayName,
+    }));
+  }
   return GEMINI_RECOMMENDED_MODELS.map((model) => ({
     description: model.description,
     id: model.id,
@@ -81,6 +92,9 @@ export const getStartCardReasoningOptions = (
       id: effort,
       label: effort,
     }));
+  }
+  if (providerId === "kimiCode") {
+    return [{ id: "default", label: "default" }];
   }
   const model =
     GEMINI_RECOMMENDED_MODELS.find((candidate) => candidate.id === modelId) ??
@@ -111,6 +125,12 @@ export const resolveDefaultStartCardModelSelection = (
       reasoning:
         settings?.providers.codex.reasoningByModel[modelId] ??
         DEFAULT_CODEX_REASONING_LEVEL,
+    };
+  }
+  if (providerId === "kimiCode") {
+    return {
+      modelId: settings?.providers.kimi?.defaultModel ?? DEFAULT_KIMI_MODEL_ID,
+      reasoning: "default",
     };
   }
   const modelId = settings?.providers.gemini.defaultModel ?? DEFAULT_GEMINI_MODEL_ID;
