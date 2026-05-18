@@ -27,6 +27,8 @@ Clients may submit raw user intent and render Core-owned snapshots, but they mus
 
 User-review acceptance can be submitted through a client-rendered inline button on the Core/system `managed-workflow-user-review` dialog card. The button label and placement are UI projection details; the submitted acceptance intent enters the same Core-managed review decision path as typed acceptance. Clients must not mark the stage accepted, open materialization/integration, write `### Stream: User Return And Revisions`, or publish a green marker on their own.
 
+The same Core/system card tag is also used for provider-direct preliminary review gates on `Description` and `Virtual Simulation`. Those preliminary steps are not managed technical stage-plan flows: Core must dispatch startup prompts and user revision text directly to the provider, then append the review card after each provider turn. The inline `Подтверждаю` button is the expected acceptance surface; if the user answers the agent's questions instead, Core routes that text to the provider and shows a fresh review card after the next completed turn. Only button acceptance or an equivalent short acceptance command while the gate is open may advance the preliminary step and let Project Manager activate the next step card.
+
 Every Type A, Type B, and Persistent Return managed flow must continue with all clients closed until Core explicitly opens a user review, revision, acceptance, or configuration gate. If a managed step depends on an open Project Manager window to advance before such a user gate, the step contract is invalid and the defect belongs in Core orchestration.
 
 ## Stage Marker And Terminal Git Boundary

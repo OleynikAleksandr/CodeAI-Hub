@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "3094a80d6",
+  "lastRecordedCommit": "4f455ddb3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase15.docs.review-gate.task1",
-  "expectedCommitMessage": "docs: clarify preliminary review gate behavior",
+  "currentTaskId": "pm-sidebar-settings.phase15.docs.step-contracts.task1",
+  "expectedCommitMessage": "docs: document preliminary review gate contracts",
   "debt": {
-    "expectedCommitMessage": "docs: clarify preliminary review gate behavior",
-    "preCommitHead": "3094a80d6",
+    "expectedCommitMessage": "docs: document preliminary review gate contracts",
+    "preCommitHead": "4f455ddb3",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase15.docs.review-gate.task1"
+    "taskId": "pm-sidebar-settings.phase15.docs.step-contracts.task1"
   }
 }
 ```
@@ -304,9 +304,9 @@
 ### Stream: Review Gate SSOT Clarification
 
 75. [DONE] `pm-sidebar-settings.phase15.docs.review-gate.task1` Clarify the Core-owned preliminary review gate in system/session workflow SSOT docs, including repeated post-turn gate behavior and UI button acceptance (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `docs: clarify preliminary review gate behavior`).
-76. [PENDING] Git Commit: `docs: clarify preliminary review gate behavior` (hash: TBD)
-77. [TODO] `pm-sidebar-settings.phase15.docs.step-contracts.task1` Clarify Description, Virtual Simulation, and orchestration boundary contracts for the same repeated review-card and `Подтверждаю` button semantics (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md, doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `docs: document preliminary review gate contracts`).
-78. [TODO] Git Commit: `docs: document preliminary review gate contracts` (hash: TBD)
+76. [DONE] Git Commit: `docs: clarify preliminary review gate behavior` (hash: 4f455ddb3)
+77. [DONE] `pm-sidebar-settings.phase15.docs.step-contracts.task1` Clarify Description, Virtual Simulation, and orchestration boundary contracts for the same repeated review-card and `Подтверждаю` button semantics (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md, doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `docs: document preliminary review gate contracts`).
+78. [PENDING] Git Commit: `docs: document preliminary review gate contracts` (hash: TBD)
 
 ## Phase 16 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
