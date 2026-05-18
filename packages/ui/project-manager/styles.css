@@ -1195,6 +1195,14 @@ body {
   --row-soft: rgba(171, 52, 203, 0.22);
 }
 
+.pm-tree__item[data-provider="kimi"] {
+  --row-accent: rgba(119, 214, 255, 0.64);
+  --row-fill: rgba(76, 181, 255, 0.1);
+  --row-fill-hover: rgba(76, 181, 255, 0.16);
+  --row-border: rgba(76, 181, 255, 0.36);
+  --row-soft: rgba(76, 181, 255, 0.24);
+}
+
 .pm-tree__item[data-provider] .pm-tree__label {
   font-weight: 300;
   color: var(--row-accent);

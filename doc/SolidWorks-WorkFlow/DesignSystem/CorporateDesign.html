@@ -32,6 +32,12 @@
       --gemini-fill-hover: rgba(171, 52, 203, 0.13);
       --gemini-border: rgba(171, 52, 203, 0.3);
       --gemini-soft: rgba(171, 52, 203, 0.22);
+
+      --kimi-accent: rgba(119, 214, 255, 0.64);
+      --kimi-fill: rgba(76, 181, 255, 0.1);
+      --kimi-fill-hover: rgba(76, 181, 255, 0.16);
+      --kimi-border: rgba(76, 181, 255, 0.36);
+      --kimi-soft: rgba(76, 181, 255, 0.24);
     }
 
     * {
@@ -151,6 +157,10 @@
       color: var(--gemini-accent);
       border-color: var(--gemini-border);
     }
+    .provider-block__chip--kimi {
+      color: var(--kimi-accent);
+      border-color: var(--kimi-border);
+    }
 
     .token-grid {
       display: grid;
@@ -268,6 +278,9 @@
     .sample-row--gemini {
       color: var(--gemini-accent);
     }
+    .sample-row--kimi {
+      color: var(--kimi-accent);
+    }
 
     .sample-row--selected.sample-row--claude {
       color: var(--selected-text);
@@ -283,6 +296,11 @@
       color: var(--selected-text);
       background: var(--gemini-fill);
       border-color: var(--gemini-border);
+    }
+    .sample-row--selected.sample-row--kimi {
+      color: var(--selected-text);
+      background: var(--kimi-fill);
+      border-color: var(--kimi-border);
     }
 
     .sample-info {
@@ -799,12 +817,12 @@
               <strong style="color: #5fe3ba">[DONE 1.2.109]</strong>
               <code>StageConfirmationCard</code>
               provider radio pills используют corporate tokens (Claude warm
-              peach / Codex cyan / Gemini cool lavender) через
+              peach / Codex cyan / Gemini cool lavender / Kimi sky blue) через
               <code>stage-confirmation-card-provider-tint.ts</code>
               вместо legacy hardcoded зелёного selection state.
             </li>
             <li>
-              <code>session-status-button--claude/codex/gemini</code>
+              <code>session-status-button--claude/codex/gemini/kimi</code>
               в
               <code>media/session-view.css</code>
               — кнопки модели и reasoning в Session info-card. Сейчас используют

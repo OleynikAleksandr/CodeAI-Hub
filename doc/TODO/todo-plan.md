@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "ec33d4b99",
+  "lastRecordedCommit": "20676c652",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-runtime-model-sync",
-  "expectedCommitMessage": "feat: add kimi runtime model sync hooks",
+  "currentTaskId": "phase5-kimi-provider-design-tokens",
+  "expectedCommitMessage": "feat: add kimi provider design tokens",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi runtime model sync hooks",
-    "preCommitHead": "ec33d4b99",
+    "expectedCommitMessage": "feat: add kimi provider design tokens",
+    "preCommitHead": "20676c652",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-runtime-model-sync"
+    "taskId": "phase5-kimi-provider-design-tokens"
   }
 }
 ```
@@ -158,11 +158,15 @@
 
 ### Stream: Runtime Model Sync And Switch Callbacks
 1. [DONE] `phase5-kimi-runtime-model-sync` Подключить Kimi model update/switch callback path для runtime/dialog session views; если Kimi model switch не поддержан в first release, status chip остаётся display-only с явным no-op contract — scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/project-manager/services/switch-api.ts`; expected commit: `feat: add kimi runtime model sync hooks`.
-2. [PENDING] Git Commit: `feat: add kimi runtime model sync hooks` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi runtime model sync hooks` (hash: 20676c652)
 
 ### Stream: Provider Design Tokens
-1. [TODO] `phase5-kimi-provider-design-tokens` Добавить Kimi provider color tokens для Session UI/Project Manager tree/cards/status chips без изменения существующих Claude/Codex/Gemini цветов — scope: `doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html, packages/ui/project-manager/styles.css, src/client/ui/src/session/session.css`; expected commit: `feat: add kimi provider design tokens`.
-2. [TODO] Git Commit: `feat: add kimi provider design tokens` (hash: TBD)
+1. [DONE] `phase5-kimi-provider-design-tokens` Добавить Kimi provider color tokens для Session UI/Project Manager tree/cards/status chips без изменения существующих Claude/Codex/Gemini цветов — scope: `doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html, packages/ui/project-manager/styles.css, media/session-view.css`; expected commit: `feat: add kimi provider design tokens`.
+2. [PENDING] Git Commit: `feat: add kimi provider design tokens` (hash: TBD)
+
+### Stream: Provider Theme Mapping
+1. [TODO] `phase5-kimi-provider-theme-mapping` Подключить Kimi provider theme mapping для Project Manager tree, Session tabs и assistant message bubbles, чтобы новые design tokens реально применялись на всех runtime surfaces — scope: `src/client/project-manager/components/layout/use-step-provider-resolver.ts, src/client/project-manager/components/layout/use-step-provider-resolver.test.ts, src/client/ui/src/session/helpers.ts`; expected commit: `feat: map kimi provider theme across ui`.
+2. [TODO] Git Commit: `feat: map kimi provider theme across ui` (hash: TBD)
 
 ## Phase 6 — Diagnostics, Usage And Documentation (owner: Codex, updated: 2026-05-18)
 ### Stream: Native Wire Capture

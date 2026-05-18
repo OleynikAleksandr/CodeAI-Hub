@@ -145,6 +145,10 @@
   color: #ab34cb;
 }
 
+.session-tab.session-tab--kimi .session-tab__providers-line {
+  color: #77d6ff;
+}
+
 .session-tab__close {
   display: flex;
   align-items: center;
@@ -526,6 +530,14 @@
   color: #ab34cb;
 }
 
+.session-dialog__message--assistant-kimi {
+  background-color: #27313a;
+}
+
+.session-dialog__message--assistant-kimi .session-dialog__role {
+  color: #77d6ff;
+}
+
 .session-dialog__message--thinking,
 .session-dialog__message--assistant-thinking {
   gap: 0;
@@ -573,6 +585,11 @@
 .session-dialog__message--assistant-thinking.session-dialog__message--assistant-gemini
   .session-dialog__role {
   color: rgba(171, 52, 203, 0.6);
+}
+
+.session-dialog__message--assistant-thinking.session-dialog__message--assistant-kimi
+  .session-dialog__role {
+  color: rgba(119, 214, 255, 0.64);
 }
 
 .session-dialog__message--assistant-thinking .session-dialog__content {
@@ -1115,6 +1132,18 @@
   --border-active: rgba(171, 52, 203, 0.8);
 }
 
+.session-status-button--kimi {
+  --accent: #b0b0b0;
+  --bg: rgba(76, 181, 255, 0.1);
+  --border: rgba(76, 181, 255, 0.36);
+  --accent-hover: #77d6ff;
+  --bg-hover: rgba(76, 181, 255, 0.16);
+  --border-hover: rgba(76, 181, 255, 0.56);
+  --accent-active: #ffffff;
+  --bg-active: rgba(76, 181, 255, 0.4);
+  --border-active: rgba(76, 181, 255, 0.74);
+}
+
 .session-status-picker {
   position: absolute;
   bottom: calc(100% + 6px);
@@ -1165,6 +1194,18 @@
   --picker-accent-active: #ffffff;
   --picker-bg-active: rgba(171, 52, 203, 0.45);
   --picker-border-active: rgba(171, 52, 203, 0.8);
+}
+
+.session-status-picker[data-provider="kimiCode"] {
+  --picker-accent: #b0b0b0;
+  --picker-bg: transparent;
+  --picker-border: rgba(255, 255, 255, 0.08);
+  --picker-accent-hover: #77d6ff;
+  --picker-bg-hover: rgba(76, 181, 255, 0.16);
+  --picker-border-hover: rgba(76, 181, 255, 0.56);
+  --picker-accent-active: #ffffff;
+  --picker-bg-active: rgba(76, 181, 255, 0.4);
+  --picker-border-active: rgba(76, 181, 255, 0.74);
 }
 
 .session-status-picker__option {
