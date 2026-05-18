@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "cda5b8c8c",
+  "lastRecordedCommit": "4cac3da6c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-message-hotfix-release-build",
-  "expectedCommitMessage": "chore: release kimi message hotfix build",
+  "currentTaskId": "phase8-kimi-create-session-workspace-fix",
+  "expectedCommitMessage": "fix: apply kimi session workspace override",
   "debt": {
-    "expectedCommitMessage": "chore: release kimi message hotfix build",
-    "preCommitHead": "cda5b8c8c",
+    "expectedCommitMessage": "fix: apply kimi session workspace override",
+    "preCommitHead": "4cac3da6c",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-message-hotfix-release-build"
+    "taskId": "phase8-kimi-create-session-workspace-fix"
   }
 }
 ```
@@ -280,7 +280,20 @@
    - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.308.vsix`, package size `49M`.
    - Result: release tarballs copied to `doc/tmp/releases/`: `kimi-module-1.2.308.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.308.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.308.tar.bz2`, provider/UI tarballs.
    - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
-6. [PENDING] Git Commit: `chore: release kimi message hotfix build` (hash: TBD)
+6. [DONE] Git Commit: `chore: release kimi message hotfix build` (hash: 4cac3da6c)
+
+### Stream: Acceptance Bug Fix — Kimi Session Workspace Override
+1. [DONE] `phase8-kimi-create-session-workspace-fix` Исправить installed-runtime regression 1.2.308: Core передает фактический workspace в `adapter.createSession(workspacePath)`, но Kimi adapter строит Wire CLI args во время `initialize()` из раннего `process.cwd()` и только логирует override; перед первым Wire start нужно применить override к `--work-dir` и process cwd — scope: `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/src/provider/kimi-workspace-override-state.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply kimi session workspace override`.
+   - Log diagnosis: installed Core logs `[kimi] Kimi session workspace override`, then Kimi Wire stderr, but no Core session file is created; the installed Kimi adapter works when invoked manually with explicit workspace options.
+   - Root cause: Core constructs the Kimi provider at startup with `process.cwd()`, while the real workspace arrives later through `createSession(workspacePath)`; adapter ignored that argument for runtime configuration.
+   - Implementation note: Kimi adapter now rebuilds Wire runtime configuration before the first Wire start when `createSession(workspacePath)` supplies a different workspace, so both `--work-dir` and process cwd use the Core-provided workspace.
+   - Verification: `npm run plan:validate` passed.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: architecture line limit repaired by extracting `KimiWorkspaceOverrideState`; `kimi-provider-adapter.ts` is 488 lines.
+   - Verification: source-runtime override smoke passed: adapter initialized with a wrong workspace, `createSession(actualWorkspace)` rebuilt Kimi CLI args to `--work-dir /Users/oleksandroliinyk/VSCODE/CodeAI-Hub kimi`.
+   - Verification: source-runtime Kimi turn smoke passed after workspace override: emitted `turn_started`, aggregated `thinking`, aggregated `assistant`, `turn_completed`.
+2. [PENDING] Git Commit: `fix: apply kimi session workspace override` (hash: TBD)
 
 ### Stream: Subscribe Contract Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».

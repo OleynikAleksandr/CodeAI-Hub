@@ -10,6 +10,10 @@ import { normalizeKimiWireRequest } from "../messaging/kimi-request-failure-norm
 import { KimiSessionLifecycle } from "../session/kimi-session-lifecycle";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
 import { KimiWireRouter } from "../wire/kimi-wire-router";
+import {
+  KimiWorkspaceOverrideState,
+  reportKimiWorkspaceOverride,
+} from "./kimi-workspace-override-state";
 
 export const KIMI_PROVIDER_ID = "kimiCode" as const;
 const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
@@ -204,19 +208,52 @@ export class KimiProviderAdapter {
   private cliEnvironment: KimiCliEnvironment | null = null;
   private runtimeHome: KimiRuntimeHome | null = null;
   private sessionLifecycle: KimiSessionLifecycle | null = null;
+  private readonly workspaceOverride: KimiWorkspaceOverrideState;
   private wireProcessBridge: KimiWireProcessBridge | null = null;
   private wireRouter: KimiWireRouter | null = null;
   private initialized = false;
 
   constructor(options: KimiModuleOptions) {
     this.options = options;
+    this.workspaceOverride = new KimiWorkspaceOverrideState(
+      options.workspace.workspacePath
+    );
   }
 
   async initialize(): Promise<void> {
+    await this.configureWireRuntime(
+      this.workspaceOverride.getActiveWorkspacePath() ?? undefined
+    );
+    this.initialized = true;
+  }
+
+  async createSession(workspacePath?: string): Promise<string> {
+    this.assertInitialized();
+    const override = this.workspaceOverride.resolve(workspacePath);
+    reportKimiWorkspaceOverride(this.options.reporter, override);
+    if (override.applied) {
+      await this.configureWireRuntime(override.workspacePath ?? undefined);
+    }
+    const sessionId = await this.requireSessionLifecycle().create();
+    this.workspaceOverride.markRuntimeStarted();
+    return sessionId;
+  }
+
+  async resumeSession(sessionId: string): Promise<string> {
+    this.assertInitialized();
+    const providerSessionId =
+      await this.requireSessionLifecycle().resume(sessionId);
+    this.workspaceOverride.markRuntimeStarted();
+    return providerSessionId;
+  }
+
+  private async configureWireRuntime(
+    workspacePath: string | undefined
+  ): Promise<void> {
     const cliEnvironment = buildKimiCliEnvironment({
       providerHomePath: this.options.workspace.providerHomePath,
       userConfigPath: this.options.workspace.configPath,
-      workspacePath: this.options.workspace.workspacePath,
+      workspacePath,
     });
     this.cliEnvironment = cliEnvironment;
     this.runtimeHome = await ensureKimiProviderHome(cliEnvironment.runtimeHome);
@@ -236,21 +273,6 @@ export class KimiProviderAdapter {
       wireProcessReady: this.wireProcessBridge !== null,
       wireRouterReady: this.wireRouter !== null,
     });
-  }
-
-  createSession(workspacePath?: string): Promise<string> {
-    this.assertInitialized();
-    if (workspacePath) {
-      this.options.reporter?.info?.("Kimi session workspace override", {
-        workspacePath,
-      });
-    }
-    return this.requireSessionLifecycle().create();
-  }
-
-  resumeSession(sessionId: string): Promise<string> {
-    this.assertInitialized();
-    return this.requireSessionLifecycle().resume(sessionId);
   }
 
   onSessionEvent(sessionId: string, listener: SessionListener): () => void {
@@ -356,7 +378,7 @@ export class KimiProviderAdapter {
     return new KimiWireProcessBridge({
       args: cliEnvironment.args,
       command: cliEnvironment.command,
-      cwd: this.options.workspace.workspacePath ?? process.cwd(),
+      cwd: this.workspaceOverride.getActiveWorkspacePath() ?? process.cwd(),
       env: cliEnvironment.env,
       onLine: (line) => {
         this.requireWireRouter().handleLine(line);
