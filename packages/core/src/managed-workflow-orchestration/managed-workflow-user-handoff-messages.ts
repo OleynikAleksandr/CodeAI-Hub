@@ -1,7 +1,9 @@
 export type ManagedWorkflowHandoffStage =
   | "Application Skeleton"
+  | "Description"
   | "Diagram Modules"
-  | "Quality Gates";
+  | "Quality Gates"
+  | "Virtual Simulation";
 
 const stageLabel = (stage: ManagedWorkflowHandoffStage): string => stage;
 

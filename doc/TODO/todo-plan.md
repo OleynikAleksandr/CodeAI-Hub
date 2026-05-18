@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "7f070a51d",
+  "lastRecordedCommit": "97818f0bc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase5.release.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.298 vsix",
+  "currentTaskId": "pm-sidebar-settings.phase7.feedback.review-flow.task1",
+  "expectedCommitMessage": "feat: extend workflow review confirmation flow",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.298 vsix",
-    "preCommitHead": "7f070a51d",
+    "expectedCommitMessage": "feat: extend workflow review confirmation flow",
+    "preCommitHead": "97818f0bc",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase5.release.vsix.task1"
+    "taskId": "pm-sidebar-settings.phase7.feedback.review-flow.task1"
   }
 }
 ```
@@ -130,18 +130,41 @@
     - Verification 2026-05-17: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated package 2026-05-17: `codeai-hub-1.2.298.vsix` (48M).
     - Release confirmations 2026-05-17: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, `Release build complete`.
-27. [PENDING] Git Commit: `chore: package release 1.2.298 vsix` (hash: TBD)
+27. [DONE] Git Commit: `chore: package release 1.2.298 vsix` (hash: 97818f0bc)
 
 ## Phase 6 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-17)
 
 ### Stream: User Retest
 
-28. [TODO] `pm-sidebar-settings.phase6.acceptance.task1` User installs and tests the next release, then confirms the bottom footer is gone, `Workflow Tree MVP` is not visible, `Open Settings` sits at the bottom of the left sidebar, and the main area has matching bottom/right gutters (scope: user visual acceptance only; expected commit: none).
+28. [DONE] `pm-sidebar-settings.phase6.acceptance.task1` User installs and tests the next release, then confirms the bottom footer is gone, `Workflow Tree MVP` is not visible, `Open Settings` sits at the bottom of the left sidebar, and the main area has matching bottom/right gutters (scope: user visual acceptance only; expected commit: none). Result: User acceptance moved into new step progression usability feedback stream.
 
-## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-05-17)
+## Phase 7 - Step Progression Usability Feedback (owner: Codex, updated: 2026-05-18)
+
+### Stream: Review Confirmation Flow
+
+29. [DONE] `pm-sidebar-settings.phase7.feedback.review-flow.task1` Extend Core-owned review handoff and Project Manager session confirmation so Description and Virtual Simulation show the same `Подтверждаю` action and confirmation activates the next workflow step card (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn*, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, src/client/ui/src/session/session-view*, src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: extend workflow review confirmation flow`).
+30. [PENDING] Git Commit: `feat: extend workflow review confirmation flow` (hash: TBD)
+
+### Stream: Next Step Card Polish
+
+31. [TODO] `pm-sidebar-settings.phase7.feedback.start-card.task1` Remove the managed orchestration preview block from the next-step card and widen listbox options so model names fit horizontally (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/capture-workbench/dom-listbox-selector.tsx, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `fix: polish workflow start card controls`).
+32. [TODO] Git Commit: `fix: polish workflow start card controls` (hash: TBD)
+
+### Stream: Tooling Verification
+
+33. [TODO] `pm-sidebar-settings.phase7.feedback.verify.task1` Run targeted Core/PM tests and webview checks for the step progression usability fixes, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify workflow step progression polish`).
+34. [TODO] Git Commit: `test: verify workflow step progression polish` (hash: TBD)
+
+## Phase 8 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
+
+### Stream: User Retest
+
+35. [TODO] `pm-sidebar-settings.phase8.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation show the Core `Подтверждаю` handoff, confirmation opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
+
+## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-29. [TODO] `pm-sidebar-settings.phase7.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-30. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-31. [TODO] `pm-sidebar-settings.phase7.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+36. [TODO] `pm-sidebar-settings.phase9.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+37. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+38. [TODO] `pm-sidebar-settings.phase9.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.

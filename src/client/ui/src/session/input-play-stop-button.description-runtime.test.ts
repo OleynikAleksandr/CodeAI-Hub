@@ -26,3 +26,23 @@ test("Description runtime input action does not include restart-attempt branch",
   assert.equal(inputButtonSource.includes("RestartAttemptButton"), false);
   assert.equal(sessionViewSource.includes("descriptionRestartAttempt"), false);
 });
+
+test("managed review confirmation activates the next workflow card", async () => {
+  const sessionViewSource = await readFile(SESSION_VIEW_SOURCE_PATH, "utf8");
+
+  assert.equal(sessionViewSource.includes("NEXT_STAGE_BY_REVIEW_STAGE"), true);
+  assert.equal(
+    sessionViewSource.includes('description: "virtual_simulation"'),
+    true
+  );
+  assert.equal(
+    sessionViewSource.includes('virtual_simulation: "diagram_modules"'),
+    true
+  );
+  assert.equal(
+    sessionViewSource.includes('diagram_modules: "application_skeleton"'),
+    true
+  );
+  assert.equal(sessionViewSource.includes('"pm:stage:activated"'), true);
+  assert.equal(sessionViewSource.includes('"managed-review-confirm"'), true);
+});

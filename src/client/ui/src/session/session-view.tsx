@@ -29,6 +29,11 @@ import {
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
 const MANAGED_REVIEW_ACCEPTANCE_CONTENT = "подтверждаю";
+const NEXT_STAGE_BY_REVIEW_STAGE: Readonly<Record<string, string>> = {
+  description: "virtual_simulation",
+  diagram_modules: "application_skeleton",
+  virtual_simulation: "diagram_modules",
+};
 
 const RESUMING_LOCK_REASONS = new Set([
   "context_check_pending",
@@ -105,6 +110,18 @@ const resolveContinuityErrorCopy = (
     return null;
   }
   return activeSession.status.rollover?.error ?? "Rollover failed.";
+};
+
+const activateNextWorkflowStageAfterReview = (stage: string | null): void => {
+  const nextStage = stage ? NEXT_STAGE_BY_REVIEW_STAGE[stage] : undefined;
+  if (!nextStage) {
+    return;
+  }
+  window.dispatchEvent(
+    new CustomEvent("pm:stage:activated", {
+      detail: { source: "managed-review-confirm", stage: nextStage },
+    })
+  );
 };
 
 const SessionViewBody = ({
@@ -226,9 +243,10 @@ const SessionViewBody = ({
           <DialogPanel
             messages={virtualConversationMessages}
             onFileLinkActivate={onFileLinkActivate}
-            onManagedReviewAccept={() =>
-              submitMessage(MANAGED_REVIEW_ACCEPTANCE_CONTENT)
-            }
+            onManagedReviewAccept={() => {
+              submitMessage(MANAGED_REVIEW_ACCEPTANCE_CONTENT);
+              activateNextWorkflowStageAfterReview(activeRecord?.stage ?? null);
+            }}
             onSpeakMessage={
               onSpeakMessage
                 ? (message) =>

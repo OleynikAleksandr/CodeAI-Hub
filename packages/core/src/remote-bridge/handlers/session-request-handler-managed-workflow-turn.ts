@@ -27,6 +27,11 @@ import {
   buildManagedUserLedReviewHandoffMessage,
 } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
 import {
+  buildPreliminaryReviewHandoffMessage,
+  isPreliminaryReviewStage,
+  type PreliminaryReviewSession,
+} from "../../managed-workflow-orchestration/preliminary-review-handoff";
+import {
   buildQualityGatesBoundaryBlockedMessage,
   buildQualityGatesDraftRepairPrompt,
   buildQualityGatesIntegrationRepairPrompt,
@@ -48,7 +53,7 @@ const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
 const QUALITY_GATES_INTEGRATION_REPAIR_TASK_RE =
   /^quality-gates\.phase3\.repair\.task(\d+)$/u;
 
-interface ManagedWorkflowTurnSession {
+interface ManagedWorkflowTurnSession extends PreliminaryReviewSession {
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
   readonly workspacePath?: string | null;
@@ -140,6 +145,21 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       | null
       | undefined;
     if (!(session?.workspacePath && session.initiativeSlug && session.stage)) {
+      return;
+    }
+    if (isPreliminaryReviewStage(session.stage)) {
+      const content = await buildPreliminaryReviewHandoffMessage({
+        session,
+        stage: session.stage,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+      if (content) {
+        this.appendCoreMessage(sessionId, {
+          content,
+          tag: "managed-workflow-user-review",
+        });
+      }
       return;
     }
     if (session.stage === DIAGRAM_MODULES_STAGE) {
