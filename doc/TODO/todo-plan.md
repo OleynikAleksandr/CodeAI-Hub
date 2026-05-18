@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "6de4a3142",
+  "lastRecordedCommit": "ec33d4b99",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-status-line-display",
-  "expectedCommitMessage": "feat: add kimi session status line",
+  "currentTaskId": "phase5-kimi-runtime-model-sync",
+  "expectedCommitMessage": "feat: add kimi runtime model sync hooks",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi session status line",
-    "preCommitHead": "6de4a3142",
+    "expectedCommitMessage": "feat: add kimi runtime model sync hooks",
+    "preCommitHead": "ec33d4b99",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-status-line-display"
+    "taskId": "phase5-kimi-runtime-model-sync"
   }
 }
 ```
@@ -154,11 +154,11 @@
 
 ### Stream: Status Line Model Display
 1. [DONE] `phase5-kimi-status-line-display` Добавить Kimi provider button class, model display name и `kimi-for-coding` status-line rendering в Session UI — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `feat: add kimi session status line`.
-2. [PENDING] Git Commit: `feat: add kimi session status line` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi session status line` (hash: ec33d4b99)
 
 ### Stream: Runtime Model Sync And Switch Callbacks
-1. [TODO] `phase5-kimi-runtime-model-sync` Подключить Kimi model update/switch callback path для runtime/dialog session views; если Kimi model switch не поддержан в first release, status chip остаётся display-only с явным no-op contract — scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/project-manager/services/switch-api.ts`; expected commit: `feat: add kimi runtime model sync hooks`.
-2. [TODO] Git Commit: `feat: add kimi runtime model sync hooks` (hash: TBD)
+1. [DONE] `phase5-kimi-runtime-model-sync` Подключить Kimi model update/switch callback path для runtime/dialog session views; если Kimi model switch не поддержан в first release, status chip остаётся display-only с явным no-op contract — scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/project-manager/services/switch-api.ts`; expected commit: `feat: add kimi runtime model sync hooks`.
+2. [PENDING] Git Commit: `feat: add kimi runtime model sync hooks` (hash: TBD)
 
 ### Stream: Provider Design Tokens
 1. [TODO] `phase5-kimi-provider-design-tokens` Добавить Kimi provider color tokens для Session UI/Project Manager tree/cards/status chips без изменения существующих Claude/Codex/Gemini цветов — scope: `doc/SolidWorks-WorkFlow/DesignSystem/CorporateDesign.html, packages/ui/project-manager/styles.css, src/client/ui/src/session/session.css`; expected commit: `feat: add kimi provider design tokens`.

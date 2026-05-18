@@ -14,6 +14,7 @@ import {
 import { useProjectManagerDialogSessionController } from "./use-project-manager-dialog-session-controller";
 import { useRuntimeModelSync } from "./use-runtime-model-sync";
 import { api } from "../../api";
+import { isDisplayOnlyKimiModelSwitch } from "../../services/switch-api";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
 export type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
@@ -93,6 +94,16 @@ const ProjectManagerDialogSessionView = (props: {
     },
     [activeSpeechMessageId, settings.general.textToSpeech.rate]
   );
+  const handleSelectModel = useCallback(
+    (modelId: string) => {
+      const providerId = session?.providerIds[0] ?? props.intent?.providerId ?? null;
+      if (isDisplayOnlyKimiModelSwitch({ providerId, targetModelId: modelId })) {
+        return;
+      }
+      requestCodexModelSwitch(modelId);
+    },
+    [props.intent?.providerId, requestCodexModelSwitch, session?.providerIds]
+  );
 
   if (!session) {
     const shouldShowPending = props.emptyStatePending === true;
@@ -110,9 +121,7 @@ const ProjectManagerDialogSessionView = (props: {
         onSelectClaudeThinking={(_sessionId, thinking) =>
           requestClaudeThinkingSwitch?.(thinking)
         }
-        onSelectModel={(_sessionId, modelId) =>
-          requestCodexModelSwitch(modelId)
-        }
+        onSelectModel={(_sessionId, modelId) => handleSelectModel(modelId)}
         onSelectReasoning={(_sessionId, reasoning) =>
           requestCodexReasoningSwitch(reasoning)
         }
@@ -144,9 +153,7 @@ const ProjectManagerDialogSessionView = (props: {
       onSelectClaudeThinking={(_sessionId, thinking) =>
         requestClaudeThinkingSwitch?.(thinking)
       }
-      onSelectModel={(_sessionId, modelId) =>
-        requestCodexModelSwitch(modelId)
-      }
+      onSelectModel={(_sessionId, modelId) => handleSelectModel(modelId)}
       onSelectReasoning={(_sessionId, reasoning) =>
         requestCodexReasoningSwitch(reasoning)
       }

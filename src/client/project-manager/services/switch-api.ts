@@ -7,6 +7,14 @@ import type {
 
 type Send = (message: OutgoingMessage) => void;
 
+export const isDisplayOnlyKimiModelSwitch = (params: {
+  readonly providerId?: string | null;
+  readonly targetModelId?: string | null;
+}): boolean =>
+  params.providerId === "kimiCode" &&
+  typeof params.targetModelId === "string" &&
+  params.targetModelId.trim().length > 0;
+
 export class SwitchApi {
   readonly #send: Send;
 

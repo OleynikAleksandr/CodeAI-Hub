@@ -7,6 +7,7 @@ import type { CodexReasoningLevel } from "../../../../types/codex-model-registry
 import type { ProviderStackDescriptor } from "../../../../types/provider";
 import type { SessionMessage, SessionRecord } from "../../../../types/session";
 import { api } from "../../api";
+import { isDisplayOnlyKimiModelSwitch } from "../../services/switch-api";
 import { workspaceSnapshotStore } from "../../services/workspace-snapshot-store";
 import { loadSessionHistories } from "../../../ui/src/core-bridge/session-history";
 import type { FileLinkTarget } from "../../../ui/src/session/file-link-target";
@@ -367,7 +368,11 @@ const ProjectManagerRuntimeSessionView = ({
       const session = sessionsRef.current.find(
         (candidate) => candidate.id === sessionId
       );
-      if (session?.providerIds[0] !== "codexCli") {
+      const providerId = session?.providerIds[0] ?? null;
+      if (isDisplayOnlyKimiModelSwitch({ providerId, targetModelId: modelId })) {
+        return;
+      }
+      if (providerId !== "codexCli") {
         return;
       }
       api.requestCodexModelSwitch(sessionId, modelId);
