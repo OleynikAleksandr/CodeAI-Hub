@@ -27,6 +27,7 @@ type SettingsMode = "full" | "project-manager" | "settings-only";
 
 type SettingsViewState = UseSettingsStateResult & {
   readonly handleKimiDefaultModelChange?: (modelId: KimiModelId) => void;
+  readonly handleKimiThinkingDisplaySyncChange?: (enabled: boolean) => void;
   readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
   readonly hostPostMessage?: (message: unknown) => void;
   readonly supportsCoreRestart?: boolean;
@@ -170,6 +171,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleClaudeThinkingDisplaySyncChange,
     handleCodexThinkingDisplaySyncChange,
     handleGeminiThinkingDisplaySyncChange,
+    handleKimiThinkingDisplaySyncChange,
     handleLocalizationCategoryLanguageChange,
     handleLocalizationDefaultLanguageChange,
     handleLocalizationEngineIdChange,
@@ -413,6 +415,12 @@ const SettingsView: React.FC<SettingsViewProps> = ({
                 <KimiDefaultModelCard
                   defaultModel={settings.providers.kimi?.defaultModel}
                   onDefaultModelChange={handleKimiDefaultModelChange}
+                  onThinkingDisplaySyncChange={
+                    handleKimiThinkingDisplaySyncChange
+                  }
+                  thinkingDisplaySyncEnabled={
+                    settings.providers.kimi?.thinkingDisplaySyncEnabled
+                  }
                 />
               </div>
             );

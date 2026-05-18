@@ -75,7 +75,6 @@ const PM_CORE_CONTROL_STATE: CoreControlState = {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
 const isCoreControlStatusPayload = (
   payload: unknown
 ): payload is CoreControlState => {
@@ -105,6 +104,7 @@ export type UseProjectManagerSettingsStateResult =
   UseSettingsStateResult &
     TemplateUpdateSettingsControls & {
       readonly handleKimiDefaultModelChange: (modelId: KimiModelId) => void;
+      readonly handleKimiThinkingDisplaySyncChange: (enabled: boolean) => void;
       readonly handleNativeRequestCaptureWorkbenchOpen: () => void;
       readonly hostPostMessage: (message: unknown) => void;
       readonly supportsCoreRestart: false;
@@ -338,54 +338,50 @@ export const useProjectManagerSettingsState =
       },
       [settings, updateSettings]
     );
-
     const handleResponsePolicyModeChange = useCallback(
       (mode: GeneralResponseMode) => {
         updateSettings(updateResponsePolicyMode(settings, mode));
       },
       [settings, updateSettings]
     );
-
     const handleStrictSchemaTextChange = useCallback(
       (value: string) => {
         updateSettings(updateStrictSchemaText(settings, value));
       },
       [settings, updateSettings]
     );
-
     const handleStrictInstructionTextChange = useCallback(
       (value: string) => {
         updateSettings(updateStrictInstructionText(settings, value));
       },
       [settings, updateSettings]
     );
-
     const handleGeminiDefaultModelChange = useCallback(
       (modelId: GeminiModelId) => {
         updateSettings(updateGeminiDefaultModel(settings, modelId));
       },
       [settings, updateSettings]
     );
-
     const handleKimiDefaultModelChange = (defaultModel: KimiModelId) =>
       updateSettings({
         ...settings,
         providers: {
           ...settings.providers,
           kimi: {
-            autoUpdate: settings.providers.kimi?.autoUpdate ?? { enabled: false },
+            ...(settings.providers.kimi ?? {
+              autoUpdate: { enabled: false },
+              thinkingDisplaySyncEnabled: true,
+            }),
             defaultModel,
           },
         },
       });
-
     const handleGeminiThinkingChange = useCallback(
       (modelId: GeminiModelId, level: GeminiThinkingLevel) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
       },
       [settings, updateSettings]
     );
-
     const handleClaudeThinkingDisplaySyncChange = useCallback(
       (enabled: boolean) => {
         updateSettings(
@@ -394,7 +390,6 @@ export const useProjectManagerSettingsState =
       },
       [settings, updateSettings]
     );
-
     const handleCodexThinkingDisplaySyncChange = useCallback(
       (enabled: boolean) => {
         updateSettings(
@@ -403,7 +398,6 @@ export const useProjectManagerSettingsState =
       },
       [settings, updateSettings]
     );
-
     const handleGeminiThinkingDisplaySyncChange = useCallback(
       (enabled: boolean) => {
         updateSettings(
@@ -412,7 +406,12 @@ export const useProjectManagerSettingsState =
       },
       [settings, updateSettings]
     );
-
+    const handleKimiThinkingDisplaySyncChange = useCallback(
+      (enabled: boolean) => {
+        updateSettings(updateThinkingDisplaySyncEnabled(settings, "kimi", enabled));
+      },
+      [settings, updateSettings]
+    );
     const handleNativeRequestCapture = useCallback(
       (
         providerId: NativeRequestCaptureProviderId,
@@ -473,6 +472,7 @@ export const useProjectManagerSettingsState =
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
+      handleKimiThinkingDisplaySyncChange,
       handleLocalizationCategoryLanguageChange,
       handleLocalizationDefaultLanguageChange,
       handleLocalizationEngineIdChange,
