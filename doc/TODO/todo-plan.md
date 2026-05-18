@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "faa5f193c",
+  "lastRecordedCommit": "97728b30f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase1-kimi-package-scaffold",
-  "expectedCommitMessage": "feat: scaffold kimi provider module",
+  "currentTaskId": "phase1-kimi-runtime-home",
+  "expectedCommitMessage": "feat: add kimi provider home bootstrap",
   "debt": {
-    "expectedCommitMessage": "feat: scaffold kimi provider module",
-    "preCommitHead": "faa5f193c",
+    "expectedCommitMessage": "feat: add kimi provider home bootstrap",
+    "preCommitHead": "97728b30f",
     "stage": "commit_pending",
-    "taskId": "phase1-kimi-package-scaffold"
+    "taskId": "phase1-kimi-runtime-home"
   }
 }
 ```
@@ -82,11 +82,11 @@
 
 ### Stream: Kimi Module Package Scaffold
 1. [DONE] `phase1-kimi-package-scaffold` Создать `packages/Kimi_Module` с package metadata, public facade export и минимальным provider adapter skeleton без Core registry integration; `KimiProviderAdapter` является самостоятельным facade class — scope: `packages/Kimi_Module/package.json, packages/Kimi_Module/src/index.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `feat: scaffold kimi provider module`.
-2. [PENDING] Git Commit: `feat: scaffold kimi provider module` (hash: TBD)
+2. [DONE] Git Commit: `feat: scaffold kimi provider module` (hash: 97728b30f)
 
 ### Stream: Kimi Runtime Home Contract
-1. [TODO] `phase1-kimi-runtime-home` Реализовать provider-home resolver/bootstrap для `~/.codeai-hub/providers/kimi/home` и env builder с `KIMI_SHARE_DIR` / `KIMI_CLI_NO_AUTO_UPDATE`; добавить unit tests — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi provider home bootstrap`.
-2. [TODO] Git Commit: `feat: add kimi provider home bootstrap` (hash: TBD)
+1. [DONE] `phase1-kimi-runtime-home` Реализовать provider-home resolver/bootstrap для `~/.codeai-hub/providers/kimi/home` и env builder с `KIMI_SHARE_DIR` / `KIMI_CLI_NO_AUTO_UPDATE`; добавить unit tests — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi provider home bootstrap`.
+2. [PENDING] Git Commit: `feat: add kimi provider home bootstrap` (hash: TBD)
 
 ## Phase 2 — Wire Transport And Session Lifecycle (owner: Codex, updated: 2026-05-18)
 ### Stream: Wire Process Bridge
