@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "65fe00aa9",
+  "lastRecordedCommit": "c0f2d34ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase6-kimi-module-docs",
-  "expectedCommitMessage": "docs: add kimi provider module ssot",
+  "currentTaskId": "phase7-kimi-packaging",
+  "expectedCommitMessage": "feat: package kimi provider module",
   "debt": {
-    "expectedCommitMessage": "docs: add kimi provider module ssot",
-    "preCommitHead": "65fe00aa9",
+    "expectedCommitMessage": "feat: package kimi provider module",
+    "preCommitHead": "c0f2d34ea",
     "stage": "commit_pending",
-    "taskId": "phase6-kimi-module-docs"
+    "taskId": "phase7-kimi-packaging"
   }
 }
 ```
@@ -179,12 +179,16 @@
 
 ### Stream: Module SSOT Documentation
 1. [DONE] `phase6-kimi-module-docs` Создать `doc/SolidWorks-WorkFlow/Modules/Kimi.md`, обновить `Docs_Index.md` и синхронизировать SystemArchitecture provider list/invariants — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: add kimi provider module ssot`.
-2. [PENDING] Git Commit: `docs: add kimi provider module ssot` (hash: TBD)
+2. [DONE] Git Commit: `docs: add kimi provider module ssot` (hash: c0f2d34ea)
 
 ## Phase 7 — Packaging And Targeted Verification (owner: Codex, updated: 2026-05-18)
 ### Stream: Build And Packaging Integration
-1. [TODO] `phase7-kimi-packaging` Добавить Kimi module в build/package scripts и provider artifact flow без изменения версий вручную — scope: `scripts, package.json, packages/Kimi_Module`; expected commit: `feat: package kimi provider module`.
-2. [TODO] Git Commit: `feat: package kimi provider module` (hash: TBD)
+1. [DONE] `phase7-kimi-packaging` Добавить Kimi provider artifact builder, release cleanup keep-pattern и tracked provider manifest без изменения версий вручную — scope: `scripts/build-kimi-module.sh, scripts/release-utils.sh, assets/providers/kimi/manifest.json`; expected commit: `feat: package kimi provider module`.
+2. [PENDING] Git Commit: `feat: package kimi provider module` (hash: TBD)
+3. [TODO] `phase7-kimi-core-packaging` Подключить Kimi module к unified build/core runtime packaging и Core runtime dependency rewrite — scope: `scripts/build-all.sh, scripts/build-core.sh, packages/core/package.json, package-lock.json`; expected commit: `feat: bundle kimi provider in core runtime`.
+4. [TODO] Git Commit: `feat: bundle kimi provider in core runtime` (hash: TBD)
+5. [TODO] `phase7-kimi-release-validation` Подключить Kimi provider artifact к release validation, VSIX exclusions и manifest version checks — scope: `scripts/build-release.sh, .vscodeignore`; expected commit: `feat: validate kimi release packaging`.
+6. [TODO] Git Commit: `feat: validate kimi release packaging` (hash: TBD)
 
 ### Stream: Targeted Builds
 1. [TODO] `phase7-kimi-targeted-builds` Выполнить targeted verification для затронутых пакетов/клиентов (`packages/Kimi_Module`, `packages/core`, UI/PM если затронуты) и зафиксировать результаты в плане — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi targeted verification`.
