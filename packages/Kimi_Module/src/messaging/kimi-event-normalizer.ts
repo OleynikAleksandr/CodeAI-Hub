@@ -9,6 +9,20 @@ interface WireEventEnvelope {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const THINKING_STREAM_FLUSH_MIN_CHARS = 900;
+const THINKING_STREAM_BOUNDARY_MIN_CHARS = 360;
+const THINKING_STREAM_BOUNDARY_REGEX = /(?:\n\n|[.!?。！？]\s*)$/u;
+
+const shouldFlushThinkingStreamChunk = (content: string): boolean => {
+  if (content.length >= THINKING_STREAM_FLUSH_MIN_CHARS) {
+    return true;
+  }
+  return (
+    content.length >= THINKING_STREAM_BOUNDARY_MIN_CHARS &&
+    THINKING_STREAM_BOUNDARY_REGEX.test(content.trimEnd())
+  );
+};
+
 const createEvent = (
   eventType: string,
   payload?: Record<string, unknown>
@@ -255,9 +269,20 @@ export class KimiWireEventNormalizer {
       if (thinking.length > 0) {
         this.thinkingChunks.push(thinking);
       }
-      return [];
+      return this.flushThinkingStreamChunk();
     }
     return [createEvent("kimi_wire_event", { raw: payload })];
+  }
+
+  private flushThinkingStreamChunk(): readonly KimiSessionEvent[] {
+    const thinking = this.thinkingChunks.join("");
+    if (!shouldFlushThinkingStreamChunk(thinking)) {
+      return [];
+    }
+    this.thinkingChunks.length = 0;
+    return thinking.trim().length > 0
+      ? [createMessageEvent("thinking", thinking)]
+      : [];
   }
 
   private flushMessages(): readonly KimiSessionEvent[] {
