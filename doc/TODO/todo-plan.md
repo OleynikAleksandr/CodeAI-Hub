@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "d23be288e",
+  "lastRecordedCommit": "f456d146a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-reasoning-settings-state",
-  "expectedCommitMessage": "fix: add kimi reasoning setting state",
+  "currentTaskId": "phase8-kimi-reasoning-settings-controls",
+  "expectedCommitMessage": "fix: add kimi reasoning toggle controls",
   "debt": {
-    "expectedCommitMessage": "fix: add kimi reasoning setting state",
-    "preCommitHead": "d23be288e",
+    "expectedCommitMessage": "fix: add kimi reasoning toggle controls",
+    "preCommitHead": "f456d146a",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-reasoning-settings-state"
+    "taskId": "phase8-kimi-reasoning-settings-controls"
   }
 }
 ```
@@ -381,9 +381,9 @@
 
 ### Stream: Acceptance Bug Fix — Kimi Reasoning Display And Streaming
 1. [DONE] `phase8-kimi-reasoning-settings-state` Добавить Kimi в shared settings state/raw snapshot с `thinkingDisplaySyncEnabled`, чтобы provider toggle имел тот же state contract, что Claude/Gemini/Codex — scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, doc/TODO/todo-plan.md`; expected commit: `fix: add kimi reasoning setting state`.
-2. [PENDING] Git Commit: `fix: add kimi reasoning setting state` (hash: TBD)
-3. [TODO] `phase8-kimi-reasoning-settings-controls` Добавить Kimi settings checkbox и helper update path без hidden reasoning-effort поля — scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/kimi-default-model-card.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: add kimi reasoning toggle controls`.
-4. [TODO] Git Commit: `fix: add kimi reasoning toggle controls` (hash: TBD)
+2. [DONE] Git Commit: `fix: add kimi reasoning setting state` (hash: f456d146a)
+3. [DONE] `phase8-kimi-reasoning-settings-controls` Добавить Kimi settings checkbox и helper update path без hidden reasoning-effort поля — scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/kimi-default-model-card.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: add kimi reasoning toggle controls`.
+4. [PENDING] Git Commit: `fix: add kimi reasoning toggle controls` (hash: TBD)
 5. [TODO] `phase8-kimi-reasoning-settings-wiring` Подключить Kimi checkbox к SettingsView и Project Manager settings state — scope: `src/client/ui/src/components/settings-view.tsx, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `fix: wire kimi reasoning toggle in settings`.
 6. [TODO] Git Commit: `fix: wire kimi reasoning toggle in settings` (hash: TBD)
 7. [TODO] `phase8-kimi-reasoning-core-policy` Подключить Kimi settings persistence, applied turn config и translation visibility policy — scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply kimi reasoning display policy`.

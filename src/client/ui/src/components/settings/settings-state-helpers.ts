@@ -97,7 +97,7 @@ export const updateCodexReasoning = (
 
 export const updateThinkingDisplaySyncEnabled = (
   settings: Settings,
-  provider: "claude" | "codex" | "gemini",
+  provider: "claude" | "codex" | "gemini" | "kimi",
   enabled: boolean
 ): Settings => ({
   ...settings,

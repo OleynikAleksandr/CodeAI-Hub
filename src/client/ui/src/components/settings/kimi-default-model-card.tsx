@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { CSSProperties, FC } from "react";
 import {
   DEFAULT_KIMI_MODEL_ID,
   KIMI_RECOMMENDED_MODELS,
@@ -22,7 +22,35 @@ import {
 interface KimiDefaultModelCardProps {
   readonly defaultModel?: KimiModelId;
   readonly onDefaultModelChange?: (modelId: KimiModelId) => void;
+  readonly onThinkingDisplaySyncChange?: (enabled: boolean) => void;
+  readonly thinkingDisplaySyncEnabled?: boolean;
 }
+
+const displaySyncToggleStyles: CSSProperties = {
+  display: "flex",
+  gap: "12px",
+  alignItems: "flex-start",
+  margin: "12px 0 18px",
+};
+
+const displaySyncCheckboxStyles: CSSProperties = {
+  marginTop: "2px",
+  width: "16px",
+  height: "16px",
+  cursor: "pointer",
+};
+
+const displaySyncTitleStyles: CSSProperties = {
+  fontSize: "13px",
+  fontWeight: 600,
+  marginBottom: "4px",
+};
+
+const displaySyncDescriptionStyles: CSSProperties = {
+  fontSize: "12px",
+  color: "#999999",
+  lineHeight: 1.4,
+};
 
 const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
   <div
@@ -38,11 +66,29 @@ const RadioCircle: FC<{ readonly checked: boolean }> = ({ checked }) => (
 const KimiDefaultModelCard: FC<KimiDefaultModelCardProps> = ({
   defaultModel = DEFAULT_KIMI_MODEL_ID,
   onDefaultModelChange,
+  onThinkingDisplaySyncChange,
+  thinkingDisplaySyncEnabled = true,
 }) => (
   <SettingsCard title="Kimi Default model">
     <p style={descriptionStyles}>
       Select the Kimi model used for new Kimi sessions.
     </p>
+    <label style={displaySyncToggleStyles}>
+      <input
+        checked={thinkingDisplaySyncEnabled}
+        onChange={(event) =>
+          onThinkingDisplaySyncChange?.(event.target.checked)
+        }
+        style={displaySyncCheckboxStyles}
+        type="checkbox"
+      />
+      <div>
+        <div style={displaySyncTitleStyles}>Reasoning in dialog</div>
+        <div style={displaySyncDescriptionStyles}>
+          Show Kimi reasoning as a normal assistant bubble in the dialog.
+        </div>
+      </div>
+    </label>
     <div style={listStyles}>
       {KIMI_RECOMMENDED_MODELS.map((model) => {
         const selected = model.id === defaultModel;
