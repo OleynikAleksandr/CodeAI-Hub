@@ -84,6 +84,10 @@ const buildDisabledSettings = (): Settings => {
         ...defaults.providers.gemini,
         thinkingDisplaySyncEnabled: false,
       },
+      kimi: {
+        ...defaults.providers.kimi,
+        thinkingDisplaySyncEnabled: false,
+      },
     },
   };
 };
@@ -108,6 +112,13 @@ test("resolveSessionThinkingDisplayEnabled follows provider-specific settings", 
   assert.equal(
     resolveSessionThinkingDisplayEnabled({
       providerId: "geminiCli",
+      settings,
+    }),
+    false
+  );
+  assert.equal(
+    resolveSessionThinkingDisplayEnabled({
+      providerId: "kimiCode",
       settings,
     }),
     false

@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "bbf0f0f45",
+  "lastRecordedCommit": "e7d07fa35",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-reasoning-core-policy",
-  "expectedCommitMessage": "fix: apply kimi reasoning display policy",
+  "currentTaskId": "phase8-kimi-reasoning-core-persistence",
+  "expectedCommitMessage": "fix: persist kimi reasoning display defaults",
   "debt": {
-    "expectedCommitMessage": "fix: apply kimi reasoning display policy",
-    "preCommitHead": "bbf0f0f45",
+    "expectedCommitMessage": "fix: persist kimi reasoning display defaults",
+    "preCommitHead": "e7d07fa35",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-reasoning-core-policy"
+    "taskId": "phase8-kimi-reasoning-core-persistence"
   }
 }
 ```
@@ -387,13 +387,15 @@
 5. [DONE] `phase8-kimi-reasoning-settings-wiring` Подключить Kimi checkbox к SettingsView и Project Manager settings state — scope: `src/client/ui/src/components/settings-view.tsx, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `fix: wire kimi reasoning toggle in settings`.
 6. [DONE] Git Commit: `fix: wire kimi reasoning toggle in settings` (hash: bbf0f0f45)
 7. [DONE] `phase8-kimi-reasoning-core-policy` Подключить Kimi settings persistence, applied turn config и translation visibility policy — scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply kimi reasoning display policy`.
-8. [PENDING] Git Commit: `fix: apply kimi reasoning display policy` (hash: TBD)
-9. [TODO] `phase8-kimi-reasoning-core-persistence` Добавить Kimi defaults/migration в Core settings snapshot и Kimi visibility resolver в UI session policy tests — scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/session/helpers.ts, src/client/ui/src/session/thinking-display-policy.test.tsx`; expected commit: `fix: persist kimi reasoning display defaults`.
-10. [TODO] Git Commit: `fix: persist kimi reasoning display defaults` (hash: TBD)
-11. [TODO] `phase8-kimi-reasoning-streaming` Улучшить Kimi reasoning streaming: flush accumulated `ContentPart(type=think)` по bounded chunks до tool/turn boundaries, сохраняя Core-compatible thinking bubbles и не создавая token-level message spam — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: stream kimi reasoning chunks earlier`.
-12. [TODO] Git Commit: `fix: stream kimi reasoning chunks earlier` (hash: TBD)
-13. [TODO] `phase8-kimi-reasoning-docs` Синхронизировать Kimi SSOT: reasoning toggle contract, bounded streaming behavior и ограничение system-instruction cadence для Kimi Wire — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi reasoning display behavior`.
-14. [TODO] Git Commit: `docs: document kimi reasoning display behavior` (hash: TBD)
+8. [DONE] Git Commit: `fix: apply kimi reasoning display policy` (hash: e7d07fa35)
+9. [DONE] `phase8-kimi-reasoning-core-persistence` Добавить Kimi defaults/migration в Core settings snapshot и Kimi visibility resolver в UI session policy tests — scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/session/helpers.ts, src/client/ui/src/session/thinking-display-policy.test.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: persist kimi reasoning display defaults`.
+10. [PENDING] Git Commit: `fix: persist kimi reasoning display defaults` (hash: TBD)
+11. [TODO] `phase8-kimi-reasoning-translation-visibility` Добавить Kimi в Core translation/visibility provider mapping, чтобы hidden/visible-at-emission и translation skip подчинялись Kimi checkbox — scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/session-translation/session-translation-policy-resolver.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts`; expected commit: `fix: route kimi reasoning visibility through core translation`.
+12. [TODO] Git Commit: `fix: route kimi reasoning visibility through core translation` (hash: TBD)
+13. [TODO] `phase8-kimi-reasoning-streaming` Улучшить Kimi reasoning streaming: flush accumulated `ContentPart(type=think)` по bounded chunks до tool/turn boundaries, сохраняя Core-compatible thinking bubbles и не создавая token-level message spam — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: stream kimi reasoning chunks earlier`.
+14. [TODO] Git Commit: `fix: stream kimi reasoning chunks earlier` (hash: TBD)
+15. [TODO] `phase8-kimi-reasoning-docs` Синхронизировать Kimi SSOT: reasoning toggle contract, bounded streaming behavior и ограничение system-instruction cadence для Kimi Wire — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi reasoning display behavior`.
+16. [TODO] Git Commit: `docs: document kimi reasoning display behavior` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

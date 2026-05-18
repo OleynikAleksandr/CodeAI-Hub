@@ -332,6 +332,10 @@ export const resolveSessionThinkingDisplayEnabled = (options: {
       return options.settings.providers.codex.reasoningSummaryEnabled;
     case "geminiCli":
       return options.settings.providers.gemini.thinkingDisplaySyncEnabled;
+    case "kimiCode":
+      return (
+        options.settings.providers.kimi?.thinkingDisplaySyncEnabled ?? true
+      );
     default:
       return true;
   }
