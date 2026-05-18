@@ -69,6 +69,15 @@ Diagram Modules
 
 Практическое следствие: если `Diagram Modules`, `Application Skeleton` или `Quality Gates Baseline` не могут продолжить работу без открытого Project Manager до явного user gate, контракт нарушен и должен чиниться в Core/orchestrator logic, а не в клиенте.
 
+### Preliminary Review Gate — Description and Virtual Simulation
+
+`Description` и `Virtual Simulation` не используют managed technical stage plan, но их переход к следующему trunk step всё равно подтверждается Core-owned review gate:
+- стартовый prompt и последующие правки пользователя всегда уходят агенту как provider-direct работа;
+- Core не показывает completion/review card перед первым provider turn и не перехватывает стартовый prompt как acceptance;
+- после каждого завершённого provider turn Core добавляет system review-card с inline-кнопкой `Подтверждаю`;
+- если пользователь отвечает на вопросы агента или просит правки, сообщение уходит агенту, а после следующего provider turn Core снова показывает ту же review-card;
+- нажатие `Подтверждаю` принимает текущий preliminary artifact и может сразу открыть карточку следующего шага, но Core остаётся источником статуса и unlock truth.
+
 ### Core Runtime как Product Part с контрактами
 
 Core Runtime является самостоятельным `Product Part`, а не набором независимых helper-процессов. Все его кластеры, которые взаимодействуют с Project Manager, provider adapters, agent sessions, Git и Plan Orchestrator, должны проектироваться через явные контракты: сначала boundary contract, затем функции модулей внутри boundary.
@@ -135,6 +144,7 @@ UI на этом этапе:
 UI после submit:
 - левая панель возвращается к обычному Session UI;
 - правая панель поддерживает переключатель `Artifacts/Help`.
+- после каждого ответа Description Agent Core показывает review-card с кнопкой `Подтверждаю`; ответы пользователя на вопросы агента продолжают итерацию, а кнопка подтверждает текущий `Final_Description.md` и открывает карточку `Virtual Simulation`.
 
 ### 1.3 Что должно быть в `Final_Description.md`
 
@@ -182,6 +192,7 @@ Manual start из PM + resume-сессия агента:
 - Core включает полный `Final_Description.md` в первый prompt как authoritative inline source; path остаётся fallback/reference;
 - агент задаёт только уточнения, которые реально улучшают сценарии;
 - агент обновляет `virtual-simulation.md` итеративно.
+- после каждого ответа Virtual Simulation Agent Core показывает review-card с кнопкой `Подтверждаю`; ответы пользователя продолжают итерацию с агентом, а кнопка подтверждает текущий `virtual-simulation.md` и открывает карточку `Diagram Modules`.
 
 ### Артефакт
 

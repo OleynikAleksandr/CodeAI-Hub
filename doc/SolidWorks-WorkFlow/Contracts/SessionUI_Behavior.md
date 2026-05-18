@@ -162,9 +162,19 @@ Scope: в первую очередь для resume-сессий.
 - `DescriptionStep_SingleAgent.md`
 - `ProjectManager_DescriptionEntry_CopyRefactor.md`
 
+## 8) Preliminary review-card button
+
+Для `Description` и `Virtual Simulation` Core показывает review-card только после завершения provider turn-а. До первого provider ответа такой system card быть не должно: стартовый prompt обязан уйти агенту.
+
+Review-card содержит inline-кнопку `Подтверждаю`. Пользователь не обязан печатать это слово вручную:
+- кнопка отправляет Core acceptance intent;
+- свободный текст пользователя считается ответом/правкой и уходит агенту;
+- если агент после этого обновляет артефакт и завершает turn, Core снова показывает такую же review-card;
+- подтверждение кнопкой принимает текущий артефакт и открывает карточку следующего шага (`Description -> Virtual Simulation`, `Virtual Simulation -> Diagram Modules`).
+
 ---
 
-## 8) Регрессионный чеклист (happy path)
+## 9) Регрессионный чеклист (happy path)
 
 1. **Workflow open → immediate lock**
    - Открыть workflow-сессию со стартовым submit.
@@ -172,11 +182,13 @@ Scope: в первую очередь для resume-сессий.
 
 2. **Description turn complete → unlock**
    - Дождаться ответа Description Agent.
-   - После завершения turn ввод становится доступным.
+   - После завершения turn ввод становится доступным, а Core показывает review-card с кнопкой `Подтверждаю`.
+   - Ответить на вопросы агента текстом; после следующего turn Core снова показывает такую же review-card.
 
 3. **Virtual Simulation turn complete → unlock**
    - Дождаться завершения turn.
-   - Ввод доступен для следующего сообщения.
+   - Ввод доступен для следующего сообщения, а Core показывает review-card с кнопкой `Подтверждаю`.
+   - Нажатие кнопки открывает карточку `Diagram Modules`.
 
 4. **Rollover happy path → unlock after bootstrap**
    - В rollover ввод временно блокирован.

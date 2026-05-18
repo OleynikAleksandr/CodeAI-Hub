@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "ae41287a6",
+  "lastRecordedCommit": "3094a80d6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase14.release.vsix.task1",
-  "expectedCommitMessage": "chore: package release 1.2.302 vsix",
+  "currentTaskId": "pm-sidebar-settings.phase15.docs.review-gate.task1",
+  "expectedCommitMessage": "docs: clarify preliminary review gate behavior",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.302 vsix",
-    "preCommitHead": "ae41287a6",
+    "expectedCommitMessage": "docs: clarify preliminary review gate behavior",
+    "preCommitHead": "3094a80d6",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase14.release.vsix.task1"
+    "taskId": "pm-sidebar-settings.phase15.docs.review-gate.task1"
   }
 }
 ```
@@ -297,18 +297,27 @@
     - Verification 2026-05-18: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated package 2026-05-18: `codeai-hub-1.2.302.vsix` (49M reported by release script; filesystem size 48M).
     - Release confirmations 2026-05-18: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, `Release build complete`.
-74. [PENDING] Git Commit: `chore: package release 1.2.302 vsix` (hash: TBD)
+74. [DONE] Git Commit: `chore: package release 1.2.302 vsix` (hash: 3094a80d6)
 
-## Phase 15 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
+## Phase 15 - Preliminary Review Gate Documentation (owner: Codex, updated: 2026-05-18)
+
+### Stream: Review Gate SSOT Clarification
+
+75. [DONE] `pm-sidebar-settings.phase15.docs.review-gate.task1` Clarify the Core-owned preliminary review gate in system/session workflow SSOT docs, including repeated post-turn gate behavior and UI button acceptance (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md`; expected commit: `docs: clarify preliminary review gate behavior`).
+76. [PENDING] Git Commit: `docs: clarify preliminary review gate behavior` (hash: TBD)
+77. [TODO] `pm-sidebar-settings.phase15.docs.step-contracts.task1` Clarify Description, Virtual Simulation, and orchestration boundary contracts for the same repeated review-card and `Подтверждаю` button semantics (scope: `doc/SolidWorks-WorkFlow/Contracts/DescriptionStep_SingleAgent.md, doc/SolidWorks-WorkFlow/Contracts/VirtualSimulation_Step.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md`; expected commit: `docs: document preliminary review gate contracts`).
+78. [TODO] Git Commit: `docs: document preliminary review gate contracts` (hash: TBD)
+
+## Phase 16 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
 ### Stream: User Retest
 
-75. [TODO] `pm-sidebar-settings.phase15.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, show the post-turn Core review card with `Подтверждаю`, and the confirmation button opens the next step card (scope: user visual acceptance only; expected commit: none).
+79. [TODO] `pm-sidebar-settings.phase16.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation start agent work without a premature Core completion card, show the post-turn Core review card with `Подтверждаю`, repeat that review card after agent revisions, and the confirmation button opens the next step card (scope: user visual acceptance only; expected commit: none).
 
-## Phase 16 - Scope Closeout (owner: Codex, updated: 2026-05-18)
+## Phase 17 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-76. [TODO] `pm-sidebar-settings.phase16.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-77. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-78. [TODO] `pm-sidebar-settings.phase16.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+80. [TODO] `pm-sidebar-settings.phase17.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+81. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+82. [TODO] `pm-sidebar-settings.phase17.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
