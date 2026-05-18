@@ -1,6 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
 
 export const KIMI_PROVIDER_ID = "kimiCode" as const;
 const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
@@ -111,7 +112,9 @@ const buildKimiCliEnvironment = (
 export class KimiProviderAdapter {
   private readonly listeners = new Map<string, Set<SessionListener>>();
   private readonly options: KimiModuleOptions;
+  private cliEnvironment: KimiCliEnvironment | null = null;
   private runtimeHome: KimiRuntimeHome | null = null;
+  private wireProcessBridge: KimiWireProcessBridge | null = null;
   private initialized = false;
 
   constructor(options: KimiModuleOptions) {
@@ -123,13 +126,16 @@ export class KimiProviderAdapter {
       providerHomePath: this.options.workspace.providerHomePath,
       userConfigPath: this.options.workspace.configPath,
     });
+    this.cliEnvironment = cliEnvironment;
     this.runtimeHome = await ensureKimiProviderHome(cliEnvironment.runtimeHome);
+    this.wireProcessBridge = this.createWireProcessBridge();
     this.initialized = true;
     this.options.reporter?.info?.("Kimi provider scaffold initialized", {
       cliArgs: cliEnvironment.args,
       providerId: KIMI_PROVIDER_ID,
       providerHomePath: this.runtimeHome.providerHomePath,
       userConfigPath: this.runtimeHome.userConfigPath,
+      wireProcessReady: this.wireProcessBridge !== null,
     });
   }
 
@@ -188,6 +194,25 @@ export class KimiProviderAdapter {
     return Promise.resolve();
   }
 
+  private createWireProcessBridge(): KimiWireProcessBridge {
+    const cliEnvironment = this.requireCliEnvironment();
+    return new KimiWireProcessBridge({
+      args: cliEnvironment.args,
+      cwd: this.options.workspace.workspacePath ?? process.cwd(),
+      env: cliEnvironment.env,
+      onLine: (line) => {
+        this.options.reporter?.info?.("Kimi Wire stdout frame received", {
+          bytes: line.length,
+        });
+      },
+      onStderr: (line) => {
+        this.options.reporter?.warn?.("Kimi Wire stderr line received", {
+          line,
+        });
+      },
+    });
+  }
+
   private createScaffoldSessionId(workspacePath?: string): string {
     const resolvedWorkspacePath =
       workspacePath ?? this.options.workspace.workspacePath ?? "workspace";
@@ -210,5 +235,12 @@ export class KimiProviderAdapter {
     if (!this.initialized) {
       throw new Error("Kimi provider adapter must be initialized before use.");
     }
+  }
+
+  private requireCliEnvironment(): KimiCliEnvironment {
+    if (!this.cliEnvironment) {
+      throw new Error("Kimi CLI environment is not initialized.");
+    }
+    return this.cliEnvironment;
   }
 }

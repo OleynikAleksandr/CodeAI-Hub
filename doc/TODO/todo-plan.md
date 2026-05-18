@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "97728b30f",
+  "lastRecordedCommit": "72cefbef1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase1-kimi-runtime-home",
-  "expectedCommitMessage": "feat: add kimi provider home bootstrap",
+  "currentTaskId": "phase2-kimi-wire-process",
+  "expectedCommitMessage": "feat: add kimi wire process bridge",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi provider home bootstrap",
-    "preCommitHead": "97728b30f",
+    "expectedCommitMessage": "feat: add kimi wire process bridge",
+    "preCommitHead": "72cefbef1",
     "stage": "commit_pending",
-    "taskId": "phase1-kimi-runtime-home"
+    "taskId": "phase2-kimi-wire-process"
   }
 }
 ```
@@ -86,12 +86,12 @@
 
 ### Stream: Kimi Runtime Home Contract
 1. [DONE] `phase1-kimi-runtime-home` Реализовать provider-home resolver/bootstrap для `~/.codeai-hub/providers/kimi/home` и env builder с `KIMI_SHARE_DIR` / `KIMI_CLI_NO_AUTO_UPDATE`; добавить unit tests — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi provider home bootstrap`.
-2. [PENDING] Git Commit: `feat: add kimi provider home bootstrap` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi provider home bootstrap` (hash: 72cefbef1)
 
 ## Phase 2 — Wire Transport And Session Lifecycle (owner: Codex, updated: 2026-05-18)
 ### Stream: Wire Process Bridge
-1. [TODO] `phase2-kimi-wire-process` Реализовать process bridge для `kimi --wire`: spawn/env/stdin/stdout framing, startup failure normalization и shutdown cleanup — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi wire process bridge`.
-2. [TODO] Git Commit: `feat: add kimi wire process bridge` (hash: TBD)
+1. [DONE] `phase2-kimi-wire-process` Реализовать process bridge для `kimi --wire`: spawn/env/stdin/stdout framing, startup failure normalization и shutdown cleanup — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi wire process bridge`.
+2. [PENDING] Git Commit: `feat: add kimi wire process bridge` (hash: TBD)
 
 ### Stream: Wire Protocol Router
 1. [TODO] `phase2-kimi-wire-router` Реализовать JSON-RPC/Wire request-response router, event/request dispatch и malformed-frame handling с unit tests — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi wire protocol router`.
