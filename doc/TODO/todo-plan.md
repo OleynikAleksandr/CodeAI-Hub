@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "3f3896ecd",
+  "lastRecordedCommit": "290219e42",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase0.plan.task1",
-  "expectedCommitMessage": "docs: plan application skeleton final review gate",
+  "currentTaskId": "application-skeleton-final-review.phase1.lifecycle.task1",
+  "expectedCommitMessage": "fix: defer application skeleton completion until final review",
   "debt": {
-    "expectedCommitMessage": "docs: plan application skeleton final review gate",
-    "preCommitHead": "3f3896ecd",
+    "expectedCommitMessage": "fix: defer application skeleton completion until final review",
+    "preCommitHead": "290219e42",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase0.plan.task1"
+    "taskId": "application-skeleton-final-review.phase1.lifecycle.task1"
   }
 }
 ```
@@ -48,14 +48,14 @@
 ### Stream: Active Scope Creation
 
 1. [DONE] `application-skeleton-final-review.phase0.plan.task1` Create planning source, register it in Docs_Index, and open the active todo-plan (scope: `doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan application skeleton final review gate`).
-2. [PENDING] Git Commit: `docs: plan application skeleton final review gate` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan application skeleton final review gate` (hash: 290219e42)
 
 ## Phase 1 - Core Final Gate Lifecycle (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Stage Plan Completion Boundary
 
-3. [TODO] `application-skeleton-final-review.phase1.lifecycle.task1` Defer Application Skeleton completed-stage ledger/unlock until explicit final user acceptance and expose final-review state helpers (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts`; expected commit: `fix: defer application skeleton completion until final review`).
-4. [TODO] Git Commit: `fix: defer application skeleton completion until final review` (hash: TBD)
+3. [DONE] `application-skeleton-final-review.phase1.lifecycle.task1` Defer Application Skeleton completed-stage ledger/unlock until explicit final user acceptance and expose final-review state helpers (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts, doc/TODO/todo-plan.md`; expected commit: `fix: defer application skeleton completion until final review`).
+4. [PENDING] Git Commit: `fix: defer application skeleton completion until final review` (hash: TBD)
 
 ### Stream: Core Handoff And Review Actions
 

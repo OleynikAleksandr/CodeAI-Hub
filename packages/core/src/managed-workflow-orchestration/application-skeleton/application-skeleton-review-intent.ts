@@ -35,12 +35,19 @@ export const classifyApplicationSkeletonReviewIntent = (
 export const isApplicationSkeletonReviewOpen = async (
   workspaceRoot: string
 ): Promise<boolean> => {
+  const taskId = await readCurrentTaskId(workspaceRoot);
+  return taskId?.startsWith(REVIEW_TASK_PREFIX) ?? false;
+};
+
+const readCurrentTaskId = async (
+  workspaceRoot: string
+): Promise<string | null> => {
   const planText = await readFile(
     path.join(workspaceRoot, APPLICATION_STAGE_PLAN_PATH),
     "utf8"
   ).catch(() => null);
   if (!planText) {
-    return false;
+    return null;
   }
   const rawState = planText.split(PLAN_START)[1]?.split(PLAN_END)[0];
   const json = rawState
@@ -49,16 +56,13 @@ export const isApplicationSkeletonReviewOpen = async (
     .replace(FENCED_JSON_END_RE, "")
     .trim();
   if (!json) {
-    return false;
+    return null;
   }
   try {
     const state = JSON.parse(json) as { readonly currentTaskId?: unknown };
-    return (
-      typeof state.currentTaskId === "string" &&
-      state.currentTaskId.startsWith(REVIEW_TASK_PREFIX)
-    );
+    return typeof state.currentTaskId === "string" ? state.currentTaskId : null;
   } catch {
-    return false;
+    return null;
   }
 };
 

@@ -3,7 +3,6 @@ import { commitManagedWorkflowLedger } from "../diagram-modules/managed-workflow
 import { ensureManagedTerminalGitClean } from "../managed-terminal-clean-git-boundary";
 import {
   APPLICATION_STAGE_PLAN_PATH,
-  addUnique,
   appendMaterializationStep,
   buildContractArtifactPaths,
   buildMaterializeTaskId,
@@ -13,10 +12,11 @@ import {
   DRAFT_TASK_ID,
   MATERIALIZE_COMMIT_MESSAGE,
   type ManagedPlanState,
-  type ManagedWorkspaceState,
+  markFinalReviewAccepted,
   markReviewAcceptedWithoutRevision,
   type NextPlanStep,
   openDraftStagePlan,
+  PERSISTENT_RETURN_TASK_ID,
   PHASE4_TASK_ID,
   PLAN_END,
   PLAN_START,
@@ -27,10 +27,9 @@ import {
   resolveNextAfterCommit,
   resolveNextAfterRejectedCommit,
   uniqueExistingPaths,
+  updateApplicationSkeletonWorkspaceState,
   updateStagePlanAfterCommit,
-  WORKSPACE_END,
   WORKSPACE_PLAN_PATH,
-  WORKSPACE_START,
   writeText,
 } from "./application-skeleton-stage-plan-model";
 import type { ApplicationSkeletonManagedValidationResult } from "./application-skeleton-validator";
@@ -141,6 +140,54 @@ export class ApplicationSkeletonStagePlanController {
       workspaceRoot: params.workspaceRoot,
     });
     return MATERIALIZE_COMMIT_MESSAGE;
+  }
+
+  async acceptFinalMaterializedReview(params: {
+    readonly workspaceRoot: string;
+  }): Promise<void> {
+    const stagePlanText = await readText(
+      params.workspaceRoot,
+      APPLICATION_STAGE_PLAN_PATH
+    );
+    const stageState = parseStateBlock<ManagedPlanState>(
+      stagePlanText,
+      PLAN_START,
+      PLAN_END
+    );
+    if (stageState.currentTaskId !== PHASE4_TASK_ID) {
+      throw new Error("Application Skeleton final review is not open.");
+    }
+    await ensureManagedTerminalGitClean({
+      gitBoundary: this.gitBoundary,
+      stage: "application_skeleton",
+      workspaceRoot: params.workspaceRoot,
+    });
+    await writeText(
+      params.workspaceRoot,
+      APPLICATION_STAGE_PLAN_PATH,
+      replaceStateBlock(
+        markFinalReviewAccepted(stagePlanText),
+        PLAN_START,
+        PLAN_END,
+        {
+          ...stageState,
+          currentTaskId: PERSISTENT_RETURN_TASK_ID,
+          expectedCommitMessage: null,
+        }
+      )
+    );
+    await this.updateWorkspaceState(params.workspaceRoot, {
+      completed: true,
+      hash: stageState.lastRecordedCommit ?? "not-created-final-user-review",
+      message: "not-created-final-user-review",
+      sessionId: "core-final-review",
+      taskId: PHASE4_TASK_ID,
+    });
+    await commitManagedWorkflowLedger({
+      gitBoundary: this.gitBoundary,
+      ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
   }
 
   async commitManagedTurn(params: {
@@ -346,13 +393,6 @@ export class ApplicationSkeletonStagePlanController {
     readonly stageState: ManagedPlanState;
     readonly workspaceRoot: string;
   }): Promise<void> {
-    if (params.next.taskId === PHASE4_TASK_ID) {
-      await ensureManagedTerminalGitClean({
-        gitBoundary: this.gitBoundary,
-        stage: "application_skeleton",
-        workspaceRoot: params.workspaceRoot,
-      });
-    }
     const nextStageState: ManagedPlanState = {
       ...params.stageState,
       currentTaskId: params.next.taskId,
@@ -377,7 +417,7 @@ export class ApplicationSkeletonStagePlanController {
       nextStagePlanText
     );
     await this.updateWorkspaceState(params.workspaceRoot, {
-      completed: params.next.taskId === PHASE4_TASK_ID,
+      completed: false,
       hash: params.hash,
       message: params.commitMessage,
       sessionId: params.sessionId,
@@ -439,62 +479,9 @@ export class ApplicationSkeletonStagePlanController {
       readonly taskId: string | null;
     } | null
   ): Promise<void> {
-    const workspacePlanText = await readText(
+    await updateApplicationSkeletonWorkspaceState(
       workspaceRoot,
-      WORKSPACE_PLAN_PATH
-    );
-    const workspaceState = parseStateBlock<ManagedWorkspaceState>(
-      workspacePlanText,
-      WORKSPACE_START,
-      WORKSPACE_END
-    );
-    const acceptedCommits = Array.isArray(workspaceState.acceptedCommits)
-      ? workspaceState.acceptedCommits
-      : [];
-    const nextWorkspaceState: ManagedWorkspaceState = {
-      ...workspaceState,
-      activePlanPath: APPLICATION_STAGE_PLAN_PATH,
-      activeStage: acceptedCommit?.completed
-        ? "quality_gates"
-        : "application_skeleton",
-      unlockedStages: addUnique(
-        workspaceState.unlockedStages,
-        "application_skeleton"
-      ),
-    };
-    if (acceptedCommit) {
-      nextWorkspaceState.acceptedCommits = [
-        ...acceptedCommits,
-        {
-          hash: acceptedCommit.hash,
-          message: acceptedCommit.message,
-          sessionId: acceptedCommit.sessionId,
-          stage: "application_skeleton",
-          taskId: acceptedCommit.taskId,
-        },
-      ];
-      nextWorkspaceState.lastAcceptedCommitHash = acceptedCommit.hash;
-      nextWorkspaceState.lastAcceptedCommitMessage = acceptedCommit.message;
-    }
-    if (acceptedCommit?.completed) {
-      nextWorkspaceState.completedStages = addUnique(
-        workspaceState.completedStages,
-        "application_skeleton"
-      );
-      nextWorkspaceState.unlockedStages = addUnique(
-        nextWorkspaceState.unlockedStages,
-        "quality_gates"
-      );
-    }
-    await writeText(
-      workspaceRoot,
-      WORKSPACE_PLAN_PATH,
-      replaceStateBlock(
-        workspacePlanText,
-        WORKSPACE_START,
-        WORKSPACE_END,
-        nextWorkspaceState
-      )
+      acceptedCommit
     );
   }
 }

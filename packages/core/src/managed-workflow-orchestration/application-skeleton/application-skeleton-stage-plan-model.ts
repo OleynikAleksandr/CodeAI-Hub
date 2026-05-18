@@ -18,8 +18,8 @@ export {
 
 export const PLAN_START = "<!-- codeai-plan-state:start -->";
 export const PLAN_END = "<!-- codeai-plan-state:end -->";
-export const WORKSPACE_START = "<!-- codeai-workspace-plan-state:start -->";
-export const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
+const WORKSPACE_START = "<!-- codeai-workspace-plan-state:start -->";
+const WORKSPACE_END = "<!-- codeai-workspace-plan-state:end -->";
 
 export const APPLICATION_STAGE_PLAN_PATH =
   "doc/TODO/stages/application-skeleton/todo-plan.md";
@@ -28,10 +28,13 @@ export const REVIEW_TASK_PREFIX = "application-skeleton.phase2.review.task";
 const MATERIALIZE_TASK_PREFIX = "application-skeleton.phase3.materialize.task";
 export const MATERIALIZE_COMMIT_MESSAGE =
   "feat: materialize application skeleton attempt 1";
-export const PHASE4_TASK_ID = "application-skeleton.phase4.user-return.task1";
+export const PHASE4_TASK_ID = "application-skeleton.phase4.final-review.task1";
+export const PERSISTENT_RETURN_TASK_ID =
+  "application-skeleton.phase5.user-return.task1";
 
 const NO_REVISION_DISPOSITION =
   "not-created-user-accepted-without-review-revision";
+const PERSISTENT_RETURN_DISPOSITION = "not-created-persistent-user-return-open";
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const FENCED_JSON_END_RE = /\s*```$/u;
 const LOCKFILES_BY_PACKAGE_MANAGER: Record<string, readonly string[]> = {
@@ -51,11 +54,7 @@ export interface ManagedPlanState {
 
 export interface ManagedWorkspaceState {
   acceptedCommits?: unknown[];
-  activePlanPath?: string | null;
-  activeStage?: string | null;
   completedStages?: unknown[];
-  lastAcceptedCommitHash?: string | null;
-  lastAcceptedCommitMessage?: string | null;
   unlockedStages?: unknown[];
   [key: string]: unknown;
 }
@@ -130,7 +129,7 @@ const maxListNumber = (content: string): number => {
   return max;
 };
 
-export const addUnique = <TValue>(
+const addUnique = <TValue>(
   values: readonly unknown[] | undefined,
   value: TValue
 ): unknown[] => {
@@ -155,10 +154,9 @@ export const buildMaterializeTaskId = (attemptNumber: number): string =>
   `${MATERIALIZE_TASK_PREFIX}${attemptNumber}`;
 
 const parseReviewTaskNumber = (taskId: string): number | null => {
-  if (!taskId.startsWith(REVIEW_TASK_PREFIX)) {
-    return null;
-  }
-  const value = Number(taskId.slice(REVIEW_TASK_PREFIX.length));
+  const value = taskId.startsWith(REVIEW_TASK_PREFIX)
+    ? Number(taskId.slice(REVIEW_TASK_PREFIX.length))
+    : Number.NaN;
   return Number.isInteger(value) && value > 0 ? value : null;
 };
 
@@ -197,21 +195,12 @@ const appendReviewStep = (content: string, reviewNumber: number): string => {
   const nextNumber = maxListNumber(content) + 1;
   const phaseHeader =
     reviewNumber === 1
-      ? [
-          "",
-          "## Phase 2 — Application Skeleton Contract Review",
-          "",
-          "### Stream: User-Led Review",
-          "",
-        ]
-      : [""];
-  return [
-    content.trimEnd(),
-    ...phaseHeader,
-    `${nextNumber}. [IN_PROGRESS] \`${taskId}\` User reviews the Application Skeleton contract and either accepts it or requests revision (scope: user decision + \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`${buildReviewCommitMessage(reviewNumber)}\`).`,
-    `${nextNumber + 1}. [TODO] Git Commit: \`${buildReviewCommitMessage(reviewNumber)}\` (hash: TBD)`,
-    "",
-  ].join("\n");
+      ? "\n\n## Phase 2 — Application Skeleton Contract Review\n\n### Stream: User-Led Review"
+      : "";
+  return `${content.trimEnd()}${phaseHeader}
+${nextNumber}. [IN_PROGRESS] \`${taskId}\` User reviews the Application Skeleton contract and either accepts it or requests revision (scope: user decision + \`.codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`${buildReviewCommitMessage(reviewNumber)}\`).
+${nextNumber + 1}. [TODO] Git Commit: \`${buildReviewCommitMessage(reviewNumber)}\` (hash: TBD)
+`;
 };
 
 export const appendMaterializationStep = (content: string): string => {
@@ -220,35 +209,46 @@ export const appendMaterializationStep = (content: string): string => {
     return content;
   }
   const nextNumber = maxListNumber(content) + 1;
-  return [
-    content.trimEnd(),
-    "",
-    "## Phase 3 — Application Skeleton Materialization",
-    "",
-    "### Stream: Filesystem Projection",
-    "",
-    `${nextNumber}. [IN_PROGRESS] \`${taskId}\` Materialize the user-accepted Application Skeleton contract into the workspace filesystem and stop for Core validation (scope: \`product-parts/**, package.json, package-lock.json, tsconfig*.json, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`${MATERIALIZE_COMMIT_MESSAGE}\`).`,
-    `${nextNumber + 1}. [TODO] Git Commit: \`${MATERIALIZE_COMMIT_MESSAGE}\` (hash: TBD)`,
-    "",
-  ].join("\n");
+  return `${content.trimEnd()}
+
+## Phase 3 — Application Skeleton Materialization
+
+### Stream: Filesystem Projection
+
+${nextNumber}. [IN_PROGRESS] \`${taskId}\` Materialize the user-accepted Application Skeleton contract into the workspace filesystem and stop for Core validation (scope: \`product-parts/**, package.json, package-lock.json, tsconfig*.json, .codeai-hub/**/application_skeleton/application-skeleton.md, .codeai-hub/**/application_skeleton/application-skeleton-map.json\`; expected commit: \`${MATERIALIZE_COMMIT_MESSAGE}\`).
+${nextNumber + 1}. [TODO] Git Commit: \`${MATERIALIZE_COMMIT_MESSAGE}\` (hash: TBD)
+`;
 };
 
-const appendPersistentReturnStep = (content: string): string => {
+const appendFinalReviewStep = (content: string): string => {
   if (content.includes(`\`${PHASE4_TASK_ID}\``)) {
     return content;
   }
   const nextNumber = maxListNumber(content) + 1;
-  return [
-    content.trimEnd(),
-    "",
-    "## Phase 4 — Persistent Application Skeleton User Return",
-    "",
-    "### Stream: User Return And Revisions",
-    "",
-    `${nextNumber}. [IN_PROGRESS] \`${PHASE4_TASK_ID}\` Persistent Application Skeleton return phase is open for future user revisions after accepted materialization (scope: user workflow; expected commit: none).`,
-    `${nextNumber + 1}. [DONE] Git Commit: \`not-created-persistent-user-return-open\` (hash: not-created-persistent-user-return-open)`,
-    "",
-  ].join("\n");
+  return `${content.trimEnd()}
+
+## Phase 4 — Application Skeleton Final User Review
+
+### Stream: Post-Materialization Review
+
+${nextNumber}. [IN_PROGRESS] \`${PHASE4_TASK_ID}\` User reviews the materialized Application Skeleton and either accepts it to unlock Quality Gates or requests revision (scope: user decision + Application Skeleton materialized workspace; expected commit: none).
+`;
+};
+
+const appendPersistentReturnStep = (content: string): string => {
+  if (content.includes(`\`${PERSISTENT_RETURN_TASK_ID}\``)) {
+    return content;
+  }
+  const nextNumber = maxListNumber(content) + 1;
+  return `${content.trimEnd()}
+
+## Phase 5 — Persistent Application Skeleton User Return
+
+### Stream: User Return And Revisions
+
+${nextNumber}. [IN_PROGRESS] \`${PERSISTENT_RETURN_TASK_ID}\` Persistent Application Skeleton return phase is open for future user revisions after accepted materialization (scope: user workflow; expected commit: none).
+${nextNumber + 1}. [DONE] Git Commit: \`${PERSISTENT_RETURN_DISPOSITION}\` (hash: ${PERSISTENT_RETURN_DISPOSITION})
+`;
 };
 
 export const updateStagePlanAfterCommit = (params: {
@@ -295,9 +295,19 @@ export const updateStagePlanAfterCommit = (params: {
     );
   }
   if (params.next.taskId === PHASE4_TASK_ID) {
-    return appendPersistentReturnStep(markedDone);
+    return appendFinalReviewStep(markedDone);
   }
   return markedDone;
+};
+
+export const markFinalReviewAccepted = (content: string): string => {
+  const taskPattern = new RegExp(
+    `^(\\d+\\. \\[)(?:TODO|IN_PROGRESS|BLOCKED)(\\] \`${escapeRegExp(
+      PHASE4_TASK_ID
+    )}\` .*)$`,
+    "mu"
+  );
+  return appendPersistentReturnStep(content.replace(taskPattern, "$1DONE$2"));
 };
 
 export const markReviewAcceptedWithoutRevision = (params: {
@@ -332,10 +342,7 @@ const collectCodePathsFromNode = (node: Record<string, unknown>): string[] => {
   }
   for (const key of ["clusters", "modules", "standaloneModules"]) {
     const children = node[key];
-    if (!Array.isArray(children)) {
-      continue;
-    }
-    for (const child of children) {
+    for (const child of Array.isArray(children) ? children : []) {
       if (isRecord(child)) {
         paths.push(...collectCodePathsFromNode(child));
       }
@@ -360,11 +367,7 @@ export const collectMaterializedPaths = (
   if (!mapJson) {
     return [];
   }
-  const direct = Array.isArray(mapJson.materializedPaths)
-    ? mapJson.materializedPaths.filter(
-        (entry): entry is string => typeof entry === "string"
-      )
-    : [];
+  const direct = readStringArray(mapJson, "materializedPaths");
   const codePaths = Array.isArray(mapJson.productParts)
     ? mapJson.productParts.flatMap((part) =>
         isRecord(part) ? collectCodePathsFromNode(part) : []
@@ -375,6 +378,72 @@ export const collectMaterializedPaths = (
       ? [mapJson.sourceRoot.trim()]
       : [];
   return Array.from(new Set([...direct, ...codePaths, ...sourceRoot]));
+};
+
+export const updateApplicationSkeletonWorkspaceState = async (
+  workspaceRoot: string,
+  acceptedCommit: {
+    readonly completed: boolean;
+    readonly hash: string;
+    readonly message: string;
+    readonly sessionId: string;
+    readonly taskId: string | null;
+  } | null
+): Promise<void> => {
+  const workspacePlanText = await readText(workspaceRoot, WORKSPACE_PLAN_PATH);
+  const workspaceState = parseStateBlock<ManagedWorkspaceState>(
+    workspacePlanText,
+    WORKSPACE_START,
+    WORKSPACE_END
+  );
+  const acceptedCommits = Array.isArray(workspaceState.acceptedCommits)
+    ? workspaceState.acceptedCommits
+    : [];
+  const nextWorkspaceState: ManagedWorkspaceState = {
+    ...workspaceState,
+    activePlanPath: APPLICATION_STAGE_PLAN_PATH,
+    activeStage: acceptedCommit?.completed
+      ? "quality_gates"
+      : "application_skeleton",
+    unlockedStages: addUnique(
+      workspaceState.unlockedStages,
+      "application_skeleton"
+    ),
+  };
+  if (acceptedCommit) {
+    nextWorkspaceState.acceptedCommits = [
+      ...acceptedCommits,
+      {
+        hash: acceptedCommit.hash,
+        message: acceptedCommit.message,
+        sessionId: acceptedCommit.sessionId,
+        stage: "application_skeleton",
+        taskId: acceptedCommit.taskId,
+      },
+    ];
+    nextWorkspaceState.lastAcceptedCommitHash = acceptedCommit.hash;
+    nextWorkspaceState.lastAcceptedCommitMessage = acceptedCommit.message;
+  }
+  if (acceptedCommit?.completed) {
+    nextWorkspaceState.completedStages = addUnique(
+      workspaceState.completedStages,
+      "application_skeleton"
+    );
+    nextWorkspaceState.unlockedStages = addUnique(
+      nextWorkspaceState.unlockedStages,
+      "quality_gates"
+    );
+  }
+  await writeText(
+    workspaceRoot,
+    WORKSPACE_PLAN_PATH,
+    replaceStateBlock(
+      workspacePlanText,
+      WORKSPACE_START,
+      WORKSPACE_END,
+      nextWorkspaceState
+    )
+  );
 };
 
 export const collectFoundationPaths = async (
