@@ -41,8 +41,10 @@ import type { SessionRequestHandlerEventMessages } from "./session-request-handl
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
+const DESCRIPTION_STAGE = "description";
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const QUALITY_GATES_STAGE = "quality_gates";
+const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
 const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
   /^application-skeleton\.phase3\.repair\.task(\d+)$/u;
 const QUALITY_GATES_INTEGRATION_REPAIR_TASK_RE =
@@ -140,6 +142,20 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       | null
       | undefined;
     if (!(session?.workspacePath && session.initiativeSlug && session.stage)) {
+      return;
+    }
+    if (session.stage === DESCRIPTION_STAGE) {
+      this.appendCoreMessage(sessionId, {
+        content: buildManagedUserLedReviewHandoffMessage("Description"),
+        tag: "managed-workflow-user-review",
+      });
+      return;
+    }
+    if (session.stage === VIRTUAL_SIMULATION_STAGE) {
+      this.appendCoreMessage(sessionId, {
+        content: buildManagedUserLedReviewHandoffMessage("Virtual Simulation"),
+        tag: "managed-workflow-user-review",
+      });
       return;
     }
     if (session.stage === DIAGRAM_MODULES_STAGE) {
