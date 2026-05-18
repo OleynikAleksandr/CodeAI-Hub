@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "2a4491eca",
+  "lastRecordedCommit": "7827efdfb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase11.feedback.preliminary-router.task1",
-  "expectedCommitMessage": "fix: route preliminary prompts to providers",
+  "currentTaskId": "pm-sidebar-settings.phase11.feedback.verify.task1",
+  "expectedCommitMessage": "test: verify preliminary provider routing",
   "debt": {
-    "expectedCommitMessage": "fix: route preliminary prompts to providers",
-    "preCommitHead": "2a4491eca",
+    "expectedCommitMessage": "test: verify preliminary provider routing",
+    "preCommitHead": "7827efdfb",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase11.feedback.preliminary-router.task1"
+    "taskId": "pm-sidebar-settings.phase11.feedback.verify.task1"
   }
 }
 ```
@@ -228,9 +228,14 @@
 ### Stream: Preliminary Step Router Separation
 
 53. [DONE] `pm-sidebar-settings.phase11.feedback.preliminary-router.task1` Remove Description/Virtual Simulation from managed review decision interception and turn-completion hooks so startup prompts containing confirmation instructions are dispatched to providers instead of being consumed as Core acceptance (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, packages/core/src/managed-workflow-orchestration, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: route preliminary prompts to providers`). Regression source: v1.2.300 user retest still showed `Core: Description completed` immediately after the start prompt because the generic managed review classifier intercepted preliminary stage text containing `подтверждаю`.
-54. [PENDING] Git Commit: `fix: route preliminary prompts to providers` (hash: TBD)
-55. [TODO] `pm-sidebar-settings.phase11.feedback.verify.task1` Run targeted preliminary router regression tests and affected Core/UI builds, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify preliminary provider routing`).
-56. [TODO] Git Commit: `test: verify preliminary provider routing` (hash: TBD)
+54. [DONE] Git Commit: `fix: route preliminary prompts to providers` (hash: 7827efdfb)
+55. [DONE] `pm-sidebar-settings.phase11.feedback.verify.task1` Run targeted preliminary router regression tests and affected Core/UI builds, then record results (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify preliminary provider routing`).
+    - Verification 2026-05-18: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts` passed 13/13.
+    - Verification 2026-05-18: `npm run build --workspace @codeai-hub/core` passed.
+    - Verification 2026-05-18: `npm run typecheck:webview` passed.
+    - Verification 2026-05-18: `npm run build:webview` passed.
+    - Verification 2026-05-18: `npm run build:project-manager` passed.
+56. [PENDING] Git Commit: `test: verify preliminary provider routing` (hash: TBD)
 
 ## Phase 12 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
