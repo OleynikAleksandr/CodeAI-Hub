@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "72cefbef1",
+  "lastRecordedCommit": "e500a17c5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase2-kimi-wire-process",
-  "expectedCommitMessage": "feat: add kimi wire process bridge",
+  "currentTaskId": "phase2-kimi-wire-router",
+  "expectedCommitMessage": "feat: add kimi wire protocol router",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi wire process bridge",
-    "preCommitHead": "72cefbef1",
+    "expectedCommitMessage": "feat: add kimi wire protocol router",
+    "preCommitHead": "e500a17c5",
     "stage": "commit_pending",
-    "taskId": "phase2-kimi-wire-process"
+    "taskId": "phase2-kimi-wire-router"
   }
 }
 ```
@@ -91,11 +91,11 @@
 ## Phase 2 — Wire Transport And Session Lifecycle (owner: Codex, updated: 2026-05-18)
 ### Stream: Wire Process Bridge
 1. [DONE] `phase2-kimi-wire-process` Реализовать process bridge для `kimi --wire`: spawn/env/stdin/stdout framing, startup failure normalization и shutdown cleanup — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi wire process bridge`.
-2. [PENDING] Git Commit: `feat: add kimi wire process bridge` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi wire process bridge` (hash: e500a17c5)
 
 ### Stream: Wire Protocol Router
-1. [TODO] `phase2-kimi-wire-router` Реализовать JSON-RPC/Wire request-response router, event/request dispatch и malformed-frame handling с unit tests — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi wire protocol router`.
-2. [TODO] Git Commit: `feat: add kimi wire protocol router` (hash: TBD)
+1. [DONE] `phase2-kimi-wire-router` Реализовать JSON-RPC/Wire request-response router, event/request dispatch и malformed-frame handling с unit tests — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi wire protocol router`.
+2. [PENDING] Git Commit: `feat: add kimi wire protocol router` (hash: TBD)
 
 ### Stream: Session Lifecycle
 1. [TODO] `phase2-kimi-session-lifecycle` Реализовать create/resume/send/cancel/close lifecycle поверх Wire, capture/restore providerSessionId и typed stale-binding error `KIMI_SESSION_STALE_BINDING` — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi session lifecycle`.

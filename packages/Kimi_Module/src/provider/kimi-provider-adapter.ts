@@ -2,6 +2,7 @@ import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
+import { KimiWireRouter } from "../wire/kimi-wire-router";
 
 export const KIMI_PROVIDER_ID = "kimiCode" as const;
 const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
@@ -115,6 +116,7 @@ export class KimiProviderAdapter {
   private cliEnvironment: KimiCliEnvironment | null = null;
   private runtimeHome: KimiRuntimeHome | null = null;
   private wireProcessBridge: KimiWireProcessBridge | null = null;
+  private wireRouter: KimiWireRouter | null = null;
   private initialized = false;
 
   constructor(options: KimiModuleOptions) {
@@ -128,6 +130,7 @@ export class KimiProviderAdapter {
     });
     this.cliEnvironment = cliEnvironment;
     this.runtimeHome = await ensureKimiProviderHome(cliEnvironment.runtimeHome);
+    this.wireRouter = this.createWireRouter();
     this.wireProcessBridge = this.createWireProcessBridge();
     this.initialized = true;
     this.options.reporter?.info?.("Kimi provider scaffold initialized", {
@@ -136,6 +139,7 @@ export class KimiProviderAdapter {
       providerHomePath: this.runtimeHome.providerHomePath,
       userConfigPath: this.runtimeHome.userConfigPath,
       wireProcessReady: this.wireProcessBridge !== null,
+      wireRouterReady: this.wireRouter !== null,
     });
   }
 
@@ -201,15 +205,37 @@ export class KimiProviderAdapter {
       cwd: this.options.workspace.workspacePath ?? process.cwd(),
       env: cliEnvironment.env,
       onLine: (line) => {
-        this.options.reporter?.info?.("Kimi Wire stdout frame received", {
-          bytes: line.length,
-        });
+        this.requireWireRouter().handleLine(line);
       },
       onStderr: (line) => {
         this.options.reporter?.warn?.("Kimi Wire stderr line received", {
           line,
         });
       },
+    });
+  }
+
+  private createWireRouter(): KimiWireRouter {
+    return new KimiWireRouter({
+      onEvent: (params) => {
+        this.options.reporter?.info?.("Kimi Wire event received", {
+          params,
+        });
+      },
+      onMalformedFrame: (line, error) => {
+        this.options.reporter?.warn?.("Malformed Kimi Wire frame received", {
+          errorMessage: error.message,
+          line,
+        });
+      },
+      onRequest: (request) => ({
+        request_id:
+          isRecord(request.params) && isRecord(request.params.payload)
+            ? request.params.payload.id
+            : request.id,
+        response: "deny",
+      }),
+      sendJson: (message) => this.requireWireProcessBridge().sendJson(message),
     });
   }
 
@@ -243,4 +269,21 @@ export class KimiProviderAdapter {
     }
     return this.cliEnvironment;
   }
+
+  private requireWireProcessBridge(): KimiWireProcessBridge {
+    if (!this.wireProcessBridge) {
+      throw new Error("Kimi Wire process bridge is not initialized.");
+    }
+    return this.wireProcessBridge;
+  }
+
+  private requireWireRouter(): KimiWireRouter {
+    if (!this.wireRouter) {
+      throw new Error("Kimi Wire router is not initialized.");
+    }
+    return this.wireRouter;
+  }
 }
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
