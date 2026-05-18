@@ -1,3 +1,18 @@
+# Plan Closeout: application-skeleton-final-review-gate-2026-05-18
+
+**Created:** 2026-05-18T13:03:31.015Z
+**Acceptance:** User tested v1.2.304 and confirmed everything is OK; the active Application Skeleton final review gate plan can be closed.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** application-skeleton-final-review.phase5.closeout.task1
+**Expected Commit:** docs: close application skeleton final review gate scope
+**Last Recorded Commit:** 2597e75a9
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_FinalReviewGate_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_FinalReviewGate_Planning.md",
   "currentTaskId": "application-skeleton-final-review.phase5.closeout.task1",
   "expectedCommitMessage": "docs: close application skeleton final review gate scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close application skeleton final review gate scope",
-    "preCommitHead": "2597e75a9",
-    "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase5.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -135,6 +145,7 @@
 
 ### Stream: Scope Closeout
 
-33. [DONE] `application-skeleton-final-review.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton final review gate scope`).
-34. [PENDING] Git Commit: `docs: close application skeleton final review gate scope` (hash: TBD)
+33. [IN_PROGRESS] `application-skeleton-final-review.phase5.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close application skeleton final review gate scope`).
+34. [TODO] Git Commit: `docs: close application skeleton final review gate scope` (hash: TBD)
 35. [TODO] `application-skeleton-final-review.phase5.closeout.anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````
