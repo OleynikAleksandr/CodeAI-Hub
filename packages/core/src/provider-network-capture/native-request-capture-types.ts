@@ -1,4 +1,4 @@
-export type NativeRequestCaptureProviderId = "claude" | "codex";
+export type NativeRequestCaptureProviderId = "claude" | "codex" | "kimi";
 
 export type NativeRequestCaptureMode = "managed" | "vanilla";
 
@@ -71,9 +71,18 @@ export interface NativeRequestCaptureCodexAppliedInputEnvelope {
   readonly sandbox: string | null;
 }
 
+export interface NativeRequestCaptureKimiAppliedInputEnvelope {
+  readonly kind: "kimi";
+  readonly providerHomePath: string | null;
+  readonly selectedModelId: string | null;
+  readonly userConfigPath: string | null;
+  readonly wireJsonlPath: string | null;
+}
+
 export type NativeRequestCaptureAppliedInputEnvelope =
   | NativeRequestCaptureClaudeAppliedInputEnvelope
-  | NativeRequestCaptureCodexAppliedInputEnvelope;
+  | NativeRequestCaptureCodexAppliedInputEnvelope
+  | NativeRequestCaptureKimiAppliedInputEnvelope;
 
 export interface NativeRequestCaptureAppliedInputEnvelopeRecord {
   readonly captureId: string;

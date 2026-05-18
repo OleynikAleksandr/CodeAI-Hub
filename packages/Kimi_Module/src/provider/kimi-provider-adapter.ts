@@ -56,6 +56,25 @@ export interface KimiSessionEvent {
   readonly type: string;
 }
 
+interface KimiNativeRequestCaptureOptions {
+  readonly captureId: string;
+  readonly recordAppliedInputEnvelope?: (envelope: {
+    readonly kind: "kimi";
+    readonly providerHomePath: string | null;
+    readonly selectedModelId: string | null;
+    readonly userConfigPath: string | null;
+    readonly wireJsonlPath: string | null;
+  }) => Promise<void> | void;
+  readonly recordDiagnosticContext?: (record: {
+    readonly kind: string;
+    readonly payload: unknown;
+  }) => Promise<void> | void;
+  readonly scenarioId?: string | null;
+  readonly selectedModelId?: string | null;
+  readonly workflowPrompt?: string | null;
+  readonly workspacePath: string;
+}
+
 interface KimiCliEnvironment {
   readonly args: readonly string[];
   readonly env: NodeJS.ProcessEnv;
@@ -193,6 +212,35 @@ export class KimiProviderAdapter {
     return this.requireSessionLifecycle().cancel(sessionId);
   }
 
+  async captureNativeRequest(
+    options: KimiNativeRequestCaptureOptions
+  ): Promise<void> {
+    this.assertInitialized();
+    const runtimeHome = this.requireRuntimeHome();
+    const wireJsonlPath = path.join(runtimeHome.providerHomePath, "wire.jsonl");
+    const selectedModelId =
+      options.selectedModelId ?? this.options.workspace.defaultModel ?? null;
+    await options.recordAppliedInputEnvelope?.({
+      kind: "kimi",
+      providerHomePath: runtimeHome.providerHomePath,
+      selectedModelId,
+      userConfigPath: runtimeHome.userConfigPath,
+      wireJsonlPath,
+    });
+    await options.recordDiagnosticContext?.({
+      kind: "kimi_wire_capture",
+      payload: {
+        captureId: options.captureId,
+        promptLength: options.workflowPrompt?.length ?? 0,
+        scenarioId: options.scenarioId ?? null,
+        selectedModelId,
+        userConfigPath: runtimeHome.userConfigPath,
+        wireJsonlPath,
+        workspacePath: options.workspacePath,
+      },
+    });
+  }
+
   async closeSession(sessionId: string): Promise<void> {
     this.listeners.delete(sessionId);
     await this.requireSessionLifecycle().close(sessionId);
@@ -277,6 +325,13 @@ export class KimiProviderAdapter {
       throw new Error("Kimi CLI environment is not initialized.");
     }
     return this.cliEnvironment;
+  }
+
+  private requireRuntimeHome(): KimiRuntimeHome {
+    if (!this.runtimeHome) {
+      throw new Error("Kimi runtime home is not initialized.");
+    }
+    return this.runtimeHome;
   }
 
   private requireSessionLifecycle(): KimiSessionLifecycle {

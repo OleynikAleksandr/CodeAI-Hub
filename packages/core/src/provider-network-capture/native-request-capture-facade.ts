@@ -35,6 +35,7 @@ const PROVIDER_RUNTIME_IDS: Readonly<
 > = {
   claude: "claudeCodeCli",
   codex: "codexCli",
+  kimi: "kimiCode",
 };
 
 const PROVIDER_TARGET_RULES: Readonly<
@@ -53,6 +54,7 @@ const PROVIDER_TARGET_RULES: Readonly<
   codex: [
     { host: "chatgpt.com", pathIncludes: "/backend-api/codex/responses" },
   ],
+  kimi: [],
 };
 
 interface ProviderAdapterLookup {
@@ -167,13 +169,15 @@ export class NativeRequestCaptureFacade {
       return this.#failure(command, "provider_not_supported", null);
     }
 
-    const preflight = await this.#preflight.checkOpenSsl();
-    if (!preflight.ok) {
-      return this.#failure(
-        command,
-        preflight.reason ?? "tls_credentials_unavailable",
-        null
-      );
+    if (command.providerId !== "kimi") {
+      const preflight = await this.#preflight.checkOpenSsl();
+      if (!preflight.ok) {
+        return this.#failure(
+          command,
+          preflight.reason ?? "tls_credentials_unavailable",
+          null
+        );
+      }
     }
 
     const captureId = this.#captureIdFactory();
@@ -201,6 +205,16 @@ export class NativeRequestCaptureFacade {
     });
     const eventWrites: Promise<void>[] = [];
     const targetRules = PROVIDER_TARGET_RULES[command.providerId];
+    if (command.providerId === "kimi") {
+      return this.#captureWireOnly({
+        adapter,
+        appliedTurnConfig,
+        captureId,
+        command,
+        eventWrites,
+        writer,
+      });
+    }
     const firstTargetHost = targetRules[0]?.host;
     if (!firstTargetHost) {
       return this.#failure(command, "target_not_seen", writer);
@@ -235,16 +249,7 @@ export class NativeRequestCaptureFacade {
       });
       await Promise.all(eventWrites);
       if (captureResult.status === "captured") {
-        return {
-          providerId: command.providerId,
-          ok: true,
-          markdownPath: writer.artifacts.markdownPath,
-          modelId: command.modelId ?? null,
-          jsonlPath: writer.artifacts.jsonlPath,
-          error: null,
-          reason: null,
-          scenarioId: command.scenarioId ?? null,
-        };
+        return this.#success(command, writer);
       }
       if (!captureResult.completedByProxy) {
         await writer.complete(captureResult.status, captureResult.reason);
@@ -327,6 +332,59 @@ export class NativeRequestCaptureFacade {
     };
   }
 
+  async #captureWireOnly(params: {
+    readonly adapter: ProviderAdapter;
+    readonly appliedTurnConfig: ProviderNativeRequestCaptureAppliedTurnConfig | null;
+    readonly captureId: string;
+    readonly command: NativeRequestCaptureCommand;
+    readonly eventWrites: Promise<void>[];
+    readonly writer: NativeRequestCaptureWriter;
+  }): Promise<NativeRequestCaptureCommandResult> {
+    const captureNativeRequest = params.adapter.captureNativeRequest;
+    if (!captureNativeRequest) {
+      return this.#failure(
+        params.command,
+        "provider_not_supported",
+        params.writer
+      );
+    }
+    try {
+      await captureNativeRequest.call(params.adapter, {
+        captureId: params.captureId,
+        certificateEnv: {},
+        certificatePath: "",
+        appliedTurnConfig: params.appliedTurnConfig,
+        invocationPurpose: resolveInvocationPurpose(params.command.scenarioId),
+        probePrompt: DIAGNOSTIC_PROBE_PROMPT,
+        proxyUrl: "wire://kimi",
+        recordDiagnosticContext: (record) => {
+          params.eventWrites.push(
+            params.writer.recordProviderDiagnosticContext(record)
+          );
+        },
+        recordAppliedInputEnvelope: (envelope) => {
+          params.eventWrites.push(
+            params.writer.recordAppliedInputEnvelope(envelope)
+          );
+        },
+        selectedModelId: params.command.modelId ?? null,
+        scenarioId: params.command.scenarioId ?? null,
+        workspacePath: params.command.workspacePath,
+        workflowPrompt:
+          resolveInvocationPurpose(params.command.scenarioId) === "translation"
+            ? null
+            : (params.command.scenarioPrompt ?? null),
+      });
+      await Promise.all(params.eventWrites);
+      await params.writer.complete("captured", null);
+      return this.#success(params.command, params.writer);
+    } catch (error: unknown) {
+      await params.writer.recordProviderRuntimeError(error);
+      await params.writer.complete("failed", "runtime_failed");
+      return this.#failure(params.command, "runtime_failed", params.writer);
+    }
+  }
+
   #failure(
     command: Pick<
       NativeRequestCaptureCommand,
@@ -346,12 +404,31 @@ export class NativeRequestCaptureFacade {
       scenarioId: command.scenarioId ?? null,
     };
   }
+
+  #success(
+    command: Pick<
+      NativeRequestCaptureCommand,
+      "modelId" | "providerId" | "scenarioId"
+    >,
+    writer: NativeRequestCaptureWriter
+  ): NativeRequestCaptureCommandResult {
+    return {
+      providerId: command.providerId,
+      ok: true,
+      markdownPath: writer.artifacts.markdownPath,
+      modelId: command.modelId ?? null,
+      jsonlPath: writer.artifacts.jsonlPath,
+      error: null,
+      reason: null,
+      scenarioId: command.scenarioId ?? null,
+    };
+  }
 }
 
 export const isNativeRequestCaptureProviderId = (
   value: unknown
 ): value is NativeRequestCaptureProviderId =>
-  value === "claude" || value === "codex";
+  value === "claude" || value === "codex" || value === "kimi";
 
 export const createCapturedProxyResult = (
   request: NativeRequestCaptureRequest

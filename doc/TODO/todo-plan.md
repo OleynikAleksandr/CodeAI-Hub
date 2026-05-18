@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "e0bcf5176",
+  "lastRecordedCommit": "dab778f78",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-provider-theme-mapping",
-  "expectedCommitMessage": "feat: map kimi provider theme across ui",
+  "currentTaskId": "phase6-kimi-wire-capture",
+  "expectedCommitMessage": "feat: add kimi wire diagnostic capture",
   "debt": {
-    "expectedCommitMessage": "feat: map kimi provider theme across ui",
-    "preCommitHead": "e0bcf5176",
+    "expectedCommitMessage": "feat: add kimi wire diagnostic capture",
+    "preCommitHead": "dab778f78",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-provider-theme-mapping"
+    "taskId": "phase6-kimi-wire-capture"
   }
 }
 ```
@@ -166,12 +166,12 @@
 
 ### Stream: Provider Theme Mapping
 1. [DONE] `phase5-kimi-provider-theme-mapping` Подключить Kimi provider theme mapping для Project Manager tree, Session tabs и assistant message bubbles, чтобы новые design tokens реально применялись на всех runtime surfaces — scope: `src/client/project-manager/components/layout/use-step-provider-resolver.ts, src/client/project-manager/components/layout/use-step-provider-resolver.test.ts, src/client/ui/src/session/helpers.ts`; expected commit: `feat: map kimi provider theme across ui`.
-2. [PENDING] Git Commit: `feat: map kimi provider theme across ui` (hash: TBD)
+2. [DONE] Git Commit: `feat: map kimi provider theme across ui` (hash: dab778f78)
 
 ## Phase 6 — Diagnostics, Usage And Documentation (owner: Codex, updated: 2026-05-18)
 ### Stream: Native Wire Capture
-1. [TODO] `phase6-kimi-wire-capture` Реализовать Kimi native diagnostic capture на Wire evidence: Core-owned `.jsonl`/`.md` artifacts, provider-home `wire.jsonl` provenance и redaction policy — scope: `packages/Kimi_Module, packages/core/src/provider-network-capture, src/client/project-manager/components/settings`; expected commit: `feat: add kimi wire diagnostic capture`.
-2. [TODO] Git Commit: `feat: add kimi wire diagnostic capture` (hash: TBD)
+1. [DONE] `phase6-kimi-wire-capture` Реализовать Kimi native diagnostic capture на Wire evidence: Core-owned `.jsonl`/`.md` artifacts, provider-home `wire.jsonl` provenance и redaction policy — scope: `packages/Kimi_Module, packages/core/src/provider-network-capture, src/client/project-manager/components/settings`; expected commit: `feat: add kimi wire diagnostic capture`.
+2. [PENDING] Git Commit: `feat: add kimi wire diagnostic capture` (hash: TBD)
 
 ### Stream: Usage Limits Boundary
 1. [TODO] `phase6-kimi-usage-boundary` Добавить Kimi usage-limits facade stub или real reader только при стабильном official endpoint; UI должен показывать unavailable state без stuck loading — scope: `packages/core/src/provider-usage-limits, src/client/ui/src/session, packages/Kimi_Module`; expected commit: `feat: add kimi usage limits boundary`.
