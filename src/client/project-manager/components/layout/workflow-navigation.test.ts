@@ -57,6 +57,16 @@ test("sidebar-only workflow navigation keeps stage routing consistent", async ()
     true,
     "main area must react to stage activation events from sidebar tree"
   );
+  assert.equal(
+    mainAreaSource.includes('"workflow:stage:activate"'),
+    true,
+    "main area must listen for Core-managed stage activation events"
+  );
+  assert.equal(
+    mainAreaSource.includes("core-workflow-stage-activate"),
+    true,
+    "Core stage activation must reuse the shared stage activation route"
+  );
 
   // main area must not render a toolbar or import it
   assert.equal(

@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "38e4c0422",
+  "lastRecordedCommit": "e14cd6701",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase4.retest-fix.core.task1",
-  "expectedCommitMessage": "fix: route application skeleton final acceptance to quality gates",
+  "currentTaskId": "application-skeleton-final-review.phase4.retest-fix.client.task1",
+  "expectedCommitMessage": "test: cover application skeleton final acceptance navigation",
   "debt": {
-    "expectedCommitMessage": "fix: route application skeleton final acceptance to quality gates",
-    "preCommitHead": "38e4c0422",
+    "expectedCommitMessage": "test: cover application skeleton final acceptance navigation",
+    "preCommitHead": "e14cd6701",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase4.retest-fix.core.task1"
+    "taskId": "application-skeleton-final-review.phase4.retest-fix.client.task1"
   }
 }
 ```
@@ -109,9 +109,9 @@
 ### Stream: Retest Failure Fix
 
 21. [DONE] `application-skeleton-final-review.phase4.retest-fix.core.task1` Emit a Core-owned stage activation event after final Application Skeleton acceptance and stop appending the stale Application Skeleton persistent-return message (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/types.ts, doc/TODO/todo-plan.md`; expected commit: `fix: route application skeleton final acceptance to quality gates`).
-22. [PENDING] Git Commit: `fix: route application skeleton final acceptance to quality gates` (hash: TBD)
-23. [TODO] `application-skeleton-final-review.phase4.retest-fix.client.task1` Route the Project Manager stage-activation bridge event to the existing Quality Gates card navigation and cover the regression (scope: `src/client/project-manager/components/layout/main-area.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton final acceptance navigation`).
-24. [TODO] Git Commit: `test: cover application skeleton final acceptance navigation` (hash: TBD)
+22. [DONE] Git Commit: `fix: route application skeleton final acceptance to quality gates` (hash: e14cd6701)
+23. [DONE] `application-skeleton-final-review.phase4.retest-fix.client.task1` Route the Project Manager stage-activation bridge event to the existing Quality Gates card navigation and cover the regression (scope: `src/client/project-manager/components/layout/main-area.tsx, src/client/project-manager/components/layout/workflow-navigation.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton final acceptance navigation`).
+24. [PENDING] Git Commit: `test: cover application skeleton final acceptance navigation` (hash: TBD)
 25. [TODO] `application-skeleton-final-review.phase4.release.gate.task1` Ask the user for explicit corrective release confirmation before preparing v1.2.304 release notes or running release scripts (scope: user confirmation only; expected commit: none).
 
 ## Phase 5 - Scope Closeout (owner: Codex, updated: 2026-05-18)

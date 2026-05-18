@@ -392,6 +392,22 @@ test("Application Skeleton review corrections stay in the active review task", a
   }
 });
 
+test("Application Skeleton final acceptance broadcasts Quality Gates activation", async () => {
+  const source = await readFile(
+    path.resolve(
+      process.cwd(),
+      "packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts"
+    ),
+    "utf8"
+  );
+  const finalReviewSource =
+    source
+      .split("private async completeApplicationSkeletonFinalReview")[1]
+      ?.split("private async acceptApplicationSkeletonReview")[0] ?? "";
+  assert.ok(finalReviewSource.includes('type: "workflow:stage:activate"'));
+  assert.ok(!finalReviewSource.includes("managed-workflow-complete"));
+});
+
 test("Quality Gates review acceptance opens integration without forwarding user text", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "quality-gates-review-accept-")

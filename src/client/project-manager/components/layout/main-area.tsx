@@ -41,6 +41,21 @@ const resolveWorkflowPollingMode = (): WorkflowStatePollingMode => {
 const isDevelopmentTreeArtifactPath = (value: string | undefined): boolean =>
   Boolean(value?.includes("/development_tree/"));
 
+const readCoreStageActivation = (message: {
+  readonly payload?: unknown;
+  readonly type?: string;
+}): string | null => {
+  if (message.type !== "workflow:stage:activate") {
+    return null;
+  }
+  const { payload } = message;
+  if (!payload || typeof payload !== "object" || !("stage" in payload)) {
+    return null;
+  }
+  const stage = (payload as { readonly stage?: unknown }).stage;
+  return typeof stage === "string" ? stage : null;
+};
+
 interface MainAreaProps {
   sizes: [number, number];
   onSizeChange: (index: 0, delta: number, containerWidth: number) => void;
@@ -123,6 +138,22 @@ export const MainArea: React.FC<MainAreaProps> = ({
   useEffect(() => {
     workflowStateStore.setVisibilityMode(workflowPollingMode);
   }, [workflowPollingMode]);
+
+  useEffect(
+    () =>
+      api.onCoreEvent((message) => {
+        const stage = readCoreStageActivation(message);
+        if (!stage) {
+          return;
+        }
+        window.dispatchEvent(
+          new CustomEvent("pm:stage:activated", {
+            detail: { source: "core-workflow-stage-activate", stage },
+          })
+        );
+      }),
+    []
+  );
 
   useEffect(() => {
     const onSelected = (event: Event) => {
