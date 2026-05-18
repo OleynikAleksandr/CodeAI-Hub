@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "dab778f78",
+  "lastRecordedCommit": "1b00386db",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase6-kimi-wire-capture",
-  "expectedCommitMessage": "feat: add kimi wire diagnostic capture",
+  "currentTaskId": "phase6-kimi-usage-boundary",
+  "expectedCommitMessage": "feat: add kimi usage limits boundary",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi wire diagnostic capture",
-    "preCommitHead": "dab778f78",
+    "expectedCommitMessage": "feat: add kimi usage limits boundary",
+    "preCommitHead": "1b00386db",
     "stage": "commit_pending",
-    "taskId": "phase6-kimi-wire-capture"
+    "taskId": "phase6-kimi-usage-boundary"
   }
 }
 ```
@@ -171,11 +171,11 @@
 ## Phase 6 — Diagnostics, Usage And Documentation (owner: Codex, updated: 2026-05-18)
 ### Stream: Native Wire Capture
 1. [DONE] `phase6-kimi-wire-capture` Реализовать Kimi native diagnostic capture на Wire evidence: Core-owned `.jsonl`/`.md` artifacts, provider-home `wire.jsonl` provenance и redaction policy — scope: `packages/Kimi_Module, packages/core/src/provider-network-capture, src/client/project-manager/components/settings`; expected commit: `feat: add kimi wire diagnostic capture`.
-2. [PENDING] Git Commit: `feat: add kimi wire diagnostic capture` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi wire diagnostic capture` (hash: 1b00386db)
 
 ### Stream: Usage Limits Boundary
-1. [TODO] `phase6-kimi-usage-boundary` Добавить Kimi usage-limits facade stub или real reader только при стабильном official endpoint; UI должен показывать unavailable state без stuck loading — scope: `packages/core/src/provider-usage-limits, src/client/ui/src/session, packages/Kimi_Module`; expected commit: `feat: add kimi usage limits boundary`.
-2. [TODO] Git Commit: `feat: add kimi usage limits boundary` (hash: TBD)
+1. [DONE] `phase6-kimi-usage-boundary` Добавить Kimi usage-limits facade stub или real reader только при стабильном official endpoint; UI должен показывать unavailable state без stuck loading — scope: `packages/core/src/provider-usage-limits, src/client/ui/src/session, packages/Kimi_Module`; expected commit: `feat: add kimi usage limits boundary`.
+2. [PENDING] Git Commit: `feat: add kimi usage limits boundary` (hash: TBD)
 
 ### Stream: Module SSOT Documentation
 1. [TODO] `phase6-kimi-module-docs` Создать `doc/SolidWorks-WorkFlow/Modules/Kimi.md`, обновить `Docs_Index.md` и синхронизировать SystemArchitecture provider list/invariants — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: add kimi provider module ssot`.

@@ -1,4 +1,8 @@
-export type ProviderUsageLimitProviderId = "codex" | "claude" | "gemini";
+export type ProviderUsageLimitProviderId =
+  | "codex"
+  | "claude"
+  | "gemini"
+  | "kimi";
 
 export type ProviderUsageLimitWindowId = "primary" | "secondary" | "tertiary";
 
@@ -17,7 +21,8 @@ export type ProviderUsageLimitSource =
   | "claude_headers"
   | "claude_probe"
   | "gemini_quota_api"
-  | "gemini_cli_fallback";
+  | "gemini_cli_fallback"
+  | "kimi_unavailable";
 
 export interface ProviderUsageLimitBucket {
   readonly percentUsed: number;

@@ -124,9 +124,14 @@ const resolveUsageLabelState = (options: {
   readonly binding: SessionBindingInfo;
   readonly status: SessionStatusInfo;
 }): "loading" | "unavailable" => {
-  return readProviderLabelPrefix(options.status, options.binding)
-    ? "loading"
-    : "unavailable";
+  const providerLabelPrefix = readProviderLabelPrefix(
+    options.status,
+    options.binding
+  );
+  if (providerLabelPrefix === "kimi") {
+    return "unavailable";
+  }
+  return providerLabelPrefix ? "loading" : "unavailable";
 };
 
 const buildLimitRowData = (

@@ -246,6 +246,36 @@ export class KimiProviderAdapter {
     await this.requireSessionLifecycle().close(sessionId);
   }
 
+  refreshUsageLimits(params: {
+    readonly broadcast: (event: unknown) => void;
+    readonly providerSessionId: string;
+  }): void {
+    params.broadcast({
+      providerScopeKey: "kimi:global",
+      usageLimits: null,
+      data: {
+        kind: "usage_limits",
+        collectedAt: new Date().toISOString(),
+        diagnostics: {
+          force: false,
+          fromCache: false,
+          readerRegistered: false,
+          result: "unavailable",
+          source: "kimi_unavailable",
+        },
+        providerScopeKey: "kimi:global",
+        source: "kimi_unavailable",
+        usageLimitLabels: {
+          currentSession: "Session",
+          currentWeekAllModels: "Weekly",
+          currentWeekSonnetOnly: "Model Weekly",
+        },
+        usageLimits: null,
+      },
+      providerSessionId: params.providerSessionId,
+    });
+  }
+
   private createWireProcessBridge(): KimiWireProcessBridge {
     const cliEnvironment = this.requireCliEnvironment();
     return new KimiWireProcessBridge({
