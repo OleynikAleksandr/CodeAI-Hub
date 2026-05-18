@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.310] - 2026-05-18
+### Fixed
+- **Kimi review gates now unlock the user input panel after provider completion.** Kimi `TurnEnd` now normalizes to Core-compatible `turn_completed` with `postTurnTokenUsageUnavailable=true`, so Core resolves post-turn continuity arbitration as no-rollover and returns the runtime session to `idle` after the `managed-workflow-user-review` card appears.
+
+### Tests
+- `npm run plan:validate`
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run test --workspace=@codeai-hub/kimi-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `./scripts/check-architecture.sh`
+
 ## [1.2.309] - 2026-05-18
 ### Fixed
 - **Installed Kimi sessions now apply the Core-provided workspace before Wire startup.** When Core creates a Kimi session with `createSession(workspacePath)`, the adapter rebuilds its Wire runtime config before the first process starts, so `--work-dir` and process `cwd` use the actual project workspace instead of the early Core launcher directory.

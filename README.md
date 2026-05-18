@@ -2,14 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.309** (Kimi workspace override hotfix)
+**Current Release — v1.2.310** (Kimi review input unlock hotfix)
 
-This hotfix makes installed Kimi Code / Kimi 2.6 sessions apply the
-Core-provided workspace before Wire startup. When Core calls
-`createSession(workspacePath)`, the Kimi adapter now rebuilds its runtime
-configuration before the first Wire process starts, so both `--work-dir` and
-the process `cwd` point at the actual project workspace instead of the early
-Core launcher working directory.
+This hotfix unblocks the user input panel after Kimi finishes a managed
+workflow turn and Core opens the user-review card. Kimi `TurnEnd` now
+normalizes to a Core-compatible `turn_completed` event with
+`postTurnTokenUsageUnavailable=true`, allowing Core continuity arbitration to
+resolve the post-turn check as no-rollover and return the runtime session to
+`idle`.
+
+Installed Kimi Code / Kimi 2.6 sessions also apply the Core-provided workspace
+before Wire startup. When Core calls `createSession(workspacePath)`, the Kimi
+adapter rebuilds its runtime configuration before the first Wire process
+starts, so both `--work-dir` and the process `cwd` point at the actual project
+workspace instead of the early Core launcher working directory.
 
 Kimi Wire `ContentPart` text and thinking chunks are normalized into
 Core-compatible `assistant` and `thinking` messages, buffered per turn, and

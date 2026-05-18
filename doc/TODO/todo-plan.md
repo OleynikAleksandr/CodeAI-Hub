@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "bde715333",
+  "lastRecordedCommit": "bcd9dbe18",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-review-gate-input-unlock-fix",
-  "expectedCommitMessage": "fix: unlock kimi review gate input",
+  "currentTaskId": "phase8-kimi-review-unlock-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi review unlock release notes",
   "debt": {
-    "expectedCommitMessage": "fix: unlock kimi review gate input",
-    "preCommitHead": "bde715333",
+    "expectedCommitMessage": "docs: prepare kimi review unlock release notes",
+    "preCommitHead": "bcd9dbe18",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-review-gate-input-unlock-fix"
+    "taskId": "phase8-kimi-review-unlock-release-notes"
   }
 }
 ```
@@ -317,7 +317,18 @@
    - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts `TurnEnd` exposes `postTurnTokenUsageUnavailable=true` in both stateless and buffered normalizer paths.
    - Verification: `npm run build --workspace=@codeai-hub/core` passed.
    - Verification: `./scripts/check-architecture.sh` passed with existing warnings only; no non-allowlisted file exceeds 500 lines.
-2. [PENDING] Git Commit: `fix: unlock kimi review gate input` (hash: TBD)
+2. [DONE] Git Commit: `fix: unlock kimi review gate input` (hash: bcd9dbe18)
+
+### Stream: Review Unlock Hotfix Release Confirmation Gate
+1. [DONE] `phase8-kimi-review-unlock-release-confirmation` Остановиться после фикса Kimi review gate input unlock и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».
+
+### Stream: Review Unlock Hotfix Release Build
+1. [DONE] `phase8-kimi-review-unlock-release-notes` После явного подтверждения подготовить README/CHANGELOG под будущую версию 1.2.310 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi review unlock release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi review unlock release notes` (hash: TBD)
+3. [TODO] `phase8-kimi-review-unlock-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi review unlock release build started`.
+4. [TODO] Git Commit: `docs: mark kimi review unlock release build started` (hash: TBD)
+5. [TODO] `phase8-kimi-review-unlock-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi review unlock hotfix build`.
+6. [TODO] Git Commit: `chore: release kimi review unlock hotfix build` (hash: TBD)
 
 ### Stream: Workspace Override Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-workspace-hotfix-release-confirmation` Остановиться после фикса Kimi session workspace override и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «После фикса собери новый релиз».
