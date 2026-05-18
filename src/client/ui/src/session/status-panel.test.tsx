@@ -91,6 +91,29 @@ test("StatusPanel applies the Gemini provider class", () => {
   assert.equal(html.includes("(thinking high)"), true);
 });
 
+test("StatusPanel applies the Kimi provider class", () => {
+  Object.assign(globalThis, { React: { createElement } });
+
+  const html = renderToStaticMarkup(
+    createElement(StatusPanel, {
+      connectionStatus: "ready",
+      status: buildStatus({
+        models: [
+          {
+            modelDisplayName: "Kimi Code",
+            modelId: "kimi-for-coding",
+            providerId: "kimiCode" as const,
+            providerName: "Kimi",
+          },
+        ],
+      }),
+    })
+  );
+
+  assert.equal(html.includes("session-status-button--kimi"), true);
+  assert.equal(html.includes("Kimi Code"), true);
+});
+
 test("StatusPanel hides the reasoning chip when reasoning is missing", () => {
   Object.assign(globalThis, { React: { createElement } });
 

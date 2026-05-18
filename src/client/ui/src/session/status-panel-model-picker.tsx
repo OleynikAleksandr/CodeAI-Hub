@@ -7,6 +7,7 @@ import {
   CODEX_SETTINGS_MODELS,
   type CodexReasoningLevel,
 } from "../../../../types/codex-model-registry";
+import { KIMI_RECOMMENDED_MODELS } from "../../../../types/kimi-model-registry";
 import type { ProviderStackId } from "../../../../types/provider";
 
 export type StatusPanelPickerMode = "model" | "reasoning";
@@ -118,14 +119,41 @@ const buildClaudeConfig = (
   };
 };
 
+const buildKimiConfig = (currentModelId: string): PickerConfig => {
+  const baseModelId = normalizeBaseModelId(currentModelId);
+  const currentModel =
+    KIMI_RECOMMENDED_MODELS.find((model) => model.id === baseModelId) ??
+    KIMI_RECOMMENDED_MODELS[0];
+  return {
+    currentModel: {
+      id: currentModel.id,
+      displayName: currentModel.displayName,
+      reasoningOptions: ["default"],
+      defaultReasoning: "default",
+    },
+    currentReasoning: "default",
+    models: KIMI_RECOMMENDED_MODELS.map((model) => ({
+      id: model.id,
+      displayName: model.displayName,
+      reasoningOptions: ["default"],
+      defaultReasoning: "default",
+    })),
+  };
+};
+
 const buildPickerConfig = (options: {
   readonly currentModelId: string;
   readonly currentReasoning?: string;
   readonly providerId: ProviderStackId;
-}): PickerConfig =>
-  options.providerId === "claudeCodeCli"
-    ? buildClaudeConfig(options.currentModelId, options.currentReasoning)
-    : buildCodexConfig(options.currentModelId, options.currentReasoning);
+}): PickerConfig => {
+  if (options.providerId === "claudeCodeCli") {
+    return buildClaudeConfig(options.currentModelId, options.currentReasoning);
+  }
+  if (options.providerId === "kimiCode") {
+    return buildKimiConfig(options.currentModelId);
+  }
+  return buildCodexConfig(options.currentModelId, options.currentReasoning);
+};
 
 export const StatusPanelModelPicker = ({
   anchorLeft,

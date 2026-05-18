@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "1e1002db5",
+  "lastRecordedCommit": "6de4a3142",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-start-card-provider-ui",
-  "expectedCommitMessage": "feat: add kimi workflow provider card ui",
+  "currentTaskId": "phase5-kimi-status-line-display",
+  "expectedCommitMessage": "feat: add kimi session status line",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi workflow provider card ui",
-    "preCommitHead": "1e1002db5",
+    "expectedCommitMessage": "feat: add kimi session status line",
+    "preCommitHead": "6de4a3142",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-start-card-provider-ui"
+    "taskId": "phase5-kimi-status-line-display"
   }
 }
 ```
@@ -150,11 +150,11 @@
 
 ### Stream: Workflow Start Cards Provider UI
 1. [DONE] `phase5-kimi-start-card-provider-ui` Добавить Kimi tint/disabled/selected rendering в common workflow start/fix cards, включая Development Tree start/fix surfaces через общий provider picker path — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts, src/client/project-manager/components/shared/stage-artifact-fix-button.tsx`; expected commit: `feat: add kimi workflow provider card ui`.
-2. [PENDING] Git Commit: `feat: add kimi workflow provider card ui` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi workflow provider card ui` (hash: 6de4a3142)
 
 ### Stream: Status Line Model Display
-1. [TODO] `phase5-kimi-status-line-display` Добавить Kimi provider button class, model display name и `kimi-for-coding` status-line rendering в Session UI — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `feat: add kimi session status line`.
-2. [TODO] Git Commit: `feat: add kimi session status line` (hash: TBD)
+1. [DONE] `phase5-kimi-status-line-display` Добавить Kimi provider button class, model display name и `kimi-for-coding` status-line rendering в Session UI — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.test.tsx`; expected commit: `feat: add kimi session status line`.
+2. [PENDING] Git Commit: `feat: add kimi session status line` (hash: TBD)
 
 ### Stream: Runtime Model Sync And Switch Callbacks
 1. [TODO] `phase5-kimi-runtime-model-sync` Подключить Kimi model update/switch callback path для runtime/dialog session views; если Kimi model switch не поддержан в first release, status chip остаётся display-only с явным no-op contract — scope: `src/client/project-manager/components/sessions/project-manager-runtime-session-view.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/project-manager/services/switch-api.ts`; expected commit: `feat: add kimi runtime model sync hooks`.

@@ -35,6 +35,7 @@ const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
   claudeCodeCli: "session-status-button--claude",
   codexCli: "session-status-button--codex",
   geminiCli: "session-status-button--gemini",
+  kimiCode: "session-status-button--kimi",
 };
 
 const resolveProviderButtonClass = (providerId: ProviderStackId): string =>
@@ -118,7 +119,9 @@ const StatusPanel = ({
 
   const providerButtonClass = resolveProviderButtonClass(model.providerId);
   const canOpenPicker =
-    model.providerId === "codexCli" || model.providerId === "claudeCodeCli";
+    model.providerId === "codexCli" ||
+    model.providerId === "claudeCodeCli" ||
+    model.providerId === "kimiCode";
   const reasoningText =
     typeof model.reasoning === "string" && model.reasoning.length > 0
       ? `(${model.reasoning})`
@@ -142,6 +145,10 @@ const StatusPanel = ({
       return;
     }
     if (model.providerId === "codexCli") {
+      onSelectModel?.(modelId);
+      return;
+    }
+    if (model.providerId === "kimiCode") {
       onSelectModel?.(modelId);
     }
   };
