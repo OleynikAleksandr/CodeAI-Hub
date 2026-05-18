@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "e5d265532",
+  "lastRecordedCommit": "a2327cf44",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase1.tests.task1",
-  "expectedCommitMessage": "test: cover application skeleton final review gate",
+  "currentTaskId": "application-skeleton-final-review.phase2.docs.task1",
+  "expectedCommitMessage": "docs: document application skeleton final review gate",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton final review gate",
-    "preCommitHead": "e5d265532",
+    "expectedCommitMessage": "docs: document application skeleton final review gate",
+    "preCommitHead": "a2327cf44",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase1.tests.task1"
+    "taskId": "application-skeleton-final-review.phase2.docs.task1"
   }
 }
 ```
@@ -65,14 +65,14 @@
 ### Stream: Core Regression Tests
 
 7. [DONE] `application-skeleton-final-review.phase1.tests.task1` Cover post-materialization review, final acceptance unlock, and final revision behavior for Application Skeleton (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton final review gate`).
-8. [PENDING] Git Commit: `test: cover application skeleton final review gate` (hash: TBD)
+8. [DONE] Git Commit: `test: cover application skeleton final review gate` (hash: a2327cf44)
 
 ## Phase 2 - Documentation And Verification (owner: Codex, updated: 2026-05-18)
 
 ### Stream: SSOT Documentation
 
-9. [TODO] `application-skeleton-final-review.phase2.docs.task1` Document the Application Skeleton post-materialization user review gate in managed workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md`; expected commit: `docs: document application skeleton final review gate`).
-10. [TODO] Git Commit: `docs: document application skeleton final review gate` (hash: TBD)
+9. [DONE] `application-skeleton-final-review.phase2.docs.task1` Document the Application Skeleton post-materialization user review gate in managed workflow SSOT docs (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md, doc/TODO/todo-plan.md`; expected commit: `docs: document application skeleton final review gate`).
+10. [PENDING] Git Commit: `docs: document application skeleton final review gate` (hash: TBD)
 
 ### Stream: Tooling Verification
 

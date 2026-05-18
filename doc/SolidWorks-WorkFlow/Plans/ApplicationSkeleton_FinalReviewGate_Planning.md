@@ -3,6 +3,7 @@
 **Status:** Active planning source
 **Created:** 2026-05-18
 **Owner:** Oleksandr + Codex
+**Implementation note:** Lifecycle, handler, and regression-test changes are implemented in commits `d3bb293a4`, `e5d265532`, and `a2327cf44`; SSOT synchronization is tracked by the active `todo-plan.md`.
 
 ## Problem
 
