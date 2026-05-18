@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "d83d2d0b4",
+  "lastRecordedCommit": "30d19b106",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-message-normalization-fix",
-  "expectedCommitMessage": "fix: materialize kimi assistant messages",
+  "currentTaskId": "phase8-kimi-content-part-aggregation-fix",
+  "expectedCommitMessage": "fix: aggregate kimi wire content parts",
   "debt": {
-    "expectedCommitMessage": "fix: materialize kimi assistant messages",
-    "preCommitHead": "d83d2d0b4",
+    "expectedCommitMessage": "fix: aggregate kimi wire content parts",
+    "preCommitHead": "30d19b106",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-message-normalization-fix"
+    "taskId": "phase8-kimi-content-part-aggregation-fix"
   }
 }
 ```
@@ -255,7 +255,17 @@
    - Verification: `npm run plan:validate` passed.
    - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
    - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts Core-compatible Kimi assistant/thinking event materialization.
-4. [PENDING] Git Commit: `fix: materialize kimi assistant messages` (hash: TBD)
+4. [DONE] Git Commit: `fix: materialize kimi assistant messages` (hash: 30d19b106)
+
+### Stream: Acceptance Bug Fix — Kimi Content Part Aggregation
+1. [DONE] `phase8-kimi-content-part-aggregation-fix` Исправить Kimi Wire chunk aggregation: адаптер не должен превращать каждый `ContentPart` token в отдельное dialog message; он должен буферизовать `think`/`text` chunks и отдавать Core один `thinking` и один `assistant` перед `turn_completed` — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, doc/TODO/todo-plan.md`; expected commit: `fix: aggregate kimi wire content parts`.
+   - Runtime diagnosis: source-runtime smoke showed Kimi emits many small `ContentPart` chunks (`"С"`, `"в"`, `"яз"` ...); immediate materialization would unblock Core but pollute dialog history with many tiny assistant messages.
+   - Implementation note: Kimi adapter now uses stateful `KimiWireEventNormalizer`; per-turn chunks are reset on `TurnBegin`, buffered during `ContentPart`, flushed as Core-compatible root-content messages before `turn_completed`.
+   - Verification: `npm run plan:validate` passed.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: source-runtime Kimi smoke passed; a live short prompt emitted one aggregated `thinking`, one aggregated `assistant`, then `turn_completed`.
+2. [PENDING] Git Commit: `fix: aggregate kimi wire content parts` (hash: TBD)
 
 ### Stream: Subscribe Contract Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».

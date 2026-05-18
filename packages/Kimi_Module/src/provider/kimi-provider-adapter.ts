@@ -2,7 +2,10 @@ import { accessSync, constants } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { normalizeKimiWireEvent } from "../messaging/kimi-event-normalizer";
+import {
+  KimiWireEventNormalizer,
+  normalizeKimiWireEvent,
+} from "../messaging/kimi-event-normalizer";
 import { normalizeKimiWireRequest } from "../messaging/kimi-request-failure-normalizer";
 import { KimiSessionLifecycle } from "../session/kimi-session-lifecycle";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
@@ -195,6 +198,9 @@ const buildKimiCliEnvironment = (
 export class KimiProviderAdapter {
   private readonly listeners = new Map<string, Set<SessionListener>>();
   private readonly options: KimiModuleOptions;
+  private readonly wireEventNormalizer = new KimiWireEventNormalizer(
+    normalizeKimiWireEvent
+  );
   private cliEnvironment: KimiCliEnvironment | null = null;
   private runtimeHome: KimiRuntimeHome | null = null;
   private sessionLifecycle: KimiSessionLifecycle | null = null;
@@ -366,7 +372,7 @@ export class KimiProviderAdapter {
   private createWireRouter(): KimiWireRouter {
     return new KimiWireRouter({
       onEvent: (params) => {
-        const events = normalizeKimiWireEvent(params);
+        const events = this.wireEventNormalizer.normalize(params);
         for (const sessionId of this.listeners.keys()) {
           for (const event of events) {
             this.dispatchMessage(sessionId, event);

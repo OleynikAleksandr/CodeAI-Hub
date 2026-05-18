@@ -99,3 +99,81 @@ const normalizeContentPart = (
   }
   return [createEvent("kimi_wire_event", { raw: payload })];
 };
+
+type KimiWireFallbackNormalizer = (
+  params: unknown
+) => readonly KimiSessionEvent[];
+
+export class KimiWireEventNormalizer {
+  private readonly assistantChunks: string[] = [];
+  private readonly fallbackNormalizer: KimiWireFallbackNormalizer;
+  private readonly thinkingChunks: string[] = [];
+
+  constructor(
+    fallbackNormalizer: KimiWireFallbackNormalizer = normalizeKimiWireEvent
+  ) {
+    this.fallbackNormalizer = fallbackNormalizer;
+  }
+
+  normalize(params: unknown): readonly KimiSessionEvent[] {
+    if (!isRecord(params)) {
+      return this.fallbackNormalizer(params);
+    }
+
+    const envelope = params as WireEventEnvelope;
+    switch (envelope.type) {
+      case "TurnBegin":
+        this.reset();
+        return [createEvent("turn_started")];
+      case "TurnEnd":
+        return [...this.flushMessages(), createEvent("turn_completed")];
+      case "StepBegin":
+      case "StatusUpdate":
+        return this.fallbackNormalizer(params);
+      case "ContentPart":
+        return this.bufferContentPart(envelope.payload);
+      default:
+        return this.fallbackNormalizer(params);
+    }
+  }
+
+  private bufferContentPart(payload: unknown): readonly KimiSessionEvent[] {
+    if (!isRecord(payload)) {
+      return [createEvent("kimi_wire_event", { raw: payload })];
+    }
+    if (payload.type === "text") {
+      const text = typeof payload.text === "string" ? payload.text : "";
+      if (text.length > 0) {
+        this.assistantChunks.push(text);
+      }
+      return [];
+    }
+    if (payload.type === "think") {
+      const thinking = typeof payload.think === "string" ? payload.think : "";
+      if (thinking.length > 0) {
+        this.thinkingChunks.push(thinking);
+      }
+      return [];
+    }
+    return [createEvent("kimi_wire_event", { raw: payload })];
+  }
+
+  private flushMessages(): readonly KimiSessionEvent[] {
+    const events: KimiSessionEvent[] = [];
+    const thinking = this.thinkingChunks.join("");
+    const assistant = this.assistantChunks.join("");
+    if (thinking.trim().length > 0) {
+      events.push(createMessageEvent("thinking", thinking));
+    }
+    if (assistant.trim().length > 0) {
+      events.push(createMessageEvent("assistant", assistant));
+    }
+    this.reset();
+    return events;
+  }
+
+  private reset(): void {
+    this.assistantChunks.length = 0;
+    this.thinkingChunks.length = 0;
+  }
+}
