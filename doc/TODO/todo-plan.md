@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "507d418d8",
+  "lastRecordedCommit": "d9a9bf992",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase3.release.buildall.task1",
-  "expectedCommitMessage": "chore: build release 1.2.303 artifacts",
+  "currentTaskId": "application-skeleton-final-review.phase3.release.vsix.task1",
+  "expectedCommitMessage": "chore: package release 1.2.303 vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.303 artifacts",
-    "preCommitHead": "507d418d8",
+    "expectedCommitMessage": "chore: package release 1.2.303 vsix",
+    "preCommitHead": "d9a9bf992",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase3.release.buildall.task1"
+    "taskId": "application-skeleton-final-review.phase3.release.vsix.task1"
   }
 }
 ```
@@ -93,9 +93,12 @@
 16. [DONE] `application-skeleton-final-review.phase3.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.303 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/*/manifest.json, assets/providers/*/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.303 artifacts`).
     - Verification 2026-05-18: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
     - Generated artifacts in `doc/tmp/releases/`: `claude-module-1.2.303.tar.bz2`, `codex-module-1.2.303.tar.bz2`, `gemini-module-1.2.303.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.303.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.303.tar.bz2`, `vscode-webview-1.2.303.tar.bz2`, `project-manager-1.2.303.tar.bz2`.
-17. [PENDING] Git Commit: `chore: build release 1.2.303 artifacts` (hash: TBD)
-18. [TODO] `application-skeleton-final-review.phase3.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.303 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.303 vsix`).
-19. [TODO] Git Commit: `chore: package release 1.2.303 vsix` (hash: TBD)
+17. [DONE] Git Commit: `chore: build release 1.2.303 artifacts` (hash: d9a9bf992)
+18. [DONE] `application-skeleton-final-review.phase3.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.303 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.303 vsix`).
+    - Verification 2026-05-18: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
+    - Output confirmed `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
+    - VSIX: `codeai-hub-1.2.303.vsix` (`48M`, sha256 `81f80294f7c6bed21ce32e180a097a97d7e5ede4a15425ad23156fcc16d16e7a`).
+19. [PENDING] Git Commit: `chore: package release 1.2.303 vsix` (hash: TBD)
 
 ## Phase 4 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
