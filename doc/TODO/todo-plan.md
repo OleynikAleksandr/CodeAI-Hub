@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "9279e74f3",
+  "lastRecordedCommit": "2a3070737",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase7-kimi-core-packaging",
-  "expectedCommitMessage": "feat: bundle kimi provider in core runtime",
+  "currentTaskId": "phase7-kimi-release-validation",
+  "expectedCommitMessage": "feat: validate kimi release packaging",
   "debt": {
-    "expectedCommitMessage": "feat: bundle kimi provider in core runtime",
-    "preCommitHead": "9279e74f3",
+    "expectedCommitMessage": "feat: validate kimi release packaging",
+    "preCommitHead": "2a3070737",
     "stage": "commit_pending",
-    "taskId": "phase7-kimi-core-packaging"
+    "taskId": "phase7-kimi-release-validation"
   }
 }
 ```
@@ -186,9 +186,9 @@
 1. [DONE] `phase7-kimi-packaging` Добавить Kimi provider artifact builder, release cleanup keep-pattern и tracked provider manifest без изменения версий вручную — scope: `scripts/build-kimi-module.sh, scripts/release-utils.sh, assets/providers/kimi/manifest.json`; expected commit: `feat: package kimi provider module`.
 2. [DONE] Git Commit: `feat: package kimi provider module` (hash: 9279e74f3)
 3. [DONE] `phase7-kimi-core-packaging` Подключить Kimi module к unified build/core runtime packaging и Core runtime dependency rewrite — scope: `scripts/build-all.sh, scripts/build-core.sh, packages/core/package.json, packages/core/src/provider-registry/provider-descriptor-factory.ts, package-lock.json`; expected commit: `feat: bundle kimi provider in core runtime`.
-4. [PENDING] Git Commit: `feat: bundle kimi provider in core runtime` (hash: TBD)
-5. [TODO] `phase7-kimi-release-validation` Подключить Kimi provider artifact к release validation, VSIX exclusions и manifest version checks — scope: `scripts/build-release.sh, .vscodeignore`; expected commit: `feat: validate kimi release packaging`.
-6. [TODO] Git Commit: `feat: validate kimi release packaging` (hash: TBD)
+4. [DONE] Git Commit: `feat: bundle kimi provider in core runtime` (hash: 2a3070737)
+5. [DONE] `phase7-kimi-release-validation` Подключить Kimi provider artifact к release validation, VSIX exclusions и manifest version checks — scope: `scripts/build-release.sh, .vscodeignore`; expected commit: `feat: validate kimi release packaging`.
+6. [PENDING] Git Commit: `feat: validate kimi release packaging` (hash: TBD)
 
 ### Stream: Targeted Builds
 1. [TODO] `phase7-kimi-targeted-builds` Выполнить targeted verification для затронутых пакетов/клиентов (`packages/Kimi_Module`, `packages/core`, UI/PM если затронуты) и зафиксировать результаты в плане — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi targeted verification`.

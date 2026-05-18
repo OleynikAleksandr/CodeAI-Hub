@@ -20,6 +20,7 @@ node_modules/tree-sitter-bash/**
 node_modules/web-tree-sitter/**
 node_modules/@codeai-hub/claude-module/**
 node_modules/@codeai-hub/gemini-module/**
+node_modules/@codeai-hub/kimi-module/**
 codeai-hub-*/**
 dist/**
 .vsix/**
@@ -43,6 +44,7 @@ binaries/**
 dist/cef-launcher/**
 packages/Claude_Module/**
 packages/Gemini_Module/**
+packages/Kimi_Module/**
 packages/**
 media/react-chat.js
 media/*.css
