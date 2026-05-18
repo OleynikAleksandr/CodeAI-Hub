@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.303] - 2026-05-18
+### Fixed
+- **Application Skeleton now opens a final post-materialization review gate.** After Core validates and commits materialization, it sends the `managed-workflow-user-review` card with the inline `Подтверждаю` action instead of publishing `managed-workflow-complete`.
+- **Quality Gates stays locked until explicit final acceptance.** The Application Skeleton completed marker, persistent return stream, and `quality_gates` unlock now happen only after the user confirms the final review card.
+- **Final Application Skeleton corrections stay managed by Core.** User feedback at the post-materialization gate is routed as a materialized-scope revision prompt, revalidated, committed, and then returned to the same final review gate.
+
+### Tests
+- `npx tsc --noEmit --pretty false -p packages/core/tsconfig.json`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`
+
 ## [1.2.302] - 2026-05-18
 ### Fixed
 - **Description and Virtual Simulation now show the post-turn Core review card again.** After the provider finishes and asks follow-up questions, Core appends the `managed-workflow-user-review` system message with the inline `Подтверждаю` button.

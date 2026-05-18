@@ -2,19 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.302** (preliminary review gate fix)
+**Current Release — v1.2.303** (Application Skeleton final review gate)
 
-This release keeps the Project Manager step-card polish from v1.2.299 and fixes
-the preliminary workflow review gate regression found during the v1.2.301
-retest. Description and Virtual Simulation remain provider-direct at session
-start, then after the provider turn completes Core adds the same user review
-card pattern: answer the agent's questions, ask more questions, request edits,
-or press `Подтверждаю` to accept and open the next step card.
+This release fixes the managed `Application Skeleton` completion boundary. A
+valid materialization commit no longer makes Core complete the step on the
+user's behalf or unlock `Quality Gates Baseline` immediately. Core now opens the
+same final user review card pattern used by the other workflow gates: the user
+can keep asking questions, request materialized-scope changes, or press
+`Подтверждаю` to finish `Application Skeleton` and move to the next technical
+step.
 
-Startup prompts that mention `подтверждаю` are still dispatched to the provider;
-Core only consumes a short explicit confirmation while its preliminary review
-gate is already open. Managed technical review stages keep their existing
-Core-owned acceptance flow.
+Application Skeleton corrections at that final gate are routed back through
+Core as materialized-scope revision prompts, then validated and committed again
+before the final review card reopens. The completed marker and Quality Gates
+unlock happen only after explicit final acceptance.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the
