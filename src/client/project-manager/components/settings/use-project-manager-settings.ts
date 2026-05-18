@@ -163,6 +163,9 @@ export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => 
 
   const updateProvider = useCallback(
     (provider: ProviderId, target: SettingsProviderTarget) => {
+      if (provider === "kimi") {
+        return;
+      }
       const targetKey = `${provider}:${target}`;
       setVersions((current) => ({
         ...current,

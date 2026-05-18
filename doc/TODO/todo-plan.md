@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "068b483a4",
+  "lastRecordedCommit": "642c6b658",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-reasoning-panel-expanded",
-  "expectedCommitMessage": "fix: expand reasoning dialog panel",
+  "currentTaskId": "phase8-kimi-reasoning-webview-typecheck-fix",
+  "expectedCommitMessage": "fix: repair kimi settings webview typecheck",
   "debt": {
-    "expectedCommitMessage": "fix: expand reasoning dialog panel",
-    "preCommitHead": "068b483a4",
+    "expectedCommitMessage": "fix: repair kimi settings webview typecheck",
+    "preCommitHead": "642c6b658",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-reasoning-panel-expanded"
+    "taskId": "phase8-kimi-reasoning-webview-typecheck-fix"
   }
 }
 ```
@@ -395,7 +395,17 @@
 13. [DONE] `phase8-kimi-reasoning-streaming` Улучшить Kimi reasoning streaming: flush accumulated `ContentPart(type=think)` по bounded chunks до tool/turn boundaries, сохраняя Core-compatible thinking bubbles и не создавая token-level message spam — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: stream kimi reasoning chunks earlier`.
 14. [DONE] Git Commit: `fix: stream kimi reasoning chunks earlier` (hash: 068b483a4)
 15. [DONE] `phase8-kimi-reasoning-panel-expanded` Исправить устаревшее свернутое поведение reasoning/thinking плашки: содержимое должно быть видно сразу, а Kimi SSOT должен фиксировать тот же dialog behavior — scope: `src/client/ui/src/session/dialog-panel.tsx, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: expand reasoning dialog panel`.
-16. [PENDING] Git Commit: `fix: expand reasoning dialog panel` (hash: TBD)
+16. [DONE] Git Commit: `fix: expand reasoning dialog panel` (hash: 642c6b658)
+
+### Stream: Scope Closeout
+### Stream: Kimi Reasoning Hotfix Verification
+1. [DONE] `phase8-kimi-reasoning-webview-typecheck-fix` Исправить строгие webview TypeScript ошибки после добавления Kimi reasoning setting: workflow start persistence, provider update narrowing и synthetic settings fallback в session policy test — scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/components/settings/use-project-manager-settings.ts, src/client/ui/src/session/thinking-display-policy.test.tsx`; expected commit: `fix: repair kimi settings webview typecheck`.
+2. [PENDING] Git Commit: `fix: repair kimi settings webview typecheck` (hash: TBD)
+3. [TODO] `phase8-kimi-reasoning-targeted-verification` Выполнить targeted verification для Kimi reasoning/settings/UI hotfix (`@codeai-hub/kimi-module`, `@codeai-hub/core`, webview build/typecheck) и зафиксировать результаты — scope: `doc/TODO/todo-plan.md, media/react-chat.js`; expected commit: `docs: record kimi reasoning verification`.
+4. [TODO] Git Commit: `docs: record kimi reasoning verification` (hash: TBD)
+
+### Stream: Kimi Reasoning Hotfix Release Confirmation Gate
+1. [TODO] `phase8-kimi-reasoning-release-confirmation` Остановиться после targeted verification и запросить отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none.
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

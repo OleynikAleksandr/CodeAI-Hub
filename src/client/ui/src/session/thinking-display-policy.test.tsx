@@ -85,7 +85,9 @@ const buildDisabledSettings = (): Settings => {
         thinkingDisplaySyncEnabled: false,
       },
       kimi: {
-        ...defaults.providers.kimi,
+        autoUpdate: defaults.providers.kimi?.autoUpdate ?? { enabled: false },
+        defaultModel:
+          defaults.providers.kimi?.defaultModel ?? "kimi-for-coding",
         thinkingDisplaySyncEnabled: false,
       },
     },

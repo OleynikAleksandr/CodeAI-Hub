@@ -18,6 +18,7 @@ import {
   type GeminiThinkingLevel,
 } from "../../../types/gemini-model-registry";
 import {
+  DEFAULT_KIMI_MODEL_ID,
   KIMI_MODEL_ID_SET,
   type KimiModelId,
 } from "../../../types/kimi-model-registry";
@@ -159,7 +160,11 @@ const applyStartCardModelDefaults = (
       providers: {
         ...settings.providers,
         kimi: {
-          autoUpdate: settings.providers.kimi?.autoUpdate ?? { enabled: false },
+          ...(settings.providers.kimi ?? {
+            autoUpdate: { enabled: false },
+            defaultModel: DEFAULT_KIMI_MODEL_ID,
+            thinkingDisplaySyncEnabled: true,
+          }),
           defaultModel: modelId,
         },
       },
