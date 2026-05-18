@@ -7551,6 +7551,23 @@
   ];
   var DEFAULT_CODEX_REASONING_LEVEL = "medium";
 
+  // src/types/kimi-model-registry.ts
+  var KIMI_RECOMMENDED_MODELS = [
+    {
+      id: "kimi-for-coding",
+      displayName: "Kimi 2.6 / Kimi Code",
+      description: "Kimi CLI coding model exposed through Wire mode.",
+      status: "active",
+      supportsReasoningControl: false,
+      supportsThinkingDisplaySummarized: false,
+      tier: "coding"
+    }
+  ];
+  var DEFAULT_KIMI_MODEL_ID = "kimi-for-coding";
+  var KIMI_MODEL_ID_SET = new Set(
+    KIMI_RECOMMENDED_MODELS.map((model) => model.id)
+  );
+
   // src/client/ui/src/components/settings/claude-thinking-state.ts
   var LEGACY_THINKING_TOKEN_ANCHORS = [
     { effort: "low", maxTokens: 2e3 },
@@ -7836,14 +7853,6 @@
     }
     return normalized.toLowerCase() === LEGACY_SOURCE_LANGUAGE ? DEFAULT_LOCALIZATION_LANGUAGE : normalized;
   };
-  var createLocalizationCategorySettings = (approved) => ({
-    ...approved,
-    interactiveTemplates: approved.artifactsForTheUser,
-    systemFeedback: approved.messagesForTheUser,
-    uiInterface: approved.uiLabels,
-    userGuidance: approved.uiHelperText,
-    workflowTerms: approved.uiLabels
-  });
   var resolveLocalizationCategory = (value, candidateKeys, fallback) => {
     for (const key of candidateKeys) {
       const resolved = mapLocalizationString(value?.[key], "");
@@ -7865,34 +7874,35 @@
     enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
   });
   var mapLocalizationCategories = (value, defaultLanguage) => {
-    const messagesForTheUser = resolveLocalizationCategory(
-      value,
+    const resolve = (keys, fallback) => resolveLocalizationCategory(value, keys, fallback);
+    const artifactsForTheUser = resolve(
+      ["artifactsForTheUser", "interactiveTemplates"],
+      defaultLanguage
+    );
+    const messagesForTheUser = resolve(
       ["messagesForTheUser", "systemFeedback"],
       defaultLanguage
     );
-    return createLocalizationCategorySettings({
-      artifactsForTheUser: resolveLocalizationCategory(
-        value,
-        ["artifactsForTheUser", "interactiveTemplates"],
-        defaultLanguage
-      ),
+    const uiHelperText = resolve(
+      ["uiHelperText", "userGuidance"],
+      defaultLanguage
+    );
+    const uiLabels = resolve(
+      ["uiLabels", "uiInterface", "workflowTerms"],
+      defaultLanguage
+    );
+    return {
+      artifactsForTheUser,
+      interactiveTemplates: artifactsForTheUser,
       messagesForTheUser,
-      reasoning: resolveLocalizationCategory(
-        value,
-        ["reasoning"],
-        messagesForTheUser
-      ),
-      uiHelperText: resolveLocalizationCategory(
-        value,
-        ["uiHelperText", "userGuidance"],
-        defaultLanguage
-      ),
-      uiLabels: resolveLocalizationCategory(
-        value,
-        ["uiLabels", "uiInterface", "workflowTerms"],
-        defaultLanguage
-      )
-    });
+      reasoning: resolve(["reasoning"], messagesForTheUser),
+      systemFeedback: messagesForTheUser,
+      uiHelperText,
+      uiInterface: uiLabels,
+      uiLabels,
+      userGuidance: uiHelperText,
+      workflowTerms: uiLabels
+    };
   };
   var mapLocalizationSettings = (value) => {
     const legacyDefaultLanguage = mapLocalizationString(
@@ -7988,12 +7998,17 @@
       value?.thinkingDisplaySyncEnabled
     )
   });
+  var mapKimiSettings = (value) => ({
+    autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
+    defaultModel: DEFAULT_KIMI_MODEL_ID
+  });
   var mapSettingsSnapshot = (value) => ({
     general: mapGeneralSettings(value?.general),
     providers: {
       claude: mapClaudeSettings(value?.providers?.claude),
       codex: mapCodexSettings(value?.providers?.codex),
-      gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini)
+      gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini),
+      kimi: mapKimiSettings(value?.providers?.kimi)
     }
   });
   var createDefaultSettings = () => mapSettingsSnapshot(void 0);
@@ -8016,7 +8031,7 @@
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
   ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini);
+  var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && JSON.stringify(left.providers.kimi ?? null) === JSON.stringify(right.providers.kimi ?? null);
 
   // src/client/ui/src/components/settings/native-request-capture-state.ts
   var createNativeRequestCaptureState = () => ({
@@ -8283,13 +8298,15 @@
   var PROVIDER_TITLE_MAP = {
     claudeCodeCli: "Claude",
     codexCli: "Codex",
-    geminiCli: "Gemini"
+    geminiCli: "Gemini",
+    kimiCode: "Kimi"
   };
   var getDefaultProviderTitle = (providerId) => PROVIDER_TITLE_MAP[providerId] ?? providerId;
   var PROVIDER_DESCRIPTION_MAP = {
     claudeCodeCli: "Using your authentication Claude Code CLI",
     codexCli: "Using your authentication Codex CLI",
-    geminiCli: "Using your authentication Gemini CLI"
+    geminiCli: "Using your authentication Gemini CLI",
+    kimiCode: "Using your authentication Kimi CLI"
   };
   var getDefaultProviderDescription = (providerId) => PROVIDER_DESCRIPTION_MAP[providerId] ?? "";
 
@@ -8429,7 +8446,8 @@
   var providerIdSet = /* @__PURE__ */ new Set([
     "claudeCodeCli",
     "codexCli",
-    "geminiCli"
+    "geminiCli",
+    "kimiCode"
   ]);
   var isProviderDescriptorCandidate = (value) => {
     if (!value || typeof value !== "object") {

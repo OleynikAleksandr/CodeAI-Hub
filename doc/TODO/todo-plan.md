@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "8ff02a0d0",
+  "lastRecordedCommit": "c708aef45",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase7-kimi-release-build-start",
-  "expectedCommitMessage": "docs: mark kimi release build started",
+  "currentTaskId": "phase7-kimi-release-build",
+  "expectedCommitMessage": "chore: release kimi provider module build",
   "debt": {
-    "expectedCommitMessage": "docs: mark kimi release build started",
-    "preCommitHead": "8ff02a0d0",
+    "expectedCommitMessage": "chore: release kimi provider module build",
+    "preCommitHead": "c708aef45",
     "stage": "commit_pending",
-    "taskId": "phase7-kimi-release-build-start"
+    "taskId": "phase7-kimi-release-build"
   }
 }
 ```
@@ -211,9 +211,13 @@
 1. [DONE] `phase7-kimi-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.305 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi release notes`.
 2. [DONE] Git Commit: `docs: prepare kimi release notes` (hash: 8ff02a0d0)
 3. [DONE] `phase7-kimi-release-build-start` Зафиксировать post-commit advancement перед clean-tree release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi release build started`.
-4. [PENDING] Git Commit: `docs: mark kimi release build started` (hash: TBD)
-5. [TODO] `phase7-kimi-release-build` После явного подтверждения пользователя выполнить release checklist: clean tree, `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package manifests, assets manifests, README.md, CHANGELOG.md, media/react-chat.js, doc/TODO/todo-plan.md, doc/tmp/releases`; expected commit: `chore: release kimi provider module build`.
-6. [TODO] Git Commit: `chore: release kimi provider module build` (hash: TBD)
+4. [DONE] Git Commit: `docs: mark kimi release build started` (hash: c708aef45)
+5. [DONE] `phase7-kimi-release-build` После явного подтверждения пользователя выполнить release checklist: clean tree, `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi provider module build`.
+   - Result: `./scripts/build-all.sh --allow-dirty` passed for version `1.2.305`; `--allow-dirty` used because the only pre-build dirty file was machine-managed `doc/TODO/todo-plan.md` after post-commit advancement to the active release task.
+   - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.305.vsix`, package size `49M`.
+   - Result: release tarballs copied to `doc/tmp/releases/`: `kimi-module-1.2.305.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.305.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.305.tar.bz2`, provider/UI tarballs.
+   - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
+6. [PENDING] Git Commit: `chore: release kimi provider module build` (hash: TBD)
 
 ## Phase 8 — User Workflow Acceptance And Closeout (owner: Codex, updated: 2026-05-18)
 ### Stream: User Workflow Acceptance Testing
