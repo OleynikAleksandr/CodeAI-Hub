@@ -79,6 +79,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/Provider_Candidates/Agent_Runtime_Provider_Candidates_Analysis_RU.md` — active planning analysis for provider candidates after Claude/Codex/Gemini: Kimi, Qwen Code, GLM, DeepSeek, MiniMax; compares native agent runtime surfaces, backend-provider options, and subscription-vs-token access.
 - `Plans/Archive/PM_Sidebar_Settings_Action_Planning.md` — archived implementation planning source for Project Manager sidebar Settings action and the follow-up workflow review-gate usability fixes, closed after user acceptance of release `1.2.302`.
 - `Plans/Archive/ApplicationSkeleton_FinalReviewGate_Planning.md` — archived planning source for the Application Skeleton final review gate and corrective `v1.2.304` navigation fix: Core keeps `Application Skeleton` active after materialization validation, shows a `managed-workflow-user-review` card with `Подтверждаю`, and after final acceptance activates the `Quality Gates` card through Core-owned stage activation.
 - `Plans/Archive/ManagedReview_ConfirmButton_Planning.md` — archived implementation planning source for replacing managed user-review prose acceptance (`напишите подтверждаю`) with an inline `Подтверждаю` button on the Core/system review card while preserving Core-owned managed review acceptance and `User Return And Revisions` transitions. Closed by user acceptance of release `1.2.296`.
