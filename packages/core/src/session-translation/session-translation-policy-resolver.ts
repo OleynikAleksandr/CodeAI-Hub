@@ -12,12 +12,17 @@ import {
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
   loadGeminiSettingsSnapshot,
+  loadKimiSettingsSnapshot,
   loadReasoningLanguage,
   loadReasoningTranslationEngineId,
   loadUITranslationEngineId,
 } from "../config/provider-settings-snapshot";
 
-export type SessionThinkingVisibilityProviderId = "claude" | "codex" | "gemini";
+export type SessionThinkingVisibilityProviderId =
+  | "claude"
+  | "codex"
+  | "gemini"
+  | "kimi";
 export type SessionTranslationPolicyCategory =
   | "messages_for_the_user"
   | "reasoning";
@@ -156,6 +161,10 @@ export class SessionTranslationPolicyResolver {
       return resolveThinkingVisibilityEnabled(
         gemini?.thinkingDisplaySyncEnabled
       );
+    }
+    if (providerId === "kimi") {
+      const kimi = loadKimiSettingsSnapshot(settingsPath);
+      return resolveThinkingVisibilityEnabled(kimi?.thinkingDisplaySyncEnabled);
     }
     const codex = loadCodexSettingsSnapshot(settingsPath);
     return (

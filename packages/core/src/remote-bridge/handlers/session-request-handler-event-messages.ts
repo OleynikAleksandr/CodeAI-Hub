@@ -14,9 +14,13 @@ const resolveTranslationProviderId = (
   if (
     providerId === "claude" ||
     providerId === "codex" ||
-    providerId === "gemini"
+    providerId === "gemini" ||
+    providerId === "kimi"
   ) {
     return providerId;
+  }
+  if (providerId === "kimiCode") {
+    return "kimi";
   }
   return undefined;
 };

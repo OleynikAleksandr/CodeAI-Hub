@@ -47,7 +47,11 @@ export interface SessionTranslationFacadeOptions {
   readonly translationFacadeFactory?: SessionTranslationFacadeFactory;
 }
 
-export type SessionTranslationProviderId = "claude" | "codex" | "gemini";
+export type SessionTranslationProviderId =
+  | "claude"
+  | "codex"
+  | "gemini"
+  | "kimi";
 
 export interface SessionMessageTranslationCandidate
   extends SessionTranslationDispatchCandidate {
