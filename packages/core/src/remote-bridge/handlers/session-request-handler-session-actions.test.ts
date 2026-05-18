@@ -358,6 +358,35 @@ test("Application Skeleton review corrections stay in the active review task", a
     assert.match(plan, REVIEW_TASK_STATE_RE);
     assert.doesNotMatch(plan, MATERIALIZE_TASK_STATE_RE);
     assert.deepEqual(harness.events, []);
+    const planPath = "doc/TODO/stages/application-skeleton/todo-plan.md";
+    await writeWorkspaceFile(
+      workspaceRoot,
+      planPath,
+      plan
+        .replace(
+          '"currentTaskId": "application-skeleton.phase2.review.task1"',
+          '"currentTaskId": "application-skeleton.phase4.final-review.task1"'
+        )
+        .replace(
+          '"expectedCommitMessage": "docs: revise application skeleton review revision 1"',
+          '"expectedCommitMessage": null'
+        )
+    );
+    await harness.actions.handleMessage(session.id, "Добавь CLI entrypoint.");
+
+    assert.equal(harness.sentInternalMessages.length, 2);
+    assert.equal(
+      (harness.sentInternalMessages[1] ?? "").includes(
+        "final review corrections"
+      ),
+      true
+    );
+    assert.equal(
+      (await readWorkspaceFile(workspaceRoot, planPath)).includes(
+        '"currentTaskId": "application-skeleton.phase4.final-review.task1"'
+      ),
+      true
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

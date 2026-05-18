@@ -22,7 +22,6 @@ const TYPE_CONFIRMATION_RE = /напишите `подтверждаю`/u;
 const RETURN_RE = /Можно переходить к следующему шагу/u;
 const APP_REVIEW_RE =
   /Core: Application Skeleton перешёл в пользовательскую проверку/u;
-const APP_RETURN_RE = /Core: Application Skeleton завершён и зафиксирован/u;
 const DIAGRAM_REVIEW_RE =
   /Core: Diagram Modules перешёл в пользовательскую проверку/u;
 const QUALITY_REVIEW_RE =
@@ -364,6 +363,11 @@ test("managed workflow turn emits Core-owned user review handoff messages", asyn
       stage: APP_STAGE,
     },
     {
+      expected: APP_REVIEW_RE,
+      prepare: prepareApplicationMaterialization,
+      stage: APP_STAGE,
+    },
+    {
       expected: QUALITY_REVIEW_RE,
       prepare: prepareQualityDraft,
       stage: QUALITY_STAGE,
@@ -426,11 +430,6 @@ test("managed workflow turn emits Core-owned Diagram Modules review handoff", as
 
 test("managed workflow turn emits Core-owned persistent return messages", async () => {
   const cases = [
-    {
-      expected: APP_RETURN_RE,
-      prepare: prepareApplicationMaterialization,
-      stage: APP_STAGE,
-    },
     {
       expected: QUALITY_RETURN_RE,
       prepare: prepareQualityIntegration,

@@ -35,8 +35,9 @@ const MATERIALIZATION_REPAIR_TASK_1_RE =
 const MATERIALIZATION_REPAIR_EXPECTED_1_RE =
   /"expectedCommitMessage": "feat: repair application skeleton materialization attempt 1"/u;
 const REJECTED_MATERIALIZATION_HASH_RE = /feed1234/u;
-const PHASE_4_RE = /## Phase 4 — Persistent Application Skeleton User Return/u;
-const QUALITY_GATES_UNLOCKED_RE = /"quality_gates"/u;
+const PHASE_4_RE = /## Phase 4 — Application Skeleton Final User Review/u;
+const PHASE_5_RE = /## Phase 5 — Persistent Application Skeleton User Return/u;
+const QUALITY_GATES_UNLOCKED_RE = /"unlockedStages": \[[\s\S]*"quality_gates"/u;
 const APPLICATION_COMPLETED_RE =
   /"completedStages": \[\n {4}"application_skeleton"/u;
 const MANAGED_DECISION_PATH = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`;
@@ -230,11 +231,6 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
     await writeWorkspaceFile(workspaceRoot, "tsconfig.json", "{}\n");
     await writeWorkspaceFile(
       workspaceRoot,
-      "scripts/application-skeleton-smoke.cjs",
-      "console.log('ok');\n"
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
       APPLICATION_MARKDOWN_PATH,
       [
         "# Application Skeleton",
@@ -277,7 +273,6 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
         "package.json",
         "package-lock.json",
         "tsconfig.json",
-        "scripts/application-skeleton-smoke.cjs",
       ]),
       ""
     );
@@ -301,8 +296,21 @@ test("ApplicationSkeletonStagePlanController commits draft, accepts review, and 
       workspaceRoot,
       "doc/TODO/workspace.plan.md"
     );
-    assert.match(workspacePlan, APPLICATION_COMPLETED_RE);
-    assert.match(workspacePlan, QUALITY_GATES_UNLOCKED_RE);
+    assert.doesNotMatch(workspacePlan, APPLICATION_COMPLETED_RE);
+    assert.doesNotMatch(workspacePlan, QUALITY_GATES_UNLOCKED_RE);
+
+    await controller.acceptFinalMaterializedReview({ workspaceRoot });
+    const acceptedPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    assert.match(acceptedPlan, PHASE_5_RE);
+    const acceptedWorkspacePlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/workspace.plan.md"
+    );
+    assert.match(acceptedWorkspacePlan, APPLICATION_COMPLETED_RE);
+    assert.match(acceptedWorkspacePlan, QUALITY_GATES_UNLOCKED_RE);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

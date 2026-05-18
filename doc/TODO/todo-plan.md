@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "d3bb293a4",
+  "lastRecordedCommit": "e5d265532",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase1.handlers.task1",
-  "expectedCommitMessage": "fix: open application skeleton final review gate",
+  "currentTaskId": "application-skeleton-final-review.phase1.tests.task1",
+  "expectedCommitMessage": "test: cover application skeleton final review gate",
   "debt": {
-    "expectedCommitMessage": "fix: open application skeleton final review gate",
-    "preCommitHead": "d3bb293a4",
+    "expectedCommitMessage": "test: cover application skeleton final review gate",
+    "preCommitHead": "e5d265532",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase1.handlers.task1"
+    "taskId": "application-skeleton-final-review.phase1.tests.task1"
   }
 }
 ```
@@ -60,12 +60,12 @@
 ### Stream: Core Handoff And Review Actions
 
 5. [DONE] `application-skeleton-final-review.phase1.handlers.task1` Emit a final Application Skeleton user-review card after materialization and route final accept/revision decisions through Core (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: open application skeleton final review gate`).
-6. [PENDING] Git Commit: `fix: open application skeleton final review gate` (hash: TBD)
+6. [DONE] Git Commit: `fix: open application skeleton final review gate` (hash: e5d265532)
 
 ### Stream: Core Regression Tests
 
-7. [TODO] `application-skeleton-final-review.phase1.tests.task1` Cover post-materialization review, final acceptance unlock, and final revision behavior for Application Skeleton (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts`; expected commit: `test: cover application skeleton final review gate`).
-8. [TODO] Git Commit: `test: cover application skeleton final review gate` (hash: TBD)
+7. [DONE] `application-skeleton-final-review.phase1.tests.task1` Cover post-materialization review, final acceptance unlock, and final revision behavior for Application Skeleton (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton final review gate`).
+8. [PENDING] Git Commit: `test: cover application skeleton final review gate` (hash: TBD)
 
 ## Phase 2 - Documentation And Verification (owner: Codex, updated: 2026-05-18)
 
