@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "5ce3201ac",
+  "lastRecordedCommit": "60e4beae9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase3-kimi-event-normalization",
-  "expectedCommitMessage": "feat: normalize kimi provider events",
+  "currentTaskId": "phase3-kimi-requests-failures",
+  "expectedCommitMessage": "feat: classify kimi provider requests and failures",
   "debt": {
-    "expectedCommitMessage": "feat: normalize kimi provider events",
-    "preCommitHead": "5ce3201ac",
+    "expectedCommitMessage": "feat: classify kimi provider requests and failures",
+    "preCommitHead": "60e4beae9",
     "stage": "commit_pending",
-    "taskId": "phase3-kimi-event-normalization"
+    "taskId": "phase3-kimi-requests-failures"
   }
 }
 ```
@@ -104,11 +104,11 @@
 ## Phase 3 — Provider Event Normalization (owner: Codex, updated: 2026-05-18)
 ### Stream: Lifecycle And Message Events
 1. [DONE] `phase3-kimi-event-normalization` Нормализовать Wire prompt lifecycle и assistant/progress/thinking messages в Core provider event surface без UI authority leaks — scope: `packages/Kimi_Module`; expected commit: `feat: normalize kimi provider events`.
-2. [PENDING] Git Commit: `feat: normalize kimi provider events` (hash: TBD)
+2. [DONE] Git Commit: `feat: normalize kimi provider events` (hash: 60e4beae9)
 
 ### Stream: Provider Requests And Failure Classification
-1. [TODO] `phase3-kimi-requests-failures` Нормализовать Wire `request`/approval/tool/question envelopes и auth/quota/service/unsupported-model failures в provider-neutral recovery surface — scope: `packages/Kimi_Module, packages/core/src/remote-bridge/handlers`; expected commit: `feat: classify kimi provider requests and failures`.
-2. [TODO] Git Commit: `feat: classify kimi provider requests and failures` (hash: TBD)
+1. [DONE] `phase3-kimi-requests-failures` Нормализовать Wire `request`/approval/tool/question envelopes и auth/quota/service/unsupported-model failures в provider-neutral recovery surface — scope: `packages/Kimi_Module, packages/core/src/remote-bridge/handlers`; expected commit: `feat: classify kimi provider requests and failures`.
+2. [PENDING] Git Commit: `feat: classify kimi provider requests and failures` (hash: TBD)
 
 ## Phase 4 — Core Provider Registry Integration (owner: Codex, updated: 2026-05-18)
 ### Stream: Provider Registry And Installer Paths

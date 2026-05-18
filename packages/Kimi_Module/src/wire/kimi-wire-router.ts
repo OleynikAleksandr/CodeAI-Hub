@@ -1,3 +1,5 @@
+import { createKimiWireRequestError } from "../messaging/kimi-request-failure-normalizer";
+
 export interface KimiWireRequest {
   readonly id: string | number;
   readonly method: string;
@@ -18,8 +20,6 @@ interface PendingRequest {
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
-const createJsonRpcError = (message: string): Error => new Error(message);
 
 export class KimiWireRouter {
   private nextRequestId = 1;
@@ -118,12 +118,14 @@ export class KimiWireRouter {
     this.pendingRequests.delete(id);
 
     if (isRecord(message.error)) {
+      const code =
+        typeof message.error.code === "number" ? message.error.code : undefined;
+      const errorMessage =
+        typeof message.error.message === "string"
+          ? message.error.message
+          : "Kimi Wire request failed.";
       pending.reject(
-        createJsonRpcError(
-          typeof message.error.message === "string"
-            ? message.error.message
-            : "Kimi Wire request failed."
-        )
+        createKimiWireRequestError(code, errorMessage, message.error.data)
       );
       return;
     }

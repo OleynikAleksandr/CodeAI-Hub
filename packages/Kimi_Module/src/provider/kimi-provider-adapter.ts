@@ -2,6 +2,7 @@ import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { normalizeKimiWireEvent } from "../messaging/kimi-event-normalizer";
+import { normalizeKimiWireRequest } from "../messaging/kimi-request-failure-normalizer";
 import { KimiSessionLifecycle } from "../session/kimi-session-lifecycle";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
 import { KimiWireRouter } from "../wire/kimi-wire-router";
@@ -231,10 +232,7 @@ export class KimiProviderAdapter {
         });
       },
       onRequest: (request) => ({
-        request_id:
-          isRecord(request.params) && isRecord(request.params.payload)
-            ? request.params.payload.id
-            : request.id,
+        request_id: this.handleProviderRequest(request),
         response: "deny",
       }),
       sendJson: (message) => this.requireWireProcessBridge().sendJson(message),
@@ -249,6 +247,23 @@ export class KimiProviderAdapter {
     for (const listener of listeners) {
       listener(payload);
     }
+  }
+
+  private handleProviderRequest(request: {
+    readonly id: string | number;
+    readonly params?: unknown;
+  }): string | number | unknown {
+    const event = normalizeKimiWireRequest({
+      id: request.id,
+      method: "request",
+      params: request.params,
+    });
+    for (const sessionId of this.listeners.keys()) {
+      this.dispatchMessage(sessionId, event);
+    }
+    return isRecord(request.params) && isRecord(request.params.payload)
+      ? request.params.payload.id
+      : request.id;
   }
 
   private assertInitialized(): void {
