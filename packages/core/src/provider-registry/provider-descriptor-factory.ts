@@ -30,6 +30,20 @@ interface ProviderDescriptorFactoryOptions {
     error: unknown,
     failureLabel: string
   ) => void;
+  readonly kimiAdapterCtor: KimiAdapterCtor;
+}
+
+export type KimiAdapterCtor = new (
+  options: KimiModuleOptions
+) => ProviderAdapter;
+
+interface KimiModuleOptions {
+  readonly reporter?: ModuleReporter;
+  readonly workspace: {
+    readonly defaultModel?: string;
+    readonly providerHomePath?: string;
+    readonly workspacePath?: string;
+  };
 }
 
 interface GeminiAdapterFactoryOptions {
@@ -85,6 +99,12 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
+  kimiCode: {
+    acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
+    syncsLabelFromAppliedConfig: true,
+  },
 };
 
 export const resolveProviderModelSyncCapabilities = (
@@ -99,6 +119,7 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   claudeCodeCli: false,
   codexCli: false,
   geminiCli: true,
+  kimiCode: true,
 };
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
@@ -157,6 +178,20 @@ export const createCodexAdapterInstance = (
     reporter: options.createReporter("codex"),
   });
 };
+
+export const createKimiAdapterInstance = (
+  options: Pick<
+    ProviderDescriptorFactoryOptions,
+    "config" | "createReporter" | "kimiAdapterCtor"
+  >
+): ProviderAdapter =>
+  new options.kimiAdapterCtor({
+    workspace: {
+      workspacePath: process.cwd(),
+      defaultModel: "kimi-for-coding",
+    },
+    reporter: options.createReporter("kimi"),
+  });
 
 const buildClaudeDescriptor = (
   options: ProviderDescriptorFactoryOptions
@@ -219,12 +254,37 @@ const buildGeminiDescriptor = (): ProviderDescriptor => ({
   status: "active",
 });
 
+const buildKimiDescriptor = (
+  options: ProviderDescriptorFactoryOptions
+): ProviderDescriptor => {
+  const descriptor: MutableProviderDescriptor = {
+    capabilities: {
+      modelSync: resolveProviderModelSyncCapabilities("kimiCode"),
+      requiresPostStopResume: false,
+      supportsImmediateBinding:
+        resolveProviderImmediateBindingCapability("kimiCode"),
+    },
+    id: "kimiCode",
+    name: "Kimi",
+    description: "Using your authentication Kimi Code CLI",
+    status: "active",
+  };
+  tryAttachAdapter(
+    () => createKimiAdapterInstance(options),
+    descriptor,
+    "Kimi CLI components are unavailable.",
+    options.handleAdapterConstructionFailure
+  );
+  return descriptor;
+};
+
 export const createProviderDescriptors = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor[] => [
   buildClaudeDescriptor(options),
   buildCodexDescriptor(options),
   buildGeminiDescriptor(),
+  buildKimiDescriptor(options),
 ];
 
 export const createGeminiAdapterInstance = (

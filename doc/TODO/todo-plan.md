@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "60e4beae9",
+  "lastRecordedCommit": "d3e8933e5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase3-kimi-requests-failures",
-  "expectedCommitMessage": "feat: classify kimi provider requests and failures",
+  "currentTaskId": "phase4-kimi-provider-registry",
+  "expectedCommitMessage": "feat: register kimi provider module",
   "debt": {
-    "expectedCommitMessage": "feat: classify kimi provider requests and failures",
-    "preCommitHead": "60e4beae9",
+    "expectedCommitMessage": "feat: register kimi provider module",
+    "preCommitHead": "d3e8933e5",
     "stage": "commit_pending",
-    "taskId": "phase3-kimi-requests-failures"
+    "taskId": "phase4-kimi-provider-registry"
   }
 }
 ```
@@ -108,12 +108,12 @@
 
 ### Stream: Provider Requests And Failure Classification
 1. [DONE] `phase3-kimi-requests-failures` Нормализовать Wire `request`/approval/tool/question envelopes и auth/quota/service/unsupported-model failures в provider-neutral recovery surface — scope: `packages/Kimi_Module, packages/core/src/remote-bridge/handlers`; expected commit: `feat: classify kimi provider requests and failures`.
-2. [PENDING] Git Commit: `feat: classify kimi provider requests and failures` (hash: TBD)
+2. [DONE] Git Commit: `feat: classify kimi provider requests and failures` (hash: d3e8933e5)
 
 ## Phase 4 — Core Provider Registry Integration (owner: Codex, updated: 2026-05-18)
 ### Stream: Provider Registry And Installer Paths
-1. [TODO] `phase4-kimi-provider-registry` Добавить Kimi provider descriptor, module loader/installer path metadata и installed/auth-ready detection без включения provider для UI до готовности — scope: `packages/core/src/provider-registry, packages/Kimi_Module`; expected commit: `feat: register kimi provider module`.
-2. [TODO] Git Commit: `feat: register kimi provider module` (hash: TBD)
+1. [DONE] `phase4-kimi-provider-registry` Добавить Kimi provider descriptor, module loader/installer path metadata и installed/auth-ready detection без включения provider для UI до готовности — scope: `packages/core/src/provider-registry, packages/Kimi_Module`; expected commit: `feat: register kimi provider module`.
+2. [PENDING] Git Commit: `feat: register kimi provider module` (hash: TBD)
 
 ### Stream: Effective Model Identity
 1. [TODO] `phase4-kimi-model-identity` Добавить Kimi default model identity (`kimi-for-coding`) и settings/applied-turn-config path без перезаписи существующих sessions — scope: `packages/core/src/config, packages/core/src/session-model-binding, src/types`; expected commit: `feat: add kimi model identity settings`.

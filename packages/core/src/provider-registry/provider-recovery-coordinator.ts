@@ -13,6 +13,7 @@ interface ProviderRecoveryCoordinatorOptions {
   readonly clearRetry: (providerId: string) => void;
   readonly createClaudeAdapter: () => ProviderAdapter;
   readonly createCodexAdapter: () => ProviderAdapter;
+  readonly createKimiAdapter: () => ProviderAdapter;
   readonly emitStatus: (
     event: Omit<RuntimeStatusEvent, "timestamp" | "phase"> & {
       readonly phase: RuntimeStatusPhase;
@@ -141,10 +142,7 @@ export class ProviderRecoveryCoordinator {
 
     if (!mutable.adapter) {
       try {
-        mutable.adapter =
-          providerId === "claudeCodeCli"
-            ? this.options.createClaudeAdapter()
-            : this.options.createCodexAdapter();
+        mutable.adapter = this.createProviderAdapter(providerId);
       } catch (error) {
         this.options.logger.error(
           "Provider adapter construction failed during retry",
@@ -163,6 +161,17 @@ export class ProviderRecoveryCoordinator {
     }
 
     await this.prepareProvider(mutable);
+  }
+
+  private createProviderAdapter(providerId: string): ProviderAdapter {
+    switch (providerId) {
+      case "claudeCodeCli":
+        return this.options.createClaudeAdapter();
+      case "kimiCode":
+        return this.options.createKimiAdapter();
+      default:
+        return this.options.createCodexAdapter();
+    }
   }
 
   private markProviderInactive(
@@ -204,6 +213,8 @@ export class ProviderRecoveryCoordinator {
         return "Codex CLI is unavailable. Re-authenticate the CLI, verify your limits, then use Settings → General → Restart Core to retry";
       case "geminiCli":
         return "Gemini CLI is unavailable. Run `gemini login`, confirm credentials, then use Settings → General → Restart Core to retry";
+      case "kimiCode":
+        return "Kimi CLI is unavailable. Confirm `kimi` is installed and logged in, then use Settings → General → Restart Core to retry";
       default:
         return "Claude CLI is unavailable. CodeAI Hub runs provider-home auth bootstrap automatically; if it still fails, run `claude /login`, then use Settings → General → Restart Core to retry. If it still fails, run `HOME=~/.codeai-hub/providers/claude/home claude /login`, then restart Core";
     }

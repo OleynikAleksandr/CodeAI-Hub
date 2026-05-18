@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import type { ModuleReporter } from "@codeai-hub/claude-module";
 import type { CoreConfig } from "../config";
 import type {
@@ -10,7 +11,9 @@ import {
   createClaudeAdapterInstance,
   createCodexAdapterInstance,
   createGeminiAdapterInstance,
+  createKimiAdapterInstance,
   createProviderDescriptors,
+  type KimiAdapterCtor,
 } from "./provider-descriptor-factory";
 import {
   resolveClaudeModulePath,
@@ -44,6 +47,7 @@ export class ProviderRegistry {
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
   private readonly codexAdapterCtor: CodexAdapterCtor;
   private readonly geminiAdapterCtorPromise: Promise<GeminiAdapterCtor | null>;
+  private readonly kimiAdapterCtor: KimiAdapterCtor;
   private readonly geminiWorkspacePath: string;
   private readonly geminiDefaultModel?: string;
   private readonly geminiThinkingLevelByModel: Record<string, string>;
@@ -75,6 +79,7 @@ export class ProviderRegistry {
       resolveCodexModulePath(),
       this.options.logger
     );
+    this.kimiAdapterCtor = loadBundledKimiAdapterCtor();
     this.geminiAdapterCtorPromise = loadGeminiAdapterCtor(
       resolveGeminiModulePath(),
       this.options.logger
@@ -107,6 +112,12 @@ export class ProviderRegistry {
           config: this.options.config,
           createReporter: (scope) => this.createReporter(scope),
         }),
+      createKimiAdapter: () =>
+        createKimiAdapterInstance({
+          config: this.options.config,
+          createReporter: (scope) => this.createReporter(scope),
+          kimiAdapterCtor: this.kimiAdapterCtor,
+        }),
       emitStatus: (event) => this.emitStatus(event),
       ensureGeminiAdapter: async () => {
         await this.ensureGeminiAdapter();
@@ -127,6 +138,7 @@ export class ProviderRegistry {
           failureLabel,
           this.pendingRetryProviders
         ),
+      kimiAdapterCtor: this.kimiAdapterCtor,
     });
     for (const providerId of this.pendingRetryProviders) {
       this.recoveryScheduler.scheduleRetry(providerId);
@@ -278,3 +290,13 @@ export class ProviderRegistry {
     );
   }
 }
+
+const loadBundledKimiAdapterCtor = (): KimiAdapterCtor => {
+  const requireModule = createRequire(
+    process.argv[1] ?? `${process.cwd()}/package.json`
+  );
+  const bundled = requireModule("@codeai-hub/kimi-module") as {
+    readonly KimiProviderAdapter: KimiAdapterCtor;
+  };
+  return bundled.KimiProviderAdapter;
+};
