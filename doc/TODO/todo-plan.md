@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "6f8b7e8ca",
+  "lastRecordedCommit": "d83d2d0b4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-workdir-approval-fix",
-  "expectedCommitMessage": "fix: align kimi managed workflow runtime",
+  "currentTaskId": "phase8-kimi-message-normalization-fix",
+  "expectedCommitMessage": "fix: materialize kimi assistant messages",
   "debt": {
-    "expectedCommitMessage": "fix: align kimi managed workflow runtime",
-    "preCommitHead": "6f8b7e8ca",
+    "expectedCommitMessage": "fix: materialize kimi assistant messages",
+    "preCommitHead": "d83d2d0b4",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-workdir-approval-fix"
+    "taskId": "phase8-kimi-message-normalization-fix"
   }
 }
 ```
@@ -247,9 +247,15 @@
    - Implementation note: Kimi Wire startup now includes `--work-dir <workspace>` and `--yolo`, while fallback approval responses use protocol literal `reject`.
    - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
    - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts Kimi CLI args include `--yolo --work-dir <workspace>`.
-2. [PENDING] Git Commit: `fix: align kimi managed workflow runtime` (hash: TBD)
-3. [TODO] `phase8-kimi-message-normalization-fix` Исправить Kimi event normalization: Core должен получать `assistant`/`thinking` events instead of ignored `assistant_delta`, so provider text appears in dialog history and message flush can complete before turn completion — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: materialize kimi assistant messages`.
-4. [TODO] Git Commit: `fix: materialize kimi assistant messages` (hash: TBD)
+2. [DONE] Git Commit: `fix: align kimi managed workflow runtime` (hash: d83d2d0b4)
+3. [DONE] `phase8-kimi-message-normalization-fix` Исправить Kimi event normalization: Core должен получать `assistant`/`thinking` events instead of ignored `assistant_delta`, so provider text appears in dialog history and message flush can complete before turn completion — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: materialize kimi assistant messages`.
+   - Log diagnosis: Kimi Wire emitted `ContentPart` records with `payload.type="think"` / `payload.think` and `payload.type="text"` / `payload.text`, but the adapter normalized visible text to unsupported `assistant_delta`; `SessionProviderEventRouter` ignores that event type.
+   - Core contract diagnosis: Core `appendProviderMessage(...)` extracts display text from top-level `event.content`, not nested `event.payload.content`, so Kimi assistant/thinking events must expose `content` at the event root.
+   - Implementation note: Kimi text content now emits `assistant` with root `content`; Kimi think content now emits `thinking` with root `content` and `tag="thinking"`.
+   - Verification: `npm run plan:validate` passed.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts Core-compatible Kimi assistant/thinking event materialization.
+4. [PENDING] Git Commit: `fix: materialize kimi assistant messages` (hash: TBD)
 
 ### Stream: Subscribe Contract Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-subscribe-hotfix-release-confirmation` Остановиться после фикса Kimi `subscribe(...)` contract bug и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «Собери новый релиз».

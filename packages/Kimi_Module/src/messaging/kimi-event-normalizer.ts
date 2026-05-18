@@ -22,6 +22,36 @@ const createEvent = (
   type: eventType,
 });
 
+type KimiMessageEvent = KimiSessionEvent & {
+  readonly content: string;
+  readonly tag?: string;
+  readonly timestamp: string;
+};
+
+const createMessageEvent = (
+  eventType: "assistant" | "thinking",
+  content: string,
+  payload?: Record<string, unknown>
+): KimiMessageEvent => {
+  const timestamp = new Date().toISOString();
+  const tag = eventType === "thinking" ? "thinking" : undefined;
+  return {
+    content,
+    payload: {
+      content,
+      provider: "kimi",
+      text: content,
+      timestamp,
+      uuid: `${crypto.randomUUID()}::${eventType}`,
+      ...(tag ? { tag } : {}),
+      ...(payload ?? {}),
+    },
+    tag,
+    timestamp,
+    type: eventType,
+  };
+};
+
 export const normalizeKimiWireEvent = (
   params: unknown
 ): readonly KimiSessionEvent[] => {
@@ -55,15 +85,17 @@ const normalizeContentPart = (
   payload: unknown
 ): readonly KimiSessionEvent[] => {
   if (!isRecord(payload)) {
-    return [createEvent("assistant_delta", { text: "" })];
+    return [createEvent("kimi_wire_event", { raw: payload })];
   }
-  const text = typeof payload.text === "string" ? payload.text : "";
-  if (text.length === 0) {
-    return [];
+  if (payload.type === "text") {
+    const text = typeof payload.text === "string" ? payload.text : "";
+    return text.length > 0 ? [createMessageEvent("assistant", text)] : [];
   }
-  return [
-    createEvent("assistant_delta", {
-      text,
-    }),
-  ];
+  if (payload.type === "think") {
+    const thinking = typeof payload.think === "string" ? payload.think : "";
+    return thinking.length > 0
+      ? [createMessageEvent("thinking", thinking)]
+      : [];
+  }
+  return [createEvent("kimi_wire_event", { raw: payload })];
 };
