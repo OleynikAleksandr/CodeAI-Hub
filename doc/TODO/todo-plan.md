@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "e6d13c13e",
+  "lastRecordedCommit": "507d418d8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase3.release.docs.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.303",
+  "currentTaskId": "application-skeleton-final-review.phase3.release.buildall.task1",
+  "expectedCommitMessage": "chore: build release 1.2.303 artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.303",
-    "preCommitHead": "e6d13c13e",
+    "expectedCommitMessage": "chore: build release 1.2.303 artifacts",
+    "preCommitHead": "507d418d8",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase3.release.docs.task1"
+    "taskId": "application-skeleton-final-review.phase3.release.buildall.task1"
   }
 }
 ```
@@ -89,9 +89,11 @@
 ### Stream: Release Build
 
 14. [DONE] `application-skeleton-final-review.phase3.release.docs.task1` Update release-facing README/CHANGELOG for v1.2.303 before the version bump/build so the VSIX contains the Application Skeleton final review gate release notes (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.303`).
-15. [PENDING] Git Commit: `docs: prepare release 1.2.303` (hash: TBD)
-16. [TODO] `application-skeleton-final-review.phase3.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.303 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/*/manifest.json, assets/providers/*/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.303 artifacts`).
-17. [TODO] Git Commit: `chore: build release 1.2.303 artifacts` (hash: TBD)
+15. [DONE] Git Commit: `docs: prepare release 1.2.303` (hash: 507d418d8)
+16. [DONE] `application-skeleton-final-review.phase3.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.303 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/*/manifest.json, assets/providers/*/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.303 artifacts`).
+    - Verification 2026-05-18: `./scripts/build-all.sh --allow-dirty` passed; dirty input was the active plan-state file from the previous post-commit transition.
+    - Generated artifacts in `doc/tmp/releases/`: `claude-module-1.2.303.tar.bz2`, `codex-module-1.2.303.tar.bz2`, `gemini-module-1.2.303.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.303.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.303.tar.bz2`, `vscode-webview-1.2.303.tar.bz2`, `project-manager-1.2.303.tar.bz2`.
+17. [PENDING] Git Commit: `chore: build release 1.2.303 artifacts` (hash: TBD)
 18. [TODO] `application-skeleton-final-review.phase3.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.303 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.303 vsix`).
 19. [TODO] Git Commit: `chore: package release 1.2.303 vsix` (hash: TBD)
 
