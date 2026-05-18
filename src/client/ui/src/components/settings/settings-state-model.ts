@@ -11,6 +11,7 @@ import {
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../types/codex-model-registry";
+import { DEFAULT_KIMI_MODEL_ID } from "../../../../../types/kimi-model-registry";
 import {
   areClaudeThinkingSettingsEqual,
   type ClaudeThinkingSettingsState,
@@ -33,6 +34,7 @@ import type {
   RawGeminiSettings,
   RawGeneralLocalizationSettings,
   RawGeneralSettings,
+  RawKimiSettings,
   RawLocalizationCategorySettings,
   RawSettingsSnapshot,
 } from "./settings-state-raw";
@@ -61,13 +63,6 @@ interface AutoUpdateSettings {
   readonly enabled: boolean;
 }
 type LocalizationWorkflowTermsPolicy = "keep_english" | "translate";
-interface ApprovedLocalizationCategorySettings {
-  readonly artifactsForTheUser: string;
-  readonly messagesForTheUser: string;
-  readonly reasoning: string;
-  readonly uiHelperText: string;
-  readonly uiLabels: string;
-}
 interface LocalizationCategorySettings {
   readonly artifactsForTheUser?: string;
   readonly interactiveTemplates: string;
@@ -118,12 +113,17 @@ interface CodexSettings {
 interface GeminiSettingsWithDisplaySync extends GeminiSettings {
   readonly thinkingDisplaySyncEnabled: boolean;
 }
+interface KimiSettings {
+  readonly autoUpdate: AutoUpdateSettings;
+  readonly defaultModel: typeof DEFAULT_KIMI_MODEL_ID;
+}
 export interface Settings {
   readonly general: GeneralSettings;
   readonly providers: {
     readonly claude: ClaudeSettings;
     readonly codex: CodexSettings;
     readonly gemini: GeminiSettingsWithDisplaySync;
+    readonly kimi?: KimiSettings;
   };
 }
 
@@ -162,17 +162,6 @@ const mapLocalizationString = (value: unknown, fallback: string): string => {
     ? DEFAULT_LOCALIZATION_LANGUAGE
     : normalized;
 };
-
-const createLocalizationCategorySettings = (
-  approved: ApprovedLocalizationCategorySettings
-): LocalizationCategorySettings => ({
-  ...approved,
-  interactiveTemplates: approved.artifactsForTheUser,
-  systemFeedback: approved.messagesForTheUser,
-  uiInterface: approved.uiLabels,
-  userGuidance: approved.uiHelperText,
-  workflowTerms: approved.uiLabels,
-});
 
 const resolveLocalizationCategory = (
   value: RawLocalizationCategorySettings | undefined,
@@ -223,35 +212,39 @@ const mapLocalizationCategories = (
   value: RawLocalizationCategorySettings | undefined,
   defaultLanguage: string
 ): LocalizationCategorySettings => {
-  const messagesForTheUser = resolveLocalizationCategory(
-    value,
+  const resolve = (
+    keys: readonly (keyof RawLocalizationCategorySettings)[],
+    fallback: string
+  ): string => resolveLocalizationCategory(value, keys, fallback);
+  const artifactsForTheUser = resolve(
+    ["artifactsForTheUser", "interactiveTemplates"],
+    defaultLanguage
+  );
+  const messagesForTheUser = resolve(
     ["messagesForTheUser", "systemFeedback"],
     defaultLanguage
   );
+  const uiHelperText = resolve(
+    ["uiHelperText", "userGuidance"],
+    defaultLanguage
+  );
+  const uiLabels = resolve(
+    ["uiLabels", "uiInterface", "workflowTerms"],
+    defaultLanguage
+  );
 
-  return createLocalizationCategorySettings({
-    artifactsForTheUser: resolveLocalizationCategory(
-      value,
-      ["artifactsForTheUser", "interactiveTemplates"],
-      defaultLanguage
-    ),
+  return {
+    artifactsForTheUser,
+    interactiveTemplates: artifactsForTheUser,
     messagesForTheUser,
-    reasoning: resolveLocalizationCategory(
-      value,
-      ["reasoning"],
-      messagesForTheUser
-    ),
-    uiHelperText: resolveLocalizationCategory(
-      value,
-      ["uiHelperText", "userGuidance"],
-      defaultLanguage
-    ),
-    uiLabels: resolveLocalizationCategory(
-      value,
-      ["uiLabels", "uiInterface", "workflowTerms"],
-      defaultLanguage
-    ),
-  });
+    reasoning: resolve(["reasoning"], messagesForTheUser),
+    systemFeedback: messagesForTheUser,
+    uiHelperText,
+    uiInterface: uiLabels,
+    uiLabels,
+    userGuidance: uiHelperText,
+    workflowTerms: uiLabels,
+  };
 };
 
 const mapLocalizationSettings = (
@@ -390,6 +383,11 @@ const mapCodexSettings = (
   ),
 });
 
+const mapKimiSettings = (value: RawKimiSettings | undefined): KimiSettings => ({
+  autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
+  defaultModel: DEFAULT_KIMI_MODEL_ID,
+});
+
 export const mapSettingsSnapshot = (
   value: RawSettingsSnapshot | undefined
 ): Settings => ({
@@ -398,6 +396,7 @@ export const mapSettingsSnapshot = (
     claude: mapClaudeSettings(value?.providers?.claude),
     codex: mapCodexSettings(value?.providers?.codex),
     gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini),
+    kimi: mapKimiSettings(value?.providers?.kimi),
   },
 });
 
@@ -496,4 +495,6 @@ export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areGeneralSettingsEqual(left.general, right.general) &&
   areClaudeSettingsEqual(left.providers.claude, right.providers.claude) &&
   areCodexSettingsEqual(left.providers.codex, right.providers.codex) &&
-  areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini);
+  areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) &&
+  JSON.stringify(left.providers.kimi ?? null) ===
+    JSON.stringify(right.providers.kimi ?? null);

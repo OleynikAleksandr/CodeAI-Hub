@@ -40,6 +40,10 @@ export interface RawGeminiSettings {
   readonly thinkingDisplaySyncEnabled?: unknown;
   readonly thinkingLevelByModel?: Record<string, unknown>;
 }
+export interface RawKimiSettings {
+  readonly autoUpdate?: RawAutoUpdateSettings;
+  readonly defaultModel?: unknown;
+}
 export interface RawCoreControlsSettings {
   readonly allowRestart?: unknown;
 }
@@ -84,5 +88,6 @@ export interface RawSettingsSnapshot {
     readonly claude?: RawClaudeSettings;
     readonly codex?: RawCodexSettings;
     readonly gemini?: RawGeminiSettings;
+    readonly kimi?: RawKimiSettings;
   };
 }

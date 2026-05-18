@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "888b2e432",
+  "lastRecordedCommit": "24bba8665",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-model-registry",
-  "expectedCommitMessage": "feat: add kimi model registry",
+  "currentTaskId": "phase5-kimi-settings-state",
+  "expectedCommitMessage": "feat: add kimi settings state",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi model registry",
-    "preCommitHead": "888b2e432",
+    "expectedCommitMessage": "feat: add kimi settings state",
+    "preCommitHead": "24bba8665",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-model-registry"
+    "taskId": "phase5-kimi-settings-state"
   }
 }
 ```
@@ -130,11 +130,11 @@
 
 ### Stream: Kimi Model Registry
 1. [DONE] `phase5-kimi-model-registry` Создать shared Kimi model registry для UI/settings/start cards/status display (`kimi-for-coding`, label `Kimi 2.6 / Kimi Code`) — scope: `src/types/kimi-model-registry.ts, src/client/project-manager/services/kimi-model-registry-alignment.test.ts, packages/Kimi_Module/src/types/kimi-model-capabilities.ts`; expected commit: `feat: add kimi model registry`.
-2. [PENDING] Git Commit: `feat: add kimi model registry` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi model registry` (hash: 24bba8665)
 
 ### Stream: Settings State And Persistence
-1. [TODO] `phase5-kimi-settings-state` Добавить Kimi в settings schema/default mapping/raw snapshot без ломки существующих Claude/Codex/Gemini settings — scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/settings-state-helpers.ts`; expected commit: `feat: add kimi settings state`.
-2. [TODO] Git Commit: `feat: add kimi settings state` (hash: TBD)
+1. [DONE] `phase5-kimi-settings-state` Добавить Kimi в settings schema/default mapping/raw snapshot без ломки существующих Claude/Codex/Gemini settings — scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/settings-state-helpers.ts`; expected commit: `feat: add kimi settings state`.
+2. [PENDING] Git Commit: `feat: add kimi settings state` (hash: TBD)
 
 ### Stream: Settings UI Card
 1. [TODO] `phase5-kimi-settings-card` Добавить отдельную Kimi settings card/tab для default model, provider-home note и availability/update controls — scope: `src/client/ui/src/components/settings/kimi-default-model-card.tsx, src/client/ui/src/components/settings/settings-view.tsx, src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; expected commit: `feat: add kimi settings card`.
