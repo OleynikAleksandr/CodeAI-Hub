@@ -1,6 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { normalizeKimiWireEvent } from "../messaging/kimi-event-normalizer";
 import { KimiSessionLifecycle } from "../session/kimi-session-lifecycle";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
 import { KimiWireRouter } from "../wire/kimi-wire-router";
@@ -216,14 +217,11 @@ export class KimiProviderAdapter {
   private createWireRouter(): KimiWireRouter {
     return new KimiWireRouter({
       onEvent: (params) => {
-        this.options.reporter?.info?.("Kimi Wire event received", {
-          params,
-        });
+        const events = normalizeKimiWireEvent(params);
         for (const sessionId of this.listeners.keys()) {
-          this.dispatchMessage(sessionId, {
-            payload: params,
-            type: "kimi_wire_event",
-          });
+          for (const event of events) {
+            this.dispatchMessage(sessionId, event);
+          }
         }
       },
       onMalformedFrame: (line, error) => {

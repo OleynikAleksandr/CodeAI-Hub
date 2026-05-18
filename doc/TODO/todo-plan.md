@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "eeaecfff7",
+  "lastRecordedCommit": "5ce3201ac",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase2-kimi-session-lifecycle",
-  "expectedCommitMessage": "feat: add kimi session lifecycle",
+  "currentTaskId": "phase3-kimi-event-normalization",
+  "expectedCommitMessage": "feat: normalize kimi provider events",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi session lifecycle",
-    "preCommitHead": "eeaecfff7",
+    "expectedCommitMessage": "feat: normalize kimi provider events",
+    "preCommitHead": "5ce3201ac",
     "stage": "commit_pending",
-    "taskId": "phase2-kimi-session-lifecycle"
+    "taskId": "phase3-kimi-event-normalization"
   }
 }
 ```
@@ -99,12 +99,12 @@
 
 ### Stream: Session Lifecycle
 1. [DONE] `phase2-kimi-session-lifecycle` Реализовать create/resume/send/cancel/close lifecycle поверх Wire, capture/restore providerSessionId и typed stale-binding error `KIMI_SESSION_STALE_BINDING` — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi session lifecycle`.
-2. [PENDING] Git Commit: `feat: add kimi session lifecycle` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi session lifecycle` (hash: 5ce3201ac)
 
 ## Phase 3 — Provider Event Normalization (owner: Codex, updated: 2026-05-18)
 ### Stream: Lifecycle And Message Events
-1. [TODO] `phase3-kimi-event-normalization` Нормализовать Wire prompt lifecycle и assistant/progress/thinking messages в Core provider event surface без UI authority leaks — scope: `packages/Kimi_Module`; expected commit: `feat: normalize kimi provider events`.
-2. [TODO] Git Commit: `feat: normalize kimi provider events` (hash: TBD)
+1. [DONE] `phase3-kimi-event-normalization` Нормализовать Wire prompt lifecycle и assistant/progress/thinking messages в Core provider event surface без UI authority leaks — scope: `packages/Kimi_Module`; expected commit: `feat: normalize kimi provider events`.
+2. [PENDING] Git Commit: `feat: normalize kimi provider events` (hash: TBD)
 
 ### Stream: Provider Requests And Failure Classification
 1. [TODO] `phase3-kimi-requests-failures` Нормализовать Wire `request`/approval/tool/question envelopes и auth/quota/service/unsupported-model failures в provider-neutral recovery surface — scope: `packages/Kimi_Module, packages/core/src/remote-bridge/handlers`; expected commit: `feat: classify kimi provider requests and failures`.
