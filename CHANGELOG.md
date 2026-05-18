@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.300] - 2026-05-18
+### Fixed
+- **Description and Virtual Simulation no longer show a premature Core completion card at session start.** Core suppresses the preliminary review handoff for these provider-direct steps even when canonical artifacts already exist on disk, so the agent starts normally after the initial prompt.
+- **Managed review acceptance remains scoped to managed technical stages.** Diagram Modules and later managed review stages keep the inline `Подтверждаю` flow without leaking the same completion card into Description or Virtual Simulation startup.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.299] - 2026-05-18
 ### Changed
 - **Description and Virtual Simulation now use the same Core review confirmation handoff as managed technical stages.** When either step has a final artifact and the next step is available, the Session UI renders the Core-owned `Подтверждаю` button on the system card.

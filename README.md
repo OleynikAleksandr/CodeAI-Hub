@@ -2,18 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.299** (workflow step progression polish)
+**Current Release — v1.2.300** (preliminary step handoff regression fix)
 
-This release keeps the Project Manager layout polish from v1.2.298 and improves
-the development-tree step progression flow. Description and Virtual Simulation
-now show the same Core-owned `Подтверждаю` review handoff button used by managed
-technical stages when their final artifacts make the next step available. Pressing
-the button accepts the current step and immediately opens the next step card, so
-the user can continue without manually selecting the next node.
+This release keeps the Project Manager step-card polish from v1.2.299 and fixes
+the preliminary workflow regression found during retest. Description and Virtual
+Simulation now remain provider-direct steps at session start: Core no longer adds
+a premature system completion/review card just because a `Final_Description.md`
+or `virtual-simulation.md` artifact already exists on disk. The agent starts and
+continues normally on those steps.
 
-The next-step card no longer shows the obsolete Managed Workflow Orchestration
-preview block, and the model selector popup now expands to fit full model names
-horizontally instead of wrapping or clipping them.
+Managed technical review stages keep the inline `Подтверждаю` acceptance button,
+so Diagram Modules and later managed stages still use the Core-owned acceptance
+flow and next-step card navigation.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the
