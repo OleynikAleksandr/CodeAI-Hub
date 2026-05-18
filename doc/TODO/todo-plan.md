@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "265cb98b2",
+  "lastRecordedCommit": "888b2e432",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-provider-types",
-  "expectedCommitMessage": "feat: add kimi shared provider catalog",
+  "currentTaskId": "phase5-kimi-model-registry",
+  "expectedCommitMessage": "feat: add kimi model registry",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi shared provider catalog",
-    "preCommitHead": "265cb98b2",
+    "expectedCommitMessage": "feat: add kimi model registry",
+    "preCommitHead": "888b2e432",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-provider-types"
+    "taskId": "phase5-kimi-model-registry"
   }
 }
 ```
@@ -126,11 +126,11 @@
 ## Phase 5 — Project Manager And Settings Integration (owner: Codex, updated: 2026-05-18)
 ### Stream: Shared Provider Catalog
 1. [DONE] `phase5-kimi-provider-types` Добавить `kimiCode` в shared provider type/catalog и Session UI provider allowlist, чтобы Kimi records/provider catalog не отбрасывались клиентом — scope: `src/types/provider.ts, src/client/ui/src/session/session-candidates.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: add kimi shared provider catalog`.
-2. [PENDING] Git Commit: `feat: add kimi shared provider catalog` (hash: TBD)
+2. [DONE] Git Commit: `feat: add kimi shared provider catalog` (hash: 888b2e432)
 
 ### Stream: Kimi Model Registry
-1. [TODO] `phase5-kimi-model-registry` Создать shared Kimi model registry для UI/settings/start cards/status display (`kimi-for-coding`, label `Kimi 2.6 / Kimi Code`) — scope: `src/types/kimi-model-registry.ts, src/client/project-manager/services/kimi-model-registry-alignment.test.ts, packages/Kimi_Module/src/types/kimi-model-capabilities.ts`; expected commit: `feat: add kimi model registry`.
-2. [TODO] Git Commit: `feat: add kimi model registry` (hash: TBD)
+1. [DONE] `phase5-kimi-model-registry` Создать shared Kimi model registry для UI/settings/start cards/status display (`kimi-for-coding`, label `Kimi 2.6 / Kimi Code`) — scope: `src/types/kimi-model-registry.ts, src/client/project-manager/services/kimi-model-registry-alignment.test.ts, packages/Kimi_Module/src/types/kimi-model-capabilities.ts`; expected commit: `feat: add kimi model registry`.
+2. [PENDING] Git Commit: `feat: add kimi model registry` (hash: TBD)
 
 ### Stream: Settings State And Persistence
 1. [TODO] `phase5-kimi-settings-state` Добавить Kimi в settings schema/default mapping/raw snapshot без ломки существующих Claude/Codex/Gemini settings — scope: `src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/settings-state-helpers.ts`; expected commit: `feat: add kimi settings state`.
