@@ -16,6 +16,7 @@ import {
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
   loadGeminiSettingsSnapshot,
+  loadKimiSettingsSnapshot,
 } from "./provider-settings-snapshot";
 
 export interface ProviderTurnConfigResolverOptions {
@@ -229,16 +230,24 @@ const resolveGeminiTurnConfig = (
 const resolveKimiTurnConfig = (
   options: ProviderTurnConfigResolverOptions
 ): ResolvedKimiTurnConfig => {
+  const snapshot = loadKimiSettingsSnapshot(options.settingsPath);
   const defaultModel =
+    normalizeOptionalString(
+      typeof snapshot?.defaultModel === "string"
+        ? snapshot.defaultModel
+        : undefined
+    ) ??
     normalizeOptionalString(options.env.KIMI_DEFAULT_MODEL) ??
     options.fallbackKimiModel ??
     DEFAULT_KIMI_MODEL_ID;
+  const thinkingDisplaySyncEnabled =
+    snapshot?.thinkingDisplaySyncEnabled !== false;
 
   return {
     baseModelId: defaultModel,
     defaultModel,
     effectiveModelId: defaultModel,
-    thinkingDisplaySyncEnabled: false,
+    thinkingDisplaySyncEnabled,
   };
 };
 

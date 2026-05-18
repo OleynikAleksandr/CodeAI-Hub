@@ -38,6 +38,11 @@ export interface GeminiSettingsSnapshot {
   readonly thinkingLevelByModel?: unknown;
 }
 
+export interface KimiSettingsSnapshot {
+  readonly defaultModel?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
@@ -123,6 +128,20 @@ export const loadGeminiSettingsSnapshot = (
     defaultModel: gemini.defaultModel,
     thinkingLevelByModel: gemini.thinkingLevelByModel,
     thinkingDisplaySyncEnabled: gemini.thinkingDisplaySyncEnabled,
+  };
+};
+
+export const loadKimiSettingsSnapshot = (
+  settingsPath: string
+): KimiSettingsSnapshot | null => {
+  const kimi = loadProviderSnapshot(settingsPath, "kimi");
+  if (!kimi) {
+    return null;
+  }
+
+  return {
+    defaultModel: kimi.defaultModel,
+    thinkingDisplaySyncEnabled: kimi.thinkingDisplaySyncEnabled,
   };
 };
 
