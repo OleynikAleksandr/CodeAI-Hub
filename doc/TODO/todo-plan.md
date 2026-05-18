@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "c708aef45",
+  "lastRecordedCommit": "5f5b7d3d3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase7-kimi-release-build",
-  "expectedCommitMessage": "chore: release kimi provider module build",
+  "currentTaskId": "phase8-kimi-cli-path-fix",
+  "expectedCommitMessage": "fix: resolve kimi cli from provider runtime path",
   "debt": {
-    "expectedCommitMessage": "chore: release kimi provider module build",
-    "preCommitHead": "c708aef45",
+    "expectedCommitMessage": "fix: resolve kimi cli from provider runtime path",
+    "preCommitHead": "5f5b7d3d3",
     "stage": "commit_pending",
-    "taskId": "phase7-kimi-release-build"
+    "taskId": "phase8-kimi-cli-path-fix"
   }
 }
 ```
@@ -217,11 +217,20 @@
    - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.305.vsix`, package size `49M`.
    - Result: release tarballs copied to `doc/tmp/releases/`: `kimi-module-1.2.305.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.305.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.305.tar.bz2`, provider/UI tarballs.
    - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
-6. [PENDING] Git Commit: `chore: release kimi provider module build` (hash: TBD)
+6. [DONE] Git Commit: `chore: release kimi provider module build` (hash: 5f5b7d3d3)
 
 ## Phase 8 — User Workflow Acceptance And Closeout (owner: Codex, updated: 2026-05-18)
+### Stream: Acceptance Bug Fix — Kimi CLI Resolution
+1. [DONE] `phase8-kimi-cli-path-fix` Исправить отказ старта Kimi Description session в установленном релизе: Core launcher PATH не содержит `~/.local/bin`, а Kimi Wire требует строковые JSON-RPC request id; adapter должен резолвить CLI binary из CodeAI runtime env/user-local путей и не зависать на unmatched `id:null` error response — scope: `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/src/wire/kimi-wire-router.ts, doc/TODO/todo-plan.md`; expected commit: `fix: resolve kimi cli from provider runtime path`.
+   - Log diagnosis: installed launcher starts Core with PATH `node/bin:/usr/bin:/bin:/usr/sbin:/sbin`; local `kimi` is `/Users/oleksandroliinyk/.local/bin/kimi`, so Core could not resolve `kimi` from PATH.
+   - Wire diagnosis: Kimi Wire requires string JSON-RPC request ids; numeric ids receive `Invalid request` with `id:null`, leaving the router pending request unresolved.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: restricted-PATH runtime smoke passed: adapter resolved `/Users/oleksandroliinyk/.local/bin/kimi`, `createSession()` returned `kimi:*`, and a short `prompt` emitted `turn_started`, `step_started`, `assistant_delta`, `status_update`, `turn_completed`.
+2. [PENDING] Git Commit: `fix: resolve kimi cli from provider runtime path` (hash: TBD)
+
 ### Stream: User Workflow Acceptance Testing
-1. [TODO] `phase8-kimi-user-acceptance` Передать пользователю release/working build для установки и проверки Kimi provider workflow; дождаться явного acceptance или bug report — scope: без изменения файлов; expected commit: none.
+1. [BLOCKED] `phase8-kimi-user-acceptance` Передать пользователю release/working build для установки и проверки Kimi provider workflow; дождаться явного acceptance или bug report — scope: без изменения файлов; expected commit: none. Blocked by bug report: installed release cannot start Description session with Kimi because Core runtime cannot resolve user-local `kimi` CLI from launcher PATH.
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

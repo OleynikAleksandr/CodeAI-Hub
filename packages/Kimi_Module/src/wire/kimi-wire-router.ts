@@ -73,7 +73,7 @@ export class KimiWireRouter {
   }
 
   request(method: string, params?: unknown): Promise<unknown> {
-    const id = this.nextRequestId;
+    const id = String(this.nextRequestId);
     this.nextRequestId += 1;
     const message = {
       id,
@@ -110,7 +110,10 @@ export class KimiWireRouter {
   }
 
   private handleResponse(message: Record<string, unknown>): void {
-    const id = message.id as string | number;
+    if (typeof message.id !== "string" && typeof message.id !== "number") {
+      return;
+    }
+    const id = typeof message.id === "number" ? String(message.id) : message.id;
     const pending = this.pendingRequests.get(id);
     if (!pending) {
       return;

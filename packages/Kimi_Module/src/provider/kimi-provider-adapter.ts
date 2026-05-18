@@ -1,3 +1,4 @@
+import { accessSync, constants } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -15,6 +16,10 @@ const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
   "home"
 );
 const KIMI_DEFAULT_CONFIG_RELATIVE_PATH = path.join(".kimi", "config.toml");
+const KIMI_CLI_PATH_ENV = "KIMI_CLI_PATH";
+const KIMI_BINARY_NAME = "kimi";
+const KIMI_USER_LOCAL_BIN_RELATIVE_PATH = path.join(".local", "bin");
+const KIMI_COMMON_BIN_DIRS = ["/opt/homebrew/bin", "/usr/local/bin"] as const;
 
 export type SessionListener = (payload: KimiSessionEvent) => void;
 
@@ -77,6 +82,7 @@ interface KimiNativeRequestCaptureOptions {
 
 interface KimiCliEnvironment {
   readonly args: readonly string[];
+  readonly command: string;
   readonly env: NodeJS.ProcessEnv;
   readonly runtimeHome: KimiRuntimeHome;
 }
@@ -117,16 +123,64 @@ const ensureKimiProviderHome = async (
   return runtimeHome;
 };
 
+const canExecuteFile = (filePath: string): boolean => {
+  try {
+    accessSync(filePath, constants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const prependPathEntries = (
+  pathValue: string | undefined,
+  entries: readonly string[]
+): string => {
+  const existingEntries =
+    pathValue?.split(path.delimiter).filter(Boolean) ?? [];
+  const nextEntries = [...entries, ...existingEntries];
+  return Array.from(new Set(nextEntries)).join(path.delimiter);
+};
+
+const getKimiCandidateBinDirs = (homeDir: string): string[] => [
+  path.join(homeDir, KIMI_USER_LOCAL_BIN_RELATIVE_PATH),
+  ...KIMI_COMMON_BIN_DIRS,
+];
+
+const resolveKimiCliCommand = (
+  env: NodeJS.ProcessEnv,
+  homeDir: string
+): string => {
+  const explicitCommand = env[KIMI_CLI_PATH_ENV]?.trim();
+  if (explicitCommand) {
+    return explicitCommand;
+  }
+
+  for (const binDir of getKimiCandidateBinDirs(homeDir)) {
+    const candidatePath = path.join(binDir, KIMI_BINARY_NAME);
+    if (canExecuteFile(candidatePath)) {
+      return candidatePath;
+    }
+  }
+
+  return KIMI_BINARY_NAME;
+};
+
 const buildKimiCliEnvironment = (
   options: KimiCliEnvironmentOptions = {}
 ): KimiCliEnvironment => {
+  const baseEnv = options.env ?? process.env;
   const runtimeHome = resolveKimiRuntimeHome(options);
+  const homeDir = resolveHomeDir(options.homeDir);
+  const candidateBinDirs = getKimiCandidateBinDirs(homeDir);
   return {
     args: ["--config-file", runtimeHome.userConfigPath],
+    command: resolveKimiCliCommand(baseEnv, homeDir),
     env: {
-      ...(options.env ?? process.env),
+      ...baseEnv,
       KIMI_CLI_NO_AUTO_UPDATE: "1",
       KIMI_SHARE_DIR: runtimeHome.providerHomePath,
+      PATH: prependPathEntries(baseEnv.PATH, candidateBinDirs),
     },
     runtimeHome,
   };
@@ -162,6 +216,7 @@ export class KimiProviderAdapter {
     this.initialized = true;
     this.options.reporter?.info?.("Kimi provider scaffold initialized", {
       cliArgs: cliEnvironment.args,
+      cliCommand: cliEnvironment.command,
       providerId: KIMI_PROVIDER_ID,
       providerHomePath: this.runtimeHome.providerHomePath,
       userConfigPath: this.runtimeHome.userConfigPath,
@@ -280,6 +335,7 @@ export class KimiProviderAdapter {
     const cliEnvironment = this.requireCliEnvironment();
     return new KimiWireProcessBridge({
       args: cliEnvironment.args,
+      command: cliEnvironment.command,
       cwd: this.options.workspace.workspacePath ?? process.cwd(),
       env: cliEnvironment.env,
       onLine: (line) => {
