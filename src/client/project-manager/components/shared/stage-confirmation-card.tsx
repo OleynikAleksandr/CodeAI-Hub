@@ -237,13 +237,6 @@ export const StageConfirmationCard: React.FC<{
     { providerTitle }
   );
   const noProviderText = userMessage("pm.confirmation_card.no_provider", "No provider available for the agent.");
-  const managedPreviewTitle = uiLabel(
-    "pm.confirmation_card.managed_preview_title",
-    "Managed Workflow Orchestration preview"
-  );
-  const managedPreviewReason =
-    workflowSnapshot.managedWorkflowPreview?.reason ?? "";
-
   const handleStart = useCallback(() => {
     if (!canStart || !selectedProviderId) {
       return;
@@ -345,26 +338,6 @@ export const StageConfirmationCard: React.FC<{
         ) : (
           <div style={MUTED_TEXT_STYLE}>{confirmText}</div>
         )}
-
-        {managedPreviewStage ? (
-          <div style={{ ...ARTIFACT_BOX_STYLE, borderColor: "rgba(66, 211, 200, 0.28)" }}>
-            <strong style={{ display: "block", marginBottom: 6 }}>
-              {managedPreviewTitle}
-            </strong>
-            <div style={MUTED_TEXT_STYLE}>
-              {managedPreviewStage.displayName} · {managedPreviewStage.controllerId} ·{" "}
-              {managedPreviewStage.startPolicy}
-            </div>
-            {managedPreviewStage.runStatus ? (
-              <div style={{ ...MUTED_TEXT_STYLE, marginTop: 4 }}>
-                {managedPreviewStage.runStatus}
-              </div>
-            ) : null}
-            <div style={{ ...MUTED_TEXT_STYLE, marginTop: 4 }}>
-              {managedPreviewReason}
-            </div>
-          </div>
-        ) : null}
 
         <div style={{ display: "grid", gap: 8 }}>
           <div style={PROVIDER_LABEL_STYLE}>{providerLabelText}</div>

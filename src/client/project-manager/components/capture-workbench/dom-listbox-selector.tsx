@@ -166,11 +166,12 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 6,
     boxShadow: "0 12px 26px rgba(0, 0, 0, 0.35)",
     left: 0,
-    minWidth: "100%",
+    minWidth: "max(100%, 220px)",
     overflow: "hidden",
     padding: 4,
     position: "absolute",
     top: "calc(100% + 8px)",
+    width: "max-content",
     zIndex: 20,
   },
   option: {
@@ -184,6 +185,7 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 500,
     padding: "7px 10px",
     textAlign: "left",
+    whiteSpace: "nowrap",
     width: "100%",
   },
   optionDisabled: {

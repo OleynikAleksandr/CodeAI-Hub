@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "97818f0bc",
+  "lastRecordedCommit": "fa6ac261a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase7.feedback.review-flow.task1",
-  "expectedCommitMessage": "feat: extend workflow review confirmation flow",
+  "currentTaskId": "pm-sidebar-settings.phase7.feedback.start-card.task1",
+  "expectedCommitMessage": "fix: polish workflow start card controls",
   "debt": {
-    "expectedCommitMessage": "feat: extend workflow review confirmation flow",
-    "preCommitHead": "97818f0bc",
+    "expectedCommitMessage": "fix: polish workflow start card controls",
+    "preCommitHead": "fa6ac261a",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase7.feedback.review-flow.task1"
+    "taskId": "pm-sidebar-settings.phase7.feedback.start-card.task1"
   }
 }
 ```
@@ -143,12 +143,12 @@
 ### Stream: Review Confirmation Flow
 
 29. [DONE] `pm-sidebar-settings.phase7.feedback.review-flow.task1` Extend Core-owned review handoff and Project Manager session confirmation so Description and Virtual Simulation show the same `Подтверждаю` action and confirmation activates the next workflow step card (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn*, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, src/client/ui/src/session/session-view*, src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: extend workflow review confirmation flow`).
-30. [PENDING] Git Commit: `feat: extend workflow review confirmation flow` (hash: TBD)
+30. [DONE] Git Commit: `feat: extend workflow review confirmation flow` (hash: fa6ac261a)
 
 ### Stream: Next Step Card Polish
 
-31. [TODO] `pm-sidebar-settings.phase7.feedback.start-card.task1` Remove the managed orchestration preview block from the next-step card and widen listbox options so model names fit horizontally (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/capture-workbench/dom-listbox-selector.tsx, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `fix: polish workflow start card controls`).
-32. [TODO] Git Commit: `fix: polish workflow start card controls` (hash: TBD)
+31. [DONE] `pm-sidebar-settings.phase7.feedback.start-card.task1` Remove the managed orchestration preview block from the next-step card and widen listbox options so model names fit horizontally (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/capture-workbench/dom-listbox-selector.tsx, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `fix: polish workflow start card controls`).
+32. [PENDING] Git Commit: `fix: polish workflow start card controls` (hash: TBD)
 
 ### Stream: Tooling Verification
 

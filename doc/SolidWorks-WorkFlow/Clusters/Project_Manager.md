@@ -58,9 +58,10 @@ provider continuation directly.
   - правая панель имеет переключатель `Artifacts/Help`.
 - Для idle trunk stages `Virtual Simulation`, `Diagram Modules`, `Application Skeleton` и `Quality Gates Baseline`, у которых ещё нет continuity session:
   - левая панель `Sessions` показывает confirmation card вместо session view;
-  - card показывает upstream artifact, helper warning, inline provider selector и `Start step`;
+  - card показывает upstream artifact, helper warning, inline provider selector и `Start step`; internal `Managed Workflow Orchestration preview` diagnostics are not rendered in the user card;
   - default provider наследуется от предыдущего trunk step (`Description -> Virtual Simulation`, `Virtual Simulation -> Diagram Modules`, `Diagram Modules -> Application Skeleton`, `Application Skeleton -> Quality Gates Baseline`);
   - пользователь может оставить inherited provider и запустить шаг одним кликом или явно переключить provider до старта;
+  - model/reasoning listbox popups must be wide enough to show model labels such as `GPT-5.3-Codex-Spark` horizontally without wrapping;
   - как только continuity session уже существует, selector исчезает вместе с confirmation card и PM возвращается к обычному resume/open-session поведению.
 - В Description UI не допускаются термины/ветвления `description.md` и auto-reviewer.
 - Для `Diagram Modules` правая панель использует контракт `Artifacts/Help` (Source mode убран):
@@ -84,7 +85,7 @@ provider continuation directly.
 - Managed user-review system cards:
   - cards tagged `managed-workflow-user-review` render the Core review handoff plus an inline `Подтверждаю` action at the bottom of the same card;
   - clicking it sends the same acceptance intent as the old typed `подтверждаю` path through the existing session/dialog send transport;
-  - PM does not decide whether that acceptance is valid, does not open the next phase locally, and does not infer completion from the click.
+  - after sending the intent, PM may activate the next trunk step card for navigation convenience, but Core still decides whether acceptance is valid and remains the source of completion/phase truth.
 - Settings surface belongs to PM:
   - bottom footer/status bar удалён из Project Manager layout: `Workflow Tree MVP` больше не рендерится, а session/artifact panes используют освобождённую вертикальную область;
   - sidebar остаётся единственной workflow navigation surface; его нижний action `Open Settings` использует выделенный CSS-класс `pm-sidebar__settings-button` (accent-colored default/hover/active фазы + focus-visible outline) и переключает правую панель PM в отдельный in-shell settings mode без второго окна;
