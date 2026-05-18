@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
   buildApplicationSkeletonMaterializationPrompt,
+  buildApplicationSkeletonMaterializationRevisionPrompt,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
 import {
   buildApplicationSkeletonReviewRevisionPrompt,
@@ -10,6 +11,10 @@ import {
   isApplicationSkeletonReviewOpen,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent";
 import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
+import {
+  APPLICATION_STAGE_PLAN_PATH,
+  PHASE4_TASK_ID,
+} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model";
 import {
   acceptDiagramModulesReviewWithoutRevision,
   isDiagramModulesReviewOpen,
@@ -32,6 +37,7 @@ import type { SessionRequestHandlerEventMessages } from "./session-request-handl
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 
 type ManagedReviewIntent = "accept" | "none" | "revision";
+type ApplicationSkeletonReviewPhase = "draft" | "final";
 
 interface ManagedReviewDecisionOptions {
   readonly content: string;
@@ -107,6 +113,34 @@ const isQualityGatesReviewOpen = async (
     );
   } catch {
     return false;
+  }
+};
+
+const readApplicationSkeletonTaskId = async (
+  workspaceRoot: string
+): Promise<string | null> => {
+  const planText = await readFile(
+    path.join(workspaceRoot, APPLICATION_STAGE_PLAN_PATH),
+    "utf8"
+  ).catch(() => null);
+  if (!planText) {
+    return null;
+  }
+  const json = planText
+    .split(PLAN_START)[1]
+    ?.split(PLAN_END)[0]
+    ?.trim()
+    .replace(FENCED_JSON_START_RE, "")
+    .replace(FENCED_JSON_END_RE, "")
+    .trim();
+  if (!json) {
+    return null;
+  }
+  try {
+    const state = JSON.parse(json) as { readonly currentTaskId?: unknown };
+    return typeof state.currentTaskId === "string" ? state.currentTaskId : null;
+  } catch {
+    return null;
   }
 };
 
@@ -206,9 +240,10 @@ export class SessionRequestHandlerManagedReviewDecisions {
     ) {
       return false;
     }
-    if (
-      !(await isApplicationSkeletonReviewOpen(options.session.workspacePath))
-    ) {
+    const phase = await this.resolveApplicationSkeletonReviewPhase(
+      options.session.workspacePath
+    );
+    if (!phase) {
       return false;
     }
     if (options.intent === "none") {
@@ -216,14 +251,27 @@ export class SessionRequestHandlerManagedReviewDecisions {
     }
     this.appendUserReviewMessage(options);
     if (options.intent === "accept") {
-      await this.openApplicationSkeletonMaterialization(options.session);
+      await this.acceptApplicationSkeletonReview(options.session, phase);
       return true;
     }
     await this.dispatchApplicationSkeletonReviewRevision(
       options.session,
-      options.content
+      options.content,
+      phase
     );
     return true;
+  }
+
+  private async resolveApplicationSkeletonReviewPhase(
+    workspaceRoot: string
+  ): Promise<ApplicationSkeletonReviewPhase | null> {
+    if (await isApplicationSkeletonReviewOpen(workspaceRoot)) {
+      return "draft";
+    }
+    return (await readApplicationSkeletonTaskId(workspaceRoot)) ===
+      PHASE4_TASK_ID
+      ? "final"
+      : null;
   }
 
   private async handleDiagramModulesReviewDecision(
@@ -322,6 +370,44 @@ export class SessionRequestHandlerManagedReviewDecisions {
     await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
   }
 
+  private async completeApplicationSkeletonFinalReview(
+    session: Session
+  ): Promise<void> {
+    if (!session.workspacePath) {
+      return;
+    }
+    try {
+      await this.applicationSkeletonStagePlan.acceptFinalMaterializedReview({
+        workspaceRoot: session.workspacePath,
+      });
+    } catch (error) {
+      this.deps.eventMessages.appendCoreMessage(session.id, {
+        content: buildApplicationSkeletonBoundaryBlockedMessage(
+          error instanceof Error ? error.message : String(error)
+        ),
+        tag: "managed-workflow-validation",
+      });
+      return;
+    }
+    this.deps.eventMessages.appendCoreMessage(session.id, {
+      content: buildManagedPersistentReturnHandoffMessage(
+        "Application Skeleton"
+      ),
+      tag: "managed-workflow-complete",
+    });
+  }
+
+  private async acceptApplicationSkeletonReview(
+    session: Session,
+    phase: ApplicationSkeletonReviewPhase
+  ): Promise<void> {
+    if (phase === "draft") {
+      await this.openApplicationSkeletonMaterialization(session);
+      return;
+    }
+    await this.completeApplicationSkeletonFinalReview(session);
+  }
+
   private async openQualityGatesIntegration(session: Session): Promise<void> {
     if (!(session.workspacePath && session.initiativeSlug)) {
       return;
@@ -374,15 +460,22 @@ export class SessionRequestHandlerManagedReviewDecisions {
 
   private async dispatchApplicationSkeletonReviewRevision(
     session: Session,
-    content: string
+    content: string,
+    phase: ApplicationSkeletonReviewPhase
   ): Promise<void> {
     if (!session.initiativeSlug) {
       return;
     }
-    const prompt = buildApplicationSkeletonReviewRevisionPrompt({
-      userFeedback: content,
-      workspaceSlug: session.initiativeSlug,
-    });
+    const prompt =
+      phase === "draft"
+        ? buildApplicationSkeletonReviewRevisionPrompt({
+            userFeedback: content,
+            workspaceSlug: session.initiativeSlug,
+          })
+        : buildApplicationSkeletonMaterializationRevisionPrompt({
+            userFeedback: content,
+            workspaceSlug: session.initiativeSlug,
+          });
     await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
   }
 

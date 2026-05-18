@@ -8,15 +8,15 @@
   "planId": "application-skeleton-final-review-gate-2026-05-18",
   "branch": "main",
   "baseHead": "3f3896ecd",
-  "lastRecordedCommit": "290219e42",
+  "lastRecordedCommit": "d3bb293a4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_FinalReviewGate_Planning.md",
-  "currentTaskId": "application-skeleton-final-review.phase1.lifecycle.task1",
-  "expectedCommitMessage": "fix: defer application skeleton completion until final review",
+  "currentTaskId": "application-skeleton-final-review.phase1.handlers.task1",
+  "expectedCommitMessage": "fix: open application skeleton final review gate",
   "debt": {
-    "expectedCommitMessage": "fix: defer application skeleton completion until final review",
-    "preCommitHead": "290219e42",
+    "expectedCommitMessage": "fix: open application skeleton final review gate",
+    "preCommitHead": "d3bb293a4",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-final-review.phase1.lifecycle.task1"
+    "taskId": "application-skeleton-final-review.phase1.handlers.task1"
   }
 }
 ```
@@ -55,12 +55,12 @@
 ### Stream: Stage Plan Completion Boundary
 
 3. [DONE] `application-skeleton-final-review.phase1.lifecycle.task1` Defer Application Skeleton completed-stage ledger/unlock until explicit final user acceptance and expose final-review state helpers (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent.ts, doc/TODO/todo-plan.md`; expected commit: `fix: defer application skeleton completion until final review`).
-4. [PENDING] Git Commit: `fix: defer application skeleton completion until final review` (hash: TBD)
+4. [DONE] Git Commit: `fix: defer application skeleton completion until final review` (hash: d3bb293a4)
 
 ### Stream: Core Handoff And Review Actions
 
-5. [TODO] `application-skeleton-final-review.phase1.handlers.task1` Emit a final Application Skeleton user-review card after materialization and route final accept/revision decisions through Core (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts`; expected commit: `fix: open application skeleton final review gate`).
-6. [TODO] Git Commit: `fix: open application skeleton final review gate` (hash: TBD)
+5. [DONE] `application-skeleton-final-review.phase1.handlers.task1` Emit a final Application Skeleton user-review card after materialization and route final accept/revision decisions through Core (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: open application skeleton final review gate`).
+6. [PENDING] Git Commit: `fix: open application skeleton final review gate` (hash: TBD)
 
 ### Stream: Core Regression Tests
 

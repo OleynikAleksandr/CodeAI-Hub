@@ -317,21 +317,21 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       });
       return;
     }
-    if (
-      decision.nextAction === "open_user_review" ||
-      decision.nextAction === "open_persistent_return"
-    ) {
+    if (decision.nextAction === "open_user_review") {
       this.appendCoreMessage(params.sessionId, {
-        content:
-          decision.nextAction === "open_user_review"
-            ? buildManagedUserLedReviewHandoffMessage("Application Skeleton")
-            : buildManagedPersistentReturnHandoffMessage(
-                "Application Skeleton"
-              ),
-        tag:
-          decision.nextAction === "open_user_review"
-            ? "managed-workflow-user-review"
-            : "managed-workflow-complete",
+        content: buildManagedUserLedReviewHandoffMessage(
+          "Application Skeleton"
+        ),
+        tag: "managed-workflow-user-review",
+      });
+      return;
+    }
+    if (decision.nextAction === "open_persistent_return") {
+      this.appendCoreMessage(params.sessionId, {
+        content: buildManagedUserLedReviewHandoffMessage(
+          "Application Skeleton"
+        ),
+        tag: "managed-workflow-user-review",
       });
     }
   }

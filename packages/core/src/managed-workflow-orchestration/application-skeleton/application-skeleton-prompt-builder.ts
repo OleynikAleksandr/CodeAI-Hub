@@ -156,6 +156,34 @@ export const buildApplicationSkeletonMaterializationRepairPrompt = (
     "When the repair is ready, stop with a content-readiness note for Core validation.",
   ].join("\n");
 
+export const buildApplicationSkeletonMaterializationRevisionPrompt = (options: {
+  readonly userFeedback: string;
+  readonly workspaceSlug: string;
+}): string =>
+  [
+    "Core received Application Skeleton final review corrections from the user.",
+    "Revise the materialized Application Skeleton within the current Application Skeleton scope, then stop for Core validation.",
+    "",
+    "Allowed artifacts and paths:",
+    ...buildContractArtifactPaths(options.workspaceSlug).map(
+      (artifactPath) => `- \`${artifactPath}\``
+    ),
+    "- production scaffold paths declared by `application-skeleton-map.json`",
+    "- package manifests, lockfiles, package-manager metadata, and `tsconfig*.json` required by the accepted foundation",
+    "- minimal source entrypoints/facades declared by `projectFoundation.firstWaveEntrypoints`",
+    "",
+    "User requested changes:",
+    options.userFeedback.trim(),
+    "",
+    "Keep the lifecycle materialized when the revised result is ready:",
+    "- `accepted: true`",
+    "- `materialized: true`",
+    '- `materializationState: "materialized"`',
+    '- `reviewState: "materialized"`',
+    "",
+    "Do not run Git commands or edit managed plan files.",
+  ].join("\n");
+
 export const buildApplicationSkeletonBoundaryBlockedMessage = (
   details: string
 ): string =>
