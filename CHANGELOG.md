@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.306] - 2026-05-18
+### Fixed
+- **Kimi starts correctly from the installed Core runtime.** The Kimi module now resolves the user-local CLI from `KIMI_CLI_PATH`, `~/.local/bin/kimi`, Homebrew locations, or the inherited `PATH`, so launcher-managed Core no longer fails when its PATH does not include the user's shell bins.
+- **Kimi Wire requests use protocol-compatible ids.** JSON-RPC request ids are now strings, preventing Kimi Wire from returning `Invalid request` with `id:null` and leaving `initialize`/session startup pending.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run test --workspace=@codeai-hub/kimi-module`
+- Restricted-PATH Kimi runtime smoke: adapter resolved `/Users/oleksandroliinyk/.local/bin/kimi`, `createSession()` returned `kimi:*`, and a short prompt emitted lifecycle events through `turn_completed`.
+
 ## [1.2.305] - 2026-05-18
 ### Added
 - **Kimi Code / Kimi 2.6 is now a first-class provider module.** The new `packages/Kimi_Module` exposes a `KimiProviderAdapter` facade over `kimi --wire`, uses `KIMI_SHARE_DIR=~/.codeai-hub/providers/kimi/home`, and references the authenticated `~/.kimi/config.toml` without writing CodeAI runtime state into the user Kimi home.

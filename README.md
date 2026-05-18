@@ -2,9 +2,14 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.305** (Kimi provider module)
+**Current Release — v1.2.306** (Kimi provider hotfix)
 
-This release adds the Kimi Code / Kimi 2.6 provider module to CodeAI Hub. Kimi
+This hotfix makes the Kimi Code / Kimi 2.6 provider start reliably from the
+installed Core runtime. The Kimi module now resolves the user-local `kimi` CLI
+from `KIMI_CLI_PATH`, `~/.local/bin`, Homebrew paths, or the inherited `PATH`,
+and uses string JSON-RPC request ids required by Kimi Wire.
+
+The Kimi provider module remains available across CodeAI Hub. Kimi
 uses Wire mode through the standalone `packages/Kimi_Module` facade, keeps
 CodeAI-managed runtime state under `~/.codeai-hub/providers/kimi/home` via
 `KIMI_SHARE_DIR`, and references the already authorized Kimi config through
