@@ -8,15 +8,15 @@
   "planId": "kimi-2-6-module-planning-2026-05-18",
   "branch": "main",
   "baseHead": "823c2105f",
-  "lastRecordedCommit": "823c2105f",
+  "lastRecordedCommit": "44349baff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase1-kimi-module-planning-doc",
-  "expectedCommitMessage": "docs: add kimi 2.6 module implementation plan",
+  "currentTaskId": "phase1-kimi-planning-verification",
+  "expectedCommitMessage": "docs: record kimi 2.6 planning verification",
   "debt": {
-    "expectedCommitMessage": "docs: add kimi 2.6 module implementation plan",
-    "preCommitHead": "823c2105f",
+    "expectedCommitMessage": "docs: record kimi 2.6 planning verification",
+    "preCommitHead": "44349baff",
     "stage": "commit_pending",
-    "taskId": "phase1-kimi-module-planning-doc"
+    "taskId": "phase1-kimi-planning-verification"
   }
 }
 ```
@@ -46,11 +46,11 @@
 ## Phase 1 — Kimi 2.6 Module Planning Intake (owner: Codex, updated: 2026-05-18)
 ### Stream: Kimi Module Implementation Planning
 1. [DONE] `phase1-kimi-module-planning-doc` Создать planning-документ реализации Kimi 2.6 provider module и обновить индекс документации — scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Kimi/Kimi_2_6_Module_Implementation_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: add kimi 2.6 module implementation plan`.
-2. [PENDING] Git Commit: `docs: add kimi 2.6 module implementation plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: add kimi 2.6 module implementation plan` (hash: 44349baff)
 
 ### Stream: Tooling Verification
-1. [TODO] `phase1-kimi-planning-verification` Проверить UTF-8/readback, `git status`, `npm run plan:validate` и `npm run plan:status` после документационного изменения — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi 2.6 planning verification`.
-2. [TODO] Git Commit: `docs: record kimi 2.6 planning verification` (hash: TBD)
+1. [DONE] `phase1-kimi-planning-verification` Проверить UTF-8/readback, `git status`, `npm run plan:validate` и `npm run plan:status` после документационного изменения — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi 2.6 planning verification`.
+2. [PENDING] Git Commit: `docs: record kimi 2.6 planning verification` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 1. [TODO] `phase1-kimi-planning-acceptance` Передать Kimi 2.6 planning-документ пользователю на review и дождаться явного acceptance или правок — scope: без изменения файлов; expected commit: none.
