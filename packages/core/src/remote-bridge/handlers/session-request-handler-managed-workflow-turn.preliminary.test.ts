@@ -9,6 +9,9 @@ import { SessionRequestHandlerManagedWorkflowTurn } from "./session-request-hand
 const WORKSPACE_SLUG = "demo-workspace";
 const DESCRIPTION_STAGE = "description";
 const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
+const PRELIMINARY_REVIEW_GATE_RE =
+  /Core: (Description|Virtual Simulation) перешёл в пользовательскую проверку/u;
+const CONFIRMATION_BUTTON_RE = /Подтверждаю/u;
 interface CapturedCoreMessage {
   readonly content: string;
   readonly tag: string;
@@ -55,7 +58,7 @@ const createHandler = (params: {
   return { coreMessages, handler, sessionId: session.id };
 };
 
-test("managed workflow turn does not emit preliminary review handoffs", async () => {
+test("managed workflow turn emits preliminary review handoffs after provider turns", async () => {
   const cases = [
     {
       prepare: (workspaceRoot: string) =>
@@ -90,7 +93,10 @@ test("managed workflow turn does not emit preliminary review handoffs", async ()
 
       await handler.handleTurnCompleted(sessionId);
 
-      assert.deepEqual(coreMessages, []);
+      assert.equal(coreMessages.length, 1);
+      assert.equal(coreMessages[0]?.tag, "managed-workflow-user-review");
+      assert.match(coreMessages[0]?.content ?? "", PRELIMINARY_REVIEW_GATE_RE);
+      assert.match(coreMessages[0]?.content ?? "", CONFIRMATION_BUTTON_RE);
     } finally {
       await rm(workspaceRoot, { force: true, recursive: true });
     }

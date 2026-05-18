@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "9ccecc2f8",
+  "lastRecordedCommit": "ed45b8132",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase13.feedback.preliminary-gate.task1",
-  "expectedCommitMessage": "fix: restore preliminary review gate",
+  "currentTaskId": "pm-sidebar-settings.phase13.feedback.verify.task1",
+  "expectedCommitMessage": "test: verify preliminary review gate",
   "debt": {
-    "expectedCommitMessage": "fix: restore preliminary review gate",
-    "preCommitHead": "9ccecc2f8",
+    "expectedCommitMessage": "test: verify preliminary review gate",
+    "preCommitHead": "ed45b8132",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase13.feedback.preliminary-gate.task1"
+    "taskId": "pm-sidebar-settings.phase13.feedback.verify.task1"
   }
 }
 ```
@@ -266,9 +266,14 @@
 ### Stream: Preliminary Review Gate
 
 64. [DONE] `pm-sidebar-settings.phase13.feedback.preliminary-gate.task1` Restore the Description/Virtual Simulation post-turn Core review gate without reintroducing startup prompt interception (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: restore preliminary review gate`). Regression source: v1.2.301 user retest showed provider work starts, but after the agent asks questions Core does not append the `Подтверждаю` review card for Description.
-65. [PENDING] Git Commit: `fix: restore preliminary review gate` (hash: TBD)
-66. [TODO] `pm-sidebar-settings.phase13.feedback.verify.task1` Add and run preliminary review-gate regression tests plus affected Core/UI builds, then record results (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify preliminary review gate`).
-67. [TODO] Git Commit: `test: verify preliminary review gate` (hash: TBD)
+65. [DONE] Git Commit: `fix: restore preliminary review gate` (hash: ed45b8132)
+66. [DONE] `pm-sidebar-settings.phase13.feedback.verify.task1` Add and run preliminary review-gate regression tests plus affected Core/UI builds, then record results (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify preliminary review gate`).
+    - Verification 2026-05-18: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts` passed 15/15.
+    - Verification 2026-05-18: `npm run build --workspace @codeai-hub/core` passed.
+    - Verification 2026-05-18: `npm run typecheck:webview` passed.
+    - Verification 2026-05-18: `npm run build:webview` passed.
+    - Verification 2026-05-18: `npm run build:project-manager` passed.
+67. [PENDING] Git Commit: `test: verify preliminary review gate` (hash: TBD)
 
 ## Phase 14 - Release Build For Retest (owner: Codex, updated: 2026-05-18)
 
