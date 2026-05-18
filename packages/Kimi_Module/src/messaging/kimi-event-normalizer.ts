@@ -22,6 +22,13 @@ const createEvent = (
   type: eventType,
 });
 
+const createTurnCompletedEvent = (): KimiSessionEvent & {
+  readonly postTurnTokenUsageUnavailable: true;
+} => ({
+  ...createEvent("turn_completed"),
+  postTurnTokenUsageUnavailable: true,
+});
+
 type KimiMessageEvent = KimiSessionEvent & {
   readonly content: string;
   readonly tag?: string;
@@ -89,7 +96,7 @@ export const normalizeKimiWireEvent = (
     case "TurnBegin":
       return [createEvent("turn_started")];
     case "TurnEnd":
-      return [createEvent("turn_completed")];
+      return [createTurnCompletedEvent()];
     case "StepBegin":
       return [
         createEvent("step_started"),
@@ -201,7 +208,7 @@ export class KimiWireEventNormalizer {
         this.reset();
         return [createEvent("turn_started")];
       case "TurnEnd":
-        return [...this.flushMessages(), createEvent("turn_completed")];
+        return [...this.flushMessages(), createTurnCompletedEvent()];
       case "StepBegin":
         return [
           ...this.flushMessages(),

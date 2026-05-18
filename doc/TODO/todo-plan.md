@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "4f919ea71",
+  "lastRecordedCommit": "bde715333",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-live-progress-fix",
-  "expectedCommitMessage": "fix: surface kimi live progress before turn completion",
+  "currentTaskId": "phase8-kimi-review-gate-input-unlock-fix",
+  "expectedCommitMessage": "fix: unlock kimi review gate input",
   "debt": {
-    "expectedCommitMessage": "fix: surface kimi live progress before turn completion",
-    "preCommitHead": "4f919ea71",
+    "expectedCommitMessage": "fix: unlock kimi review gate input",
+    "preCommitHead": "bde715333",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-live-progress-fix"
+    "taskId": "phase8-kimi-review-gate-input-unlock-fix"
   }
 }
 ```
@@ -305,7 +305,19 @@
    - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
    - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts live boundary flush plus Kimi progress stream events.
    - Verification: `./scripts/check-architecture.sh` passed with existing warnings only; no non-allowlisted file exceeds 500 lines.
-2. [PENDING] Git Commit: `fix: surface kimi live progress before turn completion` (hash: TBD)
+2. [DONE] Git Commit: `fix: surface kimi live progress before turn completion` (hash: bde715333)
+
+### Stream: Acceptance Bug Fix — Kimi Review Gate Input Unlock
+1. [DONE] `phase8-kimi-review-gate-input-unlock-fix` Исправить installed-runtime regression 1.2.309: после `managed-workflow-user-review` Core показывает карточку пользовательской проверки, но runtime session остаётся `running`, поэтому UI блокирует ввод с текстом `Agent is resuming your session... Please wait`; Kimi terminal event должен завершать post-turn continuity arbitration даже без token usage — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/package.json, doc/TODO/todo-plan.md`; expected commit: `fix: unlock kimi review gate input`.
+   - Log diagnosis: после Kimi `TurnEnd` Core append'ит `managed-workflow-user-review`, но последующий `dialog_opened` usage refresh всё ещё видит `runtimeTurnState="running"` для `8cca4852-766b-4799-91ae-3d79b36885e0`.
+   - Root cause: Kimi `turn_completed` не содержит `tokenUsage` и не содержит `postTurnTokenUsageUnavailable=true`; Core ставит `context_check_pending`, не получает post-turn decision и не вызывает idle/unlock.
+   - Implementation note: Kimi `TurnEnd` теперь нормализуется в Core-compatible `turn_completed` с верхнеуровневым `postTurnTokenUsageUnavailable=true`, чтобы существующий Core arbitration path завершал ход как `no_rollover` и переводил runtime session в `idle`.
+   - Verification: `npm run plan:validate` passed.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and asserts `TurnEnd` exposes `postTurnTokenUsageUnavailable=true` in both stateless and buffered normalizer paths.
+   - Verification: `npm run build --workspace=@codeai-hub/core` passed.
+   - Verification: `./scripts/check-architecture.sh` passed with existing warnings only; no non-allowlisted file exceeds 500 lines.
+2. [PENDING] Git Commit: `fix: unlock kimi review gate input` (hash: TBD)
 
 ### Stream: Workspace Override Hotfix Release Confirmation Gate
 1. [DONE] `phase8-kimi-workspace-hotfix-release-confirmation` Остановиться после фикса Kimi session workspace override и запросить у пользователя отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: подтверждение получено в сообщении пользователя от 2026-05-18: «После фикса собери новый релиз».
