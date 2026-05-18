@@ -36,6 +36,7 @@ export interface CoreConfig {
   readonly geminiWorkspacePath?: string;
   readonly host: string;
   readonly idleTtlMinutes: number | null;
+  readonly kimiDefaultModel?: string;
   readonly managedMode: string | null;
   readonly port: number;
   readonly shutdownGracePeriodMs: number;
@@ -125,6 +126,7 @@ export const loadConfig = (): CoreConfig => {
     fallbackCodexModel: DEFAULT_CODEX_MODEL_ID,
     fallbackCodexReasoningEffort: DEFAULT_CODEX_REASONING_EFFORT,
     fallbackGeminiModel: process.env.GEMINI_DEFAULT_MODEL ?? undefined,
+    fallbackKimiModel: process.env.KIMI_DEFAULT_MODEL ?? undefined,
   });
   const codexDefaultModel = providerTurnConfig.codex.defaultModel;
   const codexDefaultReasoningEffort =
@@ -139,6 +141,7 @@ export const loadConfig = (): CoreConfig => {
     undefined;
   const geminiThinkingLevelByModel =
     providerTurnConfig.gemini.thinkingLevelByModel;
+  const kimiDefaultModel = providerTurnConfig.kimi.defaultModel;
   const claudeSettings = loadClaudeSettingsSnapshot(claudeSettingsPath);
   const claudeContinuityRemainingPercentThreshold =
     resolveClaudeContinuityRemainingPercentThreshold(claudeSettings);
@@ -175,6 +178,7 @@ export const loadConfig = (): CoreConfig => {
     geminiThinkingLevelByModel,
     geminiSettingsPath,
     geminiCredentialsDirectory,
+    kimiDefaultModel,
     claudeContinuityRemainingPercentThreshold,
     continuityPreemptRemainingPercentThreshold,
   };

@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "d3e8933e5",
+  "lastRecordedCommit": "690657037",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase4-kimi-provider-registry",
-  "expectedCommitMessage": "feat: register kimi provider module",
+  "currentTaskId": "phase4-kimi-model-identity",
+  "expectedCommitMessage": "feat: add kimi model identity settings",
   "debt": {
-    "expectedCommitMessage": "feat: register kimi provider module",
-    "preCommitHead": "d3e8933e5",
+    "expectedCommitMessage": "feat: add kimi model identity settings",
+    "preCommitHead": "690657037",
     "stage": "commit_pending",
-    "taskId": "phase4-kimi-provider-registry"
+    "taskId": "phase4-kimi-model-identity"
   }
 }
 ```
@@ -113,11 +113,11 @@
 ## Phase 4 — Core Provider Registry Integration (owner: Codex, updated: 2026-05-18)
 ### Stream: Provider Registry And Installer Paths
 1. [DONE] `phase4-kimi-provider-registry` Добавить Kimi provider descriptor, module loader/installer path metadata и installed/auth-ready detection без включения provider для UI до готовности — scope: `packages/core/src/provider-registry, packages/Kimi_Module`; expected commit: `feat: register kimi provider module`.
-2. [PENDING] Git Commit: `feat: register kimi provider module` (hash: TBD)
+2. [DONE] Git Commit: `feat: register kimi provider module` (hash: 690657037)
 
 ### Stream: Effective Model Identity
-1. [TODO] `phase4-kimi-model-identity` Добавить Kimi default model identity (`kimi-for-coding`) и settings/applied-turn-config path без перезаписи существующих sessions — scope: `packages/core/src/config, packages/core/src/session-model-binding, src/types`; expected commit: `feat: add kimi model identity settings`.
-2. [TODO] Git Commit: `feat: add kimi model identity settings` (hash: TBD)
+1. [DONE] `phase4-kimi-model-identity` Добавить Kimi default model identity (`kimi-for-coding`) и settings/applied-turn-config path без перезаписи существующих sessions — scope: `packages/core/src/config, packages/core/src/session-model-binding, src/types`; expected commit: `feat: add kimi model identity settings`.
+2. [PENDING] Git Commit: `feat: add kimi model identity settings` (hash: TBD)
 
 ### Stream: Core Stale-Binding Recovery
 1. [TODO] `phase4-kimi-stale-binding-core` Подключить `KIMI_SESSION_STALE_BINDING` к Core one-shot stale-binding recovery path и post-rebind lifecycle без silent drop — scope: `packages/core/src/remote-bridge/handlers, packages/Kimi_Module`; expected commit: `feat: add kimi stale binding recovery`.

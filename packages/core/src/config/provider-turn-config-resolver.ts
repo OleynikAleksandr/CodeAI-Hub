@@ -24,6 +24,7 @@ export interface ProviderTurnConfigResolverOptions {
   readonly fallbackCodexModel: string;
   readonly fallbackCodexReasoningEffort: CodexReasoningEffort;
   readonly fallbackGeminiModel?: string;
+  readonly fallbackKimiModel?: string;
   readonly settingsPath: string;
 }
 
@@ -42,6 +43,13 @@ export interface ResolvedGeminiTurnConfig {
   readonly effectiveModelId?: string;
   readonly thinkingDisplaySyncEnabled: boolean;
   readonly thinkingLevelByModel: Record<string, string>;
+}
+
+export interface ResolvedKimiTurnConfig {
+  readonly baseModelId: string;
+  readonly defaultModel: string;
+  readonly effectiveModelId: string;
+  readonly thinkingDisplaySyncEnabled: boolean;
 }
 
 export interface ResolvedClaudeTurnConfig {
@@ -73,6 +81,7 @@ export interface ResolvedProviderTurnConfig {
   readonly claude: ResolvedClaudeTurnConfig;
   readonly codex: ResolvedCodexTurnConfig;
   readonly gemini: ResolvedGeminiTurnConfig;
+  readonly kimi: ResolvedKimiTurnConfig;
 }
 
 export interface ResolvedProviderEffectiveModelIdentity {
@@ -107,6 +116,8 @@ const buildClaudeEffectiveModelId = (
   thinkingEnabled
     ? `${baseModelId} reasoning:${reasoningEffort ?? DEFAULT_CLAUDE_THINKING_EFFORT}`
     : `${baseModelId} thinking:off`;
+
+const DEFAULT_KIMI_MODEL_ID = "kimi-for-coding";
 
 const resolveClaudeThinkingDisplaySyncEnabled = (
   snapshot: ClaudeProviderSettingsSnapshot | null
@@ -215,6 +226,22 @@ const resolveGeminiTurnConfig = (
   };
 };
 
+const resolveKimiTurnConfig = (
+  options: ProviderTurnConfigResolverOptions
+): ResolvedKimiTurnConfig => {
+  const defaultModel =
+    normalizeOptionalString(options.env.KIMI_DEFAULT_MODEL) ??
+    options.fallbackKimiModel ??
+    DEFAULT_KIMI_MODEL_ID;
+
+  return {
+    baseModelId: defaultModel,
+    defaultModel,
+    effectiveModelId: defaultModel,
+    thinkingDisplaySyncEnabled: false,
+  };
+};
+
 const resolveClaudeTurnConfig = (
   options: ProviderTurnConfigResolverOptions
 ): ResolvedClaudeTurnConfig => {
@@ -252,6 +279,7 @@ const buildResolvedProviderConfigRegistry = (resolved: {
   readonly claude: ResolvedClaudeTurnConfig;
   readonly codex: ResolvedCodexTurnConfig;
   readonly gemini: ResolvedGeminiTurnConfig;
+  readonly kimi: ResolvedKimiTurnConfig;
 }): Readonly<Record<string, ResolvedProviderTurnConfigEntry>> => ({
   claudeCodeCli: {
     providerId: "claudeCodeCli",
@@ -279,6 +307,13 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     thinkingLevelByModel: resolved.gemini.thinkingLevelByModel,
     thinkingDisplaySyncEnabled: resolved.gemini.thinkingDisplaySyncEnabled,
   },
+  kimiCode: {
+    providerId: "kimiCode",
+    baseModelId: resolved.kimi.baseModelId,
+    defaultModel: resolved.kimi.defaultModel,
+    effectiveModelId: resolved.kimi.effectiveModelId,
+    thinkingDisplaySyncEnabled: resolved.kimi.thinkingDisplaySyncEnabled,
+  },
 });
 
 export const resolveProviderTurnConfig = (
@@ -287,15 +322,18 @@ export const resolveProviderTurnConfig = (
   const claude = resolveClaudeTurnConfig(options);
   const codex = resolveCodexTurnConfig(options);
   const gemini = resolveGeminiTurnConfig(options);
+  const kimi = resolveKimiTurnConfig(options);
 
   return {
     claude,
     codex,
     gemini,
+    kimi,
     byProviderId: buildResolvedProviderConfigRegistry({
       claude,
       codex,
       gemini,
+      kimi,
     }),
   };
 };
