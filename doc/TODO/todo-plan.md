@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "bcf3ab1f9",
+  "lastRecordedCommit": "faa5f193c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase1-kimi-wire-runtime-proof",
-  "expectedCommitMessage": "docs: capture kimi wire runtime proof",
+  "currentTaskId": "phase1-kimi-package-scaffold",
+  "expectedCommitMessage": "feat: scaffold kimi provider module",
   "debt": {
-    "expectedCommitMessage": "docs: capture kimi wire runtime proof",
-    "preCommitHead": "bcf3ab1f9",
+    "expectedCommitMessage": "feat: scaffold kimi provider module",
+    "preCommitHead": "faa5f193c",
     "stage": "commit_pending",
-    "taskId": "phase1-kimi-wire-runtime-proof"
+    "taskId": "phase1-kimi-package-scaffold"
   }
 }
 ```
@@ -72,7 +72,7 @@
 ## Phase 1 — Runtime Proof And Module Scaffold (owner: Codex, updated: 2026-05-18)
 ### Stream: Kimi Wire Runtime Proof
 1. [DONE] `phase1-kimi-wire-runtime-proof` Проверить установленный `kimi` CLI в isolated provider-home: `KIMI_SHARE_DIR=~/.codeai-hub/providers/kimi/home`, выполнить минимальный `kimi --wire` prompt/resume/cancel probe и сохранить raw evidence в ignored scratch или tracked planning note при необходимости — scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md, doc/tmp`; expected commit: `docs: capture kimi wire runtime proof`.
-2. [PENDING] Git Commit: `docs: capture kimi wire runtime proof` (hash: TBD)
+2. [DONE] Git Commit: `docs: capture kimi wire runtime proof` (hash: faa5f193c)
 
 #### Runtime proof evidence (2026-05-18)
 - Local CLI identity: `kimi info --json` reports `kimi_cli_version=1.44.0` and `wire_protocol_version=1.10`.
@@ -81,8 +81,8 @@
 - Implementation implication: Kimi bootstrap must explicitly import or reference the already authorized Kimi config/model-provider mapping while keeping runtime/session writes under `~/.codeai-hub/providers/kimi/home`; `KIMI_SHARE_DIR` alone is not enough to pick up an existing `~/.kimi` login/config.
 
 ### Stream: Kimi Module Package Scaffold
-1. [TODO] `phase1-kimi-package-scaffold` Создать `packages/Kimi_Module` с package metadata, public facade export и минимальным provider adapter skeleton без Core registry integration; `KimiProviderAdapter` является самостоятельным facade class — scope: `packages/Kimi_Module/package.json, packages/Kimi_Module/src/index.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `feat: scaffold kimi provider module`.
-2. [TODO] Git Commit: `feat: scaffold kimi provider module` (hash: TBD)
+1. [DONE] `phase1-kimi-package-scaffold` Создать `packages/Kimi_Module` с package metadata, public facade export и минимальным provider adapter skeleton без Core registry integration; `KimiProviderAdapter` является самостоятельным facade class — scope: `packages/Kimi_Module/package.json, packages/Kimi_Module/src/index.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `feat: scaffold kimi provider module`.
+2. [PENDING] Git Commit: `feat: scaffold kimi provider module` (hash: TBD)
 
 ### Stream: Kimi Runtime Home Contract
 1. [TODO] `phase1-kimi-runtime-home` Реализовать provider-home resolver/bootstrap для `~/.codeai-hub/providers/kimi/home` и env builder с `KIMI_SHARE_DIR` / `KIMI_CLI_NO_AUTO_UPDATE`; добавить unit tests — scope: `packages/Kimi_Module`; expected commit: `feat: add kimi provider home bootstrap`.
