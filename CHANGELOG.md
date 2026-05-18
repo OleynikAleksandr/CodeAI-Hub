@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.299] - 2026-05-18
+### Changed
+- **Description and Virtual Simulation now use the same Core review confirmation handoff as managed technical stages.** When either step has a final artifact and the next step is available, the Session UI renders the Core-owned `Подтверждаю` button on the system card.
+- **Confirming a ready step opens the next step card immediately.** The confirmation path accepts the current step and activates the next workflow node so the user can continue from the next-step card without extra navigation.
+- **The next-step card is cleaner and model selection is wider.** The obsolete Managed Workflow Orchestration preview block is gone, and the model selector popup expands so full model names fit horizontally.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/ui/src/session/input-play-stop-button.description-runtime.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts`
+- `npm run typecheck:webview`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:project-manager`
+- `npm run build:webview`
+
 ## [1.2.298] - 2026-05-17
 ### Changed
 - **Project Manager main area keeps a matching edge gutter.** The session/artifact working area now reserves the same unhighlighted 8px bottom/right breathing room as the internal panel rhythm, so session status controls and Settings footer buttons do not touch the outer PM edge.

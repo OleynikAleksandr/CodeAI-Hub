@@ -8,15 +8,15 @@
   "planId": "pm-sidebar-settings-action-2026-05-17",
   "branch": "main",
   "baseHead": "3ad97771b",
-  "lastRecordedCommit": "45bf72b93",
+  "lastRecordedCommit": "eaa91a277",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/PM_Sidebar_Settings_Action_Planning.md",
-  "currentTaskId": "pm-sidebar-settings.phase7.feedback.verify.task1",
-  "expectedCommitMessage": "test: verify workflow step progression polish",
+  "currentTaskId": "pm-sidebar-settings.phase8.release.docs.task1",
+  "expectedCommitMessage": "docs: prepare 1.2.299 release",
   "debt": {
-    "expectedCommitMessage": "test: verify workflow step progression polish",
-    "preCommitHead": "45bf72b93",
+    "expectedCommitMessage": "docs: prepare 1.2.299 release",
+    "preCommitHead": "eaa91a277",
     "stage": "commit_pending",
-    "taskId": "pm-sidebar-settings.phase7.feedback.verify.task1"
+    "taskId": "pm-sidebar-settings.phase8.release.docs.task1"
   }
 }
 ```
@@ -159,18 +159,37 @@
     - Verification 2026-05-18: `npm run build:project-manager` passed.
     - Verification 2026-05-18: `npm run build:webview` passed.
     - Browser note 2026-05-18: Project Manager is packaged as a VS Code/CEF webview bundle and this repo has no standalone PM dev-server target for direct Browser inspection.
-34. [PENDING] Git Commit: `test: verify workflow step progression polish` (hash: TBD)
+34. [DONE] Git Commit: `test: verify workflow step progression polish` (hash: eaa91a277)
 
-## Phase 8 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
+## Phase 8 - Release Build For Retest (owner: Codex, updated: 2026-05-18)
+
+### Stream: Release Confirmation Gate
+
+35. [DONE] `pm-sidebar-settings.phase8.release.confirm.task1` Wait for explicit user confirmation before preparing or building the next retest release after the step progression usability fixes (scope: user release confirmation only; expected commit: none). Result: User confirmed release build for v1.2.299 after the workflow step progression polish.
+
+### Stream: Release Preparation
+
+36. [DONE] `pm-sidebar-settings.phase8.release.docs.task1` After release confirmation, update release notes for v1.2.299 before version bump/build so packaged README/CHANGELOG include the workflow step progression usability fixes (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.299 release`).
+    - Release docs 2026-05-18: `README.md` Current Release and `CHANGELOG.md` now describe v1.2.299 workflow step progression polish.
+37. [PENDING] Git Commit: `docs: prepare 1.2.299 release` (hash: TBD)
+
+### Stream: Release Automation
+
+38. [TODO] `pm-sidebar-settings.phase8.release.buildall.task1` Run `./scripts/build-all.sh` for v1.2.299 and record generated provider/core/UI/launcher tarball artifacts (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.299 artifacts`).
+39. [TODO] Git Commit: `chore: build release 1.2.299 artifacts` (hash: TBD)
+40. [TODO] `pm-sidebar-settings.phase8.release.vsix.task1` Run `./scripts/build-release.sh --use-current-version` for v1.2.299 and record the generated VSIX package (scope: VSIX package, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.299 vsix`).
+41. [TODO] Git Commit: `chore: package release 1.2.299 vsix` (hash: TBD)
+
+## Phase 9 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-05-18)
 
 ### Stream: User Retest
 
-35. [TODO] `pm-sidebar-settings.phase8.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation show the Core `Подтверждаю` handoff, confirmation opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
+42. [TODO] `pm-sidebar-settings.phase9.acceptance.task1` User installs and tests the next release, then confirms Description and Virtual Simulation show the Core `Подтверждаю` handoff, confirmation opens the next step card, the preview block is gone, and model listbox options fit horizontally (scope: user visual acceptance only; expected commit: none).
 
-## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-18)
+## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-05-18)
 
 ### Stream: Scope Closeout
 
-36. [TODO] `pm-sidebar-settings.phase9.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
-37. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
-38. [TODO] `pm-sidebar-settings.phase9.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+43. [TODO] `pm-sidebar-settings.phase10.closeout.task1` After explicit user acceptance, archive the active todo-plan, resolve the planning document disposition, and update Docs_Index if needed (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close pm sidebar settings action scope`).
+44. [TODO] Git Commit: `docs: close pm sidebar settings action scope` (hash: TBD)
+45. [TODO] `pm-sidebar-settings.phase10.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
