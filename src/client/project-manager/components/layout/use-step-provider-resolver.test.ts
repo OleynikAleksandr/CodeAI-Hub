@@ -44,6 +44,7 @@ test("provider stack ids map to canonical design ids", () => {
   assert.equal(PROVIDER_STACK_TO_DESIGN_ID.claudeCodeCli, "claude");
   assert.equal(PROVIDER_STACK_TO_DESIGN_ID.codexCli, "codex");
   assert.equal(PROVIDER_STACK_TO_DESIGN_ID.geminiCli, "gemini");
+  assert.equal(PROVIDER_STACK_TO_DESIGN_ID.kimiCode, "kimi");
 });
 
 test("trunk stage resolves to provider of latest continuity segment", () => {
@@ -71,6 +72,34 @@ test("trunk stage resolves to provider of latest continuity segment", () => {
   assert.equal(
     resolveSidebarProviderIdForStage(snapshot, "virtual_simulation", "codex"),
     "claude"
+  );
+});
+
+test("trunk stage resolves Kimi continuity segment to Kimi design id", () => {
+  const snapshot = baseSnapshot({
+    continuity: {
+      chains: [
+        {
+          rootSessionId: "r1",
+          workspaceSlug: "ws",
+          stage: "diagram_modules",
+          updatedAt: "2026-04-29T01:00:00.000Z",
+          segments: [
+            {
+              sessionId: "s1",
+              providerId: "kimiCode",
+              providerSessionId: "ps1",
+              createdAt: "2026-04-29T00:30:00.000Z",
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  assert.equal(
+    resolveSidebarProviderIdForStage(snapshot, "diagram_modules", "codex"),
+    "kimi"
   );
 });
 

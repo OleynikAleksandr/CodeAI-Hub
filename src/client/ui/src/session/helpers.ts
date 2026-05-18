@@ -279,7 +279,7 @@ export const mergeHistoryIntoSnapshots = (
   } satisfies SessionSnapshots;
 };
 
-export type ProviderTheme = "claude" | "codex" | "gemini";
+export type ProviderTheme = "claude" | "codex" | "gemini" | "kimi";
 export const mapProviderTheme = (
   providerId: ProviderStackId | null
 ): ProviderTheme | null => {
@@ -290,6 +290,8 @@ export const mapProviderTheme = (
       return "codex";
     case "geminiCli":
       return "gemini";
+    case "kimiCode":
+      return "kimi";
     default:
       return null;
   }
