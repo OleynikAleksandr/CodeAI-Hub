@@ -1,6 +1,20 @@
 import { ClaudeProviderAdapter as ClaudeProviderAdapterImpl } from "./provider/claude-provider-adapter";
 
 export {
+  buildKimiClaudeCodeRuntimeProbeProfile,
+  extractKimiClaudeCodeApiKeyFromConfig,
+  KIMI_CLAUDE_CODE_DEFAULT_BASE_URL,
+  KIMI_CLAUDE_CODE_MODEL_ID,
+  KIMI_CLAUDE_CODE_PROVIDER_ID,
+  type KimiClaudeCodeApiKeyResolution,
+  type KimiClaudeCodeApiKeySource,
+  type KimiClaudeCodeRuntimeProbeProfile,
+  type KimiClaudeCodeRuntimeProbeProfileOptions,
+  resolveKimiClaudeCodeApiKey,
+  resolveKimiClaudeCodeConfigPath,
+  resolveKimiClaudeCodeProviderHome,
+} from "./kimi-claude-code/kimi-claude-code-runtime-profile";
+export {
   CLAUDE_MODEL_CAPABILITIES,
   type ClaudeModelAliasId,
   type ClaudeModelCapabilities,

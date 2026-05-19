@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "7cd05e195",
+  "lastRecordedCommit": "41499205b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase2-kimi-claude-code-implementation-slicing",
-  "expectedCommitMessage": "docs: slice kimi claude code implementation plan",
+  "currentTaskId": "phase3-kimi-claude-code-probe-profile",
+  "expectedCommitMessage": "feat: add kimi claude code runtime probe profile",
   "debt": {
-    "expectedCommitMessage": "docs: slice kimi claude code implementation plan",
-    "preCommitHead": "7cd05e195",
+    "expectedCommitMessage": "feat: add kimi claude code runtime probe profile",
+    "preCommitHead": "41499205b",
     "stage": "commit_pending",
-    "taskId": "phase2-kimi-claude-code-implementation-slicing"
+    "taskId": "phase3-kimi-claude-code-probe-profile"
   }
 }
 ```
@@ -57,12 +57,12 @@
 ## Phase 2 — Implementation Plan Slicing (owner: Codex, updated: 2026-05-19)
 ### Stream: Implementation Slicing
 1. [DONE] `phase2-kimi-claude-code-implementation-slicing` Нарезать implementation scope по принятому planning-документу на микрозадачи ≤3 файлов/пакетов, включая feasibility probe, runtime shell, Core/UI integration, targeted verification, release gate, user acceptance и closeout — scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `docs: slice kimi claude code implementation plan`.
-2. [PENDING] Git Commit: `docs: slice kimi claude code implementation plan` (hash: TBD)
+2. [DONE] Git Commit: `docs: slice kimi claude code implementation plan` (hash: 41499205b)
 
 ## Phase 3 — Feasibility Spike (owner: Codex, updated: 2026-05-19)
 ### Stream: Claude Code Runtime Probe
-1. [TODO] `phase3-kimi-claude-code-probe-profile` Добавить минимальные runtime/auth profile helpers для Kimi-Claude-Code без подключения UI: isolated home, Kimi API key resolution из env или `~/.kimi/config.toml`, sanitized diagnostic metadata — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/auth, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code runtime probe profile`.
-2. [TODO] Git Commit: `feat: add kimi claude code runtime probe profile` (hash: TBD)
+1. [DONE] `phase3-kimi-claude-code-probe-profile` Добавить минимальные runtime/auth profile helpers для Kimi-Claude-Code без подключения UI: isolated home, Kimi API key resolution из env или `~/.kimi/config.toml`, sanitized diagnostic metadata and package entry export — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code runtime probe profile`.
+2. [PENDING] Git Commit: `feat: add kimi claude code runtime probe profile` (hash: TBD)
 3. [TODO] `phase3-kimi-claude-code-diagnostic-runner` Добавить диагностический runner для live probe через Claude Code-compatible SDK/CLI path: short answer, workflow-style prompt, minimal tools, categorized failure output, no secret logging — scope: `packages/Claude_Module/src/diagnostics, packages/Claude_Module/src/kimi-claude-code, doc/TODO/todo-plan.md`; expected commit: `feat: probe kimi through claude code runtime`.
 4. [TODO] Git Commit: `feat: probe kimi through claude code runtime` (hash: TBD)
 5. [TODO] `phase3-kimi-claude-code-live-evidence` Запустить live probe, зафиксировать evidence/decision по HTTP/runtime, workflow prompt, tool loop, lifecycle и isolation gates; если gate failed — остановить product integration и оформить blocker — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code feasibility result`.
