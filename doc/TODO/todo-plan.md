@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "f231cab9d",
+  "lastRecordedCommit": "28978d5c1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase6-session-indicators-release-build-start",
-  "expectedCommitMessage": "docs: mark session indicators release build started",
+  "currentTaskId": "phase6-session-indicators-release-build",
+  "expectedCommitMessage": "chore: release session indicators build",
   "debt": {
-    "expectedCommitMessage": "docs: mark session indicators release build started",
-    "preCommitHead": "f231cab9d",
+    "expectedCommitMessage": "chore: release session indicators build",
+    "preCommitHead": "28978d5c1",
     "stage": "commit_pending",
-    "taskId": "phase6-session-indicators-release-build-start"
+    "taskId": "phase6-session-indicators-release-build"
   }
 }
 ```
@@ -124,9 +124,15 @@ Verification log:
 1. [DONE] `phase6-session-indicators-release-notes` После подтверждения подготовить README/CHANGELOG под будущую версию до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare session indicators release notes`.
 2. [DONE] Git Commit: `docs: prepare session indicators release notes` (hash: f231cab9d)
 3. [DONE] `phase6-session-indicators-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark session indicators release build started`.
-4. [PENDING] Git Commit: `docs: mark session indicators release build started` (hash: TBD)
-5. [TODO] `phase6-session-indicators-release-build` Выполнить release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release session indicators build`.
-6. [TODO] Git Commit: `chore: release session indicators build` (hash: TBD)
+4. [DONE] Git Commit: `docs: mark session indicators release build started` (hash: 28978d5c1)
+5. [DONE] `phase6-session-indicators-release-build` Выполнить release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release session indicators build`.
+6. [PENDING] Git Commit: `chore: release session indicators build` (hash: TBD)
+
+Release build log:
+- `./scripts/build-all.sh --allow-dirty` — PASS; built unified version `1.2.315`, including `kimi-module-1.2.315.tar.bz2`, core, launcher, `vscode-webview`, and `project-manager` artifacts.
+- `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS; architecture check, type-check, compile, SDK exclusions, local artefact validation, markdown links, duplication check, production dependency pruning, VSIX packaging, VSIX runtime surface verification, and dependency restore completed.
+- VSIX: `codeai-hub-1.2.315.vsix` (48.37 MB, shown as 49M by the release script).
+- Release tarballs copied under `doc/tmp/releases/`: Claude, Codex, Gemini, Kimi, core `darwin-arm64`, CEF launcher `macos-arm64`, `vscode-webview`, and `project-manager`.
 
 ## Phase 7 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-19)
 ### Stream: User Retest
