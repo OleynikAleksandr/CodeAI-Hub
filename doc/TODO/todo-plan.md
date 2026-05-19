@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "fd11652fb",
+  "lastRecordedCommit": "9d4d54bd3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-thinking-block-summary-cadence",
-  "expectedCommitMessage": "fix: tie kimi progress to thinking block count",
+  "currentTaskId": "phase8-kimi-progress-summary-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi progress summary release notes",
   "debt": {
-    "expectedCommitMessage": "fix: tie kimi progress to thinking block count",
-    "preCommitHead": "fd11652fb",
+    "expectedCommitMessage": "docs: prepare kimi progress summary release notes",
+    "preCommitHead": "9d4d54bd3",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-thinking-block-summary-cadence"
+    "taskId": "phase8-kimi-progress-summary-release-notes"
   }
 }
 ```
@@ -470,7 +470,15 @@
 
 ### Stream: Acceptance Bug Fix — Kimi Thinking Block Summary Cadence
 1. [DONE] `phase8-kimi-thinking-block-summary-cadence` Усилить managed Kimi prompt: явно привязать ordinary assistant progress summary к каждые 5-6 существенных hidden thinking blocks/reasoning paragraphs, чтобы длинная reasoning-серия не оставалась без пользовательского summary — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: tie kimi progress to thinking block count`.
-2. [PENDING] Git Commit: `fix: tie kimi progress to thinking block count` (hash: TBD)
+2. [DONE] Git Commit: `fix: tie kimi progress to thinking block count` (hash: 9d4d54bd3)
+
+### Stream: Kimi Progress Summary Release Build
+1. [DONE] `phase8-kimi-progress-summary-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.313 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi progress summary release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi progress summary release notes` (hash: TBD)
+3. [TODO] `phase8-kimi-progress-summary-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi progress summary release build started`.
+4. [TODO] Git Commit: `docs: mark kimi progress summary release build started` (hash: TBD)
+5. [TODO] `phase8-kimi-progress-summary-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi progress summary build`.
+6. [TODO] Git Commit: `chore: release kimi progress summary build` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

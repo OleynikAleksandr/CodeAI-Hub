@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.313] - 2026-05-19
+### Fixed
+- **Kimi progress summaries now have a thinking-block cadence.** The managed profile treats substantial hidden reasoning paragraphs, draft chunks, and planning blocks as internal thinking blocks and asks Kimi to publish an ordinary visible assistant summary after every 5-6 such blocks without a visible message.
+- **Kimi long-turn progress is less dependent on visible reasoning.** Progress summaries must compress what was reviewed, what artifact area was drafted, what boundary/assumption/risk was found, and what happens next before Kimi continues.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/kimi-module`
+
 ## [1.2.312] - 2026-05-19
 ### Fixed
 - **Kimi now starts with a CodeAI-owned managed agent profile.** Runtime startup materializes `codeai-managed-agent/agent.yaml`, passes it through `--agent-file`, and isolates MCP/skills with CodeAI-owned empty config paths.
