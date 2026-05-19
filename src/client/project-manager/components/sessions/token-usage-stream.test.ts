@@ -152,6 +152,32 @@ test("updateSnapshotsWithTokenUsage supports nested tokenUsage payload and keeps
   assert.equal(next.s1.status.rollover?.phase, "resume_sent");
 });
 
+test("updateSnapshotsWithTokenUsage accepts Kimi context-window projection payload", () => {
+  const snapshots = { s1: createSnapshot() };
+
+  const next = updateSnapshotsWithTokenUsage(snapshots, {
+    sessionId: "s1",
+    event: {
+      type: "stream_event",
+      data: {
+        contextUsage: 0.104_648_590_087_890_62,
+        kind: "kimi_wire_progress",
+        phase: "status_update",
+        tokenUsage: {
+          limit: 262_144,
+          used: 27_433,
+        },
+      },
+    },
+  });
+
+  assert.equal(next.s1.status.tokenUsage.used, 27_433);
+  assert.equal(next.s1.status.tokenUsage.limit, 262_144);
+  assert.equal(next.s1.status.connectionState, "running");
+  assert.equal(next.s1.status.continuityLock?.active, true);
+  assert.equal(next.s1.status.rollover?.phase, "resume_sent");
+});
+
 test("updateSnapshotsWithTokenUsage falls back to providerSessionId when sessionId snapshot is missing", () => {
   const snapshots = {
     root: {

@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "89cf0ceec",
+  "lastRecordedCommit": "0d89f871b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase2-context-percentage-formatter",
-  "expectedCommitMessage": "fix: clarify session context percentage display",
+  "currentTaskId": "phase2-context-percentage-stream-tests",
+  "expectedCommitMessage": "test: cover session context percentage updates",
   "debt": {
-    "expectedCommitMessage": "fix: clarify session context percentage display",
-    "preCommitHead": "89cf0ceec",
+    "expectedCommitMessage": "test: cover session context percentage updates",
+    "preCommitHead": "0d89f871b",
     "stage": "commit_pending",
-    "taskId": "phase2-context-percentage-formatter"
+    "taskId": "phase2-context-percentage-stream-tests"
   }
 }
 ```
@@ -73,11 +73,11 @@
 ## Phase 2 — Context Window Status Panel (owner: Codex, updated: 2026-05-19)
 ### Stream: Percentage Formatter Contract
 1. [DONE] `phase2-context-percentage-formatter` Выделить/уточнить formatter для context-window percentage, чтобы label явно показывал согласованную semantics и корректно работал при нулевом/неизвестном limit — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `fix: clarify session context percentage display`.
-2. [PENDING] Git Commit: `fix: clarify session context percentage display` (hash: TBD)
+2. [DONE] Git Commit: `fix: clarify session context percentage display` (hash: 0d89f871b)
 
 ### Stream: Context Percentage Projection Tests
-1. [TODO] `phase2-context-percentage-stream-tests` Добавить regression coverage для применения token usage stream snapshots к status panel projection без изменения lock/turn state — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts, src/client/project-manager/components/sessions/token-usage-stream.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover session context percentage updates`.
-2. [TODO] Git Commit: `test: cover session context percentage updates` (hash: TBD)
+1. [DONE] `phase2-context-percentage-stream-tests` Добавить regression coverage для применения token usage stream snapshots к status panel projection без изменения lock/turn state — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts, src/client/project-manager/components/sessions/token-usage-stream.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover session context percentage updates`.
+2. [PENDING] Git Commit: `test: cover session context percentage updates` (hash: TBD)
 
 ## Phase 3 — Provider Usage Limits Bar (owner: Codex, updated: 2026-05-19)
 ### Stream: Usage Limit Label Semantics
