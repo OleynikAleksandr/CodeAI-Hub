@@ -208,9 +208,9 @@ Important caveat:
 
 ### 11.2. Tool-loop probe
 
-Result: **failed / blocked for product integration**.
+Result after extended checks: **passed with constraints**.
 
-Observed facts:
+Initial observed facts:
 
 - Probe used a temporary directory under `/tmp/kimi-claude-code-probe-*`, not the repository.
 - Prompt asked the model to create `probe.txt` with exact content `KIMI_TOOL_OK` through the `Write` tool.
@@ -218,15 +218,21 @@ Observed facts:
 - Second attempt used `thinking: { type: "disabled" }`, `maxTurns: 2`, `maxBudgetUsd: 0.05`, and an SDK abort controller at `60s`; it still did not create the file and ended as an aborted Claude Code process.
 - The temporary probe directories remained empty.
 
+Follow-up checks:
+
+- A minimal Claude Code tool prompt without the full CodeAI workflow system prompt successfully emitted `tool_use: Write`, created `probe.txt`, and returned `DONE`.
+- A CodeAI workflow-style prompt with an explicit absolute target path successfully emitted `tool_use: Write`, created the exact target file, and returned `DONE`.
+- When the prompt said only "current directory", Kimi sometimes chose `/tmp/probe.txt` rather than the SDK `cwd`; therefore CodeAI prompts must continue to provide the full absolute target artifact path.
+- `thinking: { type: "disabled" }` produced no thinking deltas and completed normally.
+- `thinking: { type: "adaptive", display: "summarized" }` produced thinking deltas normally.
+- If SDK `title` is omitted, Claude Code may generate an `ai-title` and report an additional `claude-haiku-4-5-20251001` usage entry. Passing an explicit `title` removed that extra usage key; only `kimi-for-coding` remained.
+
 Decision:
 
-- **Do not continue to product UI/provider-card integration yet.**
-- HTTP/auth/basic stream compatibility is proven, but tool-loop compatibility is not proven.
-- The current blocker is: Kimi through Claude Code-compatible runtime can answer, but did not complete a simple `Write` tool task within the diagnostic window.
-
-Next possible unblockers:
-
-1. Capture the full stream for the hanging tool-loop attempt to determine whether Kimi never emits `tool_use`, emits an incompatible tool schema, or Claude Code blocks the tool call internally.
-2. Try a smaller tool prompt with no CodeAI workflow system prompt to separate Kimi endpoint/tool compatibility from CodeAI system-instruction effects.
-3. Compare raw Anthropic-compatible `/v1/messages` tool schema expected by Kimi with the Claude Code SDK tool schema emitted for `Write`.
-4. If Kimi requires a different tool schema or client identity, implement a native Kimi bridge instead of trying to reuse Claude Code as the runtime.
+- Product integration may continue if Kimi-Claude-Code query options enforce:
+  - explicit SDK `title`;
+  - absolute target artifact paths in Core workflow prompts;
+  - `settingSources: []`;
+  - minimal tool list;
+  - thinking options derived from provider settings, including real disabled mode.
+- Usage/context telemetry must treat Claude Code auto-title/modelUsage side effects as a risk and keep explicit title enabled for this provider.

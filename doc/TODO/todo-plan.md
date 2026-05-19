@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "eb522a746",
+  "lastRecordedCommit": "2694afc09",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase4-claude-runtime-profile-contract",
-  "expectedCommitMessage": "refactor: define claude code runtime profiles",
+  "currentTaskId": "phase4-kimi-claude-code-auth-profile",
+  "expectedCommitMessage": "feat: add kimi claude code auth profile",
   "debt": {
-    "expectedCommitMessage": "refactor: define claude code runtime profiles",
-    "preCommitHead": "eb522a746",
+    "expectedCommitMessage": "feat: add kimi claude code auth profile",
+    "preCommitHead": "2694afc09",
     "stage": "commit_pending",
-    "taskId": "phase4-claude-runtime-profile-contract"
+    "taskId": "phase4-kimi-claude-code-auth-profile"
   }
 }
 ```
@@ -71,9 +71,9 @@
 ## Phase 4 — Runtime Profile Extraction (owner: Codex, updated: 2026-05-19)
 ### Stream: Claude Runtime Profiles
 1. [DONE] `phase4-claude-runtime-profile-contract` Выделить контракт runtime profile, разделяющий обычный `claudeCode` subscription profile и будущий `kimiClaudeCode` API-key/base-url profile, без изменения поведения Claude по умолчанию — scope: `packages/Claude_Module/src/sdk, packages/Claude_Module/src/auth, doc/TODO/todo-plan.md`; expected commit: `refactor: define claude code runtime profiles`.
-2. [PENDING] Git Commit: `refactor: define claude code runtime profiles` (hash: TBD)
-3. [TODO] `phase4-kimi-claude-code-auth-profile` Реализовать Kimi-Claude-Code auth profile: `HOME=~/.codeai-hub/providers/kimi-claude-code/home`, proven base URL, API key resolution, secret-safe logging — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/auth, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: add kimi claude code auth profile`.
-4. [TODO] Git Commit: `feat: add kimi claude code auth profile` (hash: TBD)
+2. [DONE] Git Commit: `refactor: define claude code runtime profiles` (hash: 2694afc09)
+3. [DONE] `phase4-kimi-claude-code-auth-profile` Реализовать Kimi-Claude-Code auth profile: `HOME=~/.codeai-hub/providers/kimi-claude-code/home`, proven base URL, API key resolution, secret-safe logging — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/auth, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: add kimi claude code auth profile`.
+4. [PENDING] Git Commit: `feat: add kimi claude code auth profile` (hash: TBD)
 5. [TODO] `phase4-claude-sdk-profile-wiring` Подключить profile selection в Claude SDK manager/factory так, чтобы обычный Claude путь продолжал использовать subscription auth, а Kimi-Claude-Code путь использовал отдельный profile — scope: `packages/Claude_Module/src/sdk, packages/Claude_Module/src/provider, doc/TODO/todo-plan.md`; expected commit: `refactor: support kimi claude code runtime profile`.
 6. [TODO] Git Commit: `refactor: support kimi claude code runtime profile` (hash: TBD)
 
