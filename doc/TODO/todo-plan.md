@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "17311c6fa",
+  "lastRecordedCommit": "25916925a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase3-kimi-claude-code-diagnostic-runner",
-  "expectedCommitMessage": "feat: probe kimi through claude code runtime",
+  "currentTaskId": "phase3-kimi-claude-code-live-evidence",
+  "expectedCommitMessage": "docs: record kimi claude code feasibility result",
   "debt": {
-    "expectedCommitMessage": "feat: probe kimi through claude code runtime",
-    "preCommitHead": "17311c6fa",
+    "expectedCommitMessage": "docs: record kimi claude code feasibility result",
+    "preCommitHead": "25916925a",
     "stage": "commit_pending",
-    "taskId": "phase3-kimi-claude-code-diagnostic-runner"
+    "taskId": "phase3-kimi-claude-code-live-evidence"
   }
 }
 ```
@@ -64,9 +64,9 @@
 1. [DONE] `phase3-kimi-claude-code-probe-profile` Добавить минимальные runtime/auth profile helpers для Kimi-Claude-Code без подключения UI: isolated home, Kimi API key resolution из env или `~/.kimi/config.toml`, sanitized diagnostic metadata and package entry export — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code runtime probe profile`.
 2. [DONE] Git Commit: `feat: add kimi claude code runtime probe profile` (hash: 17311c6fa)
 3. [DONE] `phase3-kimi-claude-code-diagnostic-runner` Добавить диагностический runner для live probe через Claude Code-compatible SDK/CLI path: short answer, workflow-style prompt, minimal tools, categorized failure output, no secret logging — scope: `packages/Claude_Module/src/diagnostics, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat: probe kimi through claude code runtime`.
-4. [PENDING] Git Commit: `feat: probe kimi through claude code runtime` (hash: TBD)
-5. [TODO] `phase3-kimi-claude-code-live-evidence` Запустить live probe, зафиксировать evidence/decision по HTTP/runtime, workflow prompt, tool loop, lifecycle и isolation gates; если gate failed — остановить product integration и оформить blocker — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code feasibility result`.
-6. [TODO] Git Commit: `docs: record kimi claude code feasibility result` (hash: TBD)
+4. [DONE] Git Commit: `feat: probe kimi through claude code runtime` (hash: 25916925a)
+5. [DONE] `phase3-kimi-claude-code-live-evidence` Запустить live probe, зафиксировать evidence/decision по HTTP/runtime, workflow prompt, tool loop, lifecycle и isolation gates; если gate failed — остановить product integration и оформить blocker — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code feasibility result`.
+6. [PENDING] Git Commit: `docs: record kimi claude code feasibility result` (hash: TBD)
 
 ## Phase 4 — Runtime Profile Extraction (owner: Codex, updated: 2026-05-19)
 ### Stream: Claude Runtime Profiles

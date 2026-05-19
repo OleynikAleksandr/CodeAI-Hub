@@ -183,3 +183,50 @@ Minimum failed experiment:
 
 - blocker is documented with exact failed gate, endpoint/runtime evidence, and next possible unblocker;
 - no incomplete provider cards/settings are shipped.
+
+## 11. Live feasibility evidence — 2026-05-19
+
+### 11.1. Short-answer runtime probe
+
+Result: **passed**.
+
+Observed facts:
+
+- Claude Agent SDK was able to start a Kimi-backed turn through `ANTHROPIC_BASE_URL=https://api.kimi.com/coding`.
+- Model id reported by the SDK stream: `kimi-for-coding`.
+- CodeAI resolved the Kimi API key from `~/.kimi/config.toml` `providers.kimi-for-coding.api_key`; the secret was not logged.
+- Runtime home was isolated under `~/.codeai-hub/providers/kimi-claude-code/home`.
+- SDK init event reported tools as `Edit`, `Read`, `Write`.
+- SDK init event reported `apiKeySource: ANTHROPIC_API_KEY`, because CodeAI passes the resolved Kimi key to Claude Code through that environment variable.
+- Short prompt returned the exact final visible text `KIMI_CLAUDE_CODE_PROBE_OK`.
+- The short probe completed with `stopReason=end_turn`.
+- Measured short probe: `63` stream messages, `41` thinking deltas, elapsed about `5.5s`.
+
+Important caveat:
+
+- Even with `settingSources: []` and a minimal tool list, Claude Code still advertises built-in slash commands, agents and skills in the init event. The provider-visible executable tool list was restricted to `Edit`, `Read`, `Write`, but the broader Claude Code runtime surface is not empty.
+
+### 11.2. Tool-loop probe
+
+Result: **failed / blocked for product integration**.
+
+Observed facts:
+
+- Probe used a temporary directory under `/tmp/kimi-claude-code-probe-*`, not the repository.
+- Prompt asked the model to create `probe.txt` with exact content `KIMI_TOOL_OK` through the `Write` tool.
+- First attempt stayed running for more than a minute with no file created and had to be killed.
+- Second attempt used `thinking: { type: "disabled" }`, `maxTurns: 2`, `maxBudgetUsd: 0.05`, and an SDK abort controller at `60s`; it still did not create the file and ended as an aborted Claude Code process.
+- The temporary probe directories remained empty.
+
+Decision:
+
+- **Do not continue to product UI/provider-card integration yet.**
+- HTTP/auth/basic stream compatibility is proven, but tool-loop compatibility is not proven.
+- The current blocker is: Kimi through Claude Code-compatible runtime can answer, but did not complete a simple `Write` tool task within the diagnostic window.
+
+Next possible unblockers:
+
+1. Capture the full stream for the hanging tool-loop attempt to determine whether Kimi never emits `tool_use`, emits an incompatible tool schema, or Claude Code blocks the tool call internally.
+2. Try a smaller tool prompt with no CodeAI workflow system prompt to separate Kimi endpoint/tool compatibility from CodeAI system-instruction effects.
+3. Compare raw Anthropic-compatible `/v1/messages` tool schema expected by Kimi with the Claude Code SDK tool schema emitted for `Write`.
+4. If Kimi requires a different tool schema or client identity, implement a native Kimi bridge instead of trying to reuse Claude Code as the runtime.
