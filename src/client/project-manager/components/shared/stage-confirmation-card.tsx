@@ -63,7 +63,8 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "claudeCodeCli" ||
   value === "codexCli" ||
   value === "geminiCli" ||
-  value === "kimiCode";
+  value === "kimiCode" ||
+  value === "kimiClaudeCode";
 
 const startService = new WorkflowStepStartService();
 

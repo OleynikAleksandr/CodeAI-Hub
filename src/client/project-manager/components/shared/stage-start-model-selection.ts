@@ -57,7 +57,7 @@ export const getStartCardModelOptions = (
       label: model.displayName,
     }));
   }
-  if (providerId === "kimiCode") {
+  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
     return KIMI_RECOMMENDED_MODELS.map((model) => ({
       description: model.description,
       id: model.id,
@@ -93,7 +93,7 @@ export const getStartCardReasoningOptions = (
       label: effort,
     }));
   }
-  if (providerId === "kimiCode") {
+  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
     return [{ id: "default", label: "default" }];
   }
   const model =
@@ -127,9 +127,12 @@ export const resolveDefaultStartCardModelSelection = (
         DEFAULT_CODEX_REASONING_LEVEL,
     };
   }
-  if (providerId === "kimiCode") {
+  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
     return {
-      modelId: settings?.providers.kimi?.defaultModel ?? DEFAULT_KIMI_MODEL_ID,
+      modelId:
+        (providerId === "kimiClaudeCode"
+          ? settings?.providers.kimiClaudeCode?.defaultModel
+          : settings?.providers.kimi?.defaultModel) ?? DEFAULT_KIMI_MODEL_ID,
       reasoning: "default",
     };
   }

@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "0da27981b",
+  "lastRecordedCommit": "7e597bba2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase7-kimi-claude-code-turn-config",
-  "expectedCommitMessage": "feat: resolve kimi claude code turn config",
+  "currentTaskId": "phase8-kimi-claude-code-start-cards",
+  "expectedCommitMessage": "feat: show kimi claude code in provider start cards",
   "debt": {
-    "expectedCommitMessage": "feat: resolve kimi claude code turn config",
-    "preCommitHead": "0da27981b",
+    "expectedCommitMessage": "feat: show kimi claude code in provider start cards",
+    "preCommitHead": "7e597bba2",
     "stage": "commit_pending",
-    "taskId": "phase7-kimi-claude-code-turn-config"
+    "taskId": "phase8-kimi-claude-code-start-cards"
   }
 }
 ```
@@ -102,12 +102,12 @@
 3. [DONE] `phase7-kimi-claude-code-settings-ui` Добавить Kimi-Claude-Code subsection в Claude-family Settings surface без отдельного лишнего tab, если текущая UI-архитектура это поддерживает — scope: `src/client/ui, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code claude-family settings`.
 4. [DONE] Git Commit: `feat: add kimi claude code claude-family settings` (hash: 0da27981b)
 5. [DONE] `phase7-kimi-claude-code-turn-config` Подключить applied turn config/effective model identity resolver для `kimiClaudeCode`, включая provider inheritance into next steps — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: resolve kimi claude code turn config`.
-6. [PENDING] Git Commit: `feat: resolve kimi claude code turn config` (hash: TBD)
+6. [DONE] Git Commit: `feat: resolve kimi claude code turn config` (hash: 7e597bba2)
 
 ## Phase 8 — Project Manager And Session UI (owner: Codex, updated: 2026-05-19)
 ### Stream: Provider Surfaces
-1. [TODO] `phase8-kimi-claude-code-start-cards` Добавить Kimi-Claude-Code в provider descriptors/cards для Description questionnaire submit, workflow start cards, Development Tree start/fix cards — scope: `src/client/ui, src/client/workflow, doc/TODO/todo-plan.md`; expected commit: `feat: show kimi claude code in provider start cards`.
-2. [TODO] Git Commit: `feat: show kimi claude code in provider start cards` (hash: TBD)
+1. [DONE] `phase8-kimi-claude-code-start-cards` Добавить Kimi-Claude-Code в provider descriptors/cards для Description questionnaire submit, workflow start cards, Development Tree start/fix cards — scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: show kimi claude code in provider start cards`.
+2. [PENDING] Git Commit: `feat: show kimi claude code in provider start cards` (hash: TBD)
 3. [TODO] `phase8-kimi-claude-code-next-step-default` Проверить и исправить inheritance выбранного `kimiClaudeCode` при переходе между managed workflow steps, чтобы следующий шаг не падал в Claude — scope: `packages/core, src/client/workflow, doc/TODO/todo-plan.md`; expected commit: `feat: preserve kimi claude code provider inheritance`.
 4. [TODO] Git Commit: `feat: preserve kimi claude code provider inheritance` (hash: TBD)
 5. [TODO] `phase8-kimi-claude-code-status-identity` Добавить status line/model chip/session title/provider tint mapping для `kimiClaudeCode` — scope: `src/client/ui, packages/core, doc/TODO/todo-plan.md`; expected commit: `feat: show kimi claude code session identity`.
