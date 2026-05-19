@@ -102,11 +102,17 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
     },
     kimi: {
       autoUpdate: { enabled: false },
-      defaultModel: "kimi-for-coding",
+      defaultModel: "glm-5.1",
       thinkingDisplaySyncEnabled: true,
     },
-    kimiClaudeCode: {
-      defaultModel: "kimi-for-coding",
+    glmClaudeCode: {
+      apiKey: "",
+      baseUrl: "https://api.z.ai/api/anthropic",
+      configPath: "~/.codeai-hub/providers/glm-claude-code/config.json",
+      defaultModel: "glm-5.1",
+      haikuModel: "glm-4.5-air",
+      opusModel: "glm-5.1",
+      sonnetModel: "glm-5-turbo",
       thinkingDisplaySyncEnabled: true,
     },
   },
@@ -292,7 +298,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       readonly codex: Record<string, unknown>;
       readonly gemini: Record<string, unknown>;
       readonly kimi: Record<string, unknown>;
-      readonly kimiClaudeCode: Record<string, unknown>;
+      readonly glmClaudeCode: Record<string, unknown>;
     };
   };
   const rawGeneral = isRecord(settings.general) ? settings.general : {};
@@ -307,8 +313,8 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
   const rawCodex = isRecord(rawProviders.codex) ? rawProviders.codex : {};
   const rawGemini = isRecord(rawProviders.gemini) ? rawProviders.gemini : {};
   const rawKimi = isRecord(rawProviders.kimi) ? rawProviders.kimi : {};
-  const rawKimiClaudeCode = isRecord(rawProviders.kimiClaudeCode)
-    ? rawProviders.kimiClaudeCode
+  const rawGlmClaudeCode = isRecord(rawProviders.glmClaudeCode)
+    ? rawProviders.glmClaudeCode
     : {};
   const normalizedClaudeThinking = normalizeClaudeThinkingSettings({
     defaultThinkingSettings: defaults.providers.claude.thinking as {
@@ -364,7 +370,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       isRecord(rawProviders.codex) &&
       isRecord(rawProviders.gemini) &&
       isRecord(rawProviders.kimi) &&
-      isRecord(rawProviders.kimiClaudeCode)
+      isRecord(rawProviders.glmClaudeCode)
     )
   ) {
     changed = true;
@@ -383,7 +389,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
   if (typeof rawKimi.thinkingDisplaySyncEnabled !== "boolean") {
     changed = true;
   }
-  if (typeof rawKimiClaudeCode.thinkingDisplaySyncEnabled !== "boolean") {
+  if (typeof rawGlmClaudeCode.thinkingDisplaySyncEnabled !== "boolean") {
     changed = true;
   }
   if (
@@ -421,12 +427,12 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
               ? rawKimi.thinkingDisplaySyncEnabled
               : true,
         },
-        kimiClaudeCode: {
-          ...defaults.providers.kimiClaudeCode,
-          ...rawKimiClaudeCode,
+        glmClaudeCode: {
+          ...defaults.providers.glmClaudeCode,
+          ...rawGlmClaudeCode,
           thinkingDisplaySyncEnabled:
-            typeof rawKimiClaudeCode.thinkingDisplaySyncEnabled === "boolean"
-              ? rawKimiClaudeCode.thinkingDisplaySyncEnabled
+            typeof rawGlmClaudeCode.thinkingDisplaySyncEnabled === "boolean"
+              ? rawGlmClaudeCode.thinkingDisplaySyncEnabled
               : true,
         },
       },

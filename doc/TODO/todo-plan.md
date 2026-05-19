@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "245f9c76c",
+  "lastRecordedCommit": "0d39ebb7b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase5-glm-pm-settings-bridge",
-  "expectedCommitMessage": "refactor: wire glm claude code project manager settings",
+  "currentTaskId": "phase5-glm-settings-persistence",
+  "expectedCommitMessage": "refactor: persist glm claude code settings",
   "debt": {
-    "expectedCommitMessage": "refactor: wire glm claude code project manager settings",
-    "preCommitHead": "245f9c76c",
+    "expectedCommitMessage": "refactor: persist glm claude code settings",
+    "preCommitHead": "0d39ebb7b",
     "stage": "commit_pending",
-    "taskId": "phase5-glm-pm-settings-bridge"
+    "taskId": "phase5-glm-settings-persistence"
   }
 }
 ```
@@ -85,9 +85,9 @@
 3. [DONE] `phase5-glm-settings-card` Replace `Claude-Kimi` settings card with `GLM-Claude-Code` card that exposes isolated config path/API key guidance, base URL and model defaults without referencing real Claude home — scope: `src/client/ui/src/components/settings, doc/TODO/todo-plan.md`; expected commit: `refactor: replace claude kimi settings card with glm`.
 4. [DONE] Git Commit: `refactor: replace claude kimi settings card with glm` (hash: 245f9c76c)
 5. [DONE] `phase5-glm-pm-settings-bridge` Replace Project Manager settings bridge handlers from Kimi-Claude-Code to GLM-Claude-Code so PM settings save/load and default model lookup use `providers.glmClaudeCode` — scope: `src/client/project-manager/components/settings/project-manager-settings-host-message.ts, src/client/project-manager/components/settings/use-project-manager-kimi-settings-handlers.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; expected commit: `refactor: wire glm claude code project manager settings`.
-6. [PENDING] Git Commit: `refactor: wire glm claude code project manager settings` (hash: TBD)
-7. [TODO] `phase5-glm-settings-persistence` Replace Core settings persistence defaults/normalization from `kimiClaudeCode` to `glmClaudeCode`, including config defaults and secret-safe reset behavior — scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/components/settings/kimi-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: persist glm claude code settings`.
-8. [TODO] Git Commit: `refactor: persist glm claude code settings` (hash: TBD)
+6. [DONE] Git Commit: `refactor: wire glm claude code project manager settings` (hash: 0d39ebb7b)
+7. [DONE] `phase5-glm-settings-persistence` Replace Core settings persistence defaults/normalization from `kimiClaudeCode` to `glmClaudeCode`, including config defaults and secret-safe reset behavior — scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/components/settings/kimi-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: persist glm claude code settings`.
+8. [PENDING] Git Commit: `refactor: persist glm claude code settings` (hash: TBD)
 
 ## Phase 6 — Provider Selection Surfaces (owner: Codex, updated: 2026-05-19)
 ### Stream: Workflow Cards
