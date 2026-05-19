@@ -1,19 +1,19 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import type { SDKInstaller } from "../installer/sdk-installer";
 import {
-  buildKimiClaudeCodeRuntimeProbeProfile,
-  KIMI_CLAUDE_CODE_MODEL_ID,
-  type KimiClaudeCodeRuntimeProbeProfile,
-  type KimiClaudeCodeRuntimeProbeProfileOptions,
-} from "../kimi-claude-code/kimi-claude-code-runtime-profile";
+  buildGlmClaudeCodeRuntimeProbeProfile,
+  GLM_CLAUDE_CODE_MODEL_ID,
+  type GlmClaudeCodeRuntimeProbeProfile,
+  type GlmClaudeCodeRuntimeProbeProfileOptions,
+} from "../glm-claude-code/glm-claude-code-runtime-profile";
+import type { SDKInstaller } from "../installer/sdk-installer";
 import {
   CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
   CODEAI_CLAUDE_WORKFLOW_TOOLS,
 } from "../sdk/claude-workflow-system-prompt";
 import type { ClaudeStreamMessage } from "../types";
 
-const DEFAULT_PROBE_PROMPT = "Reply with exactly: KIMI_CLAUDE_CODE_PROBE_OK";
+const DEFAULT_PROBE_PROMPT = "Reply with exactly: GLM_CLAUDE_CODE_PROBE_OK";
 const DEFAULT_TIMEOUT_MS = 45_000;
 const MAX_CAPTURED_MESSAGES = 12;
 const SECRET_PATTERN = /sk-[A-Za-z0-9_-]{8,}/gu;
@@ -23,9 +23,9 @@ type QueryFunction = (payload: {
   readonly prompt: string;
 }) => AsyncIterableIterator<ClaudeStreamMessage>;
 
-export type KimiClaudeCodeProbeStatus = "failed" | "passed";
+export type GlmClaudeCodeProbeStatus = "failed" | "passed";
 
-export type KimiClaudeCodeProbeFailureCategory =
+export type GlmClaudeCodeProbeFailureCategory =
   | "api_key_missing"
   | "auth_rejected"
   | "endpoint_rejected"
@@ -34,8 +34,8 @@ export type KimiClaudeCodeProbeFailureCategory =
   | "tool_loop_rejected"
   | "unknown";
 
-export interface KimiClaudeCodeRuntimeProbeRunnerOptions
-  extends KimiClaudeCodeRuntimeProbeProfileOptions {
+export interface GlmClaudeCodeRuntimeProbeRunnerOptions
+  extends GlmClaudeCodeRuntimeProbeProfileOptions {
   readonly installer: SDKInstaller;
   readonly prompt?: string;
   readonly timeoutMs?: number;
@@ -43,25 +43,25 @@ export interface KimiClaudeCodeRuntimeProbeRunnerOptions
   readonly workspacePath: string;
 }
 
-export interface KimiClaudeCodeRuntimeProbeResult {
+export interface GlmClaudeCodeRuntimeProbeResult {
   readonly assistantText: string | null;
   readonly capturedMessageTypes: readonly string[];
-  readonly diagnostics: KimiClaudeCodeRuntimeProbeProfile["diagnostics"] & {
+  readonly diagnostics: GlmClaudeCodeRuntimeProbeProfile["diagnostics"] & {
     readonly hasSystemPrompt: boolean;
     readonly promptKind: "short" | "workflow";
     readonly settingSources: readonly string[];
     readonly toolNames: readonly string[];
   };
   readonly error: string | null;
-  readonly failureCategory: KimiClaudeCodeProbeFailureCategory | null;
-  readonly status: KimiClaudeCodeProbeStatus;
+  readonly failureCategory: GlmClaudeCodeProbeFailureCategory | null;
+  readonly status: GlmClaudeCodeProbeStatus;
 }
 
-export class KimiClaudeCodeRuntimeProbeRunner {
+export class GlmClaudeCodeRuntimeProbeRunner {
   async run(
-    options: KimiClaudeCodeRuntimeProbeRunnerOptions
-  ): Promise<KimiClaudeCodeRuntimeProbeResult> {
-    const profile = await buildKimiClaudeCodeRuntimeProbeProfile(options);
+    options: GlmClaudeCodeRuntimeProbeRunnerOptions
+  ): Promise<GlmClaudeCodeRuntimeProbeResult> {
+    const profile = await buildGlmClaudeCodeRuntimeProbeProfile(options);
     const diagnostics = buildDiagnostics(
       profile,
       Boolean(options.workflowPrompt)
@@ -71,7 +71,7 @@ export class KimiClaudeCodeRuntimeProbeRunner {
         assistantText: null,
         capturedMessageTypes: [],
         diagnostics,
-        error: "Kimi API key is unavailable.",
+        error: "GLM API key is unavailable.",
         failureCategory: "api_key_missing",
         status: "failed",
       };
@@ -100,14 +100,14 @@ export class KimiClaudeCodeRuntimeProbeRunner {
 }
 
 const runQuery = async (payload: {
-  readonly diagnostics: KimiClaudeCodeRuntimeProbeResult["diagnostics"];
+  readonly diagnostics: GlmClaudeCodeRuntimeProbeResult["diagnostics"];
   readonly installer: SDKInstaller;
-  readonly profile: KimiClaudeCodeRuntimeProbeProfile;
+  readonly profile: GlmClaudeCodeRuntimeProbeProfile;
   readonly prompt: string;
   readonly query: QueryFunction;
   readonly timeoutMs: number;
   readonly workspacePath: string;
-}): Promise<KimiClaudeCodeRuntimeProbeResult> => {
+}): Promise<GlmClaudeCodeRuntimeProbeResult> => {
   const iterator = payload.query({
     prompt: payload.prompt,
     options: buildQueryOptions(payload),
@@ -139,7 +139,7 @@ const runQuery = async (payload: {
 
 const buildQueryOptions = (payload: {
   readonly installer: SDKInstaller;
-  readonly profile: KimiClaudeCodeRuntimeProbeProfile;
+  readonly profile: GlmClaudeCodeRuntimeProbeProfile;
   readonly workspacePath: string;
 }): Record<string, unknown> => ({
   additionalDirectories: [payload.workspacePath],
@@ -147,7 +147,7 @@ const buildQueryOptions = (payload: {
   cwd: payload.workspacePath,
   env: payload.profile.env,
   includePartialMessages: true,
-  model: KIMI_CLAUDE_CODE_MODEL_ID,
+  model: GLM_CLAUDE_CODE_MODEL_ID,
   pathToClaudeCodeExecutable: payload.installer.getExecutablePath(),
   permissionMode: "bypassPermissions",
   persistSession: false,
@@ -168,7 +168,7 @@ const nextWithTimeout = async (
       new Promise<IteratorResult<ClaudeStreamMessage>>((_, reject) => {
         timeout = setTimeout(() => {
           reject(
-            new Error(`Kimi-Claude-Code probe timed out after ${timeoutMs}ms.`)
+            new Error(`GLM-Claude-Code probe timed out after ${timeoutMs}ms.`)
           );
         }, timeoutMs);
       }),
@@ -181,9 +181,9 @@ const nextWithTimeout = async (
 };
 
 const buildDiagnostics = (
-  profile: KimiClaudeCodeRuntimeProbeProfile,
+  profile: GlmClaudeCodeRuntimeProbeProfile,
   workflowPrompt: boolean
-): KimiClaudeCodeRuntimeProbeResult["diagnostics"] => ({
+): GlmClaudeCodeRuntimeProbeResult["diagnostics"] => ({
   ...profile.diagnostics,
   hasSystemPrompt: true,
   promptKind: workflowPrompt ? "workflow" : "short",
@@ -192,9 +192,9 @@ const buildDiagnostics = (
 });
 
 const buildFailureResult = (
-  diagnostics: KimiClaudeCodeRuntimeProbeResult["diagnostics"],
+  diagnostics: GlmClaudeCodeRuntimeProbeResult["diagnostics"],
   error: unknown
-): KimiClaudeCodeRuntimeProbeResult => {
+): GlmClaudeCodeRuntimeProbeResult => {
   const message = sanitizeError(error);
   return {
     assistantText: null,
@@ -208,7 +208,7 @@ const buildFailureResult = (
 
 const categorizeFailure = (
   message: string
-): KimiClaudeCodeProbeFailureCategory => {
+): GlmClaudeCodeProbeFailureCategory => {
   const lower = message.toLowerCase();
   if (lower.includes("api key") || lower.includes("anthropic_api_key")) {
     return "auth_rejected";
@@ -246,7 +246,7 @@ const ensureProbeProjectPath = async (home: string): Promise<void> => {
 };
 
 const resolveProbeProjectPath = (home: string): string =>
-  path.join(home, ".claude", "projects", "kimi-claude-code-probe");
+  path.join(home, ".claude", "projects", "glm-claude-code-probe");
 
 const extractText = (message: ClaudeStreamMessage): string | null => {
   const content = message.message?.content ?? message.content;

@@ -7,7 +7,7 @@ import { SDKInstaller } from "../installer/sdk-installer";
 import { SDKMessageProcessor } from "../messaging/message-processor";
 import { ClaudeSessionStaleBindingError } from "../provider/claude-session-stale-binding-error";
 import { ClaudeSDKManager } from "../sdk/claude-sdk-manager";
-import { KimiClaudeCodeSessionStaleBindingError as GlmClaudeCodeSessionStaleBindingError } from "../session/kimi-claude-code-session-lifecycle";
+import { GlmClaudeCodeSessionStaleBindingError } from "../session/glm-claude-code-session-lifecycle";
 import { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {

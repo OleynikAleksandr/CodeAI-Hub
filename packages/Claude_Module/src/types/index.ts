@@ -5,15 +5,15 @@ export interface ClaudeInstallerPaths {
 }
 
 export {
-  DEFAULT_KIMI_CLAUDE_CODE_MODEL_ID,
-  findKimiClaudeCodeModelCapabilities,
-  isKnownKimiClaudeCodeModelId,
-  KIMI_CLAUDE_CODE_MODEL_CAPABILITIES,
-  type KimiClaudeCodeModelCapabilities,
-  type KimiClaudeCodeModelId,
-  type KimiClaudeCodeTelemetrySupport,
-  listKimiClaudeCodeModelCapabilities,
-} from "../kimi-claude-code/kimi-claude-code-model-capabilities";
+  DEFAULT_GLM_CLAUDE_CODE_MODEL_ID,
+  findGlmClaudeCodeModelCapabilities,
+  GLM_CLAUDE_CODE_MODEL_CAPABILITIES,
+  type GlmClaudeCodeModelCapabilities,
+  type GlmClaudeCodeModelId,
+  type GlmClaudeCodeTelemetrySupport,
+  isKnownGlmClaudeCodeModelId,
+  listGlmClaudeCodeModelCapabilities,
+} from "../glm-claude-code/glm-claude-code-model-capabilities";
 
 export {
   CLAUDE_MODEL_CAPABILITIES,

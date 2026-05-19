@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "21aefa580",
+  "lastRecordedCommit": "8c32a181a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase3-glm-adapter-facade",
-  "expectedCommitMessage": "refactor: replace kimi claude code provider facade with glm",
+  "currentTaskId": "phase3-glm-capabilities-lifecycle-diagnostics",
+  "expectedCommitMessage": "refactor: replace kimi claude code diagnostics with glm",
   "debt": {
-    "expectedCommitMessage": "refactor: replace kimi claude code provider facade with glm",
-    "preCommitHead": "21aefa580",
+    "expectedCommitMessage": "refactor: replace kimi claude code diagnostics with glm",
+    "preCommitHead": "8c32a181a",
     "stage": "commit_pending",
-    "taskId": "phase3-glm-adapter-facade"
+    "taskId": "phase3-glm-capabilities-lifecycle-diagnostics"
   }
 }
 ```
@@ -63,9 +63,9 @@
 1. [DONE] `phase3-glm-auth-config-profile` Replace Kimi-Claude-Code auth/config resolver with GLM config resolver: isolated config path, Z.AI API key source, base URL/model defaults and secret-safe diagnostics — scope: `packages/Claude_Module/src/auth/kimi-claude-code-auth-profile.ts, packages/Claude_Module/src/auth/glm-claude-code-auth-profile.ts, packages/Claude_Module/src/kimi-claude-code/kimi-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: replace kimi claude code auth with glm profile`.
 2. [DONE] Git Commit: `refactor: replace kimi claude code auth with glm profile` (hash: 21aefa580)
 3. [DONE] `phase3-glm-adapter-facade` Rename provider facade/auth manager exports from Kimi-Claude-Code to GLM-Claude-Code and keep Claude SDK workflow prompt/tool profile unchanged — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/glm-claude-code, packages/Claude_Module/src/index.ts, packages/Claude_Module/src/sdk/claude-runtime-profile.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: replace kimi claude code provider facade with glm`.
-4. [PENDING] Git Commit: `refactor: replace kimi claude code provider facade with glm` (hash: TBD)
-5. [TODO] `phase3-glm-capabilities-lifecycle-diagnostics` Rename model capabilities, stale-binding lifecycle and live probe runner to GLM with model defaults `glm-5.1`, `glm-5-turbo`, `glm-4.5-air` — scope: `packages/Claude_Module/src/kimi-claude-code/kimi-claude-code-model-capabilities.ts -> packages/Claude_Module/src/glm-claude-code/glm-claude-code-model-capabilities.ts, packages/Claude_Module/src/session/kimi-claude-code-session-lifecycle.ts -> packages/Claude_Module/src/session/glm-claude-code-session-lifecycle.ts, packages/Claude_Module/src/diagnostics/kimi-claude-code-runtime-probe-runner.ts -> packages/Claude_Module/src/diagnostics/glm-claude-code-runtime-probe-runner.ts`; expected commit: `refactor: replace kimi claude code diagnostics with glm`.
-6. [TODO] Git Commit: `refactor: replace kimi claude code diagnostics with glm` (hash: TBD)
+4. [DONE] Git Commit: `refactor: replace kimi claude code provider facade with glm` (hash: 8c32a181a)
+5. [DONE] `phase3-glm-capabilities-lifecycle-diagnostics` Rename model capabilities, stale-binding lifecycle and live probe runner to GLM with model defaults `glm-5.1`, `glm-5-turbo`, `glm-4.5-air` — scope: `packages/Claude_Module/src/glm-claude-code, packages/Claude_Module/src/session, packages/Claude_Module/src/diagnostics, packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/types/index.ts, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: replace kimi claude code diagnostics with glm`.
+6. [PENDING] Git Commit: `refactor: replace kimi claude code diagnostics with glm` (hash: TBD)
 
 ## Phase 4 — Core Provider Registry And Settings Contract (owner: Codex, updated: 2026-05-19)
 ### Stream: Core Registration

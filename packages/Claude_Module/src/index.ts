@@ -2,12 +2,12 @@ import { GlmClaudeCodeProviderAdapter as GlmClaudeCodeProviderAdapterImpl } from
 import { ClaudeProviderAdapter as ClaudeProviderAdapterImpl } from "./provider/claude-provider-adapter";
 
 export {
-  type KimiClaudeCodeProbeFailureCategory,
-  type KimiClaudeCodeProbeStatus,
-  type KimiClaudeCodeRuntimeProbeResult,
-  KimiClaudeCodeRuntimeProbeRunner,
-  type KimiClaudeCodeRuntimeProbeRunnerOptions,
-} from "./diagnostics/kimi-claude-code-runtime-probe-runner";
+  type GlmClaudeCodeProbeFailureCategory,
+  type GlmClaudeCodeProbeStatus,
+  type GlmClaudeCodeRuntimeProbeResult,
+  GlmClaudeCodeRuntimeProbeRunner,
+  type GlmClaudeCodeRuntimeProbeRunnerOptions,
+} from "./diagnostics/glm-claude-code-runtime-probe-runner";
 export type {
   GlmClaudeCodeProviderAdapterOptions,
   GlmClaudeCodeSessionListener,
@@ -42,16 +42,16 @@ export {
   type ClaudeModelAliasId,
   type ClaudeModelCapabilities,
   type ClaudeThinkingEffort,
-  DEFAULT_KIMI_CLAUDE_CODE_MODEL_ID,
+  DEFAULT_GLM_CLAUDE_CODE_MODEL_ID,
   findClaudeModelCapabilities,
-  findKimiClaudeCodeModelCapabilities,
+  findGlmClaudeCodeModelCapabilities,
+  GLM_CLAUDE_CODE_MODEL_CAPABILITIES,
+  type GlmClaudeCodeModelCapabilities,
+  type GlmClaudeCodeModelId,
+  type GlmClaudeCodeTelemetrySupport,
   isClaudeModelAliasId,
-  isKnownKimiClaudeCodeModelId,
-  KIMI_CLAUDE_CODE_MODEL_CAPABILITIES,
-  type KimiClaudeCodeModelCapabilities,
-  type KimiClaudeCodeModelId,
-  type KimiClaudeCodeTelemetrySupport,
-  listKimiClaudeCodeModelCapabilities,
+  isKnownGlmClaudeCodeModelId,
+  listGlmClaudeCodeModelCapabilities,
 } from "./types";
 
 import type {
