@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "989d41fa8",
+  "lastRecordedCommit": "e26949324",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase4-kimi-context-token-usage",
-  "expectedCommitMessage": "feat: normalize kimi context usage telemetry",
+  "currentTaskId": "phase4-kimi-usage-limits-reader",
+  "expectedCommitMessage": "feat: read kimi usage limits",
   "debt": {
-    "expectedCommitMessage": "feat: normalize kimi context usage telemetry",
-    "preCommitHead": "989d41fa8",
+    "expectedCommitMessage": "feat: read kimi usage limits",
+    "preCommitHead": "e26949324",
     "stage": "commit_pending",
-    "taskId": "phase4-kimi-context-token-usage"
+    "taskId": "phase4-kimi-usage-limits-reader"
   }
 }
 ```
@@ -95,11 +95,11 @@
 
 ### Stream: Kimi Context Window Telemetry
 1. [DONE] `phase4-kimi-context-token-usage` Нормализовать `StatusUpdate.context_tokens/max_context_tokens/context_usage` в Kimi Wire stream как provider-neutral `tokenUsage` для status panel и зарегистрировать Kimi source tests в quality gates — scope: `packages/Kimi_Module/src/messaging, knip.json, doc/TODO/todo-plan.md`; expected commit: `feat: normalize kimi context usage telemetry`.
-2. [PENDING] Git Commit: `feat: normalize kimi context usage telemetry` (hash: TBD)
+2. [DONE] Git Commit: `feat: normalize kimi context usage telemetry` (hash: e26949324)
 
 ### Stream: Kimi Usage Limits Endpoint
-1. [TODO] `phase4-kimi-usage-limits-reader` Добавить Kimi usage limits reader для `https://api.kimi.com/coding/v1/usages`, читающий API key из user config без логирования секрета — scope: `packages/Kimi_Module/src/provider/kimi-usage-limits-reader.ts, packages/Kimi_Module/src/provider/kimi-usage-limits-reader.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: read kimi usage limits`.
-2. [TODO] Git Commit: `feat: read kimi usage limits` (hash: TBD)
+1. [DONE] `phase4-kimi-usage-limits-reader` Добавить Kimi usage limits reader для `https://api.kimi.com/coding/v1/usages`, читающий API key из user config без логирования секрета — scope: `packages/Kimi_Module/src/provider/kimi-usage-limits-reader.ts, packages/Kimi_Module/src/provider/kimi-usage-limits-reader.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: read kimi usage limits`.
+2. [PENDING] Git Commit: `feat: read kimi usage limits` (hash: TBD)
 3. [TODO] `phase4-kimi-usage-limits-adapter` Подключить Kimi usage limits reader к `KimiProviderAdapter.refreshUsageLimits` и отдавать labels `5h`/`Weekly` через существующий Core stream contract — scope: `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/src/provider/kimi-usage-limits-reader.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md`; expected commit: `feat: broadcast kimi usage limits`.
 4. [TODO] Git Commit: `feat: broadcast kimi usage limits` (hash: TBD)
 
