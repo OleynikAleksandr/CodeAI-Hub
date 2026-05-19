@@ -29,11 +29,10 @@ Codex App Server уже является проверенным transport/runtim
 
 ## 3. Target Runtime Contract
 
-`kimi-codex` должен выглядеть для Core/UI как отдельный провайдер, а не как модель внутри существующего `codexCli`:
+`kimi-codex` должен выглядеть для Core/session runtime как отдельный провайдер, а не как модель внутри существующего `codexCli`:
 
 - отдельный provider id: `kimiCodex`;
 - отдельный provider home: `~/.codeai-hub/providers/kimi-codex/home`;
-- отдельная Settings tab/card `Kimi-Codex`;
 - отдельные model choices для Kimi 2.6 через Codex transport;
 - отдельная карточка провайдера на запуске `Description`, `Virtual Simulation`, managed technical steps и Development Tree node sessions;
 - отдельный provider label/color/status-line identity;
@@ -49,6 +48,15 @@ Codex App Server уже является проверенным transport/runtim
 - Codex startup disabled flags;
 - Codex turn-level `summary` handling where compatible;
 - Codex model/reasoning switch semantics where compatible.
+
+### Settings surface decision
+
+`kimi-codex` не должен дублировать всю Codex Settings страницу. Settings surface должен быть Codex-family reuse:
+
+- в пользовательском Settings можно разместить `Kimi-Codex` как дополнительный model/profile subsection внутри раздела Codex;
+- визуально пользователь видит те же настройки reasoning/summary/progress profile, потому что transport и instruction stack совпадают с Codex GPT 5.5;
+- persistence при этом должна хранить отдельный provider default для `kimiCodex`, чтобы start cards, provider inheritance, status-line identity и diagnostics не превращались в `codexCli`;
+- простое добавление Kimi как еще одной модели обычного `codexCli` допустимо только для локального spike, но не для product integration, потому что тогда теряются provider identity, отдельный home, отдельные artifacts, честное A/B сравнение и возможность показывать `Kimi-Codex` рядом с native `Kimi`.
 
 ## 4. Provider-Home Configuration
 
@@ -157,7 +165,7 @@ Goal: make `kimiCodex` selectable wherever providers are selectable.
 Tasks:
 
 1. Add provider id/type support to shared provider contracts and Core settings defaults.
-2. Add Settings `Kimi-Codex` tab/card with default model and reasoning/summary compatibility controls.
+2. Add Settings Codex-family subsection for `Kimi-Codex` defaults without duplicating the full Codex settings page; persist `kimiCodex` separately from `codexCli`.
 3. Add launch-card provider option for all workflow starts and Development Tree node starts.
 4. Add status-line/session header identity and provider tint.
 5. Preserve provider inheritance: if a step starts with `kimiCodex`, the next step defaults to `kimiCodex`.
@@ -192,7 +200,8 @@ Release must follow the standard confirmation gate before `build-all.sh`.
 
 The scope is accepted when:
 
-- Settings shows both `Kimi` and `Kimi-Codex` as separate providers.
+- Settings exposes `Kimi-Codex` defaults inside the Codex-family settings surface without duplicating the full Codex page.
+- Start cards show both `Kimi` and `Kimi-Codex` as separate providers.
 - Start cards show both providers and both can be selected.
 - `kimiCodex` starts a workflow session and responds through Codex App Server.
 - The session UI labels the provider as `Kimi-Codex`, not `Codex`.
