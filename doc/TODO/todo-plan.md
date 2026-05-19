@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "5ada97a01",
+  "lastRecordedCommit": "de2501c43",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-reasoning-hotfix-release-notes",
-  "expectedCommitMessage": "docs: prepare kimi reasoning hotfix release notes",
+  "currentTaskId": "phase8-kimi-reasoning-hotfix-release-build-start",
+  "expectedCommitMessage": "docs: mark kimi reasoning hotfix release build started",
   "debt": {
-    "expectedCommitMessage": "docs: prepare kimi reasoning hotfix release notes",
-    "preCommitHead": "5ada97a01",
+    "expectedCommitMessage": "docs: mark kimi reasoning hotfix release build started",
+    "preCommitHead": "de2501c43",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-reasoning-hotfix-release-notes"
+    "taskId": "phase8-kimi-reasoning-hotfix-release-build-start"
   }
 }
 ```
@@ -417,9 +417,9 @@
 
 ### Stream: Kimi Reasoning Hotfix Release Build
 1. [DONE] `phase8-kimi-reasoning-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.311 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi reasoning hotfix release notes`.
-2. [PENDING] Git Commit: `docs: prepare kimi reasoning hotfix release notes` (hash: TBD)
-3. [TODO] `phase8-kimi-reasoning-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi reasoning hotfix release build started`.
-4. [TODO] Git Commit: `docs: mark kimi reasoning hotfix release build started` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare kimi reasoning hotfix release notes` (hash: de2501c43)
+3. [DONE] `phase8-kimi-reasoning-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi reasoning hotfix release build started`.
+4. [PENDING] Git Commit: `docs: mark kimi reasoning hotfix release build started` (hash: TBD)
 5. [TODO] `phase8-kimi-reasoning-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi reasoning hotfix build`.
 6. [TODO] Git Commit: `chore: release kimi reasoning hotfix build` (hash: TBD)
 
