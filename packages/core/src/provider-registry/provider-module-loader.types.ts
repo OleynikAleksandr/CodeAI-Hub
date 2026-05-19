@@ -154,8 +154,6 @@ export type GlmClaudeCodeAdapterCtor = new (
   options: GlmClaudeCodeProviderAdapterOptions
 ) => ProviderAdapter;
 
-export type KimiClaudeCodeAdapterCtor = GlmClaudeCodeAdapterCtor;
-
 export type CodexAdapterCtor = new (
   options: CodexModuleOptions
 ) => ProviderAdapter;

@@ -10,7 +10,7 @@ import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
-  KimiClaudeCodeAdapterCtor,
+  GlmClaudeCodeAdapterCtor,
   MutableProviderDescriptor,
   ProviderAdapter,
   ProviderDescriptor,
@@ -27,13 +27,13 @@ interface ProviderDescriptorFactoryOptions {
   readonly codexAdapterCtor: CodexAdapterCtor;
   readonly config: CoreConfig;
   readonly createReporter: (scope: string) => ModuleReporter;
+  readonly glmClaudeCodeAdapterCtor: GlmClaudeCodeAdapterCtor;
   readonly handleAdapterConstructionFailure: (
     descriptor: MutableProviderDescriptor,
     error: unknown,
     failureLabel: string
   ) => void;
   readonly kimiAdapterCtor: KimiAdapterCtor;
-  readonly kimiClaudeCodeAdapterCtor: KimiClaudeCodeAdapterCtor;
 }
 
 export type KimiAdapterCtor = new (
@@ -99,7 +99,7 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
-  kimiClaudeCode: {
+  glmClaudeCode: {
     acceptsAppliedTurnConfig: true,
     appliedConfigIdentityKey: "effective_model_id",
     runtimeModelSelectionKey: "base_model_id",
@@ -120,7 +120,7 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   codexCli: false,
   geminiCli: true,
   kimiCode: true,
-  kimiClaudeCode: false,
+  glmClaudeCode: false,
 };
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
@@ -194,21 +194,21 @@ export const createKimiAdapterInstance = (
     reporter: options.createReporter("kimi"),
   });
 
-export const createKimiClaudeCodeAdapterInstance = (
+export const createGlmClaudeCodeAdapterInstance = (
   options: Pick<
     ProviderDescriptorFactoryOptions,
-    "config" | "createReporter" | "kimiClaudeCodeAdapterCtor"
+    "config" | "createReporter" | "glmClaudeCodeAdapterCtor"
   >
 ): ProviderAdapter =>
-  new options.kimiClaudeCodeAdapterCtor({
+  new options.glmClaudeCodeAdapterCtor({
     installerPaths: CLAUDE_INSTALLER_PATHS,
     workspace: {
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
-      defaultModel: options.config.kimiDefaultModel ?? "kimi-for-coding",
-      kimiClaudeProjectSlug: `${options.config.claudeProjectSlug}-kimi-claude-code`,
+      defaultModel: "glm-5.1",
+      glmClaudeProjectSlug: `${options.config.claudeProjectSlug}-glm-claude-code`,
       settingsPath: options.config.claudeSettingsPath,
     },
-    reporter: options.createReporter("kimi-claude-code"),
+    reporter: options.createReporter("glm-claude-code"),
   });
 
 const buildClaudeDescriptor = (
@@ -296,25 +296,25 @@ const buildKimiDescriptor = (
   return descriptor;
 };
 
-const buildKimiClaudeCodeDescriptor = (
+const buildGlmClaudeCodeDescriptor = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor => {
   const descriptor: MutableProviderDescriptor = {
     capabilities: {
-      modelSync: resolveProviderModelSyncCapabilities("kimiClaudeCode"),
+      modelSync: resolveProviderModelSyncCapabilities("glmClaudeCode"),
       requiresPostStopResume: false,
       supportsImmediateBinding:
-        resolveProviderImmediateBindingCapability("kimiClaudeCode"),
+        resolveProviderImmediateBindingCapability("glmClaudeCode"),
     },
-    id: "kimiClaudeCode",
-    name: "Claude-Kimi",
-    description: "Using Kimi 2.6 through Claude Agent SDK-compatible runtime",
+    id: "glmClaudeCode",
+    name: "GLM-Claude-Code",
+    description: "Using GLM 5.1 through Claude Agent SDK-compatible runtime",
     status: "active",
   };
   tryAttachAdapter(
-    () => createKimiClaudeCodeAdapterInstance(options),
+    () => createGlmClaudeCodeAdapterInstance(options),
     descriptor,
-    "Kimi-Claude-Code components are unavailable.",
+    "GLM-Claude-Code components are unavailable.",
     options.handleAdapterConstructionFailure
   );
   return descriptor;
@@ -327,7 +327,7 @@ export const createProviderDescriptors = (
   buildCodexDescriptor(options),
   buildGeminiDescriptor(),
   buildKimiDescriptor(options),
-  buildKimiClaudeCodeDescriptor(options),
+  buildGlmClaudeCodeDescriptor(options),
 ];
 
 export const createGeminiAdapterInstance = (

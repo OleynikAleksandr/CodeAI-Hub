@@ -140,7 +140,7 @@ export const loadClaudeAdapterCtor = (
   return bundled.ClaudeProviderAdapter;
 };
 
-export const loadKimiClaudeCodeAdapterCtor = (
+export const loadGlmClaudeCodeAdapterCtor = (
   overridePath: string | undefined,
   logger: Logger
 ): GlmClaudeCodeAdapterCtor => {
