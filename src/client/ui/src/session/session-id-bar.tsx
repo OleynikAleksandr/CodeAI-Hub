@@ -65,6 +65,14 @@ const readProviderLabelPrefix = (
   status: SessionStatusInfo,
   binding: SessionBindingInfo
 ): string | null => {
+  const rawScopeProviderId = status.providerScopeKey
+    ?.split(":")[0]
+    ?.trim()
+    .toLowerCase();
+  if (rawScopeProviderId) {
+    return rawScopeProviderId;
+  }
+
   const scopeKey = resolveStatusUsageLimitScopeKey(status, binding);
   const providerId = scopeKey?.split(":")[0]?.trim().toLowerCase();
   if (providerId) {
@@ -78,6 +86,8 @@ const readProviderLabelPrefix = (
       return "codex";
     case "geminiCli":
       return "gemini";
+    case "kimiCode":
+      return "kimi";
     default:
       if (status.providerSummary.toLowerCase().includes("claude")) {
         return "claude";
@@ -87,6 +97,9 @@ const readProviderLabelPrefix = (
       }
       if (status.providerSummary.toLowerCase().includes("gemini")) {
         return "gemini";
+      }
+      if (status.providerSummary.toLowerCase().includes("kimi")) {
+        return "kimi";
       }
       return null;
   }
@@ -102,6 +115,12 @@ const buildFallbackLabels = (
         currentSession: "Primary",
         currentWeekAllModels: "Secondary",
         currentWeekSonnetOnly: "Tertiary",
+      };
+    case "kimi":
+      return {
+        currentSession: "5h",
+        currentWeekAllModels: "Weekly",
+        currentWeekSonnetOnly: "Parallel",
       };
     default:
       return {

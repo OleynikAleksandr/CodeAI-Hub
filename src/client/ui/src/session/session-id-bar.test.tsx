@@ -75,6 +75,45 @@ test("SessionIdBar renders loading labels when provider usage telemetry is pendi
   assert.equal(html.includes("unavailable"), false);
 });
 
+test("SessionIdBar renders Kimi usage labels from live telemetry", () => {
+  Object.assign(globalThis, { React: { createElement } });
+
+  const html = renderToStaticMarkup(
+    createElement(SessionIdBar, {
+      binding: {
+        providerSessionId: "e2115c3e-62b9-46c2-8810-1652405a50e4",
+        status: "ready",
+      },
+      sessionId: "runtime-session-kimi",
+      status: {
+        connectionState: "idle",
+        continuityLock: { active: false, updatedAt: Date.now() },
+        providerScopeKey: "kimi:global",
+        providerSummary: "Kimi",
+        tokenUsage: { used: 0, limit: 262_144 },
+        updatedAt: Date.now(),
+        usageLimits: {
+          currentSession: {
+            percentUsed: 9,
+            resetsAt: "2026-05-19T12:50:12.630Z",
+          },
+          currentWeekAllModels: {
+            percentUsed: 13,
+            resetsAt: "2026-05-23T11:50:12.630Z",
+          },
+          currentWeekSonnetOnly: {
+            percentUsed: 0,
+          },
+        },
+      },
+    })
+  );
+
+  assert.equal(html.includes("5h 9%"), true);
+  assert.equal(html.includes("Weekly 13%"), true);
+  assert.equal(html.includes("Parallel 0%"), true);
+});
+
 test("SessionIdBar stays display-only and resolves pending labels from session status", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
 

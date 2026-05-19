@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "0d89f871b",
+  "lastRecordedCommit": "24d737af2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase2-context-percentage-stream-tests",
-  "expectedCommitMessage": "test: cover session context percentage updates",
+  "currentTaskId": "phase3-usage-limit-labels",
+  "expectedCommitMessage": "fix: clarify provider usage limit labels",
   "debt": {
-    "expectedCommitMessage": "test: cover session context percentage updates",
-    "preCommitHead": "0d89f871b",
+    "expectedCommitMessage": "fix: clarify provider usage limit labels",
+    "preCommitHead": "24d737af2",
     "stage": "commit_pending",
-    "taskId": "phase2-context-percentage-stream-tests"
+    "taskId": "phase3-usage-limit-labels"
   }
 }
 ```
@@ -77,12 +77,12 @@
 
 ### Stream: Context Percentage Projection Tests
 1. [DONE] `phase2-context-percentage-stream-tests` Добавить regression coverage для применения token usage stream snapshots к status panel projection без изменения lock/turn state — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts, src/client/project-manager/components/sessions/token-usage-stream.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover session context percentage updates`.
-2. [PENDING] Git Commit: `test: cover session context percentage updates` (hash: TBD)
+2. [DONE] Git Commit: `test: cover session context percentage updates` (hash: 24d737af2)
 
 ## Phase 3 — Provider Usage Limits Bar (owner: Codex, updated: 2026-05-19)
 ### Stream: Usage Limit Label Semantics
-1. [TODO] `phase3-usage-limit-labels` Уточнить labels для 5-часового и weekly provider usage rows без fake values; Kimi остается unavailable, если source не подтвержден — scope: `src/client/ui/src/session/session-id-bar.tsx, src/client/ui/src/session/session-id-bar.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md`; expected commit: `fix: clarify provider usage limit labels`.
-2. [TODO] Git Commit: `fix: clarify provider usage limit labels` (hash: TBD)
+1. [DONE] `phase3-usage-limit-labels` Уточнить labels для 5-часового и weekly provider usage rows без fake values; Kimi остается unavailable, если source не подтвержден — scope: `src/client/ui/src/session/session-id-bar.tsx, src/client/ui/src/session/session-id-bar.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md`; expected commit: `fix: clarify provider usage limit labels`.
+2. [PENDING] Git Commit: `fix: clarify provider usage limit labels` (hash: TBD)
 
 ### Stream: Provider Limit Normalization Tests
 1. [TODO] `phase3-provider-limit-normalization-tests` Добавить/уточнить provider-specific tests для 5-hour/weekly semantics в usage-limits payloads и reset labels — scope: `packages/core/src/provider-usage-limits, packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover provider usage limit semantics`.

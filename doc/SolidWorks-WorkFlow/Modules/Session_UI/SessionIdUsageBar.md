@@ -55,7 +55,7 @@
 Особенности:
 - для `claude/codex` fallback labels = `Session`, `Weekly`, `Model Weekly`;
 - для `gemini` fallback labels = `Primary`, `Secondary`, `Tertiary`;
-- для `kimi` live labels должны быть explicit: `5h`, `Weekly`, `Parallel` или близкие короткие user-facing equivalents, потому что Kimi endpoint возвращает rolling 300-minute window, weekly quota и concurrency limit;
+- для `kimi` labels = `5h`, `Weekly`, `Parallel`, потому что Kimi endpoint возвращает rolling 300-minute window, weekly quota и concurrency limit;
 - третья строка рендерится только если для неё реально известен `percentUsed`;
 - reset label строится из `resetsAt` и подставляется в подпись строки.
 
