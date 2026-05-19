@@ -1,3 +1,18 @@
+# Plan Closeout: kimi-claude-code-provider-planning-2026-05-19
+
+**Created:** 2026-05-19T18:23:11.381Z
+**Acceptance:** Релиз 1.2.317 принят пользователем: Claude-Kimi работает, но для Kimi не дает преимущества перед native Wire provider; направление закрывается, следующий scope заменяет эксперимент на GLM-Claude-Code.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase15-kimi-claude-code-closeout
+**Expected Commit:** docs: close kimi claude code provider experiment scope
+**Last Recorded Commit:** 64dcc1283
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md",
   "currentTaskId": "phase15-kimi-claude-code-closeout",
   "expectedCommitMessage": "docs: close kimi claude code provider experiment scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close kimi claude code provider experiment scope",
-    "preCommitHead": "64dcc1283",
-    "stage": "commit_pending",
-    "taskId": "phase15-kimi-claude-code-closeout"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -163,6 +173,7 @@
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-19)
 ### Stream: Scope Closeout
-1. [DONE] `phase15-kimi-claude-code-closeout` После явного acceptance архивировать active plan, disposition planning source, обновить Docs Index и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi claude code provider experiment scope`.
-2. [PENDING] Git Commit: `docs: close kimi claude code provider experiment scope` (hash: TBD)
+1. [IN_PROGRESS] `phase15-kimi-claude-code-closeout` После явного acceptance архивировать active plan, disposition planning source, обновить Docs Index и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi claude code provider experiment scope`.
+2. [TODO] Git Commit: `docs: close kimi claude code provider experiment scope` (hash: TBD)
 3. [TODO] `phase15-kimi-claude-code-post-closeout-anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle — scope: handoff only; expected commit: none.
+````
