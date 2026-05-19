@@ -7,7 +7,7 @@ import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
-  KimiClaudeCodeAdapterCtor,
+  GlmClaudeCodeAdapterCtor,
 } from "./provider-module-loader.types";
 
 type GeminiAdapterResolution =
@@ -143,28 +143,25 @@ export const loadClaudeAdapterCtor = (
 export const loadKimiClaudeCodeAdapterCtor = (
   overridePath: string | undefined,
   logger: Logger
-): KimiClaudeCodeAdapterCtor => {
+): GlmClaudeCodeAdapterCtor => {
   if (overridePath) {
     try {
       const overrideEntry = path.join(overridePath, "dist", "index.js");
       const loaded = dynamicRequire(overrideEntry) as {
-        readonly KimiClaudeCodeProviderAdapter?: KimiClaudeCodeAdapterCtor;
+        readonly GlmClaudeCodeProviderAdapter?: GlmClaudeCodeAdapterCtor;
       };
-      if (loaded?.KimiClaudeCodeProviderAdapter) {
-        logger.info("Loaded Kimi-Claude-Code adapter from Claude override", {
+      if (loaded?.GlmClaudeCodeProviderAdapter) {
+        logger.info("Loaded GLM-Claude-Code adapter from Claude override", {
           overridePath,
         });
-        return loaded.KimiClaudeCodeProviderAdapter;
+        return loaded.GlmClaudeCodeProviderAdapter;
       }
-      logger.warn(
-        "Override path missing KimiClaudeCodeProviderAdapter export",
-        {
-          overridePath,
-        }
-      );
+      logger.warn("Override path missing GlmClaudeCodeProviderAdapter export", {
+        overridePath,
+      });
     } catch (error) {
       logger.error(
-        "Failed to load Kimi-Claude-Code module override",
+        "Failed to load GLM-Claude-Code module override",
         error as Error,
         {
           overridePath,
@@ -173,9 +170,9 @@ export const loadKimiClaudeCodeAdapterCtor = (
     }
   }
   const bundled = dynamicRequire("@codeai-hub/claude-module") as {
-    readonly KimiClaudeCodeProviderAdapter: KimiClaudeCodeAdapterCtor;
+    readonly GlmClaudeCodeProviderAdapter: GlmClaudeCodeAdapterCtor;
   };
-  return bundled.KimiClaudeCodeProviderAdapter;
+  return bundled.GlmClaudeCodeProviderAdapter;
 };
 
 export const loadCodexAdapterCtor = (

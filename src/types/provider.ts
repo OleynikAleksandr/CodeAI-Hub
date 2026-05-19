@@ -2,8 +2,8 @@ export type KnownProviderStackId =
   | "claudeCodeCli"
   | "codexCli"
   | "geminiCli"
-  | "kimiCode"
-  | "kimiClaudeCode";
+  | "glmClaudeCode"
+  | "kimiCode";
 export type ProviderStackId = string;
 
 export interface ProviderStackDescriptor {
@@ -18,8 +18,8 @@ const PROVIDER_TITLE_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Claude",
   codexCli: "Codex",
   geminiCli: "Gemini",
+  glmClaudeCode: "GLM-Claude-Code",
   kimiCode: "Kimi",
-  kimiClaudeCode: "Claude-Kimi",
 };
 
 export const getDefaultProviderTitle = (providerId: ProviderStackId): string =>
@@ -28,8 +28,8 @@ const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   claudeCodeCli: "Using your authentication Claude Code CLI",
   codexCli: "Using your authentication Codex CLI",
   geminiCli: "Using your authentication Gemini CLI",
+  glmClaudeCode: "Using GLM 5.1 through Claude Agent SDK-compatible runtime",
   kimiCode: "Using your authentication Kimi CLI",
-  kimiClaudeCode: "Using Kimi 2.6 through Claude Agent SDK-compatible runtime",
 };
 
 export const getDefaultProviderDescription = (

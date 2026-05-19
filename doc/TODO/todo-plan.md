@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "8c32a181a",
+  "lastRecordedCommit": "6fa8f2344",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase3-glm-capabilities-lifecycle-diagnostics",
-  "expectedCommitMessage": "refactor: replace kimi claude code diagnostics with glm",
+  "currentTaskId": "phase4-glm-provider-types-loader",
+  "expectedCommitMessage": "refactor: register glm claude code provider type",
   "debt": {
-    "expectedCommitMessage": "refactor: replace kimi claude code diagnostics with glm",
-    "preCommitHead": "8c32a181a",
+    "expectedCommitMessage": "refactor: register glm claude code provider type",
+    "preCommitHead": "6fa8f2344",
     "stage": "commit_pending",
-    "taskId": "phase3-glm-capabilities-lifecycle-diagnostics"
+    "taskId": "phase4-glm-provider-types-loader"
   }
 }
 ```
@@ -65,12 +65,12 @@
 3. [DONE] `phase3-glm-adapter-facade` Rename provider facade/auth manager exports from Kimi-Claude-Code to GLM-Claude-Code and keep Claude SDK workflow prompt/tool profile unchanged — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/glm-claude-code, packages/Claude_Module/src/index.ts, packages/Claude_Module/src/sdk/claude-runtime-profile.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: replace kimi claude code provider facade with glm`.
 4. [DONE] Git Commit: `refactor: replace kimi claude code provider facade with glm` (hash: 8c32a181a)
 5. [DONE] `phase3-glm-capabilities-lifecycle-diagnostics` Rename model capabilities, stale-binding lifecycle and live probe runner to GLM with model defaults `glm-5.1`, `glm-5-turbo`, `glm-4.5-air` — scope: `packages/Claude_Module/src/glm-claude-code, packages/Claude_Module/src/session, packages/Claude_Module/src/diagnostics, packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/types/index.ts, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: replace kimi claude code diagnostics with glm`.
-6. [PENDING] Git Commit: `refactor: replace kimi claude code diagnostics with glm` (hash: TBD)
+6. [DONE] Git Commit: `refactor: replace kimi claude code diagnostics with glm` (hash: 6fa8f2344)
 
 ## Phase 4 — Core Provider Registry And Settings Contract (owner: Codex, updated: 2026-05-19)
 ### Stream: Core Registration
-1. [TODO] `phase4-glm-provider-types-loader` Replace Core provider loader/type exports from `kimiClaudeCode` to `glmClaudeCode` without touching native Kimi provider id — scope: `packages/core/src/provider-registry/provider-module-loader.types.ts, packages/core/src/provider-registry/provider-module-loader.ts, src/types/provider.ts`; expected commit: `refactor: register glm claude code provider type`.
-2. [TODO] Git Commit: `refactor: register glm claude code provider type` (hash: TBD)
+1. [DONE] `phase4-glm-provider-types-loader` Replace Core provider loader/type exports from `kimiClaudeCode` to `glmClaudeCode` without touching native Kimi provider id — scope: `packages/core/src/provider-registry/provider-module-loader.types.ts, packages/core/src/provider-registry/provider-module-loader.ts, src/types/provider.ts`; expected commit: `refactor: register glm claude code provider type`.
+2. [PENDING] Git Commit: `refactor: register glm claude code provider type` (hash: TBD)
 3. [TODO] `phase4-glm-provider-descriptor-recovery` Replace descriptor factory, registry index and recovery hint with GLM provider name, reporter namespace and missing-key hint — scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/index.ts, packages/core/src/provider-registry/provider-recovery-coordinator.ts`; expected commit: `refactor: replace kimi claude code registry descriptor with glm`.
 4. [TODO] Git Commit: `refactor: replace kimi claude code registry descriptor with glm` (hash: TBD)
 5. [TODO] `phase4-glm-turn-config-settings` Replace settings snapshot and applied turn config keys with `providers.glmClaudeCode`, GLM model defaults and GLM env override names — scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `refactor: resolve glm claude code turn config`.

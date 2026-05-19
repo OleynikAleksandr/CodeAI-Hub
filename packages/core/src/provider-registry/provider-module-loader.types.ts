@@ -1,6 +1,6 @@
 import type {
   ClaudeModuleOptions,
-  KimiClaudeCodeProviderAdapterOptions,
+  GlmClaudeCodeProviderAdapterOptions,
 } from "@codeai-hub/claude-module";
 import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
 import type { GeminiModuleOptions } from "@codeai-hub/gemini-module";
@@ -150,9 +150,11 @@ export type ClaudeAdapterCtor = new (
   options: ClaudeModuleOptions
 ) => ProviderAdapter;
 
-export type KimiClaudeCodeAdapterCtor = new (
-  options: KimiClaudeCodeProviderAdapterOptions
+export type GlmClaudeCodeAdapterCtor = new (
+  options: GlmClaudeCodeProviderAdapterOptions
 ) => ProviderAdapter;
+
+export type KimiClaudeCodeAdapterCtor = GlmClaudeCodeAdapterCtor;
 
 export type CodexAdapterCtor = new (
   options: CodexModuleOptions
