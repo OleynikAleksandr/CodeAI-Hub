@@ -28,9 +28,9 @@ import {
 } from "./general-response-mode/response-mode-state";
 import {
   areKimiProviderSettingsEqual,
-  type KimiClaudeCodeSettings,
+  type GlmClaudeCodeSettings,
   type KimiSettings,
-  mapKimiClaudeCodeSettings,
+  mapGlmClaudeCodeSettings,
   mapKimiSettings,
 } from "./kimi-settings-state";
 import type {
@@ -125,7 +125,7 @@ export interface Settings {
     readonly codex: CodexSettings;
     readonly gemini: GeminiSettingsWithDisplaySync;
     readonly kimi?: KimiSettings;
-    readonly kimiClaudeCode?: KimiClaudeCodeSettings;
+    readonly glmClaudeCode?: GlmClaudeCodeSettings;
   };
 }
 
@@ -392,8 +392,8 @@ export const mapSettingsSnapshot = (
       mapAutoUpdateSettings,
       mapThinkingDisplaySyncEnabled
     ),
-    kimiClaudeCode: mapKimiClaudeCodeSettings(
-      value?.providers?.kimiClaudeCode,
+    glmClaudeCode: mapGlmClaudeCodeSettings(
+      value?.providers?.glmClaudeCode,
       mapThinkingDisplaySyncEnabled
     ),
   },
@@ -495,6 +495,6 @@ export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) &&
   areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) &&
   areKimiProviderSettingsEqual(
-    left.providers.kimiClaudeCode,
-    right.providers.kimiClaudeCode
+    left.providers.glmClaudeCode,
+    right.providers.glmClaudeCode
   );

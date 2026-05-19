@@ -1,7 +1,7 @@
 import { DEFAULT_KIMI_MODEL_ID } from "../../../../../types/kimi-model-registry";
 import type {
   RawAutoUpdateSettings,
-  RawKimiClaudeCodeSettings,
+  RawGlmClaudeCodeSettings,
   RawKimiSettings,
 } from "./settings-state-raw";
 
@@ -15,10 +15,28 @@ export interface KimiSettings {
   readonly thinkingDisplaySyncEnabled: boolean;
 }
 
-export interface KimiClaudeCodeSettings {
-  readonly defaultModel: typeof DEFAULT_KIMI_MODEL_ID;
+export interface GlmClaudeCodeSettings {
+  readonly apiKey: string;
+  readonly baseUrl: string;
+  readonly configPath: string;
+  readonly defaultModel: string;
+  readonly haikuModel: string;
+  readonly opusModel: string;
+  readonly sonnetModel: string;
   readonly thinkingDisplaySyncEnabled: boolean;
 }
+
+const DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH =
+  "~/.codeai-hub/providers/glm-claude-code/config.json";
+const DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
+const DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.1";
+const DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5-turbo";
+const DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-4.5-air";
+
+const mapOptionalString = (value: unknown, fallback: string): string =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : fallback;
 
 export const mapKimiSettings = (
   value: RawKimiSettings | undefined,
@@ -34,17 +52,38 @@ export const mapKimiSettings = (
   ),
 });
 
-export const mapKimiClaudeCodeSettings = (
-  value: RawKimiClaudeCodeSettings | undefined,
+export const mapGlmClaudeCodeSettings = (
+  value: RawGlmClaudeCodeSettings | undefined,
   mapThinkingDisplaySyncEnabled: (value: unknown) => boolean
-): KimiClaudeCodeSettings => ({
-  defaultModel: DEFAULT_KIMI_MODEL_ID,
+): GlmClaudeCodeSettings => ({
+  apiKey: mapOptionalString(value?.apiKey, ""),
+  baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_CLAUDE_CODE_BASE_URL),
+  configPath: mapOptionalString(
+    value?.configPath,
+    DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH
+  ),
+  defaultModel: mapOptionalString(
+    value?.defaultModel,
+    DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+  ),
+  haikuModel: mapOptionalString(
+    value?.haikuModel,
+    DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL
+  ),
+  opusModel: mapOptionalString(
+    value?.opusModel,
+    DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+  ),
+  sonnetModel: mapOptionalString(
+    value?.sonnetModel,
+    DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL
+  ),
   thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
     value?.thinkingDisplaySyncEnabled
   ),
 });
 
 export const areKimiProviderSettingsEqual = (
-  left: KimiSettings | KimiClaudeCodeSettings | undefined,
-  right: KimiSettings | KimiClaudeCodeSettings | undefined
+  left: KimiSettings | GlmClaudeCodeSettings | undefined,
+  right: KimiSettings | GlmClaudeCodeSettings | undefined
 ): boolean => JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
