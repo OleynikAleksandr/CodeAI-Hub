@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "a00f69188",
+  "lastRecordedCommit": "81a631885",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-managed-agent-release-build",
-  "expectedCommitMessage": "chore: release kimi managed agent profile build",
+  "currentTaskId": "phase8-kimi-progress-cadence",
+  "expectedCommitMessage": "fix: strengthen kimi visible progress cadence",
   "debt": {
-    "expectedCommitMessage": "chore: release kimi managed agent profile build",
-    "preCommitHead": "a00f69188",
+    "expectedCommitMessage": "fix: strengthen kimi visible progress cadence",
+    "preCommitHead": "81a631885",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-managed-agent-release-build"
+    "taskId": "phase8-kimi-progress-cadence"
   }
 }
 ```
@@ -450,7 +450,15 @@
    - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.312.vsix`, package size `48M`.
    - Result: release tarballs available in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: `kimi-module-1.2.312.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.312.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.312.tar.bz2`, provider/UI tarballs.
    - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
-6. [PENDING] Git Commit: `chore: release kimi managed agent profile build` (hash: TBD)
+6. [DONE] Git Commit: `chore: release kimi managed agent profile build` (hash: 81a631885)
+
+### Stream: Acceptance Bug Fix — Kimi Progress Cadence And Reasoning Panel
+1. [DONE] `phase8-kimi-progress-cadence` Усилить managed Kimi system prompt: требовать user-visible progress summaries чаще, минимум два промежуточных ordinary assistant updates для multi-minute managed artifact work, и переносить user-safe operational summary из reasoning в обычный текст — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: strengthen kimi visible progress cadence`.
+2. [PENDING] Git Commit: `fix: strengthen kimi visible progress cadence` (hash: TBD)
+3. [TODO] `phase8-kimi-thinking-panel-standalone` Исправить dialog reasoning/thinking card: `role="thinking"` должен рендериться самостоятельной плашкой без отрицательного overlay над следующим assistant message, аналогично current Codex standalone thinking card — scope: `media/session-view.css, doc/TODO/todo-plan.md`; expected commit: `fix: render thinking panels standalone`.
+4. [TODO] Git Commit: `fix: render thinking panels standalone` (hash: TBD)
+5. [TODO] `phase8-kimi-progress-panel-verification` Выполнить targeted verification для Kimi prompt/profile и Session UI thinking panel CSS; зафиксировать результаты — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi progress panel verification`.
+6. [TODO] Git Commit: `docs: record kimi progress panel verification` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
