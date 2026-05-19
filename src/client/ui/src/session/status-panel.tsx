@@ -36,6 +36,7 @@ const PROVIDER_BUTTON_CLASS: Record<ProviderStackId, string> = {
   codexCli: "session-status-button--codex",
   geminiCli: "session-status-button--gemini",
   kimiCode: "session-status-button--kimi",
+  kimiClaudeCode: "session-status-button--kimi",
 };
 
 const resolveProviderButtonClass = (providerId: ProviderStackId): string =>

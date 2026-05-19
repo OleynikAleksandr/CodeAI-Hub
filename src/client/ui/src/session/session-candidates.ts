@@ -9,6 +9,7 @@ export const providerIdSet = new Set<ProviderStackId>([
   "codexCli",
   "geminiCli",
   "kimiCode",
+  "kimiClaudeCode",
 ]);
 
 const isProviderDescriptorCandidate = (

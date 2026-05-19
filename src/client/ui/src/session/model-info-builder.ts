@@ -10,6 +10,7 @@ type ProviderKey = "claude" | "codex" | "gemini";
 type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi Code";
+const KIMI_CLAUDE_CODE_MODEL_DISPLAY_NAME = "Kimi 2.6 / Claude Code";
 const KIMI_DEFAULT_MODEL_ID = "kimi-for-coding";
 
 const PROVIDER_ID_TO_KEY: Record<SettingsBackedProviderId, ProviderKey> = {
@@ -50,17 +51,25 @@ const isSettingsBackedProviderId = (
   providerId === "codexCli" ||
   providerId === "geminiCli";
 
-const formatKimiSessionModelDisplayName = (modelId: string): string =>
-  resolveKimiBaseModelId(modelId) === KIMI_DEFAULT_MODEL_ID
-    ? KIMI_DEFAULT_MODEL_DISPLAY_NAME
-    : formatModelDisplayName(resolveKimiBaseModelId(modelId));
+const formatKimiSessionModelDisplayName = (
+  providerId: ProviderStackId,
+  modelId: string
+): string => {
+  const baseModelId = resolveKimiBaseModelId(modelId);
+  if (baseModelId !== KIMI_DEFAULT_MODEL_ID) {
+    return formatModelDisplayName(baseModelId);
+  }
+  return providerId === "kimiClaudeCode"
+    ? KIMI_CLAUDE_CODE_MODEL_DISPLAY_NAME
+    : KIMI_DEFAULT_MODEL_DISPLAY_NAME;
+};
 
 const resolveFallbackModelDisplayName = (
   providerId: ProviderStackId,
   modelId: string
 ): string => {
-  if (providerId === "kimiCode") {
-    return formatKimiSessionModelDisplayName(modelId);
+  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
+    return formatKimiSessionModelDisplayName(providerId, modelId);
   }
   if (!isSettingsBackedProviderId(providerId)) {
     return formatModelDisplayName(parseEffectiveModelId(modelId).baseModelId);
@@ -162,13 +171,18 @@ export const buildModelInfo = (
     };
   }
 
-  if (providerId === "kimiCode") {
-    const modelId = effectiveModelId ?? KIMI_DEFAULT_MODEL_ID;
+  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
+    const settingsModelId =
+      providerId === "kimiClaudeCode"
+        ? settings.providers.kimiClaudeCode?.defaultModel
+        : settings.providers.kimi?.defaultModel;
+    const modelId =
+      effectiveModelId ?? settingsModelId ?? KIMI_DEFAULT_MODEL_ID;
     return {
       providerId,
       providerName: getDefaultProviderTitle(providerId),
       modelId,
-      modelDisplayName: formatKimiSessionModelDisplayName(modelId),
+      modelDisplayName: formatKimiSessionModelDisplayName(providerId, modelId),
       source,
     };
   }
