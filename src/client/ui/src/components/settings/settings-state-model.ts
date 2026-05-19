@@ -11,7 +11,6 @@ import {
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_LEVEL,
 } from "../../../../../types/codex-model-registry";
-import { DEFAULT_KIMI_MODEL_ID } from "../../../../../types/kimi-model-registry";
 import {
   areClaudeThinkingSettingsEqual,
   type ClaudeThinkingSettingsState,
@@ -27,6 +26,13 @@ import {
   type GeneralResponsePolicySettings,
   mapGeneralResponsePolicy,
 } from "./general-response-mode/response-mode-state";
+import {
+  areKimiProviderSettingsEqual,
+  type KimiClaudeCodeSettings,
+  type KimiSettings,
+  mapKimiClaudeCodeSettings,
+  mapKimiSettings,
+} from "./kimi-settings-state";
 import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
@@ -34,7 +40,6 @@ import type {
   RawGeminiSettings,
   RawGeneralLocalizationSettings,
   RawGeneralSettings,
-  RawKimiSettings,
   RawLocalizationCategorySettings,
   RawSettingsSnapshot,
 } from "./settings-state-raw";
@@ -113,11 +118,6 @@ interface CodexSettings {
 interface GeminiSettingsWithDisplaySync extends GeminiSettings {
   readonly thinkingDisplaySyncEnabled: boolean;
 }
-interface KimiSettings {
-  readonly autoUpdate: AutoUpdateSettings;
-  readonly defaultModel: typeof DEFAULT_KIMI_MODEL_ID;
-  readonly thinkingDisplaySyncEnabled: boolean;
-}
 export interface Settings {
   readonly general: GeneralSettings;
   readonly providers: {
@@ -125,6 +125,7 @@ export interface Settings {
     readonly codex: CodexSettings;
     readonly gemini: GeminiSettingsWithDisplaySync;
     readonly kimi?: KimiSettings;
+    readonly kimiClaudeCode?: KimiClaudeCodeSettings;
   };
 }
 
@@ -149,7 +150,6 @@ const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce<
   accumulator[model.id] = DEFAULT_CODEX_REASONING_LEVEL;
   return accumulator;
 }, {});
-
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
 const mapLocalizationString = (value: unknown, fallback: string): string => {
@@ -379,14 +379,6 @@ const mapCodexSettings = (
   ),
 });
 
-const mapKimiSettings = (value: RawKimiSettings | undefined): KimiSettings => ({
-  autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-  defaultModel: DEFAULT_KIMI_MODEL_ID,
-  thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
-    value?.thinkingDisplaySyncEnabled
-  ),
-});
-
 export const mapSettingsSnapshot = (
   value: RawSettingsSnapshot | undefined
 ): Settings => ({
@@ -395,13 +387,20 @@ export const mapSettingsSnapshot = (
     claude: mapClaudeSettings(value?.providers?.claude),
     codex: mapCodexSettings(value?.providers?.codex),
     gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini),
-    kimi: mapKimiSettings(value?.providers?.kimi),
+    kimi: mapKimiSettings(
+      value?.providers?.kimi,
+      mapAutoUpdateSettings,
+      mapThinkingDisplaySyncEnabled
+    ),
+    kimiClaudeCode: mapKimiClaudeCodeSettings(
+      value?.providers?.kimiClaudeCode,
+      mapThinkingDisplaySyncEnabled
+    ),
   },
 });
 
 export const createDefaultSettings = (): Settings =>
   mapSettingsSnapshot(undefined);
-
 const areAutoUpdateSettingsEqual = (
   left: AutoUpdateSettings,
   right: AutoUpdateSettings
@@ -439,7 +438,6 @@ const areLocalizationCategoriesEqual = (
   left.reasoning === right.reasoning &&
   left.uiHelperText === right.uiHelperText &&
   left.uiLabels === right.uiLabels;
-
 const areLocalizationSettingsEqual = (
   left: LocalizationSettings,
   right: LocalizationSettings
@@ -495,5 +493,8 @@ export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areClaudeSettingsEqual(left.providers.claude, right.providers.claude) &&
   areCodexSettingsEqual(left.providers.codex, right.providers.codex) &&
   areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) &&
-  JSON.stringify(left.providers.kimi ?? null) ===
-    JSON.stringify(right.providers.kimi ?? null);
+  areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) &&
+  areKimiProviderSettingsEqual(
+    left.providers.kimiClaudeCode,
+    right.providers.kimiClaudeCode
+  );

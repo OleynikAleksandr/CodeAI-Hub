@@ -43,6 +43,11 @@ export interface KimiSettingsSnapshot {
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
+export interface KimiClaudeCodeSettingsSnapshot {
+  readonly defaultModel?: unknown;
+  readonly thinkingDisplaySyncEnabled?: unknown;
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
@@ -142,6 +147,20 @@ export const loadKimiSettingsSnapshot = (
   return {
     defaultModel: kimi.defaultModel,
     thinkingDisplaySyncEnabled: kimi.thinkingDisplaySyncEnabled,
+  };
+};
+
+export const loadKimiClaudeCodeSettingsSnapshot = (
+  settingsPath: string
+): KimiClaudeCodeSettingsSnapshot | null => {
+  const kimiClaudeCode = loadProviderSnapshot(settingsPath, "kimiClaudeCode");
+  if (!kimiClaudeCode) {
+    return null;
+  }
+
+  return {
+    defaultModel: kimiClaudeCode.defaultModel,
+    thinkingDisplaySyncEnabled: kimiClaudeCode.thinkingDisplaySyncEnabled,
   };
 };
 

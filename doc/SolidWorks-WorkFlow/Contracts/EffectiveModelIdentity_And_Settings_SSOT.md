@@ -1,5 +1,5 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
-
+ 
 **Status:** Implemented on `main`
 **Updated:** 2026-05-02
 **Owner:** Oleksandr + Codex
@@ -71,6 +71,13 @@ Provider-neutral payload, вычисленный Core-ом из `session.modelBi
 Persisted user-facing settings state, из которого Core вычисляет default identity for a new session binding and presentation/localization policy.
 Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth for a bound session identity.
 Settings snapshot reads may be cached only as short, path-scoped read-through snapshots. Core-owned settings save/reset/default-materialization paths must invalidate the canonical path immediately after write; provider-local fallback caches are bounded helpers and never become a second settings owner.
+
+Kimi provider settings are split by runtime:
+
+- `providers.kimi` belongs to the native Kimi Wire/CLI provider.
+- `providers.kimiClaudeCode` belongs to Kimi 2.6 through the Claude Code-compatible runtime.
+
+Both may default to the same base model (`kimi-for-coding`), but they must remain separate persisted defaults because they run under different provider process/session/turn envelopes.
 
 Presentation-only/runtime-localization fields, such as `thinkingDisplaySyncEnabled`, `reasoningEngineId` / `reasoningLanguage` (the dedicated reasoning translation pair after the UI/Reasoning translation split) и их deprecated legacy aliases `translationEngineId` / `messagesForTheUserLanguage`, live in the same persisted settings snapshot / applied-config envelope but are intentionally excluded from effective identity resolution. Они управляют visible thinking presentation и target language for translated reasoning/thought bubbles, and must not mutate `modelId` or applied turn config identity. Both legacy aliases are threaded with the same resolved value as the canonical reasoning fields until the provider adapters finish migrating.
 

@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "58456d15c",
+  "lastRecordedCommit": "067943ad7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase6-kimi-claude-code-package-mapping",
-  "expectedCommitMessage": "feat: package kimi claude code provider runtime",
+  "currentTaskId": "phase7-kimi-claude-code-settings-schema",
+  "expectedCommitMessage": "feat: add kimi claude code settings schema",
   "debt": {
-    "expectedCommitMessage": "feat: package kimi claude code provider runtime",
-    "preCommitHead": "58456d15c",
+    "expectedCommitMessage": "feat: add kimi claude code settings schema",
+    "preCommitHead": "067943ad7",
     "stage": "commit_pending",
-    "taskId": "phase6-kimi-claude-code-package-mapping"
+    "taskId": "phase7-kimi-claude-code-settings-schema"
   }
 }
 ```
@@ -93,12 +93,12 @@
 3. [DONE] `phase6-kimi-claude-code-runtime-loader` Добавить loader/descriptor/install path для Kimi-Claude-Code, переиспользуя Claude runtime artifact только если это сохраняет отдельный provider namespace — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: load kimi claude code provider runtime`.
 4. [DONE] Git Commit: `feat: load kimi claude code provider runtime` (hash: 58456d15c)
 5. [DONE] `phase6-kimi-claude-code-package-mapping` Обновить package/build mapping только если отдельный provider artifact или manifest entry реально нужен после loader implementation; зафиксировать no-extra-artifact decision, если runtime живет внутри Claude module — scope: `scripts, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `feat: package kimi claude code provider runtime`.
-6. [PENDING] Git Commit: `feat: package kimi claude code provider runtime` (hash: TBD)
+6. [DONE] Git Commit: `feat: package kimi claude code provider runtime` (hash: 067943ad7)
 
 ## Phase 7 — Settings And Effective Model Identity (owner: Codex, updated: 2026-05-19)
 ### Stream: Settings Defaults
-1. [TODO] `phase7-kimi-claude-code-settings-schema` Добавить settings schema/defaults под `providers.kimiClaudeCode` с отдельным хранением от Claude и native Kimi — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: add kimi claude code settings schema`.
-2. [TODO] Git Commit: `feat: add kimi claude code settings schema` (hash: TBD)
+1. [DONE] `phase7-kimi-claude-code-settings-schema` Добавить settings schema/defaults под `providers.kimiClaudeCode` с отдельным хранением от Claude и native Kimi — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: add kimi claude code settings schema`.
+2. [PENDING] Git Commit: `feat: add kimi claude code settings schema` (hash: TBD)
 3. [TODO] `phase7-kimi-claude-code-settings-ui` Добавить Kimi-Claude-Code subsection в Claude-family Settings surface без отдельного лишнего tab, если текущая UI-архитектура это поддерживает — scope: `src/client/ui, src/client/settings, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code claude-family settings`.
 4. [TODO] Git Commit: `feat: add kimi claude code claude-family settings` (hash: TBD)
 5. [TODO] `phase7-kimi-claude-code-turn-config` Подключить applied turn config/effective model identity resolver для `kimiClaudeCode`, включая provider inheritance into next steps — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: resolve kimi claude code turn config`.
