@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "818645e38",
+  "lastRecordedCommit": "8813fbf74",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-progress-example-guidance",
-  "expectedCommitMessage": "fix: add kimi progress update examples",
+  "currentTaskId": "phase8-kimi-progress-panel-verification",
+  "expectedCommitMessage": "docs: record kimi progress panel verification",
   "debt": {
-    "expectedCommitMessage": "fix: add kimi progress update examples",
-    "preCommitHead": "818645e38",
+    "expectedCommitMessage": "docs: record kimi progress panel verification",
+    "preCommitHead": "8813fbf74",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-progress-example-guidance"
+    "taskId": "phase8-kimi-progress-panel-verification"
   }
 }
 ```
@@ -458,9 +458,15 @@
 3. [DONE] `phase8-kimi-thinking-panel-standalone` Исправить dialog reasoning/thinking card: `role="thinking"` должен рендериться самостоятельной плашкой без отрицательного overlay над следующим assistant message, аналогично current Codex standalone thinking card — scope: `media/session-view.css, doc/TODO/todo-plan.md`; expected commit: `fix: render thinking panels standalone`.
 4. [DONE] Git Commit: `fix: render thinking panels standalone` (hash: 818645e38)
 5. [DONE] `phase8-kimi-progress-example-guidance` На основании реального Kimi Virtual Simulation log добавить в managed prompt конкретные примеры visible progress summaries и reasoning-budget правило: не накапливать длинное hidden reasoning без ordinary assistant update — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: add kimi progress update examples`.
-6. [PENDING] Git Commit: `fix: add kimi progress update examples` (hash: TBD)
-7. [TODO] `phase8-kimi-progress-panel-verification` Выполнить targeted verification для Kimi prompt/profile и Session UI thinking panel CSS; зафиксировать результаты — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi progress panel verification`.
-8. [TODO] Git Commit: `docs: record kimi progress panel verification` (hash: TBD)
+6. [DONE] Git Commit: `fix: add kimi progress update examples` (hash: 8813fbf74)
+7. [DONE] `phase8-kimi-progress-panel-verification` Выполнить targeted verification для Kimi prompt/profile и Session UI thinking panel CSS; зафиксировать результаты — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi progress panel verification`.
+   - Evidence review: `kimicode-c4dde7d8-3f25-4a8c-b7ad-0aab17aed091-virtual-simulation.jsonl` showed 26 thinking messages / 15184 chars, first visible assistant update only at 137s and only 87 chars, then final answer at 349s.
+   - Verification: `npm run build --workspace=@codeai-hub/kimi-module` passed.
+   - Verification: `npm run test --workspace=@codeai-hub/kimi-module` passed and confirms managed profile materialization, `--agent-file`/empty MCP/empty skills args, no AGENTS placeholder, Kimi thinking normalization, bounded thinking flush, and turn completion.
+   - Verification: `npm run build:webview` passed.
+   - Verification: `npm run typecheck:webview` passed.
+   - Verification: CSS diff makes `role="thinking"` standalone by removing the negative bottom margin and top-only border radius; no generated webview bundle changed for the CSS-only panel fix.
+8. [PENDING] Git Commit: `docs: record kimi progress panel verification` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
