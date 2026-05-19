@@ -10,6 +10,7 @@ import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
+  KimiClaudeCodeAdapterCtor,
   MutableProviderDescriptor,
   ProviderAdapter,
   ProviderDescriptor,
@@ -32,6 +33,7 @@ interface ProviderDescriptorFactoryOptions {
     failureLabel: string
   ) => void;
   readonly kimiAdapterCtor: KimiAdapterCtor;
+  readonly kimiClaudeCodeAdapterCtor: KimiClaudeCodeAdapterCtor;
 }
 
 export type KimiAdapterCtor = new (
@@ -192,6 +194,23 @@ export const createKimiAdapterInstance = (
     reporter: options.createReporter("kimi"),
   });
 
+export const createKimiClaudeCodeAdapterInstance = (
+  options: Pick<
+    ProviderDescriptorFactoryOptions,
+    "config" | "createReporter" | "kimiClaudeCodeAdapterCtor"
+  >
+): ProviderAdapter =>
+  new options.kimiClaudeCodeAdapterCtor({
+    installerPaths: CLAUDE_INSTALLER_PATHS,
+    workspace: {
+      workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
+      defaultModel: options.config.kimiDefaultModel ?? "kimi-for-coding",
+      kimiClaudeProjectSlug: `${options.config.claudeProjectSlug}-kimi-claude-code`,
+      settingsPath: options.config.claudeSettingsPath,
+    },
+    reporter: options.createReporter("kimi-claude-code"),
+  });
+
 const buildClaudeDescriptor = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor => {
@@ -277,6 +296,30 @@ const buildKimiDescriptor = (
   return descriptor;
 };
 
+const buildKimiClaudeCodeDescriptor = (
+  options: ProviderDescriptorFactoryOptions
+): ProviderDescriptor => {
+  const descriptor: MutableProviderDescriptor = {
+    capabilities: {
+      modelSync: resolveProviderModelSyncCapabilities("kimiClaudeCode"),
+      requiresPostStopResume: false,
+      supportsImmediateBinding:
+        resolveProviderImmediateBindingCapability("kimiClaudeCode"),
+    },
+    id: "kimiClaudeCode",
+    name: "Kimi Claude Code",
+    description: "Using Kimi 2.6 through Claude Code-compatible runtime",
+    status: "active",
+  };
+  tryAttachAdapter(
+    () => createKimiClaudeCodeAdapterInstance(options),
+    descriptor,
+    "Kimi-Claude-Code components are unavailable.",
+    options.handleAdapterConstructionFailure
+  );
+  return descriptor;
+};
+
 export const createProviderDescriptors = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor[] => [
@@ -284,6 +327,7 @@ export const createProviderDescriptors = (
   buildCodexDescriptor(options),
   buildGeminiDescriptor(),
   buildKimiDescriptor(options),
+  buildKimiClaudeCodeDescriptor(options),
 ];
 
 export const createGeminiAdapterInstance = (

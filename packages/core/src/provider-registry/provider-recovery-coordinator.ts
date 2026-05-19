@@ -14,6 +14,7 @@ interface ProviderRecoveryCoordinatorOptions {
   readonly createClaudeAdapter: () => ProviderAdapter;
   readonly createCodexAdapter: () => ProviderAdapter;
   readonly createKimiAdapter: () => ProviderAdapter;
+  readonly createKimiClaudeCodeAdapter: () => ProviderAdapter;
   readonly emitStatus: (
     event: Omit<RuntimeStatusEvent, "timestamp" | "phase"> & {
       readonly phase: RuntimeStatusPhase;
@@ -169,6 +170,8 @@ export class ProviderRecoveryCoordinator {
         return this.options.createClaudeAdapter();
       case "kimiCode":
         return this.options.createKimiAdapter();
+      case "kimiClaudeCode":
+        return this.options.createKimiClaudeCodeAdapter();
       default:
         return this.options.createCodexAdapter();
     }
@@ -215,6 +218,8 @@ export class ProviderRecoveryCoordinator {
         return "Gemini CLI is unavailable. Run `gemini login`, confirm credentials, then use Settings → General → Restart Core to retry";
       case "kimiCode":
         return "Kimi CLI is unavailable. Confirm `kimi` is installed and logged in, then use Settings → General → Restart Core to retry";
+      case "kimiClaudeCode":
+        return "Kimi-Claude-Code is unavailable. Confirm Kimi API key exists in CODEAI_KIMI_CLAUDE_CODE_API_KEY, KIMI_API_KEY, or ~/.kimi/config.toml, then use Settings → General → Restart Core to retry";
       default:
         return "Claude CLI is unavailable. CodeAI Hub runs provider-home auth bootstrap automatically; if it still fails, run `claude /login`, then use Settings → General → Restart Core to retry. If it still fails, run `HOME=~/.codeai-hub/providers/claude/home claude /login`, then restart Core";
     }

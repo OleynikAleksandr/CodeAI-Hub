@@ -1,4 +1,7 @@
-import type { ClaudeModuleOptions } from "@codeai-hub/claude-module";
+import type {
+  ClaudeModuleOptions,
+  KimiClaudeCodeProviderAdapterOptions,
+} from "@codeai-hub/claude-module";
 import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
 import type { GeminiModuleOptions } from "@codeai-hub/gemini-module";
 import type { NativeRequestCaptureAppliedInputEnvelope } from "../provider-network-capture/native-request-capture-types";
@@ -145,6 +148,10 @@ export type MutableProviderDescriptor = {
 
 export type ClaudeAdapterCtor = new (
   options: ClaudeModuleOptions
+) => ProviderAdapter;
+
+export type KimiClaudeCodeAdapterCtor = new (
+  options: KimiClaudeCodeProviderAdapterOptions
 ) => ProviderAdapter;
 
 export type CodexAdapterCtor = new (

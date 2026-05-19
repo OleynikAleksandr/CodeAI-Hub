@@ -7,6 +7,7 @@ import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
+  KimiClaudeCodeAdapterCtor,
 } from "./provider-module-loader.types";
 
 type GeminiAdapterResolution =
@@ -137,6 +138,44 @@ export const loadClaudeAdapterCtor = (
     readonly ClaudeProviderAdapter: ClaudeAdapterCtor;
   };
   return bundled.ClaudeProviderAdapter;
+};
+
+export const loadKimiClaudeCodeAdapterCtor = (
+  overridePath: string | undefined,
+  logger: Logger
+): KimiClaudeCodeAdapterCtor => {
+  if (overridePath) {
+    try {
+      const overrideEntry = path.join(overridePath, "dist", "index.js");
+      const loaded = dynamicRequire(overrideEntry) as {
+        readonly KimiClaudeCodeProviderAdapter?: KimiClaudeCodeAdapterCtor;
+      };
+      if (loaded?.KimiClaudeCodeProviderAdapter) {
+        logger.info("Loaded Kimi-Claude-Code adapter from Claude override", {
+          overridePath,
+        });
+        return loaded.KimiClaudeCodeProviderAdapter;
+      }
+      logger.warn(
+        "Override path missing KimiClaudeCodeProviderAdapter export",
+        {
+          overridePath,
+        }
+      );
+    } catch (error) {
+      logger.error(
+        "Failed to load Kimi-Claude-Code module override",
+        error as Error,
+        {
+          overridePath,
+        }
+      );
+    }
+  }
+  const bundled = dynamicRequire("@codeai-hub/claude-module") as {
+    readonly KimiClaudeCodeProviderAdapter: KimiClaudeCodeAdapterCtor;
+  };
+  return bundled.KimiClaudeCodeProviderAdapter;
 };
 
 export const loadCodexAdapterCtor = (

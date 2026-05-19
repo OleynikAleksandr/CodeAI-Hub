@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "e1cde7c69",
+  "lastRecordedCommit": "c6eba1b28",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase6-kimi-claude-code-provider-type",
-  "expectedCommitMessage": "feat: register kimi claude code provider type",
+  "currentTaskId": "phase6-kimi-claude-code-runtime-loader",
+  "expectedCommitMessage": "feat: load kimi claude code provider runtime",
   "debt": {
-    "expectedCommitMessage": "feat: register kimi claude code provider type",
-    "preCommitHead": "e1cde7c69",
+    "expectedCommitMessage": "feat: load kimi claude code provider runtime",
+    "preCommitHead": "c6eba1b28",
     "stage": "commit_pending",
-    "taskId": "phase6-kimi-claude-code-provider-type"
+    "taskId": "phase6-kimi-claude-code-runtime-loader"
   }
 }
 ```
@@ -89,9 +89,9 @@
 ## Phase 6 — Core Provider Registry And Packaging (owner: Codex, updated: 2026-05-19)
 ### Stream: Core Registration
 1. [DONE] `phase6-kimi-claude-code-provider-type` Добавить provider id/type `kimiClaudeCode` в shared/Core contracts и registry descriptors, не смешивая его с `kimiCode` или `claudeCode` — scope: `packages/core, src/types, doc/TODO/todo-plan.md`; expected commit: `feat: register kimi claude code provider type`.
-2. [PENDING] Git Commit: `feat: register kimi claude code provider type` (hash: TBD)
-3. [TODO] `phase6-kimi-claude-code-runtime-loader` Добавить loader/descriptor/install path для Kimi-Claude-Code, переиспользуя Claude runtime artifact только если это сохраняет отдельный provider namespace — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: load kimi claude code provider runtime`.
-4. [TODO] Git Commit: `feat: load kimi claude code provider runtime` (hash: TBD)
+2. [DONE] Git Commit: `feat: register kimi claude code provider type` (hash: c6eba1b28)
+3. [DONE] `phase6-kimi-claude-code-runtime-loader` Добавить loader/descriptor/install path для Kimi-Claude-Code, переиспользуя Claude runtime artifact только если это сохраняет отдельный provider namespace — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: load kimi claude code provider runtime`.
+4. [PENDING] Git Commit: `feat: load kimi claude code provider runtime` (hash: TBD)
 5. [TODO] `phase6-kimi-claude-code-package-mapping` Обновить package/build mapping только если отдельный provider artifact или manifest entry реально нужен после loader implementation — scope: `package.json, packages/Claude_Module/package.json, scripts`; expected commit: `feat: package kimi claude code provider runtime`.
 6. [TODO] Git Commit: `feat: package kimi claude code provider runtime` (hash: TBD)
 

@@ -12,6 +12,7 @@ import {
   createCodexAdapterInstance,
   createGeminiAdapterInstance,
   createKimiAdapterInstance,
+  createKimiClaudeCodeAdapterInstance,
   createProviderDescriptors,
   type KimiAdapterCtor,
 } from "./provider-descriptor-factory";
@@ -24,11 +25,13 @@ import {
   loadClaudeAdapterCtor,
   loadCodexAdapterCtor,
   loadGeminiAdapterCtor,
+  loadKimiClaudeCodeAdapterCtor,
 } from "./provider-module-loader";
 import type {
   ClaudeAdapterCtor,
   CodexAdapterCtor,
   GeminiAdapterCtor,
+  KimiClaudeCodeAdapterCtor,
   MutableProviderDescriptor,
   Provider,
   ProviderAdapter,
@@ -48,6 +51,7 @@ export class ProviderRegistry {
   private readonly codexAdapterCtor: CodexAdapterCtor;
   private readonly geminiAdapterCtorPromise: Promise<GeminiAdapterCtor | null>;
   private readonly kimiAdapterCtor: KimiAdapterCtor;
+  private readonly kimiClaudeCodeAdapterCtor: KimiClaudeCodeAdapterCtor;
   private readonly geminiWorkspacePath: string;
   private readonly geminiDefaultModel?: string;
   private readonly geminiThinkingLevelByModel: Record<string, string>;
@@ -80,6 +84,10 @@ export class ProviderRegistry {
       this.options.logger
     );
     this.kimiAdapterCtor = loadBundledKimiAdapterCtor();
+    this.kimiClaudeCodeAdapterCtor = loadKimiClaudeCodeAdapterCtor(
+      resolveClaudeModulePath(),
+      this.options.logger
+    );
     this.geminiAdapterCtorPromise = loadGeminiAdapterCtor(
       resolveGeminiModulePath(),
       this.options.logger
@@ -118,6 +126,12 @@ export class ProviderRegistry {
           createReporter: (scope) => this.createReporter(scope),
           kimiAdapterCtor: this.kimiAdapterCtor,
         }),
+      createKimiClaudeCodeAdapter: () =>
+        createKimiClaudeCodeAdapterInstance({
+          config: this.options.config,
+          createReporter: (scope) => this.createReporter(scope),
+          kimiClaudeCodeAdapterCtor: this.kimiClaudeCodeAdapterCtor,
+        }),
       emitStatus: (event) => this.emitStatus(event),
       ensureGeminiAdapter: async () => {
         await this.ensureGeminiAdapter();
@@ -139,6 +153,7 @@ export class ProviderRegistry {
           this.pendingRetryProviders
         ),
       kimiAdapterCtor: this.kimiAdapterCtor,
+      kimiClaudeCodeAdapterCtor: this.kimiClaudeCodeAdapterCtor,
     });
     for (const providerId of this.pendingRetryProviders) {
       this.recoveryScheduler.scheduleRetry(providerId);
