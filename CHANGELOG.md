@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.317] - 2026-05-19
+### Fixed
+- **Kimi provider variants are now explicit in Settings.** Settings shows separate `Kimi` and `Claude-Kimi` tabs instead of placing the Claude Agent SDK-compatible runtime inside the native Kimi section.
+- **Workflow start cards show both Kimi providers.** Description, managed step start cards, Development Tree start cards, and Capture Workbench can distinguish native `Kimi` from `Claude-Kimi`.
+- **Kimi model labels now match the selected runtime.** Native Kimi keeps `Kimi 2.6 / Kimi Code`, while Claude-Kimi shows `Kimi 2.6 / Claude-Kimi`.
+
+### Tests
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npx tsx --test src/client/project-manager/services/workflow-provider-resolver.test.ts src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts src/client/project-manager/components/layout/use-step-provider-resolver.test.ts packages/core/src/provider-network-capture/native-request-capture-facade.test.ts`
+
 ## [1.2.316] - 2026-05-19
 ### Added
 - **Kimi-Claude-Code is available as a separate comparison provider.** Users can select `Kimi-Claude-Code` to run Kimi 2.6 through the Claude Code-compatible runtime while native `Kimi` remains the Wire-based provider.

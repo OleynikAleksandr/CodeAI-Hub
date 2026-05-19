@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.316** (Kimi-Claude-Code provider experiment)
+**Current Release — v1.2.317** (Kimi and Claude-Kimi provider selection hotfix)
+
+This hotfix makes the two Kimi runtime conditions explicit across provider and
+model selection surfaces. Native `Kimi` remains the Wire-based provider, while
+`Claude-Kimi` is the separate Claude Agent SDK-compatible runtime for Kimi 2.6.
+Settings now shows separate `Kimi` and `Claude-Kimi` tabs, workflow start cards
+show both providers, and model labels distinguish `Kimi 2.6 / Kimi Code` from
+`Kimi 2.6 / Claude-Kimi`.
+
+Capture Workbench and provider tint/status helpers also recognize both Kimi
+variants, so comparison runs can select either provider without hidden fallback
+or ambiguous labels.
 
 This release adds `Kimi-Claude-Code` as a separate provider option for comparing
 Kimi 2.6 behavior through the Claude Code-compatible runtime. It uses the
