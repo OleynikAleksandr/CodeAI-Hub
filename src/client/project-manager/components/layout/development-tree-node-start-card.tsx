@@ -15,7 +15,7 @@ const isProviderStackId = (value: string): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
-  value === "kimiClaudeCode";
+  value === "glmClaudeCode";
 
 const resolveKindLabel = (kind: BranchNodeKind): string =>
   kind === "product-part" ? "Product Part" : kind === "cluster" ? "Cluster" : "Module";
