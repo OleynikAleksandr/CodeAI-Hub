@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "24d737af2",
+  "lastRecordedCommit": "06777e3eb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase3-usage-limit-labels",
-  "expectedCommitMessage": "fix: clarify provider usage limit labels",
+  "currentTaskId": "phase3-provider-limit-normalization-tests",
+  "expectedCommitMessage": "test: cover provider usage limit semantics",
   "debt": {
-    "expectedCommitMessage": "fix: clarify provider usage limit labels",
-    "preCommitHead": "24d737af2",
+    "expectedCommitMessage": "test: cover provider usage limit semantics",
+    "preCommitHead": "06777e3eb",
     "stage": "commit_pending",
-    "taskId": "phase3-usage-limit-labels"
+    "taskId": "phase3-provider-limit-normalization-tests"
   }
 }
 ```
@@ -82,11 +82,11 @@
 ## Phase 3 — Provider Usage Limits Bar (owner: Codex, updated: 2026-05-19)
 ### Stream: Usage Limit Label Semantics
 1. [DONE] `phase3-usage-limit-labels` Уточнить labels для 5-часового и weekly provider usage rows без fake values; Kimi остается unavailable, если source не подтвержден — scope: `src/client/ui/src/session/session-id-bar.tsx, src/client/ui/src/session/session-id-bar.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md`; expected commit: `fix: clarify provider usage limit labels`.
-2. [PENDING] Git Commit: `fix: clarify provider usage limit labels` (hash: TBD)
+2. [DONE] Git Commit: `fix: clarify provider usage limit labels` (hash: 06777e3eb)
 
 ### Stream: Provider Limit Normalization Tests
-1. [TODO] `phase3-provider-limit-normalization-tests` Добавить/уточнить provider-specific tests для 5-hour/weekly semantics в usage-limits payloads и reset labels — scope: `packages/core/src/provider-usage-limits, packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover provider usage limit semantics`.
-2. [TODO] Git Commit: `test: cover provider usage limit semantics` (hash: TBD)
+1. [DONE] `phase3-provider-limit-normalization-tests` Добавить/уточнить provider-specific tests для 5-hour/weekly semantics в usage-limits payloads и reset labels — scope: `packages/core/src/provider-usage-limits, packages/core/src/remote-bridge/handlers/session-request-handler.usage-limits.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover provider usage limit semantics`.
+2. [PENDING] Git Commit: `test: cover provider usage limit semantics` (hash: TBD)
 
 ## Phase 4 — Targeted Verification (owner: Codex, updated: 2026-05-19)
 ### Stream: UI And Core Verification
