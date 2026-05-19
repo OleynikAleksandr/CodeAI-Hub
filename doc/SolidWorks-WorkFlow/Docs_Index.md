@@ -80,7 +80,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/Session_Context_And_Usage_Indicators_Planning_RU.md` — active planning source for the next Session UI telemetry scope: context-window percentage in the status panel plus 5-hour/weekly provider usage-limit rows in the session ID usage bar.
+- `Plans/Archive/Session_Context_And_Usage_Indicators_Planning_RU.md` — archived accepted planning source for release `1.2.315`: context-window remaining percentage in the status panel, Kimi context usage telemetry, and provider 5-hour/weekly usage-limit rows in the session ID usage bar. Pair with `doc/TODO/Archive/todo-plan-closeout-session-context-and-usage-indicators-2026-05-19.md`.
 - `Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md` — archived accepted planning source for implementing the Kimi Code / Kimi 2.6 provider module: Wire transport, provider-home isolation, session lifecycle, Core registry/settings integration, diagnostics, packaging, and phased execution slicing.
 - `Plans/Archive/Agent_Runtime_Provider_Candidates_Analysis_RU.md` — archived accepted planning analysis for provider candidates after Claude/Codex/Gemini: Kimi, Qwen Code, GLM, DeepSeek, MiniMax; compares native agent runtime surfaces, backend-provider options, and subscription-vs-token access.
 - `Plans/Archive/PM_Sidebar_Settings_Action_Planning.md` — archived implementation planning source for Project Manager sidebar Settings action and the follow-up workflow review-gate usability fixes, closed after user acceptance of release `1.2.302`.

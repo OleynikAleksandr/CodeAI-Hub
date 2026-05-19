@@ -1,3 +1,18 @@
+# Plan Closeout: session-context-and-usage-indicators-2026-05-19
+
+**Created:** 2026-05-19T11:42:05.546Z
+**Acceptance:** user accepted release 1.2.315 after retest; added functions work
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase8-session-indicators-closeout
+**Expected Commit:** docs: close session indicators scope
+**Last Recorded Commit:** a8571f904
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Session_Context_And_Usage_Indicators_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Session_Context_And_Usage_Indicators_Planning_RU.md",
   "currentTaskId": "phase8-session-indicators-closeout",
   "expectedCommitMessage": "docs: close session indicators scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close session indicators scope",
-    "preCommitHead": "a8571f904",
-    "stage": "commit_pending",
-    "taskId": "phase8-session-indicators-closeout"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -140,6 +150,7 @@ Release build log:
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-19)
 ### Stream: Scope Closeout
-1. [DONE] `phase8-session-indicators-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close session indicators scope`.
-2. [PENDING] Git Commit: `docs: close session indicators scope` (hash: TBD)
+1. [IN_PROGRESS] `phase8-session-indicators-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close session indicators scope`.
+2. [TODO] Git Commit: `docs: close session indicators scope` (hash: TBD)
 3. [TODO] `phase8-session-indicators-post-closeout-anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle. Scope: handoff only; expected commit: none.
+````
