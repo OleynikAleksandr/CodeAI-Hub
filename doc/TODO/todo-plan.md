@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "c232428cd",
+  "lastRecordedCommit": "89cf0ceec",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase1-usage-limits-audit",
-  "expectedCommitMessage": "docs: audit provider usage limits contract",
+  "currentTaskId": "phase2-context-percentage-formatter",
+  "expectedCommitMessage": "fix: clarify session context percentage display",
   "debt": {
-    "expectedCommitMessage": "docs: audit provider usage limits contract",
-    "preCommitHead": "c232428cd",
+    "expectedCommitMessage": "fix: clarify session context percentage display",
+    "preCommitHead": "89cf0ceec",
     "stage": "commit_pending",
-    "taskId": "phase1-usage-limits-audit"
+    "taskId": "phase2-context-percentage-formatter"
   }
 }
 ```
@@ -68,12 +68,12 @@
 
 ### Stream: Usage Limits Audit
 1. [DONE] `phase1-usage-limits-audit` Проследить путь `usageLimits` от provider adapters/Core usage-limits bridge до `SessionIdBar`, включая найденный Kimi `coding/v1/usages` endpoint и planning-source correction — scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md, doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: audit provider usage limits contract`.
-2. [PENDING] Git Commit: `docs: audit provider usage limits contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: audit provider usage limits contract` (hash: 89cf0ceec)
 
 ## Phase 2 — Context Window Status Panel (owner: Codex, updated: 2026-05-19)
 ### Stream: Percentage Formatter Contract
-1. [TODO] `phase2-context-percentage-formatter` Выделить/уточнить formatter для context-window percentage, чтобы label явно показывал согласованную semantics и корректно работал при нулевом/неизвестном limit — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `fix: clarify session context percentage display`.
-2. [TODO] Git Commit: `fix: clarify session context percentage display` (hash: TBD)
+1. [DONE] `phase2-context-percentage-formatter` Выделить/уточнить formatter для context-window percentage, чтобы label явно показывал согласованную semantics и корректно работал при нулевом/неизвестном limit — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/status-panel.test.tsx, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `fix: clarify session context percentage display`.
+2. [PENDING] Git Commit: `fix: clarify session context percentage display` (hash: TBD)
 
 ### Stream: Context Percentage Projection Tests
 1. [TODO] `phase2-context-percentage-stream-tests` Добавить regression coverage для применения token usage stream snapshots к status panel projection без изменения lock/turn state — scope: `src/client/project-manager/components/sessions/token-usage-stream.ts, src/client/project-manager/components/sessions/token-usage-stream.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover session context percentage updates`.

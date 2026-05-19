@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import StatusPanel from "./status-panel";
+import StatusPanel, { formatContextWindowUsage } from "./status-panel";
 
 const buildStatus = (overrides: Record<string, unknown> = {}) => ({
   connectionState: "idle" as const,
@@ -37,8 +37,27 @@ test("StatusPanel renders four chips for a Claude session", () => {
   assert.equal(html.includes("(high)"), true);
   assert.equal(html.includes("Tokens:"), true);
   assert.equal(html.includes("22,328"), true);
+  assert.equal(html.includes("(89%)"), true);
+  assert.equal(
+    html.includes("Context window: 22,328 used, 200,000 limit, 89% remaining"),
+    true
+  );
   assert.equal(html.includes("session-status-button--claude"), true);
   assert.equal(html.includes("session-status-chip--limits"), true);
+});
+
+test("formatContextWindowUsage returns remaining percentage", () => {
+  assert.deepEqual(formatContextWindowUsage({ used: 27_433, limit: 262_144 }), {
+    title: "Context window: 27,433 used, 262,144 limit, 90% remaining",
+    value: "27,433 (90%)",
+  });
+});
+
+test("formatContextWindowUsage handles unknown context limit", () => {
+  assert.deepEqual(formatContextWindowUsage({ used: 27_433, limit: 0 }), {
+    title: "Context window: 27,433 used, unknown limit, 0% remaining",
+    value: "27,433 (0%)",
+  });
 });
 
 test("StatusPanel applies the Codex provider class", () => {

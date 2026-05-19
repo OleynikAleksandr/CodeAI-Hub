@@ -72,6 +72,23 @@ const computeRemainingPercentage = (
   return Math.max(0, Math.min(MAX_PERCENTAGE, MAX_PERCENTAGE - usedPercentage));
 };
 
+export const formatContextWindowUsage = (tokenUsage: {
+  readonly limit: number;
+  readonly used: number;
+}): { readonly title: string; readonly value: string } => {
+  const tokenLimit = tokenUsage.limit > 0 ? tokenUsage.limit : null;
+  const remainingPercentage = computeRemainingPercentage(
+    tokenUsage.used,
+    tokenLimit
+  );
+  const usedText = tokenUsage.used.toLocaleString();
+  const limitText = tokenLimit?.toLocaleString() ?? "unknown";
+  return {
+    title: `Context window: ${usedText} used, ${limitText} limit, ${remainingPercentage}% remaining`,
+    value: `${usedText} (${remainingPercentage}%)`,
+  };
+};
+
 const StatusPanel = ({
   status,
   connectionStatus,
@@ -109,13 +126,7 @@ const StatusPanel = ({
     "Tokens"
   );
 
-  const tokenLimit =
-    status.tokenUsage.limit > 0 ? status.tokenUsage.limit : null;
-  const remainingPercentage = computeRemainingPercentage(
-    status.tokenUsage.used,
-    tokenLimit
-  );
-  const tokensValue = `${status.tokenUsage.used.toLocaleString()} (${remainingPercentage}%)`;
+  const tokensDisplay = formatContextWindowUsage(status.tokenUsage);
 
   const providerButtonClass = resolveProviderButtonClass(model.providerId);
   const canOpenPicker =
@@ -196,7 +207,12 @@ const StatusPanel = ({
         ) : null}
         <span className="session-status-chip session-status-chip--limits">
           <span className="session-status-chip__label">{`${tokensLabel}:`}</span>
-          <span className="session-status-chip__value">{tokensValue}</span>
+          <span
+            className="session-status-chip__value"
+            title={tokensDisplay.title}
+          >
+            {tokensDisplay.value}
+          </span>
         </span>
       </div>
       {tokenDebugSummary ? (

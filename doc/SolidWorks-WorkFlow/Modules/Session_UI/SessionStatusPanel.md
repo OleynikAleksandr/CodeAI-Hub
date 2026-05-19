@@ -32,7 +32,7 @@
 - `status.tokenUsage.used` / `.limit` → токен-плашка (used + remaining percent);
 - `tokenDebugSummary` либо вычисляется по chain/messages, либо в dialog mode приходит как override из parsed dialog history.
 
-The user-facing percentage in the chip is **remaining context window percentage**. Current rendering is `used (remaining%)`, not `used%`.
+The user-facing percentage in the chip is **remaining context window percentage**. Current rendering is `used (remaining%)`, not `used%`. `status-panel.tsx` owns this formatting through `formatContextWindowUsage(...)`; provider adapters only supply `used/limit` snapshots.
 
 ## Как обновляется
 
@@ -71,6 +71,7 @@ The user-facing percentage in the chip is **remaining context window percentage*
 - model-card popup рендерит только список моделей; reasoning-card popup рендерит только список значений reasoning/thinking. Активный пункт обеих карт подсвечен провайдерным цветом через `data-active="true"` + `data-provider`, без отдельного текстового маркера;
 - при `session:model:update`;
 - при новых token usage/history данных.
+- the token chip tooltip must spell out the meaning explicitly: `Context window: <used> used, <limit> limit, <remaining>% remaining`. This prevents ambiguity between used percentage and remaining percentage while preserving the compact chip text.
 
 ## Что отдает наружу
 
