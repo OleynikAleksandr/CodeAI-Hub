@@ -1,168 +1,34 @@
-# План разработки (Development TODO Plan)
+# Development TODO Plan
 
 <!-- codeai-plan-state:start -->
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "ACTIVE",
+  "executionScopeStatus": "NONE",
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "64dcc1283",
+  "lastRecordedCommit": "98ab5a3bb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase15-kimi-claude-code-closeout",
-  "expectedCommitMessage": "docs: close kimi claude code provider experiment scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close kimi claude code provider experiment scope",
-    "preCommitHead": "64dcc1283",
-    "stage": "commit_pending",
-    "taskId": "phase15-kimi-claude-code-closeout"
-  }
+  "currentTaskId": null,
+  "expectedCommitMessage": null,
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
 
-## Context Pack For This Cycle
+## No Active Execution Scope
+
+- **Execution Scope Status:** NONE
+- **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-kimi-claude-code-provider-planning-2026-05-19.md`
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md`
-- **Read this context before implementation:**
-  - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
-  - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
-  - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-  - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
-  - `doc/SolidWorks-WorkFlow/Modules/Kimi.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
-  - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Только этот список является источником документов для восстановления контекста текущего execution cycle.
+- **Last recorded commit:** `98ab5a3bb`
 
-## Правила выполнения (Execution Rules)
-- **Required reading перед каждым фиксом:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`.
-- Каждая подзадача должна затрагивать не более 3 файлов/пакетов.
-- Каждая подзадача оформляется парой пунктов: реализация/изменения и отдельный `Git Commit: ...`.
-- Гейты через Husky не обходить.
-- Новый эксперимент называется `kimi-claude-code`: Kimi 2.6 / Kimi Code работает через Claude Code-compatible runtime/protocol, а не через Codex App Server.
-- Текущий Codex-based spike уже откатан коммитом `5902a324f`; не восстанавливать `kimi-codex` код без отдельного нового решения.
-- Перед product integration сначала доказать live compatibility Claude Code CLI/SDK с Kimi Code Anthropic-compatible endpoint.
-- **Release Build Confirmation Gate:** после targeted verification остановиться и отдельно спросить пользователя, собирать ли release.
-- `Scope Closeout` выполняется только после явного acceptance пользователя.
+## Start Next Scope
 
-## Phase 0 — Planning Intake (owner: Codex, updated: 2026-05-19)
-### Stream: Kimi-Claude-Code Planning Source
-1. [DONE] `phase0-kimi-claude-code-planning-intake` Создать planning-документ для экспериментального провайдера `kimi-claude-code`, который использует Claude Code-compatible runtime/protocol и Kimi Code Anthropic-compatible endpoint для `kimi-for-coding`, и добавить его в Docs Index — scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: plan kimi claude code provider experiment`.
-2. [DONE] Git Commit: `docs: plan kimi claude code provider experiment` (hash: 7cd05e195)
+There is no active execution scope. Before starting new implementation work:
 
-## Phase 1 — User Planning Acceptance (owner: User, updated: 2026-05-19)
-### Stream: Planning Review
-1. [DONE] `phase1-kimi-claude-code-planning-review` Пользователь проверяет planning-документ и подтверждает, начинать ли implementation scope или скорректировать архитектуру до нарезки задач — scope: без изменения файлов; expected commit: none. Result: User accepted direction: replace Codex-client experiment with Claude Code-compatible Kimi provider and proceed to implementation slicing.
-
-## Phase 2 — Implementation Plan Slicing (owner: Codex, updated: 2026-05-19)
-### Stream: Implementation Slicing
-1. [DONE] `phase2-kimi-claude-code-implementation-slicing` Нарезать implementation scope по принятому planning-документу на микрозадачи ≤3 файлов/пакетов, включая feasibility probe, runtime shell, Core/UI integration, targeted verification, release gate, user acceptance и closeout — scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `docs: slice kimi claude code implementation plan`.
-2. [DONE] Git Commit: `docs: slice kimi claude code implementation plan` (hash: 41499205b)
-
-## Phase 3 — Feasibility Spike (owner: Codex, updated: 2026-05-19)
-### Stream: Claude Code Runtime Probe
-1. [DONE] `phase3-kimi-claude-code-probe-profile` Добавить минимальные runtime/auth profile helpers для Kimi-Claude-Code без подключения UI: isolated home, Kimi API key resolution из env или `~/.kimi/config.toml`, sanitized diagnostic metadata and package entry export — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code runtime probe profile`.
-2. [DONE] Git Commit: `feat: add kimi claude code runtime probe profile` (hash: 17311c6fa)
-3. [DONE] `phase3-kimi-claude-code-diagnostic-runner` Добавить диагностический runner для live probe через Claude Code-compatible SDK/CLI path: short answer, workflow-style prompt, minimal tools, categorized failure output, no secret logging — scope: `packages/Claude_Module/src/diagnostics, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat: probe kimi through claude code runtime`.
-4. [DONE] Git Commit: `feat: probe kimi through claude code runtime` (hash: 25916925a)
-5. [DONE] `phase3-kimi-claude-code-live-evidence` Запустить live probe, зафиксировать evidence/decision по HTTP/runtime, workflow prompt, tool loop, lifecycle и isolation gates; если gate failed — остановить product integration и оформить blocker — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code feasibility result`.
-6. [DONE] Git Commit: `docs: record kimi claude code feasibility result` (hash: eb522a746)
-
-## Phase 4 — Runtime Profile Extraction (owner: Codex, updated: 2026-05-19)
-### Stream: Claude Runtime Profiles
-1. [DONE] `phase4-claude-runtime-profile-contract` Выделить контракт runtime profile, разделяющий обычный `claudeCode` subscription profile и будущий `kimiClaudeCode` API-key/base-url profile, без изменения поведения Claude по умолчанию — scope: `packages/Claude_Module/src/sdk, packages/Claude_Module/src/auth, doc/TODO/todo-plan.md`; expected commit: `refactor: define claude code runtime profiles`.
-2. [DONE] Git Commit: `refactor: define claude code runtime profiles` (hash: 2694afc09)
-3. [DONE] `phase4-kimi-claude-code-auth-profile` Реализовать Kimi-Claude-Code auth profile: `HOME=~/.codeai-hub/providers/kimi-claude-code/home`, proven base URL, API key resolution, secret-safe logging — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/auth, doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: add kimi claude code auth profile`.
-4. [DONE] Git Commit: `feat: add kimi claude code auth profile` (hash: 83d993f6c)
-5. [DONE] `phase4-claude-sdk-profile-wiring` Подключить profile selection в Claude SDK manager/factory так, чтобы обычный Claude путь продолжал использовать subscription auth, а Kimi-Claude-Code путь использовал отдельный profile — scope: `packages/Claude_Module/src/sdk, packages/Claude_Module/src/provider, doc/TODO/todo-plan.md`; expected commit: `refactor: support kimi claude code runtime profile`.
-6. [DONE] Git Commit: `refactor: support kimi claude code runtime profile` (hash: 13c9c973e)
-
-## Phase 5 — Provider Facade And Model Contract (owner: Codex, updated: 2026-05-19)
-### Stream: Kimi-Claude-Code Facade
-1. [DONE] `phase5-kimi-claude-code-facade` Добавить самостоятельный Core-facing facade/adapter `KimiClaudeCodeProviderAdapter`, который делегирует в Claude Code runtime profile и не открывает Core внутренние helper-классы — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/sdk, packages/Claude_Module/src/index.ts`; expected commit: `feat: add kimi claude code provider facade`.
-2. [DONE] Git Commit: `feat: add kimi claude code provider facade` (hash: 8f7cf9557)
-3. [DONE] `phase5-kimi-claude-code-model-capabilities` Добавить model/capabilities contract для `kimi-for-coding`: single default model, honest unsupported reasoning controls, token/context telemetry unknown until proven — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/types, packages/Claude_Module/src/index.ts`; expected commit: `feat: add kimi claude code model capabilities`.
-4. [DONE] Git Commit: `feat: add kimi claude code model capabilities` (hash: a331244e8)
-5. [DONE] `phase5-kimi-claude-code-lifecycle` Подключить lifecycle classification для turn start, assistant progress/final, failure, stop and stale binding states без влияния на native Kimi/Claude — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/messaging, packages/Claude_Module/src/session`; expected commit: `feat: support kimi claude code session lifecycle`.
-6. [DONE] Git Commit: `feat: support kimi claude code session lifecycle` (hash: e1cde7c69)
-
-## Phase 6 — Core Provider Registry And Packaging (owner: Codex, updated: 2026-05-19)
-### Stream: Core Registration
-1. [DONE] `phase6-kimi-claude-code-provider-type` Добавить provider id/type `kimiClaudeCode` в shared/Core contracts и registry descriptors, не смешивая его с `kimiCode` или `claudeCode` — scope: `packages/core, src/types, doc/TODO/todo-plan.md`; expected commit: `feat: register kimi claude code provider type`.
-2. [DONE] Git Commit: `feat: register kimi claude code provider type` (hash: c6eba1b28)
-3. [DONE] `phase6-kimi-claude-code-runtime-loader` Добавить loader/descriptor/install path для Kimi-Claude-Code, переиспользуя Claude runtime artifact только если это сохраняет отдельный provider namespace — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: load kimi claude code provider runtime`.
-4. [DONE] Git Commit: `feat: load kimi claude code provider runtime` (hash: 58456d15c)
-5. [DONE] `phase6-kimi-claude-code-package-mapping` Обновить package/build mapping только если отдельный provider artifact или manifest entry реально нужен после loader implementation; зафиксировать no-extra-artifact decision, если runtime живет внутри Claude module — scope: `scripts, doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `feat: package kimi claude code provider runtime`.
-6. [DONE] Git Commit: `feat: package kimi claude code provider runtime` (hash: 067943ad7)
-
-## Phase 7 — Settings And Effective Model Identity (owner: Codex, updated: 2026-05-19)
-### Stream: Settings Defaults
-1. [DONE] `phase7-kimi-claude-code-settings-schema` Добавить settings schema/defaults под `providers.kimiClaudeCode` с отдельным хранением от Claude и native Kimi — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: add kimi claude code settings schema`.
-2. [DONE] Git Commit: `feat: add kimi claude code settings schema` (hash: e019b7888)
-3. [DONE] `phase7-kimi-claude-code-settings-ui` Добавить Kimi-Claude-Code subsection в Claude-family Settings surface без отдельного лишнего tab, если текущая UI-архитектура это поддерживает — scope: `src/client/ui, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code claude-family settings`.
-4. [DONE] Git Commit: `feat: add kimi claude code claude-family settings` (hash: 0da27981b)
-5. [DONE] `phase7-kimi-claude-code-turn-config` Подключить applied turn config/effective model identity resolver для `kimiClaudeCode`, включая provider inheritance into next steps — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: resolve kimi claude code turn config`.
-6. [DONE] Git Commit: `feat: resolve kimi claude code turn config` (hash: 7e597bba2)
-
-## Phase 8 — Project Manager And Session UI (owner: Codex, updated: 2026-05-19)
-### Stream: Provider Surfaces
-1. [DONE] `phase8-kimi-claude-code-start-cards` Добавить Kimi-Claude-Code в provider descriptors/cards для Description questionnaire submit, workflow start cards, Development Tree start/fix cards — scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: show kimi claude code in provider start cards`.
-2. [DONE] Git Commit: `feat: show kimi claude code in provider start cards` (hash: 3d98066c7)
-3. [DONE] `phase8-kimi-claude-code-next-step-default` Проверить и исправить inheritance выбранного `kimiClaudeCode` при переходе между managed workflow steps, чтобы следующий шаг не падал в Claude — scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: preserve kimi claude code provider inheritance`.
-4. [DONE] Git Commit: `feat: preserve kimi claude code provider inheritance` (hash: 993be3cb3)
-5. [DONE] `phase8-kimi-claude-code-status-identity` Добавить status line/model chip/session title/provider tint mapping для `kimiClaudeCode` — scope: `src/client/ui, packages/core, doc/TODO/todo-plan.md`; expected commit: `feat: show kimi claude code session identity`.
-6. [DONE] Git Commit: `feat: show kimi claude code session identity` (hash: 232eb7de6)
-
-## Phase 9 — Diagnostics, Capture, Usage Telemetry (owner: Codex, updated: 2026-05-19)
-### Stream: Observability
-1. [DONE] `phase9-kimi-claude-code-native-capture` Подключить native capture/workbench support для Kimi-Claude-Code: provider-visible system prompt, model, tool list, base URL class and first user prompt, без secret leakage — scope: `packages/core, packages/Claude_Module, src/client/ui, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: capture kimi claude code native requests`.
-2. [DONE] Git Commit: `feat: capture kimi claude code native requests` (hash: c178acea7)
-3. [DONE] `phase9-kimi-claude-code-session-artifacts` Обеспечить отдельный artifact/session namespace под `~/.codeai-hub/providers/kimi-claude-code/home` и CodeAI sessions, не смешивая с `kimiCode` — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: persist kimi claude code session artifacts`.
-4. [DONE] Git Commit: `feat: persist kimi claude code session artifacts` (hash: 853d698b3)
-5. [DONE] `phase9-kimi-claude-code-usage-context-state` Показать usage/context telemetry как unavailable либо подключить native Kimi usage endpoint только если доказано совпадение account/API key source — scope: `packages/core, src/client/ui, doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: surface kimi claude code telemetry state`.
-6. [DONE] Git Commit: `feat: surface kimi claude code telemetry state` (hash: d56fcdf32)
-
-## Phase 10 — Documentation Sync (owner: Codex, updated: 2026-05-19)
-### Stream: Module Documentation
-1. [DONE] `phase10-kimi-claude-code-module-doc` Создать module doc для Kimi-Claude-Code с финальной архитектурой, supported/unsupported settings, probe evidence summary and recovery notes — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi claude code module`.
-2. [DONE] Git Commit: `docs: document kimi claude code module` (hash: 2c550f6a6)
-3. [DONE] `phase10-claude-kimi-boundary-docs` Синхронизировать Claude/Kimi docs: явно описать, что Claude provider не мутирован, native Kimi остается Wire-runtime, Kimi-Claude-Code является отдельным experiment/runtime — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync claude and kimi claude code boundaries`.
-4. [DONE] Git Commit: `docs: sync claude and kimi claude code boundaries` (hash: aae1679ea)
-
-## Phase 11 — Targeted Verification (owner: Codex, updated: 2026-05-19)
-### Stream: Focused Checks
-1. [DONE] `phase11-kimi-claude-code-tests` Запустить focused unit/integration tests для затронутых provider/profile/config modules и зафиксировать результат; при падениях добавить repair microtasks перед продолжением — scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify kimi claude code provider integration`. Result: `npm test --workspace packages/Claude_Module` 20/20 pass; `npm test --workspace packages/core` 12/12 pass; targeted compiled `node --test` for core provider registry/settings/native-capture 11/11 pass; targeted compiled `node --test` for Claude SDK/native-capture 14/14 pass.
-2. [DONE] Git Commit: `test: verify kimi claude code provider integration` (hash: 36f8c0e28)
-3. [DONE] `phase11-kimi-claude-code-target-builds` Выполнить targeted builds/typechecks для затронутых пакетов/UI (`npm run build --workspace ...`, `npm run build:webview`, `npm run typecheck:webview` по фактическому scope) и зафиксировать результат — scope: `doc/TODO/todo-plan.md, media/react-chat.js`; expected commit: `chore: verify kimi claude code targeted builds`. Result: `npm run build --workspace packages/Claude_Module`, `npm run build --workspace packages/core`, `npm run typecheck:webview`, and `npm run build:webview` passed.
-4. [DONE] Git Commit: `chore: verify kimi claude code targeted builds` (hash: d15080704)
-5. [DONE] `phase11-kimi-claude-code-live-smoke` Выполнить live smoke на одинаковом workflow prompt: native Kimi vs Kimi-Claude-Code, проверить visible progress/final, unlock input, artifacts and stop behavior — scope: `doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code live smoke result`. Result: Kimi-Claude-Code SDK smoke returned `KIMI_CLAUDE_CODE_LIVE_SMOKE_OK` with `assistant` + `result` events; native Kimi Wire smoke returned `KIMI_NATIVE_LIVE_SMOKE_OK` with `turn_started`, `status_update`, `thinking`, `assistant`, and `turn_completed`.
-6. [DONE] Git Commit: `docs: record kimi claude code live smoke result` (hash: 41a76ef41)
-
-## Phase 12 — Release Build Confirmation Gate (owner: Codex, updated: 2026-05-19)
-### Stream: Release Confirmation
-1. [DONE] `phase12-kimi-claude-code-release-confirmation` После targeted verification остановиться и запросить отдельное явное подтверждение пользователя на release build; до подтверждения не менять README/CHANGELOG версии и не запускать `build-all.sh`/`build-release.sh` — scope: без изменения файлов; expected commit: none. Result: confirmed by explicit user request "собери новый релиз, без пауз".
-
-## Phase 13 — Release Build (owner: Codex, updated: 2026-05-19)
-### Stream: Release Build
-1. [DONE] `phase13-kimi-claude-code-release-notes` После явного подтверждения пользователя обновить README/CHANGELOG на будущую версию и связанные docs, если затронуты — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi claude code release notes`. Result: README/CHANGELOG prepared for v1.2.316 with Kimi-Claude-Code provider notes, boundary notes, verification commands, and live smoke evidence.
-2. [DONE] Git Commit: `docs: prepare kimi claude code release notes` (hash: d5b3b33d1)
-3. [DONE] `phase13-kimi-claude-code-build-all` Запустить `./scripts/build-all.sh`, затем при необходимости `./scripts/build-release.sh --use-current-version`, перенести/проверить release artifacts and VSIX — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build kimi claude code release`. Result: `./scripts/build-all.sh` built v1.2.316 provider/core/UI/launcher artifacts and copied release tarballs to `doc/tmp/releases`; `./scripts/build-release.sh --use-current-version --allow-dirty` produced `codeai-hub-1.2.316.vsix` and verified VSIX runtime package surface.
-4. [DONE] Git Commit: `chore: build kimi claude code release` (hash: 700fa6933)
-
-## Phase 14 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-19)
-### Stream: Native Kimi vs Kimi-Claude-Code Retest
-1. [DONE] `phase14-kimi-claude-code-user-retest` Пользователь устанавливает релиз и сравнивает native `Kimi` vs `Kimi-Claude-Code` на одинаковом workflow step, включая progress messages, reasoning visibility, file artifacts, status line and next-step provider inheritance — scope: без изменения файлов; expected commit: none. Result: user could not install immediately but requested self-review; review found Settings/selection UX needed stronger separation of native `Kimi` and `Claude-Kimi`.
-
-### Stream: Provider Selection Hotfix
-1. [DONE] `phase14-kimi-provider-ui-hotfix` Разделить native `Kimi` и `Claude-Kimi` во всех UI-точках выбора provider/model: Settings tabs, workflow start cards, Description provider picker, Development Tree start card, Capture Workbench, status/model labels, provider tint and generated webview bundle — scope: `src/client, src/types, packages/core, media/react-chat.js`; expected commit: `fix: expose kimi providers separately in ui`.
-2. [DONE] Git Commit: `fix: expose kimi providers separately in ui` (hash: e6043a8a1)
-3. [DONE] `phase14-kimi-provider-hotfix-release-notes` После подтверждения пользователя на релиз обновить README/CHANGELOG на будущую hotfix-версию и связанные notes — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi provider ui hotfix release`.
-4. [DONE] Git Commit: `docs: prepare kimi provider ui hotfix release` (hash: 066c161f3)
-5. [DONE] `phase14-kimi-provider-hotfix-release-build` Собрать новый hotfix-релиз через `./scripts/build-all.sh` и проверить VSIX/release artifacts — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases`; expected commit: `chore: build kimi provider ui hotfix release`. Result: `./scripts/build-all.sh --allow-dirty` built provider/core/UI/launcher artifacts for v1.2.317 and copied tarballs to `doc/tmp/releases`; `./scripts/build-release.sh --use-current-version --allow-dirty` produced `codeai-hub-1.2.317.vsix` and verified the VSIX runtime package surface.
-6. [DONE] Git Commit: `chore: build kimi provider ui hotfix release` (hash: 64dcc1283)
-
-## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-19)
-### Stream: Scope Closeout
-1. [DONE] `phase15-kimi-claude-code-closeout` После явного acceptance архивировать active plan, disposition planning source, обновить Docs Index и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close kimi claude code provider experiment scope`.
-2. [PENDING] Git Commit: `docs: close kimi claude code provider experiment scope` (hash: TBD)
-3. [TODO] `phase15-kimi-claude-code-post-closeout-anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle — scope: handoff only; expected commit: none.
+- read `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`;
+- use `doc/SolidWorks-WorkFlow/Docs_Index.md` to choose relevant documents;
+- create or update a planning document under `doc/SolidWorks-WorkFlow/Plans/`;
+- create a new active `doc/TODO/todo-plan.md` only after the new scope is accepted.
