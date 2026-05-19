@@ -1,3 +1,18 @@
+# Plan Closeout: kimi-provider-module-implementation-2026-05-18
+
+**Created:** 2026-05-19T08:16:47.480Z
+**Acceptance:** User accepted Kimi provider scope after testing release 1.2.314; remaining Kimi reasoning-summary behavior is intentionally deferred to future UX/diagnostics work.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase8-kimi-closeout
+**Expected Commit:** docs: close kimi provider implementation scope
+**Last Recorded Commit:** 4e92fd5bd
+**Planning Source Disposition:** already_archived
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
   "currentTaskId": "phase8-kimi-closeout",
   "expectedCommitMessage": "docs: close kimi provider implementation scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close kimi provider implementation scope",
-    "preCommitHead": "4e92fd5bd",
-    "stage": "commit_pending",
-    "taskId": "phase8-kimi-closeout"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -505,6 +515,7 @@
 6. [DONE] Git Commit: `chore: release kimi provider inheritance build` (hash: 4e92fd5bd)
 
 ### Stream: Scope Closeout
-1. [DONE] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
-2. [PENDING] Git Commit: `docs: close kimi provider implementation scope` (hash: TBD)
+1. [IN_PROGRESS] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
+2. [TODO] Git Commit: `docs: close kimi provider implementation scope` (hash: TBD)
 3. [TODO] `phase8-kimi-post-closeout-handoff` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md`; expected commit: none.
+````
