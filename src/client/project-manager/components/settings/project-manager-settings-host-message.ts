@@ -10,6 +10,11 @@ import type { UseProjectManagerSettingsResult } from "./use-project-manager-sett
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+const isGlmClaudeCodeCaptureModelId = (
+  value: string
+): value is NativeRequestCaptureModelId =>
+  value === "glm-5.1" || value === "glm-5-turbo" || value === "glm-4.5-air";
+
 export const isNativeRequestCaptureProviderId = (
   value: unknown
 ): value is NativeRequestCaptureProviderId =>
@@ -29,9 +34,12 @@ const resolveDefaultCaptureModelId = (
     return settings.providers.codex.defaultModel;
   }
   if (providerId === "glmClaudeCode") {
-    return settings.providers.glmClaudeCode?.defaultModel ?? "glm-5.1";
+    const modelId = settings.providers.glmClaudeCode?.defaultModel;
+    return modelId && isGlmClaudeCodeCaptureModelId(modelId)
+      ? modelId
+      : "glm-5.1";
   }
-  return settings.providers.kimi?.defaultModel ?? "glm-5.1";
+  return settings.providers.kimi?.defaultModel ?? "kimi-for-coding";
 };
 
 const isTemplateUpdateResolutionAction = (

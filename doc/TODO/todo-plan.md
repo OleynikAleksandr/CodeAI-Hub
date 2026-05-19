@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "6073c1823",
+  "lastRecordedCommit": "4da2d2496",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase9-glm-provider-tests",
-  "expectedCommitMessage": "test: verify glm claude code provider replacement",
+  "currentTaskId": "phase9-glm-target-builds",
+  "expectedCommitMessage": "chore: verify glm claude code targeted builds",
   "debt": {
-    "expectedCommitMessage": "test: verify glm claude code provider replacement",
-    "preCommitHead": "6073c1823",
+    "expectedCommitMessage": "chore: verify glm claude code targeted builds",
+    "preCommitHead": "4da2d2496",
     "stage": "commit_pending",
-    "taskId": "phase9-glm-provider-tests"
+    "taskId": "phase9-glm-target-builds"
   }
 }
 ```
@@ -119,9 +119,9 @@
 ## Phase 9 — Targeted Verification (owner: Codex, updated: 2026-05-19)
 ### Stream: Focused Checks
 1. [DONE] `phase9-glm-provider-tests` Run focused tests for changed Claude module/Core provider registry/settings/capture paths; add repair microtasks before continuing if failures are implementation-related — scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify glm claude code provider replacement`. Result: removed leftover `kimiClaudeCode` runtime profile/test identifiers from active Claude module sources; `npm test --workspace packages/Claude_Module` passed 20/20; `npm test --workspace packages/core` passed 12/12; `rg` found no active `kimiClaudeCode` references in `packages/Claude_Module` or `packages/core`.
-2. [PENDING] Git Commit: `test: verify glm claude code provider replacement` (hash: TBD)
-3. [TODO] `phase9-glm-target-builds` Run targeted builds/typechecks for changed provider/core/UI packages and record exact results — scope: `packages/Claude_Module, packages/core, src/client`; expected commit: `chore: verify glm claude code targeted builds`.
-4. [TODO] Git Commit: `chore: verify glm claude code targeted builds` (hash: TBD)
+2. [DONE] Git Commit: `test: verify glm claude code provider replacement` (hash: 4da2d2496)
+3. [DONE] `phase9-glm-target-builds` Run targeted builds/typechecks for changed provider/core/UI packages and record exact results — scope: `packages/Claude_Module, packages/core, src/client, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: verify glm claude code targeted builds`. Result: fixed GLM native-capture model typing and restored native Kimi capture defaults to `kimi-for-coding`; `npm run build --workspace packages/Claude_Module`, `npm run build --workspace packages/core`, `npm run typecheck:webview`, and `npm run build:webview` passed; generated `media/react-chat.js` no longer contains active `kimiClaudeCode`/`Claude-Kimi` references.
+4. [PENDING] Git Commit: `chore: verify glm claude code targeted builds` (hash: TBD)
 5. [TODO] `phase9-glm-local-config-template` Create isolated local GLM provider config/home template outside Git for user API-key entry and verify missing-key failure is explicit — scope: `~/.codeai-hub/providers/glm-claude-code/config.json, ~/.codeai-hub/providers/glm-claude-code/home, doc/TODO/todo-plan.md`; expected commit: `docs: record glm claude code local config setup`.
 6. [TODO] Git Commit: `docs: record glm claude code local config setup` (hash: TBD)
 7. [TODO] `phase9-glm-live-smoke` After user enters Z.AI API key, run live smoke through GLM-Claude-Code on short answer and workflow-style prompt; verify visible output, completion, input unlock and no real Claude home writes — scope: `doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record glm claude code live smoke result`.

@@ -7,10 +7,12 @@ export type NativeRequestCaptureProviderId =
   | "codex"
   | "kimi"
   | "glmClaudeCode";
+type GlmClaudeCodeModelId = "glm-5.1" | "glm-5-turbo" | "glm-4.5-air";
 export type NativeRequestCaptureModelId =
   | ClaudeModelAliasId
   | CodexModelId
-  | KimiModelId;
+  | KimiModelId
+  | GlmClaudeCodeModelId;
 export type NativeRequestCaptureScenarioId =
   | "description"
   | "virtual_simulation"

@@ -11,7 +11,7 @@ type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi Code";
 const GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME = "GLM 5.1 / Claude Code";
-const KIMI_DEFAULT_MODEL_ID = "glm-5.1";
+const KIMI_DEFAULT_MODEL_ID = "kimi-for-coding";
 
 const PROVIDER_ID_TO_KEY: Record<SettingsBackedProviderId, ProviderKey> = {
   claudeCodeCli: "claude",

@@ -7807,6 +7807,12 @@
   );
 
   // src/client/ui/src/components/settings/kimi-settings-state.ts
+  var DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH = "~/.codeai-hub/providers/glm-claude-code/config.json";
+  var DEFAULT_GLM_CLAUDE_CODE_BASE_URL = "https://api.z.ai/api/anthropic";
+  var DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL = "glm-5.1";
+  var DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL = "glm-5-turbo";
+  var DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL = "glm-4.5-air";
+  var mapOptionalString = (value, fallback) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
   var mapKimiSettings = (value, mapAutoUpdateSettings2, mapThinkingDisplaySyncEnabled2) => ({
     autoUpdate: mapAutoUpdateSettings2(value?.autoUpdate),
     defaultModel: DEFAULT_KIMI_MODEL_ID,
@@ -7814,8 +7820,29 @@
       value?.thinkingDisplaySyncEnabled
     )
   });
-  var mapKimiClaudeCodeSettings = (value, mapThinkingDisplaySyncEnabled2) => ({
-    defaultModel: DEFAULT_KIMI_MODEL_ID,
+  var mapGlmClaudeCodeSettings = (value, mapThinkingDisplaySyncEnabled2) => ({
+    apiKey: mapOptionalString(value?.apiKey, ""),
+    baseUrl: mapOptionalString(value?.baseUrl, DEFAULT_GLM_CLAUDE_CODE_BASE_URL),
+    configPath: mapOptionalString(
+      value?.configPath,
+      DEFAULT_GLM_CLAUDE_CODE_CONFIG_PATH
+    ),
+    defaultModel: mapOptionalString(
+      value?.defaultModel,
+      DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+    ),
+    haikuModel: mapOptionalString(
+      value?.haikuModel,
+      DEFAULT_GLM_CLAUDE_CODE_HAIKU_MODEL
+    ),
+    opusModel: mapOptionalString(
+      value?.opusModel,
+      DEFAULT_GLM_CLAUDE_CODE_OPUS_MODEL
+    ),
+    sonnetModel: mapOptionalString(
+      value?.sonnetModel,
+      DEFAULT_GLM_CLAUDE_CODE_SONNET_MODEL
+    ),
     thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
       value?.thinkingDisplaySyncEnabled
     )
@@ -8025,8 +8052,8 @@
         mapAutoUpdateSettings,
         mapThinkingDisplaySyncEnabled
       ),
-      kimiClaudeCode: mapKimiClaudeCodeSettings(
-        value?.providers?.kimiClaudeCode,
+      glmClaudeCode: mapGlmClaudeCodeSettings(
+        value?.providers?.glmClaudeCode,
         mapThinkingDisplaySyncEnabled
       )
     }
@@ -8052,8 +8079,8 @@
     right.thinkingLevelByModel
   ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) && areKimiProviderSettingsEqual(
-    left.providers.kimiClaudeCode,
-    right.providers.kimiClaudeCode
+    left.providers.glmClaudeCode,
+    right.providers.glmClaudeCode
   );
 
   // src/client/ui/src/components/settings/native-request-capture-state.ts
@@ -8322,16 +8349,16 @@
     claudeCodeCli: "Claude",
     codexCli: "Codex",
     geminiCli: "Gemini",
-    kimiCode: "Kimi",
-    kimiClaudeCode: "Claude-Kimi"
+    glmClaudeCode: "GLM-Claude-Code",
+    kimiCode: "Kimi"
   };
   var getDefaultProviderTitle = (providerId) => PROVIDER_TITLE_MAP[providerId] ?? providerId;
   var PROVIDER_DESCRIPTION_MAP = {
     claudeCodeCli: "Using your authentication Claude Code CLI",
     codexCli: "Using your authentication Codex CLI",
     geminiCli: "Using your authentication Gemini CLI",
-    kimiCode: "Using your authentication Kimi CLI",
-    kimiClaudeCode: "Using Kimi 2.6 through Claude Agent SDK-compatible runtime"
+    glmClaudeCode: "Using GLM 5.1 through Claude Agent SDK-compatible runtime",
+    kimiCode: "Using your authentication Kimi CLI"
   };
   var getDefaultProviderDescription = (providerId) => PROVIDER_DESCRIPTION_MAP[providerId] ?? "";
 
@@ -8473,7 +8500,7 @@
     "codexCli",
     "geminiCli",
     "kimiCode",
-    "kimiClaudeCode"
+    "glmClaudeCode"
   ]);
   var isProviderDescriptorCandidate = (value) => {
     if (!value || typeof value !== "object") {
