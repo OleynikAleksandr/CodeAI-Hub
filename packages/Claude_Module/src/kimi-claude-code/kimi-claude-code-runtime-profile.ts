@@ -1,158 +1,19 @@
-import { homedir } from "node:os";
-import path from "node:path";
-import {
-  type KimiClaudeCodeApiKeySource,
-  resolveKimiClaudeCodeApiKey,
-  resolveKimiClaudeCodeConfigPath,
-} from "../auth/kimi-claude-code-auth-profile";
-import type { ClaudeCodeRuntimeProfile } from "../sdk/claude-runtime-profile";
-import { CODEAI_CLAUDE_WORKFLOW_TOOLS } from "../sdk/claude-workflow-system-prompt";
-
-export const KIMI_CLAUDE_CODE_PROVIDER_ID = "kimiClaudeCode";
-export const KIMI_CLAUDE_CODE_MODEL_ID = "kimi-for-coding";
-export const KIMI_CLAUDE_CODE_DEFAULT_BASE_URL = "https://api.kimi.com/coding";
-export const KIMI_CLAUDE_CODE_DEFAULT_PROJECT_SLUG = "kimi-claude-code";
-export const KIMI_CLAUDE_CODE_SESSION_TITLE = "CodeAI Kimi Claude Code";
-
-const DEFAULT_PROVIDER_HOME = path.join(
-  homedir(),
-  ".codeai-hub",
-  "providers",
-  "kimi-claude-code",
-  "home"
-);
-
-export interface KimiClaudeCodeRuntimeProbeProfile {
-  readonly anthropicBaseUrl: string;
-  readonly configPath: string;
-  readonly diagnostics: {
-    readonly anthropicBaseUrl: string;
-    readonly apiKeyAvailable: boolean;
-    readonly apiKeySource: KimiClaudeCodeApiKeySource;
-    readonly configPath: string;
-    readonly home: string;
-    readonly modelId: typeof KIMI_CLAUDE_CODE_MODEL_ID;
-    readonly providerId: typeof KIMI_CLAUDE_CODE_PROVIDER_ID;
-  };
-  readonly env: NodeJS.ProcessEnv;
-  readonly home: string;
-  readonly modelId: typeof KIMI_CLAUDE_CODE_MODEL_ID;
-  readonly providerId: typeof KIMI_CLAUDE_CODE_PROVIDER_ID;
-}
-
-export interface KimiClaudeCodeRuntimeProbeProfileOptions {
-  readonly anthropicBaseUrl?: string;
-  readonly configPath?: string;
-  readonly env?: NodeJS.ProcessEnv;
-  readonly home?: string;
-}
-
-export interface KimiClaudeCodeRuntimeProfileOptions {
-  readonly env?: NodeJS.ProcessEnv;
-  readonly home?: string;
-  readonly projectSlug?: string;
-  readonly sessionTitle?: string;
-}
-
-const trimOptional = (value: string | undefined): string | null => {
-  const trimmed = value?.trim();
-  return trimmed ? trimmed : null;
-};
-
-export const resolveKimiClaudeCodeProviderHome = (
-  env: NodeJS.ProcessEnv = process.env
-): string =>
-  trimOptional(env.CODEAI_KIMI_CLAUDE_CODE_HOME) ?? DEFAULT_PROVIDER_HOME;
-
-export const resolveKimiClaudeCodeProjectPath = (
-  options: KimiClaudeCodeRuntimeProfileOptions = {}
-): string =>
-  path.join(
-    options.home ??
-      resolveKimiClaudeCodeProviderHome(options.env ?? process.env),
-    ".claude",
-    "projects",
-    options.projectSlug ?? KIMI_CLAUDE_CODE_DEFAULT_PROJECT_SLUG
-  );
-
-export const buildKimiClaudeCodeRuntimeProfile = (
-  options: KimiClaudeCodeRuntimeProfileOptions = {}
-): ClaudeCodeRuntimeProfile => {
-  const home =
-    options.home ??
-    resolveKimiClaudeCodeProviderHome(options.env ?? process.env);
-  return {
-    authMode: "anthropic-api-key",
-    id: "kimiClaudeCode",
-    projectPath: resolveKimiClaudeCodeProjectPath({
-      env: options.env,
-      home,
-      projectSlug: options.projectSlug,
-    }),
-    providerHome: home,
-    sessionTitle: options.sessionTitle ?? KIMI_CLAUDE_CODE_SESSION_TITLE,
-    settingSources: [],
-    toolNames: [...CODEAI_CLAUDE_WORKFLOW_TOOLS],
-  };
-};
-
-export const buildKimiClaudeCodeRuntimeProbeProfile = async (
-  options: KimiClaudeCodeRuntimeProbeProfileOptions = {}
-): Promise<KimiClaudeCodeRuntimeProbeProfile> => {
-  const sourceEnv = options.env ?? process.env;
-  const {
-    ANTHROPIC_API_KEY: _anthropicApiKey,
-    ANTHROPIC_BASE_URL: _anthropicBaseUrl,
-    CLAUDE_CODE_OAUTH_TOKEN: _claudeCodeOauthToken,
-    CLAUDE_SUBSCRIPTION_MODE: _claudeSubscriptionMode,
-    CLAUDE_USE_CLI_AUTH: _claudeUseCliAuth,
-    CLAUDECODE: _claudeCode,
-    ...baseEnv
-  } = sourceEnv;
-  const home = options.home ?? resolveKimiClaudeCodeProviderHome(sourceEnv);
-  const configPath =
-    options.configPath ?? resolveKimiClaudeCodeConfigPath(sourceEnv);
-  const anthropicBaseUrl =
-    options.anthropicBaseUrl ??
-    trimOptional(sourceEnv.KIMI_CLAUDE_CODE_ANTHROPIC_BASE_URL) ??
-    KIMI_CLAUDE_CODE_DEFAULT_BASE_URL;
-  const apiKey = await resolveKimiClaudeCodeApiKey({
-    configPath,
-    env: sourceEnv,
-  });
-
-  const env: NodeJS.ProcessEnv = {
-    ...baseEnv,
-    ANTHROPIC_BASE_URL: anthropicBaseUrl,
-    HOME: home,
-  };
-  if (apiKey.apiKey) {
-    env.ANTHROPIC_API_KEY = apiKey.apiKey;
-  }
-
-  return {
-    anthropicBaseUrl,
-    configPath,
-    diagnostics: {
-      anthropicBaseUrl,
-      apiKeyAvailable: Boolean(apiKey.apiKey),
-      apiKeySource: apiKey.source,
-      configPath,
-      home,
-      modelId: KIMI_CLAUDE_CODE_MODEL_ID,
-      providerId: KIMI_CLAUDE_CODE_PROVIDER_ID,
-    },
-    env,
-    home,
-    modelId: KIMI_CLAUDE_CODE_MODEL_ID,
-    providerId: KIMI_CLAUDE_CODE_PROVIDER_ID,
-  };
-};
-
 export {
-  extractKimiClaudeCodeApiKeyFromConfig,
-  type KimiClaudeCodeApiKeyResolution,
-  type KimiClaudeCodeApiKeySource,
-  resolveKimiClaudeCodeApiKey,
-  resolveKimiClaudeCodeConfigPath,
-} from "../auth/kimi-claude-code-auth-profile";
+  buildGlmClaudeCodeRuntimeProbeProfile as buildKimiClaudeCodeRuntimeProbeProfile,
+  buildGlmClaudeCodeRuntimeProfile as buildKimiClaudeCodeRuntimeProfile,
+  extractGlmClaudeCodeApiKeyFromConfig as extractKimiClaudeCodeApiKeyFromConfig,
+  GLM_CLAUDE_CODE_DEFAULT_BASE_URL as KIMI_CLAUDE_CODE_DEFAULT_BASE_URL,
+  GLM_CLAUDE_CODE_DEFAULT_PROJECT_SLUG as KIMI_CLAUDE_CODE_DEFAULT_PROJECT_SLUG,
+  GLM_CLAUDE_CODE_MODEL_ID as KIMI_CLAUDE_CODE_MODEL_ID,
+  GLM_CLAUDE_CODE_PROVIDER_ID as KIMI_CLAUDE_CODE_PROVIDER_ID,
+  GLM_CLAUDE_CODE_SESSION_TITLE as KIMI_CLAUDE_CODE_SESSION_TITLE,
+  type GlmClaudeCodeApiKeyResolution as KimiClaudeCodeApiKeyResolution,
+  type GlmClaudeCodeApiKeySource as KimiClaudeCodeApiKeySource,
+  type GlmClaudeCodeRuntimeProbeProfile as KimiClaudeCodeRuntimeProbeProfile,
+  type GlmClaudeCodeRuntimeProbeProfileOptions as KimiClaudeCodeRuntimeProbeProfileOptions,
+  type GlmClaudeCodeRuntimeProfileOptions as KimiClaudeCodeRuntimeProfileOptions,
+  resolveGlmClaudeCodeApiKey as resolveKimiClaudeCodeApiKey,
+  resolveGlmClaudeCodeConfigPath as resolveKimiClaudeCodeConfigPath,
+  resolveGlmClaudeCodeProjectPath as resolveKimiClaudeCodeProjectPath,
+  resolveGlmClaudeCodeProviderHome as resolveKimiClaudeCodeProviderHome,
+} from "../glm-claude-code/glm-claude-code-runtime-profile";
