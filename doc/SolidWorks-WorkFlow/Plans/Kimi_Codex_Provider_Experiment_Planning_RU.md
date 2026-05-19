@@ -72,21 +72,21 @@ Target `config.toml` materialization:
 
 ```toml
 model_provider = "kimi"
-model = "<kimi-2.6-codex-model-id>"
+model = "kimi-for-coding"
 model_reasoning_summary = "none"
 
 [model_providers.kimi]
 name = "Kimi"
-base_url = "<kimi-openai-compatible-base-url>"
+base_url = "https://api.kimi.com/coding/v1"
 env_key = "KIMI_API_KEY"
-wire_api = "chat" # or "responses" only if Kimi endpoint proves compatible with Codex Responses path
+wire_api = "chat"
 env_key_instructions = "Set KIMI_API_KEY in the environment used by CodeAI Hub."
 stream_idle_timeout_ms = 300000
 stream_max_retries = 5
 request_max_retries = 4
 ```
 
-Open question: exact Kimi OpenAI-compatible `base_url`, `model` id, and `wire_api` must be verified before implementation. The native Kimi CLI auth and Kimi Code subscription auth are not automatically the same thing as an OpenAI-compatible API key.
+Initial probe values are based on the local Kimi CLI profile shape and the native Kimi provider defaults already used by CodeAI Hub. The materializer must not copy secrets from `~/.kimi/config.toml`; `kimi-codex` should read `KIMI_API_KEY` only from the CodeAI Hub process environment. `wire_api = "responses"` remains an experiment only if the Kimi endpoint proves compatible with the Codex Responses path.
 
 ## 5. Instruction And Flag Parity With GPT 5.5
 
