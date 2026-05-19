@@ -42,8 +42,16 @@ export {
   type ClaudeModelAliasId,
   type ClaudeModelCapabilities,
   type ClaudeThinkingEffort,
+  DEFAULT_KIMI_CLAUDE_CODE_MODEL_ID,
   findClaudeModelCapabilities,
+  findKimiClaudeCodeModelCapabilities,
   isClaudeModelAliasId,
+  isKnownKimiClaudeCodeModelId,
+  KIMI_CLAUDE_CODE_MODEL_CAPABILITIES,
+  type KimiClaudeCodeModelCapabilities,
+  type KimiClaudeCodeModelId,
+  type KimiClaudeCodeTelemetrySupport,
+  listKimiClaudeCodeModelCapabilities,
 } from "./types";
 
 import type {

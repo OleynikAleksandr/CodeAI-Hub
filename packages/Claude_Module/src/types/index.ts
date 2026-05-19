@@ -5,6 +5,17 @@ export interface ClaudeInstallerPaths {
 }
 
 export {
+  DEFAULT_KIMI_CLAUDE_CODE_MODEL_ID,
+  findKimiClaudeCodeModelCapabilities,
+  isKnownKimiClaudeCodeModelId,
+  KIMI_CLAUDE_CODE_MODEL_CAPABILITIES,
+  type KimiClaudeCodeModelCapabilities,
+  type KimiClaudeCodeModelId,
+  type KimiClaudeCodeTelemetrySupport,
+  listKimiClaudeCodeModelCapabilities,
+} from "../kimi-claude-code/kimi-claude-code-model-capabilities";
+
+export {
   CLAUDE_MODEL_CAPABILITIES,
   type ClaudeModelAliasId,
   type ClaudeModelCapabilities,
