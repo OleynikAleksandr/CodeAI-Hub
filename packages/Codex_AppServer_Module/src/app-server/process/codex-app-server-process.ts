@@ -10,10 +10,7 @@ import {
   type CodexAppServerProcessProfileKey,
   resolveCodexAppServerProcessProfile,
 } from "./codex-app-server-process-profile";
-import {
-  materializeCodexProviderHomeSummaryConfig,
-  materializeKimiCodexProviderHomeConfig,
-} from "./codex-provider-home-config";
+import { materializeCodexProviderHomeSummaryConfig } from "./codex-provider-home-config";
 
 export {
   CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
@@ -87,13 +84,6 @@ const DEFAULT_PROVIDER_CODEX_HOME = path.join(
   "codex",
   "home"
 );
-const DEFAULT_KIMI_CODEX_PROVIDER_HOME = path.join(
-  homedir(),
-  ".codeai-hub",
-  "providers",
-  "kimi-codex",
-  "home"
-);
 const LEGACY_CODEX_HOME = path.join(homedir(), ".codex");
 const AUTH_FILENAME = "auth.json";
 const CONFIG_FILENAME = "config.toml";
@@ -105,30 +95,11 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const toError = (error: unknown): Error =>
   error instanceof Error ? error : new Error(String(error));
 
-export type CodexAppServerProviderHomeProfile = "codex" | "kimiCodex";
-
-const resolveDefaultProviderHome = (
-  providerHomeProfile: CodexAppServerProviderHomeProfile
-): string =>
-  providerHomeProfile === "kimiCodex"
-    ? DEFAULT_KIMI_CODEX_PROVIDER_HOME
-    : DEFAULT_PROVIDER_CODEX_HOME;
-
-const resolveProviderCodexHome = (options: {
-  readonly environment: Readonly<Record<string, string>>;
-  readonly providerCodexHome?: string;
-  readonly providerHomeProfile: CodexAppServerProviderHomeProfile;
-}): string => {
-  const fromOptions = options.providerCodexHome?.trim();
-  if (fromOptions) {
-    return fromOptions;
-  }
-
-  const fromEnvironment =
-    options.environment.CODEX_HOME?.trim() ?? process.env.CODEX_HOME?.trim();
+const resolveProviderCodexHome = (): string => {
+  const fromEnvironment = process.env.CODEX_HOME?.trim();
   return fromEnvironment?.length
     ? fromEnvironment
-    : resolveDefaultProviderHome(options.providerHomeProfile);
+    : DEFAULT_PROVIDER_CODEX_HOME;
 };
 
 const copyLegacyFileIfMissing = async (
@@ -153,20 +124,12 @@ const copyLegacyFileIfMissing = async (
   }
 };
 
-const prepareProviderCodexHome = async (options: {
-  readonly environment: Readonly<Record<string, string>>;
-  readonly providerCodexHome?: string;
-  readonly providerHomeProfile: CodexAppServerProviderHomeProfile;
-}): Promise<string> => {
-  const providerCodexHome = resolveProviderCodexHome(options);
+const prepareProviderCodexHome = async (): Promise<string> => {
+  const providerCodexHome = resolveProviderCodexHome();
   await mkdir(providerCodexHome, { recursive: true });
   await copyLegacyFileIfMissing(AUTH_FILENAME, providerCodexHome);
   await copyLegacyFileIfMissing(CONFIG_FILENAME, providerCodexHome);
-  if (options.providerHomeProfile === "kimiCodex") {
-    await materializeKimiCodexProviderHomeConfig(providerCodexHome);
-  } else {
-    await materializeCodexProviderHomeSummaryConfig(providerCodexHome);
-  }
+  await materializeCodexProviderHomeSummaryConfig(providerCodexHome);
   return providerCodexHome;
 };
 
@@ -183,8 +146,6 @@ const extractResponseError = (response: JsonRpcResponse): Error | null => {
 interface CodexAppServerProcessOptions {
   readonly environment?: Readonly<Record<string, string>>;
   readonly processProfileKey?: CodexAppServerProcessProfileKey;
-  readonly providerCodexHome?: string;
-  readonly providerHomeProfile?: CodexAppServerProviderHomeProfile;
   readonly reporter?: ModuleReporter;
 }
 
@@ -195,8 +156,6 @@ const isProcessOptions = (
     value &&
       ("environment" in value ||
         "processProfileKey" in value ||
-        "providerCodexHome" in value ||
-        "providerHomeProfile" in value ||
         "reporter" in value)
   );
 
@@ -204,8 +163,6 @@ export class CodexAppServerProcess {
   private child: ChildProcessWithoutNullStreams | null = null;
   private readonly environment: Readonly<Record<string, string>>;
   private readonly processProfile: CodexAppServerProcessProfile;
-  private readonly providerCodexHome?: string;
-  private readonly providerHomeProfile: CodexAppServerProviderHomeProfile;
   private stdoutReader: readline.Interface | null = null;
   private readonly notificationListeners = new Set<
     (notification: {
@@ -232,12 +189,6 @@ export class CodexAppServerProcess {
     this.processProfile = resolveCodexAppServerProcessProfile(
       isProcessOptions(options) ? options.processProfileKey : undefined
     );
-    this.providerCodexHome = isProcessOptions(options)
-      ? options.providerCodexHome
-      : undefined;
-    this.providerHomeProfile = isProcessOptions(options)
-      ? (options.providerHomeProfile ?? "codex")
-      : "codex";
   }
 
   async start(): Promise<void> {
@@ -296,11 +247,7 @@ export class CodexAppServerProcess {
   }
 
   private async startInternal(): Promise<void> {
-    const providerCodexHome = await prepareProviderCodexHome({
-      environment: this.environment,
-      providerCodexHome: this.providerCodexHome,
-      providerHomeProfile: this.providerHomeProfile,
-    });
+    const providerCodexHome = await prepareProviderCodexHome();
     const child = spawn(
       CODEX_EXECUTABLE,
       [...this.processProfile.appServerArgs],

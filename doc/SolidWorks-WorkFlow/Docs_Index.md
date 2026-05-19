@@ -80,7 +80,6 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
-- `Plans/Kimi_Codex_Provider_Experiment_Planning_RU.md` — active planning source for experimental `kimi-codex` provider: Kimi 2.6 through Codex App Server with GPT 5.5 Codex workflow instructions, startup flags, provider-home isolation, Settings/start-card/status integration, diagnostics, and A/B comparison against native Kimi.
 - `Plans/Archive/Session_Context_And_Usage_Indicators_Planning_RU.md` — archived accepted planning source for release `1.2.315`: context-window remaining percentage in the status panel, Kimi context usage telemetry, and provider 5-hour/weekly usage-limit rows in the session ID usage bar. Pair with `doc/TODO/Archive/todo-plan-closeout-session-context-and-usage-indicators-2026-05-19.md`.
 - `Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md` — archived accepted planning source for implementing the Kimi Code / Kimi 2.6 provider module: Wire transport, provider-home isolation, session lifecycle, Core registry/settings integration, diagnostics, packaging, and phased execution slicing.
 - `Plans/Archive/Agent_Runtime_Provider_Candidates_Analysis_RU.md` — archived accepted planning analysis for provider candidates after Claude/Codex/Gemini: Kimi, Qwen Code, GLM, DeepSeek, MiniMax; compares native agent runtime surfaces, backend-provider options, and subscription-vs-token access.
