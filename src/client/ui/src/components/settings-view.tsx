@@ -1,47 +1,26 @@
 import React, { useEffect, useState } from "react";
-import type { KimiModelId } from "../../../../types/kimi-model-registry";
 import { useLocalization } from "../app-host/use-localization";
 import vscode from "../vscode";
-import ClaudeDefaultModelCard from "./settings/claude-default-model/claude-default-model-card";
-import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-model-card";
-import GeminiDefaultModelCard from "./settings/gemini-default-model/gemini-default-model-card";
-import GeneralResponseModeFacade from "./settings/general-response-mode/general-response-mode-facade";
-import GeneralSettings from "./settings/general-settings";
-import KimiSettingsTab from "./settings/kimi-settings-tab";
-import LocalizationSettingsCard from "./settings/localization-settings-card";
-import ProviderVersions from "./settings/provider-versions";
-import SessionContinuityCard from "./settings/session-continuity-card";
 import SettingsFooter from "./settings/settings-footer";
 import SettingsHeader from "./settings/settings-header";
+import {
+  SettingsProviderTabContent,
+  type SettingsTab,
+  type SettingsViewMode,
+  type SettingsViewState,
+  settingsTabs,
+} from "./settings/settings-provider-tab-content";
 import {
   settingsColorTokens,
   settingsSpacingTokens,
   settingsTypographyTokens,
 } from "./settings/style-tokens";
-import type { TemplateUpdateSettingsControls } from "./settings/template-update-settings-model";
-import TemplateUpdatesCard from "./settings/template-updates-card";
-import ThinkingSettings from "./settings/thinking-settings";
-import type { UseSettingsStateResult } from "./settings/use-settings-state";
-
-type SettingsMode = "full" | "project-manager" | "settings-only";
-type SettingsBooleanHandler = (enabled: boolean) => void;
-
-type SettingsViewState = UseSettingsStateResult & {
-  readonly handleKimiDefaultModelChange?: (modelId: KimiModelId) => void;
-  readonly handleKimiClaudeCodeThinkingDisplaySyncChange?: SettingsBooleanHandler;
-  readonly handleKimiThinkingDisplaySyncChange?: SettingsBooleanHandler;
-  readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
-  readonly hostPostMessage?: (message: unknown) => void;
-  readonly supportsCoreRestart?: boolean;
-} & Partial<TemplateUpdateSettingsControls>;
 
 interface SettingsViewProps {
-  readonly mode?: SettingsMode;
+  readonly mode?: SettingsViewMode;
   readonly onClose: () => void;
   readonly state: SettingsViewState;
 }
-
-type SettingsTab = "claude" | "codex" | "gemini" | "kimi" | "general";
 
 const containerStyles: React.CSSProperties = {
   height: "100%",
@@ -81,12 +60,6 @@ const contentStyles: React.CSSProperties = {
   overflowY: "auto",
   overscrollBehavior: "contain",
   padding: settingsSpacingTokens.pagePadding,
-};
-
-const stackStyles: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  gap: settingsSpacingTokens.containerGap,
 };
 
 const syncOverlayStyles: React.CSSProperties = {
@@ -135,17 +108,6 @@ const syncDescriptionStyles: React.CSSProperties = {
   lineHeight: 1.6,
 };
 
-const settingsTabs: ReadonlyArray<{
-  readonly id: SettingsTab;
-  readonly label: string;
-}> = [
-  { id: "claude", label: "Claude" },
-  { id: "codex", label: "Codex" },
-  { id: "gemini", label: "Gemini" },
-  { id: "kimi", label: "Kimi" },
-  { id: "general", label: "General" },
-];
-
 const SettingsView: React.FC<SettingsViewProps> = ({
   mode = "full",
   onClose,
@@ -153,58 +115,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
 }) => {
   const { ready } = useLocalization();
   const [activeTab, setActiveTab] = useState<SettingsTab>("claude");
-  const {
-    coreControl,
-    settings,
-    hasChanges,
-    saving,
-    resetting,
-    versions,
-    handleThinkingSettingsChange,
-    handleClaudeContinuityRemainingPercentThresholdChange,
-    handleCodexContinuityRemainingPercentThresholdChange,
-    handleGeminiContinuityRemainingPercentThresholdChange,
-    handleGeminiContextWindowTokenLimitChange,
-    handleCodexDefaultModelChange,
-    handleClaudeDefaultModelChange,
-    handleGeminiDefaultModelChange,
-    handleKimiDefaultModelChange,
-    handleKimiClaudeCodeThinkingDisplaySyncChange,
-    handleGeminiThinkingChange,
-    handleClaudeThinkingDisplaySyncChange,
-    handleCodexThinkingDisplaySyncChange,
-    handleGeminiThinkingDisplaySyncChange,
-    handleKimiThinkingDisplaySyncChange,
-    handleLocalizationCategoryLanguageChange,
-    handleLocalizationDefaultLanguageChange,
-    handleLocalizationEngineIdChange,
-    handleLocalizationGlossaryEnabledChange,
-    handleLocalizationWorkflowTermsPolicyChange,
-    handleNativeRequestCaptureWorkbenchOpen,
-    handleReasoningTranslationEngineIdChange,
-    handleCodexReasoningChange,
-    handleProviderAutoUpdateChange,
-    handleRestartCore,
-    handleResponsePolicyModeChange,
-    handleStrictSchemaTextChange,
-    handleStrictInstructionTextChange,
-    handleTextToSpeechRateChange,
-    handleSave,
-    handleReset,
-    handleUpdateProvider,
-  } = state;
-  const renderProjectManagerGeneralTab =
-    mode !== "project-manager" && state.supportsCoreRestart === false;
-  const templateUpdateControls =
-    state.templateUpdates &&
-    state.handleTemplateUpdatesLoad &&
-    state.handleTemplateUpdateResolve
-      ? {
-          handleTemplateUpdateResolve: state.handleTemplateUpdateResolve,
-          handleTemplateUpdatesLoad: state.handleTemplateUpdatesLoad,
-          templateUpdates: state.templateUpdates,
-        }
-      : null;
+  const { hasChanges, saving, resetting, handleSave, handleReset } = state;
   const localizationSyncTitle = "Synchronizing localization";
   const localizationSyncDescription =
     state.localizationSyncStatus.message ??
@@ -247,234 +158,11 @@ const SettingsView: React.FC<SettingsViewProps> = ({
         ))}
       </div>
       <div style={contentStyles}>
-        {(() => {
-          if (activeTab === "claude") {
-            return (
-              <div style={stackStyles}>
-                <ClaudeDefaultModelCard
-                  defaultModel={settings.providers.claude.defaultModel}
-                  onDefaultModelChange={handleClaudeDefaultModelChange}
-                />
-                <ProviderVersions
-                  autoUpdateEnabled={
-                    settings.providers.claude.autoUpdate.enabled
-                  }
-                  onAutoUpdateChange={handleProviderAutoUpdateChange}
-                  onUpdate={handleUpdateProvider}
-                  provider="claude"
-                  versions={versions}
-                />
-                <ThinkingSettings
-                  effort={settings.providers.claude.thinking.effort}
-                  enabled={settings.providers.claude.thinking.enabled}
-                  onChange={handleThinkingSettingsChange}
-                  onThinkingDisplaySyncChange={
-                    handleClaudeThinkingDisplaySyncChange
-                  }
-                  thinkingDisplaySyncEnabled={
-                    settings.providers.claude.thinkingDisplaySyncEnabled
-                  }
-                />
-                <SessionContinuityCard
-                  onRemainingPercentThresholdChange={
-                    handleClaudeContinuityRemainingPercentThresholdChange
-                  }
-                  remainingPercentThreshold={
-                    settings.providers.claude.sessionContinuity
-                      .remainingPercentThreshold
-                  }
-                  title="Claude Session Continuity"
-                />
-              </div>
-            );
-          }
-          if (activeTab === "general") {
-            return (
-              <div style={stackStyles}>
-                {renderProjectManagerGeneralTab ? (
-                  <>
-                    <GeneralResponseModeFacade
-                      onModeChange={handleResponsePolicyModeChange}
-                      onStrictInstructionTextChange={
-                        handleStrictInstructionTextChange
-                      }
-                      onStrictSchemaTextChange={handleStrictSchemaTextChange}
-                      responsePolicy={settings.general.responsePolicy}
-                    />
-                    <LocalizationSettingsCard
-                      localization={settings.general.localization}
-                      onCategoryLanguageChange={
-                        handleLocalizationCategoryLanguageChange
-                      }
-                      onDefaultLanguageChange={
-                        handleLocalizationDefaultLanguageChange
-                      }
-                      onEngineIdChange={handleLocalizationEngineIdChange}
-                      onGlossaryEnabledChange={
-                        handleLocalizationGlossaryEnabledChange
-                      }
-                      onReasoningTranslationEngineIdChange={
-                        handleReasoningTranslationEngineIdChange
-                      }
-                      onWorkflowTermsPolicyChange={
-                        handleLocalizationWorkflowTermsPolicyChange
-                      }
-                    />
-                  </>
-                ) : (
-                  <>
-                    <GeneralSettings
-                      coreControl={coreControl}
-                      localization={settings.general.localization}
-                      onLocalizationCategoryLanguageChange={
-                        handleLocalizationCategoryLanguageChange
-                      }
-                      onLocalizationDefaultLanguageChange={
-                        handleLocalizationDefaultLanguageChange
-                      }
-                      onLocalizationEngineIdChange={
-                        handleLocalizationEngineIdChange
-                      }
-                      onLocalizationGlossaryEnabledChange={
-                        handleLocalizationGlossaryEnabledChange
-                      }
-                      onLocalizationWorkflowTermsPolicyChange={
-                        handleLocalizationWorkflowTermsPolicyChange
-                      }
-                      onNativeRequestCaptureWorkbenchOpen={
-                        handleNativeRequestCaptureWorkbenchOpen
-                      }
-                      onReasoningTranslationEngineIdChange={
-                        handleReasoningTranslationEngineIdChange
-                      }
-                      onResponsePolicyModeChange={
-                        handleResponsePolicyModeChange
-                      }
-                      onRestartCore={handleRestartCore}
-                      onStrictInstructionTextChange={
-                        handleStrictInstructionTextChange
-                      }
-                      onStrictSchemaTextChange={handleStrictSchemaTextChange}
-                      onTextToSpeechRateChange={handleTextToSpeechRateChange}
-                      responsePolicy={settings.general.responsePolicy}
-                      textToSpeech={settings.general.textToSpeech}
-                    />
-                    {templateUpdateControls ? (
-                      <TemplateUpdatesCard
-                        onLoad={
-                          templateUpdateControls.handleTemplateUpdatesLoad
-                        }
-                        onResolve={
-                          templateUpdateControls.handleTemplateUpdateResolve
-                        }
-                        state={templateUpdateControls.templateUpdates}
-                      />
-                    ) : null}
-                  </>
-                )}
-              </div>
-            );
-          }
-          if (activeTab === "codex") {
-            return (
-              <div style={stackStyles}>
-                <CodexDefaultModelCard
-                  defaultModel={settings.providers.codex.defaultModel}
-                  onDefaultModelChange={handleCodexDefaultModelChange}
-                  onReasoningChange={handleCodexReasoningChange}
-                  onReasoningSummaryEnabledChange={
-                    handleCodexThinkingDisplaySyncChange
-                  }
-                  reasoningByModel={settings.providers.codex.reasoningByModel}
-                  reasoningSummaryEnabled={
-                    settings.providers.codex.reasoningSummaryEnabled
-                  }
-                />
-                <ProviderVersions
-                  autoUpdateEnabled={
-                    settings.providers.codex.autoUpdate.enabled
-                  }
-                  onAutoUpdateChange={handleProviderAutoUpdateChange}
-                  onUpdate={handleUpdateProvider}
-                  provider="codex"
-                  versions={versions}
-                />
-                <SessionContinuityCard
-                  onRemainingPercentThresholdChange={
-                    handleCodexContinuityRemainingPercentThresholdChange
-                  }
-                  remainingPercentThreshold={
-                    settings.providers.codex.sessionContinuity
-                      .remainingPercentThreshold
-                  }
-                  title="Codex Session Continuity"
-                />
-              </div>
-            );
-          }
-          if (activeTab === "kimi") {
-            return (
-              <KimiSettingsTab
-                kimiClaudeCodeThinkingDisplaySyncEnabled={
-                  settings.providers.kimiClaudeCode?.thinkingDisplaySyncEnabled
-                }
-                kimiDefaultModel={settings.providers.kimi?.defaultModel}
-                kimiThinkingDisplaySyncEnabled={
-                  settings.providers.kimi?.thinkingDisplaySyncEnabled
-                }
-                onKimiClaudeCodeThinkingDisplaySyncChange={
-                  handleKimiClaudeCodeThinkingDisplaySyncChange
-                }
-                onKimiDefaultModelChange={handleKimiDefaultModelChange}
-                onKimiThinkingDisplaySyncChange={
-                  handleKimiThinkingDisplaySyncChange
-                }
-              />
-            );
-          }
-          return (
-            <div style={stackStyles}>
-              <GeminiDefaultModelCard
-                defaultModel={settings.providers.gemini.defaultModel}
-                onDefaultModelChange={handleGeminiDefaultModelChange}
-                onThinkingChange={handleGeminiThinkingChange}
-                onThinkingDisplaySyncChange={
-                  handleGeminiThinkingDisplaySyncChange
-                }
-                thinkingDisplaySyncEnabled={
-                  settings.providers.gemini.thinkingDisplaySyncEnabled
-                }
-                thinkingLevelByModel={
-                  settings.providers.gemini.thinkingLevelByModel
-                }
-              />
-              <ProviderVersions
-                autoUpdateEnabled={settings.providers.gemini.autoUpdate.enabled}
-                onAutoUpdateChange={handleProviderAutoUpdateChange}
-                onUpdate={handleUpdateProvider}
-                provider="gemini"
-                versions={versions}
-              />
-              <SessionContinuityCard
-                contextWindowTokenLimit={
-                  settings.providers.gemini.sessionContinuity
-                    .contextWindowTokenLimit
-                }
-                onContextWindowTokenLimitChange={
-                  handleGeminiContextWindowTokenLimitChange
-                }
-                onRemainingPercentThresholdChange={
-                  handleGeminiContinuityRemainingPercentThresholdChange
-                }
-                remainingPercentThreshold={
-                  settings.providers.gemini.sessionContinuity
-                    .remainingPercentThreshold
-                }
-                title="Gemini Session Continuity"
-              />
-            </div>
-          );
-        })()}
+        <SettingsProviderTabContent
+          activeTab={activeTab}
+          mode={mode}
+          state={state}
+        />
       </div>
       <SettingsFooter
         hasChanges={hasChanges}

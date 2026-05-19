@@ -6,7 +6,8 @@ const GEMINI_TOOLTIP = "Gemini support arrives with parent Phase 2";
 const PROVIDER_OPTIONS = [
   { value: "claude", label: "Claude", disabled: false },
   { value: "codex", label: "Codex", disabled: false },
-  { value: "kimiClaudeCode", label: "Kimi-Claude-Code", disabled: false },
+  { value: "kimi", label: "Kimi", disabled: false },
+  { value: "kimiClaudeCode", label: "Claude-Kimi", disabled: false },
   { value: "gemini", label: "Gemini", disabled: true },
 ] as const;
 

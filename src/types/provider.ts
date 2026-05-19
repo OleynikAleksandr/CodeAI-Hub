@@ -19,7 +19,7 @@ const PROVIDER_TITLE_MAP: Partial<Record<ProviderStackId, string>> = {
   codexCli: "Codex",
   geminiCli: "Gemini",
   kimiCode: "Kimi",
-  kimiClaudeCode: "Kimi Claude Code",
+  kimiClaudeCode: "Claude-Kimi",
 };
 
 export const getDefaultProviderTitle = (providerId: ProviderStackId): string =>
@@ -29,7 +29,7 @@ const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   codexCli: "Using your authentication Codex CLI",
   geminiCli: "Using your authentication Gemini CLI",
   kimiCode: "Using your authentication Kimi CLI",
-  kimiClaudeCode: "Using Kimi 2.6 through Claude Code-compatible runtime",
+  kimiClaudeCode: "Using Kimi 2.6 through Claude Agent SDK-compatible runtime",
 };
 
 export const getDefaultProviderDescription = (

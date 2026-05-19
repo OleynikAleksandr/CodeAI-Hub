@@ -37,6 +37,10 @@ export type StartCardModelSelection = {
   readonly reasoning: string;
 };
 
+const KIMI_CLAUDE_CODE_MODEL_LABEL = "Kimi 2.6 / Claude-Kimi";
+const KIMI_CLAUDE_CODE_MODEL_DESCRIPTION =
+  "Kimi 2.6 exposed through the Claude Agent SDK-compatible runtime.";
+
 const isSettings = (value: unknown): value is Settings =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
 
@@ -57,11 +61,18 @@ export const getStartCardModelOptions = (
       label: model.displayName,
     }));
   }
-  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
+  if (providerId === "kimiCode") {
     return KIMI_RECOMMENDED_MODELS.map((model) => ({
       description: model.description,
       id: model.id,
       label: model.displayName,
+    }));
+  }
+  if (providerId === "kimiClaudeCode") {
+    return KIMI_RECOMMENDED_MODELS.map((model) => ({
+      description: KIMI_CLAUDE_CODE_MODEL_DESCRIPTION,
+      id: model.id,
+      label: KIMI_CLAUDE_CODE_MODEL_LABEL,
     }));
   }
   return GEMINI_RECOMMENDED_MODELS.map((model) => ({

@@ -5,6 +5,7 @@ import type { KimiModelId } from "../../../../../types/kimi-model-registry";
 export type NativeRequestCaptureProviderId =
   | "claude"
   | "codex"
+  | "kimi"
   | "kimiClaudeCode";
 export type NativeRequestCaptureModelId =
   | ClaudeModelAliasId

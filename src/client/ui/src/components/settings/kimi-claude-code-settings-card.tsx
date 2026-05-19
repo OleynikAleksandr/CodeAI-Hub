@@ -37,9 +37,9 @@ const KimiClaudeCodeSettingsCard: FC<KimiClaudeCodeSettingsCardProps> = ({
   onThinkingDisplaySyncChange,
   thinkingDisplaySyncEnabled = true,
 }) => (
-  <SettingsCard title="Kimi-Claude-Code">
+  <SettingsCard title="Claude-Kimi">
     <p style={descriptionStyles}>
-      Runs Kimi 2.6 through the Claude Code-compatible runtime as model
+      Runs Kimi 2.6 through the Claude Agent SDK-compatible runtime as model
       kimi-for-coding.
     </p>
     <label style={displaySyncToggleStyles}>
@@ -54,8 +54,7 @@ const KimiClaudeCodeSettingsCard: FC<KimiClaudeCodeSettingsCardProps> = ({
       <div>
         <div style={displaySyncTitleStyles}>Reasoning in dialog</div>
         <div style={displaySyncDescriptionStyles}>
-          Show Kimi-Claude-Code reasoning as a normal assistant bubble in the
-          dialog.
+          Show Claude-Kimi reasoning as a normal assistant bubble in the dialog.
         </div>
       </div>
     </label>

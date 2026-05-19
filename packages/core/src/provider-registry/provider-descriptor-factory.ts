@@ -307,8 +307,8 @@ const buildKimiClaudeCodeDescriptor = (
         resolveProviderImmediateBindingCapability("kimiClaudeCode"),
     },
     id: "kimiClaudeCode",
-    name: "Kimi Claude Code",
-    description: "Using Kimi 2.6 through Claude Code-compatible runtime",
+    name: "Claude-Kimi",
+    description: "Using Kimi 2.6 through Claude Agent SDK-compatible runtime",
     status: "active",
   };
   tryAttachAdapter(

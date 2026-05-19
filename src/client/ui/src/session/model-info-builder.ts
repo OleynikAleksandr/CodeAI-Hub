@@ -10,7 +10,7 @@ type ProviderKey = "claude" | "codex" | "gemini";
 type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi Code";
-const KIMI_CLAUDE_CODE_MODEL_DISPLAY_NAME = "Kimi 2.6 / Claude Code";
+const KIMI_CLAUDE_CODE_MODEL_DISPLAY_NAME = "Kimi 2.6 / Claude-Kimi";
 const KIMI_DEFAULT_MODEL_ID = "kimi-for-coding";
 
 const PROVIDER_ID_TO_KEY: Record<SettingsBackedProviderId, ProviderKey> = {

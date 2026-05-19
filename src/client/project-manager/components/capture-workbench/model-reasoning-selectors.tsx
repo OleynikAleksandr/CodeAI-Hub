@@ -4,6 +4,7 @@ import { CaptureWorkbenchDomListboxSelector } from "./dom-listbox-selector";
 const MODEL_OPTIONS: Record<string, readonly string[]> = {
   claude: ["sonnet", "opus", "haiku"],
   codex: ["gpt-5.3-codex", "gpt-5.2"],
+  kimi: ["kimi-for-coding"],
   kimiClaudeCode: ["kimi-for-coding"],
 };
 
@@ -17,6 +18,7 @@ const REASONING_OPTIONS: Record<string, readonly string[]> = {
     "thinking-max",
   ],
   codex: ["reasoning-low", "reasoning-medium", "reasoning-high"],
+  kimi: ["default"],
   kimiClaudeCode: [
     "thinking-off",
     "thinking-low",

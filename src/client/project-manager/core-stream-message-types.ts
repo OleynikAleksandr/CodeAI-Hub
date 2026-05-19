@@ -218,6 +218,7 @@ export type SettingsTemplateUpdateResolutionPayload = {
 export type SettingsNativeRequestCaptureProviderId =
   | "claude"
   | "codex"
+  | "kimi"
   | "kimiClaudeCode";
 export type SettingsNativeRequestCaptureModelId = NativeRequestCaptureModelId;
 export type SettingsNativeRequestCaptureScenarioId =

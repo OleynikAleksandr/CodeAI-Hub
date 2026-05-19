@@ -13,7 +13,26 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 export const isNativeRequestCaptureProviderId = (
   value: unknown
 ): value is NativeRequestCaptureProviderId =>
-  value === "claude" || value === "codex";
+  value === "claude" ||
+  value === "codex" ||
+  value === "kimi" ||
+  value === "kimiClaudeCode";
+
+const resolveDefaultCaptureModelId = (
+  providerId: NativeRequestCaptureProviderId,
+  settings: Settings
+): NativeRequestCaptureModelId => {
+  if (providerId === "claude") {
+    return settings.providers.claude.defaultModel;
+  }
+  if (providerId === "codex") {
+    return settings.providers.codex.defaultModel;
+  }
+  if (providerId === "kimiClaudeCode") {
+    return settings.providers.kimiClaudeCode?.defaultModel ?? "kimi-for-coding";
+  }
+  return settings.providers.kimi?.defaultModel ?? "kimi-for-coding";
+};
 
 const isTemplateUpdateResolutionAction = (
   value: unknown
@@ -64,10 +83,10 @@ export const handleProjectManagerSettingsHostMessage = (params: {
     params.message.type === "settings:native-request-capture" &&
     isNativeRequestCaptureProviderId(params.message.providerId)
   ) {
-    const defaultModelId =
-      params.message.providerId === "claude"
-        ? params.settings.providers.claude.defaultModel
-        : params.settings.providers.codex.defaultModel;
+    const defaultModelId = resolveDefaultCaptureModelId(
+      params.message.providerId,
+      params.settings
+    );
     const modelId =
       typeof params.message.modelId === "string" &&
       params.message.modelId.trim().length > 0

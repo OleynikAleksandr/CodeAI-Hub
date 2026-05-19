@@ -430,7 +430,10 @@ export class NativeRequestCaptureFacade {
 export const isNativeRequestCaptureProviderId = (
   value: unknown
 ): value is NativeRequestCaptureProviderId =>
-  value === "claude" || value === "codex" || value === "kimi";
+  value === "claude" ||
+  value === "codex" ||
+  value === "kimi" ||
+  value === "kimiClaudeCode";
 
 export const createCapturedProxyResult = (
   request: NativeRequestCaptureRequest

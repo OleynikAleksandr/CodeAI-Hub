@@ -8323,7 +8323,7 @@
     codexCli: "Codex",
     geminiCli: "Gemini",
     kimiCode: "Kimi",
-    kimiClaudeCode: "Kimi Claude Code"
+    kimiClaudeCode: "Claude-Kimi"
   };
   var getDefaultProviderTitle = (providerId) => PROVIDER_TITLE_MAP[providerId] ?? providerId;
   var PROVIDER_DESCRIPTION_MAP = {
@@ -8331,7 +8331,7 @@
     codexCli: "Using your authentication Codex CLI",
     geminiCli: "Using your authentication Gemini CLI",
     kimiCode: "Using your authentication Kimi CLI",
-    kimiClaudeCode: "Using Kimi 2.6 through Claude Code-compatible runtime"
+    kimiClaudeCode: "Using Kimi 2.6 through Claude Agent SDK-compatible runtime"
   };
   var getDefaultProviderDescription = (providerId) => PROVIDER_DESCRIPTION_MAP[providerId] ?? "";
 
