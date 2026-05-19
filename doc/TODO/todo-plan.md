@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "81a631885",
+  "lastRecordedCommit": "f6f80509d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-progress-cadence",
-  "expectedCommitMessage": "fix: strengthen kimi visible progress cadence",
+  "currentTaskId": "phase8-kimi-thinking-panel-standalone",
+  "expectedCommitMessage": "fix: render thinking panels standalone",
   "debt": {
-    "expectedCommitMessage": "fix: strengthen kimi visible progress cadence",
-    "preCommitHead": "81a631885",
+    "expectedCommitMessage": "fix: render thinking panels standalone",
+    "preCommitHead": "f6f80509d",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-progress-cadence"
+    "taskId": "phase8-kimi-thinking-panel-standalone"
   }
 }
 ```
@@ -454,9 +454,9 @@
 
 ### Stream: Acceptance Bug Fix — Kimi Progress Cadence And Reasoning Panel
 1. [DONE] `phase8-kimi-progress-cadence` Усилить managed Kimi system prompt: требовать user-visible progress summaries чаще, минимум два промежуточных ordinary assistant updates для multi-minute managed artifact work, и переносить user-safe operational summary из reasoning в обычный текст — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: strengthen kimi visible progress cadence`.
-2. [PENDING] Git Commit: `fix: strengthen kimi visible progress cadence` (hash: TBD)
-3. [TODO] `phase8-kimi-thinking-panel-standalone` Исправить dialog reasoning/thinking card: `role="thinking"` должен рендериться самостоятельной плашкой без отрицательного overlay над следующим assistant message, аналогично current Codex standalone thinking card — scope: `media/session-view.css, doc/TODO/todo-plan.md`; expected commit: `fix: render thinking panels standalone`.
-4. [TODO] Git Commit: `fix: render thinking panels standalone` (hash: TBD)
+2. [DONE] Git Commit: `fix: strengthen kimi visible progress cadence` (hash: f6f80509d)
+3. [DONE] `phase8-kimi-thinking-panel-standalone` Исправить dialog reasoning/thinking card: `role="thinking"` должен рендериться самостоятельной плашкой без отрицательного overlay над следующим assistant message, аналогично current Codex standalone thinking card — scope: `media/session-view.css, doc/TODO/todo-plan.md`; expected commit: `fix: render thinking panels standalone`.
+4. [PENDING] Git Commit: `fix: render thinking panels standalone` (hash: TBD)
 5. [TODO] `phase8-kimi-progress-panel-verification` Выполнить targeted verification для Kimi prompt/profile и Session UI thinking panel CSS; зафиксировать результаты — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi progress panel verification`.
 6. [TODO] Git Commit: `docs: record kimi progress panel verification` (hash: TBD)
 
