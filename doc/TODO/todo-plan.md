@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "2c550f6a6",
+  "lastRecordedCommit": "aae1679ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase10-claude-kimi-boundary-docs",
-  "expectedCommitMessage": "docs: sync claude and kimi claude code boundaries",
+  "currentTaskId": "phase11-kimi-claude-code-tests",
+  "expectedCommitMessage": "test: verify kimi claude code provider integration",
   "debt": {
-    "expectedCommitMessage": "docs: sync claude and kimi claude code boundaries",
-    "preCommitHead": "2c550f6a6",
+    "expectedCommitMessage": "test: verify kimi claude code provider integration",
+    "preCommitHead": "aae1679ea",
     "stage": "commit_pending",
-    "taskId": "phase10-claude-kimi-boundary-docs"
+    "taskId": "phase11-kimi-claude-code-tests"
   }
 }
 ```
@@ -127,12 +127,12 @@
 1. [DONE] `phase10-kimi-claude-code-module-doc` Создать module doc для Kimi-Claude-Code с финальной архитектурой, supported/unsupported settings, probe evidence summary and recovery notes — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi claude code module`.
 2. [DONE] Git Commit: `docs: document kimi claude code module` (hash: 2c550f6a6)
 3. [DONE] `phase10-claude-kimi-boundary-docs` Синхронизировать Claude/Kimi docs: явно описать, что Claude provider не мутирован, native Kimi остается Wire-runtime, Kimi-Claude-Code является отдельным experiment/runtime — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync claude and kimi claude code boundaries`.
-4. [PENDING] Git Commit: `docs: sync claude and kimi claude code boundaries` (hash: TBD)
+4. [DONE] Git Commit: `docs: sync claude and kimi claude code boundaries` (hash: aae1679ea)
 
 ## Phase 11 — Targeted Verification (owner: Codex, updated: 2026-05-19)
 ### Stream: Focused Checks
-1. [TODO] `phase11-kimi-claude-code-tests` Запустить focused unit/integration tests для затронутых provider/profile/config modules и зафиксировать результат; при падениях добавить repair microtasks перед продолжением — scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify kimi claude code provider integration`.
-2. [TODO] Git Commit: `test: verify kimi claude code provider integration` (hash: TBD)
+1. [DONE] `phase11-kimi-claude-code-tests` Запустить focused unit/integration tests для затронутых provider/profile/config modules и зафиксировать результат; при падениях добавить repair microtasks перед продолжением — scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify kimi claude code provider integration`. Result: `npm test --workspace packages/Claude_Module` 20/20 pass; `npm test --workspace packages/core` 12/12 pass; targeted compiled `node --test` for core provider registry/settings/native-capture 11/11 pass; targeted compiled `node --test` for Claude SDK/native-capture 14/14 pass.
+2. [PENDING] Git Commit: `test: verify kimi claude code provider integration` (hash: TBD)
 3. [TODO] `phase11-kimi-claude-code-target-builds` Выполнить targeted builds/typechecks для затронутых пакетов/UI (`npm run build --workspace ...`, `npm run build:webview`, `npm run typecheck:webview` по фактическому scope) и зафиксировать результат — scope: `doc/TODO/todo-plan.md`; expected commit: `chore: verify kimi claude code targeted builds`.
 4. [TODO] Git Commit: `chore: verify kimi claude code targeted builds` (hash: TBD)
 5. [TODO] `phase11-kimi-claude-code-live-smoke` Выполнить live smoke на одинаковом workflow prompt: native Kimi vs Kimi-Claude-Code, проверить visible progress/final, unlock input, artifacts and stop behavior — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code live smoke result`.
