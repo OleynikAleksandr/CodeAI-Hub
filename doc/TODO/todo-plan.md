@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "351bed3b1",
+  "lastRecordedCommit": "a2b3fb891",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-managed-agent-docs",
-  "expectedCommitMessage": "docs: document kimi managed agent profile",
+  "currentTaskId": "phase8-kimi-managed-agent-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi managed agent release notes",
   "debt": {
-    "expectedCommitMessage": "docs: document kimi managed agent profile",
-    "preCommitHead": "351bed3b1",
+    "expectedCommitMessage": "docs: prepare kimi managed agent release notes",
+    "preCommitHead": "a2b3fb891",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-managed-agent-docs"
+    "taskId": "phase8-kimi-managed-agent-release-notes"
   }
 }
 ```
@@ -435,7 +435,18 @@
 1. [DONE] `phase8-kimi-managed-agent-profile` Реализовать CodeAI-owned Kimi `--agent-file` profile: заменить default Kimi system prompt на early-architecture workflow profile, убрать AGENTS/project instructions block и задать узкий tool allowlist с Codex-like visible progress update rules — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/package.json`; expected commit: `feat: add kimi managed agent profile`.
 2. [DONE] Git Commit: `feat: add kimi managed agent profile` (hash: 351bed3b1)
 3. [DONE] `phase8-kimi-managed-agent-docs` Обновить Kimi module SSOT по новому managed agent profile, replacement semantics и ограничениям tool/project-discovery policy — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi managed agent profile`.
-4. [PENDING] Git Commit: `docs: document kimi managed agent profile` (hash: TBD)
+4. [DONE] Git Commit: `docs: document kimi managed agent profile` (hash: a2b3fb891)
+
+### Stream: Kimi Managed Agent Profile Release Confirmation Gate
+1. [DONE] `phase8-kimi-managed-agent-release-confirmation` Остановиться после managed agent profile фикса и запросить отдельное подтверждение на release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: User confirmed release build on 2026-05-19: «Собери новый релиз».
+
+### Stream: Kimi Managed Agent Profile Release Build
+1. [DONE] `phase8-kimi-managed-agent-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.312 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi managed agent release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi managed agent release notes` (hash: TBD)
+3. [TODO] `phase8-kimi-managed-agent-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi managed agent release build started`.
+4. [TODO] Git Commit: `docs: mark kimi managed agent release build started` (hash: TBD)
+5. [TODO] `phase8-kimi-managed-agent-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi managed agent profile build`.
+6. [TODO] Git Commit: `chore: release kimi managed agent profile build` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

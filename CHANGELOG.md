@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.312] - 2026-05-19
+### Fixed
+- **Kimi now starts with a CodeAI-owned managed agent profile.** Runtime startup materializes `codeai-managed-agent/agent.yaml`, passes it through `--agent-file`, and isolates MCP/skills with CodeAI-owned empty config paths.
+- **Kimi managed prompts no longer include AGENTS/project instruction injection.** CodeAI Core and the first Core-built user prompt remain the workflow authority; provider-global project instructions, skills, MCP resources, and unrelated repository implementation source are excluded from managed Kimi prompt truth.
+- **Kimi managed tools are narrowed to file operations.** The profile allowlist includes read/media read/glob/grep/write/str-replace tools and explicitly keeps shell, web, subagents, background tasks, MCP tools, provider skills, and Git operations out of the managed runtime surface.
+- **Kimi is instructed to emit visible progress updates during long managed work.** The profile mirrors the Codex/GPT-5.5 UX target by requiring ordinary assistant progress messages, not reasoning-only text, roughly every 30 seconds while work continues.
+
+### Documentation
+- Updated the Kimi module SSOT with the current managed profile runtime contract, replacement semantics, tool restrictions, and remaining reasoning-control limits.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run test --workspace=@codeai-hub/kimi-module`
+- Live Kimi Wire smoke with the managed agent profile and authorized user config.
+
 ## [1.2.311] - 2026-05-19
 ### Fixed
 - **Kimi reasoning display now matches the current provider UX.** Kimi `think` content respects the Kimi `Reasoning in dialog` setting, renders in an expanded thinking bubble instead of the retired collapsed panel, and streams bounded reasoning chunks before long turns finish when Kimi Wire provides intermediate thinking content.

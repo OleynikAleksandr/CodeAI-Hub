@@ -2,20 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.311** (Kimi reasoning display hotfix)
+**Current Release — v1.2.312** (Kimi managed agent profile hotfix)
 
-This hotfix aligns Kimi reasoning with the current provider UX contract. Kimi
-`think` content now respects the Kimi `Reasoning in dialog` setting, renders as
-an expanded thinking bubble instead of the retired collapsed panel, and streams
-bounded reasoning chunks before long turns finish when Kimi Wire provides
-intermediate thinking content.
+This hotfix starts Kimi through a CodeAI-owned managed agent profile instead of
+the provider default agent prompt. The runtime materializes
+`~/.codeai-hub/providers/kimi/home/codeai-managed-agent/` and passes
+`--agent-file`, an empty `--mcp-config-file`, and an empty `--skills-dir` before
+starting Kimi Wire.
 
-Kimi settings now persist `thinkingDisplaySyncEnabled`, Project Manager and
-Session UI resolve Kimi reasoning visibility through the same Core policy used
-by the other providers, and the webview bundle includes the Kimi settings
-mapping. The Kimi module SSOT also documents the provider-native control
-surface for future managed profiles: `--agent-file` system prompt replacement,
-explicit tool allowlists, MCP isolation, skills directories, and hooks.
+The managed Kimi profile omits AGENTS/project instruction injection and provider
+skills from the system prompt, keeps CodeAI Core as the workflow prompt
+authority, and narrows the available tools to file read/search/write/edit
+operations. It also asks Kimi to send visible ordinary assistant progress
+updates during long managed turns so hidden reasoning does not leave the user
+staring at a silent session.
+
+The previous Kimi reasoning display behavior remains included. Kimi `think`
+content respects the Kimi `Reasoning in dialog` setting, renders as an expanded
+thinking bubble instead of the retired collapsed panel, and streams bounded
+reasoning chunks before long turns finish when Kimi Wire provides intermediate
+thinking content.
 
 The previous Kimi review input unlock behavior remains included. Kimi `TurnEnd`
 normalizes to a Core-compatible `turn_completed` event with
