@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "15895e390",
+  "lastRecordedCommit": "db4748258",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-reasoning-targeted-verification",
-  "expectedCommitMessage": "docs: record kimi reasoning verification",
+  "currentTaskId": "phase8-kimi-capabilities-docs",
+  "expectedCommitMessage": "docs: document kimi agent control capabilities",
   "debt": {
-    "expectedCommitMessage": "docs: record kimi reasoning verification",
-    "preCommitHead": "15895e390",
+    "expectedCommitMessage": "docs: document kimi agent control capabilities",
+    "preCommitHead": "db4748258",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-reasoning-targeted-verification"
+    "taskId": "phase8-kimi-capabilities-docs"
   }
 }
 ```
@@ -406,10 +406,22 @@
    - Verification: `npm run build --workspace=@codeai-hub/core` passed.
    - Verification: `npm run build:webview` passed and regenerated `media/react-chat.js` with Kimi `thinkingDisplaySyncEnabled` settings mapping.
    - Verification: `npm run typecheck:webview` passed after `fix: repair kimi settings webview typecheck`.
-4. [PENDING] Git Commit: `docs: record kimi reasoning verification` (hash: TBD)
+4. [DONE] Git Commit: `docs: record kimi reasoning verification` (hash: db4748258)
 
 ### Stream: Kimi Reasoning Hotfix Release Confirmation Gate
-1. [TODO] `phase8-kimi-reasoning-release-confirmation` Остановиться после targeted verification и запросить отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none.
+1. [DONE] `phase8-kimi-reasoning-release-confirmation` Остановиться после targeted verification и запросить отдельное подтверждение на следующий hotfix release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: User confirmed next hotfix release build on 2026-05-19 and requested Kimi capabilities documentation before release.
+
+### Stream: Kimi Capabilities Documentation
+1. [DONE] `phase8-kimi-capabilities-docs` Добавить в Kimi module SSOT раздел по найденным возможностям замены agent/system prompt, tool allowlist/denylist, MCP isolation, hooks и current CodeAI usage без изменения runtime code — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi agent control capabilities`.
+2. [PENDING] Git Commit: `docs: document kimi agent control capabilities` (hash: TBD)
+
+### Stream: Kimi Reasoning Hotfix Release Build
+1. [TODO] `phase8-kimi-reasoning-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.311 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi reasoning hotfix release notes`.
+2. [TODO] Git Commit: `docs: prepare kimi reasoning hotfix release notes` (hash: TBD)
+3. [TODO] `phase8-kimi-reasoning-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi reasoning hotfix release build started`.
+4. [TODO] Git Commit: `docs: mark kimi reasoning hotfix release build started` (hash: TBD)
+5. [TODO] `phase8-kimi-reasoning-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi reasoning hotfix build`.
+6. [TODO] Git Commit: `chore: release kimi reasoning hotfix build` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

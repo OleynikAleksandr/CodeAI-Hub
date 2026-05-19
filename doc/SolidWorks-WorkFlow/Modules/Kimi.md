@@ -58,6 +58,23 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 - Kimi has no reasoning/thinking effort dimension in the current release. UI surfaces must not synthesize a hidden effort field.
 - Prompt/system-instruction cadence can ask Kimi for visible progress updates, but it is not a reliable substitute for Wire event handling: during a long tool call the model may emit no new text, so the adapter must rely on Wire `think` chunks and progress events for live UX.
 
+## Agent/system prompt and tool-control capabilities
+- Kimi CLI supports full agent replacement through `--agent-file <path>`; this is the correct mechanism for CodeAI-owned managed workflow behavior when Core must replace the provider default system prompt instead of appending instructions to a user turn.
+- A custom Kimi agent file is YAML with `version: 1`, `agent.name`, `agent.system_prompt_path`, `agent.tools`, optional `agent.exclude_tools`, optional `agent.system_prompt_args`, and optional `agent.subagents`.
+- If the agent file does not use `extend: default`, the `tools` list is an explicit allowlist. This gives Core a provider-native way to restrict built-in tools for a specific managed workflow step.
+- If the agent file uses `extend: default`, `system_prompt_path` overrides the inherited prompt and `exclude_tools` can remove tools from the built-in default agent. This is useful for incremental profiles but is weaker than a fully explicit CodeAI-owned allowlist.
+- Built-in default tools include subagents, user questions, todo list, shell, file read/write/edit, glob/grep, web search/fetch, plan-mode tools, and background task controls. Managed workflow profiles must not assume that the built-in default agent is safe for every step.
+- Kimi `--plan` starts or forces plan mode with read-only exploration semantics. It is suitable for provider-native planning profiles but should not replace Core-owned managed stage planning unless Core explicitly selects that mode.
+- Kimi supports `--mcp-config-file` and `--mcp-config`; if CodeAI needs strict tool boundaries, managed Kimi sessions should receive a CodeAI-owned empty or curated MCP config instead of loading user-global `~/.kimi/mcp.json`.
+- Kimi supports `--skills-dir`; skills are injected into the system prompt context. Managed sessions should either use a CodeAI-owned skills directory or avoid custom skills to keep prompt provenance deterministic.
+- Kimi hooks can enforce a second safety layer through `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, session, subagent, compaction, and notification lifecycle events. `PreToolUse` can block sensitive tools or paths by returning a denial decision, but hooks are Beta and should complement, not replace, agent tool allowlists.
+- Current CodeAI Hub Kimi release does not yet pass `--agent-file`, `--mcp-config-file`, `--skills-dir`, `--thinking`, `--no-thinking`, or loop-control flags. It runs Kimi Wire with CodeAI-owned home/env, user auth config, workspace path, and managed auto-approval. Adding managed agent profiles is the next integration layer, not part of the first release runtime contract.
+- Recommended next profiles:
+  - managed write profile: CodeAI system prompt, file read/write/edit, glob/grep, and shell only when the workflow stage permits commands;
+  - read-only review/profile: CodeAI system prompt, `ReadFile`, `Glob`, `Grep`, optionally `AskUserQuestion`, with no write or shell tools;
+  - planning profile: CodeAI system prompt plus read-only tools, optionally provider-native `--plan`;
+  - strict MCP profile: explicit empty or curated MCP config for managed sessions.
+
 ## Project Manager surfaces
 - Kimi must be visible anywhere users choose or inspect a provider: Settings provider card, Description submit provider picker, workflow start cards, Development Tree start/fix cards, Session UI status-line/model chip, provider labels, and provider color/theme mapping.
 - PM must send raw provider/model intent to Core and render Core-owned snapshots. It must not create a Kimi-specific workflow truth or bypass Core managed stage transitions.
