@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.314** (Kimi provider inheritance hotfix)
+**Current Release — v1.2.315** (Session context and Kimi usage telemetry)
+
+This release clarifies session context-window percentage display and wires Kimi
+usage telemetry into the Session ID usage bar. The status panel now treats the
+context chip as remaining context percentage, while Kimi `StatusUpdate`
+context-token fields update the same provider-neutral token usage snapshot path
+used by the other providers.
+
+Kimi usage limits now read the existing authorized Kimi config from
+`~/.kimi/config.toml` and call the Kimi coding usage endpoint without storing or
+logging the API key. The Session ID usage bar can show Kimi `5h` and `Weekly`
+percentages when the endpoint is available, and still degrades to explicit
+unavailable labels instead of fake values when telemetry cannot be read.
+
+The previous Kimi provider inheritance behavior remains included.
 
 This hotfix keeps Kimi selected across managed workflow steps. When Description
 or an upstream managed stage is started with Kimi, the next start card now
@@ -70,9 +84,7 @@ Wire switch contract is verified.
 
 Release packaging now builds `kimi-module-<version>.tar.bz2`, includes Kimi in
 the Core runtime dependency bundle, validates installed Kimi artifacts during
-release, and keeps Kimi provider workspace files out of the VSIX. Kimi usage
-limits intentionally degrade to explicit unavailable state until a stable
-official usage endpoint exists.
+release, and keeps Kimi provider workspace files out of the VSIX.
 
 Project Manager trunk step markers now come from Core-owned workflow state:
 gray before a step starts, yellow after Core opens the step session or sends the

@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "32b9e9ad9",
+  "lastRecordedCommit": "37b993697",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase5-session-indicators-verification",
-  "expectedCommitMessage": "docs: record session indicators verification",
+  "currentTaskId": "phase6-session-indicators-release-notes",
+  "expectedCommitMessage": "docs: prepare session indicators release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record session indicators verification",
-    "preCommitHead": "32b9e9ad9",
+    "expectedCommitMessage": "docs: prepare session indicators release notes",
+    "preCommitHead": "37b993697",
     "stage": "commit_pending",
-    "taskId": "phase5-session-indicators-verification"
+    "taskId": "phase6-session-indicators-release-notes"
   }
 }
 ```
@@ -106,7 +106,7 @@
 ## Phase 5 — Targeted Verification (owner: Codex, updated: 2026-05-19)
 ### Stream: UI And Core Verification
 1. [DONE] `phase5-session-indicators-verification` Выполнить targeted verification по затронутым UI/Core/provider surfaces и зафиксировать результаты в плане — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record session indicators verification`.
-2. [PENDING] Git Commit: `docs: record session indicators verification` (hash: TBD)
+2. [DONE] Git Commit: `docs: record session indicators verification` (hash: 37b993697)
 
 Verification log:
 - `npx tsx --test packages/Kimi_Module/src/messaging/kimi-event-normalizer.test.ts packages/Kimi_Module/src/provider/kimi-usage-limits-reader.test.ts src/client/ui/src/session/status-panel.test.tsx src/client/ui/src/session/session-id-bar.test.tsx src/client/project-manager/components/sessions/token-usage-stream.test.ts packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.test.ts` — PASS (30 tests).
@@ -118,11 +118,11 @@ Verification log:
 
 ## Phase 6 — Release Build (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Build Confirmation Gate
-1. [TODO] `phase6-session-indicators-release-confirmation` Остановиться после targeted verification и запросить отдельное подтверждение пользователя на release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none.
+1. [DONE] `phase6-session-indicators-release-confirmation` Остановиться после targeted verification и запросить отдельное подтверждение пользователя на release build; не готовить release notes/version bump и не запускать release scripts до подтверждения — scope: без изменения файлов; expected commit: none. Result: release build confirmed by user request: execute the plan through building a new release
 
 ### Stream: Release Build
-1. [TODO] `phase6-session-indicators-release-notes` После подтверждения подготовить README/CHANGELOG под будущую версию до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare session indicators release notes`.
-2. [TODO] Git Commit: `docs: prepare session indicators release notes` (hash: TBD)
+1. [DONE] `phase6-session-indicators-release-notes` После подтверждения подготовить README/CHANGELOG под будущую версию до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare session indicators release notes`.
+2. [PENDING] Git Commit: `docs: prepare session indicators release notes` (hash: TBD)
 3. [TODO] `phase6-session-indicators-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark session indicators release build started`.
 4. [TODO] Git Commit: `docs: mark session indicators release build started` (hash: TBD)
 5. [TODO] `phase6-session-indicators-release-build` Выполнить release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release session indicators build`.

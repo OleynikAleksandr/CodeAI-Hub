@@ -8,6 +8,23 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.315] - 2026-05-19
+### Added
+- **Kimi usage limits now use live Kimi coding telemetry.** The Kimi adapter reads the existing `~/.kimi/config.toml` `providers.kimi-for-coding.api_key`, calls `https://api.kimi.com/coding/v1/usages`, and broadcasts `5h` plus `Weekly` usage rows without logging or persisting the secret.
+- **Kimi context-window telemetry now reaches Session UI.** Kimi Wire `StatusUpdate.context_tokens`, `max_context_tokens`, and `context_usage` normalize into provider-neutral `tokenUsage` snapshots for the status panel.
+
+### Fixed
+- **Session context percentage is explicitly remaining context.** The status chip tooltip now distinguishes used tokens, context limit, and remaining percentage.
+- **Kimi usage rows use provider-specific labels.** The Session ID usage bar renders `5h` and `Weekly` for live Kimi telemetry and degrades to unavailable labels instead of fake percentages when telemetry is missing.
+
+### Tests
+- `npx tsx --test packages/Kimi_Module/src/messaging/kimi-event-normalizer.test.ts packages/Kimi_Module/src/provider/kimi-usage-limits-reader.test.ts src/client/ui/src/session/status-panel.test.tsx src/client/ui/src/session/session-id-bar.test.tsx src/client/project-manager/components/sessions/token-usage-stream.test.ts packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.test.ts`
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- Live Kimi usage probe with local authorized config: returned `5h=9%`, `Weekly=13%`.
+
 ## [1.2.314] - 2026-05-19
 ### Fixed
 - **Kimi now remains selected across managed workflow start cards.** Provider inheritance recognizes `kimiCode` from Description primary sessions and upstream continuity segments, so the next step no longer falls back to Claude when Kimi was the previous provider.
