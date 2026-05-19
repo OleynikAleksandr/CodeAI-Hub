@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "853d698b3",
+  "lastRecordedCommit": "d56fcdf32",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase9-kimi-claude-code-usage-context-state",
-  "expectedCommitMessage": "feat: surface kimi claude code telemetry state",
+  "currentTaskId": "phase10-kimi-claude-code-module-doc",
+  "expectedCommitMessage": "docs: document kimi claude code module",
   "debt": {
-    "expectedCommitMessage": "feat: surface kimi claude code telemetry state",
-    "preCommitHead": "853d698b3",
+    "expectedCommitMessage": "docs: document kimi claude code module",
+    "preCommitHead": "d56fcdf32",
     "stage": "commit_pending",
-    "taskId": "phase9-kimi-claude-code-usage-context-state"
+    "taskId": "phase10-kimi-claude-code-module-doc"
   }
 }
 ```
@@ -120,12 +120,12 @@
 3. [DONE] `phase9-kimi-claude-code-session-artifacts` Обеспечить отдельный artifact/session namespace под `~/.codeai-hub/providers/kimi-claude-code/home` и CodeAI sessions, не смешивая с `kimiCode` — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: persist kimi claude code session artifacts`.
 4. [DONE] Git Commit: `feat: persist kimi claude code session artifacts` (hash: 853d698b3)
 5. [DONE] `phase9-kimi-claude-code-usage-context-state` Показать usage/context telemetry как unavailable либо подключить native Kimi usage endpoint только если доказано совпадение account/API key source — scope: `packages/core, src/client/ui, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: surface kimi claude code telemetry state`.
-6. [PENDING] Git Commit: `feat: surface kimi claude code telemetry state` (hash: TBD)
+6. [DONE] Git Commit: `feat: surface kimi claude code telemetry state` (hash: d56fcdf32)
 
 ## Phase 10 — Documentation Sync (owner: Codex, updated: 2026-05-19)
 ### Stream: Module Documentation
-1. [TODO] `phase10-kimi-claude-code-module-doc` Создать module doc для Kimi-Claude-Code с финальной архитектурой, supported/unsupported settings, probe evidence summary and recovery notes — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi claude code module`.
-2. [TODO] Git Commit: `docs: document kimi claude code module` (hash: TBD)
+1. [DONE] `phase10-kimi-claude-code-module-doc` Создать module doc для Kimi-Claude-Code с финальной архитектурой, supported/unsupported settings, probe evidence summary and recovery notes — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi claude code module`.
+2. [PENDING] Git Commit: `docs: document kimi claude code module` (hash: TBD)
 3. [TODO] `phase10-claude-kimi-boundary-docs` Синхронизировать Claude/Kimi docs: явно описать, что Claude provider не мутирован, native Kimi остается Wire-runtime, Kimi-Claude-Code является отдельным experiment/runtime — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync claude and kimi claude code boundaries`.
 4. [TODO] Git Commit: `docs: sync claude and kimi claude code boundaries` (hash: TBD)
 
