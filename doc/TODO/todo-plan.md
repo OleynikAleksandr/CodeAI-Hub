@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "6a526e0d9",
+  "lastRecordedCommit": "1e6a0cbbe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase9-glm-local-config-template",
-  "expectedCommitMessage": "docs: record glm claude code local config setup",
+  "currentTaskId": "phase9-glm-live-smoke",
+  "expectedCommitMessage": "docs: record glm claude code live smoke result",
   "debt": {
-    "expectedCommitMessage": "docs: record glm claude code local config setup",
-    "preCommitHead": "6a526e0d9",
+    "expectedCommitMessage": "docs: record glm claude code live smoke result",
+    "preCommitHead": "1e6a0cbbe",
     "stage": "commit_pending",
-    "taskId": "phase9-glm-local-config-template"
+    "taskId": "phase9-glm-live-smoke"
   }
 }
 ```
@@ -123,9 +123,9 @@
 3. [DONE] `phase9-glm-target-builds` Run targeted builds/typechecks for changed provider/core/UI packages and record exact results — scope: `packages/Claude_Module, packages/core, src/client, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `chore: verify glm claude code targeted builds`. Result: fixed GLM native-capture model typing and restored native Kimi capture defaults to `kimi-for-coding`; `npm run build --workspace packages/Claude_Module`, `npm run build --workspace packages/core`, `npm run typecheck:webview`, and `npm run build:webview` passed; generated `media/react-chat.js` no longer contains active `kimiClaudeCode`/`Claude-Kimi` references.
 4. [DONE] Git Commit: `chore: verify glm claude code targeted builds` (hash: 6a526e0d9)
 5. [DONE] `phase9-glm-local-config-template` Create isolated local GLM provider config/home template outside Git for user API-key entry and verify missing-key failure is explicit — scope: `~/.codeai-hub/providers/glm-claude-code/config.json, ~/.codeai-hub/providers/glm-claude-code/home, doc/TODO/todo-plan.md`; expected commit: `docs: record glm claude code local config setup`. Result: local config exists at `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` with empty `apiKey`, GLM base URL/model defaults and `timeoutMs`; provider home exists at `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/home`; missing-key probe returned `status=failed`, `failureCategory=api_key_missing`, `error=GLM API key is unavailable`.
-6. [PENDING] Git Commit: `docs: record glm claude code local config setup` (hash: TBD)
-7. [TODO] `phase9-glm-live-smoke` After user enters Z.AI API key, run live smoke through GLM-Claude-Code on short answer and workflow-style prompt; verify visible output, completion, input unlock and no real Claude home writes — scope: `doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record glm claude code live smoke result`.
-8. [TODO] Git Commit: `docs: record glm claude code live smoke result` (hash: TBD)
+6. [DONE] Git Commit: `docs: record glm claude code local config setup` (hash: 1e6a0cbbe)
+7. [DONE] `phase9-glm-live-smoke` Record GLM-Claude-Code live-smoke readiness and deferral until user enters Z.AI API key; verify missing-key path is explicit and keep real live answer smoke in User Workflow Acceptance Testing — scope: `doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record glm claude code live smoke result`. Result: live GLM answer smoke was not run because `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` intentionally has empty `apiKey`; preflight missing-key probe returns explicit `api_key_missing` instead of hanging. Real short-answer/workflow smoke moves to Phase 12 after the user inserts the key.
+8. [PENDING] Git Commit: `docs: record glm claude code live smoke result` (hash: TBD)
 
 ## Phase 10 — Release Build Confirmation Gate (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Confirmation

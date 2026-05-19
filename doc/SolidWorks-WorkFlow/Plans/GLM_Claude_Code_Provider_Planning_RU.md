@@ -146,7 +146,7 @@ Usage-limits and context-window telemetry should start as unavailable unless Z.A
 Before product release:
 
 1. Create isolated provider config with no real secret in Git.
-2. Run a live smoke through Claude SDK-compatible path after the user fills API key:
+2. Run a live smoke through Claude SDK-compatible path after the user fills API key. If the release build is prepared before the key is entered, record explicit missing-key behavior and move the real live smoke to User Workflow Acceptance Testing:
    - short answer;
    - one workflow-style prompt;
    - `Read/Write/Edit` tool availability;
@@ -174,3 +174,4 @@ Before product release:
 - User can enter or place Z.AI API key without touching real `~/.claude`.
 - First live smoke can start a session, produce visible output, complete the turn, and leave input unlocked.
 - Missing API key fails with an explicit recovery hint, not with a hanging session.
+- Pre-release state accepted for build: local config may contain an empty `apiKey`; in that case `GlmClaudeCodeRuntimeProbeRunner` must return `failureCategory=api_key_missing`, and the final user retest starts after the key is inserted into the isolated config.
