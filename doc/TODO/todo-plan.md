@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "71c5767fe",
+  "lastRecordedCommit": "32b9e9ad9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase4-kimi-usage-limits-adapter",
-  "expectedCommitMessage": "feat: broadcast kimi usage limits",
+  "currentTaskId": "phase5-session-indicators-verification",
+  "expectedCommitMessage": "docs: record session indicators verification",
   "debt": {
-    "expectedCommitMessage": "feat: broadcast kimi usage limits",
-    "preCommitHead": "71c5767fe",
+    "expectedCommitMessage": "docs: record session indicators verification",
+    "preCommitHead": "32b9e9ad9",
     "stage": "commit_pending",
-    "taskId": "phase4-kimi-usage-limits-adapter"
+    "taskId": "phase5-session-indicators-verification"
   }
 }
 ```
@@ -101,12 +101,20 @@
 1. [DONE] `phase4-kimi-usage-limits-reader` Добавить Kimi usage limits reader для `https://api.kimi.com/coding/v1/usages`, читающий API key из user config без логирования секрета — scope: `packages/Kimi_Module/src/provider/kimi-usage-limits-reader.ts, packages/Kimi_Module/src/provider/kimi-usage-limits-reader.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: read kimi usage limits`.
 2. [DONE] Git Commit: `feat: read kimi usage limits` (hash: 71c5767fe)
 3. [DONE] `phase4-kimi-usage-limits-adapter` Подключить Kimi usage limits reader к `KimiProviderAdapter.refreshUsageLimits` и отдавать labels `5h`/`Weekly` через существующий Core stream contract — scope: `packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/src/provider/kimi-usage-limits-reader.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md`; expected commit: `feat: broadcast kimi usage limits`.
-4. [PENDING] Git Commit: `feat: broadcast kimi usage limits` (hash: TBD)
+4. [DONE] Git Commit: `feat: broadcast kimi usage limits` (hash: 32b9e9ad9)
 
 ## Phase 5 — Targeted Verification (owner: Codex, updated: 2026-05-19)
 ### Stream: UI And Core Verification
-1. [TODO] `phase5-session-indicators-verification` Выполнить targeted verification по затронутым UI/Core/provider surfaces и зафиксировать результаты в плане — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record session indicators verification`.
-2. [TODO] Git Commit: `docs: record session indicators verification` (hash: TBD)
+1. [DONE] `phase5-session-indicators-verification` Выполнить targeted verification по затронутым UI/Core/provider surfaces и зафиксировать результаты в плане — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record session indicators verification`.
+2. [PENDING] Git Commit: `docs: record session indicators verification` (hash: TBD)
+
+Verification log:
+- `npx tsx --test packages/Kimi_Module/src/messaging/kimi-event-normalizer.test.ts packages/Kimi_Module/src/provider/kimi-usage-limits-reader.test.ts src/client/ui/src/session/status-panel.test.tsx src/client/ui/src/session/session-id-bar.test.tsx src/client/project-manager/components/sessions/token-usage-stream.test.ts packages/core/src/provider-usage-limits/provider-usage-limits-stream-event.test.ts` — PASS (30 tests).
+- `npm run build --workspace @codeai-hub/kimi-module` — PASS.
+- `npm run build --workspace @codeai-hub/core` — PASS.
+- `npm run build:webview` — PASS.
+- `npm run typecheck:webview` — PASS.
+- Live Kimi usage probe via `KimiUsageLimitsReader` and local `~/.kimi/config.toml` — PASS; returned `kimi:global`, `5h=9%`, `Weekly=13%`, source `kimi_usage_api` without exposing the API key.
 
 ## Phase 6 — Release Build (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Build Confirmation Gate
