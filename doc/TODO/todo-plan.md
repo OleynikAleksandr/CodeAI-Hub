@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "41a76ef41",
+  "lastRecordedCommit": "d5b3b33d1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase13-kimi-claude-code-release-notes",
-  "expectedCommitMessage": "docs: prepare kimi claude code release notes",
+  "currentTaskId": "phase13-kimi-claude-code-build-all",
+  "expectedCommitMessage": "chore: build kimi claude code release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare kimi claude code release notes",
-    "preCommitHead": "41a76ef41",
+    "expectedCommitMessage": "chore: build kimi claude code release",
+    "preCommitHead": "d5b3b33d1",
     "stage": "commit_pending",
-    "taskId": "phase13-kimi-claude-code-release-notes"
+    "taskId": "phase13-kimi-claude-code-build-all"
   }
 }
 ```
@@ -140,14 +140,14 @@
 
 ## Phase 12 — Release Build Confirmation Gate (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Confirmation
-1. [DONE] `phase12-kimi-claude-code-release-confirmation` После targeted verification остановиться и запросить отдельное явное подтверждение пользователя на release build; до подтверждения не менять README/CHANGELOG версии и не запускать `build-all.sh`/`build-release.sh` — scope: без изменения файлов; expected commit: none. Result: --help
+1. [DONE] `phase12-kimi-claude-code-release-confirmation` После targeted verification остановиться и запросить отдельное явное подтверждение пользователя на release build; до подтверждения не менять README/CHANGELOG версии и не запускать `build-all.sh`/`build-release.sh` — scope: без изменения файлов; expected commit: none. Result: confirmed by explicit user request "собери новый релиз, без пауз".
 
 ## Phase 13 — Release Build (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Build
 1. [DONE] `phase13-kimi-claude-code-release-notes` После явного подтверждения пользователя обновить README/CHANGELOG на будущую версию и связанные docs, если затронуты — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi claude code release notes`. Result: README/CHANGELOG prepared for v1.2.316 with Kimi-Claude-Code provider notes, boundary notes, verification commands, and live smoke evidence.
-2. [PENDING] Git Commit: `docs: prepare kimi claude code release notes` (hash: TBD)
-3. [TODO] `phase13-kimi-claude-code-build-all` Запустить `./scripts/build-all.sh`, затем при необходимости `./scripts/build-release.sh --use-current-version`, перенести/проверить release artifacts and VSIX — scope: `package manifests, release artifacts, doc/TODO/todo-plan.md`; expected commit: `chore: build kimi claude code release`.
-4. [TODO] Git Commit: `chore: build kimi claude code release` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare kimi claude code release notes` (hash: d5b3b33d1)
+3. [DONE] `phase13-kimi-claude-code-build-all` Запустить `./scripts/build-all.sh`, затем при необходимости `./scripts/build-release.sh --use-current-version`, перенести/проверить release artifacts and VSIX — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build kimi claude code release`. Result: `./scripts/build-all.sh` built v1.2.316 provider/core/UI/launcher artifacts and copied release tarballs to `doc/tmp/releases`; `./scripts/build-release.sh --use-current-version --allow-dirty` produced `codeai-hub-1.2.316.vsix` and verified VSIX runtime package surface.
+4. [PENDING] Git Commit: `chore: build kimi claude code release` (hash: TBD)
 
 ## Phase 14 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-19)
 ### Stream: Native Kimi vs Kimi-Claude-Code Retest
