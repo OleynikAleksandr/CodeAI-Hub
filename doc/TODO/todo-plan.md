@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "e6043a8a1",
+  "lastRecordedCommit": "066c161f3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase14-kimi-provider-hotfix-release-notes",
-  "expectedCommitMessage": "docs: prepare kimi provider ui hotfix release",
+  "currentTaskId": "phase14-kimi-provider-hotfix-release-build",
+  "expectedCommitMessage": "chore: build kimi provider ui hotfix release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare kimi provider ui hotfix release",
-    "preCommitHead": "e6043a8a1",
+    "expectedCommitMessage": "chore: build kimi provider ui hotfix release",
+    "preCommitHead": "066c161f3",
     "stage": "commit_pending",
-    "taskId": "phase14-kimi-provider-hotfix-release-notes"
+    "taskId": "phase14-kimi-provider-hotfix-release-build"
   }
 }
 ```
@@ -157,9 +157,9 @@
 1. [DONE] `phase14-kimi-provider-ui-hotfix` Разделить native `Kimi` и `Claude-Kimi` во всех UI-точках выбора provider/model: Settings tabs, workflow start cards, Description provider picker, Development Tree start card, Capture Workbench, status/model labels, provider tint and generated webview bundle — scope: `src/client, src/types, packages/core, media/react-chat.js`; expected commit: `fix: expose kimi providers separately in ui`.
 2. [DONE] Git Commit: `fix: expose kimi providers separately in ui` (hash: e6043a8a1)
 3. [DONE] `phase14-kimi-provider-hotfix-release-notes` После подтверждения пользователя на релиз обновить README/CHANGELOG на будущую hotfix-версию и связанные notes — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi provider ui hotfix release`.
-4. [PENDING] Git Commit: `docs: prepare kimi provider ui hotfix release` (hash: TBD)
-5. [TODO] `phase14-kimi-provider-hotfix-release-build` Собрать новый hotfix-релиз через `./scripts/build-all.sh` и проверить VSIX/release artifacts — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases`; expected commit: `chore: build kimi provider ui hotfix release`.
-6. [TODO] Git Commit: `chore: build kimi provider ui hotfix release` (hash: TBD)
+4. [DONE] Git Commit: `docs: prepare kimi provider ui hotfix release` (hash: 066c161f3)
+5. [DONE] `phase14-kimi-provider-hotfix-release-build` Собрать новый hotfix-релиз через `./scripts/build-all.sh` и проверить VSIX/release artifacts — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases`; expected commit: `chore: build kimi provider ui hotfix release`. Result: `./scripts/build-all.sh --allow-dirty` built provider/core/UI/launcher artifacts for v1.2.317 and copied tarballs to `doc/tmp/releases`; `./scripts/build-release.sh --use-current-version --allow-dirty` produced `codeai-hub-1.2.317.vsix` and verified the VSIX runtime package surface.
+6. [PENDING] Git Commit: `chore: build kimi provider ui hotfix release` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-19)
 ### Stream: Scope Closeout
