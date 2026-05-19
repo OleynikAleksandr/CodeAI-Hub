@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "f6d56796c",
+  "lastRecordedCommit": "c3d4d4470",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase4-glm-turn-config-settings",
-  "expectedCommitMessage": "refactor: resolve glm claude code turn config",
+  "currentTaskId": "phase4-glm-native-capture-core",
+  "expectedCommitMessage": "refactor: capture glm claude code native requests",
   "debt": {
-    "expectedCommitMessage": "refactor: resolve glm claude code turn config",
-    "preCommitHead": "f6d56796c",
+    "expectedCommitMessage": "refactor: capture glm claude code native requests",
+    "preCommitHead": "c3d4d4470",
     "stage": "commit_pending",
-    "taskId": "phase4-glm-turn-config-settings"
+    "taskId": "phase4-glm-native-capture-core"
   }
 }
 ```
@@ -74,9 +74,9 @@
 3. [DONE] `phase4-glm-provider-descriptor-recovery` Replace descriptor factory, registry index and recovery hint with GLM provider name, reporter namespace and missing-key hint — scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/provider-registry/index.ts, packages/core/src/provider-registry/provider-recovery-coordinator.ts, packages/core/src/provider-registry/provider-module-loader.ts, packages/core/src/provider-registry/provider-module-loader.types.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: replace kimi claude code registry descriptor with glm`.
 4. [DONE] Git Commit: `refactor: replace kimi claude code registry descriptor with glm` (hash: f6d56796c)
 5. [DONE] `phase4-glm-turn-config-settings` Replace settings snapshot and applied turn config keys with `providers.glmClaudeCode`, GLM model defaults and GLM env override names — scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `refactor: resolve glm claude code turn config`.
-6. [PENDING] Git Commit: `refactor: resolve glm claude code turn config` (hash: TBD)
-7. [TODO] `phase4-glm-native-capture-core` Replace native request capture provider id/target/reasoning override for GLM endpoint and remove Kimi-Claude-Code capture target — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.ts, packages/core/src/provider-network-capture/native-request-capture-types.ts, packages/core/src/provider-network-capture/native-request-capture-reasoning-override.ts`; expected commit: `refactor: capture glm claude code native requests`.
-8. [TODO] Git Commit: `refactor: capture glm claude code native requests` (hash: TBD)
+6. [DONE] Git Commit: `refactor: resolve glm claude code turn config` (hash: c3d4d4470)
+7. [DONE] `phase4-glm-native-capture-core` Replace native request capture provider id/target/reasoning override for GLM endpoint and remove Kimi-Claude-Code capture target — scope: `packages/core/src/provider-network-capture/native-request-capture-facade.ts, packages/core/src/provider-network-capture/native-request-capture-types.ts, packages/core/src/provider-network-capture/native-request-capture-reasoning-override.ts`; expected commit: `refactor: capture glm claude code native requests`.
+8. [PENDING] Git Commit: `refactor: capture glm claude code native requests` (hash: TBD)
 
 ## Phase 5 — Settings UI And Local Config Surface (owner: Codex, updated: 2026-05-19)
 ### Stream: Settings Model

@@ -36,7 +36,7 @@ const PROVIDER_RUNTIME_IDS: Readonly<
   claude: "claudeCodeCli",
   codex: "codexCli",
   kimi: "kimiCode",
-  kimiClaudeCode: "kimiClaudeCode",
+  glmClaudeCode: "glmClaudeCode",
 };
 
 const PROVIDER_TARGET_RULES: Readonly<
@@ -56,7 +56,7 @@ const PROVIDER_TARGET_RULES: Readonly<
     { host: "chatgpt.com", pathIncludes: "/backend-api/codex/responses" },
   ],
   kimi: [],
-  kimiClaudeCode: [{ host: "api.kimi.com", pathIncludes: "/coding" }],
+  glmClaudeCode: [{ host: "api.z.ai", pathIncludes: "/api/anthropic" }],
 };
 
 interface ProviderAdapterLookup {
@@ -433,7 +433,7 @@ export const isNativeRequestCaptureProviderId = (
   value === "claude" ||
   value === "codex" ||
   value === "kimi" ||
-  value === "kimiClaudeCode";
+  value === "glmClaudeCode";
 
 export const createCapturedProxyResult = (
   request: NativeRequestCaptureRequest
