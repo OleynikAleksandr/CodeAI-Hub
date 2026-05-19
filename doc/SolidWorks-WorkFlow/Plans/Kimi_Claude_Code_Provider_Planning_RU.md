@@ -113,6 +113,8 @@ Preferred implementation: additive module inside or next to `packages/Claude_Mod
 
 Core provider registry adds `kimiClaudeCode` as a distinct provider id with its own descriptor, installer path/runtime package mapping, effective model identity key, and usage-limits bridge behavior.
 
+Packaging decision: `kimiClaudeCode` does not need a separate provider tarball while it reuses the Claude Code SDK/runtime. The adapter is exported by `@codeai-hub/claude-module`, so release packaging must keep bundling the normal Claude module tarball and should treat Kimi-Claude-Code as an additional runtime profile inside that artifact.
+
 ### Settings
 
 Settings should avoid a full duplicate tab if possible:
