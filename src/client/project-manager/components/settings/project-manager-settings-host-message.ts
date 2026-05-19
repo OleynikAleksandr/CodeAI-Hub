@@ -16,7 +16,7 @@ export const isNativeRequestCaptureProviderId = (
   value === "claude" ||
   value === "codex" ||
   value === "kimi" ||
-  value === "kimiClaudeCode";
+  value === "glmClaudeCode";
 
 const resolveDefaultCaptureModelId = (
   providerId: NativeRequestCaptureProviderId,
@@ -28,10 +28,10 @@ const resolveDefaultCaptureModelId = (
   if (providerId === "codex") {
     return settings.providers.codex.defaultModel;
   }
-  if (providerId === "kimiClaudeCode") {
-    return settings.providers.kimiClaudeCode?.defaultModel ?? "kimi-for-coding";
+  if (providerId === "glmClaudeCode") {
+    return settings.providers.glmClaudeCode?.defaultModel ?? "glm-5.1";
   }
-  return settings.providers.kimi?.defaultModel ?? "kimi-for-coding";
+  return settings.providers.kimi?.defaultModel ?? "glm-5.1";
 };
 
 const isTemplateUpdateResolutionAction = (

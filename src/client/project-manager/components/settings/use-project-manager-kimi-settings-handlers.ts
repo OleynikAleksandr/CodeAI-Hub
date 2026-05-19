@@ -27,17 +27,17 @@ export const useProjectManagerKimiSettingsHandlers = ({
     },
     [settings, updateSettings]
   );
-  const handleKimiClaudeCodeThinkingDisplaySyncChange = useCallback(
+  const handleGlmClaudeCodeThinkingDisplaySyncChange = useCallback(
     (enabled: boolean) => {
       updateSettings(
-        updateThinkingDisplaySyncEnabled(settings, "kimiClaudeCode", enabled)
+        updateThinkingDisplaySyncEnabled(settings, "glmClaudeCode", enabled)
       );
     },
     [settings, updateSettings]
   );
 
   return {
-    handleKimiClaudeCodeThinkingDisplaySyncChange,
+    handleGlmClaudeCodeThinkingDisplaySyncChange,
     handleKimiDefaultModelChange,
     handleKimiThinkingDisplaySyncChange,
   };

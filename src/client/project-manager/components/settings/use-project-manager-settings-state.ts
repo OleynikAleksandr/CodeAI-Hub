@@ -105,7 +105,7 @@ export type UseProjectManagerSettingsStateResult =
   UseSettingsStateResult &
     TemplateUpdateSettingsControls & {
       readonly handleKimiDefaultModelChange: (modelId: KimiModelId) => void;
-      readonly handleKimiClaudeCodeThinkingDisplaySyncChange: (
+      readonly handleGlmClaudeCodeThinkingDisplaySyncChange: (
         enabled: boolean
       ) => void;
       readonly handleKimiThinkingDisplaySyncChange: (enabled: boolean) => void;
@@ -367,7 +367,7 @@ export const useProjectManagerSettingsState =
       [settings, updateSettings]
     );
     const {
-      handleKimiClaudeCodeThinkingDisplaySyncChange,
+      handleGlmClaudeCodeThinkingDisplaySyncChange,
       handleKimiDefaultModelChange,
       handleKimiThinkingDisplaySyncChange,
     } = useProjectManagerKimiSettingsHandlers({ settings, updateSettings });
@@ -461,7 +461,7 @@ export const useProjectManagerSettingsState =
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
-      handleKimiClaudeCodeThinkingDisplaySyncChange,
+      handleGlmClaudeCodeThinkingDisplaySyncChange,
       handleKimiThinkingDisplaySyncChange,
       handleLocalizationCategoryLanguageChange,
       handleLocalizationDefaultLanguageChange,
