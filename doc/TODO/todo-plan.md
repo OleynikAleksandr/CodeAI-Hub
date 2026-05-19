@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "1e6a0cbbe",
+  "lastRecordedCommit": "f583fc57b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase9-glm-live-smoke",
-  "expectedCommitMessage": "docs: record glm claude code live smoke result",
+  "currentTaskId": "phase11-glm-release-notes",
+  "expectedCommitMessage": "docs: prepare glm claude code release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record glm claude code live smoke result",
-    "preCommitHead": "1e6a0cbbe",
+    "expectedCommitMessage": "docs: prepare glm claude code release notes",
+    "preCommitHead": "f583fc57b",
     "stage": "commit_pending",
-    "taskId": "phase9-glm-live-smoke"
+    "taskId": "phase11-glm-release-notes"
   }
 }
 ```
@@ -125,16 +125,16 @@
 5. [DONE] `phase9-glm-local-config-template` Create isolated local GLM provider config/home template outside Git for user API-key entry and verify missing-key failure is explicit — scope: `~/.codeai-hub/providers/glm-claude-code/config.json, ~/.codeai-hub/providers/glm-claude-code/home, doc/TODO/todo-plan.md`; expected commit: `docs: record glm claude code local config setup`. Result: local config exists at `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` with empty `apiKey`, GLM base URL/model defaults and `timeoutMs`; provider home exists at `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/home`; missing-key probe returned `status=failed`, `failureCategory=api_key_missing`, `error=GLM API key is unavailable`.
 6. [DONE] Git Commit: `docs: record glm claude code local config setup` (hash: 1e6a0cbbe)
 7. [DONE] `phase9-glm-live-smoke` Record GLM-Claude-Code live-smoke readiness and deferral until user enters Z.AI API key; verify missing-key path is explicit and keep real live answer smoke in User Workflow Acceptance Testing — scope: `doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record glm claude code live smoke result`. Result: live GLM answer smoke was not run because `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` intentionally has empty `apiKey`; preflight missing-key probe returns explicit `api_key_missing` instead of hanging. Real short-answer/workflow smoke moves to Phase 12 after the user inserts the key.
-8. [PENDING] Git Commit: `docs: record glm claude code live smoke result` (hash: TBD)
+8. [DONE] Git Commit: `docs: record glm claude code live smoke result` (hash: f583fc57b)
 
 ## Phase 10 — Release Build Confirmation Gate (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Confirmation
-1. [TODO] `phase10-glm-release-confirmation` После targeted verification остановиться и запросить отдельное явное подтверждение пользователя на release build; до подтверждения не менять README/CHANGELOG версии и не запускать `build-all.sh`/`build-release.sh` — scope: без изменения файлов; expected commit: none.
+1. [DONE] `phase10-glm-release-confirmation` После targeted verification остановиться и запросить отдельное явное подтверждение пользователя на release build; до подтверждения не менять README/CHANGELOG версии и не запускать `build-all.sh`/`build-release.sh` — scope: без изменения файлов; expected commit: none. Result: Release build confirmed by explicit user request: реализуй этот план и без пауз собери новый релиз
 
 ## Phase 11 — Release Build (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Build
-1. [TODO] `phase11-glm-release-notes` После явного подтверждения пользователя обновить README/CHANGELOG на будущую версию и связанные docs, если затронуты — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm claude code release notes`.
-2. [TODO] Git Commit: `docs: prepare glm claude code release notes` (hash: TBD)
+1. [DONE] `phase11-glm-release-notes` После явного подтверждения пользователя обновить README/CHANGELOG на будущую версию и связанные docs, если затронуты — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm claude code release notes`. Result: README and CHANGELOG prepared for v1.2.318 with GLM-Claude-Code replacement notes, isolated config path, supported verification commands and missing-key behavior.
+2. [PENDING] Git Commit: `docs: prepare glm claude code release notes` (hash: TBD)
 3. [TODO] `phase11-glm-build-all` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить VSIX/release artifacts and record result — scope: `package manifests, assets manifests, doc/TODO/todo-plan.md`; expected commit: `chore: build glm claude code release`.
 4. [TODO] Git Commit: `chore: build glm claude code release` (hash: TBD)
 

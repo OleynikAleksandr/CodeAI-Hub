@@ -2,31 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.317** (Kimi and Claude-Kimi provider selection hotfix)
+**Current Release — v1.2.318** (GLM-Claude-Code provider replacement)
 
-This hotfix makes the two Kimi runtime conditions explicit across provider and
-model selection surfaces. Native `Kimi` remains the Wire-based provider, while
-`Claude-Kimi` is the separate Claude Agent SDK-compatible runtime for Kimi 2.6.
-Settings now shows separate `Kimi` and `Claude-Kimi` tabs, workflow start cards
-show both providers, and model labels distinguish `Kimi 2.6 / Kimi Code` from
-`Kimi 2.6 / Claude-Kimi`.
+This release replaces the closed `Claude-Kimi` experiment with
+`GLM-Claude-Code`: GLM 5.1 running through the Claude Code-compatible runtime.
+Native `Kimi` remains the Wire-based provider, while `GLM-Claude-Code` has its
+own provider id, Settings tab, workflow start-card option, Capture Workbench
+entry, status identity, and provider inheritance path.
 
-Capture Workbench and provider tint/status helpers also recognize both Kimi
-variants, so comparison runs can select either provider without hidden fallback
-or ambiguous labels.
+The GLM runtime is isolated under
+`~/.codeai-hub/providers/glm-claude-code/home` and reads its local config from
+`~/.codeai-hub/providers/glm-claude-code/config.json`. The API key is not stored
+in repository files; enter it in the local config `apiKey` field or provide one
+of the supported runtime env vars.
 
-This release adds `Kimi-Claude-Code` as a separate provider option for comparing
-Kimi 2.6 behavior through the Claude Code-compatible runtime. It uses the
-Kimi Anthropic-compatible coding endpoint, keeps runtime state isolated under
-`~/.codeai-hub/providers/kimi-claude-code/home`, resolves the existing Kimi API
-key without persisting it in CodeAI settings, and reuses the CodeAI-owned Claude
-workflow system prompt/tool profile.
-
-Kimi-Claude-Code is available in Settings, Description/provider start cards,
-workflow continuation defaults, Development Tree start/fix cards, Session UI
-provider identity, native request capture, and provider inheritance. Usage and
-context telemetry intentionally render as unavailable until a matching live
-Kimi-Claude-Code account source is proven.
+The release also keeps native Kimi defaults honest in capture/workbench surfaces:
+Kimi uses `kimi-for-coding`, and GLM-Claude-Code uses `glm-5.1`.
 
 The previous session context and Kimi usage telemetry behavior remains included.
 

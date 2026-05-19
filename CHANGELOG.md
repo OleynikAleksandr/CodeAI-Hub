@@ -8,6 +8,24 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.318] - 2026-05-19
+### Changed
+- **Claude-Kimi is replaced by GLM-Claude-Code.** Active provider surfaces now expose native `Kimi` plus `GLM-Claude-Code`; the archived `kimiClaudeCode` experiment is no longer an active Settings/card/status/capture option.
+- **GLM-Claude-Code uses isolated config and provider home.** Runtime state lives under `~/.codeai-hub/providers/glm-claude-code/home`, and the user API key is read from `~/.codeai-hub/providers/glm-claude-code/config.json` or supported env vars without touching the real Claude home.
+- **GLM-Claude-Code reuses the Claude workflow runtime profile.** The provider keeps CodeAI-owned Claude workflow system instructions, `settingSources: []`, and the compact `Read` / `Write` / `Edit` tool profile.
+
+### Fixed
+- **Native Kimi model defaults remain native Kimi.** Capture Workbench and session model identity use `kimi-for-coding` for Kimi and `glm-5.1` for GLM-Claude-Code.
+- **Missing GLM API key fails explicitly.** The preflight returns `api_key_missing` instead of leaving a session in an ambiguous startup state.
+
+### Tests
+- `npm test --workspace packages/Claude_Module`
+- `npm test --workspace packages/core`
+- `npm run build --workspace packages/Claude_Module`
+- `npm run build --workspace packages/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.317] - 2026-05-19
 ### Fixed
 - **Kimi provider variants are now explicit in Settings.** Settings shows separate `Kimi` and `Claude-Kimi` tabs instead of placing the Claude Agent SDK-compatible runtime inside the native Kimi section.
