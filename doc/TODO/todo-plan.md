@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "3d336b30c",
+  "lastRecordedCommit": "cb6a83df8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-reasoning-summary-output",
-  "expectedCommitMessage": "fix: make kimi summarize reasoning visibly",
+  "currentTaskId": "phase8-kimi-provider-inheritance",
+  "expectedCommitMessage": "fix: inherit kimi provider across workflow steps",
   "debt": {
-    "expectedCommitMessage": "fix: make kimi summarize reasoning visibly",
-    "preCommitHead": "3d336b30c",
+    "expectedCommitMessage": "fix: inherit kimi provider across workflow steps",
+    "preCommitHead": "cb6a83df8",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-reasoning-summary-output"
+    "taskId": "phase8-kimi-provider-inheritance"
   }
 }
 ```
@@ -486,7 +486,11 @@
 
 ### Stream: Acceptance Bug Fix — Kimi Reasoning Summary Output
 1. [DONE] `phase8-kimi-reasoning-summary-output` Изменить managed Kimi prompt с cadence-only подхода на режим коротких visible reasoning summaries: запретить подробный hidden reasoning как рабочий журнал и требовать summary рассуждений ordinary assistant text — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: make kimi summarize reasoning visibly`.
-2. [PENDING] Git Commit: `fix: make kimi summarize reasoning visibly` (hash: TBD)
+2. [DONE] Git Commit: `fix: make kimi summarize reasoning visibly` (hash: cb6a83df8)
+
+### Stream: Acceptance Bug Fix — Kimi Provider Inheritance
+1. [DONE] `phase8-kimi-provider-inheritance` Исправить default provider в карточке следующего workflow step: если Description/предыдущий stage был запущен на Kimi, следующий start card должен наследовать `kimiCode`, а не падать на Claude — scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: inherit kimi provider across workflow steps`.
+2. [PENDING] Git Commit: `fix: inherit kimi provider across workflow steps` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

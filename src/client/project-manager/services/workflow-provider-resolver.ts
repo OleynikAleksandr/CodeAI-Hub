@@ -8,7 +8,10 @@ type WorkflowProviderStageId =
   | "quality_gates";
 
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
-  value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
+  value === "claudeCodeCli" ||
+  value === "codexCli" ||
+  value === "geminiCli" ||
+  value === "kimiCode";
 
 const resolveProviderIdFromDescription = (
   state: WorkflowStateSnapshot | null

@@ -58,6 +58,14 @@ const createProviders = (
     statusMessage: null,
     ...overrides?.geminiCli,
   },
+  {
+    id: "kimiCode",
+    title: "Kimi",
+    description: "Kimi Code",
+    connected: true,
+    statusMessage: null,
+    ...overrides?.kimiCode,
+  },
 ];
 
 test("virtual simulation inherits provider from description primary session", () => {
@@ -78,6 +86,26 @@ test("virtual simulation inherits provider from description primary session", ()
   });
 
   assert.equal(providerId, "geminiCli");
+});
+
+test("virtual simulation inherits Kimi provider from description primary session", () => {
+  const providerId = resolvePreferredWorkflowProviderId({
+    workflowState: createWorkflowState({
+      description: {
+        updatedAt: "2026-05-19T08:00:00.000Z",
+        finalPath: ".codeai-hub/demo/description/Final_Description.md",
+        primarySession: {
+          providerId: "kimiCode",
+          providerSessionId: "kimi-description-session",
+          jsonlPath: "/tmp/kimi-description.jsonl",
+        },
+      },
+    }),
+    providers: createProviders(),
+    stage: "virtual_simulation",
+  });
+
+  assert.equal(providerId, "kimiCode");
 });
 
 test("diagram modules inherits provider from latest virtual simulation continuity segment", () => {
