@@ -6,6 +6,10 @@ import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
+import {
+  DEFAULT_KIMI_MODEL_ID,
+  type KimiModelId,
+} from "../../../../../types/kimi-model-registry";
 import type {
   CodexModelId,
   CodexReasoningLevel,
@@ -97,7 +101,7 @@ export const updateCodexReasoning = (
 
 export const updateThinkingDisplaySyncEnabled = (
   settings: Settings,
-  provider: "claude" | "codex" | "gemini" | "kimi",
+  provider: "claude" | "codex" | "gemini" | "kimi" | "kimiClaudeCode",
   enabled: boolean
 ): Settings => ({
   ...settings,
@@ -107,6 +111,23 @@ export const updateThinkingDisplaySyncEnabled = (
       ...settings.providers[provider],
       thinkingDisplaySyncEnabled: enabled,
       ...(provider === "codex" ? { reasoningSummaryEnabled: enabled } : {}),
+    },
+  },
+});
+
+export const updateKimiDefaultModel = (
+  settings: Settings,
+  defaultModel: KimiModelId = DEFAULT_KIMI_MODEL_ID
+): Settings => ({
+  ...settings,
+  providers: {
+    ...settings.providers,
+    kimi: {
+      ...(settings.providers.kimi ?? {
+        autoUpdate: { enabled: false },
+        thinkingDisplaySyncEnabled: true,
+      }),
+      defaultModel,
     },
   },
 });

@@ -66,6 +66,7 @@ import {
   isNativeRequestCaptureProviderId,
 } from "./project-manager-settings-host-message";
 import { startProjectManagerNativeRequestCapture } from "./native-request-capture-runner";
+import { useProjectManagerKimiSettingsHandlers } from "./use-project-manager-kimi-settings-handlers";
 import { useProjectManagerSettings } from "./use-project-manager-settings";
 const PM_CORE_CONTROL_STATE: CoreControlState = {
   busy: false,
@@ -104,6 +105,9 @@ export type UseProjectManagerSettingsStateResult =
   UseSettingsStateResult &
     TemplateUpdateSettingsControls & {
       readonly handleKimiDefaultModelChange: (modelId: KimiModelId) => void;
+      readonly handleKimiClaudeCodeThinkingDisplaySyncChange: (
+        enabled: boolean
+      ) => void;
       readonly handleKimiThinkingDisplaySyncChange: (enabled: boolean) => void;
       readonly handleNativeRequestCaptureWorkbenchOpen: () => void;
       readonly hostPostMessage: (message: unknown) => void;
@@ -362,20 +366,11 @@ export const useProjectManagerSettingsState =
       },
       [settings, updateSettings]
     );
-    const handleKimiDefaultModelChange = (defaultModel: KimiModelId) =>
-      updateSettings({
-        ...settings,
-        providers: {
-          ...settings.providers,
-          kimi: {
-            ...(settings.providers.kimi ?? {
-              autoUpdate: { enabled: false },
-              thinkingDisplaySyncEnabled: true,
-            }),
-            defaultModel,
-          },
-        },
-      });
+    const {
+      handleKimiClaudeCodeThinkingDisplaySyncChange,
+      handleKimiDefaultModelChange,
+      handleKimiThinkingDisplaySyncChange,
+    } = useProjectManagerKimiSettingsHandlers({ settings, updateSettings });
     const handleGeminiThinkingChange = useCallback(
       (modelId: GeminiModelId, level: GeminiThinkingLevel) => {
         updateSettings(updateGeminiThinking(settings, modelId, level));
@@ -403,12 +398,6 @@ export const useProjectManagerSettingsState =
         updateSettings(
           updateThinkingDisplaySyncEnabled(settings, "gemini", enabled)
         );
-      },
-      [settings, updateSettings]
-    );
-    const handleKimiThinkingDisplaySyncChange = useCallback(
-      (enabled: boolean) => {
-        updateSettings(updateThinkingDisplaySyncEnabled(settings, "kimi", enabled));
       },
       [settings, updateSettings]
     );
@@ -472,6 +461,7 @@ export const useProjectManagerSettingsState =
       handleCodexReasoningChange,
       handleCodexThinkingDisplaySyncChange,
       handleGeminiThinkingDisplaySyncChange,
+      handleKimiClaudeCodeThinkingDisplaySyncChange,
       handleKimiThinkingDisplaySyncChange,
       handleLocalizationCategoryLanguageChange,
       handleLocalizationDefaultLanguageChange,

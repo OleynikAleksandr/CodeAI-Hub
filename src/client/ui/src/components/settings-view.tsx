@@ -7,7 +7,7 @@ import CodexDefaultModelCard from "./settings/codex-default-model/codex-default-
 import GeminiDefaultModelCard from "./settings/gemini-default-model/gemini-default-model-card";
 import GeneralResponseModeFacade from "./settings/general-response-mode/general-response-mode-facade";
 import GeneralSettings from "./settings/general-settings";
-import KimiDefaultModelCard from "./settings/kimi-default-model-card";
+import KimiSettingsTab from "./settings/kimi-settings-tab";
 import LocalizationSettingsCard from "./settings/localization-settings-card";
 import ProviderVersions from "./settings/provider-versions";
 import SessionContinuityCard from "./settings/session-continuity-card";
@@ -24,10 +24,12 @@ import ThinkingSettings from "./settings/thinking-settings";
 import type { UseSettingsStateResult } from "./settings/use-settings-state";
 
 type SettingsMode = "full" | "project-manager" | "settings-only";
+type SettingsBooleanHandler = (enabled: boolean) => void;
 
 type SettingsViewState = UseSettingsStateResult & {
   readonly handleKimiDefaultModelChange?: (modelId: KimiModelId) => void;
-  readonly handleKimiThinkingDisplaySyncChange?: (enabled: boolean) => void;
+  readonly handleKimiClaudeCodeThinkingDisplaySyncChange?: SettingsBooleanHandler;
+  readonly handleKimiThinkingDisplaySyncChange?: SettingsBooleanHandler;
   readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
   readonly hostPostMessage?: (message: unknown) => void;
   readonly supportsCoreRestart?: boolean;
@@ -167,6 +169,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
     handleKimiDefaultModelChange,
+    handleKimiClaudeCodeThinkingDisplaySyncChange,
     handleGeminiThinkingChange,
     handleClaudeThinkingDisplaySyncChange,
     handleCodexThinkingDisplaySyncChange,
@@ -411,18 +414,22 @@ const SettingsView: React.FC<SettingsViewProps> = ({
           }
           if (activeTab === "kimi") {
             return (
-              <div style={stackStyles}>
-                <KimiDefaultModelCard
-                  defaultModel={settings.providers.kimi?.defaultModel}
-                  onDefaultModelChange={handleKimiDefaultModelChange}
-                  onThinkingDisplaySyncChange={
-                    handleKimiThinkingDisplaySyncChange
-                  }
-                  thinkingDisplaySyncEnabled={
-                    settings.providers.kimi?.thinkingDisplaySyncEnabled
-                  }
-                />
-              </div>
+              <KimiSettingsTab
+                kimiClaudeCodeThinkingDisplaySyncEnabled={
+                  settings.providers.kimiClaudeCode?.thinkingDisplaySyncEnabled
+                }
+                kimiDefaultModel={settings.providers.kimi?.defaultModel}
+                kimiThinkingDisplaySyncEnabled={
+                  settings.providers.kimi?.thinkingDisplaySyncEnabled
+                }
+                onKimiClaudeCodeThinkingDisplaySyncChange={
+                  handleKimiClaudeCodeThinkingDisplaySyncChange
+                }
+                onKimiDefaultModelChange={handleKimiDefaultModelChange}
+                onKimiThinkingDisplaySyncChange={
+                  handleKimiThinkingDisplaySyncChange
+                }
+              />
             );
           }
           return (
