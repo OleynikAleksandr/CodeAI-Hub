@@ -12,6 +12,7 @@ export interface ClaudeCodeRuntimeProfile {
   readonly id: ClaudeRuntimeProfileId;
   readonly projectPath: string;
   readonly providerHome: string;
+  readonly sessionTitle?: string;
   readonly settingSources: readonly string[];
   readonly toolNames: readonly string[];
 }

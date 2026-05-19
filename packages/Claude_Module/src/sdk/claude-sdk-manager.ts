@@ -15,7 +15,10 @@ import type {
   ClaudeWorkspaceOptions,
   ModuleReporter,
 } from "../types";
-import { buildClaudeCodeRuntimeProfile } from "./claude-runtime-profile";
+import {
+  buildClaudeCodeRuntimeProfile,
+  type ClaudeCodeRuntimeProfile,
+} from "./claude-runtime-profile";
 import { CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT } from "./claude-workflow-system-prompt";
 
 export type QueryFunction = (payload: {
@@ -35,6 +38,7 @@ interface ClaudeManagerDependencies {
   readonly installer: SDKInstaller;
   readonly processor: SDKMessageProcessor;
   readonly reporter?: ModuleReporter;
+  readonly runtimeProfile?: ClaudeCodeRuntimeProfile;
   readonly sessions: SDKSessionManager;
   readonly workspace: ClaudeWorkspaceOptions;
 }
@@ -85,6 +89,7 @@ interface ClaudeQueryOptions extends Record<string, unknown> {
     readonly display?: "summarized" | "omitted";
     readonly type: "adaptive" | "disabled";
   };
+  title?: string;
   tools: string[];
 }
 
@@ -264,9 +269,7 @@ export class ClaudeSDKManager {
     const appliedConfig = readAppliedClaudeTurnConfig(turnOptions);
     const resolvedModel =
       appliedConfig?.modelId ?? this.deps.workspace.defaultModel;
-    const runtimeProfile = buildClaudeCodeRuntimeProfile({
-      projectSlug: this.deps.workspace.claudeProjectSlug,
-    });
+    const runtimeProfile = this.resolveRuntimeProfile();
     const thinkingOptions = this.resolveThinkingOptions(
       settingsSnapshot,
       appliedConfig
@@ -299,6 +302,9 @@ export class ClaudeSDKManager {
     if (resumeSessionId) {
       options.resume = resumeSessionId;
     }
+    if (runtimeProfile.sessionTitle) {
+      options.title = runtimeProfile.sessionTitle;
+    }
     if (outputSchema) {
       options.outputFormat = {
         type: "json_schema",
@@ -309,9 +315,16 @@ export class ClaudeSDKManager {
   }
 
   private resolveProjectPath(): string {
-    return buildClaudeCodeRuntimeProfile({
-      projectSlug: this.deps.workspace.claudeProjectSlug,
-    }).projectPath;
+    return this.resolveRuntimeProfile().projectPath;
+  }
+
+  private resolveRuntimeProfile(): ClaudeCodeRuntimeProfile {
+    return (
+      this.deps.runtimeProfile ??
+      buildClaudeCodeRuntimeProfile({
+        projectSlug: this.deps.workspace.claudeProjectSlug,
+      })
+    );
   }
 
   private resolveAuthEnvironment(): NodeJS.ProcessEnv {

@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { ActiveSession } from "../session/types";
+import type { ClaudeCodeRuntimeProfile } from "./claude-runtime-profile";
 import { ClaudeSDKManager } from "./claude-sdk-manager";
 
 const shouldYieldEmptyStreamValue = (): boolean => false;
@@ -15,7 +16,10 @@ async function* emptyClaudeStream(): AsyncIterableIterator<never> {
   }
 }
 
-const createManager = (settingsPath?: string): ClaudeSDKManager =>
+const createManager = (
+  settingsPath?: string,
+  runtimeProfile?: ClaudeCodeRuntimeProfile
+): ClaudeSDKManager =>
   new ClaudeSDKManager({
     authManager: {
       ensureSubscriptionAuth: () => Promise.resolve(),
@@ -36,6 +40,7 @@ const createManager = (settingsPath?: string): ClaudeSDKManager =>
         // noop
       },
     },
+    runtimeProfile,
     sessions: {},
     workspace: {
       claudeProjectSlug: "workspace-slug",
@@ -109,6 +114,28 @@ test("ClaudeSDKManager keeps provider sessions in SDK isolation mode", () => {
   assert.deepEqual(options.env, {
     HOME: "/sandbox/provider-home",
   });
+});
+
+test("ClaudeSDKManager applies explicit runtime profile options", () => {
+  const manager = createManager(undefined, {
+    authMode: "anthropic-api-key",
+    id: "kimiClaudeCode",
+    projectPath: "/provider-home/.claude/projects/kimi",
+    providerHome: "/provider-home",
+    settingSources: [],
+    sessionTitle: "CodeAI Kimi-Claude-Code",
+    toolNames: ["Write"],
+  });
+
+  const options = buildQueryOptions(manager, {
+    sessionId: "session-123",
+    workspacePath: "/tmp/codeai-workspace",
+  } as ActiveSession);
+
+  assert.equal(options.projectPath, "/provider-home/.claude/projects/kimi");
+  assert.deepEqual(options.settingSources, []);
+  assert.deepEqual(options.tools, ["Write"]);
+  assert.equal(options.title, "CodeAI Kimi-Claude-Code");
 });
 
 test("ClaudeSDKManager passes installed executable to auth preflight", async () => {
