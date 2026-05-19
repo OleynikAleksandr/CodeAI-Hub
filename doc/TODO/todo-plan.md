@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "c43a2fca7",
+  "lastRecordedCommit": "57b7ce667",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase6-glm-description-devtree-picker",
-  "expectedCommitMessage": "refactor: expose glm claude code in step pickers",
+  "currentTaskId": "phase7-glm-session-identity",
+  "expectedCommitMessage": "refactor: show glm claude code session identity",
   "debt": {
-    "expectedCommitMessage": "refactor: expose glm claude code in step pickers",
-    "preCommitHead": "c43a2fca7",
+    "expectedCommitMessage": "refactor: show glm claude code session identity",
+    "preCommitHead": "57b7ce667",
     "stage": "commit_pending",
-    "taskId": "phase6-glm-description-devtree-picker"
+    "taskId": "phase7-glm-session-identity"
   }
 }
 ```
@@ -96,12 +96,12 @@
 3. [DONE] `phase6-glm-card-provider-tint` Replace provider guards/tints in shared confirmation and Development Tree start cards from Kimi-Claude-Code to GLM-Claude-Code — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `refactor: show glm claude code provider tint`.
 4. [DONE] Git Commit: `refactor: show glm claude code provider tint` (hash: c43a2fca7)
 5. [DONE] `phase6-glm-description-devtree-picker` Replace Description provider picker copy and Development Tree provider guard so only native Kimi plus GLM-Claude-Code appear — scope: `src/client/project-manager/components/description/description-provider-picker.tsx, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/use-step-provider-resolver.ts`; expected commit: `refactor: expose glm claude code in step pickers`.
-6. [PENDING] Git Commit: `refactor: expose glm claude code in step pickers` (hash: TBD)
+6. [DONE] Git Commit: `refactor: expose glm claude code in step pickers` (hash: 57b7ce667)
 
 ## Phase 7 — Session UI And Capture Workbench (owner: Codex, updated: 2026-05-19)
 ### Stream: Session Identity
-1. [TODO] `phase7-glm-session-identity` Replace session status/model identity helpers and provider candidates with GLM-Claude-Code labels while keeping native Kimi labels unchanged — scope: `src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/helpers.ts, src/client/ui/src/session/session-candidates.ts`; expected commit: `refactor: show glm claude code session identity`.
-2. [TODO] Git Commit: `refactor: show glm claude code session identity` (hash: TBD)
+1. [DONE] `phase7-glm-session-identity` Replace session status/model identity helpers and provider candidates with GLM-Claude-Code labels while keeping native Kimi labels unchanged — scope: `src/client/ui/src/session/model-info-builder.ts, src/client/ui/src/session/helpers.ts, src/client/ui/src/session/session-candidates.ts`; expected commit: `refactor: show glm claude code session identity`.
+2. [PENDING] Git Commit: `refactor: show glm claude code session identity` (hash: TBD)
 3. [TODO] `phase7-glm-session-bars` Replace status panel/session id bar provider mapping for GLM-Claude-Code and avoid reusing Kimi-only usage rows — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-id-bar.tsx, src/client/project-manager/core-stream-message-types.ts`; expected commit: `refactor: show glm claude code status surfaces`.
 4. [TODO] Git Commit: `refactor: show glm claude code status surfaces` (hash: TBD)
 5. [TODO] `phase7-glm-capture-workbench-ui` Replace Capture Workbench provider/model/reasoning defaults from Claude-Kimi to GLM-Claude-Code — scope: `src/client/project-manager/components/capture-workbench/provider-selector.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx`; expected commit: `refactor: expose glm claude code in capture workbench`.

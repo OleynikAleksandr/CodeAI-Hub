@@ -10,8 +10,8 @@ type ProviderKey = "claude" | "codex" | "gemini";
 type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
 
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi Code";
-const KIMI_CLAUDE_CODE_MODEL_DISPLAY_NAME = "Kimi 2.6 / Claude-Kimi";
-const KIMI_DEFAULT_MODEL_ID = "kimi-for-coding";
+const GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME = "GLM 5.1 / Claude Code";
+const KIMI_DEFAULT_MODEL_ID = "glm-5.1";
 
 const PROVIDER_ID_TO_KEY: Record<SettingsBackedProviderId, ProviderKey> = {
   claudeCodeCli: "claude",
@@ -59,8 +59,8 @@ const formatKimiSessionModelDisplayName = (
   if (baseModelId !== KIMI_DEFAULT_MODEL_ID) {
     return formatModelDisplayName(baseModelId);
   }
-  return providerId === "kimiClaudeCode"
-    ? KIMI_CLAUDE_CODE_MODEL_DISPLAY_NAME
+  return providerId === "glmClaudeCode"
+    ? GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME
     : KIMI_DEFAULT_MODEL_DISPLAY_NAME;
 };
 
@@ -68,7 +68,7 @@ const resolveFallbackModelDisplayName = (
   providerId: ProviderStackId,
   modelId: string
 ): string => {
-  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
+  if (providerId === "kimiCode" || providerId === "glmClaudeCode") {
     return formatKimiSessionModelDisplayName(providerId, modelId);
   }
   if (!isSettingsBackedProviderId(providerId)) {
@@ -171,10 +171,10 @@ export const buildModelInfo = (
     };
   }
 
-  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
+  if (providerId === "kimiCode" || providerId === "glmClaudeCode") {
     const settingsModelId =
-      providerId === "kimiClaudeCode"
-        ? settings.providers.kimiClaudeCode?.defaultModel
+      providerId === "glmClaudeCode"
+        ? settings.providers.glmClaudeCode?.defaultModel
         : settings.providers.kimi?.defaultModel;
     const modelId =
       effectiveModelId ?? settingsModelId ?? KIMI_DEFAULT_MODEL_ID;
