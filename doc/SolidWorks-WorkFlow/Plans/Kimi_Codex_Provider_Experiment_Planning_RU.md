@@ -79,14 +79,26 @@ model_reasoning_summary = "none"
 name = "Kimi"
 base_url = "https://api.kimi.com/coding/v1"
 env_key = "KIMI_API_KEY"
-wire_api = "chat"
+wire_api = "responses"
 env_key_instructions = "Set KIMI_API_KEY in the environment used by CodeAI Hub."
 stream_idle_timeout_ms = 300000
 stream_max_retries = 5
 request_max_retries = 4
 ```
 
-Initial probe values are based on the local Kimi CLI profile shape and the native Kimi provider defaults already used by CodeAI Hub. The materializer must not copy secrets from `~/.kimi/config.toml`; `kimi-codex` should read `KIMI_API_KEY` only from the CodeAI Hub process environment. `wire_api = "responses"` remains an experiment only if the Kimi endpoint proves compatible with the Codex Responses path.
+Initial probe values are based on the local Kimi CLI profile shape and the native Kimi provider defaults already used by CodeAI Hub. The materializer must not copy secrets from `~/.kimi/config.toml`; `kimi-codex` should read `KIMI_API_KEY` only from the CodeAI Hub process environment.
+
+Feasibility result (2026-05-19):
+
+- `wire_api = "chat"` is rejected by the current Codex CLI before the provider call: Codex reports that Chat wire API is no longer supported and requires `wire_api = "responses"`.
+- `wire_api = "responses"` lets `codex app-server` start and create a thread with the Kimi-Codex home, but `turn/start` fails when Codex calls `https://api.kimi.com/coding/v1/responses`; Kimi returns `404 Not Found`.
+- Therefore the current Kimi coding endpoint is not compatible with the current Codex App Server OpenAI-compatible provider path.
+
+Decision: do not continue product integration of `kimi-codex` until one unblocker exists:
+
+1. Kimi exposes a Responses-compatible endpoint for `kimi-for-coding`.
+2. Codex CLI restores/supports a Chat Completions wire API for custom model providers.
+3. CodeAI Hub adds a local protocol bridge that translates Codex Responses requests into Kimi Chat/Coding requests. This would be a separate architecture scope, not the simple Codex-client reuse experiment.
 
 ## 5. Instruction And Flag Parity With GPT 5.5
 
@@ -144,6 +156,8 @@ Exit criteria:
 - app-server starts;
 - Kimi returns a visible answer;
 - errors are classified into auth/config/protocol/model-incompatible categories.
+
+Current exit result: failed at provider protocol compatibility. App-server startup and `thread/start` are proven; `turn/start` fails because Codex requires Responses API while the tested Kimi endpoint exposes no `/responses` route.
 
 ### Phase B — Provider Runtime Shell
 

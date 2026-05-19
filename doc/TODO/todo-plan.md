@@ -8,15 +8,15 @@
   "planId": "kimi-codex-provider-experiment-planning-2026-05-19",
   "branch": "main",
   "baseHead": "ddebe437a",
-  "lastRecordedCommit": "dfe8cbe8e",
+  "lastRecordedCommit": "3565b6865",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Codex_Provider_Experiment_Planning_RU.md",
-  "currentTaskId": "phase3-kimi-codex-app-server-probe",
-  "expectedCommitMessage": "feat: probe kimi through codex app server",
+  "currentTaskId": "phase3-kimi-codex-wire-api-decision",
+  "expectedCommitMessage": "docs: record kimi codex feasibility result",
   "debt": {
-    "expectedCommitMessage": "feat: probe kimi through codex app server",
-    "preCommitHead": "dfe8cbe8e",
+    "expectedCommitMessage": "docs: record kimi codex feasibility result",
+    "preCommitHead": "3565b6865",
     "stage": "commit_pending",
-    "taskId": "phase3-kimi-codex-app-server-probe"
+    "taskId": "phase3-kimi-codex-wire-api-decision"
   }
 }
 ```
@@ -65,9 +65,9 @@
 1. [DONE] `phase3-kimi-codex-home-config-probe` Добавить локальный Kimi-Codex provider-home materializer/probe config для `~/.codeai-hub/providers/kimi-codex/home` без изменения normal Codex home — scope: `packages/Codex_AppServer_Module/src/app-server/process, doc/SolidWorks-WorkFlow/Plans/Kimi_Codex_Provider_Experiment_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi codex home config probe`.
 2. [DONE] Git Commit: `feat: add kimi codex home config probe` (hash: dfe8cbe8e)
 3. [DONE] `phase3-kimi-codex-app-server-probe` Добавить минимальный diagnostic runner для `codex app-server` с `model_provider=kimi`, `thread/start`, `turn/start` и categorized failure output — scope: `packages/Codex_AppServer_Module/src/diagnostics, packages/Codex_AppServer_Module/src/app-server, doc/TODO/todo-plan.md`; expected commit: `feat: probe kimi through codex app server`.
-4. [PENDING] Git Commit: `feat: probe kimi through codex app server` (hash: TBD)
-5. [TODO] `phase3-kimi-codex-wire-api-decision` Зафиксировать evidence и выбрать `wire_api=chat` или `wire_api=responses`; если spike fails, оформить blocker вместо product integration — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Codex_Provider_Experiment_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi codex feasibility result`.
-6. [TODO] Git Commit: `docs: record kimi codex feasibility result` (hash: TBD)
+4. [DONE] Git Commit: `feat: probe kimi through codex app server` (hash: 3565b6865)
+5. [DONE] `phase3-kimi-codex-wire-api-decision` Зафиксировать evidence и выбрать `wire_api=chat` или `wire_api=responses`; если spike fails, оформить blocker вместо product integration — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Codex_Provider_Experiment_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi codex feasibility result`. Result: Codex CLI rejects `wire_api=chat`; `wire_api=responses` reaches Kimi but `/responses` returns 404, so product integration is blocked until Kimi supports Responses API, Codex supports Chat wire API, or CodeAI Hub adds a protocol bridge.
+6. [PENDING] Git Commit: `docs: record kimi codex feasibility result` (hash: TBD)
 
 ## Phase 4 — Shared Codex App Server Runtime Extraction (owner: Codex, updated: 2026-05-19)
 ### Stream: Runtime Profile Boundary
