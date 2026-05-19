@@ -1,6 +1,13 @@
 import { ClaudeProviderAdapter as ClaudeProviderAdapterImpl } from "./provider/claude-provider-adapter";
 
 export {
+  type KimiClaudeCodeProbeFailureCategory,
+  type KimiClaudeCodeProbeStatus,
+  type KimiClaudeCodeRuntimeProbeResult,
+  KimiClaudeCodeRuntimeProbeRunner,
+  type KimiClaudeCodeRuntimeProbeRunnerOptions,
+} from "./diagnostics/kimi-claude-code-runtime-probe-runner";
+export {
   buildKimiClaudeCodeRuntimeProbeProfile,
   extractKimiClaudeCodeApiKeyFromConfig,
   KIMI_CLAUDE_CODE_DEFAULT_BASE_URL,
