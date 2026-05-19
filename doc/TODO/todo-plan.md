@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "101aff7e4",
+  "lastRecordedCommit": "c9adaac51",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-reasoning-hotfix-release-build",
-  "expectedCommitMessage": "chore: release kimi reasoning hotfix build",
+  "currentTaskId": "phase8-kimi-default-agent-capture",
+  "expectedCommitMessage": "docs: capture kimi default agent baseline",
   "debt": {
-    "expectedCommitMessage": "chore: release kimi reasoning hotfix build",
-    "preCommitHead": "101aff7e4",
+    "expectedCommitMessage": "docs: capture kimi default agent baseline",
+    "preCommitHead": "c9adaac51",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-reasoning-hotfix-release-build"
+    "taskId": "phase8-kimi-default-agent-capture"
   }
 }
 ```
@@ -425,7 +425,11 @@
    - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.311.vsix`, package size `49M`.
    - Result: release tarballs available in `~/.codeai-hub/releases/` and copied to `doc/tmp/releases/`: `kimi-module-1.2.311.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.311.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.311.tar.bz2`, provider/UI tarballs.
    - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
-6. [PENDING] Git Commit: `chore: release kimi reasoning hotfix build` (hash: TBD)
+6. [DONE] Git Commit: `chore: release kimi reasoning hotfix build` (hash: c9adaac51)
+
+### Stream: Kimi Default Agent Baseline Capture
+1. [DONE] `phase8-kimi-default-agent-capture` Найти и зафиксировать baseline Kimi default agent/system prompt/tooling через существующий Capture Workbench контекст, установленный Kimi CLI/package resources, runtime/export/debug artifacts и сохранить документы в `doc/SolidWorks-WorkFlow/Plans/KIMI/` — scope: `doc/SolidWorks-WorkFlow/Plans/KIMI, doc/TODO/todo-plan.md`; expected commit: `docs: capture kimi default agent baseline`.
+2. [PENDING] Git Commit: `docs: capture kimi default agent baseline` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
