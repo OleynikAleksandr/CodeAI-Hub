@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
 import type { SDKMessageProcessor } from "../messaging/message-processor";
 import {
@@ -32,8 +31,15 @@ const SHORT_ID_LENGTH = 8;
 const TEMP_SESSION_PREFIX = "temp_";
 const SETTINGS_SNAPSHOT_CACHE_TTL_MS = 500;
 
+export interface ClaudeSDKAuthProvider {
+  ensureSubscriptionAuth(options?: {
+    readonly executablePath?: string;
+  }): Promise<void>;
+  getAuthEnvironment(): NodeJS.ProcessEnv;
+}
+
 interface ClaudeManagerDependencies {
-  readonly authManager: SDKAuthManager;
+  readonly authManager: ClaudeSDKAuthProvider;
   readonly enableDebugStreams?: boolean;
   readonly installer: SDKInstaller;
   readonly processor: SDKMessageProcessor;

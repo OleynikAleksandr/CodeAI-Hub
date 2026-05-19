@@ -5,10 +5,14 @@ import {
   resolveKimiClaudeCodeApiKey,
   resolveKimiClaudeCodeConfigPath,
 } from "../auth/kimi-claude-code-auth-profile";
+import type { ClaudeCodeRuntimeProfile } from "../sdk/claude-runtime-profile";
+import { CODEAI_CLAUDE_WORKFLOW_TOOLS } from "../sdk/claude-workflow-system-prompt";
 
 export const KIMI_CLAUDE_CODE_PROVIDER_ID = "kimiClaudeCode";
 export const KIMI_CLAUDE_CODE_MODEL_ID = "kimi-for-coding";
 export const KIMI_CLAUDE_CODE_DEFAULT_BASE_URL = "https://api.kimi.com/coding";
+export const KIMI_CLAUDE_CODE_DEFAULT_PROJECT_SLUG = "kimi-claude-code";
+export const KIMI_CLAUDE_CODE_SESSION_TITLE = "CodeAI Kimi Claude Code";
 
 const DEFAULT_PROVIDER_HOME = path.join(
   homedir(),
@@ -43,6 +47,13 @@ export interface KimiClaudeCodeRuntimeProbeProfileOptions {
   readonly home?: string;
 }
 
+export interface KimiClaudeCodeRuntimeProfileOptions {
+  readonly env?: NodeJS.ProcessEnv;
+  readonly home?: string;
+  readonly projectSlug?: string;
+  readonly sessionTitle?: string;
+}
+
 const trimOptional = (value: string | undefined): string | null => {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
@@ -52,6 +63,38 @@ export const resolveKimiClaudeCodeProviderHome = (
   env: NodeJS.ProcessEnv = process.env
 ): string =>
   trimOptional(env.CODEAI_KIMI_CLAUDE_CODE_HOME) ?? DEFAULT_PROVIDER_HOME;
+
+export const resolveKimiClaudeCodeProjectPath = (
+  options: KimiClaudeCodeRuntimeProfileOptions = {}
+): string =>
+  path.join(
+    options.home ??
+      resolveKimiClaudeCodeProviderHome(options.env ?? process.env),
+    ".claude",
+    "projects",
+    options.projectSlug ?? KIMI_CLAUDE_CODE_DEFAULT_PROJECT_SLUG
+  );
+
+export const buildKimiClaudeCodeRuntimeProfile = (
+  options: KimiClaudeCodeRuntimeProfileOptions = {}
+): ClaudeCodeRuntimeProfile => {
+  const home =
+    options.home ??
+    resolveKimiClaudeCodeProviderHome(options.env ?? process.env);
+  return {
+    authMode: "anthropic-api-key",
+    id: "kimiClaudeCode",
+    projectPath: resolveKimiClaudeCodeProjectPath({
+      env: options.env,
+      home,
+      projectSlug: options.projectSlug,
+    }),
+    providerHome: home,
+    sessionTitle: options.sessionTitle ?? KIMI_CLAUDE_CODE_SESSION_TITLE,
+    settingSources: [],
+    toolNames: [...CODEAI_CLAUDE_WORKFLOW_TOOLS],
+  };
+};
 
 export const buildKimiClaudeCodeRuntimeProbeProfile = async (
   options: KimiClaudeCodeRuntimeProbeProfileOptions = {}

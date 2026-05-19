@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "83d993f6c",
+  "lastRecordedCommit": "13c9c973e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase4-claude-sdk-profile-wiring",
-  "expectedCommitMessage": "refactor: support kimi claude code runtime profile",
+  "currentTaskId": "phase5-kimi-claude-code-facade",
+  "expectedCommitMessage": "feat: add kimi claude code provider facade",
   "debt": {
-    "expectedCommitMessage": "refactor: support kimi claude code runtime profile",
-    "preCommitHead": "83d993f6c",
+    "expectedCommitMessage": "feat: add kimi claude code provider facade",
+    "preCommitHead": "13c9c973e",
     "stage": "commit_pending",
-    "taskId": "phase4-claude-sdk-profile-wiring"
+    "taskId": "phase5-kimi-claude-code-facade"
   }
 }
 ```
@@ -75,12 +75,12 @@
 3. [DONE] `phase4-kimi-claude-code-auth-profile` Реализовать Kimi-Claude-Code auth profile: `HOME=~/.codeai-hub/providers/kimi-claude-code/home`, proven base URL, API key resolution, secret-safe logging — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/auth, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: add kimi claude code auth profile`.
 4. [DONE] Git Commit: `feat: add kimi claude code auth profile` (hash: 83d993f6c)
 5. [DONE] `phase4-claude-sdk-profile-wiring` Подключить profile selection в Claude SDK manager/factory так, чтобы обычный Claude путь продолжал использовать subscription auth, а Kimi-Claude-Code путь использовал отдельный profile — scope: `packages/Claude_Module/src/sdk, packages/Claude_Module/src/provider, doc/TODO/todo-plan.md`; expected commit: `refactor: support kimi claude code runtime profile`.
-6. [PENDING] Git Commit: `refactor: support kimi claude code runtime profile` (hash: TBD)
+6. [DONE] Git Commit: `refactor: support kimi claude code runtime profile` (hash: 13c9c973e)
 
 ## Phase 5 — Provider Facade And Model Contract (owner: Codex, updated: 2026-05-19)
 ### Stream: Kimi-Claude-Code Facade
-1. [TODO] `phase5-kimi-claude-code-facade` Добавить самостоятельный Core-facing facade/adapter `KimiClaudeCodeProviderAdapter`, который делегирует в Claude Code runtime profile и не открывает Core внутренние helper-классы — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code provider facade`.
-2. [TODO] Git Commit: `feat: add kimi claude code provider facade` (hash: TBD)
+1. [DONE] `phase5-kimi-claude-code-facade` Добавить самостоятельный Core-facing facade/adapter `KimiClaudeCodeProviderAdapter`, который делегирует в Claude Code runtime profile и не открывает Core внутренние helper-классы — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/sdk, packages/Claude_Module/src/index.ts`; expected commit: `feat: add kimi claude code provider facade`.
+2. [PENDING] Git Commit: `feat: add kimi claude code provider facade` (hash: TBD)
 3. [TODO] `phase5-kimi-claude-code-model-capabilities` Добавить model/capabilities contract для `kimi-for-coding`: single default model, honest unsupported reasoning controls, token/context telemetry unknown until proven — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/types, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code model capabilities`.
 4. [TODO] Git Commit: `feat: add kimi claude code model capabilities` (hash: TBD)
 5. [TODO] `phase5-kimi-claude-code-lifecycle` Подключить lifecycle classification для turn start, assistant progress/final, failure, stop and stale binding states без влияния на native Kimi/Claude — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/provider, packages/Claude_Module/src/session`; expected commit: `feat: support kimi claude code session lifecycle`.

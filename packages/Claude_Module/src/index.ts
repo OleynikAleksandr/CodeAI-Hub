@@ -1,3 +1,4 @@
+import { KimiClaudeCodeProviderAdapter as KimiClaudeCodeProviderAdapterImpl } from "./kimi-claude-code/kimi-claude-code-provider-adapter";
 import { ClaudeProviderAdapter as ClaudeProviderAdapterImpl } from "./provider/claude-provider-adapter";
 
 export {
@@ -7,20 +8,35 @@ export {
   KimiClaudeCodeRuntimeProbeRunner,
   type KimiClaudeCodeRuntimeProbeRunnerOptions,
 } from "./diagnostics/kimi-claude-code-runtime-probe-runner";
+export type {
+  KimiClaudeCodeProviderAdapterOptions,
+  KimiClaudeCodeSessionListener,
+  KimiClaudeCodeUsageLimitsFacadeBridge,
+  KimiClaudeCodeWorkspaceOptions,
+} from "./kimi-claude-code/kimi-claude-code-provider-adapter";
 export {
   buildKimiClaudeCodeRuntimeProbeProfile,
+  buildKimiClaudeCodeRuntimeProfile,
   extractKimiClaudeCodeApiKeyFromConfig,
   KIMI_CLAUDE_CODE_DEFAULT_BASE_URL,
+  KIMI_CLAUDE_CODE_DEFAULT_PROJECT_SLUG,
   KIMI_CLAUDE_CODE_MODEL_ID,
   KIMI_CLAUDE_CODE_PROVIDER_ID,
+  KIMI_CLAUDE_CODE_SESSION_TITLE,
   type KimiClaudeCodeApiKeyResolution,
   type KimiClaudeCodeApiKeySource,
   type KimiClaudeCodeRuntimeProbeProfile,
   type KimiClaudeCodeRuntimeProbeProfileOptions,
+  type KimiClaudeCodeRuntimeProfileOptions,
   resolveKimiClaudeCodeApiKey,
   resolveKimiClaudeCodeConfigPath,
+  resolveKimiClaudeCodeProjectPath,
   resolveKimiClaudeCodeProviderHome,
 } from "./kimi-claude-code/kimi-claude-code-runtime-profile";
+export {
+  KimiClaudeCodeSDKAuthManager,
+  type KimiClaudeCodeSDKAuthManagerOptions,
+} from "./kimi-claude-code/kimi-claude-code-sdk-auth-manager";
 export {
   CLAUDE_MODEL_CAPABILITIES,
   type ClaudeModelAliasId,
@@ -40,6 +56,7 @@ import type {
 } from "./types";
 
 const ClaudeProviderAdapter = ClaudeProviderAdapterImpl;
+const KimiClaudeCodeProviderAdapter = KimiClaudeCodeProviderAdapterImpl;
 type ClaudeInstallerPaths = ClaudeInstallerPathsType;
 type ClaudeModuleOptions = ClaudeModuleOptionsType;
 type ClaudeUsageLimitsFacadeBridge = ClaudeUsageLimitsFacadeBridgeType;
@@ -66,4 +83,4 @@ export type {
   ClaudeWorkspaceOptions,
   ModuleReporter,
 };
-export { ClaudeProviderAdapter };
+export { ClaudeProviderAdapter, KimiClaudeCodeProviderAdapter };
