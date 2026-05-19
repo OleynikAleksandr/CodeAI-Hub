@@ -7,7 +7,7 @@ import { SDKInstaller } from "../installer/sdk-installer";
 import { SDKMessageProcessor } from "../messaging/message-processor";
 import { ClaudeSessionStaleBindingError } from "../provider/claude-session-stale-binding-error";
 import { ClaudeSDKManager } from "../sdk/claude-sdk-manager";
-import { KimiClaudeCodeSessionStaleBindingError } from "../session/kimi-claude-code-session-lifecycle";
+import { KimiClaudeCodeSessionStaleBindingError as GlmClaudeCodeSessionStaleBindingError } from "../session/kimi-claude-code-session-lifecycle";
 import { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {
@@ -18,61 +18,61 @@ import type {
   ModuleReporter,
 } from "../types";
 import {
-  buildKimiClaudeCodeRuntimeProfile,
-  KIMI_CLAUDE_CODE_DEFAULT_PROJECT_SLUG,
-  KIMI_CLAUDE_CODE_MODEL_ID,
-} from "./kimi-claude-code-runtime-profile";
-import { KimiClaudeCodeSDKAuthManager } from "./kimi-claude-code-sdk-auth-manager";
+  buildGlmClaudeCodeRuntimeProfile,
+  GLM_CLAUDE_CODE_DEFAULT_PROJECT_SLUG,
+  GLM_CLAUDE_CODE_MODEL_ID,
+} from "./glm-claude-code-runtime-profile";
+import { GlmClaudeCodeSDKAuthManager } from "./glm-claude-code-sdk-auth-manager";
 
-export type KimiClaudeCodeSessionListener = (payload: unknown) => void;
+export type GlmClaudeCodeSessionListener = (payload: unknown) => void;
 
-export interface KimiClaudeCodeWorkspaceOptions {
+export interface GlmClaudeCodeWorkspaceOptions {
   readonly defaultModel?: string;
-  readonly kimiClaudeProjectSlug?: string;
+  readonly glmClaudeProjectSlug?: string;
   readonly settingsPath?: string;
   readonly workspacePath: string;
 }
 
-export type KimiClaudeCodeUsageLimitsFacadeBridge =
+export type GlmClaudeCodeUsageLimitsFacadeBridge =
   ClaudeUsageLimitsFacadeBridge;
 
-export interface KimiClaudeCodeProviderAdapterOptions {
+export interface GlmClaudeCodeProviderAdapterOptions {
   readonly enableDebugStreams?: boolean;
   readonly installerPaths: ClaudeInstallerPaths;
   readonly reporter?: ModuleReporter;
-  readonly usageLimitsFacade?: KimiClaudeCodeUsageLimitsFacadeBridge;
-  readonly workspace: KimiClaudeCodeWorkspaceOptions;
+  readonly usageLimitsFacade?: GlmClaudeCodeUsageLimitsFacadeBridge;
+  readonly workspace: GlmClaudeCodeWorkspaceOptions;
 }
 
-export class KimiClaudeCodeProviderAdapter {
-  private readonly authManager: KimiClaudeCodeSDKAuthManager;
+export class GlmClaudeCodeProviderAdapter {
+  private readonly authManager: GlmClaudeCodeSDKAuthManager;
   private readonly listeners = new Map<
     string,
-    Set<KimiClaudeCodeSessionListener>
+    Set<GlmClaudeCodeSessionListener>
   >();
   private readonly pendingEvents = new Map<string, unknown[]>();
   private readonly nativeRequestCaptureService: ClaudeNativeRequestCaptureService;
   private readonly sessionIdAliases = new Map<string, string>();
   private readonly sdkManager: ClaudeSDKManager;
-  private readonly usageLimitsFacade?: KimiClaudeCodeUsageLimitsFacadeBridge;
+  private readonly usageLimitsFacade?: GlmClaudeCodeUsageLimitsFacadeBridge;
 
-  constructor(options: KimiClaudeCodeProviderAdapterOptions) {
+  constructor(options: GlmClaudeCodeProviderAdapterOptions) {
     this.usageLimitsFacade = options.usageLimitsFacade;
     const projectSlug =
-      options.workspace.kimiClaudeProjectSlug ??
-      KIMI_CLAUDE_CODE_DEFAULT_PROJECT_SLUG;
+      options.workspace.glmClaudeProjectSlug ??
+      GLM_CLAUDE_CODE_DEFAULT_PROJECT_SLUG;
     const sdkWorkspace = this.buildSDKWorkspace(options.workspace, projectSlug);
-    const runtimeProfile = buildKimiClaudeCodeRuntimeProfile({ projectSlug });
+    const runtimeProfile = buildGlmClaudeCodeRuntimeProfile({ projectSlug });
     const installer = new SDKInstaller(options.installerPaths, {
       logger: options.reporter,
     });
-    this.authManager = new KimiClaudeCodeSDKAuthManager({
+    this.authManager = new GlmClaudeCodeSDKAuthManager({
       reporter: options.reporter,
     });
     const sessions = new SDKSessionManager();
     const processor = new SDKMessageProcessor(sessions, {
       projectPath: runtimeProfile.projectPath,
-      providerId: "kimiClaudeCode",
+      providerId: "glmClaudeCode",
       reporter: options.reporter,
       usageLimitsFacade: options.usageLimitsFacade,
     });
@@ -168,7 +168,7 @@ export class KimiClaudeCodeProviderAdapter {
       await this.sdkManager.sendMessage(sessionId, content, turnOptions);
     } catch (error) {
       if (error instanceof ClaudeSessionStaleBindingError) {
-        throw new KimiClaudeCodeSessionStaleBindingError(sessionId);
+        throw new GlmClaudeCodeSessionStaleBindingError(sessionId);
       }
       throw error;
     }
@@ -176,12 +176,11 @@ export class KimiClaudeCodeProviderAdapter {
 
   subscribe(
     sessionId: string,
-    listener: KimiClaudeCodeSessionListener
+    listener: GlmClaudeCodeSessionListener
   ): () => void {
     const resolvedId = this.resolveSessionAlias(sessionId);
     const bucket =
-      this.listeners.get(resolvedId) ??
-      new Set<KimiClaudeCodeSessionListener>();
+      this.listeners.get(resolvedId) ?? new Set<GlmClaudeCodeSessionListener>();
     bucket.add(listener);
     this.listeners.set(resolvedId, bucket);
     this.flushPendingEvents(resolvedId);
@@ -202,12 +201,12 @@ export class KimiClaudeCodeProviderAdapter {
   }
 
   private buildSDKWorkspace(
-    workspace: KimiClaudeCodeWorkspaceOptions,
+    workspace: GlmClaudeCodeWorkspaceOptions,
     projectSlug: string
   ): ClaudeWorkspaceOptions {
     return {
       claudeProjectSlug: projectSlug,
-      defaultModel: workspace.defaultModel ?? KIMI_CLAUDE_CODE_MODEL_ID,
+      defaultModel: workspace.defaultModel ?? GLM_CLAUDE_CODE_MODEL_ID,
       settingsPath: workspace.settingsPath,
       workspacePath: workspace.workspacePath,
     };
@@ -220,7 +219,7 @@ export class KimiClaudeCodeProviderAdapter {
     session.eventEmitter.on("error", (payload: unknown) => {
       this.dispatchMessage(session.sessionId, {
         payload,
-        provider: "kimiClaudeCode",
+        provider: "glmClaudeCode",
         type: "error",
       });
     });
@@ -260,7 +259,7 @@ export class KimiClaudeCodeProviderAdapter {
     if (set) {
       this.listeners.delete(oldId);
       const destination =
-        this.listeners.get(newId) ?? new Set<KimiClaudeCodeSessionListener>();
+        this.listeners.get(newId) ?? new Set<GlmClaudeCodeSessionListener>();
       for (const listener of set) {
         destination.add(listener);
       }
