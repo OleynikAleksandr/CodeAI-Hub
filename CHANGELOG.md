@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.314] - 2026-05-19
+### Fixed
+- **Kimi now remains selected across managed workflow start cards.** Provider inheritance recognizes `kimiCode` from Description primary sessions and upstream continuity segments, so the next step no longer falls back to Claude when Kimi was the previous provider.
+
+### Tests
+- `npx tsx --test src/client/project-manager/services/workflow-provider-resolver.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.313] - 2026-05-19
 ### Fixed
 - **Kimi progress summaries now have a thinking-block cadence.** The managed profile treats substantial hidden reasoning paragraphs, draft chunks, and planning blocks as internal thinking blocks and asks Kimi to publish an ordinary visible assistant summary after every 5-6 such blocks without a visible message.

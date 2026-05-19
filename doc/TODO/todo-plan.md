@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "cb6a83df8",
+  "lastRecordedCommit": "8b25cdec1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-provider-inheritance",
-  "expectedCommitMessage": "fix: inherit kimi provider across workflow steps",
+  "currentTaskId": "phase8-kimi-provider-inheritance-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi provider inheritance release notes",
   "debt": {
-    "expectedCommitMessage": "fix: inherit kimi provider across workflow steps",
-    "preCommitHead": "cb6a83df8",
+    "expectedCommitMessage": "docs: prepare kimi provider inheritance release notes",
+    "preCommitHead": "8b25cdec1",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-provider-inheritance"
+    "taskId": "phase8-kimi-provider-inheritance-release-notes"
   }
 }
 ```
@@ -490,7 +490,15 @@
 
 ### Stream: Acceptance Bug Fix — Kimi Provider Inheritance
 1. [DONE] `phase8-kimi-provider-inheritance` Исправить default provider в карточке следующего workflow step: если Description/предыдущий stage был запущен на Kimi, следующий start card должен наследовать `kimiCode`, а не падать на Claude — scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: inherit kimi provider across workflow steps`.
-2. [PENDING] Git Commit: `fix: inherit kimi provider across workflow steps` (hash: TBD)
+2. [DONE] Git Commit: `fix: inherit kimi provider across workflow steps` (hash: 8b25cdec1)
+
+### Stream: Kimi Provider Inheritance Release Build
+1. [DONE] `phase8-kimi-provider-inheritance-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.314 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi provider inheritance release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi provider inheritance release notes` (hash: TBD)
+3. [TODO] `phase8-kimi-provider-inheritance-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi provider inheritance release build started`.
+4. [TODO] Git Commit: `docs: mark kimi provider inheritance release build started` (hash: TBD)
+5. [TODO] `phase8-kimi-provider-inheritance-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi provider inheritance build`.
+6. [TODO] Git Commit: `chore: release kimi provider inheritance build` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

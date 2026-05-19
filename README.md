@@ -2,13 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.313** (Kimi progress summary cadence hotfix)
+**Current Release — v1.2.314** (Kimi provider inheritance hotfix)
 
-This hotfix strengthens the managed Kimi profile so long artifact-generation
-turns summarize progress in ordinary assistant messages after every 5-6
-substantial internal thinking blocks. This keeps user-visible progress moving
-even when Kimi produces a long hidden reasoning stream and the user disables
-reasoning display in the dialog.
+This hotfix keeps Kimi selected across managed workflow steps. When Description
+or an upstream managed stage is started with Kimi, the next start card now
+inherits `kimiCode` instead of falling back to Claude as the first connected
+provider.
+
+The previous Kimi progress summary behavior remains included. The managed Kimi
+profile asks Kimi to avoid full detailed reasoning output as a work log and to
+compress analysis into short visible ordinary assistant summaries when possible.
 
 The previous managed profile behavior remains included. Kimi starts through a
 CodeAI-owned managed agent profile instead of
