@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "f583fc57b",
+  "lastRecordedCommit": "c189f1d04",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase11-glm-release-notes",
-  "expectedCommitMessage": "docs: prepare glm claude code release notes",
+  "currentTaskId": "phase11-glm-build-all",
+  "expectedCommitMessage": "chore: build glm claude code release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare glm claude code release notes",
-    "preCommitHead": "f583fc57b",
+    "expectedCommitMessage": "chore: build glm claude code release",
+    "preCommitHead": "c189f1d04",
     "stage": "commit_pending",
-    "taskId": "phase11-glm-release-notes"
+    "taskId": "phase11-glm-build-all"
   }
 }
 ```
@@ -134,9 +134,9 @@
 ## Phase 11 — Release Build (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Build
 1. [DONE] `phase11-glm-release-notes` После явного подтверждения пользователя обновить README/CHANGELOG на будущую версию и связанные docs, если затронуты — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm claude code release notes`. Result: README and CHANGELOG prepared for v1.2.318 with GLM-Claude-Code replacement notes, isolated config path, supported verification commands and missing-key behavior.
-2. [PENDING] Git Commit: `docs: prepare glm claude code release notes` (hash: TBD)
-3. [TODO] `phase11-glm-build-all` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить VSIX/release artifacts and record result — scope: `package manifests, assets manifests, doc/TODO/todo-plan.md`; expected commit: `chore: build glm claude code release`.
-4. [TODO] Git Commit: `chore: build glm claude code release` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare glm claude code release notes` (hash: c189f1d04)
+3. [DONE] `phase11-glm-build-all` Запустить `./scripts/build-all.sh`, затем `./scripts/build-release.sh --use-current-version`, проверить VSIX/release artifacts and record result — scope: `package.json, package-lock.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/core/package.json, packages/initiatives/package.json, packages/localization/package.json, packages/translation/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, scripts/build-all.sh, doc/TODO/todo-plan.md`; expected commit: `chore: build glm claude code release`. Result: `./scripts/build-all.sh` built v1.2.318 provider/core/UI/launcher artifacts and copied release tarballs into `doc/tmp/releases`; `./scripts/build-release.sh --use-current-version --allow-dirty` produced `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.318.vsix`, verified SDK exclusions, validated local artefacts, restored development dependencies, and warned only about expected package size over 20MB.
+4. [PENDING] Git Commit: `chore: build glm claude code release` (hash: TBD)
 
 ## Phase 12 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-19)
 ### Stream: GLM-Claude-Code Retest
