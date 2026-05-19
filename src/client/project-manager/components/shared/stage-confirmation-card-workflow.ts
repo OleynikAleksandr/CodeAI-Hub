@@ -40,7 +40,7 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
-  value === "kimiClaudeCode";
+  value === "glmClaudeCode";
 
 export const resolveUpstreamArtifactInfo = (
   stage: ConfirmableStageId,

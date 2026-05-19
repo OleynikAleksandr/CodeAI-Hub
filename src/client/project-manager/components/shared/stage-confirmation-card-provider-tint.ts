@@ -36,7 +36,7 @@ export const PROVIDER_TINT_TOKENS: Record<ProviderStackId, ProviderTintTokens> =
       border: "rgba(76, 181, 255, 0.36)",
       badgeBackground: "rgba(76, 181, 255, 0.15)",
     },
-    kimiClaudeCode: {
+    glmClaudeCode: {
       accent: "rgba(129, 220, 186, 0.66)",
       fill: "rgba(37, 196, 128, 0.10)",
       border: "rgba(37, 196, 128, 0.36)",

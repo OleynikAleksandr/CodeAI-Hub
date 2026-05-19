@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "61cdc84df",
+  "lastRecordedCommit": "7f5231308",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase6-glm-start-card-model-selection",
-  "expectedCommitMessage": "refactor: show glm claude code in workflow start cards",
+  "currentTaskId": "phase6-glm-card-provider-tint",
+  "expectedCommitMessage": "refactor: show glm claude code provider tint",
   "debt": {
-    "expectedCommitMessage": "refactor: show glm claude code in workflow start cards",
-    "preCommitHead": "61cdc84df",
+    "expectedCommitMessage": "refactor: show glm claude code provider tint",
+    "preCommitHead": "7f5231308",
     "stage": "commit_pending",
-    "taskId": "phase6-glm-start-card-model-selection"
+    "taskId": "phase6-glm-card-provider-tint"
   }
 }
 ```
@@ -92,9 +92,9 @@
 ## Phase 6 — Provider Selection Surfaces (owner: Codex, updated: 2026-05-19)
 ### Stream: Workflow Cards
 1. [DONE] `phase6-glm-start-card-model-selection` Replace start-card model labels/defaults with `GLM 5.1 / Claude-Code` and preserve native Kimi separately — scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `refactor: show glm claude code in workflow start cards`.
-2. [PENDING] Git Commit: `refactor: show glm claude code in workflow start cards` (hash: TBD)
-3. [TODO] `phase6-glm-card-provider-tint` Replace provider guards/tints in shared confirmation and Development Tree start cards from Kimi-Claude-Code to GLM-Claude-Code — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `refactor: show glm claude code provider tint`.
-4. [TODO] Git Commit: `refactor: show glm claude code provider tint` (hash: TBD)
+2. [DONE] Git Commit: `refactor: show glm claude code in workflow start cards` (hash: 7f5231308)
+3. [DONE] `phase6-glm-card-provider-tint` Replace provider guards/tints in shared confirmation and Development Tree start cards from Kimi-Claude-Code to GLM-Claude-Code — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `refactor: show glm claude code provider tint`.
+4. [PENDING] Git Commit: `refactor: show glm claude code provider tint` (hash: TBD)
 5. [TODO] `phase6-glm-description-devtree-picker` Replace Description provider picker copy and Development Tree provider guard so only native Kimi plus GLM-Claude-Code appear — scope: `src/client/project-manager/components/description/description-provider-picker.tsx, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/use-step-provider-resolver.ts`; expected commit: `refactor: expose glm claude code in step pickers`.
 6. [TODO] Git Commit: `refactor: expose glm claude code in step pickers` (hash: TBD)
 
