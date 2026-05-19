@@ -238,3 +238,22 @@ Decision:
   - minimal tool list;
   - thinking options derived from provider settings, including real disabled mode.
 - Usage/context telemetry must treat Claude Code auto-title/modelUsage side effects as a risk and keep explicit title enabled for this provider.
+
+### 11.3. Product integration live smoke
+
+Result: **passed**.
+
+Observed facts:
+
+- Kimi-Claude-Code live smoke used the built `packages/Claude_Module/dist` runtime, Claude Agent SDK `0.2.140`, `ANTHROPIC_BASE_URL=https://api.kimi.com/coding`, model `kimi-for-coding`, `settingSources: []`, tools `Read`, `Write`, `Edit`, and an explicit SDK `title`.
+- Kimi-Claude-Code returned the exact visible assistant text `KIMI_CLAUDE_CODE_LIVE_SMOKE_OK`.
+- Kimi-Claude-Code stream completed with `22` SDK messages and included `assistant` and `result` events.
+- Kimi-Claude-Code auth was resolved from `~/.kimi/config.toml`; the API key was not logged.
+- Native Kimi Wire smoke used `KimiProviderAdapter`, created a runtime session, sent a short prompt, emitted `turn_started`, `step_started`, `status_update`, `thinking`, `assistant`, and `turn_completed`, then closed the session.
+- Native Kimi returned the exact visible assistant text `KIMI_NATIVE_LIVE_SMOKE_OK`.
+- Native Kimi emitted `204` thinking characters on the short prompt, confirming the Wire reasoning path still works independently of the Claude Code-compatible variant.
+
+Decision:
+
+- Both provider variants are runnable from the current build artifacts and can return visible final text.
+- Kimi-Claude-Code remains suitable for user retest in the next release as a separate comparison provider, not as a replacement for native Kimi.
