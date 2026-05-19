@@ -87,7 +87,7 @@ const readProviderLabelPrefix = (
     case "geminiCli":
       return "gemini";
     case "kimiCode":
-    case "kimiClaudeCode":
+    case "glmClaudeCode":
       return "kimi";
     default:
       if (status.providerSummary.toLowerCase().includes("claude")) {

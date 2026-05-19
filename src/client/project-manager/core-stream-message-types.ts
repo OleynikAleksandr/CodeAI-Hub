@@ -219,7 +219,7 @@ export type SettingsNativeRequestCaptureProviderId =
   | "claude"
   | "codex"
   | "kimi"
-  | "kimiClaudeCode";
+  | "glmClaudeCode";
 export type SettingsNativeRequestCaptureModelId = NativeRequestCaptureModelId;
 export type SettingsNativeRequestCaptureScenarioId =
   | "description"
