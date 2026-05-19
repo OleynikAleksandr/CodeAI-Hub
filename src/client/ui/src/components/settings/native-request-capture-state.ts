@@ -6,7 +6,7 @@ export type NativeRequestCaptureProviderId =
   | "claude"
   | "codex"
   | "kimi"
-  | "kimiClaudeCode";
+  | "glmClaudeCode";
 export type NativeRequestCaptureModelId =
   | ClaudeModelAliasId
   | CodexModelId

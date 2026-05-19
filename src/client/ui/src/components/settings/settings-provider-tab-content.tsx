@@ -5,7 +5,7 @@ import CodexDefaultModelCard from "./codex-default-model/codex-default-model-car
 import GeminiDefaultModelCard from "./gemini-default-model/gemini-default-model-card";
 import GeneralResponseModeFacade from "./general-response-mode/general-response-mode-facade";
 import GeneralSettings from "./general-settings";
-import KimiClaudeCodeSettingsCard from "./kimi-claude-code-settings-card";
+import GlmClaudeCodeSettingsCard from "./glm-claude-code-settings-card";
 import KimiSettingsTab from "./kimi-settings-tab";
 import LocalizationSettingsCard from "./localization-settings-card";
 import ProviderVersions from "./provider-versions";
@@ -21,7 +21,7 @@ type SettingsBooleanHandler = (enabled: boolean) => void;
 
 export type SettingsViewState = UseSettingsStateResult & {
   readonly handleKimiDefaultModelChange?: (modelId: KimiModelId) => void;
-  readonly handleKimiClaudeCodeThinkingDisplaySyncChange?: SettingsBooleanHandler;
+  readonly handleGlmClaudeCodeThinkingDisplaySyncChange?: SettingsBooleanHandler;
   readonly handleKimiThinkingDisplaySyncChange?: SettingsBooleanHandler;
   readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
   readonly hostPostMessage?: (message: unknown) => void;
@@ -33,7 +33,7 @@ export type SettingsTab =
   | "codex"
   | "gemini"
   | "kimi"
-  | "kimiClaudeCode"
+  | "glmClaudeCode"
   | "general";
 
 const stackStyles: React.CSSProperties = {
@@ -50,7 +50,7 @@ export const settingsTabs: ReadonlyArray<{
   { id: "codex", label: "Codex" },
   { id: "gemini", label: "Gemini" },
   { id: "kimi", label: "Kimi" },
-  { id: "kimiClaudeCode", label: "Claude-Kimi" },
+  { id: "glmClaudeCode", label: "GLM-Claude-Code" },
   { id: "general", label: "General" },
 ];
 
@@ -76,7 +76,7 @@ export const SettingsProviderTabContent: React.FC<
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
     handleKimiDefaultModelChange,
-    handleKimiClaudeCodeThinkingDisplaySyncChange,
+    handleGlmClaudeCodeThinkingDisplaySyncChange,
     handleGeminiThinkingChange,
     handleClaudeThinkingDisplaySyncChange,
     handleCodexThinkingDisplaySyncChange,
@@ -194,15 +194,16 @@ export const SettingsProviderTabContent: React.FC<
     );
   }
 
-  if (activeTab === "kimiClaudeCode") {
+  if (activeTab === "glmClaudeCode") {
     return (
       <div style={stackStyles}>
-        <KimiClaudeCodeSettingsCard
+        <GlmClaudeCodeSettingsCard
           onThinkingDisplaySyncChange={
-            handleKimiClaudeCodeThinkingDisplaySyncChange
+            handleGlmClaudeCodeThinkingDisplaySyncChange
           }
+          settings={settings.providers.glmClaudeCode}
           thinkingDisplaySyncEnabled={
-            settings.providers.kimiClaudeCode?.thinkingDisplaySyncEnabled
+            settings.providers.glmClaudeCode?.thinkingDisplaySyncEnabled
           }
         />
       </div>

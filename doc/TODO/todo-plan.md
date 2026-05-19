@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "8e97e7fb0",
+  "lastRecordedCommit": "fe40f5bac",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase5-glm-settings-state-model",
-  "expectedCommitMessage": "refactor: add glm claude code settings state",
+  "currentTaskId": "phase5-glm-settings-card",
+  "expectedCommitMessage": "refactor: replace claude kimi settings card with glm",
   "debt": {
-    "expectedCommitMessage": "refactor: add glm claude code settings state",
-    "preCommitHead": "8e97e7fb0",
+    "expectedCommitMessage": "refactor: replace claude kimi settings card with glm",
+    "preCommitHead": "fe40f5bac",
     "stage": "commit_pending",
-    "taskId": "phase5-glm-settings-state-model"
+    "taskId": "phase5-glm-settings-card"
   }
 }
 ```
@@ -81,9 +81,9 @@
 ## Phase 5 — Settings UI And Local Config Surface (owner: Codex, updated: 2026-05-19)
 ### Stream: Settings Model
 1. [DONE] `phase5-glm-settings-state-model` Replace UI raw/settings model types from Kimi-Claude-Code to GLM-Claude-Code and include API-key/base-url/model fields needed for local config materialization — scope: `src/client/ui/src/components/settings/settings-state-raw.ts, src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/kimi-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: add glm claude code settings state`.
-2. [PENDING] Git Commit: `refactor: add glm claude code settings state` (hash: TBD)
-3. [TODO] `phase5-glm-settings-card` Replace `Claude-Kimi` settings card with `GLM-Claude-Code` card that exposes isolated config path/API key guidance, base URL and model defaults without referencing real Claude home — scope: `src/client/ui/src/components/settings/kimi-claude-code-settings-card.tsx -> src/client/ui/src/components/settings/glm-claude-code-settings-card.tsx, src/client/ui/src/components/settings/settings-provider-tab-content.tsx, src/client/ui/src/components/settings/native-request-capture-state.ts`; expected commit: `refactor: replace claude kimi settings card with glm`.
-4. [TODO] Git Commit: `refactor: replace claude kimi settings card with glm` (hash: TBD)
+2. [DONE] Git Commit: `refactor: add glm claude code settings state` (hash: fe40f5bac)
+3. [DONE] `phase5-glm-settings-card` Replace `Claude-Kimi` settings card with `GLM-Claude-Code` card that exposes isolated config path/API key guidance, base URL and model defaults without referencing real Claude home — scope: `src/client/ui/src/components/settings, doc/TODO/todo-plan.md`; expected commit: `refactor: replace claude kimi settings card with glm`.
+4. [PENDING] Git Commit: `refactor: replace claude kimi settings card with glm` (hash: TBD)
 5. [TODO] `phase5-glm-pm-settings-bridge` Replace Project Manager settings bridge handlers from Kimi-Claude-Code to GLM-Claude-Code so PM settings save/load and default model lookup use `providers.glmClaudeCode` — scope: `src/client/project-manager/components/settings/project-manager-settings-host-message.ts, src/client/project-manager/components/settings/use-project-manager-kimi-settings-handlers.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; expected commit: `refactor: wire glm claude code project manager settings`.
 6. [TODO] Git Commit: `refactor: wire glm claude code project manager settings` (hash: TBD)
 7. [TODO] `phase5-glm-settings-persistence` Replace Core settings persistence defaults/normalization from `kimiClaudeCode` to `glmClaudeCode`, including config defaults and secret-safe reset behavior — scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/components/settings/kimi-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: persist glm claude code settings`.
