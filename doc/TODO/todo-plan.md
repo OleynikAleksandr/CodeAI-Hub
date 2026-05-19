@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "37b993697",
+  "lastRecordedCommit": "f231cab9d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase6-session-indicators-release-notes",
-  "expectedCommitMessage": "docs: prepare session indicators release notes",
+  "currentTaskId": "phase6-session-indicators-release-build-start",
+  "expectedCommitMessage": "docs: mark session indicators release build started",
   "debt": {
-    "expectedCommitMessage": "docs: prepare session indicators release notes",
-    "preCommitHead": "37b993697",
+    "expectedCommitMessage": "docs: mark session indicators release build started",
+    "preCommitHead": "f231cab9d",
     "stage": "commit_pending",
-    "taskId": "phase6-session-indicators-release-notes"
+    "taskId": "phase6-session-indicators-release-build-start"
   }
 }
 ```
@@ -122,9 +122,9 @@ Verification log:
 
 ### Stream: Release Build
 1. [DONE] `phase6-session-indicators-release-notes` После подтверждения подготовить README/CHANGELOG под будущую версию до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare session indicators release notes`.
-2. [PENDING] Git Commit: `docs: prepare session indicators release notes` (hash: TBD)
-3. [TODO] `phase6-session-indicators-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark session indicators release build started`.
-4. [TODO] Git Commit: `docs: mark session indicators release build started` (hash: TBD)
+2. [DONE] Git Commit: `docs: prepare session indicators release notes` (hash: f231cab9d)
+3. [DONE] `phase6-session-indicators-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark session indicators release build started`.
+4. [PENDING] Git Commit: `docs: mark session indicators release build started` (hash: TBD)
 5. [TODO] `phase6-session-indicators-release-build` Выполнить release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release session indicators build`.
 6. [TODO] Git Commit: `chore: release session indicators build` (hash: TBD)
 
