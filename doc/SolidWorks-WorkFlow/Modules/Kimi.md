@@ -97,12 +97,12 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 - The Core native request capture writer includes Kimi provider diagnostic context in the same `.jsonl` / `.md` artifact family under `~/.codeai-hub/logs/native-request-capture/`.
 - Kimi capture must not require OpenSSL/TLS proxy preflight because the useful evidence is the Wire prompt envelope and provider-home `wire.jsonl` provenance.
 
-## Kimi-Claude-Code boundary
-- Kimi-Claude-Code (`kimiClaudeCode`) is not this native Wire runtime. It is a separate provider variant documented in `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md`.
+## GLM-Claude-Code boundary
+- GLM-Claude-Code (`glmClaudeCode`) is not a Kimi runtime. It is a Claude Code-compatible GLM/Z.AI provider variant documented in `doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md`.
 - Native Kimi keeps provider id `kimiCode`, `KIMI_SHARE_DIR=~/.codeai-hub/providers/kimi/home`, Kimi CLI Wire transport, managed `--agent-file`, and Wire-evidence capture.
-- Kimi-Claude-Code uses Claude Code-compatible runtime/profile with `ANTHROPIC_BASE_URL=https://api.kimi.com/coding`, separate home `~/.codeai-hub/providers/kimi-claude-code/home`, and the single model id `kimi-for-coding`.
-- Settings and provider inheritance must treat `providers.kimi` and `providers.kimiClaudeCode` as separate defaults. A user choosing one runtime must not silently switch to the other.
-- Native Kimi usage limits may read `GET https://api.kimi.com/coding/v1/usages` from `~/.kimi/config.toml`; Kimi-Claude-Code must not reuse that live telemetry unless the same account/API-key source is explicitly proven for the runtime.
+- The closed `Kimi-Claude-Code` experiment is archived and must not reappear in active Settings, provider pickers, start cards, Capture Workbench, status labels, or provider inheritance.
+- Settings and provider inheritance must treat `providers.kimi` and `providers.glmClaudeCode` as different providers. A user choosing native Kimi must not be silently switched to GLM, and a user choosing GLM must not be silently switched to native Kimi or Claude.
+- Native Kimi usage limits may read `GET https://api.kimi.com/coding/v1/usages` from `~/.kimi/config.toml`; GLM-Claude-Code must not reuse that live telemetry because it uses a different model/account family.
 
 ## Release packaging
 - `packages/Kimi_Module` must be built and packaged as a self-contained provider module artifact during release packaging.

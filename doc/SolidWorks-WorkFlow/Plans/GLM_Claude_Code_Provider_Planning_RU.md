@@ -1,7 +1,7 @@
 # GLM-Claude-Code Provider Replacement — planning
 
 **Дата:** 2026-05-19  
-**Статус:** planning intake  
+**Статус:** implementation in progress  
 **Scope:** заменить экспериментальный provider `kimi-claude-code` на `glm-claude-code`, чтобы проверить GLM 5.1 через Claude Code-compatible runtime без пересечения с настоящим Claude Code и без второго Kimi-провайдера.
 
 ## 1. Решение
@@ -70,6 +70,7 @@ Runtime env for Claude SDK/Claude Code-compatible path:
 ```text
 HOME=~/.codeai-hub/providers/glm-claude-code/home
 ANTHROPIC_AUTH_TOKEN=<Z.AI API key>
+ANTHROPIC_API_KEY=<Z.AI API key>
 ANTHROPIC_BASE_URL=https://api.z.ai/api/anthropic
 API_TIMEOUT_MS=3000000
 CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
@@ -78,7 +79,7 @@ ANTHROPIC_DEFAULT_SONNET_MODEL=glm-5-turbo
 ANTHROPIC_DEFAULT_HAIKU_MODEL=glm-4.5-air
 ```
 
-If the SDK path also needs `ANTHROPIC_API_KEY`, the implementation may duplicate the same secret into that environment variable at runtime only, but must not persist duplicate copies.
+The implementation currently sets both `ANTHROPIC_AUTH_TOKEN` and `ANTHROPIC_API_KEY` at runtime only, because different Claude Code-compatible paths may read different Anthropic-style key variables. The key is still stored in one local config field or env source and must not be duplicated into tracked files.
 
 ## 4. System prompt and tool profile
 
@@ -103,15 +104,15 @@ The provider must not load:
 
 The implementation should replace, not duplicate:
 
-- `packages/Claude_Module/src/kimi-claude-code/*` -> GLM-specific runtime/profile/auth/facade names;
-- provider id `kimiClaudeCode` -> `glmClaudeCode`;
-- settings key `providers.kimiClaudeCode` -> `providers.glmClaudeCode`;
-- UI label `Claude-Kimi` / `Kimi-Claude-Code` -> `GLM-Claude-Code`;
-- model label `Kimi 2.6 / Claude-Kimi` -> `GLM 5.1 / Claude-Code`;
-- home path `~/.codeai-hub/providers/kimi-claude-code/home` -> `~/.codeai-hub/providers/glm-claude-code/home`;
-- docs module `Modules/Kimi_Claude_Code.md` -> `Modules/GLM_Claude_Code.md`.
+- `packages/Claude_Module/src/glm-claude-code/*` owns GLM-specific runtime/profile/auth/facade names;
+- provider id is `glmClaudeCode`;
+- settings key is `providers.glmClaudeCode`;
+- UI label is `GLM-Claude-Code`;
+- model label is `GLM 5.1 / Claude-Code`;
+- home path is `~/.codeai-hub/providers/glm-claude-code/home`;
+- docs module is `Modules/GLM_Claude_Code.md`.
 
-Native Kimi files and docs must remain intact except for removing obsolete references to the old `Kimi-Claude-Code` boundary.
+Native Kimi files and docs must remain intact except for removing obsolete active references to the old `Kimi-Claude-Code` boundary. Historical archive docs may still mention the closed experiment.
 
 ## 6. Product surfaces
 

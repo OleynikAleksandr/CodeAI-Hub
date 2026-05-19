@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "9fe746c2d",
+  "lastRecordedCommit": "de33782dd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase8-glm-module-doc",
-  "expectedCommitMessage": "docs: document glm claude code module",
+  "currentTaskId": "phase8-claude-kimi-boundary-docs",
+  "expectedCommitMessage": "docs: sync glm claude code provider boundaries",
   "debt": {
-    "expectedCommitMessage": "docs: document glm claude code module",
-    "preCommitHead": "9fe746c2d",
+    "expectedCommitMessage": "docs: sync glm claude code provider boundaries",
+    "preCommitHead": "de33782dd",
     "stage": "commit_pending",
-    "taskId": "phase8-glm-module-doc"
+    "taskId": "phase8-claude-kimi-boundary-docs"
   }
 }
 ```
@@ -112,9 +112,9 @@
 ## Phase 8 — Documentation Sync (owner: Codex, updated: 2026-05-19)
 ### Stream: Module Documentation
 1. [DONE] `phase8-glm-module-doc` Replace active Kimi-Claude-Code module doc with GLM-Claude-Code SSOT and update Docs Index module list/Plans note — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm claude code module`.
-2. [PENDING] Git Commit: `docs: document glm claude code module` (hash: TBD)
-3. [TODO] `phase8-claude-kimi-boundary-docs` Sync Claude/Kimi docs: remove active Kimi-Claude-Code boundary, add GLM-Claude-Code runtime-profile boundary, keep native Kimi Wire as primary Kimi provider — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md`; expected commit: `docs: sync glm claude code provider boundaries`.
-4. [TODO] Git Commit: `docs: sync glm claude code provider boundaries` (hash: TBD)
+2. [DONE] Git Commit: `docs: document glm claude code module` (hash: de33782dd)
+3. [DONE] `phase8-claude-kimi-boundary-docs` Sync Claude/Kimi docs: remove active Kimi-Claude-Code boundary, add GLM-Claude-Code runtime-profile boundary, keep native Kimi Wire as primary Kimi provider — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md`; expected commit: `docs: sync glm claude code provider boundaries`.
+4. [PENDING] Git Commit: `docs: sync glm claude code provider boundaries` (hash: TBD)
 
 ## Phase 9 — Targeted Verification (owner: Codex, updated: 2026-05-19)
 ### Stream: Focused Checks
