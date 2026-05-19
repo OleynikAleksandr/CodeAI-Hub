@@ -75,7 +75,7 @@ Settings snapshot reads may be cached only as short, path-scoped read-through sn
 Kimi provider settings are split by runtime:
 
 - `providers.kimi` belongs to the native Kimi Wire/CLI provider.
-- `providers.kimiClaudeCode` belongs to Kimi 2.6 through the Claude Code-compatible runtime.
+- `providers.glmClaudeCode` belongs to GLM 5.1 through the Claude Code-compatible runtime.
 
 Both may default to the same base model (`kimi-for-coding`), but they must remain separate persisted defaults because they run under different provider process/session/turn envelopes.
 

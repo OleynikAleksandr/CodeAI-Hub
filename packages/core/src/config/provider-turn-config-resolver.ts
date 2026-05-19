@@ -16,7 +16,7 @@ import {
   loadClaudeProviderSettingsSnapshot,
   loadCodexSettingsSnapshot,
   loadGeminiSettingsSnapshot,
-  loadKimiClaudeCodeSettingsSnapshot,
+  loadGlmClaudeCodeSettingsSnapshot,
   loadKimiSettingsSnapshot,
 } from "./provider-settings-snapshot";
 
@@ -83,8 +83,8 @@ export interface ResolvedProviderTurnConfig {
   readonly claude: ResolvedClaudeTurnConfig;
   readonly codex: ResolvedCodexTurnConfig;
   readonly gemini: ResolvedGeminiTurnConfig;
+  readonly glmClaudeCode: ResolvedKimiTurnConfig;
   readonly kimi: ResolvedKimiTurnConfig;
-  readonly kimiClaudeCode: ResolvedKimiTurnConfig;
 }
 
 export interface ResolvedProviderEffectiveModelIdentity {
@@ -121,6 +121,7 @@ const buildClaudeEffectiveModelId = (
     : `${baseModelId} thinking:off`;
 
 const DEFAULT_KIMI_MODEL_ID = "kimi-for-coding";
+const DEFAULT_GLM_CLAUDE_CODE_MODEL_ID = "glm-5.1";
 
 const resolveClaudeThinkingDisplaySyncEnabled = (
   snapshot: ClaudeProviderSettingsSnapshot | null
@@ -253,19 +254,18 @@ const resolveKimiTurnConfig = (
   };
 };
 
-const resolveKimiClaudeCodeTurnConfig = (
+const resolveGlmClaudeCodeTurnConfig = (
   options: ProviderTurnConfigResolverOptions
 ): ResolvedKimiTurnConfig => {
-  const snapshot = loadKimiClaudeCodeSettingsSnapshot(options.settingsPath);
+  const snapshot = loadGlmClaudeCodeSettingsSnapshot(options.settingsPath);
   const defaultModel =
     normalizeOptionalString(
       typeof snapshot?.defaultModel === "string"
         ? snapshot.defaultModel
         : undefined
     ) ??
-    normalizeOptionalString(options.env.KIMI_CLAUDE_CODE_DEFAULT_MODEL) ??
-    options.fallbackKimiModel ??
-    DEFAULT_KIMI_MODEL_ID;
+    normalizeOptionalString(options.env.GLM_CLAUDE_CODE_DEFAULT_MODEL) ??
+    DEFAULT_GLM_CLAUDE_CODE_MODEL_ID;
   const thinkingDisplaySyncEnabled =
     snapshot?.thinkingDisplaySyncEnabled !== false;
 
@@ -315,7 +315,7 @@ const buildResolvedProviderConfigRegistry = (resolved: {
   readonly codex: ResolvedCodexTurnConfig;
   readonly gemini: ResolvedGeminiTurnConfig;
   readonly kimi: ResolvedKimiTurnConfig;
-  readonly kimiClaudeCode: ResolvedKimiTurnConfig;
+  readonly glmClaudeCode: ResolvedKimiTurnConfig;
 }): Readonly<Record<string, ResolvedProviderTurnConfigEntry>> => ({
   claudeCodeCli: {
     providerId: "claudeCodeCli",
@@ -350,13 +350,13 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     effectiveModelId: resolved.kimi.effectiveModelId,
     thinkingDisplaySyncEnabled: resolved.kimi.thinkingDisplaySyncEnabled,
   },
-  kimiClaudeCode: {
-    providerId: "kimiClaudeCode",
-    baseModelId: resolved.kimiClaudeCode.baseModelId,
-    defaultModel: resolved.kimiClaudeCode.defaultModel,
-    effectiveModelId: resolved.kimiClaudeCode.effectiveModelId,
+  glmClaudeCode: {
+    providerId: "glmClaudeCode",
+    baseModelId: resolved.glmClaudeCode.baseModelId,
+    defaultModel: resolved.glmClaudeCode.defaultModel,
+    effectiveModelId: resolved.glmClaudeCode.effectiveModelId,
     thinkingDisplaySyncEnabled:
-      resolved.kimiClaudeCode.thinkingDisplaySyncEnabled,
+      resolved.glmClaudeCode.thinkingDisplaySyncEnabled,
   },
 });
 
@@ -367,20 +367,20 @@ export const resolveProviderTurnConfig = (
   const codex = resolveCodexTurnConfig(options);
   const gemini = resolveGeminiTurnConfig(options);
   const kimi = resolveKimiTurnConfig(options);
-  const kimiClaudeCode = resolveKimiClaudeCodeTurnConfig(options);
+  const glmClaudeCode = resolveGlmClaudeCodeTurnConfig(options);
 
   return {
     claude,
     codex,
     gemini,
     kimi,
-    kimiClaudeCode,
+    glmClaudeCode,
     byProviderId: buildResolvedProviderConfigRegistry({
       claude,
       codex,
       gemini,
       kimi,
-      kimiClaudeCode,
+      glmClaudeCode,
     }),
   };
 };

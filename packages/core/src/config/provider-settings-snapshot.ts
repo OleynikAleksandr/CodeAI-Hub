@@ -43,7 +43,7 @@ export interface KimiSettingsSnapshot {
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
-export interface KimiClaudeCodeSettingsSnapshot {
+export interface GlmClaudeCodeSettingsSnapshot {
   readonly defaultModel?: unknown;
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
@@ -150,17 +150,17 @@ export const loadKimiSettingsSnapshot = (
   };
 };
 
-export const loadKimiClaudeCodeSettingsSnapshot = (
+export const loadGlmClaudeCodeSettingsSnapshot = (
   settingsPath: string
-): KimiClaudeCodeSettingsSnapshot | null => {
-  const kimiClaudeCode = loadProviderSnapshot(settingsPath, "kimiClaudeCode");
-  if (!kimiClaudeCode) {
+): GlmClaudeCodeSettingsSnapshot | null => {
+  const glmClaudeCode = loadProviderSnapshot(settingsPath, "glmClaudeCode");
+  if (!glmClaudeCode) {
     return null;
   }
 
   return {
-    defaultModel: kimiClaudeCode.defaultModel,
-    thinkingDisplaySyncEnabled: kimiClaudeCode.thinkingDisplaySyncEnabled,
+    defaultModel: glmClaudeCode.defaultModel,
+    thinkingDisplaySyncEnabled: glmClaudeCode.thinkingDisplaySyncEnabled,
   };
 };
 
