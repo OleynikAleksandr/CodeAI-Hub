@@ -13,14 +13,17 @@ import {
 export type { ContextUsageReaderConfig } from "./claude-usage-sync";
 
 interface ClaudeMessageFinishHandlerOptions {
+  readonly providerId?: string;
   readonly reporter?: ModuleReporter;
   readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
 }
 
 export class ClaudeMessageFinishHandler {
+  private readonly providerId: string;
   private readonly usageSync: ClaudeUsageSync;
 
   constructor(options: ClaudeMessageFinishHandlerOptions) {
+    this.providerId = options.providerId ?? "claude";
     this.usageSync = new ClaudeUsageSync(options);
   }
 
@@ -42,7 +45,7 @@ export class ClaudeMessageFinishHandler {
     queueState.lifecycle.started = true;
     session.eventEmitter.emit("message", {
       type: "turn_started",
-      provider: "claude",
+      provider: this.providerId,
       sessionId: session.sessionId,
       claudeSessionId,
       uuid: `${crypto.randomUUID()}::turn_started`,
@@ -68,7 +71,7 @@ export class ClaudeMessageFinishHandler {
     queueState.lifecycle.ended = true;
     session.eventEmitter.emit("message", {
       type: "turn_failed",
-      provider: "claude",
+      provider: this.providerId,
       sessionId: session.sessionId,
       claudeSessionId: resolvedSessionId,
       message: error instanceof Error ? error.message : String(error),
@@ -97,7 +100,7 @@ export class ClaudeMessageFinishHandler {
     queueState.lifecycle.ended = true;
     session.eventEmitter.emit("message", {
       type: "turn_completed",
-      provider: "claude",
+      provider: this.providerId,
       sessionId: session.sessionId,
       claudeSessionId: resolvedSessionId,
       ...(postTurnTokenUsageUnavailable

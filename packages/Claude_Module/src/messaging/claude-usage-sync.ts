@@ -28,6 +28,7 @@ export type {
 } from "./claude-token-usage-sync";
 
 interface ClaudeUsageSyncOptions {
+  readonly providerId?: string;
   readonly reporter?: ModuleReporter;
   readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
 }
@@ -106,12 +107,14 @@ const buildRuntimeUsageLimitsPayload = (
 
 export class ClaudeUsageSync {
   private readonly latestRuntimeUsageLimitsPayload = new Map<string, string>();
+  private readonly providerId: string;
   private readonly reporter?: ModuleReporter;
   private readonly tokenUsageSync: ClaudeTokenUsageSync;
   private readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
   private usageLimitsEnvironment: NodeJS.ProcessEnv | undefined;
 
   constructor(options: ClaudeUsageSyncOptions) {
+    this.providerId = options.providerId ?? "claude";
     this.reporter = options.reporter;
     this.tokenUsageSync = new ClaudeTokenUsageSync(options);
     this.usageLimitsFacade = options.usageLimitsFacade;
@@ -191,7 +194,7 @@ export class ClaudeUsageSync {
     }
     session.eventEmitter.emit("message", {
       type: "stream_event",
-      provider: "claude",
+      provider: this.providerId,
       sessionId: session.sessionId,
       claudeSessionId: resolvedId,
       usageLimits: nextPayload.usageLimits,
@@ -242,7 +245,7 @@ export class ClaudeUsageSync {
     if (!areUsageLimitsPayloadEqual(previousPayload, nextPayload)) {
       session.eventEmitter.emit("message", {
         type: "stream_event",
-        provider: "claude",
+        provider: this.providerId,
         sessionId: session.sessionId,
         claudeSessionId: resolvedId,
         usageLimits: nextPayload.usageLimits,

@@ -46,13 +46,17 @@ export class ClaudeStreamEventRouter {
   constructor(
     reporter?: ModuleReporter,
     thoughtTranslator?: ClaudeTextTranslationAdapter,
-    contentStreamHandler?: ClaudeContentStreamHandler
+    contentStreamHandler?: ClaudeContentStreamHandler,
+    providerId = "claude"
   ) {
     this.thoughtTranslator =
       thoughtTranslator ?? new ClaudeThoughtTranslationAdapter(reporter);
     this.contentStreamHandler =
       contentStreamHandler ?? new ClaudeContentStreamHandler();
+    this.providerId = providerId;
   }
+
+  private readonly providerId: string;
 
   handleAssistantMessage(
     session: ActiveSession,
@@ -356,7 +360,7 @@ export class ClaudeStreamEventRouter {
 
     session.eventEmitter.emit("message", {
       type: "stream_event",
-      provider: "claude",
+      provider: this.providerId,
       sessionId: session.sessionId,
       claudeSessionId: message.session_id,
       data: {

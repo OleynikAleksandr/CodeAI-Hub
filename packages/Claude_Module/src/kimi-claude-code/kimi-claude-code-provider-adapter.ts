@@ -1,7 +1,9 @@
 import crypto from "node:crypto";
 import { SDKInstaller } from "../installer/sdk-installer";
 import { SDKMessageProcessor } from "../messaging/message-processor";
+import { ClaudeSessionStaleBindingError } from "../provider/claude-session-stale-binding-error";
 import { ClaudeSDKManager } from "../sdk/claude-sdk-manager";
+import { KimiClaudeCodeSessionStaleBindingError } from "../session/kimi-claude-code-session-lifecycle";
 import { SDKSessionManager } from "../session/session-manager";
 import type { ActiveSession } from "../session/types";
 import type {
@@ -65,6 +67,7 @@ export class KimiClaudeCodeProviderAdapter {
     const sessions = new SDKSessionManager();
     const processor = new SDKMessageProcessor(sessions, {
       projectPath: runtimeProfile.projectPath,
+      providerId: "kimiClaudeCode",
       reporter: options.reporter,
       usageLimitsFacade: options.usageLimitsFacade,
     });
@@ -145,7 +148,14 @@ export class KimiClaudeCodeProviderAdapter {
     content: string,
     turnOptions?: Record<string, unknown>
   ): Promise<void> {
-    await this.sdkManager.sendMessage(sessionId, content, turnOptions);
+    try {
+      await this.sdkManager.sendMessage(sessionId, content, turnOptions);
+    } catch (error) {
+      if (error instanceof ClaudeSessionStaleBindingError) {
+        throw new KimiClaudeCodeSessionStaleBindingError(sessionId);
+      }
+      throw error;
+    }
   }
 
   subscribe(

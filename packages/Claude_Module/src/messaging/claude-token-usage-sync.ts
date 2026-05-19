@@ -22,6 +22,7 @@ export interface TokenUsageReadResult {
 }
 
 interface ClaudeTokenUsageSyncOptions {
+  readonly providerId?: string;
   readonly reporter?: ModuleReporter;
 }
 
@@ -42,6 +43,7 @@ export class ClaudeTokenUsageSync {
     Promise<TokenUsageReadResult>
   >();
   private readonly contextUsageLastAttemptAt = new Map<string, number>();
+  private readonly providerId: string;
   private readonly reporter?: ModuleReporter;
   private readonly tokenUsageCache = new Map<
     string,
@@ -49,6 +51,7 @@ export class ClaudeTokenUsageSync {
   >();
 
   constructor(options: ClaudeTokenUsageSyncOptions) {
+    this.providerId = options.providerId ?? "claude";
     this.reporter = options.reporter;
   }
 
@@ -133,7 +136,7 @@ export class ClaudeTokenUsageSync {
         this.tokenUsageCache.set(resolvedId, nextUsage);
         session.eventEmitter.emit("message", {
           type: "stream_event",
-          provider: "claude",
+          provider: this.providerId,
           sessionId: session.sessionId,
           claudeSessionId: resolvedId,
           tokenUsage: nextUsage,

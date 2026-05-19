@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "8f7cf9557",
+  "lastRecordedCommit": "a331244e8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-claude-code-model-capabilities",
-  "expectedCommitMessage": "feat: add kimi claude code model capabilities",
+  "currentTaskId": "phase5-kimi-claude-code-lifecycle",
+  "expectedCommitMessage": "feat: support kimi claude code session lifecycle",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi claude code model capabilities",
-    "preCommitHead": "8f7cf9557",
+    "expectedCommitMessage": "feat: support kimi claude code session lifecycle",
+    "preCommitHead": "a331244e8",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-claude-code-model-capabilities"
+    "taskId": "phase5-kimi-claude-code-lifecycle"
   }
 }
 ```
@@ -82,9 +82,9 @@
 1. [DONE] `phase5-kimi-claude-code-facade` Добавить самостоятельный Core-facing facade/adapter `KimiClaudeCodeProviderAdapter`, который делегирует в Claude Code runtime profile и не открывает Core внутренние helper-классы — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/sdk, packages/Claude_Module/src/index.ts`; expected commit: `feat: add kimi claude code provider facade`.
 2. [DONE] Git Commit: `feat: add kimi claude code provider facade` (hash: 8f7cf9557)
 3. [DONE] `phase5-kimi-claude-code-model-capabilities` Добавить model/capabilities contract для `kimi-for-coding`: single default model, honest unsupported reasoning controls, token/context telemetry unknown until proven — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/types, packages/Claude_Module/src/index.ts`; expected commit: `feat: add kimi claude code model capabilities`.
-4. [PENDING] Git Commit: `feat: add kimi claude code model capabilities` (hash: TBD)
-5. [TODO] `phase5-kimi-claude-code-lifecycle` Подключить lifecycle classification для turn start, assistant progress/final, failure, stop and stale binding states без влияния на native Kimi/Claude — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/provider, packages/Claude_Module/src/session`; expected commit: `feat: support kimi claude code session lifecycle`.
-6. [TODO] Git Commit: `feat: support kimi claude code session lifecycle` (hash: TBD)
+4. [DONE] Git Commit: `feat: add kimi claude code model capabilities` (hash: a331244e8)
+5. [DONE] `phase5-kimi-claude-code-lifecycle` Подключить lifecycle classification для turn start, assistant progress/final, failure, stop and stale binding states без влияния на native Kimi/Claude — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/messaging, packages/Claude_Module/src/session`; expected commit: `feat: support kimi claude code session lifecycle`.
+6. [PENDING] Git Commit: `feat: support kimi claude code session lifecycle` (hash: TBD)
 
 ## Phase 6 — Core Provider Registry And Packaging (owner: Codex, updated: 2026-05-19)
 ### Stream: Core Registration

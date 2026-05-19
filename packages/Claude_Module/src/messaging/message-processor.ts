@@ -30,6 +30,7 @@ interface ProcessResponseState {
 
 interface MessageProcessorOptions {
   readonly projectPath: string;
+  readonly providerId?: string;
   readonly reporter?: ModuleReporter;
   readonly thoughtTranslator?: ClaudeTextTranslationAdapter;
   readonly usageLimitsFacade?: ClaudeUsageLimitsFacadeBridge;
@@ -77,12 +78,15 @@ export class SDKMessageProcessor {
     this.sessionManager = sessionManager;
     this.reporter = options.reporter;
     this.finishHandler = new ClaudeMessageFinishHandler({
+      providerId: options.providerId,
       reporter: options.reporter,
       usageLimitsFacade: options.usageLimitsFacade,
     });
     this.streamEventRouter = new ClaudeStreamEventRouter(
       options.reporter,
-      options.thoughtTranslator
+      options.thoughtTranslator,
+      undefined,
+      options.providerId
     );
   }
 
