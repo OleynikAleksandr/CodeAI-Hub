@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "a331244e8",
+  "lastRecordedCommit": "e1cde7c69",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase5-kimi-claude-code-lifecycle",
-  "expectedCommitMessage": "feat: support kimi claude code session lifecycle",
+  "currentTaskId": "phase6-kimi-claude-code-provider-type",
+  "expectedCommitMessage": "feat: register kimi claude code provider type",
   "debt": {
-    "expectedCommitMessage": "feat: support kimi claude code session lifecycle",
-    "preCommitHead": "a331244e8",
+    "expectedCommitMessage": "feat: register kimi claude code provider type",
+    "preCommitHead": "e1cde7c69",
     "stage": "commit_pending",
-    "taskId": "phase5-kimi-claude-code-lifecycle"
+    "taskId": "phase6-kimi-claude-code-provider-type"
   }
 }
 ```
@@ -84,12 +84,12 @@
 3. [DONE] `phase5-kimi-claude-code-model-capabilities` Добавить model/capabilities contract для `kimi-for-coding`: single default model, honest unsupported reasoning controls, token/context telemetry unknown until proven — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/types, packages/Claude_Module/src/index.ts`; expected commit: `feat: add kimi claude code model capabilities`.
 4. [DONE] Git Commit: `feat: add kimi claude code model capabilities` (hash: a331244e8)
 5. [DONE] `phase5-kimi-claude-code-lifecycle` Подключить lifecycle classification для turn start, assistant progress/final, failure, stop and stale binding states без влияния на native Kimi/Claude — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/messaging, packages/Claude_Module/src/session`; expected commit: `feat: support kimi claude code session lifecycle`.
-6. [PENDING] Git Commit: `feat: support kimi claude code session lifecycle` (hash: TBD)
+6. [DONE] Git Commit: `feat: support kimi claude code session lifecycle` (hash: e1cde7c69)
 
 ## Phase 6 — Core Provider Registry And Packaging (owner: Codex, updated: 2026-05-19)
 ### Stream: Core Registration
-1. [TODO] `phase6-kimi-claude-code-provider-type` Добавить provider id/type `kimiClaudeCode` в shared/Core contracts и registry descriptors, не смешивая его с `kimiCode` или `claudeCode` — scope: `packages/core, src/types, doc/TODO/todo-plan.md`; expected commit: `feat: register kimi claude code provider type`.
-2. [TODO] Git Commit: `feat: register kimi claude code provider type` (hash: TBD)
+1. [DONE] `phase6-kimi-claude-code-provider-type` Добавить provider id/type `kimiClaudeCode` в shared/Core contracts и registry descriptors, не смешивая его с `kimiCode` или `claudeCode` — scope: `packages/core, src/types, doc/TODO/todo-plan.md`; expected commit: `feat: register kimi claude code provider type`.
+2. [PENDING] Git Commit: `feat: register kimi claude code provider type` (hash: TBD)
 3. [TODO] `phase6-kimi-claude-code-runtime-loader` Добавить loader/descriptor/install path для Kimi-Claude-Code, переиспользуя Claude runtime artifact только если это сохраняет отдельный provider namespace — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: load kimi claude code provider runtime`.
 4. [TODO] Git Commit: `feat: load kimi claude code provider runtime` (hash: TBD)
 5. [TODO] `phase6-kimi-claude-code-package-mapping` Обновить package/build mapping только если отдельный provider artifact или manifest entry реально нужен после loader implementation — scope: `package.json, packages/Claude_Module/package.json, scripts`; expected commit: `feat: package kimi claude code provider runtime`.

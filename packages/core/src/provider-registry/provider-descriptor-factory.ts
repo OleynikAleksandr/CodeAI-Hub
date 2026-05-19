@@ -97,6 +97,12 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
+  kimiClaudeCode: {
+    acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
+    syncsLabelFromAppliedConfig: true,
+  },
 };
 
 export const resolveProviderModelSyncCapabilities = (
@@ -112,6 +118,7 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   codexCli: false,
   geminiCli: true,
   kimiCode: true,
+  kimiClaudeCode: false,
 };
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";

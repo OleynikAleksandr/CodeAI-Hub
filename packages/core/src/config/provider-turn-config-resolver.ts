@@ -323,6 +323,13 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     effectiveModelId: resolved.kimi.effectiveModelId,
     thinkingDisplaySyncEnabled: resolved.kimi.thinkingDisplaySyncEnabled,
   },
+  kimiClaudeCode: {
+    providerId: "kimiClaudeCode",
+    baseModelId: resolved.kimi.baseModelId,
+    defaultModel: resolved.kimi.defaultModel,
+    effectiveModelId: resolved.kimi.effectiveModelId,
+    thinkingDisplaySyncEnabled: resolved.kimi.thinkingDisplaySyncEnabled,
+  },
 });
 
 export const resolveProviderTurnConfig = (
