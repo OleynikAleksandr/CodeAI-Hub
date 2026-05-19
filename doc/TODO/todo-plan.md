@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "f82a4de71",
+  "lastRecordedCommit": "3d336b30c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-progress-summary-release-build",
-  "expectedCommitMessage": "chore: release kimi progress summary build",
+  "currentTaskId": "phase8-kimi-reasoning-summary-output",
+  "expectedCommitMessage": "fix: make kimi summarize reasoning visibly",
   "debt": {
-    "expectedCommitMessage": "chore: release kimi progress summary build",
-    "preCommitHead": "f82a4de71",
+    "expectedCommitMessage": "fix: make kimi summarize reasoning visibly",
+    "preCommitHead": "3d336b30c",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-progress-summary-release-build"
+    "taskId": "phase8-kimi-reasoning-summary-output"
   }
 }
 ```
@@ -482,7 +482,11 @@
    - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.313.vsix`, package size `49M`.
    - Result: release tarballs available in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: `kimi-module-1.2.313.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.313.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.313.tar.bz2`, provider/UI tarballs.
    - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
-6. [PENDING] Git Commit: `chore: release kimi progress summary build` (hash: TBD)
+6. [DONE] Git Commit: `chore: release kimi progress summary build` (hash: 3d336b30c)
+
+### Stream: Acceptance Bug Fix — Kimi Reasoning Summary Output
+1. [DONE] `phase8-kimi-reasoning-summary-output` Изменить managed Kimi prompt с cadence-only подхода на режим коротких visible reasoning summaries: запретить подробный hidden reasoning как рабочий журнал и требовать summary рассуждений ordinary assistant text — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: make kimi summarize reasoning visibly`.
+2. [PENDING] Git Commit: `fix: make kimi summarize reasoning visibly` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
