@@ -13,7 +13,7 @@
 3. `System/ManagedDocumentationCommitOwnership.md` (suspended historical pointer)
 4. `Clusters/Project_Manager.md`
 5. `Clusters/CoreOrchestrator.md`
-6. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Kimi.md`, `Modules/Kimi_Claude_Code.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
+6. `Modules/Claude.md`, `Modules/Codex.md`, `Modules/Codex_ProviderInvocationFlags.md`, `Modules/Gemini.md`, `Modules/Kimi.md`, `Modules/GLM_Claude_Code.md`, `Modules/Shared_RuntimeTranslation_Module.md`, `Modules/Localization.md`, `Modules/Launcher_CEF.md`, `Modules/UI_Bundles.md`
 7. `Contracts/` (только по ссылкам из документов выше)
 8. `Contracts/Codex_ResponseMode_Settings_Architecture.md`
 9. `Plans/` (только при запуске нового scope, deferred work или design intake перед `todo-plan.md`)
@@ -40,7 +40,7 @@
 - `Modules/Codex_ProviderInvocationFlags.md` — SSOT actual Codex App Server startup flags, JSON-RPC `initialize` / `thread/start` / `thread/resume` / `turn/start` payloads, model/reasoning resolution, provider-home env, and native request capture parity.
 - `Modules/Gemini.md` — SSOT Gemini provider module.
 - `Modules/Kimi.md` — SSOT Kimi Code / Kimi 2.6 provider module, including Wire transport, `KIMI_SHARE_DIR=~/.codeai-hub/providers/kimi/home`, `~/.kimi/config.toml` auth reference, stale-binding recovery, unavailable usage-limits boundary, UI/provider surfaces, and Wire-evidence diagnostic capture.
-- `Modules/Kimi_Claude_Code.md` — SSOT Kimi-Claude-Code provider module: Kimi Code / Kimi 2.6 through Claude Code-compatible runtime, isolated `~/.codeai-hub/providers/kimi-claude-code/home`, separate `kimiClaudeCode` provider id, Claude workflow system prompt reuse, Kimi API-key auth profile, capture diagnostics, and explicit unavailable telemetry boundary.
+- `Modules/GLM_Claude_Code.md` — SSOT GLM-Claude-Code provider module: GLM 5.1 through Claude Code-compatible runtime, isolated `~/.codeai-hub/providers/glm-claude-code/home`, separate `glmClaudeCode` provider id, Claude workflow system prompt reuse, Z.AI API-key config profile, capture diagnostics, and explicit unavailable telemetry boundary.
 - `Modules/Shared_RuntimeTranslation_Module.md` — SSOT shared runtime translation module.
 - `Modules/Localization.md` — SSOT persistent UI localization module, including user-facing categories and the code-owned internal-instructions boundary with explicit localized prompt materialization exceptions.
 - `Plans/Archive/Localization_TranslationEngine_AnthropicHaiku_Architecture.md` — archived Anthropic Claude Haiku 4.5 translation engine architecture (closed by release `1.1.986`; canonical SSOT lives in `Modules/Claude.md`, `Modules/Shared_RuntimeTranslation_Module.md`, and `Modules/Localization.md`).

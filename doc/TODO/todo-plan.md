@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "f8cd1b0a5",
+  "lastRecordedCommit": "9fe746c2d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase7-glm-capture-workbench-runner",
-  "expectedCommitMessage": "refactor: route glm claude code capture runner",
+  "currentTaskId": "phase8-glm-module-doc",
+  "expectedCommitMessage": "docs: document glm claude code module",
   "debt": {
-    "expectedCommitMessage": "refactor: route glm claude code capture runner",
-    "preCommitHead": "f8cd1b0a5",
+    "expectedCommitMessage": "docs: document glm claude code module",
+    "preCommitHead": "9fe746c2d",
     "stage": "commit_pending",
-    "taskId": "phase7-glm-capture-workbench-runner"
+    "taskId": "phase8-glm-module-doc"
   }
 }
 ```
@@ -107,12 +107,12 @@
 5. [DONE] `phase7-glm-capture-workbench-ui` Replace Capture Workbench provider/model/reasoning defaults from Claude-Kimi to GLM-Claude-Code — scope: `src/client/project-manager/components/capture-workbench/provider-selector.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx`; expected commit: `refactor: expose glm claude code in capture workbench`.
 6. [DONE] Git Commit: `refactor: expose glm claude code in capture workbench` (hash: f8cd1b0a5)
 7. [DONE] `phase7-glm-capture-workbench-runner` Replace Capture Workbench runner provider validation/defaults for GLM-Claude-Code and GLM model ids — scope: `src/client/project-manager/services/capture-workbench-runner.ts, src/client/project-manager/services/provider-snapshot.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: route glm claude code capture runner`.
-8. [PENDING] Git Commit: `refactor: route glm claude code capture runner` (hash: TBD)
+8. [DONE] Git Commit: `refactor: route glm claude code capture runner` (hash: 9fe746c2d)
 
 ## Phase 8 — Documentation Sync (owner: Codex, updated: 2026-05-19)
 ### Stream: Module Documentation
-1. [TODO] `phase8-glm-module-doc` Replace active Kimi-Claude-Code module doc with GLM-Claude-Code SSOT and update Docs Index module list/Plans note — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md -> doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm claude code module`.
-2. [TODO] Git Commit: `docs: document glm claude code module` (hash: TBD)
+1. [DONE] `phase8-glm-module-doc` Replace active Kimi-Claude-Code module doc with GLM-Claude-Code SSOT and update Docs Index module list/Plans note — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm claude code module`.
+2. [PENDING] Git Commit: `docs: document glm claude code module` (hash: TBD)
 3. [TODO] `phase8-claude-kimi-boundary-docs` Sync Claude/Kimi docs: remove active Kimi-Claude-Code boundary, add GLM-Claude-Code runtime-profile boundary, keep native Kimi Wire as primary Kimi provider — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md`; expected commit: `docs: sync glm claude code provider boundaries`.
 4. [TODO] Git Commit: `docs: sync glm claude code provider boundaries` (hash: TBD)
 
