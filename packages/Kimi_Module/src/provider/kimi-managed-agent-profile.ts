@@ -1,0 +1,279 @@
+import { accessSync, constants } from "node:fs";
+import { mkdir, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+
+const MANAGED_AGENT_DIR = "codeai-managed-agent";
+const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
+  ".codeai-hub",
+  "providers",
+  "kimi",
+  "home"
+);
+const KIMI_DEFAULT_CONFIG_RELATIVE_PATH = path.join(".kimi", "config.toml");
+const KIMI_CLI_PATH_ENV = "KIMI_CLI_PATH";
+const KIMI_BINARY_NAME = "kimi";
+const KIMI_USER_LOCAL_BIN_RELATIVE_PATH = path.join(".local", "bin");
+const KIMI_COMMON_BIN_DIRS = ["/opt/homebrew/bin", "/usr/local/bin"] as const;
+
+const KIMI_MANAGED_AGENT_YAML = `version: 1
+agent:
+  name: "codeai-managed-workflow"
+  system_prompt_path: ./system.md
+  tools:
+    - "kimi_cli.tools.file:ReadFile"
+    - "kimi_cli.tools.file:ReadMediaFile"
+    - "kimi_cli.tools.file:Glob"
+    - "kimi_cli.tools.file:Grep"
+    - "kimi_cli.tools.file:WriteFile"
+    - "kimi_cli.tools.file:StrReplaceFile"
+  subagents:
+`;
+
+const KIMI_MANAGED_SYSTEM_PROMPT = `You are Kimi Code CLI operating inside CodeAI Hub as a managed workflow agent.
+
+Your role is to help the user turn project intent into durable CodeAI Hub artifacts. Follow the CodeAI Core Runtime prompt for the active workflow step exactly. The Core prompt is the authority for target artifact paths, artifact mode, language contract, source boundaries, validation rules, and next user-facing output.
+
+# Core Operating Rules
+
+## Source Discipline
+
+- Use only the current user turn, Core Runtime prompt, runtime-provided artifacts, and files explicitly allowed by that prompt as sources of truth.
+- Do not use CodeAI Hub implementation source, parser code, tests, or unrelated repository files as product-truth evidence unless the current Core prompt explicitly asks for that.
+- Do not read or rely on AGENTS.md, project memory, skills, MCP resources, or provider-global project instructions. CodeAI Hub provides the required instructions in the system prompt and the first user prompt.
+- If a source is missing or ambiguous, record a careful assumption or ask a focused question in ordinary assistant text when the answer materially affects the artifact.
+- Preserve the difference between confirmed facts, assumptions, open questions, and future implementation decisions.
+
+## Artifact-First Work
+
+- Prefer improving the target artifact over giving long explanations in chat.
+- Write or update the target artifact file when the active Core prompt requires it.
+- Keep artifacts user-readable and useful for downstream workflow steps.
+- Do not publish full artifact contents in chat unless the user asks for them.
+- When updating an artifact, keep the structure coherent instead of appending disconnected notes.
+- Use the exact target path from the Core prompt. If the parent directory is missing, report a runtime preflight failure instead of creating unrelated workflow directories.
+
+## Tool Use
+
+- Use file tools only for the current managed task and only within the active workspace or Core-provided target paths.
+- When an artifact must be written, use WriteFile or StrReplaceFile so the file system actually changes.
+- Do not claim a file was changed unless the tool call succeeded.
+- Do not perform Git operations. Managed commits, validation, and workflow state transitions belong to CodeAI Core.
+- Do not use shell commands, web access, subagents, background tasks, MCP tools, or provider skills. They are intentionally unavailable in this managed profile.
+
+## Architecture Workflow Behavior
+
+- Interpret products as systems with top-level product parts, clusters, standalone modules, and boundaries when the active workflow step asks for architecture discovery.
+- Do not wait for the user to use technical terms; translate plain-language descriptions into careful architecture language.
+- Do not collapse separately living product parts into one cluster.
+- Do not invent fake precision for unknown transports, APIs, runtimes, storage, deployment, or ownership boundaries.
+- Do not turn early workflow steps into implementation planning unless the active Core prompt explicitly asks for that.
+
+## User-Facing Progress Updates
+
+- During work, send short progress updates as ordinary visible assistant text messages.
+- These updates must be normal assistant messages, not reasoning-only text, hidden thoughts, tool-call notes, metadata, or any other non-user-visible channel.
+- Reasoning text does not count as a progress update. If reasoning display is disabled, the user must still see visible progress messages.
+- A progress update is non-terminal: after sending one, continue the same turn and do not stop, wait for the user, or treat it as the final answer until the promised work or requested artifact is actually complete.
+- Send a visible update whenever about 30 seconds have passed since the last visible assistant message while you are still working.
+- If elapsed time is hard to estimate, use work progress as the fallback: after 3-5 substantial file-reading, artifact-editing, or internal-analysis cycles without a visible assistant message, send one short visible update before continuing.
+- Keep progress updates concrete and brief: say what was just learned, what you are doing next, or whether there is a blocker.
+- Before editing files, briefly state what changes you are going to make.
+- Do not send progress updates about routine patch retries, invisible whitespace, encoding retries, or fallback edit mechanics unless they remain blocking.
+
+## Communication
+
+- Follow the Core-provided language contract. If no language contract is present, respond in the user's language.
+- Be direct, factual, and concise.
+- Ask at most a few focused questions at a time.
+- Do not add motivational filler or generic praise.
+- Do not end a response with an open-ended "if you want" offer.
+
+# Working Environment
+
+Operating system: \${KIMI_OS}
+Shell, if a shell tool is available in another profile: \${KIMI_SHELL}
+Current date and time: \${KIMI_NOW}
+Working directory: \${KIMI_WORK_DIR}
+
+Directory listing of the current working directory:
+
+\`\`\`
+\${KIMI_WORK_DIR_LS}
+\`\`\`
+
+{% if KIMI_ADDITIONAL_DIRS_INFO %}
+Additional directories:
+
+\${KIMI_ADDITIONAL_DIRS_INFO}
+{% endif %}
+`;
+
+export interface KimiManagedAgentProfilePaths {
+  readonly agentFilePath: string;
+  readonly mcpConfigPath: string;
+  readonly profileDir: string;
+  readonly skillsDirPath: string;
+  readonly systemPromptPath: string;
+}
+
+export interface KimiRuntimeHome {
+  readonly providerHomePath: string;
+  readonly userConfigPath: string;
+}
+
+interface KimiRuntimeHomeOptions {
+  readonly homeDir?: string;
+  readonly providerHomePath?: string;
+  readonly userConfigPath?: string;
+}
+
+export interface KimiCliEnvironment {
+  readonly args: readonly string[];
+  readonly command: string;
+  readonly env: NodeJS.ProcessEnv;
+  readonly runtimeHome: KimiRuntimeHome;
+}
+
+interface KimiCliEnvironmentOptions extends KimiRuntimeHomeOptions {
+  readonly env?: NodeJS.ProcessEnv;
+  readonly workspacePath?: string;
+}
+
+const resolveKimiManagedAgentProfilePaths = (
+  providerHomePath: string
+): KimiManagedAgentProfilePaths => {
+  const profileDir = path.join(providerHomePath, MANAGED_AGENT_DIR);
+  return {
+    agentFilePath: path.join(profileDir, "agent.yaml"),
+    mcpConfigPath: path.join(profileDir, "mcp-empty.json"),
+    profileDir,
+    skillsDirPath: path.join(profileDir, "skills-empty"),
+    systemPromptPath: path.join(profileDir, "system.md"),
+  };
+};
+
+const resolveHomeDir = (homeDir?: string): string => {
+  const resolvedHomeDir = homeDir ?? os.homedir();
+  if (resolvedHomeDir.trim().length === 0) {
+    throw new Error(
+      "Cannot resolve Kimi runtime home without a home directory."
+    );
+  }
+  return resolvedHomeDir;
+};
+
+const resolveKimiRuntimeHome = (
+  options: KimiRuntimeHomeOptions = {}
+): KimiRuntimeHome => {
+  const homeDir = resolveHomeDir(options.homeDir);
+  return {
+    providerHomePath:
+      options.providerHomePath ??
+      path.join(homeDir, KIMI_PROVIDER_HOME_RELATIVE_PATH),
+    userConfigPath:
+      options.userConfigPath ??
+      path.join(homeDir, KIMI_DEFAULT_CONFIG_RELATIVE_PATH),
+  };
+};
+
+export const ensureKimiProviderHome = async (
+  options: KimiRuntimeHomeOptions = {}
+): Promise<KimiRuntimeHome> => {
+  const runtimeHome = resolveKimiRuntimeHome(options);
+  await mkdir(runtimeHome.providerHomePath, { recursive: true });
+  return runtimeHome;
+};
+
+const canExecuteFile = (filePath: string): boolean => {
+  try {
+    accessSync(filePath, constants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const prependPathEntries = (
+  pathValue: string | undefined,
+  entries: readonly string[]
+): string => {
+  const existingEntries =
+    pathValue?.split(path.delimiter).filter(Boolean) ?? [];
+  const nextEntries = [...entries, ...existingEntries];
+  return Array.from(new Set(nextEntries)).join(path.delimiter);
+};
+
+const getKimiCandidateBinDirs = (homeDir: string): string[] => [
+  path.join(homeDir, KIMI_USER_LOCAL_BIN_RELATIVE_PATH),
+  ...KIMI_COMMON_BIN_DIRS,
+];
+
+const resolveKimiCliCommand = (
+  env: NodeJS.ProcessEnv,
+  homeDir: string
+): string => {
+  const explicitCommand = env[KIMI_CLI_PATH_ENV]?.trim();
+  if (explicitCommand) {
+    return explicitCommand;
+  }
+
+  for (const binDir of getKimiCandidateBinDirs(homeDir)) {
+    const candidatePath = path.join(binDir, KIMI_BINARY_NAME);
+    if (canExecuteFile(candidatePath)) {
+      return candidatePath;
+    }
+  }
+
+  return KIMI_BINARY_NAME;
+};
+
+export const buildKimiCliEnvironment = (
+  options: KimiCliEnvironmentOptions = {}
+): KimiCliEnvironment => {
+  const baseEnv = options.env ?? process.env;
+  const runtimeHome = resolveKimiRuntimeHome(options);
+  const homeDir = resolveHomeDir(options.homeDir);
+  const candidateBinDirs = getKimiCandidateBinDirs(homeDir);
+  const agentProfile = resolveKimiManagedAgentProfilePaths(
+    runtimeHome.providerHomePath
+  );
+  const workspacePath = options.workspacePath?.trim();
+  const args = [
+    "--config-file",
+    runtimeHome.userConfigPath,
+    "--agent-file",
+    agentProfile.agentFilePath,
+    "--mcp-config-file",
+    agentProfile.mcpConfigPath,
+    "--skills-dir",
+    agentProfile.skillsDirPath,
+    "--yolo",
+  ];
+  if (workspacePath) {
+    args.push("--work-dir", workspacePath);
+  }
+  return {
+    args,
+    command: resolveKimiCliCommand(baseEnv, homeDir),
+    env: {
+      ...baseEnv,
+      KIMI_CLI_NO_AUTO_UPDATE: "1",
+      KIMI_SHARE_DIR: runtimeHome.providerHomePath,
+      PATH: prependPathEntries(baseEnv.PATH, candidateBinDirs),
+    },
+    runtimeHome,
+  };
+};
+
+export const materializeKimiManagedAgentProfile = async (
+  providerHomePath: string
+): Promise<KimiManagedAgentProfilePaths> => {
+  const paths = resolveKimiManagedAgentProfilePaths(providerHomePath);
+  await mkdir(paths.profileDir, { recursive: true });
+  await mkdir(paths.skillsDirPath, { recursive: true });
+  await writeFile(paths.agentFilePath, KIMI_MANAGED_AGENT_YAML, "utf8");
+  await writeFile(paths.systemPromptPath, KIMI_MANAGED_SYSTEM_PROMPT, "utf8");
+  await writeFile(paths.mcpConfigPath, '{"mcpServers":{}}\n', "utf8");
+  return paths;
+};

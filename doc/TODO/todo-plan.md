@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "c9adaac51",
+  "lastRecordedCommit": "9af474c08",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-default-agent-capture",
-  "expectedCommitMessage": "docs: capture kimi default agent baseline",
+  "currentTaskId": "phase8-kimi-managed-agent-profile",
+  "expectedCommitMessage": "feat: add kimi managed agent profile",
   "debt": {
-    "expectedCommitMessage": "docs: capture kimi default agent baseline",
-    "preCommitHead": "c9adaac51",
+    "expectedCommitMessage": "feat: add kimi managed agent profile",
+    "preCommitHead": "9af474c08",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-default-agent-capture"
+    "taskId": "phase8-kimi-managed-agent-profile"
   }
 }
 ```
@@ -429,7 +429,13 @@
 
 ### Stream: Kimi Default Agent Baseline Capture
 1. [DONE] `phase8-kimi-default-agent-capture` Найти и зафиксировать baseline Kimi default agent/system prompt/tooling через существующий Capture Workbench контекст, установленный Kimi CLI/package resources, runtime/export/debug artifacts и сохранить документы в `doc/SolidWorks-WorkFlow/Plans/KIMI/` — scope: `doc/SolidWorks-WorkFlow/Plans/KIMI, doc/TODO/todo-plan.md`; expected commit: `docs: capture kimi default agent baseline`.
-2. [PENDING] Git Commit: `docs: capture kimi default agent baseline` (hash: TBD)
+2. [DONE] Git Commit: `docs: capture kimi default agent baseline` (hash: 9af474c08)
+
+### Stream: Kimi Managed Agent Profile
+1. [DONE] `phase8-kimi-managed-agent-profile` Реализовать CodeAI-owned Kimi `--agent-file` profile: заменить default Kimi system prompt на early-architecture workflow profile, убрать AGENTS/project instructions block и задать узкий tool allowlist с Codex-like visible progress update rules — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts, packages/Kimi_Module/package.json`; expected commit: `feat: add kimi managed agent profile`.
+2. [PENDING] Git Commit: `feat: add kimi managed agent profile` (hash: TBD)
+3. [TODO] `phase8-kimi-managed-agent-docs` Обновить Kimi module SSOT по новому managed agent profile, replacement semantics и ограничениям tool/project-discovery policy — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi managed agent profile`.
+4. [TODO] Git Commit: `docs: document kimi managed agent profile` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.

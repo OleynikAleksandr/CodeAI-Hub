@@ -1,6 +1,3 @@
-import { accessSync, constants } from "node:fs";
-import { mkdir } from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
 import {
   KimiWireEventNormalizer,
@@ -11,22 +8,18 @@ import { KimiSessionLifecycle } from "../session/kimi-session-lifecycle";
 import { KimiWireProcessBridge } from "../wire/kimi-wire-process";
 import { KimiWireRouter } from "../wire/kimi-wire-router";
 import {
+  buildKimiCliEnvironment,
+  ensureKimiProviderHome,
+  type KimiCliEnvironment,
+  type KimiRuntimeHome,
+  materializeKimiManagedAgentProfile,
+} from "./kimi-managed-agent-profile";
+import {
   KimiWorkspaceOverrideState,
   reportKimiWorkspaceOverride,
 } from "./kimi-workspace-override-state";
 
 export const KIMI_PROVIDER_ID = "kimiCode" as const;
-const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
-  ".codeai-hub",
-  "providers",
-  "kimi",
-  "home"
-);
-const KIMI_DEFAULT_CONFIG_RELATIVE_PATH = path.join(".kimi", "config.toml");
-const KIMI_CLI_PATH_ENV = "KIMI_CLI_PATH";
-const KIMI_BINARY_NAME = "kimi";
-const KIMI_USER_LOCAL_BIN_RELATIVE_PATH = path.join(".local", "bin");
-const KIMI_COMMON_BIN_DIRS = ["/opt/homebrew/bin", "/usr/local/bin"] as const;
 
 export type SessionListener = (payload: KimiSessionEvent) => void;
 
@@ -52,17 +45,6 @@ export interface KimiModuleOptions {
   readonly workspace: KimiWorkspaceOptions;
 }
 
-interface KimiRuntimeHome {
-  readonly providerHomePath: string;
-  readonly userConfigPath: string;
-}
-
-interface KimiRuntimeHomeOptions {
-  readonly homeDir?: string;
-  readonly providerHomePath?: string;
-  readonly userConfigPath?: string;
-}
-
 export interface KimiSessionEvent {
   readonly payload?: unknown;
   readonly type: string;
@@ -86,118 +68,6 @@ interface KimiNativeRequestCaptureOptions {
   readonly workflowPrompt?: string | null;
   readonly workspacePath: string;
 }
-
-interface KimiCliEnvironment {
-  readonly args: readonly string[];
-  readonly command: string;
-  readonly env: NodeJS.ProcessEnv;
-  readonly runtimeHome: KimiRuntimeHome;
-}
-
-interface KimiCliEnvironmentOptions extends KimiRuntimeHomeOptions {
-  readonly env?: NodeJS.ProcessEnv;
-  readonly workspacePath?: string;
-}
-
-const resolveHomeDir = (homeDir?: string): string => {
-  const resolvedHomeDir = homeDir ?? os.homedir();
-  if (resolvedHomeDir.trim().length === 0) {
-    throw new Error(
-      "Cannot resolve Kimi runtime home without a home directory."
-    );
-  }
-  return resolvedHomeDir;
-};
-
-const resolveKimiRuntimeHome = (
-  options: KimiRuntimeHomeOptions = {}
-): KimiRuntimeHome => {
-  const homeDir = resolveHomeDir(options.homeDir);
-  return {
-    providerHomePath:
-      options.providerHomePath ??
-      path.join(homeDir, KIMI_PROVIDER_HOME_RELATIVE_PATH),
-    userConfigPath:
-      options.userConfigPath ??
-      path.join(homeDir, KIMI_DEFAULT_CONFIG_RELATIVE_PATH),
-  };
-};
-
-const ensureKimiProviderHome = async (
-  options: KimiRuntimeHomeOptions = {}
-): Promise<KimiRuntimeHome> => {
-  const runtimeHome = resolveKimiRuntimeHome(options);
-  await mkdir(runtimeHome.providerHomePath, { recursive: true });
-  return runtimeHome;
-};
-
-const canExecuteFile = (filePath: string): boolean => {
-  try {
-    accessSync(filePath, constants.X_OK);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const prependPathEntries = (
-  pathValue: string | undefined,
-  entries: readonly string[]
-): string => {
-  const existingEntries =
-    pathValue?.split(path.delimiter).filter(Boolean) ?? [];
-  const nextEntries = [...entries, ...existingEntries];
-  return Array.from(new Set(nextEntries)).join(path.delimiter);
-};
-
-const getKimiCandidateBinDirs = (homeDir: string): string[] => [
-  path.join(homeDir, KIMI_USER_LOCAL_BIN_RELATIVE_PATH),
-  ...KIMI_COMMON_BIN_DIRS,
-];
-
-const resolveKimiCliCommand = (
-  env: NodeJS.ProcessEnv,
-  homeDir: string
-): string => {
-  const explicitCommand = env[KIMI_CLI_PATH_ENV]?.trim();
-  if (explicitCommand) {
-    return explicitCommand;
-  }
-
-  for (const binDir of getKimiCandidateBinDirs(homeDir)) {
-    const candidatePath = path.join(binDir, KIMI_BINARY_NAME);
-    if (canExecuteFile(candidatePath)) {
-      return candidatePath;
-    }
-  }
-
-  return KIMI_BINARY_NAME;
-};
-
-const buildKimiCliEnvironment = (
-  options: KimiCliEnvironmentOptions = {}
-): KimiCliEnvironment => {
-  const baseEnv = options.env ?? process.env;
-  const runtimeHome = resolveKimiRuntimeHome(options);
-  const homeDir = resolveHomeDir(options.homeDir);
-  const candidateBinDirs = getKimiCandidateBinDirs(homeDir);
-  const workspacePath = options.workspacePath?.trim();
-  const args = ["--config-file", runtimeHome.userConfigPath, "--yolo"];
-  if (workspacePath) {
-    args.push("--work-dir", workspacePath);
-  }
-  return {
-    args,
-    command: resolveKimiCliCommand(baseEnv, homeDir),
-    env: {
-      ...baseEnv,
-      KIMI_CLI_NO_AUTO_UPDATE: "1",
-      KIMI_SHARE_DIR: runtimeHome.providerHomePath,
-      PATH: prependPathEntries(baseEnv.PATH, candidateBinDirs),
-    },
-    runtimeHome,
-  };
-};
 
 export class KimiProviderAdapter {
   private readonly listeners = new Map<string, Set<SessionListener>>();
@@ -257,6 +127,7 @@ export class KimiProviderAdapter {
     });
     this.cliEnvironment = cliEnvironment;
     this.runtimeHome = await ensureKimiProviderHome(cliEnvironment.runtimeHome);
+    await materializeKimiManagedAgentProfile(this.runtimeHome.providerHomePath);
     this.wireRouter = this.createWireRouter();
     this.wireProcessBridge = this.createWireProcessBridge();
     this.sessionLifecycle = new KimiSessionLifecycle({
