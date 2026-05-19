@@ -36,7 +36,11 @@ type UpstreamArtifactInfo = {
 };
 
 const isProviderStackId = (value: unknown): value is ProviderStackId =>
-  value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
+  value === "claudeCodeCli" ||
+  value === "codexCli" ||
+  value === "geminiCli" ||
+  value === "kimiCode" ||
+  value === "kimiClaudeCode";
 
 export const resolveUpstreamArtifactInfo = (
   stage: ConfirmableStageId,

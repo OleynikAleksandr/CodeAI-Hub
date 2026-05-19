@@ -11,7 +11,11 @@ import {
 } from "../shared/stage-start-model-selection";
 
 const isProviderStackId = (value: string): value is ProviderStackId =>
-  value === "claudeCodeCli" || value === "codexCli" || value === "geminiCli";
+  value === "claudeCodeCli" ||
+  value === "codexCli" ||
+  value === "geminiCli" ||
+  value === "kimiCode" ||
+  value === "kimiClaudeCode";
 
 const resolveKindLabel = (kind: BranchNodeKind): string =>
   kind === "product-part" ? "Product Part" : kind === "cluster" ? "Cluster" : "Module";
