@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "60ea2359d",
+  "lastRecordedCommit": "f8cd1b0a5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase7-glm-capture-workbench-ui",
-  "expectedCommitMessage": "refactor: expose glm claude code in capture workbench",
+  "currentTaskId": "phase7-glm-capture-workbench-runner",
+  "expectedCommitMessage": "refactor: route glm claude code capture runner",
   "debt": {
-    "expectedCommitMessage": "refactor: expose glm claude code in capture workbench",
-    "preCommitHead": "60ea2359d",
+    "expectedCommitMessage": "refactor: route glm claude code capture runner",
+    "preCommitHead": "f8cd1b0a5",
     "stage": "commit_pending",
-    "taskId": "phase7-glm-capture-workbench-ui"
+    "taskId": "phase7-glm-capture-workbench-runner"
   }
 }
 ```
@@ -105,9 +105,9 @@
 3. [DONE] `phase7-glm-session-bars` Replace status panel/session id bar provider mapping for GLM-Claude-Code and avoid reusing Kimi-only usage rows — scope: `src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-id-bar.tsx, src/client/project-manager/core-stream-message-types.ts`; expected commit: `refactor: show glm claude code status surfaces`.
 4. [DONE] Git Commit: `refactor: show glm claude code status surfaces` (hash: 60ea2359d)
 5. [DONE] `phase7-glm-capture-workbench-ui` Replace Capture Workbench provider/model/reasoning defaults from Claude-Kimi to GLM-Claude-Code — scope: `src/client/project-manager/components/capture-workbench/provider-selector.tsx, src/client/project-manager/components/capture-workbench/selection-bar.tsx, src/client/project-manager/components/capture-workbench/model-reasoning-selectors.tsx`; expected commit: `refactor: expose glm claude code in capture workbench`.
-6. [PENDING] Git Commit: `refactor: expose glm claude code in capture workbench` (hash: TBD)
-7. [TODO] `phase7-glm-capture-workbench-runner` Replace Capture Workbench runner provider validation/defaults for GLM-Claude-Code and GLM model ids — scope: `src/client/project-manager/services/capture-workbench-runner.ts, src/client/project-manager/services/provider-snapshot.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: route glm claude code capture runner`.
-8. [TODO] Git Commit: `refactor: route glm claude code capture runner` (hash: TBD)
+6. [DONE] Git Commit: `refactor: expose glm claude code in capture workbench` (hash: f8cd1b0a5)
+7. [DONE] `phase7-glm-capture-workbench-runner` Replace Capture Workbench runner provider validation/defaults for GLM-Claude-Code and GLM model ids — scope: `src/client/project-manager/services/capture-workbench-runner.ts, src/client/project-manager/services/provider-snapshot.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: route glm claude code capture runner`.
+8. [PENDING] Git Commit: `refactor: route glm claude code capture runner` (hash: TBD)
 
 ## Phase 8 — Documentation Sync (owner: Codex, updated: 2026-05-19)
 ### Stream: Module Documentation

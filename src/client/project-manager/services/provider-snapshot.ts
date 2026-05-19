@@ -20,7 +20,7 @@ const DESCRIPTION_PROVIDER_IDS = new Set<ProviderStackId>([
   "codexCli",
   "geminiCli",
   "kimiCode",
-  "kimiClaudeCode",
+  "glmClaudeCode",
 ]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

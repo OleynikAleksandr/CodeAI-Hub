@@ -264,7 +264,7 @@ const parseProviderId = (
     value === "claude" ||
     value === "codex" ||
     value === "kimi" ||
-    value === "kimiClaudeCode"
+    value === "glmClaudeCode"
   ) {
     return value;
   }
@@ -335,7 +335,7 @@ const parseProviderIdSafe = (
   value === "claude" ||
   value === "codex" ||
   value === "kimi" ||
-  value === "kimiClaudeCode";
+  value === "glmClaudeCode";
 
 const loadScenarioPromptBuilder =
   async (): Promise<CaptureWorkbenchScenarioPromptBuilder> => {
