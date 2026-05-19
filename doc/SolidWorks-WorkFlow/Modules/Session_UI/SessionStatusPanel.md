@@ -32,6 +32,8 @@
 - `status.tokenUsage.used` / `.limit` → токен-плашка (used + remaining percent);
 - `tokenDebugSummary` либо вычисляется по chain/messages, либо в dialog mode приходит как override из parsed dialog history.
 
+The user-facing percentage in the chip is **remaining context window percentage**. Current rendering is `used (remaining%)`, not `used%`.
+
 ## Как обновляется
 
 ### Connection side
@@ -49,6 +51,12 @@
 
 ### Token side
 - `session:stream` token-usage events -> `updateSnapshotsWithTokenUsage(...)`.
+- Kimi-specific discovery, 2026-05-19: Kimi Wire `StatusUpdate` already carries authoritative context-window fields:
+  - `context_usage` as a `0..1` used ratio;
+  - `context_tokens` as current context tokens;
+  - `max_context_tokens` as the model context window.
+  The Kimi adapter must normalize these into the same `tokenUsage` snapshot shape consumed by `updateSnapshotsWithTokenUsage(...)`: `used = context_tokens`, `limit = max_context_tokens`. `context_usage` is useful as provider evidence/debug, but the UI chip still derives the displayed percentage from `used / limit` to keep the provider-neutral status-panel contract.
+- Kimi Wire `token_usage.input_other/output/input_cache_read/input_cache_creation` is per-turn accounting, not the status-panel context-window source. It must not replace `context_tokens/max_context_tokens` in the `Токены:` chip.
 
 ### Debug summary side
 - пересчитывается по runtime chain или dialog history.
