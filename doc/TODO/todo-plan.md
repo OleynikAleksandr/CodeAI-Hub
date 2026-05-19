@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "bddfd2a5b",
+  "lastRecordedCommit": "a00f69188",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-managed-agent-release-build-start",
-  "expectedCommitMessage": "docs: mark kimi managed agent release build started",
+  "currentTaskId": "phase8-kimi-managed-agent-release-build",
+  "expectedCommitMessage": "chore: release kimi managed agent profile build",
   "debt": {
-    "expectedCommitMessage": "docs: mark kimi managed agent release build started",
-    "preCommitHead": "bddfd2a5b",
+    "expectedCommitMessage": "chore: release kimi managed agent profile build",
+    "preCommitHead": "a00f69188",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-managed-agent-release-build-start"
+    "taskId": "phase8-kimi-managed-agent-release-build"
   }
 }
 ```
@@ -444,9 +444,13 @@
 1. [DONE] `phase8-kimi-managed-agent-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.312 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi managed agent release notes`.
 2. [DONE] Git Commit: `docs: prepare kimi managed agent release notes` (hash: bddfd2a5b)
 3. [DONE] `phase8-kimi-managed-agent-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi managed agent release build started`.
-4. [PENDING] Git Commit: `docs: mark kimi managed agent release build started` (hash: TBD)
-5. [TODO] `phase8-kimi-managed-agent-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi managed agent profile build`.
-6. [TODO] Git Commit: `chore: release kimi managed agent profile build` (hash: TBD)
+4. [DONE] Git Commit: `docs: mark kimi managed agent release build started` (hash: a00f69188)
+5. [DONE] `phase8-kimi-managed-agent-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi managed agent profile build`.
+   - Result: `./scripts/build-all.sh --allow-dirty` passed for version `1.2.312`; `--allow-dirty` used because the active release task kept machine-managed `doc/TODO/todo-plan.md` dirty after post-commit advancement.
+   - Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.312.vsix`, package size `48M`.
+   - Result: release tarballs available in `~/.codeai-hub/releases/` and `doc/tmp/releases/`: `kimi-module-1.2.312.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.312.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.312.tar.bz2`, provider/UI tarballs.
+   - Result: release validation confirmed Kimi provider bundle loads, Core runtime includes Kimi provider module, SDK/provider module exclusions verified, markdown links OK, duplication check within threshold, VSIX runtime package surface verified.
+6. [PENDING] Git Commit: `chore: release kimi managed agent profile build` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
