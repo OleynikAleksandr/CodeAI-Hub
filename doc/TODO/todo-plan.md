@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "f6f80509d",
+  "lastRecordedCommit": "818645e38",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-thinking-panel-standalone",
-  "expectedCommitMessage": "fix: render thinking panels standalone",
+  "currentTaskId": "phase8-kimi-progress-example-guidance",
+  "expectedCommitMessage": "fix: add kimi progress update examples",
   "debt": {
-    "expectedCommitMessage": "fix: render thinking panels standalone",
-    "preCommitHead": "f6f80509d",
+    "expectedCommitMessage": "fix: add kimi progress update examples",
+    "preCommitHead": "818645e38",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-thinking-panel-standalone"
+    "taskId": "phase8-kimi-progress-example-guidance"
   }
 }
 ```
@@ -456,9 +456,11 @@
 1. [DONE] `phase8-kimi-progress-cadence` Усилить managed Kimi system prompt: требовать user-visible progress summaries чаще, минимум два промежуточных ordinary assistant updates для multi-minute managed artifact work, и переносить user-safe operational summary из reasoning в обычный текст — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: strengthen kimi visible progress cadence`.
 2. [DONE] Git Commit: `fix: strengthen kimi visible progress cadence` (hash: f6f80509d)
 3. [DONE] `phase8-kimi-thinking-panel-standalone` Исправить dialog reasoning/thinking card: `role="thinking"` должен рендериться самостоятельной плашкой без отрицательного overlay над следующим assistant message, аналогично current Codex standalone thinking card — scope: `media/session-view.css, doc/TODO/todo-plan.md`; expected commit: `fix: render thinking panels standalone`.
-4. [PENDING] Git Commit: `fix: render thinking panels standalone` (hash: TBD)
-5. [TODO] `phase8-kimi-progress-panel-verification` Выполнить targeted verification для Kimi prompt/profile и Session UI thinking panel CSS; зафиксировать результаты — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi progress panel verification`.
-6. [TODO] Git Commit: `docs: record kimi progress panel verification` (hash: TBD)
+4. [DONE] Git Commit: `fix: render thinking panels standalone` (hash: 818645e38)
+5. [DONE] `phase8-kimi-progress-example-guidance` На основании реального Kimi Virtual Simulation log добавить в managed prompt конкретные примеры visible progress summaries и reasoning-budget правило: не накапливать длинное hidden reasoning без ordinary assistant update — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: add kimi progress update examples`.
+6. [PENDING] Git Commit: `fix: add kimi progress update examples` (hash: TBD)
+7. [TODO] `phase8-kimi-progress-panel-verification` Выполнить targeted verification для Kimi prompt/profile и Session UI thinking panel CSS; зафиксировать результаты — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record kimi progress panel verification`.
+8. [TODO] Git Commit: `docs: record kimi progress panel verification` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
