@@ -15,11 +15,8 @@ import type {
   ClaudeWorkspaceOptions,
   ModuleReporter,
 } from "../types";
-import { resolveClaudeProviderProjectDir } from "./claude-provider-home";
-import {
-  CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
-  CODEAI_CLAUDE_WORKFLOW_TOOLS,
-} from "./claude-workflow-system-prompt";
+import { buildClaudeCodeRuntimeProfile } from "./claude-runtime-profile";
+import { CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT } from "./claude-workflow-system-prompt";
 
 export type QueryFunction = (payload: {
   readonly prompt: string;
@@ -267,6 +264,9 @@ export class ClaudeSDKManager {
     const appliedConfig = readAppliedClaudeTurnConfig(turnOptions);
     const resolvedModel =
       appliedConfig?.modelId ?? this.deps.workspace.defaultModel;
+    const runtimeProfile = buildClaudeCodeRuntimeProfile({
+      projectSlug: this.deps.workspace.claudeProjectSlug,
+    });
     const thinkingOptions = this.resolveThinkingOptions(
       settingsSnapshot,
       appliedConfig
@@ -281,9 +281,9 @@ export class ClaudeSDKManager {
       projectPath: this.resolveProjectPath(),
       // Keep CodeAI Hub-managed Claude turns in SDK isolation mode so
       // CLAUDE.md/settings discovery cannot walk parent directories from cwd.
-      settingSources: [],
+      settingSources: [...runtimeProfile.settingSources],
       systemPrompt: CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
-      tools: [...CODEAI_CLAUDE_WORKFLOW_TOOLS],
+      tools: [...runtimeProfile.toolNames],
       env: this.resolveAuthEnvironment(),
       pathToClaudeCodeExecutable: this.deps.installer.getExecutablePath(),
     };
@@ -309,9 +309,9 @@ export class ClaudeSDKManager {
   }
 
   private resolveProjectPath(): string {
-    return resolveClaudeProviderProjectDir(
-      this.deps.workspace.claudeProjectSlug
-    );
+    return buildClaudeCodeRuntimeProfile({
+      projectSlug: this.deps.workspace.claudeProjectSlug,
+    }).projectPath;
   }
 
   private resolveAuthEnvironment(): NodeJS.ProcessEnv {

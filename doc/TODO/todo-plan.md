@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "25916925a",
+  "lastRecordedCommit": "eb522a746",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase3-kimi-claude-code-live-evidence",
-  "expectedCommitMessage": "docs: record kimi claude code feasibility result",
+  "currentTaskId": "phase4-claude-runtime-profile-contract",
+  "expectedCommitMessage": "refactor: define claude code runtime profiles",
   "debt": {
-    "expectedCommitMessage": "docs: record kimi claude code feasibility result",
-    "preCommitHead": "25916925a",
+    "expectedCommitMessage": "refactor: define claude code runtime profiles",
+    "preCommitHead": "eb522a746",
     "stage": "commit_pending",
-    "taskId": "phase3-kimi-claude-code-live-evidence"
+    "taskId": "phase4-claude-runtime-profile-contract"
   }
 }
 ```
@@ -66,12 +66,12 @@
 3. [DONE] `phase3-kimi-claude-code-diagnostic-runner` Добавить диагностический runner для live probe через Claude Code-compatible SDK/CLI path: short answer, workflow-style prompt, minimal tools, categorized failure output, no secret logging — scope: `packages/Claude_Module/src/diagnostics, packages/Claude_Module/src/index.ts, doc/TODO/todo-plan.md`; expected commit: `feat: probe kimi through claude code runtime`.
 4. [DONE] Git Commit: `feat: probe kimi through claude code runtime` (hash: 25916925a)
 5. [DONE] `phase3-kimi-claude-code-live-evidence` Запустить live probe, зафиксировать evidence/decision по HTTP/runtime, workflow prompt, tool loop, lifecycle и isolation gates; если gate failed — остановить product integration и оформить blocker — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code feasibility result`.
-6. [PENDING] Git Commit: `docs: record kimi claude code feasibility result` (hash: TBD)
+6. [DONE] Git Commit: `docs: record kimi claude code feasibility result` (hash: eb522a746)
 
 ## Phase 4 — Runtime Profile Extraction (owner: Codex, updated: 2026-05-19)
 ### Stream: Claude Runtime Profiles
-1. [TODO] `phase4-claude-runtime-profile-contract` Выделить контракт runtime profile, разделяющий обычный `claudeCode` subscription profile и будущий `kimiClaudeCode` API-key/base-url profile, без изменения поведения Claude по умолчанию — scope: `packages/Claude_Module/src/sdk, packages/Claude_Module/src/auth, doc/TODO/todo-plan.md`; expected commit: `refactor: define claude code runtime profiles`.
-2. [TODO] Git Commit: `refactor: define claude code runtime profiles` (hash: TBD)
+1. [DONE] `phase4-claude-runtime-profile-contract` Выделить контракт runtime profile, разделяющий обычный `claudeCode` subscription profile и будущий `kimiClaudeCode` API-key/base-url profile, без изменения поведения Claude по умолчанию — scope: `packages/Claude_Module/src/sdk, packages/Claude_Module/src/auth, doc/TODO/todo-plan.md`; expected commit: `refactor: define claude code runtime profiles`.
+2. [PENDING] Git Commit: `refactor: define claude code runtime profiles` (hash: TBD)
 3. [TODO] `phase4-kimi-claude-code-auth-profile` Реализовать Kimi-Claude-Code auth profile: `HOME=~/.codeai-hub/providers/kimi-claude-code/home`, proven base URL, API key resolution, secret-safe logging — scope: `packages/Claude_Module/src/kimi-claude-code, packages/Claude_Module/src/auth, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: add kimi claude code auth profile`.
 4. [TODO] Git Commit: `feat: add kimi claude code auth profile` (hash: TBD)
 5. [TODO] `phase4-claude-sdk-profile-wiring` Подключить profile selection в Claude SDK manager/factory так, чтобы обычный Claude путь продолжал использовать subscription auth, а Kimi-Claude-Code путь использовал отдельный profile — scope: `packages/Claude_Module/src/sdk, packages/Claude_Module/src/provider, doc/TODO/todo-plan.md`; expected commit: `refactor: support kimi claude code runtime profile`.
