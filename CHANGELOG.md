@@ -8,6 +8,29 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.316] - 2026-05-19
+### Added
+- **Kimi-Claude-Code is available as a separate comparison provider.** Users can select `Kimi-Claude-Code` to run Kimi 2.6 through the Claude Code-compatible runtime while native `Kimi` remains the Wire-based provider.
+- **Kimi-Claude-Code has isolated runtime/auth state.** The runtime uses `~/.codeai-hub/providers/kimi-claude-code/home`, maps Kimi's Anthropic-compatible endpoint through `ANTHROPIC_BASE_URL=https://api.kimi.com/coding`, and resolves the Kimi API key from explicit env or `~/.kimi/config.toml` without logging or persisting the secret.
+- **Kimi-Claude-Code is wired through product surfaces.** Settings, Description/start cards, Development Tree cards, provider inheritance, Session UI identity, and Capture Workbench now recognize `kimiClaudeCode`.
+
+### Changed
+- **Claude and native Kimi boundaries are explicit.** Claude remains subscription/OAuth based, native Kimi remains Wire based, and Kimi-Claude-Code is documented as a third runtime condition.
+- **Kimi-Claude-Code telemetry is honest.** Usage/context rows render as unavailable instead of reusing Claude telemetry or unproven native Kimi usage data.
+
+### Tests
+- `npm test --workspace packages/Claude_Module`
+- `npm test --workspace packages/core`
+- `node --test packages/core/dist/provider-registry/provider-descriptor-factory.test.js packages/core/dist/config/provider-settings-snapshot.test.js packages/core/dist/provider-network-capture/native-request-capture-reasoning-override.test.js packages/core/dist/provider-network-capture/native-request-capture-facade.test.js`
+- `node --test packages/Claude_Module/dist/sdk/claude-sdk-manager.test.js packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js`
+- `npm run build --workspace packages/Claude_Module`
+- `npm run build --workspace packages/core`
+- `npm run build --workspace packages/Kimi_Module`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- Live Kimi-Claude-Code SDK smoke: returned `KIMI_CLAUDE_CODE_LIVE_SMOKE_OK`.
+- Live native Kimi Wire smoke: returned `KIMI_NATIVE_LIVE_SMOKE_OK`.
+
 ## [1.2.315] - 2026-05-19
 ### Added
 - **Kimi usage limits now use live Kimi coding telemetry.** The Kimi adapter reads the existing `~/.kimi/config.toml` `providers.kimi-for-coding.api_key`, calls `https://api.kimi.com/coding/v1/usages`, and broadcasts `5h` plus `Weekly` usage rows without logging or persisting the secret.

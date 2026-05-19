@@ -2,21 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.315** (Session context and Kimi usage telemetry)
+**Current Release — v1.2.316** (Kimi-Claude-Code provider experiment)
 
-This release clarifies session context-window percentage display and wires Kimi
-usage telemetry into the Session ID usage bar. The status panel now treats the
-context chip as remaining context percentage, while Kimi `StatusUpdate`
-context-token fields update the same provider-neutral token usage snapshot path
-used by the other providers.
+This release adds `Kimi-Claude-Code` as a separate provider option for comparing
+Kimi 2.6 behavior through the Claude Code-compatible runtime. It uses the
+Kimi Anthropic-compatible coding endpoint, keeps runtime state isolated under
+`~/.codeai-hub/providers/kimi-claude-code/home`, resolves the existing Kimi API
+key without persisting it in CodeAI settings, and reuses the CodeAI-owned Claude
+workflow system prompt/tool profile.
 
-Kimi usage limits now read the existing authorized Kimi config from
-`~/.kimi/config.toml` and call the Kimi coding usage endpoint without storing or
-logging the API key. The Session ID usage bar can show Kimi `5h` and `Weekly`
-percentages when the endpoint is available, and still degrades to explicit
-unavailable labels instead of fake values when telemetry cannot be read.
+Kimi-Claude-Code is available in Settings, Description/provider start cards,
+workflow continuation defaults, Development Tree start/fix cards, Session UI
+provider identity, native request capture, and provider inheritance. Usage and
+context telemetry intentionally render as unavailable until a matching live
+Kimi-Claude-Code account source is proven.
 
-The previous Kimi provider inheritance behavior remains included.
+The previous session context and Kimi usage telemetry behavior remains included.
 
 This hotfix keeps Kimi selected across managed workflow steps. When Description
 or an upstream managed stage is started with Kimi, the next start card now

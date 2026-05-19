@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "d15080704",
+  "lastRecordedCommit": "41a76ef41",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase11-kimi-claude-code-live-smoke",
-  "expectedCommitMessage": "docs: record kimi claude code live smoke result",
+  "currentTaskId": "phase13-kimi-claude-code-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi claude code release notes",
   "debt": {
-    "expectedCommitMessage": "docs: record kimi claude code live smoke result",
-    "preCommitHead": "d15080704",
+    "expectedCommitMessage": "docs: prepare kimi claude code release notes",
+    "preCommitHead": "41a76ef41",
     "stage": "commit_pending",
-    "taskId": "phase11-kimi-claude-code-live-smoke"
+    "taskId": "phase13-kimi-claude-code-release-notes"
   }
 }
 ```
@@ -136,16 +136,16 @@
 3. [DONE] `phase11-kimi-claude-code-target-builds` Выполнить targeted builds/typechecks для затронутых пакетов/UI (`npm run build --workspace ...`, `npm run build:webview`, `npm run typecheck:webview` по фактическому scope) и зафиксировать результат — scope: `doc/TODO/todo-plan.md, media/react-chat.js`; expected commit: `chore: verify kimi claude code targeted builds`. Result: `npm run build --workspace packages/Claude_Module`, `npm run build --workspace packages/core`, `npm run typecheck:webview`, and `npm run build:webview` passed.
 4. [DONE] Git Commit: `chore: verify kimi claude code targeted builds` (hash: d15080704)
 5. [DONE] `phase11-kimi-claude-code-live-smoke` Выполнить live smoke на одинаковом workflow prompt: native Kimi vs Kimi-Claude-Code, проверить visible progress/final, unlock input, artifacts and stop behavior — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code live smoke result`. Result: Kimi-Claude-Code SDK smoke returned `KIMI_CLAUDE_CODE_LIVE_SMOKE_OK` with `assistant` + `result` events; native Kimi Wire smoke returned `KIMI_NATIVE_LIVE_SMOKE_OK` with `turn_started`, `status_update`, `thinking`, `assistant`, and `turn_completed`.
-6. [PENDING] Git Commit: `docs: record kimi claude code live smoke result` (hash: TBD)
+6. [DONE] Git Commit: `docs: record kimi claude code live smoke result` (hash: 41a76ef41)
 
 ## Phase 12 — Release Build Confirmation Gate (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Confirmation
-1. [TODO] `phase12-kimi-claude-code-release-confirmation` После targeted verification остановиться и запросить отдельное явное подтверждение пользователя на release build; до подтверждения не менять README/CHANGELOG версии и не запускать `build-all.sh`/`build-release.sh` — scope: без изменения файлов; expected commit: none.
+1. [DONE] `phase12-kimi-claude-code-release-confirmation` После targeted verification остановиться и запросить отдельное явное подтверждение пользователя на release build; до подтверждения не менять README/CHANGELOG версии и не запускать `build-all.sh`/`build-release.sh` — scope: без изменения файлов; expected commit: none. Result: --help
 
 ## Phase 13 — Release Build (owner: Codex, updated: 2026-05-19)
 ### Stream: Release Build
-1. [TODO] `phase13-kimi-claude-code-release-notes` После явного подтверждения пользователя обновить README/CHANGELOG на будущую версию и связанные docs, если затронуты — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi claude code release notes`.
-2. [TODO] Git Commit: `docs: prepare kimi claude code release notes` (hash: TBD)
+1. [DONE] `phase13-kimi-claude-code-release-notes` После явного подтверждения пользователя обновить README/CHANGELOG на будущую версию и связанные docs, если затронуты — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi claude code release notes`. Result: README/CHANGELOG prepared for v1.2.316 with Kimi-Claude-Code provider notes, boundary notes, verification commands, and live smoke evidence.
+2. [PENDING] Git Commit: `docs: prepare kimi claude code release notes` (hash: TBD)
 3. [TODO] `phase13-kimi-claude-code-build-all` Запустить `./scripts/build-all.sh`, затем при необходимости `./scripts/build-release.sh --use-current-version`, перенести/проверить release artifacts and VSIX — scope: `package manifests, release artifacts, doc/TODO/todo-plan.md`; expected commit: `chore: build kimi claude code release`.
 4. [TODO] Git Commit: `chore: build kimi claude code release` (hash: TBD)
 
