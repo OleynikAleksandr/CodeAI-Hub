@@ -31,7 +31,7 @@
 Её truth sources:
 - `binding.providerSessionId` и `binding.status` приходят из live snapshot/binding path;
 - `status.usageLimits` и `status.usageLimitLabels` приходят только из live snapshot;
-- provider scope для usage limits нормализован в provider-global contract (`claude:global`, `codex:global`, `gemini:global`);
+- provider scope для usage limits нормализован в provider-global contract (`claude:global`, `codex:global`, `gemini:global`, `kimi:global`);
 - persistent fallback cache для usage limits отсутствует.
 
 Следствие: если snapshot не получил реальный runtime binding или usage-limits stream event, панель ничего не "вспомнит" из старого кэша и не нарисует лимиты искусственно.
@@ -55,6 +55,7 @@
 Особенности:
 - для `claude/codex` fallback labels = `Session`, `Weekly`, `Model Weekly`;
 - для `gemini` fallback labels = `Primary`, `Secondary`, `Tertiary`;
+- для `kimi` live labels должны быть explicit: `5h`, `Weekly`, `Parallel` или близкие короткие user-facing equivalents, потому что Kimi endpoint возвращает rolling 300-minute window, weekly quota и concurrency limit;
 - третья строка рендерится только если для неё реально известен `percentUsed`;
 - reset label строится из `resetsAt` и подставляется в подпись строки.
 
@@ -161,6 +162,26 @@ Usage limits side:
 - `session:stream` usage-limit payloads
 - `updateSnapshotsWithUsageLimits(...)`
 - manual refresh через `api.refreshUsageLimits({ sessionId, providerId, providerSessionId })`
+
+### Kimi usage source discovery (2026-05-19)
+
+Kimi Code Console / community quota tracker discovery confirmed an authenticated usage endpoint:
+
+- `GET https://api.kimi.com/coding/v1/usages`
+- Authorization: `Bearer <Kimi Code API key>`
+
+The response shape includes:
+
+- `usage.limit/used/remaining/resetTime` — weekly quota. In observed data the limit is `"100"`, so this is a percentage-like credit scale, not raw request count.
+- `limits[0].window.duration = 300` and `timeUnit = TIME_UNIT_MINUTE` — rolling 5-hour window.
+- `limits[0].detail.limit/used/remaining/resetTime` — current 5-hour window usage.
+- `parallel.limit` — concurrent task/session limit; it is a capacity value, not a percent-used value. UI may expose it as a third informational row only if the row contract supports non-percent capacity labels, otherwise it should stay out of the bar until the UI contract is extended.
+
+Kimi module implication:
+- `currentSession` should map to the rolling 300-minute window (`5h`) percent used.
+- `currentWeekAllModels` should map to weekly quota percent used.
+- `currentWeekSonnetOnly` must not be reused for fake model-weekly data; for Kimi it can only represent `Parallel` if the UI supports capacity-only labels without a progress fill.
+- On `401` / `403` / timeout / malformed payload the adapter must keep the explicit unavailable state instead of showing stale or guessed values.
 
 ## Инварианты, которые нельзя ломать дальше
 

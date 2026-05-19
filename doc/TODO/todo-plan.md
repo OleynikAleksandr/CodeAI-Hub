@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "a584dd433",
+  "lastRecordedCommit": "c232428cd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase1-context-window-audit",
-  "expectedCommitMessage": "docs: audit session context percentage contract",
+  "currentTaskId": "phase1-usage-limits-audit",
+  "expectedCommitMessage": "docs: audit provider usage limits contract",
   "debt": {
-    "expectedCommitMessage": "docs: audit session context percentage contract",
-    "preCommitHead": "a584dd433",
+    "expectedCommitMessage": "docs: audit provider usage limits contract",
+    "preCommitHead": "c232428cd",
     "stage": "commit_pending",
-    "taskId": "phase1-context-window-audit"
+    "taskId": "phase1-usage-limits-audit"
   }
 }
 ```
@@ -64,11 +64,11 @@
 ## Phase 1 — Telemetry Contract Audit (owner: Codex, updated: 2026-05-19)
 ### Stream: Context Window Token Usage Audit
 1. [DONE] `phase1-context-window-audit` Проследить путь `tokenUsage` от provider events/Core stream до `SessionStatusPanel`, зафиксировать фактическую semantics процента и gaps по Kimi — scope: `src/client/ui/src/session/status-panel.tsx, src/client/project-manager/components/sessions/token-usage-stream.ts, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`; expected commit: `docs: audit session context percentage contract`.
-2. [PENDING] Git Commit: `docs: audit session context percentage contract` (hash: TBD)
+2. [DONE] Git Commit: `docs: audit session context percentage contract` (hash: c232428cd)
 
 ### Stream: Usage Limits Audit
-1. [TODO] `phase1-usage-limits-audit` Проследить путь `usageLimits` от provider adapters/Core usage-limits bridge до `SessionIdBar`, включая Kimi unavailable boundary — scope: `src/client/ui/src/session/session-id-bar.tsx, packages/core/src/provider-usage-limits, doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md`; expected commit: `docs: audit provider usage limits contract`.
-2. [TODO] Git Commit: `docs: audit provider usage limits contract` (hash: TBD)
+1. [DONE] `phase1-usage-limits-audit` Проследить путь `usageLimits` от provider adapters/Core usage-limits bridge до `SessionIdBar`, включая найденный Kimi `coding/v1/usages` endpoint и planning-source correction — scope: `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionIdUsageBar.md, doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: audit provider usage limits contract`.
+2. [PENDING] Git Commit: `docs: audit provider usage limits contract` (hash: TBD)
 
 ## Phase 2 — Context Window Status Panel (owner: Codex, updated: 2026-05-19)
 ### Stream: Percentage Formatter Contract

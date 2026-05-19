@@ -33,7 +33,7 @@ Provider events уже несут token usage разными путями:
 - Claude — `/context` read после turn-а;
 - Codex — `thread/tokenUsage/updated`;
 - Gemini — `usageMetadata.totalTokenCount` + configured `contextWindowTokenLimit`;
-- Kimi — на текущем baseline explicit token-usage snapshot не подтвержден как полноценный provider contract.
+- Kimi — Wire `StatusUpdate` подтвержденно несет `context_usage`, `context_tokens`, `max_context_tokens` и per-turn `token_usage`; для UI status panel source должен быть `context_tokens/max_context_tokens`.
 
 ### Provider usage limits
 
@@ -57,7 +57,15 @@ Provider events уже несут token usage разными путями:
 - labels `Session / Weekly / Model Weekly`
 - diagnostics `source: "kimi_unavailable"`
 
-То есть UI корректно показывает `unavailable`, но следующий scope должен проверить, можно ли добывать реальные 5-часовые/weekly лимиты хотя бы для тех провайдеров, которые их возвращают.
+Discovery от 2026-05-19 подтвердил рабочий Kimi Code usage endpoint:
+
+- `GET https://api.kimi.com/coding/v1/usages`
+- Authorization: `Bearer <Kimi Code API key>`
+- `usage.*` = weekly quota;
+- `limits[0].window.duration = 300` minutes = rolling 5-hour window;
+- `parallel.limit` = concurrency capacity.
+
+Следовательно, текущий `unavailable` для Kimi является временным baseline, а реализация этого scope должна заменить его на live reader с fail-closed fallback.
 
 ## 3. Архитектурные инварианты
 
@@ -76,9 +84,9 @@ Provider events уже несут token usage разными путями:
    - Claude headers / OAuth reader;
    - Codex app-server rate-limit snapshot;
    - Gemini shared usage facade;
-   - Kimi Wire / CLI diagnostics.
+   - Kimi `api.kimi.com/coding/v1/usages` with Kimi Code API key.
 4. Нужно ли переименовать rows `Session / Weekly / Model Weekly` в более явные `5h / Weekly / Model weekly`, если provider source подтверждает такой смысл.
-5. Для Kimi: оставляем `unavailable` или добавляем диагностический probe, если CLI умеет вернуть subscription/rate-limit state.
+5. Для Kimi: источник найден; нужно реализовать reader, который берет API key из already-authorized `~/.kimi/config.toml` / Kimi workspace config, не сохраняет ключ в CodeAI settings и fail-closes в `unavailable`.
 
 ## 5. Предлагаемая реализация
 
@@ -97,7 +105,7 @@ Provider events уже несут token usage разными путями:
 ### Phase C — usage-limits rows
 
 - Развести labels и semantics для 5-часовых/weekly rows.
-- Не показывать fake values для Kimi.
+- Подключить Kimi `coding/v1/usages`: rolling 300-minute window в `currentSession`, weekly quota в `currentWeekAllModels`, parallel limit как capacity-only diagnostic если UI row contract это поддерживает.
 - Добавить provider-specific tests для нормализации labels/percent/reset.
 
 ### Phase D — verification and release
