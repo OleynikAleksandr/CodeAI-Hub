@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "de33782dd",
+  "lastRecordedCommit": "6073c1823",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase8-claude-kimi-boundary-docs",
-  "expectedCommitMessage": "docs: sync glm claude code provider boundaries",
+  "currentTaskId": "phase9-glm-provider-tests",
+  "expectedCommitMessage": "test: verify glm claude code provider replacement",
   "debt": {
-    "expectedCommitMessage": "docs: sync glm claude code provider boundaries",
-    "preCommitHead": "de33782dd",
+    "expectedCommitMessage": "test: verify glm claude code provider replacement",
+    "preCommitHead": "6073c1823",
     "stage": "commit_pending",
-    "taskId": "phase8-claude-kimi-boundary-docs"
+    "taskId": "phase9-glm-provider-tests"
   }
 }
 ```
@@ -114,12 +114,12 @@
 1. [DONE] `phase8-glm-module-doc` Replace active Kimi-Claude-Code module doc with GLM-Claude-Code SSOT and update Docs Index module list/Plans note — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi_Claude_Code.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: document glm claude code module`.
 2. [DONE] Git Commit: `docs: document glm claude code module` (hash: de33782dd)
 3. [DONE] `phase8-claude-kimi-boundary-docs` Sync Claude/Kimi docs: remove active Kimi-Claude-Code boundary, add GLM-Claude-Code runtime-profile boundary, keep native Kimi Wire as primary Kimi provider — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md`; expected commit: `docs: sync glm claude code provider boundaries`.
-4. [PENDING] Git Commit: `docs: sync glm claude code provider boundaries` (hash: TBD)
+4. [DONE] Git Commit: `docs: sync glm claude code provider boundaries` (hash: 6073c1823)
 
 ## Phase 9 — Targeted Verification (owner: Codex, updated: 2026-05-19)
 ### Stream: Focused Checks
-1. [TODO] `phase9-glm-provider-tests` Run focused tests for changed Claude module/Core provider registry/settings/capture paths; add repair microtasks before continuing if failures are implementation-related — scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify glm claude code provider replacement`.
-2. [TODO] Git Commit: `test: verify glm claude code provider replacement` (hash: TBD)
+1. [DONE] `phase9-glm-provider-tests` Run focused tests for changed Claude module/Core provider registry/settings/capture paths; add repair microtasks before continuing if failures are implementation-related — scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify glm claude code provider replacement`. Result: removed leftover `kimiClaudeCode` runtime profile/test identifiers from active Claude module sources; `npm test --workspace packages/Claude_Module` passed 20/20; `npm test --workspace packages/core` passed 12/12; `rg` found no active `kimiClaudeCode` references in `packages/Claude_Module` or `packages/core`.
+2. [PENDING] Git Commit: `test: verify glm claude code provider replacement` (hash: TBD)
 3. [TODO] `phase9-glm-target-builds` Run targeted builds/typechecks for changed provider/core/UI packages and record exact results — scope: `packages/Claude_Module, packages/core, src/client`; expected commit: `chore: verify glm claude code targeted builds`.
 4. [TODO] Git Commit: `chore: verify glm claude code targeted builds` (hash: TBD)
 5. [TODO] `phase9-glm-local-config-template` Create isolated local GLM provider config/home template outside Git for user API-key entry and verify missing-key failure is explicit — scope: `~/.codeai-hub/providers/glm-claude-code/config.json, ~/.codeai-hub/providers/glm-claude-code/home, doc/TODO/todo-plan.md`; expected commit: `docs: record glm claude code local config setup`.

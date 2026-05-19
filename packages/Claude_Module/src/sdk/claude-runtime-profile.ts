@@ -4,10 +4,7 @@ import {
 } from "./claude-provider-home";
 import { CODEAI_CLAUDE_WORKFLOW_TOOLS } from "./claude-workflow-system-prompt";
 
-export type ClaudeRuntimeProfileId =
-  | "claudeCode"
-  | "glmClaudeCode"
-  | "kimiClaudeCode";
+export type ClaudeRuntimeProfileId = "claudeCode" | "glmClaudeCode";
 export type ClaudeRuntimeAuthMode = "anthropic-api-key" | "subscription";
 
 export interface ClaudeCodeRuntimeProfile {

@@ -119,11 +119,11 @@ test("ClaudeSDKManager keeps provider sessions in SDK isolation mode", () => {
 test("ClaudeSDKManager applies explicit runtime profile options", () => {
   const manager = createManager(undefined, {
     authMode: "anthropic-api-key",
-    id: "kimiClaudeCode",
-    projectPath: "/provider-home/.claude/projects/kimi",
+    id: "glmClaudeCode",
+    projectPath: "/provider-home/.claude/projects/glm",
     providerHome: "/provider-home",
     settingSources: [],
-    sessionTitle: "CodeAI Kimi-Claude-Code",
+    sessionTitle: "CodeAI GLM Claude Code",
     toolNames: ["Write"],
   });
 
@@ -132,10 +132,10 @@ test("ClaudeSDKManager applies explicit runtime profile options", () => {
     workspacePath: "/tmp/codeai-workspace",
   } as ActiveSession);
 
-  assert.equal(options.projectPath, "/provider-home/.claude/projects/kimi");
+  assert.equal(options.projectPath, "/provider-home/.claude/projects/glm");
   assert.deepEqual(options.settingSources, []);
   assert.deepEqual(options.tools, ["Write"]);
-  assert.equal(options.title, "CodeAI Kimi-Claude-Code");
+  assert.equal(options.title, "CodeAI GLM Claude Code");
 });
 
 test("ClaudeSDKManager passes installed executable to auth preflight", async () => {
