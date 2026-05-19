@@ -105,6 +105,10 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
       defaultModel: "kimi-for-coding",
       thinkingDisplaySyncEnabled: true,
     },
+    kimiClaudeCode: {
+      defaultModel: "kimi-for-coding",
+      thinkingDisplaySyncEnabled: true,
+    },
   },
 } as const;
 
@@ -288,6 +292,7 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       readonly codex: Record<string, unknown>;
       readonly gemini: Record<string, unknown>;
       readonly kimi: Record<string, unknown>;
+      readonly kimiClaudeCode: Record<string, unknown>;
     };
   };
   const rawGeneral = isRecord(settings.general) ? settings.general : {};
@@ -302,6 +307,9 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
   const rawCodex = isRecord(rawProviders.codex) ? rawProviders.codex : {};
   const rawGemini = isRecord(rawProviders.gemini) ? rawProviders.gemini : {};
   const rawKimi = isRecord(rawProviders.kimi) ? rawProviders.kimi : {};
+  const rawKimiClaudeCode = isRecord(rawProviders.kimiClaudeCode)
+    ? rawProviders.kimiClaudeCode
+    : {};
   const normalizedClaudeThinking = normalizeClaudeThinkingSettings({
     defaultThinkingSettings: defaults.providers.claude.thinking as {
       readonly enabled: boolean;
@@ -355,7 +363,8 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
       isRecord(rawProviders.claude) &&
       isRecord(rawProviders.codex) &&
       isRecord(rawProviders.gemini) &&
-      isRecord(rawProviders.kimi)
+      isRecord(rawProviders.kimi) &&
+      isRecord(rawProviders.kimiClaudeCode)
     )
   ) {
     changed = true;
@@ -372,6 +381,9 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
     changed = true;
   }
   if (typeof rawKimi.thinkingDisplaySyncEnabled !== "boolean") {
+    changed = true;
+  }
+  if (typeof rawKimiClaudeCode.thinkingDisplaySyncEnabled !== "boolean") {
     changed = true;
   }
   if (
@@ -407,6 +419,14 @@ export const normalizeLoadedSettingsSnapshotWithDefaults = (
           thinkingDisplaySyncEnabled:
             typeof rawKimi.thinkingDisplaySyncEnabled === "boolean"
               ? rawKimi.thinkingDisplaySyncEnabled
+              : true,
+        },
+        kimiClaudeCode: {
+          ...defaults.providers.kimiClaudeCode,
+          ...rawKimiClaudeCode,
+          thinkingDisplaySyncEnabled:
+            typeof rawKimiClaudeCode.thinkingDisplaySyncEnabled === "boolean"
+              ? rawKimiClaudeCode.thinkingDisplaySyncEnabled
               : true,
         },
       },

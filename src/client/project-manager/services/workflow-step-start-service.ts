@@ -151,20 +151,33 @@ const applyStartCardModelDefaults = (
     return nextSettings;
   }
 
-  if (params.providerId === "kimiCode") {
+  if (
+    params.providerId === "kimiCode" ||
+    params.providerId === "kimiClaudeCode"
+  ) {
     if (!modelId || !isKimiModelId(modelId)) {
       return null;
     }
+    const providerSettingsKey =
+      params.providerId === "kimiClaudeCode" ? "kimiClaudeCode" : "kimi";
+    const fallbackProviderSettings =
+      providerSettingsKey === "kimi"
+        ? {
+            autoUpdate: { enabled: false },
+            defaultModel: DEFAULT_KIMI_MODEL_ID,
+            thinkingDisplaySyncEnabled: true,
+          }
+        : {
+            defaultModel: DEFAULT_KIMI_MODEL_ID,
+            thinkingDisplaySyncEnabled: true,
+          };
     return {
       ...settings,
       providers: {
         ...settings.providers,
-        kimi: {
-          ...(settings.providers.kimi ?? {
-            autoUpdate: { enabled: false },
-            defaultModel: DEFAULT_KIMI_MODEL_ID,
-            thinkingDisplaySyncEnabled: true,
-          }),
+        [providerSettingsKey]: {
+          ...(settings.providers[providerSettingsKey] ??
+            fallbackProviderSettings),
           defaultModel: modelId,
         },
       },

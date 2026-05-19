@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "e019b7888",
+  "lastRecordedCommit": "0da27981b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase7-kimi-claude-code-settings-ui",
-  "expectedCommitMessage": "feat: add kimi claude code claude-family settings",
+  "currentTaskId": "phase7-kimi-claude-code-turn-config",
+  "expectedCommitMessage": "feat: resolve kimi claude code turn config",
   "debt": {
-    "expectedCommitMessage": "feat: add kimi claude code claude-family settings",
-    "preCommitHead": "e019b7888",
+    "expectedCommitMessage": "feat: resolve kimi claude code turn config",
+    "preCommitHead": "0da27981b",
     "stage": "commit_pending",
-    "taskId": "phase7-kimi-claude-code-settings-ui"
+    "taskId": "phase7-kimi-claude-code-turn-config"
   }
 }
 ```
@@ -100,9 +100,9 @@
 1. [DONE] `phase7-kimi-claude-code-settings-schema` Добавить settings schema/defaults под `providers.kimiClaudeCode` с отдельным хранением от Claude и native Kimi — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: add kimi claude code settings schema`.
 2. [DONE] Git Commit: `feat: add kimi claude code settings schema` (hash: e019b7888)
 3. [DONE] `phase7-kimi-claude-code-settings-ui` Добавить Kimi-Claude-Code subsection в Claude-family Settings surface без отдельного лишнего tab, если текущая UI-архитектура это поддерживает — scope: `src/client/ui, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: add kimi claude code claude-family settings`.
-4. [PENDING] Git Commit: `feat: add kimi claude code claude-family settings` (hash: TBD)
-5. [TODO] `phase7-kimi-claude-code-turn-config` Подключить applied turn config/effective model identity resolver для `kimiClaudeCode`, включая provider inheritance into next steps — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: resolve kimi claude code turn config`.
-6. [TODO] Git Commit: `feat: resolve kimi claude code turn config` (hash: TBD)
+4. [DONE] Git Commit: `feat: add kimi claude code claude-family settings` (hash: 0da27981b)
+5. [DONE] `phase7-kimi-claude-code-turn-config` Подключить applied turn config/effective model identity resolver для `kimiClaudeCode`, включая provider inheritance into next steps — scope: `packages/core, src/client, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`; expected commit: `feat: resolve kimi claude code turn config`.
+6. [PENDING] Git Commit: `feat: resolve kimi claude code turn config` (hash: TBD)
 
 ## Phase 8 — Project Manager And Session UI (owner: Codex, updated: 2026-05-19)
 ### Stream: Provider Surfaces
