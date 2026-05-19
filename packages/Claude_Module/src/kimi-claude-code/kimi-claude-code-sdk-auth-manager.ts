@@ -1,9 +1,11 @@
+import { mkdir } from "node:fs/promises";
 import type { ClaudeSDKAuthProvider } from "../sdk/claude-sdk-manager";
 import type { ModuleReporter } from "../types";
 import {
   buildKimiClaudeCodeRuntimeProbeProfile,
   type KimiClaudeCodeRuntimeProbeProfile,
   type KimiClaudeCodeRuntimeProbeProfileOptions,
+  resolveKimiClaudeCodeProjectPath,
 } from "./kimi-claude-code-runtime-profile";
 
 export interface KimiClaudeCodeSDKAuthManagerOptions
@@ -32,7 +34,12 @@ export class KimiClaudeCodeSDKAuthManager implements ClaudeSDKAuthProvider {
   }
 
   async ensureProviderHomeSessionBootstrap(): Promise<void> {
+    const profile = await this.resolveProfile();
     await this.ensureSubscriptionAuth();
+    await mkdir(profile.home, { recursive: true });
+    await mkdir(resolveKimiClaudeCodeProjectPath({ home: profile.home }), {
+      recursive: true,
+    });
   }
 
   getAuthEnvironment(): NodeJS.ProcessEnv {
