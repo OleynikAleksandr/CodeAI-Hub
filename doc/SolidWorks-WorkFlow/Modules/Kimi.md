@@ -68,12 +68,13 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 - Kimi supports `--mcp-config-file` and `--mcp-config`; if CodeAI needs strict tool boundaries, managed Kimi sessions should receive a CodeAI-owned empty or curated MCP config instead of loading user-global `~/.kimi/mcp.json`.
 - Kimi supports `--skills-dir`; skills are injected into the system prompt context. Managed sessions should either use a CodeAI-owned skills directory or avoid custom skills to keep prompt provenance deterministic.
 - Kimi hooks can enforce a second safety layer through `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, session, subagent, compaction, and notification lifecycle events. `PreToolUse` can block sensitive tools or paths by returning a denial decision, but hooks are Beta and should complement, not replace, agent tool allowlists.
-- Current CodeAI Hub Kimi release does not yet pass `--agent-file`, `--mcp-config-file`, `--skills-dir`, `--thinking`, `--no-thinking`, or loop-control flags. It runs Kimi Wire with CodeAI-owned home/env, user auth config, workspace path, and managed auto-approval. Adding managed agent profiles is the next integration layer, not part of the first release runtime contract.
-- Recommended next profiles:
-  - managed write profile: CodeAI system prompt, file read/write/edit, glob/grep, and shell only when the workflow stage permits commands;
-  - read-only review/profile: CodeAI system prompt, `ReadFile`, `Glob`, `Grep`, optionally `AskUserQuestion`, with no write or shell tools;
-  - planning profile: CodeAI system prompt plus read-only tools, optionally provider-native `--plan`;
-  - strict MCP profile: explicit empty or curated MCP config for managed sessions.
+- Current CodeAI Hub Kimi runtime materializes a CodeAI-owned managed agent profile under `~/.codeai-hub/providers/kimi/home/codeai-managed-agent/` before Wire startup.
+- Current Kimi Wire startup passes `--agent-file <providerHome>/codeai-managed-agent/agent.yaml`, `--mcp-config-file <providerHome>/codeai-managed-agent/mcp-empty.json`, `--skills-dir <providerHome>/codeai-managed-agent/skills-empty`, `--yolo`, and `--work-dir <workspace>`.
+- The managed `agent.yaml` does not extend the Kimi default agent. Its tool allowlist is limited to `ReadFile`, `ReadMediaFile`, `Glob`, `Grep`, `WriteFile`, and `StrReplaceFile`.
+- The managed Kimi system prompt intentionally omits `${KIMI_AGENTS_MD}` and `${KIMI_SKILLS}`. CodeAI Core and the first Core-built user prompt own workflow/project instructions; provider-global project instructions, AGENTS.md blocks, skills, MCP resources, and repository implementation source are not prompt truth for managed Kimi turns.
+- The managed profile explicitly denies shell, web, subagents, background tasks, MCP tools, provider skills, and Git operations. Core remains responsible for commits, validation, workflow state transitions, and approval surfaces.
+- The managed profile asks Kimi to emit visible ordinary assistant progress updates roughly every 30 seconds during long work, matching the Codex/GPT-5.5 UX target. This is an instruction-level control, not a protocol guarantee: Core must still rely on Wire lifecycle, `think` chunks, and status events to avoid stuck-working UI.
+- Kimi still has no confirmed provider-native reasoning effort or encrypted reasoning-summary control in this release; CodeAI controls only reasoning visibility/rendering and the prompt request for visible progress cadence.
 
 ## Project Manager surfaces
 - Kimi must be visible anywhere users choose or inspect a provider: Settings provider card, Description submit provider picker, workflow start cards, Development Tree start/fix cards, Session UI status-line/model chip, provider labels, and provider color/theme mapping.
