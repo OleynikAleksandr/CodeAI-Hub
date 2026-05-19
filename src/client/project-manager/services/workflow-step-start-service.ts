@@ -153,13 +153,13 @@ const applyStartCardModelDefaults = (
 
   if (
     params.providerId === "kimiCode" ||
-    params.providerId === "kimiClaudeCode"
+    params.providerId === "glmClaudeCode"
   ) {
     if (!modelId || !isKimiModelId(modelId)) {
       return null;
     }
     const providerSettingsKey =
-      params.providerId === "kimiClaudeCode" ? "kimiClaudeCode" : "kimi";
+      params.providerId === "glmClaudeCode" ? "glmClaudeCode" : "kimi";
     const fallbackProviderSettings =
       providerSettingsKey === "kimi"
         ? {

@@ -37,9 +37,9 @@ export type StartCardModelSelection = {
   readonly reasoning: string;
 };
 
-const KIMI_CLAUDE_CODE_MODEL_LABEL = "Kimi 2.6 / Claude-Kimi";
-const KIMI_CLAUDE_CODE_MODEL_DESCRIPTION =
-  "Kimi 2.6 exposed through the Claude Agent SDK-compatible runtime.";
+const GLM_CLAUDE_CODE_MODEL_LABEL = "GLM 5.1 / Claude Code";
+const GLM_CLAUDE_CODE_MODEL_DESCRIPTION =
+  "GLM 5.1 exposed through the Claude Agent SDK-compatible runtime.";
 
 const isSettings = (value: unknown): value is Settings =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -68,11 +68,11 @@ export const getStartCardModelOptions = (
       label: model.displayName,
     }));
   }
-  if (providerId === "kimiClaudeCode") {
+  if (providerId === "glmClaudeCode") {
     return KIMI_RECOMMENDED_MODELS.map((model) => ({
-      description: KIMI_CLAUDE_CODE_MODEL_DESCRIPTION,
+      description: GLM_CLAUDE_CODE_MODEL_DESCRIPTION,
       id: model.id,
-      label: KIMI_CLAUDE_CODE_MODEL_LABEL,
+      label: GLM_CLAUDE_CODE_MODEL_LABEL,
     }));
   }
   return GEMINI_RECOMMENDED_MODELS.map((model) => ({
@@ -104,7 +104,7 @@ export const getStartCardReasoningOptions = (
       label: effort,
     }));
   }
-  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
+  if (providerId === "kimiCode" || providerId === "glmClaudeCode") {
     return [{ id: "default", label: "default" }];
   }
   const model =
@@ -138,11 +138,11 @@ export const resolveDefaultStartCardModelSelection = (
         DEFAULT_CODEX_REASONING_LEVEL,
     };
   }
-  if (providerId === "kimiCode" || providerId === "kimiClaudeCode") {
+  if (providerId === "kimiCode" || providerId === "glmClaudeCode") {
     return {
       modelId:
-        (providerId === "kimiClaudeCode"
-          ? settings?.providers.kimiClaudeCode?.defaultModel
+        (providerId === "glmClaudeCode"
+          ? settings?.providers.glmClaudeCode?.defaultModel
           : settings?.providers.kimi?.defaultModel) ?? DEFAULT_KIMI_MODEL_ID,
       reasoning: "default",
     };

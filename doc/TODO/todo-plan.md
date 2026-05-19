@@ -8,15 +8,15 @@
   "planId": "glm-claude-code-provider-replacement-2026-05-19",
   "branch": "main",
   "baseHead": "6a69c53c4",
-  "lastRecordedCommit": "0d39ebb7b",
+  "lastRecordedCommit": "61cdc84df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/GLM_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase5-glm-settings-persistence",
-  "expectedCommitMessage": "refactor: persist glm claude code settings",
+  "currentTaskId": "phase6-glm-start-card-model-selection",
+  "expectedCommitMessage": "refactor: show glm claude code in workflow start cards",
   "debt": {
-    "expectedCommitMessage": "refactor: persist glm claude code settings",
-    "preCommitHead": "0d39ebb7b",
+    "expectedCommitMessage": "refactor: show glm claude code in workflow start cards",
+    "preCommitHead": "61cdc84df",
     "stage": "commit_pending",
-    "taskId": "phase5-glm-settings-persistence"
+    "taskId": "phase6-glm-start-card-model-selection"
   }
 }
 ```
@@ -87,12 +87,12 @@
 5. [DONE] `phase5-glm-pm-settings-bridge` Replace Project Manager settings bridge handlers from Kimi-Claude-Code to GLM-Claude-Code so PM settings save/load and default model lookup use `providers.glmClaudeCode` — scope: `src/client/project-manager/components/settings/project-manager-settings-host-message.ts, src/client/project-manager/components/settings/use-project-manager-kimi-settings-handlers.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts`; expected commit: `refactor: wire glm claude code project manager settings`.
 6. [DONE] Git Commit: `refactor: wire glm claude code project manager settings` (hash: 0d39ebb7b)
 7. [DONE] `phase5-glm-settings-persistence` Replace Core settings persistence defaults/normalization from `kimiClaudeCode` to `glmClaudeCode`, including config defaults and secret-safe reset behavior — scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/components/settings/kimi-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `refactor: persist glm claude code settings`.
-8. [PENDING] Git Commit: `refactor: persist glm claude code settings` (hash: TBD)
+8. [DONE] Git Commit: `refactor: persist glm claude code settings` (hash: 61cdc84df)
 
 ## Phase 6 — Provider Selection Surfaces (owner: Codex, updated: 2026-05-19)
 ### Stream: Workflow Cards
-1. [TODO] `phase6-glm-start-card-model-selection` Replace start-card model labels/defaults with `GLM 5.1 / Claude-Code` and preserve native Kimi separately — scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `refactor: show glm claude code in workflow start cards`.
-2. [TODO] Git Commit: `refactor: show glm claude code in workflow start cards` (hash: TBD)
+1. [DONE] `phase6-glm-start-card-model-selection` Replace start-card model labels/defaults with `GLM 5.1 / Claude-Code` and preserve native Kimi separately — scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `refactor: show glm claude code in workflow start cards`.
+2. [PENDING] Git Commit: `refactor: show glm claude code in workflow start cards` (hash: TBD)
 3. [TODO] `phase6-glm-card-provider-tint` Replace provider guards/tints in shared confirmation and Development Tree start cards from Kimi-Claude-Code to GLM-Claude-Code — scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `refactor: show glm claude code provider tint`.
 4. [TODO] Git Commit: `refactor: show glm claude code provider tint` (hash: TBD)
 5. [TODO] `phase6-glm-description-devtree-picker` Replace Description provider picker copy and Development Tree provider guard so only native Kimi plus GLM-Claude-Code appear — scope: `src/client/project-manager/components/description/description-provider-picker.tsx, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/use-step-provider-resolver.ts`; expected commit: `refactor: expose glm claude code in step pickers`.
