@@ -23,6 +23,17 @@ const shouldFlushThinkingStreamChunk = (content: string): boolean => {
   );
 };
 
+const readNumber = (value: unknown): number | null => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value !== "string") {
+    return null;
+  }
+  const parsed = Number.parseFloat(value.trim().replace(/,/g, ""));
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
 const createEvent = (
   eventType: string,
   payload?: Record<string, unknown>
@@ -98,6 +109,47 @@ const createStreamEvent = (
   };
 };
 
+const normalizeContextUsageRatio = (value: unknown): number | null => {
+  const numeric = readNumber(value);
+  if (numeric === null) {
+    return null;
+  }
+  if (numeric >= 0 && numeric <= 1) {
+    return numeric;
+  }
+  if (numeric > 1 && numeric <= 100) {
+    return numeric / 100;
+  }
+  return null;
+};
+
+const readContextTokenUsage = (payload: unknown): Record<string, unknown> => {
+  if (!isRecord(payload)) {
+    return { raw: payload };
+  }
+  const limit = readNumber(payload.max_context_tokens);
+  const directUsed = readNumber(payload.context_tokens);
+  const contextUsage = normalizeContextUsageRatio(payload.context_usage);
+  const computedUsed =
+    directUsed ??
+    (limit !== null && contextUsage !== null
+      ? Math.round(limit * contextUsage)
+      : null);
+  const tokenUsage =
+    computedUsed !== null && limit !== null && limit > 0
+      ? {
+          limit,
+          used: computedUsed,
+        }
+      : null;
+
+  return {
+    raw: payload,
+    ...(contextUsage === null ? {} : { contextUsage }),
+    ...(tokenUsage ? { tokenUsage } : {}),
+  };
+};
+
 export const normalizeKimiWireEvent = (
   params: unknown
 ): readonly KimiSessionEvent[] => {
@@ -119,7 +171,10 @@ export const normalizeKimiWireEvent = (
     case "StatusUpdate":
       return [
         createEvent("status_update", { raw: envelope.payload }),
-        createStreamEvent("status_update", { raw: envelope.payload }),
+        createStreamEvent(
+          "status_update",
+          readContextTokenUsage(envelope.payload)
+        ),
       ];
     case "ToolCall":
       return [
@@ -232,7 +287,10 @@ export class KimiWireEventNormalizer {
       case "StatusUpdate":
         return [
           createEvent("status_update", { raw: envelope.payload }),
-          createStreamEvent("status_update", { raw: envelope.payload }),
+          createStreamEvent(
+            "status_update",
+            readContextTokenUsage(envelope.payload)
+          ),
         ];
       case "ToolCall":
         return [

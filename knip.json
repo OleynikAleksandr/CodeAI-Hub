@@ -23,6 +23,9 @@
     "packages/Gemini_Module": {
       "entry": ["src/index.ts", "src/**/*.test.ts"]
     },
+    "packages/Kimi_Module": {
+      "entry": ["src/index.ts", "src/**/*.test.ts"]
+    },
     "packages/localization": {
       "entry": ["src/index.ts", "src/**/*.test.ts"]
     },

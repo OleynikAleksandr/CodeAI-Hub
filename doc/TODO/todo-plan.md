@@ -8,15 +8,15 @@
   "planId": "session-context-and-usage-indicators-2026-05-19",
   "branch": "main",
   "baseHead": "37448d20d",
-  "lastRecordedCommit": "135cf95d4",
+  "lastRecordedCommit": "989d41fa8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Session_Context_And_Usage_Indicators_Planning_RU.md",
-  "currentTaskId": "phase4-kimi-telemetry-plan-extension",
-  "expectedCommitMessage": "docs: extend session indicators plan for kimi telemetry",
+  "currentTaskId": "phase4-kimi-context-token-usage",
+  "expectedCommitMessage": "feat: normalize kimi context usage telemetry",
   "debt": {
-    "expectedCommitMessage": "docs: extend session indicators plan for kimi telemetry",
-    "preCommitHead": "135cf95d4",
+    "expectedCommitMessage": "feat: normalize kimi context usage telemetry",
+    "preCommitHead": "989d41fa8",
     "stage": "commit_pending",
-    "taskId": "phase4-kimi-telemetry-plan-extension"
+    "taskId": "phase4-kimi-context-token-usage"
   }
 }
 ```
@@ -91,11 +91,11 @@
 ## Phase 4 — Kimi Provider Telemetry (owner: Codex, updated: 2026-05-19)
 ### Stream: Kimi Telemetry Plan Extension
 1. [DONE] `phase4-kimi-telemetry-plan-extension` Расширить active plan отдельными microtasks для Kimi context-window telemetry и Kimi usage limits endpoint до targeted verification — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: extend session indicators plan for kimi telemetry`.
-2. [PENDING] Git Commit: `docs: extend session indicators plan for kimi telemetry` (hash: TBD)
+2. [DONE] Git Commit: `docs: extend session indicators plan for kimi telemetry` (hash: 989d41fa8)
 
 ### Stream: Kimi Context Window Telemetry
-1. [TODO] `phase4-kimi-context-token-usage` Нормализовать `StatusUpdate.context_tokens/max_context_tokens/context_usage` в Kimi Wire stream как provider-neutral `tokenUsage` для status panel — scope: `packages/Kimi_Module/src/messaging/kimi-event-normalizer.ts, packages/Kimi_Module/src/messaging/kimi-event-normalizer.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: normalize kimi context usage telemetry`.
-2. [TODO] Git Commit: `feat: normalize kimi context usage telemetry` (hash: TBD)
+1. [DONE] `phase4-kimi-context-token-usage` Нормализовать `StatusUpdate.context_tokens/max_context_tokens/context_usage` в Kimi Wire stream как provider-neutral `tokenUsage` для status panel и зарегистрировать Kimi source tests в quality gates — scope: `packages/Kimi_Module/src/messaging, knip.json, doc/TODO/todo-plan.md`; expected commit: `feat: normalize kimi context usage telemetry`.
+2. [PENDING] Git Commit: `feat: normalize kimi context usage telemetry` (hash: TBD)
 
 ### Stream: Kimi Usage Limits Endpoint
 1. [TODO] `phase4-kimi-usage-limits-reader` Добавить Kimi usage limits reader для `https://api.kimi.com/coding/v1/usages`, читающий API key из user config без логирования секрета — scope: `packages/Kimi_Module/src/provider/kimi-usage-limits-reader.ts, packages/Kimi_Module/src/provider/kimi-usage-limits-reader.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: read kimi usage limits`.
