@@ -20,7 +20,7 @@ const KIMI_CODEX_PROVIDER_SECTION_REGEX = /^\[model_providers\.kimi\]$/mu;
 const KIMI_CODEX_BASE_URL_LINE_REGEX =
   /^base_url = "https:\/\/api\.kimi\.com\/coding\/v1"$/mu;
 const KIMI_CODEX_ENV_KEY_LINE_REGEX = /^env_key = "KIMI_API_KEY"$/mu;
-const KIMI_CODEX_WIRE_API_LINE_REGEX = /^wire_api = "chat"$/mu;
+const KIMI_CODEX_WIRE_API_LINE_REGEX = /^wire_api = "responses"$/mu;
 const FEATURES_SECTION_LINE_REGEX = /^\[features\]$/mu;
 const OLD_KIMI_BASE_URL_LINE_REGEX = /example\.invalid/u;
 const OLD_KIMI_NAME_LINE_REGEX = /Old Kimi/u;

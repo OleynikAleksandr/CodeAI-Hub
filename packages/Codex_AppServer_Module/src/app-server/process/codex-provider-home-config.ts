@@ -18,7 +18,7 @@ const KIMI_CODEX_DEFAULT_MODEL_PROVIDER = "kimi";
 const KIMI_CODEX_DEFAULT_MODEL = "kimi-for-coding";
 const KIMI_CODEX_DEFAULT_BASE_URL = "https://api.kimi.com/coding/v1";
 const KIMI_CODEX_DEFAULT_ENV_KEY = "KIMI_API_KEY";
-const KIMI_CODEX_DEFAULT_WIRE_API = "chat";
+const KIMI_CODEX_DEFAULT_WIRE_API = "responses";
 
 type KimiCodexWireApi = "chat" | "responses";
 
