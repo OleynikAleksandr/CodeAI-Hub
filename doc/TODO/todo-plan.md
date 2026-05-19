@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "db4748258",
+  "lastRecordedCommit": "5ada97a01",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-capabilities-docs",
-  "expectedCommitMessage": "docs: document kimi agent control capabilities",
+  "currentTaskId": "phase8-kimi-reasoning-hotfix-release-notes",
+  "expectedCommitMessage": "docs: prepare kimi reasoning hotfix release notes",
   "debt": {
-    "expectedCommitMessage": "docs: document kimi agent control capabilities",
-    "preCommitHead": "db4748258",
+    "expectedCommitMessage": "docs: prepare kimi reasoning hotfix release notes",
+    "preCommitHead": "5ada97a01",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-capabilities-docs"
+    "taskId": "phase8-kimi-reasoning-hotfix-release-notes"
   }
 }
 ```
@@ -413,11 +413,11 @@
 
 ### Stream: Kimi Capabilities Documentation
 1. [DONE] `phase8-kimi-capabilities-docs` Добавить в Kimi module SSOT раздел по найденным возможностям замены agent/system prompt, tool allowlist/denylist, MCP isolation, hooks и current CodeAI usage без изменения runtime code — scope: `doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `docs: document kimi agent control capabilities`.
-2. [PENDING] Git Commit: `docs: document kimi agent control capabilities` (hash: TBD)
+2. [DONE] Git Commit: `docs: document kimi agent control capabilities` (hash: 5ada97a01)
 
 ### Stream: Kimi Reasoning Hotfix Release Build
-1. [TODO] `phase8-kimi-reasoning-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.311 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi reasoning hotfix release notes`.
-2. [TODO] Git Commit: `docs: prepare kimi reasoning hotfix release notes` (hash: TBD)
+1. [DONE] `phase8-kimi-reasoning-hotfix-release-notes` Подготовить README/CHANGELOG под будущую версию 1.2.311 до запуска release scripts — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi reasoning hotfix release notes`.
+2. [PENDING] Git Commit: `docs: prepare kimi reasoning hotfix release notes` (hash: TBD)
 3. [TODO] `phase8-kimi-reasoning-hotfix-release-build-start` Зафиксировать post-commit advancement перед release scripts — scope: `doc/TODO/todo-plan.md`; expected commit: `docs: mark kimi reasoning hotfix release build started`.
 4. [TODO] Git Commit: `docs: mark kimi reasoning hotfix release build started` (hash: TBD)
 5. [TODO] `phase8-kimi-reasoning-hotfix-release-build` Выполнить hotfix release checklist: `./scripts/build-all.sh`, `./scripts/build-release.sh --use-current-version`, release artifacts handoff — scope: `package.json, package-lock.json, packages/*/package.json, assets/**/manifest.json, media/react-chat.js, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: release kimi reasoning hotfix build`.

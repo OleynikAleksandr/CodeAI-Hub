@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.311] - 2026-05-19
+### Fixed
+- **Kimi reasoning display now matches the current provider UX.** Kimi `think` content respects the Kimi `Reasoning in dialog` setting, renders in an expanded thinking bubble instead of the retired collapsed panel, and streams bounded reasoning chunks before long turns finish when Kimi Wire provides intermediate thinking content.
+- **Kimi settings and Core visibility policy are wired end to end.** Kimi now persists `thinkingDisplaySyncEnabled`, Project Manager settings update that value, Core applies it in turn config and translation visibility, and the webview bundle includes the Kimi settings mapping.
+
+### Documentation
+- Documented Kimi's provider-native agent control capabilities: `--agent-file` system prompt replacement, explicit tool allowlists, MCP isolation, skills directories, hooks, and recommended future managed profiles.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/kimi-module`
+- `npm run test --workspace=@codeai-hub/kimi-module`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
 ## [1.2.310] - 2026-05-18
 ### Fixed
 - **Kimi review gates now unlock the user input panel after provider completion.** Kimi `TurnEnd` now normalizes to Core-compatible `turn_completed` with `postTurnTokenUsageUnavailable=true`, so Core resolves post-turn continuity arbitration as no-rollover and returns the runtime session to `idle` after the `managed-workflow-user-review` card appears.
