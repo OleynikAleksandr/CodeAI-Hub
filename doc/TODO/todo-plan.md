@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "c178acea7",
+  "lastRecordedCommit": "853d698b3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase9-kimi-claude-code-session-artifacts",
-  "expectedCommitMessage": "feat: persist kimi claude code session artifacts",
+  "currentTaskId": "phase9-kimi-claude-code-usage-context-state",
+  "expectedCommitMessage": "feat: surface kimi claude code telemetry state",
   "debt": {
-    "expectedCommitMessage": "feat: persist kimi claude code session artifacts",
-    "preCommitHead": "c178acea7",
+    "expectedCommitMessage": "feat: surface kimi claude code telemetry state",
+    "preCommitHead": "853d698b3",
     "stage": "commit_pending",
-    "taskId": "phase9-kimi-claude-code-session-artifacts"
+    "taskId": "phase9-kimi-claude-code-usage-context-state"
   }
 }
 ```
@@ -118,9 +118,9 @@
 1. [DONE] `phase9-kimi-claude-code-native-capture` Подключить native capture/workbench support для Kimi-Claude-Code: provider-visible system prompt, model, tool list, base URL class and first user prompt, без secret leakage — scope: `packages/core, packages/Claude_Module, src/client/ui, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: capture kimi claude code native requests`.
 2. [DONE] Git Commit: `feat: capture kimi claude code native requests` (hash: c178acea7)
 3. [DONE] `phase9-kimi-claude-code-session-artifacts` Обеспечить отдельный artifact/session namespace под `~/.codeai-hub/providers/kimi-claude-code/home` и CodeAI sessions, не смешивая с `kimiCode` — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: persist kimi claude code session artifacts`.
-4. [PENDING] Git Commit: `feat: persist kimi claude code session artifacts` (hash: TBD)
-5. [TODO] `phase9-kimi-claude-code-usage-context-state` Показать usage/context telemetry как unavailable либо подключить native Kimi usage endpoint только если доказано совпадение account/API key source — scope: `packages/core, src/client/ui, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: surface kimi claude code telemetry state`.
-6. [TODO] Git Commit: `feat: surface kimi claude code telemetry state` (hash: TBD)
+4. [DONE] Git Commit: `feat: persist kimi claude code session artifacts` (hash: 853d698b3)
+5. [DONE] `phase9-kimi-claude-code-usage-context-state` Показать usage/context telemetry как unavailable либо подключить native Kimi usage endpoint только если доказано совпадение account/API key source — scope: `packages/core, src/client/ui, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: surface kimi claude code telemetry state`.
+6. [PENDING] Git Commit: `feat: surface kimi claude code telemetry state` (hash: TBD)
 
 ## Phase 10 — Documentation Sync (owner: Codex, updated: 2026-05-19)
 ### Stream: Module Documentation
