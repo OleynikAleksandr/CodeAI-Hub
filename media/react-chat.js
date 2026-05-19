@@ -7551,23 +7551,6 @@
   ];
   var DEFAULT_CODEX_REASONING_LEVEL = "medium";
 
-  // src/types/kimi-model-registry.ts
-  var KIMI_RECOMMENDED_MODELS = [
-    {
-      id: "kimi-for-coding",
-      displayName: "Kimi 2.6 / Kimi Code",
-      description: "Kimi CLI coding model exposed through Wire mode.",
-      status: "active",
-      supportsReasoningControl: false,
-      supportsThinkingDisplaySummarized: false,
-      tier: "coding"
-    }
-  ];
-  var DEFAULT_KIMI_MODEL_ID = "kimi-for-coding";
-  var KIMI_MODEL_ID_SET = new Set(
-    KIMI_RECOMMENDED_MODELS.map((model) => model.id)
-  );
-
   // src/client/ui/src/components/settings/claude-thinking-state.ts
   var LEGACY_THINKING_TOKEN_ANCHORS = [
     { effort: "low", maxTokens: 2e3 },
@@ -7806,6 +7789,39 @@
   });
   var areGeneralResponsePolicyEqual = (left, right) => left.mode === right.mode && left.strictOutput.schemaText === right.strictOutput.schemaText && left.strictOutput.instructionText === right.strictOutput.instructionText;
 
+  // src/types/kimi-model-registry.ts
+  var KIMI_RECOMMENDED_MODELS = [
+    {
+      id: "kimi-for-coding",
+      displayName: "Kimi 2.6 / Kimi Code",
+      description: "Kimi CLI coding model exposed through Wire mode.",
+      status: "active",
+      supportsReasoningControl: false,
+      supportsThinkingDisplaySummarized: false,
+      tier: "coding"
+    }
+  ];
+  var DEFAULT_KIMI_MODEL_ID = "kimi-for-coding";
+  var KIMI_MODEL_ID_SET = new Set(
+    KIMI_RECOMMENDED_MODELS.map((model) => model.id)
+  );
+
+  // src/client/ui/src/components/settings/kimi-settings-state.ts
+  var mapKimiSettings = (value, mapAutoUpdateSettings2, mapThinkingDisplaySyncEnabled2) => ({
+    autoUpdate: mapAutoUpdateSettings2(value?.autoUpdate),
+    defaultModel: DEFAULT_KIMI_MODEL_ID,
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
+      value?.thinkingDisplaySyncEnabled
+    )
+  });
+  var mapKimiClaudeCodeSettings = (value, mapThinkingDisplaySyncEnabled2) => ({
+    defaultModel: DEFAULT_KIMI_MODEL_ID,
+    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled2(
+      value?.thinkingDisplaySyncEnabled
+    )
+  });
+  var areKimiProviderSettingsEqual = (left, right) => JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
+
   // src/client/ui/src/components/settings/text-to-speech-settings.ts
   var DEFAULT_TEXT_TO_SPEECH_RATE = 1;
   var MAX_TEXT_TO_SPEECH_RATE = 2;
@@ -7998,20 +8014,21 @@
       value?.thinkingDisplaySyncEnabled
     )
   });
-  var mapKimiSettings = (value) => ({
-    autoUpdate: mapAutoUpdateSettings(value?.autoUpdate),
-    defaultModel: DEFAULT_KIMI_MODEL_ID,
-    thinkingDisplaySyncEnabled: mapThinkingDisplaySyncEnabled(
-      value?.thinkingDisplaySyncEnabled
-    )
-  });
   var mapSettingsSnapshot = (value) => ({
     general: mapGeneralSettings(value?.general),
     providers: {
       claude: mapClaudeSettings(value?.providers?.claude),
       codex: mapCodexSettings(value?.providers?.codex),
       gemini: mapGeminiSettingsWithDisplaySync(value?.providers?.gemini),
-      kimi: mapKimiSettings(value?.providers?.kimi)
+      kimi: mapKimiSettings(
+        value?.providers?.kimi,
+        mapAutoUpdateSettings,
+        mapThinkingDisplaySyncEnabled
+      ),
+      kimiClaudeCode: mapKimiClaudeCodeSettings(
+        value?.providers?.kimiClaudeCode,
+        mapThinkingDisplaySyncEnabled
+      )
     }
   });
   var createDefaultSettings = () => mapSettingsSnapshot(void 0);
@@ -8034,7 +8051,10 @@
     left.thinkingLevelByModel,
     right.thinkingLevelByModel
   ) && left.thinkingDisplaySyncEnabled === right.thinkingDisplaySyncEnabled && left.sessionContinuity.contextWindowTokenLimit === right.sessionContinuity.contextWindowTokenLimit && left.sessionContinuity.remainingPercentThreshold === right.sessionContinuity.remainingPercentThreshold;
-  var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && JSON.stringify(left.providers.kimi ?? null) === JSON.stringify(right.providers.kimi ?? null);
+  var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) && areKimiProviderSettingsEqual(
+    left.providers.kimiClaudeCode,
+    right.providers.kimiClaudeCode
+  );
 
   // src/client/ui/src/components/settings/native-request-capture-state.ts
   var createNativeRequestCaptureState = () => ({
@@ -8302,14 +8322,16 @@
     claudeCodeCli: "Claude",
     codexCli: "Codex",
     geminiCli: "Gemini",
-    kimiCode: "Kimi"
+    kimiCode: "Kimi",
+    kimiClaudeCode: "Kimi Claude Code"
   };
   var getDefaultProviderTitle = (providerId) => PROVIDER_TITLE_MAP[providerId] ?? providerId;
   var PROVIDER_DESCRIPTION_MAP = {
     claudeCodeCli: "Using your authentication Claude Code CLI",
     codexCli: "Using your authentication Codex CLI",
     geminiCli: "Using your authentication Gemini CLI",
-    kimiCode: "Using your authentication Kimi CLI"
+    kimiCode: "Using your authentication Kimi CLI",
+    kimiClaudeCode: "Using Kimi 2.6 through Claude Code-compatible runtime"
   };
   var getDefaultProviderDescription = (providerId) => PROVIDER_DESCRIPTION_MAP[providerId] ?? "";
 
@@ -8450,7 +8472,8 @@
     "claudeCodeCli",
     "codexCli",
     "geminiCli",
-    "kimiCode"
+    "kimiCode",
+    "kimiClaudeCode"
   ]);
   var isProviderDescriptorCandidate = (value) => {
     if (!value || typeof value !== "object") {

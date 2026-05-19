@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "aae1679ea",
+  "lastRecordedCommit": "36f8c0e28",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase11-kimi-claude-code-tests",
-  "expectedCommitMessage": "test: verify kimi claude code provider integration",
+  "currentTaskId": "phase11-kimi-claude-code-target-builds",
+  "expectedCommitMessage": "chore: verify kimi claude code targeted builds",
   "debt": {
-    "expectedCommitMessage": "test: verify kimi claude code provider integration",
-    "preCommitHead": "aae1679ea",
+    "expectedCommitMessage": "chore: verify kimi claude code targeted builds",
+    "preCommitHead": "36f8c0e28",
     "stage": "commit_pending",
-    "taskId": "phase11-kimi-claude-code-tests"
+    "taskId": "phase11-kimi-claude-code-target-builds"
   }
 }
 ```
@@ -132,9 +132,9 @@
 ## Phase 11 — Targeted Verification (owner: Codex, updated: 2026-05-19)
 ### Stream: Focused Checks
 1. [DONE] `phase11-kimi-claude-code-tests` Запустить focused unit/integration tests для затронутых provider/profile/config modules и зафиксировать результат; при падениях добавить repair microtasks перед продолжением — scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify kimi claude code provider integration`. Result: `npm test --workspace packages/Claude_Module` 20/20 pass; `npm test --workspace packages/core` 12/12 pass; targeted compiled `node --test` for core provider registry/settings/native-capture 11/11 pass; targeted compiled `node --test` for Claude SDK/native-capture 14/14 pass.
-2. [PENDING] Git Commit: `test: verify kimi claude code provider integration` (hash: TBD)
-3. [TODO] `phase11-kimi-claude-code-target-builds` Выполнить targeted builds/typechecks для затронутых пакетов/UI (`npm run build --workspace ...`, `npm run build:webview`, `npm run typecheck:webview` по фактическому scope) и зафиксировать результат — scope: `doc/TODO/todo-plan.md`; expected commit: `chore: verify kimi claude code targeted builds`.
-4. [TODO] Git Commit: `chore: verify kimi claude code targeted builds` (hash: TBD)
+2. [DONE] Git Commit: `test: verify kimi claude code provider integration` (hash: 36f8c0e28)
+3. [DONE] `phase11-kimi-claude-code-target-builds` Выполнить targeted builds/typechecks для затронутых пакетов/UI (`npm run build --workspace ...`, `npm run build:webview`, `npm run typecheck:webview` по фактическому scope) и зафиксировать результат — scope: `doc/TODO/todo-plan.md, media/react-chat.js`; expected commit: `chore: verify kimi claude code targeted builds`. Result: `npm run build --workspace packages/Claude_Module`, `npm run build --workspace packages/core`, `npm run typecheck:webview`, and `npm run build:webview` passed.
+4. [PENDING] Git Commit: `chore: verify kimi claude code targeted builds` (hash: TBD)
 5. [TODO] `phase11-kimi-claude-code-live-smoke` Выполнить live smoke на одинаковом workflow prompt: native Kimi vs Kimi-Claude-Code, проверить visible progress/final, unlock input, artifacts and stop behavior — scope: `doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md, doc/TODO/todo-plan.md`; expected commit: `docs: record kimi claude code live smoke result`.
 6. [TODO] Git Commit: `docs: record kimi claude code live smoke result` (hash: TBD)
 
