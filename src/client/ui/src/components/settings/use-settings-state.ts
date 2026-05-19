@@ -50,6 +50,7 @@ import {
   type LocalizationSyncStatusState,
   type LocalizationWorkflowTermsPolicy,
   type NativeRequestCaptureModelId,
+  type NativeRequestCaptureProviderId,
   type NativeRequestCaptureScenarioId,
   type NativeRequestCaptureState,
   normalizeLoadedLocalizationSettings,
@@ -440,7 +441,7 @@ export const useSettingsState = (): UseSettingsStateResult => {
 
   const handleNativeRequestCapture = useCallback(
     (
-      providerId: "claude" | "codex",
+      providerId: NativeRequestCaptureProviderId,
       modelId: NativeRequestCaptureModelId,
       scenarioId: NativeRequestCaptureScenarioId
     ) => {

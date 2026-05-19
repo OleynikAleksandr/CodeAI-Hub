@@ -260,7 +260,7 @@ interface CaptureWorkbenchRequest {
 const parseProviderId = (
   value: string
 ): SettingsNativeRequestCaptureProviderId => {
-  if (value === "claude" || value === "codex") {
+  if (value === "claude" || value === "codex" || value === "kimiClaudeCode") {
     return value;
   }
   throw new Error(`Unsupported capture provider: ${value}`);
@@ -327,7 +327,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const parseProviderIdSafe = (
   value: unknown
 ): value is SettingsNativeRequestCaptureProviderId =>
-  value === "claude" || value === "codex";
+  value === "claude" || value === "codex" || value === "kimiClaudeCode";
 
 const loadScenarioPromptBuilder =
   async (): Promise<CaptureWorkbenchScenarioPromptBuilder> => {

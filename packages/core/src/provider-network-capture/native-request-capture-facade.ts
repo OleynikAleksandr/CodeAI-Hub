@@ -36,6 +36,7 @@ const PROVIDER_RUNTIME_IDS: Readonly<
   claude: "claudeCodeCli",
   codex: "codexCli",
   kimi: "kimiCode",
+  kimiClaudeCode: "kimiClaudeCode",
 };
 
 const PROVIDER_TARGET_RULES: Readonly<
@@ -55,6 +56,7 @@ const PROVIDER_TARGET_RULES: Readonly<
     { host: "chatgpt.com", pathIncludes: "/backend-api/codex/responses" },
   ],
   kimi: [],
+  kimiClaudeCode: [{ host: "api.kimi.com", pathIncludes: "/coding" }],
 };
 
 interface ProviderAdapterLookup {

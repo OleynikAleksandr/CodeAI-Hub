@@ -1,6 +1,6 @@
-import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
 import { resolveClaudeProviderProjectDir } from "../sdk/claude-provider-home";
+import type { ClaudeSDKAuthProvider } from "../sdk/claude-sdk-manager";
 import {
   CODEAI_CLAUDE_WORKFLOW_SYSTEM_PROMPT,
   CODEAI_CLAUDE_WORKFLOW_TOOLS,
@@ -41,6 +41,13 @@ interface ClaudeNativeRequestCaptureAppliedInputEnvelope {
   readonly toolCount: number;
 }
 
+interface ClaudeNativeRequestCaptureAuthProvider extends ClaudeSDKAuthProvider {
+  ensureProviderHomeSessionBootstrap(options?: {
+    readonly executablePath?: string;
+    readonly workspacePath?: string;
+  }): Promise<void>;
+}
+
 interface ClaudeCaptureThinkingOptions {
   readonly effort?: string;
   readonly thinking: {
@@ -55,12 +62,12 @@ type QueryFunction = (payload: {
 }) => AsyncIterableIterator<ClaudeStreamMessage>;
 
 export class ClaudeNativeRequestCaptureService {
-  readonly #authManager: SDKAuthManager;
+  readonly #authManager: ClaudeNativeRequestCaptureAuthProvider;
   readonly #installer: SDKInstaller;
   readonly #workspace: ClaudeWorkspaceOptions;
 
   constructor(options: {
-    readonly authManager: SDKAuthManager;
+    readonly authManager: ClaudeNativeRequestCaptureAuthProvider;
     readonly installer: SDKInstaller;
     readonly workspace: ClaudeWorkspaceOptions;
   }) {

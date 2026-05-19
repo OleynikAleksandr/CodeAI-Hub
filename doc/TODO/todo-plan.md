@@ -8,15 +8,15 @@
   "planId": "kimi-claude-code-provider-planning-2026-05-19",
   "branch": "main",
   "baseHead": "5902a324f",
-  "lastRecordedCommit": "993be3cb3",
+  "lastRecordedCommit": "232eb7de6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-claude-code-status-identity",
-  "expectedCommitMessage": "feat: show kimi claude code session identity",
+  "currentTaskId": "phase9-kimi-claude-code-native-capture",
+  "expectedCommitMessage": "feat: capture kimi claude code native requests",
   "debt": {
-    "expectedCommitMessage": "feat: show kimi claude code session identity",
-    "preCommitHead": "993be3cb3",
+    "expectedCommitMessage": "feat: capture kimi claude code native requests",
+    "preCommitHead": "232eb7de6",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-claude-code-status-identity"
+    "taskId": "phase9-kimi-claude-code-native-capture"
   }
 }
 ```
@@ -111,12 +111,12 @@
 3. [DONE] `phase8-kimi-claude-code-next-step-default` Проверить и исправить inheritance выбранного `kimiClaudeCode` при переходе между managed workflow steps, чтобы следующий шаг не падал в Claude — scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: preserve kimi claude code provider inheritance`.
 4. [DONE] Git Commit: `feat: preserve kimi claude code provider inheritance` (hash: 993be3cb3)
 5. [DONE] `phase8-kimi-claude-code-status-identity` Добавить status line/model chip/session title/provider tint mapping для `kimiClaudeCode` — scope: `src/client/ui, packages/core, doc/TODO/todo-plan.md`; expected commit: `feat: show kimi claude code session identity`.
-6. [PENDING] Git Commit: `feat: show kimi claude code session identity` (hash: TBD)
+6. [DONE] Git Commit: `feat: show kimi claude code session identity` (hash: 232eb7de6)
 
 ## Phase 9 — Diagnostics, Capture, Usage Telemetry (owner: Codex, updated: 2026-05-19)
 ### Stream: Observability
-1. [TODO] `phase9-kimi-claude-code-native-capture` Подключить native capture/workbench support для Kimi-Claude-Code: provider-visible system prompt, model, tool list, base URL class and first user prompt, без secret leakage — scope: `packages/core, packages/Claude_Module, src/client/ui`; expected commit: `feat: capture kimi claude code native requests`.
-2. [TODO] Git Commit: `feat: capture kimi claude code native requests` (hash: TBD)
+1. [DONE] `phase9-kimi-claude-code-native-capture` Подключить native capture/workbench support для Kimi-Claude-Code: provider-visible system prompt, model, tool list, base URL class and first user prompt, без secret leakage — scope: `packages/core, packages/Claude_Module, src/client/ui, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `feat: capture kimi claude code native requests`.
+2. [PENDING] Git Commit: `feat: capture kimi claude code native requests` (hash: TBD)
 3. [TODO] `phase9-kimi-claude-code-session-artifacts` Обеспечить отдельный artifact/session namespace под `~/.codeai-hub/providers/kimi-claude-code/home` и CodeAI sessions, не смешивая с `kimiCode` — scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `feat: persist kimi claude code session artifacts`.
 4. [TODO] Git Commit: `feat: persist kimi claude code session artifacts` (hash: TBD)
 5. [TODO] `phase9-kimi-claude-code-usage-context-state` Показать usage/context telemetry как unavailable либо подключить native Kimi usage endpoint только если доказано совпадение account/API key source — scope: `packages/core, src/client/ui, doc/SolidWorks-WorkFlow/Plans/Kimi_Claude_Code_Provider_Planning_RU.md`; expected commit: `feat: surface kimi claude code telemetry state`.

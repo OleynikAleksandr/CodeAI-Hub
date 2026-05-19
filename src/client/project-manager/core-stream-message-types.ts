@@ -215,7 +215,10 @@ export type SettingsTemplateUpdateResolutionPayload = {
   readonly status: "error" | "not_found" | "resolved";
 };
 
-export type SettingsNativeRequestCaptureProviderId = "claude" | "codex";
+export type SettingsNativeRequestCaptureProviderId =
+  | "claude"
+  | "codex"
+  | "kimiClaudeCode";
 export type SettingsNativeRequestCaptureModelId = NativeRequestCaptureModelId;
 export type SettingsNativeRequestCaptureScenarioId =
   | "description"

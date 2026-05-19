@@ -1,8 +1,15 @@
 import type { ClaudeModelAliasId } from "../../../../../types/claude-model-registry";
 import type { CodexModelId } from "../../../../../types/codex-model-registry";
+import type { KimiModelId } from "../../../../../types/kimi-model-registry";
 
-export type NativeRequestCaptureProviderId = "claude" | "codex";
-export type NativeRequestCaptureModelId = ClaudeModelAliasId | CodexModelId;
+export type NativeRequestCaptureProviderId =
+  | "claude"
+  | "codex"
+  | "kimiClaudeCode";
+export type NativeRequestCaptureModelId =
+  | ClaudeModelAliasId
+  | CodexModelId
+  | KimiModelId;
 export type NativeRequestCaptureScenarioId =
   | "description"
   | "virtual_simulation"

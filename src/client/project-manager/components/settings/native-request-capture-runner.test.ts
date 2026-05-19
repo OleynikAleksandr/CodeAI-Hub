@@ -7,12 +7,13 @@ import {
   type NativeRequestCaptureScenarioId,
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import type { SettingsNativeRequestCaptureOptions } from "../../core-stream-message-types";
+import type { SettingsNativeRequestCaptureProviderId } from "../../core-stream-message-types";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
 
 type CaptureCall = {
   readonly modelId?: NativeRequestCaptureModelId;
   readonly options?: SettingsNativeRequestCaptureOptions;
-  readonly providerId: "claude" | "codex";
+  readonly providerId: SettingsNativeRequestCaptureProviderId;
 };
 
 const installBrowserStubs = (): void => {

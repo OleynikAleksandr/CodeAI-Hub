@@ -1,4 +1,8 @@
-export type NativeRequestCaptureProviderId = "claude" | "codex" | "kimi";
+export type NativeRequestCaptureProviderId =
+  | "claude"
+  | "codex"
+  | "kimi"
+  | "kimiClaudeCode";
 
 export type NativeRequestCaptureMode = "managed" | "vanilla";
 

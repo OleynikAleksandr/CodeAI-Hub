@@ -1,4 +1,8 @@
 import crypto from "node:crypto";
+import {
+  type ClaudeNativeRequestCaptureOptions,
+  ClaudeNativeRequestCaptureService,
+} from "../diagnostics/claude-native-request-capture-service";
 import { SDKInstaller } from "../installer/sdk-installer";
 import { SDKMessageProcessor } from "../messaging/message-processor";
 import { ClaudeSessionStaleBindingError } from "../provider/claude-session-stale-binding-error";
@@ -47,6 +51,7 @@ export class KimiClaudeCodeProviderAdapter {
     Set<KimiClaudeCodeSessionListener>
   >();
   private readonly pendingEvents = new Map<string, unknown[]>();
+  private readonly nativeRequestCaptureService: ClaudeNativeRequestCaptureService;
   private readonly sessionIdAliases = new Map<string, string>();
   private readonly sdkManager: ClaudeSDKManager;
   private readonly usageLimitsFacade?: KimiClaudeCodeUsageLimitsFacadeBridge;
@@ -79,6 +84,11 @@ export class KimiClaudeCodeProviderAdapter {
       reporter: options.reporter,
       runtimeProfile,
       sessions,
+      workspace: sdkWorkspace,
+    });
+    this.nativeRequestCaptureService = new ClaudeNativeRequestCaptureService({
+      authManager: this.authManager,
+      installer,
       workspace: sdkWorkspace,
     });
   }
@@ -141,6 +151,12 @@ export class KimiClaudeCodeProviderAdapter {
   async closeSession(sessionId: string): Promise<void> {
     await this.sdkManager.closeSession(sessionId);
     this.listeners.delete(sessionId);
+  }
+
+  async captureNativeRequest(
+    options: ClaudeNativeRequestCaptureOptions
+  ): Promise<void> {
+    await this.nativeRequestCaptureService.captureNativeRequest(options);
   }
 
   async sendMessage(

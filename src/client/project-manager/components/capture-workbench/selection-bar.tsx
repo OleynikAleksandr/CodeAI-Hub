@@ -18,6 +18,7 @@ const PROVIDER_DEFAULTS: Record<
 > = {
   claude: { model: "sonnet", reasoning: "thinking-high" },
   codex: { model: "gpt-5.3-codex", reasoning: "reasoning-high" },
+  kimiClaudeCode: { model: "kimi-for-coding", reasoning: "thinking-high" },
 };
 
 interface CaptureWorkbenchSelectionBarProps {
