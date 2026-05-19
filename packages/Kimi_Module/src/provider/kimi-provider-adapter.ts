@@ -14,6 +14,7 @@ import {
   type KimiRuntimeHome,
   materializeKimiManagedAgentProfile,
 } from "./kimi-managed-agent-profile";
+import { KimiUsageLimitsReader } from "./kimi-usage-limits-reader";
 import {
   KimiWorkspaceOverrideState,
   reportKimiWorkspaceOverride,
@@ -72,6 +73,7 @@ interface KimiNativeRequestCaptureOptions {
 export class KimiProviderAdapter {
   private readonly listeners = new Map<string, Set<SessionListener>>();
   private readonly options: KimiModuleOptions;
+  private readonly usageLimitsReader = new KimiUsageLimitsReader();
   private readonly wireEventNormalizer = new KimiWireEventNormalizer(
     normalizeKimiWireEvent
   );
@@ -214,11 +216,39 @@ export class KimiProviderAdapter {
     await this.requireSessionLifecycle().close(sessionId);
   }
 
-  refreshUsageLimits(params: {
+  async refreshUsageLimits(params: {
     readonly broadcast: (event: unknown) => void;
     readonly providerSessionId: string;
-  }): void {
-    params.broadcast({
+  }): Promise<void> {
+    const userConfigPath = this.runtimeHome?.userConfigPath ?? null;
+    const livePayload = userConfigPath
+      ? await this.usageLimitsReader
+          .read({ userConfigPath })
+          .catch((error: unknown) => {
+            this.options.reporter?.warn?.("Kimi usage limits read failed", {
+              errorMessage:
+                error instanceof Error ? error.message : String(error),
+            });
+            return null;
+          })
+      : null;
+    params.broadcast(
+      livePayload
+        ? {
+            ...livePayload,
+            providerSessionId: params.providerSessionId,
+          }
+        : this.createUsageLimitsUnavailableEvent(params.providerSessionId)
+    );
+  }
+
+  private createUsageLimitsUnavailableEvent(providerSessionId: string): {
+    readonly data: Record<string, unknown>;
+    readonly providerScopeKey: string;
+    readonly providerSessionId: string;
+    readonly usageLimits: null;
+  } {
+    return {
       providerScopeKey: "kimi:global",
       usageLimits: null,
       data: {
@@ -234,14 +264,13 @@ export class KimiProviderAdapter {
         providerScopeKey: "kimi:global",
         source: "kimi_unavailable",
         usageLimitLabels: {
-          currentSession: "Session",
+          currentSession: "5h",
           currentWeekAllModels: "Weekly",
-          currentWeekSonnetOnly: "Model Weekly",
         },
         usageLimits: null,
       },
-      providerSessionId: params.providerSessionId,
-    });
+      providerSessionId,
+    };
   }
 
   private createWireProcessBridge(): KimiWireProcessBridge {

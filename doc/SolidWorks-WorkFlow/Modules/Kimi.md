@@ -82,9 +82,14 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 - Kimi provider theme id is `kimi`; CSS/design tokens define its accent/fill/border/soft states for Project Manager and Session UI.
 
 ## Usage limits
-- Kimi usage limits have no stable official reader in this release.
-- `KimiProviderAdapter.refreshUsageLimits(...)` broadcasts a provider-scoped unavailable payload with `providerScopeKey = "kimi:global"`, `usageLimits = null`, and source `kimi_unavailable`.
-- Session UI must render this as unavailable, not as indefinite loading.
+- Kimi usage limits are read from `GET https://api.kimi.com/coding/v1/usages` with the existing `~/.kimi/config.toml` `providers.kimi-for-coding.api_key`.
+- The API key is read locally and sent only as an `Authorization: Bearer ...` header to the Kimi endpoint. It must not be logged, persisted into CodeAI settings, or copied into diagnostic artifacts.
+- Live payload mapping:
+  - `limits[0].detail.used/limit/resetTime` → `usageLimits.currentSession`, label `5h`;
+  - `usage.used/limit/resetTime` → `usageLimits.currentWeekAllModels`, label `Weekly`;
+  - `parallel.limit` is not rendered as a percent row because the current Session ID usage bar only supports percent windows.
+- If config is missing, auth fails, the endpoint is unavailable, or the payload is malformed, `KimiProviderAdapter.refreshUsageLimits(...)` broadcasts a provider-scoped unavailable payload with `providerScopeKey = "kimi:global"`, `usageLimits = null`, source `kimi_unavailable`, and labels `5h` / `Weekly`.
+- Session UI must render the fallback as unavailable, not as indefinite loading and not as fake percentages.
 
 ## Native diagnostic capture
 - Kimi diagnostic capture is Wire-evidence based, not TLS MITM based.
@@ -103,7 +108,7 @@ Kimi provider module подключает Kimi Code / Kimi 2.6 к Core как о
 - `KimiProviderAdapter` is the only public module facade for Core integration.
 - Wire/process/router/session classes are module internals.
 - Every send must finish with `turn_completed` or `turn_failed`; stuck-working UI is a provider contract violation.
-- Kimi usage limits must degrade to explicit unavailable state until a stable official usage endpoint exists.
+- Kimi usage limits must degrade to explicit unavailable state when the Kimi console usage endpoint cannot be read.
 - Kimi native capture is diagnostic-only and must not mutate workflow state or settings defaults.
 
 ## Связанные контракты
