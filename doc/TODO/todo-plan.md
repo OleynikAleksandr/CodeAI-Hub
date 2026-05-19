@@ -8,15 +8,15 @@
   "planId": "kimi-provider-module-implementation-2026-05-18",
   "branch": "main",
   "baseHead": "cb93c430b",
-  "lastRecordedCommit": "8813fbf74",
+  "lastRecordedCommit": "fd11652fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Kimi_2_6_Module_Implementation_Planning_RU.md",
-  "currentTaskId": "phase8-kimi-progress-panel-verification",
-  "expectedCommitMessage": "docs: record kimi progress panel verification",
+  "currentTaskId": "phase8-kimi-thinking-block-summary-cadence",
+  "expectedCommitMessage": "fix: tie kimi progress to thinking block count",
   "debt": {
-    "expectedCommitMessage": "docs: record kimi progress panel verification",
-    "preCommitHead": "8813fbf74",
+    "expectedCommitMessage": "fix: tie kimi progress to thinking block count",
+    "preCommitHead": "fd11652fb",
     "stage": "commit_pending",
-    "taskId": "phase8-kimi-progress-panel-verification"
+    "taskId": "phase8-kimi-thinking-block-summary-cadence"
   }
 }
 ```
@@ -466,7 +466,11 @@
    - Verification: `npm run build:webview` passed.
    - Verification: `npm run typecheck:webview` passed.
    - Verification: CSS diff makes `role="thinking"` standalone by removing the negative bottom margin and top-only border radius; no generated webview bundle changed for the CSS-only panel fix.
-8. [PENDING] Git Commit: `docs: record kimi progress panel verification` (hash: TBD)
+8. [DONE] Git Commit: `docs: record kimi progress panel verification` (hash: fd11652fb)
+
+### Stream: Acceptance Bug Fix — Kimi Thinking Block Summary Cadence
+1. [DONE] `phase8-kimi-thinking-block-summary-cadence` Усилить managed Kimi prompt: явно привязать ordinary assistant progress summary к каждые 5-6 существенных hidden thinking blocks/reasoning paragraphs, чтобы длинная reasoning-серия не оставалась без пользовательского summary — scope: `packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/TODO/todo-plan.md`; expected commit: `fix: tie kimi progress to thinking block count`.
+2. [PENDING] Git Commit: `fix: tie kimi progress to thinking block count` (hash: TBD)
 
 ### Stream: Scope Closeout
 1. [TODO] `phase8-kimi-closeout` После явного acceptance закрыть scope: архивировать active plan, определить disposition implementation planning source, обновить `Docs_Index.md` и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans`; expected commit: `docs: close kimi provider implementation scope`.
