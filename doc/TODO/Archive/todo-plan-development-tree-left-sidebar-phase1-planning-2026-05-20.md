@@ -12,12 +12,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
   "currentTaskId": "phase1.stream4.task1",
   "expectedCommitMessage": "docs: close development tree sidebar planning",
-  "debt": {
-    "expectedCommitMessage": "docs: close development tree sidebar planning",
-    "preCommitHead": "364a70f83",
-    "stage": "commit_pending",
-    "taskId": "phase1.stream4.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -65,6 +60,6 @@
 8. [DONE] `phase1.stream3.revised-acceptance.task1` User reviews the revised Development Tree materialization and left sidebar refactoring planning document before scope closeout (scope: user workflow acceptance; no commit expected).
 
 ### Stream: Scope Closeout
-9. [DONE] `phase1.stream4.task1` Close this planning scope after explicit user acceptance, archive or promote the planning document according to disposition, update references, and return `todo-plan.md` to terminal NONE state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-development-tree-left-sidebar-phase1-planning-2026-05-20.md, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree sidebar planning`).
-10. [PENDING] Git Commit: `docs: close development tree sidebar planning` (hash: TBD)
+9. [IN_PROGRESS] `phase1.stream4.task1` Close this planning scope after explicit user acceptance, archive or promote the planning document according to disposition, update references, and return `todo-plan.md` to terminal NONE state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/todo-plan-development-tree-left-sidebar-phase1-planning-2026-05-20.md, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree sidebar planning`).
+10. [TODO] Git Commit: `docs: close development tree sidebar planning` (hash: TBD)
 11. [TODO] `phase1.stream4.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
