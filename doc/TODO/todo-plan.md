@@ -8,15 +8,15 @@
   "planId": "development-tree-left-sidebar-phase1-planning-2026-05-20",
   "branch": "main",
   "baseHead": "22ad9bcec",
-  "lastRecordedCommit": "8ce7623c2",
+  "lastRecordedCommit": "00749d090",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase1.stream2.task1",
-  "expectedCommitMessage": "docs: draft development tree sidebar phase one plan",
+  "currentTaskId": "phase1.stream3.revision.task1",
+  "expectedCommitMessage": "docs: revise development tree materialization plan",
   "debt": {
-    "expectedCommitMessage": "docs: draft development tree sidebar phase one plan",
-    "preCommitHead": "8ce7623c2",
+    "expectedCommitMessage": "docs: revise development tree materialization plan",
+    "preCommitHead": "00749d090",
     "stage": "commit_pending",
-    "taskId": "phase1.stream2.task1"
+    "taskId": "phase1.stream3.revision.task1"
   }
 }
 ```
@@ -52,12 +52,19 @@
 
 ### Stream: Planning Draft
 3. [DONE] `phase1.stream2.task1` Draft the detailed phase 1 plan for left sidebar Development Tree UI changes, including node hierarchy, visual rules, state projection, Core data needs, and implementation slicing (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md`; expected commit: `docs: draft development tree sidebar phase one plan`).
-4. [PENDING] Git Commit: `docs: draft development tree sidebar phase one plan` (hash: TBD)
+4. [DONE] Git Commit: `docs: draft development tree sidebar phase one plan` (hash: 00749d090)
 
 ### Stream: User Workflow Acceptance Testing
-5. [TODO] `phase1.stream3.task1` User reviews the Development Tree left sidebar phase 1 planning document before scope closeout (scope: user workflow acceptance; no commit expected).
+5. [DONE] `phase1.stream3.task1` User reviews the Development Tree left sidebar phase 1 planning document before scope closeout (scope: user workflow acceptance; no commit expected).
+
+### Stream: Planning Revision
+6. [DONE] `phase1.stream3.revision.task1` Revise the Development Tree phase 1 planning document for Core-owned artifact workspace materialization after accepted Diagram Modules, orphan disposition, Project Manager projection boundaries, and refactoring implementation slicing (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md`; expected commit: `docs: revise development tree materialization plan`).
+7. [PENDING] Git Commit: `docs: revise development tree materialization plan` (hash: TBD)
+
+### Stream: Revised User Workflow Acceptance Testing
+8. [TODO] `phase1.stream3.revised-acceptance.task1` User reviews the revised Development Tree materialization and left sidebar refactoring planning document before scope closeout (scope: user workflow acceptance; no commit expected).
 
 ### Stream: Scope Closeout
-6. [TODO] `phase1.stream4.task1` Close this planning scope after explicit user acceptance, archive or promote the planning document according to disposition, update references, and return `todo-plan.md` to terminal NONE state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree sidebar planning`).
-7. [TODO] Git Commit: `docs: close development tree sidebar planning` (hash: TBD)
-8. [TODO] `phase1.stream4.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
+9. [TODO] `phase1.stream4.task1` Close this planning scope after explicit user acceptance, archive or promote the planning document according to disposition, update references, and return `todo-plan.md` to terminal NONE state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree sidebar planning`).
+10. [TODO] Git Commit: `docs: close development tree sidebar planning` (hash: TBD)
+11. [TODO] `phase1.stream4.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
