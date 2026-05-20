@@ -1,4 +1,5 @@
 import { getDefaultProviderTitle } from "../../../../types/provider";
+import type { DevelopmentTreeOperationNode } from "../../services/workflow-state-development-tree-client";
 import type {
   DevelopmentTreeClusterNode,
   DevelopmentTreeModuleNode,
@@ -139,10 +140,47 @@ const dispatchBranchSelected = (detail: {
   readonly artifacts?: DevelopmentTreeModuleNode["artifacts"];
   readonly session?: DevelopmentTreeModuleNode["session"];
   readonly workflowPath?: string;
+  readonly artifactWorkspacePath?: string;
+  readonly codeWorkspacePath?: string;
+  readonly operationKind?: DevelopmentTreeOperationNode["kind"];
 }): void => {
   window.dispatchEvent(
     new CustomEvent("pm:branch:selected", { detail })
   );
+};
+
+const buildOperationTreeNode = (
+  operation: DevelopmentTreeOperationNode,
+  parentId: string,
+  partId: string,
+  clusterId: string | null,
+  depth: number
+): TreeNode => {
+  const id = `${parentId}:operation:${operation.id}`;
+  const children = operation.children?.map((child) =>
+    buildOperationTreeNode(child, id, partId, clusterId, depth + 1)
+  );
+  return {
+    id,
+    label: operation.title,
+    status: "todo",
+    visualDepth: depth,
+    nodeType: "operation",
+    operationKind: operation.kind,
+    isCollapsible: Boolean(children?.length),
+    children: children && children.length > 0 ? children : undefined,
+    onSelect: () =>
+      dispatchBranchSelected({
+        kind: "operation",
+        nodeId: operation.id,
+        label: operation.title,
+        partId,
+        clusterId: clusterId ?? undefined,
+        workflowPath: operation.workflowPath,
+        artifactWorkspacePath: operation.artifactWorkspacePath,
+        operationKind: operation.kind,
+      }),
+  };
 };
 
 const buildModuleTreeNode = (
@@ -150,27 +188,37 @@ const buildModuleTreeNode = (
   partId: string,
   clusterId: string | null,
   depth: number
-): TreeNode => ({
-  id: clusterId
+): TreeNode => {
+  const id = clusterId
     ? `devtree:${partId}:${clusterId}:${mod.id}`
-    : `devtree:${partId}:standalone:${mod.id}`,
-  label: mod.title,
-  status: resolveReadinessStatus(mod.readiness, "todo"),
-  visualDepth: depth,
-  nodeType: "module",
-  readiness: mod.readiness,
-  onSelect: () =>
-    dispatchBranchSelected({
-      kind: "module",
-      nodeId: mod.id,
-      label: mod.title,
-      partId,
-      clusterId: clusterId ?? undefined,
-      artifacts: mod.artifacts,
-      session: mod.session,
-      workflowPath: mod.workflowPath,
-    }),
-});
+    : `devtree:${partId}:standalone:${mod.id}`;
+  const children = mod.operations?.map((operation) =>
+    buildOperationTreeNode(operation, id, partId, clusterId, depth + 1)
+  );
+  return {
+    id,
+    label: mod.title,
+    status: resolveReadinessStatus(mod.readiness, "todo"),
+    visualDepth: depth,
+    nodeType: "module",
+    readiness: mod.readiness,
+    isCollapsible: Boolean(children?.length),
+    children: children && children.length > 0 ? children : undefined,
+    onSelect: () =>
+      dispatchBranchSelected({
+        kind: "module",
+        nodeId: mod.id,
+        label: mod.title,
+        partId,
+        clusterId: clusterId ?? undefined,
+        artifacts: mod.artifacts,
+        session: mod.session,
+        workflowPath: mod.workflowPath,
+        artifactWorkspacePath: mod.artifactWorkspacePath,
+        codeWorkspacePath: mod.codeWorkspacePath,
+      }),
+  };
+};
 
 const buildClusterTreeNode = (
   cluster: DevelopmentTreeClusterNode,

@@ -116,3 +116,69 @@ test("buildDevelopmentTreeNodes marks current pending product part as progress",
   assert.equal(nodes[1]?.status, "progress");
   assert.equal(nodes[1]?.title, "Current Core target Product Part.");
 });
+
+test("buildDevelopmentTreeNodes renders module operation children from Core snapshot", () => {
+  const nodes = buildDevelopmentTreeNodes(
+    {
+      parts: [
+        {
+          id: "ui-shell",
+          status: "materialized",
+          clusters: [
+            {
+              id: "layout-cluster",
+              modules: [
+                {
+                  id: "main-area",
+                  title: "Main Area",
+                  operations: [
+                    {
+                      id: "module-facade-specification",
+                      kind: "module_facade_specification",
+                      title: "Module / Facade Specification",
+                      workflowPath:
+                        "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/modules/main-area",
+                      artifactWorkspacePath:
+                        ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/modules/main-area",
+                    },
+                    {
+                      id: "implementation",
+                      kind: "implementation",
+                      title: "Implementation",
+                      workflowPath:
+                        "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/modules/main-area/implementation",
+                      artifactWorkspacePath:
+                        ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/modules/main-area",
+                      children: [
+                        {
+                          id: "workers",
+                          kind: "workers",
+                          title: "Workers",
+                          workflowPath:
+                            "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/modules/main-area/workers",
+                          artifactWorkspacePath:
+                            ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/modules/main-area/workers",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          standaloneModules: [],
+        },
+      ],
+    },
+    0
+  );
+
+  const moduleNode = nodes[0]?.children?.[0]?.children?.[0];
+  const specNode = moduleNode?.children?.[0];
+  const implementationNode = moduleNode?.children?.[1];
+  assert.equal(moduleNode?.isCollapsible, true);
+  assert.equal(specNode?.label, "Module / Facade Specification");
+  assert.equal(specNode?.operationKind, "module_facade_specification");
+  assert.equal(implementationNode?.children?.[0]?.label, "Workers");
+  assert.equal(implementationNode?.children?.[0]?.operationKind, "workers");
+});

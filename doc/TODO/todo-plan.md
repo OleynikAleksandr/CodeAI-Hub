@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "7984ab5cc",
+  "lastRecordedCommit": "db60de52b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase4.stream1.task1",
-  "expectedCommitMessage": "feat: parse development tree operation projection",
+  "currentTaskId": "phase4.stream2.task1",
+  "expectedCommitMessage": "feat: render development tree workflow nodes",
   "debt": {
-    "expectedCommitMessage": "feat: parse development tree operation projection",
-    "preCommitHead": "7984ab5cc",
+    "expectedCommitMessage": "feat: render development tree workflow nodes",
+    "preCommitHead": "db60de52b",
     "stage": "commit_pending",
-    "taskId": "phase4.stream1.task1"
+    "taskId": "phase4.stream2.task1"
   }
 }
 ```
@@ -78,11 +78,11 @@
 
 ### Stream: PM Snapshot Parsing
 13. [DONE] `phase4.stream1.task1` Parse Core-owned operation nodes and materialization fields in Project Manager workflow state client without adding filesystem scans (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/services/workflow-state-client.test.ts, src/client/project-manager/components/layout/workspace-tree-model.ts`; expected commit: `feat: parse development tree operation projection`).
-14. [PENDING] Git Commit: `feat: parse development tree operation projection` (hash: TBD)
+14. [DONE] Git Commit: `feat: parse development tree operation projection` (hash: db60de52b)
 
 ### Stream: PM Tree Rendering
-15. [TODO] `phase4.stream2.task1` Render nested `Module -> Module / Facade Specification -> Implementation -> Worker/Integration` nodes from Core snapshot (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `feat: render development tree workflow nodes`).
-16. [TODO] Git Commit: `feat: render development tree workflow nodes` (hash: TBD)
+15. [DONE] `phase4.stream2.task1` Render nested `Module -> Module / Facade Specification -> Implementation -> Worker/Integration` nodes from Core snapshot (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `feat: render development tree workflow nodes`).
+16. [PENDING] Git Commit: `feat: render development tree workflow nodes` (hash: TBD)
 17. [TODO] `phase4.stream2.task2` Update PM tree row rendering/type markers/styles for operation node indentation, wrapped long labels, and stable wider sidebar behavior matching the prototype (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-type-marker.tsx, packages/ui/project-manager/styles.css`; expected commit: `feat: style development tree workflow nodes`).
 18. [TODO] Git Commit: `feat: style development tree workflow nodes` (hash: TBD)
 
