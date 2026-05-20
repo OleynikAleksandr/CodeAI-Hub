@@ -259,7 +259,14 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const providerResolver = useStepProviderResolver({ snapshot: workflowState });
 
   const renderItemClass = (node: TreeNode) =>
-    `pm-tree__item pm-tree__item--${node.status}${node.isSelected ? " pm-tree__item--selected" : ""}`;
+    [
+      "pm-tree__item",
+      `pm-tree__item--${node.status}`,
+      node.nodeType ? `pm-tree__item--type-${node.nodeType}` : null,
+      node.isSelected ? "pm-tree__item--selected" : null,
+    ]
+      .filter((className): className is string => Boolean(className))
+      .join(" ");
 
   const renderTreeLabel = (label: string): React.ReactNode =>
     label.split("\n").map((line, index) => (
@@ -269,20 +276,32 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       </Fragment>
     ));
 
-  const renderModuleRow = (node: TreeNode) => (
-    <li
-      className={renderItemClass(node)}
-      data-provider={providerResolver.forBranchModule(node.id) ?? undefined}
-      key={node.id}
-      onClick={node.onSelect}
-      role={node.onSelect ? "button" : undefined}
-    >
-      {renderTypeMarker(node)}
-      <span className="pm-tree__label" title={node.title ?? node.label}>
-        {renderTreeLabel(node.label)}
-      </span>
-    </li>
-  );
+  const renderModuleRow = (node: TreeNode): React.ReactNode => {
+    const children = node.children ?? [];
+    return (
+      <Fragment key={node.id}>
+        <li
+          className={renderItemClass(node)}
+          data-provider={providerResolver.forBranchModule(node.id) ?? undefined}
+          onClick={node.onSelect}
+          role={node.onSelect ? "button" : undefined}
+          style={
+            node.nodeType === "operation"
+              ? {
+                  paddingLeft: `${baseIndent + node.visualDepth * depthIndent}px`,
+                }
+              : undefined
+          }
+        >
+          {renderTypeMarker(node)}
+          <span className="pm-tree__label" title={node.title ?? node.label}>
+            {renderTreeLabel(node.label)}
+          </span>
+        </li>
+        {children.map((child) => renderModuleRow(child))}
+      </Fragment>
+    );
+  };
 
   const renderClusterNode = (node: TreeNode) => {
     const isOpen = openClusterId === node.id;

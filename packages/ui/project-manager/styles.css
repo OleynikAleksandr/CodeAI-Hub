@@ -5,8 +5,8 @@
 :root {
   --pm-font-family:
     "Space Grotesk", "Sora", "IBM Plex Sans", "Segoe UI", sans-serif;
-  --pm-sidebar-min-width: 220px;
-  --pm-sidebar-max-width: 420px;
+  --pm-sidebar-min-width: 280px;
+  --pm-sidebar-max-width: 560px;
   --pm-resizer-width: 6px;
   --pm-panel-gap: 8px;
   --pm-panel-min-width: 240px;
@@ -587,6 +587,13 @@ body {
   white-space: nowrap;
 }
 
+.pm-tree__item--type-operation .pm-tree__label {
+  text-overflow: clip;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
 .pm-tree__item--selected .pm-tree__label {
   font-weight: 600;
 }
@@ -667,6 +674,31 @@ body {
 .pm-tree__type-marker--has-children {
   outline: 1px solid var(--pm-accent-strong);
   outline-offset: 2px;
+}
+
+.pm-tree__type-marker--operation {
+  width: 17px;
+  height: 17px;
+  font-size: 9px;
+  color: #93a0ad;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+}
+
+.pm-tree__item--type-operation {
+  gap: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-right: 8px;
+  font-size: 12px;
+  color: var(--pm-text-muted);
+  background: transparent;
+}
+
+.pm-tree__item--type-operation:hover {
+  color: var(--pm-text-primary);
+  background: rgba(255, 255, 255, 0.025);
 }
 
 /* ========== Development Tree: PP Wrapper ========== */

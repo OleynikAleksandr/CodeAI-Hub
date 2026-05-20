@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "db60de52b",
+  "lastRecordedCommit": "3ef3f7a84",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase4.stream2.task1",
-  "expectedCommitMessage": "feat: render development tree workflow nodes",
+  "currentTaskId": "phase4.stream2.task2",
+  "expectedCommitMessage": "feat: style development tree workflow nodes",
   "debt": {
-    "expectedCommitMessage": "feat: render development tree workflow nodes",
-    "preCommitHead": "db60de52b",
+    "expectedCommitMessage": "feat: style development tree workflow nodes",
+    "preCommitHead": "3ef3f7a84",
     "stage": "commit_pending",
-    "taskId": "phase4.stream2.task1"
+    "taskId": "phase4.stream2.task2"
   }
 }
 ```
@@ -82,9 +82,9 @@
 
 ### Stream: PM Tree Rendering
 15. [DONE] `phase4.stream2.task1` Render nested `Module -> Module / Facade Specification -> Implementation -> Worker/Integration` nodes from Core snapshot (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `feat: render development tree workflow nodes`).
-16. [PENDING] Git Commit: `feat: render development tree workflow nodes` (hash: TBD)
-17. [TODO] `phase4.stream2.task2` Update PM tree row rendering/type markers/styles for operation node indentation, wrapped long labels, and stable wider sidebar behavior matching the prototype (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-type-marker.tsx, packages/ui/project-manager/styles.css`; expected commit: `feat: style development tree workflow nodes`).
-18. [TODO] Git Commit: `feat: style development tree workflow nodes` (hash: TBD)
+16. [DONE] Git Commit: `feat: render development tree workflow nodes` (hash: 3ef3f7a84)
+17. [DONE] `phase4.stream2.task2` Update PM tree row rendering/type markers/styles for operation node indentation, wrapped long labels, and stable wider sidebar behavior matching the prototype (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-type-marker.tsx, packages/ui/project-manager/styles.css`; expected commit: `feat: style development tree workflow nodes`).
+18. [PENDING] Git Commit: `feat: style development tree workflow nodes` (hash: TBD)
 
 ### Stream: PM Routing And Disposition
 19. [TODO] `phase4.stream3.task1` Route selected operation nodes to their own Sessions/Artifacts surfaces and add raw Core-owned orphan disposition command payloads (scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/services/workflow-state-client.ts`; expected commit: `feat: route development tree operation nodes`).
