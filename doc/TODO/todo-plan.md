@@ -8,15 +8,15 @@
   "planId": "development-tree-left-sidebar-phase1-planning-2026-05-20",
   "branch": "main",
   "baseHead": "22ad9bcec",
-  "lastRecordedCommit": "22ad9bcec",
+  "lastRecordedCommit": "8ce7623c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: open development tree sidebar planning",
+  "currentTaskId": "phase1.stream2.task1",
+  "expectedCommitMessage": "docs: draft development tree sidebar phase one plan",
   "debt": {
-    "expectedCommitMessage": "docs: open development tree sidebar planning",
-    "preCommitHead": "22ad9bcec",
+    "expectedCommitMessage": "docs: draft development tree sidebar phase one plan",
+    "preCommitHead": "8ce7623c2",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase1.stream2.task1"
   }
 }
 ```
@@ -48,11 +48,11 @@
 
 ### Stream: Planning Intake
 1. [DONE] `phase1.stream1.task1` Create the active planning scaffold for Development Tree left sidebar phase 1 and register it in the docs index (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: open development tree sidebar planning`).
-2. [PENDING] Git Commit: `docs: open development tree sidebar planning` (hash: TBD)
+2. [DONE] Git Commit: `docs: open development tree sidebar planning` (hash: 8ce7623c2)
 
 ### Stream: Planning Draft
-3. [TODO] `phase1.stream2.task1` Draft the detailed phase 1 plan for left sidebar Development Tree UI changes, including node hierarchy, visual rules, state projection, Core data needs, and implementation slicing (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md`; expected commit: `docs: draft development tree sidebar phase one plan`).
-4. [TODO] Git Commit: `docs: draft development tree sidebar phase one plan` (hash: TBD)
+3. [DONE] `phase1.stream2.task1` Draft the detailed phase 1 plan for left sidebar Development Tree UI changes, including node hierarchy, visual rules, state projection, Core data needs, and implementation slicing (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md`; expected commit: `docs: draft development tree sidebar phase one plan`).
+4. [PENDING] Git Commit: `docs: draft development tree sidebar phase one plan` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 5. [TODO] `phase1.stream3.task1` User reviews the Development Tree left sidebar phase 1 planning document before scope closeout (scope: user workflow acceptance; no commit expected).
