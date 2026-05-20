@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -276,6 +283,17 @@ test("DiagramModulesStagePlanController commits accepted turns and advances the 
     assert.match(finalPlan, REVIEW_TASK_STATE_RE);
     assert.match(finalPlan, REVIEW_EXPECTED_COMMIT_RE);
     assert.match(finalPlan, REVIEW_COMMIT_RE);
+    assert.equal(
+      (
+        await stat(
+          path.join(
+            workspaceRoot,
+            ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/project-manager"
+          )
+        )
+      ).isDirectory(),
+      true
+    );
     assert.equal(
       await git(workspaceRoot, [
         "status",

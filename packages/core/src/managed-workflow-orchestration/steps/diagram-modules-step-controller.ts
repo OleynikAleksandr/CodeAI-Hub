@@ -25,6 +25,7 @@ export const diagramModulesStepController: ManagedWorkflowStepController = {
     ".codeai-hub/**/diagram_modules/product-parts.index.md",
     ".codeai-hub/**/diagram_modules/product-parts/**",
     ".codeai-hub/**/diagram_modules/module-map.flow.json",
+    ".codeai-hub/**/development_tree/materialized/**",
     "doc/TODO/stages/diagram-modules/**",
   ],
   phases: [

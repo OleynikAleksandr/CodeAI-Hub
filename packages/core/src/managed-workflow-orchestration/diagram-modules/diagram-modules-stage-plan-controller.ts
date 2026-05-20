@@ -1,5 +1,7 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
+import { DevelopmentTreeFilesystemStructuratorFacade } from "../../development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade";
 import { DiagramModulesManagedGitBoundary } from "./diagram-modules-managed-git-boundary";
 import {
   appendDiagramModulesRepairStep,
@@ -338,6 +340,18 @@ export class DiagramModulesStagePlanController {
 
     const commitMessage = stageState.expectedCommitMessage;
     const next = resolveNextStep(params.decision);
+    if (next.taskId === DIAGRAM_MODULES_REVIEW_TASK_ID) {
+      await new DevelopmentTreeFilesystemStructuratorFacade().materialize({
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+        snapshot: await new DevelopmentTreeStateFacade().currentSnapshot({
+          workspaceRoot: params.workspaceRoot,
+          workspaceSlug: params.workspaceSlug,
+          plannedPartIds: params.decision.plannedPartIds,
+          generatedPartIds: params.decision.generatedPartIds,
+        }),
+      });
+    }
     const managedPaths = await uniqueExistingPaths(params.workspaceRoot, [
       WORKSPACE_PLAN_PATH,
       DIAGRAM_STAGE_PLAN_PATH,
