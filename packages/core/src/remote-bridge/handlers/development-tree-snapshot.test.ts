@@ -58,6 +58,47 @@ Defined.
 <!-- /agent-fill -->
 `;
 
+const writeApplicationSkeletonMap = async (workspaceRoot: string) => {
+  const mapPath = path.join(
+    workspaceRoot,
+    ".codeai-hub/demo/application_skeleton/application-skeleton-map.json"
+  );
+  await mkdir(path.dirname(mapPath), { recursive: true });
+  await writeFile(
+    mapPath,
+    `${JSON.stringify({
+      accepted: true,
+      materialized: true,
+      productParts: [
+        {
+          id: "ui-shell",
+          codePath: "product-parts/ui-shell",
+          clusters: [
+            {
+              id: "layout-cluster",
+              codePath: "product-parts/ui-shell/clusters/layout-cluster",
+              modules: [
+                {
+                  id: "main-area",
+                  codePath:
+                    "product-parts/ui-shell/clusters/layout-cluster/modules/main-area",
+                },
+              ],
+            },
+          ],
+          standaloneModules: [
+            {
+              id: "theme-engine",
+              codePath: "product-parts/ui-shell/modules/theme-engine",
+            },
+          ],
+        },
+      ],
+    })}\n`,
+    "utf8"
+  );
+};
+
 test("readDevelopmentTreeSnapshot returns skeleton for planned-only parts", async () => {
   const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-"));
   try {
@@ -145,6 +186,44 @@ test("readDevelopmentTreeSnapshot extracts clusters and standalone modules from 
     assert.equal(part.standaloneModules.length, 1);
     assert.equal(part.standaloneModules[0]?.id, "theme-engine");
     assert.equal(part.standaloneModules[0]?.title, "Theme Engine");
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("readDevelopmentTreeSnapshot exposes code workspace paths only from materialized application skeleton", async () => {
+  const tmpDir = await mkdtemp(path.join(os.tmpdir(), "devtree-"));
+  try {
+    const partDir = path.join(
+      tmpDir,
+      ".codeai-hub/demo/diagram_modules/product-parts"
+    );
+    await mkdir(partDir, { recursive: true });
+    await writeFile(path.join(partDir, "ui-shell.md"), PART_CONTENT, "utf8");
+    await writeApplicationSkeletonMap(tmpDir);
+
+    const result = await readDevelopmentTreeSnapshot({
+      workspaceRoot: tmpDir,
+      workspaceSlug: "demo",
+      plannedPartIds: ["ui-shell"],
+      generatedPartIds: ["ui-shell"],
+    });
+
+    const part = result.parts[0];
+    assert.equal(part?.codeWorkspacePath, "product-parts/ui-shell");
+    assert.equal(
+      part?.clusters[0]?.codeWorkspacePath,
+      "product-parts/ui-shell/clusters/layout-cluster"
+    );
+    assert.equal(
+      part?.clusters[0]?.modules[0]?.codeWorkspacePath,
+      "product-parts/ui-shell/clusters/layout-cluster/modules/main-area"
+    );
+    assert.equal(
+      part?.standaloneModules[0]?.codeWorkspacePath,
+      "product-parts/ui-shell/modules/theme-engine"
+    );
+    assert.equal(part?.clusters[0]?.modules[1]?.codeWorkspacePath, undefined);
   } finally {
     await rm(tmpDir, { recursive: true, force: true });
   }

@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "8557614f5",
+  "lastRecordedCommit": "9d5487835",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase3.stream1.task1",
-  "expectedCommitMessage": "feat: expose development tree operation nodes",
+  "currentTaskId": "phase3.stream1.task2",
+  "expectedCommitMessage": "feat: separate development tree artifact and code paths",
   "debt": {
-    "expectedCommitMessage": "feat: expose development tree operation nodes",
-    "preCommitHead": "8557614f5",
+    "expectedCommitMessage": "feat: separate development tree artifact and code paths",
+    "preCommitHead": "9d5487835",
     "stage": "commit_pending",
-    "taskId": "phase3.stream1.task1"
+    "taskId": "phase3.stream1.task2"
   }
 }
 ```
@@ -70,9 +70,9 @@
 
 ### Stream: Snapshot Operation Nodes
 9. [DONE] `phase3.stream1.task1` Extend Core Development Tree node types and state facade with operation node children, artifact workspace paths, and backward-compatible snapshot output (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: expose development tree operation nodes`).
-10. [PENDING] Git Commit: `feat: expose development tree operation nodes` (hash: TBD)
-11. [TODO] `phase3.stream1.task2` Keep code mirror projection Application Skeleton-owned while exposing optional code workspace path only when available (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-production-path-applier.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: separate development tree artifact and code paths`).
-12. [TODO] Git Commit: `feat: separate development tree artifact and code paths` (hash: TBD)
+10. [DONE] Git Commit: `feat: expose development tree operation nodes` (hash: 9d5487835)
+11. [DONE] `phase3.stream1.task2` Keep code mirror projection Application Skeleton-owned while exposing optional code workspace path only when available (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-production-path-applier.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: separate development tree artifact and code paths`).
+12. [PENDING] Git Commit: `feat: separate development tree artifact and code paths` (hash: TBD)
 
 ## Phase 4 — Project Manager Projection Rendering (owner: Codex, updated: 2026-05-20)
 

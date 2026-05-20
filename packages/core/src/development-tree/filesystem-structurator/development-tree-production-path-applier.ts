@@ -8,6 +8,18 @@ export interface DevelopmentTreeProductionPathApplyResult {
   readonly skippedReason?: string;
 }
 
+export interface DevelopmentTreeCodeWorkspacePathEntry {
+  readonly clusterId?: string;
+  readonly codeWorkspacePath: string;
+  readonly kind: "cluster" | "module" | "product_part";
+  readonly moduleId?: string;
+  readonly partId: string;
+}
+
+export interface DevelopmentTreeCodeWorkspacePathIndex {
+  readonly entries: readonly DevelopmentTreeCodeWorkspacePathEntry[];
+}
+
 const EMPTY_RESULT: DevelopmentTreeProductionPathApplyResult = {
   conflicts: [],
   created: [],
@@ -53,6 +65,9 @@ const normalizeSafeRelativePath = (value: unknown): string | null => {
   return segments.join("/");
 };
 
+const readId = (value: unknown): string | null =>
+  typeof value === "string" && value.trim() ? value.trim() : null;
+
 const collectCodePaths = (value: unknown, output: Set<string>): void => {
   if (!isRecord(value)) {
     return;
@@ -76,6 +91,103 @@ const collectCodePaths = (value: unknown, output: Set<string>): void => {
   }
 };
 
+const pushCodePathEntry = (
+  entries: DevelopmentTreeCodeWorkspacePathEntry[],
+  params: Omit<DevelopmentTreeCodeWorkspacePathEntry, "codeWorkspacePath"> & {
+    readonly codePath: unknown;
+  }
+): void => {
+  const codeWorkspacePath = normalizeSafeRelativePath(params.codePath);
+  if (!codeWorkspacePath) {
+    return;
+  }
+  entries.push({
+    kind: params.kind,
+    partId: params.partId,
+    codeWorkspacePath,
+    ...(params.clusterId ? { clusterId: params.clusterId } : {}),
+    ...(params.moduleId ? { moduleId: params.moduleId } : {}),
+  });
+};
+
+const collectCodePathEntries = (
+  skeletonMap: Record<string, unknown>
+): readonly DevelopmentTreeCodeWorkspacePathEntry[] => {
+  const entries: DevelopmentTreeCodeWorkspacePathEntry[] = [];
+  const productParts = skeletonMap.productParts;
+  if (!Array.isArray(productParts)) {
+    return entries;
+  }
+  for (const part of productParts) {
+    if (!isRecord(part)) {
+      continue;
+    }
+    const partId = readId(part.id);
+    if (!partId) {
+      continue;
+    }
+    pushCodePathEntry(entries, {
+      kind: "product_part",
+      partId,
+      codePath: part.codePath,
+    });
+    for (const cluster of Array.isArray(part.clusters) ? part.clusters : []) {
+      collectClusterCodePathEntries(entries, partId, cluster);
+    }
+    for (const module of Array.isArray(part.standaloneModules)
+      ? part.standaloneModules
+      : []) {
+      collectModuleCodePathEntries(entries, partId, undefined, module);
+    }
+  }
+  return entries;
+};
+
+const collectClusterCodePathEntries = (
+  entries: DevelopmentTreeCodeWorkspacePathEntry[],
+  partId: string,
+  cluster: unknown
+): void => {
+  if (!isRecord(cluster)) {
+    return;
+  }
+  const clusterId = readId(cluster.id);
+  if (!clusterId) {
+    return;
+  }
+  pushCodePathEntry(entries, {
+    kind: "cluster",
+    partId,
+    clusterId,
+    codePath: cluster.codePath,
+  });
+  for (const module of Array.isArray(cluster.modules) ? cluster.modules : []) {
+    collectModuleCodePathEntries(entries, partId, clusterId, module);
+  }
+};
+
+const collectModuleCodePathEntries = (
+  entries: DevelopmentTreeCodeWorkspacePathEntry[],
+  partId: string,
+  clusterId: string | undefined,
+  module: unknown
+): void => {
+  if (!isRecord(module)) {
+    return;
+  }
+  const moduleId = readId(module.id);
+  if (!moduleId) {
+    return;
+  }
+  pushCodePathEntry(entries, {
+    kind: "module",
+    partId,
+    ...(clusterId ? { clusterId } : {}),
+    moduleId,
+    codePath: module.codePath,
+  });
+};
+
 const readSkeletonMap = async (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -93,6 +205,19 @@ const readSkeletonMap = async (params: {
   } catch {
     return null;
   }
+};
+
+export const readDevelopmentTreeCodeWorkspacePathIndex = async (params: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<DevelopmentTreeCodeWorkspacePathIndex | null> => {
+  const skeletonMap = await readSkeletonMap(params);
+  if (
+    !(skeletonMap && isAccepted(skeletonMap) && isMaterialized(skeletonMap))
+  ) {
+    return null;
+  }
+  return { entries: collectCodePathEntries(skeletonMap) };
 };
 
 export class DevelopmentTreeProductionPathApplier {

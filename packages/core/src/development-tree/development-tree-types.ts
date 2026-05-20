@@ -51,6 +51,7 @@ export interface DevelopmentTreeOperationNode {
 export interface DevelopmentTreeModuleNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly artifactWorkspacePath?: string;
+  readonly codeWorkspacePath?: string;
   readonly id: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly operations?: readonly DevelopmentTreeOperationNode[];
@@ -63,6 +64,7 @@ export interface DevelopmentTreeModuleNode {
 export interface DevelopmentTreeClusterNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly artifactWorkspacePath?: string;
+  readonly codeWorkspacePath?: string;
   readonly id: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly modules: readonly DevelopmentTreeModuleNode[];
@@ -75,6 +77,7 @@ export interface DevelopmentTreePartNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly artifactWorkspacePath?: string;
   readonly clusters: readonly DevelopmentTreeClusterNode[];
+  readonly codeWorkspacePath?: string;
   readonly id: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly readiness?: DevelopmentTreeDraftReadiness;
