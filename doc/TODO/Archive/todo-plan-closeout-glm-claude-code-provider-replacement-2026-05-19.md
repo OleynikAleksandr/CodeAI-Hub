@@ -1,3 +1,18 @@
+# Plan Closeout: glm-claude-code-provider-replacement-2026-05-19
+
+**Created:** 2026-05-20T05:53:21.784Z
+**Acceptance:** User accepted release 1.2.318: GLM-Claude-Code appeared and works; external-model expansion scope is complete
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase13-glm-closeout
+**Expected Commit:** docs: close glm claude code provider replacement scope
+**Last Recorded Commit:** 031289cc4
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/GLM_Claude_Code_Provider_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/GLM_Claude_Code_Provider_Planning_RU.md",
   "currentTaskId": "phase13-glm-closeout",
   "expectedCommitMessage": "docs: close glm claude code provider replacement scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close glm claude code provider replacement scope",
-    "preCommitHead": "031289cc4",
-    "stage": "commit_pending",
-    "taskId": "phase13-glm-closeout"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -144,6 +154,7 @@
 
 ## Phase 13 — Scope Closeout (owner: Codex, updated: 2026-05-19)
 ### Stream: Scope Closeout
-1. [DONE] `phase13-glm-closeout` После явного acceptance архивировать active plan, disposition planning source, обновить Docs Index и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm claude code provider replacement scope`. Result: closeout archive created at `doc/TODO/Archive/todo-plan-closeout-glm-claude-code-provider-replacement-2026-05-19.md`; planning source moved to `doc/SolidWorks-WorkFlow/Plans/Archive/GLM_Claude_Code_Provider_Planning_RU.md`; Docs Index updated to point to the archived accepted planning source.
-2. [PENDING] Git Commit: `docs: close glm claude code provider replacement scope` (hash: TBD)
+1. [IN_PROGRESS] `phase13-glm-closeout` После явного acceptance архивировать active plan, disposition planning source, обновить Docs Index и связанные ссылки — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive, doc/SolidWorks-WorkFlow/Plans, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close glm claude code provider replacement scope`.
+2. [TODO] Git Commit: `docs: close glm claude code provider replacement scope` (hash: TBD)
 3. [TODO] `phase13-glm-post-closeout-anchor` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle — scope: handoff only; expected commit: none.
+````
