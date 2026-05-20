@@ -8,15 +8,15 @@
   "planId": "development-tree-implementation-lifecycle-planning-2026-05-20",
   "branch": "main",
   "baseHead": "08f8a366c",
-  "lastRecordedCommit": "08f8a366c",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_Implementation_Lifecycle_Planning_RU.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: document development tree implementation lifecycle",
+  "lastRecordedCommit": "6f3e678f9",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_Implementation_Lifecycle_Planning_RU.md",
+  "currentTaskId": "phase1.stream3.task1",
+  "expectedCommitMessage": "docs: close development tree implementation lifecycle planning",
   "debt": {
-    "expectedCommitMessage": "docs: document development tree implementation lifecycle",
-    "preCommitHead": "08f8a366c",
+    "expectedCommitMessage": "docs: close development tree implementation lifecycle planning",
+    "preCommitHead": "6f3e678f9",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase1.stream3.task1"
   }
 }
 ```
@@ -24,7 +24,7 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_Implementation_Lifecycle_Planning_RU.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_Implementation_Lifecycle_Planning_RU.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
@@ -45,12 +45,12 @@
 
 ### Stream: Planning Document
 1. [DONE] `phase1.stream1.task1` Create the Development Tree Implementation lifecycle planning document and update navigation index (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_Implementation_Lifecycle_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document development tree implementation lifecycle`).
-2. [PENDING] Git Commit: `docs: document development tree implementation lifecycle` (hash: TBD)
+2. [DONE] Git Commit: `docs: document development tree implementation lifecycle` (hash: 6f3e678f9)
 
 ### Stream: User Workflow Acceptance Testing
-3. [TODO] `phase1.stream2.task1` User reviews the implementation lifecycle planning document and HTML prototype before scope closeout (scope: user workflow acceptance; no commit expected).
+3. [DONE] `phase1.stream2.task1` User reviews the implementation lifecycle planning document and HTML prototype before scope closeout (scope: user workflow acceptance; no commit expected). Result: User accepted the Development Tree implementation lifecycle planning document and prototype.
 
 ### Stream: Scope Closeout
-4. [TODO] `phase1.stream3.task1` Close this planning scope after explicit user acceptance, archive or dispose the planning document according to the accepted lifecycle, and return `todo-plan.md` to terminal NONE state (scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Implementation/`, `doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree implementation lifecycle planning`).
-5. [TODO] Git Commit: `docs: close development tree implementation lifecycle planning` (hash: TBD)
+4. [DONE] `phase1.stream3.task1` Close this planning scope after explicit user acceptance, archive or dispose the planning document according to the accepted lifecycle, and return `todo-plan.md` to terminal NONE state (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Plans/Implementation/DevelopmentTree_Implementation_Lifecycle_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_Implementation_Lifecycle_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree implementation lifecycle planning`).
+5. [PENDING] Git Commit: `docs: close development tree implementation lifecycle planning` (hash: TBD)
 6. [TODO] `phase1.stream3.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
