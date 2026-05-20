@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "779c601f5",
+  "lastRecordedCommit": "faf9af6bb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase4.stream3.task1",
-  "expectedCommitMessage": "feat: route development tree operation nodes",
+  "currentTaskId": "phase5.stream1.task1",
+  "expectedCommitMessage": "docs: sync development tree materialization architecture",
   "debt": {
-    "expectedCommitMessage": "feat: route development tree operation nodes",
-    "preCommitHead": "779c601f5",
+    "expectedCommitMessage": "docs: sync development tree materialization architecture",
+    "preCommitHead": "faf9af6bb",
     "stage": "commit_pending",
-    "taskId": "phase4.stream3.task1"
+    "taskId": "phase5.stream1.task1"
   }
 }
 ```
@@ -88,13 +88,13 @@
 
 ### Stream: PM Routing And Disposition
 19. [DONE] `phase4.stream3.task1` Route selected operation nodes to their own Sessions/Artifacts surfaces and add raw Core-owned orphan disposition command payloads (scope: `src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/main-area-utils.ts`; expected commit: `feat: route development tree operation nodes`).
-20. [PENDING] Git Commit: `feat: route development tree operation nodes` (hash: TBD)
+20. [DONE] Git Commit: `feat: route development tree operation nodes` (hash: faf9af6bb)
 
 ## Phase 5 — Documentation And Verification (owner: Codex, updated: 2026-05-20)
 
 ### Stream: SSOT Sync
-21. [TODO] `phase5.stream1.task1` Sync SSOT documentation for Core-owned Development Tree materialization, PM projection-only boundary, and Application Skeleton-owned code mirror (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync development tree materialization architecture`).
-22. [TODO] Git Commit: `docs: sync development tree materialization architecture` (hash: TBD)
+21. [DONE] `phase5.stream1.task1` Sync SSOT documentation for Core-owned Development Tree materialization, PM projection-only boundary, and Application Skeleton-owned code mirror (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync development tree materialization architecture`).
+22. [PENDING] Git Commit: `docs: sync development tree materialization architecture` (hash: TBD)
 
 ### Stream: Tooling Verification
 23. [TODO] `phase5.stream2.task1` Run targeted verification for affected Core and Project Manager packages (scope: `packages/core, src/client/project-manager, packages/ui/project-manager`; expected commit: no commit expected).
