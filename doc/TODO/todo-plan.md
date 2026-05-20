@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "a9018b572",
+  "lastRecordedCommit": "8557614f5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase2.stream2.task1",
-  "expectedCommitMessage": "feat: materialize development tree after diagram acceptance",
+  "currentTaskId": "phase3.stream1.task1",
+  "expectedCommitMessage": "feat: expose development tree operation nodes",
   "debt": {
-    "expectedCommitMessage": "feat: materialize development tree after diagram acceptance",
-    "preCommitHead": "a9018b572",
+    "expectedCommitMessage": "feat: expose development tree operation nodes",
+    "preCommitHead": "8557614f5",
     "stage": "commit_pending",
-    "taskId": "phase2.stream2.task1"
+    "taskId": "phase3.stream1.task1"
   }
 }
 ```
@@ -64,13 +64,13 @@
 
 ### Stream: Diagram Modules Acceptance Hook
 7. [DONE] `phase2.stream2.task1` Wire the Development Tree artifact materializer into the Core-owned Diagram Modules acceptance lifecycle, not Project Manager and not Application Skeleton (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts`; expected commit: `feat: materialize development tree after diagram acceptance`).
-8. [PENDING] Git Commit: `feat: materialize development tree after diagram acceptance` (hash: TBD)
+8. [DONE] Git Commit: `feat: materialize development tree after diagram acceptance` (hash: 8557614f5)
 
 ## Phase 3 — Core Read Model Contract (owner: Codex, updated: 2026-05-20)
 
 ### Stream: Snapshot Operation Nodes
-9. [TODO] `phase3.stream1.task1` Extend Core Development Tree node types and state facade with operation node children, artifact workspace paths, and backward-compatible snapshot output (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: expose development tree operation nodes`).
-10. [TODO] Git Commit: `feat: expose development tree operation nodes` (hash: TBD)
+9. [DONE] `phase3.stream1.task1` Extend Core Development Tree node types and state facade with operation node children, artifact workspace paths, and backward-compatible snapshot output (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: expose development tree operation nodes`).
+10. [PENDING] Git Commit: `feat: expose development tree operation nodes` (hash: TBD)
 11. [TODO] `phase3.stream1.task2` Keep code mirror projection Application Skeleton-owned while exposing optional code workspace path only when available (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-production-path-applier.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: separate development tree artifact and code paths`).
 12. [TODO] Git Commit: `feat: separate development tree artifact and code paths` (hash: TBD)
 

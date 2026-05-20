@@ -33,10 +33,27 @@ export interface DevelopmentTreeNodeLifecycle {
   readonly startState: DevelopmentTreeNodeStartState;
 }
 
+export type DevelopmentTreeOperationNodeKind =
+  | "implementation"
+  | "integration"
+  | "module_facade_specification"
+  | "workers";
+
+export interface DevelopmentTreeOperationNode {
+  readonly artifactWorkspacePath: string;
+  readonly children?: readonly DevelopmentTreeOperationNode[];
+  readonly id: string;
+  readonly kind: DevelopmentTreeOperationNodeKind;
+  readonly title: string;
+  readonly workflowPath: string;
+}
+
 export interface DevelopmentTreeModuleNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
+  readonly artifactWorkspacePath?: string;
   readonly id: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
+  readonly operations?: readonly DevelopmentTreeOperationNode[];
   readonly readiness?: DevelopmentTreeDraftReadiness;
   readonly session?: DevelopmentTreeNodeSession;
   readonly title: string;
@@ -45,6 +62,7 @@ export interface DevelopmentTreeModuleNode {
 
 export interface DevelopmentTreeClusterNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
+  readonly artifactWorkspacePath?: string;
   readonly id: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly modules: readonly DevelopmentTreeModuleNode[];
@@ -55,6 +73,7 @@ export interface DevelopmentTreeClusterNode {
 
 export interface DevelopmentTreePartNode {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
+  readonly artifactWorkspacePath?: string;
   readonly clusters: readonly DevelopmentTreeClusterNode[];
   readonly id: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;

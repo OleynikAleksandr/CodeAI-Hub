@@ -97,6 +97,42 @@ test("DevelopmentTreeStateFacade exposes draft artifacts and sessions per node",
     const module = snapshot.parts[0]?.clusters[0]?.modules[0];
 
     assert.equal(module?.workflowPath, moduleWorkflowPath);
+    assert.equal(
+      module?.artifactWorkspacePath,
+      `.codeai-hub/${workspaceSlug}/${moduleWorkflowPath}`
+    );
+    assert.deepEqual(module?.operations, [
+      {
+        id: "module-facade-specification",
+        kind: "module_facade_specification",
+        title: "Module / Facade Specification",
+        workflowPath: moduleWorkflowPath,
+        artifactWorkspacePath: `.codeai-hub/${workspaceSlug}/${moduleWorkflowPath}`,
+      },
+      {
+        id: "implementation",
+        kind: "implementation",
+        title: "Implementation",
+        workflowPath: `${moduleWorkflowPath}/implementation`,
+        artifactWorkspacePath: `.codeai-hub/${workspaceSlug}/${moduleWorkflowPath}`,
+        children: [
+          {
+            id: "workers",
+            kind: "workers",
+            title: "Workers",
+            workflowPath: `${moduleWorkflowPath}/workers`,
+            artifactWorkspacePath: `.codeai-hub/${workspaceSlug}/${moduleWorkflowPath}/workers`,
+          },
+          {
+            id: "integration",
+            kind: "integration",
+            title: "Integration",
+            workflowPath: `${moduleWorkflowPath}/integration`,
+            artifactWorkspacePath: `.codeai-hub/${workspaceSlug}/${moduleWorkflowPath}/integration`,
+          },
+        ],
+      },
+    ]);
     assert.deepEqual(module?.artifacts, [
       {
         fileName: "ModuleSpec.draft.md",

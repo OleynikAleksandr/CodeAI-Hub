@@ -3,6 +3,10 @@ import path from "node:path";
 import type { ContinuityChainSummary } from "../session-continuity/continuity-types";
 import { SessionContinuityFacade } from "../session-continuity/session-continuity-facade";
 import { resolveWorkflowArtifactPaths } from "../workflow/paths/workflow-artifact-paths";
+import {
+  createArtifactWorkspacePath,
+  createModuleOperationNodes,
+} from "./development-tree-operation-nodes";
 import type {
   DevelopmentTreeClusterNode,
   DevelopmentTreeDraftReadiness,
@@ -296,6 +300,7 @@ const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
     readonly moduleId?: string;
     readonly partId: string;
   }): Promise<{
+    readonly artifactWorkspacePath: string;
     readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
     readonly lifecycle: DevelopmentTreeNodeLifecycle;
     readonly session?: DevelopmentTreeNodeSession;
@@ -323,6 +328,10 @@ const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
     }
     const session = resolveLatestNodeSession(chains, workflowPath);
     return {
+      artifactWorkspacePath: createArtifactWorkspacePath(
+        params.workspaceSlug,
+        workflowPath
+      ),
       artifacts: artifacts.length > 0 ? artifacts : undefined,
       lifecycle: createNodeLifecycle(session),
       workflowPath,
@@ -350,6 +359,10 @@ const applyReadiness = async (
       modules.push({
         ...module,
         ...metadata,
+        operations: createModuleOperationNodes(
+          metadata.workflowPath,
+          params.workspaceSlug
+        ),
         readiness: await readReadiness({
           kind: "module",
           partId: part.id,
