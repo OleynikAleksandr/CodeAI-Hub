@@ -44,15 +44,25 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
       parts: [
         {
           id: "ui-shell",
+          artifactWorkspacePath:
+            ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell",
+          codeWorkspacePath: "product-parts/ui-shell",
           readiness: "in_progress",
           status: "materialized",
           clusters: [
             {
               id: "layout",
+              artifactWorkspacePath:
+                ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout",
+              codeWorkspacePath: "product-parts/ui-shell/clusters/layout",
               readiness: "ready",
               modules: [
                 {
                   id: "main-area",
+                  artifactWorkspacePath:
+                    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area",
+                  codeWorkspacePath:
+                    "product-parts/ui-shell/clusters/layout/modules/main-area",
                   artifacts: [
                     {
                       fileName: "ModuleSpec.draft.md",
@@ -69,6 +79,37 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
                     sessionId: "runtime-session",
                     updatedAt: "2026-05-04T10:01:00.000Z",
                   },
+                  operations: [
+                    {
+                      id: "module-facade-specification",
+                      kind: "module_facade_specification",
+                      title: "Module / Facade Specification",
+                      workflowPath:
+                        "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area",
+                      artifactWorkspacePath:
+                        ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area",
+                    },
+                    {
+                      id: "implementation",
+                      kind: "implementation",
+                      title: "Implementation",
+                      workflowPath:
+                        "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area/implementation",
+                      artifactWorkspacePath:
+                        ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area",
+                      children: [
+                        {
+                          id: "workers",
+                          kind: "workers",
+                          title: "Workers",
+                          workflowPath:
+                            "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area/workers",
+                          artifactWorkspacePath:
+                            ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area/workers",
+                        },
+                      ],
+                    },
+                  ],
                   title: "Main Area",
                   workflowPath:
                     "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area",
@@ -114,12 +155,27 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
 
   const part = state?.developmentTree?.parts[0];
   assert.equal(part?.readiness, "in_progress");
+  assert.equal(part?.codeWorkspacePath, "product-parts/ui-shell");
   assert.equal(part?.clusters[0]?.readiness, "ready");
+  assert.equal(
+    part?.clusters[0]?.artifactWorkspacePath,
+    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout"
+  );
   const module = part?.clusters[0]?.modules[0];
   assert.equal(module?.readiness, "ready");
   assert.equal(
+    module?.codeWorkspacePath,
+    "product-parts/ui-shell/clusters/layout/modules/main-area"
+  );
+  assert.equal(
     module?.workflowPath,
     "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area"
+  );
+  assert.equal(module?.operations?.[0]?.kind, "module_facade_specification");
+  assert.equal(module?.operations?.[1]?.children?.[0]?.kind, "workers");
+  assert.equal(
+    module?.operations?.[1]?.children?.[0]?.artifactWorkspacePath,
+    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area/workers"
   );
   assert.equal(module?.artifacts?.[0]?.fileName, "ModuleSpec.draft.md");
   assert.equal(module?.session?.providerId, "codexCli");

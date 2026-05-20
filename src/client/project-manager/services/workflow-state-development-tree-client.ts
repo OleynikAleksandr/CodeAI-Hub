@@ -23,8 +23,25 @@ export type DevelopmentTreeNodeLifecycle = {
   readonly startable: boolean;
 };
 
+export type DevelopmentTreeOperationNodeKind =
+  | "implementation"
+  | "integration"
+  | "module_facade_specification"
+  | "workers";
+
+export type DevelopmentTreeOperationNode = {
+  readonly artifactWorkspacePath: string;
+  readonly children?: readonly DevelopmentTreeOperationNode[];
+  readonly id: string;
+  readonly kind: DevelopmentTreeOperationNodeKind;
+  readonly title: string;
+  readonly workflowPath: string;
+};
+
 type DevelopmentTreeNodeMetadata = {
+  readonly artifactWorkspacePath?: string;
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
+  readonly codeWorkspacePath?: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly session?: DevelopmentTreeNodeSession;
   readonly workflowPath?: string;
@@ -32,6 +49,7 @@ type DevelopmentTreeNodeMetadata = {
 
 export type DevelopmentTreeModuleNode = DevelopmentTreeNodeMetadata & {
   readonly id: string;
+  readonly operations?: readonly DevelopmentTreeOperationNode[];
   readonly readiness?: DevelopmentTreeReadiness;
   readonly title: string;
 };
@@ -69,6 +87,14 @@ const isDevelopmentTreeNodeStartState = (
   value: unknown
 ): value is DevelopmentTreeNodeStartState =>
   value === "not_started" || value === "started";
+
+const isDevelopmentTreeOperationNodeKind = (
+  value: unknown
+): value is DevelopmentTreeOperationNodeKind =>
+  value === "implementation" ||
+  value === "integration" ||
+  value === "module_facade_specification" ||
+  value === "workers";
 
 const parseArtifact = (payload: unknown): DevelopmentTreeNodeArtifact | null => {
   if (!isRecord(payload)) return null;
@@ -112,6 +138,37 @@ const parseLifecycle = (
     : undefined;
 };
 
+const parseOperationNode = (
+  payload: unknown
+): DevelopmentTreeOperationNode | null => {
+  if (!isRecord(payload)) return null;
+  const artifactWorkspacePath = readNonEmptyString(
+    payload.artifactWorkspacePath
+  );
+  const id = readNonEmptyString(payload.id);
+  const kind = isDevelopmentTreeOperationNodeKind(payload.kind)
+    ? payload.kind
+    : null;
+  const title = readNonEmptyString(payload.title);
+  const workflowPath = readNonEmptyString(payload.workflowPath);
+  if (!(artifactWorkspacePath && id && kind && title && workflowPath)) {
+    return null;
+  }
+  const children = Array.isArray(payload.children)
+    ? payload.children
+        .map(parseOperationNode)
+        .filter((item): item is DevelopmentTreeOperationNode => item !== null)
+    : [];
+  return {
+    artifactWorkspacePath,
+    id,
+    kind,
+    title,
+    workflowPath,
+    children: children.length > 0 ? children : undefined,
+  };
+};
+
 const parseNodeMetadata = (
   payload: Record<string, unknown>
 ): DevelopmentTreeNodeMetadata => {
@@ -121,7 +178,10 @@ const parseNodeMetadata = (
         .filter((item): item is DevelopmentTreeNodeArtifact => item !== null)
     : [];
   return {
+    artifactWorkspacePath:
+      readNonEmptyString(payload.artifactWorkspacePath) ?? undefined,
     artifacts: artifacts.length > 0 ? artifacts : undefined,
+    codeWorkspacePath: readNonEmptyString(payload.codeWorkspacePath) ?? undefined,
     lifecycle: parseLifecycle(payload.lifecycle),
     session: parseSession(payload.session),
     workflowPath: readNonEmptyString(payload.workflowPath) ?? undefined,
@@ -133,10 +193,16 @@ const parseModuleNode = (payload: unknown): DevelopmentTreeModuleNode | null => 
   const id = readNonEmptyString(payload.id);
   const title = readNonEmptyString(payload.title);
   if (!(id && title)) return null;
+  const operations = Array.isArray(payload.operations)
+    ? payload.operations
+        .map(parseOperationNode)
+        .filter((item): item is DevelopmentTreeOperationNode => item !== null)
+    : [];
   return {
     id,
     title,
     ...parseNodeMetadata(payload),
+    operations: operations.length > 0 ? operations : undefined,
     readiness: isDevelopmentTreeReadiness(payload.readiness)
       ? payload.readiness
       : undefined,

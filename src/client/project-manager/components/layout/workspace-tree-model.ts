@@ -1,12 +1,19 @@
+import type { DevelopmentTreeOperationNodeKind } from "../../services/workflow-state-development-tree-client";
 import type {
   DevelopmentTreeReadiness,
   WorkflowStageId,
   WorkflowStageStatus,
 } from "../../services/workflow-state-client";
 
-export type TreeStatus = "active" | "progress" | "todo" | "blocked" | "draft" | "outdated";
+export type TreeStatus =
+  | "active"
+  | "blocked"
+  | "draft"
+  | "outdated"
+  | "progress"
+  | "todo";
 
-export type TreeNodeType = "product-part" | "cluster" | "module";
+export type TreeNodeType = "cluster" | "module" | "operation" | "product-part";
 
 export type TreeNode = {
   readonly id: string;
@@ -21,6 +28,7 @@ export type TreeNode = {
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];
   readonly nodeType?: TreeNodeType;
+  readonly operationKind?: DevelopmentTreeOperationNodeKind;
   readonly readiness?: DevelopmentTreeReadiness;
 };
 
