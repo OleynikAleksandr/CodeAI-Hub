@@ -18,7 +18,13 @@ const isProviderStackId = (value: string): value is ProviderStackId =>
   value === "glmClaudeCode";
 
 const resolveKindLabel = (kind: BranchNodeKind): string =>
-  kind === "product-part" ? "Product Part" : kind === "cluster" ? "Cluster" : "Module";
+  kind === "product-part"
+    ? "Product Part"
+    : kind === "cluster"
+      ? "Cluster"
+      : kind === "operation"
+        ? "Operation"
+        : "Module";
 
 export const DevelopmentTreeNodeStartCard: React.FC<{
   readonly kind: BranchNodeKind;

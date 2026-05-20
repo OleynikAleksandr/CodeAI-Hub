@@ -235,7 +235,9 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
         ? "Product Part"
         : selectedBranchNode.kind === "cluster"
           ? "Cluster"
-          : "Module";
+          : selectedBranchNode.kind === "operation"
+            ? "Operation"
+            : "Module";
     if (!selectedBranchArtifact) {
       return (
         <div className="pm-placeholder">

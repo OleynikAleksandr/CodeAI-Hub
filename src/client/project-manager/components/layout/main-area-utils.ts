@@ -3,9 +3,10 @@ import type {
   DevelopmentTreeNodeArtifact,
   DevelopmentTreeNodeSession,
 } from "../../services/workflow-state-client";
+import type { DevelopmentTreeOperationNodeKind } from "../../services/workflow-state-development-tree-client";
 import type { WorkflowEvent } from "../../services/workflow-events-client";
 
-export type BranchNodeKind = "product-part" | "cluster" | "module";
+export type BranchNodeKind = "product-part" | "cluster" | "module" | "operation";
 
 export type BranchNodeSelection = {
   readonly kind: BranchNodeKind;
@@ -16,6 +17,9 @@ export type BranchNodeSelection = {
   readonly artifacts?: readonly DevelopmentTreeNodeArtifact[];
   readonly session?: DevelopmentTreeNodeSession;
   readonly workflowPath?: string;
+  readonly artifactWorkspacePath?: string;
+  readonly codeWorkspacePath?: string;
+  readonly operationKind?: DevelopmentTreeOperationNodeKind;
 };
 
 type ArtifactRefreshTarget = {
@@ -67,6 +71,7 @@ const BRANCH_NODE_KINDS: readonly string[] = [
   "product-part",
   "cluster",
   "module",
+  "operation",
 ];
 
 const isBranchNodeKind = (value: unknown): value is BranchNodeKind =>
@@ -151,6 +156,21 @@ export const parseBranchNodeSelection = (
     record.workflowPath.trim().length > 0
       ? record.workflowPath.trim()
       : undefined;
+  const artifactWorkspacePath =
+    typeof record.artifactWorkspacePath === "string" &&
+    record.artifactWorkspacePath.trim().length > 0
+      ? record.artifactWorkspacePath.trim()
+      : undefined;
+  const codeWorkspacePath =
+    typeof record.codeWorkspacePath === "string" &&
+    record.codeWorkspacePath.trim().length > 0
+      ? record.codeWorkspacePath.trim()
+      : undefined;
+  const operationKind =
+    typeof record.operationKind === "string" &&
+    record.operationKind.trim().length > 0
+      ? (record.operationKind.trim() as DevelopmentTreeOperationNodeKind)
+      : undefined;
   return {
     kind,
     nodeId,
@@ -160,6 +180,9 @@ export const parseBranchNodeSelection = (
     artifacts: artifacts.length > 0 ? artifacts : undefined,
     session: parseBranchSession(record.session),
     workflowPath,
+    artifactWorkspacePath,
+    codeWorkspacePath,
+    operationKind,
   };
 };
 import {
