@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "bde34814f",
+  "lastRecordedCommit": "7e76d164f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: open development tree materialization implementation",
+  "currentTaskId": "phase2.stream1.task1",
+  "expectedCommitMessage": "feat: plan development tree artifact workspace",
   "debt": {
-    "expectedCommitMessage": "docs: open development tree materialization implementation",
-    "preCommitHead": "bde34814f",
+    "expectedCommitMessage": "feat: plan development tree artifact workspace",
+    "preCommitHead": "7e76d164f",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase2.stream1.task1"
   }
 }
 ```
@@ -52,13 +52,13 @@
 
 ### Stream: Planning Intake
 1. [DONE] `phase1.stream1.task1` Open the implementation execution plan for Core-owned Development Tree materialization and left sidebar projection refactoring (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open development tree materialization implementation`).
-2. [PENDING] Git Commit: `docs: open development tree materialization implementation` (hash: TBD)
+2. [DONE] Git Commit: `docs: open development tree materialization implementation` (hash: 7e76d164f)
 
 ## Phase 2 — Core Artifact Workspace Materializer (owner: Codex, updated: 2026-05-20)
 
 ### Stream: Materialized Directory Plan
-3. [TODO] `phase2.stream1.task1` Extend Development Tree filesystem path planning for `.codeai-hub/<slug>/development_tree/materialized/product-parts/...`, including module-level `workers/` and `integration/` folders (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `feat: plan development tree artifact workspace`).
-4. [TODO] Git Commit: `feat: plan development tree artifact workspace` (hash: TBD)
+3. [DONE] `phase2.stream1.task1` Extend Development Tree filesystem path planning for `.codeai-hub/<slug>/development_tree/materialized/product-parts/...`, including module-level `workers/` and `integration/` folders (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `feat: plan development tree artifact workspace`).
+4. [PENDING] Git Commit: `feat: plan development tree artifact workspace` (hash: TBD)
 5. [TODO] `phase2.stream1.task2` Extend filesystem application/orphan summarization for artifact workspace directories without deleting populated orphan content (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-applier.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-orphan-registry.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.test.ts`; expected commit: `feat: materialize development tree artifact workspace`).
 6. [TODO] Git Commit: `feat: materialize development tree artifact workspace` (hash: TBD)
 

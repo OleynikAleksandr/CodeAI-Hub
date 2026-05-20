@@ -2,8 +2,10 @@ import path from "node:path";
 
 export type DevelopmentTreeFilesystemNodeKind =
   | "cluster"
+  | "integration"
   | "module"
-  | "product_part";
+  | "product_part"
+  | "workers";
 
 export interface DevelopmentTreeFilesystemDirectoryPlan {
   readonly absolutePath: string;

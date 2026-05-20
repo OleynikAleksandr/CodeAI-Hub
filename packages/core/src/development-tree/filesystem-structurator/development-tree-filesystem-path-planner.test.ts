@@ -84,6 +84,22 @@ test("DevelopmentTreeFilesystemPathPlanner creates neutral materialized P/C/M pa
           ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/workflow-state",
       },
       {
+        kind: "workers",
+        partId: "local-runtime",
+        clusterId: "orchestration",
+        moduleId: "workflow-state",
+        relativePath:
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/workflow-state/workers",
+      },
+      {
+        kind: "integration",
+        partId: "local-runtime",
+        clusterId: "orchestration",
+        moduleId: "workflow-state",
+        relativePath:
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/workflow-state/integration",
+      },
+      {
         kind: "module",
         partId: "local-runtime",
         clusterId: "orchestration",
@@ -92,12 +108,44 @@ test("DevelopmentTreeFilesystemPathPlanner creates neutral materialized P/C/M pa
           ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/session-router",
       },
       {
+        kind: "workers",
+        partId: "local-runtime",
+        clusterId: "orchestration",
+        moduleId: "session-router",
+        relativePath:
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/session-router/workers",
+      },
+      {
+        kind: "integration",
+        partId: "local-runtime",
+        clusterId: "orchestration",
+        moduleId: "session-router",
+        relativePath:
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/session-router/integration",
+      },
+      {
         kind: "module",
         partId: "local-runtime",
         clusterId: undefined,
         moduleId: "provider-bridge",
         relativePath:
           ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge",
+      },
+      {
+        kind: "workers",
+        partId: "local-runtime",
+        clusterId: undefined,
+        moduleId: "provider-bridge",
+        relativePath:
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge/workers",
+      },
+      {
+        kind: "integration",
+        partId: "local-runtime",
+        clusterId: undefined,
+        moduleId: "provider-bridge",
+        relativePath:
+          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge/integration",
       },
     ]
   );

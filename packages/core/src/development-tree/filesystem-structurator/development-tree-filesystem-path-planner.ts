@@ -45,6 +45,49 @@ const createStandaloneModuleSegments = (params: {
   params.moduleId,
 ];
 
+const createModuleOperationSegments = (
+  moduleSegments: readonly string[],
+  operation: "integration" | "workers"
+): readonly string[] => [...moduleSegments, operation];
+
+const pushModuleDirectoryPlans = (params: {
+  readonly clusterId?: string;
+  readonly directories: DevelopmentTreeFilesystemDirectoryPlan[];
+  readonly moduleId: string;
+  readonly moduleSegments: readonly string[];
+  readonly partId: string;
+  readonly rootAbsolutePath: string;
+  readonly rootRelativePath: string;
+}): void => {
+  const base = {
+    rootAbsolutePath: params.rootAbsolutePath,
+    rootRelativePath: params.rootRelativePath,
+    partId: params.partId,
+    ...(params.clusterId ? { clusterId: params.clusterId } : {}),
+    moduleId: params.moduleId,
+  };
+  params.directories.push(
+    createDevelopmentTreeDirectoryPlan({
+      ...base,
+      kind: "module",
+      segments: params.moduleSegments,
+    }),
+    createDevelopmentTreeDirectoryPlan({
+      ...base,
+      kind: "workers",
+      segments: createModuleOperationSegments(params.moduleSegments, "workers"),
+    }),
+    createDevelopmentTreeDirectoryPlan({
+      ...base,
+      kind: "integration",
+      segments: createModuleOperationSegments(
+        params.moduleSegments,
+        "integration"
+      ),
+    })
+  );
+};
+
 export class DevelopmentTreeFilesystemPathPlanner {
   plan(
     params: DevelopmentTreeFilesystemPathPlannerRequest
@@ -85,38 +128,34 @@ export class DevelopmentTreeFilesystemPathPlanner {
         );
 
         for (const module of cluster.modules) {
-          directories.push(
-            createDevelopmentTreeDirectoryPlan({
-              rootAbsolutePath: root.absolutePath,
-              rootRelativePath: root.relativePath,
-              kind: "module",
+          pushModuleDirectoryPlans({
+            directories,
+            rootAbsolutePath: root.absolutePath,
+            rootRelativePath: root.relativePath,
+            partId: part.id,
+            clusterId: cluster.id,
+            moduleId: module.id,
+            moduleSegments: createClusterModuleSegments({
               partId: part.id,
               clusterId: cluster.id,
               moduleId: module.id,
-              segments: createClusterModuleSegments({
-                partId: part.id,
-                clusterId: cluster.id,
-                moduleId: module.id,
-              }),
-            })
-          );
+            }),
+          });
         }
       }
 
       for (const module of part.standaloneModules) {
-        directories.push(
-          createDevelopmentTreeDirectoryPlan({
-            rootAbsolutePath: root.absolutePath,
-            rootRelativePath: root.relativePath,
-            kind: "module",
+        pushModuleDirectoryPlans({
+          directories,
+          rootAbsolutePath: root.absolutePath,
+          rootRelativePath: root.relativePath,
+          partId: part.id,
+          moduleId: module.id,
+          moduleSegments: createStandaloneModuleSegments({
             partId: part.id,
             moduleId: module.id,
-            segments: createStandaloneModuleSegments({
-              partId: part.id,
-              moduleId: module.id,
-            }),
-          })
-        );
+          }),
+        });
       }
     }
 
