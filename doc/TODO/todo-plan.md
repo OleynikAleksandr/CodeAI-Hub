@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "7e76d164f",
+  "lastRecordedCommit": "512a79926",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase2.stream1.task1",
-  "expectedCommitMessage": "feat: plan development tree artifact workspace",
+  "currentTaskId": "phase2.stream1.task2",
+  "expectedCommitMessage": "feat: materialize development tree artifact workspace",
   "debt": {
-    "expectedCommitMessage": "feat: plan development tree artifact workspace",
-    "preCommitHead": "7e76d164f",
+    "expectedCommitMessage": "feat: materialize development tree artifact workspace",
+    "preCommitHead": "512a79926",
     "stage": "commit_pending",
-    "taskId": "phase2.stream1.task1"
+    "taskId": "phase2.stream1.task2"
   }
 }
 ```
@@ -58,9 +58,9 @@
 
 ### Stream: Materialized Directory Plan
 3. [DONE] `phase2.stream1.task1` Extend Development Tree filesystem path planning for `.codeai-hub/<slug>/development_tree/materialized/product-parts/...`, including module-level `workers/` and `integration/` folders (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `feat: plan development tree artifact workspace`).
-4. [PENDING] Git Commit: `feat: plan development tree artifact workspace` (hash: TBD)
-5. [TODO] `phase2.stream1.task2` Extend filesystem application/orphan summarization for artifact workspace directories without deleting populated orphan content (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-applier.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-orphan-registry.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.test.ts`; expected commit: `feat: materialize development tree artifact workspace`).
-6. [TODO] Git Commit: `feat: materialize development tree artifact workspace` (hash: TBD)
+4. [DONE] Git Commit: `feat: plan development tree artifact workspace` (hash: 512a79926)
+5. [DONE] `phase2.stream1.task2` Extend filesystem application/orphan summarization for artifact workspace directories without deleting populated orphan content (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-applier.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-orphan-registry.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.test.ts`; expected commit: `feat: materialize development tree artifact workspace`).
+6. [PENDING] Git Commit: `feat: materialize development tree artifact workspace` (hash: TBD)
 
 ### Stream: Diagram Modules Acceptance Hook
 7. [TODO] `phase2.stream2.task1` Wire the Development Tree artifact materializer into the Core-owned Diagram Modules acceptance lifecycle, not Project Manager and not Application Skeleton (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts, packages/core/src/managed-workflow-orchestration/steps/diagram-modules-step-controller.ts`; expected commit: `feat: materialize development tree after diagram acceptance`).

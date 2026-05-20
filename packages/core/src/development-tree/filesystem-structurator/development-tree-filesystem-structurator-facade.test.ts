@@ -168,6 +168,48 @@ test("DevelopmentTreeFilesystemStructuratorFacade reports orphan summary behind 
   }
 });
 
+test("DevelopmentTreeFilesystemStructuratorFacade reports filesystem orphans without deleting populated content", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "devtree-facade-")
+  );
+  try {
+    const facade = new DevelopmentTreeFilesystemStructuratorFacade();
+    const plan = facade.plan({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+      snapshot: createSnapshot(),
+    });
+    const orphanPath = `${plan.rootRelativePath}/product-parts/removed-part`;
+    const orphanAbsolutePath = path.join(
+      plan.rootAbsolutePath,
+      "product-parts",
+      "removed-part"
+    );
+    const orphanArtifactPath = path.join(orphanAbsolutePath, "notes.md");
+    await mkdir(orphanAbsolutePath, { recursive: true });
+    await writeFile(orphanArtifactPath, "manual artifact", "utf8");
+
+    const result = await facade.materialize({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+      snapshot: createSnapshot(),
+    });
+
+    assert.deepEqual(result.orphans.orphanRelativePaths, [orphanPath]);
+    assert.deepEqual(result.orphans.populatedOrphanRelativePaths, [orphanPath]);
+    assert.deepEqual(result.orphans.orphanDirectories, [
+      {
+        relativePath: orphanPath,
+        contentState: "populated",
+        disposition: "requires_user_disposition",
+      },
+    ]);
+    assert.equal((await stat(orphanArtifactPath)).isFile(), true);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("DevelopmentTreeFilesystemStructuratorFacade materializes accepted production code paths", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "devtree-facade-")

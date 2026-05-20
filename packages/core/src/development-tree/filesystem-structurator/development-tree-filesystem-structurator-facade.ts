@@ -50,10 +50,21 @@ export class DevelopmentTreeFilesystemStructuratorFacade {
     const plan = this.plan(params);
     const apply = await this.applier.apply(plan);
     const productionApply = await this.productionPathApplier.apply(params);
-    const orphans = this.orphanRegistry.summarize({
-      plan,
-      existingRelativePaths: params.existingRelativePaths ?? [],
-    });
+    const orphans =
+      params.existingRelativePaths && params.existingRelativePaths.length > 0
+        ? this.orphanRegistry.summarize({
+            plan,
+            existingRelativePaths: [
+              ...apply.observedDirectories.map(
+                (directory) => directory.relativePath
+              ),
+              ...params.existingRelativePaths,
+            ],
+          })
+        : this.orphanRegistry.summarizeFromObservedDirectories({
+            plan,
+            observedDirectories: apply.observedDirectories,
+          });
     return { plan, apply, orphans, productionApply };
   }
 }
