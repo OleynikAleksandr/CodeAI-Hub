@@ -4,7 +4,7 @@
 **Owner:** Oleksandr + Codex  
 **Created:** 2026-05-21  
 **Revised:** 2026-05-21  
-**Scope:** добавить контрактный слой Development Tree после `Diagram Modules`, где `Diagram Modules` определяет lead Product Part, а lead Product Part agent строит application-wide Contract Graph.
+**Scope:** добавить контрактный слой Development Tree после `Diagram Modules`, где `Diagram Modules` определяет lead Product Part, задает порядок Product Parts по лидерству, а lead Product Part agent строит application-wide Contract Graph.
 
 ## 1. Проблема
 
@@ -36,9 +36,12 @@ Product Part
 
 ```text
 leadProductPartId
+productPartLeadershipOrder
 ```
 
-После принятия `Diagram Modules` Core материализует Development Tree так, чтобы lead Product Part был первым root-node для контрактной работы.
+`productPartLeadershipOrder` не является декоративным порядком отображения. Это порядок лидерства и contract orchestration priority: lead Product Part стоит первым, затем идут participant Product Parts в порядке зависимости от lead boundary, ответственности за внешние входы/выходы и влияния на downstream contracts.
+
+После принятия `Diagram Modules` Core материализует Development Tree так, чтобы Product Parts были расположены в этом порядке, а lead Product Part был первым root-node для контрактной работы.
 
 Дальше application-wide Contract Graph строит не отдельный Project/Application agent, а:
 
@@ -98,11 +101,13 @@ Lead Product Part -> reconciles and freezes graph after user acceptance
 
 Дополнительные обязанности:
 - определить `leadProductPartId`;
+- сформировать `productPartLeadershipOrder`, где первый элемент обязан совпадать с `leadProductPartId`;
+- расположить Product Parts в accepted Diagram Modules artifact именно в порядке лидерства;
 - явно пометить participant Product Parts;
 - явно пометить standalone Modules;
-- materialize Development Tree с lead node первым;
-- передать lead selection в Core-owned Development Tree snapshot;
-- при изменении структуры пересчитать lead/participants и downstream impact.
+- materialize Development Tree с Product Parts в порядке `productPartLeadershipOrder`;
+- передать lead selection и leadership order в Core-owned Development Tree snapshot;
+- при изменении структуры или порядка пересчитать lead/participants и downstream impact.
 
 `Diagram Modules` не проектирует все contracts. Он только выбирает, кто должен владеть contract orchestration.
 
@@ -175,7 +180,7 @@ Cluster level остается главным местом, где high-level co
 Новый порядок:
 
 ```text
-1. Diagram Modules accepts topology and leadProductPartId
+1. Diagram Modules accepts topology, leadProductPartId and productPartLeadershipOrder
 2. Lead Product Part Orchestrator drafts application-wide Contract Graph
 3. Participant Product Parts review assigned contracts
 4. Cluster Orchestrators refine Cluster and Module contracts
@@ -345,7 +350,7 @@ Project Manager остается projection-only. Он получает Core-own
 Contract Graph становится вторым upstream artifact после `Diagram Modules`.
 
 ```text
-Diagram Modules controls structure and lead owner.
+Diagram Modules controls structure, lead owner and Product Part leadership order.
 Contract Graph controls interfaces.
 Module Specifications control internals.
 Todo Plans control execution.
@@ -357,7 +362,8 @@ Todo Plans control execution.
 Diagram Modules accepted
   -> Core validates topology
   -> Core records leadProductPartId
-  -> Core materializes Development Tree folders with lead Product Part first
+  -> Core records productPartLeadershipOrder
+  -> Core materializes Development Tree folders using Product Part leadership order
   -> Lead Product Part Orchestrator starts
   -> Agent produces Contract Graph draft
   -> Core validates graph
@@ -454,7 +460,7 @@ Lead Product Part Orchestrator не должен полностью проект
 Правильная ownership model:
 
 ```text
-Diagram Modules owns topology and leadProductPartId.
+Diagram Modules owns topology, leadProductPartId and productPartLeadershipOrder.
 Lead Product Part Orchestrator owns application-wide Contract Graph.
 Participant Product Part Orchestrators own feasibility review of assigned contracts.
 Cluster Orchestrators own Cluster facade and module facade contracts.
@@ -466,6 +472,10 @@ Module Agents own internal specifications and implementation plans.
 Core/shared contract validator должен проверять:
 
 - `leadProductPartId` exists in accepted Diagram Modules topology;
+- `productPartLeadershipOrder` exists in accepted Diagram Modules topology;
+- `productPartLeadershipOrder` contains every Product Part exactly once;
+- first item in `productPartLeadershipOrder` equals `leadProductPartId`;
+- Development Tree projection/materialization preserves `productPartLeadershipOrder`;
 - every participant Product Part references a known node;
 - every graph node references a known Development Tree node or explicit external node;
 - every required input has source or explicit unresolved question;
@@ -504,8 +514,8 @@ wave 8: application integration
 
 ## 13. Open questions
 
-1. Как `Diagram Modules` выбирает lead Product Part?
-   - Предварительное решение: через явное поле/section `leadProductPartId`, предложенное агентом и подтвержденное пользователем.
+1. Как `Diagram Modules` выбирает lead Product Part и порядок Product Parts?
+   - Предварительное решение: через явные поля/sections `leadProductPartId` и `productPartLeadershipOrder`, предложенные агентом и подтвержденные пользователем. Порядок: lead первым, затем participant Product Parts по contract dependency / orchestration priority.
 
 2. Может ли пользователь поменять lead Product Part после acceptance?
    - Предварительное решение: да, но Core должен пересчитать graph ownership и пометить downstream artifacts OUTDATED.
@@ -521,11 +531,11 @@ wave 8: application integration
 
 ## 14. Recommended implementation phases
 
-### Phase A — Diagram Modules lead owner contract
+### Phase A — Diagram Modules lead owner and leadership order contract
 
-- Расширить Diagram Modules artifact contract: `leadProductPartId`.
+- Расширить Diagram Modules artifact contract: `leadProductPartId` и `productPartLeadershipOrder`.
 - Обновить parser/validator/read-model.
-- Materializer должен ставить lead Product Part первым в Development Tree projection.
+- Materializer должен сохранять Product Part leadership order в Development Tree projection.
 
 ### Phase B — Contract Graph artifact contract
 
@@ -556,7 +566,7 @@ wave 8: application integration
 - Добавить Contract Graph view under lead Product Part.
 - Добавить graph inspector.
 - Добавить validation overlay.
-- Sidebar показывает lead Product Part first and marks participant review nodes.
+- Sidebar сохраняет Product Part leadership order and marks participant review nodes.
 
 ### Phase G — Execution graph integration
 
@@ -569,6 +579,7 @@ wave 8: application integration
 Planning document считается принятым, если пользователь согласовал:
 - отдельный Project/Application Orchestrator как agent не нужен;
 - `Diagram Modules` должен определять `leadProductPartId`;
+- `Diagram Modules` должен располагать Product Parts по порядку лидерства, и этот порядок должен определять Development Tree root order;
 - lead Product Part owns application-wide Contract Graph;
 - participant Product Parts / Clusters review assigned contracts instead of negotiating freely;
 - top-down contracts + bottom-up feasibility порядок верен;

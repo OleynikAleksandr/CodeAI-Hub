@@ -8,15 +8,15 @@
   "planId": "development-tree-project-contract-orchestrator-planning-2026-05-21",
   "branch": "main",
   "baseHead": "fa17f6a43",
-  "lastRecordedCommit": "23c76a21a",
+  "lastRecordedCommit": "3d3711ff3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase1.stream5.task1",
-  "expectedCommitMessage": "docs: revise lead product part contract orchestration",
+  "currentTaskId": "phase1.stream7.task1",
+  "expectedCommitMessage": "docs: require product part leadership ordering",
   "debt": {
-    "expectedCommitMessage": "docs: revise lead product part contract orchestration",
-    "preCommitHead": "23c76a21a",
+    "expectedCommitMessage": "docs: require product part leadership ordering",
+    "preCommitHead": "3d3711ff3",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5.task1"
+    "taskId": "phase1.stream7.task1"
   }
 }
 ```
@@ -61,10 +61,17 @@
 
 ### Stream: Lead Product Part Revision
 8. [DONE] `phase1.stream5.task1` Revise the planning document so Diagram Modules owns lead Product Part selection and the lead Product Part agent owns application-wide Contract Graph orchestration without a separate Project/Application Orchestrator agent (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: revise lead product part contract orchestration`).
-9. [PENDING] Git Commit: `docs: revise lead product part contract orchestration` (hash: TBD)
+9. [DONE] Git Commit: `docs: revise lead product part contract orchestration` (hash: 3d3711ff3)
 
 ### Stream: User Workflow Acceptance Testing 2
-10. [TODO] `phase1.stream6.task1` User reviews and accepts or requests revisions to the Lead Product Part Contract Orchestrator planning document (scope: user workflow acceptance; no commit expected).
+10. [DONE] `phase1.stream6.task1` User reviews and accepts or requests revisions to the Lead Product Part Contract Orchestrator planning document (scope: user workflow acceptance; no commit expected). Result: user requested revision: Diagram Modules must order Product Parts by leadership so this order directly defines Development Tree root order.
+
+### Stream: Product Part Leadership Ordering Revision
+11. [DONE] `phase1.stream7.task1` Add Diagram Modules requirement to order Product Parts by leadership/contract orchestration priority and preserve that order in Development Tree projection/materialization (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: require product part leadership ordering`).
+12. [PENDING] Git Commit: `docs: require product part leadership ordering` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing 3
+13. [TODO] `phase1.stream8.task1` User reviews and accepts or requests revisions to the Product Part leadership ordering planning update (scope: user workflow acceptance; no commit expected).
 
 ### Stream: Scope Closeout
 5. [TODO] `phase1.stream4.task1` Close the planning scope after explicit user acceptance and decide whether the planning document remains active/deferred or moves into Archive/SSOT follow-up (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: close lead product part contract orchestrator planning`).
