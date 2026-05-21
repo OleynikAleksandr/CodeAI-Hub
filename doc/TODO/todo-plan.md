@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "092a30ebb",
+  "lastRecordedCommit": "ad5b6f827",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase6.stream1.task2",
-  "expectedCommitMessage": "feat: reveal development tree workflow nodes in sidebar",
+  "currentTaskId": "phase6.stream3.task1",
+  "expectedCommitMessage": "feat: add cluster operation artifact folders",
   "debt": {
-    "expectedCommitMessage": "feat: reveal development tree workflow nodes in sidebar",
-    "preCommitHead": "092a30ebb",
+    "expectedCommitMessage": "feat: add cluster operation artifact folders",
+    "preCommitHead": "ad5b6f827",
     "stage": "commit_pending",
-    "taskId": "phase6.stream1.task2"
+    "taskId": "phase6.stream3.task1"
   }
 }
 ```
@@ -114,13 +114,21 @@
 29. [DONE] `phase6.stream1.task1` Materialize the same accepted Development Tree folder shape into `doc/TODO/stages/development-tree/...` during the Core-owned Diagram Modules materialization step (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `feat: mirror development tree todo stage workspace`).
 30. [DONE] Git Commit: `feat: mirror development tree todo stage workspace` (hash: 092a30ebb)
 31. [DONE] `phase6.stream1.task2` Expand the first Development Tree Product Part/Cluster in the left sidebar when Core snapshot data appears so module operation nodes are visible like the accepted prototype (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-development-expansion.test.ts`; expected commit: `feat: reveal development tree workflow nodes in sidebar`).
-32. [PENDING] Git Commit: `feat: reveal development tree workflow nodes in sidebar` (hash: TBD)
-33. [TODO] `phase6.stream1.task3` Run targeted Core/Project Manager verification after acceptance defect fixes (scope: `packages/core, src/client/project-manager, packages/ui/project-manager`; expected commit: no commit expected).
+32. [DONE] Git Commit: `feat: reveal development tree workflow nodes in sidebar` (hash: ad5b6f827)
+33. [DONE] `phase6.stream1.task3` Run targeted Core/Project Manager verification after acceptance defect fixes (scope: `packages/core, src/client/project-manager, packages/ui/project-manager`; expected commit: no commit expected). Result: targeted verification passed; materialized doc/TODO/stages/development-tree mirror in CodeAI-Hub codex 5.4 test workspace
 
 ### Stream: User Visual Acceptance Retest
-34. [TODO] `phase6.stream2.task1` User installs/retests the fixed release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
+34. [BLOCKED] `phase6.stream2.task1` User installs/retests the fixed release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected). Blocked by acceptance defect: cluster nodes have their own contract/facade session but the materialized tree did not create cluster-level `workers/` and `integration/` artifact folders.
+
+### Stream: Cluster Operation Folder Fix
+35. [DONE] `phase6.stream3.task1` Add cluster-level `workers/` and `integration/` artifact folders to both `.codeai-hub/<workspace>/development_tree/materialized/...` and `doc/TODO/stages/development-tree/...` materialization plans (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `feat: add cluster operation artifact folders`).
+36. [PENDING] Git Commit: `feat: add cluster operation artifact folders` (hash: TBD)
+37. [TODO] `phase6.stream3.task2` Run targeted Core materializer verification and re-materialize the test workspace cluster operation folders (scope: `packages/core, /Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`; expected commit: no commit expected).
+
+### Stream: User Visual Acceptance Retest 2
+38. [TODO] `phase6.stream4.task1` User installs/retests the fixed release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
 
 ### Stream: Scope Closeout
-35. [TODO] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).
-36. [TODO] Git Commit: `docs: close development tree materialization implementation` (hash: TBD)
-37. [TODO] `phase5.stream5.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
+39. [TODO] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).
+40. [TODO] Git Commit: `docs: close development tree materialization implementation` (hash: TBD)
+41. [TODO] `phase5.stream5.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).

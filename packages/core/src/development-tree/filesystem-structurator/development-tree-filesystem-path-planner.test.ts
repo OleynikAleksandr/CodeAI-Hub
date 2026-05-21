@@ -46,6 +46,20 @@ const createExpectedEntries = (rootRelativePath: string) => [
     relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration`,
   },
   {
+    kind: "workers",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/workers`,
+  },
+  {
+    kind: "integration",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/integration`,
+  },
+  {
     kind: "module",
     partId: "local-runtime",
     clusterId: "orchestration",
