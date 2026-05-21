@@ -1,9 +1,10 @@
-# Development Tree — Project/Application Contract Orchestrator Planning
+# Development Tree — Lead Product Part Contract Orchestrator Planning
 
 **Status:** Planning / design intake, not implemented SSOT  
 **Owner:** Oleksandr + Codex  
 **Created:** 2026-05-21  
-**Scope:** добавить верхний контрактный слой Development Tree после `Diagram Modules` и до Product Part / Cluster / Module specification work.
+**Revised:** 2026-05-21  
+**Scope:** добавить контрактный слой Development Tree после `Diagram Modules`, где `Diagram Modules` определяет lead Product Part, а lead Product Part agent строит application-wide Contract Graph.
 
 ## 1. Проблема
 
@@ -15,130 +16,183 @@ Product Part
     Module
 ```
 
-Но этой структуры недостаточно для управляемой разработки. Она отвечает на вопрос "из каких частей состоит приложение", но еще не отвечает на вопрос "как части взаимодействуют друг с другом".
+Эта структура отвечает на вопрос "из каких частей состоит приложение", но еще не отвечает на вопрос "как части взаимодействуют друг с другом".
 
-После `Diagram Modules` Core уже знает состав Product Parts, Clusters, Modules и standalone Modules. Но между этим structural artifact и нижними шагами `Product Part / Cluster / Module` не хватает самого ответственного слоя:
+Нужно добавить слой контрактов:
+- входы;
+- выходы;
+- payload names;
+- facade boundaries;
+- dependencies;
+- allowed / forbidden coupling;
+- execution waves;
+- downstream OUTDATED propagation.
 
-```text
-Project / Application Orchestrator
-```
+Первоначальная идея отдельного `Project / Application Orchestrator` была пересмотрена. В системе, где уже есть естественный главный Product Part, отдельный верхний agent становится лишним звеном.
 
-Этот слой должен видеть всю структуру приложения и сформировать contract graph: входы, выходы, связи, payload names, ownership и зависимости между Product Parts, Clusters, Modules и standalone Modules.
+## 2. Новое принятое направление
 
-Без такого слоя нижние агенты будут проектировать контракты локально:
-- Product Part agent не увидит всю application-level картину;
-- Cluster agent не сможет корректно построить внешний контракт кластера без upstream contract map;
-- Module agent будет вынужден изобретать внешний API самостоятельно;
-- параллельное выполнение станет рискованным из-за конфликтов ownership, hidden dependencies и поздних merge-проблем.
-
-## 2. Принятое направление
-
-Нужен новый root-level шаг Development Tree:
+`Diagram Modules` уже строит всю topological structure приложения. Поэтому именно `Diagram Modules` должен дополнительно определить:
 
 ```text
-Project / Application Orchestration
+leadProductPartId
 ```
 
-Он запускается после принятого `Diagram Modules` и до детальных Product Part / Cluster / Module specifications.
+После принятия `Diagram Modules` Core материализует Development Tree так, чтобы lead Product Part был первым root-node для контрактной работы.
 
-Этот шаг выполняет AI agent, а не обычный скрипт. Скрипты могут валидировать результат, но не могут спроектировать смысловую контрактную карту приложения.
+Дальше application-wide Contract Graph строит не отдельный Project/Application agent, а:
 
-### Почему это должен быть AI agent
+```text
+Lead Product Part Orchestrator
+```
 
-Project/Application Orchestrator должен:
-- интерпретировать назначение Product Parts и Clusters;
-- выявлять межчастевые зависимости;
-- формулировать входы/выходы и payload names;
-- находить неочевидные shared services, state, commands, events, artifacts;
-- задавать пользователю уточняющие вопросы;
-- предлагать trade-offs для границ и facade contracts.
+Для CodeAI Hub lead Product Part, как правило, `Core`, потому что Core:
+- владеет workflow truth;
+- владеет managed lifecycle;
+- принимает команды от Project Manager;
+- вызывает provider modules;
+- материализует artifacts;
+- управляет Git/Plan Orchestrator boundaries;
+- решает OUTDATED propagation;
+- является центром contracts для UI, providers, workspace, sessions, artifacts и runtime state.
 
-Это архитектурная reasoning-задача. Скрипт может только проверить, что:
-- graph schema валидна;
-- node ids существуют;
-- у input есть source или явно указан external source;
-- нет запрещенных boundary crossings;
-- нет циклов там, где они запрещены;
-- downstream artifacts имеют revision links;
-- orphaned / outdated nodes подсвечены.
+В другом приложении lead Product Part может быть другим: `Domain Engine`, `Simulation Kernel`, `Backend API`, `Game Runtime`, `CRM Core` и т.п.
 
-## 3. Роли оркестраторов
+## 3. Почему отдельный Project/Application Orchestrator не нужен
 
-### Project / Application Orchestrator
+Отдельный Project/Application agent дублировал бы работу, которую можно выполнить естественнее:
 
-Владеет application-level contract map.
+```text
+Diagram Modules
+  -> знает всю структуру
+  -> определяет lead Product Part
 
-Он видит:
-- все Product Parts;
-- все Clusters внутри них;
-- standalone Modules;
-- cross-product-part dependencies;
-- application-level inputs/outputs;
-- shared services/state/events/artifacts;
-- предварительные execution waves.
+Lead Product Part Orchestrator
+  -> знает свой central responsibility
+  -> строит application-wide contract graph вокруг lead boundary
+```
 
-Он не должен писать module micro-tasks и не должен полностью проектировать internals каждого модуля. Его результат — верхняя контрактная карта и preliminary contracts для Product Parts / Clusters.
+Это уменьшает количество абстрактных шагов и делает контрактную работу конкретной сразу.
 
-### Product Part Orchestrator
+Если в приложении один Product Part:
 
-Владеет контрактной картой одного Product Part.
+```text
+Diagram Modules -> marks single Product Part as lead
+Lead Product Part -> owns full Contract Graph
+```
 
-Он получает сверху application-level constraints и уточняет:
-- какие Clusters входят в Product Part;
-- какие external inputs Product Part принимает;
-- какие outputs Product Part обязан предоставить;
-- какие Cluster boundaries нужны внутри Product Part;
-- какие cluster-level dependencies могут идти параллельно или только последовательно.
+Если Product Parts несколько:
 
-Product Part agents не должны "договариваться" между собой напрямую. Если возникает cross-product-part dependency, он поднимается в Project/Application Orchestrator и фиксируется в Core-owned graph.
+```text
+Diagram Modules -> selects lead Product Part
+Lead Product Part -> drafts contracts for participants
+Participant Product Parts / Clusters -> review assigned contracts
+Lead Product Part -> reconciles and freezes graph after user acceptance
+```
+
+## 4. Role model
+
+### Diagram Modules
+
+`Diagram Modules` остается structural authority.
+
+Дополнительные обязанности:
+- определить `leadProductPartId`;
+- явно пометить participant Product Parts;
+- явно пометить standalone Modules;
+- materialize Development Tree с lead node первым;
+- передать lead selection в Core-owned Development Tree snapshot;
+- при изменении структуры пересчитать lead/participants и downstream impact.
+
+`Diagram Modules` не проектирует все contracts. Он только выбирает, кто должен владеть contract orchestration.
+
+### Lead Product Part Orchestrator
+
+Владеет application-wide Contract Graph.
+
+Он получает:
+- accepted Diagram Modules structure;
+- lead Product Part artifact;
+- participant Product Part artifacts;
+- Cluster/Module topology;
+- user context from upstream workflow artifacts.
+
+Он создает:
+- application-level Contract Graph;
+- lead Product Part contract map;
+- requested contracts for participant Product Parts;
+- cross-part dependencies;
+- shared interfaces;
+- preliminary execution waves.
+
+Lead Product Part Orchestrator не должен писать module micro-tasks. Его работа заканчивается на verified/frozen contract graph and downstream contract artifact materialization.
+
+### Participant Product Part Orchestrator
+
+Не "договаривается" с другими Product Parts напрямую.
+
+Он получает assigned contracts от lead graph:
+- expected inputs;
+- expected outputs;
+- payload names;
+- external responsibilities;
+- constraints;
+- questions.
+
+Он может:
+- подтвердить contract;
+- указать missing input/output;
+- предложить correction;
+- поднять conflict обратно к Lead Product Part Orchestrator.
 
 ### Cluster Orchestrator
 
-Владеет Cluster facade contract и module facade contracts внутри кластера.
-
-Он получает сверху внешний контракт кластера и раскладывает его на:
+Получает внешний contract своего Cluster сверху и уточняет:
+- Cluster facade contract;
 - module boundaries;
 - module facade inputs/outputs;
-- допустимые internal dependencies;
-- forbidden direct coupling;
-- integration contract внутри кластера.
+- allowed internal dependencies;
+- forbidden bypasses around facade;
+- integration responsibilities.
 
-Cluster level является главным местом, где contracts превращаются в реалистичные module API.
+Cluster level остается главным местом, где high-level contracts превращаются в реалистичные module facade contracts.
 
 ### Module Agent
 
-Владеет module internal specification и implementation plan.
+Получает module facade contract сверху.
 
-Он получает внешний module facade contract сверху. Он может:
-- проверить реализуемость;
-- задать вопросы пользователю по внутренней логике;
-- предложить contract change request наверх;
-- спроектировать internal classes, data models, edge cases;
-- создать module todo-plan с micro-tasks.
+Он владеет:
+- internal module specification;
+- classes/data models;
+- edge cases;
+- implementation todo-plan;
+- micro-tasks.
 
-Module Agent не должен сам изобретать свой внешний контракт.
+Он не владеет внешним module contract. Он может только вернуть feasibility issue или change request наверх.
 
-## 4. Contract Cascade
+## 5. Contract cascade
 
-Порядок работы должен быть гибридным:
+Новый порядок:
 
 ```text
-1. Top-down contract framing
-2. Local refinement
-3. Bottom-up feasibility review
-4. Bubble-up conflict resolution
-5. Contract graph freeze
-6. Module specifications
-7. Module todo-plans
-8. Execution / implementation
-9. Cluster integration
-10. Product Part integration
-11. Application integration
+1. Diagram Modules accepts topology and leadProductPartId
+2. Lead Product Part Orchestrator drafts application-wide Contract Graph
+3. Participant Product Parts review assigned contracts
+4. Cluster Orchestrators refine Cluster and Module contracts
+5. Module Agents perform feasibility review
+6. Lead Product Part Orchestrator reconciles conflicts
+7. Core validates graph
+8. User reviews graph visually and accepts/revises
+9. Core freezes accepted graph revision
+10. Core materializes downstream contract artifacts
+11. Module specifications unlock
+12. Module todo-plans unlock
+13. Execution waves start
 ```
 
-### Top-down отвечает за контракты
+### Top-down отвечает за contracts
 
-Top-down движение касается не реализации, а contract boundaries:
+Top-down движение касается:
 - facade classes;
 - inputs;
 - outputs;
@@ -149,9 +203,9 @@ Top-down движение касается не реализации, а contrac
 - allowed dependencies;
 - forbidden dependencies.
 
-### Bottom-up отвечает за реализуемость
+### Bottom-up отвечает за feasibility
 
-Нижние агенты не владеют внешней truth, но могут возвращать наверх:
+Нижние agents возвращают:
 - missing input;
 - impossible dependency;
 - unclear payload;
@@ -160,28 +214,29 @@ Top-down движение касается не реализации, а contrac
 - performance/security risk;
 - suggested contract correction.
 
-## 5. Новый upstream artifact: Contract Graph
+## 6. New upstream artifact: Contract Graph
 
-Contract Graph должен быть структурированным Core-owned artifact, а не только картинкой.
+Contract Graph остается Core-owned structured artifact, но его logical owner — lead Product Part.
 
 Минимальный storage proposal:
 
 ```text
-.codeai-hub/<workspace>/development_tree/project-orchestration/contract-graph.json
-.codeai-hub/<workspace>/development_tree/project-orchestration/contract-graph.md
-doc/TODO/stages/development-tree/project-orchestration/contract-graph.md
+.codeai-hub/<workspace>/development_tree/lead-product-part/<lead-part-id>/contract-graph.json
+.codeai-hub/<workspace>/development_tree/lead-product-part/<lead-part-id>/contract-graph.md
+doc/TODO/stages/development-tree/lead-product-part/<lead-part-id>/contract-graph.md
 doc/TODO/stages/development-tree/product-parts/<part>/product-part-contract-map.md
 doc/TODO/stages/development-tree/product-parts/<part>/clusters/<cluster>/cluster-contract.md
 doc/TODO/stages/development-tree/product-parts/<part>/clusters/<cluster>/modules/<module>/module-contract.md
 ```
 
-`contract-graph.json` является machine-readable truth. Markdown artifacts являются reviewable user-facing projections.
+`contract-graph.json` является machine-readable truth. Markdown artifacts являются reviewable projections.
 
 ### Graph node types
 
 ```text
 application
-product_part
+lead_product_part
+participant_product_part
 cluster
 module
 standalone_module
@@ -202,7 +257,7 @@ configuration
 runtime_signal
 ```
 
-### Минимальная contract edge schema
+### Minimal contract edge schema
 
 ```json
 {
@@ -213,7 +268,8 @@ runtime_signal
   "targetPort": "dialog.openSession",
   "kind": "command",
   "payloadName": "OpenSessionRequest",
-  "ownerNodeId": "cluster.session-workspace-ui",
+  "ownerNodeId": "product-part.core",
+  "leadProductPartId": "product-part.core",
   "status": "draft",
   "revision": "r1",
   "dependsOn": [],
@@ -223,7 +279,7 @@ runtime_signal
 
 ### Port naming
 
-Порты должны иметь user-readable и code-oriented names:
+Порты должны стать будущей основой для facade method/event naming:
 
 ```text
 session.openRequested
@@ -233,61 +289,63 @@ artifact.contractGraphUpdated
 workflow.nodeOutdated
 ```
 
-Имена портов не должны быть случайными фразами. Они должны стать будущей основой для facade method/event naming.
+## 7. UX: Contract Graph View
 
-## 6. UX: Contract Graph View
-
-Project Manager должен показывать Contract Graph как отдельную projection surface:
+Project Manager должен показывать Contract Graph как отдельную projection surface внутри lead Product Part:
 
 ```text
-Project/Application Orchestration
-  Contract Graph
+Development Tree
+  <Lead Product Part>
+    Lead Product Part Orchestration
+      Contract Graph
+      Cross-Part Contracts
+      Shared Interfaces
+      Execution Waves
 ```
 
 Это не тот же экран, что `Diagram Modules`, но UX должен быть похож:
-- пользователь видит граф вместо стены текста;
-- узлы можно раскрывать по уровням;
-- связи подписаны именами ports/payloads;
+- пользователь видит graph вместо стены текста;
+- узлы раскрываются по уровням;
+- связи подписаны ports/payloads;
 - клик по связи открывает inspector;
-- клик по узлу показывает его inputs/outputs/contracts/questions.
+- клик по узлу показывает inputs/outputs/contracts/questions;
+- validation overlay подсвечивает проблемы.
 
 ### Visual model
 
 ```text
-[Project Manager]
-  output: workspace.selected
-        ───────────────▶ input: session.workspaceContext [Session Workspace UI]
+[Core Runtime]
+  output: workflow.stageAccepted
+        ───────────────▶ input: sidebar.updateWorkflowState [Project Manager]
 
-[Session Workspace UI]
-  output: session.openRequested
-        ───────────────▶ input: dialog.openSession [Dialog Runtime]
+[Core Runtime]
+  output: provider.turnRequested
+        ───────────────▶ input: runTurn [Provider Module]
 ```
 
-### Required UI layers
+### Contract inspector
 
-1. **Application overview graph**
-   Показывает Product Parts, standalone Modules, shared services и cross-part contracts.
+Inspector показывает:
+- source node;
+- source port;
+- target node;
+- target port;
+- payload name;
+- kind;
+- owner;
+- lead Product Part;
+- validation status;
+- questions;
+- impacted downstream artifacts.
 
-2. **Product Part drill-down**
-   Показывает Clusters внутри Product Part и связи между ними.
+Project Manager остается projection-only. Он получает Core-owned graph snapshot и отправляет raw user intents: accept, request revision, ask agent, approve conflict resolution, rerun impact analysis.
 
-3. **Cluster drill-down**
-   Показывает Modules внутри Cluster и module facade contracts.
+## 8. Core-owned lifecycle
 
-4. **Contract inspector**
-   Показывает source, target, ports, payload name, kind, owner, status, questions, impacted downstream artifacts.
-
-5. **Validation overlay**
-   Подсвечивает missing inputs, orphan outputs, cycles, forbidden boundary crossings, duplicate payload names и contracts that bypass facade boundaries.
-
-Project Manager остается projection-only. Он не должен владеть parser/validator truth. Он получает Core-owned graph snapshot и отправляет raw user intents: accept, edit request, ask agent, approve conflict resolution, rerun impact analysis.
-
-## 7. Core-owned lifecycle
-
-Contract Graph должен стать вторым upstream artifact после `Diagram Modules`.
+Contract Graph становится вторым upstream artifact после `Diagram Modules`.
 
 ```text
-Diagram Modules controls structure.
+Diagram Modules controls structure and lead owner.
 Contract Graph controls interfaces.
 Module Specifications control internals.
 Todo Plans control execution.
@@ -297,8 +355,10 @@ Todo Plans control execution.
 
 ```text
 Diagram Modules accepted
-  -> Core materializes Development Tree folders
-  -> Project/Application Orchestrator starts
+  -> Core validates topology
+  -> Core records leadProductPartId
+  -> Core materializes Development Tree folders with lead Product Part first
+  -> Lead Product Part Orchestrator starts
   -> Agent produces Contract Graph draft
   -> Core validates graph
   -> PM renders graph and review surface
@@ -330,9 +390,7 @@ Core должен уметь спросить пользователя, что �
 - mark outdated only;
 - delete only if empty/safe.
 
-Это аналогично текущему behavior вокруг Development Tree materialization/orphans after Diagram Modules structure changes.
-
-## 8. Что меняется в Development Tree
+## 9. Development Tree shape
 
 Текущая структура:
 
@@ -354,59 +412,67 @@ Development Tree
 
 ```text
 Development Tree
-  Project / Application Orchestration
-    Contract Graph
-    Cross-Part Dependencies
-    Shared Interfaces
-    Execution Waves
-  Product Parts
-    <product-part>
-      Product Part Orchestration
-      Product Part Contract Map
-      Clusters
-        <cluster>
-          Cluster Orchestration
-          Cluster Facade Contract
-          Module Contract Map
-          Modules
-            <module>
-              Module / Facade Specification
-              Implementation
-              Workers
-              Integration
+  <Lead Product Part> [lead]
+    Lead Product Part Orchestration
+      Contract Graph
+      Cross-Part Contracts
+      Shared Interfaces
+      Execution Waves
+    Clusters
+      <lead cluster>
+        Cluster Orchestration
+        Cluster Facade Contract
+        Module Contract Map
+        Modules
+          <module>
+            Module / Facade Specification
+            Implementation
+            Workers
+            Integration
+  <Participant Product Part>
+    Participant Contract Review
+    Product Part Contract Map
+    Clusters
+      <cluster>
+        Cluster Orchestration
+        Cluster Facade Contract
+        Module Contract Map
 ```
 
-Важный нюанс: `Module / Facade Specification` остается ниже, но стартует только после verified/frozen upstream contract graph.
+Важно: `Module / Facade Specification` остается ниже, но стартует только после verified/frozen Contract Graph.
 
-## 9. Зачем нужны нижние контракты, если есть Project Orchestrator
+## 10. Why lower contracts still exist
 
-Project/Application Orchestrator не должен проектировать все module contracts до конца. Он владеет application-level contract map и preliminary boundaries.
+Lead Product Part Orchestrator не должен полностью проектировать все module APIs.
 
 Нижние уровни нужны потому что:
-- Product Part знает локальную область глубже;
-- Cluster лучше понимает свои module boundaries;
+- Product Part лучше понимает локальную responsibility;
+- Cluster лучше понимает module boundaries;
 - Module лучше проверяет реализуемость;
-- полный module contract без Cluster refinement будет слишком coarse или ошибочным;
-- один root-agent, который полностью расписывает все module APIs, станет слишком большим и начнет ошибаться.
+- один lead agent, который полностью расписывает все module internals, станет слишком большим и начнет ошибаться.
 
-Правильная модель:
+Правильная ownership model:
 
 ```text
-Project Orchestrator owns application contract map.
-Product Part Orchestrator owns product-part internal contract map.
-Cluster Orchestrator owns cluster facade contract and module facade contracts.
-Module Agent owns module internal specification and implementation plan.
+Diagram Modules owns topology and leadProductPartId.
+Lead Product Part Orchestrator owns application-wide Contract Graph.
+Participant Product Part Orchestrators own feasibility review of assigned contracts.
+Cluster Orchestrators own Cluster facade and module facade contracts.
+Module Agents own internal specifications and implementation plans.
 ```
 
-## 10. Validation rules
+## 11. Validation rules
 
 Core/shared contract validator должен проверять:
 
+- `leadProductPartId` exists in accepted Diagram Modules topology;
+- every participant Product Part references a known node;
 - every graph node references a known Development Tree node or explicit external node;
 - every required input has source or explicit unresolved question;
 - every output has consumer or explicit exported/public status;
-- cross-product-part edge is owned at Project/Application level;
-- cross-cluster edge is visible at Product Part or Project/Application level;
+- cross-product-part edge is owned by lead Product Part graph;
+- participant-owned edge has participant review status;
+- cross-cluster edge is visible at Product Part or lead graph level;
 - module-to-module dependency across clusters is forbidden unless routed through cluster facade;
 - duplicate payload names are either shared intentionally or rejected;
 - cycles are classified as allowed runtime feedback loop or blocking architecture cycle;
@@ -414,7 +480,7 @@ Core/shared contract validator должен проверять:
 - downstream artifacts record source graph revision;
 - edits compute impacted downstream nodes deterministically.
 
-## 11. Execution planning impact
+## 12. Execution planning impact
 
 После Contract Graph freeze можно строить execution waves:
 
@@ -436,68 +502,75 @@ wave 8: application integration
 - no shared artifact writer;
 - compatible integration wave.
 
-## 12. Open questions
+## 13. Open questions
 
-1. Должен ли Project/Application Orchestrator запускаться сразу после `Diagram Modules`, или после `Application Skeleton`, когда известны production code paths?
-   - Предварительное решение: сразу после `Diagram Modules` для logical contract graph, затем Application Skeleton добавляет code path mapping.
+1. Как `Diagram Modules` выбирает lead Product Part?
+   - Предварительное решение: через явное поле/section `leadProductPartId`, предложенное агентом и подтвержденное пользователем.
 
-2. Должен ли Contract Graph иметь отдельный acceptance gate до Application Skeleton?
-   - Предварительное решение: да, иначе skeleton может быть построен под непроверенные boundaries.
+2. Может ли пользователь поменять lead Product Part после acceptance?
+   - Предварительное решение: да, но Core должен пересчитать graph ownership и пометить downstream artifacts OUTDATED.
 
-3. Нужно ли показывать Contract Graph в sidebar как root node рядом с Product Parts?
-   - Предварительное решение: да, как первый Development Tree root operation.
+3. Должен ли Contract Graph запускаться сразу после `Diagram Modules`, или после `Application Skeleton`?
+   - Предварительное решение: сразу после `Diagram Modules` для logical contracts; Application Skeleton позже добавляет code path mapping.
 
-4. Должен ли пользователь редактировать graph вручную, или только через agent revisions?
-   - Предварительное решение: сначала review/revision через agent; прямое graph editing можно отложить до второго scope.
+4. Должен ли пользователь редактировать graph вручную?
+   - Предварительное решение: сначала review/revision через agent; direct graph editing можно отложить.
 
-5. Где хранить structured graph: только `.codeai-hub/...`, или зеркалить в `doc/TODO/stages/development-tree/...`?
-   - Предварительное решение: оба места, как для текущего Development Tree artifact workspace.
+5. Где хранить structured graph?
+   - Предварительное решение: `.codeai-hub/...` плюс mirror under `doc/TODO/stages/development-tree/...`, как в текущей Development Tree artifact workspace модели.
 
-## 13. Recommended implementation phases
+## 14. Recommended implementation phases
 
-### Phase A — Planning and contracts
+### Phase A — Diagram Modules lead owner contract
 
-- Утвердить этот planning document.
-- Создать canonical artifact contract для Contract Graph JSON/Markdown.
-- Обновить WorkflowSteps/System/Project Manager/Core Orchestrator SSOT.
+- Расширить Diagram Modules artifact contract: `leadProductPartId`.
+- Обновить parser/validator/read-model.
+- Materializer должен ставить lead Product Part первым в Development Tree projection.
 
-### Phase B — Core graph model
+### Phase B — Contract Graph artifact contract
 
-- Добавить Core-owned contract graph types/parser/validator.
-- Связать graph nodes с Development Tree snapshot node ids.
+- Создать Core-owned JSON schema/types/parser/validator.
+- Связать graph node ids с Development Tree snapshot node ids.
 - Добавить revision/hash и impacted-node model.
 
-### Phase C — Project/Application Orchestrator managed step
+### Phase C — Lead Product Part Orchestrator managed step
 
-- Добавить root Development Tree operation `Project / Application Orchestration`.
-- Создать first prompt для Project/Application Orchestrator.
+- Добавить first Development Tree operation under lead Product Part: `Lead Product Part Orchestration`.
+- Создать first prompt для lead Product Part agent.
 - Встроить acceptance/revision lifecycle через Managed Workflow Orchestration.
 
-### Phase D — Materialization and OUTDATED propagation
+### Phase D — Participant review and reconciliation
+
+- Participant Product Parts / Clusters получают assigned contract review tasks.
+- Lead Product Part Orchestrator reconciles accepted/rejected/corrected contracts.
+- Core валидирует graph перед user acceptance.
+
+### Phase E — Materialization and OUTDATED propagation
 
 - Materialize graph artifacts into `.codeai-hub/...` and `doc/TODO/stages/...`.
 - Создавать product-part/cluster/module contract artifact placeholders.
-- При graph edits помечать downstream contracts/specs/todo-plans как `OUTDATED`.
+- При graph edits помечать downstream contracts/specs/todo-plans as `OUTDATED`.
 
-### Phase E — PM graph projection
+### Phase F — PM graph projection
 
-- Добавить Contract Graph view.
+- Добавить Contract Graph view under lead Product Part.
 - Добавить graph inspector.
 - Добавить validation overlay.
-- Sidebar должен показывать Project/Application Orchestration как первый Development Tree node.
+- Sidebar показывает lead Product Part first and marks participant review nodes.
 
-### Phase F — Execution graph integration
+### Phase G — Execution graph integration
 
 - Использовать accepted Contract Graph для parallel/serial execution waves.
-- Запретить module todo-plan generation до verified upstream contract graph.
+- Запретить module todo-plan generation до verified upstream graph.
 - Добавить conflict/ownership checks before parallel agent launch.
 
-## 14. Acceptance criteria for this planning scope
+## 15. Acceptance criteria for this planning scope
 
 Planning document считается принятым, если пользователь согласовал:
-- нужен ли root Project/Application Orchestrator;
-- является ли Contract Graph отдельным accepted upstream artifact;
-- верна ли роль Product Part / Cluster / Module agents;
-- верен ли top-down contracts + bottom-up feasibility порядок;
-- нужно ли показывать Contract Graph как graph view в Project Manager;
-- нужно ли Core-owned impact propagation после edits.
+- отдельный Project/Application Orchestrator как agent не нужен;
+- `Diagram Modules` должен определять `leadProductPartId`;
+- lead Product Part owns application-wide Contract Graph;
+- participant Product Parts / Clusters review assigned contracts instead of negotiating freely;
+- top-down contracts + bottom-up feasibility порядок верен;
+- Contract Graph нужен как visual/reviewable Core-owned artifact;
+- Core должен выполнять downstream OUTDATED propagation after graph edits.
