@@ -27,6 +27,13 @@ const DEVELOPMENT_TREE_MATERIALIZED_ROOT_SEGMENTS = [
   "materialized",
 ] as const;
 
+const DEVELOPMENT_TREE_TODO_STAGE_ROOT_SEGMENTS = [
+  "doc",
+  "TODO",
+  "stages",
+  "development-tree",
+] as const;
+
 export const createDevelopmentTreeMaterializedRoot = (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -35,6 +42,18 @@ export const createDevelopmentTreeMaterializedRoot = (params: {
     ".codeai-hub",
     params.workspaceSlug,
     ...DEVELOPMENT_TREE_MATERIALIZED_ROOT_SEGMENTS
+  );
+  return {
+    relativePath,
+    absolutePath: path.join(params.workspaceRoot, relativePath),
+  };
+};
+
+export const createDevelopmentTreeTodoStageRoot = (params: {
+  readonly workspaceRoot: string;
+}): { readonly absolutePath: string; readonly relativePath: string } => {
+  const relativePath = path.posix.join(
+    ...DEVELOPMENT_TREE_TODO_STAGE_ROOT_SEGMENTS
   );
   return {
     relativePath,

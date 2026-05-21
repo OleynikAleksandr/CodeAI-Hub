@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "755f9ee57",
+  "lastRecordedCommit": "dbde8cce3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase5.stream3.task2",
-  "expectedCommitMessage": "chore: build development tree materialization release",
+  "currentTaskId": "phase6.stream1.task1",
+  "expectedCommitMessage": "feat: mirror development tree todo stage workspace",
   "debt": {
-    "expectedCommitMessage": "chore: build development tree materialization release",
-    "preCommitHead": "755f9ee57",
+    "expectedCommitMessage": "feat: mirror development tree todo stage workspace",
+    "preCommitHead": "dbde8cce3",
     "stage": "commit_pending",
-    "taskId": "phase5.stream3.task2"
+    "taskId": "phase6.stream1.task1"
   }
 }
 ```
@@ -103,12 +103,24 @@
 24. [DONE] `phase5.stream3.task1` After separate explicit user confirmation, update release docs for the next version and run the release build checklist (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `docs: prepare release notes for development tree materialization`).
 25. [DONE] Git Commit: `docs: prepare release notes for development tree materialization` (hash: 755f9ee57)
 26. [DONE] `phase5.stream3.task2` After release-doc commit and clean tree, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build development tree materialization release`).
-27. [PENDING] Git Commit: `chore: build development tree materialization release` (hash: TBD)
+27. [DONE] Git Commit: `chore: build development tree materialization release` (hash: dbde8cce3)
 
 ### Stream: User Visual Acceptance Testing
-28. [TODO] `phase5.stream4.task1` User installs/retests the release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
+28. [BLOCKED] `phase5.stream4.task1` User installs/retests the release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected). Blocked by acceptance defect: Diagram Modules materialized `.codeai-hub/<workspace>/development_tree/` but did not mirror `doc/TODO/stages/development-tree/...`, and the sidebar did not expose the agreed tree shape by default.
+
+## Phase 6 — Acceptance Defect Fixes (owner: Codex, updated: 2026-05-21)
+
+### Stream: Diagram Modules Development Tree Mirror
+29. [DONE] `phase6.stream1.task1` Materialize the same accepted Development Tree folder shape into `doc/TODO/stages/development-tree/...` during the Core-owned Diagram Modules materialization step (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `feat: mirror development tree todo stage workspace`).
+30. [PENDING] Git Commit: `feat: mirror development tree todo stage workspace` (hash: TBD)
+31. [TODO] `phase6.stream1.task2` Expand the first Development Tree Product Part/Cluster in the left sidebar when Core snapshot data appears so module operation nodes are visible like the accepted prototype (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`; expected commit: `feat: reveal development tree workflow nodes in sidebar`).
+32. [TODO] Git Commit: `feat: reveal development tree workflow nodes in sidebar` (hash: TBD)
+33. [TODO] `phase6.stream1.task3` Run targeted Core/Project Manager verification after acceptance defect fixes (scope: `packages/core, src/client/project-manager, packages/ui/project-manager`; expected commit: no commit expected).
+
+### Stream: User Visual Acceptance Retest
+34. [TODO] `phase6.stream2.task1` User installs/retests the fixed release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
 
 ### Stream: Scope Closeout
-29. [TODO] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).
-30. [TODO] Git Commit: `docs: close development tree materialization implementation` (hash: TBD)
-31. [TODO] `phase5.stream5.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
+35. [TODO] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).
+36. [TODO] Git Commit: `docs: close development tree materialization implementation` (hash: TBD)
+37. [TODO] `phase5.stream5.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).

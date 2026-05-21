@@ -30,6 +30,93 @@ const createSnapshot = (): DevelopmentTreeSnapshot => ({
   ],
 });
 
+const createExpectedEntries = (rootRelativePath: string) => [
+  {
+    kind: "product_part",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime`,
+  },
+  {
+    kind: "cluster",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration`,
+  },
+  {
+    kind: "module",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: "workflow-state",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/workflow-state`,
+  },
+  {
+    kind: "workers",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: "workflow-state",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/workflow-state/workers`,
+  },
+  {
+    kind: "integration",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: "workflow-state",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/workflow-state/integration`,
+  },
+  {
+    kind: "module",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: "session-router",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/session-router`,
+  },
+  {
+    kind: "workers",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: "session-router",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/session-router/workers`,
+  },
+  {
+    kind: "integration",
+    partId: "local-runtime",
+    clusterId: "orchestration",
+    moduleId: "session-router",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/session-router/integration`,
+  },
+  {
+    kind: "module",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: "provider-bridge",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/modules/provider-bridge`,
+  },
+  {
+    kind: "workers",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: "provider-bridge",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/modules/provider-bridge/workers`,
+  },
+  {
+    kind: "integration",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: "provider-bridge",
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/modules/provider-bridge/integration`,
+  },
+];
+
+const sortByRelativePath = <T extends { readonly relativePath: string }>(
+  entries: readonly T[]
+): T[] =>
+  [...entries].sort((left, right) =>
+    left.relativePath.localeCompare(right.relativePath)
+  );
+
 test("DevelopmentTreeFilesystemPathPlanner creates neutral materialized P/C/M paths", () => {
   const workspaceRoot = path.join(os.tmpdir(), "codeai-hub-planner");
   const planner = new DevelopmentTreeFilesystemPathPlanner();
@@ -51,103 +138,21 @@ test("DevelopmentTreeFilesystemPathPlanner creates neutral materialized P/C/M pa
     )
   );
   assert.deepEqual(
-    plan.directories.map((entry) => ({
-      kind: entry.kind,
-      partId: entry.partId,
-      clusterId: entry.clusterId,
-      moduleId: entry.moduleId,
-      relativePath: entry.relativePath,
-    })),
-    [
-      {
-        kind: "product_part",
-        partId: "local-runtime",
-        clusterId: undefined,
-        moduleId: undefined,
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime",
-      },
-      {
-        kind: "cluster",
-        partId: "local-runtime",
-        clusterId: "orchestration",
-        moduleId: undefined,
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration",
-      },
-      {
-        kind: "module",
-        partId: "local-runtime",
-        clusterId: "orchestration",
-        moduleId: "workflow-state",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/workflow-state",
-      },
-      {
-        kind: "workers",
-        partId: "local-runtime",
-        clusterId: "orchestration",
-        moduleId: "workflow-state",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/workflow-state/workers",
-      },
-      {
-        kind: "integration",
-        partId: "local-runtime",
-        clusterId: "orchestration",
-        moduleId: "workflow-state",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/workflow-state/integration",
-      },
-      {
-        kind: "module",
-        partId: "local-runtime",
-        clusterId: "orchestration",
-        moduleId: "session-router",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/session-router",
-      },
-      {
-        kind: "workers",
-        partId: "local-runtime",
-        clusterId: "orchestration",
-        moduleId: "session-router",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/session-router/workers",
-      },
-      {
-        kind: "integration",
-        partId: "local-runtime",
-        clusterId: "orchestration",
-        moduleId: "session-router",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/clusters/orchestration/modules/session-router/integration",
-      },
-      {
-        kind: "module",
-        partId: "local-runtime",
-        clusterId: undefined,
-        moduleId: "provider-bridge",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge",
-      },
-      {
-        kind: "workers",
-        partId: "local-runtime",
-        clusterId: undefined,
-        moduleId: "provider-bridge",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge/workers",
-      },
-      {
-        kind: "integration",
-        partId: "local-runtime",
-        clusterId: undefined,
-        moduleId: "provider-bridge",
-        relativePath:
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge/integration",
-      },
-    ]
+    sortByRelativePath(
+      plan.directories.map((entry) => ({
+        kind: entry.kind,
+        partId: entry.partId,
+        clusterId: entry.clusterId,
+        moduleId: entry.moduleId,
+        relativePath: entry.relativePath,
+      }))
+    ),
+    sortByRelativePath([
+      ...createExpectedEntries(
+        ".codeai-hub/demo-workspace/development_tree/materialized"
+      ),
+      ...createExpectedEntries("doc/TODO/stages/development-tree"),
+    ])
   );
   assert.equal(
     plan.directories.some((entry) => entry.partId === "project-manager"),
@@ -155,7 +160,7 @@ test("DevelopmentTreeFilesystemPathPlanner creates neutral materialized P/C/M pa
   );
 });
 
-test("DevelopmentTreeFilesystemPathPlanner keeps absolute paths under materialized root", () => {
+test("DevelopmentTreeFilesystemPathPlanner keeps absolute paths under planned roots", () => {
   const workspaceRoot = path.join(os.tmpdir(), "codeai-hub-planner");
   const planner = new DevelopmentTreeFilesystemPathPlanner();
   const plan = planner.plan({
@@ -164,9 +169,15 @@ test("DevelopmentTreeFilesystemPathPlanner keeps absolute paths under materializ
     snapshot: createSnapshot(),
   });
 
+  const plannedRoots = [
+    plan.rootAbsolutePath,
+    path.join(workspaceRoot, "doc/TODO/stages/development-tree"),
+  ];
   for (const entry of plan.directories) {
     assert.equal(
-      entry.absolutePath.startsWith(`${plan.rootAbsolutePath}${path.sep}`),
+      plannedRoots.some((root) =>
+        entry.absolutePath.startsWith(`${root}${path.sep}`)
+      ),
       true
     );
   }
