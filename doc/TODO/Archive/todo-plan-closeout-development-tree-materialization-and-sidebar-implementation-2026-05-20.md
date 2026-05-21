@@ -1,3 +1,18 @@
+# Plan Closeout: development-tree-materialization-and-sidebar-implementation-2026-05-20
+
+**Created:** 2026-05-21T06:54:05.000Z
+**Acceptance:** User accepted release v1.2.321 after retest: VSIX size restored to 4.5M, package-size hotfix accepted, Development Tree materialization/sidebar behavior remains accepted.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase5.stream5.task1
+**Expected Commit:** docs: close development tree materialization implementation
+**Last Recorded Commit:** 6eeaf0f56
+**Planning Source Disposition:** already_archived
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
   "currentTaskId": "phase5.stream5.task1",
   "expectedCommitMessage": "docs: close development tree materialization implementation",
-  "debt": {
-    "expectedCommitMessage": "docs: close development tree materialization implementation",
-    "preCommitHead": "6eeaf0f56",
-    "stage": "commit_pending",
-    "taskId": "phase5.stream5.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -155,6 +165,7 @@
 53. [DONE] `phase8.stream3.task1` User installs/retests the VSIX package-size hotfix release and accepts the Development Tree materialization/sidebar behavior plus release package size (scope: user visual acceptance; no commit expected). Accepted by user after release `1.2.321`: VSIX package size is `4.5M`, Development Tree behavior remains accepted.
 
 ### Stream: Scope Closeout
-44. [DONE] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).
-45. [PENDING] Git Commit: `docs: close development tree materialization implementation` (hash: TBD)
+44. [IN_PROGRESS] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).
+45. [TODO] Git Commit: `docs: close development tree materialization implementation` (hash: TBD)
 46. [TODO] `phase5.stream5.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
+````
