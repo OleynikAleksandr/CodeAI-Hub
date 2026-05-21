@@ -40,6 +40,7 @@ lefthook.yml
 doc/TODO/**
 scripts/**
 binaries/**
+native/**
 *.tar.bz2
 dist/cef-launcher/**
 packages/Claude_Module/**

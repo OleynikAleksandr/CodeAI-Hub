@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "6b4878658",
+  "lastRecordedCommit": "8c5c8ffbb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase7.stream1.task2",
-  "expectedCommitMessage": "chore: build development tree acceptance fix release",
+  "currentTaskId": "phase8.stream1.task1",
+  "expectedCommitMessage": "fix: exclude native swift build artifacts from vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build development tree acceptance fix release",
-    "preCommitHead": "6b4878658",
+    "expectedCommitMessage": "fix: exclude native swift build artifacts from vsix",
+    "preCommitHead": "8c5c8ffbb",
     "stage": "commit_pending",
-    "taskId": "phase7.stream1.task2"
+    "taskId": "phase8.stream1.task1"
   }
 }
 ```
@@ -134,10 +134,25 @@
 39. [DONE] `phase7.stream1.task1` After explicit user confirmation, update release docs for the next version covering Development Tree acceptance fixes (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release notes for development tree acceptance fixes`).
 40. [DONE] Git Commit: `docs: prepare release notes for development tree acceptance fixes` (hash: 6b4878658)
 41. [DONE] `phase7.stream1.task2` After release-doc commit and clean tree, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build development tree acceptance fix release`).
-42. [PENDING] Git Commit: `chore: build development tree acceptance fix release` (hash: TBD)
+42. [DONE] Git Commit: `chore: build development tree acceptance fix release` (hash: 8c5c8ffbb)
 
 ### Stream: User Visual Acceptance Retest 3
-43. [TODO] `phase7.stream2.task1` User installs/retests the new acceptance-fix release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
+43. [BLOCKED] `phase7.stream2.task1` User installs/retests the new acceptance-fix release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected). Blocked by packaging defect: VSIX grew to ~49M because local Swift `.build` artefacts under `native/apple-*-helper/` were included in the extension package.
+
+## Phase 8 — VSIX Packaging Hotfix Release (owner: Codex, updated: 2026-05-21)
+
+### Stream: VSIX Package Surface Guard
+47. [DONE] `phase8.stream1.task1` Exclude local native Swift helper build outputs from VSIX packaging and add a release guard that fails if native build/cache artefacts leak into the packaged extension (scope: `.vscodeignore, scripts/build-release.sh`; expected commit: `fix: exclude native swift build artifacts from vsix`).
+48. [PENDING] Git Commit: `fix: exclude native swift build artifacts from vsix` (hash: TBD)
+
+### Stream: Hotfix Release Build
+49. [TODO] `phase8.stream2.task1` Update release docs for the next hotfix version covering the VSIX package-size fix (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release notes for vsix size hotfix`).
+50. [TODO] Git Commit: `docs: prepare release notes for vsix size hotfix` (hash: TBD)
+51. [TODO] `phase8.stream2.task2` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, verify the VSIX no longer contains native Swift build artefacts, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build vsix size hotfix release`).
+52. [TODO] Git Commit: `chore: build vsix size hotfix release` (hash: TBD)
+
+### Stream: User Visual Acceptance Retest 4
+53. [TODO] `phase8.stream3.task1` User installs/retests the VSIX package-size hotfix release and accepts the Development Tree materialization/sidebar behavior plus release package size (scope: user visual acceptance; no commit expected).
 
 ### Stream: Scope Closeout
 44. [TODO] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).

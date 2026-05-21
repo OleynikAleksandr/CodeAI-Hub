@@ -438,17 +438,32 @@ const requiredEntries = [
 const forbiddenEntries = [
   "extension/.github/",
   "extension/.nvmrc",
+  "extension/native/",
+];
+const forbiddenPatterns = [
+  /\/\.build\//u,
+  /\/ModuleCache\//u,
+  /\.dSYM\//u,
 ];
 
 const missing = requiredEntries.filter((entry) => !listing.includes(entry));
 const leaked = forbiddenEntries.filter((entry) => listing.includes(entry));
+const leakedByPattern = listing
+  .split("\n")
+  .map((line) => line.trim().split(/\s+/u).at(-1) ?? "")
+  .filter((entry) => forbiddenPatterns.some((pattern) => pattern.test(entry)));
 
-if (missing.length > 0 || leaked.length > 0) {
+if (missing.length > 0 || leaked.length > 0 || leakedByPattern.length > 0) {
   if (missing.length > 0) {
     console.error(`Missing VSIX runtime entries:\n${missing.join("\n")}`);
   }
   if (leaked.length > 0) {
     console.error(`Unexpected repo-only VSIX entries:\n${leaked.join("\n")}`);
+  }
+  if (leakedByPattern.length > 0) {
+    console.error(
+      `Unexpected VSIX build-cache entries:\n${leakedByPattern.slice(0, 20).join("\n")}`
+    );
   }
   process.exit(1);
 }
