@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "8194bdcf3",
+  "lastRecordedCommit": "6b4878658",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase7.stream1.task1",
-  "expectedCommitMessage": "docs: prepare release notes for development tree acceptance fixes",
+  "currentTaskId": "phase7.stream1.task2",
+  "expectedCommitMessage": "chore: build development tree acceptance fix release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release notes for development tree acceptance fixes",
-    "preCommitHead": "8194bdcf3",
+    "expectedCommitMessage": "chore: build development tree acceptance fix release",
+    "preCommitHead": "6b4878658",
     "stage": "commit_pending",
-    "taskId": "phase7.stream1.task1"
+    "taskId": "phase7.stream1.task2"
   }
 }
 ```
@@ -132,9 +132,9 @@
 
 ### Stream: Release Build
 39. [DONE] `phase7.stream1.task1` After explicit user confirmation, update release docs for the next version covering Development Tree acceptance fixes (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release notes for development tree acceptance fixes`).
-40. [PENDING] Git Commit: `docs: prepare release notes for development tree acceptance fixes` (hash: TBD)
-41. [TODO] `phase7.stream1.task2` After release-doc commit and clean tree, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build development tree acceptance fix release`).
-42. [TODO] Git Commit: `chore: build development tree acceptance fix release` (hash: TBD)
+40. [DONE] Git Commit: `docs: prepare release notes for development tree acceptance fixes` (hash: 6b4878658)
+41. [DONE] `phase7.stream1.task2` After release-doc commit and clean tree, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build development tree acceptance fix release`).
+42. [PENDING] Git Commit: `chore: build development tree acceptance fix release` (hash: TBD)
 
 ### Stream: User Visual Acceptance Retest 3
 43. [TODO] `phase7.stream2.task1` User installs/retests the new acceptance-fix release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
