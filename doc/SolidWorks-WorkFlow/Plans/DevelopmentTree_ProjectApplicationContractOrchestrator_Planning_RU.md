@@ -364,14 +364,16 @@ Diagram Modules accepted
   -> Core records leadProductPartId
   -> Core records productPartLeadershipOrder
   -> Core materializes Development Tree folders using Product Part leadership order
+  -> Core locks all non-lead Development Tree agent start actions
   -> Lead Product Part Orchestrator starts
-  -> Agent produces Contract Graph draft
-  -> Core validates graph
+  -> Core builds provider prompt pack from accepted structured artifacts
+  -> Agent produces structured Contract Graph draft
+  -> Core parses and validates graph
   -> PM renders graph and review surface
   -> User accepts or requests revisions
   -> Core freezes accepted graph revision
   -> Core materializes downstream contract artifacts
-  -> Product Part / Cluster / Module specification steps unlock
+  -> Core unlocks only first allowed execution wave
 ```
 
 ### Edit / revision flow
@@ -396,7 +398,98 @@ Core должен уметь спросить пользователя, что �
 - mark outdated only;
 - delete only if empty/safe.
 
-## 9. Development Tree shape
+До freeze accepted Contract Graph пользователь должен видеть остальные Product Parts, Clusters и standalone Modules в дереве, но не иметь возможности стартовать их agents. Их состояние: `Waiting for Lead Product Part Contract Graph`. После acceptance Core отправляет initial prompt packs только agents первой разрешенной wave, а не всем downstream agents сразу.
+
+## 9. Agent instruction and output enforcement model
+
+Development Tree требует строгих рамок, потому что каждый следующий agent должен дополнять Core-owned structured state, а не оставлять следующему agent набор текстовых догадок.
+
+Принцип:
+
+```text
+Structured Outputs are input shaping, not validation authority.
+Core validators and hooks are validation authority.
+```
+
+### Enforcement layers
+
+Каждый managed Development Tree agent должен запускаться через несколько слоев контроля:
+
+```text
+Provider system instructions
+  -> Core-generated task prompt pack
+  -> provider structured output / tool schema when supported
+  -> Core parser
+  -> Core schema validator
+  -> Core semantic validator
+  -> managed repair lifecycle if invalid
+  -> user acceptance
+  -> frozen Core-owned artifact revision
+```
+
+`System instructions` сильнее обычного task prompt и должны задавать постоянные invariant rules конкретного agent type:
+- роль agent;
+- границы ответственности;
+- запрет менять чужие contracts;
+- запрет bypass around facade;
+- запрет начинать implementation до frozen upstream contract graph;
+- правило: Project Manager не source of truth;
+- правило: structured artifact is primary output, markdown is projection.
+
+`Task prompt pack` должен генерироваться Core автоматически из accepted artifacts:
+- Diagram Modules topology;
+- `leadProductPartId`;
+- `productPartLeadershipOrder`;
+- accepted Contract Graph revision;
+- assigned Product Part / Cluster / Module node;
+- assigned contract slice;
+- upstream/downstream dependencies;
+- wave id and parallel group;
+- artifact output targets;
+- current validation diagnostics and unresolved questions.
+
+Provider-native structured output / tool schema нужно использовать там, где provider adapter это поддерживает:
+- OpenAI/Codex: structured output / JSON schema mode when available;
+- Claude: tool use with input schema / forced tool use when available;
+- fallback для любого provider: prompt + schema instructions + Core parser + validator + repair loop.
+
+Structured output снижает вероятность мусорной формы ответа, но не заменяет Core. Даже schema-compatible ответ считается untrusted input, пока Core не проверит:
+- ссылочную целостность node ids;
+- соответствие topology;
+- ownership boundaries;
+- facade boundaries;
+- wave dependencies;
+- downstream impact;
+- отсутствие forbidden dependencies;
+- полноту required artifacts.
+
+### Prompt pack generation principle
+
+Core Orchestrator должен стремиться не писать уникальные prompt вручную для каждого приложения, а собирать prompt packs из structured accepted state.
+
+AI нужен там, где есть semantic design:
+- выбрать meaningful contracts;
+- предложить payload names;
+- определить feasibility concerns;
+- согласовать conflicts;
+- объяснить user tradeoffs.
+
+Core должен оставаться deterministic:
+- блокировать недоступные nodes;
+- создавать prompt packs;
+- выбирать first allowed wave;
+- dispatch agents;
+- парсить structured output;
+- запускать validators/hooks;
+- materialize artifacts;
+- считать OUTDATED propagation;
+- открывать следующую wave.
+
+Core не должен разблокировать Product Part / Cluster / Module session start, если отсутствует frozen upstream graph revision, assigned contract slice или валидный wave assignment.
+
+Если structured output недостаточен для автоматизации следующего шага, правильная реакция — усилить предыдущий step schema/validator/repair prompt/acceptance gate, а не добавлять ручную логику в Project Manager.
+
+## 10. Development Tree shape
 
 Текущая структура:
 
@@ -447,7 +540,7 @@ Development Tree
 
 Важно: `Module / Facade Specification` остается ниже, но стартует только после verified/frozen Contract Graph.
 
-## 10. Why lower contracts still exist
+## 11. Why lower contracts still exist
 
 Lead Product Part Orchestrator не должен полностью проектировать все module APIs.
 
@@ -467,7 +560,7 @@ Cluster Orchestrators own Cluster facade and module facade contracts.
 Module Agents own internal specifications and implementation plans.
 ```
 
-## 11. Validation rules
+## 12. Validation rules
 
 Core/shared contract validator должен проверять:
 
@@ -476,6 +569,7 @@ Core/shared contract validator должен проверять:
 - `productPartLeadershipOrder` contains every Product Part exactly once;
 - first item in `productPartLeadershipOrder` equals `leadProductPartId`;
 - Development Tree projection/materialization preserves `productPartLeadershipOrder`;
+- after Diagram Modules acceptance only the lead Product Part agent start action is unlocked;
 - every participant Product Part references a known node;
 - every graph node references a known Development Tree node or explicit external node;
 - every required input has source or explicit unresolved question;
@@ -489,8 +583,14 @@ Core/shared contract validator должен проверять:
 - accepted graph revision is immutable;
 - downstream artifacts record source graph revision;
 - edits compute impacted downstream nodes deterministically.
+- each agent output references the expected schema version;
+- structured output contains the assigned node id, source artifact revision and output targets;
+- markdown projection, if present, matches the structured artifact hash/revision;
+- provider output cannot unlock downstream nodes without Core parser and semantic validator success;
+- failed schema/semantic validation enters managed repair lifecycle instead of being accepted by Project Manager.
+- downstream agent prompt dispatch is limited to currently unlocked wave nodes.
 
-## 12. Execution planning impact
+## 13. Execution planning impact
 
 После Contract Graph freeze можно строить execution waves:
 
@@ -512,7 +612,7 @@ wave 8: application integration
 - no shared artifact writer;
 - compatible integration wave.
 
-## 13. Open questions
+## 14. Open questions
 
 1. Как `Diagram Modules` выбирает lead Product Part и порядок Product Parts?
    - Предварительное решение: через явные поля/sections `leadProductPartId` и `productPartLeadershipOrder`, предложенные агентом и подтвержденные пользователем. Порядок: lead первым, затем participant Product Parts по contract dependency / orchestration priority.
@@ -529,7 +629,7 @@ wave 8: application integration
 5. Где хранить structured graph?
    - Предварительное решение: `.codeai-hub/...` плюс mirror under `doc/TODO/stages/development-tree/...`, как в текущей Development Tree artifact workspace модели.
 
-## 14. Recommended implementation phases
+## 15. Recommended implementation phases
 
 ### Phase A — Diagram Modules lead owner and leadership order contract
 
@@ -542,11 +642,12 @@ wave 8: application integration
 - Создать Core-owned JSON schema/types/parser/validator.
 - Связать graph node ids с Development Tree snapshot node ids.
 - Добавить revision/hash и impacted-node model.
+- Добавить schema versioning and provider structured output/tool schema contracts.
 
 ### Phase C — Lead Product Part Orchestrator managed step
 
 - Добавить first Development Tree operation under lead Product Part: `Lead Product Part Orchestration`.
-- Создать first prompt для lead Product Part agent.
+- Создать system instructions и Core-generated first prompt pack для lead Product Part agent.
 - Встроить acceptance/revision lifecycle через Managed Workflow Orchestration.
 
 ### Phase D — Participant review and reconciliation
@@ -572,9 +673,11 @@ wave 8: application integration
 
 - Использовать accepted Contract Graph для parallel/serial execution waves.
 - Запретить module todo-plan generation до verified upstream graph.
+- Заблокировать старт Product Part / Cluster / Module agents до assigned contract slice and wave unlock.
 - Добавить conflict/ownership checks before parallel agent launch.
+- Генерировать downstream agent prompt packs только из frozen structured artifacts.
 
-## 15. Acceptance criteria for this planning scope
+## 16. Acceptance criteria for this planning scope
 
 Planning document считается принятым, если пользователь согласовал:
 - отдельный Project/Application Orchestrator как agent не нужен;
@@ -584,4 +687,7 @@ Planning document считается принятым, если пользова
 - participant Product Parts / Clusters review assigned contracts instead of negotiating freely;
 - top-down contracts + bottom-up feasibility порядок верен;
 - Contract Graph нужен как visual/reviewable Core-owned artifact;
-- Core должен выполнять downstream OUTDATED propagation after graph edits.
+- Core должен выполнять downstream OUTDATED propagation after graph edits;
+- после `Diagram Modules` доступен только старт lead Product Part agent, остальные agents открываются только через frozen Contract Graph waves;
+- provider system instructions, structured outputs/tool schemas and prompts являются enforcement layers, но validation authority остается у Core validators/hooks;
+- каждый Development Tree agent должен возвращать structured artifact, достаточный для автоматизации следующего шага.

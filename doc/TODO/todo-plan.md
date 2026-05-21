@@ -8,15 +8,15 @@
   "planId": "development-tree-project-contract-orchestrator-planning-2026-05-21",
   "branch": "main",
   "baseHead": "fa17f6a43",
-  "lastRecordedCommit": "3d3711ff3",
+  "lastRecordedCommit": "b77e6d44a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase1.stream7.task1",
-  "expectedCommitMessage": "docs: require product part leadership ordering",
+  "currentTaskId": "phase1.stream9.task1",
+  "expectedCommitMessage": "docs: define agent output enforcement model",
   "debt": {
-    "expectedCommitMessage": "docs: require product part leadership ordering",
-    "preCommitHead": "3d3711ff3",
+    "expectedCommitMessage": "docs: define agent output enforcement model",
+    "preCommitHead": "b77e6d44a",
     "stage": "commit_pending",
-    "taskId": "phase1.stream7.task1"
+    "taskId": "phase1.stream9.task1"
   }
 }
 ```
@@ -68,10 +68,17 @@
 
 ### Stream: Product Part Leadership Ordering Revision
 11. [DONE] `phase1.stream7.task1` Add Diagram Modules requirement to order Product Parts by leadership/contract orchestration priority and preserve that order in Development Tree projection/materialization (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: require product part leadership ordering`).
-12. [PENDING] Git Commit: `docs: require product part leadership ordering` (hash: TBD)
+12. [DONE] Git Commit: `docs: require product part leadership ordering` (hash: b77e6d44a)
 
 ### Stream: User Workflow Acceptance Testing 3
-13. [TODO] `phase1.stream8.task1` User reviews and accepts or requests revisions to the Product Part leadership ordering planning update (scope: user workflow acceptance; no commit expected).
+13. [DONE] `phase1.stream8.task1` User reviews and accepts or requests revisions to the Product Part leadership ordering planning update (scope: user workflow acceptance; no commit expected). Result: user requested revision: define strict agent enforcement layers for Development Tree work, including system instructions, structured outputs, Core validators and hooks.
+
+### Stream: Agent Output Enforcement Model Revision
+14. [DONE] `phase1.stream9.task1` Add Development Tree enforcement model for per-agent system instructions, provider structured output/tool schemas, Core-owned validators/hooks, repair lifecycle and deterministic prompt pack generation from accepted structured artifacts (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: define agent output enforcement model`).
+15. [PENDING] Git Commit: `docs: define agent output enforcement model` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing 4
+16. [TODO] `phase1.stream10.task1` User reviews and accepts or requests revisions to the agent output enforcement model planning update (scope: user workflow acceptance; no commit expected).
 
 ### Stream: Scope Closeout
 5. [TODO] `phase1.stream4.task1` Close the planning scope after explicit user acceptance and decide whether the planning document remains active/deferred or moves into Archive/SSOT follow-up (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: close lead product part contract orchestrator planning`).
