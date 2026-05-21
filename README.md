@@ -2,7 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.320** (Development Tree acceptance fixes)
+**Current Release — v1.2.321** (VSIX package-size hotfix)
+
+This hotfix restores the VSIX package boundary. The extension package excludes
+local Swift native-helper build outputs under `native/**`, and the release
+build now fails if `extension/native/`, Swift `.build` caches, `ModuleCache`,
+or `dSYM` debug artefacts leak into the packaged VSIX. CodeAI Hub remains a
+lightweight extension installer/distributor while runtime binaries continue to
+ship through the external release artefacts.
+
+The previous Development Tree acceptance fixes remain included.
 
 This release completes the Diagram Modules Development Tree materialization
 flow. Core now creates the accepted tree both under

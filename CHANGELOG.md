@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.321] - 2026-05-21
+### Fixed
+- **VSIX packaging excludes local Swift native-helper build outputs.** The extension package no longer includes `native/apple-*-helper/.build`, Swift `ModuleCache`, or `dSYM` artefacts, restoring the lightweight installer/distributor package boundary.
+- **Release builds guard the VSIX package surface.** `build-release.sh` now fails if native build-cache artefacts leak into the packaged extension.
+
+### Tests
+- `npx vsce ls | rg '^(native/|.*\\.build/|.*ModuleCache/|.*\\.dSYM/)' || true`
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
+
 ## [1.2.320] - 2026-05-21
 ### Fixed
 - **Diagram Modules mirrors the accepted Development Tree into TODO stage folders.** Core now creates `doc/TODO/stages/development-tree/product-parts/...` from the same accepted Product Part / Cluster / Module structure used for `.codeai-hub/<workspace>/development_tree/materialized/...`.

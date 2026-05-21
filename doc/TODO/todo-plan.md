@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "8c5c8ffbb",
+  "lastRecordedCommit": "9c92f828a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase8.stream1.task1",
-  "expectedCommitMessage": "fix: exclude native swift build artifacts from vsix",
+  "currentTaskId": "phase8.stream2.task1",
+  "expectedCommitMessage": "docs: prepare release notes for vsix size hotfix",
   "debt": {
-    "expectedCommitMessage": "fix: exclude native swift build artifacts from vsix",
-    "preCommitHead": "8c5c8ffbb",
+    "expectedCommitMessage": "docs: prepare release notes for vsix size hotfix",
+    "preCommitHead": "9c92f828a",
     "stage": "commit_pending",
-    "taskId": "phase8.stream1.task1"
+    "taskId": "phase8.stream2.task1"
   }
 }
 ```
@@ -143,11 +143,11 @@
 
 ### Stream: VSIX Package Surface Guard
 47. [DONE] `phase8.stream1.task1` Exclude local native Swift helper build outputs from VSIX packaging and add a release guard that fails if native build/cache artefacts leak into the packaged extension (scope: `.vscodeignore, scripts/build-release.sh`; expected commit: `fix: exclude native swift build artifacts from vsix`).
-48. [PENDING] Git Commit: `fix: exclude native swift build artifacts from vsix` (hash: TBD)
+48. [DONE] Git Commit: `fix: exclude native swift build artifacts from vsix` (hash: 9c92f828a)
 
 ### Stream: Hotfix Release Build
-49. [TODO] `phase8.stream2.task1` Update release docs for the next hotfix version covering the VSIX package-size fix (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release notes for vsix size hotfix`).
-50. [TODO] Git Commit: `docs: prepare release notes for vsix size hotfix` (hash: TBD)
+49. [DONE] `phase8.stream2.task1` Update release docs for the next hotfix version covering the VSIX package-size fix (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release notes for vsix size hotfix`).
+50. [PENDING] Git Commit: `docs: prepare release notes for vsix size hotfix` (hash: TBD)
 51. [TODO] `phase8.stream2.task2` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, verify the VSIX no longer contains native Swift build artefacts, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build vsix size hotfix release`).
 52. [TODO] Git Commit: `chore: build vsix size hotfix release` (hash: TBD)
 
