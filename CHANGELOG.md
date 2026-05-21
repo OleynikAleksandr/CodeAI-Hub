@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.319] - 2026-05-21
+### Added
+- **Diagram Modules materializes a Core-owned Development Tree artifact workspace.** Accepted Product Parts, Clusters, Modules, and module operations now map to `.codeai-hub/<workspace>/development_tree/materialized/...` for future agent artifacts.
+- **Development Tree snapshots expose operation nodes.** Core now publishes artifact and code workspace paths plus Module/Facade Specification, Implementation, Workers, and Integration operations for each module.
+- **Project Manager renders operation-level workflow nodes.** The left Development Tree sidebar shows Core-owned operation children under modules and routes operation selections into the existing Sessions/Artifacts surfaces.
+
+### Changed
+- **Project Manager remains projection-only.** Sidebar parsing and rendering consume Core-owned snapshots instead of scanning workspace folders or owning Diagram Modules parser truth.
+- **Application Skeleton remains the production code mirror owner.** `product-parts/...` paths are attached only from accepted/materialized Application Skeleton data, while Diagram Modules owns artifact workspace materialization.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `node --test packages/core/dist/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.js packages/core/dist/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.test.js packages/core/dist/development-tree/development-tree-state-facade-metadata.test.js packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.js packages/core/dist/remote-bridge/handlers/development-tree-snapshot.test.js`
+
 ## [1.2.318] - 2026-05-19
 ### Changed
 - **Claude-Kimi is replaced by GLM-Claude-Code.** Active provider surfaces now expose native `Kimi` plus `GLM-Claude-Code`; the archived `kimiClaudeCode` experiment is no longer an active Settings/card/status/capture option.

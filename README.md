@@ -2,22 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.318** (GLM-Claude-Code provider replacement)
+**Current Release — v1.2.319** (Development Tree materialization)
 
-This release replaces the closed `Claude-Kimi` experiment with
-`GLM-Claude-Code`: GLM 5.1 running through the Claude Code-compatible runtime.
-Native `Kimi` remains the Wire-based provider, while `GLM-Claude-Code` has its
-own provider id, Settings tab, workflow start-card option, Capture Workbench
-entry, status identity, and provider inheritance path.
+This release materializes the accepted Diagram Modules development tree into a
+Core-owned artifact workspace under `.codeai-hub/<workspace>/development_tree/`
+and exposes the same Product Part / Cluster / Module structure to Project
+Manager as a projection of Core-owned state.
 
-The GLM runtime is isolated under
-`~/.codeai-hub/providers/glm-claude-code/home` and reads its local config from
-`~/.codeai-hub/providers/glm-claude-code/config.json`. The API key is not stored
-in repository files; enter it in the local config `apiKey` field or provide one
-of the supported runtime env vars.
+Module nodes now include operation-level artifact workspaces for Module/Facade
+Specification, Implementation, Workers, and Integration. Project Manager renders
+those operations in the left Development Tree sidebar and routes operation
+selection into the normal Sessions/Artifacts surfaces without owning parser or
+filesystem truth.
 
-The release also keeps native Kimi defaults honest in capture/workbench surfaces:
-Kimi uses `kimi-for-coding`, and GLM-Claude-Code uses `glm-5.1`.
+The production code mirror remains owned by Application Skeleton under
+`product-parts/`. Diagram Modules owns the artifact workspace materialization,
+including orphan detection for previously generated populated folders.
+
+The previous GLM-Claude-Code provider replacement behavior remains included.
 
 The previous session context and Kimi usage telemetry behavior remains included.
 

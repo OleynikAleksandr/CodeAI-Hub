@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "faf9af6bb",
+  "lastRecordedCommit": "174d5c2f1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase5.stream1.task1",
-  "expectedCommitMessage": "docs: sync development tree materialization architecture",
+  "currentTaskId": "phase5.stream3.task1",
+  "expectedCommitMessage": "docs: prepare release notes for development tree materialization",
   "debt": {
-    "expectedCommitMessage": "docs: sync development tree materialization architecture",
-    "preCommitHead": "faf9af6bb",
+    "expectedCommitMessage": "docs: prepare release notes for development tree materialization",
+    "preCommitHead": "174d5c2f1",
     "stage": "commit_pending",
-    "taskId": "phase5.stream1.task1"
+    "taskId": "phase5.stream3.task1"
   }
 }
 ```
@@ -94,14 +94,14 @@
 
 ### Stream: SSOT Sync
 21. [DONE] `phase5.stream1.task1` Sync SSOT documentation for Core-owned Development Tree materialization, PM projection-only boundary, and Application Skeleton-owned code mirror (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md`; expected commit: `docs: sync development tree materialization architecture`).
-22. [PENDING] Git Commit: `docs: sync development tree materialization architecture` (hash: TBD)
+22. [DONE] Git Commit: `docs: sync development tree materialization architecture` (hash: 174d5c2f1)
 
 ### Stream: Tooling Verification
-23. [TODO] `phase5.stream2.task1` Run targeted verification for affected Core and Project Manager packages (scope: `packages/core, src/client/project-manager, packages/ui/project-manager`; expected commit: no commit expected).
+23. [DONE] `phase5.stream2.task1` Run targeted verification for affected Core and Project Manager packages (scope: `packages/core, src/client/project-manager, packages/ui/project-manager`; expected commit: no commit expected). Result: --help
 
 ### Stream: Release Build
-24. [TODO] `phase5.stream3.task1` After separate explicit user confirmation, update release docs for the next version and run the release build checklist (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `docs: prepare release notes for development tree materialization`).
-25. [TODO] Git Commit: `docs: prepare release notes for development tree materialization` (hash: TBD)
+24. [DONE] `phase5.stream3.task1` After separate explicit user confirmation, update release docs for the next version and run the release build checklist (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `docs: prepare release notes for development tree materialization`).
+25. [PENDING] Git Commit: `docs: prepare release notes for development tree materialization` (hash: TBD)
 26. [TODO] `phase5.stream3.task2` After release-doc commit and clean tree, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record build artifacts and release evidence (scope: release artifacts and versioned manifests; expected commit: `chore: build development tree materialization release`).
 27. [TODO] Git Commit: `chore: build development tree materialization release` (hash: TBD)
 
