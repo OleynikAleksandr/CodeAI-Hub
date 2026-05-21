@@ -12,6 +12,7 @@ import { useStagePanelSync } from "./use-stage-panel-sync";
 import {
   buildDevelopmentTreeLockedNodes,
   buildDevelopmentTreeNodes,
+  resolveInitialDevelopmentTreeExpansion,
 } from "./workspace-tree-diagram-branch-nodes";
 import {
   useWorkspaceTreeAutoSelect,
@@ -39,6 +40,16 @@ const isTechnicalStageRewriteBoundaryActive = (
 const isReadOnlyUpstreamStage = (stage: WorkflowStageId): boolean =>
   stage === "description" || stage === "virtual_simulation";
 
+const createDevelopmentTreeExpansionKey = (
+  nodes: readonly TreeNode[]
+): string =>
+  nodes
+    .map(
+      (part) =>
+        `${part.id}:${(part.children ?? []).map((child) => child.id).join("|")}`
+    )
+    .join(";");
+
 interface WorkspaceTreeProps {
   readonly selectedWorkspaceId?: string;
   readonly workspaceName?: string;
@@ -56,6 +67,9 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
   const [expandedNodes, setExpandedNodes] = useState<
     Readonly<Record<string, boolean>>
   >({});
+  const [autoExpandedTreeKey, setAutoExpandedTreeKey] = useState<string | null>(
+    null
+  );
   const [openPartId, setOpenPartId] = useState<string | null>(null);
   const [openClusterId, setOpenClusterId] = useState<string | null>(null);
   const activeStage = useWorkspaceTreeActiveStage(selectedWorkspaceId);
@@ -165,6 +179,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     }
     markWorkspaceChanged();
     setExpandedNodes({});
+    setAutoExpandedTreeKey(null);
     setOpenPartId(null);
     setOpenClusterId(null);
   }, [
@@ -256,7 +271,21 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     selectedWorkspaceId && devTreeNodes.length === 0
       ? buildDevelopmentTreeLockedNodes(workflowState, 0)
       : [];
+  const devTreeExpansionKey =
+    selectedWorkspaceId && devTreeNodes.length > 0
+      ? `${selectedWorkspaceId}:${createDevelopmentTreeExpansionKey(devTreeNodes)}`
+      : null;
   const providerResolver = useStepProviderResolver({ snapshot: workflowState });
+
+  useEffect(() => {
+    if (!devTreeExpansionKey || autoExpandedTreeKey === devTreeExpansionKey) {
+      return;
+    }
+    const initialExpansion = resolveInitialDevelopmentTreeExpansion(devTreeNodes);
+    setAutoExpandedTreeKey(devTreeExpansionKey);
+    setOpenPartId(initialExpansion.partId);
+    setOpenClusterId(initialExpansion.clusterId);
+  }, [autoExpandedTreeKey, devTreeExpansionKey, devTreeNodes]);
 
   const renderItemClass = (node: TreeNode) =>
     [

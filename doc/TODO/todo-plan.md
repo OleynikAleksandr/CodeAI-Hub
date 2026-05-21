@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "dbde8cce3",
+  "lastRecordedCommit": "092a30ebb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase6.stream1.task1",
-  "expectedCommitMessage": "feat: mirror development tree todo stage workspace",
+  "currentTaskId": "phase6.stream1.task2",
+  "expectedCommitMessage": "feat: reveal development tree workflow nodes in sidebar",
   "debt": {
-    "expectedCommitMessage": "feat: mirror development tree todo stage workspace",
-    "preCommitHead": "dbde8cce3",
+    "expectedCommitMessage": "feat: reveal development tree workflow nodes in sidebar",
+    "preCommitHead": "092a30ebb",
     "stage": "commit_pending",
-    "taskId": "phase6.stream1.task1"
+    "taskId": "phase6.stream1.task2"
   }
 }
 ```
@@ -112,9 +112,9 @@
 
 ### Stream: Diagram Modules Development Tree Mirror
 29. [DONE] `phase6.stream1.task1` Materialize the same accepted Development Tree folder shape into `doc/TODO/stages/development-tree/...` during the Core-owned Diagram Modules materialization step (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `feat: mirror development tree todo stage workspace`).
-30. [PENDING] Git Commit: `feat: mirror development tree todo stage workspace` (hash: TBD)
-31. [TODO] `phase6.stream1.task2` Expand the first Development Tree Product Part/Cluster in the left sidebar when Core snapshot data appears so module operation nodes are visible like the accepted prototype (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`; expected commit: `feat: reveal development tree workflow nodes in sidebar`).
-32. [TODO] Git Commit: `feat: reveal development tree workflow nodes in sidebar` (hash: TBD)
+30. [DONE] Git Commit: `feat: mirror development tree todo stage workspace` (hash: 092a30ebb)
+31. [DONE] `phase6.stream1.task2` Expand the first Development Tree Product Part/Cluster in the left sidebar when Core snapshot data appears so module operation nodes are visible like the accepted prototype (scope: `src/client/project-manager/components/layout/workspace-tree.tsx, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-development-expansion.test.ts`; expected commit: `feat: reveal development tree workflow nodes in sidebar`).
+32. [PENDING] Git Commit: `feat: reveal development tree workflow nodes in sidebar` (hash: TBD)
 33. [TODO] `phase6.stream1.task3` Run targeted Core/Project Manager verification after acceptance defect fixes (scope: `packages/core, src/client/project-manager, packages/ui/project-manager`; expected commit: no commit expected).
 
 ### Stream: User Visual Acceptance Retest

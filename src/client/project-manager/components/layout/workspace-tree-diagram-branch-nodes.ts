@@ -292,6 +292,26 @@ const buildPartTreeNode = (
   };
 };
 
+export interface DevelopmentTreeInitialExpansion {
+  readonly clusterId: string | null;
+  readonly partId: string | null;
+}
+
+export const resolveInitialDevelopmentTreeExpansion = (
+  nodes: readonly TreeNode[]
+): DevelopmentTreeInitialExpansion => {
+  const part = nodes.find(
+    (node) => node.nodeType === "product-part" && node.isCollapsible
+  );
+  const cluster = part?.children?.find(
+    (node) => node.nodeType === "cluster" && node.isCollapsible
+  );
+  return {
+    partId: part?.id ?? null,
+    clusterId: cluster?.id ?? null,
+  };
+};
+
 const readStringArray = (value: unknown): readonly string[] =>
   Array.isArray(value)
     ? value.filter((entry): entry is string => typeof entry === "string")
