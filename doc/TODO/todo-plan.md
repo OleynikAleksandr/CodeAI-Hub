@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "174d5c2f1",
+  "lastRecordedCommit": "755f9ee57",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase5.stream3.task1",
-  "expectedCommitMessage": "docs: prepare release notes for development tree materialization",
+  "currentTaskId": "phase5.stream3.task2",
+  "expectedCommitMessage": "chore: build development tree materialization release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release notes for development tree materialization",
-    "preCommitHead": "174d5c2f1",
+    "expectedCommitMessage": "chore: build development tree materialization release",
+    "preCommitHead": "755f9ee57",
     "stage": "commit_pending",
-    "taskId": "phase5.stream3.task1"
+    "taskId": "phase5.stream3.task2"
   }
 }
 ```
@@ -101,9 +101,9 @@
 
 ### Stream: Release Build
 24. [DONE] `phase5.stream3.task1` After separate explicit user confirmation, update release docs for the next version and run the release build checklist (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `docs: prepare release notes for development tree materialization`).
-25. [PENDING] Git Commit: `docs: prepare release notes for development tree materialization` (hash: TBD)
-26. [TODO] `phase5.stream3.task2` After release-doc commit and clean tree, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record build artifacts and release evidence (scope: release artifacts and versioned manifests; expected commit: `chore: build development tree materialization release`).
-27. [TODO] Git Commit: `chore: build development tree materialization release` (hash: TBD)
+25. [DONE] Git Commit: `docs: prepare release notes for development tree materialization` (hash: 755f9ee57)
+26. [DONE] `phase5.stream3.task2` After release-doc commit and clean tree, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build development tree materialization release`).
+27. [PENDING] Git Commit: `chore: build development tree materialization release` (hash: TBD)
 
 ### Stream: User Visual Acceptance Testing
 28. [TODO] `phase5.stream4.task1` User installs/retests the release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
