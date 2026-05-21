@@ -2,24 +2,26 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.319** (Development Tree materialization)
+**Current Release — v1.2.320** (Development Tree acceptance fixes)
 
-This release materializes the accepted Diagram Modules development tree into a
-Core-owned artifact workspace under `.codeai-hub/<workspace>/development_tree/`
-and exposes the same Product Part / Cluster / Module structure to Project
-Manager as a projection of Core-owned state.
+This release completes the Diagram Modules Development Tree materialization
+flow. Core now creates the accepted tree both under
+`.codeai-hub/<workspace>/development_tree/materialized/...` and under
+`doc/TODO/stages/development-tree/...`, so later TODO plans and agent artifacts
+have the same Product Part / Cluster / Module folder structure available before
+Application Skeleton starts.
 
-Module nodes now include operation-level artifact workspaces for Module/Facade
-Specification, Implementation, Workers, and Integration. Project Manager renders
-those operations in the left Development Tree sidebar and routes operation
-selection into the normal Sessions/Artifacts surfaces without owning parser or
-filesystem truth.
+Clusters and modules both receive `workers/` and `integration/` artifact
+folders. Cluster root folders remain the place for cluster description and
+facade-contract drafts, while the nested operation folders hold worker task
+evidence and integration handoff artifacts.
 
-The production code mirror remains owned by Application Skeleton under
-`product-parts/`. Diagram Modules owns the artifact workspace materialization,
-including orphan detection for previously generated populated folders.
+Project Manager still remains a projection-only surface: it consumes Core-owned
+Development Tree snapshots and auto-reveals the first Product Part / Cluster in
+the left sidebar so Module / Facade Specification, Implementation, Workers, and
+Integration nodes are visible immediately.
 
-The previous GLM-Claude-Code provider replacement behavior remains included.
+The previous Development Tree materialization behavior remains included.
 
 The previous session context and Kimi usage telemetry behavior remains included.
 

@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.320] - 2026-05-21
+### Fixed
+- **Diagram Modules mirrors the accepted Development Tree into TODO stage folders.** Core now creates `doc/TODO/stages/development-tree/product-parts/...` from the same accepted Product Part / Cluster / Module structure used for `.codeai-hub/<workspace>/development_tree/materialized/...`.
+- **The left sidebar reveals Development Tree workflow nodes by default.** Project Manager auto-expands the first Product Part and Cluster when Core snapshot data appears, making Module / Facade Specification, Implementation, Workers, and Integration visible without manual tree drilling.
+- **Clusters receive operation artifact folders.** Cluster roots now get `workers/` and `integration/` folders alongside `modules/` in both materialized roots, matching the cluster facade/contract workflow.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.js packages/core/dist/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.test.js`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npx tsx --test src/client/project-manager/components/layout/workspace-tree-development-expansion.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts`
+
 ## [1.2.319] - 2026-05-21
 ### Added
 - **Diagram Modules materializes a Core-owned Development Tree artifact workspace.** Accepted Product Parts, Clusters, Modules, and module operations now map to `.codeai-hub/<workspace>/development_tree/materialized/...` for future agent artifacts.

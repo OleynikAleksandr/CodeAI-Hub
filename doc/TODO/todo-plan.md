@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "ad5b6f827",
+  "lastRecordedCommit": "8194bdcf3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase6.stream3.task1",
-  "expectedCommitMessage": "feat: add cluster operation artifact folders",
+  "currentTaskId": "phase7.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release notes for development tree acceptance fixes",
   "debt": {
-    "expectedCommitMessage": "feat: add cluster operation artifact folders",
-    "preCommitHead": "ad5b6f827",
+    "expectedCommitMessage": "docs: prepare release notes for development tree acceptance fixes",
+    "preCommitHead": "8194bdcf3",
     "stage": "commit_pending",
-    "taskId": "phase6.stream3.task1"
+    "taskId": "phase7.stream1.task1"
   }
 }
 ```
@@ -122,13 +122,24 @@
 
 ### Stream: Cluster Operation Folder Fix
 35. [DONE] `phase6.stream3.task1` Add cluster-level `workers/` and `integration/` artifact folders to both `.codeai-hub/<workspace>/development_tree/materialized/...` and `doc/TODO/stages/development-tree/...` materialization plans (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `feat: add cluster operation artifact folders`).
-36. [PENDING] Git Commit: `feat: add cluster operation artifact folders` (hash: TBD)
-37. [TODO] `phase6.stream3.task2` Run targeted Core materializer verification and re-materialize the test workspace cluster operation folders (scope: `packages/core, /Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`; expected commit: no commit expected).
+36. [DONE] Git Commit: `feat: add cluster operation artifact folders` (hash: 8194bdcf3)
+37. [DONE] `phase6.stream3.task2` Run targeted Core materializer verification and re-materialize the test workspace cluster operation folders (scope: `packages/core, /Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`; expected commit: no commit expected). Result: targeted Core materializer verification passed; re-materialized cluster workers and integration folders in CodeAI-Hub codex 5.4
 
 ### Stream: User Visual Acceptance Retest 2
-38. [TODO] `phase6.stream4.task1` User installs/retests the fixed release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
+38. [BLOCKED] `phase6.stream4.task1` User installs/retests the fixed release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected). Blocked until the acceptance-fix release is built and installed.
+
+## Phase 7 — Acceptance Fix Release Build (owner: Codex, updated: 2026-05-21)
+
+### Stream: Release Build
+39. [DONE] `phase7.stream1.task1` After explicit user confirmation, update release docs for the next version covering Development Tree acceptance fixes (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release notes for development tree acceptance fixes`).
+40. [PENDING] Git Commit: `docs: prepare release notes for development tree acceptance fixes` (hash: TBD)
+41. [TODO] `phase7.stream1.task2` After release-doc commit and clean tree, run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build development tree acceptance fix release`).
+42. [TODO] Git Commit: `chore: build development tree acceptance fix release` (hash: TBD)
+
+### Stream: User Visual Acceptance Retest 3
+43. [TODO] `phase7.stream2.task1` User installs/retests the new acceptance-fix release and accepts the Development Tree materialization/sidebar behavior (scope: user visual acceptance; no commit expected).
 
 ### Stream: Scope Closeout
-39. [TODO] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).
-40. [TODO] Git Commit: `docs: close development tree materialization implementation` (hash: TBD)
-41. [TODO] `phase5.stream5.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
+44. [TODO] `phase5.stream5.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update planning-doc disposition/index references (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree materialization implementation`).
+45. [TODO] Git Commit: `docs: close development tree materialization implementation` (hash: TBD)
+46. [TODO] `phase5.stream5.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
