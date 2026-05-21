@@ -8,15 +8,15 @@
   "planId": "development-tree-materialization-and-sidebar-implementation-2026-05-20",
   "branch": "main",
   "baseHead": "bde34814f",
-  "lastRecordedCommit": "9c92f828a",
+  "lastRecordedCommit": "78f4714e6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md",
-  "currentTaskId": "phase8.stream2.task1",
-  "expectedCommitMessage": "docs: prepare release notes for vsix size hotfix",
+  "currentTaskId": "phase8.stream2.task2",
+  "expectedCommitMessage": "chore: build vsix size hotfix release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release notes for vsix size hotfix",
-    "preCommitHead": "9c92f828a",
+    "expectedCommitMessage": "chore: build vsix size hotfix release",
+    "preCommitHead": "78f4714e6",
     "stage": "commit_pending",
-    "taskId": "phase8.stream2.task1"
+    "taskId": "phase8.stream2.task2"
   }
 }
 ```
@@ -147,9 +147,9 @@
 
 ### Stream: Hotfix Release Build
 49. [DONE] `phase8.stream2.task1` Update release docs for the next hotfix version covering the VSIX package-size fix (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release notes for vsix size hotfix`).
-50. [PENDING] Git Commit: `docs: prepare release notes for vsix size hotfix` (hash: TBD)
-51. [TODO] `phase8.stream2.task2` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, verify the VSIX no longer contains native Swift build artefacts, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build vsix size hotfix release`).
-52. [TODO] Git Commit: `chore: build vsix size hotfix release` (hash: TBD)
+50. [DONE] Git Commit: `docs: prepare release notes for vsix size hotfix` (hash: 78f4714e6)
+51. [DONE] `phase8.stream2.task2` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version`, verify the VSIX no longer contains native Swift build artefacts, then record build artifacts and release evidence (scope: `assets/**/manifest.json, package.json, package-lock.json, packages/**/package.json, doc/tmp/releases/`; expected commit: `chore: build vsix size hotfix release`).
+52. [PENDING] Git Commit: `chore: build vsix size hotfix release` (hash: TBD)
 
 ### Stream: User Visual Acceptance Retest 4
 53. [TODO] `phase8.stream3.task1` User installs/retests the VSIX package-size hotfix release and accepts the Development Tree materialization/sidebar behavior plus release package size (scope: user visual acceptance; no commit expected).
