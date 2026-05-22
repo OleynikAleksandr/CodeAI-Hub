@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "5bc8983f7",
+  "lastRecordedCommit": "962332d7c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase5.stream2.task1",
-  "expectedCommitMessage": "feat: show lead contract orchestration in sidebar",
+  "currentTaskId": "phase5.stream3.task1",
+  "expectedCommitMessage": "feat: explain locked development tree nodes",
   "debt": {
-    "expectedCommitMessage": "feat: show lead contract orchestration in sidebar",
-    "preCommitHead": "5bc8983f7",
+    "expectedCommitMessage": "feat: explain locked development tree nodes",
+    "preCommitHead": "962332d7c",
     "stage": "commit_pending",
-    "taskId": "phase5.stream2.task1"
+    "taskId": "phase5.stream3.task1"
   }
 }
 ```
@@ -107,11 +107,11 @@
 
 ### Stream: Sidebar Projection
 19. [DONE] `phase5.stream2.task1` Render lead Product Part first, locked non-lead nodes and lead orchestration children in the left sidebar (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `feat: show lead contract orchestration in sidebar`).
-20. [PENDING] Git Commit: `feat: show lead contract orchestration in sidebar` (hash: TBD)
+20. [DONE] Git Commit: `feat: show lead contract orchestration in sidebar` (hash: 962332d7c)
 
 ### Stream: Node Start Card UX
-21. [TODO] `phase5.stream3.task1` Show locked reason and disable node start UI for non-startable Development Tree nodes (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/main-area-panel-content.test.ts`; expected commit: `feat: explain locked development tree nodes`).
-22. [TODO] Git Commit: `feat: explain locked development tree nodes` (hash: TBD)
+21. [DONE] `phase5.stream3.task1` Show locked reason and disable node start UI for non-startable Development Tree nodes (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/main-area-panel-content.test.ts`; expected commit: `feat: explain locked development tree nodes`).
+22. [PENDING] Git Commit: `feat: explain locked development tree nodes` (hash: TBD)
 
 ## Phase 6 — Verification (owner: Codex, updated: 2026-05-22)
 

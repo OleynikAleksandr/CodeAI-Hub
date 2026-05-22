@@ -436,6 +436,7 @@ export const MainAreaSessionContent: React.FC<SessionContentProps> = ({
         kind={selectedBranchNode.kind}
         label={selectedBranchNode.label}
         nodeId={selectedBranchNode.nodeId}
+        operationKind={selectedBranchNode.operationKind}
         workflowPath={selectedBranchNode.workflowPath}
         workspacePath={workspacePath}
         workspaceSlug={workspaceSlug}

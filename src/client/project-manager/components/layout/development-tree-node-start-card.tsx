@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
 import { CaptureWorkbenchDomListboxSelector } from "../capture-workbench/dom-listbox-selector";
-import type { BranchNodeKind } from "./main-area-utils";
+import type { BranchNodeKind, BranchNodeSelection } from "./main-area-utils";
 import {
   getStartCardModelOptions,
   getStartCardReasoningOptions,
@@ -30,10 +30,19 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
   readonly kind: BranchNodeKind;
   readonly label: string;
   readonly nodeId: string;
+  readonly operationKind?: BranchNodeSelection["operationKind"];
   readonly workflowPath: string;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
-}> = ({ kind, label, nodeId, workflowPath, workspacePath, workspaceSlug }) => {
+}> = ({
+  kind,
+  label,
+  nodeId,
+  operationKind,
+  workflowPath,
+  workspacePath,
+  workspaceSlug,
+}) => {
   const providers = api.getDescriptionProviders();
   const firstProvider =
     providers.find((provider) => provider.connected && isProviderStackId(provider.id)) ??
@@ -81,7 +90,11 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
     }
   }, [reasoningOptions, selectedReasoning]);
 
-  const startDisabled = !(selectedProviderId && selectedModelId && selectedReasoning);
+  const lockedReason =
+    operationKind === "lead_orchestration"
+      ? null
+      : "Lead Product Part Contract Graph is not frozen yet. Start Lead Product Part Orchestration first.";
+  const startDisabled = Boolean(lockedReason) || !(selectedProviderId && selectedModelId && selectedReasoning);
   return (
     <div className="pm-details" style={{ padding: "24px 20px" }}>
       <strong style={{ display: "block", fontSize: 14, marginBottom: 16 }}>
@@ -89,8 +102,8 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
       </strong>
       <div style={{ display: "grid", gap: 12 }}>
         <div style={{ color: "var(--pm-text-muted)", fontSize: 13 }}>
-          Draft artifacts are not created yet. Start this node to create only this
-          node session and its draft artifacts.
+          {lockedReason ??
+            "Draft artifacts are not created yet. Start this node to create only this node session and its draft artifacts."}
         </div>
         <CaptureWorkbenchDomListboxSelector
           label="Agent provider"

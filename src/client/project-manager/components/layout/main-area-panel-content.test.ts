@@ -66,6 +66,18 @@ test("main-area session content scopes runtime fallback by selected development-
   assert.equal(stageIntentIndex > nullIntentIndex, true);
 });
 
+test("main-area session content forwards development-tree operation kind to start card", async () => {
+  const source = await readFile(SOURCE_PATH, "utf8");
+
+  const startCardIndex = source.indexOf("<DevelopmentTreeNodeStartCard");
+  const operationKindIndex = source.indexOf(
+    "operationKind={selectedBranchNode.operationKind}",
+    startCardIndex
+  );
+  assert.equal(startCardIndex >= 0, true);
+  assert.equal(operationKindIndex > startCardIndex, true);
+});
+
 test("main-area session content lets selected development-tree node outrank stale step-started intent", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
 
