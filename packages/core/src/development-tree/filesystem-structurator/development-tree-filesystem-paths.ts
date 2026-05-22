@@ -2,9 +2,14 @@ import path from "node:path";
 
 export type DevelopmentTreeFilesystemNodeKind =
   | "cluster"
+  | "contract_graph"
+  | "cross_part_contracts"
+  | "execution_waves"
   | "integration"
+  | "lead_orchestration"
   | "module"
   | "product_part"
+  | "shared_interfaces"
   | "workers";
 
 export interface DevelopmentTreeFilesystemDirectoryPlan {

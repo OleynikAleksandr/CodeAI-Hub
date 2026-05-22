@@ -4,6 +4,7 @@ import {
   createDevelopmentTreeMaterializedRoot,
   createDevelopmentTreeTodoStageRoot,
   type DevelopmentTreeFilesystemDirectoryPlan,
+  type DevelopmentTreeFilesystemNodeKind,
   type DevelopmentTreeFilesystemPathPlan,
 } from "./development-tree-filesystem-paths";
 
@@ -17,6 +18,17 @@ export interface DevelopmentTreeFilesystemPathPlannerRequest {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }
+
+const LEAD_ORCHESTRATION_SEGMENT = "lead-product-part-orchestration";
+const LEAD_ORCHESTRATION_CHILDREN = [
+  { kind: "contract_graph", segment: "contract-graph" },
+  { kind: "cross_part_contracts", segment: "cross-part-contracts" },
+  { kind: "shared_interfaces", segment: "shared-interfaces" },
+  { kind: "execution_waves", segment: "execution-waves" },
+] as const satisfies readonly {
+  readonly kind: DevelopmentTreeFilesystemNodeKind;
+  readonly segment: string;
+}[];
 
 const createProductPartSegments = (partId: string): readonly string[] => [
   "product-parts",
@@ -121,6 +133,37 @@ const pushProductPartDirectoryPlan = (params: {
       partId: params.partId,
       segments: createProductPartSegments(params.partId),
     })
+  );
+};
+
+const pushLeadOrchestrationDirectoryPlans = (params: {
+  readonly directories: DevelopmentTreeFilesystemDirectoryPlan[];
+  readonly partId: string;
+  readonly rootAbsolutePath: string;
+  readonly rootRelativePath: string;
+}): void => {
+  const orchestrationSegments = [
+    ...createProductPartSegments(params.partId),
+    LEAD_ORCHESTRATION_SEGMENT,
+  ];
+  const base = {
+    rootAbsolutePath: params.rootAbsolutePath,
+    rootRelativePath: params.rootRelativePath,
+    partId: params.partId,
+  };
+  params.directories.push(
+    createDevelopmentTreeDirectoryPlan({
+      ...base,
+      kind: "lead_orchestration",
+      segments: orchestrationSegments,
+    }),
+    ...LEAD_ORCHESTRATION_CHILDREN.map((child) =>
+      createDevelopmentTreeDirectoryPlan({
+        ...base,
+        kind: child.kind,
+        segments: [...orchestrationSegments, child.segment],
+      })
+    )
   );
 };
 
@@ -229,6 +272,7 @@ const pushClusterTreeDirectoryPlans = (params: {
 
 const pushPartDirectoryPlans = (params: {
   readonly directories: DevelopmentTreeFilesystemDirectoryPlan[];
+  readonly isLeadPart: boolean;
   readonly part: DevelopmentTreeSnapshot["parts"][number];
   readonly roots: readonly DevelopmentTreePlanRoot[];
 }): void => {
@@ -239,6 +283,14 @@ const pushPartDirectoryPlans = (params: {
       rootAbsolutePath: root.absolutePath,
       rootRelativePath: root.relativePath,
     });
+    if (params.isLeadPart) {
+      pushLeadOrchestrationDirectoryPlans({
+        directories: params.directories,
+        partId: params.part.id,
+        rootAbsolutePath: root.absolutePath,
+        rootRelativePath: root.relativePath,
+      });
+    }
   }
 
   for (const cluster of params.part.clusters) {
@@ -282,7 +334,12 @@ export class DevelopmentTreeFilesystemPathPlanner {
       if (part.status !== "materialized") {
         continue;
       }
-      pushPartDirectoryPlans({ directories, part, roots: allRoots });
+      pushPartDirectoryPlans({
+        directories,
+        part,
+        roots: allRoots,
+        isLeadPart: params.snapshot.leadProductPartId === part.id,
+      });
     }
 
     return {

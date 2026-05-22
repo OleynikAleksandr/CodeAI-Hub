@@ -6,6 +6,7 @@ import type { DevelopmentTreeSnapshot } from "../development-tree-types";
 import { DevelopmentTreeFilesystemPathPlanner } from "./development-tree-filesystem-path-planner";
 
 const createSnapshot = (): DevelopmentTreeSnapshot => ({
+  leadProductPartId: "local-runtime",
   parts: [
     {
       id: "local-runtime",
@@ -28,6 +29,7 @@ const createSnapshot = (): DevelopmentTreeSnapshot => ({
       standaloneModules: [],
     },
   ],
+  productPartLeadershipOrder: ["local-runtime", "project-manager"],
 });
 
 const createExpectedEntries = (rootRelativePath: string) => [
@@ -37,6 +39,41 @@ const createExpectedEntries = (rootRelativePath: string) => [
     clusterId: undefined,
     moduleId: undefined,
     relativePath: `${rootRelativePath}/product-parts/local-runtime`,
+  },
+  {
+    kind: "lead_orchestration",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration`,
+  },
+  {
+    kind: "contract_graph",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration/contract-graph`,
+  },
+  {
+    kind: "cross_part_contracts",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration/cross-part-contracts`,
+  },
+  {
+    kind: "shared_interfaces",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration/shared-interfaces`,
+  },
+  {
+    kind: "execution_waves",
+    partId: "local-runtime",
+    clusterId: undefined,
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration/execution-waves`,
   },
   {
     kind: "cluster",

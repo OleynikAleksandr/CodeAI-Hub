@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "fb3e000f4",
+  "lastRecordedCommit": "b96461b76",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase3.stream1.task1",
-  "expectedCommitMessage": "feat: project development tree leadership metadata",
+  "currentTaskId": "phase3.stream2.task1",
+  "expectedCommitMessage": "feat: materialize lead contract orchestration folders",
   "debt": {
-    "expectedCommitMessage": "feat: project development tree leadership metadata",
-    "preCommitHead": "fb3e000f4",
+    "expectedCommitMessage": "feat: materialize lead contract orchestration folders",
+    "preCommitHead": "b96461b76",
     "stage": "commit_pending",
-    "taskId": "phase3.stream1.task1"
+    "taskId": "phase3.stream2.task1"
   }
 }
 ```
@@ -79,11 +79,11 @@
 
 ### Stream: Snapshot Metadata
 7. [DONE] `phase3.stream1.task1` Extend Development Tree snapshot types/read model with `leadProductPartId`, leadership order metadata and node lock reasons (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: project development tree leadership metadata`).
-8. [PENDING] Git Commit: `feat: project development tree leadership metadata` (hash: TBD)
+8. [DONE] Git Commit: `feat: project development tree leadership metadata` (hash: b96461b76)
 
 ### Stream: Filesystem Materialization
-9. [TODO] `phase3.stream2.task1` Materialize lead orchestration folders/placeholders in `.codeai-hub` and `doc/TODO/stages/development-tree` while preserving Product Part leadership order (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts`; expected commit: `feat: materialize lead contract orchestration folders`).
-10. [TODO] Git Commit: `feat: materialize lead contract orchestration folders` (hash: TBD)
+9. [DONE] `phase3.stream2.task1` Materialize lead orchestration folders/placeholders in `.codeai-hub` and `doc/TODO/stages/development-tree` while preserving Product Part leadership order (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts`; expected commit: `feat: materialize lead contract orchestration folders`).
+10. [PENDING] Git Commit: `feat: materialize lead contract orchestration folders` (hash: TBD)
 
 ### Stream: Operation Nodes
 11. [TODO] `phase3.stream3.task1` Add Lead Product Part Orchestration operation nodes for Contract Graph, Cross-Part Contracts, Shared Interfaces and Execution Waves (scope: `packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: add lead contract operation nodes`).
