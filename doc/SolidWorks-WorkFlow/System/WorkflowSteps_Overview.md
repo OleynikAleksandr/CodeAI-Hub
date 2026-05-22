@@ -237,6 +237,7 @@ Manual start из sidebar Workflow Tree:
 
 `product-parts.index.md` является первым canonical orchestration artifact этого шага:
 - он фиксирует список `Product Part`, их порядок, purpose и generation status;
+- он обязан фиксировать `leadProductPartId` и `productPartLeadershipOrder`; первый элемент leadership order должен совпадать с lead Product Part, а сам порядок становится порядком корневых Product Part nodes в Development Tree;
 - по нему visual shell может показать skeleton общей картины ещё до materialization всех part-файлов.
 
 `product-parts/<part-id>.md` являются canonical semantic artifacts отдельных `Product Part`.

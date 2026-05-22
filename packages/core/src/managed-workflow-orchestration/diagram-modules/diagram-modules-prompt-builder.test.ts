@@ -51,6 +51,9 @@ test("diagram modules managed prompt embeds upstream sources and target artifact
   assertIncludes(prompt, "### virtual-simulation.md");
   assertIncludes(prompt, "## Сценарий 1");
   assertIncludes(prompt, "## Embedded artifact contract templates");
+  assertIncludes(prompt, "`leadProductPartId`");
+  assertIncludes(prompt, "`productPartLeadershipOrder`");
+  assertIncludes(prompt, "with the lead Product Part first");
   assertIncludes(prompt, "### product-parts-index-template");
   assertIncludes(prompt, "### product-part-template");
   assertIncludes(prompt, "### diagram-modules-field-reference");

@@ -118,6 +118,8 @@ export const buildDiagramModulesManagedPrompt = (
     "## Required artifact shape",
     "",
     "- `product-parts.index.md` lists every Product Part id, display name, purpose, and generation status.",
+    "- `product-parts.index.md` must declare `leadProductPartId`: the single Product Part that owns the first Development Tree contract orchestration session.",
+    "- `product-parts.index.md` must declare `productPartLeadershipOrder`: every Product Part id exactly once, ordered by leadership/contract orchestration priority, with the lead Product Part first.",
     "- `product-parts/<part-id>.md` describes each Product Part with clusters, modules, responsibilities, and dependencies.",
     "- `module-map.flow.json` is a layout/view sidecar only; Markdown artifacts remain semantic SSOT.",
     "",
