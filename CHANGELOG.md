@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.324] - 2026-05-22
+### Added
+- **Project Manager sidebar steps now expose a clear action.** Right-clicking a workflow step or Development Tree node opens a context menu with `Clear`, guarded by a destructive confirmation dialog.
+- **Core owns workflow step reset.** `POST /api/v1/orchestrator/workflow-step-clear` removes selected-step and downstream artifacts, stage todo folders, Development Tree materialization, continuity data, active session records, and matching user-space unified session files.
+
+### Fixed
+- **Workflow steps can be restarted cleanly after generated state is no longer wanted.** Clearing a step removes stale workspace/user-space records so the selected step becomes available for a fresh start.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.test.js`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+- `npx tsx --test src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`
+
 ## [1.2.323] - 2026-05-22
 ### Added
 - **Quality Gates now requires a first research artifact.** Core validates `quality-gates-research.md` and `quality-gates-research.json` before the Quality Gates baseline contract can move through the draft review path.

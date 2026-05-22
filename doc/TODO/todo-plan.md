@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "2210d8931",
+  "lastRecordedCommit": "4b2feb5f5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream6.task6",
-  "expectedCommitMessage": "feat: clear workflow user-space session files",
+  "currentTaskId": "phase8.stream7.task1",
+  "expectedCommitMessage": "docs: prepare workflow step clear release",
   "debt": {
-    "expectedCommitMessage": "feat: clear workflow user-space session files",
-    "preCommitHead": "2210d8931",
+    "expectedCommitMessage": "docs: prepare workflow step clear release",
+    "preCommitHead": "4b2feb5f5",
     "stage": "commit_pending",
-    "taskId": "phase8.stream6.task6"
+    "taskId": "phase8.stream7.task1"
   }
 }
 ```
@@ -156,11 +156,18 @@
 44. [DONE] Git Commit: `feat: add sidebar workflow clear action` (hash: 2210d8931)
 45. [DONE] `phase8.stream6.task4` Run targeted validation for Core clear behavior and Project Manager sidebar context menu (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build and workflow-step-clear service tests passed; webview typecheck, webview build, Project Manager build and sidebar clear menu tests passed.
 46. [DONE] `phase8.stream6.task6` Extend Core clear action to delete matching user-space unified session history and translation overlay files under `~/.codeai-hub/sessions` for selected steps and downstream continuity chains (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts`; expected commit: `feat: clear workflow user-space session files`).
-47. [PENDING] Git Commit: `feat: clear workflow user-space session files` (hash: TBD)
-48. [TODO] `phase8.stream6.task5` Wait for explicit user confirmation before building a replacement release for the clear action (scope: release confirmation gate; no commit expected).
+47. [DONE] Git Commit: `feat: clear workflow user-space session files` (hash: 4b2feb5f5)
+48. [DONE] `phase8.stream6.task5` Wait for explicit user confirmation before building a replacement release for the clear action (scope: release confirmation gate; no commit expected). Result: user explicitly requested a new release build on 2026-05-22.
+
+### Stream: Release Build — Workflow Step Clear Action
+49. [DONE] `phase8.stream7.task1` Update release-facing docs for the replacement workflow step clear build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow step clear release`).
+50. [PENDING] Git Commit: `docs: prepare workflow step clear release` (hash: TBD)
+51. [TODO] `phase8.stream7.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workflow step clear release`).
+52. [TODO] Git Commit: `chore: build workflow step clear release` (hash: TBD)
+53. [TODO] `phase8.stream7.task3` User installs the generated replacement VSIX and verifies workflow step clear behavior from the Project Manager sidebar (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-49. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-50. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+54. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+55. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
