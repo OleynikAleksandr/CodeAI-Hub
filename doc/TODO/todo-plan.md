@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "3e3545ca2",
+  "lastRecordedCommit": "17ed00acc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase3.stream3.task1",
-  "expectedCommitMessage": "feat: add lead contract operation nodes",
+  "currentTaskId": "phase4.stream1.task1",
+  "expectedCommitMessage": "feat: gate development tree node starts by contract wave",
   "debt": {
-    "expectedCommitMessage": "feat: add lead contract operation nodes",
-    "preCommitHead": "3e3545ca2",
+    "expectedCommitMessage": "feat: gate development tree node starts by contract wave",
+    "preCommitHead": "17ed00acc",
     "stage": "commit_pending",
-    "taskId": "phase3.stream3.task1"
+    "taskId": "phase4.stream1.task1"
   }
 }
 ```
@@ -87,13 +87,13 @@
 
 ### Stream: Operation Nodes
 11. [DONE] `phase3.stream3.task1` Add Lead Product Part Orchestration operation nodes for Contract Graph, Cross-Part Contracts, Shared Interfaces and Execution Waves (scope: `packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: add lead contract operation nodes`).
-12. [PENDING] Git Commit: `feat: add lead contract operation nodes` (hash: TBD)
+12. [DONE] Git Commit: `feat: add lead contract operation nodes` (hash: 17ed00acc)
 
 ## Phase 4 — Start Gating And Prompt Foundations (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Core Node Start Gate
-13. [TODO] `phase4.stream1.task1` Enforce Core-side Development Tree node start rules so only lead orchestration is startable before frozen Contract Graph/wave assignment (scope: `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts, packages/core/src/development-tree/development-tree-types.ts`; expected commit: `feat: gate development tree node starts by contract wave`).
-14. [TODO] Git Commit: `feat: gate development tree node starts by contract wave` (hash: TBD)
+13. [DONE] `phase4.stream1.task1` Enforce Core-side Development Tree node start rules so only lead orchestration is startable before frozen Contract Graph/wave assignment (scope: `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts, packages/core/src/development-tree/development-tree-types.ts`; expected commit: `feat: gate development tree node starts by contract wave`).
+14. [PENDING] Git Commit: `feat: gate development tree node starts by contract wave` (hash: TBD)
 
 ### Stream: Prompt Pack And Research Artifact Schema
 15. [TODO] `phase4.stream2.task1` Add initial Core-owned types/contracts for agent prompt pack enforcement and per-agent research artifacts (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts`; expected commit: `feat: add development tree agent research contracts`).

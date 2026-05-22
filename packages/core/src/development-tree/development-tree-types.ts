@@ -35,9 +35,14 @@ export interface DevelopmentTreeNodeLifecycle {
 }
 
 export type DevelopmentTreeOperationNodeKind =
+  | "contract_graph"
+  | "cross_part_contracts"
+  | "execution_waves"
   | "implementation"
   | "integration"
+  | "lead_orchestration"
   | "module_facade_specification"
+  | "shared_interfaces"
   | "workers";
 
 export interface DevelopmentTreeOperationNode {
@@ -81,6 +86,7 @@ export interface DevelopmentTreePartNode {
   readonly codeWorkspacePath?: string;
   readonly id: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
+  readonly operations?: readonly DevelopmentTreeOperationNode[];
   readonly readiness?: DevelopmentTreeDraftReadiness;
   readonly session?: DevelopmentTreeNodeSession;
   readonly standaloneModules: readonly DevelopmentTreeModuleNode[];

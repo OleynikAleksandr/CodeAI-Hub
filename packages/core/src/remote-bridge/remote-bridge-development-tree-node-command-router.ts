@@ -1,14 +1,14 @@
 import { execFile } from "node:child_process";
+import { stat } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { createDevelopmentTreeMaterializedRoot } from "../development-tree/filesystem-structurator/development-tree-filesystem-paths";
-import { DevelopmentTreeNodeDetector } from "../development-tree/node-bootstrap/development-tree-node-detector";
-import { DraftWriter } from "../development-tree/node-bootstrap/draft-writer";
 import type { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
 
 const execFileAsync = promisify(execFile);
 const COMMAND = "development-tree:node-start";
 const DEVELOPMENT_TREE_STAGE_PREFIX = "development_tree/";
+const LEAD_ORCHESTRATION_STAGE_RE =
+  /^development_tree\/materialized\/product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\/lead-product-part-orchestration$/;
 
 type SendCommandError = (
   clientId: string,
@@ -20,9 +20,10 @@ type SendCommandError = (
 const readOptionalString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
+const directoryExists = async (absolutePath: string): Promise<boolean> =>
+  Boolean((await stat(absolutePath).catch(() => null))?.isDirectory());
+
 export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
-  private readonly detector = new DevelopmentTreeNodeDetector();
-  private readonly draftWriter = new DraftWriter();
   private readonly sendCommandError: SendCommandError;
   private readonly sessionCreateRouter: RemoteBridgeSessionCreateRouter;
 
@@ -74,18 +75,20 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       );
       return;
     }
-    const materialized = createDevelopmentTreeMaterializedRoot({
-      workspaceRoot: workspacePath,
-      workspaceSlug,
-    });
-    const nodes = await this.detector.detect({
-      materializedRootAbsolutePath: materialized.absolutePath,
-      materializedRootRelativePath: materialized.relativePath,
-    });
-    const node = nodes.find(
-      (candidate) => candidate.relativePath === workflowPath
-    );
-    if (!node) {
+    if (!LEAD_ORCHESTRATION_STAGE_RE.test(workflowPath)) {
+      this.sendCommandError(
+        clientId,
+        COMMAND,
+        "Core acceptance check failed for Development Tree node start: Lead Product Part Contract Graph is not frozen yet. Start the Lead Product Part Orchestration node first.",
+        "contract_graph_pending"
+      );
+      return;
+    }
+    if (
+      !(await directoryExists(
+        path.join(workspacePath, ".codeai-hub", workspaceSlug, workflowPath)
+      ))
+    ) {
       this.sendCommandError(
         clientId,
         COMMAND,
@@ -94,7 +97,6 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       );
       return;
     }
-    await this.draftWriter.writeDrafts({ node });
     await this.sessionCreateRouter.handle(clientId, {
       type: "session:create",
       payload: {
