@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "f2ff64bab",
+  "lastRecordedCommit": "f346bde3f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream5.task1",
-  "expectedCommitMessage": "docs: prepare quality gates research remediation release",
+  "currentTaskId": "phase8.stream5.task2",
+  "expectedCommitMessage": "chore: build quality gates research remediation release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates research remediation release",
-    "preCommitHead": "f2ff64bab",
+    "expectedCommitMessage": "chore: build quality gates research remediation release",
+    "preCommitHead": "f346bde3f",
     "stage": "commit_pending",
-    "taskId": "phase8.stream5.task1"
+    "taskId": "phase8.stream5.task2"
   }
 }
 ```
@@ -143,9 +143,9 @@
 33. [DONE] Git Commit: `feat: require research capable quality gates providers` (hash: f2ff64bab)
 34. [DONE] `phase8.stream4.task1` Run targeted validation for Quality Gates research flow, provider gating and Project Manager artifacts UI (scope: `packages/core, packages/Claude_Module, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted validation completed: Core build and Quality Gates tests passed; Claude/Codex provider builds and tests passed; Project Manager build, webview typecheck, provider gating and artifact header mode tests passed.
 35. [DONE] `phase8.stream5.task1` Update release-facing docs for the replacement v1.2.323 build after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates research remediation release`).
-36. [PENDING] Git Commit: `docs: prepare quality gates research remediation release` (hash: TBD)
-37. [TODO] `phase8.stream5.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates research remediation release`).
-38. [TODO] Git Commit: `chore: build quality gates research remediation release` (hash: TBD)
+36. [DONE] Git Commit: `docs: prepare quality gates research remediation release` (hash: f346bde3f)
+37. [DONE] `phase8.stream5.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates research remediation release`). Result: v1.2.323 tarballs copied to `doc/tmp/releases/`; VSIX `codeai-hub-1.2.323.vsix` built successfully at 4.5M with SDK exclusions and package surface checks passing.
+38. [PENDING] Git Commit: `chore: build quality gates research remediation release` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
