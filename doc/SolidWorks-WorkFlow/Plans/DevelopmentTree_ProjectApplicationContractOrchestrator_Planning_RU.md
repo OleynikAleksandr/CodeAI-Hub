@@ -448,6 +448,21 @@ Provider system instructions
 - artifact output targets;
 - current validation diagnostics and unresolved questions.
 
+Если конкретному workflow agent нужны актуальные внешние знания, Core не должен запускать отдельный универсальный research layer "для всех технологий". Research должен быть обязанностью того agent step, который будет принимать решение.
+
+Пример:
+- Quality Gates agent ищет современные quality tools именно для текущего приложения, языка, package manager, repo layout и release process;
+- Application Skeleton agent ищет framework/runtime constraints только для выбранного skeleton;
+- Module Specification agent ищет framework/library practices только для assigned module и его contract slice;
+- Integration agent ищет integration/testing practices только для своей wave.
+
+Такой поиск точнее, потому что agent уже знает:
+- что именно он должен сделать;
+- какой artifact он должен создать;
+- какие constraints пришли сверху;
+- какие validation gates должен предложить или пройти;
+- какие решения пользователь должен принять.
+
 Provider-native structured output / tool schema нужно использовать там, где provider adapter это поддерживает:
 - OpenAI/Codex: structured output / JSON schema mode when available;
 - Claude: tool use with input schema / forced tool use when available;
@@ -488,6 +503,44 @@ Core должен оставаться deterministic:
 Core не должен разблокировать Product Part / Cluster / Module session start, если отсутствует frozen upstream graph revision, assigned contract slice или валидный wave assignment.
 
 Если structured output недостаточен для автоматизации следующего шага, правильная реакция — усилить предыдущий step schema/validator/repair prompt/acceptance gate, а не добавлять ручную логику в Project Manager.
+
+### Per-agent research artifact requirement
+
+Любой workflow agent, который использует внешний поиск или provider knowledge для выбора tools, frameworks, quality gates, runtime practices или implementation rules, обязан создать отдельный Core-owned structured research artifact before recommendations are accepted.
+
+Минимальный artifact contract:
+
+```text
+researchArtifactId
+agentStepId
+targetNodeId
+decisionArea
+technologyContext
+sources[]
+recommendations[]
+rejectedOptions[]
+userQuestions[]
+freshnessDate
+validationNotes
+```
+
+Каждый source должен содержать:
+- title;
+- url;
+- source type: official docs, official repo, package registry, release notes, security advisory, standards/spec;
+- retrieved date;
+- reason why relevant;
+- warning if not official / not primary.
+
+Каждая recommendation должна содержать:
+- what to use;
+- why it fits this project/step;
+- required commands or checks;
+- expected artifact changes;
+- risk/tradeoff;
+- whether user approval is required.
+
+Project Manager показывает этот research artifact как review surface. Пользователь может принять, отклонить, попросить альтернативы или отправить agent на уточняющий поиск. Core принимает downstream prompt/rule changes только после accepted/reviewed research artifact.
 
 ## 10. Development Tree shape
 
@@ -589,6 +642,9 @@ Core/shared contract validator должен проверять:
 - provider output cannot unlock downstream nodes without Core parser and semantic validator success;
 - failed schema/semantic validation enters managed repair lifecycle instead of being accepted by Project Manager.
 - downstream agent prompt dispatch is limited to currently unlocked wave nodes.
+- any agent recommendation based on external research references an accepted/reviewed research artifact;
+- research artifacts contain source URLs, source type, retrieved date, relevance reason and primary/non-primary warning;
+- recommendations derived from research artifacts record tradeoff, required checks and whether user approval is required.
 
 ## 13. Execution planning impact
 
@@ -628,6 +684,9 @@ wave 8: application integration
 
 5. Где хранить structured graph?
    - Предварительное решение: `.codeai-hub/...` плюс mirror under `doc/TODO/stages/development-tree/...`, как в текущей Development Tree artifact workspace модели.
+
+6. Нужен ли отдельный глобальный Technology Research Pack step?
+   - Предварительное решение: нет. Research запускается внутри конкретного workflow step, которому нужны актуальные внешние знания, и результат сохраняется как Core-owned reviewable research artifact.
 
 ## 15. Recommended implementation phases
 
@@ -677,6 +736,13 @@ wave 8: application integration
 - Добавить conflict/ownership checks before parallel agent launch.
 - Генерировать downstream agent prompt packs только из frozen structured artifacts.
 
+### Phase H — Per-agent research artifact lifecycle
+
+- Добавить Core-owned research artifact schema for workflow agents.
+- Quality Gates и другие knowledge-dependent agents должны создавать focused research artifacts before recommending tools/rules.
+- Project Manager должен показывать research artifacts for user review.
+- Core должен связывать accepted recommendations с prompt packs, validators, gates and downstream artifacts.
+
 ## 16. Acceptance criteria for this planning scope
 
 Planning document считается принятым, если пользователь согласовал:
@@ -690,4 +756,5 @@ Planning document считается принятым, если пользова
 - Core должен выполнять downstream OUTDATED propagation after graph edits;
 - после `Diagram Modules` доступен только старт lead Product Part agent, остальные agents открываются только через frozen Contract Graph waves;
 - provider system instructions, structured outputs/tool schemas and prompts являются enforcement layers, но validation authority остается у Core validators/hooks;
-- каждый Development Tree agent должен возвращать structured artifact, достаточный для автоматизации следующего шага.
+- каждый Development Tree agent должен возвращать structured artifact, достаточный для автоматизации следующего шага;
+- Quality Gates и другие agents, которым нужны актуальные внешние знания, должны создавать reviewable research artifact with sources before recommendations affect Core rules/prompts/gates.
