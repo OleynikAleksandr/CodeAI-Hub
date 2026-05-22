@@ -1,3 +1,18 @@
+# Plan Closeout: development-tree-project-contract-orchestrator-planning-2026-05-21
+
+**Created:** 2026-05-22T06:42:16.013Z
+**Acceptance:** User explicitly accepted Development Tree Lead Contract Orchestration planning and requested implementation plus release build on 2026-05-22.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase1.stream4.task1
+**Expected Commit:** docs: close lead product part contract orchestrator planning
+**Last Recorded Commit:** 533b72e7c
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
   "currentTaskId": "phase1.stream4.task1",
   "expectedCommitMessage": "docs: close lead product part contract orchestrator planning",
-  "debt": {
-    "expectedCommitMessage": "docs: close lead product part contract orchestrator planning",
-    "preCommitHead": "533b72e7c",
-    "stage": "commit_pending",
-    "taskId": "phase1.stream4.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -88,6 +98,7 @@
 19. [DONE] `phase1.stream12.task1` User reviews and accepts or requests revisions to the per-agent research artifact planning update (scope: user workflow acceptance; no commit expected). Result: User explicitly accepted the planning scope and requested a new implementation todo plan plus release build.
 
 ### Stream: Scope Closeout
-5. [DONE] `phase1.stream4.task1` Close the planning scope after explicit user acceptance and decide whether the planning document remains active/deferred or moves into Archive/SSOT follow-up (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: close lead product part contract orchestrator planning`).
-6. [PENDING] Git Commit: `docs: close lead product part contract orchestrator planning` (hash: TBD)
+5. [IN_PROGRESS] `phase1.stream4.task1` Close the planning scope after explicit user acceptance and decide whether the planning document remains active/deferred or moves into Archive/SSOT follow-up (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: close lead product part contract orchestrator planning`).
+6. [TODO] Git Commit: `docs: close lead product part contract orchestrator planning` (hash: TBD)
 7. [TODO] `phase1.stream4.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
+````
