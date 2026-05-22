@@ -97,6 +97,10 @@ export class WorkflowStateService {
     return store.apply(event);
   }
 
+  resetWorkspaceState(workspaceSlug: string): void {
+    this.stores.delete(workspaceSlug);
+  }
+
   handleWorkflowStateRead(req: Request, res: Response): void {
     const workspaceSlugResult = this.resolveWorkspaceSlug(req);
     if (!workspaceSlugResult.ok) {

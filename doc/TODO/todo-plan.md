@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "0c7c47f65",
+  "lastRecordedCommit": "b476d190e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream6.task1",
-  "expectedCommitMessage": "docs: plan workflow step clear action",
+  "currentTaskId": "phase8.stream6.task2",
+  "expectedCommitMessage": "feat: clear workflow step artifacts from core",
   "debt": {
-    "expectedCommitMessage": "docs: plan workflow step clear action",
-    "preCommitHead": "0c7c47f65",
+    "expectedCommitMessage": "feat: clear workflow step artifacts from core",
+    "preCommitHead": "b476d190e",
     "stage": "commit_pending",
-    "taskId": "phase8.stream6.task1"
+    "taskId": "phase8.stream6.task2"
   }
 }
 ```
@@ -149,9 +149,9 @@
 
 ### Stream: Acceptance Remediation — Workflow Step Clear Action
 39. [DONE] `phase8.stream6.task1` Add a focused plan for Core-owned workflow step clear action with PM context menu trigger and confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan workflow step clear action`).
-40. [PENDING] Git Commit: `docs: plan workflow step clear action` (hash: TBD)
-41. [TODO] `phase8.stream6.task2` Add Core-owned clear endpoint/service that removes selected workflow step artifacts, continuity records and downstream state from workspace and user-space locations (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/state/**, packages/core/src/remote-bridge/handlers/**.test.ts`; expected commit: `feat: clear workflow step artifacts from core`).
-42. [TODO] Git Commit: `feat: clear workflow step artifacts from core` (hash: TBD)
+40. [DONE] Git Commit: `docs: plan workflow step clear action` (hash: b476d190e)
+41. [DONE] `phase8.stream6.task2` Add Core-owned clear endpoint/service that removes selected workflow step artifacts, continuity records and downstream state from workspace and user-space locations (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/state/**, packages/core/src/remote-bridge/handlers/**.test.ts`; expected commit: `feat: clear workflow step artifacts from core`).
+42. [PENDING] Git Commit: `feat: clear workflow step artifacts from core` (hash: TBD)
 43. [TODO] `phase8.stream6.task3` Add Project Manager API and sidebar right-click menu with English `Clear` command plus destructive confirmation before calling Core (scope: `src/client/project-manager/api.ts, src/client/project-manager/components/layout/**`; expected commit: `feat: add sidebar workflow clear action`).
 44. [TODO] Git Commit: `feat: add sidebar workflow clear action` (hash: TBD)
 45. [TODO] `phase8.stream6.task4` Run targeted validation for Core clear behavior and Project Manager sidebar context menu (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
