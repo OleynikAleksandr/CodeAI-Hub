@@ -141,7 +141,7 @@ class WorkflowStateStore {
     }, intervalMs);
   }
 
-  private requestImmediatePoll(): void {
+  requestImmediatePoll(): void {
     const { workspaceSlug, workspacePath } = this.state;
     if (!(workspaceSlug && workspacePath)) {
       return;

@@ -19,6 +19,7 @@ import {
   type SessionResumeIntent,
 } from "./workspace-tree-auto-select";
 import { useWorkspaceTreeActiveStage } from "./use-workspace-tree-active-stage";
+import { useWorkspaceTreeClearMenu } from "./use-workspace-tree-clear-menu";
 import { resolveTreeStatus, type TreeNode } from "./workspace-tree-model";
 import {
   resolveStageLabel,
@@ -89,6 +90,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
     (workspaceName && workspaceName.trim().length > 0
       ? toWorkflowWorkspaceSlug(workspaceName)
       : null);
+  const clearMenu = useWorkspaceTreeClearMenu({ workspacePath, workspaceSlug });
 
   const virtualSimulationArtifactAvailable =
     useVirtualSimulationArtifactAvailability({
@@ -211,6 +213,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
         label: resolveStageLabel(stage, t),
         status: "todo",
         stage,
+        clearTarget: { kind: "workflow_stage", stage },
         visualDepth: 0,
       }));
     }
@@ -223,6 +226,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
       const title = resolveStageTitle(stage, status, blocked, t);
       return {
         id: `workflow:${stage}`,
+        clearTarget: { kind: "workflow_stage", stage },
         label: resolveStageLabel(stage, t),
         stage,
         title: readOnly
@@ -313,6 +317,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           className={renderItemClass(node)}
           data-provider={providerResolver.forBranchModule(node.id) ?? undefined}
           onClick={node.onSelect}
+          {...clearMenu.bind(node.clearTarget, node.label)}
           role={node.onSelect ? "button" : undefined}
           style={
             node.nodeType === "operation"
@@ -349,6 +354,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
             node.onSelect?.();
             if (node.isCollapsible) toggleCluster(node.id);
           }}
+          {...clearMenu.bind(node.clearTarget, node.label)}
           role="button"
         >
           {renderTypeMarker(node)}
@@ -386,6 +392,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
             node.onSelect?.();
             if (node.isCollapsible) togglePart(node.id);
           }}
+          {...clearMenu.bind(node.clearTarget, node.label)}
           role="button"
         >
           {renderTypeMarker(node)}
@@ -427,6 +434,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
                 className={renderItemClass(node)}
                 data-provider={trunkProvider}
                 onClick={node.onSelect}
+                {...clearMenu.bind(node.clearTarget, node.label)}
                 key={node.id}
                 role={node.onSelect ? "button" : undefined}
                 style={{
@@ -479,6 +487,7 @@ export const WorkspaceTree: React.FC<WorkspaceTreeProps> = ({
           )}
         </ul>
       )}
+      {clearMenu.element}
     </div>
   );
 };

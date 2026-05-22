@@ -1,4 +1,5 @@
 import type { DevelopmentTreeOperationNodeKind } from "../../services/workflow-state-development-tree-client";
+import type { WorkflowStepClearTarget } from "../../services/workflow-step-clear-client";
 import type {
   DevelopmentTreeReadiness,
   WorkflowStageId,
@@ -27,6 +28,7 @@ export type TreeNode = {
   readonly onSelect?: () => void;
   readonly isCollapsible?: boolean;
   readonly children?: readonly TreeNode[];
+  readonly clearTarget?: WorkflowStepClearTarget;
   readonly nodeType?: TreeNodeType;
   readonly operationKind?: DevelopmentTreeOperationNodeKind;
   readonly readiness?: DevelopmentTreeReadiness;

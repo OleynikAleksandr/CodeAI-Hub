@@ -8,8 +8,10 @@ import type {
   DiagramModulesProgressSnapshot,
   WorkflowStateSnapshot,
 } from "../../services/workflow-state-client";
+import type { WorkflowStepClearTarget } from "../../services/workflow-step-clear-client";
 import type { SessionResumeIntent } from "./workspace-tree-auto-select";
 import type { StageSyncPayload } from "./workspace-tree-branch-nodes";
+import { resolvePartProgressVisuals } from "./workspace-tree-diagram-branch-progress";
 import {
   WORKFLOW_STAGE_BLOCKED_TITLES,
   WORKFLOW_STAGE_OUTDATED_TITLE,
@@ -21,6 +23,16 @@ const resolveProviderTitle = (providerId: string): string =>
   providerId === "claudeCodeCli" || providerId === "codexCli" || providerId === "geminiCli"
     ? getDefaultProviderTitle(providerId)
     : providerId;
+
+const buildDevelopmentTreeClearTarget = (
+  workflowPath?: string,
+  codeWorkspacePath?: string | null
+): WorkflowStepClearTarget | undefined =>
+  workflowPath && codeWorkspacePath
+    ? { codeWorkspacePath, kind: "development_tree_node", workflowPath }
+    : workflowPath
+      ? { kind: "development_tree_node", workflowPath }
+      : undefined;
 
 const dispatchStageActivated = (stage: string): void => {
   window.dispatchEvent(
@@ -165,6 +177,7 @@ const buildOperationTreeNode = (
     label: operation.title,
     status: "todo",
     visualDepth: depth,
+    clearTarget: buildDevelopmentTreeClearTarget(operation.workflowPath),
     nodeType: "operation",
     operationKind: operation.kind,
     isCollapsible: Boolean(children?.length),
@@ -204,6 +217,10 @@ const buildModuleTreeNode = (
       : resolveReadinessStatus(mod.readiness, "todo"),
     title: lockedReason,
     visualDepth: depth,
+    clearTarget: buildDevelopmentTreeClearTarget(
+      mod.workflowPath,
+      mod.codeWorkspacePath
+    ),
     nodeType: "module",
     readiness: mod.readiness,
     isCollapsible: Boolean(children?.length),
@@ -242,6 +259,7 @@ const buildClusterTreeNode = (
       : resolveReadinessStatus(cluster.readiness, "todo"),
     title: lockedReason,
     visualDepth: depth,
+    clearTarget: buildDevelopmentTreeClearTarget(cluster.workflowPath),
     nodeType: "cluster",
     readiness: cluster.readiness,
     isCollapsible: children.length > 0,
@@ -289,6 +307,7 @@ const buildPartTreeNode = (
     status: lockedReason ? "blocked" : (progressVisuals.status ?? fallbackStatus),
     title: lockedReason ?? progressVisuals.title,
     visualDepth: depth,
+    clearTarget: buildDevelopmentTreeClearTarget(part.workflowPath),
     nodeType: "product-part",
     readiness: progressVisuals.readiness ?? part.readiness,
     isCollapsible: children.length > 0,
@@ -324,51 +343,6 @@ export const resolveInitialDevelopmentTreeExpansion = (
     partId: part?.id ?? null,
     clusterId: cluster?.id ?? null,
   };
-};
-
-const readStringArray = (value: unknown): readonly string[] =>
-  Array.isArray(value)
-    ? value.filter((entry): entry is string => typeof entry === "string")
-    : [];
-
-const resolvePartProgressVisuals = (
-  part: DevelopmentTreePartNode,
-  progress?: DiagramModulesProgressSnapshot | null
-): {
-  readonly readiness?: DevelopmentTreeReadiness;
-  readonly status?: TreeNode["status"];
-  readonly title?: string;
-} => {
-  if (!progress) {
-    return {};
-  }
-  const acceptedPartIds = readStringArray(progress.acceptedPartIds);
-  const generatedPartIds = readStringArray(progress.generatedPartIds);
-  if (acceptedPartIds.includes(part.id) || generatedPartIds.includes(part.id)) {
-    return { readiness: "ready", status: "active", title: "Accepted by Core." };
-  }
-  const activeSubturn = progress.activeSubturn;
-  const isActiveProductPart =
-    activeSubturn?.kind === "product_part" && activeSubturn.partId === part.id;
-  if (isActiveProductPart && activeSubturn.status === "repair_pending") {
-    return {
-      readiness: "in_progress",
-      status: "blocked",
-      title: "Repair pending for this Product Part.",
-    };
-  }
-  if (
-    isActiveProductPart ||
-    (typeof progress.currentPartId === "string" &&
-      progress.currentPartId === part.id)
-  ) {
-    return {
-      readiness: "in_progress",
-      status: "progress",
-      title: "Current Core target Product Part.",
-    };
-  }
-  return { readiness: "idle", status: "todo", title: "Pending Core turn." };
 };
 
 export const buildDevelopmentTreeNodes = (
