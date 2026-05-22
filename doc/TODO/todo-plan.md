@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "ff75189bb",
+  "lastRecordedCommit": "1a9a2c21c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream2.task1",
-  "expectedCommitMessage": "feat: add quality gates research artifact gate",
+  "currentTaskId": "phase8.stream3.task1",
+  "expectedCommitMessage": "feat: require research capable quality gates providers",
   "debt": {
-    "expectedCommitMessage": "feat: add quality gates research artifact gate",
-    "preCommitHead": "ff75189bb",
+    "expectedCommitMessage": "feat: require research capable quality gates providers",
+    "preCommitHead": "1a9a2c21c",
     "stage": "commit_pending",
-    "taskId": "phase8.stream2.task1"
+    "taskId": "phase8.stream3.task1"
   }
 }
 ```
@@ -138,9 +138,9 @@
 
 ### Stream: Acceptance Remediation — Quality Gates Research Gate
 30. [DONE] `phase8.stream2.task1` Add Core-owned Quality Gates research artifact contract, validator phase, stage plan transition and prompt repair messages before draft contract creation (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/**, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/**`; expected commit: `feat: add quality gates research artifact gate`).
-31. [PENDING] Git Commit: `feat: add quality gates research artifact gate` (hash: TBD)
-32. [TODO] `phase8.stream3.task1` Gate Quality Gates provider choices to research-capable providers, enable supported search tooling and expose Research/Contract artifact buttons in Project Manager (scope: `packages/Claude_Module/src/**, packages/Codex_AppServer_Module/src/**, src/client/project-manager/**`; expected commit: `feat: require research capable quality gates providers`).
-33. [TODO] Git Commit: `feat: require research capable quality gates providers` (hash: TBD)
+31. [DONE] Git Commit: `feat: add quality gates research artifact gate` (hash: 1a9a2c21c)
+32. [DONE] `phase8.stream3.task1` Gate Quality Gates provider choices to research-capable providers, enable supported search tooling and expose Research/Contract artifact buttons in Project Manager (scope: `packages/Claude_Module/src/**, packages/Codex_AppServer_Module/src/**, src/client/project-manager/**`; expected commit: `feat: require research capable quality gates providers`).
+33. [PENDING] Git Commit: `feat: require research capable quality gates providers` (hash: TBD)
 34. [TODO] `phase8.stream4.task1` Run targeted validation for Quality Gates research flow, provider gating and Project Manager artifacts UI (scope: `packages/core, packages/Claude_Module, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 35. [TODO] `phase8.stream5.task1` Prepare a replacement release build after explicit release confirmation for the Quality Gates research gate remediation (scope: release confirmation gate; expected commit: no commit expected).
 

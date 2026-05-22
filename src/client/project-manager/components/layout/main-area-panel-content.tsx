@@ -197,8 +197,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
     branchArtifacts.find((item) => item.path === selectedBranchArtifactPath) ??
     branchArtifacts[0] ??
     null;
-  const showSourceViewer =
-    headerMode === "source" && sourceArtifact !== null;
+  const showSourceViewer = headerMode === "source" && sourceArtifact !== null;
   const showArtifactViewer =
     selectedArtifact !== null &&
     !shouldShowQuestionnaireEditor &&
@@ -333,6 +332,7 @@ export const MainAreaArtifactContent: React.FC<ArtifactContentProps> = memo(({
   }
   const stagePanel = renderWorkflowStagePanel({
     activeTool,
+    headerMode,
     refreshKey: artifactRefreshKey,
     workspacePath: activeWorkspacePath,
     workspaceSlug: activeWorkspaceSlug,

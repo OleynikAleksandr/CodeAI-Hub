@@ -32,9 +32,21 @@ test("non-diagram stages keep the legacy artifact/help contract", () => {
   ]);
 });
 
+test("quality gates exposes research and contract artifact header modes", () => {
+  assert.deepEqual(resolveArtifactHeaderModes("Quality Gates Baseline"), [
+    "research",
+    "contract",
+    "help",
+  ]);
+});
+
 test("source mode normalizes back to artifacts when the stage does not support it", () => {
   assert.equal(normalizeArtifactHeaderMode("Description", "source"), "artifacts");
   assert.equal(normalizeArtifactHeaderMode(null, "help"), "artifacts");
+  assert.equal(
+    normalizeArtifactHeaderMode("Quality Gates Baseline", "artifacts"),
+    "research"
+  );
 });
 
 test("diagram source artifact resolves to the canonical markdown path", () => {

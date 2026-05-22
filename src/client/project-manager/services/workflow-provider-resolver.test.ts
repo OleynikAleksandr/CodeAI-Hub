@@ -201,3 +201,57 @@ test("legacy call sites without stage keep description-based fallback", () => {
 
   assert.equal(providerId, "claudeCodeCli");
 });
+
+test("quality gates ignores providers without search capability", () => {
+  const providerId = resolvePreferredWorkflowProviderId({
+    workflowState: createWorkflowState({
+      continuity: {
+        chains: [
+          {
+            rootSessionId: "skeleton-root",
+            workspaceSlug: "demo-workspace",
+            stage: "application_skeleton",
+            updatedAt: "2026-05-22T08:00:00.000Z",
+            segments: [
+              {
+                sessionId: "skeleton-session",
+                providerId: "kimiCode",
+                providerSessionId: "kimi-skeleton",
+                createdAt: "2026-05-22T08:00:00.000Z",
+              },
+            ],
+          },
+        ],
+      },
+    }),
+    providers: createProviders({
+      claudeCodeCli: { connected: false },
+    }),
+    stage: "quality_gates",
+  });
+
+  assert.equal(providerId, "codexCli");
+});
+
+test("quality gates returns no provider when only non-search providers exist", () => {
+  const providerId = resolvePreferredWorkflowProviderId({
+    workflowState: createWorkflowState({
+      description: {
+        updatedAt: "2026-05-22T08:00:00.000Z",
+        finalPath: ".codeai-hub/demo/description/Final_Description.md",
+        primarySession: {
+          providerId: "geminiCli",
+          providerSessionId: "gemini-description-session",
+          jsonlPath: "/tmp/gemini-description.jsonl",
+        },
+      },
+    }),
+    providers: createProviders({
+      claudeCodeCli: { connected: false },
+      codexCli: { connected: false },
+    }).filter((provider) => provider.id === "geminiCli" || provider.id === "kimiCode"),
+    stage: "quality_gates",
+  });
+
+  assert.equal(providerId, null);
+});

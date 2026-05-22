@@ -12,6 +12,7 @@ import {
   QUALITY_GATES_TOOL_LABEL,
   VIRTUAL_SIMULATION_TOOL_LABEL,
 } from "./use-workflow-tool-select";
+import type { ArtifactHeaderMode } from "./stage-artifact-mode";
 
 const renderPanel = (
   Panel: React.FC<{
@@ -45,6 +46,7 @@ export const renderWorkflowStageHelp = (
 
 export const renderWorkflowStagePanel = (params: {
   readonly activeTool: string | null;
+  readonly headerMode: ArtifactHeaderMode;
   readonly workspacePath: string | undefined;
   readonly workspaceSlug: string | null;
   readonly refreshKey: number;
@@ -64,7 +66,16 @@ export const renderWorkflowStagePanel = (params: {
     return renderPanel(ApplicationSkeletonPanel, params.workspacePath, params.workspaceSlug);
   }
   if (params.activeTool === QUALITY_GATES_TOOL_LABEL) {
-    return renderPanel(QualityGatesPanel, params.workspacePath, params.workspaceSlug);
+    return params.workspacePath && params.workspaceSlug ? (
+      <QualityGatesPanel
+        headerMode={params.headerMode}
+        refreshKey={params.refreshKey}
+        workspacePath={params.workspacePath}
+        workspaceSlug={params.workspaceSlug}
+      />
+    ) : (
+      <div className="pm-placeholder">Выберите workspace, чтобы начать.</div>
+    );
   }
   return null;
 };

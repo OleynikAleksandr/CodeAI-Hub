@@ -48,6 +48,18 @@ export const StageArtifactHeaderToggle: React.FC<
         );
       case "help":
         return t(UI_LABELS_CATEGORY, "pm.stage_artifact_header.mode.help", "Help");
+      case "contract":
+        return t(
+          UI_LABELS_CATEGORY,
+          "pm.stage_artifact_header.mode.contract",
+          "Contract"
+        );
+      case "research":
+        return t(
+          UI_LABELS_CATEGORY,
+          "pm.stage_artifact_header.mode.research",
+          "Research"
+        );
       case "source":
         return t(
           UI_LABELS_CATEGORY,

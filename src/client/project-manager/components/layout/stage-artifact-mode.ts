@@ -1,6 +1,12 @@
-export type ArtifactHeaderMode = "artifacts" | "source" | "help";
+export type ArtifactHeaderMode =
+  | "artifacts"
+  | "contract"
+  | "help"
+  | "research"
+  | "source";
 
 type DiagramTool = "Diagram Modules";
+type QualityGatesTool = "Quality Gates Baseline";
 
 const DIAGRAM_TOOL_SOURCE: Readonly<
   Record<DiagramTool, { readonly label: string; readonly path: string }>
@@ -14,11 +20,16 @@ const DIAGRAM_TOOL_SOURCE: Readonly<
 export const isDiagramTool = (tool: string | null): tool is DiagramTool =>
   tool === "Diagram Modules";
 
+const isQualityGatesTool = (tool: string | null): tool is QualityGatesTool =>
+  tool === "Quality Gates Baseline";
+
 export const resolveArtifactHeaderModes = (
   tool: string | null
 ): readonly ArtifactHeaderMode[] =>
   !tool
     ? ["artifacts"]
+    : isQualityGatesTool(tool)
+      ? ["research", "contract", "help"]
     : isDiagramTool(tool)
       ? ["artifacts", "help"]
       : ["artifacts", "help"];
@@ -26,8 +37,13 @@ export const resolveArtifactHeaderModes = (
 export const normalizeArtifactHeaderMode = (
   tool: string | null,
   mode: ArtifactHeaderMode
-): ArtifactHeaderMode =>
-  resolveArtifactHeaderModes(tool).includes(mode) ? mode : "artifacts";
+): ArtifactHeaderMode => {
+  const modes = resolveArtifactHeaderModes(tool);
+  if (modes.includes(mode)) {
+    return mode;
+  }
+  return modes[0] ?? "artifacts";
+};
 
 export const resolveDiagramSourceArtifact = (params: {
   readonly activeTool: string | null;

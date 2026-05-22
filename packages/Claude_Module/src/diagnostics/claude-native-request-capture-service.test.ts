@@ -90,7 +90,7 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
       kind: "claude",
       permissionMode: "bypassPermissions",
       settingSources: [],
-      toolCount: 3,
+      toolCount: 4,
     },
   ]);
   assert.equal(typeof queryPayload.options.systemPrompt, "string");
@@ -114,7 +114,12 @@ test("ClaudeNativeRequestCaptureService injects proxy and certificate env into S
     (queryPayload.options.systemPrompt as string).includes("claude_code"),
     false
   );
-  assert.deepEqual(queryPayload.options.tools, ["Read", "Write", "Edit"]);
+  assert.deepEqual(queryPayload.options.tools, [
+    "Read",
+    "Write",
+    "Edit",
+    "WebSearch",
+  ]);
   assert.deepEqual(authCalls.subscription, { executablePath: "/tmp/claude" });
   assert.deepEqual(authCalls.bootstrap, {
     executablePath: "/tmp/claude",

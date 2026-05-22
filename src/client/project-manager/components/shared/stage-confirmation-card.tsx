@@ -4,7 +4,10 @@ import type { ProviderStackId } from "../../../../types/provider";
 import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { api } from "../../api";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
-import { resolvePreferredWorkflowProviderId } from "../../services/workflow-provider-resolver";
+import {
+  isResearchCapableProviderId,
+  resolvePreferredWorkflowProviderId,
+} from "../../services/workflow-provider-resolver";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
 import { CaptureWorkbenchDomListboxSelector } from "../capture-workbench/dom-listbox-selector";
 import { PROVIDER_TINT_TOKENS } from "./stage-confirmation-card-provider-tint";
@@ -116,7 +119,9 @@ export const StageConfirmationCard: React.FC<{
   const managedPreviewBlocked =
     managedPreviewStage?.startPolicy === "core_preview_boundary";
 
-  const providers = api.getDescriptionProviders();
+  const providers = api
+    .getDescriptionProviders()
+    .filter((provider) => stage !== "quality_gates" || isResearchCapableProviderId(provider.id));
   const defaultProviderId =
     resolvePreferredWorkflowProviderId({
       workflowState: workflowSnapshot,

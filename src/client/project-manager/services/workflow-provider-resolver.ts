@@ -14,6 +14,10 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "kimiCode" ||
   value === "glmClaudeCode";
 
+export const isResearchCapableProviderId = (
+  providerId: ProviderStackId
+): boolean => providerId === "codexCli" || providerId === "claudeCodeCli";
+
 const resolveProviderIdFromDescription = (
   state: WorkflowStateSnapshot | null
 ): ProviderStackId | null => {
@@ -104,10 +108,16 @@ export const resolvePreferredWorkflowProviderId = (options: {
   readonly providers: readonly ProviderStackDescriptor[];
   readonly stage?: WorkflowProviderStageId;
 }): ProviderStackId | null => {
-  const providerIds = new Set(options.providers.map((provider) => provider.id));
+  const providers =
+    options.stage === "quality_gates"
+      ? options.providers.filter((provider) =>
+          isResearchCapableProviderId(provider.id)
+        )
+      : options.providers;
+  const providerIds = new Set(providers.map((provider) => provider.id));
   const fromState = resolveInheritedProviderId(options);
   if (fromState && providerIds.has(fromState)) {
-    const inheritedProvider = options.providers.find(
+    const inheritedProvider = providers.find(
       (provider) => provider.id === fromState
     );
     if (inheritedProvider?.connected !== false) {
@@ -116,11 +126,11 @@ export const resolvePreferredWorkflowProviderId = (options: {
   }
 
   const firstConnectedProviderId = resolveFirstConnectedProviderId(
-    options.providers
+    providers
   );
   if (firstConnectedProviderId) {
     return firstConnectedProviderId;
   }
 
-  return options.providers.at(0)?.id ?? null;
+  return providers.at(0)?.id ?? null;
 };
