@@ -303,6 +303,31 @@ test("DevelopmentTreeStateFacade applies leadership order and locks non-lead nod
       snapshot.parts.map((part) => part.id),
       ["core-runtime", "project-manager"]
     );
+    const leadOperation = (
+      leadPart as {
+        readonly operations?: readonly {
+          readonly children?: readonly { readonly id: string }[];
+          readonly id: string;
+          readonly kind: string;
+          readonly workflowPath: string;
+        }[];
+      }
+    )?.operations?.[0];
+    assert.equal(leadOperation?.id, "lead-product-part-orchestration");
+    assert.equal(leadOperation?.kind, "lead_orchestration");
+    assert.equal(
+      leadOperation?.workflowPath,
+      "development_tree/materialized/product-parts/core-runtime/lead-product-part-orchestration"
+    );
+    assert.deepEqual(
+      leadOperation?.children?.map((child) => child.id),
+      [
+        "contract-graph",
+        "cross-part-contracts",
+        "shared-interfaces",
+        "execution-waves",
+      ]
+    );
     assert.equal(leadPart?.lifecycle?.startable, true);
     assert.equal(leadPart?.lifecycle?.lockedReason, undefined);
     assert.equal(followerPart?.lifecycle?.startable, false);

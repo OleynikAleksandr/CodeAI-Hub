@@ -5,6 +5,7 @@ import { SessionContinuityFacade } from "../session-continuity/session-continuit
 import { resolveWorkflowArtifactPaths } from "../workflow/paths/workflow-artifact-paths";
 import {
   createArtifactWorkspacePath,
+  createLeadProductPartOperationNodes,
   createModuleOperationNodes,
 } from "./development-tree-operation-nodes";
 import type {
@@ -31,9 +32,6 @@ export type DevelopmentTreeSnapshotListener = (
   params: DevelopmentTreeSnapshotListenerParams
 ) => Promise<void> | void;
 
-// Lightweight regex for extracting cluster/module structure from product-part files.
-// Intentionally simpler than the full diagram DSL parser: the facade owns the
-// current Project Manager read model, not semantic authoring validation.
 const createClusterHeaderRegex = (): RegExp =>
   /^###\s+(?:Cluster(?:\s+\d+\.)?:?\s+)?`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*$/gm;
 const createModuleRowRegex = (): RegExp =>
@@ -159,20 +157,8 @@ const createMaterializedPart = async (
 
 const resolvePartOrder = (
   params: DevelopmentTreeSnapshotRequest
-): readonly string[] => {
-  const planned = new Set(params.plannedPartIds);
-  const seen = new Set<string>();
-  return [
-    ...(params.productPartLeadershipOrder ?? []),
-    ...params.plannedPartIds,
-  ].filter((partId) => {
-    if (!planned.has(partId) || seen.has(partId)) {
-      return false;
-    }
-    seen.add(partId);
-    return true;
-  });
-};
+): readonly string[] =>
+  params.productPartLeadershipOrder ?? params.plannedPartIds;
 
 const aggregateReadiness = (
   self: DevelopmentTreeDraftReadiness,
@@ -437,6 +423,13 @@ const applyReadiness = async (
     kind: "product_part",
     partId: part.id,
   });
+  const operations =
+    params.leadProductPartId === part.id
+      ? createLeadProductPartOperationNodes(
+          metadata.workflowPath,
+          params.workspaceSlug
+        )
+      : undefined;
   const selfReadiness = await readReadiness({
     kind: "product_part",
     partId: part.id,
@@ -444,13 +437,14 @@ const applyReadiness = async (
   return {
     ...part,
     ...metadata,
+    ...(operations ? { operations } : {}),
     clusters,
     standaloneModules,
     readiness: aggregateReadiness(selfReadiness, [
       ...clusters.map((cluster) => cluster.readiness ?? "idle"),
       ...standaloneModules.map((module) => module.readiness ?? "idle"),
     ]),
-  };
+  } as DevelopmentTreePartNode;
 };
 
 export class DevelopmentTreeStateFacade {
