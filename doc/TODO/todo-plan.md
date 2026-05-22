@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "09b43087f",
+  "lastRecordedCommit": "2210d8931",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream6.task3",
-  "expectedCommitMessage": "feat: add sidebar workflow clear action",
+  "currentTaskId": "phase8.stream6.task6",
+  "expectedCommitMessage": "feat: clear workflow user-space session files",
   "debt": {
-    "expectedCommitMessage": "feat: add sidebar workflow clear action",
-    "preCommitHead": "09b43087f",
+    "expectedCommitMessage": "feat: clear workflow user-space session files",
+    "preCommitHead": "2210d8931",
     "stage": "commit_pending",
-    "taskId": "phase8.stream6.task3"
+    "taskId": "phase8.stream6.task6"
   }
 }
 ```
@@ -153,12 +153,14 @@
 41. [DONE] `phase8.stream6.task2` Add Core-owned clear endpoint/service that removes selected workflow step artifacts, continuity records and downstream state from workspace and user-space locations (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/state/**, packages/core/src/remote-bridge/handlers/**.test.ts`; expected commit: `feat: clear workflow step artifacts from core`).
 42. [DONE] Git Commit: `feat: clear workflow step artifacts from core` (hash: 09b43087f)
 43. [DONE] `phase8.stream6.task3` Add Project Manager API/service and sidebar right-click menu with English `Clear` command plus destructive confirmation before calling Core (scope: `src/client/project-manager/services/**, src/client/project-manager/components/layout/**`; expected commit: `feat: add sidebar workflow clear action`).
-44. [PENDING] Git Commit: `feat: add sidebar workflow clear action` (hash: TBD)
-45. [TODO] `phase8.stream6.task4` Run targeted validation for Core clear behavior and Project Manager sidebar context menu (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-46. [TODO] `phase8.stream6.task5` Wait for explicit user confirmation before building a replacement release for the clear action (scope: release confirmation gate; no commit expected).
+44. [DONE] Git Commit: `feat: add sidebar workflow clear action` (hash: 2210d8931)
+45. [DONE] `phase8.stream6.task4` Run targeted validation for Core clear behavior and Project Manager sidebar context menu (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build and workflow-step-clear service tests passed; webview typecheck, webview build, Project Manager build and sidebar clear menu tests passed.
+46. [DONE] `phase8.stream6.task6` Extend Core clear action to delete matching user-space unified session history and translation overlay files under `~/.codeai-hub/sessions` for selected steps and downstream continuity chains (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts`; expected commit: `feat: clear workflow user-space session files`).
+47. [PENDING] Git Commit: `feat: clear workflow user-space session files` (hash: TBD)
+48. [TODO] `phase8.stream6.task5` Wait for explicit user confirmation before building a replacement release for the clear action (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-47. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-48. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+49. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+50. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
