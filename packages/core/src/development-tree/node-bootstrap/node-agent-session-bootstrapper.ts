@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
+import type { DevelopmentTreeAgentPromptPackContract } from "../development-tree-types";
 import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detector";
 import {
   NodeFirstMessageBuilder,
@@ -80,6 +81,37 @@ const createNodeWorkflowPath = (
     splitWorkflowPath(node.relativePath),
     workspaceSlug
   ).join("/");
+
+const createPromptPackContract = (params: {
+  readonly stage: string;
+  readonly workspaceSlug: string;
+}): DevelopmentTreeAgentPromptPackContract => ({
+  artifactVersion: "development-tree-agent-prompt-pack-v1",
+  researchArtifactPath: path.posix.join(
+    ".codeai-hub",
+    params.workspaceSlug,
+    params.stage,
+    "AgentResearch.draft.json"
+  ),
+  requiresResearchArtifactBeforeExternalRecommendations: true,
+  structuredOutputPolicy: "core_validator_required",
+  workflowPath: params.stage,
+});
+
+const createPromptPackContractLines = (
+  contract: DevelopmentTreeAgentPromptPackContract
+): string[] => [
+  "",
+  "Core-owned prompt pack contract:",
+  `- Workflow path: ${contract.workflowPath}`,
+  `- Research artifact path: ${contract.researchArtifactPath}`,
+  `- Structured output policy: ${contract.structuredOutputPolicy}`,
+  "- If you use external search, provider knowledge, tools/framework recommendations, quality gate recommendations, runtime practices, or implementation rules, first create or update this research artifact before presenting recommendations as accepted facts.",
+  "- Research artifact JSON shape: artifactVersion, workflowPath, topic, status, sources[], recommendations[].",
+  "- Each source must include title, url, sourceType, retrievedAt, whyRelevant, and optional warning.",
+  "- Each recommendation must include recommendation, sourceUrls, tradeoff, requiredChecks, and userApprovalRequired.",
+  "- Provider structured output/tool schemas are preferred when available, but Core validators and hooks remain the enforcement authority.",
+];
 
 const resolveProviderId = async (
   providerId: NodeAgentSessionBootstrapperOptions["providerId"]
@@ -276,8 +308,16 @@ export class NodeAgentSessionBootstrapper {
       responseLanguage,
       technologyBase: options.technologyBase,
     });
+    const promptPackContract = createPromptPackContract({
+      stage,
+      workspaceSlug: options.workspaceSlug,
+    });
+    const firstMessageContent = [
+      firstMessage.content,
+      ...createPromptPackContractLines(promptPackContract),
+    ].join("\n");
     if (session) {
-      await options.gateway.handleMessage(session.id, firstMessage.content);
+      await options.gateway.handleMessage(session.id, firstMessageContent);
     }
     return {
       draftFileNames: firstMessage.draftFileNames,

@@ -108,3 +108,50 @@ export interface DevelopmentTreeSnapshotRequest {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }
+
+export type DevelopmentTreeAgentResearchArtifactStatus =
+  | "accepted"
+  | "draft"
+  | "rejected"
+  | "review_required";
+
+export type DevelopmentTreeAgentResearchSourceType =
+  | "community"
+  | "official"
+  | "primary"
+  | "secondary"
+  | "unknown";
+
+export interface DevelopmentTreeAgentResearchSource {
+  readonly retrievedAt: string;
+  readonly sourceType: DevelopmentTreeAgentResearchSourceType;
+  readonly title: string;
+  readonly url: string;
+  readonly warning?: string;
+  readonly whyRelevant: string;
+}
+
+export interface DevelopmentTreeAgentResearchRecommendation {
+  readonly recommendation: string;
+  readonly requiredChecks: readonly string[];
+  readonly sourceUrls: readonly string[];
+  readonly tradeoff: string;
+  readonly userApprovalRequired: boolean;
+}
+
+export interface DevelopmentTreeAgentResearchArtifact {
+  readonly artifactVersion: "development-tree-agent-research-v1";
+  readonly recommendations: readonly DevelopmentTreeAgentResearchRecommendation[];
+  readonly sources: readonly DevelopmentTreeAgentResearchSource[];
+  readonly status: DevelopmentTreeAgentResearchArtifactStatus;
+  readonly topic: string;
+  readonly workflowPath: string;
+}
+
+export interface DevelopmentTreeAgentPromptPackContract {
+  readonly artifactVersion: "development-tree-agent-prompt-pack-v1";
+  readonly requiresResearchArtifactBeforeExternalRecommendations: boolean;
+  readonly researchArtifactPath: string;
+  readonly structuredOutputPolicy: "core_validator_required";
+  readonly workflowPath: string;
+}

@@ -31,6 +31,11 @@ const WORKFLOW_STEP_CONTEXT_PATTERN =
   /Workflow Step Navigation chooses current step/;
 const EMBEDDED_SOURCE_PATH_PATTERN =
   /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md/;
+const RESEARCH_ARTIFACT_PATH_PATTERN =
+  /\.codeai-hub\/demo-workspace\/development_tree\/materialized\/product-parts\/project-manager\/clusters\/workflow-and-artifact-ui\/modules\/workflow-step-controller\/AgentResearch\.draft\.json/;
+const PROMPT_PACK_CONTRACT_PATTERN = /Core-owned prompt pack contract:/;
+const RESEARCH_SOURCE_TYPE_PATTERN = /sourceType/;
+const CORE_VALIDATOR_POLICY_PATTERN = /core_validator_required/;
 
 const writeWorkspaceArtifact = async (
   workspacePath: string,
@@ -44,6 +49,7 @@ const writeWorkspaceArtifact = async (
 
 test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage", async () => {
   const createdStages: string[] = [];
+  const sentMessages: string[] = [];
   const result = await new NodeAgentSessionBootstrapper().bootstrapNode(
     {
       absolutePath:
@@ -61,7 +67,10 @@ test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage
           createdStages.push(options.context.stage);
           return Promise.resolve({ id: "session-1" });
         },
-        handleMessage: () => Promise.resolve(),
+        handleMessage: (_sessionId, content) => {
+          sentMessages.push(content);
+          return Promise.resolve();
+        },
       },
       providerId: "codexCli",
       technologyBase: "TypeScript",
@@ -74,6 +83,10 @@ test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage
     "development_tree/materialized/product-parts/project-manager/clusters/workflow-and-artifact-ui/modules/workflow-step-controller";
   assert.equal(result.stage, expectedStage);
   assert.deepEqual(createdStages, [expectedStage]);
+  assert.match(sentMessages[0] ?? "", PROMPT_PACK_CONTRACT_PATTERN);
+  assert.match(sentMessages[0] ?? "", RESEARCH_ARTIFACT_PATH_PATTERN);
+  assert.match(sentMessages[0] ?? "", RESEARCH_SOURCE_TYPE_PATTERN);
+  assert.match(sentMessages[0] ?? "", CORE_VALIDATOR_POLICY_PATTERN);
 });
 
 test("NodeAgentSessionBootstrapper reads response language from settings reasoning category", async () => {

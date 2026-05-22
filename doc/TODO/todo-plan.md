@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "17ed00acc",
+  "lastRecordedCommit": "3af0a006e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase4.stream1.task1",
-  "expectedCommitMessage": "feat: gate development tree node starts by contract wave",
+  "currentTaskId": "phase4.stream2.task1",
+  "expectedCommitMessage": "feat: add development tree agent research contracts",
   "debt": {
-    "expectedCommitMessage": "feat: gate development tree node starts by contract wave",
-    "preCommitHead": "17ed00acc",
+    "expectedCommitMessage": "feat: add development tree agent research contracts",
+    "preCommitHead": "3af0a006e",
     "stage": "commit_pending",
-    "taskId": "phase4.stream1.task1"
+    "taskId": "phase4.stream2.task1"
   }
 }
 ```
@@ -93,11 +93,11 @@
 
 ### Stream: Core Node Start Gate
 13. [DONE] `phase4.stream1.task1` Enforce Core-side Development Tree node start rules so only lead orchestration is startable before frozen Contract Graph/wave assignment (scope: `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts, packages/core/src/development-tree/development-tree-types.ts`; expected commit: `feat: gate development tree node starts by contract wave`).
-14. [PENDING] Git Commit: `feat: gate development tree node starts by contract wave` (hash: TBD)
+14. [DONE] Git Commit: `feat: gate development tree node starts by contract wave` (hash: 3af0a006e)
 
 ### Stream: Prompt Pack And Research Artifact Schema
-15. [TODO] `phase4.stream2.task1` Add initial Core-owned types/contracts for agent prompt pack enforcement and per-agent research artifacts (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts`; expected commit: `feat: add development tree agent research contracts`).
-16. [TODO] Git Commit: `feat: add development tree agent research contracts` (hash: TBD)
+15. [DONE] `phase4.stream2.task1` Add initial Core-owned types/contracts for agent prompt pack enforcement and per-agent research artifacts (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts`; expected commit: `feat: add development tree agent research contracts`).
+16. [PENDING] Git Commit: `feat: add development tree agent research contracts` (hash: TBD)
 
 ## Phase 5 — Project Manager Projection (owner: Codex, updated: 2026-05-22)
 
