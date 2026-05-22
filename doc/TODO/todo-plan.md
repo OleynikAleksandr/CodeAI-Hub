@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "4b2feb5f5",
+  "lastRecordedCommit": "da578f1cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream7.task1",
-  "expectedCommitMessage": "docs: prepare workflow step clear release",
+  "currentTaskId": "phase8.stream7.task2",
+  "expectedCommitMessage": "chore: build workflow step clear release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare workflow step clear release",
-    "preCommitHead": "4b2feb5f5",
+    "expectedCommitMessage": "chore: build workflow step clear release",
+    "preCommitHead": "da578f1cc",
     "stage": "commit_pending",
-    "taskId": "phase8.stream7.task1"
+    "taskId": "phase8.stream7.task2"
   }
 }
 ```
@@ -161,9 +161,9 @@
 
 ### Stream: Release Build — Workflow Step Clear Action
 49. [DONE] `phase8.stream7.task1` Update release-facing docs for the replacement workflow step clear build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow step clear release`).
-50. [PENDING] Git Commit: `docs: prepare workflow step clear release` (hash: TBD)
-51. [TODO] `phase8.stream7.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workflow step clear release`).
-52. [TODO] Git Commit: `chore: build workflow step clear release` (hash: TBD)
+50. [DONE] Git Commit: `docs: prepare workflow step clear release` (hash: da578f1cc)
+51. [DONE] `phase8.stream7.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workflow step clear release`). Result: v1.2.324 tarballs copied to `doc/tmp/releases/`; VSIX `codeai-hub-1.2.324.vsix` built successfully at 4.5M with SDK exclusions, local artefact validation, markdown links, duplication check and package surface checks passing.
+52. [PENDING] Git Commit: `chore: build workflow step clear release` (hash: TBD)
 53. [TODO] `phase8.stream7.task3` User installs the generated replacement VSIX and verifies workflow step clear behavior from the Project Manager sidebar (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
