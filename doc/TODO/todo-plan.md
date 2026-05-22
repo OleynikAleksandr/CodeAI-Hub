@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "f346bde3f",
+  "lastRecordedCommit": "0c7c47f65",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream5.task2",
-  "expectedCommitMessage": "chore: build quality gates research remediation release",
+  "currentTaskId": "phase8.stream6.task1",
+  "expectedCommitMessage": "docs: plan workflow step clear action",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates research remediation release",
-    "preCommitHead": "f346bde3f",
+    "expectedCommitMessage": "docs: plan workflow step clear action",
+    "preCommitHead": "0c7c47f65",
     "stage": "commit_pending",
-    "taskId": "phase8.stream5.task2"
+    "taskId": "phase8.stream6.task1"
   }
 }
 ```
@@ -134,7 +134,7 @@
 ## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-22)
 
 ### Stream: User Retest
-29. [BLOCKED] `phase8.stream1.task1` User installs the generated VSIX and verifies Diagram Modules acceptance creates the lead-first Development Tree, locks non-lead nodes, exposes Lead Product Part Orchestration and preserves materialized folders (scope: user workflow acceptance; no commit expected). Blocked: release acceptance withheld because Quality Gates still lacks a mandatory research artifact gate and research-capable provider gating.
+29. [BLOCKED] `phase8.stream1.task1` User installs the generated v1.2.323 VSIX and verifies Diagram Modules acceptance creates the lead-first Development Tree, locks non-lead nodes, exposes Lead Product Part Orchestration and preserves materialized folders; Quality Gates creates the research artifact first, offers only research-capable providers, and shows Research/Contract artifact buttons (scope: user workflow acceptance; no commit expected). Blocked: user requested workflow step clear remediation before final acceptance.
 
 ### Stream: Acceptance Remediation — Quality Gates Research Gate
 30. [DONE] `phase8.stream2.task1` Add Core-owned Quality Gates research artifact contract, validator phase, stage plan transition and prompt repair messages before draft contract creation (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/**, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/**`; expected commit: `feat: add quality gates research artifact gate`).
@@ -145,10 +145,20 @@
 35. [DONE] `phase8.stream5.task1` Update release-facing docs for the replacement v1.2.323 build after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates research remediation release`).
 36. [DONE] Git Commit: `docs: prepare quality gates research remediation release` (hash: f346bde3f)
 37. [DONE] `phase8.stream5.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates research remediation release`). Result: v1.2.323 tarballs copied to `doc/tmp/releases/`; VSIX `codeai-hub-1.2.323.vsix` built successfully at 4.5M with SDK exclusions and package surface checks passing.
-38. [PENDING] Git Commit: `chore: build quality gates research remediation release` (hash: TBD)
+38. [DONE] Git Commit: `chore: build quality gates research remediation release` (hash: 0c7c47f65)
+
+### Stream: Acceptance Remediation — Workflow Step Clear Action
+39. [DONE] `phase8.stream6.task1` Add a focused plan for Core-owned workflow step clear action with PM context menu trigger and confirmation (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan workflow step clear action`).
+40. [PENDING] Git Commit: `docs: plan workflow step clear action` (hash: TBD)
+41. [TODO] `phase8.stream6.task2` Add Core-owned clear endpoint/service that removes selected workflow step artifacts, continuity records and downstream state from workspace and user-space locations (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/state/**, packages/core/src/remote-bridge/handlers/**.test.ts`; expected commit: `feat: clear workflow step artifacts from core`).
+42. [TODO] Git Commit: `feat: clear workflow step artifacts from core` (hash: TBD)
+43. [TODO] `phase8.stream6.task3` Add Project Manager API and sidebar right-click menu with English `Clear` command plus destructive confirmation before calling Core (scope: `src/client/project-manager/api.ts, src/client/project-manager/components/layout/**`; expected commit: `feat: add sidebar workflow clear action`).
+44. [TODO] Git Commit: `feat: add sidebar workflow clear action` (hash: TBD)
+45. [TODO] `phase8.stream6.task4` Run targeted validation for Core clear behavior and Project Manager sidebar context menu (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+46. [TODO] `phase8.stream6.task5` Wait for explicit user confirmation before building a replacement release for the clear action (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-39. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-40. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+47. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+48. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
