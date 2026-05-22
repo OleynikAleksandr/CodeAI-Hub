@@ -5,18 +5,18 @@
 {
   "schema": "codeai-plan-v1",
   "executionScopeStatus": "ACTIVE",
-  "planId": "development-tree-project-contract-orchestrator-planning-2026-05-21",
+  "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
-  "baseHead": "fa17f6a43",
-  "lastRecordedCommit": "533b72e7c",
+  "baseHead": "ab59a2447",
+  "lastRecordedCommit": "ab59a2447",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase1.stream4.task1",
-  "expectedCommitMessage": "docs: close lead product part contract orchestrator planning",
+  "currentTaskId": "phase1.stream1.task1",
+  "expectedCommitMessage": "docs: open development tree lead contract implementation",
   "debt": {
-    "expectedCommitMessage": "docs: close lead product part contract orchestrator planning",
-    "preCommitHead": "533b72e7c",
+    "expectedCommitMessage": "docs: open development tree lead contract implementation",
+    "preCommitHead": "ab59a2447",
     "stage": "commit_pending",
-    "taskId": "phase1.stream4.task1"
+    "taskId": "phase1.stream1.task1"
   }
 }
 ```
@@ -25,69 +25,119 @@
 ## Context Pack For This Cycle
 
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`
+- **Release build confirmation:** user explicitly requested implementation and a new release build on 2026-05-22.
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
-  - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
-  - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`
   - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_Sidebar_Visualization_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
+  - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- Только этот список является источником документов для восстановления контекста текущего execution cycle.
+  - `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts`
+  - `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts`
+  - `packages/core/src/development-tree/development-tree-types.ts`
+  - `packages/core/src/development-tree/development-tree-state-facade.ts`
+  - `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts`
+  - `packages/core/src/development-tree/development-tree-operation-nodes.ts`
+  - `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts`
+  - `src/client/project-manager/services/workflow-state-development-tree-client.ts`
+  - `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`
+  - `src/client/project-manager/components/layout/development-tree-node-start-card.tsx`
+- Only this list is the recovery context for this implementation cycle.
 
 ## Правила выполнения (Execution Rules)
 
-- **Required reading (прочитать перед каждым фиксом):** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
-- TODO Plan состоит из Phase, Stream и микро-задач.
-- Каждая подзадача должна затрагивать не более 3 tracked файлов.
-- Каждая tracked подзадача оформляется парой пунктов: реализация/изменения и `Git Commit: ...`.
-- Гейты запускаются штатно через Husky и `npm run plan:commit -- "<expected commit message>"`.
-- Targeted builds выполняются перед закрытием затронутого Stream/Phase.
-- Для документационного planning scope вместо Release Build используется Tooling Verification.
-- `Scope Closeout` выполняется только после явного acceptance пользователя.
+- **Required reading before each code fix:** `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`.
+- Each implementation task touches no more than 3 tracked files/packages unless the task is split first.
+- Each tracked task is paired with a separate `Git Commit: ...` item.
+- Architecture changes must update the relevant `doc/SolidWorks-WorkFlow/**` document in the same commit.
+- Quality gates run through Husky via `npm run plan:commit -- "<expected commit message>"`.
+- Targeted verification is required for touched packages before their stream is closed.
+- Release build is authorized by the user for this cycle, but scope remains `ACTIVE` after release until user acceptance testing completes.
+- Scope Closeout runs only after explicit post-release user acceptance.
 
-## Phase 1 — Planning Intake (owner: Codex, updated: 2026-05-21)
+## Phase 1 — Plan Setup (owner: Codex, updated: 2026-05-22)
 
-### Stream: Project Contract Orchestrator Planning
-1. [DONE] `phase1.stream1.task1` Create the planning document for the Project/Application Contract Orchestrator, Contract Graph artifact, top-down contract cascade, editable graph UX, and Core-owned downstream invalidation model (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: plan project application contract orchestration`).
-2. [DONE] Git Commit: `docs: plan project application contract orchestration` (hash: 23c76a21a)
+### Stream: Implementation Plan Setup
+1. [DONE] `phase1.stream1.task1` Create the implementation todo plan based on the archived Lead Product Part Contract Orchestrator planning document and real code inspection (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open development tree lead contract implementation`).
+2. [PENDING] Git Commit: `docs: open development tree lead contract implementation` (hash: TBD)
+
+## Phase 2 — Diagram Modules Lead Contract (owner: Codex, updated: 2026-05-22)
+
+### Stream: Diagram Modules Artifact Contract
+3. [TODO] `phase2.stream1.task1` Add parsing/validation support for `leadProductPartId` and `productPartLeadershipOrder` in Diagram Modules index artifacts (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `feat: validate diagram modules leadership order`).
+4. [TODO] Git Commit: `feat: validate diagram modules leadership order` (hash: TBD)
+
+### Stream: Diagram Modules Prompt Contract
+5. [TODO] `phase2.stream2.task1` Update Diagram Modules prompt/tests so the agent must declare lead Product Part and Product Part leadership order in the accepted index artifact (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: require diagram modules leadership order prompt`).
+6. [TODO] Git Commit: `docs: require diagram modules leadership order prompt` (hash: TBD)
+
+## Phase 3 — Development Tree Read Model And Materialization (owner: Codex, updated: 2026-05-22)
+
+### Stream: Snapshot Metadata
+7. [TODO] `phase3.stream1.task1` Extend Development Tree snapshot types/read model with `leadProductPartId`, leadership order metadata and node lock reasons (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: project development tree leadership metadata`).
+8. [TODO] Git Commit: `feat: project development tree leadership metadata` (hash: TBD)
+
+### Stream: Filesystem Materialization
+9. [TODO] `phase3.stream2.task1` Materialize lead orchestration folders/placeholders in `.codeai-hub` and `doc/TODO/stages/development-tree` while preserving Product Part leadership order (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts`; expected commit: `feat: materialize lead contract orchestration folders`).
+10. [TODO] Git Commit: `feat: materialize lead contract orchestration folders` (hash: TBD)
+
+### Stream: Operation Nodes
+11. [TODO] `phase3.stream3.task1` Add Lead Product Part Orchestration operation nodes for Contract Graph, Cross-Part Contracts, Shared Interfaces and Execution Waves (scope: `packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: add lead contract operation nodes`).
+12. [TODO] Git Commit: `feat: add lead contract operation nodes` (hash: TBD)
+
+## Phase 4 — Start Gating And Prompt Foundations (owner: Codex, updated: 2026-05-22)
+
+### Stream: Core Node Start Gate
+13. [TODO] `phase4.stream1.task1` Enforce Core-side Development Tree node start rules so only lead orchestration is startable before frozen Contract Graph/wave assignment (scope: `packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts, packages/core/src/development-tree/development-tree-types.ts`; expected commit: `feat: gate development tree node starts by contract wave`).
+14. [TODO] Git Commit: `feat: gate development tree node starts by contract wave` (hash: TBD)
+
+### Stream: Prompt Pack And Research Artifact Schema
+15. [TODO] `phase4.stream2.task1` Add initial Core-owned types/contracts for agent prompt pack enforcement and per-agent research artifacts (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts`; expected commit: `feat: add development tree agent research contracts`).
+16. [TODO] Git Commit: `feat: add development tree agent research contracts` (hash: TBD)
+
+## Phase 5 — Project Manager Projection (owner: Codex, updated: 2026-05-22)
+
+### Stream: Client Read Model
+17. [TODO] `phase5.stream1.task1` Extend Project Manager Development Tree client parser/types for lead metadata, operation locks and research/contract review nodes (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `feat: parse development tree leadership metadata`).
+18. [TODO] Git Commit: `feat: parse development tree leadership metadata` (hash: TBD)
+
+### Stream: Sidebar Projection
+19. [TODO] `phase5.stream2.task1` Render lead Product Part first, locked non-lead nodes and lead orchestration children in the left sidebar (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `feat: show lead contract orchestration in sidebar`).
+20. [TODO] Git Commit: `feat: show lead contract orchestration in sidebar` (hash: TBD)
+
+### Stream: Node Start Card UX
+21. [TODO] `phase5.stream3.task1` Show locked reason and disable node start UI for non-startable Development Tree nodes (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/main-area-panel-content.test.ts`; expected commit: `feat: explain locked development tree nodes`).
+22. [TODO] Git Commit: `feat: explain locked development tree nodes` (hash: TBD)
+
+## Phase 6 — Verification (owner: Codex, updated: 2026-05-22)
+
+### Stream: Targeted Builds
+23. [TODO] `phase6.stream1.task1` Run targeted verification for touched packages and clients: core build/tests, webview typecheck, Project Manager build (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ### Stream: Tooling Verification
-3. [DONE] `phase1.stream2.task1` Validate the active planning scope and links after the planning document is created (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: no commit expected). Result: Plan validation OK; markdown links OK (454 files checked).
+24. [TODO] `phase6.stream2.task1` Run plan validation, link checker and final quality diagnostics before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
-### Stream: User Workflow Acceptance Testing
-4. [DONE] `phase1.stream3.task1` User reviews and accepts or requests revisions to the Project/Application Contract Orchestrator planning document (scope: user workflow acceptance; no commit expected). Result: user requested revision: remove separate Project/Application Orchestrator agent; Diagram Modules should select lead Product Part, and the lead Product Part should own application-wide Contract Graph orchestration.
+## Phase 7 — Release Build (owner: Codex, updated: 2026-05-22)
 
-### Stream: Lead Product Part Revision
-8. [DONE] `phase1.stream5.task1` Revise the planning document so Diagram Modules owns lead Product Part selection and the lead Product Part agent owns application-wide Contract Graph orchestration without a separate Project/Application Orchestrator agent (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: revise lead product part contract orchestration`).
-9. [DONE] Git Commit: `docs: revise lead product part contract orchestration` (hash: 3d3711ff3)
+### Stream: Release Docs
+25. [TODO] `phase7.stream1.task1` Update release-facing docs for the next version before build-all, as required by the release checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare development tree orchestration release`).
+26. [TODO] Git Commit: `docs: prepare development tree orchestration release` (hash: TBD)
 
-### Stream: User Workflow Acceptance Testing 2
-10. [DONE] `phase1.stream6.task1` User reviews and accepts or requests revisions to the Lead Product Part Contract Orchestrator planning document (scope: user workflow acceptance; no commit expected). Result: user requested revision: Diagram Modules must order Product Parts by leadership so this order directly defines Development Tree root order.
+### Stream: Release Build
+27. [TODO] `phase7.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, CHANGELOG.md, README.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build development tree orchestration release`).
+28. [TODO] Git Commit: `chore: build development tree orchestration release` (hash: TBD)
 
-### Stream: Product Part Leadership Ordering Revision
-11. [DONE] `phase1.stream7.task1` Add Diagram Modules requirement to order Product Parts by leadership/contract orchestration priority and preserve that order in Development Tree projection/materialization (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: require product part leadership ordering`).
-12. [DONE] Git Commit: `docs: require product part leadership ordering` (hash: b77e6d44a)
+## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-22)
 
-### Stream: User Workflow Acceptance Testing 3
-13. [DONE] `phase1.stream8.task1` User reviews and accepts or requests revisions to the Product Part leadership ordering planning update (scope: user workflow acceptance; no commit expected). Result: user requested revision: define strict agent enforcement layers for Development Tree work, including system instructions, structured outputs, Core validators and hooks.
+### Stream: User Retest
+29. [TODO] `phase8.stream1.task1` User installs the generated VSIX and verifies Diagram Modules acceptance creates the lead-first Development Tree, locks non-lead nodes, exposes Lead Product Part Orchestration and preserves materialized folders (scope: user workflow acceptance; no commit expected).
 
-### Stream: Agent Output Enforcement Model Revision
-14. [DONE] `phase1.stream9.task1` Add Development Tree enforcement model for per-agent system instructions, provider structured output/tool schemas, Core-owned validators/hooks, repair lifecycle and deterministic prompt pack generation from accepted structured artifacts (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: define agent output enforcement model`).
-15. [DONE] Git Commit: `docs: define agent output enforcement model` (hash: a2276519f)
-
-### Stream: User Workflow Acceptance Testing 4
-16. [DONE] `phase1.stream10.task1` User reviews and accepts or requests revisions to the agent output enforcement model planning update (scope: user workflow acceptance; no commit expected). Result: user requested revision: avoid a separate global Technology Research Pack layer; each workflow agent that needs current external knowledge must perform focused research and produce a reviewable structured research artifact.
-
-### Stream: Per-Agent Research Artifact Revision
-17. [DONE] `phase1.stream11.task1` Revise the planning document so Quality Gates and other knowledge-dependent workflow agents perform focused current-source research for their own step and create Core-owned reviewable research artifacts before recommendations are accepted (scope: `doc/TODO/todo-plan.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: require per-agent research artifacts`).
-18. [DONE] Git Commit: `docs: require per-agent research artifacts` (hash: 533b72e7c)
-
-### Stream: User Workflow Acceptance Testing 5
-19. [DONE] `phase1.stream12.task1` User reviews and accepts or requests revisions to the per-agent research artifact planning update (scope: user workflow acceptance; no commit expected). Result: User explicitly accepted the planning scope and requested a new implementation todo plan plus release build.
+## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-5. [DONE] `phase1.stream4.task1` Close the planning scope after explicit user acceptance and decide whether the planning document remains active/deferred or moves into Archive/SSOT follow-up (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md`; expected commit: `docs: close lead product part contract orchestrator planning`).
-6. [PENDING] Git Commit: `docs: close lead product part contract orchestrator planning` (hash: TBD)
-7. [TODO] `phase1.stream4.task2` Reserved post-closeout handoff anchor (scope: terminal NONE transition; no commit expected).
+30. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+31. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
