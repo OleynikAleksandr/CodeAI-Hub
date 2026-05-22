@@ -12,6 +12,11 @@ const PRODUCT_PART_ORDERED_ITEM_RE =
   /^(?:\d+\.\s+|###\s+\d+\.\s+)`([a-z0-9]+(?:-[a-z0-9]+)*)`(?:\s+[—-]\s+`[^`]+`)?\s*$/gm;
 const PRODUCT_PART_TABLE_ROW_RE =
   /^\|\s*\d+\s*\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*`[^`]+`\s*\|\s*.+\|$/gm;
+const LEAD_PRODUCT_PART_RE =
+  /(?:^|\n)\s*(?:[-*]\s*)?(?:leadProductPartId|Lead Product Part(?: ID)?)\s*[:|]\s*`?([a-z0-9]+(?:-[a-z0-9]+)*)`?/iu;
+const LEADERSHIP_ORDER_RE =
+  /(?:^|\n)\s*(?:[-*]\s*)?(?:productPartLeadershipOrder|Product Part Leadership Order)\s*[:|]\s*(.+)/iu;
+const PRODUCT_PART_ID_IN_TEXT_RE = /`([a-z0-9]+(?:-[a-z0-9]+)*)`/gu;
 
 export interface DiagramModulesManagedValidationRequest {
   readonly workspaceRoot: string;
@@ -29,6 +34,12 @@ export interface DiagramModulesManagedValidationResult {
   readonly nextPrompt: string | null;
   readonly plannedPartIds: readonly string[];
   readonly valid: boolean;
+}
+
+export interface DiagramModulesLeadershipContract {
+  readonly diagnostics: readonly string[];
+  readonly leadProductPartId: string | null;
+  readonly productPartLeadershipOrder: readonly string[];
 }
 
 const relativeDiagramPath = (workspaceSlug: string, suffix: string): string =>
@@ -59,6 +70,80 @@ const collectPlannedPartIds = (markdown: string): readonly string[] => {
     }
   }
   return partIds;
+};
+
+export const readDiagramModulesLeadershipContract = (params: {
+  readonly markdown: string;
+  readonly plannedPartIds: readonly string[];
+}): DiagramModulesLeadershipContract => {
+  const leadProductPartId =
+    params.markdown.match(LEAD_PRODUCT_PART_RE)?.[1] ?? null;
+  const orderLine = params.markdown.match(LEADERSHIP_ORDER_RE)?.[1] ?? "";
+  const productPartLeadershipOrder = [
+    ...orderLine.matchAll(PRODUCT_PART_ID_IN_TEXT_RE),
+  ]
+    .map((match) => match[1])
+    .filter((partId): partId is string => Boolean(partId));
+  return {
+    diagnostics: validateLeadershipContract({
+      leadProductPartId,
+      plannedPartIds: params.plannedPartIds,
+      productPartLeadershipOrder,
+    }),
+    leadProductPartId,
+    productPartLeadershipOrder,
+  };
+};
+
+const validateLeadershipContract = (params: {
+  readonly leadProductPartId: string | null;
+  readonly plannedPartIds: readonly string[];
+  readonly productPartLeadershipOrder: readonly string[];
+}): readonly string[] => {
+  const diagnostics: string[] = [];
+  if (!params.leadProductPartId) {
+    diagnostics.push("Diagram Modules index must declare leadProductPartId.");
+  } else if (!params.plannedPartIds.includes(params.leadProductPartId)) {
+    diagnostics.push(
+      `leadProductPartId must reference a planned Product Part: ${params.leadProductPartId}.`
+    );
+  }
+  if (params.productPartLeadershipOrder.length === 0) {
+    diagnostics.push(
+      "Diagram Modules index must declare productPartLeadershipOrder."
+    );
+    return diagnostics;
+  }
+  const seen = new Set<string>();
+  for (const partId of params.productPartLeadershipOrder) {
+    if (seen.has(partId)) {
+      diagnostics.push(
+        `productPartLeadershipOrder contains duplicate Product Part: ${partId}.`
+      );
+    }
+    seen.add(partId);
+    if (!params.plannedPartIds.includes(partId)) {
+      diagnostics.push(
+        `productPartLeadershipOrder references unknown Product Part: ${partId}.`
+      );
+    }
+  }
+  for (const partId of params.plannedPartIds) {
+    if (!seen.has(partId)) {
+      diagnostics.push(
+        `productPartLeadershipOrder is missing Product Part: ${partId}.`
+      );
+    }
+  }
+  if (
+    params.leadProductPartId &&
+    params.productPartLeadershipOrder[0] !== params.leadProductPartId
+  ) {
+    diagnostics.push(
+      "The first productPartLeadershipOrder item must equal leadProductPartId."
+    );
+  }
+  return diagnostics;
 };
 
 const validateGeneratedProductPart = (params: {
@@ -105,6 +190,11 @@ export const validateDiagramModulesManagedArtifacts = async (
       "Diagram Modules index does not declare Product Part ids."
     );
   }
+  const leadership = readDiagramModulesLeadershipContract({
+    markdown: indexMarkdown,
+    plannedPartIds,
+  });
+  diagnostics.push(...leadership.diagnostics);
 
   const generatedPartIds: string[] = [];
   for (const partId of plannedPartIds) {

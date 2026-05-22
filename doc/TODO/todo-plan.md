@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "ab59a2447",
+  "lastRecordedCommit": "db537ec8e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: open development tree lead contract implementation",
+  "currentTaskId": "phase2.stream1.task1",
+  "expectedCommitMessage": "feat: validate diagram modules leadership order",
   "debt": {
-    "expectedCommitMessage": "docs: open development tree lead contract implementation",
-    "preCommitHead": "ab59a2447",
+    "expectedCommitMessage": "feat: validate diagram modules leadership order",
+    "preCommitHead": "db537ec8e",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase2.stream1.task1"
   }
 }
 ```
@@ -63,13 +63,13 @@
 
 ### Stream: Implementation Plan Setup
 1. [DONE] `phase1.stream1.task1` Create the implementation todo plan based on the archived Lead Product Part Contract Orchestrator planning document and real code inspection (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open development tree lead contract implementation`).
-2. [PENDING] Git Commit: `docs: open development tree lead contract implementation` (hash: TBD)
+2. [DONE] Git Commit: `docs: open development tree lead contract implementation` (hash: db537ec8e)
 
 ## Phase 2 — Diagram Modules Lead Contract (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Diagram Modules Artifact Contract
-3. [TODO] `phase2.stream1.task1` Add parsing/validation support for `leadProductPartId` and `productPartLeadershipOrder` in Diagram Modules index artifacts (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `feat: validate diagram modules leadership order`).
-4. [TODO] Git Commit: `feat: validate diagram modules leadership order` (hash: TBD)
+3. [DONE] `phase2.stream1.task1` Add parsing/validation support for `leadProductPartId` and `productPartLeadershipOrder` in Diagram Modules index artifacts (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts`; expected commit: `feat: validate diagram modules leadership order`).
+4. [PENDING] Git Commit: `feat: validate diagram modules leadership order` (hash: TBD)
 
 ### Stream: Diagram Modules Prompt Contract
 5. [TODO] `phase2.stream2.task1` Update Diagram Modules prompt/tests so the agent must declare lead Product Part and Product Part leadership order in the accepted index artifact (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: require diagram modules leadership order prompt`).

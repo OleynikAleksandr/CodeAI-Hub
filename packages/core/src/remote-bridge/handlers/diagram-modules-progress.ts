@@ -2,6 +2,7 @@ import { execFile } from "node:child_process";
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
+import { readDiagramModulesLeadershipContract } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import { resolveWorkflowArtifactPaths } from "../../workflow/paths/workflow-artifact-paths";
 import { normalizeAndValidateWorkflowStageArtifact } from "./http-api-artifact-validation";
 
@@ -29,10 +30,12 @@ export interface DiagramModulesProgressSnapshot {
   readonly generatedCount: number;
   readonly generatedPartIds: readonly string[];
   readonly lastValidation?: DiagramModulesValidationSnapshot | null;
+  readonly leadProductPartId?: string | null;
   readonly nextPartId?: string | null;
   readonly plannedCount: number;
   readonly plannedPartIds: readonly string[];
   readonly productPartDiagnostics?: readonly ProductPartDiagnostic[];
+  readonly productPartLeadershipOrder?: readonly string[];
   readonly substep: DiagramModulesSubstep;
 }
 
@@ -235,13 +238,21 @@ const resolveActiveSubturn = (params: {
   readonly currentDiagnostic: ProductPartDiagnostic | null;
   readonly currentPartId: string | undefined;
   readonly generatedPartIds: readonly string[];
+  readonly indexDiagnostics: readonly string[];
   readonly indexDirty: boolean;
   readonly plannedPartIds: readonly string[];
 }): DiagramModulesSubturnProgress => {
-  if (params.blockedAmbiguity || params.plannedPartIds.length === 0) {
+  if (
+    params.blockedAmbiguity ||
+    params.plannedPartIds.length === 0 ||
+    params.indexDiagnostics.length > 0
+  ) {
     return {
       kind: "index",
-      status: params.blockedAmbiguity ? "repair_pending" : "pending",
+      status:
+        params.blockedAmbiguity || params.indexDiagnostics.length > 0
+          ? "repair_pending"
+          : "pending",
     };
   }
   if (params.indexDirty) {
@@ -267,9 +278,22 @@ const resolveActiveSubturn = (params: {
   };
 };
 
+const resolveIndexDiagnostics = (params: {
+  readonly indexDiagnostics: readonly string[];
+  readonly plannedPartIds: readonly string[];
+}): readonly string[] => {
+  if (params.indexDiagnostics.length > 0) {
+    return params.indexDiagnostics;
+  }
+  return params.plannedPartIds.length > 0
+    ? []
+    : ["Diagram Modules index does not declare any Product Part ids."];
+};
+
 const resolveLastValidation = (params: {
   readonly activeSubturn: DiagramModulesSubturnProgress;
   readonly currentDiagnostic: ProductPartDiagnostic | null;
+  readonly indexDiagnostics: readonly string[];
   readonly indexRelativePath: string;
   readonly plannedPartIds: readonly string[];
 }): DiagramModulesValidationSnapshot | null => {
@@ -283,13 +307,14 @@ const resolveLastValidation = (params: {
   }
   if (params.activeSubturn.kind === "index") {
     return {
-      diagnostics:
-        params.plannedPartIds.length > 0
-          ? []
-          : ["Diagram Modules index does not declare any Product Part ids."],
+      diagnostics: resolveIndexDiagnostics({
+        indexDiagnostics: params.indexDiagnostics,
+        plannedPartIds: params.plannedPartIds,
+      }),
       expectedArtifactPath: params.indexRelativePath,
       valid:
         params.plannedPartIds.length > 0 &&
+        params.indexDiagnostics.length === 0 &&
         params.activeSubturn.status === "accepted",
       validator: "diagram_modules.index",
     };
@@ -343,6 +368,11 @@ export const readDiagramModulesProgressSnapshot = async (params: {
   }
 
   const plannedPartIds = collectPlannedPartIds(indexMarkdown);
+  const leadership = readDiagramModulesLeadershipContract({
+    markdown: indexMarkdown,
+    plannedPartIds,
+  });
+  const indexDiagnostics = leadership.diagnostics;
   const productPartDiagnostics = await resolveProductPartDiagnostics({
     workspaceRoot: params.workspaceRoot,
     workspaceSlug: params.workspaceSlug,
@@ -368,12 +398,14 @@ export const readDiagramModulesProgressSnapshot = async (params: {
     currentDiagnostic,
     currentPartId,
     generatedPartIds,
+    indexDiagnostics,
     indexDirty,
     plannedPartIds,
   });
   const lastValidation = resolveLastValidation({
     activeSubturn,
     currentDiagnostic,
+    indexDiagnostics,
     indexRelativePath: indexPath.value.relativePath,
     plannedPartIds,
   });
@@ -381,7 +413,11 @@ export const readDiagramModulesProgressSnapshot = async (params: {
   let substep: DiagramModulesSubstep = "index";
   if (blockedAmbiguity) {
     substep = "blocked_ambiguity";
-  } else if (plannedPartIds.length === 0 || indexDirty) {
+  } else if (
+    plannedPartIds.length === 0 ||
+    indexDirty ||
+    indexDiagnostics.length > 0
+  ) {
     substep = "index";
   } else if (currentPartId) {
     substep = "generate_product_part";
@@ -398,9 +434,11 @@ export const readDiagramModulesProgressSnapshot = async (params: {
     ...(currentPartId ? { currentPartId } : {}),
     expectedArtifactPath: lastValidation?.expectedArtifactPath ?? null,
     lastValidation,
+    leadProductPartId: leadership.leadProductPartId,
     nextPartId: currentPartId ?? null,
     plannedCount: plannedPartIds.length,
     generatedCount: generatedPartIds.length,
+    productPartLeadershipOrder: leadership.productPartLeadershipOrder,
     productPartDiagnostics,
     aggregateReady: substep === "awaiting_review",
   };

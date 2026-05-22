@@ -14,7 +14,9 @@ import {
 const execFileAsync = promisify(execFile);
 const PRODUCT_PART_MISSING_FILE_RE = /Product Part artifact file is missing\./u;
 const PRODUCT_PART_HEADER_ERROR_RE =
-  /missing '# Module Inventory' or '# Product Part:' header/u;
+  /Expected `# Module Inventory` title|missing '# Module Inventory' or '# Product Part:' header/u;
+const LEADERSHIP_ORDER_FIRST_ITEM_ERROR_RE =
+  /first productPartLeadershipOrder item must equal leadProductPartId/u;
 
 test("Diagram Modules progress preserves per-part validation diagnostics", async () => {
   const workspaceRoot = await mkdtemp(
@@ -33,6 +35,9 @@ test("Diagram Modules progress preserves per-part validation diagnostics", async
       ),
       [
         "# Product Parts Index",
+        "",
+        "- leadProductPartId: `local-runtime`",
+        "- productPartLeadershipOrder: `local-runtime`, `provider-runtime`",
         "",
         "### Product Part: local-runtime",
         "",
@@ -116,6 +121,9 @@ test("Diagram Modules progress exposes aggregate accepted subturn when every Pro
       ),
       [
         "# Product Parts Index",
+        "",
+        "- leadProductPartId: `local-runtime`",
+        "- productPartLeadershipOrder: `local-runtime`",
         "",
         "### Product Part: local-runtime",
         "- Id: local-runtime",
@@ -205,6 +213,9 @@ test("Diagram Modules progress keeps a dirty Product Part index on the index com
       [
         "# Product Parts Index",
         "",
+        "- leadProductPartId: `local-runtime`",
+        "- productPartLeadershipOrder: `local-runtime`",
+        "",
         "### Product Part: local-runtime",
         "- Id: local-runtime",
         "- Title: Local Runtime",
@@ -268,6 +279,9 @@ test("Diagram Modules subturn state persists the active expected artifact for re
       [
         "# Product Parts Index",
         "",
+        "- leadProductPartId: `local-runtime`",
+        "- productPartLeadershipOrder: `local-runtime`",
+        "",
         "### Product Part: local-runtime",
         "- Id: local-runtime",
         "- Title: Local Runtime",
@@ -305,6 +319,67 @@ test("Diagram Modules subturn state persists the active expected artifact for re
         "diagram_modules/product-parts/local-runtime.md"
       ),
       true
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules progress blocks index when leadership order is invalid", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-progress-leadership-")
+  );
+
+  try {
+    await mkdir(
+      path.join(workspaceRoot, ".codeai-hub/demo-workspace/diagram_modules"),
+      { recursive: true }
+    );
+    await writeFile(
+      path.join(
+        workspaceRoot,
+        ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
+      ),
+      [
+        "# Product Parts Index",
+        "",
+        "- leadProductPartId: `core-runtime`",
+        "- productPartLeadershipOrder: `project-manager`, `core-runtime`",
+        "",
+        "### Product Part: core-runtime",
+        "- Id: core-runtime",
+        "- Title: Core Runtime",
+        "- Purpose: Owns workflow truth.",
+        "- Status: planned",
+        "",
+        "### Product Part: project-manager",
+        "- Id: project-manager",
+        "- Title: Project Manager",
+        "- Purpose: Renders Core-owned state.",
+        "- Status: planned",
+        "",
+      ].join("\n"),
+      "utf8"
+    );
+
+    const progress = await readDiagramModulesProgressSnapshot({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(progress?.substep, "index");
+    assert.deepEqual(progress?.activeSubturn, {
+      kind: "index",
+      status: "repair_pending",
+    });
+    assert.equal(progress?.leadProductPartId, "core-runtime");
+    assert.deepEqual(progress?.productPartLeadershipOrder, [
+      "project-manager",
+      "core-runtime",
+    ]);
+    assert.match(
+      progress?.lastValidation?.diagnostics.join("\n") ?? "",
+      LEADERSHIP_ORDER_FIRST_ITEM_ERROR_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
