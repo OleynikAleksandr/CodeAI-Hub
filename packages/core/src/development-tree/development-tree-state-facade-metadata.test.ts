@@ -24,6 +24,25 @@ const PART_CONTENT = `# Product Part: Project Manager
 ## Standalone Modules
 `;
 
+const CORE_PART_CONTENT = `# Product Part: Core Runtime
+
+## Identity
+
+| Field | Value |
+| ----- | ----- |
+| Part ID | \`core-runtime\` |
+
+## Owned Clusters
+
+### \`contract-orchestration\`
+
+| \`module-id\` | Responsibility |
+| --- | --- |
+| \`contract-graph-service\` | Owns contract graph state. |
+
+## Standalone Modules
+`;
+
 const createDraft = (body: string): string => `---
 generated: true
 ---
@@ -240,6 +259,57 @@ test("DevelopmentTreeStateFacade refreshes readiness after draft writes", async 
         (artifact) => artifact.fileName
       ),
       ["ModuleSpec.draft.md", "ModuleFacadeContract.draft.md"]
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("DevelopmentTreeStateFacade applies leadership order and locks non-lead nodes", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "devtree-leadership-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const lockedReason = "Lead Product Part contract graph is pending";
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/project-manager.md`,
+      PART_CONTENT
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/core-runtime.md`,
+      CORE_PART_CONTENT
+    );
+
+    const snapshot = await new DevelopmentTreeStateFacade().currentSnapshot({
+      workspaceRoot,
+      workspaceSlug,
+      plannedPartIds: ["project-manager", "core-runtime"],
+      generatedPartIds: ["project-manager", "core-runtime"],
+      leadProductPartId: "core-runtime",
+      productPartLeadershipOrder: ["core-runtime", "project-manager"],
+    });
+    const leadPart = snapshot.parts[0];
+    const followerPart = snapshot.parts[1];
+
+    assert.equal(snapshot.leadProductPartId, "core-runtime");
+    assert.deepEqual(snapshot.productPartLeadershipOrder, [
+      "core-runtime",
+      "project-manager",
+    ]);
+    assert.deepEqual(
+      snapshot.parts.map((part) => part.id),
+      ["core-runtime", "project-manager"]
+    );
+    assert.equal(leadPart?.lifecycle?.startable, true);
+    assert.equal(leadPart?.lifecycle?.lockedReason, undefined);
+    assert.equal(followerPart?.lifecycle?.startable, false);
+    assert.equal(followerPart?.lifecycle?.lockedReason, lockedReason);
+    assert.equal(
+      followerPart?.clusters[0]?.modules[0]?.lifecycle?.lockedReason,
+      lockedReason
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "3636357cf",
+  "lastRecordedCommit": "fb3e000f4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase2.stream2.task1",
-  "expectedCommitMessage": "docs: require diagram modules leadership order prompt",
+  "currentTaskId": "phase3.stream1.task1",
+  "expectedCommitMessage": "feat: project development tree leadership metadata",
   "debt": {
-    "expectedCommitMessage": "docs: require diagram modules leadership order prompt",
-    "preCommitHead": "3636357cf",
+    "expectedCommitMessage": "feat: project development tree leadership metadata",
+    "preCommitHead": "fb3e000f4",
     "stage": "commit_pending",
-    "taskId": "phase2.stream2.task1"
+    "taskId": "phase3.stream1.task1"
   }
 }
 ```
@@ -73,13 +73,13 @@
 
 ### Stream: Diagram Modules Prompt Contract
 5. [DONE] `phase2.stream2.task1` Update Diagram Modules prompt/tests so the agent must declare lead Product Part and Product Part leadership order in the accepted index artifact (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `docs: require diagram modules leadership order prompt`).
-6. [PENDING] Git Commit: `docs: require diagram modules leadership order prompt` (hash: TBD)
+6. [DONE] Git Commit: `docs: require diagram modules leadership order prompt` (hash: fb3e000f4)
 
 ## Phase 3 — Development Tree Read Model And Materialization (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Snapshot Metadata
-7. [TODO] `phase3.stream1.task1` Extend Development Tree snapshot types/read model with `leadProductPartId`, leadership order metadata and node lock reasons (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: project development tree leadership metadata`).
-8. [TODO] Git Commit: `feat: project development tree leadership metadata` (hash: TBD)
+7. [DONE] `phase3.stream1.task1` Extend Development Tree snapshot types/read model with `leadProductPartId`, leadership order metadata and node lock reasons (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts`; expected commit: `feat: project development tree leadership metadata`).
+8. [PENDING] Git Commit: `feat: project development tree leadership metadata` (hash: TBD)
 
 ### Stream: Filesystem Materialization
 9. [TODO] `phase3.stream2.task1` Materialize lead orchestration folders/placeholders in `.codeai-hub` and `doc/TODO/stages/development-tree` while preserving Product Part leadership order (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts`; expected commit: `feat: materialize lead contract orchestration folders`).

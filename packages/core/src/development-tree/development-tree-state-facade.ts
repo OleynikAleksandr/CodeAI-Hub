@@ -40,6 +40,7 @@ const createModuleRowRegex = (): RegExp =>
   /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*([^|\n]+?)\s*\|[ \t]*$/gm;
 const STANDALONE_SECTION_RE = /^##\s+(?:Direct\s+)?Standalone\s+Modules/im;
 const NEXT_SECTION_SEARCH_RE = /^##\s+/m;
+const LEAD_CONTRACT_LOCK_REASON = "Lead Product Part contract graph is pending";
 const DRAFT_FILES = {
   cluster: ["ClusterDescription.draft.md", "ClusterFacadeContract.draft.md"],
   module: ["ModuleSpec.draft.md", "ModuleFacadeContract.draft.md"],
@@ -154,6 +155,23 @@ const createMaterializedPart = async (
     status: "materialized",
     ...parseProductPartTree(content),
   };
+};
+
+const resolvePartOrder = (
+  params: DevelopmentTreeSnapshotRequest
+): readonly string[] => {
+  const planned = new Set(params.plannedPartIds);
+  const seen = new Set<string>();
+  return [
+    ...(params.productPartLeadershipOrder ?? []),
+    ...params.plannedPartIds,
+  ].filter((partId) => {
+    if (!planned.has(partId) || seen.has(partId)) {
+      return false;
+    }
+    seen.add(partId);
+    return true;
+  });
 };
 
 const aggregateReadiness = (
@@ -282,10 +300,12 @@ const resolveLatestNodeSession = (
 };
 
 const createNodeLifecycle = (
-  session: DevelopmentTreeNodeSession | undefined
+  session: DevelopmentTreeNodeSession | undefined,
+  lockedReason?: string
 ): DevelopmentTreeNodeLifecycle => ({
+  ...(lockedReason ? { lockedReason } : {}),
   startState: session ? "started" : "not_started",
-  startable: !session,
+  startable: !(session || lockedReason),
 });
 
 const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
@@ -327,13 +347,17 @@ const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
       }
     }
     const session = resolveLatestNodeSession(chains, workflowPath);
+    const lockedReason =
+      params.leadProductPartId && options.partId !== params.leadProductPartId
+        ? LEAD_CONTRACT_LOCK_REASON
+        : undefined;
     return {
       artifactWorkspacePath: createArtifactWorkspacePath(
         params.workspaceSlug,
         workflowPath
       ),
       artifacts: artifacts.length > 0 ? artifacts : undefined,
-      lifecycle: createNodeLifecycle(session),
+      lifecycle: createNodeLifecycle(session, lockedReason),
       workflowPath,
       session,
     };
@@ -448,8 +472,9 @@ export class DevelopmentTreeStateFacade {
     }
   ): Promise<DevelopmentTreeSnapshot> {
     const parts: DevelopmentTreePartNode[] = [];
+    const productPartLeadershipOrder = resolvePartOrder(params);
     const readMetadata = await createMetadataReader(params);
-    for (const partId of params.plannedPartIds) {
+    for (const partId of productPartLeadershipOrder) {
       parts.push(
         await applyReadiness(
           params.generatedPartIds.includes(partId)
@@ -460,7 +485,11 @@ export class DevelopmentTreeStateFacade {
         )
       );
     }
-    const snapshot = { parts };
+    const snapshot: DevelopmentTreeSnapshot = {
+      leadProductPartId: params.leadProductPartId ?? null,
+      parts,
+      productPartLeadershipOrder,
+    };
     if (params.emitSnapshotSideEffects === true) {
       for (const listener of this.snapshotListeners) {
         await listener({ ...params, snapshot });

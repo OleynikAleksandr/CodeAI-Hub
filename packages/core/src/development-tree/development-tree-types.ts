@@ -29,6 +29,7 @@ export interface DevelopmentTreeNodeSession {
 export type DevelopmentTreeNodeStartState = "not_started" | "started";
 
 export interface DevelopmentTreeNodeLifecycle {
+  readonly lockedReason?: string;
   readonly startable: boolean;
   readonly startState: DevelopmentTreeNodeStartState;
 }
@@ -88,12 +89,16 @@ export interface DevelopmentTreePartNode {
 }
 
 export interface DevelopmentTreeSnapshot {
+  readonly leadProductPartId?: string | null;
   readonly parts: readonly DevelopmentTreePartNode[];
+  readonly productPartLeadershipOrder?: readonly string[];
 }
 
 export interface DevelopmentTreeSnapshotRequest {
   readonly generatedPartIds: readonly string[];
+  readonly leadProductPartId?: string | null;
   readonly plannedPartIds: readonly string[];
+  readonly productPartLeadershipOrder?: readonly string[];
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }
