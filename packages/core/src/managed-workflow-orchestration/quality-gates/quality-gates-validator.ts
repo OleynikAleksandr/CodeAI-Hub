@@ -7,6 +7,7 @@ import {
   buildQualityGatesPersistentReturnMessage,
   buildQualityGatesUserReviewMessage,
 } from "./quality-gates-prompt-builder";
+import { validateQualityGatesResearchArtifacts } from "./quality-gates-research-validator";
 
 export type QualityGatesManagedPhase = "draft" | "integration";
 
@@ -452,6 +453,7 @@ export const validateQualityGatesManagedArtifacts = async (
         ]
       : [
           ...parsed.errors,
+          ...(await validateQualityGatesResearchArtifacts(request)),
           ...validateDraftShape({ contractJson: parsed.value, markdown }),
         ];
   if (diagnostics.length > 0) {

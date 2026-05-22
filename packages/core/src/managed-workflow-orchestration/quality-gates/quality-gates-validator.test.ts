@@ -79,6 +79,43 @@ const writeQualityGatesArtifacts = async (
 ): Promise<void> => {
   await writeWorkspaceFile(
     workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.md`,
+    "# Quality Gates Research\n\n## Summary\n\nSecret scanning is recommended.\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.json`,
+    `${JSON.stringify(
+      {
+        schema: "codeai-quality-gates-research-v1",
+        stackSummary: "Node.js workspace",
+        sources: [
+          {
+            title: "Official npm docs",
+            url: "https://docs.npmjs.com/",
+            sourceType: "official",
+            retrievedAt: "2026-05-22T00:00:00.000Z",
+            whyRelevant: "Defines npm script behavior for hooks.",
+          },
+        ],
+        recommendations: [
+          {
+            purpose: "security",
+            recommendation: "Add a secret scanning gate.",
+            whyUse: "Prevents committing credentials.",
+            sourceUrls: ["https://docs.npmjs.com/"],
+            tradeoff: "Adds pre-commit runtime.",
+            requiredChecks: ["qg-secret-scan"],
+            userApprovalRequired: false,
+          },
+        ],
+      },
+      null,
+      2
+    )}\n`
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
     `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`,
     markdown
   );

@@ -12,6 +12,8 @@ export interface QualityGatesIntegrationRepairPromptOptions
 const buildContractArtifactPaths = (
   workspaceSlug: string
 ): readonly string[] => [
+  `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates-research.md`,
+  `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates-research.json`,
   `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.md`,
   `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
 ];
@@ -63,6 +65,10 @@ const explainDiagnostic = (diagnostic: string): string => {
       "Create `quality-gates.md` with the canonical Quality Gates Markdown contract.",
     missing_package_json:
       "Create or update `package.json` with exact scripts for required Quality Gates.",
+    missing_quality_gates_research_json:
+      "Create `quality-gates-research.json` with the required current-tooling research contract.",
+    missing_quality_gates_research_markdown:
+      "Create `quality-gates-research.md` as the user-facing research report before the gate contract.",
     missing_quality_gates_json:
       "Create `quality-gates.json` with the Quality Gates JSON contract.",
     premature_accepted_true:
@@ -72,6 +78,14 @@ const explainDiagnostic = (diagnostic: string): string => {
     premature_integration_state:
       'Set the draft JSON lifecycle state to `integrationState: "not_started"`.',
     schema_invalid: 'Set `schema` to exactly `"codeai-quality-gates-v1"`.',
+    research_schema_invalid:
+      'Set `quality-gates-research.json.schema` to exactly `"codeai-quality-gates-research-v1"`.',
+    research_sources_missing:
+      "Add at least one current source to the research artifact.",
+    research_recommendations_missing:
+      "Add at least one sourced recommendation to the research artifact.",
+    research_stackSummary_missing:
+      "Add a concise `stackSummary` explaining the detected stack and why the research applies.",
   };
   return knownDiagnostics[diagnostic] ?? diagnostic;
 };
@@ -110,6 +124,7 @@ export const buildQualityGatesDraftRepairPrompt = (
     "",
     "Do not set `accepted: true`.",
     "Do not set `integrated: true`.",
+    "The research report is mandatory: create or repair `quality-gates-research.md` and `quality-gates-research.json` before relying on any tool recommendation.",
     "Do not create package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts, or production code.",
     "Do not run Git commands or edit managed plan files.",
   ].join("\n");
@@ -135,6 +150,8 @@ export const buildQualityGatesIntegrationPrompt = (options: {
     ...buildContractArtifactPaths(options.workspaceSlug).map(
       (artifactPath) => `- \`${artifactPath}\``
     ),
+    "",
+    "The accepted contract must remain traceable to `quality-gates-research.json`; do not integrate tools that are neither user-selected nor present in the research recommendations.",
     "",
     "Allowed integration scope:",
     "- `package.json` and lockfiles when required by the accepted contract",
@@ -192,6 +209,7 @@ export const buildQualityGatesReviewRevisionPrompt = (options: {
     "",
     "Do not set `accepted: true`.",
     "Do not set `integrated: true`.",
+    "If corrections affect tool selection, update the research artifacts and then the contract artifacts in the same revision.",
     "Do not create package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts, or production code.",
     "Do not run Git commands or edit managed plan files.",
   ].join("\n");
