@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "3af0a006e",
+  "lastRecordedCommit": "b25d303ec",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase4.stream2.task1",
-  "expectedCommitMessage": "feat: add development tree agent research contracts",
+  "currentTaskId": "phase5.stream1.task1",
+  "expectedCommitMessage": "feat: parse development tree leadership metadata",
   "debt": {
-    "expectedCommitMessage": "feat: add development tree agent research contracts",
-    "preCommitHead": "3af0a006e",
+    "expectedCommitMessage": "feat: parse development tree leadership metadata",
+    "preCommitHead": "b25d303ec",
     "stage": "commit_pending",
-    "taskId": "phase4.stream2.task1"
+    "taskId": "phase5.stream1.task1"
   }
 }
 ```
@@ -97,13 +97,13 @@
 
 ### Stream: Prompt Pack And Research Artifact Schema
 15. [DONE] `phase4.stream2.task1` Add initial Core-owned types/contracts for agent prompt pack enforcement and per-agent research artifacts (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts`; expected commit: `feat: add development tree agent research contracts`).
-16. [PENDING] Git Commit: `feat: add development tree agent research contracts` (hash: TBD)
+16. [DONE] Git Commit: `feat: add development tree agent research contracts` (hash: b25d303ec)
 
 ## Phase 5 — Project Manager Projection (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Client Read Model
-17. [TODO] `phase5.stream1.task1` Extend Project Manager Development Tree client parser/types for lead metadata, operation locks and research/contract review nodes (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `feat: parse development tree leadership metadata`).
-18. [TODO] Git Commit: `feat: parse development tree leadership metadata` (hash: TBD)
+17. [DONE] `phase5.stream1.task1` Extend Project Manager Development Tree client parser/types for lead metadata, operation locks and research/contract review nodes (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `feat: parse development tree leadership metadata`).
+18. [PENDING] Git Commit: `feat: parse development tree leadership metadata` (hash: TBD)
 
 ### Stream: Sidebar Projection
 19. [TODO] `phase5.stream2.task1` Render lead Product Part first, locked non-lead nodes and lead orchestration children in the left sidebar (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `feat: show lead contract orchestration in sidebar`).

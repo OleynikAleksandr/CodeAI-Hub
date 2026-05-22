@@ -19,14 +19,20 @@ export type DevelopmentTreeNodeSession = {
 export type DevelopmentTreeNodeStartState = "not_started" | "started";
 
 export type DevelopmentTreeNodeLifecycle = {
+  readonly lockedReason?: string;
   readonly startState: DevelopmentTreeNodeStartState;
   readonly startable: boolean;
 };
 
 export type DevelopmentTreeOperationNodeKind =
+  | "contract_graph"
+  | "cross_part_contracts"
+  | "execution_waves"
   | "implementation"
   | "integration"
+  | "lead_orchestration"
   | "module_facade_specification"
+  | "shared_interfaces"
   | "workers";
 
 export type DevelopmentTreeOperationNode = {
@@ -61,15 +67,18 @@ export type DevelopmentTreeClusterNode = DevelopmentTreeNodeMetadata & {
 };
 
 export type DevelopmentTreePartNode = DevelopmentTreeNodeMetadata & {
-  readonly id: string;
-  readonly readiness?: DevelopmentTreeReadiness;
-  readonly status: "skeleton" | "materialized";
   readonly clusters: readonly DevelopmentTreeClusterNode[];
+  readonly id: string;
+  readonly operations?: readonly DevelopmentTreeOperationNode[];
+  readonly readiness?: DevelopmentTreeReadiness;
   readonly standaloneModules: readonly DevelopmentTreeModuleNode[];
+  readonly status: "skeleton" | "materialized";
 };
 
 export type DevelopmentTreeSnapshot = {
+  readonly leadProductPartId?: string | null;
   readonly parts: readonly DevelopmentTreePartNode[];
+  readonly productPartLeadershipOrder?: readonly string[];
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -91,10 +100,23 @@ const isDevelopmentTreeNodeStartState = (
 const isDevelopmentTreeOperationNodeKind = (
   value: unknown
 ): value is DevelopmentTreeOperationNodeKind =>
+  value === "contract_graph" ||
+  value === "cross_part_contracts" ||
+  value === "execution_waves" ||
   value === "implementation" ||
   value === "integration" ||
+  value === "lead_orchestration" ||
   value === "module_facade_specification" ||
+  value === "shared_interfaces" ||
   value === "workers";
+
+const parseStringList = (payload: unknown): readonly string[] | undefined => {
+  if (!Array.isArray(payload)) return undefined;
+  const values = payload
+    .map(readNonEmptyString)
+    .filter((item): item is string => item !== null);
+  return values.length > 0 ? values : undefined;
+};
 
 const parseArtifact = (payload: unknown): DevelopmentTreeNodeArtifact | null => {
   if (!isRecord(payload)) return null;
@@ -133,9 +155,9 @@ const parseLifecycle = (
     : undefined;
   const startable =
     typeof payload.startable === "boolean" ? payload.startable : undefined;
-  return startState && typeof startable === "boolean"
-    ? { startState, startable }
-    : undefined;
+  if (!(startState && typeof startable === "boolean")) return undefined;
+  const lockedReason = readNonEmptyString(payload.lockedReason) ?? undefined;
+  return { startState, startable, lockedReason };
 };
 
 const parseOperationNode = (
@@ -242,10 +264,16 @@ const parsePartNode = (payload: unknown): DevelopmentTreePartNode | null => {
         .map(parseModuleNode)
         .filter((item): item is DevelopmentTreeModuleNode => item !== null)
     : [];
+  const operations = Array.isArray(payload.operations)
+    ? payload.operations
+        .map(parseOperationNode)
+        .filter((item): item is DevelopmentTreeOperationNode => item !== null)
+    : [];
   return {
     id,
     status: payload.status === "materialized" ? "materialized" : "skeleton",
     clusters,
+    operations: operations.length > 0 ? operations : undefined,
     standaloneModules,
     ...parseNodeMetadata(payload),
     readiness: isDevelopmentTreeReadiness(payload.readiness)
@@ -263,5 +291,13 @@ export const parseDevelopmentTreeSnapshot = (
         .map(parsePartNode)
         .filter((item): item is DevelopmentTreePartNode => item !== null)
     : [];
-  return parts.length > 0 ? { parts } : null;
+  return parts.length > 0
+    ? {
+        leadProductPartId: readNonEmptyString(payload.leadProductPartId),
+        parts,
+        productPartLeadershipOrder: parseStringList(
+          payload.productPartLeadershipOrder
+        ),
+      }
+    : null;
 };

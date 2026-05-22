@@ -41,12 +41,35 @@ const createWorkflowPayload = (
 test("fetchWorkflowState parses optional development tree readiness", async () => {
   installFetchStub(
     createWorkflowPayload({
+      leadProductPartId: "ui-shell",
       parts: [
         {
           id: "ui-shell",
           artifactWorkspacePath:
             ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell",
           codeWorkspacePath: "product-parts/ui-shell",
+          operations: [
+            {
+              id: "lead-product-part-orchestration",
+              kind: "lead_orchestration",
+              title: "Lead Product Part Orchestration",
+              workflowPath:
+                "development_tree/materialized/product-parts/ui-shell/lead-product-part-orchestration",
+              artifactWorkspacePath:
+                ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/lead-product-part-orchestration",
+              children: [
+                {
+                  id: "contract-graph",
+                  kind: "contract_graph",
+                  title: "Contract Graph",
+                  workflowPath:
+                    "development_tree/materialized/product-parts/ui-shell/lead-product-part-orchestration/contract-graph",
+                  artifactWorkspacePath:
+                    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/lead-product-part-orchestration/contract-graph",
+                },
+              ],
+            },
+          ],
           readiness: "in_progress",
           status: "materialized",
           clusters: [
@@ -120,12 +143,18 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
           standaloneModules: [
             {
               id: "theme-engine",
+              lifecycle: {
+                lockedReason: "Lead Product Part contract graph is pending",
+                startState: "not_started",
+                startable: false,
+              },
               readiness: "idle",
               title: "Theme Engine",
             },
           ],
         },
       ],
+      productPartLeadershipOrder: ["ui-shell"],
     },
     {
       chains: [
@@ -154,8 +183,14 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
   });
 
   const part = state?.developmentTree?.parts[0];
+  assert.equal(state?.developmentTree?.leadProductPartId, "ui-shell");
+  assert.deepEqual(state?.developmentTree?.productPartLeadershipOrder, [
+    "ui-shell",
+  ]);
   assert.equal(part?.readiness, "in_progress");
   assert.equal(part?.codeWorkspacePath, "product-parts/ui-shell");
+  assert.equal(part?.operations?.[0]?.kind, "lead_orchestration");
+  assert.equal(part?.operations?.[0]?.children?.[0]?.kind, "contract_graph");
   assert.equal(part?.clusters[0]?.readiness, "ready");
   assert.equal(
     part?.clusters[0]?.artifactWorkspacePath,
@@ -184,6 +219,10 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
     "development_tree/materialized/product-parts/ui-shell/clusters/layout/modules/main-area"
   );
   assert.equal(part?.standaloneModules[0]?.readiness, "idle");
+  assert.equal(
+    part?.standaloneModules[0]?.lifecycle?.lockedReason,
+    "Lead Product Part contract graph is pending"
+  );
 });
 
 test("fetchWorkflowState preserves managed orchestration read-only projection", async () => {
