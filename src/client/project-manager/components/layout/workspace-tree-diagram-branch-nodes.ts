@@ -195,10 +195,14 @@ const buildModuleTreeNode = (
   const children = mod.operations?.map((operation) =>
     buildOperationTreeNode(operation, id, partId, clusterId, depth + 1)
   );
+  const lockedReason = mod.lifecycle?.lockedReason;
   return {
     id,
     label: mod.title,
-    status: resolveReadinessStatus(mod.readiness, "todo"),
+    status: lockedReason
+      ? "blocked"
+      : resolveReadinessStatus(mod.readiness, "todo"),
+    title: lockedReason,
     visualDepth: depth,
     nodeType: "module",
     readiness: mod.readiness,
@@ -229,10 +233,14 @@ const buildClusterTreeNode = (
   const children = cluster.modules.map((mod) =>
     buildModuleTreeNode(mod, partId, cluster.id, depth + 1)
   );
+  const lockedReason = cluster.lifecycle?.lockedReason;
   return {
     id,
     label: cluster.id,
-    status: resolveReadinessStatus(cluster.readiness, "todo"),
+    status: lockedReason
+      ? "blocked"
+      : resolveReadinessStatus(cluster.readiness, "todo"),
+    title: lockedReason,
     visualDepth: depth,
     nodeType: "cluster",
     readiness: cluster.readiness,
@@ -258,6 +266,11 @@ const buildPartTreeNode = (
 ): TreeNode => {
   const partId = `devtree:${part.id}`;
   const children: TreeNode[] = [];
+  for (const operation of part.operations ?? []) {
+    children.push(
+      buildOperationTreeNode(operation, partId, part.id, null, depth + 1)
+    );
+  }
   for (const cluster of part.clusters) {
     children.push(buildClusterTreeNode(cluster, part.id, depth + 1));
   }
@@ -269,11 +282,12 @@ const buildPartTreeNode = (
     part.readiness,
     part.status === "materialized" ? "draft" : "todo"
   );
+  const lockedReason = part.lifecycle?.lockedReason;
   return {
     id: partId,
     label: part.id,
-    status: progressVisuals.status ?? fallbackStatus,
-    title: progressVisuals.title,
+    status: lockedReason ? "blocked" : (progressVisuals.status ?? fallbackStatus),
+    title: lockedReason ?? progressVisuals.title,
     visualDepth: depth,
     nodeType: "product-part",
     readiness: progressVisuals.readiness ?? part.readiness,
@@ -472,7 +486,6 @@ export const buildDiagramModulesBranchNodes = (options: {
     },
   });
 
-  // Append development tree branch nodes (Product Parts / Clusters / Modules)
   const devTreeNodes = buildDevelopmentTreeNodes(
     workflowState.developmentTree,
     2,

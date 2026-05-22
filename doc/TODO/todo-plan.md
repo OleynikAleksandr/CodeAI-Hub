@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "b25d303ec",
+  "lastRecordedCommit": "5bc8983f7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase5.stream1.task1",
-  "expectedCommitMessage": "feat: parse development tree leadership metadata",
+  "currentTaskId": "phase5.stream2.task1",
+  "expectedCommitMessage": "feat: show lead contract orchestration in sidebar",
   "debt": {
-    "expectedCommitMessage": "feat: parse development tree leadership metadata",
-    "preCommitHead": "b25d303ec",
+    "expectedCommitMessage": "feat: show lead contract orchestration in sidebar",
+    "preCommitHead": "5bc8983f7",
     "stage": "commit_pending",
-    "taskId": "phase5.stream1.task1"
+    "taskId": "phase5.stream2.task1"
   }
 }
 ```
@@ -103,11 +103,11 @@
 
 ### Stream: Client Read Model
 17. [DONE] `phase5.stream1.task1` Extend Project Manager Development Tree client parser/types for lead metadata, operation locks and research/contract review nodes (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `feat: parse development tree leadership metadata`).
-18. [PENDING] Git Commit: `feat: parse development tree leadership metadata` (hash: TBD)
+18. [DONE] Git Commit: `feat: parse development tree leadership metadata` (hash: 5bc8983f7)
 
 ### Stream: Sidebar Projection
-19. [TODO] `phase5.stream2.task1` Render lead Product Part first, locked non-lead nodes and lead orchestration children in the left sidebar (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `feat: show lead contract orchestration in sidebar`).
-20. [TODO] Git Commit: `feat: show lead contract orchestration in sidebar` (hash: TBD)
+19. [DONE] `phase5.stream2.task1` Render lead Product Part first, locked non-lead nodes and lead orchestration children in the left sidebar (scope: `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `feat: show lead contract orchestration in sidebar`).
+20. [PENDING] Git Commit: `feat: show lead contract orchestration in sidebar` (hash: TBD)
 
 ### Stream: Node Start Card UX
 21. [TODO] `phase5.stream3.task1` Show locked reason and disable node start UI for non-startable Development Tree nodes (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/main-area-panel-content.test.ts`; expected commit: `feat: explain locked development tree nodes`).
