@@ -2,16 +2,27 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.321** (VSIX package-size hotfix)
+**Current Release — v1.2.322** (Lead Product Part contract orchestration)
 
-This hotfix restores the VSIX package boundary. The extension package excludes
-local Swift native-helper build outputs under `native/**`, and the release
-build now fails if `extension/native/`, Swift `.build` caches, `ModuleCache`,
-or `dSYM` debug artefacts leak into the packaged VSIX. CodeAI Hub remains a
-lightweight extension installer/distributor while runtime binaries continue to
-ship through the external release artefacts.
+This release adds the first contract-orchestration layer to the Development
+Tree. Diagram Modules now records the lead Product Part and Product Part
+leadership order, and Core carries that metadata into the Development Tree
+snapshot, materialized folders, node start gates, first agent prompt packs, and
+Project Manager sidebar projection.
 
-The previous Development Tree acceptance fixes remain included.
+Only the lead Product Part orchestration node is startable before the
+application-wide Contract Graph is frozen. Non-lead Product Parts, clusters,
+modules, and downstream operation nodes remain visible in the tree, but show a
+locked state until the lead orchestration path is ready.
+
+The lead Product Part now exposes `Lead Product Part Orchestration` with
+`Contract Graph`, `Cross-Part Contracts`, `Shared Interfaces`, and
+`Execution Waves` child nodes. Workflow agents also receive a Core-owned
+research artifact contract (`AgentResearch.draft.json`) so any external search
+or technology/tool recommendation is captured as a reviewable structured
+artifact before it affects downstream prompts or rules.
+
+The previous VSIX package-size hotfix remains included.
 
 This release completes the Diagram Modules Development Tree materialization
 flow. Core now creates the accepted tree both under

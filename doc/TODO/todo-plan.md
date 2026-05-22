@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "962332d7c",
+  "lastRecordedCommit": "08453143e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase5.stream3.task1",
-  "expectedCommitMessage": "feat: explain locked development tree nodes",
+  "currentTaskId": "phase7.stream1.task1",
+  "expectedCommitMessage": "docs: prepare development tree orchestration release",
   "debt": {
-    "expectedCommitMessage": "feat: explain locked development tree nodes",
-    "preCommitHead": "962332d7c",
+    "expectedCommitMessage": "docs: prepare development tree orchestration release",
+    "preCommitHead": "08453143e",
     "stage": "commit_pending",
-    "taskId": "phase5.stream3.task1"
+    "taskId": "phase7.stream1.task1"
   }
 }
 ```
@@ -111,21 +111,21 @@
 
 ### Stream: Node Start Card UX
 21. [DONE] `phase5.stream3.task1` Show locked reason and disable node start UI for non-startable Development Tree nodes (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/main-area-panel-content.tsx, src/client/project-manager/components/layout/main-area-panel-content.test.ts`; expected commit: `feat: explain locked development tree nodes`).
-22. [PENDING] Git Commit: `feat: explain locked development tree nodes` (hash: TBD)
+22. [DONE] Git Commit: `feat: explain locked development tree nodes` (hash: 08453143e)
 
 ## Phase 6 — Verification (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Targeted Builds
-23. [TODO] `phase6.stream1.task1` Run targeted verification for touched packages and clients: core build/tests, webview typecheck, Project Manager build (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+23. [DONE] `phase6.stream1.task1` Run targeted verification for touched packages and clients: core build/tests, webview typecheck, Project Manager build (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: --help
 
 ### Stream: Tooling Verification
-24. [TODO] `phase6.stream2.task1` Run plan validation, link checker and final quality diagnostics before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: no commit expected).
+24. [DONE] `phase6.stream2.task1` Run plan validation, link checker and final quality diagnostics before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted builds, plan validation, link check and architecture diagnostics completed.
 
 ## Phase 7 — Release Build (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Release Docs
-25. [TODO] `phase7.stream1.task1` Update release-facing docs for the next version before build-all, as required by the release checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare development tree orchestration release`).
-26. [TODO] Git Commit: `docs: prepare development tree orchestration release` (hash: TBD)
+25. [DONE] `phase7.stream1.task1` Update release-facing docs for the next version before build-all, as required by the release checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare development tree orchestration release`).
+26. [PENDING] Git Commit: `docs: prepare development tree orchestration release` (hash: TBD)
 
 ### Stream: Release Build
 27. [TODO] `phase7.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, CHANGELOG.md, README.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build development tree orchestration release`).

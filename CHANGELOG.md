@@ -8,6 +8,25 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.322] - 2026-05-22
+### Added
+- **Diagram Modules declares Development Tree leadership.** Core now validates `leadProductPartId` and `productPartLeadershipOrder` in the Diagram Modules index artifact and preserves that order in Development Tree snapshots.
+- **Lead Product Part Orchestration is materialized and projected.** Core creates `lead-product-part-orchestration/` folders under the lead Product Part in both `.codeai-hub/.../development_tree/materialized` and `doc/TODO/stages/development-tree`, then exposes `Contract Graph`, `Cross-Part Contracts`, `Shared Interfaces`, and `Execution Waves` operation nodes to Project Manager.
+- **Development Tree agents receive research artifact contracts.** First prompts now include a Core-owned `AgentResearch.draft.json` contract for any external research, tool/framework recommendation, quality gate recommendation, or runtime-practice recommendation.
+
+### Fixed
+- **Non-lead Development Tree nodes stay locked before Contract Graph freeze.** Core rejects direct node starts until the lead Product Part orchestration path is selected, and Project Manager shows the locked reason instead of offering a normal start flow.
+- **Project Manager parses leadership metadata and operation locks.** The left sidebar renders lead orchestration children, preserves Core snapshot order, and carries `lockedReason` lifecycle data into node status.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/development-tree/development-tree-state-facade-metadata.test.js packages/core/dist/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.js packages/core/dist/remote-bridge/remote-bridge-development-tree-node-command-router.test.js packages/core/dist/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.js`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run plan:validate`
+- `npm run check:links`
+- `npm run check:architecture`
+
 ## [1.2.321] - 2026-05-21
 ### Fixed
 - **VSIX packaging excludes local Swift native-helper build outputs.** The extension package no longer includes `native/apple-*-helper/.build`, Swift `ModuleCache`, or `dSYM` artefacts, restoring the lightweight installer/distributor package boundary.
