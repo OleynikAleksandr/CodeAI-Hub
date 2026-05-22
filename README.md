@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.322** (Lead Product Part contract orchestration)
+**Current Release — v1.2.323** (Quality Gates research remediation)
+
+This replacement release keeps the Lead Product Part contract orchestration
+release and adds the missing Quality Gates research gate before user
+acceptance. Quality Gates now starts with a required research artifact pair
+(`quality-gates-research.md` and `quality-gates-research.json`) before the
+baseline contract can be accepted.
+
+Core validates the research report and structured sidecar before the Quality
+Gates draft moves forward. The first prompt requires the agent to research
+current tools for the detected stack, explain what each recommendation is for,
+and keep the final gate contract traceable to that research.
+
+Project Manager now shows separate Quality Gates artifact header buttons for
+`Research`, `Contract`, and `Help`. The Quality Gates start card also filters
+provider choices to research-capable providers only: Codex and Claude are
+available for the step, Claude receives `WebSearch`, and providers without a
+clear search capability are not auto-offered for this research-required phase.
 
 This release adds the first contract-orchestration layer to the Development
 Tree. Diagram Modules now records the lead Product Part and Product Part

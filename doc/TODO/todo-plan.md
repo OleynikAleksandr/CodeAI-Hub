@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "1a9a2c21c",
+  "lastRecordedCommit": "f2ff64bab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream3.task1",
-  "expectedCommitMessage": "feat: require research capable quality gates providers",
+  "currentTaskId": "phase8.stream5.task1",
+  "expectedCommitMessage": "docs: prepare quality gates research remediation release",
   "debt": {
-    "expectedCommitMessage": "feat: require research capable quality gates providers",
-    "preCommitHead": "1a9a2c21c",
+    "expectedCommitMessage": "docs: prepare quality gates research remediation release",
+    "preCommitHead": "f2ff64bab",
     "stage": "commit_pending",
-    "taskId": "phase8.stream3.task1"
+    "taskId": "phase8.stream5.task1"
   }
 }
 ```
@@ -140,12 +140,15 @@
 30. [DONE] `phase8.stream2.task1` Add Core-owned Quality Gates research artifact contract, validator phase, stage plan transition and prompt repair messages before draft contract creation (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/**, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/**`; expected commit: `feat: add quality gates research artifact gate`).
 31. [DONE] Git Commit: `feat: add quality gates research artifact gate` (hash: 1a9a2c21c)
 32. [DONE] `phase8.stream3.task1` Gate Quality Gates provider choices to research-capable providers, enable supported search tooling and expose Research/Contract artifact buttons in Project Manager (scope: `packages/Claude_Module/src/**, packages/Codex_AppServer_Module/src/**, src/client/project-manager/**`; expected commit: `feat: require research capable quality gates providers`).
-33. [PENDING] Git Commit: `feat: require research capable quality gates providers` (hash: TBD)
-34. [TODO] `phase8.stream4.task1` Run targeted validation for Quality Gates research flow, provider gating and Project Manager artifacts UI (scope: `packages/core, packages/Claude_Module, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-35. [TODO] `phase8.stream5.task1` Prepare a replacement release build after explicit release confirmation for the Quality Gates research gate remediation (scope: release confirmation gate; expected commit: no commit expected).
+33. [DONE] Git Commit: `feat: require research capable quality gates providers` (hash: f2ff64bab)
+34. [DONE] `phase8.stream4.task1` Run targeted validation for Quality Gates research flow, provider gating and Project Manager artifacts UI (scope: `packages/core, packages/Claude_Module, packages/Codex_AppServer_Module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted validation completed: Core build and Quality Gates tests passed; Claude/Codex provider builds and tests passed; Project Manager build, webview typecheck, provider gating and artifact header mode tests passed.
+35. [DONE] `phase8.stream5.task1` Update release-facing docs for the replacement v1.2.323 build after explicit release confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates research remediation release`).
+36. [PENDING] Git Commit: `docs: prepare quality gates research remediation release` (hash: TBD)
+37. [TODO] `phase8.stream5.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates research remediation release`).
+38. [TODO] Git Commit: `chore: build quality gates research remediation release` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-36. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-37. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+39. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+40. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)

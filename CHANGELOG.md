@@ -8,6 +8,26 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.323] - 2026-05-22
+### Added
+- **Quality Gates now requires a first research artifact.** Core validates `quality-gates-research.md` and `quality-gates-research.json` before the Quality Gates baseline contract can move through the draft review path.
+- **Quality Gates prompts include a current-tooling research phase.** The agent must research the detected stack, cite current sources, explain recommended tools by purpose, and keep the final gate contract traceable to the research artifact.
+- **Project Manager exposes separate Quality Gates artifacts.** The artifact header now shows `Research`, `Contract`, and `Help` buttons for the Quality Gates step.
+
+### Fixed
+- **Quality Gates start cards only offer research-capable providers.** Codex and Claude remain available; Claude receives `WebSearch`, while providers without a clear search capability are not auto-selected for this step.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/templates/quality-gates-bundled-templates.test.js packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.js`
+- `npm run build --workspace=@codeai-hub/claude-module`
+- `node --test packages/Claude_Module/dist/sdk/claude-sdk-manager.test.js packages/Claude_Module/dist/diagnostics/claude-native-request-capture-service.test.js`
+- `npm run build --workspace=@codeai-hub/codex-app-server-module`
+- `node --test packages/Codex_AppServer_Module/dist/app-server/process/codex-app-server-process.test.js packages/Codex_AppServer_Module/dist/diagnostics/codex-native-request-capture-applied-envelope.test.js`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- `node --test --import tsx src/client/project-manager/services/workflow-provider-resolver.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts src/client/project-manager/components/layout/stage-artifact-mode.test.ts`
+
 ## [1.2.322] - 2026-05-22
 ### Added
 - **Diagram Modules declares Development Tree leadership.** Core now validates `leadProductPartId` and `productPartLeadershipOrder` in the Diagram Modules index artifact and preserves that order in Development Tree snapshots.
