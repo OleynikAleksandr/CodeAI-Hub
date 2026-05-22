@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "08453143e",
+  "lastRecordedCommit": "f66c53aff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase7.stream1.task1",
-  "expectedCommitMessage": "docs: prepare development tree orchestration release",
+  "currentTaskId": "phase7.stream2.task1",
+  "expectedCommitMessage": "chore: build development tree orchestration release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare development tree orchestration release",
-    "preCommitHead": "08453143e",
+    "expectedCommitMessage": "chore: build development tree orchestration release",
+    "preCommitHead": "f66c53aff",
     "stage": "commit_pending",
-    "taskId": "phase7.stream1.task1"
+    "taskId": "phase7.stream2.task1"
   }
 }
 ```
@@ -125,11 +125,11 @@
 
 ### Stream: Release Docs
 25. [DONE] `phase7.stream1.task1` Update release-facing docs for the next version before build-all, as required by the release checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare development tree orchestration release`).
-26. [PENDING] Git Commit: `docs: prepare development tree orchestration release` (hash: TBD)
+26. [DONE] Git Commit: `docs: prepare development tree orchestration release` (hash: f66c53aff)
 
 ### Stream: Release Build
-27. [TODO] `phase7.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, CHANGELOG.md, README.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build development tree orchestration release`).
-28. [TODO] Git Commit: `chore: build development tree orchestration release` (hash: TBD)
+27. [DONE] `phase7.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, CHANGELOG.md, README.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build development tree orchestration release`).
+28. [PENDING] Git Commit: `chore: build development tree orchestration release` (hash: TBD)
 
 ## Phase 8 — User Workflow Acceptance Testing (owner: User, updated: 2026-05-22)
 
