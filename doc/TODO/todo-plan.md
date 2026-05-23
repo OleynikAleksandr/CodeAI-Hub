@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "bc5742366",
+  "lastRecordedCommit": "e310849c1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream16.task2",
-  "expectedCommitMessage": "chore: build workflow clear undo release",
+  "currentTaskId": "phase8.stream16.task3",
+  "expectedCommitMessage": "chore: package workflow clear undo vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build workflow clear undo release",
-    "preCommitHead": "bc5742366",
+    "expectedCommitMessage": "chore: package workflow clear undo vsix",
+    "preCommitHead": "e310849c1",
     "stage": "commit_pending",
-    "taskId": "phase8.stream16.task2"
+    "taskId": "phase8.stream16.task3"
   }
 }
 ```
@@ -236,9 +236,9 @@
 104. [DONE] `phase8.stream16.task1` Update release-facing docs for the v1.2.328 workflow clear persistent undo build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow clear undo release`).
 105. [DONE] Git Commit: `docs: prepare workflow clear undo release` (hash: bc5742366)
 106. [DONE] `phase8.stream16.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.328 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow clear undo release`).
-107. [PENDING] Git Commit: `chore: build workflow clear undo release` (hash: TBD)
-108. [TODO] `phase8.stream16.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.328.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow clear undo vsix`).
-109. [TODO] Git Commit: `chore: package workflow clear undo vsix` (hash: TBD)
+107. [DONE] Git Commit: `chore: build workflow clear undo release` (hash: e310849c1)
+108. [DONE] `phase8.stream16.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.328.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow clear undo vsix`).
+109. [PENDING] Git Commit: `chore: package workflow clear undo vsix` (hash: TBD)
 110. [TODO] `phase8.stream16.task4` User installs the generated v1.2.328 VSIX and verifies workflow step Clear uses persistent undo behavior for Description, Virtual Simulation and downstream Development Tree cleanup (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
