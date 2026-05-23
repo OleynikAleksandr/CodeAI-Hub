@@ -9,6 +9,7 @@ import {
 } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
+import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import type { WorkflowUndoStageId } from "../undo/workflow-step-undo-ledger";
 
 const ROOT_DIR = ".codeai-hub";
@@ -313,6 +314,29 @@ export class WorkflowStepCheckpointStore {
   }
 
   private snapshotRoots(): readonly SnapshotRootSpec[] {
+    const workspaceSessionRoots = [
+      {
+        absolutePath: path.join(
+          this.userSpaceRoot,
+          "sessions",
+          this.workspaceSlug
+        ),
+        id: "user_space_sessions",
+        kind: "user_space" as const,
+      },
+    ];
+    const workspacePathSlug = sanitizeWorkspaceSlug(this.workspaceRoot);
+    if (workspacePathSlug !== this.workspaceSlug) {
+      workspaceSessionRoots.push({
+        absolutePath: path.join(
+          this.userSpaceRoot,
+          "sessions",
+          workspacePathSlug
+        ),
+        id: "user_space_sessions_workspace_path",
+        kind: "user_space" as const,
+      });
+    }
     return [
       {
         absolutePath: path.join(
@@ -333,15 +357,7 @@ export class WorkflowStepCheckpointStore {
         id: "workspace_product_parts",
         kind: "workspace",
       },
-      {
-        absolutePath: path.join(
-          this.userSpaceRoot,
-          "sessions",
-          this.workspaceSlug
-        ),
-        id: "user_space_sessions",
-        kind: "user_space",
-      },
+      ...workspaceSessionRoots,
     ];
   }
 

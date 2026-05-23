@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import { WorkflowStepCheckpointFacade } from "./workflow-step-checkpoint-facade";
 
 const writeTextFile = async (
@@ -21,6 +22,7 @@ test("WorkflowStepCheckpointFacade restores workspace and user-space state exact
     path.join(os.tmpdir(), "workflow-step-checkpoint-home-")
   );
   const workspaceSlug = "demo-workspace";
+  const workspacePathSlug = sanitizeWorkspaceSlug(workspaceRoot);
   const facade = new WorkflowStepCheckpointFacade({
     clock: () => "2026-05-23T00:00:00.000Z",
   });
@@ -85,6 +87,16 @@ test("WorkflowStepCheckpointFacade restores workspace and user-space state exact
       "session\n"
     );
     await writeTextFile(
+      path.join(
+        userSpaceRoot,
+        "sessions",
+        workspacePathSlug,
+        "codexCli",
+        "turn.jsonl"
+      ),
+      "path slug session\n"
+    );
+    await writeTextFile(
       path.join(workspaceRoot, "product-parts", "generated", "index.ts"),
       "export {};\n"
     );
@@ -118,6 +130,18 @@ test("WorkflowStepCheckpointFacade restores workspace and user-space state exact
           workspaceSlug,
           "description",
           "Final_Description.md"
+        ),
+        "utf8"
+      )
+    );
+    await assert.rejects(() =>
+      readFile(
+        path.join(
+          userSpaceRoot,
+          "sessions",
+          workspacePathSlug,
+          "codexCli",
+          "turn.jsonl"
         ),
         "utf8"
       )

@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "bb2dfbaf4",
+  "lastRecordedCommit": "d371c6998",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream22.task1",
-  "expectedCommitMessage": "fix: clear workflow session traces after checkpoint restore",
+  "currentTaskId": "phase8.stream22.task2",
+  "expectedCommitMessage": "fix: checkpoint workspace path session roots",
   "debt": {
-    "expectedCommitMessage": "fix: clear workflow session traces after checkpoint restore",
-    "preCommitHead": "bb2dfbaf4",
+    "expectedCommitMessage": "fix: checkpoint workspace path session roots",
+    "preCommitHead": "d371c6998",
     "stage": "commit_pending",
-    "taskId": "phase8.stream22.task1"
+    "taskId": "phase8.stream22.task2"
   }
 }
 ```
@@ -302,9 +302,9 @@
 
 ### Stream: Workflow Clear Session Trace Cleanup
 166. [DONE] `phase8.stream22.task1` Make workflow step Clear collect and delete session traces before checkpoint restore, including workspace-path unified session roots and provider-native Codex/Claude session files linked by continuity provider session id (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`; expected commit: `fix: clear workflow session traces after checkpoint restore`).
-167. [PENDING] Git Commit: `fix: clear workflow session traces after checkpoint restore` (hash: TBD)
-168. [TODO] `phase8.stream22.task2` Make workflow step checkpoints capture both initiative-slug and workspace-path user-space session roots for exact future restores (scope: `packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: checkpoint workspace path session roots`).
-169. [TODO] Git Commit: `fix: checkpoint workspace path session roots` (hash: TBD)
+167. [DONE] Git Commit: `fix: clear workflow session traces after checkpoint restore` (hash: d371c6998)
+168. [DONE] `phase8.stream22.task2` Make workflow step checkpoints capture both initiative-slug and workspace-path user-space session roots for exact future restores (scope: `packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: checkpoint workspace path session roots`).
+169. [PENDING] Git Commit: `fix: checkpoint workspace path session roots` (hash: TBD)
 170. [TODO] `phase8.stream22.task3` Run targeted validation for workflow clear session trace cleanup and checkpoint root restore behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 171. [TODO] `phase8.stream22.task4` Wait for explicit user confirmation before building the next replacement release after session trace cleanup (scope: release confirmation gate; no commit expected).
 
