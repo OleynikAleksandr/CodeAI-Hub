@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "e5cfb014e",
+  "lastRecordedCommit": "d6da28361",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream20.task3",
-  "expectedCommitMessage": "feat: capture workspace file mutations",
+  "currentTaskId": "phase8.stream20.task4",
+  "expectedCommitMessage": "docs: define centralized workflow undo journal",
   "debt": {
-    "expectedCommitMessage": "feat: capture workspace file mutations",
-    "preCommitHead": "e5cfb014e",
+    "expectedCommitMessage": "docs: define centralized workflow undo journal",
+    "preCommitHead": "d6da28361",
     "stage": "commit_pending",
-    "taskId": "phase8.stream20.task3"
+    "taskId": "phase8.stream20.task4"
   }
 }
 ```
@@ -272,9 +272,9 @@
 136. [DONE] `phase8.stream20.task2` Wire mutation journal runtime into central Core workflow mutation boundaries for workspace-session creation, workspace-file writes, artifact upserts and session message turns (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `feat: capture workflow mutations centrally`).
 137. [DONE] Git Commit: `feat: capture workflow mutations centrally` (hash: e5cfb014e)
 138. [DONE] `phase8.stream20.task3` Wire mutation journal runtime into workspace-file writes and harden directory undo replay so created directory entries do not recursively delete preserved checkpoint files (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, packages/core/src/remote-bridge/handlers/workspace-file-service.test.ts`; expected commit: `feat: capture workspace file mutations`).
-139. [PENDING] Git Commit: `feat: capture workspace file mutations` (hash: TBD)
-140. [TODO] `phase8.stream20.task4` Document the centralized workflow undo invariant in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define centralized workflow undo journal`).
-141. [TODO] Git Commit: `docs: define centralized workflow undo journal` (hash: TBD)
+139. [DONE] Git Commit: `feat: capture workspace file mutations` (hash: d6da28361)
+140. [DONE] `phase8.stream20.task4` Document the centralized workflow undo invariant in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define centralized workflow undo journal`).
+141. [PENDING] Git Commit: `docs: define centralized workflow undo journal` (hash: TBD)
 142. [TODO] `phase8.stream20.task5` Run targeted validation for Core mutation journal, workflow clear undo, Project Manager questionnaire reload and affected builds before release packaging (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 143. [TODO] `phase8.stream20.task6` Update release-facing docs for the next centralized workflow undo release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare centralized workflow undo release`).
 144. [TODO] Git Commit: `docs: prepare centralized workflow undo release` (hash: TBD)
