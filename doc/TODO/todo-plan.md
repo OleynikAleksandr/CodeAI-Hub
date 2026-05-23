@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "222079007",
+  "lastRecordedCommit": "41157ab5d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream25.task2",
-  "expectedCommitMessage": "chore: build codex native cleanup release",
+  "currentTaskId": "phase8.stream25.task3",
+  "expectedCommitMessage": "chore: package codex native cleanup vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build codex native cleanup release",
-    "preCommitHead": "222079007",
+    "expectedCommitMessage": "chore: package codex native cleanup vsix",
+    "preCommitHead": "41157ab5d",
     "stage": "commit_pending",
-    "taskId": "phase8.stream25.task2"
+    "taskId": "phase8.stream25.task3"
   }
 }
 ```
@@ -327,9 +327,9 @@
 183. [DONE] `phase8.stream25.task1` Update release-facing docs for the v1.2.333 Codex native translation cleanup build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare codex native cleanup release`).
 184. [DONE] Git Commit: `docs: prepare codex native cleanup release` (hash: 222079007)
 185. [DONE] `phase8.stream25.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.333 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build codex native cleanup release`).
-186. [PENDING] Git Commit: `chore: build codex native cleanup release` (hash: TBD)
-187. [TODO] `phase8.stream25.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package codex native cleanup vsix`).
-188. [TODO] Git Commit: `chore: package codex native cleanup vsix` (hash: TBD)
+186. [DONE] Git Commit: `chore: build codex native cleanup release` (hash: 41157ab5d)
+187. [DONE] `phase8.stream25.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package codex native cleanup vsix`).
+188. [PENDING] Git Commit: `chore: package codex native cleanup vsix` (hash: TBD)
 189. [TODO] `phase8.stream25.task4` User installs the generated v1.2.333 VSIX and verifies clearing Description removes Codex provider-native workflow and translation JSONL files (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
