@@ -55,6 +55,11 @@ const DIAGRAM_REPAIR_PROMPT_RE =
 const DIAGRAM_REPAIR_TARGET_RE =
   /\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md/u;
 const DIAGRAM_REPAIR_HEADING_RE = /# Product Part: project-manager/u;
+const DIAGRAM_REPAIR_NOTICE_RE =
+  /Core: Diagram Modules требует исправить staged artifact/u;
+const DIAGRAM_REPAIR_NOTICE_TARGET_RE =
+  /Target artifact: `\.codeai-hub\/demo-workspace\/diagram_modules\/product-parts\/project-manager\.md`\./u;
+const EMBEDDED_TEMPLATE_HEADING_RE = /Embedded artifact contract templates/u;
 const DIAGRAM_REPAIR_TASK_STATE_RE =
   /"currentTaskId": "diagram-modules\.phase1\.repair\.task1"/u;
 const DIAGRAM_REPAIR_COMMIT_RE =
@@ -73,7 +78,7 @@ const DIAGRAM_CONTINUATION_PROMPT_RE =
 const DIAGRAM_CORE_CONTINUATION_MESSAGE_RE =
   /Core accepted the current Diagram Modules artifact\.\nNext subturn: project-manager\./u;
 const DIAGRAM_CORE_REVIEW_MESSAGE_RE =
-  /Core completed Diagram Modules artifact validation/u;
+  /Core: Diagram Modules перешёл в пользовательскую проверку/u;
 
 const readRuntimeContinuityCallbacks = (
   runtime: SessionRequestHandlerRuntimeCore
@@ -246,8 +251,11 @@ test("createSessionRequestHandlerRuntimeCore dispatches repair prompt for invali
   } as unknown as ProviderAdapter;
 
   try {
-    await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
+    const installer = new ManagedWorkflowScaffoldInstaller();
+    await installer.installDiagramModulesScaffold({ workspaceRoot });
+    await installer.checkpointDiagramModulesInputs({
       workspaceRoot,
+      workspaceSlug,
     });
     const diagramRoot = path.join(
       workspaceRoot,
@@ -260,6 +268,9 @@ test("createSessionRequestHandlerRuntimeCore dispatches repair prompt for invali
       path.join(diagramRoot, "product-parts.index.md"),
       [
         "# Product Parts",
+        "",
+        "- leadProductPartId: `project-manager`",
+        "- productPartLeadershipOrder: `project-manager`",
         "",
         "1. `project-manager` - `.codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md`",
       ].join("\n"),
@@ -307,6 +318,18 @@ test("createSessionRequestHandlerRuntimeCore dispatches repair prompt for invali
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_TARGET_RE);
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_HEADING_RE);
     assert.equal(session.messages.at(-1)?.tag, "managed-workflow-validation");
+    assert.match(
+      session.messages.at(-1)?.content ?? "",
+      DIAGRAM_REPAIR_NOTICE_RE
+    );
+    assert.match(
+      session.messages.at(-1)?.content ?? "",
+      DIAGRAM_REPAIR_NOTICE_TARGET_RE
+    );
+    assert.doesNotMatch(
+      session.messages.at(-1)?.content ?? "",
+      EMBEDDED_TEMPLATE_HEADING_RE
+    );
     const repairPlan = await readWorkspaceFile(
       workspaceRoot,
       "doc/TODO/stages/diagram-modules/todo-plan.md"
@@ -341,8 +364,11 @@ test("createSessionRequestHandlerRuntimeCore commits accepted Diagram Modules su
   } as unknown as ProviderAdapter;
 
   try {
-    await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
+    const installer = new ManagedWorkflowScaffoldInstaller();
+    await installer.installDiagramModulesScaffold({ workspaceRoot });
+    await installer.checkpointDiagramModulesInputs({
       workspaceRoot,
+      workspaceSlug,
     });
     const diagramRoot = path.join(
       workspaceRoot,
@@ -355,6 +381,9 @@ test("createSessionRequestHandlerRuntimeCore commits accepted Diagram Modules su
       path.join(diagramRoot, "product-parts.index.md"),
       [
         "# Product Parts",
+        "",
+        "- leadProductPartId: `project-manager`",
+        "- productPartLeadershipOrder: `project-manager`",
         "",
         "1. `project-manager` - `.codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md`",
       ].join("\n"),

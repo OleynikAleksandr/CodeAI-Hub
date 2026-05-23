@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "43b619b2c",
+  "lastRecordedCommit": "761c3904e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream9.task1",
-  "expectedCommitMessage": "fix: target diagram modules index repairs",
+  "currentTaskId": "phase8.stream9.task2",
+  "expectedCommitMessage": "fix: compact diagram modules repair notices",
   "debt": {
-    "expectedCommitMessage": "fix: target diagram modules index repairs",
-    "preCommitHead": "43b619b2c",
+    "expectedCommitMessage": "fix: compact diagram modules repair notices",
+    "preCommitHead": "761c3904e",
     "stage": "commit_pending",
-    "taskId": "phase8.stream9.task1"
+    "taskId": "phase8.stream9.task2"
   }
 }
 ```
@@ -175,9 +175,9 @@
 
 ### Stream: Acceptance Remediation — Diagram Modules Repair Flow
 59. [DONE] `phase8.stream9.task1` Stop Diagram Modules Product Part continuation when the Product Parts index has leadership metadata diagnostics, and cover the repair target with a regression test (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: target diagram modules index repairs`).
-60. [PENDING] Git Commit: `fix: target diagram modules index repairs` (hash: TBD)
-61. [TODO] `phase8.stream9.task2` Keep provider repair prompts inline but replace Core-visible Diagram Modules validation transcript messages with compact user-facing notices (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: compact diagram modules repair notices`).
-62. [TODO] Git Commit: `fix: compact diagram modules repair notices` (hash: TBD)
+60. [DONE] Git Commit: `fix: target diagram modules index repairs` (hash: 761c3904e)
+61. [DONE] `phase8.stream9.task2` Keep provider repair prompts inline but replace Core-visible Diagram Modules validation transcript messages with compact user-facing notices (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: compact diagram modules repair notices`).
+62. [PENDING] Git Commit: `fix: compact diagram modules repair notices` (hash: TBD)
 63. [TODO] `phase8.stream9.task3` Run targeted validation for Diagram Modules repair targeting and compact transcript behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 64. [TODO] `phase8.stream9.task4` Wait for explicit user confirmation before building another replacement release for Diagram Modules repair flow (scope: release confirmation gate; no commit expected).
 

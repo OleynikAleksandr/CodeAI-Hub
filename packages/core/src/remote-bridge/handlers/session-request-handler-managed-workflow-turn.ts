@@ -222,8 +222,17 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         rejectedCommitHash: planAdvance.commit.hash,
         workspaceSlug: params.workspaceSlug,
       });
+      const repairTarget = decision.currentPartId
+        ? `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts/${decision.currentPartId}.md`
+        : `.codeai-hub/${params.workspaceSlug}/diagram_modules/product-parts.index.md`;
       this.appendCoreMessage(params.sessionId, {
-        content: repairPrompt,
+        content: [
+          "Core: Diagram Modules требует исправить staged artifact.",
+          `Target artifact: \`${repairTarget}\`.`,
+          "Diagnostics:",
+          ...decision.diagnostics.map((diagnostic) => `- ${diagnostic}`),
+          "Полный repair prompt отправлен агенту внутренним сообщением.",
+        ].join("\n"),
         tag: "managed-workflow-validation",
       });
       await messageDispatch.sendInternalMessage(params.sessionId, repairPrompt);
