@@ -22,9 +22,13 @@ test("workspace tree clear menu requires destructive confirmation and calls Core
   const treeSource = await readFile(TREE_SOURCE_PATH, "utf8");
   const clientSource = await readFile(CLIENT_SOURCE_PATH, "utf8");
 
-  assert.match(hookSource, /window\.confirm/u);
+  assert.doesNotMatch(hookSource, /window\.confirm/u);
+  assert.match(hookSource, /mode: "confirm"/u);
+  assert.match(hookSource, />\s*Cancel\s*</u);
   assert.match(hookSource, />\s*Clear\s*</u);
   assert.match(hookSource, /onContextMenu/u);
+  assert.match(hookSource, /onContextMenuCapture/u);
+  assert.match(hookSource, /event\.button === 2/u);
   assert.match(clientSource, /workflow-step-clear/u);
 });
 

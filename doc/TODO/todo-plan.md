@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "dbdea07df",
+  "lastRecordedCommit": "5fd661624",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream10.task6",
-  "expectedCommitMessage": "test: cover diagram modules leadership prompt pack",
+  "currentTaskId": "phase8.stream11.task1",
+  "expectedCommitMessage": "fix: avoid native clear confirmation crash",
   "debt": {
-    "expectedCommitMessage": "test: cover diagram modules leadership prompt pack",
-    "preCommitHead": "dbdea07df",
+    "expectedCommitMessage": "fix: avoid native clear confirmation crash",
+    "preCommitHead": "5fd661624",
     "stage": "commit_pending",
-    "taskId": "phase8.stream10.task6"
+    "taskId": "phase8.stream11.task1"
   }
 }
 ```
@@ -191,12 +191,18 @@
 71. [DONE] `phase8.stream10.task5` Add lead Product Part selection rules to the Diagram Modules agent instruction asset and regenerated bundled template (scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: teach diagram modules agent prompt leadership order`).
 72. [DONE] Git Commit: `fix: teach diagram modules agent prompt leadership order` (hash: dbdea07df)
 73. [DONE] `phase8.stream10.task6` Add Core workflow prompt pack regression coverage for Diagram Modules leadership guidance in the first provider prompt (scope: `packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules leadership prompt pack`).
-74. [PENDING] Git Commit: `test: cover diagram modules leadership prompt pack` (hash: TBD)
-75. [TODO] `phase8.stream10.task7` Run targeted validation for Diagram Modules first prompt and managed prompt leadership behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-76. [TODO] `phase8.stream10.task8` Wait for explicit user confirmation before building another replacement release for Diagram Modules leadership remediation (scope: release confirmation gate; no commit expected).
+74. [DONE] Git Commit: `test: cover diagram modules leadership prompt pack` (hash: 5fd661624)
+75. [DONE] `phase8.stream10.task7` Run targeted validation for Diagram Modules first prompt and managed prompt leadership behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build passed; workflow prompt pack, Diagram Modules managed prompt builder, bundled template sync, progress/validator tests passed; generated first Diagram Modules provider prompt contains leadership fields, leadership rules and index metadata template.
+76. [BLOCKED] `phase8.stream10.task8` Wait for explicit user confirmation before building another replacement release for Diagram Modules leadership remediation (scope: release confirmation gate; no commit expected). Blocked: user reported a native Project Manager crash when opening the workflow step Clear action from the sidebar context menu.
+
+### Stream: Acceptance Remediation — Workflow Clear Context Menu Crash
+77. [DONE] `phase8.stream11.task1` Replace native `window.confirm` in the sidebar Clear action with an in-app confirmation menu and suppress native context-menu events earlier (scope: `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: avoid native clear confirmation crash`).
+78. [PENDING] Git Commit: `fix: avoid native clear confirmation crash` (hash: TBD)
+79. [TODO] `phase8.stream11.task2` Run targeted validation for Project Manager sidebar Clear context menu behavior (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+80. [TODO] `phase8.stream11.task3` Wait for explicit user confirmation before building another replacement release for workflow clear crash remediation (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-77. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-78. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+81. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+82. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
