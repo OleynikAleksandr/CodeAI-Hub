@@ -17,6 +17,7 @@ import {
 import type { Request, Response } from "express";
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
+import { WorkflowStepCheckpointFacade } from "../../workflow/step-checkpoint/workflow-step-checkpoint-facade";
 import { WorkflowStepUndoLedgerStore } from "../../workflow/undo/workflow-step-undo-ledger";
 import { handleWorkflowStepClear } from "./workflow-step-clear-service";
 
@@ -80,6 +81,28 @@ test("workflow step clear preserves Description questionnaire and removes genera
       workspaceRoot,
       `${descriptionRoot}/questionnaire.md`
     );
+    await writeFileInWorkspace(
+      workspaceRoot,
+      `${descriptionRoot}/description-step.json`,
+      JSON.stringify(
+        {
+          workspaceSlug,
+          workspacePath: workspaceRoot,
+          createdAt: "2026-05-23T07:59:00.000Z",
+          updatedAt: "2026-05-23T07:59:00.000Z",
+          questionnairePath: `${descriptionRoot}/questionnaire.md`,
+        },
+        null,
+        2
+      )
+    );
+    await new WorkflowStepCheckpointFacade({
+      clock: () => "2026-05-23T08:00:00.000Z",
+    }).ensureCheckpoint({
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug,
+    });
     await writeFileInWorkspace(
       workspaceRoot,
       `${descriptionRoot}/Final_Description.md`
@@ -175,6 +198,11 @@ test("workflow step clear preserves Description questionnaire and removes genera
     });
 
     assert.equal(result.statusCode, 200);
+    assert.equal(
+      (result.payload as { readonly checkpointRestored?: unknown })
+        .checkpointRestored,
+      true
+    );
     assert.equal(
       await exists(
         path.join(workspaceRoot, `${descriptionRoot}/questionnaire.md`)
