@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.328] - 2026-05-23
+### Added
+- **Workflow step `Clear` now uses a persistent Core undo ledger.** Generated workflow artifacts and Development Tree materialization actions are recorded in `.codeai-hub/<workspace>/workflow/undo-ledger.json`, so clear operations can reverse actual Core-created outputs even after Core restarts.
+
+### Fixed
+- **Description input questionnaires are preserved during clear.** Legacy workspaces without an undo ledger keep `description/questionnaire.md` while generated Description final/draft outputs and downstream steps are removed.
+- **Continuity indexes and user-space session traces are pruned.** Clear now removes matching `continuity/index.json` entries and unified session history/translation files under `~/.codeai-hub/sessions`.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/core`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`
+
 ## [1.2.327] - 2026-05-23
 ### Fixed
 - **Quality Gates is now a true research-first workflow.** Core accepts the first provider turn only when it contains `quality-gates-research.md` and `quality-gates-research.json`; premature `quality-gates.md/json` contract creation is rejected until the research report is reviewed.

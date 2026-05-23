@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "8efd85881",
+  "lastRecordedCommit": "1f653c14e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream15.task1",
-  "expectedCommitMessage": "feat: add workflow step undo ledger",
+  "currentTaskId": "phase8.stream16.task1",
+  "expectedCommitMessage": "docs: prepare workflow clear undo release",
   "debt": {
-    "expectedCommitMessage": "feat: add workflow step undo ledger",
-    "preCommitHead": "8efd85881",
+    "expectedCommitMessage": "docs: prepare workflow clear undo release",
+    "preCommitHead": "1f653c14e",
     "stage": "commit_pending",
-    "taskId": "phase8.stream15.task1"
+    "taskId": "phase8.stream16.task1"
   }
 }
 ```
@@ -228,12 +228,21 @@
 
 ### Stream: Acceptance Remediation — Workflow Step Persistent Undo
 100. [DONE] `phase8.stream15.task1` Add a Core-owned persistent workflow step undo ledger, record generated artifacts/directories from provider artifact upserts and Development Tree materialization, and make Clear reverse ledger entries while pruning continuity index/user-space sessions and preserving Description questionnaire fallback behavior (scope: `packages/core/src/workflow/undo/**, packages/core/src/remote-bridge/handlers/workflow-step-clear*.ts, packages/core/src/remote-bridge/handlers/http-api-artifact-*.ts, packages/core/src/remote-bridge/handlers/http-api-system-routes.ts, packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.test.ts`; expected commit: `feat: add workflow step undo ledger`).
-101. [PENDING] Git Commit: `feat: add workflow step undo ledger` (hash: TBD)
-102. [TODO] `phase8.stream15.task2` Run targeted validation for workflow clear undo ledger, artifact upsert recording and Development Tree materialization recording (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-103. [TODO] `phase8.stream15.task3` Wait for explicit user confirmation before building another replacement release for persistent workflow clear undo behavior (scope: release confirmation gate; no commit expected).
+101. [DONE] Git Commit: `feat: add workflow step undo ledger` (hash: 1f653c14e)
+102. [DONE] `phase8.stream15.task2` Run targeted validation for workflow clear undo ledger, artifact upsert recording and Development Tree materialization recording (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted workflow undo validation passed: artifact upsert, Development Tree materialization and workflow clear undo tests passed; core build passed.
+103. [DONE] `phase8.stream15.task3` Wait for explicit user confirmation before building another replacement release for persistent workflow clear undo behavior (scope: release confirmation gate; no commit expected). Result: User explicitly requested a new release build for persistent workflow clear undo behavior on 2026-05-23.
+
+### Stream: Release Build — Workflow Step Persistent Undo
+104. [DONE] `phase8.stream16.task1` Update release-facing docs for the v1.2.328 workflow clear persistent undo build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow clear undo release`).
+105. [PENDING] Git Commit: `docs: prepare workflow clear undo release` (hash: TBD)
+106. [TODO] `phase8.stream16.task2` Run `./scripts/build-all.sh`, verify v1.2.328 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow clear undo release`).
+107. [TODO] Git Commit: `chore: build workflow clear undo release` (hash: TBD)
+108. [TODO] `phase8.stream16.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.328.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow clear undo vsix`).
+109. [TODO] Git Commit: `chore: package workflow clear undo vsix` (hash: TBD)
+110. [TODO] `phase8.stream16.task4` User installs the generated v1.2.328 VSIX and verifies workflow step Clear uses persistent undo behavior for Description, Virtual Simulation and downstream Development Tree cleanup (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-104. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-105. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+111. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+112. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)

@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.327** (Quality Gates research-first remediation)
+**Current Release — v1.2.328** (Workflow Clear persistent undo)
+
+This replacement build changes workflow step `Clear` from a path-pattern reset
+into a Core-owned persistent undo flow. Core now records generated workflow
+artifacts and Development Tree materialization actions in
+`.codeai-hub/<workspace>/workflow/undo-ledger.json`; when a user clears a step
+or Development Tree node, Core walks the persisted ledger backward so the reset
+still works after a Core restart.
+
+Clear also prunes `continuity/index.json`, active runtime sessions and matching
+user-space unified session files. Legacy workspaces without an undo ledger are
+handled more carefully: Description keeps its input `questionnaire.md`, while
+generated Description outputs and downstream workflow state are removed.
 
 This replacement build fixes the Quality Gates and Project Manager regressions
 found during v1.2.326 testing. Quality Gates now has a hard research-first
