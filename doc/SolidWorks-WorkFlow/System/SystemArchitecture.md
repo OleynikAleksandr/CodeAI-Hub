@@ -368,6 +368,7 @@ Workflow directory preflight:
 
 Workflow artifact edit contract:
 - Markdown artifacts пишутся как UTF-8 + LF.
+- Core records workflow file writes in `.codeai-hub/<workspaceSlug>/workflow/undo-ledger.json` with restart-safe reverse metadata. Generated file writes restore previous content or delete newly-created files during step Clear; `description/questionnaire.md` is a preserved checkpoint so clearing `Description` returns the right panel to an editable questionnaire instead of deleting the restart input.
 - Empty `agent-fill` blocks в draft/templates имеют stable patch-friendly форму с deterministic sentinel, чтобы provider-native patch/apply_patch попадал по точному контексту без fallback-скриптов.
 - Agents should patch the sentinel/content inside `agent-fill` and avoid user-facing technical retry chatter about routine patch mismatch, line-by-line probing, python fallback, or encoding retries unless artifact update remains blocked.
 - Runtime facts supplied to workflow agents include routine tool names (`python3`, `node`, `npm`) so the first turn is not spent discovering expected command aliases.
