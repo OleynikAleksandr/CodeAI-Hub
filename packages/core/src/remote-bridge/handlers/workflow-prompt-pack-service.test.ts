@@ -17,6 +17,10 @@ const PRODUCT_PART_ARTIFACT_RE = /### Product Part: core-runtime/u;
 const PRODUCT_PARTS_INDEX_RE = /### product-parts\.index\.md/u;
 const DIAGRAM_INDEX_TEMPLATE_RE = /### product-parts-index-template/u;
 const DIAGRAM_PART_TEMPLATE_RE = /### product-part-template/u;
+const DIAGRAM_LEAD_FIELD_RE = /leadProductPartId/u;
+const DIAGRAM_LEADERSHIP_ORDER_RE = /productPartLeadershipOrder/u;
+const DIAGRAM_LEADERSHIP_RULES_RE = /Product Part leadership rules:/u;
+const DIAGRAM_THIN_DISTRIBUTION_RULE_RE = /do not choose a thin distribution/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -123,6 +127,10 @@ test("Core workflow prompt pack targets every workflow stage without PM rules", 
       if (stage === "diagram_modules") {
         assert.match(promptPack.content, DIAGRAM_INDEX_TEMPLATE_RE);
         assert.match(promptPack.content, DIAGRAM_PART_TEMPLATE_RE);
+        assert.match(promptPack.content, DIAGRAM_LEAD_FIELD_RE);
+        assert.match(promptPack.content, DIAGRAM_LEADERSHIP_ORDER_RE);
+        assert.match(promptPack.content, DIAGRAM_LEADERSHIP_RULES_RE);
+        assert.match(promptPack.content, DIAGRAM_THIN_DISTRIBUTION_RULE_RE);
       }
     }
   } finally {
