@@ -18,6 +18,8 @@ const REQUIRED_RECOMMENDATION_PURPOSES = new Set([
   "test",
   "typecheck",
 ]);
+const REQUIRED_RESEARCH_MARKDOWN_HEADING = "# Quality Gates Research";
+const NEWLINE_RE = /\r?\n/u;
 
 const researchPath = (
   workspaceSlug: string,
@@ -129,6 +131,22 @@ const parseResearchJson = (
   }
 };
 
+const hasRequiredResearchMarkdownHeading = (content: string): boolean =>
+  content
+    .split(NEWLINE_RE)
+    .some((line) => line.trim() === REQUIRED_RESEARCH_MARKDOWN_HEADING);
+
+const collectResearchMarkdownDiagnostics = (
+  content: string | null
+): readonly string[] => {
+  if (!content?.trim()) {
+    return ["missing_quality_gates_research_markdown"];
+  }
+  return hasRequiredResearchMarkdownHeading(content)
+    ? []
+    : ["research_markdown_missing_required_heading"];
+};
+
 export const validateQualityGatesResearchArtifacts = async (
   request: QualityGatesResearchValidationRequest
 ): Promise<readonly string[]> => {
@@ -147,9 +165,7 @@ export const validateQualityGatesResearchArtifacts = async (
     )
   );
   const errors = [...parsed.diagnostics];
-  if (!markdown?.trim()) {
-    errors.push("missing_quality_gates_research_markdown");
-  }
+  errors.push(...collectResearchMarkdownDiagnostics(markdown));
   const research = parsed.value;
   if (!research) {
     return errors;

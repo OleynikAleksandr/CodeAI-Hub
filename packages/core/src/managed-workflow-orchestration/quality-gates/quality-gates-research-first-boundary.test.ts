@@ -148,3 +148,33 @@ test("Quality Gates validator rejects contract files in the initial research pas
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+test("Quality Gates validator rejects research markdown without canonical heading", async () => {
+  const workspaceRoot = await mkdtemp(path.join(os.tmpdir(), "qg-heading-"));
+  try {
+    await writeInitialStagePlan(workspaceRoot);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.md`,
+      "# Исследование quality gates\n\nSecret scanning is recommended.\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.json`,
+      researchJson()
+    );
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_current_artifact");
+    assert.ok(
+      result.diagnostics.includes("research_markdown_missing_required_heading")
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
