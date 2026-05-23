@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.325] - 2026-05-23
+### Changed
+- **Rebuilt the workflow step clear release under a fresh version number.** This replacement package keeps the v1.2.324 clear-action behavior and republishes it as v1.2.325 for a clean user retest.
+
+### Tests
+- `./scripts/build-all.sh`
+- `./scripts/build-release.sh --use-current-version`
+
 ## [1.2.324] - 2026-05-22
 ### Added
 - **Project Manager sidebar steps now expose a clear action.** Right-clicking a workflow step or Development Tree node opens a context menu with `Clear`, guarded by a destructive confirmation dialog.

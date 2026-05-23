@@ -2,7 +2,12 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.324** (Workflow step clear action)
+**Current Release — v1.2.325** (Workflow step clear action)
+
+This replacement rebuild republishes the Core-owned workflow step clear action
+under a fresh release number. Runtime behavior remains the same as the
+previous clear-action package: the new VSIX is intended for a clean retest path
+with the latest release metadata and bundled artifacts.
 
 This replacement release adds a Core-owned clear action for Project Manager
 workflow steps. Right-clicking a step or Development Tree node in the left

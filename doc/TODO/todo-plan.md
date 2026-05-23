@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "da578f1cc",
+  "lastRecordedCommit": "2ddb3b14a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream7.task2",
-  "expectedCommitMessage": "chore: build workflow step clear release",
+  "currentTaskId": "phase8.stream8.task1",
+  "expectedCommitMessage": "docs: prepare workflow step clear rerelease",
   "debt": {
-    "expectedCommitMessage": "chore: build workflow step clear release",
-    "preCommitHead": "da578f1cc",
+    "expectedCommitMessage": "docs: prepare workflow step clear rerelease",
+    "preCommitHead": "2ddb3b14a",
     "stage": "commit_pending",
-    "taskId": "phase8.stream7.task2"
+    "taskId": "phase8.stream8.task1"
   }
 }
 ```
@@ -163,11 +163,18 @@
 49. [DONE] `phase8.stream7.task1` Update release-facing docs for the replacement workflow step clear build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow step clear release`).
 50. [DONE] Git Commit: `docs: prepare workflow step clear release` (hash: da578f1cc)
 51. [DONE] `phase8.stream7.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workflow step clear release`). Result: v1.2.324 tarballs copied to `doc/tmp/releases/`; VSIX `codeai-hub-1.2.324.vsix` built successfully at 4.5M with SDK exclusions, local artefact validation, markdown links, duplication check and package surface checks passing.
-52. [PENDING] Git Commit: `chore: build workflow step clear release` (hash: TBD)
-53. [TODO] `phase8.stream7.task3` User installs the generated replacement VSIX and verifies workflow step clear behavior from the Project Manager sidebar (scope: user workflow acceptance; no commit expected).
+52. [DONE] Git Commit: `chore: build workflow step clear release` (hash: 2ddb3b14a)
+53. [BLOCKED] `phase8.stream7.task3` User installs the generated replacement VSIX and verifies workflow step clear behavior from the Project Manager sidebar (scope: user workflow acceptance; no commit expected). Blocked: user requested a new replacement release number before final acceptance.
+
+### Stream: Replacement Release Build — Workflow Step Clear Action
+54. [DONE] `phase8.stream8.task1` Update release-facing docs for the v1.2.325 replacement workflow step clear build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow step clear rerelease`).
+55. [PENDING] Git Commit: `docs: prepare workflow step clear rerelease` (hash: TBD)
+56. [TODO] `phase8.stream8.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workflow step clear rerelease`).
+57. [TODO] Git Commit: `chore: build workflow step clear rerelease` (hash: TBD)
+58. [TODO] `phase8.stream8.task3` User installs the generated v1.2.325 replacement VSIX and verifies workflow step clear behavior from the Project Manager sidebar (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-54. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-55. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+59. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+60. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
