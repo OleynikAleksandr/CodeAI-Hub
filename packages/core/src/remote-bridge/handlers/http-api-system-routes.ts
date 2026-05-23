@@ -97,6 +97,7 @@ export interface WorkflowSessionContext {
 }
 
 export interface WorkflowStageArtifactUpsertPlan {
+  readonly stage: WorkflowStageId;
   readonly upserts: readonly {
     readonly slot: string;
     readonly relativePath: string;
@@ -105,6 +106,8 @@ export interface WorkflowStageArtifactUpsertPlan {
     readonly existingContent: string | null;
     readonly changed: boolean;
   }[];
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
 }
 
 interface WorkflowStageArtifactTarget {

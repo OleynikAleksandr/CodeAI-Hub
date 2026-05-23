@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -85,6 +92,21 @@ test("DevelopmentTreeFilesystemStructuratorFacade plans and applies materialized
     for (const directory of result.plan.directories) {
       assert.equal((await stat(directory.absolutePath)).isDirectory(), true);
     }
+    const ledger = JSON.parse(
+      await readFile(
+        path.join(
+          workspaceRoot,
+          ".codeai-hub/demo-workspace/workflow/undo-ledger.json"
+        ),
+        "utf8"
+      )
+    ) as { readonly entries: readonly { readonly stage: string }[] };
+    assert.equal(
+      ledger.entries.some((entry) =>
+        entry.stage.startsWith("development_tree/materialized/product-parts/")
+      ),
+      true
+    );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -239,6 +261,23 @@ test("DevelopmentTreeFilesystemStructuratorFacade materializes accepted producti
           )
         )
       ).isDirectory(),
+      true
+    );
+    const ledger = JSON.parse(
+      await readFile(
+        path.join(
+          workspaceRoot,
+          ".codeai-hub/demo-workspace/workflow/undo-ledger.json"
+        ),
+        "utf8"
+      )
+    ) as { readonly entries: readonly { readonly relativePath: string }[] };
+    assert.equal(
+      ledger.entries.some(
+        (entry) =>
+          entry.relativePath ===
+          "src/product-parts/local-runtime/clusters/orchestration/modules/workflow-state"
+      ),
       true
     );
   } finally {

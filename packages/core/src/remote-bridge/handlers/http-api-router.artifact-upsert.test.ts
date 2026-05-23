@@ -57,7 +57,14 @@ const PRODUCT_PART_MARKDOWN = [
 ].join("\n");
 
 const PRODUCT_PART_WITHOUT_NODES_MARKDOWN = PRODUCT_PART_MARKDOWN.replace(
-  "| `workspace-shell` | Host the workflow surface. |",
+  [
+    "## Standalone Modules",
+    "",
+    "| `module-id` | Responsibility |",
+    "| --- | --- |",
+    "| `workspace-shell` | Host the workflow surface. |",
+    "",
+  ].join("\n"),
   ""
 );
 
@@ -197,6 +204,24 @@ test("artifact upsert saves diagram modules staged index and dynamic product par
     assert.equal(
       await readFile(productPartPath, "utf8"),
       PRODUCT_PART_MARKDOWN
+    );
+    const ledger = JSON.parse(
+      await readFile(
+        path.join(
+          workspaceRoot,
+          `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`
+        ),
+        "utf8"
+      )
+    ) as {
+      readonly entries: readonly { readonly relativePath: string }[];
+    };
+    assert.deepEqual(
+      ledger.entries.map((entry) => entry.relativePath),
+      [
+        `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts.index.md`,
+        `.codeai-hub/${workspaceSlug}/diagram_modules/product-parts/local-core-runtime.md`,
+      ]
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

@@ -127,6 +127,12 @@ const validateProductPartArtifact = (
   if (expectedPartId && partId !== expectedPartId) {
     return `Product part markdown Part ID must match artifact path: ${expectedPartId}`;
   }
+  if (
+    (parseResult.value.clusters?.length ?? 0) === 0 &&
+    (parseResult.value.modules?.length ?? 0) === 0
+  ) {
+    return "Product part markdown must include at least one valid Cluster or Module node";
+  }
   return null;
 };
 

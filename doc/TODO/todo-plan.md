@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "01b7b712b",
+  "lastRecordedCommit": "8efd85881",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream14.task3",
-  "expectedCommitMessage": "chore: package quality gates clear regression vsix",
+  "currentTaskId": "phase8.stream15.task1",
+  "expectedCommitMessage": "feat: add workflow step undo ledger",
   "debt": {
-    "expectedCommitMessage": "chore: package quality gates clear regression vsix",
-    "preCommitHead": "01b7b712b",
+    "expectedCommitMessage": "feat: add workflow step undo ledger",
+    "preCommitHead": "8efd85881",
     "stage": "commit_pending",
-    "taskId": "phase8.stream14.task3"
+    "taskId": "phase8.stream15.task1"
   }
 }
 ```
@@ -223,11 +223,17 @@
 95. [DONE] `phase8.stream14.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.327 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates clear regression release`).
 96. [DONE] Git Commit: `chore: build quality gates clear regression release` (hash: 01b7b712b)
 97. [DONE] `phase8.stream14.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.327.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates clear regression vsix`). Result: VSIX `codeai-hub-1.2.327.vsix` built successfully at 4.5M with SDK exclusions, local artefact validation, markdown links, duplication check and package surface checks passing.
-98. [PENDING] Git Commit: `chore: package quality gates clear regression vsix` (hash: TBD)
-99. [TODO] `phase8.stream14.task4` User installs the generated v1.2.327 VSIX and verifies Quality Gates research-first flow, Research/Contract artifact buttons, and sidebar Clear menu behavior from Project Manager (scope: user workflow acceptance; no commit expected).
+98. [DONE] Git Commit: `chore: package quality gates clear regression vsix` (hash: 8efd85881)
+99. [BLOCKED] `phase8.stream14.task4` User installs the generated v1.2.327 VSIX and verifies Quality Gates research-first flow, Research/Contract artifact buttons, and sidebar Clear menu behavior from Project Manager (scope: user workflow acceptance; no commit expected). Blocked: user reported that workflow step Clear deletes Description input questionnaire while leaving continuity/index records; Clear must become persistent undo-ledger based.
+
+### Stream: Acceptance Remediation — Workflow Step Persistent Undo
+100. [DONE] `phase8.stream15.task1` Add a Core-owned persistent workflow step undo ledger, record generated artifacts/directories from provider artifact upserts and Development Tree materialization, and make Clear reverse ledger entries while pruning continuity index/user-space sessions and preserving Description questionnaire fallback behavior (scope: `packages/core/src/workflow/undo/**, packages/core/src/remote-bridge/handlers/workflow-step-clear*.ts, packages/core/src/remote-bridge/handlers/http-api-artifact-*.ts, packages/core/src/remote-bridge/handlers/http-api-system-routes.ts, packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.test.ts`; expected commit: `feat: add workflow step undo ledger`).
+101. [PENDING] Git Commit: `feat: add workflow step undo ledger` (hash: TBD)
+102. [TODO] `phase8.stream15.task2` Run targeted validation for workflow clear undo ledger, artifact upsert recording and Development Tree materialization recording (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+103. [TODO] `phase8.stream15.task3` Wait for explicit user confirmation before building another replacement release for persistent workflow clear undo behavior (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-100. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-101. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+104. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+105. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
