@@ -55,6 +55,8 @@ const explainDiagnostic = (diagnostic: string): string => {
       'Set `integrationState: "integrated"` only after the integration files are actually present.',
     json_root_not_object:
       "Make `quality-gates.json` a single JSON object at the root.",
+    quality_gates_contract_before_research_review:
+      "Remove `quality-gates.md` and `quality-gates.json` for this pass; Core must open the research report for user review before the contract draft is created.",
     markdown_premature_acceptance:
       "Remove draft-time acceptance from `quality-gates.md`; Core opens acceptance only after user review.",
     markdown_premature_integration:
@@ -138,6 +140,35 @@ export const buildQualityGatesUserReviewMessage = (): string =>
     'Review the Quality Gates contract semantically. If everything is acceptable, reply with "подтверждаю". If changes are needed, list the corrections before integration.',
   ].join("\n");
 
+export const buildQualityGatesResearchUserReviewMessage = (): string =>
+  [
+    "Core completed Quality Gates research artifact validation.",
+    "",
+    "The research report shape is valid, so user review is now open before contract drafting.",
+    "",
+    'Review the found tools and recommendations. If the research is acceptable, reply with "подтверждаю"; Core will then ask the agent to draft the Quality Gates contract from this approved research. If changes are needed, list the corrections first.',
+  ].join("\n");
+
+export const buildQualityGatesContractDraftPrompt = (options: {
+  readonly workspaceSlug: string;
+}): string =>
+  [
+    "Core accepted the Quality Gates research report and opens contract drafting.",
+    "",
+    "Use the approved research artifacts as source of truth:",
+    `- \`.codeai-hub/${options.workspaceSlug}/quality_gates/quality-gates-research.md\``,
+    `- \`.codeai-hub/${options.workspaceSlug}/quality_gates/quality-gates-research.json\``,
+    "",
+    "Now create only the contract artifacts:",
+    `- \`.codeai-hub/${options.workspaceSlug}/quality_gates/quality-gates.md\``,
+    `- \`.codeai-hub/${options.workspaceSlug}/quality_gates/quality-gates.json\``,
+    "",
+    'Keep `accepted: false`, `integrated: false`, and `integrationState: "not_started"`.',
+    "Do not create package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts, or production code.",
+    "Do not run Git commands or edit managed plan files.",
+    "When the draft contract is ready, stop for Core validation and user review.",
+  ].join("\n");
+
 export const buildQualityGatesIntegrationPrompt = (options: {
   readonly workspaceSlug: string;
 }): string =>
@@ -210,6 +241,26 @@ export const buildQualityGatesReviewRevisionPrompt = (options: {
     "Do not set `accepted: true`.",
     "Do not set `integrated: true`.",
     "If corrections affect tool selection, update the research artifacts and then the contract artifacts in the same revision.",
+    "Do not create package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts, or production code.",
+    "Do not run Git commands or edit managed plan files.",
+  ].join("\n");
+
+export const buildQualityGatesResearchReviewRevisionPrompt = (options: {
+  readonly userFeedback: string;
+  readonly workspaceSlug: string;
+}): string =>
+  [
+    "Core received Quality Gates research review corrections from the user.",
+    "Revise only the Quality Gates research artifacts and then stop for Core validation.",
+    "",
+    "Target artifacts:",
+    `- \`.codeai-hub/${options.workspaceSlug}/quality_gates/quality-gates-research.md\``,
+    `- \`.codeai-hub/${options.workspaceSlug}/quality_gates/quality-gates-research.json\``,
+    "",
+    "User requested changes:",
+    options.userFeedback.trim(),
+    "",
+    "Do not create `quality-gates.md` or `quality-gates.json` until Core explicitly opens contract drafting.",
     "Do not create package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts, or production code.",
     "Do not run Git commands or edit managed plan files.",
   ].join("\n");

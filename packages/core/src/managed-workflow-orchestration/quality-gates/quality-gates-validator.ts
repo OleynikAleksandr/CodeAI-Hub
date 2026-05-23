@@ -7,7 +7,7 @@ import {
   buildQualityGatesPersistentReturnMessage,
   buildQualityGatesUserReviewMessage,
 } from "./quality-gates-prompt-builder";
-import { validateQualityGatesResearchArtifacts } from "./quality-gates-research-validator";
+import { resolveQualityGatesResearchFirstBoundary } from "./quality-gates-research-first-boundary";
 
 export type QualityGatesManagedPhase = "draft" | "integration";
 
@@ -432,14 +432,21 @@ export const validateQualityGatesManagedArtifacts = async (
       relativeQualityGatesPath(request.workspaceSlug, "quality-gates.md")
     )
   );
-  const parsed = parseJsonObject(
-    await readRequiredFile(
-      path.join(
-        request.workspaceRoot,
-        relativeQualityGatesPath(request.workspaceSlug, "quality-gates.json")
-      )
+  const contractJsonText = await readRequiredFile(
+    path.join(
+      request.workspaceRoot,
+      relativeQualityGatesPath(request.workspaceSlug, "quality-gates.json")
     )
   );
+  const researchBoundary = await resolveQualityGatesResearchFirstBoundary({
+    contractJsonText,
+    contractMarkdown: markdown,
+    request,
+  });
+  if (researchBoundary.decision) {
+    return researchBoundary.decision;
+  }
+  const parsed = parseJsonObject(contractJsonText);
   const phase = resolvePhase(parsed.value);
   const diagnostics =
     phase === "integration"
@@ -453,7 +460,7 @@ export const validateQualityGatesManagedArtifacts = async (
         ]
       : [
           ...parsed.errors,
-          ...(await validateQualityGatesResearchArtifacts(request)),
+          ...researchBoundary.researchDiagnostics,
           ...validateDraftShape({ contractJson: parsed.value, markdown }),
         ];
   if (diagnostics.length > 0) {

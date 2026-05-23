@@ -4,7 +4,8 @@ import path from "node:path";
 import test from "node:test";
 import { BUNDLED_TEMPLATE_SOURCES } from "./bundled-templates";
 
-const DRAFT_PHASE_RE = /Phase 1: Draft Gate Contract/;
+const RESEARCH_PHASE_RE = /Phase 1A: Research Review/;
+const DRAFT_PHASE_RE = /Phase 1B: Draft Gate Contract/;
 const REVIEW_PHASE_RE = /Phase 2: User-Led Review/;
 const INTEGRATION_PHASE_RE = /Phase 3: Post-Acceptance Integration/;
 const ACCEPTANCE_BOUNDARY_RE = /Acceptance is a user\/runtime decision/;
@@ -96,9 +97,10 @@ const decodeTemplate = (id: string): string => {
   return Buffer.from(source.base64, "base64").toString("utf8");
 };
 
-test("quality gates bundled prompt keeps compact two-phase integration contract", () => {
+test("quality gates bundled prompt keeps research-first integration contract", () => {
   const prompt = decodeTemplate("quality-gates-prompt");
 
+  assert.match(prompt, RESEARCH_PHASE_RE);
   assert.match(prompt, DRAFT_PHASE_RE);
   assert.match(prompt, REVIEW_PHASE_RE);
   assert.match(prompt, INTEGRATION_PHASE_RE);

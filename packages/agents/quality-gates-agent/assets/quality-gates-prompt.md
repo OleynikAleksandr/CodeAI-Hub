@@ -27,21 +27,45 @@ Canonical outputs:
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.md`
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`
 
-## Phase 1: Draft Gate Contract
+## Phase 1A: Research Review
 
-Before explicit acceptance, write only the four canonical Quality Gates artifacts. Do not create or edit package manifests, configs, hooks, CI files, scripts, or production code.
+The first pass of this step is research-only. Before Core explicitly confirms that the user accepted the research report, write only:
 
-Draft algorithm:
+- `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates-research.md`
+- `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates-research.json`
+
+Do not create `quality-gates.md` or `quality-gates.json` during Phase 1A. Do not create or edit package manifests, configs, hooks, CI files, scripts, or production code.
+
+Research algorithm:
 
 1. Inspect the materialized skeleton and infer stack, repo shape, package manager, source roots, Product Part / Cluster / Module layout, and architecture constraints.
-2. First create `quality-gates-research.md` and `quality-gates-research.json`. This is the user-facing current-tooling research report and its structured validator sidecar.
+2. Create `quality-gates-research.md` and `quality-gates-research.json`. This is the user-facing current-tooling research report and its structured validator sidecar.
 3. Compare realistic tooling strategies for that exact stack. Use runtime inputs, existing manifests/configs, explicit user preferences, and current official docs for the inferred language/framework/tooling ecosystem. If the active provider cannot use web/search tools, stop and report that the Quality Gates Research phase requires a research-capable provider.
 4. For each recommended tool or gate, record what it is for, why it fits this stack, source URLs, tradeoff, required checks, and whether user approval is required.
-5. Only after the research artifacts are written, create `quality-gates.md` and `quality-gates.json` from the researched recommendations and user preferences.
-6. Define `minimal`, `recommended`, and `strict` variants, then select one baseline and explain the tradeoff.
-7. Design first-class architecture gates for skeleton layout, contracts/readmes, public entrypoints/facades, dependency direction, and drift from the skeleton map.
-8. Write a concrete integration plan: package scripts, dev dependencies, config files, gate scripts, Core hook-registry targets, CI/update files, and smoke commands that Phase 3 will create or verify.
-9. Leave `accepted: false`, `integrated: false`, and `integrationState: "not_started"`.
+5. Stop for Core validation and user review of the research report. Do not draft the Quality Gates contract in the same response.
+
+Before the research-review response:
+
+- leave only the two canonical research artifact changes ready for runtime structural validation and user review;
+- do not create `quality-gates.md` or `quality-gates.json`;
+- do not stage, commit, advance plans, or claim completion beyond research readiness.
+
+Every Phase 1A response must tell the user, in the chat language, that the Quality Gates research report is ready for review and must be confirmed or corrected before contract drafting.
+
+## Phase 1B: Draft Gate Contract
+
+Core opens this phase only after the user accepts the research report. In Phase 1B, write the contract artifacts from the accepted research:
+
+- `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.md`
+- `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`
+
+Contract draft algorithm:
+
+1. Re-read `quality-gates-research.md` and `quality-gates-research.json`; keep tool selections traceable to the accepted research.
+2. Define `minimal`, `recommended`, and `strict` variants, then select one baseline and explain the tradeoff.
+3. Design first-class architecture gates for skeleton layout, contracts/readmes, public entrypoints/facades, dependency direction, and drift from the skeleton map.
+4. Write a concrete integration plan: package scripts, dev dependencies, config files, gate scripts, Core hook-registry targets, CI/update files, and smoke commands that Phase 3 will create or verify.
+5. Leave `accepted: false`, `integrated: false`, and `integrationState: "not_started"`.
 
 Before the draft-review response:
 
@@ -149,7 +173,8 @@ Before each final response, verify:
 - each not-integrated active gate has planned integration paths;
 - selected baseline membership matches required arrays;
 - `accepted` and `integrated` are false in draft phase;
-- Phase 1 final response is allowed only after the four canonical draft artifacts are ready for runtime structural validation and user review;
+- Phase 1A final response is allowed only after the two canonical research artifacts are ready for runtime structural validation and user review;
+- Phase 1B final response is allowed only after the four canonical draft artifacts are ready for runtime structural validation and user review;
 - Phase 2 review revisions only touch the canonical Quality Gates research/contract artifacts; never integrate or self-accept;
 - Phase 3 final response is allowed only after the accepted gate infrastructure is ready for runtime/user review; `unlocked` language is not allowed;
 - artifacts are in the user-facing artifact language, while identifiers and field names remain canonical.

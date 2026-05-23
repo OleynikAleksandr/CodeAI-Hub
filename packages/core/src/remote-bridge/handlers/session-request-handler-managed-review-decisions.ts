@@ -20,11 +20,6 @@ import {
   isDiagramModulesReviewOpen,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
 import { buildManagedPersistentReturnHandoffMessage } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
-import {
-  buildQualityGatesBoundaryBlockedMessage,
-  buildQualityGatesIntegrationPrompt,
-  buildQualityGatesReviewRevisionPrompt,
-} from "../../managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder";
 import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import {
   PLAN_END,
@@ -33,6 +28,10 @@ import {
   QUALITY_GATES_STAGE_PLAN_PATH,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model";
 import type { Session } from "../../session-manager";
+import {
+  dispatchQualityGatesReviewRevision,
+  openQualityGatesNextAcceptedReviewPhase,
+} from "./quality-gates-review-decision-flow";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 
@@ -322,13 +321,18 @@ export class SessionRequestHandlerManagedReviewDecisions {
     }
     this.appendUserReviewMessage(options);
     if (options.intent === "accept") {
-      await this.openQualityGatesIntegration(options.session);
+      await openQualityGatesNextAcceptedReviewPhase(options.session, {
+        eventMessages: this.deps.eventMessages,
+        messageDispatch: this.deps.messageDispatch,
+        stagePlan: this.qualityGatesStagePlan,
+      });
       return true;
     }
-    await this.dispatchQualityGatesReviewRevision(
-      options.session,
-      options.content
-    );
+    await dispatchQualityGatesReviewRevision(options.session, options.content, {
+      eventMessages: this.deps.eventMessages,
+      messageDispatch: this.deps.messageDispatch,
+      stagePlan: this.qualityGatesStagePlan,
+    });
     return true;
   }
 
@@ -407,33 +411,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     await this.completeApplicationSkeletonFinalReview(session);
   }
 
-  private async openQualityGatesIntegration(session: Session): Promise<void> {
-    if (!(session.workspacePath && session.initiativeSlug)) {
-      return;
-    }
-    try {
-      await this.qualityGatesStagePlan.acceptUserReviewWithoutRevision({
-        workspaceRoot: session.workspacePath,
-      });
-    } catch (error) {
-      this.deps.eventMessages.appendCoreMessage(session.id, {
-        content: buildQualityGatesBoundaryBlockedMessage(
-          error instanceof Error ? error.message : String(error)
-        ),
-        tag: "managed-workflow-validation",
-      });
-      return;
-    }
-    const prompt = buildQualityGatesIntegrationPrompt({
-      workspaceSlug: session.initiativeSlug,
-    });
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: prompt,
-      tag: "managed-workflow-continuation",
-    });
-    await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
-  }
-
   private async completeDiagramModulesReview(session: Session): Promise<void> {
     if (!(session.workspacePath && session.initiativeSlug)) {
       return;
@@ -475,24 +452,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
             userFeedback: content,
             workspaceSlug: session.initiativeSlug,
           });
-    await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
-  }
-
-  private async dispatchQualityGatesReviewRevision(
-    session: Session,
-    content: string
-  ): Promise<void> {
-    if (!session.initiativeSlug) {
-      return;
-    }
-    const prompt = buildQualityGatesReviewRevisionPrompt({
-      userFeedback: content,
-      workspaceSlug: session.initiativeSlug,
-    });
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: prompt,
-      tag: "managed-workflow-user-review",
-    });
     await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
   }
 }
