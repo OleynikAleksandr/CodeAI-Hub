@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "797293562",
+  "lastRecordedCommit": "ff8ce953a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream34.task2",
-  "expectedCommitMessage": "chore: build quality gates research heading release",
+  "currentTaskId": "phase8.stream34.task3",
+  "expectedCommitMessage": "chore: package quality gates research heading vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates research heading release",
-    "preCommitHead": "797293562",
+    "expectedCommitMessage": "chore: package quality gates research heading vsix",
+    "preCommitHead": "ff8ce953a",
     "stage": "commit_pending",
-    "taskId": "phase8.stream34.task2"
+    "taskId": "phase8.stream34.task3"
   }
 }
 ```
@@ -399,9 +399,9 @@
 237. [DONE] `phase8.stream34.task1` Update release-facing docs for the v1.2.337 Quality Gates research heading validation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates research heading release`).
 238. [DONE] Git Commit: `docs: prepare quality gates research heading release` (hash: 797293562)
 239. [DONE] `phase8.stream34.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.337 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates research heading release`).
-240. [PENDING] Git Commit: `chore: build quality gates research heading release` (hash: TBD)
-241. [TODO] `phase8.stream34.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates research heading vsix`).
-242. [TODO] Git Commit: `chore: package quality gates research heading vsix` (hash: TBD)
+240. [DONE] Git Commit: `chore: build quality gates research heading release` (hash: ff8ce953a)
+241. [DONE] `phase8.stream34.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates research heading vsix`).
+242. [PENDING] Git Commit: `chore: package quality gates research heading vsix` (hash: TBD)
 243. [TODO] `phase8.stream34.task4` User installs the generated v1.2.337 VSIX and verifies Quality Gates research artifacts missing `# Quality Gates Research` stay in Core repair instead of opening user review (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
