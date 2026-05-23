@@ -152,6 +152,14 @@ const ensureWorkspaceSession = async (
   }
 };
 
+const refreshWorkspaceSession = async (
+  workspacePath: string,
+  initiativeSlug: string
+): Promise<string | null> => {
+  sessionCache.delete(workspacePath);
+  return await ensureWorkspaceSession(workspacePath, initiativeSlug);
+};
+
 export class DescriptionQuestionnaireService {
   async load(workspace: WorkspaceInfo): Promise<QuestionnaireLoadResult> {
     const workspaceName = resolveWorkspaceName(workspace);
@@ -159,10 +167,8 @@ export class DescriptionQuestionnaireService {
       typeof workspace.slug === "string" && workspace.slug.trim().length > 0
         ? workspace.slug.trim()
         : toWorkspaceSlug(workspaceName);
-    const sessionId = await ensureWorkspaceSession(
-      workspace.path,
-      workspaceSlug
-    );
+    let cachedSessionId = sessionCache.get(workspace.path) ?? null;
+    let sessionId = await ensureWorkspaceSession(workspace.path, workspaceSlug);
     if (!sessionId) {
       return { status: "error" };
     }
@@ -172,7 +178,17 @@ export class DescriptionQuestionnaireService {
       parseDescriptionQuestionnaireTemplateFields(template);
 
     const questionnairePath = buildCanonicalQuestionnairePath(workspaceSlug);
-    const existing = await readWorkspaceFile(sessionId, questionnairePath);
+    let existing = await readWorkspaceFile(sessionId, questionnairePath);
+    if (existing.status !== "ok" && cachedSessionId === sessionId) {
+      const refreshedSessionId = await refreshWorkspaceSession(
+        workspace.path,
+        workspaceSlug
+      );
+      if (refreshedSessionId) {
+        sessionId = refreshedSessionId;
+        existing = await readWorkspaceFile(sessionId, questionnairePath);
+      }
+    }
     const existingContent =
       existing.status === "ok" ? existing.file.content : null;
 

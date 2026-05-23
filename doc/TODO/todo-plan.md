@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "33d972c4a",
+  "lastRecordedCommit": "ac6212258",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream19.task1",
-  "expectedCommitMessage": "fix: remove orphaned workflow clear state",
+  "currentTaskId": "phase8.stream19.task2",
+  "expectedCommitMessage": "fix: reload questionnaire after workflow clear",
   "debt": {
-    "expectedCommitMessage": "fix: remove orphaned workflow clear state",
-    "preCommitHead": "33d972c4a",
+    "expectedCommitMessage": "fix: reload questionnaire after workflow clear",
+    "preCommitHead": "ac6212258",
     "stage": "commit_pending",
-    "taskId": "phase8.stream19.task1"
+    "taskId": "phase8.stream19.task2"
   }
 }
 ```
@@ -260,9 +260,9 @@
 
 ### Stream: Workflow Clear Exact Revert Regression
 126. [DONE] `phase8.stream19.task1` Make workflow step Clear combine persisted undo with fallback stage cleanup, remove empty continuity state instead of rewriting empty indexes, and delete user-space session files for cleared workflow stages even when continuity has already been pruned (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-continuity-support.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`; expected commit: `fix: remove orphaned workflow clear state`).
-127. [PENDING] Git Commit: `fix: remove orphaned workflow clear state` (hash: TBD)
-128. [TODO] `phase8.stream19.task2` Make Project Manager reload the Description questionnaire through a fresh workspace session when the cached session was cleared, preserving the existing filled questionnaire file instead of rendering an empty form (scope: `src/client/project-manager/services/description-questionnaire-service.ts, src/client/project-manager/services/description-questionnaire-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: reload questionnaire after workflow clear`).
-129. [TODO] Git Commit: `fix: reload questionnaire after workflow clear` (hash: TBD)
+127. [DONE] Git Commit: `fix: remove orphaned workflow clear state` (hash: ac6212258)
+128. [DONE] `phase8.stream19.task2` Make Project Manager reload the Description questionnaire through a fresh workspace session when the cached session was cleared, preserving the existing filled questionnaire file instead of rendering an empty form (scope: `src/client/project-manager/services/description-questionnaire-service.ts, src/client/project-manager/services/description-questionnaire-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: reload questionnaire after workflow clear`).
+129. [PENDING] Git Commit: `fix: reload questionnaire after workflow clear` (hash: TBD)
 130. [TODO] `phase8.stream19.task3` Run targeted validation for Core workflow clear exact-revert behavior and Project Manager questionnaire reload after Clear (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 131. [TODO] `phase8.stream19.task4` Wait for explicit user confirmation before building the next replacement release after exact-revert Clear fixes (scope: release confirmation gate; no commit expected).
 
