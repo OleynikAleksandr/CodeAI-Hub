@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.336** (Workflow Undo Metadata Dirty Gate)
+**Current Release — v1.2.337** (Quality Gates Research Heading Validation)
+
+This replacement build fixes the Core-owned Quality Gates research gate. Core
+now validates the same canonical Markdown title that Project Manager parses:
+`quality-gates-research.md` must contain `# Quality Gates Research`.
+
+If the agent creates a localized or otherwise wrong title, Core keeps the step
+in repair instead of opening user review. The repair prompt now tells the agent
+to start the research report with the exact heading before localized prose.
+
+**Previous Release — v1.2.336** (Workflow Undo Metadata Dirty Gate)
 
 This replacement build fixes Diagram Modules acceptance after workflow
 checkpoint/undo support. Core now treats

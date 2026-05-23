@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.337] - 2026-05-23
+### Fixed
+- **Quality Gates research markdown heading is Core-validated.** Core now rejects `quality-gates-research.md` when it is missing the canonical `# Quality Gates Research` heading, so Project Manager is no longer the only surface that detects the malformed research artifact.
+- **Quality Gates repair prompt explains the heading fix.** The managed repair prompt now tells the agent to start `quality-gates-research.md` with the exact heading before localized prose or sections.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.336] - 2026-05-23
 ### Fixed
 - **Workflow undo metadata no longer blocks Diagram Modules acceptance.** Core now classifies workflow checkpoints and the undo ledger as Core-owned runtime metadata in the managed terminal acceptance gate, so the user is not asked to manually handle internal undo files in Git.

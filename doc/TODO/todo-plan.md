@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "1faf930c3",
+  "lastRecordedCommit": "a4eb6cda1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream33.task2",
-  "expectedCommitMessage": "fix: explain quality gates research heading repair",
+  "currentTaskId": "phase8.stream34.task1",
+  "expectedCommitMessage": "docs: prepare quality gates research heading release",
   "debt": {
-    "expectedCommitMessage": "fix: explain quality gates research heading repair",
-    "preCommitHead": "1faf930c3",
+    "expectedCommitMessage": "docs: prepare quality gates research heading release",
+    "preCommitHead": "a4eb6cda1",
     "stage": "commit_pending",
-    "taskId": "phase8.stream33.task2"
+    "taskId": "phase8.stream34.task1"
   }
 }
 ```
@@ -391,9 +391,18 @@
 231. [DONE] `phase8.stream33.task1` Enforce the canonical `# Quality Gates Research` markdown heading in the Core-owned Quality Gates research validator and add a regression test for localized/wrong headings (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: validate quality gates research heading`).
 232. [DONE] Git Commit: `fix: validate quality gates research heading` (hash: 1faf930c3)
 233. [DONE] `phase8.stream33.task2` Explain the new research heading diagnostic in the Core repair prompt so the agent repairs the markdown title instead of reaching user review with a PM-only parser error (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: explain quality gates research heading repair`).
-234. [PENDING] Git Commit: `fix: explain quality gates research heading repair` (hash: TBD)
-235. [TODO] `phase8.stream33.task3` Run targeted validation for Quality Gates research boundary, repair prompt behavior and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-236. [TODO] `phase8.stream33.task4` Wait for explicit user confirmation before building the next replacement release after Quality Gates research heading validation (scope: release confirmation gate; no commit expected).
+234. [DONE] Git Commit: `fix: explain quality gates research heading repair` (hash: a4eb6cda1)
+235. [DONE] `phase8.stream33.task3` Run targeted validation for Quality Gates research boundary, repair prompt behavior and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted Quality Gates validation passed: research-first boundary, Quality Gates validator/review-decision flow and @codeai-hub/core build all passed; wrong or localized research markdown headings now block Core user review with an agent repair prompt.
+236. [DONE] `phase8.stream33.task4` Wait for explicit user confirmation before building the next replacement release after Quality Gates research heading validation (scope: release confirmation gate; no commit expected). Result: User explicitly requested a new release build for Quality Gates research heading validation on 2026-05-23.
+
+### Stream: Release Build — Quality Gates Research Heading Validation
+237. [DONE] `phase8.stream34.task1` Update release-facing docs for the v1.2.337 Quality Gates research heading validation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates research heading release`).
+238. [PENDING] Git Commit: `docs: prepare quality gates research heading release` (hash: TBD)
+239. [TODO] `phase8.stream34.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.337 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates research heading release`).
+240. [TODO] Git Commit: `chore: build quality gates research heading release` (hash: TBD)
+241. [TODO] `phase8.stream34.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates research heading vsix`).
+242. [TODO] Git Commit: `chore: package quality gates research heading vsix` (hash: TBD)
+243. [TODO] `phase8.stream34.task4` User installs the generated v1.2.337 VSIX and verifies Quality Gates research artifacts missing `# Quality Gates Research` stay in Core repair instead of opening user review (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
