@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "8cc401923",
+  "lastRecordedCommit": "088e9e535",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream32.task1",
-  "expectedCommitMessage": "docs: prepare workflow undo metadata gate release",
+  "currentTaskId": "phase8.stream32.task2",
+  "expectedCommitMessage": "chore: build workflow undo metadata gate release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare workflow undo metadata gate release",
-    "preCommitHead": "8cc401923",
+    "expectedCommitMessage": "chore: build workflow undo metadata gate release",
+    "preCommitHead": "088e9e535",
     "stage": "commit_pending",
-    "taskId": "phase8.stream32.task1"
+    "taskId": "phase8.stream32.task2"
   }
 }
 ```
@@ -380,9 +380,9 @@
 
 ### Stream: Release Build — Workflow Undo Metadata Dirty Gate
 224. [DONE] `phase8.stream32.task1` Update release-facing docs for the v1.2.336 workflow undo metadata dirty-gate build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow undo metadata gate release`).
-225. [PENDING] Git Commit: `docs: prepare workflow undo metadata gate release` (hash: TBD)
-226. [TODO] `phase8.stream32.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.336 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow undo metadata gate release`).
-227. [TODO] Git Commit: `chore: build workflow undo metadata gate release` (hash: TBD)
+225. [DONE] Git Commit: `docs: prepare workflow undo metadata gate release` (hash: 088e9e535)
+226. [DONE] `phase8.stream32.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.336 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow undo metadata gate release`).
+227. [PENDING] Git Commit: `chore: build workflow undo metadata gate release` (hash: TBD)
 228. [TODO] `phase8.stream32.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow undo metadata gate vsix`).
 229. [TODO] Git Commit: `chore: package workflow undo metadata gate vsix` (hash: TBD)
 230. [TODO] `phase8.stream32.task4` User installs the generated v1.2.336 VSIX and verifies Diagram Modules acceptance is not blocked by workflow checkpoint/undo metadata (scope: user workflow acceptance; no commit expected).
