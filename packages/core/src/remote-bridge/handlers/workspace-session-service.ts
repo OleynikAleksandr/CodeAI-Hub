@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { WorkflowStepCheckpointFacade } from "../../workflow/step-checkpoint/workflow-step-checkpoint-facade";
 import { captureWorkflowMutation } from "../../workflow/undo/workflow-mutation-journal-runtime";
 import type { WorkflowUndoStageId } from "../../workflow/undo/workflow-step-undo-ledger";
 
@@ -117,6 +118,13 @@ export const handleWorkspaceSessionCreate = async (params: {
 
   try {
     const createSession = async () => {
+      if (parsed.value.initiativeSlug && parsed.value.stage) {
+        await new WorkflowStepCheckpointFacade().ensureCheckpoint({
+          stage: parsed.value.stage as WorkflowUndoStageId,
+          workspaceRoot: parsed.value.workspacePath,
+          workspaceSlug: parsed.value.initiativeSlug,
+        });
+      }
       await prepareWorkflowStageDirectories({
         initiativeSlug: parsed.value.initiativeSlug,
         runSlug: parsed.value.runSlug,

@@ -11,6 +11,7 @@ import type { ContinuityChainSummary } from "../../session-continuity/continuity
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { WorkflowStepCheckpointFacade } from "../../workflow/step-checkpoint/workflow-step-checkpoint-facade";
 import {
   undoWorkflowStepAction,
   type WorkflowStepUndoAction,
@@ -404,6 +405,19 @@ const collectClearPaths = (
   return fallbackPaths.filter((targetPath) => !ledgerPaths.has(targetPath));
 };
 
+const restoreWorkflowStageCheckpoint = async (
+  parsed: ParsedClearRequest
+): Promise<boolean> => {
+  if (parsed.target.kind !== "workflow_stage") {
+    return false;
+  }
+  return await new WorkflowStepCheckpointFacade().restoreCheckpoint({
+    stage: parsed.target.stage,
+    workspaceRoot: parsed.workspacePath,
+    workspaceSlug: parsed.workspaceSlug,
+  });
+};
+
 export const handleWorkflowStepClear = async (
   req: Request,
   res: Response,
@@ -419,38 +433,41 @@ export const handleWorkflowStepClear = async (
   const removedPaths: string[] = [];
   const restoredPaths: string[] = [];
   try {
-    const ledgerStore = new WorkflowStepUndoLedgerStore({
-      workspaceRoot: parsed.workspacePath,
-      workspaceSlug: parsed.workspaceSlug,
-    });
-    const userSpaceSessionPaths = await collectUserSpaceSessionPaths(parsed);
-    const ledgerActions = await collectLedgerUndoActions({
-      ledgerStore,
-      target: parsed.target,
-    });
-    const paths = collectClearPaths(parsed, ledgerActions);
-    for (const ledgerAction of ledgerActions) {
-      await undoWorkflowStepAction(ledgerAction, removedPaths, restoredPaths);
+    const checkpointRestored = await restoreWorkflowStageCheckpoint(parsed);
+    if (!checkpointRestored) {
+      const ledgerStore = new WorkflowStepUndoLedgerStore({
+        workspaceRoot: parsed.workspacePath,
+        workspaceSlug: parsed.workspaceSlug,
+      });
+      const userSpaceSessionPaths = await collectUserSpaceSessionPaths(parsed);
+      const ledgerActions = await collectLedgerUndoActions({
+        ledgerStore,
+        target: parsed.target,
+      });
+      const paths = collectClearPaths(parsed, ledgerActions);
+      for (const ledgerAction of ledgerActions) {
+        await undoWorkflowStepAction(ledgerAction, removedPaths, restoredPaths);
+      }
+      for (const targetPath of [...paths, ...userSpaceSessionPaths]) {
+        await removePath(targetPath, removedPaths);
+      }
+      if (
+        parsed.target.kind === "workflow_stage" &&
+        downstreamStages(parsed.target.stage).includes("description")
+      ) {
+        await cleanupDescriptionState(parsed);
+      }
+      await pruneContinuityIndex({
+        workspacePath: parsed.workspacePath,
+        workspaceSlug: parsed.workspaceSlug,
+        isStageInScope: (stage) => isStageInScope(stage, parsed.target),
+      });
+      await ledgerStore.prune(
+        (entry) =>
+          !isUndoEntryInScope(entry, parsed.target) ||
+          entry.undoBehavior === "preserve_path"
+      );
     }
-    for (const targetPath of [...paths, ...userSpaceSessionPaths]) {
-      await removePath(targetPath, removedPaths);
-    }
-    if (
-      parsed.target.kind === "workflow_stage" &&
-      downstreamStages(parsed.target.stage).includes("description")
-    ) {
-      await cleanupDescriptionState(parsed);
-    }
-    await pruneContinuityIndex({
-      workspacePath: parsed.workspacePath,
-      workspaceSlug: parsed.workspaceSlug,
-      isStageInScope: (stage) => isStageInScope(stage, parsed.target),
-    });
-    await ledgerStore.prune(
-      (entry) =>
-        !isUndoEntryInScope(entry, parsed.target) ||
-        entry.undoBehavior === "preserve_path"
-    );
     const deletedSessions = clearMatchingSessions({
       sessionManager: deps.sessionManager,
       target: parsed.target,
@@ -458,7 +475,12 @@ export const handleWorkflowStepClear = async (
       workspaceSlug: parsed.workspaceSlug,
     });
     deps.resetWorkflowState(parsed.workspaceSlug);
-    res.json({ deletedSessions, removedPaths, restoredPaths });
+    res.json({
+      checkpointRestored,
+      deletedSessions,
+      removedPaths,
+      restoredPaths,
+    });
   } catch (error) {
     deps.logger.warn("Failed to clear workflow step", {
       error: error instanceof Error ? error.message : String(error),

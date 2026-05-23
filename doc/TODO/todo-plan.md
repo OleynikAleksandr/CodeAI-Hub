@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "0e5a85fdb",
+  "lastRecordedCommit": "daaac7232",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream21.task1",
-  "expectedCommitMessage": "feat: add workflow step checkpoint restore",
+  "currentTaskId": "phase8.stream21.task2",
+  "expectedCommitMessage": "feat: restore workflow clear from checkpoints",
   "debt": {
-    "expectedCommitMessage": "feat: add workflow step checkpoint restore",
-    "preCommitHead": "0e5a85fdb",
+    "expectedCommitMessage": "feat: restore workflow clear from checkpoints",
+    "preCommitHead": "daaac7232",
     "stage": "commit_pending",
-    "taskId": "phase8.stream21.task1"
+    "taskId": "phase8.stream21.task2"
   }
 }
 ```
@@ -286,9 +286,9 @@
 
 ### Stream: Workflow Step Checkpoint Restore
 152. [DONE] `phase8.stream21.task1` Add a Core-owned workflow step checkpoint module with explicit contract, facade, store and restart-safe exact restore coverage (scope: `packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-facade.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts`; expected commit: `feat: add workflow step checkpoint restore`).
-153. [PENDING] Git Commit: `feat: add workflow step checkpoint restore` (hash: TBD)
-154. [TODO] `phase8.stream21.task2` Wire checkpoint capture into workflow step start boundaries and make Clear prefer checkpoint restore before legacy journal cleanup while documenting the module boundary (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: restore workflow clear from checkpoints`).
-155. [TODO] Git Commit: `feat: restore workflow clear from checkpoints` (hash: TBD)
+153. [DONE] Git Commit: `feat: add workflow step checkpoint restore` (hash: daaac7232)
+154. [DONE] `phase8.stream21.task2` Wire checkpoint capture into workflow step start boundaries and make Clear prefer checkpoint restore before legacy journal cleanup while documenting the module boundary (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: restore workflow clear from checkpoints`).
+155. [PENDING] Git Commit: `feat: restore workflow clear from checkpoints` (hash: TBD)
 156. [TODO] `phase8.stream21.task3` Add Clear checkpoint restore regression coverage for Description questionnaire restart state and downstream workspace/user-space cleanup (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover workflow checkpoint clear restore`).
 157. [TODO] Git Commit: `test: cover workflow checkpoint clear restore` (hash: TBD)
 158. [TODO] `phase8.stream21.task4` Run targeted checkpoint restore validation for Core clear behavior, Description questionnaire restart state and affected builds (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
