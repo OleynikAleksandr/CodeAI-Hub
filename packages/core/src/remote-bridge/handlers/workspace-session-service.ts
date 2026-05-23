@@ -3,6 +3,8 @@ import path from "node:path";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { captureWorkflowMutation } from "../../workflow/undo/workflow-mutation-journal-runtime";
+import type { WorkflowUndoStageId } from "../../workflow/undo/workflow-step-undo-ledger";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
@@ -114,22 +116,35 @@ export const handleWorkspaceSessionCreate = async (params: {
   }
 
   try {
-    await prepareWorkflowStageDirectories({
-      initiativeSlug: parsed.value.initiativeSlug,
-      runSlug: parsed.value.runSlug,
-      stage: parsed.value.stage,
-      workspacePath: parsed.value.workspacePath,
-    });
-
-    const session = params.sessionManager.createSession(
-      "projectManager",
-      parsed.value.workspacePath,
-      undefined,
-      {
+    const createSession = async () => {
+      await prepareWorkflowStageDirectories({
         initiativeSlug: parsed.value.initiativeSlug,
+        runSlug: parsed.value.runSlug,
         stage: parsed.value.stage,
-      }
-    );
+        workspacePath: parsed.value.workspacePath,
+      });
+      return params.sessionManager.createSession(
+        "projectManager",
+        parsed.value.workspacePath,
+        undefined,
+        {
+          initiativeSlug: parsed.value.initiativeSlug,
+          stage: parsed.value.stage,
+        }
+      );
+    };
+    const session =
+      parsed.value.initiativeSlug && parsed.value.stage
+        ? await captureWorkflowMutation(
+            {
+              source: "workspace_session_create_diff",
+              stage: parsed.value.stage as WorkflowUndoStageId,
+              workspaceRoot: parsed.value.workspacePath,
+              workspaceSlug: parsed.value.initiativeSlug,
+            },
+            createSession
+          )
+        : await createSession();
 
     if (parsed.value.initiativeSlug) {
       Promise.resolve(

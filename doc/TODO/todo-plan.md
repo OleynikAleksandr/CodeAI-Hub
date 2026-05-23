@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "a5b5e4115",
+  "lastRecordedCommit": "48f705a8e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream20.task1",
-  "expectedCommitMessage": "feat: add workflow mutation journal runtime",
+  "currentTaskId": "phase8.stream20.task2",
+  "expectedCommitMessage": "feat: capture workflow mutations centrally",
   "debt": {
-    "expectedCommitMessage": "feat: add workflow mutation journal runtime",
-    "preCommitHead": "a5b5e4115",
+    "expectedCommitMessage": "feat: capture workflow mutations centrally",
+    "preCommitHead": "48f705a8e",
     "stage": "commit_pending",
-    "taskId": "phase8.stream20.task1"
+    "taskId": "phase8.stream20.task2"
   }
 }
 ```
@@ -268,9 +268,9 @@
 
 ### Stream: Workflow Mutation Journal Runtime
 134. [DONE] `phase8.stream20.task1` Add a Core-owned workflow mutation journal runtime that snapshots workflow/user-space mutation scopes before and after an action, derives file/directory diffs and appends undo entries without per-writer manual path lists (scope: `packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.test.ts`; expected commit: `feat: add workflow mutation journal runtime`).
-135. [PENDING] Git Commit: `feat: add workflow mutation journal runtime` (hash: TBD)
-136. [TODO] `phase8.stream20.task2` Wire mutation journal runtime into central Core workflow mutation boundaries for workspace-session creation, workspace-file writes, artifact upserts and session message turns (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `feat: capture workflow mutations centrally`).
-137. [TODO] Git Commit: `feat: capture workflow mutations centrally` (hash: TBD)
+135. [DONE] Git Commit: `feat: add workflow mutation journal runtime` (hash: 48f705a8e)
+136. [DONE] `phase8.stream20.task2` Wire mutation journal runtime into central Core workflow mutation boundaries for workspace-session creation, workspace-file writes, artifact upserts and session message turns (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `feat: capture workflow mutations centrally`).
+137. [PENDING] Git Commit: `feat: capture workflow mutations centrally` (hash: TBD)
 138. [TODO] `phase8.stream20.task3` Wire mutation journal runtime into workspace-file writes, document the centralized undo invariant and run targeted validation for mutation capture and Clear replay (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define centralized workflow undo journal`).
 139. [TODO] Git Commit: `docs: define centralized workflow undo journal` (hash: TBD)
 140. [TODO] `phase8.stream20.task4` Run targeted validation for Core mutation journal, workflow clear undo, Project Manager questionnaire reload and affected builds before release packaging (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
