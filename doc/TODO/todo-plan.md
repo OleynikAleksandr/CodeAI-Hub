@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "761c3904e",
+  "lastRecordedCommit": "867f3864a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream9.task2",
-  "expectedCommitMessage": "fix: compact diagram modules repair notices",
+  "currentTaskId": "phase8.stream10.task1",
+  "expectedCommitMessage": "fix: teach diagram modules leadership metadata",
   "debt": {
-    "expectedCommitMessage": "fix: compact diagram modules repair notices",
-    "preCommitHead": "761c3904e",
+    "expectedCommitMessage": "fix: teach diagram modules leadership metadata",
+    "preCommitHead": "867f3864a",
     "stage": "commit_pending",
-    "taskId": "phase8.stream9.task2"
+    "taskId": "phase8.stream10.task1"
   }
 }
 ```
@@ -177,12 +177,20 @@
 59. [DONE] `phase8.stream9.task1` Stop Diagram Modules Product Part continuation when the Product Parts index has leadership metadata diagnostics, and cover the repair target with a regression test (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: target diagram modules index repairs`).
 60. [DONE] Git Commit: `fix: target diagram modules index repairs` (hash: 761c3904e)
 61. [DONE] `phase8.stream9.task2` Keep provider repair prompts inline but replace Core-visible Diagram Modules validation transcript messages with compact user-facing notices (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: compact diagram modules repair notices`).
-62. [PENDING] Git Commit: `fix: compact diagram modules repair notices` (hash: TBD)
-63. [TODO] `phase8.stream9.task3` Run targeted validation for Diagram Modules repair targeting and compact transcript behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-64. [TODO] `phase8.stream9.task4` Wait for explicit user confirmation before building another replacement release for Diagram Modules repair flow (scope: release confirmation gate; no commit expected).
+62. [DONE] Git Commit: `fix: compact diagram modules repair notices` (hash: 867f3864a)
+63. [DONE] `phase8.stream9.task3` Run targeted validation for Diagram Modules repair targeting and compact transcript behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build passed; Diagram Modules validator/progress and runtime-core managed workflow tests passed for index repair targeting and compact Core-visible validation notices.
+64. [BLOCKED] `phase8.stream9.task4` Wait for explicit user confirmation before building another replacement release for Diagram Modules repair flow (scope: release confirmation gate; no commit expected). Blocked: user reported missing Diagram Modules leadership selection guidance in the initial Core prompt/template before release confirmation.
+
+### Stream: Acceptance Remediation — Diagram Modules Leadership Prompt
+65. [DONE] `phase8.stream10.task1` Add explicit Core-owned Diagram Modules leadership selection rules and regression coverage for the initial prompt (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: teach diagram modules leadership metadata`).
+66. [PENDING] Git Commit: `fix: teach diagram modules leadership metadata` (hash: TBD)
+67. [TODO] `phase8.stream10.task2` Add Product Parts index metadata example to the source template and regenerated bundled template (scope: `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: include diagram modules leadership index template`).
+68. [TODO] Git Commit: `fix: include diagram modules leadership index template` (hash: TBD)
+69. [TODO] `phase8.stream10.task3` Run targeted validation for Diagram Modules leadership prompt/template behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+70. [TODO] `phase8.stream10.task4` Wait for explicit user confirmation before building another replacement release for Diagram Modules leadership remediation (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-65. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-66. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+71. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+72. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)

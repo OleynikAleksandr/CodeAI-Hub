@@ -123,6 +123,17 @@ export const buildDiagramModulesManagedPrompt = (
     "- `product-parts/<part-id>.md` describes each Product Part with clusters, modules, responsibilities, and dependencies.",
     "- `module-map.flow.json` is a layout/view sidecar only; Markdown artifacts remain semantic SSOT.",
     "",
+    "## Leadership selection rules",
+    "",
+    "- Select the lead Product Part before ordering the index. The lead is the Product Part that can own the first Development Tree contract orchestration session for the whole application.",
+    "- Prefer the Product Part that owns application-wide domain/runtime/orchestration contracts: core runtime, backend/domain core, workflow engine, application kernel, or equivalent.",
+    "- If there is only one Product Part, that Product Part is the lead.",
+    "- If there is no separate core/runtime/domain Product Part, choose the Product Part that defines the main user/business flows and can name the contracts required from the other parts.",
+    "- Do not choose a thin distribution, installer, launcher, IDE extension shell, adapter, provider pack, or integration-only part as lead unless it is the only real Product Part.",
+    "- `productPartLeadershipOrder` must start with `leadProductPartId`, then list the remaining Product Parts by contract-dependency priority: contract owners before consumers, user/business flow owners before adapters/providers, distribution surfaces last unless they own product-wide contracts.",
+    "- Every planned Product Part id must appear exactly once. Do not include unknown ids, duplicate ids, clusters, modules, or implementation packages in this order.",
+    "- If leadership is ambiguous, still choose the most defensible lead and record the assumption in `## Assumptions / Open Questions`.",
+    "",
     ...buildEmbeddedArtifactContract(
       DIAGRAM_MODULES_ARTIFACT_CONTRACT_TEMPLATE_IDS
     ),

@@ -54,6 +54,14 @@ test("diagram modules managed prompt embeds upstream sources and target artifact
   assertIncludes(prompt, "`leadProductPartId`");
   assertIncludes(prompt, "`productPartLeadershipOrder`");
   assertIncludes(prompt, "with the lead Product Part first");
+  assertIncludes(prompt, "## Leadership selection rules");
+  assertIncludes(
+    prompt,
+    "owns the first Development Tree contract orchestration session"
+  );
+  assertIncludes(prompt, "core runtime, backend/domain core");
+  assertIncludes(prompt, "Do not choose a thin distribution");
+  assertIncludes(prompt, "contract owners before consumers");
   assertIncludes(prompt, "### product-parts-index-template");
   assertIncludes(prompt, "### product-part-template");
   assertIncludes(prompt, "### diagram-modules-field-reference");
