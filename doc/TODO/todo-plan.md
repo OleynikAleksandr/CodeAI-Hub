@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "25410019f",
+  "lastRecordedCommit": "f07ae9cf4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream28.task3",
-  "expectedCommitMessage": "chore: package workflow clear read model vsix",
+  "currentTaskId": "phase8.stream29.task1",
+  "expectedCommitMessage": "fix: show questionnaire editor after workflow clear",
   "debt": {
-    "expectedCommitMessage": "chore: package workflow clear read model vsix",
-    "preCommitHead": "25410019f",
+    "expectedCommitMessage": "fix: show questionnaire editor after workflow clear",
+    "preCommitHead": "f07ae9cf4",
     "stage": "commit_pending",
-    "taskId": "phase8.stream28.task3"
+    "taskId": "phase8.stream29.task1"
   }
 }
 ```
@@ -352,8 +352,14 @@
 202. [DONE] `phase8.stream28.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.334 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow clear read model release`).
 203. [DONE] Git Commit: `chore: build workflow clear read model release` (hash: 25410019f)
 204. [DONE] `phase8.stream28.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow clear read model vsix`).
-205. [PENDING] Git Commit: `chore: package workflow clear read model vsix` (hash: TBD)
-206. [TODO] `phase8.stream28.task4` User installs the generated v1.2.334 VSIX and verifies clearing Description returns Project Manager to the editable questionnaire, removes stale sidebar indicators and does not show missing downstream artifacts (scope: user workflow acceptance; no commit expected).
+205. [DONE] Git Commit: `chore: package workflow clear read model vsix` (hash: f07ae9cf4)
+206. [BLOCKED] `phase8.stream28.task4` User installs the generated v1.2.334 VSIX and verifies clearing Description returns Project Manager to the editable questionnaire, removes stale sidebar indicators and does not show missing downstream artifacts (scope: user workflow acceptance; no commit expected). Blocked: user retest showed Project Manager immediately renders `questionnaire.md` as text after Clear and only switches to the editable questionnaire after an Artifacts/Help refresh.
+
+### Stream: Workflow Clear Immediate Questionnaire Editor
+207. [DONE] `phase8.stream29.task1` Make Project Manager treat a questionnaire-only Description snapshot after Clear as a hard session downgrade so the editable questionnaire opens immediately without a manual header refresh (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts, src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: show questionnaire editor after workflow clear`).
+208. [PENDING] Git Commit: `fix: show questionnaire editor after workflow clear` (hash: TBD)
+209. [TODO] `phase8.stream29.task2` Run targeted Project Manager validation for immediate questionnaire editor restoration after workflow Clear (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+210. [TODO] `phase8.stream29.task3` Wait for explicit user confirmation before building the next replacement release after immediate questionnaire editor restoration (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

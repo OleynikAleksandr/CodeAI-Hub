@@ -16,6 +16,12 @@ test("use-main-area-workflow-state keeps description-first startup tool and prim
   assert.equal(source.includes("const STAGE_PRIORITY"), false);
   assert.equal(source.includes("hasContinuitySegmentsForStage"), false);
   assert.equal(source.includes("branch?.primarySession?.providerSessionId"), true);
+  assert.equal(source.includes("isQuestionnaireOnlyDescriptionSnapshot"), true);
+  assert.equal(
+    source.includes("params.descriptionGuardRef.current = { active: false }"),
+    true,
+    "questionnaire-only snapshots after Clear must bypass the optimistic session guard"
+  );
   assert.equal(source.includes("branch?.session?.providerSessionId"), false);
   assert.equal(source.includes("branch?.sessionKind"), false);
   assert.equal(source.includes('label: "questionnaire.md" as const'), true);

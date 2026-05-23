@@ -50,6 +50,20 @@ const resolveStartupTool = (state: WorkflowStateSnapshot | null): string => {
 const isCanonicalDescriptionPath = (path: string): boolean =>
   /\/description\/Final_Description\.md$/.test(path);
 
+const hasDescriptionProviderSession = (
+  branch: WorkflowStateSnapshot["description"] | undefined
+): boolean => Boolean(branch?.primarySession?.providerSessionId);
+
+const isQuestionnaireOnlyDescriptionSnapshot = (
+  branch: WorkflowStateSnapshot["description"] | undefined,
+  hasDescriptionOutput: boolean
+): boolean =>
+  Boolean(
+    branch?.questionnairePath?.trim() &&
+      !hasDescriptionOutput &&
+      !hasDescriptionProviderSession(branch)
+  );
+
 const isCurrentWorkspaceSnapshot = (params: {
   readonly activeWorkspace?: WorkspaceProject;
   readonly workspacePath: string;
@@ -131,8 +145,15 @@ export const useMainAreaWorkflowState = (
     params.setDescriptionDocument(
       nextDescription ? { ...nextDescription, workspacePath, workspaceSlug } : null
     );
-    const nextHasDescriptionSession = Boolean(branch?.primarySession?.providerSessionId);
-    if (!nextHasDescriptionSession && params.descriptionGuardRef.current.active) {
+    const nextHasDescriptionSession = hasDescriptionProviderSession(branch);
+    const shouldForceQuestionnaireDowngrade = isQuestionnaireOnlyDescriptionSnapshot(
+      branch,
+      Boolean(nextDescription)
+    );
+    if (shouldForceQuestionnaireDowngrade) {
+      params.descriptionGuardRef.current = { active: false };
+      params.setHasDescriptionSession(false);
+    } else if (!nextHasDescriptionSession && params.descriptionGuardRef.current.active) {
       // Guard active — skip downgrade
     } else {
       params.setHasDescriptionSession(nextHasDescriptionSession);
