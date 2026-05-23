@@ -88,21 +88,22 @@ export class WorkflowGitRollbackFacade {
         stage: params.stage,
       };
     }
+    const stage = params.stage;
     if (!(await this.isGitRepository(params.workspaceRoot))) {
-      return this.failure(params.stage, "git_repository_missing");
+      return this.failure(stage, "git_repository_missing");
     }
 
     await this.ensureGitIdentity(params.workspaceRoot);
-    const firstStageCommit = await this.firstStageCommit(params);
+    const firstStageCommit = await this.firstStageCommit({ ...params, stage });
     if (!firstStageCommit) {
-      return this.failure(params.stage, "stage_commit_boundary_missing");
+      return this.failure(stage, "stage_commit_boundary_missing");
     }
     const boundaryCommit = await this.parentCommit(
       params.workspaceRoot,
       firstStageCommit
     );
     if (!boundaryCommit) {
-      return this.failure(params.stage, "stage_parent_boundary_missing");
+      return this.failure(stage, "stage_parent_boundary_missing");
     }
 
     await this.git(params.workspaceRoot, [
@@ -118,7 +119,7 @@ export class WorkflowGitRollbackFacade {
       "clean",
       "-fd",
       "--",
-      ...stageCleanupPathspecs(params.stage, params.workspaceSlug),
+      ...stageCleanupPathspecs(stage, params.workspaceSlug),
     ]);
     await this.git(params.workspaceRoot, ["add", "-A", "--", "."]);
     const hasStagedChanges = await this.hasStagedChanges(params.workspaceRoot);
@@ -128,13 +129,13 @@ export class WorkflowGitRollbackFacade {
         handled: true,
         reason: "already_at_boundary",
         rollbackCommit: null,
-        stage: params.stage,
+        stage,
       };
     }
     await this.git(params.workspaceRoot, [
       "commit",
       "-m",
-      rollbackCommitMessage(params.stage),
+      rollbackCommitMessage(stage),
     ]);
     const rollbackCommit = await this.git(params.workspaceRoot, [
       "rev-parse",
@@ -146,7 +147,7 @@ export class WorkflowGitRollbackFacade {
       handled: true,
       reason: null,
       rollbackCommit,
-      stage: params.stage,
+      stage,
     };
   }
 

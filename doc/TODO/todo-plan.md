@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "91077cc0d",
+  "lastRecordedCommit": "e3b2ece31",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream35.task3",
-  "expectedCommitMessage": "docs: define git backed workflow clear",
+  "currentTaskId": "phase8.stream35.task4",
+  "expectedCommitMessage": "fix: narrow managed git rollback stage",
   "debt": {
-    "expectedCommitMessage": "docs: define git backed workflow clear",
-    "preCommitHead": "91077cc0d",
+    "expectedCommitMessage": "fix: narrow managed git rollback stage",
+    "preCommitHead": "e3b2ece31",
     "stage": "commit_pending",
-    "taskId": "phase8.stream35.task3"
+    "taskId": "phase8.stream35.task4"
   }
 }
 ```
@@ -410,9 +410,11 @@
 246. [DONE] `phase8.stream35.task2` Wire workflow step Clear to use Git-backed rollback for `diagram_modules`, `application_skeleton` and `quality_gates`, while keeping session/runtime cleanup separate from tracked workspace rollback (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear managed workflow stages through git`).
 247. [DONE] Git Commit: `fix: clear managed workflow stages through git` (hash: 91077cc0d)
 248. [DONE] `phase8.stream35.task3` Document the Git-backed Clear invariant for technical workflow stages in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define git backed workflow clear`).
-249. [PENDING] Git Commit: `docs: define git backed workflow clear` (hash: TBD)
-250. [TODO] `phase8.stream35.task4` Run targeted validation for Git-backed workflow rollback, workflow Clear service, Quality Gates restart state and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-251. [TODO] `phase8.stream35.task5` Wait for explicit user confirmation before building the next replacement release after Git-backed workflow Clear fixes (scope: release confirmation gate; no commit expected).
+249. [DONE] Git Commit: `docs: define git backed workflow clear` (hash: e3b2ece31)
+250. [DONE] `phase8.stream35.task4` Fix the TypeScript managed-stage narrowing found by the Core build before validation can pass (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, doc/TODO/todo-plan.md`; expected commit: `fix: narrow managed git rollback stage`).
+251. [PENDING] Git Commit: `fix: narrow managed git rollback stage` (hash: TBD)
+252. [TODO] `phase8.stream35.task5` Run targeted validation for Git-backed workflow rollback, workflow Clear service, Quality Gates restart state and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+253. [TODO] `phase8.stream35.task6` Wait for explicit user confirmation before building the next replacement release after Git-backed workflow Clear fixes (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
