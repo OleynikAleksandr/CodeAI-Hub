@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "46071a6ae",
+  "lastRecordedCommit": "a74c5e3da",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream21.task6",
-  "expectedCommitMessage": "chore: build workflow checkpoint restore release",
+  "currentTaskId": "phase8.stream21.task7",
+  "expectedCommitMessage": "chore: package workflow checkpoint restore vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build workflow checkpoint restore release",
-    "preCommitHead": "46071a6ae",
+    "expectedCommitMessage": "chore: package workflow checkpoint restore vsix",
+    "preCommitHead": "a74c5e3da",
     "stage": "commit_pending",
-    "taskId": "phase8.stream21.task6"
+    "taskId": "phase8.stream21.task7"
   }
 }
 ```
@@ -295,9 +295,9 @@
 159. [DONE] `phase8.stream21.task5` Update release-facing docs for the next checkpoint restore release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow checkpoint restore release`).
 160. [DONE] Git Commit: `docs: prepare workflow checkpoint restore release` (hash: 46071a6ae)
 161. [DONE] `phase8.stream21.task6` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow checkpoint restore release`).
-162. [PENDING] Git Commit: `chore: build workflow checkpoint restore release` (hash: TBD)
-163. [TODO] `phase8.stream21.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow checkpoint restore vsix`).
-164. [TODO] Git Commit: `chore: package workflow checkpoint restore vsix` (hash: TBD)
+162. [DONE] Git Commit: `chore: build workflow checkpoint restore release` (hash: a74c5e3da)
+163. [DONE] `phase8.stream21.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow checkpoint restore vsix`).
+164. [PENDING] Git Commit: `chore: package workflow checkpoint restore vsix` (hash: TBD)
 165. [TODO] `phase8.stream21.task8` User installs the generated checkpoint restore VSIX and verifies clearing Description returns the filled questionnaire/editor state and removes downstream workspace/user-space mutations (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
