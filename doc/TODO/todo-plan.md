@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "a2cc14849",
+  "lastRecordedCommit": "e5b6172ef",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream12.task2",
-  "expectedCommitMessage": "chore: build workflow clear crash release",
+  "currentTaskId": "phase8.stream13.task1",
+  "expectedCommitMessage": "fix: restore quality gates artifact modes and clear menu",
   "debt": {
-    "expectedCommitMessage": "chore: build workflow clear crash release",
-    "preCommitHead": "a2cc14849",
+    "expectedCommitMessage": "fix: restore quality gates artifact modes and clear menu",
+    "preCommitHead": "e5b6172ef",
     "stage": "commit_pending",
-    "taskId": "phase8.stream12.task2"
+    "taskId": "phase8.stream13.task1"
   }
 }
 ```
@@ -205,10 +205,20 @@
 81. [DONE] `phase8.stream12.task1` Update release-facing docs for the v1.2.326 workflow clear crash remediation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow clear crash release`).
 82. [DONE] Git Commit: `docs: prepare workflow clear crash release` (hash: a2cc14849)
 83. [DONE] `phase8.stream12.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workflow clear crash release`). Result: v1.2.326 tarballs copied to `doc/tmp/releases/`; VSIX `codeai-hub-1.2.326.vsix` built successfully at 4.5M with SDK exclusions, local artefact validation, markdown links, duplication check and package surface checks passing.
-84. [PENDING] Git Commit: `chore: build workflow clear crash release` (hash: TBD)
+84. [DONE] Git Commit: `chore: build workflow clear crash release` (hash: e5b6172ef)
+
+### Stream: Acceptance Remediation — Quality Gates And Clear Menu Regression
+85. [DONE] `phase8.stream13.task1` Restore Project Manager Quality Gates Research/Contract artifact header modes and make the sidebar Clear menu open from the right-button mouse-down path while keeping the in-app confirmation flow (scope: `src/client/project-manager/components/layout/stage-artifact-mode.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: restore quality gates artifact modes and clear menu`).
+86. [PENDING] Git Commit: `fix: restore quality gates artifact modes and clear menu` (hash: TBD)
+87. [TODO] `phase8.stream13.task2` Add regression coverage for Quality Gates header modes and sidebar Clear menu right-click opening (scope: `src/client/project-manager/components/layout/stage-artifact-mode.test.ts, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates artifact modes and clear menu`).
+88. [TODO] Git Commit: `test: cover quality gates artifact modes and clear menu` (hash: TBD)
+89. [TODO] `phase8.stream13.task3` Enforce Quality Gates research-first provider prompt and managed validation boundary so the first agent pass creates only the research report for user/Core review (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/managed-workflow-orchestration/quality-gates/**, doc/TODO/todo-plan.md`; expected commit: `fix: enforce quality gates research first boundary`).
+90. [TODO] Git Commit: `fix: enforce quality gates research first boundary` (hash: TBD)
+91. [TODO] `phase8.stream13.task4` Run targeted validation for Quality Gates research boundary and Project Manager sidebar/header regressions (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+92. [TODO] `phase8.stream13.task5` Wait for explicit user confirmation before building another replacement release for Quality Gates and Clear menu remediation (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-85. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-86. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+93. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+94. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)

@@ -1,3 +1,5 @@
+import { QUALITY_GATES_TOOL_LABEL } from "./use-workflow-tool-select";
+
 export type ArtifactHeaderMode =
   | "artifacts"
   | "contract"
@@ -6,7 +8,7 @@ export type ArtifactHeaderMode =
   | "source";
 
 type DiagramTool = "Diagram Modules";
-type QualityGatesTool = "Quality Gates Baseline";
+type QualityGatesTool = typeof QUALITY_GATES_TOOL_LABEL;
 
 const DIAGRAM_TOOL_SOURCE: Readonly<
   Record<DiagramTool, { readonly label: string; readonly path: string }>
@@ -21,7 +23,7 @@ export const isDiagramTool = (tool: string | null): tool is DiagramTool =>
   tool === "Diagram Modules";
 
 const isQualityGatesTool = (tool: string | null): tool is QualityGatesTool =>
-  tool === "Quality Gates Baseline";
+  tool === QUALITY_GATES_TOOL_LABEL;
 
 export const resolveArtifactHeaderModes = (
   tool: string | null

@@ -52,6 +52,24 @@ export const useWorkspaceTreeClearMenu = (params: {
     event.stopPropagation();
   };
 
+  const openMenu = useCallback(
+    (
+      target: WorkflowStepClearTarget,
+      label: string,
+      x: number,
+      y: number
+    ): void => {
+      setMenu({
+        label,
+        mode: "menu",
+        target,
+        x,
+        y,
+      });
+    },
+    []
+  );
+
   const bind = useCallback(
     (
       target: WorkflowStepClearTarget | undefined,
@@ -62,22 +80,17 @@ export const useWorkspaceTreeClearMenu = (params: {
             onContextMenuCapture: stopNativeMenu,
             onContextMenu: (event) => {
               stopNativeMenu(event);
-              setMenu({
-                label,
-                mode: "menu",
-                target,
-                x: event.clientX,
-                y: event.clientY,
-              });
+              openMenu(target, label, event.clientX, event.clientY);
             },
             onMouseDown: (event) => {
               if (event.button === 2) {
                 stopNativeMenu(event);
+                openMenu(target, label, event.clientX, event.clientY);
               }
             },
           }
         : {},
-    []
+    [openMenu]
   );
 
   const requestConfirmation = useCallback(() => {
