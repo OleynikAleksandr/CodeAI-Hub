@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "bf3235a9e",
+  "lastRecordedCommit": "0e5a85fdb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream20.task8",
-  "expectedCommitMessage": "chore: package centralized workflow undo vsix",
+  "currentTaskId": "phase8.stream21.task1",
+  "expectedCommitMessage": "feat: add workflow step checkpoint restore",
   "debt": {
-    "expectedCommitMessage": "chore: package centralized workflow undo vsix",
-    "preCommitHead": "bf3235a9e",
+    "expectedCommitMessage": "feat: add workflow step checkpoint restore",
+    "preCommitHead": "0e5a85fdb",
     "stage": "commit_pending",
-    "taskId": "phase8.stream20.task8"
+    "taskId": "phase8.stream21.task1"
   }
 }
 ```
@@ -281,8 +281,24 @@
 145. [DONE] `phase8.stream20.task7` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build centralized workflow undo release`).
 146. [DONE] Git Commit: `chore: build centralized workflow undo release` (hash: bf3235a9e)
 147. [DONE] `phase8.stream20.task8` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package centralized workflow undo vsix`).
-148. [PENDING] Git Commit: `chore: package centralized workflow undo vsix` (hash: TBD)
-149. [TODO] `phase8.stream20.task9` User installs the generated centralized workflow undo VSIX and verifies Clear returns workspace/user-space exactly to the pre-step state (scope: user workflow acceptance; no commit expected).
+148. [DONE] Git Commit: `chore: package centralized workflow undo vsix` (hash: 0e5a85fdb)
+149. [BLOCKED] `phase8.stream20.task9` User installs the generated centralized workflow undo VSIX and verifies Clear returns workspace/user-space exactly to the pre-step state (scope: user workflow acceptance; no commit expected). Blocked: user retest showed clearing Description still leaves Project Manager without the questionnaire/read-model state, proving journal-only undo is not sufficient.
+
+### Stream: Workflow Step Checkpoint Restore
+152. [DONE] `phase8.stream21.task1` Add a Core-owned workflow step checkpoint module with explicit contract, facade, store and restart-safe exact restore coverage (scope: `packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-facade.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts`; expected commit: `feat: add workflow step checkpoint restore`).
+153. [PENDING] Git Commit: `feat: add workflow step checkpoint restore` (hash: TBD)
+154. [TODO] `phase8.stream21.task2` Wire checkpoint capture into workflow step start boundaries and make Clear prefer checkpoint restore before legacy journal cleanup while documenting the module boundary (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: restore workflow clear from checkpoints`).
+155. [TODO] Git Commit: `feat: restore workflow clear from checkpoints` (hash: TBD)
+156. [TODO] `phase8.stream21.task3` Add Clear checkpoint restore regression coverage for Description questionnaire restart state and downstream workspace/user-space cleanup (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover workflow checkpoint clear restore`).
+157. [TODO] Git Commit: `test: cover workflow checkpoint clear restore` (hash: TBD)
+158. [TODO] `phase8.stream21.task4` Run targeted checkpoint restore validation for Core clear behavior, Description questionnaire restart state and affected builds (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+159. [TODO] `phase8.stream21.task5` Update release-facing docs for the next checkpoint restore release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow checkpoint restore release`).
+160. [TODO] Git Commit: `docs: prepare workflow checkpoint restore release` (hash: TBD)
+161. [TODO] `phase8.stream21.task6` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow checkpoint restore release`).
+162. [TODO] Git Commit: `chore: build workflow checkpoint restore release` (hash: TBD)
+163. [TODO] `phase8.stream21.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow checkpoint restore vsix`).
+164. [TODO] Git Commit: `chore: package workflow checkpoint restore vsix` (hash: TBD)
+165. [TODO] `phase8.stream21.task8` User installs the generated checkpoint restore VSIX and verifies clearing Description returns the filled questionnaire/editor state and removes downstream workspace/user-space mutations (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
