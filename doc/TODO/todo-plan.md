@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "ac6212258",
+  "lastRecordedCommit": "a5b5e4115",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream19.task2",
-  "expectedCommitMessage": "fix: reload questionnaire after workflow clear",
+  "currentTaskId": "phase8.stream20.task1",
+  "expectedCommitMessage": "feat: add workflow mutation journal runtime",
   "debt": {
-    "expectedCommitMessage": "fix: reload questionnaire after workflow clear",
-    "preCommitHead": "ac6212258",
+    "expectedCommitMessage": "feat: add workflow mutation journal runtime",
+    "preCommitHead": "a5b5e4115",
     "stage": "commit_pending",
-    "taskId": "phase8.stream19.task2"
+    "taskId": "phase8.stream20.task1"
   }
 }
 ```
@@ -262,12 +262,28 @@
 126. [DONE] `phase8.stream19.task1` Make workflow step Clear combine persisted undo with fallback stage cleanup, remove empty continuity state instead of rewriting empty indexes, and delete user-space session files for cleared workflow stages even when continuity has already been pruned (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-continuity-support.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`; expected commit: `fix: remove orphaned workflow clear state`).
 127. [DONE] Git Commit: `fix: remove orphaned workflow clear state` (hash: ac6212258)
 128. [DONE] `phase8.stream19.task2` Make Project Manager reload the Description questionnaire through a fresh workspace session when the cached session was cleared, preserving the existing filled questionnaire file instead of rendering an empty form (scope: `src/client/project-manager/services/description-questionnaire-service.ts, src/client/project-manager/services/description-questionnaire-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: reload questionnaire after workflow clear`).
-129. [PENDING] Git Commit: `fix: reload questionnaire after workflow clear` (hash: TBD)
-130. [TODO] `phase8.stream19.task3` Run targeted validation for Core workflow clear exact-revert behavior and Project Manager questionnaire reload after Clear (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-131. [TODO] `phase8.stream19.task4` Wait for explicit user confirmation before building the next replacement release after exact-revert Clear fixes (scope: release confirmation gate; no commit expected).
+129. [DONE] Git Commit: `fix: reload questionnaire after workflow clear` (hash: a5b5e4115)
+130. [DONE] `phase8.stream19.task3` Run targeted validation for Core workflow clear exact-revert behavior and Project Manager questionnaire reload after Clear (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build passed; `workflow-step-clear-service.undo` regression tests passed; Project Manager questionnaire stale-session refresh test passed; `typecheck:webview`, `build:webview` and `build:project-manager` passed.
+131. [BLOCKED] `phase8.stream19.task4` Wait for explicit user confirmation before building the next replacement release after exact-revert Clear fixes (scope: release confirmation gate; no commit expected). Blocked: user requested a real centralized undo module instead of continuing with per-path fixes.
+
+### Stream: Workflow Mutation Journal Runtime
+134. [DONE] `phase8.stream20.task1` Add a Core-owned workflow mutation journal runtime that snapshots workflow/user-space mutation scopes before and after an action, derives file/directory diffs and appends undo entries without per-writer manual path lists (scope: `packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.test.ts`; expected commit: `feat: add workflow mutation journal runtime`).
+135. [PENDING] Git Commit: `feat: add workflow mutation journal runtime` (hash: TBD)
+136. [TODO] `phase8.stream20.task2` Wire mutation journal runtime into central Core workflow mutation boundaries for workspace-session creation, workspace-file writes, artifact upserts and session message turns (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `feat: capture workflow mutations centrally`).
+137. [TODO] Git Commit: `feat: capture workflow mutations centrally` (hash: TBD)
+138. [TODO] `phase8.stream20.task3` Wire mutation journal runtime into workspace-file writes, document the centralized undo invariant and run targeted validation for mutation capture and Clear replay (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define centralized workflow undo journal`).
+139. [TODO] Git Commit: `docs: define centralized workflow undo journal` (hash: TBD)
+140. [TODO] `phase8.stream20.task4` Run targeted validation for Core mutation journal, workflow clear undo, Project Manager questionnaire reload and affected builds before release packaging (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+141. [TODO] `phase8.stream20.task5` Update release-facing docs for the next centralized workflow undo release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare centralized workflow undo release`).
+142. [TODO] Git Commit: `docs: prepare centralized workflow undo release` (hash: TBD)
+143. [TODO] `phase8.stream20.task6` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build centralized workflow undo release`).
+144. [TODO] Git Commit: `chore: build centralized workflow undo release` (hash: TBD)
+145. [TODO] `phase8.stream20.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package centralized workflow undo vsix`).
+146. [TODO] Git Commit: `chore: package centralized workflow undo vsix` (hash: TBD)
+147. [TODO] `phase8.stream20.task8` User installs the generated centralized workflow undo VSIX and verifies Clear returns workspace/user-space exactly to the pre-step state (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-132. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-133. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+148. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+149. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)

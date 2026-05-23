@@ -1,4 +1,5 @@
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { homedir } from "node:os";
 import path from "node:path";
 import type { WorkflowStageId } from "../watcher/watcher-types";
 
@@ -15,12 +16,14 @@ export type WorkflowUndoBehavior =
 export type WorkflowUndoStageId =
   | WorkflowStageId
   | `development_tree/${string}`;
+export type WorkflowUndoRoot = "workspace" | "user_space";
 
 export interface WorkflowStepUndoEntry {
   readonly id: string;
   readonly kind: WorkflowUndoEntryKind;
   readonly previousContent?: string | null;
   readonly relativePath: string;
+  readonly root?: WorkflowUndoRoot;
   readonly source: string;
   readonly stage: WorkflowUndoStageId;
   readonly timestamp: string;
@@ -43,6 +46,7 @@ export interface WorkflowStepUndoEntryInput {
   readonly kind: WorkflowUndoEntryKind;
   readonly previousContent?: string | null;
   readonly relativePath: string;
+  readonly root?: WorkflowUndoRoot;
   readonly source: string;
   readonly stage: WorkflowUndoStageId;
   readonly undoBehavior?: WorkflowUndoBehavior;
@@ -67,6 +71,9 @@ const readUndoBehavior = (value: unknown): WorkflowUndoBehavior | undefined =>
   value === "restore_previous"
     ? value
     : undefined;
+
+const readUndoRoot = (value: unknown): WorkflowUndoRoot | undefined =>
+  value === "workspace" || value === "user_space" ? value : undefined;
 
 const isSafeRelativePath = (value: string): boolean => {
   const normalized = path.posix.normalize(value.replace(/\\/gu, "/"));
@@ -99,6 +106,7 @@ const parseEntry = (value: unknown): WorkflowStepUndoEntry | null => {
   const timestamp = readString(value.timestamp);
   const previousContent = readNullableString(value.previousContent);
   const undoBehavior = readUndoBehavior(value.undoBehavior);
+  const root = readUndoRoot(value.root);
   if (
     !(
       id &&
@@ -117,6 +125,7 @@ const parseEntry = (value: unknown): WorkflowStepUndoEntry | null => {
     kind,
     previousContent,
     relativePath,
+    root,
     source,
     stage: stage as WorkflowUndoStageId,
     timestamp,
@@ -254,9 +263,13 @@ export class WorkflowStepUndoLedgerStore {
     if (!relativePath) {
       return null;
     }
-    const absolutePath = path.resolve(this.workspaceRoot, relativePath);
-    return absolutePath === this.workspaceRoot ||
-      absolutePath.startsWith(`${this.workspaceRoot}${path.sep}`)
+    const root =
+      entry.root === "user_space"
+        ? path.join(homedir(), ROOT_DIR)
+        : this.workspaceRoot;
+    const absolutePath = path.resolve(root, relativePath);
+    return absolutePath === root ||
+      absolutePath.startsWith(`${root}${path.sep}`)
       ? absolutePath
       : null;
   }
