@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "f67df67ff",
+  "lastRecordedCommit": "f6e8dd8ad",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream23.task2",
-  "expectedCommitMessage": "chore: build workflow session cleanup release",
+  "currentTaskId": "phase8.stream23.task3",
+  "expectedCommitMessage": "chore: package workflow session cleanup vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build workflow session cleanup release",
-    "preCommitHead": "f67df67ff",
+    "expectedCommitMessage": "chore: package workflow session cleanup vsix",
+    "preCommitHead": "f6e8dd8ad",
     "stage": "commit_pending",
-    "taskId": "phase8.stream23.task2"
+    "taskId": "phase8.stream23.task3"
   }
 }
 ```
@@ -312,9 +312,9 @@
 172. [DONE] `phase8.stream23.task1` Update release-facing docs for the v1.2.332 workflow session trace cleanup build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow session cleanup release`).
 173. [DONE] Git Commit: `docs: prepare workflow session cleanup release` (hash: f67df67ff)
 174. [DONE] `phase8.stream23.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.332 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow session cleanup release`).
-175. [PENDING] Git Commit: `chore: build workflow session cleanup release` (hash: TBD)
-176. [TODO] `phase8.stream23.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow session cleanup vsix`).
-177. [TODO] Git Commit: `chore: package workflow session cleanup vsix` (hash: TBD)
+175. [DONE] Git Commit: `chore: build workflow session cleanup release` (hash: f6e8dd8ad)
+176. [DONE] `phase8.stream23.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow session cleanup vsix`).
+177. [PENDING] Git Commit: `chore: package workflow session cleanup vsix` (hash: TBD)
 178. [TODO] `phase8.stream23.task4` User installs the generated v1.2.332 VSIX and verifies clearing Description removes workspace/user-space mutations, unified session files and provider-native session files (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
