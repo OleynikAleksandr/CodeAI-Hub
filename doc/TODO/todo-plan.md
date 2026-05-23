@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "a113af0bb",
+  "lastRecordedCommit": "7bae26102",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream30.task3",
-  "expectedCommitMessage": "chore: package immediate questionnaire editor vsix",
+  "currentTaskId": "phase8.stream31.task1",
+  "expectedCommitMessage": "fix: ignore workflow undo metadata in managed gate",
   "debt": {
-    "expectedCommitMessage": "chore: package immediate questionnaire editor vsix",
-    "preCommitHead": "a113af0bb",
+    "expectedCommitMessage": "fix: ignore workflow undo metadata in managed gate",
+    "preCommitHead": "7bae26102",
     "stage": "commit_pending",
-    "taskId": "phase8.stream30.task3"
+    "taskId": "phase8.stream31.task1"
   }
 }
 ```
@@ -367,8 +367,16 @@
 213. [DONE] `phase8.stream30.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.335 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build immediate questionnaire editor release`).
 214. [DONE] Git Commit: `chore: build immediate questionnaire editor release` (hash: a113af0bb)
 215. [DONE] `phase8.stream30.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package immediate questionnaire editor vsix`).
-216. [PENDING] Git Commit: `chore: package immediate questionnaire editor vsix` (hash: TBD)
-217. [TODO] `phase8.stream30.task4` User installs the generated v1.2.335 VSIX and verifies clearing Description immediately returns the right panel to the editable questionnaire without manual refresh (scope: user workflow acceptance; no commit expected).
+216. [DONE] Git Commit: `chore: package immediate questionnaire editor vsix` (hash: 7bae26102)
+217. [BLOCKED] `phase8.stream30.task4` User installs the generated v1.2.335 VSIX and verifies clearing Description immediately returns the right panel to the editable questionnaire without manual refresh (scope: user workflow acceptance; no commit expected). Blocked: user retest reached Diagram Modules acceptance, but Core blocked completion on internal workflow undo/checkpoint files (`workflow/checkpoints/description.json`, `workflow/undo-ledger.json`) instead of treating them as Core runtime metadata.
+
+### Stream: Workflow Undo Metadata Dirty Gate
+218. [DONE] `phase8.stream31.task1` Classify workflow undo ledger and checkpoint files as Core-owned runtime metadata in the managed terminal acceptance gate so Diagram Modules acceptance does not ask the user to handle internal undo files (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore workflow undo metadata in managed gate`).
+219. [PENDING] Git Commit: `fix: ignore workflow undo metadata in managed gate` (hash: TBD)
+220. [TODO] `phase8.stream31.task2` Classify workflow undo ledger and checkpoint files as volatile Core metadata in the technical-stage dirty read model so left sidebar/progress does not mark workflow stages dirty after restart (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore workflow undo metadata in technical gate`).
+221. [TODO] Git Commit: `fix: ignore workflow undo metadata in technical gate` (hash: TBD)
+222. [TODO] `phase8.stream31.task3` Run targeted Core validation for dirty-gate classification and affected managed workflow acceptance behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+223. [TODO] `phase8.stream31.task4` Wait for explicit user confirmation before building the next replacement release after workflow undo metadata dirty-gate fix (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

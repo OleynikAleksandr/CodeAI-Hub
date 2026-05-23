@@ -54,7 +54,9 @@ test("terminal dirty classifier treats Diagram Modules sidecars and runtime meta
     entries: [
       `?? .codeai-hub/${WORKSPACE_SLUG}/diagram_modules/module-map.flow.json`,
       ` M .codeai-hub/${WORKSPACE_SLUG}/continuity/index.json`,
+      ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/checkpoints/description.json`,
       ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`,
+      ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/undo-ledger.json`,
       " M product-parts/project-manager/src/index.ts",
     ],
     stage: "diagram_modules",
@@ -64,7 +66,9 @@ test("terminal dirty classifier treats Diagram Modules sidecars and runtime meta
   assert.deepEqual(result.committablePaths, [
     `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/module-map.flow.json`,
     `.codeai-hub/${WORKSPACE_SLUG}/continuity/index.json`,
+    `.codeai-hub/${WORKSPACE_SLUG}/workflow/checkpoints/description.json`,
     `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`,
+    `.codeai-hub/${WORKSPACE_SLUG}/workflow/undo-ledger.json`,
   ]);
   assert.deepEqual(result.unclassifiedPaths, [
     "product-parts/project-manager/src/index.ts",
