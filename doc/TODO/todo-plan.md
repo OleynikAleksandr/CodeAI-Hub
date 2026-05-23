@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "6cc0ccdec",
+  "lastRecordedCommit": "d796e6807",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream14.task1",
-  "expectedCommitMessage": "docs: prepare quality gates clear regression release",
+  "currentTaskId": "phase8.stream14.task2",
+  "expectedCommitMessage": "chore: build quality gates clear regression release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates clear regression release",
-    "preCommitHead": "6cc0ccdec",
+    "expectedCommitMessage": "chore: build quality gates clear regression release",
+    "preCommitHead": "d796e6807",
     "stage": "commit_pending",
-    "taskId": "phase8.stream14.task1"
+    "taskId": "phase8.stream14.task2"
   }
 }
 ```
@@ -219,13 +219,15 @@
 
 ### Stream: Release Build — Quality Gates And Clear Menu Regression
 93. [DONE] `phase8.stream14.task1` Update release-facing docs for the v1.2.327 Quality Gates research-first and Clear menu replacement build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates clear regression release`).
-94. [PENDING] Git Commit: `docs: prepare quality gates clear regression release` (hash: TBD)
-95. [TODO] `phase8.stream14.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates clear regression release`).
-96. [TODO] Git Commit: `chore: build quality gates clear regression release` (hash: TBD)
-97. [TODO] `phase8.stream14.task3` User installs the generated v1.2.327 VSIX and verifies Quality Gates research-first flow, Research/Contract artifact buttons, and sidebar Clear menu behavior from Project Manager (scope: user workflow acceptance; no commit expected).
+94. [DONE] Git Commit: `docs: prepare quality gates clear regression release` (hash: d796e6807)
+95. [DONE] `phase8.stream14.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.327 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates clear regression release`).
+96. [PENDING] Git Commit: `chore: build quality gates clear regression release` (hash: TBD)
+97. [TODO] `phase8.stream14.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.327.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates clear regression vsix`).
+98. [TODO] Git Commit: `chore: package quality gates clear regression vsix` (hash: TBD)
+99. [TODO] `phase8.stream14.task4` User installs the generated v1.2.327 VSIX and verifies Quality Gates research-first flow, Research/Contract artifact buttons, and sidebar Clear menu behavior from Project Manager (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-98. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-99. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+100. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+101. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
