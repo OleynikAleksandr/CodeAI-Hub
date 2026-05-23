@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "16ae45f30",
+  "lastRecordedCommit": "2bfc659ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream24.task1",
-  "expectedCommitMessage": "fix: clear codex native translation sessions",
+  "currentTaskId": "phase8.stream25.task1",
+  "expectedCommitMessage": "docs: prepare codex native cleanup release",
   "debt": {
-    "expectedCommitMessage": "fix: clear codex native translation sessions",
-    "preCommitHead": "16ae45f30",
+    "expectedCommitMessage": "docs: prepare codex native cleanup release",
+    "preCommitHead": "2bfc659ea",
     "stage": "commit_pending",
-    "taskId": "phase8.stream24.task1"
+    "taskId": "phase8.stream25.task1"
   }
 }
 ```
@@ -319,9 +319,18 @@
 
 ### Stream: Workflow Clear Codex Native Translation Cleanup
 179. [DONE] `phase8.stream24.task1` Make workflow step Clear remove Codex provider-native workflow sessions by `session_meta.payload.id` and disposable Codex translation-native sessions that are not present in continuity (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear codex native translation sessions`).
-180. [PENDING] Git Commit: `fix: clear codex native translation sessions` (hash: TBD)
-181. [TODO] `phase8.stream24.task2` Run targeted validation for Codex provider-native workflow/translation session cleanup and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-182. [TODO] `phase8.stream24.task3` Wait for explicit user confirmation before building the next replacement release after Codex native translation cleanup (scope: release confirmation gate; no commit expected).
+180. [DONE] Git Commit: `fix: clear codex native translation sessions` (hash: 2bfc659ea)
+181. [DONE] `phase8.stream24.task2` Run targeted validation for Codex provider-native workflow/translation session cleanup and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build passed; workflow-step clear session cleanup and clear undo tests passed.
+182. [DONE] `phase8.stream24.task3` Wait for explicit user confirmation before building the next replacement release after Codex native translation cleanup (scope: release confirmation gate; no commit expected). Result: user explicitly requested a new release build on 2026-05-23.
+
+### Stream: Release Build — Codex Native Translation Cleanup
+183. [DONE] `phase8.stream25.task1` Update release-facing docs for the v1.2.333 Codex native translation cleanup build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare codex native cleanup release`).
+184. [PENDING] Git Commit: `docs: prepare codex native cleanup release` (hash: TBD)
+185. [TODO] `phase8.stream25.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.333 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build codex native cleanup release`).
+186. [TODO] Git Commit: `chore: build codex native cleanup release` (hash: TBD)
+187. [TODO] `phase8.stream25.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package codex native cleanup vsix`).
+188. [TODO] Git Commit: `chore: package codex native cleanup vsix` (hash: TBD)
+189. [TODO] `phase8.stream25.task4` User installs the generated v1.2.333 VSIX and verifies clearing Description removes Codex provider-native workflow and translation JSONL files (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

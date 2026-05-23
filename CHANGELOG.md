@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.333] - 2026-05-23
+### Fixed
+- **Codex provider-native workflow sessions are matched by metadata.** Clear now reads Codex native JSONL `session_meta.payload.id` instead of relying on the rollout file name containing the provider session id.
+- **Codex translation-native sessions are cleaned up.** Disposable translation JSONL files under `~/.codeai-hub/providers/codex/home/sessions/**` are removed when their metadata shows `codeai-codex-translation-*` runtime cwd or the translation-only base instruction.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.undo.test.js`
+
 ## [1.2.332] - 2026-05-23
 ### Fixed
 - **Workflow step Clear removes stale session traces after checkpoint restore.** Clear now collects cleanup targets before restore and deletes them afterward even when checkpoint restore succeeds.
