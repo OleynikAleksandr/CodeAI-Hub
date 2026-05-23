@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "d796e6807",
+  "lastRecordedCommit": "01b7b712b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream14.task2",
-  "expectedCommitMessage": "chore: build quality gates clear regression release",
+  "currentTaskId": "phase8.stream14.task3",
+  "expectedCommitMessage": "chore: package quality gates clear regression vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates clear regression release",
-    "preCommitHead": "d796e6807",
+    "expectedCommitMessage": "chore: package quality gates clear regression vsix",
+    "preCommitHead": "01b7b712b",
     "stage": "commit_pending",
-    "taskId": "phase8.stream14.task2"
+    "taskId": "phase8.stream14.task3"
   }
 }
 ```
@@ -221,9 +221,9 @@
 93. [DONE] `phase8.stream14.task1` Update release-facing docs for the v1.2.327 Quality Gates research-first and Clear menu replacement build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates clear regression release`).
 94. [DONE] Git Commit: `docs: prepare quality gates clear regression release` (hash: d796e6807)
 95. [DONE] `phase8.stream14.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.327 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates clear regression release`).
-96. [PENDING] Git Commit: `chore: build quality gates clear regression release` (hash: TBD)
-97. [TODO] `phase8.stream14.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.327.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates clear regression vsix`).
-98. [TODO] Git Commit: `chore: package quality gates clear regression vsix` (hash: TBD)
+96. [DONE] Git Commit: `chore: build quality gates clear regression release` (hash: 01b7b712b)
+97. [DONE] `phase8.stream14.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.327.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates clear regression vsix`). Result: VSIX `codeai-hub-1.2.327.vsix` built successfully at 4.5M with SDK exclusions, local artefact validation, markdown links, duplication check and package surface checks passing.
+98. [PENDING] Git Commit: `chore: package quality gates clear regression vsix` (hash: TBD)
 99. [TODO] `phase8.stream14.task4` User installs the generated v1.2.327 VSIX and verifies Quality Gates research-first flow, Research/Contract artifact buttons, and sidebar Clear menu behavior from Project Manager (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
