@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "c5c6c7647",
+  "lastRecordedCommit": "89130528a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream27.task1",
-  "expectedCommitMessage": "fix: restore description questionnaire read model",
+  "currentTaskId": "phase8.stream28.task1",
+  "expectedCommitMessage": "docs: prepare workflow clear read model release",
   "debt": {
-    "expectedCommitMessage": "fix: restore description questionnaire read model",
-    "preCommitHead": "c5c6c7647",
+    "expectedCommitMessage": "docs: prepare workflow clear read model release",
+    "preCommitHead": "89130528a",
     "stage": "commit_pending",
-    "taskId": "phase8.stream27.task1"
+    "taskId": "phase8.stream28.task1"
   }
 }
 ```
@@ -342,9 +342,18 @@
 
 ### Stream: Workflow Clear Questionnaire Fallback
 196. [DONE] `phase8.stream27.task1` Hydrate Core Description read model from existing `questionnaire.md` when `description-step.json` is absent after Clear (scope: `packages/core/src/workflow/description/description-step-store.ts, packages/core/src/workflow/description/description-step-store.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore description questionnaire read model`).
-197. [PENDING] Git Commit: `fix: restore description questionnaire read model` (hash: TBD)
-198. [TODO] `phase8.stream27.task2` Rerun targeted validation for real-workspace Description projection, workflow clear regressions, Core build and Project Manager refresh behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-199. [TODO] `phase8.stream27.task3` Wait for explicit user confirmation before building the next replacement release after questionnaire fallback fixes (scope: release confirmation gate; no commit expected).
+197. [DONE] Git Commit: `fix: restore description questionnaire read model` (hash: 89130528a)
+198. [DONE] `phase8.stream27.task2` Rerun targeted validation for real-workspace Description projection, workflow clear regressions, Core build and Project Manager refresh behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build passed; DescriptionStepStore, workflow clear undo and Codex native session cleanup tests passed; real workspace projection now returns `questionnaire.md` without stale `Final_Description.md` or session refs; Project Manager typecheck, webview build and Project Manager build passed; Clear refresh source assertions passed.
+199. [DONE] `phase8.stream27.task3` Wait for explicit user confirmation before building the next replacement release after questionnaire fallback fixes (scope: release confirmation gate; no commit expected). Result: user explicitly requested a new release build on 2026-05-23.
+
+### Stream: Release Build — Workflow Clear Read Model Resync
+200. [DONE] `phase8.stream28.task1` Update release-facing docs for the v1.2.334 workflow Clear read-model resync build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow clear read model release`).
+201. [PENDING] Git Commit: `docs: prepare workflow clear read model release` (hash: TBD)
+202. [TODO] `phase8.stream28.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.334 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow clear read model release`).
+203. [TODO] Git Commit: `chore: build workflow clear read model release` (hash: TBD)
+204. [TODO] `phase8.stream28.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow clear read model vsix`).
+205. [TODO] Git Commit: `chore: package workflow clear read model vsix` (hash: TBD)
+206. [TODO] `phase8.stream28.task4` User installs the generated v1.2.334 VSIX and verifies clearing Description returns Project Manager to the editable questionnaire, removes stale sidebar indicators and does not show missing downstream artifacts (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.334] - 2026-05-23
+### Fixed
+- **Description read-model is sanitized after Clear.** Core no longer projects stale `Final_Description.md` or deleted session refs when those files were removed by workflow step Clear.
+- **Description questionnaire is restored without `description-step.json`.** If Clear leaves only the filled `questionnaire.md`, Core rebuilds the Description snapshot from that file so Project Manager can reopen the editable questionnaire.
+- **Project Manager refreshes artifact availability immediately after Clear.** The sidebar and artifact panel now re-probe workflow artifacts as soon as Clear succeeds, avoiding stale Virtual Simulation or Description labels.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/description/description-step-store.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.undo.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.js`
+- real-workspace Description projection check for `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.333] - 2026-05-23
 ### Fixed
 - **Codex provider-native workflow sessions are matched by metadata.** Clear now reads Codex native JSONL `session_meta.payload.id` instead of relying on the rollout file name containing the provider session id.
