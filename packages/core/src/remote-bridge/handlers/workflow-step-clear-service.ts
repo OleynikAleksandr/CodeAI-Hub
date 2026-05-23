@@ -21,6 +21,7 @@ import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
 import {
   cleanupDescriptionState,
   collectContinuityIndexUserSpaceSessionPaths,
+  collectStageNamedUserSpaceSessionPaths,
   pruneContinuityIndex,
 } from "./workflow-step-clear-continuity-support";
 
@@ -267,6 +268,15 @@ const collectUserSpaceSessionPaths = async (
   for (const indexPath of indexPaths) {
     paths.add(indexPath);
   }
+  if (params.target.kind === "workflow_stage") {
+    for (const stageNamedPath of await collectStageNamedUserSpaceSessionPaths({
+      rootDirectory,
+      stage: params.target.stage,
+      workspaceSlug: params.workspaceSlug,
+    })) {
+      paths.add(stageNamedPath);
+    }
+  }
   return [...paths];
 };
 
@@ -337,37 +347,6 @@ const collectLedgerUndoActions = async (params: {
     });
 };
 
-const collectPersistentStatePaths = (params: ParsedClearRequest): string[] => {
-  if (params.target.kind === "development_tree_node") {
-    return collectDevelopmentTreePaths({
-      ...params,
-      target: params.target,
-    }).filter((targetPath) =>
-      targetPath.includes(`${path.sep}continuity${path.sep}`)
-    );
-  }
-  const hubRoot = path.join(
-    params.workspacePath,
-    ".codeai-hub",
-    params.workspaceSlug
-  );
-  const paths: string[] = [];
-  for (const stage of downstreamStages(params.target.stage)) {
-    paths.push(path.join(hubRoot, "continuity", stage));
-    paths.push(
-      path.join(params.workspacePath, "doc/TODO/stages", STAGE_TODO_DIRS[stage])
-    );
-  }
-  paths.push(path.join(hubRoot, "workflow", "state.json"));
-  if (downstreamStages(params.target.stage).includes("diagram_modules")) {
-    paths.push(path.join(hubRoot, "continuity", "development_tree"));
-    paths.push(
-      path.join(params.workspacePath, "doc/TODO/stages/development-tree")
-    );
-  }
-  return paths;
-};
-
 const collectDevelopmentTreePaths = (
   params: DevelopmentTreeClearRequest
 ): string[] => {
@@ -412,13 +391,17 @@ const collectClearPaths = (
   parsed: ParsedClearRequest,
   ledgerActions: readonly WorkflowStepUndoAction[]
 ): string[] => {
-  if (ledgerActions.length > 0) {
-    return collectPersistentStatePaths(parsed);
+  const fallbackPaths =
+    parsed.target.kind === "workflow_stage"
+      ? collectStagePaths({ ...parsed, target: parsed.target })
+      : collectDevelopmentTreePaths({ ...parsed, target: parsed.target });
+  if (ledgerActions.length === 0) {
+    return fallbackPaths;
   }
-  if (parsed.target.kind === "workflow_stage") {
-    return collectStagePaths({ ...parsed, target: parsed.target });
-  }
-  return collectDevelopmentTreePaths({ ...parsed, target: parsed.target });
+  const ledgerPaths = new Set(
+    ledgerActions.map((ledgerAction) => ledgerAction.absolutePath)
+  );
+  return fallbackPaths.filter((targetPath) => !ledgerPaths.has(targetPath));
 };
 
 export const handleWorkflowStepClear = async (

@@ -1,10 +1,26 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   buildSessionFilePath,
   buildSessionTranslationFilePath,
   sanitizeWorkspaceSlug,
 } from "@codeai-hub/unified-session";
+import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
+
+const WORKFLOW_STAGES = [
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
+] as const satisfies readonly WorkflowStageId[];
+const STAGE_FILE_SUFFIXES: Record<WorkflowStageId, readonly string[]> = {
+  application_skeleton: ["application-skeleton"],
+  description: ["description"],
+  diagram_modules: ["diagram-modules"],
+  quality_gates: ["quality-gates"],
+  virtual_simulation: ["virtual-simulation"],
+};
 
 interface ContinuityIndexEntryRecord {
   readonly latestSessionId: string | null;
@@ -49,6 +65,13 @@ const writeJsonFile = async (
 ): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+};
+
+const downstreamStages = (
+  stage: WorkflowStageId
+): readonly WorkflowStageId[] => {
+  const index = WORKFLOW_STAGES.indexOf(stage);
+  return index < 0 ? [] : WORKFLOW_STAGES.slice(index);
 };
 
 const readContinuityIndexEntries = async (params: {
@@ -120,6 +143,54 @@ export const collectContinuityIndexUserSpaceSessionPaths = async (params: {
   return [...paths];
 };
 
+export const collectStageNamedUserSpaceSessionPaths = async (params: {
+  readonly rootDirectory: string;
+  readonly stage: WorkflowStageId;
+  readonly workspaceSlug: string;
+}): Promise<string[]> => {
+  const workspaceSessionRoot = path.join(
+    params.rootDirectory,
+    params.workspaceSlug
+  );
+  const stageSuffixes = new Set(
+    downstreamStages(params.stage).flatMap(
+      (stage) => STAGE_FILE_SUFFIXES[stage]
+    )
+  );
+  const stageSuffixList = [...stageSuffixes];
+  const providerEntries = await readdir(workspaceSessionRoot, {
+    withFileTypes: true,
+  }).catch(() => []);
+  const paths: string[] = [];
+  for (const providerEntry of providerEntries) {
+    if (!providerEntry.isDirectory()) {
+      continue;
+    }
+    const providerDirectory = path.join(
+      workspaceSessionRoot,
+      providerEntry.name
+    );
+    const fileEntries = await readdir(providerDirectory, {
+      withFileTypes: true,
+    }).catch(() => []);
+    for (const fileEntry of fileEntries) {
+      if (!fileEntry.isFile()) {
+        continue;
+      }
+      const fileName = fileEntry.name;
+      const isMatchingStageFile = stageSuffixList.some(
+        (suffix) =>
+          fileName.endsWith(`-${suffix}.jsonl`) ||
+          fileName.endsWith(`-${suffix}.translations.jsonl`)
+      );
+      if (isMatchingStageFile) {
+        paths.push(path.join(providerDirectory, fileName));
+      }
+    }
+  }
+  return paths;
+};
+
 export const cleanupDescriptionState = async (params: {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
@@ -165,6 +236,10 @@ export const pruneContinuityIndex = async (
       readString((entry as Record<string, unknown>).stage)
     );
   });
+  if (nextEntries.length === 0) {
+    await rm(path.dirname(indexPath), { force: true, recursive: true });
+    return;
+  }
   await writeJsonFile(indexPath, {
     ...index,
     version: index.version ?? 1,

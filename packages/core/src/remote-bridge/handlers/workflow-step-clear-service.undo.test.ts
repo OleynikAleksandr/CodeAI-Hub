@@ -10,7 +10,10 @@ import {
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { buildSessionFilePath } from "@codeai-hub/unified-session";
+import {
+  buildSessionFilePath,
+  buildSessionTranslationFilePath,
+} from "@codeai-hub/unified-session";
 import type { Request, Response } from "express";
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
@@ -146,6 +149,20 @@ test("workflow step clear preserves Description questionnaire and removes genera
     });
     await mkdir(path.dirname(descriptionHistoryPath), { recursive: true });
     await writeFile(descriptionHistoryPath, "test\n", "utf8");
+    const staleVirtualHistoryPath = buildSessionFilePath({
+      provider: "codexCli",
+      rootDirectory: path.join(homeRoot, ".codeai-hub", "sessions"),
+      sessionId: "codex-stale-virtual-simulation",
+      workspaceSlug,
+    });
+    const staleVirtualTranslationPath = buildSessionTranslationFilePath({
+      provider: "codexCli",
+      rootDirectory: path.join(homeRoot, ".codeai-hub", "sessions"),
+      sessionId: "codex-stale-virtual-simulation",
+      workspaceSlug,
+    });
+    await writeFile(staleVirtualHistoryPath, "test\n", "utf8");
+    await writeFile(staleVirtualTranslationPath, "test\n", "utf8");
 
     const result = await runClear({
       body: {
@@ -182,6 +199,8 @@ test("workflow step clear preserves Description questionnaire and removes genera
       false
     );
     assert.equal(await exists(descriptionHistoryPath), false);
+    assert.equal(await exists(staleVirtualHistoryPath), false);
+    assert.equal(await exists(staleVirtualTranslationPath), false);
     const descriptionState = await readJson<Record<string, unknown>>(
       path.join(workspaceRoot, `${descriptionRoot}/description-step.json`)
     );
@@ -191,10 +210,8 @@ test("workflow step clear preserves Description questionnaire and removes genera
     );
     assert.equal("finalPath" in descriptionState, false);
     assert.equal("primarySession" in descriptionState, false);
-    const index = await readJson<{ readonly entries: readonly unknown[] }>(
-      indexPath
-    );
-    assert.equal(index.entries.length, 0);
+    assert.equal(await exists(indexPath), false);
+    assert.equal(await exists(path.dirname(indexPath)), false);
     assert.deepEqual(resetCalls, [workspaceSlug]);
   } finally {
     process.env.HOME = previousHome;
@@ -260,7 +277,7 @@ test("workflow step clear uses persisted undo ledger entries after restart", asy
   }
 });
 
-test("workflow step clear keeps questionnaire checkpoint and resets Description state", async () => {
+test("workflow step clear keeps questionnaire checkpoint and removes untracked Description outputs", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-step-clear-questionnaire-checkpoint-")
   );
@@ -308,18 +325,6 @@ test("workflow step clear keeps questionnaire checkpoint and resets Description 
         source: "workspace_file_write",
         stage: "description",
         undoBehavior: "preserve_path",
-      },
-      {
-        kind: "write_file",
-        relativePath: finalPath,
-        source: "artifact_upsert",
-        stage: "description",
-      },
-      {
-        kind: "write_file",
-        relativePath: draftPath,
-        source: "artifact_upsert",
-        stage: "description",
       },
     ]);
 

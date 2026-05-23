@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "e1699d256",
+  "lastRecordedCommit": "33d972c4a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream18.task3",
-  "expectedCommitMessage": "chore: package workflow hard undo vsix",
+  "currentTaskId": "phase8.stream19.task1",
+  "expectedCommitMessage": "fix: remove orphaned workflow clear state",
   "debt": {
-    "expectedCommitMessage": "chore: package workflow hard undo vsix",
-    "preCommitHead": "e1699d256",
+    "expectedCommitMessage": "fix: remove orphaned workflow clear state",
+    "preCommitHead": "33d972c4a",
     "stage": "commit_pending",
-    "taskId": "phase8.stream18.task3"
+    "taskId": "phase8.stream19.task1"
   }
 }
 ```
@@ -255,11 +255,19 @@
 119. [DONE] `phase8.stream18.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.329 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow hard undo release`).
 120. [DONE] Git Commit: `chore: build workflow hard undo release` (hash: e1699d256)
 121. [DONE] `phase8.stream18.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.329.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow hard undo vsix`).
-122. [PENDING] Git Commit: `chore: package workflow hard undo vsix` (hash: TBD)
-123. [TODO] `phase8.stream18.task4` User installs the generated v1.2.329 VSIX and verifies workflow step Clear returns Description to an editable questionnaire and reverses downstream workflow actions from the persistent undo ledger (scope: user workflow acceptance; no commit expected).
+122. [DONE] Git Commit: `chore: package workflow hard undo vsix` (hash: 33d972c4a)
+123. [BLOCKED] `phase8.stream18.task4` User installs the generated v1.2.329 VSIX and verifies workflow step Clear returns Description to an editable questionnaire and reverses downstream workflow actions from the persistent undo ledger (scope: user workflow acceptance; no commit expected). Blocked: user retest showed orphaned `Final_Description.md`, empty continuity directories, stale user-space session files and stale Project Manager questionnaire session cache after Clear.
+
+### Stream: Workflow Clear Exact Revert Regression
+126. [DONE] `phase8.stream19.task1` Make workflow step Clear combine persisted undo with fallback stage cleanup, remove empty continuity state instead of rewriting empty indexes, and delete user-space session files for cleared workflow stages even when continuity has already been pruned (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-continuity-support.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`; expected commit: `fix: remove orphaned workflow clear state`).
+127. [PENDING] Git Commit: `fix: remove orphaned workflow clear state` (hash: TBD)
+128. [TODO] `phase8.stream19.task2` Make Project Manager reload the Description questionnaire through a fresh workspace session when the cached session was cleared, preserving the existing filled questionnaire file instead of rendering an empty form (scope: `src/client/project-manager/services/description-questionnaire-service.ts, src/client/project-manager/services/description-questionnaire-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: reload questionnaire after workflow clear`).
+129. [TODO] Git Commit: `fix: reload questionnaire after workflow clear` (hash: TBD)
+130. [TODO] `phase8.stream19.task3` Run targeted validation for Core workflow clear exact-revert behavior and Project Manager questionnaire reload after Clear (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+131. [TODO] `phase8.stream19.task4` Wait for explicit user confirmation before building the next replacement release after exact-revert Clear fixes (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-124. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-125. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+132. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+133. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
