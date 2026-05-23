@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "5fd661624",
+  "lastRecordedCommit": "b7b910544",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream11.task1",
-  "expectedCommitMessage": "fix: avoid native clear confirmation crash",
+  "currentTaskId": "phase8.stream12.task1",
+  "expectedCommitMessage": "docs: prepare workflow clear crash release",
   "debt": {
-    "expectedCommitMessage": "fix: avoid native clear confirmation crash",
-    "preCommitHead": "5fd661624",
+    "expectedCommitMessage": "docs: prepare workflow clear crash release",
+    "preCommitHead": "b7b910544",
     "stage": "commit_pending",
-    "taskId": "phase8.stream11.task1"
+    "taskId": "phase8.stream12.task1"
   }
 }
 ```
@@ -197,12 +197,18 @@
 
 ### Stream: Acceptance Remediation — Workflow Clear Context Menu Crash
 77. [DONE] `phase8.stream11.task1` Replace native `window.confirm` in the sidebar Clear action with an in-app confirmation menu and suppress native context-menu events earlier (scope: `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: avoid native clear confirmation crash`).
-78. [PENDING] Git Commit: `fix: avoid native clear confirmation crash` (hash: TBD)
-79. [TODO] `phase8.stream11.task2` Run targeted validation for Project Manager sidebar Clear context menu behavior (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-80. [TODO] `phase8.stream11.task3` Wait for explicit user confirmation before building another replacement release for workflow clear crash remediation (scope: release confirmation gate; no commit expected).
+78. [DONE] Git Commit: `fix: avoid native clear confirmation crash` (hash: b7b910544)
+79. [DONE] `phase8.stream11.task2` Run targeted validation for Project Manager sidebar Clear context menu behavior (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Project Manager sidebar Clear context menu validation passed: typecheck:webview, build:webview, build:project-manager and workspace-tree-clear-menu tests passed.
+80. [DONE] `phase8.stream11.task3` Wait for explicit user confirmation before building another replacement release for workflow clear crash remediation (scope: release confirmation gate; no commit expected). Result: User explicitly requested a new test release build for workflow clear crash remediation on 2026-05-23.
+
+### Stream: Release Build — Workflow Clear Context Menu Crash
+81. [DONE] `phase8.stream12.task1` Update release-facing docs for the v1.2.326 workflow clear crash remediation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow clear crash release`).
+82. [PENDING] Git Commit: `docs: prepare workflow clear crash release` (hash: TBD)
+83. [TODO] `phase8.stream12.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workflow clear crash release`).
+84. [TODO] Git Commit: `chore: build workflow clear crash release` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-81. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-82. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+85. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+86. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)

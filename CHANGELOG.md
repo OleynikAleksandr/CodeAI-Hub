@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.326] - 2026-05-23
+### Fixed
+- **Project Manager no longer uses a native browser confirmation for sidebar `Clear`.** The workflow step clear action now opens an in-app confirmation panel, avoiding the CEF/macOS native-dialog crash path reported during right-click testing.
+- **Sidebar right-click handling suppresses the native context menu earlier.** Clear targets now prevent the browser context-menu event at capture time and on right-button mouse down before rendering the Project Manager menu.
+
+### Tests
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+- `npx tsx --test src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`
+
 ## [1.2.325] - 2026-05-23
 ### Changed
 - **Rebuilt the workflow step clear release under a fresh version number.** This replacement package keeps the v1.2.324 clear-action behavior and republishes it as v1.2.325 for a clean user retest.
