@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.336] - 2026-05-23
+### Fixed
+- **Workflow undo metadata no longer blocks Diagram Modules acceptance.** Core now classifies workflow checkpoints and the undo ledger as Core-owned runtime metadata in the managed terminal acceptance gate, so the user is not asked to manually handle internal undo files in Git.
+- **Technical-stage dirty state ignores undo/checkpoint metadata.** The workflow-state read model now treats the same files as volatile Core metadata, preventing sidebar/progress dirty-state noise after polling or restart.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.335] - 2026-05-23
 ### Fixed
 - **Description questionnaire opens as an editor immediately after Clear.** Project Manager now bypasses the optimistic Description session guard when Core projects a questionnaire-only Description snapshot, so the preserved `questionnaire.md` opens as the editable restart form without a manual Help/Artifacts refresh.

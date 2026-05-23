@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "d6c6fe34f",
+  "lastRecordedCommit": "8cc401923",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream31.task2",
-  "expectedCommitMessage": "fix: ignore workflow undo metadata in technical gate",
+  "currentTaskId": "phase8.stream32.task1",
+  "expectedCommitMessage": "docs: prepare workflow undo metadata gate release",
   "debt": {
-    "expectedCommitMessage": "fix: ignore workflow undo metadata in technical gate",
-    "preCommitHead": "d6c6fe34f",
+    "expectedCommitMessage": "docs: prepare workflow undo metadata gate release",
+    "preCommitHead": "8cc401923",
     "stage": "commit_pending",
-    "taskId": "phase8.stream31.task2"
+    "taskId": "phase8.stream32.task1"
   }
 }
 ```
@@ -374,9 +374,18 @@
 218. [DONE] `phase8.stream31.task1` Classify workflow undo ledger and checkpoint files as Core-owned runtime metadata in the managed terminal acceptance gate so Diagram Modules acceptance does not ask the user to handle internal undo files (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore workflow undo metadata in managed gate`).
 219. [DONE] Git Commit: `fix: ignore workflow undo metadata in managed gate` (hash: d6c6fe34f)
 220. [DONE] `phase8.stream31.task2` Classify workflow undo ledger and checkpoint files as volatile Core metadata in the technical-stage dirty read model so left sidebar/progress does not mark workflow stages dirty after restart (scope: `packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.ts, packages/core/src/remote-bridge/handlers/technical-stage-dirty-gate.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore workflow undo metadata in technical gate`).
-221. [PENDING] Git Commit: `fix: ignore workflow undo metadata in technical gate` (hash: TBD)
-222. [TODO] `phase8.stream31.task3` Run targeted Core validation for dirty-gate classification and affected managed workflow acceptance behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-223. [TODO] `phase8.stream31.task4` Wait for explicit user confirmation before building the next replacement release after workflow undo metadata dirty-gate fix (scope: release confirmation gate; no commit expected).
+221. [DONE] Git Commit: `fix: ignore workflow undo metadata in technical gate` (hash: 8cc401923)
+222. [DONE] `phase8.stream31.task3` Run targeted Core validation for dirty-gate classification and affected managed workflow acceptance behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: managed terminal dirty classifier tests, technical-stage dirty gate tests, Diagram Modules review acceptance tests and `npm run build --workspace @codeai-hub/core` passed.
+223. [DONE] `phase8.stream31.task4` Wait for explicit user confirmation before building the next replacement release after workflow undo metadata dirty-gate fix (scope: release confirmation gate; no commit expected). Result: user explicitly requested a new release build on 2026-05-23.
+
+### Stream: Release Build — Workflow Undo Metadata Dirty Gate
+224. [DONE] `phase8.stream32.task1` Update release-facing docs for the v1.2.336 workflow undo metadata dirty-gate build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow undo metadata gate release`).
+225. [PENDING] Git Commit: `docs: prepare workflow undo metadata gate release` (hash: TBD)
+226. [TODO] `phase8.stream32.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.336 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow undo metadata gate release`).
+227. [TODO] Git Commit: `chore: build workflow undo metadata gate release` (hash: TBD)
+228. [TODO] `phase8.stream32.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow undo metadata gate vsix`).
+229. [TODO] Git Commit: `chore: package workflow undo metadata gate vsix` (hash: TBD)
+230. [TODO] `phase8.stream32.task4` User installs the generated v1.2.336 VSIX and verifies Diagram Modules acceptance is not blocked by workflow checkpoint/undo metadata (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

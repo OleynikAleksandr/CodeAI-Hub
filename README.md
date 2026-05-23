@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.335** (Workflow Clear Immediate Questionnaire Editor)
+**Current Release — v1.2.336** (Workflow Undo Metadata Dirty Gate)
+
+This replacement build fixes Diagram Modules acceptance after workflow
+checkpoint/undo support. Core now treats
+`.codeai-hub/<workspace>/workflow/checkpoints/**` and
+`.codeai-hub/<workspace>/workflow/undo-ledger.json` as Core-owned runtime
+metadata in both managed terminal acceptance and technical-stage dirty
+read-model checks.
+
+These internal undo files no longer block Diagram Modules review completion or
+ask the user to choose how to handle them in Git.
+
+**Previous Release — v1.2.335** (Workflow Clear Immediate Questionnaire Editor)
 
 This replacement build finishes the Project Manager side of workflow step
 `Clear` for the Description restart path. When Core returns a Description
