@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "d371c6998",
+  "lastRecordedCommit": "5186bb6bc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream22.task2",
-  "expectedCommitMessage": "fix: checkpoint workspace path session roots",
+  "currentTaskId": "phase8.stream23.task1",
+  "expectedCommitMessage": "docs: prepare workflow session cleanup release",
   "debt": {
-    "expectedCommitMessage": "fix: checkpoint workspace path session roots",
-    "preCommitHead": "d371c6998",
+    "expectedCommitMessage": "docs: prepare workflow session cleanup release",
+    "preCommitHead": "5186bb6bc",
     "stage": "commit_pending",
-    "taskId": "phase8.stream22.task2"
+    "taskId": "phase8.stream23.task1"
   }
 }
 ```
@@ -304,9 +304,18 @@
 166. [DONE] `phase8.stream22.task1` Make workflow step Clear collect and delete session traces before checkpoint restore, including workspace-path unified session roots and provider-native Codex/Claude session files linked by continuity provider session id (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`; expected commit: `fix: clear workflow session traces after checkpoint restore`).
 167. [DONE] Git Commit: `fix: clear workflow session traces after checkpoint restore` (hash: d371c6998)
 168. [DONE] `phase8.stream22.task2` Make workflow step checkpoints capture both initiative-slug and workspace-path user-space session roots for exact future restores (scope: `packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: checkpoint workspace path session roots`).
-169. [PENDING] Git Commit: `fix: checkpoint workspace path session roots` (hash: TBD)
-170. [TODO] `phase8.stream22.task3` Run targeted validation for workflow clear session trace cleanup and checkpoint root restore behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-171. [TODO] `phase8.stream22.task4` Wait for explicit user confirmation before building the next replacement release after session trace cleanup (scope: release confirmation gate; no commit expected).
+169. [DONE] Git Commit: `fix: checkpoint workspace path session roots` (hash: 5186bb6bc)
+170. [DONE] `phase8.stream22.task3` Run targeted validation for workflow clear session trace cleanup and checkpoint root restore behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build passed; workflow clear undo/session cleanup tests and workflow checkpoint restore tests passed.
+171. [DONE] `phase8.stream22.task4` Wait for explicit user confirmation before building the next replacement release after session trace cleanup (scope: release confirmation gate; no commit expected). Result: user explicitly requested a new release build on 2026-05-23.
+
+### Stream: Release Build — Workflow Session Trace Cleanup
+172. [DONE] `phase8.stream23.task1` Update release-facing docs for the v1.2.332 workflow session trace cleanup build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow session cleanup release`).
+173. [PENDING] Git Commit: `docs: prepare workflow session cleanup release` (hash: TBD)
+174. [TODO] `phase8.stream23.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.332 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow session cleanup release`).
+175. [TODO] Git Commit: `chore: build workflow session cleanup release` (hash: TBD)
+176. [TODO] `phase8.stream23.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow session cleanup vsix`).
+177. [TODO] Git Commit: `chore: package workflow session cleanup vsix` (hash: TBD)
+178. [TODO] `phase8.stream23.task4` User installs the generated v1.2.332 VSIX and verifies clearing Description removes workspace/user-space mutations, unified session files and provider-native session files (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

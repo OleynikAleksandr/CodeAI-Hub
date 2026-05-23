@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.332] - 2026-05-23
+### Fixed
+- **Workflow step Clear removes stale session traces after checkpoint restore.** Clear now collects cleanup targets before restore and deletes them afterward even when checkpoint restore succeeds.
+- **Unified session cleanup covers both workspace roots.** Core removes matching history/translation files under both the initiative slug and `sanitizeWorkspaceSlug(workspaceRoot)` session directories.
+- **Provider-native session files are removed for cleared steps.** Codex rollout JSONL files and Claude provider-home project JSONL files linked by continuity `providerSessionId` are deleted with the cleared workflow step.
+- **Checkpoints capture both user-space session roots.** New workflow step checkpoints include both initiative-slug and workspace-path session roots for exact future restores.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.undo.test.js packages/core/dist/workflow/step-checkpoint/workflow-step-checkpoint-store.test.js`
+
 ## [1.2.331] - 2026-05-23
 ### Added
 - **Workflow step checkpoint restore module.** Core now has a dedicated `workflow/step-checkpoint` module with `WorkflowStepCheckpointFacade` as the public contract/facade for creating and restoring restart-stable workflow step checkpoints.

@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.331** (Workflow Step Checkpoint Restore)
+**Current Release — v1.2.332** (Workflow Session Trace Cleanup)
+
+This replacement build finishes the workflow step `Clear` rollback path for
+provider sessions. Clear now collects session traces before checkpoint restore
+and removes them after restore even when the checkpoint path succeeds.
+
+Core now deletes matching unified session history under both
+`~/.codeai-hub/sessions/<workspaceSlug>` and the actual workspace-path session
+root `~/.codeai-hub/sessions/<sanitizeWorkspaceSlug(workspaceRoot)>`. It also
+removes provider-native session files linked by continuity `providerSessionId`,
+including Codex rollout JSONL files and Claude provider-home project JSONL
+files.
+
+New workflow checkpoints also capture both user-space session roots, so future
+stage rollback has the complete pre-step session state without relying on
+fallback cleanup heuristics.
 
 This replacement build makes workflow step `Clear` use a real Core-owned
 checkpoint restore. Before the first start effect of a workflow stage, Core now
