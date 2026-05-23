@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "b068f07f3",
+  "lastRecordedCommit": "cd0703a1a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream36.task1",
-  "expectedCommitMessage": "docs: prepare git backed workflow clear release",
+  "currentTaskId": "phase8.stream36.task2",
+  "expectedCommitMessage": "chore: build git backed workflow clear release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare git backed workflow clear release",
-    "preCommitHead": "b068f07f3",
+    "expectedCommitMessage": "chore: build git backed workflow clear release",
+    "preCommitHead": "cd0703a1a",
     "stage": "commit_pending",
-    "taskId": "phase8.stream36.task1"
+    "taskId": "phase8.stream36.task2"
   }
 }
 ```
@@ -418,9 +418,9 @@
 
 ### Stream: Release Build — Git-Backed Workflow Clear
 254. [DONE] `phase8.stream36.task1` Update release-facing docs for the v1.2.338 Git-backed workflow Clear build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare git backed workflow clear release`).
-255. [PENDING] Git Commit: `docs: prepare git backed workflow clear release` (hash: TBD)
-256. [TODO] `phase8.stream36.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.338 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build git backed workflow clear release`).
-257. [TODO] Git Commit: `chore: build git backed workflow clear release` (hash: TBD)
+255. [DONE] Git Commit: `docs: prepare git backed workflow clear release` (hash: cd0703a1a)
+256. [DONE] `phase8.stream36.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.338 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build git backed workflow clear release`).
+257. [PENDING] Git Commit: `chore: build git backed workflow clear release` (hash: TBD)
 258. [TODO] `phase8.stream36.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package git backed workflow clear vsix`).
 259. [TODO] Git Commit: `chore: package git backed workflow clear vsix` (hash: TBD)
 260. [TODO] `phase8.stream36.task4` User installs the generated v1.2.338 VSIX and verifies managed workflow Clear from Diagram Modules onward uses Git rollback and preserves upstream artifacts/read-models (scope: user workflow acceptance; no commit expected).
