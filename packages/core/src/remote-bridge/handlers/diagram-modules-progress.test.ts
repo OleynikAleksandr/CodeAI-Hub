@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
+import { validateDiagramModulesManagedArtifacts } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import {
   readDiagramModulesPersistedSubturnState,
   readDiagramModulesProgressSnapshot,
@@ -17,6 +18,10 @@ const PRODUCT_PART_HEADER_ERROR_RE =
   /Expected `# Module Inventory` title|missing '# Module Inventory' or '# Product Part:' header/u;
 const LEADERSHIP_ORDER_FIRST_ITEM_ERROR_RE =
   /first productPartLeadershipOrder item must equal leadProductPartId/u;
+const MISSING_LEAD_PRODUCT_PART_ID_RE =
+  /Diagram Modules index must declare leadProductPartId/u;
+const MISSING_PRODUCT_PART_LEADERSHIP_ORDER_RE =
+  /Diagram Modules index must declare productPartLeadershipOrder/u;
 
 test("Diagram Modules progress preserves per-part validation diagnostics", async () => {
   const workspaceRoot = await mkdtemp(
@@ -95,6 +100,56 @@ test("Diagram Modules progress preserves per-part validation diagnostics", async
     assert.match(
       progress?.productPartDiagnostics?.[1]?.error ?? "",
       PRODUCT_PART_HEADER_ERROR_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Diagram Modules managed validator repairs index before Product Part continuation when leadership metadata is missing", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "diagram-modules-index-leadership-repair-")
+  );
+
+  try {
+    await mkdir(
+      path.join(workspaceRoot, ".codeai-hub/demo-workspace/diagram_modules"),
+      { recursive: true }
+    );
+    await writeFile(
+      path.join(
+        workspaceRoot,
+        ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
+      ),
+      [
+        "# Product Parts Index",
+        "",
+        "### Product Part: project-manager",
+        "- Id: project-manager",
+        "- Title: Project Manager",
+        "- Purpose: Hosts the user workflow shell.",
+        "- Status: planned",
+        "",
+      ].join("\n"),
+      "utf8"
+    );
+
+    const decision = await validateDiagramModulesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    assert.equal(decision.valid, false);
+    assert.equal(decision.nextAction, "repair_current_artifact");
+    assert.equal(decision.currentPartId, null);
+    assert.deepEqual(decision.generatedPartIds, []);
+    assert.match(
+      decision.diagnostics.join("\n"),
+      MISSING_LEAD_PRODUCT_PART_ID_RE
+    );
+    assert.match(
+      decision.diagnostics.join("\n"),
+      MISSING_PRODUCT_PART_LEADERSHIP_ORDER_RE
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

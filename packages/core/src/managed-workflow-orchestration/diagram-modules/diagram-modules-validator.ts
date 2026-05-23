@@ -195,6 +195,17 @@ export const validateDiagramModulesManagedArtifacts = async (
     plannedPartIds,
   });
   diagnostics.push(...leadership.diagnostics);
+  if (diagnostics.length > 0) {
+    return {
+      currentPartId: null,
+      diagnostics,
+      generatedPartIds: [],
+      nextAction: "repair_current_artifact",
+      nextPrompt: null,
+      plannedPartIds,
+      valid: false,
+    };
+  }
 
   const generatedPartIds: string[] = [];
   for (const partId of plannedPartIds) {

@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "9636f5c44",
+  "lastRecordedCommit": "43b619b2c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream8.task2",
-  "expectedCommitMessage": "chore: build workflow step clear rerelease",
+  "currentTaskId": "phase8.stream9.task1",
+  "expectedCommitMessage": "fix: target diagram modules index repairs",
   "debt": {
-    "expectedCommitMessage": "chore: build workflow step clear rerelease",
-    "preCommitHead": "9636f5c44",
+    "expectedCommitMessage": "fix: target diagram modules index repairs",
+    "preCommitHead": "43b619b2c",
     "stage": "commit_pending",
-    "taskId": "phase8.stream8.task2"
+    "taskId": "phase8.stream9.task1"
   }
 }
 ```
@@ -170,11 +170,19 @@
 54. [DONE] `phase8.stream8.task1` Update release-facing docs for the v1.2.325 replacement workflow step clear build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow step clear rerelease`).
 55. [DONE] Git Commit: `docs: prepare workflow step clear rerelease` (hash: 9636f5c44)
 56. [DONE] `phase8.stream8.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workflow step clear rerelease`). Result: v1.2.325 tarballs copied to `doc/tmp/releases/`; VSIX `codeai-hub-1.2.325.vsix` built successfully at 4.5M with SDK exclusions, local artefact validation, markdown links, duplication check and package surface checks passing.
-57. [PENDING] Git Commit: `chore: build workflow step clear rerelease` (hash: TBD)
-58. [TODO] `phase8.stream8.task3` User installs the generated v1.2.325 replacement VSIX and verifies workflow step clear behavior from the Project Manager sidebar (scope: user workflow acceptance; no commit expected).
+57. [DONE] Git Commit: `chore: build workflow step clear rerelease` (hash: 43b619b2c)
+58. [BLOCKED] `phase8.stream8.task3` User installs the generated v1.2.325 replacement VSIX and verifies workflow step clear behavior from the Project Manager sidebar (scope: user workflow acceptance; no commit expected). Blocked: user reported Diagram Modules orchestrator repair prompts during release retest before final acceptance.
+
+### Stream: Acceptance Remediation — Diagram Modules Repair Flow
+59. [DONE] `phase8.stream9.task1` Stop Diagram Modules Product Part continuation when the Product Parts index has leadership metadata diagnostics, and cover the repair target with a regression test (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-validator.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: target diagram modules index repairs`).
+60. [PENDING] Git Commit: `fix: target diagram modules index repairs` (hash: TBD)
+61. [TODO] `phase8.stream9.task2` Keep provider repair prompts inline but replace Core-visible Diagram Modules validation transcript messages with compact user-facing notices (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: compact diagram modules repair notices`).
+62. [TODO] Git Commit: `fix: compact diagram modules repair notices` (hash: TBD)
+63. [TODO] `phase8.stream9.task3` Run targeted validation for Diagram Modules repair targeting and compact transcript behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+64. [TODO] `phase8.stream9.task4` Wait for explicit user confirmation before building another replacement release for Diagram Modules repair flow (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-59. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-60. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+65. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+66. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
