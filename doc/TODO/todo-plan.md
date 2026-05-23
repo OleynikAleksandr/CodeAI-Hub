@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "e3b2ece31",
+  "lastRecordedCommit": "b068f07f3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream35.task4",
-  "expectedCommitMessage": "fix: narrow managed git rollback stage",
+  "currentTaskId": "phase8.stream36.task1",
+  "expectedCommitMessage": "docs: prepare git backed workflow clear release",
   "debt": {
-    "expectedCommitMessage": "fix: narrow managed git rollback stage",
-    "preCommitHead": "e3b2ece31",
+    "expectedCommitMessage": "docs: prepare git backed workflow clear release",
+    "preCommitHead": "b068f07f3",
     "stage": "commit_pending",
-    "taskId": "phase8.stream35.task4"
+    "taskId": "phase8.stream36.task1"
   }
 }
 ```
@@ -412,9 +412,18 @@
 248. [DONE] `phase8.stream35.task3` Document the Git-backed Clear invariant for technical workflow stages in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define git backed workflow clear`).
 249. [DONE] Git Commit: `docs: define git backed workflow clear` (hash: e3b2ece31)
 250. [DONE] `phase8.stream35.task4` Fix the TypeScript managed-stage narrowing found by the Core build before validation can pass (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, doc/TODO/todo-plan.md`; expected commit: `fix: narrow managed git rollback stage`).
-251. [PENDING] Git Commit: `fix: narrow managed git rollback stage` (hash: TBD)
-252. [TODO] `phase8.stream35.task5` Run targeted validation for Git-backed workflow rollback, workflow Clear service, Quality Gates restart state and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-253. [TODO] `phase8.stream35.task6` Wait for explicit user confirmation before building the next replacement release after Git-backed workflow Clear fixes (scope: release confirmation gate; no commit expected).
+251. [DONE] Git Commit: `fix: narrow managed git rollback stage` (hash: b068f07f3)
+252. [DONE] `phase8.stream35.task5` Run targeted validation for Git-backed workflow rollback, workflow Clear service, Quality Gates restart state and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted validation passed: Git rollback and workflow Clear tests 8/8, @codeai-hub/core build, and plan validation.
+253. [DONE] `phase8.stream35.task6` Wait for explicit user confirmation before building the next replacement release after Git-backed workflow Clear fixes (scope: release confirmation gate; no commit expected). Result: User explicitly requested a new release build for Git-backed workflow Clear on 2026-05-23.
+
+### Stream: Release Build — Git-Backed Workflow Clear
+254. [DONE] `phase8.stream36.task1` Update release-facing docs for the v1.2.338 Git-backed workflow Clear build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare git backed workflow clear release`).
+255. [PENDING] Git Commit: `docs: prepare git backed workflow clear release` (hash: TBD)
+256. [TODO] `phase8.stream36.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.338 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build git backed workflow clear release`).
+257. [TODO] Git Commit: `chore: build git backed workflow clear release` (hash: TBD)
+258. [TODO] `phase8.stream36.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package git backed workflow clear vsix`).
+259. [TODO] Git Commit: `chore: package git backed workflow clear vsix` (hash: TBD)
+260. [TODO] `phase8.stream36.task4` User installs the generated v1.2.338 VSIX and verifies managed workflow Clear from Diagram Modules onward uses Git rollback and preserves upstream artifacts/read-models (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

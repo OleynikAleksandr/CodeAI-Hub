@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.338] - 2026-05-23
+### Added
+- **Git-backed workflow rollback facade.** Core now has `WorkflowGitRollbackFacade` as the public contract for managed technical stage rollback beginning with `Diagram Modules`.
+
+### Fixed
+- **Managed workflow Clear uses Git for tracked workspace state.** Clearing `Diagram Modules`, `Application Skeleton`, or `Quality Gates` now restores tracked files to the pre-stage Git boundary and creates a rollback commit instead of deleting known paths by hand.
+- **Clear refuses destructive fallback when Git is unavailable.** If a managed technical stage has no Git repository or no stage boundary commit, Core returns an explicit blocker and preserves files instead of producing an inconsistent workspace/read-model state.
+
+### Tests
+- `node --import tsx --test packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.337] - 2026-05-23
 ### Fixed
 - **Quality Gates research markdown heading is Core-validated.** Core now rejects `quality-gates-research.md` when it is missing the canonical `# Quality Gates Research` heading, so Project Manager is no longer the only surface that detects the malformed research artifact.
