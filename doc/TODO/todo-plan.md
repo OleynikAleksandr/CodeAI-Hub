@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "ca690e283",
+  "lastRecordedCommit": "25410019f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream28.task2",
-  "expectedCommitMessage": "chore: build workflow clear read model release",
+  "currentTaskId": "phase8.stream28.task3",
+  "expectedCommitMessage": "chore: package workflow clear read model vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build workflow clear read model release",
-    "preCommitHead": "ca690e283",
+    "expectedCommitMessage": "chore: package workflow clear read model vsix",
+    "preCommitHead": "25410019f",
     "stage": "commit_pending",
-    "taskId": "phase8.stream28.task2"
+    "taskId": "phase8.stream28.task3"
   }
 }
 ```
@@ -350,9 +350,9 @@
 200. [DONE] `phase8.stream28.task1` Update release-facing docs for the v1.2.334 workflow Clear read-model resync build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow clear read model release`).
 201. [DONE] Git Commit: `docs: prepare workflow clear read model release` (hash: ca690e283)
 202. [DONE] `phase8.stream28.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.334 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow clear read model release`).
-203. [PENDING] Git Commit: `chore: build workflow clear read model release` (hash: TBD)
-204. [TODO] `phase8.stream28.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow clear read model vsix`).
-205. [TODO] Git Commit: `chore: package workflow clear read model vsix` (hash: TBD)
+203. [DONE] Git Commit: `chore: build workflow clear read model release` (hash: 25410019f)
+204. [DONE] `phase8.stream28.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow clear read model vsix`).
+205. [PENDING] Git Commit: `chore: package workflow clear read model vsix` (hash: TBD)
 206. [TODO] `phase8.stream28.task4` User installs the generated v1.2.334 VSIX and verifies clearing Description returns Project Manager to the editable questionnaire, removes stale sidebar indicators and does not show missing downstream artifacts (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
