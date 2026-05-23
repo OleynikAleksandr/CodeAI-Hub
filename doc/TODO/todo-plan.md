@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "f022d5cff",
+  "lastRecordedCommit": "91077cc0d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream35.task2",
-  "expectedCommitMessage": "fix: clear managed workflow stages through git",
+  "currentTaskId": "phase8.stream35.task3",
+  "expectedCommitMessage": "docs: define git backed workflow clear",
   "debt": {
-    "expectedCommitMessage": "fix: clear managed workflow stages through git",
-    "preCommitHead": "f022d5cff",
+    "expectedCommitMessage": "docs: define git backed workflow clear",
+    "preCommitHead": "91077cc0d",
     "stage": "commit_pending",
-    "taskId": "phase8.stream35.task2"
+    "taskId": "phase8.stream35.task3"
   }
 }
 ```
@@ -408,9 +408,9 @@
 244. [DONE] `phase8.stream35.task1` Add a Core-owned Git-backed workflow rollback module that resolves the pre-stage commit boundary for `diagram_modules` and later workflow stages, restores tracked workspace state through Git and leaves the Git worktree clean after rollback (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add git backed workflow rollback`).
 245. [DONE] Git Commit: `feat: add git backed workflow rollback` (hash: f022d5cff)
 246. [DONE] `phase8.stream35.task2` Wire workflow step Clear to use Git-backed rollback for `diagram_modules`, `application_skeleton` and `quality_gates`, while keeping session/runtime cleanup separate from tracked workspace rollback (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear managed workflow stages through git`).
-247. [PENDING] Git Commit: `fix: clear managed workflow stages through git` (hash: TBD)
-248. [TODO] `phase8.stream35.task3` Document the Git-backed Clear invariant for technical workflow stages in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define git backed workflow clear`).
-249. [TODO] Git Commit: `docs: define git backed workflow clear` (hash: TBD)
+247. [DONE] Git Commit: `fix: clear managed workflow stages through git` (hash: 91077cc0d)
+248. [DONE] `phase8.stream35.task3` Document the Git-backed Clear invariant for technical workflow stages in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define git backed workflow clear`).
+249. [PENDING] Git Commit: `docs: define git backed workflow clear` (hash: TBD)
 250. [TODO] `phase8.stream35.task4` Run targeted validation for Git-backed workflow rollback, workflow Clear service, Quality Gates restart state and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 251. [TODO] `phase8.stream35.task5` Wait for explicit user confirmation before building the next replacement release after Git-backed workflow Clear fixes (scope: release confirmation gate; no commit expected).
 
