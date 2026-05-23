@@ -8,6 +8,26 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.331] - 2026-05-23
+### Added
+- **Workflow step checkpoint restore module.** Core now has a dedicated `workflow/step-checkpoint` module with `WorkflowStepCheckpointFacade` as the public contract/facade for creating and restoring restart-stable workflow step checkpoints.
+- **Exact rollback scope for workflow stages.** Before the first Core start effect of a workflow stage, Core captures `.codeai-hub/<workspace>`, `doc/TODO/stages`, `product-parts`, and `~/.codeai-hub/sessions/<workspace>`.
+
+### Fixed
+- **Description Clear returns to the filled questionnaire state.** Clearing `Description` now restores the checkpoint taken before agent work starts, so Project Manager can render the editable questionnaire/read-model state instead of `Description artifact is not available yet`.
+- **Checkpoint restore is the primary stage rollback path.** The mutation journal remains as audit/fallback coverage for uncheckpointed or narrower cleanup, but workflow-stage Clear first restores the Core-owned checkpoint.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/workflow/step-checkpoint/workflow-step-checkpoint-store.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.undo.test.js`
+- `node --test packages/core/dist/workflow/undo/workflow-mutation-journal-runtime.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workspace-file-service.test.js`
+- `node --import tsx --test src/client/project-manager/services/description-questionnaire-service.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.330] - 2026-05-23
 ### Added
 - **Centralized workflow mutation journal runtime.** Core now wraps durable workflow mutations with before/after snapshots of the stage workspace scope and `~/.codeai-hub/sessions/<workspace>`, derives filesystem/session diffs, and appends restart-safe undo entries automatically.

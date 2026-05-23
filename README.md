@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.330** (Centralized Workflow Undo Journal)
+**Current Release — v1.2.331** (Workflow Step Checkpoint Restore)
+
+This replacement build makes workflow step `Clear` use a real Core-owned
+checkpoint restore. Before the first start effect of a workflow stage, Core now
+captures the full workflow rollback scope: `.codeai-hub/<workspace>`,
+`doc/TODO/stages`, `product-parts`, and the matching user-space sessions under
+`~/.codeai-hub/sessions/<workspace>`.
+
+Clearing a workflow stage restores that checkpoint as exact state, then resets
+Core runtime projections and in-memory sessions. This returns `Description` to
+the filled editable questionnaire state instead of leaving Project Manager with
+a missing artifact/read-model mismatch. The previous mutation journal remains
+as audit/fallback coverage, but checkpoint restore is now the primary stage
+rollback mechanism.
 
 This replacement build moves workflow undo from per-writer path bookkeeping to
 a centralized Core mutation journal runtime. Core now wraps durable workflow
