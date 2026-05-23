@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.329] - 2026-05-23
+### Fixed
+- **Workflow step `Clear` now returns Description to an editable questionnaire.** The Description questionnaire is recorded as a preserved undo checkpoint, so clearing the step keeps `questionnaire.md`, removes generated final/draft outputs, and resets Description state back to the pre-submit editor.
+- **Workflow file writes now have restart-safe reverse metadata.** Core records `workspace-file-write` operations in `.codeai-hub/<workspace>/workflow/undo-ledger.json` with previous content, allowing Clear to delete newly-created files or restore overwritten files after a Core restart.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/core`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/workspace-file-service.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts packages/core/src/remote-bridge/handlers/http-api-router.artifact-upsert.test.ts`
+
 ## [1.2.328] - 2026-05-23
 ### Added
 - **Workflow step `Clear` now uses a persistent Core undo ledger.** Generated workflow artifacts and Development Tree materialization actions are recorded in `.codeai-hub/<workspace>/workflow/undo-ledger.json`, so clear operations can reverse actual Core-created outputs even after Core restarts.
