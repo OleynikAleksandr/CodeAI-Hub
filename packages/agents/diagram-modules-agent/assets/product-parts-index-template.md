@@ -1,12 +1,11 @@
 # Product Parts Index
 
-## Product Parts
+## Index Metadata
 
-### Product Part: example-ide-shell
-- Id: example-ide-shell
-- Title: IDE Shell
-- Purpose: Gives the user an entry point into the product from the IDE.
-- Status: planned
+- leadProductPartId: `example-local-runtime`
+- productPartLeadershipOrder: [`example-local-runtime`, `example-ide-shell`]
+
+## Product Parts
 
 ### Product Part: example-local-runtime
 - Id: example-local-runtime
@@ -14,12 +13,19 @@
 - Purpose: Runs the main orchestration and workspace processing logic.
 - Status: planned
 
+### Product Part: example-ide-shell
+- Id: example-ide-shell
+- Title: IDE Shell
+- Purpose: Gives the user an entry point into the product from the IDE.
+- Status: planned
+
 ## Assumptions / Open Questions
 
 - Start with the smallest honest set of top-level Product Parts.
 - Keep ids stable and deterministic across iterations.
 - Use staged statuses only: `planned`, `in_progress`, `generated`, `reviewed`.
-- Order should match the intended generation/review sequence.
+- The lead Product Part owns the first Development Tree contract orchestration session.
+- Order should match Product Part leadership and contract orchestration priority.
 
 <!--
 Language rule:
@@ -31,6 +37,9 @@ Language rule:
 
 Canonical authoring rules:
 - Title line must be exactly `# Product Parts Index`
+- The artifact must include an `## Index Metadata` section before `## Product Parts`
+- `leadProductPartId` must reference exactly one planned Product Part id
+- `productPartLeadershipOrder` must list every Product Part id exactly once with the lead Product Part first
 - Every entry uses `### Product Part: <part-id>` header
 - Each entry must have Id, Title, Purpose, and Status fields
 - Part IDs use lowercase-kebab-case

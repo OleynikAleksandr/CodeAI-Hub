@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "867f3864a",
+  "lastRecordedCommit": "78c79df68",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream10.task1",
-  "expectedCommitMessage": "fix: teach diagram modules leadership metadata",
+  "currentTaskId": "phase8.stream10.task2",
+  "expectedCommitMessage": "fix: include diagram modules leadership index template",
   "debt": {
-    "expectedCommitMessage": "fix: teach diagram modules leadership metadata",
-    "preCommitHead": "867f3864a",
+    "expectedCommitMessage": "fix: include diagram modules leadership index template",
+    "preCommitHead": "78c79df68",
     "stage": "commit_pending",
-    "taskId": "phase8.stream10.task1"
+    "taskId": "phase8.stream10.task2"
   }
 }
 ```
@@ -183,9 +183,9 @@
 
 ### Stream: Acceptance Remediation — Diagram Modules Leadership Prompt
 65. [DONE] `phase8.stream10.task1` Add explicit Core-owned Diagram Modules leadership selection rules and regression coverage for the initial prompt (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: teach diagram modules leadership metadata`).
-66. [PENDING] Git Commit: `fix: teach diagram modules leadership metadata` (hash: TBD)
-67. [TODO] `phase8.stream10.task2` Add Product Parts index metadata example to the source template and regenerated bundled template (scope: `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: include diagram modules leadership index template`).
-68. [TODO] Git Commit: `fix: include diagram modules leadership index template` (hash: TBD)
+66. [DONE] Git Commit: `fix: teach diagram modules leadership metadata` (hash: 78c79df68)
+67. [DONE] `phase8.stream10.task2` Add Product Parts index metadata example to the source template and regenerated bundled template (scope: `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: include diagram modules leadership index template`).
+68. [PENDING] Git Commit: `fix: include diagram modules leadership index template` (hash: TBD)
 69. [TODO] `phase8.stream10.task3` Run targeted validation for Diagram Modules leadership prompt/template behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 70. [TODO] `phase8.stream10.task4` Wait for explicit user confirmation before building another replacement release for Diagram Modules leadership remediation (scope: release confirmation gate; no commit expected).
 
