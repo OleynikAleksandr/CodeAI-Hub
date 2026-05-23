@@ -8,6 +8,25 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.330] - 2026-05-23
+### Added
+- **Centralized workflow mutation journal runtime.** Core now wraps durable workflow mutations with before/after snapshots of the stage workspace scope and `~/.codeai-hub/sessions/<workspace>`, derives filesystem/session diffs, and appends restart-safe undo entries automatically.
+- **User-space undo entries.** The undo ledger can now resolve entries under `~/.codeai-hub`, allowing Clear to reverse recorded session-history files instead of relying only on continuity fallback cleanup.
+
+### Changed
+- **Workflow undo no longer depends only on per-writer path lists.** Workspace-session creation, workspace-file writes, artifact upserts and session message turns are now covered by the mutation journal wrapper.
+- **Directory undo is non-recursive.** Created directory entries are removed only when empty, so preserved checkpoints such as `description/questionnaire.md` cannot be deleted by undoing their parent folder.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/undo/workflow-mutation-journal-runtime.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workspace-file-service.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.undo.test.js`
+- `node --import tsx --test src/client/project-manager/services/description-questionnaire-service.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.329] - 2026-05-23
 ### Fixed
 - **Workflow step `Clear` now returns Description to an editable questionnaire.** The Description questionnaire is recorded as a preserved undo checkpoint, so clearing the step keeps `questionnaire.md`, removes generated final/draft outputs, and resets Description state back to the pre-submit editor.

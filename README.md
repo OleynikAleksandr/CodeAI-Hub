@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.329** (Workflow Clear hard undo)
+**Current Release — v1.2.330** (Centralized Workflow Undo Journal)
+
+This replacement build moves workflow undo from per-writer path bookkeeping to
+a centralized Core mutation journal runtime. Core now wraps durable workflow
+mutations with before/after snapshots of the stage workspace scope and
+`~/.codeai-hub/sessions/<workspace>`, derives file/directory diffs, and appends
+restart-safe undo entries automatically.
+
+The journal is wired into the main workflow mutation boundaries: workspace
+session creation, workspace file writes, artifact upserts, and session message
+turns. Clear replays the ledger backward, including user-space session files,
+while directory undo is non-recursive so preserved checkpoint files such as the
+Description questionnaire are not deleted by a parent-directory cleanup.
 
 This replacement build makes workflow step `Clear` behave as a real restart
 undo instead of only removing generated paths. The Description questionnaire is

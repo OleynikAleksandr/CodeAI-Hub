@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "d6da28361",
+  "lastRecordedCommit": "0e2492906",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream20.task4",
-  "expectedCommitMessage": "docs: define centralized workflow undo journal",
+  "currentTaskId": "phase8.stream20.task6",
+  "expectedCommitMessage": "docs: prepare centralized workflow undo release",
   "debt": {
-    "expectedCommitMessage": "docs: define centralized workflow undo journal",
-    "preCommitHead": "d6da28361",
+    "expectedCommitMessage": "docs: prepare centralized workflow undo release",
+    "preCommitHead": "0e2492906",
     "stage": "commit_pending",
-    "taskId": "phase8.stream20.task4"
+    "taskId": "phase8.stream20.task6"
   }
 }
 ```
@@ -274,10 +274,10 @@
 138. [DONE] `phase8.stream20.task3` Wire mutation journal runtime into workspace-file writes and harden directory undo replay so created directory entries do not recursively delete preserved checkpoint files (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, packages/core/src/remote-bridge/handlers/workspace-file-service.test.ts`; expected commit: `feat: capture workspace file mutations`).
 139. [DONE] Git Commit: `feat: capture workspace file mutations` (hash: d6da28361)
 140. [DONE] `phase8.stream20.task4` Document the centralized workflow undo invariant in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define centralized workflow undo journal`).
-141. [PENDING] Git Commit: `docs: define centralized workflow undo journal` (hash: TBD)
-142. [TODO] `phase8.stream20.task5` Run targeted validation for Core mutation journal, workflow clear undo, Project Manager questionnaire reload and affected builds before release packaging (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-143. [TODO] `phase8.stream20.task6` Update release-facing docs for the next centralized workflow undo release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare centralized workflow undo release`).
-144. [TODO] Git Commit: `docs: prepare centralized workflow undo release` (hash: TBD)
+141. [DONE] Git Commit: `docs: define centralized workflow undo journal` (hash: 0e2492906)
+142. [DONE] `phase8.stream20.task5` Run targeted validation for Core mutation journal, workflow clear undo, Project Manager questionnaire reload and affected builds before release packaging (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build passed; mutation journal runtime, workspace-file undo and workflow-step clear undo tests passed; Project Manager questionnaire stale-session refresh test passed; `typecheck:webview`, `build:webview` and `build:project-manager` passed.
+143. [DONE] `phase8.stream20.task6` Update release-facing docs for the next centralized workflow undo release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare centralized workflow undo release`).
+144. [PENDING] Git Commit: `docs: prepare centralized workflow undo release` (hash: TBD)
 145. [TODO] `phase8.stream20.task7` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build centralized workflow undo release`).
 146. [TODO] Git Commit: `chore: build centralized workflow undo release` (hash: TBD)
 147. [TODO] `phase8.stream20.task8` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package centralized workflow undo vsix`).
