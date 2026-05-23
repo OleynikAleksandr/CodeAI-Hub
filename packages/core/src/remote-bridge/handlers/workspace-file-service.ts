@@ -4,6 +4,7 @@ import type { Request, Response } from "express";
 import { isWorkspacePathAllowlisted } from "../../security/workspace-path-allowlist";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { captureWorkflowMutation } from "../../workflow/undo/workflow-mutation-journal-runtime";
 import { WorkflowStepUndoLedgerStore } from "../../workflow/undo/workflow-step-undo-ledger";
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
 import { readFileHead, resolveWorkspaceFilePath } from "./workspace-file-utils";
@@ -326,17 +327,37 @@ export const handleWorkspaceFileWrite =
     errorResponse: "Unable to write file",
     parsePayload: parseWorkspaceFileWritePayload,
     execute: async ({ absolutePath, payload, res, session }) => {
-      const content = payload.content.endsWith("\n")
-        ? payload.content
-        : `${payload.content}\n`;
-      const previousContent = await readPreviousContent(absolutePath);
-      await mkdir(path.dirname(absolutePath), { recursive: true });
-      await writeFile(absolutePath, content, { encoding: "utf8" });
-      await recordWorkspaceFileWriteUndo({
-        previousContent,
+      const writeFileContent = async () => {
+        const content = payload.content.endsWith("\n")
+          ? payload.content
+          : `${payload.content}\n`;
+        const previousContent = await readPreviousContent(absolutePath);
+        await mkdir(path.dirname(absolutePath), { recursive: true });
+        await writeFile(absolutePath, content, { encoding: "utf8" });
+        await recordWorkspaceFileWriteUndo({
+          previousContent,
+          relativePath: payload.path,
+          session,
+        });
+      };
+      const stage = resolveWorkflowUndoStage({
         relativePath: payload.path,
-        session,
+        sessionStage: session.stage,
+        workspaceSlug: session.initiativeSlug,
       });
+      if (session.initiativeSlug && stage) {
+        await captureWorkflowMutation(
+          {
+            source: "workspace_file_write_diff",
+            stage,
+            workspaceRoot: session.workspacePath,
+            workspaceSlug: session.initiativeSlug,
+          },
+          writeFileContent
+        );
+      } else {
+        await writeFileContent();
+      }
       res.json({ path: payload.path });
     },
   });

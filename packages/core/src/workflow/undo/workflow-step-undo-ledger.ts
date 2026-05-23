@@ -176,6 +176,21 @@ export const undoWorkflowStepAction = async (
     restoredPaths.push(action.absolutePath);
     return;
   }
+  if (action.entry.kind === "create_directory") {
+    await rm(action.absolutePath, { force: true, recursive: false }).catch(
+      (error: unknown) => {
+        const code =
+          typeof error === "object" && error !== null
+            ? (error as { code?: string }).code
+            : null;
+        if (code !== "ENOTEMPTY" && code !== "EEXIST") {
+          throw error;
+        }
+      }
+    );
+    removedPaths.push(action.absolutePath);
+    return;
+  }
   await rm(action.absolutePath, { force: true, recursive: true });
   removedPaths.push(action.absolutePath);
 };

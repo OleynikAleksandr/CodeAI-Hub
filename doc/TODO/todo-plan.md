@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "48f705a8e",
+  "lastRecordedCommit": "e5cfb014e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream20.task2",
-  "expectedCommitMessage": "feat: capture workflow mutations centrally",
+  "currentTaskId": "phase8.stream20.task3",
+  "expectedCommitMessage": "feat: capture workspace file mutations",
   "debt": {
-    "expectedCommitMessage": "feat: capture workflow mutations centrally",
-    "preCommitHead": "48f705a8e",
+    "expectedCommitMessage": "feat: capture workspace file mutations",
+    "preCommitHead": "e5cfb014e",
     "stage": "commit_pending",
-    "taskId": "phase8.stream20.task2"
+    "taskId": "phase8.stream20.task3"
   }
 }
 ```
@@ -270,20 +270,22 @@
 134. [DONE] `phase8.stream20.task1` Add a Core-owned workflow mutation journal runtime that snapshots workflow/user-space mutation scopes before and after an action, derives file/directory diffs and appends undo entries without per-writer manual path lists (scope: `packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.test.ts`; expected commit: `feat: add workflow mutation journal runtime`).
 135. [DONE] Git Commit: `feat: add workflow mutation journal runtime` (hash: 48f705a8e)
 136. [DONE] `phase8.stream20.task2` Wire mutation journal runtime into central Core workflow mutation boundaries for workspace-session creation, workspace-file writes, artifact upserts and session message turns (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `feat: capture workflow mutations centrally`).
-137. [PENDING] Git Commit: `feat: capture workflow mutations centrally` (hash: TBD)
-138. [TODO] `phase8.stream20.task3` Wire mutation journal runtime into workspace-file writes, document the centralized undo invariant and run targeted validation for mutation capture and Clear replay (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define centralized workflow undo journal`).
-139. [TODO] Git Commit: `docs: define centralized workflow undo journal` (hash: TBD)
-140. [TODO] `phase8.stream20.task4` Run targeted validation for Core mutation journal, workflow clear undo, Project Manager questionnaire reload and affected builds before release packaging (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-141. [TODO] `phase8.stream20.task5` Update release-facing docs for the next centralized workflow undo release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare centralized workflow undo release`).
-142. [TODO] Git Commit: `docs: prepare centralized workflow undo release` (hash: TBD)
-143. [TODO] `phase8.stream20.task6` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build centralized workflow undo release`).
-144. [TODO] Git Commit: `chore: build centralized workflow undo release` (hash: TBD)
-145. [TODO] `phase8.stream20.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package centralized workflow undo vsix`).
-146. [TODO] Git Commit: `chore: package centralized workflow undo vsix` (hash: TBD)
-147. [TODO] `phase8.stream20.task8` User installs the generated centralized workflow undo VSIX and verifies Clear returns workspace/user-space exactly to the pre-step state (scope: user workflow acceptance; no commit expected).
+137. [DONE] Git Commit: `feat: capture workflow mutations centrally` (hash: e5cfb014e)
+138. [DONE] `phase8.stream20.task3` Wire mutation journal runtime into workspace-file writes and harden directory undo replay so created directory entries do not recursively delete preserved checkpoint files (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, packages/core/src/remote-bridge/handlers/workspace-file-service.test.ts`; expected commit: `feat: capture workspace file mutations`).
+139. [PENDING] Git Commit: `feat: capture workspace file mutations` (hash: TBD)
+140. [TODO] `phase8.stream20.task4` Document the centralized workflow undo invariant in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define centralized workflow undo journal`).
+141. [TODO] Git Commit: `docs: define centralized workflow undo journal` (hash: TBD)
+142. [TODO] `phase8.stream20.task5` Run targeted validation for Core mutation journal, workflow clear undo, Project Manager questionnaire reload and affected builds before release packaging (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+143. [TODO] `phase8.stream20.task6` Update release-facing docs for the next centralized workflow undo release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare centralized workflow undo release`).
+144. [TODO] Git Commit: `docs: prepare centralized workflow undo release` (hash: TBD)
+145. [TODO] `phase8.stream20.task7` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build centralized workflow undo release`).
+146. [TODO] Git Commit: `chore: build centralized workflow undo release` (hash: TBD)
+147. [TODO] `phase8.stream20.task8` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package centralized workflow undo vsix`).
+148. [TODO] Git Commit: `chore: package centralized workflow undo vsix` (hash: TBD)
+149. [TODO] `phase8.stream20.task9` User installs the generated centralized workflow undo VSIX and verifies Clear returns workspace/user-space exactly to the pre-step state (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-148. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-149. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+150. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+151. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)

@@ -97,6 +97,22 @@ test("workspace file write records questionnaire preserve undo entry", async () 
           stage: "description",
           undoBehavior: "preserve_path",
         },
+        {
+          kind: "create_directory",
+          previousContent: undefined,
+          relativePath: `.codeai-hub/${workspaceSlug}/description`,
+          source: "workspace_file_write_diff",
+          stage: "description",
+          undoBehavior: undefined,
+        },
+        {
+          kind: "create_directory",
+          previousContent: undefined,
+          relativePath: `.codeai-hub/${workspaceSlug}/workflow`,
+          source: "workspace_file_write_diff",
+          stage: "description",
+          undoBehavior: undefined,
+        },
       ]
     );
   } finally {
