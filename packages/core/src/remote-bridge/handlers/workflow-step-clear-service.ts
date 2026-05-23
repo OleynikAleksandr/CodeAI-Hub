@@ -1,14 +1,6 @@
 import { rm } from "node:fs/promises";
-import { homedir } from "node:os";
 import path from "node:path";
-import {
-  buildSessionFilePath,
-  buildSessionTranslationFilePath,
-  sanitizeWorkspaceSlug,
-} from "@codeai-hub/unified-session";
 import type { Request, Response } from "express";
-import type { ContinuityChainSummary } from "../../session-continuity/continuity-types";
-import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import { WorkflowStepCheckpointFacade } from "../../workflow/step-checkpoint/workflow-step-checkpoint-facade";
@@ -21,10 +13,9 @@ import {
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
 import {
   cleanupDescriptionState,
-  collectContinuityIndexUserSpaceSessionPaths,
-  collectStageNamedUserSpaceSessionPaths,
   pruneContinuityIndex,
 } from "./workflow-step-clear-continuity-support";
+import { collectWorkflowStepSessionCleanupPaths } from "./workflow-step-clear-session-cleanup";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
@@ -43,8 +34,6 @@ const STAGE_TODO_DIRS: Record<WorkflowStageId, string> = {
   virtual_simulation: "virtual-simulation",
 };
 const WORKSPACE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
-const resolveUserSpaceSessionRoot = (): string =>
-  path.join(homedir(), ".codeai-hub", "sessions");
 
 type ClearTarget =
   | { readonly kind: "workflow_stage"; readonly stage: WorkflowStageId }
@@ -217,70 +206,6 @@ const clearMatchingSessions = (params: {
   return deletedCount;
 };
 
-const isChainInScope = (
-  chain: ContinuityChainSummary,
-  target: ClearTarget
-): boolean =>
-  target.kind === "workflow_stage"
-    ? isStageDownstream(chain.stage, target.stage)
-    : chain.stage.startsWith(target.workflowPath);
-
-const collectUserSpaceSessionPaths = async (
-  params: ParsedClearRequest
-): Promise<string[]> => {
-  const chains = await SessionContinuityFacade.readWorkspaceChains({
-    workspaceRoot: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
-  });
-  const paths = new Set<string>();
-  const rootDirectory = resolveUserSpaceSessionRoot();
-  for (const chain of chains) {
-    if (!isChainInScope(chain, params.target)) {
-      continue;
-    }
-    for (const segment of chain.segments) {
-      const historySessionId = sanitizeWorkspaceSlug(
-        segment.providerSessionId || segment.sessionId
-      );
-      paths.add(
-        buildSessionFilePath({
-          provider: segment.providerId,
-          rootDirectory,
-          sessionId: historySessionId,
-          workspaceSlug: params.workspaceSlug,
-        })
-      );
-      paths.add(
-        buildSessionTranslationFilePath({
-          provider: segment.providerId,
-          rootDirectory,
-          sessionId: historySessionId,
-          workspaceSlug: params.workspaceSlug,
-        })
-      );
-    }
-  }
-  const indexPaths = await collectContinuityIndexUserSpaceSessionPaths({
-    rootDirectory,
-    workspacePath: params.workspacePath,
-    workspaceSlug: params.workspaceSlug,
-    isStageInScope: (stage) => isStageInScope(stage, params.target),
-  });
-  for (const indexPath of indexPaths) {
-    paths.add(indexPath);
-  }
-  if (params.target.kind === "workflow_stage") {
-    for (const stageNamedPath of await collectStageNamedUserSpaceSessionPaths({
-      rootDirectory,
-      stage: params.target.stage,
-      workspaceSlug: params.workspaceSlug,
-    })) {
-      paths.add(stageNamedPath);
-    }
-  }
-  return [...paths];
-};
-
 const collectLegacyDescriptionGeneratedPaths = (
   params: WorkflowStageClearRequest
 ): string[] => {
@@ -433,13 +358,14 @@ export const handleWorkflowStepClear = async (
   const removedPaths: string[] = [];
   const restoredPaths: string[] = [];
   try {
+    const sessionCleanupPaths =
+      await collectWorkflowStepSessionCleanupPaths(parsed);
     const checkpointRestored = await restoreWorkflowStageCheckpoint(parsed);
     if (!checkpointRestored) {
       const ledgerStore = new WorkflowStepUndoLedgerStore({
         workspaceRoot: parsed.workspacePath,
         workspaceSlug: parsed.workspaceSlug,
       });
-      const userSpaceSessionPaths = await collectUserSpaceSessionPaths(parsed);
       const ledgerActions = await collectLedgerUndoActions({
         ledgerStore,
         target: parsed.target,
@@ -448,7 +374,7 @@ export const handleWorkflowStepClear = async (
       for (const ledgerAction of ledgerActions) {
         await undoWorkflowStepAction(ledgerAction, removedPaths, restoredPaths);
       }
-      for (const targetPath of [...paths, ...userSpaceSessionPaths]) {
+      for (const targetPath of paths) {
         await removePath(targetPath, removedPaths);
       }
       if (
@@ -467,6 +393,9 @@ export const handleWorkflowStepClear = async (
           !isUndoEntryInScope(entry, parsed.target) ||
           entry.undoBehavior === "preserve_path"
       );
+    }
+    for (const targetPath of sessionCleanupPaths) {
+      await removePath(targetPath, removedPaths);
     }
     const deletedSessions = clearMatchingSessions({
       sessionManager: deps.sessionManager,

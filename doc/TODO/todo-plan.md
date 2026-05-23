@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "a74c5e3da",
+  "lastRecordedCommit": "bb2dfbaf4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream21.task7",
-  "expectedCommitMessage": "chore: package workflow checkpoint restore vsix",
+  "currentTaskId": "phase8.stream22.task1",
+  "expectedCommitMessage": "fix: clear workflow session traces after checkpoint restore",
   "debt": {
-    "expectedCommitMessage": "chore: package workflow checkpoint restore vsix",
-    "preCommitHead": "a74c5e3da",
+    "expectedCommitMessage": "fix: clear workflow session traces after checkpoint restore",
+    "preCommitHead": "bb2dfbaf4",
     "stage": "commit_pending",
-    "taskId": "phase8.stream21.task7"
+    "taskId": "phase8.stream22.task1"
   }
 }
 ```
@@ -297,8 +297,16 @@
 161. [DONE] `phase8.stream21.task6` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow checkpoint restore release`).
 162. [DONE] Git Commit: `chore: build workflow checkpoint restore release` (hash: a74c5e3da)
 163. [DONE] `phase8.stream21.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow checkpoint restore vsix`).
-164. [PENDING] Git Commit: `chore: package workflow checkpoint restore vsix` (hash: TBD)
-165. [TODO] `phase8.stream21.task8` User installs the generated checkpoint restore VSIX and verifies clearing Description returns the filled questionnaire/editor state and removes downstream workspace/user-space mutations (scope: user workflow acceptance; no commit expected).
+164. [DONE] Git Commit: `chore: package workflow checkpoint restore vsix` (hash: bb2dfbaf4)
+165. [BLOCKED] `phase8.stream21.task8` User installs the generated checkpoint restore VSIX and verifies clearing Description returns the filled questionnaire/editor state and removes downstream workspace/user-space mutations (scope: user workflow acceptance; no commit expected). Blocked: user retest showed Clear leaves stale unified session files under the workspace-path session slug and provider-native Codex session JSONL files.
+
+### Stream: Workflow Clear Session Trace Cleanup
+166. [DONE] `phase8.stream22.task1` Make workflow step Clear collect and delete session traces before checkpoint restore, including workspace-path unified session roots and provider-native Codex/Claude session files linked by continuity provider session id (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`; expected commit: `fix: clear workflow session traces after checkpoint restore`).
+167. [PENDING] Git Commit: `fix: clear workflow session traces after checkpoint restore` (hash: TBD)
+168. [TODO] `phase8.stream22.task2` Make workflow step checkpoints capture both initiative-slug and workspace-path user-space session roots for exact future restores (scope: `packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: checkpoint workspace path session roots`).
+169. [TODO] Git Commit: `fix: checkpoint workspace path session roots` (hash: TBD)
+170. [TODO] `phase8.stream22.task3` Run targeted validation for workflow clear session trace cleanup and checkpoint root restore behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+171. [TODO] `phase8.stream22.task4` Wait for explicit user confirmation before building the next replacement release after session trace cleanup (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

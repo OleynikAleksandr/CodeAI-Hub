@@ -13,6 +13,7 @@ import test from "node:test";
 import {
   buildSessionFilePath,
   buildSessionTranslationFilePath,
+  sanitizeWorkspaceSlug,
 } from "@codeai-hub/unified-session";
 import type { Request, Response } from "express";
 import { SessionManager } from "../../session-manager";
@@ -76,6 +77,7 @@ test("workflow step clear preserves Description questionnaire and removes genera
   const previousHome = process.env.HOME;
   try {
     process.env.HOME = homeRoot;
+    const workspacePathSlug = sanitizeWorkspaceSlug(workspaceRoot);
     const descriptionRoot = `.codeai-hub/${workspaceSlug}/description`;
     await writeFileInWorkspace(
       workspaceRoot,
@@ -172,6 +174,29 @@ test("workflow step clear preserves Description questionnaire and removes genera
     });
     await mkdir(path.dirname(descriptionHistoryPath), { recursive: true });
     await writeFile(descriptionHistoryPath, "test\n", "utf8");
+    const pathSlugDescriptionHistoryPath = buildSessionFilePath({
+      provider: "codexCli",
+      rootDirectory: path.join(homeRoot, ".codeai-hub", "sessions"),
+      sessionId: "description-provider",
+      workspaceSlug: workspacePathSlug,
+    });
+    await mkdir(path.dirname(pathSlugDescriptionHistoryPath), {
+      recursive: true,
+    });
+    await writeFile(pathSlugDescriptionHistoryPath, "test\n", "utf8");
+    const nativeCodexSessionPath = path.join(
+      homeRoot,
+      ".codeai-hub/providers/codex/home/sessions/2026/05/23/rollout-description-provider.jsonl"
+    );
+    await mkdir(path.dirname(nativeCodexSessionPath), { recursive: true });
+    await writeFile(
+      nativeCodexSessionPath,
+      `${JSON.stringify({
+        type: "session_meta",
+        payload: { id: "description-provider", cwd: workspaceRoot },
+      })}\n`,
+      "utf8"
+    );
     const staleVirtualHistoryPath = buildSessionFilePath({
       provider: "codexCli",
       rootDirectory: path.join(homeRoot, ".codeai-hub", "sessions"),
@@ -227,6 +252,8 @@ test("workflow step clear preserves Description questionnaire and removes genera
       false
     );
     assert.equal(await exists(descriptionHistoryPath), false);
+    assert.equal(await exists(pathSlugDescriptionHistoryPath), false);
+    assert.equal(await exists(nativeCodexSessionPath), false);
     assert.equal(await exists(staleVirtualHistoryPath), false);
     assert.equal(await exists(staleVirtualTranslationPath), false);
     const descriptionState = await readJson<Record<string, unknown>>(
