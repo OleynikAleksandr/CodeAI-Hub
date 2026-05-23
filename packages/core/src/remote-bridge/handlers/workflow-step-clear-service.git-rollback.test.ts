@@ -1,0 +1,165 @@
+import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import test from "node:test";
+import type { Request, Response } from "express";
+import { SessionManager } from "../../session-manager";
+import { Logger } from "../../telemetry/logger";
+import { handleWorkflowStepClear } from "./workflow-step-clear-service";
+
+const WORKSPACE_SLUG = "demo-workspace";
+const GIT_HASH_RE = /^[0-9a-f]{7,40}$/iu;
+
+const git = (workspaceRoot: string, args: readonly string[]): string =>
+  execFileSync("git", args, {
+    cwd: workspaceRoot,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  }).trim();
+
+const exists = async (targetPath: string): Promise<boolean> =>
+  Boolean(await stat(targetPath).catch(() => null));
+
+const writeWorkspaceFile = async (
+  workspaceRoot: string,
+  relativePath: string,
+  content = "test\n"
+): Promise<void> => {
+  const absolutePath = path.join(workspaceRoot, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, content, "utf8");
+};
+
+const commitAll = (workspaceRoot: string, message: string): void => {
+  git(workspaceRoot, ["add", "-A", "--", "."]);
+  git(workspaceRoot, ["commit", "-m", message]);
+};
+
+const createRepository = async (): Promise<string> => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-clear-git-")
+  );
+  git(workspaceRoot, ["init", "-b", "main"]);
+  git(workspaceRoot, ["config", "user.email", "test@example.local"]);
+  git(workspaceRoot, ["config", "user.name", "Test User"]);
+  await writeWorkspaceFile(workspaceRoot, "README.md", "# Demo\n");
+  commitAll(workspaceRoot, "chore: initial workspace");
+  return workspaceRoot;
+};
+
+const runClear = async (params: {
+  readonly body: unknown;
+  readonly resetCalls: string[];
+  readonly sessionManager: SessionManager;
+}): Promise<{ readonly payload: unknown; readonly statusCode: number }> => {
+  let statusCode = 200;
+  let payload: unknown = null;
+  const response = {
+    json(nextPayload: unknown) {
+      payload = nextPayload;
+      return this;
+    },
+    status(nextStatusCode: number) {
+      statusCode = nextStatusCode;
+      return this;
+    },
+  } as unknown as Response;
+  await handleWorkflowStepClear({ body: params.body } as Request, response, {
+    logger: new Logger("error"),
+    resetWorkflowState: (workspaceSlug) =>
+      params.resetCalls.push(workspaceSlug),
+    sessionManager: params.sessionManager,
+  });
+  return { payload, statusCode };
+};
+
+test("workflow step clear uses Git rollback for Quality Gates tracked workspace state", async () => {
+  const workspaceRoot = await createRepository();
+  const resetCalls: string[] = [];
+  try {
+    const appMapPath = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`;
+    const qualityRoot = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates`;
+    await writeWorkspaceFile(workspaceRoot, appMapPath, '{"accepted":true}\n');
+    commitAll(workspaceRoot, "feat: materialize application skeleton");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${qualityRoot}/quality-gates-research.md`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/quality_gates.json`,
+      '{"valid":true}\n'
+    );
+    commitAll(workspaceRoot, "docs: draft quality gates contract");
+    await rm(
+      path.join(workspaceRoot, `${qualityRoot}/quality-gates-research.md`),
+      {
+        force: true,
+      }
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`,
+      '{"dirty":true}\n'
+    );
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+        target: { kind: "workflow_stage", stage: "quality_gates" },
+      },
+      resetCalls,
+      sessionManager: new SessionManager(),
+    });
+    const payload = result.payload as {
+      readonly gitRollback?: { readonly rollbackCommit?: string | null };
+    };
+
+    assert.equal(result.statusCode, 200);
+    assert.match(payload.gitRollback?.rollbackCommit ?? "", GIT_HASH_RE);
+    assert.equal(await exists(path.join(workspaceRoot, appMapPath)), true);
+    assert.equal(await exists(path.join(workspaceRoot, qualityRoot)), false);
+    assert.equal(git(workspaceRoot, ["status", "--short"]), "");
+    assert.deepEqual(resetCalls, [WORKSPACE_SLUG]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow step clear refuses managed-stage path cleanup when Git is missing", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-clear-no-git-")
+  );
+  try {
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`
+    );
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+        target: { kind: "workflow_stage", stage: "quality_gates" },
+      },
+      resetCalls: [],
+      sessionManager: new SessionManager(),
+    });
+
+    assert.equal(result.statusCode, 409);
+    assert.equal(
+      await exists(
+        path.join(
+          workspaceRoot,
+          `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`
+        )
+      ),
+      true
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});

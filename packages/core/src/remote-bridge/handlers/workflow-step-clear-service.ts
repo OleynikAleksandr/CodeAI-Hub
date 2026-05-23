@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { WorkflowGitRollbackFacade } from "../../workflow/git-rollback/workflow-git-rollback-facade";
 import { WorkflowStepCheckpointFacade } from "../../workflow/step-checkpoint/workflow-step-checkpoint-facade";
 import {
   undoWorkflowStepAction,
@@ -18,6 +19,7 @@ import {
 import { collectWorkflowStepSessionCleanupPaths } from "./workflow-step-clear-session-cleanup";
 
 const HTTP_BAD_REQUEST = 400;
+const HTTP_CONFLICT = 409;
 const HTTP_INTERNAL_ERROR = 500;
 const WORKFLOW_STAGES = [
   "description",
@@ -343,6 +345,18 @@ const restoreWorkflowStageCheckpoint = async (
   });
 };
 
+const rollbackGitManagedWorkflowStage = async (parsed: ParsedClearRequest) => {
+  if (parsed.target.kind !== "workflow_stage") {
+    return null;
+  }
+  const result = await new WorkflowGitRollbackFacade().rollbackStage({
+    stage: parsed.target.stage,
+    workspaceRoot: parsed.workspacePath,
+    workspaceSlug: parsed.workspaceSlug,
+  });
+  return result.handled ? result : null;
+};
+
 export const handleWorkflowStepClear = async (
   req: Request,
   res: Response,
@@ -360,8 +374,18 @@ export const handleWorkflowStepClear = async (
   try {
     const sessionCleanupPaths =
       await collectWorkflowStepSessionCleanupPaths(parsed);
-    const checkpointRestored = await restoreWorkflowStageCheckpoint(parsed);
-    if (!checkpointRestored) {
+    const gitRollback = await rollbackGitManagedWorkflowStage(parsed);
+    if (gitRollback?.reason && gitRollback.reason !== "already_at_boundary") {
+      res.status(HTTP_CONFLICT).json({
+        error: "Unable to clear workflow step through Git rollback",
+        gitRollback,
+      });
+      return;
+    }
+    const checkpointRestored = gitRollback
+      ? false
+      : await restoreWorkflowStageCheckpoint(parsed);
+    if (!(gitRollback || checkpointRestored)) {
       const ledgerStore = new WorkflowStepUndoLedgerStore({
         workspaceRoot: parsed.workspacePath,
         workspaceSlug: parsed.workspaceSlug,
@@ -407,6 +431,7 @@ export const handleWorkflowStepClear = async (
     res.json({
       checkpointRestored,
       deletedSessions,
+      gitRollback,
       removedPaths,
       restoredPaths,
     });
