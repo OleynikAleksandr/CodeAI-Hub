@@ -12,6 +12,8 @@ import { SessionContinuityFacade } from "../../session-continuity/session-contin
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import {
+  undoWorkflowStepAction,
+  type WorkflowStepUndoAction,
   type WorkflowStepUndoEntry,
   WorkflowStepUndoLedgerStore,
 } from "../../workflow/undo/workflow-step-undo-ledger";
@@ -317,10 +319,10 @@ const isUndoEntryInScope = (
   target: ClearTarget
 ): boolean => isStageInScope(entry.stage, target);
 
-const collectLedgerPaths = async (params: {
+const collectLedgerUndoActions = async (params: {
   readonly ledgerStore: WorkflowStepUndoLedgerStore;
   readonly target: ClearTarget;
-}): Promise<string[]> => {
+}): Promise<WorkflowStepUndoAction[]> => {
   const ledger = await params.ledgerStore.read();
   if (!ledger) {
     return [];
@@ -329,8 +331,10 @@ const collectLedgerPaths = async (params: {
     .filter((entry) => isUndoEntryInScope(entry, params.target))
     .slice()
     .reverse()
-    .map((entry) => params.ledgerStore.resolveEntryPath(entry))
-    .filter((value): value is string => value !== null);
+    .flatMap((entry) => {
+      const absolutePath = params.ledgerStore.resolveEntryPath(entry);
+      return absolutePath ? [{ absolutePath, entry }] : [];
+    });
 };
 
 const collectPersistentStatePaths = (params: ParsedClearRequest): string[] => {
@@ -406,10 +410,10 @@ const collectDevelopmentTreePaths = (
 
 const collectClearPaths = (
   parsed: ParsedClearRequest,
-  ledgerPaths: readonly string[]
+  ledgerActions: readonly WorkflowStepUndoAction[]
 ): string[] => {
-  if (ledgerPaths.length > 0) {
-    return [...ledgerPaths, ...collectPersistentStatePaths(parsed)];
+  if (ledgerActions.length > 0) {
+    return collectPersistentStatePaths(parsed);
   }
   if (parsed.target.kind === "workflow_stage") {
     return collectStagePaths({ ...parsed, target: parsed.target });
@@ -430,17 +434,21 @@ export const handleWorkflowStepClear = async (
     return;
   }
   const removedPaths: string[] = [];
+  const restoredPaths: string[] = [];
   try {
     const ledgerStore = new WorkflowStepUndoLedgerStore({
       workspaceRoot: parsed.workspacePath,
       workspaceSlug: parsed.workspaceSlug,
     });
     const userSpaceSessionPaths = await collectUserSpaceSessionPaths(parsed);
-    const ledgerPaths = await collectLedgerPaths({
+    const ledgerActions = await collectLedgerUndoActions({
       ledgerStore,
       target: parsed.target,
     });
-    const paths = collectClearPaths(parsed, ledgerPaths);
+    const paths = collectClearPaths(parsed, ledgerActions);
+    for (const ledgerAction of ledgerActions) {
+      await undoWorkflowStepAction(ledgerAction, removedPaths, restoredPaths);
+    }
     for (const targetPath of [...paths, ...userSpaceSessionPaths]) {
       await removePath(targetPath, removedPaths);
     }
@@ -456,7 +464,9 @@ export const handleWorkflowStepClear = async (
       isStageInScope: (stage) => isStageInScope(stage, parsed.target),
     });
     await ledgerStore.prune(
-      (entry) => !isUndoEntryInScope(entry, parsed.target)
+      (entry) =>
+        !isUndoEntryInScope(entry, parsed.target) ||
+        entry.undoBehavior === "preserve_path"
     );
     const deletedSessions = clearMatchingSessions({
       sessionManager: deps.sessionManager,
@@ -465,7 +475,7 @@ export const handleWorkflowStepClear = async (
       workspaceSlug: parsed.workspaceSlug,
     });
     deps.resetWorkflowState(parsed.workspaceSlug);
-    res.json({ deletedSessions, removedPaths });
+    res.json({ deletedSessions, removedPaths, restoredPaths });
   } catch (error) {
     deps.logger.warn("Failed to clear workflow step", {
       error: error instanceof Error ? error.message : String(error),

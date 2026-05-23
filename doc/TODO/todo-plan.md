@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "e310849c1",
+  "lastRecordedCommit": "27d7817ee",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream16.task3",
-  "expectedCommitMessage": "chore: package workflow clear undo vsix",
+  "currentTaskId": "phase8.stream17.task1",
+  "expectedCommitMessage": "fix: restore questionnaire on workflow clear",
   "debt": {
-    "expectedCommitMessage": "chore: package workflow clear undo vsix",
-    "preCommitHead": "e310849c1",
+    "expectedCommitMessage": "fix: restore questionnaire on workflow clear",
+    "preCommitHead": "27d7817ee",
     "stage": "commit_pending",
-    "taskId": "phase8.stream16.task3"
+    "taskId": "phase8.stream17.task1"
   }
 }
 ```
@@ -238,11 +238,19 @@
 106. [DONE] `phase8.stream16.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.328 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow clear undo release`).
 107. [DONE] Git Commit: `chore: build workflow clear undo release` (hash: e310849c1)
 108. [DONE] `phase8.stream16.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-1.2.328.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow clear undo vsix`).
-109. [PENDING] Git Commit: `chore: package workflow clear undo vsix` (hash: TBD)
-110. [TODO] `phase8.stream16.task4` User installs the generated v1.2.328 VSIX and verifies workflow step Clear uses persistent undo behavior for Description, Virtual Simulation and downstream Development Tree cleanup (scope: user workflow acceptance; no commit expected).
+109. [DONE] Git Commit: `chore: package workflow clear undo vsix` (hash: 27d7817ee)
+110. [BLOCKED] `phase8.stream16.task4` User installs the generated v1.2.328 VSIX and verifies workflow step Clear uses persistent undo behavior for Description, Virtual Simulation and downstream Development Tree cleanup (scope: user workflow acceptance; no commit expected). Result: User retest on 2026-05-23 showed Clear does not restore the Description questionnaire/editor state as the first restartable step artifact.
+
+### Stream: Workflow Clear Hard Undo Regression
+111. [DONE] `phase8.stream17.task1` Make workflow step Clear preserve the Description questionnaire baseline while reversing generated downstream artifacts from the undo ledger, and cover the stale description-state projection with regression tests (scope: `packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts`; expected commit: `fix: restore questionnaire on workflow clear`).
+112. [PENDING] Git Commit: `fix: restore questionnaire on workflow clear` (hash: TBD)
+113. [TODO] `phase8.stream17.task2` Record workspace-file writes as persistent undo events so questionnaire edits and generated workflow files have restart-safe reverse operations (scope: `packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/core/src/remote-bridge/handlers/workspace-file-service.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: record workspace file writes in undo ledger`).
+114. [TODO] Git Commit: `feat: record workspace file writes in undo ledger` (hash: TBD)
+115. [TODO] `phase8.stream17.task3` Run targeted workflow clear undo validation and core build after hard-undo fixes (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+116. [TODO] `phase8.stream17.task4` Wait for explicit user confirmation before building the next replacement release after hard-undo fixes (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-111. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-112. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+117. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+118. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)

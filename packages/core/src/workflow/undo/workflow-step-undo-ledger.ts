@@ -8,6 +8,10 @@ const WORKFLOW_DIR = "workflow";
 const TEMP_FILE_SUFFIX = ".tmp";
 
 export type WorkflowUndoEntryKind = "create_directory" | "write_file";
+export type WorkflowUndoBehavior =
+  | "delete_path"
+  | "preserve_path"
+  | "restore_previous";
 export type WorkflowUndoStageId =
   | WorkflowStageId
   | `development_tree/${string}`;
@@ -15,10 +19,12 @@ export type WorkflowUndoStageId =
 export interface WorkflowStepUndoEntry {
   readonly id: string;
   readonly kind: WorkflowUndoEntryKind;
+  readonly previousContent?: string | null;
   readonly relativePath: string;
   readonly source: string;
   readonly stage: WorkflowUndoStageId;
   readonly timestamp: string;
+  readonly undoBehavior?: WorkflowUndoBehavior;
 }
 
 export interface WorkflowStepUndoLedger {
@@ -28,11 +34,18 @@ export interface WorkflowStepUndoLedger {
   readonly workspaceSlug: string;
 }
 
+export interface WorkflowStepUndoAction {
+  readonly absolutePath: string;
+  readonly entry: WorkflowStepUndoEntry;
+}
+
 export interface WorkflowStepUndoEntryInput {
   readonly kind: WorkflowUndoEntryKind;
+  readonly previousContent?: string | null;
   readonly relativePath: string;
   readonly source: string;
   readonly stage: WorkflowUndoStageId;
+  readonly undoBehavior?: WorkflowUndoBehavior;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -40,6 +53,20 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const readString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+
+const readNullableString = (value: unknown): string | null | undefined => {
+  if (value === null) {
+    return null;
+  }
+  return typeof value === "string" ? value : undefined;
+};
+
+const readUndoBehavior = (value: unknown): WorkflowUndoBehavior | undefined =>
+  value === "delete_path" ||
+  value === "preserve_path" ||
+  value === "restore_previous"
+    ? value
+    : undefined;
 
 const isSafeRelativePath = (value: string): boolean => {
   const normalized = path.posix.normalize(value.replace(/\\/gu, "/"));
@@ -70,6 +97,8 @@ const parseEntry = (value: unknown): WorkflowStepUndoEntry | null => {
   const source = readString(value.source);
   const stage = readString(value.stage);
   const timestamp = readString(value.timestamp);
+  const previousContent = readNullableString(value.previousContent);
+  const undoBehavior = readUndoBehavior(value.undoBehavior);
   if (
     !(
       id &&
@@ -86,10 +115,12 @@ const parseEntry = (value: unknown): WorkflowStepUndoEntry | null => {
   return {
     id,
     kind,
+    previousContent,
     relativePath,
     source,
     stage: stage as WorkflowUndoStageId,
     timestamp,
+    undoBehavior,
   };
 };
 
@@ -118,6 +149,27 @@ const createTempPath = (filePath: string): string =>
       .toString(36)
       .slice(2)}${TEMP_FILE_SUFFIX}`
   );
+
+export const undoWorkflowStepAction = async (
+  action: WorkflowStepUndoAction,
+  removedPaths: string[],
+  restoredPaths: string[]
+): Promise<void> => {
+  if (action.entry.undoBehavior === "preserve_path") {
+    return;
+  }
+  if (
+    action.entry.kind === "write_file" &&
+    typeof action.entry.previousContent === "string"
+  ) {
+    await mkdir(path.dirname(action.absolutePath), { recursive: true });
+    await writeFile(action.absolutePath, action.entry.previousContent, "utf8");
+    restoredPaths.push(action.absolutePath);
+    return;
+  }
+  await rm(action.absolutePath, { force: true, recursive: true });
+  removedPaths.push(action.absolutePath);
+};
 
 export class WorkflowStepUndoLedgerStore {
   private readonly clock: () => string;

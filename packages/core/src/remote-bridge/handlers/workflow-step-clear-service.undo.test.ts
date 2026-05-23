@@ -259,3 +259,152 @@ test("workflow step clear uses persisted undo ledger entries after restart", asy
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+test("workflow step clear keeps questionnaire checkpoint and resets Description state", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-step-clear-questionnaire-checkpoint-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sessionManager = new SessionManager();
+  const resetCalls: string[] = [];
+  try {
+    const descriptionRoot = `.codeai-hub/${workspaceSlug}/description`;
+    const questionnairePath = `${descriptionRoot}/questionnaire.md`;
+    const finalPath = `${descriptionRoot}/Final_Description.md`;
+    const draftPath = `${descriptionRoot}/Description_Draft.md`;
+    await writeFileInWorkspace(workspaceRoot, questionnairePath, "answers\n");
+    await writeFileInWorkspace(workspaceRoot, finalPath, "final\n");
+    await writeFileInWorkspace(workspaceRoot, draftPath, "draft\n");
+    await writeFileInWorkspace(
+      workspaceRoot,
+      `${descriptionRoot}/description-step.json`,
+      JSON.stringify(
+        {
+          workspaceSlug,
+          workspacePath: workspaceRoot,
+          createdAt: "2026-05-23T08:00:00.000Z",
+          updatedAt: "2026-05-23T08:00:00.000Z",
+          questionnairePath,
+          draftPath,
+          finalPath,
+          primarySession: {
+            providerId: "codexCli",
+            providerSessionId: "description-provider",
+            jsonlPath: "session.jsonl",
+          },
+        },
+        null,
+        2
+      )
+    );
+    await new WorkflowStepUndoLedgerStore({
+      workspaceRoot,
+      workspaceSlug,
+      clock: () => "2026-05-23T08:30:00.000Z",
+    }).append([
+      {
+        kind: "write_file",
+        relativePath: questionnairePath,
+        source: "workspace_file_write",
+        stage: "description",
+        undoBehavior: "preserve_path",
+      },
+      {
+        kind: "write_file",
+        relativePath: finalPath,
+        source: "artifact_upsert",
+        stage: "description",
+      },
+      {
+        kind: "write_file",
+        relativePath: draftPath,
+        source: "artifact_upsert",
+        stage: "description",
+      },
+    ]);
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug,
+        target: { kind: "workflow_stage", stage: "description" },
+      },
+      resetCalls,
+      sessionManager,
+    });
+
+    assert.equal(result.statusCode, 200);
+    assert.equal(
+      await readFile(path.join(workspaceRoot, questionnairePath), "utf8"),
+      "answers\n"
+    );
+    assert.equal(await exists(path.join(workspaceRoot, finalPath)), false);
+    assert.equal(await exists(path.join(workspaceRoot, draftPath)), false);
+    const descriptionState = await readJson<Record<string, unknown>>(
+      path.join(workspaceRoot, `${descriptionRoot}/description-step.json`)
+    );
+    assert.equal(descriptionState.questionnairePath, questionnairePath);
+    assert.equal("finalPath" in descriptionState, false);
+    assert.equal("draftPath" in descriptionState, false);
+    assert.equal("primarySession" in descriptionState, false);
+    const ledger = await new WorkflowStepUndoLedgerStore({
+      workspaceRoot,
+      workspaceSlug,
+    }).read();
+    assert.deepEqual(
+      ledger?.entries.map((entry) => ({
+        path: entry.relativePath,
+        undoBehavior: entry.undoBehavior,
+      })),
+      [{ path: questionnairePath, undoBehavior: "preserve_path" }]
+    );
+    assert.deepEqual(resetCalls, [workspaceSlug]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow step clear restores overwritten files from undo ledger snapshots", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-step-clear-restore-previous-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sessionManager = new SessionManager();
+  const resetCalls: string[] = [];
+  try {
+    const finalPath = `.codeai-hub/${workspaceSlug}/description/Final_Description.md`;
+    await writeFileInWorkspace(workspaceRoot, finalPath, "new\n");
+    await new WorkflowStepUndoLedgerStore({
+      workspaceRoot,
+      workspaceSlug,
+      clock: () => "2026-05-23T08:30:00.000Z",
+    }).append([
+      {
+        kind: "write_file",
+        previousContent: "old\n",
+        relativePath: finalPath,
+        source: "artifact_upsert",
+        stage: "description",
+        undoBehavior: "restore_previous",
+      },
+    ]);
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug,
+        target: { kind: "workflow_stage", stage: "description" },
+      },
+      resetCalls,
+      sessionManager,
+    });
+
+    assert.equal(result.statusCode, 200);
+    assert.equal(
+      await readFile(path.join(workspaceRoot, finalPath), "utf8"),
+      "old\n"
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
