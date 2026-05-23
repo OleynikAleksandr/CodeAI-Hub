@@ -75,7 +75,7 @@ Critical rule:
 Immediately after reading the runtime-provided inputs on the first turn, write `product-parts.index.md` with the list of product parts and short descriptions. Then stop and report that the index artifact is ready for runtime/user review. Keep each later part file focused and bounded; do not generate one monolithic inventory file.
 
 Before the final response on the index turn, perform the same observable completion check Core will perform:
-- `product-parts.index.md` exists and declares the ordered `Product Part` ids;
+- `product-parts.index.md` exists and declares `leadProductPartId`, `productPartLeadershipOrder`, and the ordered `Product Part` ids;
 - no `product-parts/<part-id>.md` file was created before the runtime requested that part;
 - the current target staged Diagram Modules artifact is written and ready for runtime/user review;
 - no unrelated workspace files were created or changed by this stage.
@@ -220,9 +220,21 @@ If the general instruction text, legacy artifact text, and runtime continuation 
 
 `product-parts.index.md` must:
 - record an ordered list of `Product Part` entries;
+- declare `leadProductPartId`: the single Product Part that owns the first Development Tree contract orchestration session for the whole application;
+- declare `productPartLeadershipOrder`: every Product Part id exactly once, ordered by leadership and contract orchestration priority with the lead Product Part first;
 - give each part a stable `id`, a readable `title`, and a short `purpose`;
 - define generation order and status as explicitly as the current staged contract allows;
 - be informative enough for the runtime/UI to immediately show the future system skeleton.
+
+Product Part leadership rules:
+- choose the lead Product Part before writing the index order;
+- prefer the Product Part that owns application-wide domain/runtime/orchestration contracts, such as a core runtime, backend/domain core, workflow engine, application kernel, or equivalent;
+- if there is only one Product Part, that Product Part is the lead;
+- if there is no separate core/runtime/domain Product Part, choose the Product Part that defines the main user/business flows and can name the contracts required from the other parts;
+- do not choose a thin distribution, installer, launcher, IDE extension shell, adapter, provider pack, or integration-only part as lead unless it is the only real Product Part;
+- put `leadProductPartId` first in `productPartLeadershipOrder`, then list contract owners before consumers, user/business flow owners before adapters/providers, and distribution surfaces last unless they own product-wide contracts;
+- every planned Product Part id must appear exactly once; do not include unknown ids, duplicate ids, clusters, modules, or implementation packages in this order;
+- if leadership is ambiguous, still choose the most defensible lead and record the assumption in `## Assumptions / Open Questions`.
 
 `product-parts/<part-id>.md` must:
 - materialize exactly one `Product Part`;

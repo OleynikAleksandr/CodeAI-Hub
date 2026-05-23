@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "78c79df68",
+  "lastRecordedCommit": "11dcac01c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream10.task2",
-  "expectedCommitMessage": "fix: include diagram modules leadership index template",
+  "currentTaskId": "phase8.stream10.task5",
+  "expectedCommitMessage": "fix: teach diagram modules agent prompt leadership order",
   "debt": {
-    "expectedCommitMessage": "fix: include diagram modules leadership index template",
-    "preCommitHead": "78c79df68",
+    "expectedCommitMessage": "fix: teach diagram modules agent prompt leadership order",
+    "preCommitHead": "11dcac01c",
     "stage": "commit_pending",
-    "taskId": "phase8.stream10.task2"
+    "taskId": "phase8.stream10.task5"
   }
 }
 ```
@@ -185,12 +185,18 @@
 65. [DONE] `phase8.stream10.task1` Add explicit Core-owned Diagram Modules leadership selection rules and regression coverage for the initial prompt (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: teach diagram modules leadership metadata`).
 66. [DONE] Git Commit: `fix: teach diagram modules leadership metadata` (hash: 78c79df68)
 67. [DONE] `phase8.stream10.task2` Add Product Parts index metadata example to the source template and regenerated bundled template (scope: `packages/agents/diagram-modules-agent/assets/product-parts-index-template.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: include diagram modules leadership index template`).
-68. [PENDING] Git Commit: `fix: include diagram modules leadership index template` (hash: TBD)
-69. [TODO] `phase8.stream10.task3` Run targeted validation for Diagram Modules leadership prompt/template behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-70. [TODO] `phase8.stream10.task4` Wait for explicit user confirmation before building another replacement release for Diagram Modules leadership remediation (scope: release confirmation gate; no commit expected).
+68. [DONE] Git Commit: `fix: include diagram modules leadership index template` (hash: 11dcac01c)
+69. [DONE] `phase8.stream10.task3` Run targeted validation for Diagram Modules leadership prompt/template behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Core build passed; Diagram Modules prompt/template/progress tests passed; generated initial prompt now contains leadership selection rules plus Product Parts index metadata template.
+70. [BLOCKED] `phase8.stream10.task4` Wait for explicit user confirmation before building another replacement release for Diagram Modules leadership remediation (scope: release confirmation gate; no commit expected). Blocked: the actual first provider prompt for Diagram Modules is built from the bundled agent instruction asset, which still lacks leadership guidance.
+71. [DONE] `phase8.stream10.task5` Add lead Product Part selection rules to the Diagram Modules agent instruction asset and regenerated bundled template (scope: `packages/agents/diagram-modules-agent/assets/diagram-modules-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: teach diagram modules agent prompt leadership order`).
+72. [PENDING] Git Commit: `fix: teach diagram modules agent prompt leadership order` (hash: TBD)
+73. [TODO] `phase8.stream10.task6` Add Core workflow prompt pack regression coverage for Diagram Modules leadership guidance in the first provider prompt (scope: `packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules leadership prompt pack`).
+74. [TODO] Git Commit: `test: cover diagram modules leadership prompt pack` (hash: TBD)
+75. [TODO] `phase8.stream10.task7` Run targeted validation for Diagram Modules first prompt and managed prompt leadership behavior (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+76. [TODO] `phase8.stream10.task8` Wait for explicit user confirmation before building another replacement release for Diagram Modules leadership remediation (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-71. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-72. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+77. [TODO] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+78. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
