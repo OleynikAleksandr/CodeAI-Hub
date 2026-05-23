@@ -225,3 +225,33 @@ test("DescriptionStepStore.read ignores missing final artifacts and missing sess
     await rm(workspaceRoot, { recursive: true, force: true });
   }
 });
+
+test("DescriptionStepStore.read rebuilds questionnaire snapshot when step state is absent", async () => {
+  const workspaceSlug = "codeai-hub";
+  const workspaceRoot = await mkdtemp(path.join(tmpdir(), "codeai-hub-ws-"));
+
+  try {
+    const questionnairePath = `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
+    await mkdir(path.dirname(path.join(workspaceRoot, questionnairePath)), {
+      recursive: true,
+    });
+    await writeFile(
+      path.join(workspaceRoot, questionnairePath),
+      "# Questionnaire\n",
+      "utf8"
+    );
+
+    const store = new DescriptionStepStore();
+    const snapshot = await store.read(workspaceRoot, workspaceSlug);
+    const branchSnapshot = snapshot
+      ? buildDescriptionBranchSnapshot(snapshot)
+      : null;
+
+    assert.equal(snapshot?.workspaceSlug, workspaceSlug);
+    assert.equal(branchSnapshot?.questionnairePath, questionnairePath);
+    assert.equal(branchSnapshot?.finalPath, undefined);
+    assert.equal(branchSnapshot?.primarySession, undefined);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});

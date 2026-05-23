@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "1bf0a6d27",
+  "lastRecordedCommit": "c5c6c7647",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream26.task2",
-  "expectedCommitMessage": "fix: refresh project manager after workflow clear",
+  "currentTaskId": "phase8.stream27.task1",
+  "expectedCommitMessage": "fix: restore description questionnaire read model",
   "debt": {
-    "expectedCommitMessage": "fix: refresh project manager after workflow clear",
-    "preCommitHead": "1bf0a6d27",
+    "expectedCommitMessage": "fix: restore description questionnaire read model",
+    "preCommitHead": "c5c6c7647",
     "stage": "commit_pending",
-    "taskId": "phase8.stream26.task2"
+    "taskId": "phase8.stream27.task1"
   }
 }
 ```
@@ -336,9 +336,15 @@
 190. [DONE] `phase8.stream26.task1` Sanitize Core Description read model after checkpoint restore so missing `Final_Description.md` and removed session traces cannot be projected back into Project Manager (scope: `packages/core/src/workflow/description/description-step-store.ts, packages/core/src/workflow/description/description-step-store.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: sanitize clear workflow read model`).
 191. [DONE] Git Commit: `fix: sanitize clear workflow read model` (hash: 1bf0a6d27)
 192. [DONE] `phase8.stream26.task2` Make Project Manager invalidate workflow artifact availability immediately after Clear so sidebar and selected artifact projection re-probe deleted downstream files (scope: `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/use-artifact-availability.ts, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `fix: refresh project manager after workflow clear`).
-193. [PENDING] Git Commit: `fix: refresh project manager after workflow clear` (hash: TBD)
-194. [TODO] `phase8.stream26.task3` Run targeted validation for Core Description projection and Project Manager Clear refresh behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+193. [DONE] Git Commit: `fix: refresh project manager after workflow clear` (hash: c5c6c7647)
+194. [BLOCKED] `phase8.stream26.task3` Run targeted validation for Core Description projection and Project Manager Clear refresh behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Blocked: real workspace validation showed `description-step.json` may be absent after Clear while `questionnaire.md` remains, so Core must hydrate the Description read model from the questionnaire file itself.
 195. [TODO] `phase8.stream26.task4` Wait for explicit user confirmation before building the next replacement release after workflow Clear read-model resync fixes (scope: release confirmation gate; no commit expected).
+
+### Stream: Workflow Clear Questionnaire Fallback
+196. [DONE] `phase8.stream27.task1` Hydrate Core Description read model from existing `questionnaire.md` when `description-step.json` is absent after Clear (scope: `packages/core/src/workflow/description/description-step-store.ts, packages/core/src/workflow/description/description-step-store.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore description questionnaire read model`).
+197. [PENDING] Git Commit: `fix: restore description questionnaire read model` (hash: TBD)
+198. [TODO] `phase8.stream27.task2` Rerun targeted validation for real-workspace Description projection, workflow clear regressions, Core build and Project Manager refresh behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+199. [TODO] `phase8.stream27.task3` Wait for explicit user confirmation before building the next replacement release after questionnaire fallback fixes (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

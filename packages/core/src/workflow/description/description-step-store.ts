@@ -158,6 +158,31 @@ const fileExists = async (filePath: string | null): Promise<boolean> => {
   return Boolean(fileStat?.isFile());
 };
 
+const readQuestionnaireFallback = async (
+  workspaceRoot: string,
+  workspaceSlug: string
+): Promise<DescriptionStepSnapshot | null> => {
+  const questionnairePath = `${ROOT_DIR}/${workspaceSlug}/${DESCRIPTION_DIR}/questionnaire.md`;
+  const absolutePath = resolveWorkspaceRelativeFile(
+    workspaceRoot,
+    questionnairePath
+  );
+  const questionnaireStat = absolutePath
+    ? await stat(absolutePath).catch(() => null)
+    : null;
+  if (!questionnaireStat?.isFile()) {
+    return null;
+  }
+  const updatedAt = questionnaireStat.mtime.toISOString();
+  return {
+    workspaceSlug,
+    workspacePath: normalizeWorkspacePath(workspaceRoot),
+    createdAt: updatedAt,
+    updatedAt,
+    questionnairePath,
+  };
+};
+
 const sessionJsonlExists = async (
   workspaceRoot: string,
   session: DescriptionSessionRef | undefined
@@ -222,7 +247,7 @@ export class DescriptionStepStore {
       buildStatePath(workspaceRoot, workspaceSlug)
     );
     if (!snapshot) {
-      return null;
+      return await readQuestionnaireFallback(workspaceRoot, workspaceSlug);
     }
     const parsed = parseSnapshot(snapshot, workspaceRoot);
     if (!parsed) {
