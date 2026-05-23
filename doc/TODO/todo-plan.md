@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "e5b6172ef",
+  "lastRecordedCommit": "0c9d0a65b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream13.task1",
-  "expectedCommitMessage": "fix: restore quality gates artifact modes and clear menu",
+  "currentTaskId": "phase8.stream13.task2",
+  "expectedCommitMessage": "test: cover quality gates artifact modes and clear menu",
   "debt": {
-    "expectedCommitMessage": "fix: restore quality gates artifact modes and clear menu",
-    "preCommitHead": "e5b6172ef",
+    "expectedCommitMessage": "test: cover quality gates artifact modes and clear menu",
+    "preCommitHead": "0c9d0a65b",
     "stage": "commit_pending",
-    "taskId": "phase8.stream13.task1"
+    "taskId": "phase8.stream13.task2"
   }
 }
 ```
@@ -209,9 +209,9 @@
 
 ### Stream: Acceptance Remediation — Quality Gates And Clear Menu Regression
 85. [DONE] `phase8.stream13.task1` Restore Project Manager Quality Gates Research/Contract artifact header modes and make the sidebar Clear menu open from the right-button mouse-down path while keeping the in-app confirmation flow (scope: `src/client/project-manager/components/layout/stage-artifact-mode.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: restore quality gates artifact modes and clear menu`).
-86. [PENDING] Git Commit: `fix: restore quality gates artifact modes and clear menu` (hash: TBD)
-87. [TODO] `phase8.stream13.task2` Add regression coverage for Quality Gates header modes and sidebar Clear menu right-click opening (scope: `src/client/project-manager/components/layout/stage-artifact-mode.test.ts, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates artifact modes and clear menu`).
-88. [TODO] Git Commit: `test: cover quality gates artifact modes and clear menu` (hash: TBD)
+86. [DONE] Git Commit: `fix: restore quality gates artifact modes and clear menu` (hash: 0c9d0a65b)
+87. [DONE] `phase8.stream13.task2` Add regression coverage for Quality Gates header modes and sidebar Clear menu right-click opening (scope: `src/client/project-manager/components/layout/stage-artifact-mode.test.ts, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates artifact modes and clear menu`).
+88. [PENDING] Git Commit: `test: cover quality gates artifact modes and clear menu` (hash: TBD)
 89. [TODO] `phase8.stream13.task3` Enforce Quality Gates research-first provider prompt and managed validation boundary so the first agent pass creates only the research report for user/Core review (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/managed-workflow-orchestration/quality-gates/**, doc/TODO/todo-plan.md`; expected commit: `fix: enforce quality gates research first boundary`).
 90. [TODO] Git Commit: `fix: enforce quality gates research first boundary` (hash: TBD)
 91. [TODO] `phase8.stream13.task4` Run targeted validation for Quality Gates research boundary and Project Manager sidebar/header regressions (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).

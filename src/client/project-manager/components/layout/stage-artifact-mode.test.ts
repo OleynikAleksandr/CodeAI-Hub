@@ -8,6 +8,7 @@ import {
   resolveDiagramSourceArtifact,
   resolveDiagramSourcePendingMessage,
 } from "./stage-artifact-mode";
+import { QUALITY_GATES_TOOL_LABEL } from "./use-workflow-tool-select";
 
 const MODULES_PANEL_SOURCE_PATH = path.resolve(
   process.cwd(),
@@ -33,7 +34,7 @@ test("non-diagram stages keep the legacy artifact/help contract", () => {
 });
 
 test("quality gates exposes research and contract artifact header modes", () => {
-  assert.deepEqual(resolveArtifactHeaderModes("Quality Gates Baseline"), [
+  assert.deepEqual(resolveArtifactHeaderModes(QUALITY_GATES_TOOL_LABEL), [
     "research",
     "contract",
     "help",
@@ -44,7 +45,7 @@ test("source mode normalizes back to artifacts when the stage does not support i
   assert.equal(normalizeArtifactHeaderMode("Description", "source"), "artifacts");
   assert.equal(normalizeArtifactHeaderMode(null, "help"), "artifacts");
   assert.equal(
-    normalizeArtifactHeaderMode("Quality Gates Baseline", "artifacts"),
+    normalizeArtifactHeaderMode(QUALITY_GATES_TOOL_LABEL, "artifacts"),
     "research"
   );
 });

@@ -29,6 +29,7 @@ test("workspace tree clear menu requires destructive confirmation and calls Core
   assert.match(hookSource, /onContextMenu/u);
   assert.match(hookSource, /onContextMenuCapture/u);
   assert.match(hookSource, /event\.button === 2/u);
+  assert.match(hookSource, /event\.button === 2[\s\S]*openMenu/u);
   assert.match(clientSource, /workflow-step-clear/u);
 });
 
