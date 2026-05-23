@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "f07ae9cf4",
+  "lastRecordedCommit": "dbaea9732",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream29.task1",
-  "expectedCommitMessage": "fix: show questionnaire editor after workflow clear",
+  "currentTaskId": "phase8.stream30.task1",
+  "expectedCommitMessage": "docs: prepare immediate questionnaire editor release",
   "debt": {
-    "expectedCommitMessage": "fix: show questionnaire editor after workflow clear",
-    "preCommitHead": "f07ae9cf4",
+    "expectedCommitMessage": "docs: prepare immediate questionnaire editor release",
+    "preCommitHead": "dbaea9732",
     "stage": "commit_pending",
-    "taskId": "phase8.stream29.task1"
+    "taskId": "phase8.stream30.task1"
   }
 }
 ```
@@ -357,9 +357,18 @@
 
 ### Stream: Workflow Clear Immediate Questionnaire Editor
 207. [DONE] `phase8.stream29.task1` Make Project Manager treat a questionnaire-only Description snapshot after Clear as a hard session downgrade so the editable questionnaire opens immediately without a manual header refresh (scope: `src/client/project-manager/components/layout/use-main-area-workflow-state.ts, src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: show questionnaire editor after workflow clear`).
-208. [PENDING] Git Commit: `fix: show questionnaire editor after workflow clear` (hash: TBD)
-209. [TODO] `phase8.stream29.task2` Run targeted Project Manager validation for immediate questionnaire editor restoration after workflow Clear (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-210. [TODO] `phase8.stream29.task3` Wait for explicit user confirmation before building the next replacement release after immediate questionnaire editor restoration (scope: release confirmation gate; no commit expected).
+208. [DONE] Git Commit: `fix: show questionnaire editor after workflow clear` (hash: dbaea9732)
+209. [DONE] `phase8.stream29.task2` Run targeted Project Manager validation for immediate questionnaire editor restoration after workflow Clear (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: source regression test, `npm run typecheck:webview`, `npm run build:webview`, `npm run build:project-manager` and `npm run plan:validate` passed.
+210. [DONE] `phase8.stream29.task3` Wait for explicit user confirmation before building the next replacement release after immediate questionnaire editor restoration (scope: release confirmation gate; no commit expected). Result: user explicitly requested a new release build on 2026-05-23.
+
+### Stream: Release Build — Immediate Questionnaire Editor
+211. [DONE] `phase8.stream30.task1` Update release-facing docs for the v1.2.335 immediate questionnaire editor build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare immediate questionnaire editor release`).
+212. [PENDING] Git Commit: `docs: prepare immediate questionnaire editor release` (hash: TBD)
+213. [TODO] `phase8.stream30.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.335 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build immediate questionnaire editor release`).
+214. [TODO] Git Commit: `chore: build immediate questionnaire editor release` (hash: TBD)
+215. [TODO] `phase8.stream30.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package immediate questionnaire editor vsix`).
+216. [TODO] Git Commit: `chore: package immediate questionnaire editor vsix` (hash: TBD)
+217. [TODO] `phase8.stream30.task4` User installs the generated v1.2.335 VSIX and verifies clearing Description immediately returns the right panel to the editable questionnaire without manual refresh (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

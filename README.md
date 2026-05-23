@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.334** (Workflow Clear Read Model Resync)
+**Current Release — v1.2.335** (Workflow Clear Immediate Questionnaire Editor)
+
+This replacement build finishes the Project Manager side of workflow step
+`Clear` for the Description restart path. When Core returns a Description
+snapshot that contains only the preserved `questionnaire.md` and no final
+artifact or provider session, Project Manager now treats it as a hard session
+downgrade and immediately opens the editable questionnaire.
+
+This removes the stale right-panel state where `questionnaire.md` was rendered
+as markdown text until the user manually switched away from Artifacts and back.
+
+**Previous Release — v1.2.334** (Workflow Clear Read Model Resync)
 
 This replacement build fixes the Project Manager projection after workflow step
 `Clear`. Core now sanitizes Description read-model references against the

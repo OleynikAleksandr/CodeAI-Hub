@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.335] - 2026-05-23
+### Fixed
+- **Description questionnaire opens as an editor immediately after Clear.** Project Manager now bypasses the optimistic Description session guard when Core projects a questionnaire-only Description snapshot, so the preserved `questionnaire.md` opens as the editable restart form without a manual Help/Artifacts refresh.
+
+### Tests
+- `node --import tsx --test src/client/project-manager/components/layout/use-main-area-workflow-state.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.334] - 2026-05-23
 ### Fixed
 - **Description read-model is sanitized after Clear.** Core no longer projects stale `Final_Description.md` or deleted session refs when those files were removed by workflow step Clear.
