@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.326** (Workflow clear crash remediation)
+**Current Release — v1.2.327** (Quality Gates research-first remediation)
+
+This replacement build fixes the Quality Gates and Project Manager regressions
+found during v1.2.326 testing. Quality Gates now has a hard research-first
+boundary: the first provider pass may create only
+`quality-gates-research.md` and `quality-gates-research.json`. If the agent
+tries to create the contract artifacts before the research report is reviewed,
+Core rejects the turn and asks for a research-only repair.
+
+After the user accepts the research report, Core sends a separate continuation
+prompt for `quality-gates.md` and `quality-gates.json`. Only the contract draft
+then enters the normal user review and integration path.
+
+Project Manager again shows separate `Research`, `Contract`, and `Help` artifact
+buttons for Quality Gates, and the sidebar `Clear` menu opens from the
+right-click path while keeping the in-app destructive confirmation flow.
 
 This replacement build fixes a Project Manager native crash seen when opening
 the sidebar `Clear` action with right-click. The sidebar clear menu now uses an

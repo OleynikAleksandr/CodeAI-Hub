@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.327] - 2026-05-23
+### Fixed
+- **Quality Gates is now a true research-first workflow.** Core accepts the first provider turn only when it contains `quality-gates-research.md` and `quality-gates-research.json`; premature `quality-gates.md/json` contract creation is rejected until the research report is reviewed.
+- **Quality Gates research acceptance opens contract drafting, not integration.** After the user accepts the research report, Core sends a separate continuation prompt for the contract artifacts. The normal contract review and integration path starts only after that draft is validated.
+- **Project Manager again shows the Quality Gates artifact split.** The artifact header resolves the real `QUALITY GATES BASELINE` tool label and exposes `Research`, `Contract`, and `Help` buttons.
+- **The sidebar `Clear` menu opens reliably after the native crash fix.** Right-click now opens the in-app menu from the right-button mouse-down path while preserving destructive confirmation.
+
+### Tests
+- `npm run build --workspace=@codeai-hub/core`
+- `npx tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.test.ts src/client/project-manager/components/layout/stage-artifact-mode.test.ts src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.326] - 2026-05-23
 ### Fixed
 - **Project Manager no longer uses a native browser confirmation for sidebar `Clear`.** The workflow step clear action now opens an in-app confirmation panel, avoiding the CEF/macOS native-dialog crash path reported during right-click testing.
