@@ -82,6 +82,8 @@ const explainDiagnostic = (diagnostic: string): string => {
     schema_invalid: 'Set `schema` to exactly `"codeai-quality-gates-v1"`.',
     research_schema_invalid:
       'Set `quality-gates-research.json.schema` to exactly `"codeai-quality-gates-research-v1"`.',
+    research_markdown_missing_required_heading:
+      "Start `quality-gates-research.md` with the exact heading `# Quality Gates Research` before any localized prose or sections.",
     research_sources_missing:
       "Add at least one current source to the research artifact.",
     research_recommendations_missing:

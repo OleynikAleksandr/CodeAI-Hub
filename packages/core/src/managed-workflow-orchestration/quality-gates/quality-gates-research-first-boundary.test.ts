@@ -7,6 +7,8 @@ import { validateQualityGatesManagedArtifacts } from "./quality-gates-validator"
 
 const WORKSPACE_SLUG = "demo-workspace";
 const RESEARCH_REVIEW_OPEN_RE = /research report shape is valid/u;
+const RESEARCH_HEADING_REPAIR_PROMPT_RE =
+  /exact heading `# Quality Gates Research`/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -174,6 +176,7 @@ test("Quality Gates validator rejects research markdown without canonical headin
     assert.ok(
       result.diagnostics.includes("research_markdown_missing_required_heading")
     );
+    assert.match(result.nextPrompt ?? "", RESEARCH_HEADING_REPAIR_PROMPT_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

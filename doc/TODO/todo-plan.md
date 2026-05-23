@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "8b8d693ec",
+  "lastRecordedCommit": "1faf930c3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream33.task1",
-  "expectedCommitMessage": "fix: validate quality gates research heading",
+  "currentTaskId": "phase8.stream33.task2",
+  "expectedCommitMessage": "fix: explain quality gates research heading repair",
   "debt": {
-    "expectedCommitMessage": "fix: validate quality gates research heading",
-    "preCommitHead": "8b8d693ec",
+    "expectedCommitMessage": "fix: explain quality gates research heading repair",
+    "preCommitHead": "1faf930c3",
     "stage": "commit_pending",
-    "taskId": "phase8.stream33.task1"
+    "taskId": "phase8.stream33.task2"
   }
 }
 ```
@@ -389,9 +389,9 @@
 
 ### Stream: Quality Gates Research Heading Validation
 231. [DONE] `phase8.stream33.task1` Enforce the canonical `# Quality Gates Research` markdown heading in the Core-owned Quality Gates research validator and add a regression test for localized/wrong headings (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: validate quality gates research heading`).
-232. [PENDING] Git Commit: `fix: validate quality gates research heading` (hash: TBD)
-233. [TODO] `phase8.stream33.task2` Explain the new research heading diagnostic in the Core repair prompt so the agent repairs the markdown title instead of reaching user review with a PM-only parser error (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: explain quality gates research heading repair`).
-234. [TODO] Git Commit: `fix: explain quality gates research heading repair` (hash: TBD)
+232. [DONE] Git Commit: `fix: validate quality gates research heading` (hash: 1faf930c3)
+233. [DONE] `phase8.stream33.task2` Explain the new research heading diagnostic in the Core repair prompt so the agent repairs the markdown title instead of reaching user review with a PM-only parser error (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: explain quality gates research heading repair`).
+234. [PENDING] Git Commit: `fix: explain quality gates research heading repair` (hash: TBD)
 235. [TODO] `phase8.stream33.task3` Run targeted validation for Quality Gates research boundary, repair prompt behavior and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 236. [TODO] `phase8.stream33.task4` Wait for explicit user confirmation before building the next replacement release after Quality Gates research heading validation (scope: release confirmation gate; no commit expected).
 
