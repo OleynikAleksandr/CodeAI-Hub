@@ -354,6 +354,16 @@ test("technical stage dirty status ignores volatile Core metadata after restart"
     );
     await writeWorkspaceFile(
       workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/workflow/checkpoints/description.json`,
+      "{}\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`,
+      "{}\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
       "doc/TODO/workspace.plan.md",
       "# Managed Workspace Plan\n"
     );

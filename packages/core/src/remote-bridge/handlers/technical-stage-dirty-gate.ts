@@ -55,7 +55,9 @@ const isVolatileCoreMetadataPath = (
   file.startsWith(`.codeai-hub/${workspaceSlug}/description/`) ||
   file.startsWith(`.codeai-hub/${workspaceSlug}/virtual_simulation/`) ||
   isNonSemanticDiagramModulesSidecar(file, workspaceSlug) ||
-  file === `.codeai-hub/${workspaceSlug}/workflow/state.json`;
+  file.startsWith(`.codeai-hub/${workspaceSlug}/workflow/checkpoints/`) ||
+  file === `.codeai-hub/${workspaceSlug}/workflow/state.json` ||
+  file === `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`;
 
 const parseGitStatusPath = (line: string): string | null => {
   const rawPath = line.slice(3).trim();
