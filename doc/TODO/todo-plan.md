@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "b97c9b7cb",
+  "lastRecordedCommit": "a113af0bb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream30.task2",
-  "expectedCommitMessage": "chore: build immediate questionnaire editor release",
+  "currentTaskId": "phase8.stream30.task3",
+  "expectedCommitMessage": "chore: package immediate questionnaire editor vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build immediate questionnaire editor release",
-    "preCommitHead": "b97c9b7cb",
+    "expectedCommitMessage": "chore: package immediate questionnaire editor vsix",
+    "preCommitHead": "a113af0bb",
     "stage": "commit_pending",
-    "taskId": "phase8.stream30.task2"
+    "taskId": "phase8.stream30.task3"
   }
 }
 ```
@@ -365,9 +365,9 @@
 211. [DONE] `phase8.stream30.task1` Update release-facing docs for the v1.2.335 immediate questionnaire editor build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare immediate questionnaire editor release`).
 212. [DONE] Git Commit: `docs: prepare immediate questionnaire editor release` (hash: b97c9b7cb)
 213. [DONE] `phase8.stream30.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.335 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build immediate questionnaire editor release`).
-214. [PENDING] Git Commit: `chore: build immediate questionnaire editor release` (hash: TBD)
-215. [TODO] `phase8.stream30.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package immediate questionnaire editor vsix`).
-216. [TODO] Git Commit: `chore: package immediate questionnaire editor vsix` (hash: TBD)
+214. [DONE] Git Commit: `chore: build immediate questionnaire editor release` (hash: a113af0bb)
+215. [DONE] `phase8.stream30.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package immediate questionnaire editor vsix`).
+216. [PENDING] Git Commit: `chore: package immediate questionnaire editor vsix` (hash: TBD)
 217. [TODO] `phase8.stream30.task4` User installs the generated v1.2.335 VSIX and verifies clearing Description immediately returns the right panel to the editable questionnaire without manual refresh (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
