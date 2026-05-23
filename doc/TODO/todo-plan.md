@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "f6e8dd8ad",
+  "lastRecordedCommit": "16ae45f30",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream23.task3",
-  "expectedCommitMessage": "chore: package workflow session cleanup vsix",
+  "currentTaskId": "phase8.stream24.task1",
+  "expectedCommitMessage": "fix: clear codex native translation sessions",
   "debt": {
-    "expectedCommitMessage": "chore: package workflow session cleanup vsix",
-    "preCommitHead": "f6e8dd8ad",
+    "expectedCommitMessage": "fix: clear codex native translation sessions",
+    "preCommitHead": "16ae45f30",
     "stage": "commit_pending",
-    "taskId": "phase8.stream23.task3"
+    "taskId": "phase8.stream24.task1"
   }
 }
 ```
@@ -314,8 +314,14 @@
 174. [DONE] `phase8.stream23.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.332 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build workflow session cleanup release`).
 175. [DONE] Git Commit: `chore: build workflow session cleanup release` (hash: f6e8dd8ad)
 176. [DONE] `phase8.stream23.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package workflow session cleanup vsix`).
-177. [PENDING] Git Commit: `chore: package workflow session cleanup vsix` (hash: TBD)
-178. [TODO] `phase8.stream23.task4` User installs the generated v1.2.332 VSIX and verifies clearing Description removes workspace/user-space mutations, unified session files and provider-native session files (scope: user workflow acceptance; no commit expected).
+177. [DONE] Git Commit: `chore: package workflow session cleanup vsix` (hash: 16ae45f30)
+178. [BLOCKED] `phase8.stream23.task4` User installs the generated v1.2.332 VSIX and verifies clearing Description removes workspace/user-space mutations, unified session files and provider-native session files (scope: user workflow acceptance; no commit expected). Blocked: user retest showed Codex provider-native translation JSONL files remain under `~/.codeai-hub/providers/codex/home/sessions`.
+
+### Stream: Workflow Clear Codex Native Translation Cleanup
+179. [DONE] `phase8.stream24.task1` Make workflow step Clear remove Codex provider-native workflow sessions by `session_meta.payload.id` and disposable Codex translation-native sessions that are not present in continuity (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear codex native translation sessions`).
+180. [PENDING] Git Commit: `fix: clear codex native translation sessions` (hash: TBD)
+181. [TODO] `phase8.stream24.task2` Run targeted validation for Codex provider-native workflow/translation session cleanup and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+182. [TODO] `phase8.stream24.task3` Wait for explicit user confirmation before building the next replacement release after Codex native translation cleanup (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

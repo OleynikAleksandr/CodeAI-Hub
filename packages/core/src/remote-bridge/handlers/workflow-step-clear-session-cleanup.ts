@@ -22,6 +22,10 @@ const WORKFLOW_STAGES = [
   "quality_gates",
 ] as const satisfies readonly WorkflowStageId[];
 const PROVIDER_NATIVE_ROOT = path.join(".codeai-hub", "providers");
+const CODEX_TRANSLATION_CWD_MARKER = "codeai-codex-translation-";
+const CODEX_TRANSLATION_INSTRUCTION_PREFIX =
+  "You are a precise translation engine for CodeAI Hub.";
+const JSONL_LINE_SEPARATOR_RE = /\r?\n/u;
 
 type ClearTarget =
   | { readonly kind: "workflow_stage"; readonly stage: WorkflowStageId }
@@ -42,6 +46,12 @@ interface ContinuityIndexEntryRecord {
   readonly providerSessionId: string | null;
   readonly rootSessionId: string;
   readonly stage: string;
+}
+
+interface CodexNativeSessionMeta {
+  readonly baseInstructionsText: string | null;
+  readonly cwd: string | null;
+  readonly id: string | null;
 }
 
 const readString = (value: unknown): string | null =>
@@ -124,6 +134,45 @@ const readJsonFile = async <T>(filePath: string): Promise<T | null> => {
     return null;
   }
 };
+
+const readFirstJsonLine = async <T>(filePath: string): Promise<T | null> => {
+  try {
+    const firstLine = (await readFile(filePath, "utf8"))
+      .split(JSONL_LINE_SEPARATOR_RE)
+      .find((line) => line.trim().length > 0);
+    return firstLine ? (JSON.parse(firstLine) as T) : null;
+  } catch {
+    return null;
+  }
+};
+
+const readCodexNativeSessionMeta = async (
+  filePath: string
+): Promise<CodexNativeSessionMeta | null> => {
+  const record = await readFirstJsonLine<Record<string, unknown>>(filePath);
+  if (!(record?.type === "session_meta" && record.payload)) {
+    return null;
+  }
+  const payload = record.payload as Record<string, unknown>;
+  const baseInstructions = payload.base_instructions as
+    | Record<string, unknown>
+    | undefined;
+  return {
+    id: readString(payload.id),
+    cwd: readString(payload.cwd),
+    baseInstructionsText: readString(baseInstructions?.text),
+  };
+};
+
+const isCodexTranslationNativeSession = (
+  meta: CodexNativeSessionMeta
+): boolean =>
+  Boolean(
+    meta.cwd?.includes(CODEX_TRANSLATION_CWD_MARKER) ||
+      meta.baseInstructionsText?.startsWith(
+        CODEX_TRANSLATION_INSTRUCTION_PREFIX
+      )
+  );
 
 const collectChainSessionRefs = (
   chain: ContinuityChainSummary
@@ -310,9 +359,9 @@ const collectUnifiedSessionPaths = async (params: {
   ];
 };
 
-const collectCodexNativeSessionPaths = async (params: {
-  readonly providerSessionId: string;
-}): Promise<string[]> => {
+const collectCodexNativeSessionPaths = async (
+  providerSessionIds: readonly string[]
+): Promise<string[]> => {
   const root = path.join(
     homedir(),
     PROVIDER_NATIVE_ROOT,
@@ -321,6 +370,7 @@ const collectCodexNativeSessionPaths = async (params: {
     "sessions"
   );
   const paths: string[] = [];
+  const providerSessionIdSet = new Set(providerSessionIds);
   const stack = [root];
   while (stack.length > 0) {
     const current = stack.pop();
@@ -334,10 +384,18 @@ const collectCodexNativeSessionPaths = async (params: {
       const absolutePath = path.join(current, entry.name);
       if (entry.isDirectory()) {
         stack.push(absolutePath);
-      } else if (
-        entry.isFile() &&
-        entry.name.endsWith(".jsonl") &&
-        entry.name.includes(params.providerSessionId)
+        continue;
+      }
+      if (!(entry.isFile() && entry.name.endsWith(".jsonl"))) {
+        continue;
+      }
+      const meta = await readCodexNativeSessionMeta(absolutePath);
+      const isTrackedWorkflowSession = Boolean(
+        meta?.id && providerSessionIdSet.has(meta.id)
+      );
+      if (
+        isTrackedWorkflowSession ||
+        (meta && isCodexTranslationNativeSession(meta))
       ) {
         paths.push(absolutePath);
       }
@@ -367,14 +425,15 @@ const collectProviderNativeSessionPaths = async (params: {
   readonly workspacePath: string;
 }): Promise<string[]> => {
   const paths = new Set<string>();
+  const codexProviderSessionIds = params.refs
+    .filter((ref) => ref.providerId === "codexCli")
+    .map((ref) => ref.providerSessionId);
+  for (const targetPath of await collectCodexNativeSessionPaths(
+    codexProviderSessionIds
+  )) {
+    paths.add(targetPath);
+  }
   for (const ref of params.refs) {
-    if (ref.providerId === "codexCli") {
-      for (const targetPath of await collectCodexNativeSessionPaths({
-        providerSessionId: ref.providerSessionId,
-      })) {
-        paths.add(targetPath);
-      }
-    }
     if (
       ref.providerId === "claudeCodeCli" ||
       ref.providerId === "glmClaudeCode"
