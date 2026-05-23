@@ -141,12 +141,26 @@ export const useArtifactAvailability = (params: {
       pendingImmediateProbe = false;
       scheduleNextProbe();
     };
+    const handleWorkflowStepCleared = (event: Event) => {
+      const detail = (event as CustomEvent<{
+        readonly workspacePath?: string;
+        readonly workspaceSlug?: string;
+      }>).detail;
+      if (
+        detail?.workspacePath !== params.workspacePath ||
+        detail.workspaceSlug !== params.workspaceSlug
+      ) {
+        return;
+      }
+      requestImmediateProbe();
+    };
 
     if (resolveIntervalMs() !== null) {
       requestImmediateProbe();
     }
     window.addEventListener("focus", handleActivityChange);
     window.addEventListener("blur", handleActivityChange);
+    window.addEventListener("pm:workflow-step:cleared", handleWorkflowStepCleared);
     document.addEventListener("visibilitychange", handleActivityChange);
 
     return () => {
@@ -156,6 +170,10 @@ export const useArtifactAvailability = (params: {
       timer = 0;
       window.removeEventListener("focus", handleActivityChange);
       window.removeEventListener("blur", handleActivityChange);
+      window.removeEventListener(
+        "pm:workflow-step:cleared",
+        handleWorkflowStepCleared
+      );
       document.removeEventListener("visibilitychange", handleActivityChange);
     };
   }, [params.artifactPath, params.enabled, params.workspacePath, params.workspaceSlug]);

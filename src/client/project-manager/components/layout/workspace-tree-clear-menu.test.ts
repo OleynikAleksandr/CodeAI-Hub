@@ -30,7 +30,20 @@ test("workspace tree clear menu requires destructive confirmation and calls Core
   assert.match(hookSource, /onContextMenuCapture/u);
   assert.match(hookSource, /event\.button === 2/u);
   assert.match(hookSource, /event\.button === 2[\s\S]*openMenu/u);
+  assert.match(hookSource, /pm:workflow-step:cleared/u);
   assert.match(clientSource, /workflow-step-clear/u);
+});
+
+test("artifact availability probes immediately after workflow clear", async () => {
+  const sourcePath = path.resolve(
+    process.cwd(),
+    "src/client/project-manager/components/layout/use-artifact-availability.ts"
+  );
+  const source = await readFile(sourcePath, "utf8");
+
+  assert.match(source, /pm:workflow-step:cleared/u);
+  assert.match(source, /handleWorkflowStepCleared/u);
+  assert.match(source, /requestImmediateProbe\(\)/u);
 });
 
 test("development tree nodes carry Core clear targets", () => {

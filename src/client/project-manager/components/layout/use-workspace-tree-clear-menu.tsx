@@ -116,6 +116,15 @@ export const useWorkspaceTreeClearMenu = (params: {
       workspacePath: params.workspacePath,
       workspaceSlug: params.workspaceSlug,
     });
+    window.dispatchEvent(
+      new CustomEvent("pm:workflow-step:cleared", {
+        detail: {
+          target: menu.target,
+          workspacePath: params.workspacePath,
+          workspaceSlug: params.workspaceSlug,
+        },
+      })
+    );
     workflowStateStore.requestImmediatePoll();
     close();
   }, [close, menu, params.workspacePath, params.workspaceSlug]);

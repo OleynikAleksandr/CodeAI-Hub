@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "6c41ed621",
+  "lastRecordedCommit": "1bf0a6d27",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream26.task1",
-  "expectedCommitMessage": "fix: sanitize clear workflow read model",
+  "currentTaskId": "phase8.stream26.task2",
+  "expectedCommitMessage": "fix: refresh project manager after workflow clear",
   "debt": {
-    "expectedCommitMessage": "fix: sanitize clear workflow read model",
-    "preCommitHead": "6c41ed621",
+    "expectedCommitMessage": "fix: refresh project manager after workflow clear",
+    "preCommitHead": "1bf0a6d27",
     "stage": "commit_pending",
-    "taskId": "phase8.stream26.task1"
+    "taskId": "phase8.stream26.task2"
   }
 }
 ```
@@ -334,9 +334,9 @@
 
 ### Stream: Workflow Clear Read Model Resync
 190. [DONE] `phase8.stream26.task1` Sanitize Core Description read model after checkpoint restore so missing `Final_Description.md` and removed session traces cannot be projected back into Project Manager (scope: `packages/core/src/workflow/description/description-step-store.ts, packages/core/src/workflow/description/description-step-store.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: sanitize clear workflow read model`).
-191. [PENDING] Git Commit: `fix: sanitize clear workflow read model` (hash: TBD)
-192. [TODO] `phase8.stream26.task2` Make Project Manager invalidate workflow artifact availability immediately after Clear so sidebar and selected artifact projection re-probe deleted downstream files (scope: `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/use-artifact-availability.ts, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `fix: refresh project manager after workflow clear`).
-193. [TODO] Git Commit: `fix: refresh project manager after workflow clear` (hash: TBD)
+191. [DONE] Git Commit: `fix: sanitize clear workflow read model` (hash: 1bf0a6d27)
+192. [DONE] `phase8.stream26.task2` Make Project Manager invalidate workflow artifact availability immediately after Clear so sidebar and selected artifact projection re-probe deleted downstream files (scope: `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/use-artifact-availability.ts, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `fix: refresh project manager after workflow clear`).
+193. [PENDING] Git Commit: `fix: refresh project manager after workflow clear` (hash: TBD)
 194. [TODO] `phase8.stream26.task3` Run targeted validation for Core Description projection and Project Manager Clear refresh behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 195. [TODO] `phase8.stream26.task4` Wait for explicit user confirmation before building the next replacement release after workflow Clear read-model resync fixes (scope: release confirmation gate; no commit expected).
 
