@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "ff8ce953a",
+  "lastRecordedCommit": "b1dec780c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream34.task3",
-  "expectedCommitMessage": "chore: package quality gates research heading vsix",
+  "currentTaskId": "phase8.stream35.task1",
+  "expectedCommitMessage": "feat: add git backed workflow rollback",
   "debt": {
-    "expectedCommitMessage": "chore: package quality gates research heading vsix",
-    "preCommitHead": "ff8ce953a",
+    "expectedCommitMessage": "feat: add git backed workflow rollback",
+    "preCommitHead": "b1dec780c",
     "stage": "commit_pending",
-    "taskId": "phase8.stream34.task3"
+    "taskId": "phase8.stream35.task1"
   }
 }
 ```
@@ -401,8 +401,18 @@
 239. [DONE] `phase8.stream34.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.337 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates research heading release`).
 240. [DONE] Git Commit: `chore: build quality gates research heading release` (hash: ff8ce953a)
 241. [DONE] `phase8.stream34.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates research heading vsix`).
-242. [PENDING] Git Commit: `chore: package quality gates research heading vsix` (hash: TBD)
-243. [TODO] `phase8.stream34.task4` User installs the generated v1.2.337 VSIX and verifies Quality Gates research artifacts missing `# Quality Gates Research` stay in Core repair instead of opening user review (scope: user workflow acceptance; no commit expected).
+242. [DONE] Git Commit: `chore: package quality gates research heading vsix` (hash: b1dec780c)
+243. [BLOCKED] `phase8.stream34.task4` User installs the generated v1.2.337 VSIX and verifies Quality Gates research artifacts missing `# Quality Gates Research` stay in Core repair instead of opening user review (scope: user workflow acceptance; no commit expected). Blocked: user retest showed workflow step Clear for Quality Gates leaves the workspace/read-model inconsistent; `application-skeleton-map.json` exists on disk, but a post-Clear mechanism reports it as not found and Git is left dirty.
+
+### Stream: Git-Backed Workflow Clear From Diagram Modules
+244. [DONE] `phase8.stream35.task1` Add a Core-owned Git-backed workflow rollback module that resolves the pre-stage commit boundary for `diagram_modules` and later workflow stages, restores tracked workspace state through Git and leaves the Git worktree clean after rollback (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `feat: add git backed workflow rollback`).
+245. [PENDING] Git Commit: `feat: add git backed workflow rollback` (hash: TBD)
+246. [TODO] `phase8.stream35.task2` Wire workflow step Clear to use Git-backed rollback for `diagram_modules`, `application_skeleton` and `quality_gates`, while keeping session/runtime cleanup separate from tracked workspace rollback (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear managed workflow stages through git`).
+247. [TODO] Git Commit: `fix: clear managed workflow stages through git` (hash: TBD)
+248. [TODO] `phase8.stream35.task3` Document the Git-backed Clear invariant for technical workflow stages in the architecture SSOT (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: define git backed workflow clear`).
+249. [TODO] Git Commit: `docs: define git backed workflow clear` (hash: TBD)
+250. [TODO] `phase8.stream35.task4` Run targeted validation for Git-backed workflow rollback, workflow Clear service, Quality Gates restart state and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+251. [TODO] `phase8.stream35.task5` Wait for explicit user confirmation before building the next replacement release after Git-backed workflow Clear fixes (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
