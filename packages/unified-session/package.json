@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/unified-session",
-  "version": "1.2.325",
+  "version": "1.2.326",
   "description": "Shared utilities for CodeAI Hub unified session storage",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
