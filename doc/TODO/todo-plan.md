@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "27b0f0573",
+  "lastRecordedCommit": "bf3235a9e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream20.task7",
-  "expectedCommitMessage": "chore: build centralized workflow undo release",
+  "currentTaskId": "phase8.stream20.task8",
+  "expectedCommitMessage": "chore: package centralized workflow undo vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build centralized workflow undo release",
-    "preCommitHead": "27b0f0573",
+    "expectedCommitMessage": "chore: package centralized workflow undo vsix",
+    "preCommitHead": "bf3235a9e",
     "stage": "commit_pending",
-    "taskId": "phase8.stream20.task7"
+    "taskId": "phase8.stream20.task8"
   }
 }
 ```
@@ -279,9 +279,9 @@
 143. [DONE] `phase8.stream20.task6` Update release-facing docs for the next centralized workflow undo release before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare centralized workflow undo release`).
 144. [DONE] Git Commit: `docs: prepare centralized workflow undo release` (hash: 27b0f0573)
 145. [DONE] `phase8.stream20.task7` Run `./scripts/build-all.sh --allow-dirty`, verify tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build centralized workflow undo release`).
-146. [PENDING] Git Commit: `chore: build centralized workflow undo release` (hash: TBD)
-147. [TODO] `phase8.stream20.task8` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package centralized workflow undo vsix`).
-148. [TODO] Git Commit: `chore: package centralized workflow undo vsix` (hash: TBD)
+146. [DONE] Git Commit: `chore: build centralized workflow undo release` (hash: bf3235a9e)
+147. [DONE] `phase8.stream20.task8` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package centralized workflow undo vsix`).
+148. [PENDING] Git Commit: `chore: package centralized workflow undo vsix` (hash: TBD)
 149. [TODO] `phase8.stream20.task9` User installs the generated centralized workflow undo VSIX and verifies Clear returns workspace/user-space exactly to the pre-step state (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
