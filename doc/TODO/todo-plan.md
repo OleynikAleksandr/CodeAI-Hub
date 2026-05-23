@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "41157ab5d",
+  "lastRecordedCommit": "6c41ed621",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream25.task3",
-  "expectedCommitMessage": "chore: package codex native cleanup vsix",
+  "currentTaskId": "phase8.stream26.task1",
+  "expectedCommitMessage": "fix: sanitize clear workflow read model",
   "debt": {
-    "expectedCommitMessage": "chore: package codex native cleanup vsix",
-    "preCommitHead": "41157ab5d",
+    "expectedCommitMessage": "fix: sanitize clear workflow read model",
+    "preCommitHead": "6c41ed621",
     "stage": "commit_pending",
-    "taskId": "phase8.stream25.task3"
+    "taskId": "phase8.stream26.task1"
   }
 }
 ```
@@ -329,8 +329,16 @@
 185. [DONE] `phase8.stream25.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.333 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build codex native cleanup release`).
 186. [DONE] Git Commit: `chore: build codex native cleanup release` (hash: 41157ab5d)
 187. [DONE] `phase8.stream25.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package codex native cleanup vsix`).
-188. [PENDING] Git Commit: `chore: package codex native cleanup vsix` (hash: TBD)
-189. [TODO] `phase8.stream25.task4` User installs the generated v1.2.333 VSIX and verifies clearing Description removes Codex provider-native workflow and translation JSONL files (scope: user workflow acceptance; no commit expected).
+188. [DONE] Git Commit: `chore: package codex native cleanup vsix` (hash: 6c41ed621)
+189. [BLOCKED] `phase8.stream25.task4` User installs the generated v1.2.333 VSIX and verifies clearing Description removes Codex provider-native workflow and translation JSONL files (scope: user workflow acceptance; no commit expected). Blocked: user retest showed Clear removes files but Project Manager keeps stale read-model/UI projection: Description does not reopen questionnaire, Virtual Simulation still references missing Description output, and sidebar indicators remain stale.
+
+### Stream: Workflow Clear Read Model Resync
+190. [DONE] `phase8.stream26.task1` Sanitize Core Description read model after checkpoint restore so missing `Final_Description.md` and removed session traces cannot be projected back into Project Manager (scope: `packages/core/src/workflow/description/description-step-store.ts, packages/core/src/workflow/description/description-step-store.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: sanitize clear workflow read model`).
+191. [PENDING] Git Commit: `fix: sanitize clear workflow read model` (hash: TBD)
+192. [TODO] `phase8.stream26.task2` Make Project Manager invalidate workflow artifact availability immediately after Clear so sidebar and selected artifact projection re-probe deleted downstream files (scope: `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/use-artifact-availability.ts, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `fix: refresh project manager after workflow clear`).
+193. [TODO] Git Commit: `fix: refresh project manager after workflow clear` (hash: TBD)
+194. [TODO] `phase8.stream26.task3` Run targeted validation for Core Description projection and Project Manager Clear refresh behavior (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+195. [TODO] `phase8.stream26.task4` Wait for explicit user confirmation before building the next replacement release after workflow Clear read-model resync fixes (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

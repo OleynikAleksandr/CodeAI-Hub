@@ -23,7 +23,9 @@ test("DescriptionStepStore.read folds legacy collector session into primarySessi
 
   try {
     const statePath = buildStatePath(workspaceRoot, workspaceSlug);
+    const jsonlPath = path.join(workspaceRoot, "dialog.jsonl");
     await mkdir(path.dirname(statePath), { recursive: true });
+    await writeFile(jsonlPath, "", "utf8");
     await writeFile(
       statePath,
       `${JSON.stringify(
@@ -35,7 +37,7 @@ test("DescriptionStepStore.read folds legacy collector session into primarySessi
           collectorSession: {
             providerId: "codexCli",
             providerSessionId: "019c5bbe-ece9-7832-8edc-b7c546f12e63",
-            jsonlPath: "/tmp/dialog.jsonl",
+            jsonlPath,
             dialogSessionId: "codex-abc-collector",
           },
           sessionKind: "collector",
@@ -63,7 +65,9 @@ test("DescriptionStepStore.read falls back to workspaceRoot when snapshot worksp
 
   try {
     const statePath = buildStatePath(workspaceRoot, workspaceSlug);
+    const jsonlPath = path.join(workspaceRoot, "dialog.jsonl");
     await mkdir(path.dirname(statePath), { recursive: true });
+    await writeFile(jsonlPath, "", "utf8");
     await writeFile(
       statePath,
       `${JSON.stringify(
@@ -76,7 +80,7 @@ test("DescriptionStepStore.read falls back to workspaceRoot when snapshot worksp
           collectorSession: {
             providerId: "codexCli",
             providerSessionId: "019c5bbe-ece9-7832-8edc-b7c546f12e63",
-            jsonlPath: "/tmp/dialog.jsonl",
+            jsonlPath,
             dialogSessionId: "codex-abc-collector",
           },
           sessionKind: "collector",
@@ -167,6 +171,56 @@ test("DescriptionStepStore.read clears primarySession on workspace mismatch", as
     const snapshot = await store.read(workspaceRoot, workspaceSlug);
 
     assert.equal(snapshot?.primarySession, undefined);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("DescriptionStepStore.read ignores missing final artifacts and missing sessions after clear", async () => {
+  const workspaceSlug = "codeai-hub";
+  const workspaceRoot = await mkdtemp(path.join(tmpdir(), "codeai-hub-ws-"));
+
+  try {
+    const statePath = buildStatePath(workspaceRoot, workspaceSlug);
+    const questionnairePath = `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
+    await mkdir(path.dirname(statePath), { recursive: true });
+    await writeFile(
+      path.join(workspaceRoot, questionnairePath),
+      "# Questionnaire\n",
+      "utf8"
+    );
+    await writeFile(
+      statePath,
+      `${JSON.stringify(
+        {
+          workspaceSlug,
+          workspacePath: workspaceRoot,
+          createdAt: "2026-05-23T12:00:00.000Z",
+          updatedAt: "2026-05-23T12:30:00.000Z",
+          questionnairePath,
+          finalPath: `.codeai-hub/${workspaceSlug}/description/Final_Description.md`,
+          primarySession: {
+            providerId: "codexCli",
+            providerSessionId: "cleared-provider-session",
+            jsonlPath: path.join(workspaceRoot, "cleared-session.jsonl"),
+          },
+        },
+        null,
+        2
+      )}\n`,
+      "utf8"
+    );
+
+    const store = new DescriptionStepStore();
+    const snapshot = await store.read(workspaceRoot, workspaceSlug);
+    const branchSnapshot = snapshot
+      ? buildDescriptionBranchSnapshot(snapshot)
+      : null;
+
+    assert.equal(snapshot?.finalPath, undefined);
+    assert.equal(snapshot?.primarySession, undefined);
+    assert.equal(branchSnapshot?.questionnairePath, questionnairePath);
+    assert.equal(branchSnapshot?.finalPath, undefined);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
   DescriptionBranchSnapshot,
@@ -136,6 +136,58 @@ const writeJson = async (filePath: string, value: unknown): Promise<void> => {
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 };
 
+const resolveWorkspaceRelativeFile = (
+  workspaceRoot: string,
+  relativePath: string | undefined
+): string | null => {
+  if (!relativePath || path.isAbsolute(relativePath)) {
+    return null;
+  }
+  const resolved = path.resolve(workspaceRoot, relativePath);
+  const root = path.resolve(workspaceRoot);
+  return resolved === root || resolved.startsWith(`${root}${path.sep}`)
+    ? resolved
+    : null;
+};
+
+const fileExists = async (filePath: string | null): Promise<boolean> => {
+  if (!filePath) {
+    return false;
+  }
+  const fileStat = await stat(filePath).catch(() => null);
+  return Boolean(fileStat?.isFile());
+};
+
+const sessionJsonlExists = async (
+  workspaceRoot: string,
+  session: DescriptionSessionRef | undefined
+): Promise<boolean> => {
+  if (!session) {
+    return false;
+  }
+  const sessionPath = path.isAbsolute(session.jsonlPath)
+    ? session.jsonlPath
+    : resolveWorkspaceRelativeFile(workspaceRoot, session.jsonlPath);
+  return await fileExists(sessionPath);
+};
+
+const sanitizeSnapshotFileRefs = async (
+  snapshot: DescriptionStepSnapshot,
+  workspaceRoot: string
+): Promise<DescriptionStepSnapshot> => {
+  const [draftExists, finalExists, primarySessionExists] = await Promise.all([
+    fileExists(resolveWorkspaceRelativeFile(workspaceRoot, snapshot.draftPath)),
+    fileExists(resolveWorkspaceRelativeFile(workspaceRoot, snapshot.finalPath)),
+    sessionJsonlExists(workspaceRoot, snapshot.primarySession),
+  ]);
+  return {
+    ...snapshot,
+    draftPath: draftExists ? snapshot.draftPath : undefined,
+    finalPath: finalExists ? snapshot.finalPath : undefined,
+    primarySession: primarySessionExists ? snapshot.primarySession : undefined,
+  };
+};
+
 export const buildDescriptionBranchSnapshot = (
   snapshot: DescriptionStepSnapshot
 ): DescriptionBranchSnapshot => {
@@ -182,12 +234,15 @@ export class DescriptionStepStore {
       normalizeWorkspacePath(parsed.workspacePath) !==
       normalizeWorkspacePath(workspaceRoot)
     ) {
-      return {
-        ...parsed,
-        primarySession: undefined,
-      };
+      return await sanitizeSnapshotFileRefs(
+        {
+          ...parsed,
+          primarySession: undefined,
+        },
+        workspaceRoot
+      );
     }
-    return parsed;
+    return await sanitizeSnapshotFileRefs(parsed, workspaceRoot);
   }
 
   async upsert(
