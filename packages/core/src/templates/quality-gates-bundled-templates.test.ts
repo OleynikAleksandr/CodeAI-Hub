@@ -61,6 +61,16 @@ const HARDCODED_KNIP_RE = /Knip is a first-class JavaScript\/TypeScript gate/;
 const DEVELOPMENT_TREE_SESSION_RE = /Development Tree Session/i;
 const DEVELOPMENT_TREE_SESSIONS_RE = /Development Tree sessions/i;
 const COMMANDS_OBJECT_RE = /`commands` object keyed by stable gate id/;
+const RESEARCH_MARKDOWN_TEMPLATE_RE =
+  /Required `quality-gates-research\.md` template:[\s\S]*# Quality Gates Research/u;
+const RESEARCH_JSON_TEMPLATE_RE =
+  /Required `quality-gates-research\.json` template:[\s\S]*"schema": "codeai-quality-gates-research-v1"/u;
+const CONTRACT_MARKDOWN_TEMPLATE_RE =
+  /Required `quality-gates\.md` contract template:[\s\S]*# Quality Gates Baseline/u;
+const CONTRACT_JSON_TEMPLATE_RE =
+  /Required `quality-gates\.json` contract template:[\s\S]*"schema": "codeai-quality-gates-v1"/u;
+const PHASE_1A_CONTRACT_FORBIDDEN_RE =
+  /Do not create `quality-gates\.md` or `quality-gates\.json` during Phase 1A/u;
 const DESIRED_STATUS_RE = /"desiredStatus": "active"/;
 const AVAILABILITY_RE = /"availability": "not_integrated"/;
 const INTEGRATION_REQUIRED_RE = /"integrationRequired": true/;
@@ -142,6 +152,11 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.doesNotMatch(prompt, WORKSPACE_PLAN_PATH_RE);
   assert.doesNotMatch(prompt, PLAN_STATUS_COMMAND_RE);
   assert.match(prompt, COMMANDS_OBJECT_RE);
+  assert.match(prompt, RESEARCH_MARKDOWN_TEMPLATE_RE);
+  assert.match(prompt, RESEARCH_JSON_TEMPLATE_RE);
+  assert.match(prompt, CONTRACT_MARKDOWN_TEMPLATE_RE);
+  assert.match(prompt, CONTRACT_JSON_TEMPLATE_RE);
+  assert.match(prompt, PHASE_1A_CONTRACT_FORBIDDEN_RE);
   assert.doesNotMatch(prompt, HARDCODED_ULTRACITE_RE);
   assert.doesNotMatch(prompt, HARDCODED_KNIP_RE);
   assert.doesNotMatch(prompt, DEVELOPMENT_TREE_SESSION_RE);
