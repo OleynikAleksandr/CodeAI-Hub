@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "1af801f16",
+  "lastRecordedCommit": "b68a8e80b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream40.task1",
-  "expectedCommitMessage": "fix: require quality gates baseline heading",
+  "currentTaskId": "phase8.stream40.task2",
+  "expectedCommitMessage": "fix: repair quality gates baseline heading",
   "debt": {
-    "expectedCommitMessage": "fix: require quality gates baseline heading",
-    "preCommitHead": "1af801f16",
+    "expectedCommitMessage": "fix: repair quality gates baseline heading",
+    "preCommitHead": "b68a8e80b",
     "stage": "commit_pending",
-    "taskId": "phase8.stream40.task1"
+    "taskId": "phase8.stream40.task2"
   }
 }
 ```
@@ -451,9 +451,9 @@
 
 ### Stream: Quality Gates Contract Heading Validation
 279. [DONE] `phase8.stream40.task1` Require Core Quality Gates validation to reject contract Markdown that does not start with the exact `# Quality Gates Baseline` heading, matching the Project Manager artifact parser (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require quality gates baseline heading`).
-280. [PENDING] Git Commit: `fix: require quality gates baseline heading` (hash: TBD)
-281. [TODO] `phase8.stream40.task2` Update the Quality Gates repair prompt so agents repair the Markdown heading to `# Quality Gates Baseline` only, not the looser `# Quality Gates` form (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: repair quality gates baseline heading`).
-282. [TODO] Git Commit: `fix: repair quality gates baseline heading` (hash: TBD)
+280. [DONE] Git Commit: `fix: require quality gates baseline heading` (hash: b68a8e80b)
+281. [DONE] `phase8.stream40.task2` Update the Quality Gates repair prompt so agents repair the Markdown heading to `# Quality Gates Baseline` only, not the looser `# Quality Gates` form (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: repair quality gates baseline heading`).
+282. [PENDING] Git Commit: `fix: repair quality gates baseline heading` (hash: TBD)
 283. [TODO] `phase8.stream40.task3` Run targeted validation for Quality Gates heading rejection, repair prompt guidance, Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 284. [TODO] `phase8.stream40.task4` Wait for explicit user confirmation before building the next replacement release after Quality Gates contract heading validation (scope: release confirmation gate; no commit expected).
 

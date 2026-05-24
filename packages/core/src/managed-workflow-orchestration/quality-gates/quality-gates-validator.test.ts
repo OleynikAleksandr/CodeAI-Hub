@@ -16,6 +16,8 @@ const INTEGRATION_ACCEPTED_RE = /Core accepted Quality Gates integration/u;
 const INTEGRATION_OPEN_RE = /Core opens Phase 3 Quality Gates Integration/u;
 const INTEGRATION_REJECTED_RE = /Core rejected Quality Gates integration/u;
 const PLAN_STATE_PROBLEM_RE = /orchestrator plan-state problem/u;
+const QUALITY_GATES_BASELINE_HEADING_RE =
+  /Set the first Markdown heading to exactly `# Quality Gates Baseline`/u;
 const REVIEW_CORRECTIONS_RE = /review corrections/u;
 const USER_REVIEW_OPEN_RE = /user review is now open/u;
 const REQUIRED_INTEGRATED_GATE_IDS = [
@@ -215,6 +217,7 @@ test("Quality Gates validator rejects draft contract without Baseline heading", 
     assert.equal(result.nextAction, "repair_current_artifact");
     assert.ok(result.diagnostics.includes("markdown_wrong_stage"));
     assert.match(result.nextPrompt ?? "", DRAFT_REJECTED_RE);
+    assert.match(result.nextPrompt ?? "", QUALITY_GATES_BASELINE_HEADING_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

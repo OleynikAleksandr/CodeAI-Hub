@@ -62,7 +62,7 @@ const explainDiagnostic = (diagnostic: string): string => {
     markdown_premature_integration:
       "Remove draft-time integration claims from `quality-gates.md`; integration is not open yet.",
     markdown_wrong_stage:
-      "Set the first Markdown heading to exactly `# Quality Gates` or `# Quality Gates Baseline`.",
+      "Set the first Markdown heading to exactly `# Quality Gates Baseline`.",
     missing_markdown:
       "Create `quality-gates.md` with the canonical Quality Gates Markdown contract.",
     missing_package_json:
