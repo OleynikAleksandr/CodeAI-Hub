@@ -112,26 +112,26 @@ export const buildApplicationSkeletonMaterializationPrompt = (options: {
   [
     "Core opens Phase 3 Application Skeleton Materialization.",
     "",
-    "The user accepted the Application Skeleton contract. Materialize the installable project foundation and workspace filesystem projection.",
+    "The user accepted the Application Skeleton contract. Core now owns deterministic filesystem materialization.",
     "",
-    "Allowed artifacts and paths:",
+    "Provider-agent boundary:",
     ...buildContractArtifactPaths(options.workspaceSlug).map(
-      (artifactPath) => `- \`${artifactPath}\``
+      (artifactPath) => `- Contract artifact: \`${artifactPath}\``
     ),
-    "- production scaffold paths declared by `application-skeleton-map.json`",
-    "- package manifests, lockfiles, package-manager metadata, and `tsconfig*.json` required by the accepted foundation",
-    "- minimal source entrypoints/facades declared by `projectFoundation.firstWaveEntrypoints`",
+    "- Do not create production scaffold paths.",
+    "- Do not create package manifests, lockfiles, `.npmrc`, `.gitignore`, TypeScript configs, Product Part folders, README placeholders, install outputs, or build outputs.",
+    "- Do not run npm, package-manager, build, typecheck, smoke, Git, or managed plan commands.",
     "",
-    "Update the canonical Application Skeleton artifacts so they reflect materialized state.",
-    "Required lifecycle state after successful materialization:",
+    "Core materializer will create package metadata, lockfile bootstrap, `.npmrc`, `.gitignore`, TypeScript config, Product Part / Cluster / Module directories, README placeholders, first-wave entrypoints, local install output, and required script verification.",
+    "",
+    "Required lifecycle state after Core materialization:",
     "- `accepted: true`",
     "- `materialized: true`",
     '- `materializationState: "materialized"`',
     '- `reviewState: "materialized"`',
     "- `openQuestions` absent or empty",
     "",
-    "Do not run Git commands or edit managed plan files.",
-    "When materialization is ready, stop with a content-readiness note for Core validation.",
+    "If this prompt is visible to a provider agent, stop and report that Core materialization should run without provider scaffold edits.",
   ].join("\n");
 
 export const buildApplicationSkeletonMaterializationRepairPrompt = (
@@ -150,10 +150,9 @@ export const buildApplicationSkeletonMaterializationRepairPrompt = (
     "Diagnostics:",
     ...formatDiagnostics(options.diagnostics),
     "",
-    "Repair the materialization within the current Application Skeleton scope.",
-    "Change only the contract artifacts and production scaffold paths declared by the accepted map.",
-    "Do not run Git commands or edit managed plan files.",
-    "When the repair is ready, stop with a content-readiness note for Core validation.",
+    "Repair only the accepted Application Skeleton contract if the diagnostics point to contract ambiguity.",
+    "Do not create production scaffold files, package manifests, lockfiles, install output, build output, Git commits, or managed plan edits.",
+    "If diagnostics point to npm/bootstrap mechanics rather than contract ambiguity, report that Core-owned materialization must be fixed in Core.",
   ].join("\n");
 
 export const buildApplicationSkeletonMaterializationRevisionPrompt = (options: {

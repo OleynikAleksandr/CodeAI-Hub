@@ -41,15 +41,15 @@ const PLAN_STATE_PROBLEM_RE = /orchestrator plan-state problem/u;
 const PAIRED_COMMIT_ITEM_RE = /paired `Git Commit: \.\.\.` item/u;
 const CANONICAL_MARKDOWN_STRUCTURE_RE = /canonical Markdown section structure/u;
 const MATERIALIZE_WORKSPACE_RE =
-  /Materialize the installable project foundation/u;
+  /Core now owns deterministic filesystem materialization/u;
 const PROJECT_FOUNDATION_RE = /projectFoundation/u;
 const PLACEHOLDER_STACK_RE = /placeholder_foundation_field: stack\.frameworks/u;
 const createDraftFoundation = (): Record<string, unknown> => ({
   packageManager: "npm",
   projectFoundation: {
-    configFiles: ["tsconfig.json"],
+    configFiles: [".gitignore", ".npmrc", "package-lock.json", "tsconfig.json"],
     firstWaveEntrypoints: ["product-parts/core-runtime/src/index.ts"],
-    installCommand: "npm ci",
+    installCommand: "npm install --include=dev",
     requiredScripts: ["build", "typecheck", "test:smoke"],
   },
   repoShape: "workspace-monorepo",
@@ -119,8 +119,9 @@ const writeInstallableFoundationFiles = async (
   await writeFile(path.join(workspaceRoot, "tsconfig.json"), "{}\n");
   await writeFile(
     path.join(workspaceRoot, ".gitignore"),
-    "node_modules/\ndist/\n"
+    "node_modules/\ndist/\n.codeai-hub/state/\n"
   );
+  await writeFile(path.join(workspaceRoot, ".npmrc"), "include=dev\n");
 };
 
 test("Application Skeleton validator opens user review for a valid draft contract", async () => {

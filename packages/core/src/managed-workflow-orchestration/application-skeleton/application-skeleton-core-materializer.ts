@@ -381,7 +381,7 @@ export class ApplicationSkeletonCoreMaterializer {
       this.writeFile(
         workspaceRoot,
         ".gitignore",
-        "node_modules/\ndist/\n.DS_Store\n"
+        "node_modules/\ndist/\n.codeai-hub/state/\n.DS_Store\n"
       ),
       this.writeFile(workspaceRoot, ".npmrc", "include=dev\n"),
       this.writeFile(
