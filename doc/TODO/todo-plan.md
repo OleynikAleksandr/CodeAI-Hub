@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "b4ac86e4a",
+  "lastRecordedCommit": "9c20fe86b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream69.task2",
-  "expectedCommitMessage": "chore: build quality gates terminal residue release",
+  "currentTaskId": "phase8.stream69.task4",
+  "expectedCommitMessage": "docs: record quality gates terminal residue release",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates terminal residue release",
-    "preCommitHead": "b4ac86e4a",
+    "expectedCommitMessage": "docs: record quality gates terminal residue release",
+    "preCommitHead": "9c20fe86b",
     "stage": "commit_pending",
-    "taskId": "phase8.stream69.task2"
+    "taskId": "phase8.stream69.task4"
   }
 }
 ```
@@ -694,8 +694,10 @@
 461. [DONE] `phase8.stream69.task1` Update release-facing docs for the v1.2.353 Quality Gates terminal residue build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates terminal residue release`).
 462. [DONE] Git Commit: `docs: prepare quality gates terminal residue release` (hash: b4ac86e4a)
 463. [DONE] `phase8.stream69.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates terminal residue release`).
-464. [PENDING] Git Commit: `chore: build quality gates terminal residue release` (hash: TBD)
-465. [TODO] `phase8.stream69.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+464. [DONE] Git Commit: `chore: build quality gates terminal residue release` (hash: 9c20fe86b)
+465. [DONE] `phase8.stream69.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Release 1.2.353 built: build-all and build-release completed, VSIX codeai-hub-1.2.353.vsix created at 4.7M, SHA-256 24f4a1f1683cd93a41ee832df4582602408186882f4a2d2d4066ae63d6cf6ab6.
+466. [DONE] `phase8.stream69.task4` Record the completed v1.2.353 VSIX build result in the active plan before user workflow acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record quality gates terminal residue release`).
+467. [PENDING] Git Commit: `docs: record quality gates terminal residue release` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
