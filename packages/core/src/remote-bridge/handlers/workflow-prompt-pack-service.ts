@@ -65,15 +65,7 @@ const STAGE_FILES: Record<WorkflowStageId, string> = {
   virtual_simulation: "virtual-simulation.md",
   diagram_modules: "product-parts.index.md",
   application_skeleton: "application-skeleton.md",
-  quality_gates: "quality-gates.md",
-};
-
-const STAGE_LABELS: Record<WorkflowStageId, string> = {
-  description: "Description",
-  virtual_simulation: "Virtual Simulation",
-  diagram_modules: "Diagram Modules",
-  application_skeleton: "Application Skeleton",
-  quality_gates: "Quality Gates Baseline",
+  quality_gates: "quality-gates-research.md",
 };
 
 const CONTRACT_BUILDERS: Record<
@@ -390,15 +382,22 @@ const buildSourceBlock = (
         ]),
       ].join("\n");
 
-const buildArtifactModeBlock = (relativePath: string): string =>
-  [
+const buildArtifactModeBlock = (relativePath: string): string => {
+  const researchLine = relativePath.endsWith("/quality-gates-research.md")
+    ? "- Quality Gates Phase 1A is research-only: create `quality-gates-research.md` and `quality-gates-research.json`; do not create `quality-gates.md` or `quality-gates.json`."
+    : null;
+  return [
     "Workflow artifact mode:",
     "- Mode: `create_initial_draft`.",
     `- Target artifact: \`${relativePath}\`.`,
     "- Write the target artifact directly from the current prompt and runtime-provided inputs.",
     "- Do not search for, read, or check whether the target artifact already exists.",
     "- If existing artifact content is relevant, it must be included in this prompt as runtime-provided artifact context.",
-  ].join("\n");
+    researchLine,
+  ]
+    .filter((line): line is string => Boolean(line))
+    .join("\n");
+};
 
 export const buildCoreWorkflowPromptPack = async (params: {
   readonly artifactLanguage?: string;
@@ -431,7 +430,7 @@ export const buildCoreWorkflowPromptPack = async (params: {
     prompt,
     buildArtifactModeBlock(target.relativePath),
     buildSourceBlock(sourceArtifacts),
-    `Stage: ${STAGE_LABELS[params.stage]}.`,
+    `Stage: ${params.stage === "quality_gates" ? "Quality Gates Baseline" : params.stage}.`,
     `Output file name: \`${STAGE_FILES[params.stage]}\``,
     `Output target artifact (write exactly this relative path; do not read it first): \`${target.relativePath}\``,
     `Final language reminder: user-facing chat stays in \`${chatLanguage}\`; artifact prose stays in \`${artifactLanguage}\`; English examples/templates are format-only.`,

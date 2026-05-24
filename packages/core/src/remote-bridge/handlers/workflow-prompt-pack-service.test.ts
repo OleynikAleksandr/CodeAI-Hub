@@ -21,6 +21,10 @@ const DIAGRAM_LEAD_FIELD_RE = /leadProductPartId/u;
 const DIAGRAM_LEADERSHIP_ORDER_RE = /productPartLeadershipOrder/u;
 const DIAGRAM_LEADERSHIP_RULES_RE = /Product Part leadership rules:/u;
 const DIAGRAM_THIN_DISTRIBUTION_RULE_RE = /do not choose a thin distribution/u;
+const QUALITY_GATES_RESEARCH_ONLY_RE =
+  /Quality Gates Phase 1A is research-only/u;
+const QUALITY_GATES_CONTRACT_TARGET_RE =
+  /Target artifact: `.*quality-gates\.md`/u;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -111,7 +115,7 @@ test("Core workflow prompt pack targets every workflow stage without PM rules", 
       ["virtual_simulation", "virtual_simulation/virtual-simulation.md"],
       ["diagram_modules", "diagram_modules/product-parts.index.md"],
       ["application_skeleton", "application_skeleton/application-skeleton.md"],
-      ["quality_gates", "quality_gates/quality-gates.md"],
+      ["quality_gates", "quality_gates/quality-gates-research.md"],
     ] as const) {
       const promptPack = await buildCoreWorkflowPromptPack({
         stage,
@@ -131,6 +135,13 @@ test("Core workflow prompt pack targets every workflow stage without PM rules", 
         assert.match(promptPack.content, DIAGRAM_LEADERSHIP_ORDER_RE);
         assert.match(promptPack.content, DIAGRAM_LEADERSHIP_RULES_RE);
         assert.match(promptPack.content, DIAGRAM_THIN_DISTRIBUTION_RULE_RE);
+      }
+      if (stage === "quality_gates") {
+        assert.match(promptPack.content, QUALITY_GATES_RESEARCH_ONLY_RE);
+        assert.doesNotMatch(
+          promptPack.content,
+          QUALITY_GATES_CONTRACT_TARGET_RE
+        );
       }
     }
   } finally {

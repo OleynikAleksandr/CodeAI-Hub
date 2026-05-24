@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "cff27fe5d",
+  "lastRecordedCommit": "487f63c0e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream43.task3",
-  "expectedCommitMessage": "chore: package description restart projection vsix",
+  "currentTaskId": "phase8.stream44.task1",
+  "expectedCommitMessage": "fix: target quality gates research first",
   "debt": {
-    "expectedCommitMessage": "chore: package description restart projection vsix",
-    "preCommitHead": "cff27fe5d",
+    "expectedCommitMessage": "fix: target quality gates research first",
+    "preCommitHead": "487f63c0e",
     "stage": "commit_pending",
-    "taskId": "phase8.stream43.task3"
+    "taskId": "phase8.stream44.task1"
   }
 }
 ```
@@ -482,8 +482,28 @@
 302. [DONE] `phase8.stream43.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.340 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build description restart projection release`). Result: `./scripts/build-all.sh --allow-dirty` completed v1.2.340; provider, Core, CEF launcher, vscode-webview and project-manager tarball artifacts were created under `doc/tmp/releases/`.
 303. [DONE] Git Commit: `chore: build description restart projection release` (hash: cff27fe5d)
 304. [DONE] `phase8.stream43.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package description restart projection vsix`). Result: VSIX `codeai-hub-1.2.340.vsix` built successfully at 4.7M; SHA256 `bf76160c8bbcfe1f14536b1789aefbf23002ba9cb6a054d74465d7f5db4b5cda`; SDK exclusions, local artefact validation, markdown links, duplication check and VSIX runtime package surface checks passed.
-305. [PENDING] Git Commit: `chore: package description restart projection vsix` (hash: TBD)
-306. [TODO] `phase8.stream43.task4` User installs the generated v1.2.340 VSIX and verifies Description Clear restart preserves Description session projection and Virtual Simulation provider/model inheritance (scope: user workflow acceptance; no commit expected).
+305. [DONE] Git Commit: `chore: package description restart projection vsix` (hash: 487f63c0e)
+306. [BLOCKED] `phase8.stream43.task4` User installs the generated v1.2.340 VSIX and verifies Description Clear restart preserves Description session projection and Virtual Simulation provider/model inheritance (scope: user workflow acceptance; no commit expected). Blocked: user retest found Quality Gates initial prompt still targets `quality-gates.md`, so the agent skips the mandatory `quality-gates-research.md` first artifact and Core repeatedly rejects repairs.
+
+### Stream: Quality Gates Research-First Prompt Contract
+307. [DONE] `phase8.stream44.task1` Make the initial Quality Gates prompt pack target the research artifact instead of the contract artifact, and verify the prompt no longer instructs initial `quality-gates.md` creation (scope: `packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.ts, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: target quality gates research first`).
+308. [PENDING] Git Commit: `fix: target quality gates research first` (hash: TBD)
+309. [TODO] `phase8.stream44.task2` Add explicit inline Markdown and JSON skeletons for Quality Gates research and contract phases to the bundled agent prompt source (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: embed quality gates research templates`).
+310. [TODO] Git Commit: `fix: embed quality gates research templates` (hash: TBD)
+311. [TODO] `phase8.stream44.task3` Add bundled prompt regression coverage for the exact research heading, research JSON skeleton, contract heading, and phase separation (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research templates`).
+312. [TODO] Git Commit: `test: cover quality gates research templates` (hash: TBD)
+313. [TODO] `phase8.stream44.task4` Tighten Quality Gates repair prompts and stage plan wording so research-phase repairs target only research artifacts and never ask for contract artifacts before research user acceptance (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope quality gates research repairs`).
+314. [TODO] Git Commit: `fix: scope quality gates research repairs` (hash: TBD)
+315. [TODO] `phase8.stream44.task5` Align Quality Gates stage-plan wording with the research-only first pass without changing managed state semantics (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, doc/TODO/todo-plan.md`; expected commit: `fix: describe quality gates research task`).
+316. [TODO] Git Commit: `fix: describe quality gates research task` (hash: TBD)
+317. [TODO] `phase8.stream44.task6` Run targeted Core prompt/Quality Gates tests, Core build, webview build, and plan validation for the research-first prompt fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+318. [TODO] `phase8.stream44.task7` Update release-facing docs for the v1.2.341 Quality Gates research-first prompt build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates research prompt release`).
+319. [TODO] Git Commit: `docs: prepare quality gates research prompt release` (hash: TBD)
+320. [TODO] `phase8.stream44.task8` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.341 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates research prompt release`).
+321. [TODO] Git Commit: `chore: build quality gates research prompt release` (hash: TBD)
+322. [TODO] `phase8.stream44.task9` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates research prompt vsix`).
+323. [TODO] Git Commit: `chore: package quality gates research prompt vsix` (hash: TBD)
+324. [TODO] `phase8.stream44.task10` User installs the generated v1.2.341 VSIX and verifies Quality Gates starts with valid `# Quality Gates Research` artifacts before contract drafting (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
