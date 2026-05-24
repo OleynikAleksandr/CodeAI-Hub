@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "4e5ff1747",
+  "lastRecordedCommit": "908dfc547",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream55.task4",
-  "expectedCommitMessage": "test: cover core application skeleton materializer",
+  "currentTaskId": "phase8.stream56.task1",
+  "expectedCommitMessage": "fix: repair workflow clear git rollback",
   "debt": {
-    "expectedCommitMessage": "test: cover core application skeleton materializer",
-    "preCommitHead": "4e5ff1747",
+    "expectedCommitMessage": "fix: repair workflow clear git rollback",
+    "preCommitHead": "908dfc547",
     "stage": "commit_pending",
-    "taskId": "phase8.stream55.task4"
+    "taskId": "phase8.stream56.task1"
   }
 }
 ```
@@ -608,8 +608,15 @@
 403. [DONE] `phase8.stream55.task3` Sync the bundled Application Skeleton agent prompt and contract reference with the Core-owned materialization boundary (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/application-skeleton-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: sync core-owned application skeleton agent prompt`).
 404. [DONE] Git Commit: `fix: sync core-owned application skeleton agent prompt` (hash: 4e5ff1747)
 405. [DONE] `phase8.stream55.task4` Add targeted regression coverage for Core-owned Application Skeleton materialization after user acceptance (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover core application skeleton materializer`).
-406. [PENDING] Git Commit: `test: cover core application skeleton materializer` (hash: TBD)
-407. [TODO] `phase8.stream55.task5` Run targeted Application Skeleton materializer tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+406. [DONE] Git Commit: `test: cover core application skeleton materializer` (hash: 908dfc547)
+407. [DONE] `phase8.stream55.task5` Run targeted Application Skeleton materializer tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted Application Skeleton materializer tests passed (14 node:test subtests), packages/core build passed, and plan validation passed.
+
+### Stream: Workflow Clear Git Undo Repair
+408. [DONE] `phase8.stream56.task1` Diagnose and repair Core-owned workflow Clear so Diagram Modules and downstream managed stages execute Git rollback/path cleanup and reset workflow state from Core truth (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`; expected commit: `fix: repair workflow clear git rollback`).
+409. [PENDING] Git Commit: `fix: repair workflow clear git rollback` (hash: TBD)
+410. [TODO] `phase8.stream56.task2` Repair downstream workspace/session cleanup coverage for Virtual Simulation clearing after generated downstream steps (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore workflow clear undo cleanup`).
+411. [TODO] Git Commit: `fix: restore workflow clear undo cleanup` (hash: TBD)
+412. [TODO] `phase8.stream56.task3` Run targeted Clear/Undo tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

@@ -176,6 +176,59 @@ test("workflow step clear uses Git rollback for Diagram Modules development tree
   }
 });
 
+test("workflow step clear falls back when Git is already at the requested stage boundary", async () => {
+  const workspaceRoot = await createRepository();
+  const resetCalls: string[] = [];
+  try {
+    const virtualSimulationPath = `.codeai-hub/${WORKSPACE_SLUG}/virtual_simulation/final-virtual-simulation.md`;
+    const devTreeRoot = `.codeai-hub/${WORKSPACE_SLUG}/development_tree`;
+    const devTreePath = `${devTreeRoot}/materialized/product-parts/core/index.md`;
+    const workflowStatePath = `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`;
+    await writeWorkspaceFile(workspaceRoot, virtualSimulationPath);
+    commitAll(workspaceRoot, "docs: accept virtual simulation");
+    await writeWorkspaceFile(workspaceRoot, devTreePath);
+    commitAll(workspaceRoot, "feat: materialize diagram modules tree");
+    await rm(path.join(workspaceRoot, devTreeRoot), {
+      force: true,
+      recursive: true,
+    });
+    commitAll(workspaceRoot, "chore: previously clear diagram modules");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      workflowStatePath,
+      '{"dirty":true}\n'
+    );
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+        target: { kind: "workflow_stage", stage: "diagram_modules" },
+      },
+      resetCalls,
+      sessionManager: new SessionManager(),
+    });
+    const payload = result.payload as {
+      readonly gitRollback?: { readonly reason?: string | null };
+    };
+
+    assert.equal(result.statusCode, 200);
+    assert.equal(payload.gitRollback?.reason, "already_at_boundary");
+    assert.equal(
+      await exists(path.join(workspaceRoot, virtualSimulationPath)),
+      true
+    );
+    assert.equal(
+      await exists(path.join(workspaceRoot, workflowStatePath)),
+      false
+    );
+    assert.equal(git(workspaceRoot, ["status", "--short"]), "");
+    assert.deepEqual(resetCalls, [WORKSPACE_SLUG]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("workflow step clear falls back to path cleanup when Git is missing", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-clear-no-git-")

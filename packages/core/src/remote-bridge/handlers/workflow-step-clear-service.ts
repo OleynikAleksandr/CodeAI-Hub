@@ -37,7 +37,10 @@ const STAGE_TODO_DIRS: Record<WorkflowStageId, string> = {
   virtual_simulation: "virtual-simulation",
 };
 const WORKSPACE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
-const GIT_ROLLBACK_FALLBACK_REASONS = new Set(["git_repository_missing"]);
+const GIT_ROLLBACK_FALLBACK_REASONS = new Set([
+  "already_at_boundary",
+  "git_repository_missing",
+]);
 
 type ClearTarget =
   | { readonly kind: "workflow_stage"; readonly stage: WorkflowStageId }
@@ -236,6 +239,7 @@ const collectStagePaths = (params: WorkflowStageClearRequest): string[] => {
       paths.push(path.join(hubRoot, stage));
     }
     paths.push(path.join(hubRoot, "continuity", stage));
+    paths.push(path.join(hubRoot, "workflow", "managed", `${stage}.json`));
     paths.push(
       path.join(params.workspacePath, "doc/TODO/stages", STAGE_TODO_DIRS[stage])
     );
@@ -382,7 +386,6 @@ export const handleWorkflowStepClear = async (
     const gitRollbackAttempt = await rollbackGitManagedWorkflowStage(parsed);
     if (
       gitRollbackAttempt?.reason &&
-      gitRollbackAttempt.reason !== "already_at_boundary" &&
       !shouldFallbackFromGitRollback(gitRollbackAttempt.reason)
     ) {
       res.status(HTTP_CONFLICT).json({

@@ -82,13 +82,16 @@ const stageCleanupPathspecs = (
 ): readonly string[] => {
   const stageIndex = MANAGED_ROLLBACK_STAGES.indexOf(stage);
   const downstreamStages = MANAGED_ROLLBACK_STAGES.slice(stageIndex);
-  return downstreamStages.flatMap((item) => [
-    `.codeai-hub/${workspaceSlug}/${item}`,
-    `.codeai-hub/${workspaceSlug}/continuity/${item}`,
-    `.codeai-hub/${workspaceSlug}/workflow/managed/${item}.json`,
-    `doc/TODO/stages/${stageDirName(item)}`,
-    ...generatedBoundaryPathspecs(item, workspaceSlug),
-  ]);
+  return [
+    `.codeai-hub/${workspaceSlug}/workflow/state.json`,
+    ...downstreamStages.flatMap((item) => [
+      `.codeai-hub/${workspaceSlug}/${item}`,
+      `.codeai-hub/${workspaceSlug}/continuity/${item}`,
+      `.codeai-hub/${workspaceSlug}/workflow/managed/${item}.json`,
+      `doc/TODO/stages/${stageDirName(item)}`,
+      ...generatedBoundaryPathspecs(item, workspaceSlug),
+    ]),
+  ];
 };
 
 const rollbackCommitMessage = (stage: ManagedRollbackStage): string =>
