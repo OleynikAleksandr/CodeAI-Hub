@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.343] - 2026-05-24
+### Fixed
+- **Quality Gates size policy is now structured.** Core recognizes the mandatory 500-line source/class gate through explicit `policy.type: "source_size_limit"`, `policy.maxLines: 500`, and `policy.appliesTo: ["source_files", "classes"]` metadata instead of relying on text search through the command object.
+- **Quality Gates repair prompts explain the exact size-policy contract.** The `missing_required_size_policy_gate` repair now tells the agent which required hook scope and JSON `policy` shape Core expects.
+- **Quality Gates bundled prompt carries the size-policy template.** Draft and integration prompts now show the structured policy snippet so agents do not guess between `size`, `size-policy`, `size_policy`, runner files, or config files.
+- **Managed workflow Clear falls back when Git rollback is unavailable.** Clearing `Diagram Modules`, `Application Skeleton`, or `Quality Gates` no longer fails with a 409 when the workspace has no Git repository or no stage boundary; Core falls back to the existing clear/undo cleanup path and still reports the Git rollback reason in the response.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-planned-required-validator.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.ts src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.342] - 2026-05-24
 ### Fixed
 - **Quality Gates planned-required gates stay mandatory in draft contracts.** Core now rejects `plannedRequiredAfterIntegration` gates when their command entries are converted to advisory/deferred, lose `integrationRequired: true`, use the wrong availability, or omit planned integration paths.

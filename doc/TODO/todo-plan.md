@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "474e677ad",
+  "lastRecordedCommit": "d69205235",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream48.task1",
-  "expectedCommitMessage": "fix: restore managed workflow clear availability",
+  "currentTaskId": "phase8.stream47.task5",
+  "expectedCommitMessage": "docs: prepare quality gates size policy release",
   "debt": {
-    "expectedCommitMessage": "fix: restore managed workflow clear availability",
-    "preCommitHead": "474e677ad",
+    "expectedCommitMessage": "docs: prepare quality gates size policy release",
+    "preCommitHead": "d69205235",
     "stage": "commit_pending",
-    "taskId": "phase8.stream48.task1"
+    "taskId": "phase8.stream47.task5"
   }
 }
 ```
@@ -539,12 +539,12 @@
 351. [DONE] `phase8.stream47.task4` Run targeted Quality Gates tests, Core build, webview build, and plan validation after the structured size policy fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: 17 targeted Quality Gates/prompt tests passed; Core build, webview build, and plan validation passed
 ### Stream: Managed Workflow Clear Availability
 352. [DONE] `phase8.stream48.task1` Restore Clear command availability for managed workflow steps starting with Diagram Modules, preserving Core-owned clear/undo semantics and Project Manager as UI-only caller (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore managed workflow clear availability`).
-353. [PENDING] Git Commit: `fix: restore managed workflow clear availability` (hash: TBD)
-354. [TODO] `phase8.stream48.task2` Run targeted Clear availability validation plus affected Core/Project Manager builds after the managed workflow Clear fix (scope: affected package tests/builds, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+353. [DONE] Git Commit: `fix: restore managed workflow clear availability` (hash: d69205235)
+354. [DONE] `phase8.stream48.task2` Run targeted Clear availability validation plus affected Core/Project Manager builds after the managed workflow Clear fix (scope: affected package tests/builds, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: 11 targeted Clear tests passed; Core build, webview typecheck, webview build, Project Manager build, and plan validation passed
 
 ### Stream: Release Build — Quality Gates Size Policy And Clear Availability
-355. [TODO] `phase8.stream47.task5` Update release-facing docs for the replacement Quality Gates structured size policy and managed Clear availability build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates size policy release`).
-356. [TODO] Git Commit: `docs: prepare quality gates size policy release` (hash: TBD)
+355. [DONE] `phase8.stream47.task5` Update release-facing docs for the replacement Quality Gates structured size policy and managed Clear availability build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates size policy release`).
+356. [PENDING] Git Commit: `docs: prepare quality gates size policy release` (hash: TBD)
 357. [TODO] `phase8.stream47.task6` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates size policy release`).
 358. [TODO] Git Commit: `chore: build quality gates size policy release` (hash: TBD)
 359. [TODO] `phase8.stream47.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates size policy vsix`).
