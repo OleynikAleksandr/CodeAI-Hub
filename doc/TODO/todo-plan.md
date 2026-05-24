@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "1d258313d",
+  "lastRecordedCommit": "8ba228c2b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream68.task1",
-  "expectedCommitMessage": "fix: clean quality gates terminal residue",
+  "currentTaskId": "phase8.stream69.task1",
+  "expectedCommitMessage": "docs: prepare quality gates terminal residue release",
   "debt": {
-    "expectedCommitMessage": "fix: clean quality gates terminal residue",
-    "preCommitHead": "1d258313d",
+    "expectedCommitMessage": "docs: prepare quality gates terminal residue release",
+    "preCommitHead": "8ba228c2b",
     "stage": "commit_pending",
-    "taskId": "phase8.stream68.task1"
+    "taskId": "phase8.stream69.task1"
   }
 }
 ```
@@ -687,8 +687,15 @@
 
 ### Stream: Quality Gates Terminal Git Cleanliness
 458. [DONE] `phase8.stream68.task1` Repair the Quality Gates terminal Git boundary so formatter/runtime residue from accepted upstream managed artifacts is handled by Core before completion instead of leaving a dirty workspace blocker (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clean quality gates terminal residue`).
-459. [PENDING] Git Commit: `fix: clean quality gates terminal residue` (hash: TBD)
-460. [TODO] `phase8.stream68.task2` Run targeted managed terminal dirty-boundary validation plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+459. [DONE] Git Commit: `fix: clean quality gates terminal residue` (hash: 8ba228c2b)
+460. [DONE] `phase8.stream68.task2` Run targeted managed terminal dirty-boundary validation plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted managed terminal dirty-boundary validation passed: @codeai-hub/core build, managed-terminal-dirty-classifier regression test, and plan validation completed.
+
+### Stream: Release Build — Quality Gates Terminal Residue
+461. [DONE] `phase8.stream69.task1` Update release-facing docs for the v1.2.353 Quality Gates terminal residue build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates terminal residue release`).
+462. [PENDING] Git Commit: `docs: prepare quality gates terminal residue release` (hash: TBD)
+463. [TODO] `phase8.stream69.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates terminal residue release`).
+464. [TODO] Git Commit: `chore: build quality gates terminal residue release` (hash: TBD)
+465. [TODO] `phase8.stream69.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

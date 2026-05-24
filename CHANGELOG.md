@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.353] - 2026-05-24
+### Fixed
+- **Quality Gates terminal cleanup now handles Core-managed residue.** When Quality Gates integration or repair leaves accepted upstream Application Skeleton managed artifacts, workflow runtime metadata, continuity files, or formatter output dirty, Core now treats those paths as managed terminal residue and commits them before step completion instead of blocking the workflow with a dirty Git prompt.
+
+### Tests
+- `node --test packages/core/dist/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.js`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.352] - 2026-05-24
 ### Fixed
 - **Clear now rewinds stale `workflow/state.json` last-active data.** After clearing `Diagram Modules` in an app-created workspace that no longer has managed Git metadata, Core now resets `lastActive` to the latest existing upstream artifact instead of leaving it on the removed `diagram_modules/product-parts.index.md` artifact.
