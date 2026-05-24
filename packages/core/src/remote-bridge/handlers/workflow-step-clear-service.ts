@@ -16,6 +16,7 @@ import {
   cleanupDescriptionState,
   pruneContinuityIndex,
 } from "./workflow-step-clear-continuity-support";
+import { resetWorkflowLastActiveAfterClear } from "./workflow-step-clear-last-active";
 import { collectWorkflowStepSessionCleanupPaths } from "./workflow-step-clear-session-cleanup";
 import { collectWorkflowStageClearPaths } from "./workflow-step-clear-stage-paths";
 import { resetManagedWorkspacePlanAfterWorkflowClear } from "./workflow-step-clear-workspace-plan";
@@ -423,11 +424,20 @@ export const handleWorkflowStepClear = async (
             workspaceRoot: parsed.workspacePath,
           })
         : false;
+    const lastActiveReset =
+      parsed.target.kind === "workflow_stage"
+        ? await resetWorkflowLastActiveAfterClear({
+            stage: parsed.target.stage,
+            workspaceRoot: parsed.workspacePath,
+            workspaceSlug: parsed.workspaceSlug,
+          })
+        : false;
     deps.resetWorkflowState(parsed.workspaceSlug);
     res.json({
       checkpointRestored,
       deletedSessions,
       gitRollback: gitRollbackAttempt,
+      lastActiveReset,
       removedPaths,
       restoredPaths,
       workspacePlanReset,

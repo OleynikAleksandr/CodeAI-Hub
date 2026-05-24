@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -260,6 +267,68 @@ test("workflow step clear falls back to path cleanup when Git is missing", async
       await exists(path.join(workspaceRoot, qualityArtifact)),
       false
     );
+    assert.deepEqual(resetCalls, [WORKSPACE_SLUG]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow step clear rewinds stale last active after Diagram Modules clear without Git metadata", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-clear-last-active-")
+  );
+  const resetCalls: string[] = [];
+  try {
+    const virtualArtifact = `.codeai-hub/${WORKSPACE_SLUG}/virtual_simulation/virtual-simulation.md`;
+    const diagramArtifact = `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`;
+    const workflowStatePath = `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`;
+    await writeWorkspaceFile(workspaceRoot, virtualArtifact);
+    await writeWorkspaceFile(workspaceRoot, diagramArtifact);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      workflowStatePath,
+      JSON.stringify(
+        {
+          workspaceSlug: WORKSPACE_SLUG,
+          updatedAt: "2026-05-24T19:16:10.258Z",
+          lastActive: {
+            stage: "diagram_modules",
+            updatedAt: "2026-05-24T19:16:10.258Z",
+            artifactPath: diagramArtifact,
+          },
+        },
+        null,
+        2
+      )
+    );
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+        target: { kind: "workflow_stage", stage: "diagram_modules" },
+      },
+      resetCalls,
+      sessionManager: new SessionManager(),
+    });
+    const payload = result.payload as { readonly lastActiveReset?: boolean };
+    const workflowState = JSON.parse(
+      await readFile(path.join(workspaceRoot, workflowStatePath), "utf8")
+    ) as {
+      readonly lastActive?: {
+        readonly artifactPath?: string;
+        readonly stage?: string;
+      };
+    };
+
+    assert.equal(result.statusCode, 200);
+    assert.equal(payload.lastActiveReset, true);
+    assert.equal(
+      await exists(path.join(workspaceRoot, diagramArtifact)),
+      false
+    );
+    assert.equal(workflowState.lastActive?.stage, "virtual_simulation");
+    assert.equal(workflowState.lastActive?.artifactPath, virtualArtifact);
     assert.deepEqual(resetCalls, [WORKSPACE_SLUG]);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
