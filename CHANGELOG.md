@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.347] - 2026-05-24
+### Fixed
+- **Workflow Clear now completes cleanup after Git `already_at_boundary`.** Managed Clear no longer treats that Git result as a full rollback; Core continues through fallback cleanup so stale workflow state does not make the action appear to do nothing.
+- **Git rollback cleanup removes stale workflow metadata.** `workflow/state.json` and `workflow/undo-ledger.json` are cleaned inside the managed rollback scope before the rollback commit is created.
+- **Checkpoint-backed Clear still removes downstream generated artifacts.** After restoring an early-step checkpoint, Core now removes downstream workspace/doc/product-part/managed workflow paths instead of relying on the checkpoint alone.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/workflow-step-clear-service.checkpoint-cleanup.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.ts`
+- `npm run build --workspace packages/core`
+- `npm run plan:validate`
+
 ## [1.2.346] - 2026-05-24
 ### Fixed
 - **Managed Clear now requires Git rollback for Git-managed stages.** Clearing `Diagram Modules`, `Application Skeleton`, or `Quality Gates` no longer falls back to deleting known paths when a Git repository exists but the stage rollback boundary is missing.

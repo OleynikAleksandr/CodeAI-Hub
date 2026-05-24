@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "12769d4eb",
+  "lastRecordedCommit": "53bdd8f8f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream56.task2",
-  "expectedCommitMessage": "fix: restore workflow clear undo cleanup",
+  "currentTaskId": "phase8.stream57.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.347",
   "debt": {
-    "expectedCommitMessage": "fix: restore workflow clear undo cleanup",
-    "preCommitHead": "12769d4eb",
+    "expectedCommitMessage": "docs: prepare release 1.2.347",
+    "preCommitHead": "53bdd8f8f",
     "stage": "commit_pending",
-    "taskId": "phase8.stream56.task2"
+    "taskId": "phase8.stream57.task1"
   }
 }
 ```
@@ -615,8 +615,15 @@
 408. [DONE] `phase8.stream56.task1` Diagnose and repair Core-owned workflow Clear so Diagram Modules and downstream managed stages execute Git rollback/path cleanup and reset workflow state from Core truth (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`; expected commit: `fix: repair workflow clear git rollback`).
 409. [DONE] Git Commit: `fix: repair workflow clear git rollback` (hash: 12769d4eb)
 410. [DONE] `phase8.stream56.task2` Repair downstream workspace/session cleanup coverage for Virtual Simulation clearing after generated downstream steps (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service*.test.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts`; expected commit: `fix: restore workflow clear undo cleanup`).
-411. [PENDING] Git Commit: `fix: restore workflow clear undo cleanup` (hash: TBD)
-412. [TODO] `phase8.stream56.task3` Run targeted Clear/Undo tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+411. [DONE] Git Commit: `fix: restore workflow clear undo cleanup` (hash: 53bdd8f8f)
+412. [DONE] `phase8.stream56.task3` Run targeted Clear/Undo tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Clear/Undo targeted tests, Core build, and plan validation passed
+
+### Stream: Release Build v1.2.347
+413. [DONE] `phase8.stream57.task1` Prepare release notes for the Clear/Undo repair release before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.347`).
+414. [PENDING] Git Commit: `docs: prepare release 1.2.347` (hash: TBD)
+415. [TODO] `phase8.stream57.task2` Run `./scripts/build-all.sh` for v1.2.347 and commit generated package version/release artifact changes (scope: package manifests, `assets/launcher/manifest.json`, `doc/tmp/releases/**`, `doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.347 artifacts`).
+416. [TODO] Git Commit: `chore: build release 1.2.347 artifacts` (hash: TBD)
+417. [TODO] `phase8.stream57.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and leave scope active for user workflow acceptance (scope: release packaging output, `doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
