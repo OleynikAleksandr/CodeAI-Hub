@@ -5,6 +5,7 @@ import { SessionContinuityFacade } from "../session-continuity/session-continuit
 import { resolveWorkflowArtifactPaths } from "../workflow/paths/workflow-artifact-paths";
 import {
   createArtifactWorkspacePath,
+  createClusterOperationNodes,
   createLeadProductPartOperationNodes,
   createModuleOperationNodes,
 } from "./development-tree-operation-nodes";
@@ -356,6 +357,7 @@ const applyReadiness = async (
   readMetadata: Awaited<ReturnType<typeof createMetadataReader>>
 ): Promise<DevelopmentTreePartNode> => {
   const readReadiness = createReadinessReader(params);
+  const workspaceSlug = params.workspaceSlug;
   const clusters: DevelopmentTreeClusterNode[] = [];
   for (const cluster of part.clusters) {
     const modules: DevelopmentTreeModuleNode[] = [];
@@ -371,7 +373,7 @@ const applyReadiness = async (
         ...metadata,
         operations: createModuleOperationNodes(
           metadata.workflowPath,
-          params.workspaceSlug
+          workspaceSlug
         ),
         readiness: await readReadiness({
           kind: "module",
@@ -394,6 +396,9 @@ const applyReadiness = async (
     clusters.push({
       ...cluster,
       ...metadata,
+      operations: metadata.workflowPath
+        ? createClusterOperationNodes(metadata.workflowPath, workspaceSlug)
+        : undefined,
       modules,
       readiness: aggregateReadiness(
         selfReadiness,
@@ -427,7 +432,7 @@ const applyReadiness = async (
     params.leadProductPartId === part.id
       ? createLeadProductPartOperationNodes(
           metadata.workflowPath,
-          params.workspaceSlug
+          workspaceSlug
         )
       : undefined;
   const selfReadiness = await readReadiness({

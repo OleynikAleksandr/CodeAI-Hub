@@ -74,6 +74,7 @@ export interface DevelopmentTreeClusterNode {
   readonly id: string;
   readonly lifecycle?: DevelopmentTreeNodeLifecycle;
   readonly modules: readonly DevelopmentTreeModuleNode[];
+  readonly operations?: readonly DevelopmentTreeOperationNode[];
   readonly readiness?: DevelopmentTreeDraftReadiness;
   readonly session?: DevelopmentTreeNodeSession;
   readonly workflowPath?: string;

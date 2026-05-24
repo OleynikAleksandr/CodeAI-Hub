@@ -119,3 +119,21 @@ export const createModuleOperationNodes = (
     },
   ];
 };
+
+export const createClusterOperationNodes = (
+  clusterWorkflowPath: string,
+  workspaceSlug: string
+): readonly DevelopmentTreeOperationNode[] => [
+  createLeafOperationNode({
+    kind: "workers",
+    title: "Workers",
+    moduleWorkflowPath: clusterWorkflowPath,
+    workspaceSlug,
+  }),
+  createLeafOperationNode({
+    kind: "integration",
+    title: "Integration",
+    moduleWorkflowPath: clusterWorkflowPath,
+    workspaceSlug,
+  }),
+];

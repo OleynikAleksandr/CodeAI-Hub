@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "69b718042",
+  "lastRecordedCommit": "be29fd801",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream50.task3",
-  "expectedCommitMessage": "chore: package clear marker reset vsix",
+  "currentTaskId": "phase8.stream51.task1",
+  "expectedCommitMessage": "feat: project cluster workflow operations",
   "debt": {
-    "expectedCommitMessage": "chore: package clear marker reset vsix",
-    "preCommitHead": "69b718042",
+    "expectedCommitMessage": "feat: project cluster workflow operations",
+    "preCommitHead": "be29fd801",
     "stage": "commit_pending",
-    "taskId": "phase8.stream50.task3"
+    "taskId": "phase8.stream51.task1"
   }
 }
 ```
@@ -563,8 +563,16 @@
 368. [DONE] `phase8.stream50.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build clear marker reset release`). Result: v1.2.344 tarballs created under `doc/tmp/releases/` for providers, Core, launcher, VS Code webview, and Project Manager.
 369. [DONE] Git Commit: `chore: build clear marker reset release` (hash: 69b718042)
 370. [DONE] `phase8.stream50.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package clear marker reset vsix`). Result: `codeai-hub-1.2.344.vsix` created at 4.7M; SHA-256 `6cc5b5099bf7562c5be6cd194a4e07e3e22348a8f72fdd35f580357b8d5c0fe7`.
-371. [PENDING] Git Commit: `chore: package clear marker reset vsix` (hash: TBD)
-372. [TODO] `phase8.stream50.task4` User installs the generated replacement VSIX and verifies Clear resets cleared/downstream left-sidebar markers to grey (scope: user workflow acceptance; no commit expected).
+371. [DONE] Git Commit: `chore: package clear marker reset vsix` (hash: be29fd801)
+372. [BLOCKED] `phase8.stream50.task4` User installs the generated replacement VSIX and verifies Clear resets cleared/downstream left-sidebar markers to grey (scope: user workflow acceptance; no commit expected). Result: marker reset works in v1.2.344 so far, but user acceptance found cluster-owned workflow nodes need to render before module nodes in the Development Tree.
+
+### Stream: Cluster Workflow Node Ordering
+373. [DONE] `phase8.stream51.task1` Project cluster-owned workflow operation nodes from Core snapshots so the cluster has its own first steps before modules (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts`; expected commit: `feat: project cluster workflow operations`).
+374. [PENDING] Git Commit: `feat: project cluster workflow operations` (hash: TBD)
+375. [TODO] `phase8.stream51.task2` Parse and place cluster workflow operation nodes before module nodes in Project Manager without changing existing tree styling (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`; expected commit: `fix: place cluster workflow before modules`).
+376. [TODO] Git Commit: `fix: place cluster workflow before modules` (hash: TBD)
+377. [TODO] `phase8.stream51.task3` Run targeted Core/Project Manager tests and builds for cluster workflow node ordering (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+378. [TODO] `phase8.stream51.task4` User confirms whether to build a replacement release after cluster workflow node ordering is verified (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
