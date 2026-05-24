@@ -63,6 +63,10 @@ const DEVELOPMENT_TREE_SESSIONS_RE = /Development Tree sessions/i;
 const COMMANDS_OBJECT_RE = /`commands` object keyed by stable gate id/;
 const RESEARCH_MARKDOWN_TEMPLATE_RE =
   /Required `quality-gates-research\.md` template:[\s\S]*# Quality Gates Research/u;
+const RESEARCH_MARKDOWN_LANGUAGE_RE =
+  /quality-gates-research\.md` in the same language you use to communicate with the user in chat/u;
+const RESEARCH_TEMPLATE_LANGUAGE_RE =
+  /All prose placeholders in this Markdown template must be filled in the chat language used with the user/u;
 const RESEARCH_JSON_TEMPLATE_RE =
   /Required `quality-gates-research\.json` template:[\s\S]*"schema": "codeai-quality-gates-research-v1"/u;
 const CONTRACT_MARKDOWN_TEMPLATE_RE =
@@ -153,6 +157,8 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.doesNotMatch(prompt, PLAN_STATUS_COMMAND_RE);
   assert.match(prompt, COMMANDS_OBJECT_RE);
   assert.match(prompt, RESEARCH_MARKDOWN_TEMPLATE_RE);
+  assert.match(prompt, RESEARCH_MARKDOWN_LANGUAGE_RE);
+  assert.match(prompt, RESEARCH_TEMPLATE_LANGUAGE_RE);
   assert.match(prompt, RESEARCH_JSON_TEMPLATE_RE);
   assert.match(prompt, CONTRACT_MARKDOWN_TEMPLATE_RE);
   assert.match(prompt, CONTRACT_JSON_TEMPLATE_RE);

@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "2b69e165d",
+  "lastRecordedCommit": "365a0e212",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream45.task1",
-  "expectedCommitMessage": "fix: localize quality gates research artifact",
+  "currentTaskId": "phase8.stream45.task2",
+  "expectedCommitMessage": "test: cover quality gates research artifact language",
   "debt": {
-    "expectedCommitMessage": "fix: localize quality gates research artifact",
-    "preCommitHead": "2b69e165d",
+    "expectedCommitMessage": "test: cover quality gates research artifact language",
+    "preCommitHead": "365a0e212",
     "stage": "commit_pending",
-    "taskId": "phase8.stream45.task1"
+    "taskId": "phase8.stream45.task2"
   }
 }
 ```
@@ -507,9 +507,9 @@
 
 ### Stream: Quality Gates Research Artifact Localization
 325. [DONE] `phase8.stream45.task1` Add an explicit Quality Gates prompt requirement that `quality-gates-research.md` user-facing prose is written in the same language the agent uses with the user, while JSON field names and stable identifiers remain canonical (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: localize quality gates research artifact`).
-326. [PENDING] Git Commit: `fix: localize quality gates research artifact` (hash: TBD)
-327. [TODO] `phase8.stream45.task2` Add bundled prompt regression coverage for the research artifact language rule (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research artifact language`).
-328. [TODO] Git Commit: `test: cover quality gates research artifact language` (hash: TBD)
+326. [DONE] Git Commit: `fix: localize quality gates research artifact` (hash: 365a0e212)
+327. [DONE] `phase8.stream45.task2` Add bundled prompt regression coverage for the research artifact language rule (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research artifact language`).
+328. [PENDING] Git Commit: `test: cover quality gates research artifact language` (hash: TBD)
 329. [TODO] `phase8.stream45.task3` Run targeted Quality Gates prompt/template tests and Core plan validation after the localization prompt fix (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 330. [TODO] `phase8.stream45.task4` Prepare release-facing docs and build a replacement VSIX only after explicit release build confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md, package versions, release artifacts`; expected commit: pending confirmation).
 
