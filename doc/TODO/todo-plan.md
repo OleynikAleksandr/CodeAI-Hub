@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "15b98823d",
+  "lastRecordedCommit": "4bee77e91",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream46.task7",
-  "expectedCommitMessage": "chore: package quality gates planned required vsix",
+  "currentTaskId": "phase8.stream47.task1",
+  "expectedCommitMessage": "fix: structure quality gates size policy contract",
   "debt": {
-    "expectedCommitMessage": "chore: package quality gates planned required vsix",
-    "preCommitHead": "15b98823d",
+    "expectedCommitMessage": "fix: structure quality gates size policy contract",
+    "preCommitHead": "4bee77e91",
     "stage": "commit_pending",
-    "taskId": "phase8.stream46.task7"
+    "taskId": "phase8.stream47.task1"
   }
 }
 ```
@@ -526,8 +526,24 @@
 340. [DONE] `phase8.stream46.task6` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates planned required release`). Result: v1.2.342 provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
 341. [DONE] Git Commit: `chore: build quality gates planned required release` (hash: 15b98823d)
 342. [DONE] `phase8.stream46.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates planned required vsix`). Result: `codeai-hub-1.2.342.vsix` built successfully at 4.7M; SHA-256 `751f1747eb192affbfe340fcc73caa1b684c7ce2a9280c9cb571d55f6d88da92`; SDK exclusions, local artefact validation, markdown links, duplication check and package surface checks passed.
-343. [PENDING] Git Commit: `chore: package quality gates planned required vsix` (hash: TBD)
-344. [TODO] `phase8.stream46.task8` User installs the generated replacement VSIX and verifies Quality Gates contract drafting keeps planned required gates active/integration-required and contract repairs do not touch research artifacts (scope: user workflow acceptance; no commit expected).
+343. [DONE] Git Commit: `chore: package quality gates planned required vsix` (hash: 4bee77e91)
+344. [BLOCKED] `phase8.stream46.task8` User installs the generated replacement VSIX and verifies Quality Gates contract drafting keeps planned required gates active/integration-required and contract repairs do not touch research artifacts (scope: user workflow acceptance; no commit expected). Blocked: user retest found repeated Quality Gates integration repairs with opaque `missing_required_size_policy_gate` diagnostics; Core recognizes the required 500-line size policy through implicit searchable text instead of a structured policy contract.
+
+### Stream: Quality Gates Structured Size Policy Repair
+345. [DONE] `phase8.stream47.task1` Add a structured Quality Gates size policy contract and explicit repair diagnostics so the agent can satisfy `missing_required_size_policy_gate` without guessing aliases or filenames (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: structure quality gates size policy contract`).
+346. [PENDING] Git Commit: `fix: structure quality gates size policy contract` (hash: TBD)
+347. [TODO] `phase8.stream47.task2` Update the Quality Gates bundled prompt template so draft/integration agents create explicit `policy.type: "source_size_limit"`, `maxLines: 500`, and `appliesTo` metadata for the mandatory size gate (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: document quality gates size policy template`).
+348. [TODO] Git Commit: `fix: document quality gates size policy template` (hash: TBD)
+349. [TODO] `phase8.stream47.task3` Add regression coverage for structured size policy validation, explanatory repair prompts, and bundled prompt wording (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates size policy diagnostics`).
+350. [TODO] Git Commit: `test: cover quality gates size policy diagnostics` (hash: TBD)
+351. [TODO] `phase8.stream47.task4` Run targeted Quality Gates tests, Core build, webview build, and plan validation after the structured size policy fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+352. [TODO] `phase8.stream47.task5` Update release-facing docs for the replacement Quality Gates structured size policy build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates size policy release`).
+353. [TODO] Git Commit: `docs: prepare quality gates size policy release` (hash: TBD)
+354. [TODO] `phase8.stream47.task6` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates size policy release`).
+355. [TODO] Git Commit: `chore: build quality gates size policy release` (hash: TBD)
+356. [TODO] `phase8.stream47.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates size policy vsix`).
+357. [TODO] Git Commit: `chore: package quality gates size policy vsix` (hash: TBD)
+358. [TODO] `phase8.stream47.task8` User installs the generated replacement VSIX and verifies Quality Gates integration no longer loops on `missing_required_size_policy_gate` when the mandatory 500-line size policy infrastructure exists (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

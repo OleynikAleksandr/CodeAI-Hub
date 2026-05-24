@@ -141,6 +141,8 @@ const explainDiagnostic = (diagnostic: string): string => {
       "Add at least one sourced recommendation to the research artifact.",
     research_stackSummary_missing:
       "Add a concise `stackSummary` explaining the detected stack and why the research applies.",
+    missing_required_size_policy_gate:
+      'Add one required gate to `requiredBeforeCommit` or `requiredBeforePush` whose `commands.<gate-id>.policy` is exactly `{ "type": "source_size_limit", "maxLines": 500, "appliesTo": ["source_files", "classes"] }`. Keep its package script and hook call wired with the same gate id.',
   };
   return knownDiagnostics[diagnostic] ?? diagnostic;
 };
