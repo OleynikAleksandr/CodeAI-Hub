@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "216181341",
+  "lastRecordedCommit": "15ce41ff4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream47.task6",
-  "expectedCommitMessage": "chore: build quality gates size policy release",
+  "currentTaskId": "phase8.stream47.task7",
+  "expectedCommitMessage": "chore: package quality gates size policy vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates size policy release",
-    "preCommitHead": "216181341",
+    "expectedCommitMessage": "chore: package quality gates size policy vsix",
+    "preCommitHead": "15ce41ff4",
     "stage": "commit_pending",
-    "taskId": "phase8.stream47.task6"
+    "taskId": "phase8.stream47.task7"
   }
 }
 ```
@@ -546,9 +546,9 @@
 355. [DONE] `phase8.stream47.task5` Update release-facing docs for the replacement Quality Gates structured size policy and managed Clear availability build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates size policy release`).
 356. [DONE] Git Commit: `docs: prepare quality gates size policy release` (hash: 216181341)
 357. [DONE] `phase8.stream47.task6` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates size policy release`). Result: v1.2.343 tarballs created under `doc/tmp/releases/` for providers, Core, launcher, VS Code webview, and Project Manager.
-358. [PENDING] Git Commit: `chore: build quality gates size policy release` (hash: TBD)
-359. [TODO] `phase8.stream47.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates size policy vsix`).
-360. [TODO] Git Commit: `chore: package quality gates size policy vsix` (hash: TBD)
+358. [DONE] Git Commit: `chore: build quality gates size policy release` (hash: 15ce41ff4)
+359. [DONE] `phase8.stream47.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates size policy vsix`). Result: `codeai-hub-1.2.343.vsix` created at 4.7M; SHA-256 `2709ad7d2d5ad156fb618b492693a7cf428fc5a10ef1151a3afd56723daa89ba`.
+360. [PENDING] Git Commit: `chore: package quality gates size policy vsix` (hash: TBD)
 361. [TODO] `phase8.stream47.task8` User installs the generated replacement VSIX and verifies Quality Gates integration no longer loops on `missing_required_size_policy_gate` and Clear works from Diagram Modules onward (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
