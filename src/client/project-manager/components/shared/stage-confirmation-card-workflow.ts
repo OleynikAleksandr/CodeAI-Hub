@@ -86,13 +86,29 @@ const resolveLatestChainSegment = (
   return best;
 };
 
+const resolveDescriptionChainSegment = (
+  snapshot: WorkflowStateSnapshot
+): { readonly providerId: string; readonly providerSessionId: string } | null =>
+  resolveLatestChainSegment(snapshot, "description");
+
+const resolveDescriptionProviderId = (
+  snapshot: WorkflowStateSnapshot
+): ProviderStackId | null => {
+  const primaryProviderId = snapshot.description?.primarySession?.providerId;
+  if (isProviderStackId(primaryProviderId)) {
+    return primaryProviderId;
+  }
+  const continuityProviderId = resolveDescriptionChainSegment(snapshot)?.providerId;
+  return isProviderStackId(continuityProviderId) ? continuityProviderId : null;
+};
+
 export const resolveInheritedStageProviderId = (
   stage: ConfirmableStageId,
   snapshot: WorkflowStateSnapshot
 ): ProviderStackId | null => {
-  const descriptionProviderId = snapshot.description?.primarySession?.providerId;
+  const descriptionProviderId = resolveDescriptionProviderId(snapshot);
   if (stage === "virtual_simulation") {
-    return isProviderStackId(descriptionProviderId) ? descriptionProviderId : null;
+    return descriptionProviderId;
   }
   const stagesByPriority: Record<
     Exclude<ConfirmableStageId, "virtual_simulation">,
@@ -108,7 +124,7 @@ export const resolveInheritedStageProviderId = (
       return providerId;
     }
   }
-  return isProviderStackId(descriptionProviderId) ? descriptionProviderId : null;
+  return descriptionProviderId;
 };
 
 export const hasExistingStageSession = (
@@ -135,10 +151,12 @@ export const resolveStageSessionIntent = (
 ): StageSessionIntent | null => {
   if (stage === "description") {
     const session = snapshot.description?.primarySession;
-    if (!session) return null;
+    const continuitySegment = session ? null : resolveDescriptionChainSegment(snapshot);
+    if (!(session || continuitySegment)) return null;
     return {
-      providerId: session.providerId,
-      providerSessionId: session.providerSessionId,
+      providerId: session?.providerId ?? continuitySegment?.providerId ?? "",
+      providerSessionId:
+        session?.providerSessionId ?? continuitySegment?.providerSessionId ?? null,
       workspacePath,
       workspaceSlug,
       initiativeSlug: workspaceSlug,

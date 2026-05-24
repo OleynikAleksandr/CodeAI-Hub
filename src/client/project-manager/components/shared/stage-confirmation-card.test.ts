@@ -2,6 +2,11 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import {
+  resolveInheritedStageProviderId,
+  resolveStageSessionIntent,
+} from "./stage-confirmation-card-workflow";
 
 const SOURCE_PATH = path.resolve(
   process.cwd(),
@@ -111,4 +116,76 @@ test("stage confirmation workflow includes technical root stage labels", async (
   );
   assert.equal(source.includes('application_skeleton: "product-parts.index.md"'), true);
   assert.equal(source.includes('quality_gates: "application-skeleton-map.json"'), true);
+});
+
+const buildWorkflowSnapshot = (): WorkflowStateSnapshot => ({
+  workspaceSlug: "codeai-hub-codex-5-4",
+  updatedAt: "2026-05-24T06:00:00.000Z",
+  stages: {
+    description: "completed",
+    virtual_simulation: "idle",
+    diagram_modules: "idle",
+    application_skeleton: "idle",
+    quality_gates: "idle",
+  },
+  continuity: {
+    chains: [
+      {
+        rootSessionId: "codex-description-root",
+        workspaceSlug: "codeai-hub-codex-5-4",
+        stage: "description",
+        updatedAt: "2026-05-24T06:10:00.000Z",
+        segments: [
+          {
+            sessionId: "codex-description-root",
+            providerId: "codexCli",
+            providerSessionId: "codex-native-description",
+            createdAt: "2026-05-24T06:00:00.000Z",
+          },
+        ],
+      },
+    ],
+  },
+  lastActive: null,
+  description: {
+    updatedAt: "2026-05-24T06:10:00.000Z",
+    finalPath: ".codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md",
+  },
+  gating: {
+    blocked: {
+      virtual_simulation: false,
+      diagram_modules: true,
+      application_skeleton: true,
+      quality_gates: true,
+    },
+  },
+});
+
+test("virtual simulation inherits Description provider from continuity", () => {
+  const snapshot = buildWorkflowSnapshot();
+
+  assert.equal(resolveInheritedStageProviderId("virtual_simulation", snapshot), "codexCli");
+});
+
+test("description session intent falls back to Description continuity", () => {
+  const snapshot = buildWorkflowSnapshot();
+
+  assert.deepEqual(
+    resolveStageSessionIntent(
+      "description",
+      snapshot,
+      "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4",
+      "codeai-hub-codex-5-4"
+    ),
+    {
+      providerId: "codexCli",
+      providerSessionId: "codex-native-description",
+      workspacePath: "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4",
+      workspaceSlug: "codeai-hub-codex-5-4",
+      initiativeSlug: "codeai-hub-codex-5-4",
+      stage: "description",
+      sessionKind: "collector",
+      runSlug: null,
+    }
+  );
 });

@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "0a004b133",
+  "lastRecordedCommit": "d357b2330",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream42.task1",
-  "expectedCommitMessage": "fix: inherit description provider from continuity",
+  "currentTaskId": "phase8.stream42.task2",
+  "expectedCommitMessage": "fix: restore description session from continuity",
   "debt": {
-    "expectedCommitMessage": "fix: inherit description provider from continuity",
-    "preCommitHead": "0a004b133",
+    "expectedCommitMessage": "fix: restore description session from continuity",
+    "preCommitHead": "d357b2330",
     "stage": "commit_pending",
-    "taskId": "phase8.stream42.task1"
+    "taskId": "phase8.stream42.task2"
   }
 }
 ```
@@ -468,11 +468,13 @@
 
 ### Stream: Description Clear Restart Provider Projection
 292. [DONE] `phase8.stream42.task1` Make Virtual Simulation provider preselection inherit from the latest Description continuity chain when `description.primarySession` is absent after Clear/restart (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: inherit description provider from continuity`).
-293. [PENDING] Git Commit: `fix: inherit description provider from continuity` (hash: TBD)
-294. [TODO] `phase8.stream42.task2` Restore Description session navigation/tree projection from the latest Description continuity chain when `description.primarySession` is absent (scope: `src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore description session from continuity`).
-295. [TODO] Git Commit: `fix: restore description session from continuity` (hash: TBD)
-296. [TODO] `phase8.stream42.task3` Run targeted Project Manager tests, webview typecheck/build and plan validation for Description Clear restart provider/session projection (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-297. [TODO] `phase8.stream42.task4` Wait for explicit user confirmation before building the next replacement release after Description Clear restart projection fix (scope: release confirmation gate; no commit expected).
+293. [DONE] Git Commit: `fix: inherit description provider from continuity` (hash: d357b2330)
+294. [DONE] `phase8.stream42.task2` Restore Description session navigation intent from the latest Description continuity chain when `description.primarySession` is absent (scope: `src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore description session from continuity`).
+295. [PENDING] Git Commit: `fix: restore description session from continuity` (hash: TBD)
+296. [TODO] `phase8.stream42.task3` Restore Description sidebar tree projection from the latest Description continuity chain when `description.primarySession` is absent (scope: `src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts, src/client/project-manager/components/layout/workspace-tree-branch-nodes.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore description tree session from continuity`).
+297. [TODO] Git Commit: `fix: restore description tree session from continuity` (hash: TBD)
+298. [TODO] `phase8.stream42.task4` Run targeted Project Manager tests, webview typecheck/build and plan validation for Description Clear restart provider/session projection (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+299. [TODO] `phase8.stream42.task5` Wait for explicit user confirmation before building the next replacement release after Description Clear restart projection fix (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
