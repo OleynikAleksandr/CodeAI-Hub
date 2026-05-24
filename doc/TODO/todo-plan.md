@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "a0a9c3d60",
+  "lastRecordedCommit": "a12247cad",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream53.task1",
-  "expectedCommitMessage": "fix: require git rollback for managed clear",
+  "currentTaskId": "phase8.stream54.task1",
+  "expectedCommitMessage": "docs: prepare managed clear rollback release",
   "debt": {
-    "expectedCommitMessage": "fix: require git rollback for managed clear",
-    "preCommitHead": "a0a9c3d60",
+    "expectedCommitMessage": "docs: prepare managed clear rollback release",
+    "preCommitHead": "a12247cad",
     "stage": "commit_pending",
-    "taskId": "phase8.stream53.task1"
+    "taskId": "phase8.stream54.task1"
   }
 }
 ```
@@ -587,9 +587,18 @@
 
 ### Stream: Managed Clear Git Rollback Enforcement
 388. [DONE] `phase8.stream53.task1` Stop managed workflow Clear from falling back to path deletion when a Git-managed rollback boundary is missing for Diagram Modules, Application Skeleton, or Quality Gates (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require git rollback for managed clear`).
-389. [PENDING] Git Commit: `fix: require git rollback for managed clear` (hash: TBD)
-390. [TODO] `phase8.stream53.task2` Run targeted managed Clear rollback tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-391. [TODO] `phase8.stream53.task3` Build replacement release after managed Clear rollback enforcement (scope: release confirmation already provided by user; expected commit: no commit expected).
+389. [DONE] Git Commit: `fix: require git rollback for managed clear` (hash: a12247cad)
+390. [DONE] `phase8.stream53.task2` Run targeted managed Clear rollback tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted managed Clear rollback tests, Core build, and plan validation passed.
+391. [DONE] `phase8.stream53.task3` Build replacement release after managed Clear rollback enforcement (scope: release confirmation already provided by user; expected commit: no commit expected). Result: release work split into the v1.2.346 replacement build stream.
+
+### Stream: Release Build — Managed Clear Git Rollback Enforcement
+392. [DONE] `phase8.stream54.task1` Update release-facing docs for the v1.2.346 managed Clear rollback enforcement build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed clear rollback release`).
+393. [PENDING] Git Commit: `docs: prepare managed clear rollback release` (hash: TBD)
+394. [TODO] `phase8.stream54.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed clear rollback release`).
+395. [TODO] Git Commit: `chore: build managed clear rollback release` (hash: TBD)
+396. [TODO] `phase8.stream54.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package managed clear rollback vsix`).
+397. [TODO] Git Commit: `chore: package managed clear rollback vsix` (hash: TBD)
+398. [TODO] `phase8.stream54.task4` User installs the generated v1.2.346 VSIX and verifies managed Clear on Quality Gates does not delete tracked stage files when Git rollback boundary is missing (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

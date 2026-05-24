@@ -2,14 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.345** (Cluster Workflow Node Ordering)
+**Current Release — v1.2.346** (Managed Clear Git Rollback Enforcement)
+
+This replacement build fixes `Clear` for Git-managed workflow stages. For
+`Diagram Modules`, `Application Skeleton`, and `Quality Gates`, Core no longer
+falls back to path deletion when a workspace has Git but the stage rollback
+boundary is missing. Instead it returns an explicit conflict and preserves the
+tracked workspace state, preventing dirty deleted artifacts from making later
+steps restart with misleading missing-input messages.
+
+**Previous Release — v1.2.345** (Cluster Workflow Node Ordering)
 
 This replacement build places cluster-owned workflow nodes before module nodes
 inside each Development Tree cluster. Core now projects the cluster `Workers`
 and `Integration` operations in the snapshot, and Project Manager renders them
 first with the existing tree styling and connector lines preserved.
 
-**Previous Release — v1.2.344** (Clear Marker Reset)
+**Earlier Release — v1.2.344** (Clear Marker Reset)
 
 This replacement build fixes the left-sidebar workflow markers after `Clear`.
 Core now resets the managed workspace ledger for the cleared workflow stage and

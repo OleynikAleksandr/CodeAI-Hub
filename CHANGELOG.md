@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.346] - 2026-05-24
+### Fixed
+- **Managed Clear now requires Git rollback for Git-managed stages.** Clearing `Diagram Modules`, `Application Skeleton`, or `Quality Gates` no longer falls back to deleting known paths when a Git repository exists but the stage rollback boundary is missing.
+- **Managed Clear preserves tracked state on missing rollback boundaries.** Core now returns an explicit conflict instead of leaving dirty deleted stage artifacts that can later surface as misleading missing-input messages such as `application-skeleton-map.json not found`.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.345] - 2026-05-24
 ### Fixed
 - **Cluster workflow nodes now render before modules.** Core projects cluster-owned `Workers` and `Integration` operations in the Development Tree snapshot, and Project Manager places them first inside the cluster before module nodes while preserving the existing tree row styling and connector geometry.
