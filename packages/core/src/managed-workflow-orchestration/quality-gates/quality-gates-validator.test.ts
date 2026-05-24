@@ -18,6 +18,10 @@ const INTEGRATION_REJECTED_RE = /Core rejected Quality Gates integration/u;
 const PLAN_STATE_PROBLEM_RE = /orchestrator plan-state problem/u;
 const REVIEW_CORRECTIONS_RE = /review corrections/u;
 const USER_REVIEW_OPEN_RE = /user review is now open/u;
+const REQUIRED_INTEGRATED_GATE_IDS = [
+  "qg-secret-scan",
+  "qg-max-file-lines",
+] as const;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -61,6 +65,16 @@ const buildQualityGatesJson = (
 });
 
 const buildExecutableCommands = (): Record<string, unknown> => ({
+  "qg-max-file-lines": {
+    availability: "executable",
+    baseline: ["minimal", "recommended", "strict"],
+    blockingIn: ["beforeCommit"],
+    desiredStatus: "active",
+    id: "qg-max-file-lines",
+    integrationRequired: true,
+    proposedCommand: "npm run qg:max-file-lines",
+    purpose: "Enforce source files and classes <= 500 lines.",
+  },
   "qg-secret-scan": {
     availability: "executable",
     baseline: ["recommended"],
@@ -126,6 +140,40 @@ const writeQualityGatesArtifacts = async (
   );
 };
 
+const writeIntegratedSupportFiles = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "package.json",
+    `${JSON.stringify(
+      {
+        scripts: {
+          "qg:max-file-lines": "node scripts/quality-gates/max-file-lines.mjs",
+          "qg:secret-scan": "node scripts/quality-gates/secret-scan.mjs",
+        },
+      },
+      null,
+      2
+    )}\n`
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    ".husky/pre-commit",
+    "#!/bin/sh\nset -e\nnpm run qg:max-file-lines\nnpm run qg:secret-scan\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "scripts/quality-gates/max-file-lines.mjs",
+    "console.log('ok');\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "scripts/quality-gates/secret-scan.mjs",
+    "console.log('ok');\n"
+  );
+};
+
 test("Quality Gates validator accepts draft contract and opens user review", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "quality-gates-draft-")
@@ -185,34 +233,14 @@ test("Quality Gates validator accepts integrated contract with scripts and hooks
         integratedPaths: [
           "package.json",
           ".husky/pre-commit",
+          "scripts/quality-gates/max-file-lines.mjs",
           "scripts/quality-gates/secret-scan.mjs",
         ],
         integrationState: "integrated",
+        requiredBeforeCommit: REQUIRED_INTEGRATED_GATE_IDS,
       })
     );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      "package.json",
-      `${JSON.stringify(
-        {
-          scripts: {
-            "qg:secret-scan": "node scripts/quality-gates/secret-scan.mjs",
-          },
-        },
-        null,
-        2
-      )}\n`
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      ".husky/pre-commit",
-      "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      "scripts/quality-gates/secret-scan.mjs",
-      "console.log('ok');\n"
-    );
+    await writeIntegratedSupportFiles(workspaceRoot);
 
     const result = await validateQualityGatesManagedArtifacts({
       workspaceRoot,
@@ -228,15 +256,18 @@ test("Quality Gates validator accepts integrated contract with scripts and hooks
   }
 });
 
-test("Quality Gates validator rejects integrated JSON that keeps a required gate not_integrated", async () => {
+test("Quality Gates validator rejects integration without required 500-line gate", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "quality-gates-not-integrated-json-")
+    path.join(os.tmpdir(), "quality-gates-missing-size-")
   );
   try {
     await writeQualityGatesArtifacts(
       workspaceRoot,
       buildQualityGatesJson({
         accepted: true,
+        commands: {
+          "qg-secret-scan": buildExecutableCommands()["qg-secret-scan"],
+        },
         integrated: true,
         integratedPaths: [
           "package.json",
@@ -277,6 +308,41 @@ test("Quality Gates validator rejects integrated JSON that keeps a required gate
 
     assert.equal(result.valid, false);
     assert.equal(result.nextAction, "repair_integration");
+    assert.ok(result.diagnostics.includes("missing_required_size_policy_gate"));
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates validator rejects integrated JSON that keeps a required gate not_integrated", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-not-integrated-json-")
+  );
+  try {
+    await writeQualityGatesArtifacts(
+      workspaceRoot,
+      buildQualityGatesJson({
+        accepted: true,
+        integrated: true,
+        integratedPaths: [
+          "package.json",
+          ".husky/pre-commit",
+          "scripts/quality-gates/max-file-lines.mjs",
+          "scripts/quality-gates/secret-scan.mjs",
+        ],
+        integrationState: "integrated",
+        requiredBeforeCommit: REQUIRED_INTEGRATED_GATE_IDS,
+      })
+    );
+    await writeIntegratedSupportFiles(workspaceRoot);
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_integration");
     assert.ok(
       result.diagnostics.includes(
         'quality-gates.json keeps required gate "qg-secret-scan" as not_integrated after integration'
@@ -302,9 +368,11 @@ test("Quality Gates validator rejects integrated Markdown that says a required g
         integratedPaths: [
           "package.json",
           ".husky/pre-commit",
+          "scripts/quality-gates/max-file-lines.mjs",
           "scripts/quality-gates/secret-scan.mjs",
         ],
         integrationState: "integrated",
+        requiredBeforeCommit: REQUIRED_INTEGRATED_GATE_IDS,
       }),
       [
         "# Quality Gates Baseline",
@@ -314,29 +382,7 @@ test("Quality Gates validator rejects integrated Markdown that says a required g
         "| `qg-secret-scan` | `not_integrated` |",
       ].join("\n")
     );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      "package.json",
-      `${JSON.stringify(
-        {
-          scripts: {
-            "qg:secret-scan": "node scripts/quality-gates/secret-scan.mjs",
-          },
-        },
-        null,
-        2
-      )}\n`
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      ".husky/pre-commit",
-      "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
-      "scripts/quality-gates/secret-scan.mjs",
-      "console.log('ok');\n"
-    );
+    await writeIntegratedSupportFiles(workspaceRoot);
 
     const result = await validateQualityGatesManagedArtifacts({
       workspaceRoot,
