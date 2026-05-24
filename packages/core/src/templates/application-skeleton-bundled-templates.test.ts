@@ -5,27 +5,27 @@ import test from "node:test";
 import { BUNDLED_TEMPLATE_SOURCES } from "./bundled-templates";
 
 const PHASE_1_RE = /Phase 1: Draft Contract/;
-const PHASE_2_RE = /Phase 2: Post-Acceptance Materialization/;
+const PHASE_2_RE = /Phase 2: Core-Owned Post-Acceptance Materialization/;
 const BEFORE_ACCEPTANCE_RE = /Before explicit user acceptance/;
 const NO_PRODUCTION_FILES_RE = /Do not create production files/;
 const MATERIALIZED_TRUE_RE = /materialized: true/;
-const QUALITY_GATES_START_RE = /ready for Quality Gates Baseline/;
+const QUALITY_GATES_START_RE = /Quality Gates Baseline stage owns/;
 const INSTALLABLE_FOUNDATION_RE =
-  /complete installable and buildable project foundation/;
+  /Core-owned materialization contract that lets Core create the installable and buildable project foundation/;
 const NO_QUALITY_GATE_PRODUCTS_RE =
   /(?:Do not choose or integrate quality-gate products|quality-gate product selection or integration)/;
 const NO_MATERIALIZE_WITH_OPEN_QUESTIONS_RE =
-  /no permission to materialize while any decision remains in `openQuestions`/;
+  /no permission to mark the contract ready while any decision remains in `openQuestions`/;
 const PROJECT_FOUNDATION_JSON_RE = /"projectFoundation": \{/;
 const OPEN_QUESTIONS_JSON_RE = /"openQuestions": \[\]/;
 const NODE_MODULES_NOT_COMMITTED_RE =
   /`node_modules` and other (?:dependency )?install outputs? must not be (?:committed|listed as materialized output)/;
 const GITIGNORE_CONFIG_RE =
-  /"configFiles": \["\.gitignore", "tsconfig\.json"\]/;
+  /"configFiles": \["\.gitignore", "\.npmrc", "package-lock\.json", "package\.json", "tsconfig\.base\.json"\]/;
 const GITIGNORE_OUTPUTS_RE =
-  /root `\.gitignore` exists and ignores install\/build outputs such as `node_modules\/?` and `dist\/?`/;
+  /`\.gitignore`.*(?:node_modules|dist|\.codeai-hub\/state)/s;
 const GENERATED_OUTPUT_NOT_MATERIALIZED_RE =
-  /(?:no generated install\/build output path such as `node_modules`, `dist`|Build outputs such as `dist\/`, `build\/`, `coverage\/`[\s\S]*must not be listed in `materializedPaths`)/;
+  /(?:no generated install\/build output path such as `node_modules`, `dist`|Build outputs such as `dist\/`, `build\/`, `coverage\/`[\s\S]*must not be listed (?:in|as) `materializedPaths`)/;
 const NESTED_PRODUCT_TREE_RE =
   /(?:top-level entries are Product Parts only; Product Part entries contain `clusters` and `standaloneModules`; Cluster entries contain `modules`|top-level `productParts` array may contain only Product Part entries[\s\S]*Cluster-owned Module entries must appear only inside their owning Cluster `modules` array)/;
 const REAL_TARGETS_RE = /real config(?:\/| and )source targets/;
@@ -53,13 +53,13 @@ const CODE_WRITING_WORKSPACE_RE =
   /prepare the workspace for real code writing/u;
 const LOCALLY_INSTALLED_ENVIRONMENT_RE =
   /locally installed development environment/u;
-const RUN_CLEAN_INSTALL_RE = /run the accepted clean install command/u;
+const RUN_CLEAN_INSTALL_RE = /runs the accepted install command/u;
 const NODE_MODULES_MUST_EXIST_RE =
-  /local `node_modules` install output must exist/u;
+  /Core creates local install output during materialization/u;
 const RUN_REQUIRED_SCRIPTS_RE =
-  /run every script listed in `projectFoundation\.requiredScripts`/u;
+  /runs the accepted install command and every required script/u;
 const INSTALL_SCRIPT_VERIFICATION_RE =
-  /install\/script verification commands that succeeded/u;
+  /Core has not successfully run the accepted install command and every required build\/typecheck\/smoke script/u;
 const DEVELOPMENT_TREE_MIRROR_RE =
   /mirrors the Project Manager Development Tree exactly/u;
 const CONCRETE_FRAMEWORK_BASELINE_RE =
@@ -81,8 +81,9 @@ const LOCALIZED_DRAFT_RESPONSE_RE =
 const EXACT_REVIEW_CLOSING_PHRASE_RE =
   /Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией\./;
 const LOCALIZED_MATERIALIZED_RESPONSE_RE =
-  /tell the user, in the chat language, that Application Skeleton is accepted and materialized/;
-const RUNTIME_REVIEW_READY_RE = /ready for runtime\/user review/;
+  /must be confirmed or corrected before Core-owned filesystem materialization/;
+const RUNTIME_REVIEW_READY_RE =
+  /ready for runtime structural validation and user review/;
 const PLAN_COMMIT_RE = /npm run plan:commit/;
 const PROVIDER_STAGE_ONLY_RE = /stage only the two canonical/u;
 const BEFORE_COMMITTING_RE = /Before committing materialization/u;
@@ -91,7 +92,7 @@ const PARTIAL_COMMIT_RE = /commit a partial result/u;
 const DRAFT_REVISION_MICROTASK_RE =
   /Do not edit plan files or create lifecycle tasks yourself/;
 const MATERIALIZATION_CONTEXT_RE =
-  /runtime-provided context is still for the Application Skeleton materialization task/;
+  /Core explicitly asks for a contract revision/;
 const USER_STACK_REPLACEMENT_RE =
   /If the user explicitly replaces a stack decision/;
 const NO_STACK_DETAIL_LOOP_RE =
@@ -110,9 +111,8 @@ const NO_CATEGORY_SPLIT_RE = /Do not split Product Part roots/;
 const PRODUCT_PART_PACKAGE_MANIFEST_RE =
   /Product Part roots unless the accepted contract explicitly declares a Cluster or Module as a standalone package/;
 const POST_MATERIALIZATION_RE =
-  /remove stale draft\/future claims from both artifacts/;
-const STALE_DEFERRED_NOTE_RE =
-  /deferred note that says the filesystem was not materialized/;
+  /updates `application-skeleton\.md` so it describes the current materialized state/;
+const STALE_DEFERRED_NOTE_RE = /no longer describes unmaterialized draft state/;
 const CANONICAL_ID_RE =
   /stable canonical `id` values.*legacy aliases `partId`, `clusterId`, and `moduleId` are optional/s;
 const ACCEPTED_FALSE_RE = /"accepted": false/;
@@ -134,9 +134,9 @@ const CONTRACT_CODE_READY_RE =
   /code-ready (?:installable|locally installed) project foundation/u;
 const CONTRACT_CODE_READY_LOCAL_RE =
   /code-ready locally installed project foundation/u;
-const CONTRACT_LOCAL_INSTALL_RE = /local clean install execution/u;
+const CONTRACT_LOCAL_INSTALL_RE = /local bootstrap install execution/u;
 const CONTRACT_NPM_CI_RE =
-  /npm ci` must be executed and root `node_modules` must exist/u;
+  /Core uses `npm install --include=dev` during first Application Skeleton bootstrap[\s\S]*`npm ci` belongs to later deterministic stages/u;
 const CONTRACT_REQUIRED_SCRIPTS_RE =
   /Every script listed in `projectFoundation\.requiredScripts` must be executed successfully/u;
 const CONTRACT_FRAMEWORK_SURFACES_RE =

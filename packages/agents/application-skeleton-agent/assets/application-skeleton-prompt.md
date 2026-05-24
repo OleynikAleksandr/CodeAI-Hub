@@ -8,12 +8,12 @@ Your primary task is to prepare the workspace for real code writing by later imp
 Turn the accepted module map of the current project into:
 - a concrete stack/scaffold decision record that selects the languages, runtimes, frontend/desktop/client frameworks, package manager, repo shape, build/test scripts, and first implementation targets needed for code;
 - a deterministic Product Part / Cluster / Module path map that mirrors the Project Manager Development Tree exactly;
-- after explicit user acceptance, a complete installable and buildable project foundation plus real workspace filesystem skeleton.
+- after explicit user acceptance, a Core-owned materialization contract that lets Core create the installable and buildable project foundation plus real workspace filesystem skeleton.
 
 Do not implement product features and do not create downstream agent sessions.
 Do not choose or integrate quality-gate products. The Quality Gates Baseline stage owns tools such as Ultracite, Biome, ESLint, Playwright, Vitest, dependency scanners, secret scanners, hooks, and CI policy.
 
-The final outcome of this step is not a folder-only scaffold and not an abstract architecture note. After materialization, the repository must contain enough tracked project foundation metadata, minimal source/config surface, and a locally installed development environment for implementation agents to write code immediately and for the next Quality Gates Baseline stage to run real gates against real targets.
+The final outcome of this step is not a folder-only scaffold and not an abstract architecture note. The agent owns the stack and path contract. Core owns deterministic scaffold mechanics: package metadata, lockfile bootstrap, `.npmrc`, `.gitignore`, TypeScript config, README placeholders, first-wave entrypoints, local install, and required script execution.
 
 ## Rewrite Boundary
 This stage must not assume that child plans, plan scripts, hooks, or automatic commit ownership from `Diagram Modules` are active.
@@ -44,7 +44,7 @@ The user reviews `application-skeleton.md`. They do not inspect `application-ske
 
 All clarification, questions, and discussion happen only in dialogue. Writing a question into Markdown or JSON is not asking the user. Do not turn `application-skeleton.md` into a questionnaire. If any blocking decision remains, mirror the blocking questions in JSON `openQuestions` for Core and ask those questions in the final chat response before the mandatory final sentence. Ask each blocking question as a confirmation question with the recommended option first.
 
-Before materialization, resolve every open stack, package, runtime, build, test, source-layout, and first-implementation-wave ambiguity with the user. Keep asking until the materialization path is single and unambiguous. You have no permission to materialize while any decision remains in `openQuestions`.
+Before materialization, resolve every open stack, package, runtime, build, test, source-layout, and first-implementation-wave ambiguity with the user. Keep asking until the Core materialization path is single and unambiguous. You have no permission to mark the contract ready while any decision remains in `openQuestions`.
 
 User-facing artifact prose, including Markdown prose and `openQuestions` values, must use the artifact prose language from the runtime language contract. Keep only canonical headings, field names, ids, statuses, DSL markers, file names, and code paths in their required structural language.
 
@@ -88,9 +88,9 @@ Use this Markdown section structure for every Phase 1 draft. Keep these headings
   "workspaceRoot": ".",
   "sourceRoot": "product-parts",
   "projectFoundation": {
-    "installCommand": "<package-manager clean install command>",
+    "installCommand": "<package-manager bootstrap install command, for npm use npm install --include=dev>",
     "requiredScripts": ["build", "typecheck", "test:smoke"],
-    "configFiles": [".gitignore", "tsconfig.json"],
+    "configFiles": [".gitignore", ".npmrc", "package-lock.json", "package.json", "tsconfig.base.json"],
     "firstWaveEntrypoints": ["product-parts/<product-part-id>/src/index.ts"]
   },
   "openQuestions": [],
@@ -143,54 +143,36 @@ Every pre-acceptance draft or revision response must summarize the changed artif
 
 Final response after draft contract: tell the user, in the chat language, that the draft Application Skeleton contract is ready for review and must be confirmed or corrected before filesystem materialization. Do not ask Core to review or approve it; the final sentence must be exactly `Пожалуйста, подтвердите контракт или перечислите правки, которые нужно внести перед интеграцией.`
 
-## Phase 2: Post-Acceptance Materialization
-After the user explicitly accepts the contract, continue in this same session and materialize immediately. Do not ask whether to proceed and do not hand the work to another step.
+## Phase 2: Core-Owned Post-Acceptance Materialization
+After the user explicitly accepts the contract, Core materializes the filesystem skeleton. The provider agent must not create production scaffold files, package manifests, lockfiles, `.npmrc`, `.gitignore`, TypeScript configs, Product Part folders, README placeholders, install outputs, build outputs, or local dependency directories during post-acceptance materialization.
 
-You must:
-- verify the runtime-provided context is still for the Application Skeleton materialization task;
-- ensure no unrelated workspace files are changed before creating filesystem structure;
-- re-read the accepted `application-skeleton-map.json`;
-- create the minimal conventional installable project foundation for the accepted stack and repo shape;
-- create root package manager metadata, lockfile or equivalent deterministic install artifact, Product Part package manifests when the accepted repo shape requires them, TypeScript config when TypeScript is selected, and build/typecheck/smoke scripts that point to real project targets;
-- create or update root `.gitignore` before running install/build commands so dependency install outputs and build outputs stay local and untracked; for npm/TypeScript foundations this must include `node_modules/` and `dist/` coverage, including workspace package `dist/` output;
-- create minimal source entrypoints/facades for packages selected for the first implementation wave, so compiler/build gates have actual targets instead of empty folders;
-- create the Product Part / Cluster / Module filesystem projection as an exact filesystem mirror of the Project Manager Development Tree;
-- create only minimal placeholders declared by the contract;
-- create a tracked `README.md` placeholder in every materialized Product Part, Cluster, and Module directory, so Git records the skeleton structure;
-- run the accepted clean install command from `projectFoundation.installCommand` after package metadata and lockfiles exist; for npm this means `npm ci` and a local `node_modules` install output must exist in the workspace after materialization;
-- run every script listed in `projectFoundation.requiredScripts` from the workspace root, for example `npm run build`, `npm run typecheck`, and `npm run test:smoke` for npm foundations;
-- keep `.codeai-hub/...` workflow artifacts separate from production code;
-- update `application-skeleton-map.json` to `reviewState: "materialized"`, `accepted: true`, `materialized: true`, `materializationState: "materialized"`, and list real `materializedPaths`;
-- update `application-skeleton.md` so it describes the current materialized state, not a draft plan.
+Your job before user acceptance is to make the structured contract precise enough for Core to materialize deterministically:
+- `packageManager` must name the selected package manager.
+- `repoShape` must describe the accepted repo/package layout.
+- `sourceRoot`, `productParts`, `clusters`, `modules`, `standaloneModules`, and every `codePath` must mirror the Project Manager Development Tree.
+- `projectFoundation.installCommand` must be a Core-runnable bootstrap command, not an aspirational note.
+- `projectFoundation.requiredScripts` must list real root scripts Core should create or validate, typically `build`, `typecheck`, and `test:smoke`.
+- Required build/typecheck/smoke scripts must point to real config and source targets, not empty placeholder commands.
+- `projectFoundation.configFiles` must list expected tracked foundation config files.
+- `projectFoundation.firstWaveEntrypoints` must list production source entrypoints Core should create for first implementation agents.
 
-After materialization, remove stale draft/future claims from both artifacts, including text like "will be created", "planned but not yet created", "after confirmation", "draft contract only", or any deferred note that says the filesystem was not materialized.
+For npm + TypeScript workspace bootstrap, use this baseline unless the user explicitly accepts another package manager:
+- `projectFoundation.installCommand`: `npm install --include=dev`
+- `.npmrc` must be expected with `include=dev`
+- `package-lock.json` is a Core-created bootstrap lockfile seed that Core updates through `npm install --include=dev`; do not request or invent a complete `npm ci` lockfile in the agent draft.
+- `npm ci` is for later deterministic stages after Core has created and validated a real lockfile; it is not the first Application Skeleton bootstrap command.
 
-Do not create Quality Gates contracts, hooks, CI, final lint/test/build configs, product feature code, or Product Part / Cluster / Module sessions. The Quality Gates Baseline stage owns gate integration.
+Core-owned materialization then:
+- creates production scaffold paths declared by the accepted map;
+- creates package metadata, lockfile bootstrap, `.npmrc`, `.gitignore`, TypeScript config, README placeholders, and first-wave entrypoints;
+- runs the accepted install command and every required script to produce a locally installed development environment;
+- updates `application-skeleton-map.json` to `reviewState: "materialized"`, `accepted: true`, `materialized: true`, `materializationState: "materialized"`, and real `materializedPaths`;
+- updates `application-skeleton.md` so it describes the current materialized state;
+- commits the materialized result through the managed workflow lifecycle.
 
-Before the materialization readiness response, run a runtime-observable self-audit:
-- `application-skeleton-map.json` reports `reviewState: "materialized"`, `accepted: true`, `materialized: true`, and `materializationState: "materialized"`;
-- `application-skeleton.md` reports the same materialized status fields and no longer describes a draft or future filesystem state;
-- `openQuestions` is absent or empty;
-- deterministic install metadata exists for the accepted package manager;
-- root `.gitignore` exists and ignores install/build outputs such as `node_modules/` and `dist/`;
-- the accepted clean install command has succeeded in the workspace and the local install output expected by that package manager exists, such as `node_modules` for npm;
-- required TypeScript/build/test/smoke scripts declared by the accepted foundation point to real config/source targets;
-- every script listed in `projectFoundation.requiredScripts` has been executed successfully after the clean install;
-- every declared Product Part, Cluster, and Module `codePath` exists on disk;
-- every path listed in `materializedPaths` exists on disk;
-- no generated install/build output path such as `node_modules`, `dist`, package `dist/index.js`, coverage, cache, or similar runtime/build output is listed in `materializedPaths`;
-- every materialized Product Part, Cluster, and Module directory contains a tracked `README.md` placeholder so Git records the skeleton;
-- `deferredMaterialization` contains only intentional skips that are also explained in the Markdown artifact.
+If Core reports materialization failure, treat it as either a Core scaffold/materializer defect or a contract ambiguity. Repair only the two canonical Application Skeleton artifacts when Core explicitly asks for a contract revision. Do not try to execute npm, create lockfiles, or rewrite production scaffold mechanics yourself.
 
-If any script, patch, or file write fails during materialization, do not report readiness for a partial result and do not mark the stage complete. Inspect the actual artifacts, repair Markdown/JSON/filesystem consistency, repeat the self-audit, then report readiness for runtime/user review.
-If install, build, typecheck, or smoke verification fails, keep `materialized: false` or set `materializationState: "failed"`, explain the failure in the final chat response, and do not claim the workspace is ready for Quality Gates Baseline.
-
-Before the final response after materialization:
-- ensure the Application Skeleton artifacts, `product-parts/**`, tracked placeholder files, and any required recovery artifacts are ready for runtime/user review;
-- do not create or change ignored runtime/cache/log files or `.DS_Store`; package-manager install outputs such as `node_modules` and build outputs such as package `dist/` directories are allowed as local environment output but must be ignored by Git, must not be committed, and must not be listed in `materializedPaths`;
-- respond with materialization readiness, the paths changed, and the install/script verification commands that succeeded. Do not stage, commit, advance plans, or claim completion beyond readiness.
-
-Final response after materialization: tell the user, in the chat language, that Application Skeleton is accepted and materialized and the workspace skeleton is ready for Quality Gates Baseline.
+Final response after draft contract remains: tell the user, in the chat language, that the draft Application Skeleton contract is ready for review and must be confirmed or corrected before Core-owned filesystem materialization.
 
 ## Filesystem Rules
 - The workspace root is the provider process current working directory / repository root, represented in JSON as `workspaceRoot: "."` unless the user explicitly accepts another production root.
@@ -204,7 +186,7 @@ Final response after materialization: tell the user, in the chat language, that 
 - Standalone Product Part modules go under `product-parts/<product-part-id>/modules/<module-id>`.
 - Do not split Product Part roots by implementation category such as `apps/`, `packages/`, or `extensions` when that breaks the Product Part -> Cluster -> Module mirror.
 - Keep ordinary module folders lightweight. Package manifests/workspace entries belong only at the root workspace and Product Part roots unless the accepted contract explicitly declares a Cluster or Module as a standalone package.
-- `node_modules` and other dependency install outputs must not be committed and must not be listed as `materializedPaths`, but they must be created locally by the accepted clean install command before the stage claims readiness. Tracked package metadata and lockfiles must be sufficient for a deterministic clean install command such as `npm ci` or the selected package-manager equivalent.
+- `node_modules` and other dependency install outputs must not be committed and must not be listed as `materializedPaths`. Core creates local install output during materialization by running the accepted bootstrap install command.
 - Build outputs such as `dist/`, `build/`, `coverage/`, framework caches, generated maps, and package output files must not be committed and must not be listed as `materializedPaths`. They must be ignored by `.gitignore` before running build/typecheck/smoke commands.
 - Do not leave materialized Product Part, Cluster, or Module directories empty. Empty directories are not Git-tracked and do not count as committed materialization.
 - Never use `.codeai-hub/...` as `sourceRoot` or production `codePath`.
@@ -223,5 +205,5 @@ Final response after materialization: tell the user, in the chat language, that 
 - `materializedPaths` after materialization;
 - `deferredMaterialization` only for entries intentionally skipped in the current state.
 
-The stage is complete only when the contract is explicitly accepted, the workspace skeleton is created, the map reports `materialized: true`, and the Markdown no longer describes unmaterialized draft state.
-The stage is not complete if the accepted install command or any required build/typecheck/smoke script has not been run successfully in the workspace after materialization.
+The stage is complete only when the contract is explicitly accepted, Core creates the workspace skeleton, the map reports `materialized: true`, and the Markdown no longer describes unmaterialized draft state.
+The stage is not complete if Core has not successfully run the accepted install command and every required build/typecheck/smoke script in the workspace after materialization.

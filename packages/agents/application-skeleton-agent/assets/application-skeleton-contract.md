@@ -6,7 +6,7 @@
 
 ## Step Outcome
 - Application Skeleton materialization must produce a code-ready locally installed project foundation, not only a Product Part folder map.
-- The step owns stack, package/workspace layout, deterministic install metadata, local clean install execution, minimal source/facade entrypoints, and successful build/typecheck/smoke script execution needed before implementation agents can write code and Quality Gates can run.
+- The agent owns stack, package/workspace layout, deterministic install metadata, minimal source/facade entrypoint declarations, and the accepted script contract. Core owns filesystem scaffold materialization, local bootstrap install execution, and successful build/typecheck/smoke script execution needed before implementation agents can write code and Quality Gates can run.
 - The step owns concrete framework/runtime baseline decisions for visible implementation surfaces such as Project Manager, launcher, desktop shell, webview, frontend, VS Code extension UI, mobile client, browser client, and API server.
 - The step does not own quality-gate product selection or integration. Ultracite, Biome, ESLint, Playwright, Vitest, dependency scanners, secret scanners, hooks, CI policy, and similar gate tooling belong to Quality Gates Baseline.
 - The agent must not materialize while any stack, runtime, package, build, test, source-layout, or first-wave entrypoint ambiguity remains unresolved.
@@ -37,9 +37,9 @@
   },
   "sourceRoot": "product-parts",
   "projectFoundation": {
-    "installCommand": "npm ci",
+    "installCommand": "npm install --include=dev",
     "requiredScripts": ["build", "typecheck", "test:smoke"],
-    "configFiles": [".gitignore", "tsconfig.json"],
+    "configFiles": [".gitignore", ".npmrc", "package-lock.json", "package.json", "tsconfig.base.json"],
     "firstWaveEntrypoints": [
       "product-parts/product-part-id/src/index.ts"
     ]
@@ -79,7 +79,7 @@
 - `productParts` must be an array.
 - `reviewState` must be `draft`, `accepted`, or `materialized`; it must not be `null`.
 - `stack.languages`, `stack.frameworks`, and `stack.runtimes` must be arrays. Do not replace them with scalar fields such as `stack.language`, `stack.framework`, or `stack.runtime`.
-- `projectFoundation` must describe the accepted implementation foundation: install command, required scripts, config files, workspace/package layout decisions, and first-wave source/facade entrypoints.
+- `projectFoundation` must describe the accepted implementation foundation contract: Core-runnable bootstrap install command, required scripts, config files, workspace/package layout decisions, and first-wave source/facade entrypoints.
 - `openQuestions` must be an array. It must be empty before materialization. Any non-empty entry blocks materialization and must be asked to the user in dialogue.
 - When `openQuestions` is non-empty, `application-skeleton.md` must not become a questionnaire. It should record the current proposed/agreed foundation state and make clear that confirmation is not ready until dialogue decisions are resolved, without listing the questions as Markdown prompts.
 - User-facing prose in Markdown and `openQuestions` must use the artifact prose language from the runtime language contract. Canonical headings, JSON field names, ids, statuses, paths, and code tokens remain structural and are not localized.
@@ -97,13 +97,13 @@
 - Clustered module paths must be nested under their owning cluster path: `<productPartPath>/clusters/<cluster-id>/modules/<module-id>`.
 - Standalone modules must use `standaloneModules`; do not mix cluster-owned modules into a Product Part-level `modules` array.
 - Package manifests/workspace entries should exist only at the root workspace and Product Part roots unless the accepted contract explicitly declares a Cluster or Module as its own package.
-- `node_modules` and other install outputs must not be listed as materialized output, but tracked package metadata and lockfiles must be sufficient for a deterministic clean install.
-- `node_modules` and other install outputs must not be committed or listed as `materializedPaths`, but they must exist locally after materialization when the selected package manager creates them. For npm foundations, `npm ci` must be executed and root `node_modules` must exist before readiness is claimed.
-- Root `.gitignore` must exist after materialization and must ignore dependency install outputs and build outputs. For npm/TypeScript foundations it must cover `node_modules/` and package `dist/` outputs before `npm ci`, build, typecheck, or smoke commands are reported as successful readiness evidence.
+- `node_modules` and other install outputs must not be listed as materialized output, but tracked package metadata and lockfiles must be sufficient for Core to run the accepted bootstrap install.
+- `node_modules` and other install outputs must not be committed or listed as `materializedPaths`, but they must exist locally after Core materialization when the selected package manager creates them. For npm foundations, Core uses `npm install --include=dev` during first Application Skeleton bootstrap; `npm ci` belongs to later deterministic stages after Core has created and validated the real lockfile.
+- Root `.gitignore` must exist after materialization and must ignore dependency install outputs, build outputs, and local runtime state. For npm/TypeScript foundations it must cover `node_modules/`, package `dist/` outputs, and `.codeai-hub/state/` before install, build, typecheck, or smoke commands are reported as successful readiness evidence.
 - Build outputs such as `dist/`, `build/`, `coverage/`, framework caches, generated maps, and package output files must not be committed and must not be listed in `materializedPaths`.
 - When TypeScript is selected, a tracked TypeScript config must exist after materialization.
 - Required build/typecheck/smoke scripts must point to real config and source targets. They must not pass only because no source files or compiler targets exist.
-- Every script listed in `projectFoundation.requiredScripts` must be executed successfully after the clean install. For npm foundations, run these as `npm run <script>` from the workspace root.
+- Every script listed in `projectFoundation.requiredScripts` must be executed successfully by Core after the bootstrap install. For npm foundations, Core runs these as `npm run <script>` from the workspace root.
 - First-wave implementation packages must expose minimal source entrypoints/facades after materialization so later quality gates validate real targets.
 - `accepted` must stay `false` until the user explicitly accepts the skeleton.
 - `materialized` must stay `false` until the workspace filesystem skeleton has actually been created.
@@ -113,6 +113,6 @@
 - `materializedPaths` must list real workspace files or directories created or verified during post-acceptance materialization, including tracked placeholders needed to preserve empty scaffold folders in Git.
 - `deferredMaterialization` must explain any mapped folder or scaffold element that was intentionally not created.
 - After materialization, `application-skeleton.md` must describe the current materialized state and must not keep draft-only/future-tense claims such as "will be created after confirmation".
-- Before the final materialization response, the stage must leave the materialized artifacts and the local development environment ready for runtime/user review. Do not stage, commit, advance plans, or claim completion beyond readiness.
-- The final materialization response must name the successful clean install command and required script commands. If any install/build/typecheck/smoke command fails, the response must report the failure and the map must not claim `materialized: true`.
+- Before the final materialization response, Core must leave the materialized artifacts and the local development environment ready for runtime/user review.
+- The final materialization response must name the successful bootstrap install command and required script commands. If any install/build/typecheck/smoke command fails, Core must report the failure and the map must not claim `materialized: true`.
 - Quality gate commands may be mentioned only as downstream examples. The dedicated Quality Gates stage owns current-tooling research, accepted command contract, dependencies for gate tools, hook wiring, CI policy, and gate integration.
