@@ -216,7 +216,7 @@ export const openDraftStagePlan = (content: string): string => {
   const withDraftTask = content.replace(
     taskPattern,
     (_line, number) =>
-      `${number}. [IN_PROGRESS] \`${DRAFT_TASK_ID}\` Draft the Quality Gates research report and contract artifacts, then stop for Core validation (scope: \`.codeai-hub/**/quality_gates/quality-gates-research.md, .codeai-hub/**/quality_gates/quality-gates-research.json, .codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json\`; expected commit: \`${DRAFT_COMMIT_MESSAGE}\`).`
+      `${number}. [IN_PROGRESS] \`${DRAFT_TASK_ID}\` Draft only the Quality Gates research artifacts, then stop for Core validation and user review (scope: \`.codeai-hub/**/quality_gates/quality-gates-research.md, .codeai-hub/**/quality_gates/quality-gates-research.json\`; expected commit: \`${DRAFT_COMMIT_MESSAGE}\`).`
   );
   return withDraftTask.replace(
     commitPattern,

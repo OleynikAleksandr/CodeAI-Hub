@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "073775c98",
+  "lastRecordedCommit": "ffe7f8af4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream44.task4",
-  "expectedCommitMessage": "fix: scope quality gates research repairs",
+  "currentTaskId": "phase8.stream44.task5",
+  "expectedCommitMessage": "fix: describe quality gates research task",
   "debt": {
-    "expectedCommitMessage": "fix: scope quality gates research repairs",
-    "preCommitHead": "073775c98",
+    "expectedCommitMessage": "fix: describe quality gates research task",
+    "preCommitHead": "ffe7f8af4",
     "stage": "commit_pending",
-    "taskId": "phase8.stream44.task4"
+    "taskId": "phase8.stream44.task5"
   }
 }
 ```
@@ -493,9 +493,9 @@
 311. [DONE] `phase8.stream44.task3` Add bundled prompt regression coverage for the exact research heading, research JSON skeleton, contract heading, and phase separation (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research templates`).
 312. [DONE] Git Commit: `test: cover quality gates research templates` (hash: 073775c98)
 313. [DONE] `phase8.stream44.task4` Tighten Quality Gates repair prompts and stage plan wording so research-phase repairs target only research artifacts and never ask for contract artifacts before research user acceptance (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: scope quality gates research repairs`).
-314. [PENDING] Git Commit: `fix: scope quality gates research repairs` (hash: TBD)
-315. [TODO] `phase8.stream44.task5` Align Quality Gates stage-plan wording with the research-only first pass without changing managed state semantics (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, doc/TODO/todo-plan.md`; expected commit: `fix: describe quality gates research task`).
-316. [TODO] Git Commit: `fix: describe quality gates research task` (hash: TBD)
+314. [DONE] Git Commit: `fix: scope quality gates research repairs` (hash: ffe7f8af4)
+315. [DONE] `phase8.stream44.task5` Align Quality Gates stage-plan wording with the research-only first pass without changing managed state semantics (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, doc/TODO/todo-plan.md`; expected commit: `fix: describe quality gates research task`).
+316. [PENDING] Git Commit: `fix: describe quality gates research task` (hash: TBD)
 317. [TODO] `phase8.stream44.task6` Run targeted Core prompt/Quality Gates tests, Core build, webview build, and plan validation for the research-first prompt fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 318. [TODO] `phase8.stream44.task7` Update release-facing docs for the v1.2.341 Quality Gates research-first prompt build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates research prompt release`).
 319. [TODO] Git Commit: `docs: prepare quality gates research prompt release` (hash: TBD)
