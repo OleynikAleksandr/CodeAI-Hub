@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "f2651cafe",
+  "lastRecordedCommit": "0205eca61",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream51.task3",
-  "expectedCommitMessage": "test: cover cluster workflow ordering",
+  "currentTaskId": "phase8.stream52.task1",
+  "expectedCommitMessage": "docs: prepare cluster workflow ordering release",
   "debt": {
-    "expectedCommitMessage": "test: cover cluster workflow ordering",
-    "preCommitHead": "f2651cafe",
+    "expectedCommitMessage": "docs: prepare cluster workflow ordering release",
+    "preCommitHead": "0205eca61",
     "stage": "commit_pending",
-    "taskId": "phase8.stream51.task3"
+    "taskId": "phase8.stream52.task1"
   }
 }
 ```
@@ -572,9 +572,18 @@
 375. [DONE] `phase8.stream51.task2` Parse and place cluster workflow operation nodes before module nodes in Project Manager without changing existing tree styling (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix: place cluster workflow before modules`).
 376. [DONE] Git Commit: `fix: place cluster workflow before modules` (hash: f2651cafe)
 377. [DONE] `phase8.stream51.task3` Add regression coverage for cluster operation parsing and ordering before modules (scope: `src/client/project-manager/services/workflow-state-client.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover cluster workflow ordering`).
-378. [PENDING] Git Commit: `test: cover cluster workflow ordering` (hash: TBD)
-379. [TODO] `phase8.stream51.task4` Run targeted Core/Project Manager tests and builds for cluster workflow node ordering (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-380. [TODO] `phase8.stream51.task5` User confirms whether to build a replacement release after cluster workflow node ordering is verified (scope: release confirmation gate; no commit expected).
+378. [DONE] Git Commit: `test: cover cluster workflow ordering` (hash: 0205eca61)
+379. [DONE] `phase8.stream51.task4` Run targeted Core/Project Manager tests and builds for cluster workflow node ordering (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: targeted Project Manager parser/tree tests passed; Core build, webview typecheck, Project Manager build, and plan validation passed.
+380. [DONE] `phase8.stream51.task5` User confirms whether to build a replacement release after cluster workflow node ordering is verified (scope: release confirmation gate; no commit expected). Result: User requested a replacement release build on 2026-05-24 after cluster workflow node ordering verification.
+
+### Stream: Release Build — Cluster Workflow Node Ordering
+381. [DONE] `phase8.stream52.task1` Update release-facing docs for the v1.2.345 cluster workflow node ordering build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare cluster workflow ordering release`).
+382. [PENDING] Git Commit: `docs: prepare cluster workflow ordering release` (hash: TBD)
+383. [TODO] `phase8.stream52.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build cluster workflow ordering release`).
+384. [TODO] Git Commit: `chore: build cluster workflow ordering release` (hash: TBD)
+385. [TODO] `phase8.stream52.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package cluster workflow ordering vsix`).
+386. [TODO] Git Commit: `chore: package cluster workflow ordering vsix` (hash: TBD)
+387. [TODO] `phase8.stream52.task4` User installs the generated v1.2.345 VSIX and verifies cluster workflow nodes render before module nodes while preserving existing tree lines and styling (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

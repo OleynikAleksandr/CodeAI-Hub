@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.345] - 2026-05-24
+### Fixed
+- **Cluster workflow nodes now render before modules.** Core projects cluster-owned `Workers` and `Integration` operations in the Development Tree snapshot, and Project Manager places them first inside the cluster before module nodes while preserving the existing tree row styling and connector geometry.
+- **Development Tree snapshots now include cluster operations.** The client parser keeps `cluster.operations` from the Core-owned snapshot instead of relying on Project Manager-local assumptions.
+
+### Tests
+- `npx tsx --test src/client/project-manager/services/workflow-state-client.test.ts src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+
 ## [1.2.344] - 2026-05-24
 ### Fixed
 - **Managed Clear resets left-sidebar completion markers.** Core now prunes the cleared workflow stage and all downstream managed stages from the workspace-level managed ledger after `Clear`, so Project Manager receives grey/todo statuses from the Core-owned workflow snapshot instead of stale green `completed` markers.
