@@ -129,6 +129,53 @@ test("workflow step clear uses Git rollback for Quality Gates tracked workspace 
   }
 });
 
+test("workflow step clear uses Git rollback for Diagram Modules development tree state", async () => {
+  const workspaceRoot = await createRepository();
+  const resetCalls: string[] = [];
+  try {
+    const virtualSimulationPath = `.codeai-hub/${WORKSPACE_SLUG}/virtual_simulation/final-virtual-simulation.md`;
+    const devTreeRoot = `.codeai-hub/${WORKSPACE_SLUG}/development_tree`;
+    const devTreePath = `${devTreeRoot}/materialized/product-parts/core/index.md`;
+    const continuityPath = `.codeai-hub/${WORKSPACE_SLUG}/continuity/development_tree/index.json`;
+    const todoTreePath =
+      "doc/TODO/stages/development-tree/product-parts/core/todo-plan.md";
+    await writeWorkspaceFile(workspaceRoot, virtualSimulationPath);
+    commitAll(workspaceRoot, "docs: accept virtual simulation");
+    await writeWorkspaceFile(workspaceRoot, devTreePath);
+    await writeWorkspaceFile(workspaceRoot, continuityPath, '{"valid":true}\n');
+    await writeWorkspaceFile(workspaceRoot, todoTreePath);
+    commitAll(workspaceRoot, "feat: materialize diagram modules tree");
+    await writeWorkspaceFile(workspaceRoot, `${devTreeRoot}/untracked.tmp`);
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+        target: { kind: "workflow_stage", stage: "diagram_modules" },
+      },
+      resetCalls,
+      sessionManager: new SessionManager(),
+    });
+    const payload = result.payload as {
+      readonly gitRollback?: { readonly rollbackCommit?: string | null };
+    };
+
+    assert.equal(result.statusCode, 200);
+    assert.match(payload.gitRollback?.rollbackCommit ?? "", GIT_HASH_RE);
+    assert.equal(
+      await exists(path.join(workspaceRoot, virtualSimulationPath)),
+      true
+    );
+    assert.equal(await exists(path.join(workspaceRoot, devTreeRoot)), false);
+    assert.equal(await exists(path.join(workspaceRoot, continuityPath)), false);
+    assert.equal(await exists(path.join(workspaceRoot, todoTreePath)), false);
+    assert.equal(git(workspaceRoot, ["status", "--short"]), "");
+    assert.deepEqual(resetCalls, [WORKSPACE_SLUG]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("workflow step clear refuses managed-stage path cleanup when Git is missing", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-clear-no-git-")

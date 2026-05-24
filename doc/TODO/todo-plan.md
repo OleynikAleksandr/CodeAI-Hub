@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "df1c9ff9a",
+  "lastRecordedCommit": "99ee042b2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream39.task1",
-  "expectedCommitMessage": "fix: cover diagram modules git clear boundary",
+  "currentTaskId": "phase8.stream39.task2",
+  "expectedCommitMessage": "test: cover diagram modules clear service rollback",
   "debt": {
-    "expectedCommitMessage": "fix: cover diagram modules git clear boundary",
-    "preCommitHead": "df1c9ff9a",
+    "expectedCommitMessage": "test: cover diagram modules clear service rollback",
+    "preCommitHead": "99ee042b2",
     "stage": "commit_pending",
-    "taskId": "phase8.stream39.task1"
+    "taskId": "phase8.stream39.task2"
   }
 }
 ```
@@ -443,9 +443,9 @@
 
 ### Stream: Git-Backed Clear Boundary Coverage
 273. [DONE] `phase8.stream39.task1` Extend Git-backed Clear boundary and cleanup coverage for Diagram Modules materialized `development_tree` state and Application Skeleton generated product-parts residue (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: cover diagram modules git clear boundary`).
-274. [PENDING] Git Commit: `fix: cover diagram modules git clear boundary` (hash: TBD)
-275. [TODO] `phase8.stream39.task2` Cover the Core workflow Clear service path for Diagram Modules Git rollback from the Project Manager command surface (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules clear service rollback`).
-276. [TODO] Git Commit: `test: cover diagram modules clear service rollback` (hash: TBD)
+274. [DONE] Git Commit: `fix: cover diagram modules git clear boundary` (hash: 99ee042b2)
+275. [DONE] `phase8.stream39.task2` Cover the Core workflow Clear service path for Diagram Modules Git rollback from the Project Manager command surface (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules clear service rollback`).
+276. [PENDING] Git Commit: `test: cover diagram modules clear service rollback` (hash: TBD)
 277. [TODO] `phase8.stream39.task3` Run targeted validation for Git rollback, workflow Clear service and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 278. [TODO] `phase8.stream39.task4` Wait for explicit user confirmation before building the next replacement release after Diagram Modules Clear boundary fix (scope: release confirmation gate; no commit expected).
 
