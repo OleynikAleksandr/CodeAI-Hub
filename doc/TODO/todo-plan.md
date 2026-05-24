@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "15ce41ff4",
+  "lastRecordedCommit": "c925a55df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream47.task7",
-  "expectedCommitMessage": "chore: package quality gates size policy vsix",
+  "currentTaskId": "phase8.stream49.task1",
+  "expectedCommitMessage": "fix: reset managed clear stage markers",
   "debt": {
-    "expectedCommitMessage": "chore: package quality gates size policy vsix",
-    "preCommitHead": "15ce41ff4",
+    "expectedCommitMessage": "fix: reset managed clear stage markers",
+    "preCommitHead": "c925a55df",
     "stage": "commit_pending",
-    "taskId": "phase8.stream47.task7"
+    "taskId": "phase8.stream49.task1"
   }
 }
 ```
@@ -548,8 +548,14 @@
 357. [DONE] `phase8.stream47.task6` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates size policy release`). Result: v1.2.343 tarballs created under `doc/tmp/releases/` for providers, Core, launcher, VS Code webview, and Project Manager.
 358. [DONE] Git Commit: `chore: build quality gates size policy release` (hash: 15ce41ff4)
 359. [DONE] `phase8.stream47.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates size policy vsix`). Result: `codeai-hub-1.2.343.vsix` created at 4.7M; SHA-256 `2709ad7d2d5ad156fb618b492693a7cf428fc5a10ef1151a3afd56723daa89ba`.
-360. [PENDING] Git Commit: `chore: package quality gates size policy vsix` (hash: TBD)
-361. [TODO] `phase8.stream47.task8` User installs the generated replacement VSIX and verifies Quality Gates integration no longer loops on `missing_required_size_policy_gate` and Clear works from Diagram Modules onward (scope: user workflow acceptance; no commit expected).
+360. [DONE] Git Commit: `chore: package quality gates size policy vsix` (hash: c925a55df)
+361. [BLOCKED] `phase8.stream47.task8` User installs the generated replacement VSIX and verifies Quality Gates integration no longer loops on `missing_required_size_policy_gate` and Clear works from Diagram Modules onward (scope: user workflow acceptance; no commit expected). Result: user acceptance found that Clear works, but Core leaves cleared/downstream managed workflow steps green in the left sidebar.
+
+### Stream: Managed Clear Stage Marker Reset
+362. [DONE] `phase8.stream49.task1` Reset Core-owned managed workflow completion/unlock markers for the cleared workflow stage and every downstream managed stage so Project Manager receives grey/todo statuses from the workflow snapshot after Clear (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear*, doc/TODO/todo-plan.md`; expected commit: `fix: reset managed clear stage markers`).
+363. [PENDING] Git Commit: `fix: reset managed clear stage markers` (hash: TBD)
+364. [TODO] `phase8.stream49.task2` Run targeted Clear status reset tests plus affected Core/Project Manager builds after the managed marker reset fix (scope: affected package tests/builds, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+365. [TODO] `phase8.stream49.task3` User confirms whether to build a replacement release after the Clear marker reset fix (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

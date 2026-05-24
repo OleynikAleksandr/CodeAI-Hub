@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -12,13 +19,17 @@ import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import { handleWorkflowStepClear } from "./workflow-step-clear-service";
 
+const FENCED_JSON_START_RE = /^```json\s*/u;
+const FENCED_JSON_END_RE = /\s*```$/u;
+
 const writeFileInWorkspace = async (
   workspaceRoot: string,
-  relativePath: string
+  relativePath: string,
+  content = "test\n"
 ): Promise<void> => {
   const absolutePath = path.join(workspaceRoot, relativePath);
   await mkdir(path.dirname(absolutePath), { recursive: true });
-  await writeFile(absolutePath, "test\n", "utf8");
+  await writeFile(absolutePath, content, "utf8");
 };
 
 const exists = async (targetPath: string): Promise<boolean> =>
@@ -323,6 +334,124 @@ test("workflow step clear removes a development tree node subtree only", async (
       false
     );
     assert.ok(sessionManager.getSession(siblingSession.id));
+    assert.deepEqual(resetCalls, [workspaceSlug]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow step clear resets managed workspace completion markers downstream", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-step-clear-markers-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sessionManager = new SessionManager();
+  const resetCalls: string[] = [];
+  const workspacePlanPath = "doc/TODO/workspace.plan.md";
+  try {
+    await writeFileInWorkspace(
+      workspaceRoot,
+      workspacePlanPath,
+      [
+        "# Workspace Plan",
+        "",
+        "<!-- codeai-workspace-plan-state:start -->",
+        "```json",
+        JSON.stringify(
+          {
+            acceptedCommits: [
+              {
+                hash: "diagram-hash",
+                message: "docs: accept diagram modules",
+                stage: "diagram_modules",
+              },
+              {
+                hash: "skeleton-hash",
+                message: "feat: materialize application skeleton",
+                stage: "application_skeleton",
+              },
+              {
+                hash: "gates-hash",
+                message: "feat: integrate quality gates",
+                stage: "quality_gates",
+              },
+            ],
+            activePlanPath: "doc/TODO/stages/quality-gates/todo-plan.md",
+            activeStage: "quality_gates",
+            completedStages: [
+              "diagram_modules",
+              "application_skeleton",
+              "quality_gates",
+            ],
+            lastAcceptedCommitHash: "gates-hash",
+            lastAcceptedCommitMessage: "feat: integrate quality gates",
+            unlockedStages: [
+              "diagram_modules",
+              "application_skeleton",
+              "quality_gates",
+            ],
+          },
+          null,
+          2
+        ),
+        "```",
+        "<!-- codeai-workspace-plan-state:end -->",
+        "",
+      ].join("\n")
+    );
+    for (const relativePath of [
+      `.codeai-hub/${workspaceSlug}/application_skeleton/application-skeleton.md`,
+      `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.md`,
+    ]) {
+      await writeFileInWorkspace(workspaceRoot, relativePath);
+    }
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug,
+        target: { kind: "workflow_stage", stage: "application_skeleton" },
+      },
+      resetCalls,
+      sessionManager,
+    });
+
+    const updatedPlan = await readFile(
+      path.join(workspaceRoot, workspacePlanPath),
+      "utf8"
+    );
+    const json = updatedPlan
+      .split("<!-- codeai-workspace-plan-state:start -->")[1]
+      ?.split("<!-- codeai-workspace-plan-state:end -->")[0]
+      ?.trim()
+      .replace(FENCED_JSON_START_RE, "")
+      .replace(FENCED_JSON_END_RE, "")
+      .trim();
+    const workspaceState = JSON.parse(json ?? "{}") as {
+      readonly acceptedCommits?: readonly { readonly stage?: string }[];
+      readonly activePlanPath?: string;
+      readonly activeStage?: string;
+      readonly completedStages?: readonly string[];
+      readonly lastAcceptedCommitHash?: string | null;
+      readonly unlockedStages?: readonly string[];
+    };
+
+    assert.equal(result.statusCode, 200);
+    assert.equal(workspaceState.activeStage, "application_skeleton");
+    assert.equal(
+      workspaceState.activePlanPath,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    assert.deepEqual(workspaceState.completedStages, ["diagram_modules"]);
+    assert.deepEqual(workspaceState.unlockedStages, [
+      "diagram_modules",
+      "application_skeleton",
+    ]);
+    assert.deepEqual(
+      workspaceState.acceptedCommits?.map((entry) => entry.stage),
+      ["diagram_modules"]
+    );
+    assert.equal(workspaceState.lastAcceptedCommitHash, "diagram-hash");
     assert.deepEqual(resetCalls, [workspaceSlug]);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

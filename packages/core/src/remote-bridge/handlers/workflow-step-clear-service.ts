@@ -17,6 +17,7 @@ import {
   pruneContinuityIndex,
 } from "./workflow-step-clear-continuity-support";
 import { collectWorkflowStepSessionCleanupPaths } from "./workflow-step-clear-session-cleanup";
+import { resetManagedWorkspacePlanAfterWorkflowClear } from "./workflow-step-clear-workspace-plan";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_CONFLICT = 409;
@@ -444,6 +445,13 @@ export const handleWorkflowStepClear = async (
       workspacePath: parsed.workspacePath,
       workspaceSlug: parsed.workspaceSlug,
     });
+    const workspacePlanReset =
+      parsed.target.kind === "workflow_stage"
+        ? await resetManagedWorkspacePlanAfterWorkflowClear({
+            stage: parsed.target.stage,
+            workspaceRoot: parsed.workspacePath,
+          })
+        : false;
     deps.resetWorkflowState(parsed.workspaceSlug);
     res.json({
       checkpointRestored,
@@ -451,6 +459,7 @@ export const handleWorkflowStepClear = async (
       gitRollback: gitRollbackAttempt,
       removedPaths,
       restoredPaths,
+      workspacePlanReset,
     });
   } catch (error) {
     deps.logger.warn("Failed to clear workflow step", {
