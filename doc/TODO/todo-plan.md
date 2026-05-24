@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "ae984c081",
+  "lastRecordedCommit": "a0a9c3d60",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream52.task3",
-  "expectedCommitMessage": "chore: package cluster workflow ordering vsix",
+  "currentTaskId": "phase8.stream53.task1",
+  "expectedCommitMessage": "fix: require git rollback for managed clear",
   "debt": {
-    "expectedCommitMessage": "chore: package cluster workflow ordering vsix",
-    "preCommitHead": "ae984c081",
+    "expectedCommitMessage": "fix: require git rollback for managed clear",
+    "preCommitHead": "a0a9c3d60",
     "stage": "commit_pending",
-    "taskId": "phase8.stream52.task3"
+    "taskId": "phase8.stream53.task1"
   }
 }
 ```
@@ -582,8 +582,14 @@
 383. [DONE] `phase8.stream52.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build cluster workflow ordering release`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully for v1.2.345; provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
 384. [DONE] Git Commit: `chore: build cluster workflow ordering release` (hash: ae984c081)
 385. [DONE] `phase8.stream52.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package cluster workflow ordering vsix`). Result: `codeai-hub-1.2.345.vsix` built successfully at 4.7M; SHA-256 `423ce269601995ae5e7ba89a376c20bc2dd892be17ccb3a58e08432a69ca7171`; SDK exclusions, local artefact validation, markdown links, duplication check and VSIX runtime package surface checks passed.
-386. [PENDING] Git Commit: `chore: package cluster workflow ordering vsix` (hash: TBD)
-387. [TODO] `phase8.stream52.task4` User installs the generated v1.2.345 VSIX and verifies cluster workflow nodes render before module nodes while preserving existing tree lines and styling (scope: user workflow acceptance; no commit expected).
+386. [DONE] Git Commit: `chore: package cluster workflow ordering vsix` (hash: a0a9c3d60)
+387. [BLOCKED] `phase8.stream52.task4` User installs the generated v1.2.345 VSIX and verifies cluster workflow nodes render before module nodes while preserving existing tree lines and styling (scope: user workflow acceptance; no commit expected). Blocked: user retest found clearing Quality Gates can leave tracked Quality Gates artifacts deleted in Git status instead of creating a Git rollback commit, which then blocks restart with a misleading `application-skeleton-map.json not found` message.
+
+### Stream: Managed Clear Git Rollback Enforcement
+388. [DONE] `phase8.stream53.task1` Stop managed workflow Clear from falling back to path deletion when a Git-managed rollback boundary is missing for Diagram Modules, Application Skeleton, or Quality Gates (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require git rollback for managed clear`).
+389. [PENDING] Git Commit: `fix: require git rollback for managed clear` (hash: TBD)
+390. [TODO] `phase8.stream53.task2` Run targeted managed Clear rollback tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+391. [TODO] `phase8.stream53.task3` Build replacement release after managed Clear rollback enforcement (scope: release confirmation already provided by user; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

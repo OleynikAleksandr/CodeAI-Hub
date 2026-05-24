@@ -37,11 +37,7 @@ const STAGE_TODO_DIRS: Record<WorkflowStageId, string> = {
   virtual_simulation: "virtual-simulation",
 };
 const WORKSPACE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
-const GIT_ROLLBACK_FALLBACK_REASONS = new Set([
-  "git_repository_missing",
-  "stage_commit_boundary_missing",
-  "stage_parent_boundary_missing",
-]);
+const GIT_ROLLBACK_FALLBACK_REASONS = new Set(["git_repository_missing"]);
 
 type ClearTarget =
   | { readonly kind: "workflow_stage"; readonly stage: WorkflowStageId }

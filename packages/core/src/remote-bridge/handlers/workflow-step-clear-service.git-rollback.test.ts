@@ -209,3 +209,43 @@ test("workflow step clear falls back to path cleanup when Git is missing", async
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
+
+test("workflow step clear refuses path cleanup when Git boundary is missing", async () => {
+  const workspaceRoot = await createRepository();
+  const resetCalls: string[] = [];
+  try {
+    const qualityArtifact = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`;
+    const qualityManagedPlan = "doc/TODO/stages/quality-gates/todo-plan.md";
+    await writeWorkspaceFile(workspaceRoot, qualityArtifact);
+    await writeWorkspaceFile(workspaceRoot, qualityManagedPlan);
+
+    const result = await runClear({
+      body: {
+        workspacePath: workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+        target: { kind: "workflow_stage", stage: "quality_gates" },
+      },
+      resetCalls,
+      sessionManager: new SessionManager(),
+    });
+    const payload = result.payload as {
+      readonly error?: string;
+      readonly gitRollback?: { readonly reason?: string | null };
+    };
+
+    assert.equal(result.statusCode, 409);
+    assert.equal(
+      payload.error,
+      "Unable to clear workflow step through Git rollback"
+    );
+    assert.equal(payload.gitRollback?.reason, "stage_commit_boundary_missing");
+    assert.equal(await exists(path.join(workspaceRoot, qualityArtifact)), true);
+    assert.equal(
+      await exists(path.join(workspaceRoot, qualityManagedPlan)),
+      true
+    );
+    assert.deepEqual(resetCalls, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
