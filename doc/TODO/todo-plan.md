@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "0c28e3184",
+  "lastRecordedCommit": "d0d3559bf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream67.task1",
-  "expectedCommitMessage": "docs: prepare clear last active release",
+  "currentTaskId": "phase8.stream67.task2",
+  "expectedCommitMessage": "chore: build clear last active release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare clear last active release",
-    "preCommitHead": "0c28e3184",
+    "expectedCommitMessage": "chore: build clear last active release",
+    "preCommitHead": "d0d3559bf",
     "stage": "commit_pending",
-    "taskId": "phase8.stream67.task1"
+    "taskId": "phase8.stream67.task2"
   }
 }
 ```
@@ -680,9 +680,9 @@
 
 ### Stream: Release Build — Clear Last Active Reset
 453. [DONE] `phase8.stream67.task1` Update release-facing docs for the v1.2.352 Clear last-active reset build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear last active release`).
-454. [PENDING] Git Commit: `docs: prepare clear last active release` (hash: TBD)
-455. [TODO] `phase8.stream67.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build clear last active release`).
-456. [TODO] Git Commit: `chore: build clear last active release` (hash: TBD)
+454. [DONE] Git Commit: `docs: prepare clear last active release` (hash: d0d3559bf)
+455. [DONE] `phase8.stream67.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build clear last active release`).
+456. [PENDING] Git Commit: `chore: build clear last active release` (hash: TBD)
 457. [TODO] `phase8.stream67.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
