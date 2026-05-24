@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "bcd2fff70",
+  "lastRecordedCommit": "2b69e165d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream44.task9",
-  "expectedCommitMessage": "chore: package quality gates research prompt vsix",
+  "currentTaskId": "phase8.stream45.task1",
+  "expectedCommitMessage": "fix: localize quality gates research artifact",
   "debt": {
-    "expectedCommitMessage": "chore: package quality gates research prompt vsix",
-    "preCommitHead": "bcd2fff70",
+    "expectedCommitMessage": "fix: localize quality gates research artifact",
+    "preCommitHead": "2b69e165d",
     "stage": "commit_pending",
-    "taskId": "phase8.stream44.task9"
+    "taskId": "phase8.stream45.task1"
   }
 }
 ```
@@ -502,8 +502,16 @@
 320. [DONE] `phase8.stream44.task8` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.341 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates research prompt release`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully for v1.2.341; provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
 321. [DONE] Git Commit: `chore: build quality gates research prompt release` (hash: bcd2fff70)
 322. [DONE] `phase8.stream44.task9` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates research prompt vsix`). Result: `codeai-hub-1.2.341.vsix` built successfully at 4.7M; SHA-256 `2d77f537f4d2bafac601915d311fd4afa2e5fefd7778390c2167e45a563ca50f`; SDK exclusions and runtime package surface checks passed.
-323. [PENDING] Git Commit: `chore: package quality gates research prompt vsix` (hash: TBD)
-324. [TODO] `phase8.stream44.task10` User installs the generated v1.2.341 VSIX and verifies Quality Gates starts with valid `# Quality Gates Research` artifacts before contract drafting (scope: user workflow acceptance; no commit expected).
+323. [DONE] Git Commit: `chore: package quality gates research prompt vsix` (hash: 2b69e165d)
+324. [BLOCKED] `phase8.stream44.task10` User installs the generated v1.2.341 VSIX and verifies Quality Gates starts with valid `# Quality Gates Research` artifacts before contract drafting (scope: user workflow acceptance; no commit expected). Blocked: user retest confirmed the research artifact shape is now correct, but `quality-gates-research.md` content is written in English instead of the user-facing chat language.
+
+### Stream: Quality Gates Research Artifact Localization
+325. [DONE] `phase8.stream45.task1` Add an explicit Quality Gates prompt requirement that `quality-gates-research.md` user-facing prose is written in the same language the agent uses with the user, while JSON field names and stable identifiers remain canonical (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: localize quality gates research artifact`).
+326. [PENDING] Git Commit: `fix: localize quality gates research artifact` (hash: TBD)
+327. [TODO] `phase8.stream45.task2` Add bundled prompt regression coverage for the research artifact language rule (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research artifact language`).
+328. [TODO] Git Commit: `test: cover quality gates research artifact language` (hash: TBD)
+329. [TODO] `phase8.stream45.task3` Run targeted Quality Gates prompt/template tests and Core plan validation after the localization prompt fix (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+330. [TODO] `phase8.stream45.task4` Prepare release-facing docs and build a replacement VSIX only after explicit release build confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md, package versions, release artifacts`; expected commit: pending confirmation).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

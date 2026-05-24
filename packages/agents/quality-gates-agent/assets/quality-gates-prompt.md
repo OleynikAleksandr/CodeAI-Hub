@@ -40,12 +40,13 @@ Research algorithm:
 
 1. Inspect the materialized skeleton and infer stack, repo shape, package manager, source roots, Product Part / Cluster / Module layout, and architecture constraints.
 2. Create `quality-gates-research.md` and `quality-gates-research.json`. This is the user-facing current-tooling research report and its structured validator sidecar.
-3. Compare realistic tooling strategies for that exact stack. Use runtime inputs, existing manifests/configs, explicit user preferences, and current official docs for the inferred language/framework/tooling ecosystem. If the active provider cannot use web/search tools, stop and report that the Quality Gates Research phase requires a research-capable provider.
-4. Prioritize tools and gate frameworks designed to work well with AI coding agents, agentic code review, or agent-enforced formatting/linting. Use [Ultracite](https://www.ultracite.ai) as the canonical example of an AI-agent-oriented quality gate, then compare it against stack-specific alternatives before recommending anything.
-5. For each recommended tool or gate, record what it is for, why it fits this stack, source URLs, tradeoff, required checks, and whether user approval is required.
-6. Treat the CodeAI Hub architectural invariant `source files and classes <= 500 lines` as a mandatory gate. Research how to enforce it for the detected stack, include it in the research recommendations, and mark it for contract carry-forward even if no third-party tool is needed.
-7. End `quality-gates-research.md` with a final section named `## Recommended Contract Carry-Forward`. In that section, list the exact tools/gates the agent recommends carrying into `quality-gates.md` / `quality-gates.json`, including the mandatory 500-line source/class gate, and briefly explain why each one should become part of the contract.
-8. Stop for Core validation and user review of the research report. Do not draft the Quality Gates contract in the same response.
+3. Write all user-facing prose in `quality-gates-research.md` in the same language you use to communicate with the user in chat. Keep the canonical heading `# Quality Gates Research`, source URLs, command names, gate ids, JSON field names, and schema values unchanged.
+4. Compare realistic tooling strategies for that exact stack. Use runtime inputs, existing manifests/configs, explicit user preferences, and current official docs for the inferred language/framework/tooling ecosystem. If the active provider cannot use web/search tools, stop and report that the Quality Gates Research phase requires a research-capable provider.
+5. Prioritize tools and gate frameworks designed to work well with AI coding agents, agentic code review, or agent-enforced formatting/linting. Use [Ultracite](https://www.ultracite.ai) as the canonical example of an AI-agent-oriented quality gate, then compare it against stack-specific alternatives before recommending anything.
+6. For each recommended tool or gate, record what it is for, why it fits this stack, source URLs, tradeoff, required checks, and whether user approval is required.
+7. Treat the CodeAI Hub architectural invariant `source files and classes <= 500 lines` as a mandatory gate. Research how to enforce it for the detected stack, include it in the research recommendations, and mark it for contract carry-forward even if no third-party tool is needed.
+8. End `quality-gates-research.md` with a final section named `## Recommended Contract Carry-Forward`. In that section, list the exact tools/gates the agent recommends carrying into `quality-gates.md` / `quality-gates.json`, including the mandatory 500-line source/class gate, and briefly explain why each one should become part of the contract.
+9. Stop for Core validation and user review of the research report. Do not draft the Quality Gates contract in the same response.
 
 Before the research-review response:
 
@@ -54,6 +55,8 @@ Before the research-review response:
 - do not stage, commit, advance plans, or claim completion beyond research readiness.
 
 Required `quality-gates-research.md` template:
+
+All prose placeholders in this Markdown template must be filled in the chat language used with the user. Keep the heading and section titles exactly as shown.
 
 ```markdown
 # Quality Gates Research
