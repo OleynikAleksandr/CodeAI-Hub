@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "d852c603c",
+  "lastRecordedCommit": "db8621895",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream57.task2",
-  "expectedCommitMessage": "chore: build release 1.2.347 artifacts",
+  "currentTaskId": "phase8.stream58.task1",
+  "expectedCommitMessage": "fix: align application skeleton materializer config files",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.347 artifacts",
-    "preCommitHead": "d852c603c",
+    "expectedCommitMessage": "fix: align application skeleton materializer config files",
+    "preCommitHead": "db8621895",
     "stage": "commit_pending",
-    "taskId": "phase8.stream57.task2"
+    "taskId": "phase8.stream58.task1"
   }
 }
 ```
@@ -622,8 +622,13 @@
 413. [DONE] `phase8.stream57.task1` Prepare release notes for the Clear/Undo repair release before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.347`).
 414. [DONE] Git Commit: `docs: prepare release 1.2.347` (hash: d852c603c)
 415. [DONE] `phase8.stream57.task2` Run `./scripts/build-all.sh` for v1.2.347 and commit generated package version/release artifact changes (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.347 artifacts`).
-416. [PENDING] Git Commit: `chore: build release 1.2.347 artifacts` (hash: TBD)
-417. [TODO] `phase8.stream57.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and leave scope active for user workflow acceptance (scope: release packaging output, `doc/TODO/todo-plan.md`; expected commit: no commit expected).
+416. [DONE] Git Commit: `chore: build release 1.2.347 artifacts` (hash: db8621895)
+417. [DONE] `phase8.stream57.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and leave scope active for user workflow acceptance (scope: release packaging output, `doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Release build v1.2.347 completed: build-all and build-release passed, VSIX codeai-hub-1.2.347.vsix created at 4.7M
+
+### Stream: Application Skeleton Materialization Config Alignment
+418. [DONE] `phase8.stream58.task1` Align Core-owned Application Skeleton materializer output with validator config-file contract so accepted materialization cannot write a materialized summary and then reject itself for missing root `tsconfig.json` (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align application skeleton materializer config files`).
+419. [PENDING] Git Commit: `fix: align application skeleton materializer config files` (hash: TBD)
+420. [TODO] `phase8.stream58.task2` Run targeted Application Skeleton materializer/validator tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

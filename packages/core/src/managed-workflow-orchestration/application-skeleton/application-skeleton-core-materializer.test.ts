@@ -65,7 +65,7 @@ const writeDraftMap = async (workspaceRoot: string): Promise<void> => {
           },
         ],
         projectFoundation: {
-          configFiles: [".gitignore"],
+          configFiles: [".gitignore", "tsconfig.json"],
           firstWaveEntrypoints: [
             "product-parts/core-runtime/src/core-entry.ts",
           ],
@@ -120,6 +120,7 @@ test("Core materializer creates scaffold and materialized state from accepted Ap
       ".npmrc",
       "package-lock.json",
       "package.json",
+      "tsconfig.json",
       "tsconfig.base.json",
       "product-parts/core-runtime/package.json",
       "product-parts/core-runtime/tsconfig.json",
@@ -166,10 +167,12 @@ test("Core materializer creates scaffold and materialized state from accepted Ap
       Array.isArray(foundation.configFiles) &&
         foundation.configFiles.includes(".npmrc") &&
         foundation.configFiles.includes("package-lock.json") &&
+        foundation.configFiles.includes("tsconfig.json") &&
         foundation.configFiles.includes("tsconfig.base.json")
     );
     assert.ok(result.materializedPaths.includes(".npmrc"));
     assert.ok(result.materializedPaths.includes("package-lock.json"));
+    assert.ok(result.materializedPaths.includes("tsconfig.json"));
     assert.ok(!result.materializedPaths.includes("node_modules"));
 
     const markdown = await readFile(

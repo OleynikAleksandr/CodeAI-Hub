@@ -184,7 +184,19 @@ const buildProductPartTsconfig = (): string =>
     2
   )}\n`;
 
-const buildRootTsconfig = (): string =>
+const buildRootWorkspaceTsconfig = (
+  productParts: readonly TreeNode[]
+): string =>
+  `${JSON.stringify(
+    {
+      files: [],
+      references: productParts.map((node) => ({ path: node.codePath })),
+    },
+    null,
+    2
+  )}\n`;
+
+const buildRootBaseTsconfig = (): string =>
   `${JSON.stringify(
     {
       compilerOptions: {
@@ -290,6 +302,7 @@ export class ApplicationSkeletonCoreMaterializer {
       ".npmrc",
       "package-lock.json",
       "package.json",
+      "tsconfig.json",
       "tsconfig.base.json",
       ...allNodes.flatMap((node) => [
         node.codePath,
@@ -337,6 +350,7 @@ export class ApplicationSkeletonCoreMaterializer {
         ".npmrc",
         "package-lock.json",
         "package.json",
+        "tsconfig.json",
         "tsconfig.base.json",
       ]),
       firstWaveEntrypoints,
@@ -394,7 +408,16 @@ export class ApplicationSkeletonCoreMaterializer {
         "package-lock.json",
         buildPackageLock(productParts)
       ),
-      this.writeFile(workspaceRoot, "tsconfig.base.json", buildRootTsconfig()),
+      this.writeFile(
+        workspaceRoot,
+        "tsconfig.json",
+        buildRootWorkspaceTsconfig(productParts)
+      ),
+      this.writeFile(
+        workspaceRoot,
+        "tsconfig.base.json",
+        buildRootBaseTsconfig()
+      ),
     ]);
   }
 
