@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "109a1f240",
+  "lastRecordedCommit": "6eaa375f3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream62.task1",
-  "expectedCommitMessage": "docs: prepare managed clear state isolation release",
+  "currentTaskId": "phase8.stream62.task2",
+  "expectedCommitMessage": "chore: build managed clear state isolation release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed clear state isolation release",
-    "preCommitHead": "109a1f240",
+    "expectedCommitMessage": "chore: build managed clear state isolation release",
+    "preCommitHead": "6eaa375f3",
     "stage": "commit_pending",
-    "taskId": "phase8.stream62.task1"
+    "taskId": "phase8.stream62.task2"
   }
 }
 ```
@@ -651,9 +651,9 @@
 
 ### Stream: Release Build — Managed Clear State Isolation
 434. [DONE] `phase8.stream62.task1` Update release-facing docs for the v1.2.350 managed Clear state isolation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed clear state isolation release`).
-435. [PENDING] Git Commit: `docs: prepare managed clear state isolation release` (hash: TBD)
-436. [TODO] `phase8.stream62.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed clear state isolation release`).
-437. [TODO] Git Commit: `chore: build managed clear state isolation release` (hash: TBD)
+435. [DONE] Git Commit: `docs: prepare managed clear state isolation release` (hash: 6eaa375f3)
+436. [DONE] `phase8.stream62.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed clear state isolation release`).
+437. [PENDING] Git Commit: `chore: build managed clear state isolation release` (hash: TBD)
 438. [TODO] `phase8.stream62.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
