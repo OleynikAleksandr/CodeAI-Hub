@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.348] - 2026-05-24
+### Fixed
+- **Application Skeleton materialization now writes the config files it validates.** Core now creates root `tsconfig.json` when the accepted Application Skeleton map declares it in `projectFoundation.configFiles`.
+- **Application Skeleton materialized state no longer self-rejects on `tsconfig.json`.** The Core-owned materializer adds root `tsconfig.json` to `materializedPaths` and keeps `projectFoundation.configFiles` aligned with validator expectations.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts`
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.347] - 2026-05-24
 ### Fixed
 - **Workflow Clear now completes cleanup after Git `already_at_boundary`.** Managed Clear no longer treats that Git result as a full rollback; Core continues through fallback cleanup so stale workflow state does not make the action appear to do nothing.

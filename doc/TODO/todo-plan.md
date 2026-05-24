@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "db8621895",
+  "lastRecordedCommit": "4713ad9f4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream58.task1",
-  "expectedCommitMessage": "fix: align application skeleton materializer config files",
+  "currentTaskId": "phase8.stream59.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton materializer release",
   "debt": {
-    "expectedCommitMessage": "fix: align application skeleton materializer config files",
-    "preCommitHead": "db8621895",
+    "expectedCommitMessage": "docs: prepare application skeleton materializer release",
+    "preCommitHead": "4713ad9f4",
     "stage": "commit_pending",
-    "taskId": "phase8.stream58.task1"
+    "taskId": "phase8.stream59.task1"
   }
 }
 ```
@@ -627,8 +627,15 @@
 
 ### Stream: Application Skeleton Materialization Config Alignment
 418. [DONE] `phase8.stream58.task1` Align Core-owned Application Skeleton materializer output with validator config-file contract so accepted materialization cannot write a materialized summary and then reject itself for missing root `tsconfig.json` (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align application skeleton materializer config files`).
-419. [PENDING] Git Commit: `fix: align application skeleton materializer config files` (hash: TBD)
-420. [TODO] `phase8.stream58.task2` Run targeted Application Skeleton materializer/validator tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+419. [DONE] Git Commit: `fix: align application skeleton materializer config files` (hash: 4713ad9f4)
+420. [DONE] `phase8.stream58.task2` Run targeted Application Skeleton materializer/validator tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Application Skeleton materializer/validator tests and @codeai-hub/core build passed after root tsconfig alignment
+
+### Stream: Release Build — Application Skeleton Materializer Alignment
+421. [DONE] `phase8.stream59.task1` Update release-facing docs for the v1.2.348 Application Skeleton materializer alignment build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton materializer release`).
+422. [PENDING] Git Commit: `docs: prepare application skeleton materializer release` (hash: TBD)
+423. [TODO] `phase8.stream59.task2` Run `./scripts/build-all.sh`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton materializer release`).
+424. [TODO] Git Commit: `chore: build application skeleton materializer release` (hash: TBD)
+425. [TODO] `phase8.stream59.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
