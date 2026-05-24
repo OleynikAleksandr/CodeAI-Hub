@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.344] - 2026-05-24
+### Fixed
+- **Managed Clear resets left-sidebar completion markers.** Core now prunes the cleared workflow stage and all downstream managed stages from the workspace-level managed ledger after `Clear`, so Project Manager receives grey/todo statuses from the Core-owned workflow snapshot instead of stale green `completed` markers.
+- **Managed Clear resets downstream stage routing.** `activeStage`, `activePlanPath`, downstream `unlockedStages`, downstream `acceptedCommits`, and `lastAcceptedCommit*` now move back to the first cleared managed stage, keeping the next restart/retry aligned with the cleared scope.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.343] - 2026-05-24
 ### Fixed
 - **Quality Gates size policy is now structured.** Core recognizes the mandatory 500-line source/class gate through explicit `policy.type: "source_size_limit"`, `policy.maxLines: 500`, and `policy.appliesTo: ["source_files", "classes"]` metadata instead of relying on text search through the command object.

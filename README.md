@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.343** (Quality Gates Size Policy + Clear Availability)
+**Current Release — v1.2.344** (Clear Marker Reset)
+
+This replacement build fixes the left-sidebar workflow markers after `Clear`.
+Core now resets the managed workspace ledger for the cleared workflow stage and
+all downstream managed stages, including `completedStages`, downstream
+`unlockedStages`, downstream accepted commits, and the active managed stage
+pointer. Project Manager continues to render only the Core-owned workflow
+snapshot, so cleared/downstream stages return to the grey/todo state instead of
+staying green after their files and sessions have already been removed.
+
+**Previous Release — v1.2.343** (Quality Gates Size Policy + Clear Availability)
 
 This replacement build makes the mandatory Quality Gates 500-line source/class
 policy explicit and structured. Core now accepts a required gate whose command

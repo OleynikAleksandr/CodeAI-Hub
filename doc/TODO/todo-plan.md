@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "c925a55df",
+  "lastRecordedCommit": "7c08427e2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream49.task1",
-  "expectedCommitMessage": "fix: reset managed clear stage markers",
+  "currentTaskId": "phase8.stream50.task1",
+  "expectedCommitMessage": "docs: prepare clear marker reset release",
   "debt": {
-    "expectedCommitMessage": "fix: reset managed clear stage markers",
-    "preCommitHead": "c925a55df",
+    "expectedCommitMessage": "docs: prepare clear marker reset release",
+    "preCommitHead": "7c08427e2",
     "stage": "commit_pending",
-    "taskId": "phase8.stream49.task1"
+    "taskId": "phase8.stream50.task1"
   }
 }
 ```
@@ -553,9 +553,18 @@
 
 ### Stream: Managed Clear Stage Marker Reset
 362. [DONE] `phase8.stream49.task1` Reset Core-owned managed workflow completion/unlock markers for the cleared workflow stage and every downstream managed stage so Project Manager receives grey/todo statuses from the workflow snapshot after Clear (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear*, doc/TODO/todo-plan.md`; expected commit: `fix: reset managed clear stage markers`).
-363. [PENDING] Git Commit: `fix: reset managed clear stage markers` (hash: TBD)
-364. [TODO] `phase8.stream49.task2` Run targeted Clear status reset tests plus affected Core/Project Manager builds after the managed marker reset fix (scope: affected package tests/builds, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-365. [TODO] `phase8.stream49.task3` User confirms whether to build a replacement release after the Clear marker reset fix (scope: release confirmation gate; no commit expected).
+363. [DONE] Git Commit: `fix: reset managed clear stage markers` (hash: 7c08427e2)
+364. [DONE] `phase8.stream49.task2` Run targeted Clear status reset tests plus affected Core/Project Manager builds after the managed marker reset fix (scope: affected package tests/builds, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: 11 targeted Clear tests passed; Core build, webview typecheck, webview build, Project Manager build, and plan validation passed
+365. [DONE] `phase8.stream49.task3` User confirms whether to build a replacement release after the Clear marker reset fix (scope: release confirmation gate; no commit expected). Result: User requested a replacement release build for Clear marker reset verification
+
+### Stream: Release Build — Clear Marker Reset
+366. [DONE] `phase8.stream50.task1` Update release-facing docs for the Clear marker reset replacement build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear marker reset release`).
+367. [PENDING] Git Commit: `docs: prepare clear marker reset release` (hash: TBD)
+368. [TODO] `phase8.stream50.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build clear marker reset release`).
+369. [TODO] Git Commit: `chore: build clear marker reset release` (hash: TBD)
+370. [TODO] `phase8.stream50.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package clear marker reset vsix`).
+371. [TODO] Git Commit: `chore: package clear marker reset vsix` (hash: TBD)
+372. [TODO] `phase8.stream50.task4` User installs the generated replacement VSIX and verifies Clear resets cleared/downstream left-sidebar markers to grey (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
