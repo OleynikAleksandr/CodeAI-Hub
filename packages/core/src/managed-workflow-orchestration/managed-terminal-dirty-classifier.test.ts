@@ -158,6 +158,8 @@ test("terminal dirty classifier allows quality-gate formatter residue without ac
       " M .husky/pre-commit",
       " M scripts/plan-orchestrator/plan-cli.mjs",
       " M product-parts/ai-providers/tsconfig.json",
+      ` M .codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
+      ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`,
       ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/managed/quality_gates.json`,
       "?? notes/manual-review.md",
     ],
@@ -169,6 +171,8 @@ test("terminal dirty classifier allows quality-gate formatter residue without ac
     ".husky/pre-commit",
     "scripts/plan-orchestrator/plan-cli.mjs",
     "product-parts/ai-providers/tsconfig.json",
+    `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
+    `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`,
     `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/quality_gates.json`,
   ]);
   assert.deepEqual(result.unclassifiedPaths, ["notes/manual-review.md"]);
@@ -241,6 +245,73 @@ test("terminal clean boundary ignores local runtime state and commits metadata g
     assert.match(
       await readFile(path.join(workspaceRoot, ".gitignore"), "utf8"),
       LOCAL_STATE_IGNORE_RE
+    );
+    assert.equal(
+      await git(workspaceRoot, ["log", "-1", "--pretty=%s"]),
+      "chore: commit managed terminal residue"
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("terminal clean boundary commits Quality Gates residue from formatted upstream managed artifacts", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "managed-terminal-quality-gates-clean-")
+  );
+  try {
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
+      '{\n  "requiredScripts": [\n    "build",\n    "test:smoke"\n  ]\n}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`,
+      '{\n  "stage": "application_skeleton",\n  "mapJson": {\n    "languages": [\n      "TypeScript"\n    ]\n  }\n}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/quality_gates.json`,
+      '{"stage":"quality_gates"}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nnpm run quality:gates\n"
+    );
+    await git(workspaceRoot, ["add", "."]);
+    await git(workspaceRoot, ["commit", "-m", "test: initial"]);
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
+      '{"requiredScripts":["build","test:smoke"]}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`,
+      '{"stage":"application_skeleton","mapJson":{"languages":["TypeScript"]}}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/quality_gates.json`,
+      '{"stage":"quality_gates","phase":"return"}\n'
+    );
+
+    await ensureManagedTerminalGitClean({
+      gitBoundary: new DiagramModulesManagedGitBoundary(),
+      stage: "quality_gates",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(
+      await git(workspaceRoot, ["status", "--short", "--untracked-files=all"]),
+      ""
     );
     assert.equal(
       await git(workspaceRoot, ["log", "-1", "--pretty=%s"]),

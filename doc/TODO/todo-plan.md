@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "d0d3559bf",
+  "lastRecordedCommit": "1d258313d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream67.task2",
-  "expectedCommitMessage": "chore: build clear last active release",
+  "currentTaskId": "phase8.stream68.task1",
+  "expectedCommitMessage": "fix: clean quality gates terminal residue",
   "debt": {
-    "expectedCommitMessage": "chore: build clear last active release",
-    "preCommitHead": "d0d3559bf",
+    "expectedCommitMessage": "fix: clean quality gates terminal residue",
+    "preCommitHead": "1d258313d",
     "stage": "commit_pending",
-    "taskId": "phase8.stream67.task2"
+    "taskId": "phase8.stream68.task1"
   }
 }
 ```
@@ -682,8 +682,13 @@
 453. [DONE] `phase8.stream67.task1` Update release-facing docs for the v1.2.352 Clear last-active reset build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear last active release`).
 454. [DONE] Git Commit: `docs: prepare clear last active release` (hash: d0d3559bf)
 455. [DONE] `phase8.stream67.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build clear last active release`).
-456. [PENDING] Git Commit: `chore: build clear last active release` (hash: TBD)
-457. [TODO] `phase8.stream67.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+456. [DONE] Git Commit: `chore: build clear last active release` (hash: 1d258313d)
+457. [DONE] `phase8.stream67.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Release 1.2.352 built: build-all and build-release completed, VSIX codeai-hub-1.2.352.vsix created at 4.7M, SHA-256 62cb0c556dc6ffe018de828d39e23117b8cc7bd4c6ea04d06ed0aec2962c03b3
+
+### Stream: Quality Gates Terminal Git Cleanliness
+458. [DONE] `phase8.stream68.task1` Repair the Quality Gates terminal Git boundary so formatter/runtime residue from accepted upstream managed artifacts is handled by Core before completion instead of leaving a dirty workspace blocker (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clean quality gates terminal residue`).
+459. [PENDING] Git Commit: `fix: clean quality gates terminal residue` (hash: TBD)
+460. [TODO] `phase8.stream68.task2` Run targeted managed terminal dirty-boundary validation plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

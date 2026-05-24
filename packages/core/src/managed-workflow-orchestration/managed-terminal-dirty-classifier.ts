@@ -126,12 +126,13 @@ const isLocalVolatileRuntimePath = (pathValue: string): boolean =>
 
 const isGateOrFormatterResidue = (
   stage: ManagedTerminalStage,
+  workspaceSlug: string,
   pathValue: string
 ): boolean => {
   if (stage === "diagram_modules") {
     return false;
   }
-  return matchesExactOrPrefix(pathValue, [
+  const sharedFormatterResiduePatterns = [
     ".husky/pre-commit",
     ".husky/pre-push",
     "package-lock.json",
@@ -141,7 +142,15 @@ const isGateOrFormatterResidue = (
     "scripts/plan-orchestrator/plan-cli.mjs",
     "tsconfig.base.json",
     "tsconfig.json",
-  ]);
+  ];
+  if (stage === "quality_gates") {
+    return matchesExactOrPrefix(pathValue, [
+      ...sharedFormatterResiduePatterns,
+      `.codeai-hub/${workspaceSlug}/application_skeleton/`,
+      `.codeai-hub/${workspaceSlug}/workflow/managed/application_skeleton.json`,
+    ]);
+  }
+  return matchesExactOrPrefix(pathValue, sharedFormatterResiduePatterns);
 };
 
 const classifyKind = (params: {
@@ -168,7 +177,11 @@ const classifyKind = (params: {
   if (isLocalVolatileRuntimePath(params.pathValue)) {
     return "local_volatile";
   }
-  return isGateOrFormatterResidue(params.stage, params.pathValue)
+  return isGateOrFormatterResidue(
+    params.stage,
+    params.workspaceSlug,
+    params.pathValue
+  )
     ? "gate_or_formatter_residue"
     : "unclassified";
 };
