@@ -136,6 +136,9 @@ Contract draft algorithm:
 3. Design first-class architecture gates for skeleton layout, contracts/readmes, public entrypoints/facades, dependency direction, and drift from the skeleton map.
 4. Write a concrete integration plan: package scripts, dev dependencies, config files, gate scripts, Core hook-registry targets, CI/update files, and smoke commands that Phase 3 will create or verify.
 5. Leave `accepted: false`, `integrated: false`, and `integrationState: "not_started"`.
+6. Keep planned required gates mandatory in intent. Draft phase means they are not executable yet, not that they are advisory or optional.
+
+Draft contract rule: a gate listed in `plannedRequiredAfterIntegration` must have a matching `commands` entry with `desiredStatus: "active"`, `availability: "not_integrated"`, `integrationRequired: true`, and concrete `plannedIntegrationPaths`. Do not describe these gates as non-blocking, advisory, deferred, or optional before integration.
 
 Required `quality-gates.md` contract template:
 
@@ -152,7 +155,7 @@ Required `quality-gates.md` contract template:
 
 ## Required Gates After Integration
 
-<Gate list traceable to the accepted research.>
+<Gate list traceable to the accepted research. These are mandatory after Phase 3 integration, even though they are not executable yet in draft phase.>
 
 ## Planned Integration
 
@@ -166,6 +169,8 @@ Required `quality-gates.md` contract template:
 ```
 
 Required `quality-gates.json` contract template:
+
+For every id in `plannedRequiredAfterIntegration`, keep the matching command active and integration-required. Do not move those ids to `advisory` or `deferred`.
 
 ```json
 {

@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "1ec5f98c6",
+  "lastRecordedCommit": "59ed559d7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream46.task1",
-  "expectedCommitMessage": "fix: enforce quality gates planned required semantics",
+  "currentTaskId": "phase8.stream46.task2",
+  "expectedCommitMessage": "fix: clarify quality gates draft contract template",
   "debt": {
-    "expectedCommitMessage": "fix: enforce quality gates planned required semantics",
-    "preCommitHead": "1ec5f98c6",
+    "expectedCommitMessage": "fix: clarify quality gates draft contract template",
+    "preCommitHead": "59ed559d7",
     "stage": "commit_pending",
-    "taskId": "phase8.stream46.task1"
+    "taskId": "phase8.stream46.task2"
   }
 }
 ```
@@ -515,9 +515,9 @@
 
 ### Stream: Quality Gates Planned Required Contract Repair
 331. [DONE] `phase8.stream46.task1` Enforce planned required gate semantics in Core validation and repair prompts so `plannedRequiredAfterIntegration` gates remain active, integration-required, and contract-only repairs target only contract artifacts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-planned-required-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: enforce quality gates planned required semantics`).
-332. [PENDING] Git Commit: `fix: enforce quality gates planned required semantics` (hash: TBD)
-333. [TODO] `phase8.stream46.task2` Tighten the bundled Quality Gates contract template so draft contracts cannot describe planned required gates as advisory/non-blocking before integration (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify quality gates draft contract template`).
-334. [TODO] Git Commit: `fix: clarify quality gates draft contract template` (hash: TBD)
+332. [DONE] Git Commit: `fix: enforce quality gates planned required semantics` (hash: 59ed559d7)
+333. [DONE] `phase8.stream46.task2` Tighten the bundled Quality Gates contract template so draft contracts cannot describe planned required gates as advisory/non-blocking before integration (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify quality gates draft contract template`).
+334. [PENDING] Git Commit: `fix: clarify quality gates draft contract template` (hash: TBD)
 335. [TODO] `phase8.stream46.task3` Add regression tests for planned required gate validation, contract-only repair targets, and bundled prompt wording (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-planned-required-validator.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates planned required repair`).
 336. [TODO] Git Commit: `test: cover quality gates planned required repair` (hash: TBD)
 337. [TODO] `phase8.stream46.task4` Run targeted Quality Gates tests, Core build, webview build, and plan validation after the planned-required fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
