@@ -7,6 +7,7 @@ import {
   buildQualityGatesPersistentReturnMessage,
   buildQualityGatesUserReviewMessage,
 } from "./quality-gates-prompt-builder";
+import { collectRequiredSizePolicyDiagnostics } from "./quality-gates-required-size-policy";
 import { resolveQualityGatesResearchFirstBoundary } from "./quality-gates-research-first-boundary";
 
 export type QualityGatesManagedPhase = "draft" | "integration";
@@ -359,6 +360,9 @@ const validateIntegrationShape = async (params: {
   const { commands, errors: commandErrors } = readCommands(params.contractJson);
   errors.push(...commandErrors);
   errors.push(...collectGateArrayDiagnostics(params.contractJson, commands));
+  errors.push(
+    ...collectRequiredSizePolicyDiagnostics(params.contractJson, commands)
+  );
   if (!readAcceptedFlag(params.contractJson)) {
     errors.push("accepted_required_for_integration");
   }

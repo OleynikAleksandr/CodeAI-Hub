@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "80333deef",
+  "lastRecordedCommit": "b9407d248",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream38.task1",
-  "expectedCommitMessage": "fix: require quality gates size policy prompt",
+  "currentTaskId": "phase8.stream38.task2",
+  "expectedCommitMessage": "fix: validate quality gates size policy",
   "debt": {
-    "expectedCommitMessage": "fix: require quality gates size policy prompt",
-    "preCommitHead": "80333deef",
+    "expectedCommitMessage": "fix: validate quality gates size policy",
+    "preCommitHead": "b9407d248",
     "stage": "commit_pending",
-    "taskId": "phase8.stream38.task1"
+    "taskId": "phase8.stream38.task2"
   }
 }
 ```
@@ -433,9 +433,9 @@
 
 ### Stream: Quality Gates Mandatory Size Policy
 265. [DONE] `phase8.stream38.task1` Require the Quality Gates prompt to carry the 500-line source/class policy into the research recommendations and contract integration scope (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require quality gates size policy prompt`).
-266. [PENDING] Git Commit: `fix: require quality gates size policy prompt` (hash: TBD)
-267. [TODO] `phase8.stream38.task2` Add a Core validator policy that rejects integrated Quality Gates contracts without a required executable 500-line source/class gate (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, doc/TODO/todo-plan.md`; expected commit: `fix: validate quality gates size policy`).
-268. [TODO] Git Commit: `fix: validate quality gates size policy` (hash: TBD)
+266. [DONE] Git Commit: `fix: require quality gates size policy prompt` (hash: b9407d248)
+267. [DONE] `phase8.stream38.task2` Add a Core validator policy that rejects integrated Quality Gates contracts without a required executable 500-line source/class gate (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, doc/TODO/todo-plan.md`; expected commit: `fix: validate quality gates size policy`).
+268. [PENDING] Git Commit: `fix: validate quality gates size policy` (hash: TBD)
 269. [TODO] `phase8.stream38.task3` Cover the mandatory size policy in Quality Gates prompt and validator tests (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates size policy`).
 270. [TODO] Git Commit: `test: cover quality gates size policy` (hash: TBD)
 271. [TODO] `phase8.stream38.task4` Run targeted validation for Quality Gates prompt, validator, and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
