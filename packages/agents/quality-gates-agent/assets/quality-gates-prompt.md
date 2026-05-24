@@ -53,6 +53,70 @@ Before the research-review response:
 - do not create `quality-gates.md` or `quality-gates.json`;
 - do not stage, commit, advance plans, or claim completion beyond research readiness.
 
+Required `quality-gates-research.md` template:
+
+```markdown
+# Quality Gates Research
+
+## Stack Summary
+
+<Concise detected stack summary and why these recommendations apply.>
+
+## Current Sources
+
+- <Tool/source title> - <URL> - <why this source is relevant>
+
+## Recommendations By Purpose
+
+### <purpose>
+
+- Recommendation: <tool or gate>
+- Use for: <what this gate checks>
+- Why it fits: <why it fits this workspace>
+- Sources: <URLs>
+- Tradeoff: <cost/risk>
+- Required checks: <gate ids or command names>
+- User approval required: <yes/no>
+
+## AI-Agent-Oriented Gate Findings
+
+<Explicitly mention Ultracite or equivalent agent-first tooling and whether it is suitable for this stack.>
+
+## Recommended Contract Carry-Forward
+
+- <gate/tool to transfer into the contract> - <why>
+- source files and classes <= 500 lines - mandatory architecture gate to transfer into the contract.
+```
+
+Required `quality-gates-research.json` template:
+
+```json
+{
+  "schema": "codeai-quality-gates-research-v1",
+  "stackSummary": "<detected stack summary>",
+  "sources": [
+    {
+      "title": "<source title>",
+      "url": "https://example.com",
+      "sourceType": "official",
+      "retrievedAt": "<ISO timestamp from this run>",
+      "whyRelevant": "<why this source applies>"
+    }
+  ],
+  "recommendations": [
+    {
+      "purpose": "lint",
+      "recommendation": "<tool or gate recommendation>",
+      "whyUse": "<why to use it>",
+      "sourceUrls": ["https://example.com"],
+      "tradeoff": "<cost/risk>",
+      "requiredChecks": ["<gate-id>"],
+      "userApprovalRequired": false
+    }
+  ]
+}
+```
+
 Every Phase 1A response must tell the user, in the chat language, that the Quality Gates research report is ready for review and must be confirmed or corrected before contract drafting.
 
 ## Phase 1B: Draft Gate Contract
@@ -69,6 +133,68 @@ Contract draft algorithm:
 3. Design first-class architecture gates for skeleton layout, contracts/readmes, public entrypoints/facades, dependency direction, and drift from the skeleton map.
 4. Write a concrete integration plan: package scripts, dev dependencies, config files, gate scripts, Core hook-registry targets, CI/update files, and smoke commands that Phase 3 will create or verify.
 5. Leave `accepted: false`, `integrated: false`, and `integrationState: "not_started"`.
+
+Required `quality-gates.md` contract template:
+
+```markdown
+# Quality Gates Baseline
+
+## Overview
+
+<Contract summary based only on accepted research.>
+
+## Selected Baseline
+
+<minimal/recommended/strict selection and tradeoff.>
+
+## Required Gates After Integration
+
+<Gate list traceable to the accepted research.>
+
+## Planned Integration
+
+<package scripts, configs, hooks, CI/update files, and smoke commands Phase 3 will create or verify.>
+
+## Acceptance Checklist
+
+- accepted: false
+- integrated: false
+- integrationState: not_started
+```
+
+Required `quality-gates.json` contract template:
+
+```json
+{
+  "schema": "codeai-quality-gates-v1",
+  "accepted": false,
+  "integrated": false,
+  "integrationState": "not_started",
+  "projectProfile": {},
+  "selectedBaseline": "recommended",
+  "commands": {
+    "<gate-id>": {
+      "id": "<gate-id>",
+      "proposedCommand": "npm run <script>",
+      "desiredStatus": "active",
+      "availability": "not_integrated",
+      "integrationRequired": true,
+      "baseline": "recommended",
+      "blockingIn": [],
+      "plannedIntegrationPaths": ["package.json"]
+    }
+  },
+  "requiredBeforeCommit": [],
+  "requiredBeforeModuleExecution": [],
+  "requiredBeforePush": [],
+  "requiredBeforeRelease": [],
+  "plannedRequiredAfterIntegration": ["<gate-id>"],
+  "advisory": [],
+  "deferred": [],
+  "integratedPaths": [],
+  "deferredIntegration": []
+}
+```
 
 Before the draft-review response:
 
