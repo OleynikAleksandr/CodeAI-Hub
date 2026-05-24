@@ -18,6 +18,18 @@ const buildContractArtifactPaths = (
   `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
 ];
 
+const buildResearchArtifactPaths = (
+  workspaceSlug: string
+): readonly string[] => [
+  `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates-research.md`,
+  `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates-research.json`,
+];
+
+const isResearchFirstDiagnostic = (diagnostic: string): boolean =>
+  diagnostic === "quality_gates_contract_before_research_review" ||
+  diagnostic.startsWith("research_") ||
+  diagnostic.startsWith("missing_quality_gates_research_");
+
 const explainDiagnostic = (diagnostic: string): string => {
   if (diagnostic.startsWith("json_parse_error:")) {
     return `Fix \`quality-gates.json\`; it is not valid JSON. Parser detail: ${diagnostic
@@ -113,15 +125,19 @@ const explainBoundaryDetails = (details: string): string => {
 
 export const buildQualityGatesDraftRepairPrompt = (
   options: QualityGatesRepairPromptOptions
-): string =>
-  [
+): string => {
+  const researchOnly = options.diagnostics.some(isResearchFirstDiagnostic);
+  const targetArtifacts = researchOnly
+    ? buildResearchArtifactPaths(options.workspaceSlug)
+    : buildContractArtifactPaths(options.workspaceSlug);
+  return [
     "Core rejected the current Quality Gates draft.",
-    "Repair only the Quality Gates contract artifacts and then stop for Core validation.",
+    researchOnly
+      ? "Repair only the Quality Gates research artifacts and then stop for Core validation."
+      : "Repair only the Quality Gates contract artifacts and then stop for Core validation.",
     "",
     "Target artifacts:",
-    ...buildContractArtifactPaths(options.workspaceSlug).map(
-      (artifactPath) => `- \`${artifactPath}\``
-    ),
+    ...targetArtifacts.map((artifactPath) => `- \`${artifactPath}\``),
     "",
     "Diagnostics:",
     ...formatDiagnostics(options.diagnostics),
@@ -132,6 +148,7 @@ export const buildQualityGatesDraftRepairPrompt = (
     "Do not create package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts, or production code.",
     "Do not run Git commands or edit managed plan files.",
   ].join("\n");
+};
 
 export const buildQualityGatesUserReviewMessage = (): string =>
   [

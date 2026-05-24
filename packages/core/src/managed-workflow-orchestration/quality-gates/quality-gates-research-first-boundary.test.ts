@@ -9,6 +9,22 @@ const WORKSPACE_SLUG = "demo-workspace";
 const RESEARCH_REVIEW_OPEN_RE = /research report shape is valid/u;
 const RESEARCH_HEADING_REPAIR_PROMPT_RE =
   /exact heading `# Quality Gates Research`/u;
+const RESEARCH_TARGET_ARTIFACTS = [
+  `- \`.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.md\``,
+  `- \`.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.json\``,
+] as const;
+
+const extractTargetArtifacts = (prompt: string): readonly string[] => {
+  const targetsSection = prompt.split("Target artifacts:").at(1);
+  if (!targetsSection) {
+    return [];
+  }
+  const [targetLines = ""] = targetsSection.split("Diagnostics:");
+  return targetLines
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+};
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -146,6 +162,10 @@ test("Quality Gates validator rejects contract files in the initial research pas
         "quality_gates_contract_before_research_review"
       )
     );
+    assert.deepEqual(
+      extractTargetArtifacts(result.nextPrompt ?? ""),
+      RESEARCH_TARGET_ARTIFACTS
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
@@ -177,6 +197,10 @@ test("Quality Gates validator rejects research markdown without canonical headin
       result.diagnostics.includes("research_markdown_missing_required_heading")
     );
     assert.match(result.nextPrompt ?? "", RESEARCH_HEADING_REPAIR_PROMPT_RE);
+    assert.deepEqual(
+      extractTargetArtifacts(result.nextPrompt ?? ""),
+      RESEARCH_TARGET_ARTIFACTS
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
