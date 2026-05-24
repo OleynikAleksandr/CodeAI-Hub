@@ -247,9 +247,15 @@ const buildClusterTreeNode = (
   depth: number
 ): TreeNode => {
   const id = `devtree:${partId}:${cluster.id}`;
-  const children = cluster.modules.map((mod) =>
-    buildModuleTreeNode(mod, partId, cluster.id, depth + 1)
-  );
+  const children: TreeNode[] = [];
+  for (const operation of cluster.operations ?? []) {
+    children.push(
+      buildOperationTreeNode(operation, id, partId, cluster.id, depth + 1)
+    );
+  }
+  for (const mod of cluster.modules) {
+    children.push(buildModuleTreeNode(mod, partId, cluster.id, depth + 1));
+  }
   const lockedReason = cluster.lifecycle?.lockedReason;
   return {
     id,

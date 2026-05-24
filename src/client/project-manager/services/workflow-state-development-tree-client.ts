@@ -63,6 +63,7 @@ export type DevelopmentTreeModuleNode = DevelopmentTreeNodeMetadata & {
 export type DevelopmentTreeClusterNode = DevelopmentTreeNodeMetadata & {
   readonly id: string;
   readonly modules: readonly DevelopmentTreeModuleNode[];
+  readonly operations?: readonly DevelopmentTreeOperationNode[];
   readonly readiness?: DevelopmentTreeReadiness;
 };
 
@@ -240,9 +241,15 @@ const parseClusterNode = (payload: unknown): DevelopmentTreeClusterNode | null =
         .map(parseModuleNode)
         .filter((item): item is DevelopmentTreeModuleNode => item !== null)
     : [];
+  const operations = Array.isArray(payload.operations)
+    ? payload.operations
+        .map(parseOperationNode)
+        .filter((item): item is DevelopmentTreeOperationNode => item !== null)
+    : [];
   return {
     id,
     modules,
+    operations: operations.length > 0 ? operations : undefined,
     ...parseNodeMetadata(payload),
     readiness: isDevelopmentTreeReadiness(payload.readiness)
       ? payload.readiness
