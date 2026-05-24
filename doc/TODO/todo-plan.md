@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "3eb4f04bf",
+  "lastRecordedCommit": "df1c9ff9a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream38.task3",
-  "expectedCommitMessage": "test: cover quality gates size policy",
+  "currentTaskId": "phase8.stream39.task1",
+  "expectedCommitMessage": "fix: cover diagram modules git clear boundary",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates size policy",
-    "preCommitHead": "3eb4f04bf",
+    "expectedCommitMessage": "fix: cover diagram modules git clear boundary",
+    "preCommitHead": "df1c9ff9a",
     "stage": "commit_pending",
-    "taskId": "phase8.stream38.task3"
+    "taskId": "phase8.stream39.task1"
   }
 }
 ```
@@ -437,9 +437,17 @@
 267. [DONE] `phase8.stream38.task2` Add a Core validator policy that rejects integrated Quality Gates contracts without a required executable 500-line source/class gate (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, doc/TODO/todo-plan.md`; expected commit: `fix: validate quality gates size policy`).
 268. [DONE] Git Commit: `fix: validate quality gates size policy` (hash: 3eb4f04bf)
 269. [DONE] `phase8.stream38.task3` Cover the mandatory size policy in Quality Gates prompt and validator tests (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates size policy`).
-270. [PENDING] Git Commit: `test: cover quality gates size policy` (hash: TBD)
-271. [TODO] `phase8.stream38.task4` Run targeted validation for Quality Gates prompt, validator, and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-272. [TODO] `phase8.stream38.task5` Wait for explicit user confirmation before building the next replacement release after the mandatory Quality Gates size policy fix (scope: release confirmation gate; no commit expected).
+270. [DONE] Git Commit: `test: cover quality gates size policy` (hash: df1c9ff9a)
+271. [DONE] `phase8.stream38.task4` Run targeted validation for Quality Gates prompt, validator, and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted validation passed: Quality Gates prompt and validator tests 11/11, @codeai-hub/core build, and plan validation.
+272. [BLOCKED] `phase8.stream38.task5` Wait for explicit user confirmation before building the next replacement release after the mandatory Quality Gates size policy fix (scope: release confirmation gate; no commit expected). Blocked: user retest found Clear after Virtual Simulation still fails for managed Git-backed workflow stages.
+
+### Stream: Git-Backed Clear Boundary Coverage
+273. [DONE] `phase8.stream39.task1` Extend Git-backed Clear boundary and cleanup coverage for Diagram Modules materialized `development_tree` state and Application Skeleton generated product-parts residue (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: cover diagram modules git clear boundary`).
+274. [PENDING] Git Commit: `fix: cover diagram modules git clear boundary` (hash: TBD)
+275. [TODO] `phase8.stream39.task2` Cover the Core workflow Clear service path for Diagram Modules Git rollback from the Project Manager command surface (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules clear service rollback`).
+276. [TODO] Git Commit: `test: cover diagram modules clear service rollback` (hash: TBD)
+277. [TODO] `phase8.stream39.task3` Run targeted validation for Git rollback, workflow Clear service and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+278. [TODO] `phase8.stream39.task4` Wait for explicit user confirmation before building the next replacement release after Diagram Modules Clear boundary fix (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

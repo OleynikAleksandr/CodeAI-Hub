@@ -47,14 +47,34 @@ const stageDirName = (stage: ManagedRollbackStage): string => {
   return "quality-gates";
 };
 
+const generatedBoundaryPathspecs = (
+  stage: ManagedRollbackStage,
+  workspaceSlug: string
+): readonly string[] => {
+  if (stage === "diagram_modules") {
+    return [
+      `.codeai-hub/${workspaceSlug}/development_tree`,
+      `.codeai-hub/${workspaceSlug}/continuity/development_tree`,
+      "doc/TODO/stages/development-tree",
+    ];
+  }
+  if (stage === "application_skeleton") {
+    return ["product-parts"];
+  }
+  return [];
+};
+
 const stageBoundaryPathspecs = (
   stage: ManagedRollbackStage,
   workspaceSlug: string
-): readonly string[] => [
-  `.codeai-hub/${workspaceSlug}/${stage}`,
-  `.codeai-hub/${workspaceSlug}/workflow/managed/${stage}.json`,
-  `doc/TODO/stages/${stageDirName(stage)}`,
-];
+): readonly string[] => {
+  return [
+    `.codeai-hub/${workspaceSlug}/${stage}`,
+    `.codeai-hub/${workspaceSlug}/workflow/managed/${stage}.json`,
+    `doc/TODO/stages/${stageDirName(stage)}`,
+    ...generatedBoundaryPathspecs(stage, workspaceSlug),
+  ];
+};
 
 const stageCleanupPathspecs = (
   stage: ManagedRollbackStage,
@@ -67,6 +87,7 @@ const stageCleanupPathspecs = (
     `.codeai-hub/${workspaceSlug}/continuity/${item}`,
     `.codeai-hub/${workspaceSlug}/workflow/managed/${item}.json`,
     `doc/TODO/stages/${stageDirName(item)}`,
+    ...generatedBoundaryPathspecs(item, workspaceSlug),
   ]);
 };
 

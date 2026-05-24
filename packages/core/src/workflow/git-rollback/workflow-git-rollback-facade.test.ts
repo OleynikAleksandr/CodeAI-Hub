@@ -125,6 +125,60 @@ test("Git rollback restores Quality Gates to the pre-stage boundary and keeps Ap
   }
 });
 
+test("Git rollback finds Diagram Modules boundary from materialized development tree", async () => {
+  const workspaceRoot = await createRepository();
+  try {
+    const virtualSimulationPath = `.codeai-hub/${WORKSPACE_SLUG}/virtual_simulation/final-virtual-simulation.md`;
+    const devTreePath = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/core/index.md`;
+    const continuityPath = `.codeai-hub/${WORKSPACE_SLUG}/continuity/development_tree/index.json`;
+    const todoTreePath =
+      "doc/TODO/stages/development-tree/product-parts/core/todo-plan.md";
+    await writeWorkspaceFile(workspaceRoot, virtualSimulationPath);
+    commitAll(workspaceRoot, "docs: accept virtual simulation");
+    await writeWorkspaceFile(workspaceRoot, devTreePath);
+    await writeWorkspaceFile(workspaceRoot, continuityPath, '{"valid":true}\n');
+    await writeWorkspaceFile(workspaceRoot, todoTreePath);
+    commitAll(workspaceRoot, "feat: materialize diagram modules tree");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/development_tree/untracked.tmp`
+    );
+
+    const result = await new WorkflowGitRollbackFacade().rollbackStage({
+      stage: "diagram_modules",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.handled, true);
+    assert.equal(result.reason, null);
+    assert.match(result.rollbackCommit ?? "", GIT_HASH_RE);
+    assert.equal(
+      await exists(path.join(workspaceRoot, virtualSimulationPath)),
+      true
+    );
+    assert.equal(await exists(path.join(workspaceRoot, devTreePath)), false);
+    assert.equal(await exists(path.join(workspaceRoot, continuityPath)), false);
+    assert.equal(await exists(path.join(workspaceRoot, todoTreePath)), false);
+    assert.equal(
+      await exists(
+        path.join(
+          workspaceRoot,
+          `.codeai-hub/${WORKSPACE_SLUG}/development_tree/untracked.tmp`
+        )
+      ),
+      false
+    );
+    assert.equal(git(workspaceRoot, ["status", "--short"]), "");
+    assert.equal(
+      git(workspaceRoot, ["log", "-1", "--pretty=%s"]),
+      "chore: clear workflow stage diagram_modules"
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("Git rollback reports non-managed stages without touching the repository", async () => {
   const workspaceRoot = await createRepository();
   try {
