@@ -54,6 +54,16 @@ const createRepository = async (): Promise<string> => {
   return workspaceRoot;
 };
 
+const createManagedRepositoryWithoutUserCommit = async (): Promise<string> => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-git-rollback-managed-root-")
+  );
+  git(workspaceRoot, ["init", "-b", "main"]);
+  git(workspaceRoot, ["config", "user.email", "test@example.local"]);
+  git(workspaceRoot, ["config", "user.name", "Test User"]);
+  return workspaceRoot;
+};
+
 test("Git rollback restores Quality Gates to the pre-stage boundary and keeps Application Skeleton", async () => {
   const workspaceRoot = await createRepository();
   try {
@@ -173,6 +183,94 @@ test("Git rollback finds Diagram Modules boundary from materialized development 
     assert.equal(
       git(workspaceRoot, ["log", "-1", "--pretty=%s"]),
       "chore: clear workflow stage diagram_modules"
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Git rollback clears Core-created Diagram Modules scaffold back to Virtual Simulation state", async () => {
+  const workspaceRoot = await createManagedRepositoryWithoutUserCommit();
+  try {
+    const descriptionPath = `.codeai-hub/${WORKSPACE_SLUG}/description/Final_Description.md`;
+    const virtualSimulationPath = `.codeai-hub/${WORKSPACE_SLUG}/virtual_simulation/virtual-simulation.md`;
+    const diagramPath = `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`;
+    const appPath = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
+
+    await writeWorkspaceFile(workspaceRoot, descriptionPath);
+    await writeWorkspaceFile(workspaceRoot, virtualSimulationPath);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`,
+      '{"lastActive":{"stage":"virtual_simulation"}}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/plan-orchestrator/plan-cli.mjs"
+    );
+    await writeWorkspaceFile(workspaceRoot, ".husky/pre-commit");
+    await writeWorkspaceFile(workspaceRoot, "package.json", "{}\n");
+    await writeWorkspaceFile(workspaceRoot, ".gitignore");
+    commitAll(workspaceRoot, "docs: checkpoint managed workflow inputs");
+
+    await writeWorkspaceFile(workspaceRoot, diagramPath);
+    await writeWorkspaceFile(workspaceRoot, appPath);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "product-parts/core-runtime/src/index.ts"
+    );
+    await writeWorkspaceFile(workspaceRoot, "package-lock.json", "{}\n");
+    await writeWorkspaceFile(workspaceRoot, "node_modules/typescript/index.js");
+    commitAll(workspaceRoot, "docs: update diagram modules product part index");
+
+    const result = await new WorkflowGitRollbackFacade().rollbackStage({
+      stage: "diagram_modules",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.handled, true);
+    assert.equal(result.reason, null);
+    assert.equal(result.removedGitMetadata, true);
+    assert.match(result.rollbackCommit ?? "", GIT_HASH_RE);
+    assert.equal(await exists(path.join(workspaceRoot, ".git")), false);
+    assert.equal(await exists(path.join(workspaceRoot, descriptionPath)), true);
+    assert.equal(
+      await exists(path.join(workspaceRoot, virtualSimulationPath)),
+      true
+    );
+    assert.equal(await exists(path.join(workspaceRoot, diagramPath)), false);
+    assert.equal(await exists(path.join(workspaceRoot, appPath)), false);
+    assert.equal(await exists(path.join(workspaceRoot, ".husky")), false);
+    assert.equal(await exists(path.join(workspaceRoot, "doc")), false);
+    assert.equal(await exists(path.join(workspaceRoot, "scripts")), false);
+    assert.equal(await exists(path.join(workspaceRoot, "package.json")), false);
+    assert.equal(
+      await exists(path.join(workspaceRoot, "package-lock.json")),
+      false
+    );
+    assert.equal(
+      await exists(path.join(workspaceRoot, "product-parts")),
+      false
+    );
+    assert.equal(await exists(path.join(workspaceRoot, "node_modules")), false);
+    assert.equal(
+      await readFile(
+        path.join(
+          workspaceRoot,
+          `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`
+        ),
+        "utf8"
+      ),
+      '{"lastActive":{"stage":"virtual_simulation"}}\n'
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

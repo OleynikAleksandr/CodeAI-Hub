@@ -1,10 +1,14 @@
 import { execFile } from "node:child_process";
+import { rm } from "node:fs/promises";
+import path from "node:path";
 import { promisify } from "node:util";
 import type { WorkflowStageId } from "../watcher/watcher-types";
 
 const execFileAsync = promisify(execFile);
 const GIT_AUTHOR_EMAIL = "codeai-hub@example.local";
 const GIT_AUTHOR_NAME = "CodeAI Hub";
+const DIAGRAM_INPUT_CHECKPOINT_SUBJECT =
+  "docs: checkpoint managed workflow inputs";
 const MANAGED_ROLLBACK_STAGES = [
   "diagram_modules",
   "application_skeleton",
@@ -17,6 +21,7 @@ export interface WorkflowGitRollbackResult {
   readonly boundaryCommit: string | null;
   readonly handled: boolean;
   readonly reason: string | null;
+  readonly removedGitMetadata?: boolean;
   readonly rollbackCommit: string | null;
   readonly stage: WorkflowStageId;
 }
@@ -112,6 +117,19 @@ const stageCleanupPathspecs = (
 const rollbackCommitMessage = (stage: ManagedRollbackStage): string =>
   `chore: clear workflow stage ${stage}`;
 
+const diagramModulesManagedScaffoldPathspecs = (): readonly string[] => [
+  ".husky",
+  "doc",
+  "node_modules",
+  "package-lock.json",
+  "package.json",
+  "scripts",
+  "tsconfig.base.json",
+  "tsconfig.json",
+  ".gitignore",
+  ".npmrc",
+];
+
 export class WorkflowGitRollbackFacade {
   async rollbackStage(params: {
     readonly stage: WorkflowStageId;
@@ -133,22 +151,15 @@ export class WorkflowGitRollbackFacade {
     }
 
     await this.ensureGitIdentity(params.workspaceRoot);
-    const firstStageCommit = await this.firstStageCommit({ ...params, stage });
-    if (!firstStageCommit) {
+    const boundary = await this.resolveBoundary({ ...params, stage });
+    if (!boundary) {
       return this.failure(stage, "stage_commit_boundary_missing");
-    }
-    const boundaryCommit = await this.parentCommit(
-      params.workspaceRoot,
-      firstStageCommit
-    );
-    if (!boundaryCommit) {
-      return this.failure(stage, "stage_parent_boundary_missing");
     }
 
     await this.git(params.workspaceRoot, [
       "restore",
       "--source",
-      boundaryCommit,
+      boundary.sourceCommit,
       "--staged",
       "--worktree",
       "--",
@@ -160,13 +171,23 @@ export class WorkflowGitRollbackFacade {
       "--",
       ...stageCleanupPathspecs(stage, params.workspaceSlug),
     ]);
+    if (boundary.removeManagedScaffold) {
+      await this.removePathspecs(
+        params.workspaceRoot,
+        diagramModulesManagedScaffoldPathspecs()
+      );
+    }
     await this.git(params.workspaceRoot, ["add", "-A", "--", "."]);
     const hasStagedChanges = await this.hasStagedChanges(params.workspaceRoot);
     if (!hasStagedChanges) {
+      if (boundary.removeGitMetadata) {
+        await this.removeGitMetadata(params.workspaceRoot);
+      }
       return {
-        boundaryCommit,
+        boundaryCommit: boundary.sourceCommit,
         handled: true,
         reason: "already_at_boundary",
+        removedGitMetadata: boundary.removeGitMetadata,
         rollbackCommit: null,
         stage,
       };
@@ -181,10 +202,14 @@ export class WorkflowGitRollbackFacade {
       "--short",
       "HEAD",
     ]);
+    if (boundary.removeGitMetadata) {
+      await this.removeGitMetadata(params.workspaceRoot);
+    }
     return {
-      boundaryCommit,
+      boundaryCommit: boundary.sourceCommit,
       handled: true,
       reason: null,
+      removedGitMetadata: boundary.removeGitMetadata,
       rollbackCommit,
       stage,
     };
@@ -198,9 +223,52 @@ export class WorkflowGitRollbackFacade {
       boundaryCommit: null,
       handled: true,
       reason,
+      removedGitMetadata: false,
       rollbackCommit: null,
       stage,
     };
+  }
+
+  private async resolveBoundary(params: {
+    readonly stage: ManagedRollbackStage;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<{
+    readonly removeGitMetadata: boolean;
+    readonly removeManagedScaffold: boolean;
+    readonly sourceCommit: string;
+  } | null> {
+    if (params.stage === "diagram_modules") {
+      const checkpointCommit = await this.firstCommitBySubject(
+        params.workspaceRoot,
+        DIAGRAM_INPUT_CHECKPOINT_SUBJECT
+      );
+      if (checkpointCommit) {
+        return {
+          removeGitMetadata: !(await this.parentCommit(
+            params.workspaceRoot,
+            checkpointCommit
+          )),
+          removeManagedScaffold: true,
+          sourceCommit: checkpointCommit,
+        };
+      }
+    }
+    const firstStageCommit = await this.firstStageCommit(params);
+    if (!firstStageCommit) {
+      return null;
+    }
+    const parentCommit = await this.parentCommit(
+      params.workspaceRoot,
+      firstStageCommit
+    );
+    return parentCommit
+      ? {
+          removeGitMetadata: false,
+          removeManagedScaffold: false,
+          sourceCommit: parentCommit,
+        }
+      : null;
   }
 
   private async ensureGitIdentity(workspaceRoot: string): Promise<void> {
@@ -227,6 +295,24 @@ export class WorkflowGitRollbackFacade {
     return output.split("\n").find((line) => line.trim().length > 0) ?? null;
   }
 
+  private async firstCommitBySubject(
+    workspaceRoot: string,
+    subject: string
+  ): Promise<string | null> {
+    const output = await this.git(workspaceRoot, [
+      "log",
+      "--reverse",
+      "--format=%H%x00%s",
+    ]);
+    for (const line of output.split("\n")) {
+      const [hash, commitSubject] = line.split("\0");
+      if (hash && commitSubject === subject) {
+        return hash;
+      }
+    }
+    return null;
+  }
+
   private async parentCommit(
     workspaceRoot: string,
     commitHash: string
@@ -236,6 +322,27 @@ export class WorkflowGitRollbackFacade {
     } catch {
       return null;
     }
+  }
+
+  private async removeGitMetadata(workspaceRoot: string): Promise<void> {
+    await rm(path.join(workspaceRoot, ".git"), {
+      force: true,
+      recursive: true,
+    });
+  }
+
+  private async removePathspecs(
+    workspaceRoot: string,
+    pathspecs: readonly string[]
+  ): Promise<void> {
+    await Promise.all(
+      pathspecs.map((pathspec) =>
+        rm(path.join(workspaceRoot, pathspec), {
+          force: true,
+          recursive: true,
+        })
+      )
+    );
   }
 
   private async hasStagedChanges(workspaceRoot: string): Promise<boolean> {

@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "6eaa375f3",
+  "lastRecordedCommit": "bab35bd3b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream62.task2",
-  "expectedCommitMessage": "chore: build managed clear state isolation release",
+  "currentTaskId": "phase8.stream63.task1",
+  "expectedCommitMessage": "fix: clear diagram modules managed scaffold",
   "debt": {
-    "expectedCommitMessage": "chore: build managed clear state isolation release",
-    "preCommitHead": "6eaa375f3",
+    "expectedCommitMessage": "fix: clear diagram modules managed scaffold",
+    "preCommitHead": "bab35bd3b",
     "stage": "commit_pending",
-    "taskId": "phase8.stream62.task2"
+    "taskId": "phase8.stream63.task1"
   }
 }
 ```
@@ -653,8 +653,13 @@
 434. [DONE] `phase8.stream62.task1` Update release-facing docs for the v1.2.350 managed Clear state isolation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed clear state isolation release`).
 435. [DONE] Git Commit: `docs: prepare managed clear state isolation release` (hash: 6eaa375f3)
 436. [DONE] `phase8.stream62.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed clear state isolation release`).
-437. [PENDING] Git Commit: `chore: build managed clear state isolation release` (hash: TBD)
-438. [TODO] `phase8.stream62.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+437. [DONE] Git Commit: `chore: build managed clear state isolation release` (hash: bab35bd3b)
+438. [DONE] `phase8.stream62.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Release 1.2.350 built: build-all and build-release completed, VSIX codeai-hub-1.2.350.vsix created
+
+### Stream: Diagram Modules Clear Managed Scaffold Rollback
+439. [DONE] `phase8.stream63.task1` Repair Diagram Modules Clear so Git rollback returns app-created workspaces to the post-Virtual-Simulation state, removing managed scaffold folders/files such as `.git`, `.husky`, `doc`, `scripts`, and root package files when Core created them for Diagram Modules (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear diagram modules managed scaffold`).
+440. [PENDING] Git Commit: `fix: clear diagram modules managed scaffold` (hash: TBD)
+441. [TODO] `phase8.stream63.task2` Run targeted Git rollback tests plus Core build and plan validation for the Diagram Modules scaffold-clear fix (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
