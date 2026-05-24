@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "2d91c6f24",
+  "lastRecordedCommit": "2a3cdc614",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream47.task2",
-  "expectedCommitMessage": "fix: document quality gates size policy template",
+  "currentTaskId": "phase8.stream47.task3",
+  "expectedCommitMessage": "test: cover quality gates size policy diagnostics",
   "debt": {
-    "expectedCommitMessage": "fix: document quality gates size policy template",
-    "preCommitHead": "2d91c6f24",
+    "expectedCommitMessage": "test: cover quality gates size policy diagnostics",
+    "preCommitHead": "2a3cdc614",
     "stage": "commit_pending",
-    "taskId": "phase8.stream47.task2"
+    "taskId": "phase8.stream47.task3"
   }
 }
 ```
@@ -533,9 +533,9 @@
 345. [DONE] `phase8.stream47.task1` Add a structured Quality Gates size policy contract and explicit repair diagnostics so the agent can satisfy `missing_required_size_policy_gate` without guessing aliases or filenames (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: structure quality gates size policy contract`).
 346. [DONE] Git Commit: `fix: structure quality gates size policy contract` (hash: 2d91c6f24)
 347. [DONE] `phase8.stream47.task2` Update the Quality Gates bundled prompt template so draft/integration agents create explicit `policy.type: "source_size_limit"`, `maxLines: 500`, and `appliesTo` metadata for the mandatory size gate (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: document quality gates size policy template`).
-348. [PENDING] Git Commit: `fix: document quality gates size policy template` (hash: TBD)
-349. [TODO] `phase8.stream47.task3` Add regression coverage for structured size policy validation, explanatory repair prompts, and bundled prompt wording (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates size policy diagnostics`).
-350. [TODO] Git Commit: `test: cover quality gates size policy diagnostics` (hash: TBD)
+348. [DONE] Git Commit: `fix: document quality gates size policy template` (hash: 2a3cdc614)
+349. [DONE] `phase8.stream47.task3` Add regression coverage for structured size policy validation, explanatory repair prompts, and bundled prompt wording (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates size policy diagnostics`).
+350. [PENDING] Git Commit: `test: cover quality gates size policy diagnostics` (hash: TBD)
 351. [TODO] `phase8.stream47.task4` Run targeted Quality Gates tests, Core build, webview build, and plan validation after the structured size policy fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 352. [TODO] `phase8.stream47.task5` Update release-facing docs for the replacement Quality Gates structured size policy build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates size policy release`).
 353. [TODO] Git Commit: `docs: prepare quality gates size policy release` (hash: TBD)
