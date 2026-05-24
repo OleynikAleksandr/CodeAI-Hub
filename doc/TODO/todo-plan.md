@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "999c92a63",
+  "lastRecordedCommit": "69b718042",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream50.task2",
-  "expectedCommitMessage": "chore: build clear marker reset release",
+  "currentTaskId": "phase8.stream50.task3",
+  "expectedCommitMessage": "chore: package clear marker reset vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build clear marker reset release",
-    "preCommitHead": "999c92a63",
+    "expectedCommitMessage": "chore: package clear marker reset vsix",
+    "preCommitHead": "69b718042",
     "stage": "commit_pending",
-    "taskId": "phase8.stream50.task2"
+    "taskId": "phase8.stream50.task3"
   }
 }
 ```
@@ -561,9 +561,9 @@
 366. [DONE] `phase8.stream50.task1` Update release-facing docs for the Clear marker reset replacement build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear marker reset release`).
 367. [DONE] Git Commit: `docs: prepare clear marker reset release` (hash: 999c92a63)
 368. [DONE] `phase8.stream50.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build clear marker reset release`). Result: v1.2.344 tarballs created under `doc/tmp/releases/` for providers, Core, launcher, VS Code webview, and Project Manager.
-369. [PENDING] Git Commit: `chore: build clear marker reset release` (hash: TBD)
-370. [TODO] `phase8.stream50.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package clear marker reset vsix`).
-371. [TODO] Git Commit: `chore: package clear marker reset vsix` (hash: TBD)
+369. [DONE] Git Commit: `chore: build clear marker reset release` (hash: 69b718042)
+370. [DONE] `phase8.stream50.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package clear marker reset vsix`). Result: `codeai-hub-1.2.344.vsix` created at 4.7M; SHA-256 `6cc5b5099bf7562c5be6cd194a4e07e3e22348a8f72fdd35f580357b8d5c0fe7`.
+371. [PENDING] Git Commit: `chore: package clear marker reset vsix` (hash: TBD)
 372. [TODO] `phase8.stream50.task4` User installs the generated replacement VSIX and verifies Clear resets cleared/downstream left-sidebar markers to grey (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
