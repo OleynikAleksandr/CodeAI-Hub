@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.340] - 2026-05-24
+### Fixed
+- **Description Clear restart keeps provider inheritance.** `Virtual Simulation` now inherits the provider from the latest Description continuity chain when `description.primarySession` is absent after Clear/restart.
+- **Description session navigation falls back to continuity.** Project Manager can reopen the rerun Description session from Core-owned continuity instead of treating the session as missing.
+- **Left sidebar Description projection falls back to continuity.** The workflow tree keeps the Description session node and synchronized artifact/session selection after a Description Clear and rerun.
+
+### Tests
+- `node --import tsx --test src/client/project-manager/services/workflow-provider-resolver.test.ts src/client/project-manager/components/shared/stage-confirmation-card.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+
 ## [1.2.339] - 2026-05-24
 ### Fixed
 - **Quality Gates contract heading is Core-validated.** Core now rejects `quality-gates.md` when it does not start with the exact canonical `# Quality Gates Baseline` heading, matching the Project Manager artifact parser.

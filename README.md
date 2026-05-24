@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.339** (Quality Gates Baseline Validation)
+**Current Release — v1.2.340** (Description Clear Restart Projection)
+
+This replacement build fixes the Project Manager projection after clearing and
+rerunning the `Description` step. When `description-step.json` no longer carries
+`primarySession` after restore, Project Manager now falls back to Core-owned
+`continuity` before deciding that the Description session is missing.
+
+As a result, the Description session remains navigable in the left sidebar, and
+the `Virtual Simulation` start card inherits the rerun Description provider
+instead of falling back to the first connected provider. The scenario that
+previously showed `Claude / Opus` after a Codex/Spark Description rerun now
+resolves provider/session data from the latest Description continuity chain.
+
+**Previous Release — v1.2.339** (Quality Gates Baseline Validation)
 
 This replacement build aligns Core-owned Quality Gates validation with the
 Project Manager artifact parser. Core now rejects `quality-gates.md` contracts
