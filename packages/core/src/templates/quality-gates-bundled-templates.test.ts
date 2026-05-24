@@ -12,6 +12,9 @@ const ACCEPTANCE_BOUNDARY_RE = /Acceptance is a user\/runtime decision/;
 const NO_SELF_ACCEPT_RE = /Do not set `accepted: true` yourself/;
 const SIZE_POLICY_RE = /Source files and classes must stay <= 500 lines/;
 const STACK_RESEARCH_RE = /stack-specific research/;
+const AGENT_ORIENTED_GATES_RE = /AI-agent-oriented quality gate/;
+const ULTRACITE_EXAMPLE_RE = /https:\/\/www\.ultracite\.ai/;
+const CONTRACT_CARRY_FORWARD_RE = /Recommended Contract Carry-Forward/;
 const NEEDS_USER_DECISION_RE = /needs_user_decision/;
 const INTEGRATION_PATHS_RE = /planned integration paths/;
 const CORE_HOOK_REGISTRY_RE =
@@ -108,6 +111,9 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.match(prompt, NO_SELF_ACCEPT_RE);
   assert.match(prompt, SIZE_POLICY_RE);
   assert.match(prompt, STACK_RESEARCH_RE);
+  assert.match(prompt, AGENT_ORIENTED_GATES_RE);
+  assert.match(prompt, ULTRACITE_EXAMPLE_RE);
+  assert.match(prompt, CONTRACT_CARRY_FORWARD_RE);
   assert.match(prompt, NEEDS_USER_DECISION_RE);
   assert.match(prompt, INTEGRATION_PATHS_RE);
   assert.match(prompt, CORE_HOOK_REGISTRY_RE);

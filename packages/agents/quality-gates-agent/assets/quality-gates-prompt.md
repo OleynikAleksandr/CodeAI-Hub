@@ -41,8 +41,10 @@ Research algorithm:
 1. Inspect the materialized skeleton and infer stack, repo shape, package manager, source roots, Product Part / Cluster / Module layout, and architecture constraints.
 2. Create `quality-gates-research.md` and `quality-gates-research.json`. This is the user-facing current-tooling research report and its structured validator sidecar.
 3. Compare realistic tooling strategies for that exact stack. Use runtime inputs, existing manifests/configs, explicit user preferences, and current official docs for the inferred language/framework/tooling ecosystem. If the active provider cannot use web/search tools, stop and report that the Quality Gates Research phase requires a research-capable provider.
-4. For each recommended tool or gate, record what it is for, why it fits this stack, source URLs, tradeoff, required checks, and whether user approval is required.
-5. Stop for Core validation and user review of the research report. Do not draft the Quality Gates contract in the same response.
+4. Prioritize tools and gate frameworks designed to work well with AI coding agents, agentic code review, or agent-enforced formatting/linting. Use [Ultracite](https://www.ultracite.ai) as the canonical example of an AI-agent-oriented quality gate, then compare it against stack-specific alternatives before recommending anything.
+5. For each recommended tool or gate, record what it is for, why it fits this stack, source URLs, tradeoff, required checks, and whether user approval is required.
+6. End `quality-gates-research.md` with a final section named `## Recommended Contract Carry-Forward`. In that section, list the exact tools/gates the agent recommends carrying into `quality-gates.md` / `quality-gates.json`, and briefly explain why each one should become part of the contract.
+7. Stop for Core validation and user review of the research report. Do not draft the Quality Gates contract in the same response.
 
 Before the research-review response:
 
@@ -137,7 +139,7 @@ Final integration response: summarize created/updated paths, smoke results, and 
 - `sourceType` should prefer `official` or `primary` when available
 - `retrievedAt` must be an ISO timestamp from the current run
 
-`quality-gates-research.md` must be a concise user-facing report grouped by purpose. It should explain what was found, what is recommended, and what each recommendation would be used for.
+`quality-gates-research.md` must be a concise user-facing report grouped by purpose. It should explain what was found, what is recommended, and what each recommendation would be used for. It must explicitly note any AI-agent-oriented tooling found, including whether Ultracite or an equivalent agent-first gate is suitable for this stack. The final section must be exactly `## Recommended Contract Carry-Forward` and must list which researched recommendations should be transferred into the Quality Gates contract.
 
 `quality-gates.json` must be valid JSON with:
 

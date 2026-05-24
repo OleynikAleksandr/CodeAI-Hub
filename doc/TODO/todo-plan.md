@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "dd4e97e03",
+  "lastRecordedCommit": "e75b5fbb0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream36.task3",
-  "expectedCommitMessage": "chore: package git backed workflow clear vsix",
+  "currentTaskId": "phase8.stream37.task1",
+  "expectedCommitMessage": "fix: strengthen quality gates research prompt",
   "debt": {
-    "expectedCommitMessage": "chore: package git backed workflow clear vsix",
-    "preCommitHead": "dd4e97e03",
+    "expectedCommitMessage": "fix: strengthen quality gates research prompt",
+    "preCommitHead": "e75b5fbb0",
     "stage": "commit_pending",
-    "taskId": "phase8.stream36.task3"
+    "taskId": "phase8.stream37.task1"
   }
 }
 ```
@@ -422,8 +422,14 @@
 256. [DONE] `phase8.stream36.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.338 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build git backed workflow clear release`).
 257. [DONE] Git Commit: `chore: build git backed workflow clear release` (hash: dd4e97e03)
 258. [DONE] `phase8.stream36.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package git backed workflow clear vsix`).
-259. [PENDING] Git Commit: `chore: package git backed workflow clear vsix` (hash: TBD)
-260. [TODO] `phase8.stream36.task4` User installs the generated v1.2.338 VSIX and verifies managed workflow Clear from Diagram Modules onward uses Git rollback and preserves upstream artifacts/read-models (scope: user workflow acceptance; no commit expected).
+259. [DONE] Git Commit: `chore: package git backed workflow clear vsix` (hash: e75b5fbb0)
+260. [BLOCKED] `phase8.stream36.task4` User installs the generated v1.2.338 VSIX and verifies managed workflow Clear from Diagram Modules onward uses Git rollback and preserves upstream artifacts/read-models (scope: user workflow acceptance; no commit expected). Blocked: user retest found that the Quality Gates Research first prompt must explicitly prioritize AI-agent-oriented gate tooling and end the research artifact with recommended tools to carry into the contract.
+
+### Stream: Quality Gates Research Recommendation Prompt
+261. [DONE] `phase8.stream37.task1` Strengthen the Quality Gates first research prompt to prioritize AI-agent-oriented gate tools and require final contract recommendations in the research artifact (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: strengthen quality gates research prompt`).
+262. [PENDING] Git Commit: `fix: strengthen quality gates research prompt` (hash: TBD)
+263. [TODO] `phase8.stream37.task2` Run targeted validation for Quality Gates bundled prompt sync and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+264. [TODO] `phase8.stream37.task3` Wait for explicit user confirmation before building the next replacement release after the Quality Gates research prompt fix (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
