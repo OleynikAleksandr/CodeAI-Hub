@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.351] - 2026-05-24
+### Fixed
+- **Diagram Modules Clear now removes Core-created managed scaffold.** In app-created workspaces, clearing `Diagram Modules` back to the post-`Virtual Simulation` state now removes managed workflow scaffold such as `.git`, `.husky`, `doc`, `scripts`, root package files, TypeScript configs, `node_modules`, and downstream Product Part scaffold when Core created them for managed development.
+- **Application Skeleton draft validation no longer blocks on Markdown prose.** Core keeps hard checks on the JSON contract, paths, tree shape, stack/foundation fields, and lifecycle state, but no longer repair-loops on non-machine-readable wording in `application-skeleton.md`.
+
+### Tests
+- `node --import tsx --test packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts`
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-framework-baseline-validator.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.350] - 2026-05-24
 ### Fixed
 - **Managed Clear rollback now ignores scaffold-only stage plan commits.** `Diagram Modules` and `Application Skeleton` rollback boundaries are resolved from real stage output paths, preventing `stage_parent_boundary_missing` from making Clear appear to do nothing.

@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.350** (Managed Clear State Isolation)
+**Current Release — v1.2.351** (Managed Clear Scaffold Rollback)
+
+This replacement build fixes `Clear` for app-created workspaces when returning
+from `Diagram Modules` back to the post-`Virtual Simulation` state. Core now
+restores the managed input checkpoint and removes the scaffold it created for
+managed development work, including `.git`, `.husky`, `doc`, `scripts`,
+root package files, TypeScript config files, `node_modules`, and downstream
+Product Part scaffold when those files belong to the managed workflow.
+
+Application Skeleton draft validation is also less brittle: Core keeps hard
+validation on the machine-readable JSON contract, paths, stack/foundation
+fields, and lifecycle state, while Markdown prose wording no longer blocks user
+review when it does not affect the future generated code.
+
+**Previous Release — v1.2.350** (Managed Clear State Isolation)
 
 This replacement build fixes managed `Clear` for `Diagram Modules` and
 `Application Skeleton`. Git rollback now finds the first real output commit for
