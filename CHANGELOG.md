@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.341] - 2026-05-24
+### Fixed
+- **Quality Gates starts with research artifacts.** Core now targets `quality-gates-research.md` and `quality-gates-research.json` in the first Quality Gates provider prompt instead of prematurely targeting `quality-gates.md`.
+- **Quality Gates prompt embeds exact artifact templates.** The bundled prompt now includes complete Markdown and JSON skeletons for both the research report and the later baseline contract, including the canonical `# Quality Gates Research` and `# Quality Gates Baseline` headings.
+- **Quality Gates repair prompts stay phase-scoped.** Research-first validation failures now ask the agent to repair only research artifacts, preventing contract files from being recreated before user review.
+- **Quality Gates stage todo-plan describes research-only drafting.** The managed stage task opened by Core now matches the research-first artifact lifecycle.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:webview`
+
 ## [1.2.340] - 2026-05-24
 ### Fixed
 - **Description Clear restart keeps provider inheritance.** `Virtual Simulation` now inherits the provider from the latest Description continuity chain when `description.primarySession` is absent after Clear/restart.
