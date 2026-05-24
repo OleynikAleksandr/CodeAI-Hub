@@ -225,7 +225,10 @@ const collectLegacyDescriptionGeneratedPaths = (
     .filter((value): value is string => value !== null);
 };
 
-const collectStagePaths = (params: WorkflowStageClearRequest): string[] => {
+const collectStagePaths = (
+  params: WorkflowStageClearRequest,
+  options: { readonly includeWorkflowState?: boolean } = {}
+): string[] => {
   const paths: string[] = [];
   const hubRoot = path.join(
     params.workspacePath,
@@ -244,7 +247,9 @@ const collectStagePaths = (params: WorkflowStageClearRequest): string[] => {
       path.join(params.workspacePath, "doc/TODO/stages", STAGE_TODO_DIRS[stage])
     );
   }
-  paths.push(path.join(hubRoot, "workflow", "state.json"));
+  if (options.includeWorkflowState ?? true) {
+    paths.push(path.join(hubRoot, "workflow", "state.json"));
+  }
   if (downstreamStages(params.target.stage).includes("application_skeleton")) {
     paths.push(path.join(params.workspacePath, "product-parts"));
   }
@@ -323,11 +328,12 @@ const collectDevelopmentTreePaths = (
 
 const collectClearPaths = (
   parsed: ParsedClearRequest,
-  ledgerActions: readonly WorkflowStepUndoAction[]
+  ledgerActions: readonly WorkflowStepUndoAction[],
+  options: { readonly includeWorkflowState?: boolean } = {}
 ): string[] => {
   const fallbackPaths =
     parsed.target.kind === "workflow_stage"
-      ? collectStagePaths({ ...parsed, target: parsed.target })
+      ? collectStagePaths({ ...parsed, target: parsed.target }, options)
       : collectDevelopmentTreePaths({ ...parsed, target: parsed.target });
   if (ledgerActions.length === 0) {
     return fallbackPaths;
@@ -366,6 +372,53 @@ const rollbackGitManagedWorkflowStage = async (parsed: ParsedClearRequest) => {
 const shouldFallbackFromGitRollback = (reason: string | null): boolean =>
   Boolean(reason && GIT_ROLLBACK_FALLBACK_REASONS.has(reason));
 
+const cleanupWithoutGitRollback = async (params: {
+  readonly checkpointRestored: boolean;
+  readonly parsed: ParsedClearRequest;
+  readonly removedPaths: string[];
+  readonly restoredPaths: string[];
+}): Promise<void> => {
+  const ledgerStore = new WorkflowStepUndoLedgerStore({
+    workspaceRoot: params.parsed.workspacePath,
+    workspaceSlug: params.parsed.workspaceSlug,
+  });
+  const ledgerActions = params.checkpointRestored
+    ? []
+    : await collectLedgerUndoActions({
+        ledgerStore,
+        target: params.parsed.target,
+      });
+  const paths = collectClearPaths(params.parsed, ledgerActions, {
+    includeWorkflowState: !params.checkpointRestored,
+  });
+  for (const ledgerAction of ledgerActions) {
+    await undoWorkflowStepAction(
+      ledgerAction,
+      params.removedPaths,
+      params.restoredPaths
+    );
+  }
+  for (const targetPath of paths) {
+    await removePath(targetPath, params.removedPaths);
+  }
+  if (
+    params.parsed.target.kind === "workflow_stage" &&
+    downstreamStages(params.parsed.target.stage).includes("description")
+  ) {
+    await cleanupDescriptionState(params.parsed);
+  }
+  await pruneContinuityIndex({
+    workspacePath: params.parsed.workspacePath,
+    workspaceSlug: params.parsed.workspaceSlug,
+    isStageInScope: (stage) => isStageInScope(stage, params.parsed.target),
+  });
+  await ledgerStore.prune(
+    (entry) =>
+      !isUndoEntryInScope(entry, params.parsed.target) ||
+      entry.undoBehavior === "preserve_path"
+  );
+};
+
 export const handleWorkflowStepClear = async (
   req: Request,
   res: Response,
@@ -402,38 +455,13 @@ export const handleWorkflowStepClear = async (
     const checkpointRestored = gitRollback
       ? false
       : await restoreWorkflowStageCheckpoint(parsed);
-    if (!(gitRollback || checkpointRestored)) {
-      const ledgerStore = new WorkflowStepUndoLedgerStore({
-        workspaceRoot: parsed.workspacePath,
-        workspaceSlug: parsed.workspaceSlug,
+    if (!gitRollback) {
+      await cleanupWithoutGitRollback({
+        checkpointRestored,
+        parsed,
+        removedPaths,
+        restoredPaths,
       });
-      const ledgerActions = await collectLedgerUndoActions({
-        ledgerStore,
-        target: parsed.target,
-      });
-      const paths = collectClearPaths(parsed, ledgerActions);
-      for (const ledgerAction of ledgerActions) {
-        await undoWorkflowStepAction(ledgerAction, removedPaths, restoredPaths);
-      }
-      for (const targetPath of paths) {
-        await removePath(targetPath, removedPaths);
-      }
-      if (
-        parsed.target.kind === "workflow_stage" &&
-        downstreamStages(parsed.target.stage).includes("description")
-      ) {
-        await cleanupDescriptionState(parsed);
-      }
-      await pruneContinuityIndex({
-        workspacePath: parsed.workspacePath,
-        workspaceSlug: parsed.workspaceSlug,
-        isStageInScope: (stage) => isStageInScope(stage, parsed.target),
-      });
-      await ledgerStore.prune(
-        (entry) =>
-          !isUndoEntryInScope(entry, parsed.target) ||
-          entry.undoBehavior === "preserve_path"
-      );
     }
     for (const targetPath of sessionCleanupPaths) {
       await removePath(targetPath, removedPaths);

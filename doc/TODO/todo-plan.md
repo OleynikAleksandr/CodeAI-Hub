@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "908dfc547",
+  "lastRecordedCommit": "12769d4eb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream56.task1",
-  "expectedCommitMessage": "fix: repair workflow clear git rollback",
+  "currentTaskId": "phase8.stream56.task2",
+  "expectedCommitMessage": "fix: restore workflow clear undo cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: repair workflow clear git rollback",
-    "preCommitHead": "908dfc547",
+    "expectedCommitMessage": "fix: restore workflow clear undo cleanup",
+    "preCommitHead": "12769d4eb",
     "stage": "commit_pending",
-    "taskId": "phase8.stream56.task1"
+    "taskId": "phase8.stream56.task2"
   }
 }
 ```
@@ -613,9 +613,9 @@
 
 ### Stream: Workflow Clear Git Undo Repair
 408. [DONE] `phase8.stream56.task1` Diagnose and repair Core-owned workflow Clear so Diagram Modules and downstream managed stages execute Git rollback/path cleanup and reset workflow state from Core truth (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`; expected commit: `fix: repair workflow clear git rollback`).
-409. [PENDING] Git Commit: `fix: repair workflow clear git rollback` (hash: TBD)
-410. [TODO] `phase8.stream56.task2` Repair downstream workspace/session cleanup coverage for Virtual Simulation clearing after generated downstream steps (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, packages/core/src/workflow/undo/workflow-step-undo-ledger.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore workflow clear undo cleanup`).
-411. [TODO] Git Commit: `fix: restore workflow clear undo cleanup` (hash: TBD)
+409. [DONE] Git Commit: `fix: repair workflow clear git rollback` (hash: 12769d4eb)
+410. [DONE] `phase8.stream56.task2` Repair downstream workspace/session cleanup coverage for Virtual Simulation clearing after generated downstream steps (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service*.test.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts`; expected commit: `fix: restore workflow clear undo cleanup`).
+411. [PENDING] Git Commit: `fix: restore workflow clear undo cleanup` (hash: TBD)
 412. [TODO] `phase8.stream56.task3` Run targeted Clear/Undo tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)

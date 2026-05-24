@@ -84,6 +84,7 @@ const stageCleanupPathspecs = (
   const downstreamStages = MANAGED_ROLLBACK_STAGES.slice(stageIndex);
   return [
     `.codeai-hub/${workspaceSlug}/workflow/state.json`,
+    `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`,
     ...downstreamStages.flatMap((item) => [
       `.codeai-hub/${workspaceSlug}/${item}`,
       `.codeai-hub/${workspaceSlug}/continuity/${item}`,

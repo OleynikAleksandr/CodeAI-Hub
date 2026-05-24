@@ -184,6 +184,7 @@ test("workflow step clear falls back when Git is already at the requested stage 
     const devTreeRoot = `.codeai-hub/${WORKSPACE_SLUG}/development_tree`;
     const devTreePath = `${devTreeRoot}/materialized/product-parts/core/index.md`;
     const workflowStatePath = `.codeai-hub/${WORKSPACE_SLUG}/workflow/state.json`;
+    const undoLedgerPath = `.codeai-hub/${WORKSPACE_SLUG}/workflow/undo-ledger.json`;
     await writeWorkspaceFile(workspaceRoot, virtualSimulationPath);
     commitAll(workspaceRoot, "docs: accept virtual simulation");
     await writeWorkspaceFile(workspaceRoot, devTreePath);
@@ -198,6 +199,7 @@ test("workflow step clear falls back when Git is already at the requested stage 
       workflowStatePath,
       '{"dirty":true}\n'
     );
+    await writeWorkspaceFile(workspaceRoot, undoLedgerPath, '{"entries":[]}\n');
 
     const result = await runClear({
       body: {
@@ -222,6 +224,7 @@ test("workflow step clear falls back when Git is already at the requested stage 
       await exists(path.join(workspaceRoot, workflowStatePath)),
       false
     );
+    assert.equal(await exists(path.join(workspaceRoot, undoLedgerPath)), false);
     assert.equal(git(workspaceRoot, ["status", "--short"]), "");
     assert.deepEqual(resetCalls, [WORKSPACE_SLUG]);
   } finally {
