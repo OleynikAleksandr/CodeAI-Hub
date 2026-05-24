@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "cb08f1b38",
+  "lastRecordedCommit": "4e5ff1747",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream55.task3",
-  "expectedCommitMessage": "fix: sync core-owned application skeleton agent prompt",
+  "currentTaskId": "phase8.stream55.task4",
+  "expectedCommitMessage": "test: cover core application skeleton materializer",
   "debt": {
-    "expectedCommitMessage": "fix: sync core-owned application skeleton agent prompt",
-    "preCommitHead": "cb08f1b38",
+    "expectedCommitMessage": "test: cover core application skeleton materializer",
+    "preCommitHead": "4e5ff1747",
     "stage": "commit_pending",
-    "taskId": "phase8.stream55.task3"
+    "taskId": "phase8.stream55.task4"
   }
 }
 ```
@@ -606,9 +606,9 @@
 401. [DONE] `phase8.stream55.task2` Align Core runtime materialization prompt, gitignore output, and validator expectations with Core-owned bootstrap mechanics so agents only draft/revise contracts, not npm scaffold execution (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify core-owned application skeleton materialization`).
 402. [DONE] Git Commit: `fix: clarify core-owned application skeleton materialization` (hash: cb08f1b38)
 403. [DONE] `phase8.stream55.task3` Sync the bundled Application Skeleton agent prompt and contract reference with the Core-owned materialization boundary (scope: `packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/agents/application-skeleton-agent/assets/application-skeleton-contract.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/application-skeleton-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: sync core-owned application skeleton agent prompt`).
-404. [PENDING] Git Commit: `fix: sync core-owned application skeleton agent prompt` (hash: TBD)
-405. [TODO] `phase8.stream55.task4` Add targeted regression coverage for Core-owned Application Skeleton materialization after user acceptance (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover core application skeleton materializer`).
-406. [TODO] Git Commit: `test: cover core application skeleton materializer` (hash: TBD)
+404. [DONE] Git Commit: `fix: sync core-owned application skeleton agent prompt` (hash: 4e5ff1747)
+405. [DONE] `phase8.stream55.task4` Add targeted regression coverage for Core-owned Application Skeleton materialization after user acceptance (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover core application skeleton materializer`).
+406. [PENDING] Git Commit: `test: cover core application skeleton materializer` (hash: TBD)
 407. [TODO] `phase8.stream55.task5` Run targeted Application Skeleton materializer tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
