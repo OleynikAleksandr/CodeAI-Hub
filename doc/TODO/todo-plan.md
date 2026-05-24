@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "b68a8e80b",
+  "lastRecordedCommit": "151c73601",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream40.task2",
-  "expectedCommitMessage": "fix: repair quality gates baseline heading",
+  "currentTaskId": "phase8.stream41.task1",
+  "expectedCommitMessage": "docs: prepare quality gates baseline validation release",
   "debt": {
-    "expectedCommitMessage": "fix: repair quality gates baseline heading",
-    "preCommitHead": "b68a8e80b",
+    "expectedCommitMessage": "docs: prepare quality gates baseline validation release",
+    "preCommitHead": "151c73601",
     "stage": "commit_pending",
-    "taskId": "phase8.stream40.task2"
+    "taskId": "phase8.stream41.task1"
   }
 }
 ```
@@ -453,9 +453,18 @@
 279. [DONE] `phase8.stream40.task1` Require Core Quality Gates validation to reject contract Markdown that does not start with the exact `# Quality Gates Baseline` heading, matching the Project Manager artifact parser (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require quality gates baseline heading`).
 280. [DONE] Git Commit: `fix: require quality gates baseline heading` (hash: b68a8e80b)
 281. [DONE] `phase8.stream40.task2` Update the Quality Gates repair prompt so agents repair the Markdown heading to `# Quality Gates Baseline` only, not the looser `# Quality Gates` form (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: repair quality gates baseline heading`).
-282. [PENDING] Git Commit: `fix: repair quality gates baseline heading` (hash: TBD)
-283. [TODO] `phase8.stream40.task3` Run targeted validation for Quality Gates heading rejection, repair prompt guidance, Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-284. [TODO] `phase8.stream40.task4` Wait for explicit user confirmation before building the next replacement release after Quality Gates contract heading validation (scope: release confirmation gate; no commit expected).
+282. [DONE] Git Commit: `fix: repair quality gates baseline heading` (hash: 151c73601)
+283. [DONE] `phase8.stream40.task3` Run targeted validation for Quality Gates heading rejection, repair prompt guidance, Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted validation passed: Quality Gates heading/research/stage-plan tests 14/14, @codeai-hub/core build, and plan validation.
+284. [DONE] `phase8.stream40.task4` Wait for explicit user confirmation before building the next replacement release after Quality Gates contract heading validation (scope: release confirmation gate; no commit expected). Result: user explicitly requested a new release build on 2026-05-24.
+
+### Stream: Release Build — Quality Gates Baseline Validation
+285. [DONE] `phase8.stream41.task1` Update release-facing docs for the v1.2.339 Quality Gates baseline validation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates baseline validation release`).
+286. [PENDING] Git Commit: `docs: prepare quality gates baseline validation release` (hash: TBD)
+287. [TODO] `phase8.stream41.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.339 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates baseline validation release`).
+288. [TODO] Git Commit: `chore: build quality gates baseline validation release` (hash: TBD)
+289. [TODO] `phase8.stream41.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates baseline validation vsix`).
+290. [TODO] Git Commit: `chore: package quality gates baseline validation vsix` (hash: TBD)
+291. [TODO] `phase8.stream41.task4` User installs the generated v1.2.339 VSIX and verifies Quality Gates contract heading validation, repair prompt behavior, and managed Clear boundary coverage (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.339] - 2026-05-24
+### Fixed
+- **Quality Gates contract heading is Core-validated.** Core now rejects `quality-gates.md` when it does not start with the exact canonical `# Quality Gates Baseline` heading, matching the Project Manager artifact parser.
+- **Quality Gates repair prompt uses the exact baseline heading.** Agents are now instructed to repair malformed contract headings to `# Quality Gates Baseline`, not the previously accepted looser `# Quality Gates` form.
+- **Diagram Modules Clear resolves materialized development-tree boundaries.** Managed Git rollback now finds `Diagram Modules` stage commits through `.codeai-hub/<workspace>/development_tree`, continuity, and `doc/TODO/stages/development-tree` paths.
+
+### Changed
+- **Quality Gates research prioritizes AI-agent-oriented tooling.** The research prompt now asks agents to prioritize tools intended for AI-assisted codebases, including Ultracite-style guardrails.
+- **Quality Gates contracts must carry the 500-line source/class policy.** Core validates that integrated Quality Gates include an executable required gate for the architecture size limit.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`
+- `node --import tsx --test packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.338] - 2026-05-23
 ### Added
 - **Git-backed workflow rollback facade.** Core now has `WorkflowGitRollbackFacade` as the public contract for managed technical stage rollback beginning with `Diagram Modules`.
