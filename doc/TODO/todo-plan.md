@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "53bdd8f8f",
+  "lastRecordedCommit": "d852c603c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream57.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.347",
+  "currentTaskId": "phase8.stream57.task2",
+  "expectedCommitMessage": "chore: build release 1.2.347 artifacts",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.347",
-    "preCommitHead": "53bdd8f8f",
+    "expectedCommitMessage": "chore: build release 1.2.347 artifacts",
+    "preCommitHead": "d852c603c",
     "stage": "commit_pending",
-    "taskId": "phase8.stream57.task1"
+    "taskId": "phase8.stream57.task2"
   }
 }
 ```
@@ -620,9 +620,9 @@
 
 ### Stream: Release Build v1.2.347
 413. [DONE] `phase8.stream57.task1` Prepare release notes for the Clear/Undo repair release before version bump (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.347`).
-414. [PENDING] Git Commit: `docs: prepare release 1.2.347` (hash: TBD)
-415. [TODO] `phase8.stream57.task2` Run `./scripts/build-all.sh` for v1.2.347 and commit generated package version/release artifact changes (scope: package manifests, `assets/launcher/manifest.json`, `doc/tmp/releases/**`, `doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.347 artifacts`).
-416. [TODO] Git Commit: `chore: build release 1.2.347 artifacts` (hash: TBD)
+414. [DONE] Git Commit: `docs: prepare release 1.2.347` (hash: d852c603c)
+415. [DONE] `phase8.stream57.task2` Run `./scripts/build-all.sh` for v1.2.347 and commit generated package version/release artifact changes (scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.347 artifacts`).
+416. [PENDING] Git Commit: `chore: build release 1.2.347 artifacts` (hash: TBD)
 417. [TODO] `phase8.stream57.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and leave scope active for user workflow acceptance (scope: release packaging output, `doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
