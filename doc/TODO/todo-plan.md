@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "151c73601",
+  "lastRecordedCommit": "c78fef0e9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream41.task1",
-  "expectedCommitMessage": "docs: prepare quality gates baseline validation release",
+  "currentTaskId": "phase8.stream41.task2",
+  "expectedCommitMessage": "chore: build quality gates baseline validation release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates baseline validation release",
-    "preCommitHead": "151c73601",
+    "expectedCommitMessage": "chore: build quality gates baseline validation release",
+    "preCommitHead": "c78fef0e9",
     "stage": "commit_pending",
-    "taskId": "phase8.stream41.task1"
+    "taskId": "phase8.stream41.task2"
   }
 }
 ```
@@ -459,9 +459,9 @@
 
 ### Stream: Release Build — Quality Gates Baseline Validation
 285. [DONE] `phase8.stream41.task1` Update release-facing docs for the v1.2.339 Quality Gates baseline validation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates baseline validation release`).
-286. [PENDING] Git Commit: `docs: prepare quality gates baseline validation release` (hash: TBD)
-287. [TODO] `phase8.stream41.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.339 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates baseline validation release`).
-288. [TODO] Git Commit: `chore: build quality gates baseline validation release` (hash: TBD)
+286. [DONE] Git Commit: `docs: prepare quality gates baseline validation release` (hash: c78fef0e9)
+287. [DONE] `phase8.stream41.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.339 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates baseline validation release`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully for v1.2.339; provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
+288. [PENDING] Git Commit: `chore: build quality gates baseline validation release` (hash: TBD)
 289. [TODO] `phase8.stream41.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates baseline validation vsix`).
 290. [TODO] Git Commit: `chore: package quality gates baseline validation vsix` (hash: TBD)
 291. [TODO] `phase8.stream41.task4` User installs the generated v1.2.339 VSIX and verifies Quality Gates contract heading validation, repair prompt behavior, and managed Clear boundary coverage (scope: user workflow acceptance; no commit expected).
