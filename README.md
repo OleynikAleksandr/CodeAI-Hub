@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.341** (Quality Gates Research-First Prompt)
+**Current Release — v1.2.342** (Quality Gates Planned Required Repair)
+
+This replacement build fixes Quality Gates contract drafting after research
+acceptance. Core now rejects draft contracts that move gates from
+`plannedRequiredAfterIntegration` into advisory/non-blocking semantics instead
+of keeping them active, not-yet-integrated, and integration-required.
+
+Contract repair prompts now target only `quality-gates.md` and
+`quality-gates.json`; approved research artifacts are treated as source of
+truth but are not repair targets during contract fixes. The bundled Quality
+Gates prompt also states that planned required gates are mandatory in intent:
+draft phase means not executable yet, not optional.
+
+**Previous Release — v1.2.341** (Quality Gates Research-First Prompt)
 
 This replacement build fixes the initial Quality Gates agent contract. Core now
 targets `quality-gates-research.md` / `quality-gates-research.json` first, and

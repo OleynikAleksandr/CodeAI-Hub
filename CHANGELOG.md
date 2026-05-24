@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.342] - 2026-05-24
+### Fixed
+- **Quality Gates planned-required gates stay mandatory in draft contracts.** Core now rejects `plannedRequiredAfterIntegration` gates when their command entries are converted to advisory/deferred, lose `integrationRequired: true`, use the wrong availability, or omit planned integration paths.
+- **Quality Gates contract repairs no longer target approved research artifacts.** Draft contract repair prompts now list only `quality-gates.md` and `quality-gates.json`, while preserving `quality-gates-research.md/json` as read-only source of truth.
+- **Quality Gates repair diagnostics explain planned-required semantics.** Agents now receive explicit guidance that draft phase means “not executable yet,” not optional or non-blocking.
+- **Quality Gates contract prompt forbids advisory downgrades.** The bundled template now states that gates planned for required integration must remain active, integration-required, and traceable to planned paths.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-planned-required-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-research-first-boundary.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:webview`
+
 ## [1.2.341] - 2026-05-24
 ### Fixed
 - **Quality Gates starts with research artifacts.** Core now targets `quality-gates-research.md` and `quality-gates-research.json` in the first Quality Gates provider prompt instead of prematurely targeting `quality-gates.md`.

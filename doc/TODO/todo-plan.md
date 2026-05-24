@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "81cb88619",
+  "lastRecordedCommit": "f72705098",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream46.task3",
-  "expectedCommitMessage": "test: cover quality gates planned required repair",
+  "currentTaskId": "phase8.stream46.task5",
+  "expectedCommitMessage": "docs: prepare quality gates planned required release",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates planned required repair",
-    "preCommitHead": "81cb88619",
+    "expectedCommitMessage": "docs: prepare quality gates planned required release",
+    "preCommitHead": "f72705098",
     "stage": "commit_pending",
-    "taskId": "phase8.stream46.task3"
+    "taskId": "phase8.stream46.task5"
   }
 }
 ```
@@ -519,10 +519,10 @@
 333. [DONE] `phase8.stream46.task2` Tighten the bundled Quality Gates contract template so draft contracts cannot describe planned required gates as advisory/non-blocking before integration (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify quality gates draft contract template`).
 334. [DONE] Git Commit: `fix: clarify quality gates draft contract template` (hash: 81cb88619)
 335. [DONE] `phase8.stream46.task3` Add regression tests for planned required gate validation, contract-only repair targets, and bundled prompt wording (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-planned-required-validator.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates planned required repair`).
-336. [PENDING] Git Commit: `test: cover quality gates planned required repair` (hash: TBD)
-337. [TODO] `phase8.stream46.task4` Run targeted Quality Gates tests, Core build, webview build, and plan validation after the planned-required fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-338. [TODO] `phase8.stream46.task5` Update release-facing docs for the replacement Quality Gates planned-required build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates planned required release`).
-339. [TODO] Git Commit: `docs: prepare quality gates planned required release` (hash: TBD)
+336. [DONE] Git Commit: `test: cover quality gates planned required repair` (hash: f72705098)
+337. [DONE] `phase8.stream46.task4` Run targeted Quality Gates tests, Core build, webview build, and plan validation after the planned-required fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: 18 targeted Quality Gates/prompt tests passed; Core build, webview build, and plan validation passed
+338. [DONE] `phase8.stream46.task5` Update release-facing docs for the replacement Quality Gates planned-required build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates planned required release`).
+339. [PENDING] Git Commit: `docs: prepare quality gates planned required release` (hash: TBD)
 340. [TODO] `phase8.stream46.task6` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates planned required release`).
 341. [TODO] Git Commit: `chore: build quality gates planned required release` (hash: TBD)
 342. [TODO] `phase8.stream46.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates planned required vsix`).
