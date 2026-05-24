@@ -90,6 +90,17 @@ const resolveSubturnStatePath = (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): { readonly absolutePath: string; readonly relativePath: string } => {
+  const relativePath = `.codeai-hub/${params.workspaceSlug}/workflow/diagram-modules-progress.json`;
+  return {
+    absolutePath: path.join(params.workspaceRoot, relativePath),
+    relativePath,
+  };
+};
+
+const resolveLegacySubturnStatePath = (params: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): { readonly absolutePath: string; readonly relativePath: string } => {
   const relativePath = `.codeai-hub/${params.workspaceSlug}/workflow/state.json`;
   return {
     absolutePath: path.join(params.workspaceRoot, relativePath),
@@ -111,17 +122,24 @@ export const readDiagramModulesPersistedSubturnState = async (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): Promise<DiagramModulesPersistedSubturnState | null> => {
-  const statePath = resolveSubturnStatePath(params);
-  const content = await readExistingFile(statePath.absolutePath);
-  if (!content) {
-    return null;
+  for (const statePath of [
+    resolveSubturnStatePath(params),
+    resolveLegacySubturnStatePath(params),
+  ]) {
+    const content = await readExistingFile(statePath.absolutePath);
+    if (!content) {
+      continue;
+    }
+    try {
+      const parsed = JSON.parse(content) as unknown;
+      if (isDiagramModulesPersistedSubturnState(parsed)) {
+        return parsed;
+      }
+    } catch {
+      // Ignore corrupt legacy progress snapshots and try the next location.
+    }
   }
-  try {
-    const parsed = JSON.parse(content) as unknown;
-    return isDiagramModulesPersistedSubturnState(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
+  return null;
 };
 
 export const syncDiagramModulesSubturnState = async (params: {

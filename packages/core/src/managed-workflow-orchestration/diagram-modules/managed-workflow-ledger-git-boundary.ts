@@ -22,6 +22,7 @@ const collectRuntimeMetadataPaths = async (
     }
     for (const relativePath of [
       `.codeai-hub/${entry.name}/continuity`,
+      `.codeai-hub/${entry.name}/workflow/diagram-modules-progress.json`,
       `.codeai-hub/${entry.name}/workflow/state.json`,
     ]) {
       if (await pathExists(path.join(workspaceRoot, relativePath))) {

@@ -18,13 +18,13 @@ const REVIEW_TASK_STATE_RE =
   /"currentTaskId": "application-skeleton\.phase2\.review\.task1"/u;
 const MATERIALIZE_TASK_STATE_RE =
   /"currentTaskId": "application-skeleton\.phase3\.materialize\.task1"/u;
+const FINAL_REVIEW_TASK_STATE_RE =
+  /"currentTaskId": "application-skeleton\.phase4\.final-review\.task1"/u;
 const QUALITY_GATES_REVIEW_TASK_STATE_RE =
   /"currentTaskId": "quality-gates\.phase2\.review\.task1"/u;
 const QUALITY_GATES_INTEGRATION_TASK_STATE_RE =
   /"currentTaskId": "quality-gates\.phase3\.integrate\.task1"/u;
 const NO_REVISION_RE = /not-created-user-accepted-without-review-revision/u;
-const MATERIALIZATION_PROMPT_RE =
-  /Core opens Phase 3 Application Skeleton Materialization/u;
 const QUALITY_GATES_INTEGRATION_PROMPT_RE =
   /Core opens Phase 3 Quality Gates Integration/u;
 const QUALITY_GATES_REVIEW_CORRECTIONS_RE = /Quality Gates review corrections/u;
@@ -45,12 +45,28 @@ const createDraftDecision = (): ApplicationSkeletonManagedValidationResult => ({
     accepted: false,
     materialized: false,
     openQuestions: [],
+    packageManager: "npm",
     productParts: [
       {
         codePath: "product-parts/core-runtime",
-        partId: "core-runtime",
+        id: "core-runtime",
       },
     ],
+    projectFoundation: {
+      configFiles: [".gitignore", "tsconfig.json"],
+      firstWaveEntrypoints: ["product-parts/core-runtime/src/index.ts"],
+      installCommand: "npm ci",
+      requiredScripts: ["build"],
+    },
+    reviewState: "draft",
+    schema: "codeai-application-skeleton-v1",
+    sourceRoot: "product-parts",
+    stack: {
+      frameworks: ["node"],
+      languages: ["TypeScript"],
+      runtimes: ["Node.js"],
+    },
+    workspaceRoot: ".",
   },
   nextAction: "open_user_review",
   nextPrompt: "review",
@@ -223,7 +239,7 @@ const createActions = (sessionManager: SessionManager) => {
   };
 };
 
-test("Application Skeleton review acceptance opens materialization without forwarding user text", async () => {
+test("Application Skeleton review acceptance materializes in Core without forwarding user text", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "application-skeleton-review-accept-")
   );
@@ -243,25 +259,17 @@ test("Application Skeleton review acceptance opens materialization without forwa
     assert.deepEqual(harness.dispatchedUserMessages, []);
     assert.equal(harness.dialogMessages.at(-1)?.role, "user");
     assert.equal(harness.dialogMessages.at(-1)?.content, "подтверждаю");
-    assert.equal(harness.sentInternalMessages.length, 1);
-    assert.match(
-      harness.sentInternalMessages[0] ?? "",
-      MATERIALIZATION_PROMPT_RE
-    );
-    assert.doesNotMatch(
-      harness.sentInternalMessages[0] ?? "",
-      USER_ACCEPTANCE_RE
-    );
+    assert.equal(harness.sentInternalMessages.length, 0);
     assert.equal(
       harness.coreMessages.at(-1)?.tag,
-      "managed-workflow-continuation"
+      "managed-workflow-user-review"
     );
 
     const plan = await readWorkspaceFile(
       workspaceRoot,
       "doc/TODO/stages/application-skeleton/todo-plan.md"
     );
-    assert.match(plan, MATERIALIZE_TASK_STATE_RE);
+    assert.match(plan, FINAL_REVIEW_TASK_STATE_RE);
     assert.match(plan, NO_REVISION_RE);
     assert.deepEqual(harness.events, []);
   } finally {
@@ -300,25 +308,17 @@ test("Application Skeleton review acceptance opens materialization even with ope
 
     assert.deepEqual(harness.dispatchedUserMessages, []);
     assert.equal(harness.dialogMessages.at(-1)?.content, acceptance);
-    assert.equal(harness.sentInternalMessages.length, 1);
-    assert.match(
-      harness.sentInternalMessages[0] ?? "",
-      MATERIALIZATION_PROMPT_RE
-    );
-    assert.doesNotMatch(
-      harness.sentInternalMessages[0] ?? "",
-      USER_ACCEPTANCE_RE
-    );
+    assert.equal(harness.sentInternalMessages.length, 0);
     assert.equal(
       harness.coreMessages.at(-1)?.tag,
-      "managed-workflow-continuation"
+      "managed-workflow-user-review"
     );
 
     const plan = await readWorkspaceFile(
       workspaceRoot,
       "doc/TODO/stages/application-skeleton/todo-plan.md"
     );
-    assert.match(plan, MATERIALIZE_TASK_STATE_RE);
+    assert.match(plan, FINAL_REVIEW_TASK_STATE_RE);
     assert.match(plan, NO_REVISION_RE);
     assert.deepEqual(harness.events, []);
   } finally {

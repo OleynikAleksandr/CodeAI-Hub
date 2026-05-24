@@ -179,6 +179,72 @@ test("Git rollback finds Diagram Modules boundary from materialized development 
   }
 });
 
+test("Git rollback ignores managed scaffold plans when finding the Application Skeleton boundary", async () => {
+  const workspaceRoot = await createRepository();
+  try {
+    const diagramArtifactPath = `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`;
+    const appArtifactPath = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
+    const appManagedPath = `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`;
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/application-skeleton/todo-plan.md",
+      "# Application Skeleton Plan\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/diagram-modules/todo-plan.md",
+      "# Diagram Modules Plan\n"
+    );
+    await writeWorkspaceFile(workspaceRoot, diagramArtifactPath);
+    commitAll(workspaceRoot, "docs: checkpoint managed workflow inputs");
+    await writeWorkspaceFile(workspaceRoot, appArtifactPath);
+    await writeWorkspaceFile(workspaceRoot, appManagedPath, '{"valid":true}\n');
+    commitAll(workspaceRoot, "docs: draft application skeleton contract");
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "product-parts/core-runtime/src/index.ts"
+    );
+    commitAll(
+      workspaceRoot,
+      "feat: materialize application skeleton attempt 1"
+    );
+
+    const result = await new WorkflowGitRollbackFacade().rollbackStage({
+      stage: "application_skeleton",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.handled, true);
+    assert.equal(result.reason, null);
+    assert.match(result.rollbackCommit ?? "", GIT_HASH_RE);
+    assert.equal(
+      await exists(path.join(workspaceRoot, diagramArtifactPath)),
+      true
+    );
+    assert.equal(
+      await exists(path.join(workspaceRoot, appArtifactPath)),
+      false
+    );
+    assert.equal(
+      await exists(path.join(workspaceRoot, "product-parts")),
+      false
+    );
+    assert.equal(
+      await exists(
+        path.join(
+          workspaceRoot,
+          "doc/TODO/stages/application-skeleton/todo-plan.md"
+        )
+      ),
+      true
+    );
+    assert.equal(git(workspaceRoot, ["status", "--short"]), "");
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("Git rollback reports non-managed stages without touching the repository", async () => {
   const workspaceRoot = await createRepository();
   try {

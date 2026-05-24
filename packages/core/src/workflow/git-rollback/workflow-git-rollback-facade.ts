@@ -64,15 +64,28 @@ const generatedBoundaryPathspecs = (
   return [];
 };
 
-const stageBoundaryPathspecs = (
+const stageOutputBoundaryPathspecs = (
   stage: ManagedRollbackStage,
   workspaceSlug: string
 ): readonly string[] => {
+  const hubRoot = `.codeai-hub/${workspaceSlug}`;
+  if (stage === "diagram_modules") {
+    return [
+      `${hubRoot}/diagram_modules`,
+      `${hubRoot}/development_tree`,
+      `${hubRoot}/continuity/development_tree`,
+    ];
+  }
+  if (stage === "application_skeleton") {
+    return [
+      `${hubRoot}/application_skeleton`,
+      `${hubRoot}/workflow/managed/application_skeleton.json`,
+      "product-parts",
+    ];
+  }
   return [
-    `.codeai-hub/${workspaceSlug}/${stage}`,
-    `.codeai-hub/${workspaceSlug}/workflow/managed/${stage}.json`,
-    `doc/TODO/stages/${stageDirName(stage)}`,
-    ...generatedBoundaryPathspecs(stage, workspaceSlug),
+    `${hubRoot}/quality_gates`,
+    `${hubRoot}/workflow/managed/quality_gates.json`,
   ];
 };
 
@@ -83,6 +96,7 @@ const stageCleanupPathspecs = (
   const stageIndex = MANAGED_ROLLBACK_STAGES.indexOf(stage);
   const downstreamStages = MANAGED_ROLLBACK_STAGES.slice(stageIndex);
   return [
+    `.codeai-hub/${workspaceSlug}/workflow/diagram-modules-progress.json`,
     `.codeai-hub/${workspaceSlug}/workflow/state.json`,
     `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`,
     ...downstreamStages.flatMap((item) => [
@@ -208,7 +222,7 @@ export class WorkflowGitRollbackFacade {
       "--reverse",
       "--format=%H",
       "--",
-      ...stageBoundaryPathspecs(params.stage, params.workspaceSlug),
+      ...stageOutputBoundaryPathspecs(params.stage, params.workspaceSlug),
     ]);
     return output.split("\n").find((line) => line.trim().length > 0) ?? null;
   }

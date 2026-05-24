@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -374,6 +374,14 @@ test("Diagram Modules subturn state persists the active expected artifact for re
         "diagram_modules/product-parts/local-runtime.md"
       ),
       true
+    );
+    assert.ok(
+      await stat(
+        path.join(
+          workspaceRoot,
+          ".codeai-hub/demo-workspace/workflow/diagram-modules-progress.json"
+        )
+      )
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

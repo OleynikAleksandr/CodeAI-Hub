@@ -17,6 +17,7 @@ import {
   pruneContinuityIndex,
 } from "./workflow-step-clear-continuity-support";
 import { collectWorkflowStepSessionCleanupPaths } from "./workflow-step-clear-session-cleanup";
+import { collectWorkflowStageClearPaths } from "./workflow-step-clear-stage-paths";
 import { resetManagedWorkspacePlanAfterWorkflowClear } from "./workflow-step-clear-workspace-plan";
 
 const HTTP_BAD_REQUEST = 400;
@@ -29,13 +30,6 @@ const WORKFLOW_STAGES = [
   "application_skeleton",
   "quality_gates",
 ] as const satisfies readonly WorkflowStageId[];
-const STAGE_TODO_DIRS: Record<WorkflowStageId, string> = {
-  application_skeleton: "application-skeleton",
-  description: "description",
-  diagram_modules: "diagram-modules",
-  quality_gates: "quality-gates",
-  virtual_simulation: "virtual-simulation",
-};
 const WORKSPACE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
 const GIT_ROLLBACK_FALLBACK_REASONS = new Set([
   "already_at_boundary",
@@ -49,9 +43,6 @@ type ClearTarget =
       readonly codeWorkspacePath?: string | null;
       readonly workflowPath: string;
     };
-type WorkflowStageClearRequest = ParsedClearRequest & {
-  readonly target: Extract<ClearTarget, { readonly kind: "workflow_stage" }>;
-};
 type DevelopmentTreeClearRequest = ParsedClearRequest & {
   readonly target: Extract<
     ClearTarget,
@@ -213,56 +204,6 @@ const clearMatchingSessions = (params: {
   return deletedCount;
 };
 
-const collectLegacyDescriptionGeneratedPaths = (
-  params: WorkflowStageClearRequest
-): string[] => {
-  const baseRelativePaths = [
-    `.codeai-hub/${params.workspaceSlug}/description/Final_Description.md`,
-    `.codeai-hub/${params.workspaceSlug}/description/Description_Draft.md`,
-  ];
-  return baseRelativePaths
-    .map((relativePath) => safeJoin(params.workspacePath, relativePath))
-    .filter((value): value is string => value !== null);
-};
-
-const collectStagePaths = (
-  params: WorkflowStageClearRequest,
-  options: { readonly includeWorkflowState?: boolean } = {}
-): string[] => {
-  const paths: string[] = [];
-  const hubRoot = path.join(
-    params.workspacePath,
-    ".codeai-hub",
-    params.workspaceSlug
-  );
-  for (const stage of downstreamStages(params.target.stage)) {
-    if (stage === "description") {
-      paths.push(...collectLegacyDescriptionGeneratedPaths(params));
-    } else {
-      paths.push(path.join(hubRoot, stage));
-    }
-    paths.push(path.join(hubRoot, "continuity", stage));
-    paths.push(path.join(hubRoot, "workflow", "managed", `${stage}.json`));
-    paths.push(
-      path.join(params.workspacePath, "doc/TODO/stages", STAGE_TODO_DIRS[stage])
-    );
-  }
-  if (options.includeWorkflowState ?? true) {
-    paths.push(path.join(hubRoot, "workflow", "state.json"));
-  }
-  if (downstreamStages(params.target.stage).includes("application_skeleton")) {
-    paths.push(path.join(params.workspacePath, "product-parts"));
-  }
-  if (downstreamStages(params.target.stage).includes("diagram_modules")) {
-    paths.push(path.join(hubRoot, "development_tree"));
-    paths.push(path.join(hubRoot, "continuity", "development_tree"));
-    paths.push(
-      path.join(params.workspacePath, "doc/TODO/stages/development-tree")
-    );
-  }
-  return paths;
-};
-
 const isUndoEntryInScope = (
   entry: WorkflowStepUndoEntry,
   target: ClearTarget
@@ -333,7 +274,10 @@ const collectClearPaths = (
 ): string[] => {
   const fallbackPaths =
     parsed.target.kind === "workflow_stage"
-      ? collectStagePaths({ ...parsed, target: parsed.target }, options)
+      ? collectWorkflowStageClearPaths(
+          { ...parsed, target: parsed.target },
+          options
+        )
       : collectDevelopmentTreePaths({ ...parsed, target: parsed.target });
   if (ledgerActions.length === 0) {
     return fallbackPaths;

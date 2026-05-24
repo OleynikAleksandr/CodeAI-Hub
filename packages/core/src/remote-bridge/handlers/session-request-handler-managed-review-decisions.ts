@@ -32,6 +32,7 @@ import {
   QUALITY_GATES_STAGE_PLAN_PATH,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model";
 import type { Session } from "../../session-manager";
+import { persistApplicationSkeletonManagedDecision } from "./application-skeleton-managed-decision-persister";
 import {
   dispatchQualityGatesReviewRevision,
   openQualityGatesNextAcceptedReviewPhase,
@@ -379,6 +380,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
       workspaceRoot: session.workspacePath,
       workspaceSlug: session.initiativeSlug,
     });
+    await persistApplicationSkeletonManagedDecision({ decision, session });
     if (!decision.valid) {
       this.deps.eventMessages.appendCoreMessage(session.id, {
         content: [
