@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.352] - 2026-05-24
+### Fixed
+- **Clear now rewinds stale `workflow/state.json` last-active data.** After clearing `Diagram Modules` in an app-created workspace that no longer has managed Git metadata, Core now resets `lastActive` to the latest existing upstream artifact instead of leaving it on the removed `diagram_modules/product-parts.index.md` artifact.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.351] - 2026-05-24
 ### Fixed
 - **Diagram Modules Clear now removes Core-created managed scaffold.** In app-created workspaces, clearing `Diagram Modules` back to the post-`Virtual Simulation` state now removes managed workflow scaffold such as `.git`, `.husky`, `doc`, `scripts`, root package files, TypeScript configs, `node_modules`, and downstream Product Part scaffold when Core created them for managed development.

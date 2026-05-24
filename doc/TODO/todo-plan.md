@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "dced3a3fd",
+  "lastRecordedCommit": "0c28e3184",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream66.task1",
-  "expectedCommitMessage": "fix: reset clear last active stage",
+  "currentTaskId": "phase8.stream67.task1",
+  "expectedCommitMessage": "docs: prepare clear last active release",
   "debt": {
-    "expectedCommitMessage": "fix: reset clear last active stage",
-    "preCommitHead": "dced3a3fd",
+    "expectedCommitMessage": "docs: prepare clear last active release",
+    "preCommitHead": "0c28e3184",
     "stage": "commit_pending",
-    "taskId": "phase8.stream66.task1"
+    "taskId": "phase8.stream67.task1"
   }
 }
 ```
@@ -675,8 +675,15 @@
 
 ### Stream: Acceptance Remediation — Clear Last Active State
 450. [DONE] `phase8.stream66.task1` Reset workflow `lastActive` after Clear so app-created workspaces rolled back from Diagram Modules point to the latest existing upstream artifact instead of a cleared future stage (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-last-active.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`; expected commit: `fix: reset clear last active stage`).
-451. [PENDING] Git Commit: `fix: reset clear last active stage` (hash: TBD)
+451. [DONE] Git Commit: `fix: reset clear last active stage` (hash: 0c28e3184)
 452. [DONE] `phase8.stream66.task2` Run targeted Clear last-active regression tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Clear Git rollback regression tests passed, including stale Diagram Modules `lastActive` reset to Virtual Simulation when Git metadata is absent; @codeai-hub/core build passed; plan validation passed.
+
+### Stream: Release Build — Clear Last Active Reset
+453. [DONE] `phase8.stream67.task1` Update release-facing docs for the v1.2.352 Clear last-active reset build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear last active release`).
+454. [PENDING] Git Commit: `docs: prepare clear last active release` (hash: TBD)
+455. [TODO] `phase8.stream67.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build clear last active release`).
+456. [TODO] Git Commit: `chore: build clear last active release` (hash: TBD)
+457. [TODO] `phase8.stream67.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

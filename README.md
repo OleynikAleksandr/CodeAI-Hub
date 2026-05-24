@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.351** (Managed Clear Scaffold Rollback)
+**Current Release — v1.2.352** (Clear Last Active Reset)
+
+This replacement build fixes the final stale workflow state left after clearing
+`Diagram Modules` in an app-created workspace. When Core removes the managed
+development scaffold and rolls the workspace back to the post-`Virtual
+Simulation` state, `workflow/state.json` now points `lastActive` to the latest
+existing upstream artifact instead of the cleared `diagram_modules` artifact.
+
+In the tested rollback path this means `lastActive.stage` returns to
+`virtual_simulation` and the artifact path points to
+`virtual_simulation/virtual-simulation.md`, keeping Project Manager aligned with
+the real workspace contents after Clear/Undo.
+
+**Previous Release — v1.2.351** (Managed Clear Scaffold Rollback)
 
 This replacement build fixes `Clear` for app-created workspaces when returning
 from `Diagram Modules` back to the post-`Virtual Simulation` state. Core now
