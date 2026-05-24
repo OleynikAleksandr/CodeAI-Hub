@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.350] - 2026-05-24
+### Fixed
+- **Managed Clear rollback now ignores scaffold-only stage plan commits.** `Diagram Modules` and `Application Skeleton` rollback boundaries are resolved from real stage output paths, preventing `stage_parent_boundary_missing` from making Clear appear to do nothing.
+- **Diagram Modules progress no longer overwrites shared workflow state.** Subturn progress is persisted to `workflow/diagram-modules-progress.json`, while `workflow/state.json` remains the Core-owned last-active state.
+- **Application Skeleton managed snapshots refresh after Core materialization.** Core now persists the post-materialization validation decision so Project Manager and restart recovery do not read stale draft state.
+
+### Tests
+- `npm exec -- tsx --test packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `./scripts/check-architecture.sh`
+- `npm run plan:validate`
+
 ## [1.2.349] - 2026-05-24
 ### Fixed
 - **Application Skeleton materialization now writes the config files it validates.** Core now creates root `tsconfig.json` when the accepted Application Skeleton map declares it in `projectFoundation.configFiles`.

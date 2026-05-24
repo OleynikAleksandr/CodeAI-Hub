@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "3a420fde5",
+  "lastRecordedCommit": "109a1f240",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream61.task1",
-  "expectedCommitMessage": "fix: separate workflow progress state and managed clear rollback",
+  "currentTaskId": "phase8.stream62.task1",
+  "expectedCommitMessage": "docs: prepare managed clear state isolation release",
   "debt": {
-    "expectedCommitMessage": "fix: separate workflow progress state and managed clear rollback",
-    "preCommitHead": "3a420fde5",
+    "expectedCommitMessage": "docs: prepare managed clear state isolation release",
+    "preCommitHead": "109a1f240",
     "stage": "commit_pending",
-    "taskId": "phase8.stream61.task1"
+    "taskId": "phase8.stream62.task1"
   }
 }
 ```
@@ -646,8 +646,15 @@
 
 ### Stream: Managed Clear State Isolation
 431. [DONE] `phase8.stream61.task1` Separate Core-owned workflow last-active state from Diagram Modules subturn progress, keep managed Application Skeleton progress snapshots consistent after Core materialization/final review, and make managed Clear rollback robust for Diagram Modules/Application Skeleton restart (scope: `packages/core/src/remote-bridge/handlers/diagram-modules-progress.ts, packages/core/src/remote-bridge/handlers/diagram-modules-progress.test.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/remote-bridge/handlers/application-skeleton-managed-decision-persister.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-stage-paths.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: separate workflow progress state and managed clear rollback`).
-432. [PENDING] Git Commit: `fix: separate workflow progress state and managed clear rollback` (hash: TBD)
-433. [TODO] `phase8.stream61.task2` Run targeted Clear/Application Skeleton state tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+432. [DONE] Git Commit: `fix: separate workflow progress state and managed clear rollback` (hash: 109a1f240)
+433. [DONE] `phase8.stream61.task2` Run targeted Clear/Application Skeleton state tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted Git rollback/Clear/Application Skeleton session action tests passed; @codeai-hub/core build, architecture check, and plan validation passed.
+
+### Stream: Release Build — Managed Clear State Isolation
+434. [DONE] `phase8.stream62.task1` Update release-facing docs for the v1.2.350 managed Clear state isolation build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed clear state isolation release`).
+435. [PENDING] Git Commit: `docs: prepare managed clear state isolation release` (hash: TBD)
+436. [TODO] `phase8.stream62.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed clear state isolation release`).
+437. [TODO] Git Commit: `chore: build managed clear state isolation release` (hash: TBD)
+438. [TODO] `phase8.stream62.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

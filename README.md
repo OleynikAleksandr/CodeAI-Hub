@@ -2,17 +2,25 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.349** (Application Skeleton Materializer Alignment)
+**Current Release — v1.2.350** (Managed Clear State Isolation)
+
+This replacement build fixes managed `Clear` for `Diagram Modules` and
+`Application Skeleton`. Git rollback now finds the first real output commit for
+the managed stage instead of the earlier scaffold/checkpoint commit, so Clear can
+return the workspace to the correct pre-stage boundary.
+
+Diagram Modules subturn progress is now stored separately from the shared
+workflow last-active state, and Application Skeleton managed snapshots are
+refreshed after Core-owned materialization so Project Manager receives Core-owned
+truth after restart and after Clear.
+
+**Previous Release — v1.2.349** (Application Skeleton Materializer Alignment)
 
 This replacement build fixes the Core-owned Application Skeleton materializer
 after user acceptance. Core now creates the root `tsconfig.json` whenever the
 accepted Application Skeleton contract declares it in `projectFoundation.configFiles`,
 adds that file to `materializedPaths`, and keeps validator expectations aligned
 with the files Core actually writes.
-
-This prevents the confusing state where `application-skeleton.md` is rewritten
-as materialized and then the same Core flow rejects the step for a missing
-`tsconfig.json`.
 
 **Previous Release — v1.2.347** (Workflow Clear Undo Completion)
 
