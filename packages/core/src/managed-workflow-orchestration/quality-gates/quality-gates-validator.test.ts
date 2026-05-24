@@ -195,6 +195,31 @@ test("Quality Gates validator accepts draft contract and opens user review", asy
   }
 });
 
+test("Quality Gates validator rejects draft contract without Baseline heading", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-wrong-heading-")
+  );
+  try {
+    await writeQualityGatesArtifacts(
+      workspaceRoot,
+      buildQualityGatesJson(),
+      "# Quality Gates Contract\n\n## Overview\n\nGate contract.\n"
+    );
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.nextAction, "repair_current_artifact");
+    assert.ok(result.diagnostics.includes("markdown_wrong_stage"));
+    assert.match(result.nextPrompt ?? "", DRAFT_REJECTED_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("Quality Gates validator rejects malformed draft commands", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "quality-gates-bad-draft-")

@@ -32,7 +32,7 @@ export interface QualityGatesManagedValidationResult {
   readonly valid: boolean;
 }
 
-const QUALITY_GATES_TITLE_RE = /^#\s+Quality Gates(?:\s+Baseline)?\b/imu;
+const QUALITY_GATES_TITLE_RE = /^#\s+Quality Gates Baseline\b/mu;
 const MARKDOWN_ACCEPTED_TRUE_RE = /\baccepted\s*:\s*true\b/iu;
 const MARKDOWN_INTEGRATED_TRUE_RE = /\bintegrated\s*:\s*true\b/iu;
 const REQUIRED_ARRAY_KEYS = [

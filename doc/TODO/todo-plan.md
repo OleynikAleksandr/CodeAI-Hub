@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "99ee042b2",
+  "lastRecordedCommit": "1af801f16",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream39.task2",
-  "expectedCommitMessage": "test: cover diagram modules clear service rollback",
+  "currentTaskId": "phase8.stream40.task1",
+  "expectedCommitMessage": "fix: require quality gates baseline heading",
   "debt": {
-    "expectedCommitMessage": "test: cover diagram modules clear service rollback",
-    "preCommitHead": "99ee042b2",
+    "expectedCommitMessage": "fix: require quality gates baseline heading",
+    "preCommitHead": "1af801f16",
     "stage": "commit_pending",
-    "taskId": "phase8.stream39.task2"
+    "taskId": "phase8.stream40.task1"
   }
 }
 ```
@@ -445,9 +445,17 @@
 273. [DONE] `phase8.stream39.task1` Extend Git-backed Clear boundary and cleanup coverage for Diagram Modules materialized `development_tree` state and Application Skeleton generated product-parts residue (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: cover diagram modules git clear boundary`).
 274. [DONE] Git Commit: `fix: cover diagram modules git clear boundary` (hash: 99ee042b2)
 275. [DONE] `phase8.stream39.task2` Cover the Core workflow Clear service path for Diagram Modules Git rollback from the Project Manager command surface (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover diagram modules clear service rollback`).
-276. [PENDING] Git Commit: `test: cover diagram modules clear service rollback` (hash: TBD)
-277. [TODO] `phase8.stream39.task3` Run targeted validation for Git rollback, workflow Clear service and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-278. [TODO] `phase8.stream39.task4` Wait for explicit user confirmation before building the next replacement release after Diagram Modules Clear boundary fix (scope: release confirmation gate; no commit expected).
+276. [DONE] Git Commit: `test: cover diagram modules clear service rollback` (hash: 1af801f16)
+277. [DONE] `phase8.stream39.task3` Run targeted validation for Git rollback, workflow Clear service and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted validation passed: Git rollback and workflow Clear service tests 6/6, @codeai-hub/core build, and plan validation.
+278. [BLOCKED] `phase8.stream39.task4` Wait for explicit user confirmation before building the next replacement release after Diagram Modules Clear boundary fix (scope: release confirmation gate; no commit expected). Blocked: user retest found Quality Gates contract Markdown with `# Quality Gates Contract` passed Core validation while Project Manager correctly requires `# Quality Gates Baseline`.
+
+### Stream: Quality Gates Contract Heading Validation
+279. [DONE] `phase8.stream40.task1` Require Core Quality Gates validation to reject contract Markdown that does not start with the exact `# Quality Gates Baseline` heading, matching the Project Manager artifact parser (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require quality gates baseline heading`).
+280. [PENDING] Git Commit: `fix: require quality gates baseline heading` (hash: TBD)
+281. [TODO] `phase8.stream40.task2` Update the Quality Gates repair prompt so agents repair the Markdown heading to `# Quality Gates Baseline` only, not the looser `# Quality Gates` form (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: repair quality gates baseline heading`).
+282. [TODO] Git Commit: `fix: repair quality gates baseline heading` (hash: TBD)
+283. [TODO] `phase8.stream40.task3` Run targeted validation for Quality Gates heading rejection, repair prompt guidance, Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+284. [TODO] `phase8.stream40.task4` Wait for explicit user confirmation before building the next replacement release after Quality Gates contract heading validation (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
