@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "bcd148e18",
+  "lastRecordedCommit": "e4ff233e1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream54.task3",
-  "expectedCommitMessage": "chore: package managed clear rollback vsix",
+  "currentTaskId": "phase8.stream55.task1",
+  "expectedCommitMessage": "feat: materialize application skeleton in core",
   "debt": {
-    "expectedCommitMessage": "chore: package managed clear rollback vsix",
-    "preCommitHead": "bcd148e18",
+    "expectedCommitMessage": "feat: materialize application skeleton in core",
+    "preCommitHead": "e4ff233e1",
     "stage": "commit_pending",
-    "taskId": "phase8.stream54.task3"
+    "taskId": "phase8.stream55.task1"
   }
 }
 ```
@@ -597,8 +597,17 @@
 394. [DONE] `phase8.stream54.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed clear rollback release`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully for v1.2.346; provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
 395. [DONE] Git Commit: `chore: build managed clear rollback release` (hash: bcd148e18)
 396. [DONE] `phase8.stream54.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package managed clear rollback vsix`). Result: `codeai-hub-1.2.346.vsix` built successfully at 4.7M; SHA-256 `4ee08f05f3a6fcdda08088a6c587f081c395000fae69bb6980277f66b77945e4`; SDK exclusions, local artefact validation, markdown links, duplication check and VSIX runtime package surface checks passed.
-397. [PENDING] Git Commit: `chore: package managed clear rollback vsix` (hash: TBD)
-398. [TODO] `phase8.stream54.task4` User installs the generated v1.2.346 VSIX and verifies managed Clear on Quality Gates does not delete tracked stage files when Git rollback boundary is missing (scope: user workflow acceptance; no commit expected).
+397. [DONE] Git Commit: `chore: package managed clear rollback vsix` (hash: e4ff233e1)
+398. [BLOCKED] `phase8.stream54.task4` User installs the generated v1.2.346 VSIX and verifies managed Clear on Quality Gates does not delete tracked stage files when Git rollback boundary is missing (scope: user workflow acceptance; no commit expected). Blocked: user testing found Application Skeleton still delegates deterministic npm/TypeScript materialization mechanics to the provider agent, causing repeated repair attempts around `npm ci`, lockfile bootstrap, and devDependency installation.
+
+### Stream: Core-Owned Application Skeleton Materializer
+399. [DONE] `phase8.stream55.task1` Add a Core-owned Application Skeleton scaffold materializer and call it after draft acceptance instead of dispatching npm/TypeScript materialization to the provider agent (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, doc/TODO/todo-plan.md`; expected commit: `feat: materialize application skeleton in core`).
+400. [PENDING] Git Commit: `feat: materialize application skeleton in core` (hash: TBD)
+401. [TODO] `phase8.stream55.task2` Align Application Skeleton prompts and validation expectations with Core-owned bootstrap mechanics so agents only draft/revise contracts, not npm scaffold execution (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder.ts, packages/agents/application-skeleton-agent/assets/application-skeleton-prompt.md, packages/core/src/templates/application-skeleton-bundled-templates.test.ts`; expected commit: `fix: clarify core-owned application skeleton materialization`).
+402. [TODO] Git Commit: `fix: clarify core-owned application skeleton materialization` (hash: TBD)
+403. [TODO] `phase8.stream55.task3` Add targeted regression coverage for Core-owned Application Skeleton materialization after user acceptance (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.test.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover core application skeleton materializer`).
+404. [TODO] Git Commit: `test: cover core application skeleton materializer` (hash: TBD)
+405. [TODO] `phase8.stream55.task4` Run targeted Application Skeleton materializer tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

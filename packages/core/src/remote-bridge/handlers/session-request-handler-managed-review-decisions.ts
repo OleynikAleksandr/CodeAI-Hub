@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { ApplicationSkeletonCoreMaterializer } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
-  buildApplicationSkeletonMaterializationPrompt,
   buildApplicationSkeletonMaterializationRevisionPrompt,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
 import {
@@ -15,11 +15,15 @@ import {
   APPLICATION_STAGE_PLAN_PATH,
   PHASE4_TASK_ID,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model";
+import { validateApplicationSkeletonManagedArtifacts } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-validator";
 import {
   acceptDiagramModulesReviewWithoutRevision,
   isDiagramModulesReviewOpen,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
-import { buildManagedPersistentReturnHandoffMessage } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
+import {
+  buildManagedPersistentReturnHandoffMessage,
+  buildManagedUserLedReviewHandoffMessage,
+} from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
 import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import {
   PLAN_END,
@@ -147,6 +151,8 @@ const readApplicationSkeletonTaskId = async (
 export class SessionRequestHandlerManagedReviewDecisions {
   private readonly applicationSkeletonStagePlan =
     new ApplicationSkeletonStagePlanController();
+  private readonly applicationSkeletonMaterializer =
+    new ApplicationSkeletonCoreMaterializer();
   private readonly deps: ManagedReviewDecisionDeps;
   private readonly qualityGatesStagePlan =
     new QualityGatesStagePlanController();
@@ -365,14 +371,45 @@ export class SessionRequestHandlerManagedReviewDecisions {
       });
       return;
     }
-    const prompt = buildApplicationSkeletonMaterializationPrompt({
+    await this.applicationSkeletonMaterializer.materialize({
+      workspaceRoot: session.workspacePath,
       workspaceSlug: session.initiativeSlug,
     });
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: prompt,
-      tag: "managed-workflow-continuation",
+    const decision = await validateApplicationSkeletonManagedArtifacts({
+      workspaceRoot: session.workspacePath,
+      workspaceSlug: session.initiativeSlug,
     });
-    await this.deps.messageDispatch.sendInternalMessage(session.id, prompt);
+    if (!decision.valid) {
+      this.deps.eventMessages.appendCoreMessage(session.id, {
+        content: [
+          "Core-owned Application Skeleton materialization failed validation.",
+          "Diagnostics:",
+          ...decision.diagnostics.map((diagnostic) => `- ${diagnostic}`),
+        ].join("\n"),
+        tag: "managed-workflow-validation",
+      });
+      return;
+    }
+    const planAdvance =
+      await this.applicationSkeletonStagePlan.commitManagedTurn({
+        decision,
+        sessionId: session.id,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+    if (planAdvance.blocked) {
+      this.deps.eventMessages.appendCoreMessage(session.id, {
+        content: buildApplicationSkeletonBoundaryBlockedMessage(
+          planAdvance.blocked.message
+        ),
+        tag: "managed-workflow-validation",
+      });
+      return;
+    }
+    this.deps.eventMessages.appendCoreMessage(session.id, {
+      content: buildManagedUserLedReviewHandoffMessage("Application Skeleton"),
+      tag: "managed-workflow-user-review",
+    });
   }
 
   private async completeApplicationSkeletonFinalReview(
