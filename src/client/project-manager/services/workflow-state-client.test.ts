@@ -79,6 +79,26 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
                 ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout",
               codeWorkspacePath: "product-parts/ui-shell/clusters/layout",
               readiness: "ready",
+              operations: [
+                {
+                  id: "workers",
+                  kind: "workers",
+                  title: "Workers",
+                  workflowPath:
+                    "development_tree/materialized/product-parts/ui-shell/clusters/layout/workers",
+                  artifactWorkspacePath:
+                    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout/workers",
+                },
+                {
+                  id: "integration",
+                  kind: "integration",
+                  title: "Integration",
+                  workflowPath:
+                    "development_tree/materialized/product-parts/ui-shell/clusters/layout/integration",
+                  artifactWorkspacePath:
+                    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout/integration",
+                },
+              ],
               modules: [
                 {
                   id: "main-area",
@@ -191,12 +211,15 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
   assert.equal(part?.codeWorkspacePath, "product-parts/ui-shell");
   assert.equal(part?.operations?.[0]?.kind, "lead_orchestration");
   assert.equal(part?.operations?.[0]?.children?.[0]?.kind, "contract_graph");
-  assert.equal(part?.clusters[0]?.readiness, "ready");
+  const cluster = part?.clusters[0];
+  assert.equal(cluster?.readiness, "ready");
+  assert.equal(cluster?.operations?.[0]?.kind, "workers");
+  assert.equal(cluster?.operations?.[1]?.kind, "integration");
   assert.equal(
-    part?.clusters[0]?.artifactWorkspacePath,
+    cluster?.artifactWorkspacePath,
     ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout"
   );
-  const module = part?.clusters[0]?.modules[0];
+  const module = cluster?.modules[0];
   assert.equal(module?.readiness, "ready");
   assert.equal(
     module?.codeWorkspacePath,

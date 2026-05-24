@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "ae823ca49",
+  "lastRecordedCommit": "f2651cafe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream51.task2",
-  "expectedCommitMessage": "fix: place cluster workflow before modules",
+  "currentTaskId": "phase8.stream51.task3",
+  "expectedCommitMessage": "test: cover cluster workflow ordering",
   "debt": {
-    "expectedCommitMessage": "fix: place cluster workflow before modules",
-    "preCommitHead": "ae823ca49",
+    "expectedCommitMessage": "test: cover cluster workflow ordering",
+    "preCommitHead": "f2651cafe",
     "stage": "commit_pending",
-    "taskId": "phase8.stream51.task2"
+    "taskId": "phase8.stream51.task3"
   }
 }
 ```
@@ -570,9 +570,9 @@
 373. [DONE] `phase8.stream51.task1` Project cluster-owned workflow operation nodes from Core snapshots so the cluster has its own first steps before modules (scope: `packages/core/src/development-tree/development-tree-types.ts, packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts`; expected commit: `feat: project cluster workflow operations`).
 374. [DONE] Git Commit: `feat: project cluster workflow operations` (hash: ae823ca49)
 375. [DONE] `phase8.stream51.task2` Parse and place cluster workflow operation nodes before module nodes in Project Manager without changing existing tree styling (scope: `src/client/project-manager/services/workflow-state-development-tree-client.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`; expected commit: `fix: place cluster workflow before modules`).
-376. [PENDING] Git Commit: `fix: place cluster workflow before modules` (hash: TBD)
-377. [TODO] `phase8.stream51.task3` Add regression coverage for cluster operation parsing and ordering before modules (scope: `src/client/project-manager/services/workflow-state-client.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover cluster workflow ordering`).
-378. [TODO] Git Commit: `test: cover cluster workflow ordering` (hash: TBD)
+376. [DONE] Git Commit: `fix: place cluster workflow before modules` (hash: f2651cafe)
+377. [DONE] `phase8.stream51.task3` Add regression coverage for cluster operation parsing and ordering before modules (scope: `src/client/project-manager/services/workflow-state-client.test.ts, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover cluster workflow ordering`).
+378. [PENDING] Git Commit: `test: cover cluster workflow ordering` (hash: TBD)
 379. [TODO] `phase8.stream51.task4` Run targeted Core/Project Manager tests and builds for cluster workflow node ordering (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 380. [TODO] `phase8.stream51.task5` User confirms whether to build a replacement release after cluster workflow node ordering is verified (scope: release confirmation gate; no commit expected).
 

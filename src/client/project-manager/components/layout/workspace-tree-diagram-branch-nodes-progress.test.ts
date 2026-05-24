@@ -183,6 +183,55 @@ test("buildDevelopmentTreeNodes renders module operation children from Core snap
   assert.equal(implementationNode?.children?.[0]?.operationKind, "workers");
 });
 
+test("buildDevelopmentTreeNodes renders cluster operations before modules", () => {
+  const nodes = buildDevelopmentTreeNodes(
+    {
+      parts: [
+        {
+          id: "ui-shell",
+          status: "materialized",
+          clusters: [
+            {
+              id: "layout-cluster",
+              operations: [
+                {
+                  id: "workers",
+                  kind: "workers",
+                  title: "Workers",
+                  workflowPath:
+                    "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/workers",
+                  artifactWorkspacePath:
+                    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/workers",
+                },
+                {
+                  id: "integration",
+                  kind: "integration",
+                  title: "Integration",
+                  workflowPath:
+                    "development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/integration",
+                  artifactWorkspacePath:
+                    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/clusters/layout-cluster/integration",
+                },
+              ],
+              modules: [{ id: "main-area", title: "Main Area" }],
+            },
+          ],
+          standaloneModules: [],
+        },
+      ],
+    },
+    0
+  );
+
+  const clusterChildren = nodes[0]?.children?.[0]?.children;
+  assert.equal(clusterChildren?.[0]?.label, "Workers");
+  assert.equal(clusterChildren?.[0]?.nodeType, "operation");
+  assert.equal(clusterChildren?.[1]?.label, "Integration");
+  assert.equal(clusterChildren?.[1]?.nodeType, "operation");
+  assert.equal(clusterChildren?.[2]?.label, "Main Area");
+  assert.equal(clusterChildren?.[2]?.nodeType, "module");
+});
+
 test("buildDevelopmentTreeNodes renders lead orchestration and locked nodes", () => {
   const nodes = buildDevelopmentTreeNodes(
     {
