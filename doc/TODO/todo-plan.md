@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "e14c8d2bd",
+  "lastRecordedCommit": "15b98823d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream46.task6",
-  "expectedCommitMessage": "chore: build quality gates planned required release",
+  "currentTaskId": "phase8.stream46.task7",
+  "expectedCommitMessage": "chore: package quality gates planned required vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates planned required release",
-    "preCommitHead": "e14c8d2bd",
+    "expectedCommitMessage": "chore: package quality gates planned required vsix",
+    "preCommitHead": "15b98823d",
     "stage": "commit_pending",
-    "taskId": "phase8.stream46.task6"
+    "taskId": "phase8.stream46.task7"
   }
 }
 ```
@@ -524,9 +524,9 @@
 338. [DONE] `phase8.stream46.task5` Update release-facing docs for the replacement Quality Gates planned-required build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates planned required release`).
 339. [DONE] Git Commit: `docs: prepare quality gates planned required release` (hash: e14c8d2bd)
 340. [DONE] `phase8.stream46.task6` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates planned required release`). Result: v1.2.342 provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
-341. [PENDING] Git Commit: `chore: build quality gates planned required release` (hash: TBD)
-342. [TODO] `phase8.stream46.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates planned required vsix`).
-343. [TODO] Git Commit: `chore: package quality gates planned required vsix` (hash: TBD)
+341. [DONE] Git Commit: `chore: build quality gates planned required release` (hash: 15b98823d)
+342. [DONE] `phase8.stream46.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates planned required vsix`). Result: `codeai-hub-1.2.342.vsix` built successfully at 4.7M; SHA-256 `751f1747eb192affbfe340fcc73caa1b684c7ce2a9280c9cb571d55f6d88da92`; SDK exclusions, local artefact validation, markdown links, duplication check and package surface checks passed.
+343. [PENDING] Git Commit: `chore: package quality gates planned required vsix` (hash: TBD)
 344. [TODO] `phase8.stream46.task8` User installs the generated replacement VSIX and verifies Quality Gates contract drafting keeps planned required gates active/integration-required and contract repairs do not touch research artifacts (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
