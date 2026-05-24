@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "199189796",
+  "lastRecordedCommit": "cff27fe5d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream43.task2",
-  "expectedCommitMessage": "chore: build description restart projection release",
+  "currentTaskId": "phase8.stream43.task3",
+  "expectedCommitMessage": "chore: package description restart projection vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build description restart projection release",
-    "preCommitHead": "199189796",
+    "expectedCommitMessage": "chore: package description restart projection vsix",
+    "preCommitHead": "cff27fe5d",
     "stage": "commit_pending",
-    "taskId": "phase8.stream43.task2"
+    "taskId": "phase8.stream43.task3"
   }
 }
 ```
@@ -480,9 +480,9 @@
 300. [DONE] `phase8.stream43.task1` Update release-facing docs for the v1.2.340 Description Clear restart projection build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare description restart projection release`).
 301. [DONE] Git Commit: `docs: prepare description restart projection release` (hash: 199189796)
 302. [DONE] `phase8.stream43.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.340 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build description restart projection release`). Result: `./scripts/build-all.sh --allow-dirty` completed v1.2.340; provider, Core, CEF launcher, vscode-webview and project-manager tarball artifacts were created under `doc/tmp/releases/`.
-303. [PENDING] Git Commit: `chore: build description restart projection release` (hash: TBD)
-304. [TODO] `phase8.stream43.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package description restart projection vsix`).
-305. [TODO] Git Commit: `chore: package description restart projection vsix` (hash: TBD)
+303. [DONE] Git Commit: `chore: build description restart projection release` (hash: cff27fe5d)
+304. [DONE] `phase8.stream43.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package description restart projection vsix`). Result: VSIX `codeai-hub-1.2.340.vsix` built successfully at 4.7M; SHA256 `bf76160c8bbcfe1f14536b1789aefbf23002ba9cb6a054d74465d7f5db4b5cda`; SDK exclusions, local artefact validation, markdown links, duplication check and VSIX runtime package surface checks passed.
+305. [PENDING] Git Commit: `chore: package description restart projection vsix` (hash: TBD)
 306. [TODO] `phase8.stream43.task4` User installs the generated v1.2.340 VSIX and verifies Description Clear restart preserves Description session projection and Virtual Simulation provider/model inheritance (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
