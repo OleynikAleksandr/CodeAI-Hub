@@ -2,7 +2,7 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.348** (Application Skeleton Materializer Alignment)
+**Current Release — v1.2.349** (Application Skeleton Materializer Alignment)
 
 This replacement build fixes the Core-owned Application Skeleton materializer
 after user acceptance. Core now creates the root `tsconfig.json` whenever the

@@ -8,7 +8,7 @@ orchestrator removal.
 
 ## [Unreleased]
 
-## [1.2.348] - 2026-05-24
+## [1.2.349] - 2026-05-24
 ### Fixed
 - **Application Skeleton materialization now writes the config files it validates.** Core now creates root `tsconfig.json` when the accepted Application Skeleton map declares it in `projectFoundation.configFiles`.
 - **Application Skeleton materialized state no longer self-rejects on `tsconfig.json`.** The Core-owned materializer adds root `tsconfig.json` to `materializedPaths` and keeps `projectFoundation.configFiles` aligned with validator expectations.

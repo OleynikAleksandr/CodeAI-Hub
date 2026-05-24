@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "4713ad9f4",
+  "lastRecordedCommit": "ec92aafe5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream59.task1",
-  "expectedCommitMessage": "docs: prepare application skeleton materializer release",
+  "currentTaskId": "phase8.stream60.task2",
+  "expectedCommitMessage": "chore: build application skeleton materializer rerelease",
   "debt": {
-    "expectedCommitMessage": "docs: prepare application skeleton materializer release",
-    "preCommitHead": "4713ad9f4",
+    "expectedCommitMessage": "chore: build application skeleton materializer rerelease",
+    "preCommitHead": "ec92aafe5",
     "stage": "commit_pending",
-    "taskId": "phase8.stream59.task1"
+    "taskId": "phase8.stream60.task2"
   }
 }
 ```
@@ -632,10 +632,17 @@
 
 ### Stream: Release Build — Application Skeleton Materializer Alignment
 421. [DONE] `phase8.stream59.task1` Update release-facing docs for the v1.2.348 Application Skeleton materializer alignment build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton materializer release`).
-422. [PENDING] Git Commit: `docs: prepare application skeleton materializer release` (hash: TBD)
-423. [TODO] `phase8.stream59.task2` Run `./scripts/build-all.sh`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton materializer release`).
+422. [DONE] Git Commit: `docs: prepare application skeleton materializer release` (hash: ec92aafe5)
+423. [BLOCKED] `phase8.stream59.task2` Run `./scripts/build-all.sh`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton materializer release`). Blocked: user intentionally interrupted the v1.2.348 build and requested a new release number instead of reusing the partial build.
 424. [TODO] Git Commit: `chore: build application skeleton materializer release` (hash: TBD)
 425. [TODO] `phase8.stream59.task3` Run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+### Stream: Replacement Release Build — Application Skeleton Materializer Alignment
+426. [DONE] `phase8.stream60.task1` Update release-facing docs for the v1.2.349 Application Skeleton materializer alignment rebuild after the interrupted v1.2.348 build (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: folded into `chore: build application skeleton materializer rerelease` because the interrupted v1.2.348 build already left version/manifest files dirty).
+427. [DONE] Git Commit: `docs: prepare application skeleton materializer rerelease` (hash: folded into build commit)
+428. [DONE] `phase8.stream60.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.349 tarball output and record release artifacts (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build application skeleton materializer rerelease`).
+429. [PENDING] Git Commit: `chore: build application skeleton materializer rerelease` (hash: TBD)
+430. [TODO] `phase8.stream60.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
