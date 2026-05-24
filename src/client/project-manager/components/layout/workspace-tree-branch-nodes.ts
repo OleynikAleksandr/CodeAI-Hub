@@ -17,6 +17,38 @@ const dispatchStageActivated = (stage: string): void => {
   );
 };
 
+type DescriptionSessionProjection = {
+  readonly providerId: string;
+  readonly providerSessionId: string;
+};
+
+const resolveDescriptionSession = (
+  workflowState: WorkflowStateSnapshot
+): DescriptionSessionProjection | null => {
+  const primarySession = workflowState.description?.primarySession;
+  if (primarySession) {
+    return primarySession;
+  }
+  let latest: DescriptionSessionProjection & { readonly updatedAt: string } | null = null;
+  for (const chain of workflowState.continuity.chains) {
+    if (chain.stage !== "description") {
+      continue;
+    }
+    const last = chain.segments.at(-1);
+    if (!last) {
+      continue;
+    }
+    if (!latest || chain.updatedAt.localeCompare(latest.updatedAt) > 0) {
+      latest = {
+        providerId: last.providerId,
+        providerSessionId: last.providerSessionId,
+        updatedAt: chain.updatedAt,
+      };
+    }
+  }
+  return latest;
+};
+
 const buildDescriptionBranchNodes = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly descriptionArtifactAvailable: boolean;
@@ -29,7 +61,9 @@ const buildDescriptionBranchNodes = (options: {
   if (!branch) {
     return [];
   }
-  const session = branch.primarySession;
+  const session = options.workflowState
+    ? resolveDescriptionSession(options.workflowState)
+    : null;
   const nodes: TreeNode[] = [];
   const artifactPath = branch.finalPath ?? branch.questionnairePath;
   const artifactLabel = branch.finalPath
@@ -137,7 +171,7 @@ export const resolveStageSyncPayload = (options: {
     const artifactLabel = branch.finalPath
       ? "Final_Description.md"
       : "questionnaire.md";
-    const session = branch.primarySession;
+    const session = resolveDescriptionSession(workflowState);
     return {
       artifact: artifactPath ? { path: artifactPath, label: artifactLabel } : null,
       clearTool: null,

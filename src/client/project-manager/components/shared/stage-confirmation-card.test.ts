@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import type { WorkflowStateSnapshot } from "../../services/workflow-state-client";
+import { resolveStageSyncPayload } from "../layout/workspace-tree-branch-nodes";
 import {
   resolveInheritedStageProviderId,
   resolveStageSessionIntent,
@@ -153,6 +154,7 @@ const buildWorkflowSnapshot = (): WorkflowStateSnapshot => ({
   },
   gating: {
     blocked: {
+      description: false,
       virtual_simulation: false,
       diagram_modules: true,
       application_skeleton: true,
@@ -188,4 +190,31 @@ test("description session intent falls back to Description continuity", () => {
       runSlug: null,
     }
   );
+});
+
+test("description tree sync falls back to Description continuity", () => {
+  const snapshot = buildWorkflowSnapshot();
+
+  const payload = resolveStageSyncPayload({
+    stage: "description",
+    workflowState: snapshot,
+    workspaceSlug: "codeai-hub-codex-5-4",
+    workspacePath: "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4",
+    virtualSimulationArtifactAvailable: false,
+  });
+
+  assert.deepEqual(payload.session, {
+    providerId: "codexCli",
+    providerSessionId: "codex-native-description",
+    workspacePath: "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4",
+    workspaceSlug: "codeai-hub-codex-5-4",
+    initiativeSlug: "codeai-hub-codex-5-4",
+    stage: "description",
+    sessionKind: "collector",
+    runSlug: null,
+  });
+  assert.deepEqual(payload.artifact, {
+    path: ".codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md",
+    label: "Final_Description.md",
+  });
 });
