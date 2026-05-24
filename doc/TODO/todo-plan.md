@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "6507f477b",
+  "lastRecordedCommit": "28158e795",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream44.task7",
-  "expectedCommitMessage": "docs: prepare quality gates research prompt release",
+  "currentTaskId": "phase8.stream44.task8",
+  "expectedCommitMessage": "chore: build quality gates research prompt release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates research prompt release",
-    "preCommitHead": "6507f477b",
+    "expectedCommitMessage": "chore: build quality gates research prompt release",
+    "preCommitHead": "28158e795",
     "stage": "commit_pending",
-    "taskId": "phase8.stream44.task7"
+    "taskId": "phase8.stream44.task8"
   }
 }
 ```
@@ -498,9 +498,9 @@
 316. [DONE] Git Commit: `fix: describe quality gates research task` (hash: 6507f477b)
 317. [DONE] `phase8.stream44.task6` Run targeted Core prompt/Quality Gates tests, Core build, webview build, and plan validation for the research-first prompt fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: targeted Quality Gates prompt/repair tests, Core build, webview build, and plan validation passed
 318. [DONE] `phase8.stream44.task7` Update release-facing docs for the v1.2.341 Quality Gates research-first prompt build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates research prompt release`).
-319. [PENDING] Git Commit: `docs: prepare quality gates research prompt release` (hash: TBD)
-320. [TODO] `phase8.stream44.task8` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.341 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates research prompt release`).
-321. [TODO] Git Commit: `chore: build quality gates research prompt release` (hash: TBD)
+319. [DONE] Git Commit: `docs: prepare quality gates research prompt release` (hash: 28158e795)
+320. [DONE] `phase8.stream44.task8` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.341 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates research prompt release`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully for v1.2.341; provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
+321. [PENDING] Git Commit: `chore: build quality gates research prompt release` (hash: TBD)
 322. [TODO] `phase8.stream44.task9` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates research prompt vsix`).
 323. [TODO] Git Commit: `chore: package quality gates research prompt vsix` (hash: TBD)
 324. [TODO] `phase8.stream44.task10` User installs the generated v1.2.341 VSIX and verifies Quality Gates starts with valid `# Quality Gates Research` artifacts before contract drafting (scope: user workflow acceptance; no commit expected).
