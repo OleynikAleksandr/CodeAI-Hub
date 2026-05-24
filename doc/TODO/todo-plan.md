@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "365a0e212",
+  "lastRecordedCommit": "1ec5f98c6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream45.task2",
-  "expectedCommitMessage": "test: cover quality gates research artifact language",
+  "currentTaskId": "phase8.stream46.task1",
+  "expectedCommitMessage": "fix: enforce quality gates planned required semantics",
   "debt": {
-    "expectedCommitMessage": "test: cover quality gates research artifact language",
-    "preCommitHead": "365a0e212",
+    "expectedCommitMessage": "fix: enforce quality gates planned required semantics",
+    "preCommitHead": "1ec5f98c6",
     "stage": "commit_pending",
-    "taskId": "phase8.stream45.task2"
+    "taskId": "phase8.stream46.task1"
   }
 }
 ```
@@ -509,9 +509,25 @@
 325. [DONE] `phase8.stream45.task1` Add an explicit Quality Gates prompt requirement that `quality-gates-research.md` user-facing prose is written in the same language the agent uses with the user, while JSON field names and stable identifiers remain canonical (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: localize quality gates research artifact`).
 326. [DONE] Git Commit: `fix: localize quality gates research artifact` (hash: 365a0e212)
 327. [DONE] `phase8.stream45.task2` Add bundled prompt regression coverage for the research artifact language rule (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates research artifact language`).
-328. [PENDING] Git Commit: `test: cover quality gates research artifact language` (hash: TBD)
-329. [TODO] `phase8.stream45.task3` Run targeted Quality Gates prompt/template tests and Core plan validation after the localization prompt fix (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-330. [TODO] `phase8.stream45.task4` Prepare release-facing docs and build a replacement VSIX only after explicit release build confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md, package versions, release artifacts`; expected commit: pending confirmation).
+328. [DONE] Git Commit: `test: cover quality gates research artifact language` (hash: 1ec5f98c6)
+329. [DONE] `phase8.stream45.task3` Run targeted Quality Gates prompt/template tests and Core plan validation after the localization prompt fix (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Quality Gates bundled prompt and workflow prompt-pack tests passed; plan validation passed
+330. [BLOCKED] `phase8.stream45.task4` Prepare release-facing docs and build a replacement VSIX only after explicit release build confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md, package versions, release artifacts`; expected commit: pending confirmation). Blocked: user retest found the Quality Gates contract repair prompt let the agent convert planned required gates into advisory/non-blocking gates and touch research artifacts during contract repair.
+
+### Stream: Quality Gates Planned Required Contract Repair
+331. [DONE] `phase8.stream46.task1` Enforce planned required gate semantics in Core validation and repair prompts so `plannedRequiredAfterIntegration` gates remain active, integration-required, and contract-only repairs target only contract artifacts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-planned-required-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, doc/TODO/todo-plan.md`; expected commit: `fix: enforce quality gates planned required semantics`).
+332. [PENDING] Git Commit: `fix: enforce quality gates planned required semantics` (hash: TBD)
+333. [TODO] `phase8.stream46.task2` Tighten the bundled Quality Gates contract template so draft contracts cannot describe planned required gates as advisory/non-blocking before integration (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify quality gates draft contract template`).
+334. [TODO] Git Commit: `fix: clarify quality gates draft contract template` (hash: TBD)
+335. [TODO] `phase8.stream46.task3` Add regression tests for planned required gate validation, contract-only repair targets, and bundled prompt wording (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-planned-required-validator.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates planned required repair`).
+336. [TODO] Git Commit: `test: cover quality gates planned required repair` (hash: TBD)
+337. [TODO] `phase8.stream46.task4` Run targeted Quality Gates tests, Core build, webview build, and plan validation after the planned-required fix (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+338. [TODO] `phase8.stream46.task5` Update release-facing docs for the replacement Quality Gates planned-required build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates planned required release`).
+339. [TODO] Git Commit: `docs: prepare quality gates planned required release` (hash: TBD)
+340. [TODO] `phase8.stream46.task6` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates planned required release`).
+341. [TODO] Git Commit: `chore: build quality gates planned required release` (hash: TBD)
+342. [TODO] `phase8.stream46.task7` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates planned required vsix`).
+343. [TODO] Git Commit: `chore: package quality gates planned required vsix` (hash: TBD)
+344. [TODO] `phase8.stream46.task8` User installs the generated replacement VSIX and verifies Quality Gates contract drafting keeps planned required gates active/integration-required and contract repairs do not touch research artifacts (scope: user workflow acceptance; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

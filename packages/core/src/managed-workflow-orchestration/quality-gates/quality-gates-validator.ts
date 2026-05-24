@@ -1,6 +1,7 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { collectQualityGatesIntegrationConsistencyDiagnostics } from "./quality-gates-consistency-validator";
+import { collectPlannedRequiredGateDiagnostics } from "./quality-gates-planned-required-validator";
 import {
   buildQualityGatesDraftRepairPrompt,
   buildQualityGatesIntegrationRepairPrompt,
@@ -259,6 +260,9 @@ const validateDraftShape = (params: {
   const { commands, errors: commandErrors } = readCommands(params.contractJson);
   errors.push(...commandErrors);
   errors.push(...collectGateArrayDiagnostics(params.contractJson, commands));
+  errors.push(
+    ...collectPlannedRequiredGateDiagnostics(params.contractJson, commands)
+  );
   if (readAcceptedFlag(params.contractJson)) {
     errors.push("premature_accepted_true");
   }

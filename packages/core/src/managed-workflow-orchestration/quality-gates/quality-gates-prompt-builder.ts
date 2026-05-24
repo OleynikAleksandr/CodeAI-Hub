@@ -18,6 +18,13 @@ const buildContractArtifactPaths = (
   `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
 ];
 
+const buildDraftContractArtifactPaths = (
+  workspaceSlug: string
+): readonly string[] => [
+  `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.md`,
+  `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
+];
+
 const buildResearchArtifactPaths = (
   workspaceSlug: string
 ): readonly string[] => [
@@ -53,6 +60,38 @@ const explainDiagnostic = (diagnostic: string): string => {
       .replace("not_integrated_required_gate:", "")
       .trim();
     return `Gate \`${gateId}\` is required while unavailable. Either integrate it now or keep it in \`plannedRequiredAfterIntegration\` with concrete planned paths.`;
+  }
+  if (diagnostic.startsWith("required_gate_is_non_blocking:")) {
+    const gateId = diagnostic
+      .replace("required_gate_is_non_blocking:", "")
+      .trim();
+    return `Gate \`${gateId}\` is listed as required and non-blocking at the same time. In draft phase, keep it out of required arrays and list it only in \`plannedRequiredAfterIntegration\`; its command must remain \`desiredStatus: "active"\`, \`availability: "not_integrated"\`, and \`integrationRequired: true\`.`;
+  }
+  if (diagnostic.startsWith("planned_required_gate_non_active:")) {
+    const gateId = diagnostic
+      .replace("planned_required_gate_non_active:", "")
+      .trim();
+    return `Gate \`${gateId}\` is planned to become required after integration, so do not convert it to advisory or deferred. Set its command \`desiredStatus\` to \`"active"\`.`;
+  }
+  if (
+    diagnostic.startsWith("planned_required_gate_not_integration_required:")
+  ) {
+    const gateId = diagnostic
+      .replace("planned_required_gate_not_integration_required:", "")
+      .trim();
+    return `Gate \`${gateId}\` is planned required after integration, so keep \`integrationRequired: true\` and list concrete \`plannedIntegrationPaths\`.`;
+  }
+  if (diagnostic.startsWith("planned_required_gate_wrong_availability:")) {
+    const gateId = diagnostic
+      .replace("planned_required_gate_wrong_availability:", "")
+      .trim();
+    return `Gate \`${gateId}\` is not integrated yet but is planned required after integration. Set \`availability\` to \`"not_integrated"\`.`;
+  }
+  if (diagnostic.startsWith("planned_required_gate_missing_paths:")) {
+    const gateId = diagnostic
+      .replace("planned_required_gate_missing_paths:", "")
+      .trim();
+    return `Gate \`${gateId}\` is planned required after integration and must list concrete \`plannedIntegrationPaths\`.`;
   }
   const knownDiagnostics: Readonly<Record<string, string>> = {
     accepted_required_for_integration:
@@ -129,7 +168,7 @@ export const buildQualityGatesDraftRepairPrompt = (
   const researchOnly = options.diagnostics.some(isResearchFirstDiagnostic);
   const targetArtifacts = researchOnly
     ? buildResearchArtifactPaths(options.workspaceSlug)
-    : buildContractArtifactPaths(options.workspaceSlug);
+    : buildDraftContractArtifactPaths(options.workspaceSlug);
   return [
     "Core rejected the current Quality Gates draft.",
     researchOnly
@@ -144,7 +183,10 @@ export const buildQualityGatesDraftRepairPrompt = (
     "",
     "Do not set `accepted: true`.",
     "Do not set `integrated: true`.",
-    "The research report is mandatory: create or repair `quality-gates-research.md` and `quality-gates-research.json` before relying on any tool recommendation.",
+    researchOnly
+      ? "The research report is mandatory: create or repair `quality-gates-research.md` and `quality-gates-research.json` before relying on any tool recommendation."
+      : "Use the approved research as source of truth, but do not edit `quality-gates-research.md` or `quality-gates-research.json` during contract repair.",
+    'Do not convert planned required gates into advisory or deferred gates. A gate in `plannedRequiredAfterIntegration` must keep `desiredStatus: "active"`, `availability: "not_integrated"`, `integrationRequired: true`, and concrete `plannedIntegrationPaths`.',
     "Do not create package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts, or production code.",
     "Do not run Git commands or edit managed plan files.",
   ].join("\n");
