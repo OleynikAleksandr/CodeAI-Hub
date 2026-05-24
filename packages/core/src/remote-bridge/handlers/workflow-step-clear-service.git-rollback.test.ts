@@ -176,15 +176,14 @@ test("workflow step clear uses Git rollback for Diagram Modules development tree
   }
 });
 
-test("workflow step clear refuses managed-stage path cleanup when Git is missing", async () => {
+test("workflow step clear falls back to path cleanup when Git is missing", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-clear-no-git-")
   );
+  const resetCalls: string[] = [];
   try {
-    await writeWorkspaceFile(
-      workspaceRoot,
-      `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`
-    );
+    const qualityArtifact = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`;
+    await writeWorkspaceFile(workspaceRoot, qualityArtifact);
 
     const result = await runClear({
       body: {
@@ -192,20 +191,20 @@ test("workflow step clear refuses managed-stage path cleanup when Git is missing
         workspaceSlug: WORKSPACE_SLUG,
         target: { kind: "workflow_stage", stage: "quality_gates" },
       },
-      resetCalls: [],
+      resetCalls,
       sessionManager: new SessionManager(),
     });
+    const payload = result.payload as {
+      readonly gitRollback?: { readonly reason?: string | null };
+    };
 
-    assert.equal(result.statusCode, 409);
+    assert.equal(result.statusCode, 200);
+    assert.equal(payload.gitRollback?.reason, "git_repository_missing");
     assert.equal(
-      await exists(
-        path.join(
-          workspaceRoot,
-          `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`
-        )
-      ),
-      true
+      await exists(path.join(workspaceRoot, qualityArtifact)),
+      false
     );
+    assert.deepEqual(resetCalls, [WORKSPACE_SLUG]);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

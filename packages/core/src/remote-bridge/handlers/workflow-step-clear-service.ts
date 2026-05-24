@@ -36,6 +36,11 @@ const STAGE_TODO_DIRS: Record<WorkflowStageId, string> = {
   virtual_simulation: "virtual-simulation",
 };
 const WORKSPACE_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
+const GIT_ROLLBACK_FALLBACK_REASONS = new Set([
+  "git_repository_missing",
+  "stage_commit_boundary_missing",
+  "stage_parent_boundary_missing",
+]);
 
 type ClearTarget =
   | { readonly kind: "workflow_stage"; readonly stage: WorkflowStageId }
@@ -357,6 +362,9 @@ const rollbackGitManagedWorkflowStage = async (parsed: ParsedClearRequest) => {
   return result.handled ? result : null;
 };
 
+const shouldFallbackFromGitRollback = (reason: string | null): boolean =>
+  Boolean(reason && GIT_ROLLBACK_FALLBACK_REASONS.has(reason));
+
 export const handleWorkflowStepClear = async (
   req: Request,
   res: Response,
@@ -374,14 +382,23 @@ export const handleWorkflowStepClear = async (
   try {
     const sessionCleanupPaths =
       await collectWorkflowStepSessionCleanupPaths(parsed);
-    const gitRollback = await rollbackGitManagedWorkflowStage(parsed);
-    if (gitRollback?.reason && gitRollback.reason !== "already_at_boundary") {
+    const gitRollbackAttempt = await rollbackGitManagedWorkflowStage(parsed);
+    if (
+      gitRollbackAttempt?.reason &&
+      gitRollbackAttempt.reason !== "already_at_boundary" &&
+      !shouldFallbackFromGitRollback(gitRollbackAttempt.reason)
+    ) {
       res.status(HTTP_CONFLICT).json({
         error: "Unable to clear workflow step through Git rollback",
-        gitRollback,
+        gitRollback: gitRollbackAttempt,
       });
       return;
     }
+    const gitRollback = shouldFallbackFromGitRollback(
+      gitRollbackAttempt?.reason ?? null
+    )
+      ? null
+      : gitRollbackAttempt;
     const checkpointRestored = gitRollback
       ? false
       : await restoreWorkflowStageCheckpoint(parsed);
@@ -431,7 +448,7 @@ export const handleWorkflowStepClear = async (
     res.json({
       checkpointRestored,
       deletedSessions,
-      gitRollback,
+      gitRollback: gitRollbackAttempt,
       removedPaths,
       restoredPaths,
     });
