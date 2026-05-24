@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "a12247cad",
+  "lastRecordedCommit": "421557f59",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream54.task1",
-  "expectedCommitMessage": "docs: prepare managed clear rollback release",
+  "currentTaskId": "phase8.stream54.task2",
+  "expectedCommitMessage": "chore: build managed clear rollback release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed clear rollback release",
-    "preCommitHead": "a12247cad",
+    "expectedCommitMessage": "chore: build managed clear rollback release",
+    "preCommitHead": "421557f59",
     "stage": "commit_pending",
-    "taskId": "phase8.stream54.task1"
+    "taskId": "phase8.stream54.task2"
   }
 }
 ```
@@ -593,9 +593,9 @@
 
 ### Stream: Release Build — Managed Clear Git Rollback Enforcement
 392. [DONE] `phase8.stream54.task1` Update release-facing docs for the v1.2.346 managed Clear rollback enforcement build before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed clear rollback release`).
-393. [PENDING] Git Commit: `docs: prepare managed clear rollback release` (hash: TBD)
-394. [TODO] `phase8.stream54.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed clear rollback release`).
-395. [TODO] Git Commit: `chore: build managed clear rollback release` (hash: TBD)
+393. [DONE] Git Commit: `docs: prepare managed clear rollback release` (hash: 421557f59)
+394. [DONE] `phase8.stream54.task2` Run `./scripts/build-all.sh --allow-dirty`, verify next-version tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build managed clear rollback release`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully for v1.2.346; provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
+395. [PENDING] Git Commit: `chore: build managed clear rollback release` (hash: TBD)
 396. [TODO] `phase8.stream54.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package managed clear rollback vsix`).
 397. [TODO] Git Commit: `chore: package managed clear rollback vsix` (hash: TBD)
 398. [TODO] `phase8.stream54.task4` User installs the generated v1.2.346 VSIX and verifies managed Clear on Quality Gates does not delete tracked stage files when Git rollback boundary is missing (scope: user workflow acceptance; no commit expected).
