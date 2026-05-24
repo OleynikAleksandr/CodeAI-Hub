@@ -54,6 +54,10 @@ const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
 const PLAN_STATUS_COMMAND_RE = /npm run plan:status/;
 const NO_PLANNED_DUPLICATES_RE =
   /`plannedRequiredAfterIntegration` must not duplicate ids already listed/;
+const PLANNED_REQUIRED_ACTIVE_RE =
+  /plannedRequiredAfterIntegration`, keep the matching command active and integration-required/u;
+const NO_PLANNED_REQUIRED_ADVISORY_RE =
+  /Do not describe these gates as non-blocking, advisory, deferred, or optional before integration/u;
 const LEGACY_RESEARCH_PASS_RE = /Required Research And Design Pass/;
 const HARDCODED_ULTRACITE_RE =
   /Ultracite may be the primary lint\/format preset/;
@@ -152,6 +156,8 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.match(prompt, GATE_CONTRACT_REVISION_RE);
   assert.match(prompt, INTEGRATION_CONTEXT_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
+  assert.match(prompt, PLANNED_REQUIRED_ACTIVE_RE);
+  assert.match(prompt, NO_PLANNED_REQUIRED_ADVISORY_RE);
   assert.doesNotMatch(prompt, NO_ROOT_TODO_RE);
   assert.doesNotMatch(prompt, WORKSPACE_PLAN_PATH_RE);
   assert.doesNotMatch(prompt, PLAN_STATUS_COMMAND_RE);
