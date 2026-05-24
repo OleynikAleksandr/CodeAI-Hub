@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "bab35bd3b",
+  "lastRecordedCommit": "55a15f0ff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream63.task1",
-  "expectedCommitMessage": "fix: clear diagram modules managed scaffold",
+  "currentTaskId": "phase8.stream64.task1",
+  "expectedCommitMessage": "fix: relax application skeleton markdown validation",
   "debt": {
-    "expectedCommitMessage": "fix: clear diagram modules managed scaffold",
-    "preCommitHead": "bab35bd3b",
+    "expectedCommitMessage": "fix: relax application skeleton markdown validation",
+    "preCommitHead": "55a15f0ff",
     "stage": "commit_pending",
-    "taskId": "phase8.stream63.task1"
+    "taskId": "phase8.stream64.task1"
   }
 }
 ```
@@ -658,8 +658,13 @@
 
 ### Stream: Diagram Modules Clear Managed Scaffold Rollback
 439. [DONE] `phase8.stream63.task1` Repair Diagram Modules Clear so Git rollback returns app-created workspaces to the post-Virtual-Simulation state, removing managed scaffold folders/files such as `.git`, `.husky`, `doc`, `scripts`, and root package files when Core created them for Diagram Modules (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear diagram modules managed scaffold`).
-440. [PENDING] Git Commit: `fix: clear diagram modules managed scaffold` (hash: TBD)
-441. [TODO] `phase8.stream63.task2` Run targeted Git rollback tests plus Core build and plan validation for the Diagram Modules scaffold-clear fix (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+440. [DONE] Git Commit: `fix: clear diagram modules managed scaffold` (hash: 55a15f0ff)
+441. [DONE] `phase8.stream63.task2` Run targeted Git rollback tests plus Core build and plan validation for the Diagram Modules scaffold-clear fix (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted Git rollback regression tests passed; @codeai-hub/core build passed; plan validation passed
+
+### Stream: Application Skeleton Markdown Validation Relaxation
+442. [DONE] `phase8.stream64.task1` Relax Core Application Skeleton draft validation so Markdown prose wording cannot block user review when the machine-readable JSON contract is safe and complete; keep hard gates for stage identity, required sections, JSON lifecycle, paths, tree shape, and foundation fields (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-validator.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-framework-baseline-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: relax application skeleton markdown validation`).
+443. [PENDING] Git Commit: `fix: relax application skeleton markdown validation` (hash: TBD)
+444. [TODO] `phase8.stream64.task2` Run targeted Application Skeleton validator tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

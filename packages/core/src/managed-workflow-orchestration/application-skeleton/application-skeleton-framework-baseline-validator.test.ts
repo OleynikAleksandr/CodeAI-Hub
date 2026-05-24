@@ -13,8 +13,6 @@ const DRAFT_MARKDOWN = `# Application Skeleton
 Application Skeleton draft contract.
 `;
 const MISSING_FRAMEWORK_RE = /missing_foundation_field: stack\.frameworks/u;
-const MARKDOWN_UNRESOLVED_FRAMEWORK_RE =
-  /markdown_unresolved_framework_decision/u;
 
 const createDraftFoundation = (): Record<string, unknown> => ({
   packageManager: "npm",
@@ -106,11 +104,11 @@ test("Application Skeleton validator rejects empty frameworks without a framewor
   }
 });
 
-test("Application Skeleton validator rejects unresolved framework prose in Markdown", async () => {
+test("Application Skeleton validator does not block user review on Markdown prose wording", async () => {
   const workspaceRoot = await createWorkspace();
   try {
     await writeApplicationSkeletonArtifacts(workspaceRoot, {
-      markdown: `${DRAFT_MARKDOWN}\n## Stack\n\n- **Frameworks:** не зафиксированы в этом черновике\n`,
+      markdown: `${DRAFT_MARKDOWN}\n## Stack\n\n- **Frameworks:** не зафиксированы в этом черновике.\n\n## Materialization\n\nПосле подтверждения Core обновит JSON на accepted: true и materialized: true.\n`,
       mapJson: {
         ...createDraftFoundation(),
         schema: "codeai-application-skeleton-v1",
@@ -131,12 +129,9 @@ test("Application Skeleton validator rejects unresolved framework prose in Markd
       workspaceSlug: WORKSPACE_SLUG,
     });
 
-    assert.equal(result.valid, false);
-    assert.equal(result.nextAction, "repair_current_artifact");
-    assert.match(
-      result.diagnostics.join("\n"),
-      MARKDOWN_UNRESOLVED_FRAMEWORK_RE
-    );
+    assert.equal(result.valid, true);
+    assert.deepEqual(result.diagnostics, []);
+    assert.equal(result.nextAction, "open_user_review");
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

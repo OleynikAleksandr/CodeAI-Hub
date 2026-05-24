@@ -42,10 +42,6 @@ const APPLICATION_SKELETON_TITLE_RE = /^#\s+Application Skeleton\b/imu;
 const REQUIRED_SECTION_RE =
   /^##\s+(?:Overview|Architecture|Stack|Product Parts|Filesystem|Materialization|Assumptions)\b/imu;
 const UNSAFE_PATH_SEGMENT_RE = /(^|\/)\.\.(\/|$)/u;
-const MARKDOWN_ACCEPTED_TRUE_RE = /\baccepted\s*:\s*true\b/iu;
-const MARKDOWN_MATERIALIZED_TRUE_RE = /\bmaterialized\s*:\s*true\b/iu;
-const MARKDOWN_UNRESOLVED_FRAMEWORK_RE =
-  /^.*frameworks?.*(?:не\s+зафикс|не\s+выбран|не\s+выбрано|not\s+(?:selected|fixed|chosen)|pending|tbd|unknown|unresolved).*$/imu;
 
 const relativeApplicationSkeletonPath = (
   workspaceSlug: string,
@@ -173,15 +169,6 @@ const validateDraftMarkdown = (markdown: string | null): readonly string[] => {
   }
   if (!REQUIRED_SECTION_RE.test(markdown)) {
     errors.push("markdown_missing_required_section");
-  }
-  if (MARKDOWN_ACCEPTED_TRUE_RE.test(markdown)) {
-    errors.push("markdown_premature_acceptance");
-  }
-  if (MARKDOWN_MATERIALIZED_TRUE_RE.test(markdown)) {
-    errors.push("markdown_premature_materialization");
-  }
-  if (MARKDOWN_UNRESOLVED_FRAMEWORK_RE.test(markdown)) {
-    errors.push("markdown_unresolved_framework_decision");
   }
   return errors;
 };
