@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "e75b5fbb0",
+  "lastRecordedCommit": "80333deef",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream37.task1",
-  "expectedCommitMessage": "fix: strengthen quality gates research prompt",
+  "currentTaskId": "phase8.stream38.task1",
+  "expectedCommitMessage": "fix: require quality gates size policy prompt",
   "debt": {
-    "expectedCommitMessage": "fix: strengthen quality gates research prompt",
-    "preCommitHead": "e75b5fbb0",
+    "expectedCommitMessage": "fix: require quality gates size policy prompt",
+    "preCommitHead": "80333deef",
     "stage": "commit_pending",
-    "taskId": "phase8.stream37.task1"
+    "taskId": "phase8.stream38.task1"
   }
 }
 ```
@@ -427,9 +427,19 @@
 
 ### Stream: Quality Gates Research Recommendation Prompt
 261. [DONE] `phase8.stream37.task1` Strengthen the Quality Gates first research prompt to prioritize AI-agent-oriented gate tools and require final contract recommendations in the research artifact (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: strengthen quality gates research prompt`).
-262. [PENDING] Git Commit: `fix: strengthen quality gates research prompt` (hash: TBD)
-263. [TODO] `phase8.stream37.task2` Run targeted validation for Quality Gates bundled prompt sync and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
-264. [TODO] `phase8.stream37.task3` Wait for explicit user confirmation before building the next replacement release after the Quality Gates research prompt fix (scope: release confirmation gate; no commit expected).
+262. [DONE] Git Commit: `fix: strengthen quality gates research prompt` (hash: 80333deef)
+263. [DONE] `phase8.stream37.task2` Run targeted validation for Quality Gates bundled prompt sync and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted validation passed: Quality Gates bundled prompt test 3/3, asset/bundle sync, @codeai-hub/core build, and plan validation.
+264. [BLOCKED] `phase8.stream37.task3` Wait for explicit user confirmation before building the next replacement release after the Quality Gates research prompt fix (scope: release confirmation gate; no commit expected). Blocked: user added one more Quality Gates requirement before release: the 500-line microclass/source-file policy must become a mandatory executable gate.
+
+### Stream: Quality Gates Mandatory Size Policy
+265. [DONE] `phase8.stream38.task1` Require the Quality Gates prompt to carry the 500-line source/class policy into the research recommendations and contract integration scope (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts, doc/TODO/todo-plan.md`; expected commit: `fix: require quality gates size policy prompt`).
+266. [PENDING] Git Commit: `fix: require quality gates size policy prompt` (hash: TBD)
+267. [TODO] `phase8.stream38.task2` Add a Core validator policy that rejects integrated Quality Gates contracts without a required executable 500-line source/class gate (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-required-size-policy.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, doc/TODO/todo-plan.md`; expected commit: `fix: validate quality gates size policy`).
+268. [TODO] Git Commit: `fix: validate quality gates size policy` (hash: TBD)
+269. [TODO] `phase8.stream38.task3` Cover the mandatory size policy in Quality Gates prompt and validator tests (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates size policy`).
+270. [TODO] Git Commit: `test: cover quality gates size policy` (hash: TBD)
+271. [TODO] `phase8.stream38.task4` Run targeted validation for Quality Gates prompt, validator, and Core build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+272. [TODO] `phase8.stream38.task5` Wait for explicit user confirmation before building the next replacement release after the mandatory Quality Gates size policy fix (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

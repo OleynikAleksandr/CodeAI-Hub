@@ -43,8 +43,9 @@ Research algorithm:
 3. Compare realistic tooling strategies for that exact stack. Use runtime inputs, existing manifests/configs, explicit user preferences, and current official docs for the inferred language/framework/tooling ecosystem. If the active provider cannot use web/search tools, stop and report that the Quality Gates Research phase requires a research-capable provider.
 4. Prioritize tools and gate frameworks designed to work well with AI coding agents, agentic code review, or agent-enforced formatting/linting. Use [Ultracite](https://www.ultracite.ai) as the canonical example of an AI-agent-oriented quality gate, then compare it against stack-specific alternatives before recommending anything.
 5. For each recommended tool or gate, record what it is for, why it fits this stack, source URLs, tradeoff, required checks, and whether user approval is required.
-6. End `quality-gates-research.md` with a final section named `## Recommended Contract Carry-Forward`. In that section, list the exact tools/gates the agent recommends carrying into `quality-gates.md` / `quality-gates.json`, and briefly explain why each one should become part of the contract.
-7. Stop for Core validation and user review of the research report. Do not draft the Quality Gates contract in the same response.
+6. Treat the CodeAI Hub architectural invariant `source files and classes <= 500 lines` as a mandatory gate. Research how to enforce it for the detected stack, include it in the research recommendations, and mark it for contract carry-forward even if no third-party tool is needed.
+7. End `quality-gates-research.md` with a final section named `## Recommended Contract Carry-Forward`. In that section, list the exact tools/gates the agent recommends carrying into `quality-gates.md` / `quality-gates.json`, including the mandatory 500-line source/class gate, and briefly explain why each one should become part of the contract.
+8. Stop for Core validation and user review of the research report. Do not draft the Quality Gates contract in the same response.
 
 Before the research-review response:
 
@@ -82,7 +83,7 @@ Final response after draft contract: tell the user, in the chat language, that t
 
 Universal policies for every generated product:
 
-- Source files and classes must stay <= 500 lines. Report 400-500 lines as near-limit. Mark intended blocking phases in the gate contract; Phase 3 must wire the accepted required gate scope into project checks and hooks.
+- Source files and classes must stay <= 500 lines. This is a mandatory executable gate, not advisory prose. Report 400-500 lines as near-limit. Mark it as required in the gate contract; Phase 3 must wire the accepted required gate into project scripts and hooks.
 - Architecture gates must cover skeleton-map drift, expected directories/files, contracts/readmes, public entrypoints/facades, dependency direction, and circular dependencies when the stack can express them.
 - Quality gates must cover deterministic install/restore, build/compile/typecheck when applicable, formatting/lint/static analysis, tests or smoke checks, dependency/update reproducibility, and secret/credential leakage prevention.
 - Do not hardcode a concrete tool as selected unless the user named it, the skeleton/manifests/configs prove it, or stack-specific research justifies it. Otherwise keep the gate category and mark the concrete tool choice as `needs_user_decision`.
@@ -139,7 +140,7 @@ Final integration response: summarize created/updated paths, smoke results, and 
 - `sourceType` should prefer `official` or `primary` when available
 - `retrievedAt` must be an ISO timestamp from the current run
 
-`quality-gates-research.md` must be a concise user-facing report grouped by purpose. It should explain what was found, what is recommended, and what each recommendation would be used for. It must explicitly note any AI-agent-oriented tooling found, including whether Ultracite or an equivalent agent-first gate is suitable for this stack. The final section must be exactly `## Recommended Contract Carry-Forward` and must list which researched recommendations should be transferred into the Quality Gates contract.
+`quality-gates-research.md` must be a concise user-facing report grouped by purpose. It should explain what was found, what is recommended, and what each recommendation would be used for. It must explicitly note any AI-agent-oriented tooling found, including whether Ultracite or an equivalent agent-first gate is suitable for this stack. The final section must be exactly `## Recommended Contract Carry-Forward` and must list which researched recommendations should be transferred into the Quality Gates contract. That section must include the mandatory `source files and classes <= 500 lines` gate.
 
 `quality-gates.json` must be valid JSON with:
 
