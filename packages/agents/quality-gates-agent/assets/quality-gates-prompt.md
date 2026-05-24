@@ -140,6 +140,18 @@ Contract draft algorithm:
 
 Draft contract rule: a gate listed in `plannedRequiredAfterIntegration` must have a matching `commands` entry with `desiredStatus: "active"`, `availability: "not_integrated"`, `integrationRequired: true`, and concrete `plannedIntegrationPaths`. Do not describe these gates as non-blocking, advisory, deferred, or optional before integration.
 
+Mandatory size policy contract rule: the required gate that enforces `source files and classes <= 500 lines` must include structured policy metadata in its command entry:
+
+```json
+"policy": {
+  "type": "source_size_limit",
+  "maxLines": 500,
+  "appliesTo": ["source_files", "classes"]
+}
+```
+
+Keep the same gate id in `commands`, `requiredBeforeCommit` or `requiredBeforePush`, `package.json` script `qg:<gate-id>`, and the matching Husky hook call. Do not rely only on prose, file names, or aliases to identify this mandatory size policy gate.
+
 Required `quality-gates.md` contract template:
 
 ```markdown
@@ -189,6 +201,11 @@ For every id in `plannedRequiredAfterIntegration`, keep the matching command act
       "integrationRequired": true,
       "baseline": "recommended",
       "blockingIn": [],
+      "policy": {
+        "type": "source_size_limit",
+        "maxLines": 500,
+        "appliesTo": ["source_files", "classes"]
+      },
       "plannedIntegrationPaths": ["package.json"]
     }
   },
@@ -217,7 +234,7 @@ Final response after draft contract: tell the user, in the chat language, that t
 
 Universal policies for every generated product:
 
-- Source files and classes must stay <= 500 lines. This is a mandatory executable gate, not advisory prose. Report 400-500 lines as near-limit. Mark it as required in the gate contract; Phase 3 must wire the accepted required gate into project scripts and hooks.
+- Source files and classes must stay <= 500 lines. This is a mandatory executable gate, not advisory prose. Report 400-500 lines as near-limit. Mark it as required in the gate contract; Phase 3 must wire the accepted required gate into project scripts and hooks. Its command entry must include `policy.type: "source_size_limit"`, `policy.maxLines: 500`, and `policy.appliesTo: ["source_files", "classes"]`.
 - Architecture gates must cover skeleton-map drift, expected directories/files, contracts/readmes, public entrypoints/facades, dependency direction, and circular dependencies when the stack can express them.
 - Quality gates must cover deterministic install/restore, build/compile/typecheck when applicable, formatting/lint/static analysis, tests or smoke checks, dependency/update reproducibility, and secret/credential leakage prevention.
 - Do not hardcode a concrete tool as selected unless the user named it, the skeleton/manifests/configs prove it, or stack-specific research justifies it. Otherwise keep the gate category and mark the concrete tool choice as `needs_user_decision`.
@@ -283,6 +300,7 @@ Final integration response: summarize created/updated paths, smoke results, and 
 - project profile and selected baseline
 - `commands` object keyed by stable gate id; arrays are invalid here
 - each command entry must repeat stable `id`, `proposedCommand`, `desiredStatus`, `availability`, `integrationRequired`, `baseline`, `blockingIn`, and planned integration paths when not executable yet
+- the mandatory 500-line source/class gate command must include structured `policy` metadata with `type: "source_size_limit"`, `maxLines: 500`, and `appliesTo: ["source_files", "classes"]`
 - `requiredBeforeCommit`, `requiredBeforeModuleExecution`, optional `requiredBeforePush`, optional `requiredBeforeRelease`
 - lifecycle hook wiring evidence for `.husky/pre-commit` and `.husky/pre-push` when their required arrays are non-empty
 - separate `advisory`, `deferred`, `plannedRequiredAfterIntegration`, `integratedPaths`, and `deferredIntegration`
