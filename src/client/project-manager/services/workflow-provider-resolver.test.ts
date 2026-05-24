@@ -88,6 +88,39 @@ test("virtual simulation inherits provider from description primary session", ()
   assert.equal(providerId, "geminiCli");
 });
 
+test("virtual simulation inherits provider from description continuity when primary session is missing", () => {
+  const providerId = resolvePreferredWorkflowProviderId({
+    workflowState: createWorkflowState({
+      description: {
+        updatedAt: "2026-05-24T06:31:22.000Z",
+        finalPath: ".codeai-hub/demo/description/Final_Description.md",
+      },
+      continuity: {
+        chains: [
+          {
+            rootSessionId: "description-root",
+            workspaceSlug: "demo-workspace",
+            stage: "description",
+            updatedAt: "2026-05-24T06:31:25.000Z",
+            segments: [
+              {
+                sessionId: "description-session",
+                providerId: "codexCli",
+                providerSessionId: "codex-native-description",
+                createdAt: "2026-05-24T06:31:04.000Z",
+              },
+            ],
+          },
+        ],
+      },
+    }),
+    providers: createProviders(),
+    stage: "virtual_simulation",
+  });
+
+  assert.equal(providerId, "codexCli");
+});
+
 test("virtual simulation inherits Kimi provider from description primary session", () => {
   const providerId = resolvePreferredWorkflowProviderId({
     workflowState: createWorkflowState({

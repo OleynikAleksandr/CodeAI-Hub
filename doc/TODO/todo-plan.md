@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "42057ccfe",
+  "lastRecordedCommit": "0a004b133",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream41.task3",
-  "expectedCommitMessage": "chore: package quality gates baseline validation vsix",
+  "currentTaskId": "phase8.stream42.task1",
+  "expectedCommitMessage": "fix: inherit description provider from continuity",
   "debt": {
-    "expectedCommitMessage": "chore: package quality gates baseline validation vsix",
-    "preCommitHead": "42057ccfe",
+    "expectedCommitMessage": "fix: inherit description provider from continuity",
+    "preCommitHead": "0a004b133",
     "stage": "commit_pending",
-    "taskId": "phase8.stream41.task3"
+    "taskId": "phase8.stream42.task1"
   }
 }
 ```
@@ -463,8 +463,16 @@
 287. [DONE] `phase8.stream41.task2` Run `./scripts/build-all.sh --allow-dirty`, verify v1.2.339 tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build quality gates baseline validation release`). Result: `./scripts/build-all.sh --allow-dirty` completed successfully for v1.2.339; provider/core/UI/launcher tarballs were created under `doc/tmp/releases/`.
 288. [DONE] Git Commit: `chore: build quality gates baseline validation release` (hash: 42057ccfe)
 289. [DONE] `phase8.stream41.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output and record release artifacts (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package quality gates baseline validation vsix`). Result: VSIX `codeai-hub-1.2.339.vsix` built successfully at 4.7M; SHA256 `84f9e910228b773552a396ca6778d95903b7809a15598497fe2b964df2c3f8d7`; SDK exclusions, local artefact validation, markdown links, duplication check and VSIX runtime package surface checks passed.
-290. [PENDING] Git Commit: `chore: package quality gates baseline validation vsix` (hash: TBD)
-291. [TODO] `phase8.stream41.task4` User installs the generated v1.2.339 VSIX and verifies Quality Gates contract heading validation, repair prompt behavior, and managed Clear boundary coverage (scope: user workflow acceptance; no commit expected).
+290. [DONE] Git Commit: `chore: package quality gates baseline validation vsix` (hash: 0a004b133)
+291. [BLOCKED] `phase8.stream41.task4` User installs the generated v1.2.339 VSIX and verifies Quality Gates contract heading validation, repair prompt behavior, and managed Clear boundary coverage (scope: user workflow acceptance; no commit expected). Blocked: user retest found that after clearing Description, rerunning it, and opening Virtual Simulation, Project Manager loses the Description session/provider projection and falls back to Claude/Opus instead of Codex/Spark even though Core continuity has the new Description chain.
+
+### Stream: Description Clear Restart Provider Projection
+292. [DONE] `phase8.stream42.task1` Make Virtual Simulation provider preselection inherit from the latest Description continuity chain when `description.primarySession` is absent after Clear/restart (scope: `src/client/project-manager/services/workflow-provider-resolver.ts, src/client/project-manager/services/workflow-provider-resolver.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: inherit description provider from continuity`).
+293. [PENDING] Git Commit: `fix: inherit description provider from continuity` (hash: TBD)
+294. [TODO] `phase8.stream42.task2` Restore Description session navigation/tree projection from the latest Description continuity chain when `description.primarySession` is absent (scope: `src/client/project-manager/components/shared/stage-confirmation-card-workflow.ts, src/client/project-manager/components/layout/workspace-tree-branch-nodes.ts, src/client/project-manager/components/shared/stage-confirmation-card.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: restore description session from continuity`).
+295. [TODO] Git Commit: `fix: restore description session from continuity` (hash: TBD)
+296. [TODO] `phase8.stream42.task3` Run targeted Project Manager tests, webview typecheck/build and plan validation for Description Clear restart provider/session projection (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+297. [TODO] `phase8.stream42.task4` Wait for explicit user confirmation before building the next replacement release after Description Clear restart projection fix (scope: release confirmation gate; no commit expected).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 

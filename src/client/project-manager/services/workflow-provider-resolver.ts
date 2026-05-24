@@ -2,6 +2,7 @@ import type { ProviderStackDescriptor, ProviderStackId } from "../../../types/pr
 import type { WorkflowStateSnapshot } from "./workflow-state-client";
 
 type WorkflowProviderStageId =
+  | "description"
   | "virtual_simulation"
   | "diagram_modules"
   | "application_skeleton"
@@ -60,15 +61,24 @@ const resolveInheritedProviderId = (options: {
   readonly workflowState: WorkflowStateSnapshot | null;
   readonly stage?: WorkflowProviderStageId;
 }): ProviderStackId | null => {
+  const descriptionProviderId =
+    resolveProviderIdFromDescription(options.workflowState) ??
+    resolveProviderIdFromLatestStageSegment(
+      options.workflowState,
+      "description"
+    );
+  if (options.stage === "description") {
+    return descriptionProviderId;
+  }
   if (options.stage === "virtual_simulation") {
-    return resolveProviderIdFromDescription(options.workflowState);
+    return descriptionProviderId;
   }
   if (options.stage === "diagram_modules") {
     return (
       resolveProviderIdFromLatestStageSegment(
         options.workflowState,
         "virtual_simulation"
-      ) ?? resolveProviderIdFromDescription(options.workflowState)
+      ) ?? descriptionProviderId
     );
   }
   if (options.stage === "application_skeleton") {
@@ -77,8 +87,7 @@ const resolveInheritedProviderId = (options: {
       resolveProviderIdFromLatestStageSegment(
         options.workflowState,
         "virtual_simulation"
-      ) ??
-      resolveProviderIdFromDescription(options.workflowState)
+      ) ?? descriptionProviderId
     );
   }
   if (options.stage === "quality_gates") {
@@ -91,11 +100,10 @@ const resolveInheritedProviderId = (options: {
       resolveProviderIdFromLatestStageSegment(
         options.workflowState,
         "virtual_simulation"
-      ) ??
-      resolveProviderIdFromDescription(options.workflowState)
+      ) ?? descriptionProviderId
     );
   }
-  return resolveProviderIdFromDescription(options.workflowState);
+  return descriptionProviderId;
 };
 
 const resolveFirstConnectedProviderId = (
