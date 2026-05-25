@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "e78096ee7",
+  "lastRecordedCommit": "1a4bef13b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase40.stream1.task3",
-  "expectedCommitMessage": "refactor: sync workflow dialogs through capsule",
+  "currentTaskId": "phase41.stream1.task1",
+  "expectedCommitMessage": "feat: use workspace codex home for workflow sessions",
   "debt": {
-    "expectedCommitMessage": "refactor: sync workflow dialogs through capsule",
-    "preCommitHead": "e78096ee7",
+    "expectedCommitMessage": "feat: use workspace codex home for workflow sessions",
+    "preCommitHead": "1a4bef13b",
     "stage": "commit_pending",
-    "taskId": "phase40.stream1.task3"
+    "taskId": "phase41.stream1.task1"
   }
 }
 ```
@@ -353,13 +353,13 @@
 127. [DONE] `phase40.stream1.task2` Retarget dialog history/list/open services to read workflow sessions from the active workspace capsule and keep global reads only for explicit legacy/non-workflow dialogs (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts`; expected commit: `refactor: read workflow dialogs from capsule sessions`).
 128. [DONE] Git Commit: `refactor: read workflow dialogs from capsule sessions` (hash: e78096ee7)
 129. [DONE] `phase40.stream1.task3` Retarget Description dialog sync and dialog segment metadata to capsule session roots so Clear removes native and unified workflow session history through Git (scope: `packages/core/src/remote-bridge/handlers/session-description-dialog-sync.ts, packages/core/src/remote-bridge/handlers/session-request-handler-dialog-segment-meta.ts, packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`; expected commit: `refactor: sync workflow dialogs through capsule`).
-130. [PENDING] Git Commit: `refactor: sync workflow dialogs through capsule` (hash: TBD)
+130. [DONE] Git Commit: `refactor: sync workflow dialogs through capsule` (hash: 1a4bef13b)
 
 ## Phase 41 - Workspace-Owned Provider Homes (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Codex And Claude Homes
-131. [TODO] `phase41.stream1.task1` Resolve Codex workflow provider home/session state under `runtime/providers/codex/home` while keeping auth/installed binaries global or ignored (scope: `packages/core/src/provider-registry/index.ts, packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts, packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`; expected commit: `feat: use workspace codex home for workflow sessions`).
-132. [TODO] Git Commit: `feat: use workspace codex home for workflow sessions` (hash: TBD)
+131. [DONE] `phase41.stream1.task1` Resolve Codex workflow provider home/session state under `runtime/providers/codex/home` while keeping auth/installed binaries global or ignored (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts, packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.test.ts`; expected commit: `feat: use workspace codex home for workflow sessions`).
+132. [PENDING] Git Commit: `feat: use workspace codex home for workflow sessions` (hash: TBD)
 133. [TODO] `phase41.stream1.task2` Resolve Claude workflow provider home under `runtime/providers/claude/home` while preserving the auth bridge and secret-safe ignore rules (scope: `packages/core/src/provider-registry/index.ts, packages/Claude_Module/src/sdk/claude-provider-home.ts, packages/Claude_Module/src/auth/claude-auth-home-bridge.ts`; expected commit: `feat: use workspace claude home for workflow sessions`).
 134. [TODO] Git Commit: `feat: use workspace claude home for workflow sessions` (hash: TBD)
 

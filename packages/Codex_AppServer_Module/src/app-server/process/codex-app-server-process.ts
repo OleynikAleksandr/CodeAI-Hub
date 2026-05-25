@@ -88,6 +88,9 @@ const LEGACY_CODEX_HOME = path.join(homedir(), ".codex");
 const AUTH_FILENAME = "auth.json";
 const CONFIG_FILENAME = "config.toml";
 const START_TIMEOUT_MS = 10_000;
+const WORKSPACE_FALLBACK_SLUG = "workspace";
+
+type EnvironmentMap = Readonly<Record<string, string | undefined>>;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -95,11 +98,40 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const toError = (error: unknown): Error =>
   error instanceof Error ? error : new Error(String(error));
 
-const resolveProviderCodexHome = (): string => {
-  const fromEnvironment = process.env.CODEX_HOME?.trim();
-  return fromEnvironment?.length
-    ? fromEnvironment
-    : DEFAULT_PROVIDER_CODEX_HOME;
+const normalizeWorkspaceRuntimeSlug = (value: string): string => {
+  const normalized = value
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[\u0300-\u036f]/g, "");
+  const parts = normalized.match(/[a-z0-9]+/gu);
+  return parts?.join("-") || WORKSPACE_FALLBACK_SLUG;
+};
+
+const resolveWorkspaceCodexHome = (workspaceRoot: string): string =>
+  path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    normalizeWorkspaceRuntimeSlug(path.basename(workspaceRoot)),
+    "runtime",
+    "providers",
+    "codex",
+    "home"
+  );
+
+export const resolveProviderCodexHome = (
+  environment: EnvironmentMap = process.env
+): string => {
+  const fromEnvironment = environment.CODEX_HOME?.trim();
+  if (fromEnvironment?.length) {
+    return fromEnvironment;
+  }
+  const workspaceRoot =
+    environment.CODEX_WORKSPACE_PATH?.trim() ||
+    environment.CLAUDE_WORKSPACE_PATH?.trim();
+  if (workspaceRoot) {
+    return resolveWorkspaceCodexHome(path.resolve(workspaceRoot));
+  }
+  return DEFAULT_PROVIDER_CODEX_HOME;
 };
 
 const copyLegacyFileIfMissing = async (
