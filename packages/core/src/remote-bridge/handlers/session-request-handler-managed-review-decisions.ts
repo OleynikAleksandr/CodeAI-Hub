@@ -56,7 +56,7 @@ interface ManagedReviewDecisionDeps {
   readonly broadcaster: (event: unknown) => void;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
-    "appendCoreMessage" | "appendDialogMessage"
+    "appendCoreMessage" | "appendDialogMessage" | "waitForMessagePersistence"
   >;
   readonly messageDispatch: Pick<
     SessionRequestHandlerMessageDispatch,
@@ -419,6 +419,11 @@ export class SessionRequestHandlerManagedReviewDecisions {
       await acceptDiagramModulesReviewWithoutRevision({
         workspaceRoot: session.workspacePath,
       });
+      this.deps.eventMessages.appendCoreMessage(session.id, {
+        content: buildManagedPersistentReturnHandoffMessage("Diagram Modules"),
+        tag: "managed-workflow-complete",
+      });
+      await this.deps.eventMessages.waitForMessagePersistence(session.id);
       await this.stepCommitFacade.commitAcceptedStep({
         sessions: [
           {
@@ -439,10 +444,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       });
       return;
     }
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: buildManagedPersistentReturnHandoffMessage("Diagram Modules"),
-      tag: "managed-workflow-complete",
-    });
   }
 
   private async dispatchApplicationSkeletonReviewRevision(

@@ -116,6 +116,8 @@ const resolveCoreRuntimePatterns = (
   "doc/TODO/stages/",
   `.codeai-hub/${workspaceSlug}/continuity/`,
   `.codeai-hub/${workspaceSlug}/description/description-step.json`,
+  `.codeai-hub/${workspaceSlug}/runtime/providers/`,
+  `.codeai-hub/${workspaceSlug}/runtime/sessions/`,
   `.codeai-hub/${workspaceSlug}/workflow/checkpoints/`,
   `.codeai-hub/${workspaceSlug}/workflow/state.json`,
   `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`,

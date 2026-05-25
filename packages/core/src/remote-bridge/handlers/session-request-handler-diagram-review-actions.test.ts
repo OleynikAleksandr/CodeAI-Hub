@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
+import { appendFileSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -9,6 +10,8 @@ import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchest
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
+import type { WorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
+import { bootstrapWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import type { BridgeEvent } from "../types";
 import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 
@@ -22,6 +25,8 @@ const APPLICATION_ACTIVE_RE = /"activeStage": "application_skeleton"/u;
 const DIAGRAM_COMPLETE_MESSAGE_RE =
   /Core: Diagram Modules завершён и зафиксирован/u;
 const DIAGRAM_COMPLETED_RE = /"diagram_modules"/u;
+const DIAGRAM_UNIFIED_SESSION_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/sessions\/unified\/codexCli\/diagram-review\.jsonl/u;
 const USER_ACCEPTANCE_RE = /подтверждаю/u;
 const DIAGRAM_ACCEPTED_COMMIT_RE = /codeai-step: Diagram Modules accepted/u;
 const execFileAsync = promisify(execFile);
@@ -47,6 +52,16 @@ const readWorkspaceFile = (
   relativePath: string
 ): Promise<string> => readFile(path.join(workspaceRoot, relativePath), "utf8");
 
+const appendPersistedMessage = (
+  messageLogPath: string | undefined,
+  message: CapturedMessage
+): void => {
+  if (!messageLogPath) {
+    return;
+  }
+  appendFileSync(messageLogPath, `${JSON.stringify(message)}\n`, "utf8");
+};
+
 const git = async (
   workspaceRoot: string,
   args: readonly string[]
@@ -59,7 +74,11 @@ const git = async (
 
 const prepareDiagramReviewWorkspace = async (
   workspaceRoot: string
-): Promise<void> => {
+): Promise<WorkspaceRuntimeCapsule> => {
+  const { capsule } = await bootstrapWorkspaceRuntimeCapsule({
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
   await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
     workspaceRoot,
   });
@@ -96,12 +115,16 @@ const prepareDiagramReviewWorkspace = async (
   );
   await new WorkflowBoundaryGit().commit({
     commitMessage: "docs: open diagram modules user review",
-    paths: [".husky", "doc/TODO", "package.json", "scripts"],
+    paths: [".codeai-hub", ".husky", "doc/TODO", "package.json", "scripts"],
     workspaceRoot,
   });
+  return capsule;
 };
 
-const createActions = (sessionManager: SessionManager) => {
+const createActions = (
+  sessionManager: SessionManager,
+  options: { readonly messageLogPath?: string } = {}
+) => {
   const coreMessages: CapturedMessage[] = [];
   const dialogMessages: CapturedMessage[] = [];
   const dispatchedUserMessages: string[] = [];
@@ -118,13 +141,16 @@ const createActions = (sessionManager: SessionManager) => {
     continuityRolloverOrchestrator: {} as never,
     eventMessages: {
       appendCoreMessage: (_sessionId: string, message: CapturedMessage) => {
+        appendPersistedMessage(options.messageLogPath, message);
         coreMessages.push(message);
       },
       appendDialogMessage: (_sessionId: string, message: CapturedMessage) => {
+        appendPersistedMessage(options.messageLogPath, message);
         dialogMessages.push(message);
       },
       extractMessageContentAndTurnOptions: (payload: unknown) =>
         typeof payload === "string" ? { content: payload } : null,
+      waitForMessagePersistence: () => Promise.resolve(),
     } as never,
     logger: new Logger("error"),
     messageDispatch: {
@@ -171,7 +197,17 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
     path.join(tmpdir(), "diagram-review-session-accept-")
   );
   try {
-    await prepareDiagramReviewWorkspace(workspaceRoot);
+    const capsule = await prepareDiagramReviewWorkspace(workspaceRoot);
+    const unifiedSessionPath = path.join(
+      capsule.unifiedSessionsRoot.absolutePath,
+      "codexCli",
+      "diagram-review.jsonl"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      path.relative(workspaceRoot, unifiedSessionPath),
+      "existing session\n"
+    );
     const sessionManager = new SessionManager();
     const session = sessionManager.createSession(
       "codexCli",
@@ -179,7 +215,9 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
       "provider-session-1",
       { initiativeSlug: WORKSPACE_SLUG, stage: DIAGRAM_STAGE }
     );
-    const harness = createActions(sessionManager);
+    const harness = createActions(sessionManager, {
+      messageLogPath: unifiedSessionPath,
+    });
 
     await harness.actions.handleMessage(session.id, ACCEPTANCE);
 
@@ -219,6 +257,12 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
       DIAGRAM_ACCEPTED_COMMIT_RE
     );
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
+    const unifiedSession = await readFile(unifiedSessionPath, "utf8");
+    assert.match(unifiedSession, DIAGRAM_COMPLETE_MESSAGE_RE);
+    assert.match(
+      await git(workspaceRoot, ["ls-files"]),
+      DIAGRAM_UNIFIED_SESSION_RE
+    );
     assert.deepEqual(harness.events, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

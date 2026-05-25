@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "a5a97da57",
+  "lastRecordedCommit": "f4cd63508",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase57.stream1.task1",
-  "expectedCommitMessage": "fix: keep diagram modules acceptance git clean",
+  "currentTaskId": "phase57.stream1.task2",
+  "expectedCommitMessage": "fix: commit diagram modules completion messages",
   "debt": {
-    "expectedCommitMessage": "fix: keep diagram modules acceptance git clean",
-    "preCommitHead": "a5a97da57",
+    "expectedCommitMessage": "fix: commit diagram modules completion messages",
+    "preCommitHead": "f4cd63508",
     "stage": "commit_pending",
-    "taskId": "phase57.stream1.task1"
+    "taskId": "phase57.stream1.task2"
   }
 }
 ```
@@ -500,9 +500,9 @@
 
 ### Stream: Diagram Modules Acceptance Clean Tree
 186. [DONE] `phase57.stream1.task1` Keep accepted workflow-step commits clean when provider homes already contain volatile Codex runtime files by excluding/untracking provider SQLite/cache/shell-snapshot residue from the workspace runtime capsule commit (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: keep diagram modules acceptance git clean`).
-187. [PENDING] Git Commit: `fix: keep diagram modules acceptance git clean` (hash: TBD)
-188. [TODO] `phase57.stream1.task2` Persist Diagram Modules user-return completion messages before the accepted-step commit so workspace-owned unified session history is captured before Application Skeleton unlocks (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: commit diagram modules completion messages`).
-189. [TODO] Git Commit: `fix: commit diagram modules completion messages` (hash: TBD)
+187. [DONE] Git Commit: `fix: keep diagram modules acceptance git clean` (hash: f4cd63508)
+188. [DONE] `phase57.stream1.task2` Persist Diagram Modules user-return completion messages before the accepted-step commit and classify workspace-owned runtime sessions/provider homes as managed committable state so Application Skeleton unlocks from a clean tree (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: commit diagram modules completion messages`).
+189. [PENDING] Git Commit: `fix: commit diagram modules completion messages` (hash: TBD)
 
 ### Stream: Regression Verification
 190. [TODO] `phase57.stream2.task1` Run targeted Core build and focused regression tests for Diagram Modules acceptance clean-tree behavior and Application Skeleton gating readiness (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
