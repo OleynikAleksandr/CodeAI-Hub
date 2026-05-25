@@ -48,10 +48,13 @@ const CACHE_PATTERNS = [
   "runtime/providers/**/home/**/Code Cache/",
   "runtime/providers/**/home/**/GPUCache/",
   "runtime/providers/**/home/**/node_modules/",
+  "runtime/providers/**/home/**/shell_snapshots/",
   "runtime/providers/**/home/**/tmp/",
+  "runtime/providers/**/home/**/*.sqlite",
   "runtime/providers/**/home/**/*.sqlite-shm",
   "runtime/providers/**/home/**/*.sqlite-wal",
   "runtime/providers/**/home/**/*.log",
+  "runtime/providers/**/home/**/models_cache.json",
 ] as const;
 
 export const WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT = [

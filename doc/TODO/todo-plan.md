@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "af197a7d2",
+  "lastRecordedCommit": "a5a97da57",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase55.stream2.task1",
-  "expectedCommitMessage": "chore: build full workflow start release",
+  "currentTaskId": "phase57.stream1.task1",
+  "expectedCommitMessage": "fix: keep diagram modules acceptance git clean",
   "debt": {
-    "expectedCommitMessage": "chore: build full workflow start release",
-    "preCommitHead": "af197a7d2",
+    "expectedCommitMessage": "fix: keep diagram modules acceptance git clean",
+    "preCommitHead": "a5a97da57",
     "stage": "commit_pending",
-    "taskId": "phase55.stream2.task1"
+    "taskId": "phase57.stream1.task1"
   }
 }
 ```
@@ -489,12 +489,23 @@
 
 ### Stream: Release Build
 183. [DONE] `phase55.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build full workflow start release`). Result: Release `1.2.362` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.362.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-184. [PENDING] Git Commit: `chore: build full workflow start release` (hash: TBD)
+184. [DONE] Git Commit: `chore: build full workflow start release` (hash: a5a97da57)
 
 ## Phase 56 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-185. [TODO] `phase56.stream1.task1` User installs the generated VSIX and verifies Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates start without session creation timeouts after start-card model changes (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+185. [DONE] `phase56.stream1.task1` User installs the generated VSIX and verifies Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates start without session creation timeouts after start-card model changes (scope: user workflow acceptance; expected commit: no commit expected). Result: Failed release `1.2.362` retest: Application Skeleton is blocked after Diagram Modules acceptance. The upstream file `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md` exists, but Project Manager reports it as `not found` because Core gating sees a dirty Git tree with runtime provider residue and post-review session files.
+
+## Phase 57 - Application Skeleton Unlock Regression Fix (owner: Codex, updated: 2026-05-25)
+
+### Stream: Diagram Modules Acceptance Clean Tree
+186. [DONE] `phase57.stream1.task1` Keep accepted workflow-step commits clean when provider homes already contain volatile Codex runtime files by excluding/untracking provider SQLite/cache/shell-snapshot residue from the workspace runtime capsule commit (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: keep diagram modules acceptance git clean`).
+187. [PENDING] Git Commit: `fix: keep diagram modules acceptance git clean` (hash: TBD)
+188. [TODO] `phase57.stream1.task2` Persist Diagram Modules user-return completion messages before the accepted-step commit so workspace-owned unified session history is captured before Application Skeleton unlocks (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: commit diagram modules completion messages`).
+189. [TODO] Git Commit: `fix: commit diagram modules completion messages` (hash: TBD)
+
+### Stream: Regression Verification
+190. [TODO] `phase57.stream2.task1` Run targeted Core build and focused regression tests for Diagram Modules acceptance clean-tree behavior and Application Skeleton gating readiness (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
