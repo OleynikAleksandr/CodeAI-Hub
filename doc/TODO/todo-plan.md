@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "5342db787",
+  "lastRecordedCommit": "f2e466c76",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase28.stream1.task1",
-  "expectedCommitMessage": "docs: prepare diagram modules startup release",
+  "currentTaskId": "phase28.stream2.task1",
+  "expectedCommitMessage": "chore: build diagram modules startup release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare diagram modules startup release",
-    "preCommitHead": "5342db787",
+    "expectedCommitMessage": "chore: build diagram modules startup release",
+    "preCommitHead": "f2e466c76",
     "stage": "commit_pending",
-    "taskId": "phase28.stream1.task1"
+    "taskId": "phase28.stream2.task1"
   }
 }
 ```
@@ -245,11 +245,11 @@
 
 ### Stream: Release Docs
 74. [DONE] `phase28.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules startup release`).
-75. [PENDING] Git Commit: `docs: prepare diagram modules startup release` (hash: TBD)
+75. [DONE] Git Commit: `docs: prepare diagram modules startup release` (hash: f2e466c76)
 
 ### Stream: Release Build
-76. [TODO] `phase28.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build diagram modules startup release`).
-77. [TODO] Git Commit: `chore: build diagram modules startup release` (hash: TBD)
+76. [DONE] `phase28.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build diagram modules startup release`). Result: Release `1.2.359` built with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.359.vsix` created at 4.8M; tarballs copied to `doc/tmp/releases/`; release build verified SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+77. [PENDING] Git Commit: `chore: build diagram modules startup release` (hash: TBD)
 
 ## Phase 29 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
