@@ -1,12 +1,13 @@
-import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Request, Response } from "express";
 import type { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
+import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 import {
   buildDescriptionBranchSnapshot,
   DescriptionStepStore,
 } from "../../workflow/description/description-step-store";
+import { bootstrapWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import {
   type WorkflowLastActiveSnapshot,
   WorkflowLastActiveStore,
@@ -15,8 +16,9 @@ import type { SessionRequestHandler } from "./session-request-handler";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
-const WORKSPACE_ROOT_DIR = ".codeai-hub";
 const DEFAULT_DESCRIPTION_ARTIFACT = "questionnaire.md";
+const WORKSPACE_BOOTSTRAP_COMMIT_MESSAGE =
+  "codeai-workspace-bootstrap: Description";
 
 interface WorkspaceActivatePayload {
   readonly workspacePath: string;
@@ -90,8 +92,7 @@ const repairLastActiveSnapshot = async (params: {
 
   if (
     params.lastActive?.stage === preferred.stage &&
-    params.lastActive.artifactPath === preferred.artifactPath &&
-    params.lastActive.updatedAt === preferred.updatedAt
+    params.lastActive.artifactPath === preferred.artifactPath
   ) {
     return params.lastActive;
   }
@@ -112,6 +113,7 @@ export const handleWorkspaceActivate = async (params: {
     WorkflowBoundaryFacade,
     "ensureBoundary"
   >;
+  readonly workflowBoundaryGit?: Pick<WorkflowBoundaryGit, "commit">;
   readonly onWorkspaceActivated?: (
     workspacePath: string,
     workspaceSlug: string
@@ -126,19 +128,24 @@ export const handleWorkspaceActivate = async (params: {
   const { workspacePath, workspaceSlug } = parsed.value;
 
   try {
-    await (
+    const capsuleBootstrap = await bootstrapWorkspaceRuntimeCapsule({
+      workspaceRoot: workspacePath,
+      workspaceSlug,
+    });
+    const boundary = await (
       params.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
     ).ensureBoundary({
       stage: "description",
       workspaceRoot: workspacePath,
       workspaceSlug,
     });
-    await fs.mkdir(
-      path.join(workspacePath, WORKSPACE_ROOT_DIR, workspaceSlug),
-      {
-        recursive: true,
-      }
-    );
+    if (!boundary.created && capsuleBootstrap.changedPaths.length > 0) {
+      await (params.workflowBoundaryGit ?? new WorkflowBoundaryGit()).commit({
+        commitMessage: WORKSPACE_BOOTSTRAP_COMMIT_MESSAGE,
+        paths: [".codeai-hub"],
+        workspaceRoot: workspacePath,
+      });
+    }
     await Promise.resolve(
       params.onWorkspaceActivated?.(workspacePath, workspaceSlug)
     );

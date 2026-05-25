@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "3ccd02982",
+  "lastRecordedCommit": "1db6bc6f2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase36.stream2.task2",
-  "expectedCommitMessage": "feat: coordinate workflow git rollback",
+  "currentTaskId": "phase37.stream1.task1",
+  "expectedCommitMessage": "feat: bootstrap capsule before description boundary",
   "debt": {
-    "expectedCommitMessage": "feat: coordinate workflow git rollback",
-    "preCommitHead": "3ccd02982",
+    "expectedCommitMessage": "feat: bootstrap capsule before description boundary",
+    "preCommitHead": "1db6bc6f2",
     "stage": "commit_pending",
-    "taskId": "phase36.stream2.task2"
+    "taskId": "phase37.stream1.task1"
   }
 }
 ```
@@ -307,13 +307,13 @@
 101. [DONE] `phase36.stream2.task1` Replace path-scoped `cleanPaths` with full-worktree clean and remove stage-specific cleanup lists from boundary restore params (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `refactor: use full git clean for workflow rollback`).
 102. [DONE] Git Commit: `refactor: use full git clean for workflow rollback` (hash: 3ccd02982)
 103. [DONE] `phase36.stream2.task2` Introduce a workflow rollback coordinator that runs stop/quiesce, reset hard, full clean, projection rebuild and clean-tree assert as one Core-owned transaction (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: coordinate workflow git rollback`).
-104. [PENDING] Git Commit: `feat: coordinate workflow git rollback` (hash: TBD)
+104. [DONE] Git Commit: `feat: coordinate workflow git rollback` (hash: 1db6bc6f2)
 
 ## Phase 37 - Boundary-First Workspace And Stage Starts (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Description Baseline
-105. [TODO] `phase37.stream1.task1` Move workspace capsule bootstrap before the Description boundary so the boundary contains questionnaire, workspace settings, capsule ignore rules and minimal tracked UI state (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: bootstrap capsule before description boundary`).
-106. [TODO] Git Commit: `feat: bootstrap capsule before description boundary` (hash: TBD)
+105. [DONE] `phase37.stream1.task1` Move workspace capsule bootstrap before the Description boundary so the boundary contains questionnaire, workspace settings, capsule ignore rules and minimal tracked UI state (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: bootstrap capsule before description boundary`).
+106. [PENDING] Git Commit: `feat: bootstrap capsule before description boundary` (hash: TBD)
 107. [TODO] `phase37.stream1.task2` Remove Description post-clear untracked projection writes or make them rebuildable without dirtying Git (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/workflow/description/description-step-store.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `fix: keep description clear tree clean`).
 108. [TODO] Git Commit: `fix: keep description clear tree clean` (hash: TBD)
 

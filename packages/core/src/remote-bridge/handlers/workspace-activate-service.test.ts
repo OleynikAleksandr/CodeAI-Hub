@@ -15,6 +15,14 @@ const SOURCE_PATH = path.resolve(
   "packages/core/src/remote-bridge/handlers/workspace-activate-service.ts"
 );
 const DESCRIPTION_BOUNDARY_RE = /codeai-boundary: Description/u;
+const BOUNDARY_CAPSULE_GITIGNORE_RE =
+  /\.codeai-hub\/new-workspace\/\.gitignore/u;
+const BOUNDARY_QUESTIONNAIRE_RE =
+  /\.codeai-hub\/new-workspace\/description\/questionnaire\.md/u;
+const BOUNDARY_SETTINGS_RE =
+  /\.codeai-hub\/new-workspace\/runtime\/settings\/settings\.json/u;
+const BOUNDARY_WORKFLOW_STATE_RE =
+  /\.codeai-hub\/new-workspace\/workflow\/state\.json/u;
 const execFileAsync = promisify(execFile);
 
 const createResponseRecorder = (): {
@@ -88,15 +96,16 @@ test("workspace-activate-service preserves deterministic resume/reopen path afte
     "workspace activation must create the Description Git boundary before PM workflow work"
   );
   assert.equal(
+    source.indexOf("bootstrapWorkspaceRuntimeCapsule({") <
+      source.indexOf("ensureBoundary({"),
+    true,
+    "workspace runtime capsule must be bootstrapped before the Description boundary"
+  );
+  assert.equal(
     source.indexOf("ensureBoundary({") <
       source.indexOf("params.onWorkspaceActivated?."),
     true,
     "Description boundary must be created before activation side effects"
-  );
-  assert.equal(
-    source.indexOf("ensureBoundary({") < source.indexOf("await fs.mkdir"),
-    true,
-    "Description boundary must be created before workspace directory bootstrap"
   );
 });
 
@@ -125,13 +134,48 @@ test("workspace activation creates Description boundary before new workspace boo
     readonly workspaceSlug?: unknown;
   };
   assert.equal(body.workspaceSlug, workspaceSlug);
-  assert.equal(body.description, null);
+  assert.equal(
+    (body.description as { readonly questionnairePath?: unknown })
+      ?.questionnairePath,
+    `.codeai-hub/${workspaceSlug}/description/questionnaire.md`
+  );
   assert.equal(body.lastActive?.stage, "description");
   assert.equal(
     body.lastActive?.artifactPath,
     `.codeai-hub/${workspaceSlug}/description/questionnaire.md`
   );
   assert.equal(typeof body.lastActive?.updatedAt, "string");
+  assert.equal(
+    await readFile(
+      path.join(
+        workspacePath,
+        ".codeai-hub",
+        workspaceSlug,
+        "description",
+        "questionnaire.md"
+      ),
+      "utf8"
+    ),
+    "# Description Questionnaire\n\n"
+  );
+  const settings = JSON.parse(
+    await readFile(
+      path.join(
+        workspacePath,
+        ".codeai-hub",
+        workspaceSlug,
+        "runtime",
+        "settings",
+        "settings.json"
+      ),
+      "utf8"
+    )
+  ) as {
+    readonly providers?: {
+      readonly codex?: { readonly defaultModel?: string };
+    };
+  };
+  assert.equal(settings.providers?.codex?.defaultModel, "gpt-5.3-codex");
 
   const registry = await readFile(
     path.join(
@@ -149,4 +193,29 @@ test("workspace activation creates Description boundary before new workspace boo
     cwd: workspacePath,
   });
   assert.match(stdout, DESCRIPTION_BOUNDARY_RE);
+  const { stdout: boundaryLog } = await execFileAsync(
+    "git",
+    ["log", "--format=%h%x00%s"],
+    { cwd: workspacePath }
+  );
+  const boundaryLine = boundaryLog
+    .split("\n")
+    .find((line) => line.includes("codeai-boundary: Description"));
+  assert.ok(boundaryLine);
+  const [boundaryHash] = boundaryLine.split("\0");
+  const { stdout: boundaryFiles } = await execFileAsync(
+    "git",
+    ["show", "--name-only", "--format=", boundaryHash],
+    { cwd: workspacePath }
+  );
+  assert.match(boundaryFiles, BOUNDARY_QUESTIONNAIRE_RE);
+  assert.match(boundaryFiles, BOUNDARY_SETTINGS_RE);
+  assert.match(boundaryFiles, BOUNDARY_WORKFLOW_STATE_RE);
+  assert.match(boundaryFiles, BOUNDARY_CAPSULE_GITIGNORE_RE);
+  const { stdout: status } = await execFileAsync(
+    "git",
+    ["status", "--porcelain"],
+    { cwd: workspacePath }
+  );
+  assert.equal(status.trim(), "");
 });

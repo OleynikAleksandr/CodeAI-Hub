@@ -1,4 +1,6 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT } from "./workspace-runtime-capsule-gitignore";
 
 export type WorkspaceRuntimeProviderId = "codex" | "claude" | "gemini" | "kimi";
 
@@ -8,6 +10,8 @@ export interface WorkspaceRuntimePath {
 }
 
 export interface WorkspaceRuntimeCapsule {
+  readonly descriptionQuestionnaireFile: WorkspaceRuntimePath;
+  readonly descriptionRoot: WorkspaceRuntimePath;
   readonly gitignoreFile: WorkspaceRuntimePath;
   readonly localizationRoot: WorkspaceRuntimePath;
   readonly logsRoot: WorkspaceRuntimePath;
@@ -22,6 +26,8 @@ export interface WorkspaceRuntimeCapsule {
   readonly settingsRoot: WorkspaceRuntimePath;
   readonly stateRoot: WorkspaceRuntimePath;
   readonly unifiedSessionsRoot: WorkspaceRuntimePath;
+  readonly workflowRoot: WorkspaceRuntimePath;
+  readonly workflowStateFile: WorkspaceRuntimePath;
   readonly workspaceCapsuleRoot: WorkspaceRuntimePath;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -33,11 +39,128 @@ export interface ResolveWorkspaceRuntimeCapsuleParams {
 }
 
 const CAPSULE_ROOT_DIR = ".codeai-hub";
+const DESCRIPTION_DIR = "description";
+const DESCRIPTION_QUESTIONNAIRE_FILE_NAME = "questionnaire.md";
 const RUNTIME_ROOT_DIR = "runtime";
 const SETTINGS_FILE_NAME = "settings.json";
+const WORKFLOW_ROOT_DIR = "workflow";
+const WORKFLOW_STATE_FILE_NAME = "state.json";
 const WORKSPACE_FALLBACK_SLUG = "workspace";
 
 const PROVIDER_IDS = ["codex", "claude", "gemini", "kimi"] as const;
+const DESCRIPTION_STAGE_ID = "description";
+const DESCRIPTION_QUESTIONNAIRE_SEED = "# Description Questionnaire\n\n";
+const DEFAULT_LOCALIZATION_LANGUAGE = "en";
+const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
+const WORKSPACE_SETTINGS_SEED = {
+  general: {
+    coreControls: {
+      allowRestart: true,
+    },
+    localization: {
+      defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
+      categories: {
+        artifactsForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
+        interactiveTemplates: DEFAULT_LOCALIZATION_LANGUAGE,
+        messagesForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
+        reasoning: DEFAULT_LOCALIZATION_LANGUAGE,
+        systemFeedback: DEFAULT_LOCALIZATION_LANGUAGE,
+        uiHelperText: DEFAULT_LOCALIZATION_LANGUAGE,
+        uiInterface: DEFAULT_LOCALIZATION_LANGUAGE,
+        uiLabels: DEFAULT_LOCALIZATION_LANGUAGE,
+        userGuidance: DEFAULT_LOCALIZATION_LANGUAGE,
+        workflowTerms: DEFAULT_LOCALIZATION_LANGUAGE,
+      },
+      workflowTermsPolicy: "keep_english",
+      uiEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
+      reasoningEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
+      glossaryEnabled: true,
+    },
+    responsePolicy: {
+      mode: "hybrid",
+      strictOutput: {
+        schemaText: `${JSON.stringify(
+          {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              answer: {
+                type: "string",
+                description: "Final answer for the user. Markdown allowed.",
+              },
+            },
+            required: ["answer"],
+          },
+          null,
+          2
+        )}\n`,
+        instructionText: [
+          "You must respond with a JSON object that matches the provided schema.",
+          "Populate the field:",
+          "- answer: the user-facing answer.",
+          "Return only JSON, no extra text.",
+          "",
+          "User request:",
+        ].join("\n"),
+      },
+    },
+  },
+  providers: {
+    claude: {
+      thinking: {
+        enabled: false,
+        effort: "medium",
+      },
+      thinkingDisplaySyncEnabled: true,
+      autoUpdate: { enabled: false },
+      defaultModel: "sonnet",
+      sessionContinuity: { remainingPercentThreshold: 30 },
+    },
+    codex: {
+      autoUpdate: { enabled: false },
+      defaultModel: "gpt-5.3-codex",
+      reasoningByModel: {
+        "gpt-5.2": "medium",
+        "gpt-5.3-codex-spark": "medium",
+        "gpt-5.3-codex": "medium",
+        "gpt-5.4-mini": "medium",
+        "gpt-5.4": "medium",
+        "gpt-5.5": "medium",
+      },
+      sessionContinuity: { remainingPercentThreshold: 30 },
+    },
+    gemini: {
+      autoUpdate: { enabled: false },
+      defaultModel: "gemini-3-pro-preview",
+      thinkingDisplaySyncEnabled: true,
+      thinkingLevelByModel: {},
+      sessionContinuity: {
+        remainingPercentThreshold: 30,
+        contextWindowTokenLimit: 300_000,
+      },
+    },
+    kimi: {
+      autoUpdate: { enabled: false },
+      defaultModel: "glm-5.1",
+      thinkingDisplaySyncEnabled: true,
+    },
+    glmClaudeCode: {
+      apiKey: "",
+      baseUrl: "https://api.z.ai/api/anthropic",
+      configPath: "~/.codeai-hub/providers/glm-claude-code/config.json",
+      defaultModel: "glm-5.1",
+      haikuModel: "glm-4.5-air",
+      opusModel: "glm-5.1",
+      sonnetModel: "glm-5-turbo",
+      thinkingDisplaySyncEnabled: true,
+    },
+  },
+} as const;
+
+export interface BootstrapWorkspaceRuntimeCapsuleResult {
+  readonly capsule: WorkspaceRuntimeCapsule;
+  readonly changedPaths: readonly string[];
+}
 
 export const normalizeWorkspaceRuntimeSlug = (value: string): string => {
   const normalized = value
@@ -155,8 +278,25 @@ export const resolveWorkspaceRuntimeCapsule = (
     workspaceSlug,
     "providers"
   );
+  const descriptionRoot = resolvePath(
+    workspaceRoot,
+    buildWorkspaceCapsuleRelativePath(workspaceSlug, DESCRIPTION_DIR)
+  );
+  const workflowRoot = resolvePath(
+    workspaceRoot,
+    buildWorkspaceCapsuleRelativePath(workspaceSlug, WORKFLOW_ROOT_DIR)
+  );
 
   return {
+    descriptionQuestionnaireFile: resolvePath(
+      workspaceRoot,
+      buildWorkspaceCapsuleRelativePath(
+        workspaceSlug,
+        DESCRIPTION_DIR,
+        DESCRIPTION_QUESTIONNAIRE_FILE_NAME
+      )
+    ),
+    descriptionRoot,
     gitignoreFile: resolvePath(
       workspaceRoot,
       buildWorkspaceCapsuleRelativePath(workspaceSlug, ".gitignore")
@@ -196,5 +336,100 @@ export const resolveWorkspaceRuntimeCapsule = (
     ),
     workspaceRoot,
     workspaceSlug,
+    workflowRoot,
+    workflowStateFile: resolvePath(
+      workspaceRoot,
+      buildWorkspaceCapsuleRelativePath(
+        workspaceSlug,
+        WORKFLOW_ROOT_DIR,
+        WORKFLOW_STATE_FILE_NAME
+      )
+    ),
+  };
+};
+
+const pathExists = async (filePath: string): Promise<boolean> => {
+  try {
+    await readFile(filePath, "utf8");
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const writeTextIfMissing = async (
+  target: WorkspaceRuntimePath,
+  content: string
+): Promise<string | null> => {
+  if (await pathExists(target.absolutePath)) {
+    return null;
+  }
+  await mkdir(path.dirname(target.absolutePath), { recursive: true });
+  await writeFile(target.absolutePath, content, "utf8");
+  return target.relativePath;
+};
+
+const writeJsonIfMissing = async (
+  target: WorkspaceRuntimePath,
+  value: unknown
+): Promise<string | null> =>
+  await writeTextIfMissing(target, `${JSON.stringify(value, null, 2)}\n`);
+
+const buildWorkflowStateSeed = (params: {
+  readonly artifactPath: string;
+  readonly now: string;
+  readonly workspaceSlug: string;
+}): Record<string, unknown> => ({
+  workspaceSlug: params.workspaceSlug,
+  updatedAt: params.now,
+  lastActive: {
+    stage: DESCRIPTION_STAGE_ID,
+    updatedAt: params.now,
+    artifactPath: params.artifactPath,
+  },
+});
+
+export const bootstrapWorkspaceRuntimeCapsule = async (
+  params: ResolveWorkspaceRuntimeCapsuleParams
+): Promise<BootstrapWorkspaceRuntimeCapsuleResult> => {
+  const capsule = resolveWorkspaceRuntimeCapsule(params);
+  await Promise.all([
+    mkdir(capsule.descriptionRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.localizationRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.logsRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.projectManagerRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.settingsRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.stateRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.unifiedSessionsRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.workflowRoot.absolutePath, { recursive: true }),
+    ...Object.values(capsule.providerHomes).map((providerHome) =>
+      mkdir(providerHome.absolutePath, { recursive: true })
+    ),
+  ]);
+  const now = new Date().toISOString();
+  const changedPaths = await Promise.all([
+    writeTextIfMissing(
+      capsule.gitignoreFile,
+      WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT
+    ),
+    writeTextIfMissing(
+      capsule.descriptionQuestionnaireFile,
+      DESCRIPTION_QUESTIONNAIRE_SEED
+    ),
+    writeJsonIfMissing(capsule.settingsFile, WORKSPACE_SETTINGS_SEED),
+    writeJsonIfMissing(
+      capsule.workflowStateFile,
+      buildWorkflowStateSeed({
+        artifactPath: capsule.descriptionQuestionnaireFile.relativePath,
+        now,
+        workspaceSlug: capsule.workspaceSlug,
+      })
+    ),
+  ]);
+  return {
+    capsule,
+    changedPaths: changedPaths.filter((value): value is string =>
+      Boolean(value)
+    ),
   };
 };
