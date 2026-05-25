@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "17be6d06e",
+  "lastRecordedCommit": "74c297192",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase41.stream2.task1",
-  "expectedCommitMessage": "feat: use workspace gemini home for workflow sessions",
+  "currentTaskId": "phase41.stream2.task2",
+  "expectedCommitMessage": "feat: use workspace kimi home for workflow sessions",
   "debt": {
-    "expectedCommitMessage": "feat: use workspace gemini home for workflow sessions",
-    "preCommitHead": "17be6d06e",
+    "expectedCommitMessage": "feat: use workspace kimi home for workflow sessions",
+    "preCommitHead": "74c297192",
     "stage": "commit_pending",
-    "taskId": "phase41.stream2.task1"
+    "taskId": "phase41.stream2.task2"
   }
 }
 ```
@@ -365,9 +365,9 @@
 
 ### Stream: Gemini And Kimi Homes
 135. [DONE] `phase41.stream2.task1` Resolve Gemini workflow `HOME` / `.gemini` roots under `runtime/providers/gemini/home` without mutating process-global `HOME` in Core (scope: `packages/Gemini_Module/src/runtime/cli-bridge-provider-home.ts, packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts, packages/Gemini_Module/src/runtime/cli-bridge.test.ts`; expected commit: `feat: use workspace gemini home for workflow sessions`).
-136. [PENDING] Git Commit: `feat: use workspace gemini home for workflow sessions` (hash: TBD)
-137. [TODO] `phase41.stream2.task2` Resolve Kimi managed-agent workflow home under `runtime/providers/kimi/home` and add focused provider-home tests (scope: `packages/core/src/provider-registry/index.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.test.ts`; expected commit: `feat: use workspace kimi home for workflow sessions`).
-138. [TODO] Git Commit: `feat: use workspace kimi home for workflow sessions` (hash: TBD)
+136. [DONE] Git Commit: `feat: use workspace gemini home for workflow sessions` (hash: 74c297192)
+137. [DONE] `phase41.stream2.task2` Resolve Kimi managed-agent workflow home under `runtime/providers/kimi/home` and add focused provider-home tests (scope: `packages/core/src/provider-registry/index.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.test.ts`; expected commit: `feat: use workspace kimi home for workflow sessions`).
+138. [PENDING] Git Commit: `feat: use workspace kimi home for workflow sessions` (hash: TBD)
 
 ## Phase 42 - Managed Workflow Git Consolidation (owner: Codex, updated: 2026-05-25)
 

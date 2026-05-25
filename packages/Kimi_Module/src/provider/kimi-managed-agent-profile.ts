@@ -11,6 +11,7 @@ const KIMI_PROVIDER_HOME_RELATIVE_PATH = path.join(
   "home"
 );
 const KIMI_DEFAULT_CONFIG_RELATIVE_PATH = path.join(".kimi", "config.toml");
+const WORKSPACE_FALLBACK_SLUG = "workspace";
 const KIMI_CLI_PATH_ENV = "KIMI_CLI_PATH";
 const KIMI_BINARY_NAME = "kimi";
 const KIMI_USER_LOCAL_BIN_RELATIVE_PATH = path.join(".local", "bin");
@@ -144,6 +145,7 @@ interface KimiRuntimeHomeOptions {
   readonly homeDir?: string;
   readonly providerHomePath?: string;
   readonly userConfigPath?: string;
+  readonly workspacePath?: string;
 }
 
 export interface KimiCliEnvironment {
@@ -181,17 +183,50 @@ const resolveHomeDir = (homeDir?: string): string => {
   return resolvedHomeDir;
 };
 
+const normalizeWorkspaceRuntimeSlug = (value: string): string => {
+  const normalized = value
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[\u0300-\u036f]/g, "");
+  const parts = normalized.match(/[a-z0-9]+/gu);
+  return parts?.join("-") || WORKSPACE_FALLBACK_SLUG;
+};
+
+const resolveWorkspaceKimiProviderHome = (workspacePath: string): string =>
+  path.join(
+    path.resolve(workspacePath),
+    ".codeai-hub",
+    normalizeWorkspaceRuntimeSlug(path.basename(workspacePath)),
+    "runtime",
+    "providers",
+    "kimi",
+    "home"
+  );
+
+const resolveDefaultKimiProviderHome = (
+  homeDir: string,
+  workspacePath?: string
+): string => {
+  const normalizedWorkspacePath = workspacePath?.trim();
+  return normalizedWorkspacePath
+    ? resolveWorkspaceKimiProviderHome(normalizedWorkspacePath)
+    : path.join(homeDir, KIMI_PROVIDER_HOME_RELATIVE_PATH);
+};
+
 const resolveKimiRuntimeHome = (
   options: KimiRuntimeHomeOptions = {}
 ): KimiRuntimeHome => {
   const homeDir = resolveHomeDir(options.homeDir);
+  const providerHomePath =
+    options.providerHomePath ??
+    resolveDefaultKimiProviderHome(homeDir, options.workspacePath);
   return {
-    providerHomePath:
-      options.providerHomePath ??
-      path.join(homeDir, KIMI_PROVIDER_HOME_RELATIVE_PATH),
+    providerHomePath,
     userConfigPath:
       options.userConfigPath ??
-      path.join(homeDir, KIMI_DEFAULT_CONFIG_RELATIVE_PATH),
+      (options.workspacePath
+        ? path.join(providerHomePath, KIMI_DEFAULT_CONFIG_RELATIVE_PATH)
+        : path.join(homeDir, KIMI_DEFAULT_CONFIG_RELATIVE_PATH)),
   };
 };
 
@@ -200,6 +235,7 @@ export const ensureKimiProviderHome = async (
 ): Promise<KimiRuntimeHome> => {
   const runtimeHome = resolveKimiRuntimeHome(options);
   await mkdir(runtimeHome.providerHomePath, { recursive: true });
+  await mkdir(path.dirname(runtimeHome.userConfigPath), { recursive: true });
   return runtimeHome;
 };
 
