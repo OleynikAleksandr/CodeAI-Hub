@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "f2e466c76",
+  "lastRecordedCommit": "5379f8dab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase28.stream2.task1",
-  "expectedCommitMessage": "chore: build diagram modules startup release",
+  "currentTaskId": "phase31.stream1.task1",
+  "expectedCommitMessage": "docs: plan workspace owned git rollback capsule",
   "debt": {
-    "expectedCommitMessage": "chore: build diagram modules startup release",
-    "preCommitHead": "f2e466c76",
+    "expectedCommitMessage": "docs: plan workspace owned git rollback capsule",
+    "preCommitHead": "5379f8dab",
     "stage": "commit_pending",
-    "taskId": "phase28.stream2.task1"
+    "taskId": "phase31.stream1.task1"
   }
 }
 ```
@@ -249,12 +249,18 @@
 
 ### Stream: Release Build
 76. [DONE] `phase28.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build diagram modules startup release`). Result: Release `1.2.359` built with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.359.vsix` created at 4.8M; tarballs copied to `doc/tmp/releases/`; release build verified SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-77. [PENDING] Git Commit: `chore: build diagram modules startup release` (hash: TBD)
+77. [DONE] Git Commit: `chore: build diagram modules startup release` (hash: 5379f8dab)
 
 ## Phase 29 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-78. [TODO] `phase29.stream1.task1` User installs the generated VSIX and verifies the full `Description -> Virtual Simulation -> Diagram Modules Start -> Clear Diagram Modules` workflow, including clean Git after each accepted step and removal of scaffold/runtime state on Clear (scope: user workflow acceptance; no commit expected).
+78. [DONE] `phase29.stream1.task1` User installs the generated VSIX and verifies the full `Description -> Virtual Simulation -> Diagram Modules Start -> Clear Diagram Modules` workflow, including clean Git after each accepted step and removal of scaffold/runtime state on Clear (scope: user workflow acceptance; no commit expected). Result: Failed release `1.2.359` retest. Clear Diagram Modules did not behave as a full rollback from the user's point of view, Clear Virtual Simulation failed because no `codeai-boundary: Virtual Simulation` was created, Clear Description left Core-created untracked `description-step.json` and `workflow/state.json`, and external unified/provider session files remained outside real Git rollback control.
+
+## Phase 31 - Workspace-Owned Git Rollback Redesign Planning (owner: Codex, updated: 2026-05-25)
+
+### Stream: Architecture Planning
+81. [DONE] `phase31.stream1.task1` Create a replacement planning document for full Git-only workflow rollback, including the workspace-owned runtime capsule, external state inventory, non-goals for manual projection/restore, and implementation phases that remove the hybrid runtime-slice rollback system (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan workspace owned git rollback capsule`).
+82. [PENDING] Git Commit: `docs: plan workspace owned git rollback capsule` (hash: TBD)
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
