@@ -191,6 +191,12 @@ export class WorkflowBoundaryGit {
     return await this.git(workspaceRoot, ["rev-parse", "--short", "HEAD"]);
   }
 
+  async statusPorcelain(workspaceRoot: string): Promise<readonly string[]> {
+    await this.ensureRepository(workspaceRoot);
+    const output = await this.git(workspaceRoot, ["status", "--porcelain"]);
+    return output.length > 0 ? output.split("\n") : [];
+  }
+
   private async stagePaths(
     workspaceRoot: string,
     paths: readonly string[]

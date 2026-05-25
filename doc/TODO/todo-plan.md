@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "c78fccfee",
+  "lastRecordedCommit": "03a00e850",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase9.stream1.task1",
-  "expectedCommitMessage": "feat: snapshot workflow runtime session slices",
+  "currentTaskId": "phase9.stream2.task1",
+  "expectedCommitMessage": "feat: commit accepted workflow step snapshots",
   "debt": {
-    "expectedCommitMessage": "feat: snapshot workflow runtime session slices",
-    "preCommitHead": "c78fccfee",
+    "expectedCommitMessage": "feat: commit accepted workflow step snapshots",
+    "preCommitHead": "03a00e850",
     "stage": "commit_pending",
-    "taskId": "phase9.stream1.task1"
+    "taskId": "phase9.stream2.task1"
   }
 }
 ```
@@ -108,11 +108,11 @@
 
 ### Stream: Runtime Slice Snapshot
 23. [DONE] `phase9.stream1.task1` Add a Core-owned runtime slice snapshot service for per-workspace unified session history and provider-native session files needed by workflow rollback (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts`; expected commit: `feat: snapshot workflow runtime session slices`).
-24. [PENDING] Git Commit: `feat: snapshot workflow runtime session slices` (hash: TBD)
+24. [DONE] Git Commit: `feat: snapshot workflow runtime session slices` (hash: 03a00e850)
 
 ### Stream: Accepted Step Commits
-25. [TODO] `phase9.stream2.task1` Add a workflow step commit facade that captures runtime slices, commits accepted step outputs, ignores local runtime timers, and fails if classified step completion leaves dirty Git (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `feat: commit accepted workflow step snapshots`).
-26. [TODO] Git Commit: `feat: commit accepted workflow step snapshots` (hash: TBD)
+25. [DONE] `phase9.stream2.task1` Add a workflow step commit facade that captures runtime slices, commits accepted step outputs, ignores local runtime timers, and fails if classified step completion leaves dirty Git (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `feat: commit accepted workflow step snapshots`).
+26. [PENDING] Git Commit: `feat: commit accepted workflow step snapshots` (hash: TBD)
 27. [TODO] `phase9.stream2.task2` Wire preliminary Description and Virtual Simulation review acceptance through the step commit facade before Core opens the next-step return path (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.test.ts`; expected commit: `feat: keep preliminary workflow steps git clean`).
 28. [TODO] Git Commit: `feat: keep preliminary workflow steps git clean` (hash: TBD)
 
