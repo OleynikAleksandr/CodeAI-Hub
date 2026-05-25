@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.357] - 2026-05-25
+### Fixed
+- **New workspaces can load the Description questionnaire again.** Workspace activation now creates the `Description` boundary before `.codeai-hub/<workspaceSlug>` bootstrap, so the strict dirty-tree boundary guard no longer rejects a brand-new workspace before Project Manager can create/read `description/questionnaire.md`.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/workspace-activate-service.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js`
+- `npm run plan:validate`
+
 ## [1.2.356] - 2026-05-25
 ### Fixed
 - **Workflow boundaries are now clean pre-step anchors.** `codeai-boundary: <Stage>` commits no longer stage implicit workspace changes, and Core blocks stage start if Git is already dirty before the boundary can be created.
