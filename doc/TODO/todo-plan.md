@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "55f3f949a",
+  "lastRecordedCommit": "37eec0b24",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase15.stream1.task1",
-  "expectedCommitMessage": "docs: prepare strict boundary restore release",
+  "currentTaskId": "phase15.stream2.task1",
+  "expectedCommitMessage": "chore: build strict boundary restore release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare strict boundary restore release",
-    "preCommitHead": "55f3f949a",
+    "expectedCommitMessage": "chore: build strict boundary restore release",
+    "preCommitHead": "37eec0b24",
     "stage": "commit_pending",
-    "taskId": "phase15.stream1.task1"
+    "taskId": "phase15.stream2.task1"
   }
 }
 ```
@@ -167,11 +167,11 @@
 
 ### Stream: Release Docs
 48. [DONE] `phase15.stream1.task1` Update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare strict boundary restore release`).
-49. [PENDING] Git Commit: `docs: prepare strict boundary restore release` (hash: TBD)
+49. [DONE] Git Commit: `docs: prepare strict boundary restore release` (hash: 37eec0b24)
 
 ### Stream: Release Build
-50. [TODO] `phase15.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build strict boundary restore release`).
-51. [TODO] Git Commit: `chore: build strict boundary restore release` (hash: TBD)
+50. [DONE] `phase15.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build strict boundary restore release`).
+51. [PENDING] Git Commit: `chore: build strict boundary restore release` (hash: TBD)
 
 ## Phase 16 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
