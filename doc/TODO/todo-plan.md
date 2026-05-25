@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "fa6000aa2",
+  "lastRecordedCommit": "24ccdfb0f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase63.stream1.task1",
-  "expectedCommitMessage": "docs: prepare workspace settings authority release",
+  "currentTaskId": "phase63.stream2.task1",
+  "expectedCommitMessage": "chore: build workspace settings authority release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare workspace settings authority release",
-    "preCommitHead": "fa6000aa2",
+    "expectedCommitMessage": "chore: build workspace settings authority release",
+    "preCommitHead": "24ccdfb0f",
     "stage": "commit_pending",
-    "taskId": "phase63.stream1.task1"
+    "taskId": "phase63.stream2.task1"
   }
 }
 ```
@@ -549,11 +549,11 @@
 
 ### Stream: Release Docs
 205. [DONE] `phase63.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace settings authority release`).
-206. [PENDING] Git Commit: `docs: prepare workspace settings authority release` (hash: TBD)
+206. [DONE] Git Commit: `docs: prepare workspace settings authority release` (hash: 24ccdfb0f)
 
 ### Stream: Release Build
-207. [TODO] `phase63.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings authority release`). Result: TBD.
-208. [TODO] Git Commit: `chore: build workspace settings authority release` (hash: TBD)
+207. [DONE] `phase63.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings authority release`). Result: Release `1.2.364` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.364.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+208. [PENDING] Git Commit: `chore: build workspace settings authority release` (hash: TBD)
 
 ## Phase 64 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
