@@ -1,13 +1,5 @@
 import { createHash } from "node:crypto";
-import {
-  cp,
-  mkdir,
-  readdir,
-  readFile,
-  rm,
-  stat,
-  writeFile,
-} from "node:fs/promises";
+import { cp, mkdir, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
@@ -256,65 +248,6 @@ const collectRuntimeSliceSources = async (
   return Array.from(byResolvedPath.values());
 };
 
-const isRestorableSourcePath = (
-  sourcePath: string,
-  homeDirectory: string
-): boolean => {
-  const resolved = path.resolve(sourcePath);
-  const allowedRoots = [
-    path.join(homeDirectory, ".codeai-hub", "sessions"),
-    path.join(homeDirectory, ".codeai-hub", "providers"),
-    path.join(homeDirectory, ".gemini", "tmp"),
-  ].map((root) => path.resolve(root));
-  return allowedRoots.some(
-    (root) => resolved === root || resolved.startsWith(`${root}${path.sep}`)
-  );
-};
-
-const isSessionDataFileName = (fileName: string): boolean =>
-  SESSION_FILE_EXTENSIONS.has(path.extname(fileName)) &&
-  !SENSITIVE_FILE_NAMES.has(fileName);
-
-const pruneExtraSessionFiles = async (params: {
-  readonly capturedAtMs: number;
-  readonly homeDirectory: string;
-  readonly manifest: WorkflowRuntimeSliceManifest;
-}): Promise<void> => {
-  const keptFiles = new Set(
-    params.manifest.entries
-      .filter((entry) => entry.type === "file")
-      .map((entry) => path.resolve(entry.sourcePath))
-  );
-  const sourceDirectories = unique(
-    params.manifest.entries
-      .filter((entry) => entry.type === "file")
-      .filter((entry) =>
-        isRestorableSourcePath(entry.sourcePath, params.homeDirectory)
-      )
-      .map((entry) => path.dirname(path.resolve(entry.sourcePath)))
-  );
-
-  for (const directory of sourceDirectories) {
-    const entries = await readdir(directory, { withFileTypes: true }).catch(
-      () => []
-    );
-    for (const entry of entries) {
-      if (!(entry.isFile() && isSessionDataFileName(entry.name))) {
-        continue;
-      }
-      const sourcePath = path.join(directory, entry.name);
-      const resolvedSourcePath = path.resolve(sourcePath);
-      if (keptFiles.has(resolvedSourcePath)) {
-        continue;
-      }
-      const sourceStats = await stat(sourcePath).catch(() => null);
-      if (sourceStats && sourceStats.mtimeMs > params.capturedAtMs) {
-        await rm(sourcePath, { force: true });
-      }
-    }
-  }
-};
-
 export const captureWorkflowRuntimeSlices = async (
   params: WorkflowRuntimeSliceSnapshotParams
 ): Promise<WorkflowRuntimeSliceManifest> => {
@@ -351,43 +284,5 @@ export const captureWorkflowRuntimeSlices = async (
     getManifestPath(params),
     `${JSON.stringify(manifest, null, 2)}\n`
   );
-  return manifest;
-};
-
-export const restoreWorkflowRuntimeSlices = async (
-  params: WorkflowRuntimeSliceSnapshotParams
-): Promise<WorkflowRuntimeSliceManifest | null> => {
-  const manifestPath = getManifestPath(params);
-  const raw = await readFile(manifestPath, "utf8").catch(() => null);
-  if (!raw) {
-    return null;
-  }
-  const manifest = JSON.parse(raw) as WorkflowRuntimeSliceManifest;
-  if (manifest.schema !== MANIFEST_SCHEMA) {
-    return null;
-  }
-  const homeDirectory = params.homeDirectory ?? homedir();
-  const capturedAtMs = Date.parse(manifest.updatedAt);
-  for (const entry of manifest.entries) {
-    if (!isRestorableSourcePath(entry.sourcePath, homeDirectory)) {
-      continue;
-    }
-    const snapshotAbsolutePath = path.join(
-      params.workspaceRoot,
-      entry.snapshotPath
-    );
-    if (!(await pathExists(snapshotAbsolutePath))) {
-      continue;
-    }
-    await rm(entry.sourcePath, { force: true, recursive: true });
-    await mkdir(path.dirname(entry.sourcePath), { recursive: true });
-    await cp(snapshotAbsolutePath, entry.sourcePath, {
-      force: true,
-      recursive: entry.type === "directory",
-    });
-  }
-  if (Number.isFinite(capturedAtMs)) {
-    await pruneExtraSessionFiles({ capturedAtMs, homeDirectory, manifest });
-  }
   return manifest;
 };

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "690b40909",
+  "lastRecordedCommit": "dc8f8e8c1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase37.stream2.task2",
-  "expectedCommitMessage": "fix: gate websocket stage preflight by boundary",
+  "currentTaskId": "phase38.stream1.task1",
+  "expectedCommitMessage": "refactor: remove workflow runtime slice snapshots",
   "debt": {
-    "expectedCommitMessage": "fix: gate websocket stage preflight by boundary",
-    "preCommitHead": "690b40909",
+    "expectedCommitMessage": "refactor: remove workflow runtime slice snapshots",
+    "preCommitHead": "dc8f8e8c1",
     "stage": "commit_pending",
-    "taskId": "phase37.stream2.task2"
+    "taskId": "phase38.stream1.task1"
   }
 }
 ```
@@ -321,13 +321,13 @@
 109. [DONE] `phase37.stream2.task1` Move Project Manager stage session creation behind target-stage boundary creation and capsule directory preparation (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: create stage sessions after boundaries`).
 110. [DONE] Git Commit: `feat: create stage sessions after boundaries` (hash: 690b40909)
 111. [DONE] `phase37.stream2.task2` Ensure websocket workflow `session:create` preflight cannot install scaffold, provider homes or session files before the selected stage boundary exists (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: gate websocket stage preflight by boundary`).
-112. [PENDING] Git Commit: `fix: gate websocket stage preflight by boundary` (hash: TBD)
+112. [DONE] Git Commit: `fix: gate websocket stage preflight by boundary` (hash: dc8f8e8c1)
 
 ## Phase 38 - Remove Runtime-Slices And Directly Commit Capsule State (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Runtime-Slice Deletion
-113. [TODO] `phase38.stream1.task1` Delete the runtime-slice snapshot module and update compile-time consumers to stop importing capture/restore types (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `refactor: remove workflow runtime slice snapshots`).
-114. [TODO] Git Commit: `refactor: remove workflow runtime slice snapshots` (hash: TBD)
+113. [DONE] `phase38.stream1.task1` Remove runtime-slice restore from the rollback transaction and delete restore-side tests while capture imports remain only until the accepted-step commit rewrite (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `refactor: remove workflow runtime slice snapshots`).
+114. [PENDING] Git Commit: `refactor: remove workflow runtime slice snapshots` (hash: TBD)
 115. [TODO] `phase38.stream1.task2` Replace old runtime-slice tests and preliminary routing expectations with capsule/direct-commit expectations (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts`; expected commit: `test: replace runtime slice rollback coverage`).
 116. [TODO] Git Commit: `test: replace runtime slice rollback coverage` (hash: TBD)
 

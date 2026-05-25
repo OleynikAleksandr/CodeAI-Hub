@@ -7,7 +7,6 @@ import {
   type WorkflowBoundaryRestoreResult,
 } from "./workflow-boundary-model";
 import { WorkflowBoundaryRegistryStore } from "./workflow-boundary-registry";
-import { restoreWorkflowRuntimeSlices } from "./workflow-runtime-slice-snapshot";
 
 export interface WorkflowRollbackQuiesceParams {
   readonly boundaryHash: string;
@@ -66,10 +65,6 @@ export class WorkflowRollbackCoordinator {
       workspaceRoot: params.workspaceRoot,
     });
     await this.#git.cleanWorktree({ workspaceRoot: params.workspaceRoot });
-    await restoreWorkflowRuntimeSlices({
-      workspaceRoot: params.workspaceRoot,
-      workspaceSlug: params.workspaceSlug,
-    });
     const projection = await this.rebuildProjection(params);
     const clearCommit = await this.#git.commit({
       allowEmpty: true,
