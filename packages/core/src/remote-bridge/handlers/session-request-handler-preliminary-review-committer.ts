@@ -87,6 +87,10 @@ export class SessionRequestHandlerPreliminaryReviewCommitter {
       return false;
     }
     this.appendUserReviewMessage(options);
+    this.#deps.eventMessages.appendCoreMessage(options.sessionId, {
+      content: buildManagedPersistentReturnHandoffMessage(stage.label),
+      tag: "managed-workflow-complete",
+    });
     if (options.session.workspacePath && options.session.initiativeSlug) {
       try {
         await this.#stepCommitFacade.commitAcceptedStep({
@@ -103,10 +107,6 @@ export class SessionRequestHandlerPreliminaryReviewCommitter {
         return true;
       }
     }
-    this.#deps.eventMessages.appendCoreMessage(options.sessionId, {
-      content: buildManagedPersistentReturnHandoffMessage(stage.label),
-      tag: "managed-workflow-complete",
-    });
     return true;
   }
 

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "eefa3cbf2",
+  "lastRecordedCommit": "8ab908c54",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase46.stream3.task1",
-  "expectedCommitMessage": "chore: build workspace rollback release",
+  "currentTaskId": "phase48.stream1.task1",
+  "expectedCommitMessage": "fix: keep preliminary acceptance git clean",
   "debt": {
-    "expectedCommitMessage": "chore: build workspace rollback release",
-    "preCommitHead": "eefa3cbf2",
+    "expectedCommitMessage": "fix: keep preliminary acceptance git clean",
+    "preCommitHead": "8ab908c54",
     "stage": "commit_pending",
-    "taskId": "phase46.stream3.task1"
+    "taskId": "phase48.stream1.task1"
   }
 }
 ```
@@ -418,12 +418,27 @@
 
 ### Stream: Release Build
 160. [DONE] `phase46.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace rollback release`). Result: Release `1.2.360` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.360.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-161. [PENDING] Git Commit: `chore: build workspace rollback release` (hash: TBD)
+161. [DONE] Git Commit: `chore: build workspace rollback release` (hash: 8ab908c54)
 
 ## Phase 47 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-162. [TODO] `phase47.stream1.task1` User installs the generated VSIX and verifies the full workspace-owned rollback workflow including clean Git, removed downstream artifacts, removed unified/provider sessions and sendable Description after Clear Description (scope: user workflow acceptance; no commit expected). Result: TBD.
+162. [DONE] `phase47.stream1.task1` User installs the generated VSIX and verifies the full workspace-owned rollback workflow including clean Git, removed downstream artifacts, removed unified/provider sessions and sendable Description after Clear Description (scope: user workflow acceptance; no commit expected). Result: Failed release `1.2.360` retest: Description completed, but Virtual Simulation session creation timed out because the Description accepted-step commit left the workspace Git tree dirty with Codex SQLite WAL residue and a post-commit unified-session Core completion message; the Virtual Simulation start-card model selection also did not persist to the workspace runtime settings file.
+
+## Phase 48 - Virtual Simulation Startup Regression Fix (owner: Codex, updated: 2026-05-25)
+
+### Stream: Acceptance Clean Tree
+163. [DONE] `phase48.stream1.task1` Keep preliminary Description/Virtual Simulation acceptance Git-clean by recording the Core completion message before the accepted-step commit and excluding volatile provider runtime residue from future capsule commits (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts`; expected commit: `fix: keep preliminary acceptance git clean`).
+164. [PENDING] Git Commit: `fix: keep preliminary acceptance git clean` (hash: TBD)
+
+### Stream: Workspace Settings Start Card
+165. [TODO] `phase48.stream2.task1` Persist workflow start-card model/reasoning selections through the active workspace settings scope so `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` is updated before session creation (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts`; expected commit: `fix: persist workflow start settings to workspace`).
+166. [TODO] Git Commit: `fix: persist workflow start settings to workspace` (hash: TBD)
+
+## Phase 49 - Regression Verification (owner: Codex, updated: 2026-05-25)
+
+### Stream: Targeted Checks
+167. [TODO] `phase49.stream1.task1` Run targeted Core/Project Manager tests and plan validation for clean preliminary acceptance and workspace-scoped start settings (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

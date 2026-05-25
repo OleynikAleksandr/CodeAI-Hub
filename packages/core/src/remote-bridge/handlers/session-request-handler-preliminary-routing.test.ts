@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
+import { appendFileSync } from "node:fs";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -31,7 +32,20 @@ interface CapturedMessage {
   readonly tag?: string;
 }
 
-const createActions = (sessionManager: SessionManager) => {
+const appendPersistedMessage = (
+  messageLogPath: string | undefined,
+  message: CapturedMessage
+): void => {
+  if (!messageLogPath) {
+    return;
+  }
+  appendFileSync(messageLogPath, `${JSON.stringify(message)}\n`, "utf8");
+};
+
+const createActions = (
+  sessionManager: SessionManager,
+  options: { readonly messageLogPath?: string } = {}
+) => {
   const coreMessages: CapturedMessage[] = [];
   const dialogMessages: CapturedMessage[] = [];
   const dispatchedUserMessages: string[] = [];
@@ -43,9 +57,11 @@ const createActions = (sessionManager: SessionManager) => {
     continuityRolloverOrchestrator: {} as never,
     eventMessages: {
       appendCoreMessage: (_sessionId: string, message: CapturedMessage) => {
+        appendPersistedMessage(options.messageLogPath, message);
         coreMessages.push(message);
       },
       appendDialogMessage: (_sessionId: string, message: CapturedMessage) => {
+        appendPersistedMessage(options.messageLogPath, message);
         dialogMessages.push(message);
       },
       extractMessageContentAndTurnOptions: (payload: unknown) =>
@@ -189,14 +205,12 @@ test("preliminary review accepts only explicit confirmation after Core gate", as
       ),
       "provider session\n"
     );
-    await writeText(
-      path.join(
-        capsule.unifiedSessionsRoot.absolutePath,
-        "codex",
-        "description.jsonl"
-      ),
-      "unified session\n"
+    const unifiedSessionPath = path.join(
+      capsule.unifiedSessionsRoot.absolutePath,
+      "codex",
+      "description.jsonl"
     );
+    await writeText(unifiedSessionPath, "unified session\n");
     const sessionManager = new SessionManager();
     const session = sessionManager.createSession(
       "codexCli",
@@ -209,7 +223,9 @@ test("preliminary review accepts only explicit confirmation after Core gate", as
       sessionManager,
       stageLabel: "Description",
     });
-    const harness = createActions(sessionManager);
+    const harness = createActions(sessionManager, {
+      messageLogPath: unifiedSessionPath,
+    });
 
     await harness.actions.handleMessage(session.id, "подтверждаю");
 

@@ -48,6 +48,9 @@ const CACHE_PATTERNS = [
   "runtime/providers/**/home/**/Code Cache/",
   "runtime/providers/**/home/**/GPUCache/",
   "runtime/providers/**/home/**/node_modules/",
+  "runtime/providers/**/home/**/tmp/",
+  "runtime/providers/**/home/**/*.sqlite-shm",
+  "runtime/providers/**/home/**/*.sqlite-wal",
   "runtime/providers/**/home/**/*.log",
 ] as const;
 
