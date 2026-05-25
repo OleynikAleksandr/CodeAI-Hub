@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "f5e94c038",
+  "lastRecordedCommit": "cc64f488f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase50.stream2.task1",
-  "expectedCommitMessage": "docs: prepare virtual simulation startup release",
+  "currentTaskId": "phase50.stream3.task1",
+  "expectedCommitMessage": "chore: build virtual simulation startup release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare virtual simulation startup release",
-    "preCommitHead": "f5e94c038",
+    "expectedCommitMessage": "chore: build virtual simulation startup release",
+    "preCommitHead": "cc64f488f",
     "stage": "commit_pending",
-    "taskId": "phase50.stream2.task1"
+    "taskId": "phase50.stream3.task1"
   }
 }
 ```
@@ -447,11 +447,11 @@
 
 ### Stream: Release Docs
 169. [DONE] `phase50.stream2.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare virtual simulation startup release`).
-170. [PENDING] Git Commit: `docs: prepare virtual simulation startup release` (hash: TBD)
+170. [DONE] Git Commit: `docs: prepare virtual simulation startup release` (hash: cc64f488f)
 
 ### Stream: Release Build
-171. [TODO] `phase50.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build virtual simulation startup release`).
-172. [TODO] Git Commit: `chore: build virtual simulation startup release` (hash: TBD)
+171. [DONE] `phase50.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build virtual simulation startup release`). Result: Release `1.2.361` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.361.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+172. [PENDING] Git Commit: `chore: build virtual simulation startup release` (hash: TBD)
 
 ## Phase 51 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
