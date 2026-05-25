@@ -66,7 +66,7 @@ type WorkflowStateGetter = (
 ) => ReturnType<typeof api.getWorkflowState>;
 
 type SettingsPayloadGetter = () => SettingsLoadedPayload | null;
-type SettingsSaver = (settings: Settings) => Promise<void> | void;
+type SettingsSaver = (settings: Settings, scope: StartWorkflowStepParams) => Promise<void> | void;
 
 type SubmitQuestionnaireService = Pick<
   DescriptionSubmitService,
@@ -194,7 +194,7 @@ const applyStartCardModelDefaults = (
   return nextSettings;
 };
 
-const saveSettingsAndWait = (settings: Settings): Promise<void> =>
+const saveSettingsAndWait: SettingsSaver = (settings, scope) =>
   new Promise((resolve, reject) => {
     let settled = false;
     const cleanup = (): void => {
@@ -225,7 +225,7 @@ const saveSettingsAndWait = (settings: Settings): Promise<void> =>
         reject(new Error(error));
       }
     });
-    api.saveSettings(settings);
+    api.saveSettings(settings, scope);
   });
 
 const readDiagramModulesSubstep = (
@@ -330,7 +330,7 @@ export class WorkflowStepStartService {
     }
     const nextSettings = applyStartCardModelDefaults(settings, params);
     if (nextSettings) {
-      await this.saveSettings(nextSettings);
+      await this.saveSettings(nextSettings, params);
     }
   }
 

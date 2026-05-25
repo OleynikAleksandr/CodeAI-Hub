@@ -120,8 +120,10 @@ test("Application Skeleton start waits for selected model settings before sessio
   const service = new WorkflowStepStartService({
     getWorkflowState: async () => createWorkflowState(),
     getSettingsPayload: () => ({ settings: createSettings() }),
-    saveSettings: async (settings) => {
-      events.push(`save:${settings.providers.claude.defaultModel}`);
+    saveSettings: async (settings, scope) => {
+      events.push(
+        `save:${settings.providers.claude.defaultModel}:${scope.workspacePath}:${scope.workspaceSlug}`
+      );
       await settingsSaved;
       events.push("saved");
     },
@@ -143,9 +145,13 @@ test("Application Skeleton start waits for selected model settings before sessio
   });
 
   await Promise.resolve();
-  assert.deepEqual(events, ["save:opus"]);
+  assert.deepEqual(events, ["save:opus:/tmp/demo:demo-workspace"]);
 
   releaseSettingsSave();
   assert.equal(await startPromise, "application-skeleton-session");
-  assert.deepEqual(events, ["save:opus", "saved", "session:create"]);
+  assert.deepEqual(events, [
+    "save:opus:/tmp/demo:demo-workspace",
+    "saved",
+    "session:create",
+  ]);
 });

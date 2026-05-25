@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "8ab908c54",
+  "lastRecordedCommit": "695edf548",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase48.stream1.task1",
-  "expectedCommitMessage": "fix: keep preliminary acceptance git clean",
+  "currentTaskId": "phase48.stream2.task1",
+  "expectedCommitMessage": "fix: persist workflow start settings to workspace",
   "debt": {
-    "expectedCommitMessage": "fix: keep preliminary acceptance git clean",
-    "preCommitHead": "8ab908c54",
+    "expectedCommitMessage": "fix: persist workflow start settings to workspace",
+    "preCommitHead": "695edf548",
     "stage": "commit_pending",
-    "taskId": "phase48.stream1.task1"
+    "taskId": "phase48.stream2.task1"
   }
 }
 ```
@@ -429,11 +429,11 @@
 
 ### Stream: Acceptance Clean Tree
 163. [DONE] `phase48.stream1.task1` Keep preliminary Description/Virtual Simulation acceptance Git-clean by recording the Core completion message before the accepted-step commit and excluding volatile provider runtime residue from future capsule commits (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts`; expected commit: `fix: keep preliminary acceptance git clean`).
-164. [PENDING] Git Commit: `fix: keep preliminary acceptance git clean` (hash: TBD)
+164. [DONE] Git Commit: `fix: keep preliminary acceptance git clean` (hash: 695edf548)
 
 ### Stream: Workspace Settings Start Card
-165. [TODO] `phase48.stream2.task1` Persist workflow start-card model/reasoning selections through the active workspace settings scope so `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` is updated before session creation (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.gating.test.ts`; expected commit: `fix: persist workflow start settings to workspace`).
-166. [TODO] Git Commit: `fix: persist workflow start settings to workspace` (hash: TBD)
+165. [DONE] `phase48.stream2.task1` Persist workflow start-card model/reasoning selections through the active workspace settings scope so `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` is updated before session creation (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `fix: persist workflow start settings to workspace`).
+166. [PENDING] Git Commit: `fix: persist workflow start settings to workspace` (hash: TBD)
 
 ## Phase 49 - Regression Verification (owner: Codex, updated: 2026-05-25)
 
