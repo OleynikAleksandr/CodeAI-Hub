@@ -10,6 +10,7 @@ import {
   type WorkflowBoundaryRestoreResult,
 } from "./workflow-boundary-model";
 import { WorkflowBoundaryRegistryStore } from "./workflow-boundary-registry";
+import { restoreWorkflowRuntimeSlices } from "./workflow-runtime-slice-snapshot";
 
 export interface WorkflowBoundaryFacadeOptions {
   readonly clock?: () => string;
@@ -116,6 +117,10 @@ export class WorkflowBoundaryFacade {
     await this.#git.cleanPaths({
       paths: params.cleanPaths ?? DEFAULT_CLEAN_PATHS,
       workspaceRoot: params.workspaceRoot,
+    });
+    await restoreWorkflowRuntimeSlices({
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
     });
     const prunedRegistry = await this.#registryStore.pruneFromStage(params);
     const registryPath = this.#registryStore.getRegistryPath(params);
