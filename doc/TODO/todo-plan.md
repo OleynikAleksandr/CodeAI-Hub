@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "5c4e819c2",
+  "lastRecordedCommit": "a39fd41b4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase13.stream3.task1",
-  "expectedCommitMessage": "fix: commit diagram modules acceptance snapshots",
+  "currentTaskId": "phase14.stream1.task1",
+  "expectedCommitMessage": "docs: document strict workflow boundary restore",
   "debt": {
-    "expectedCommitMessage": "fix: commit diagram modules acceptance snapshots",
-    "preCommitHead": "5c4e819c2",
+    "expectedCommitMessage": "docs: document strict workflow boundary restore",
+    "preCommitHead": "a39fd41b4",
     "stage": "commit_pending",
-    "taskId": "phase13.stream3.task1"
+    "taskId": "phase14.stream1.task1"
   }
 }
 ```
@@ -154,13 +154,13 @@
 
 ### Stream: Managed Stage Acceptance
 43. [DONE] `phase13.stream3.task1` Route Diagram Modules user acceptance through the accepted-step commit facade before Core unlocks Application Skeleton, so final managed-stage outputs and runtime slices are committed and Git-clean (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules acceptance snapshots`).
-44. [PENDING] Git Commit: `fix: commit diagram modules acceptance snapshots` (hash: TBD)
+44. [DONE] Git Commit: `fix: commit diagram modules acceptance snapshots` (hash: a39fd41b4)
 
 ## Phase 14 - Architecture Documentation And Verification (owner: Codex, updated: 2026-05-25)
 
 ### Stream: SSOT And Targeted Checks
-45. [TODO] `phase14.stream1.task1` Update workflow architecture docs for clean pre-step boundary anchors, strict runtime restore pruning, and managed-stage accepted-step commits (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document strict workflow boundary restore`).
-46. [TODO] Git Commit: `docs: document strict workflow boundary restore` (hash: TBD)
+45. [DONE] `phase14.stream1.task1` Update workflow architecture docs for clean pre-step boundary anchors, strict runtime restore pruning, and managed-stage accepted-step commits (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document strict workflow boundary restore`).
+46. [PENDING] Git Commit: `docs: document strict workflow boundary restore` (hash: TBD)
 47. [TODO] `phase14.stream2.task1` Run targeted Core build and focused tests for boundary anchors, runtime slice pruning, Clear restore, and managed Diagram Modules acceptance (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 15 - Release Build (owner: Codex, updated: 2026-05-25)
