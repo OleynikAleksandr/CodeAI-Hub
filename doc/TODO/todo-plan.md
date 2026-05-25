@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "2f3b88b96",
+  "lastRecordedCommit": "3cdb12ba2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase35.stream1.task1",
-  "expectedCommitMessage": "feat: add workspace runtime capsule paths",
+  "currentTaskId": "phase35.stream1.task2",
+  "expectedCommitMessage": "feat: define runtime capsule gitignore",
   "debt": {
-    "expectedCommitMessage": "feat: add workspace runtime capsule paths",
-    "preCommitHead": "2f3b88b96",
+    "expectedCommitMessage": "feat: define runtime capsule gitignore",
+    "preCommitHead": "3cdb12ba2",
     "stage": "commit_pending",
-    "taskId": "phase35.stream1.task1"
+    "taskId": "phase35.stream1.task2"
   }
 }
 ```
@@ -285,9 +285,9 @@
 
 ### Stream: Capsule Path Contract
 89. [DONE] `phase35.stream1.task1` Add a `WorkspaceRuntimeCapsule` path resolver with deterministic workspace slug, runtime root, settings root, sessions root and provider home roots (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `feat: add workspace runtime capsule paths`).
-90. [PENDING] Git Commit: `feat: add workspace runtime capsule paths` (hash: TBD)
-91. [TODO] `phase35.stream1.task2` Add capsule `.gitignore` contract generation for auth/cache/tmp exclusions while keeping rollback-relevant session/settings files trackable (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: define runtime capsule gitignore`).
-92. [TODO] Git Commit: `feat: define runtime capsule gitignore` (hash: TBD)
+90. [DONE] Git Commit: `feat: add workspace runtime capsule paths` (hash: 3cdb12ba2)
+91. [DONE] `phase35.stream1.task2` Add capsule `.gitignore` contract generation for auth/cache/tmp exclusions while keeping rollback-relevant session/settings files trackable (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: define runtime capsule gitignore`).
+92. [PENDING] Git Commit: `feat: define runtime capsule gitignore` (hash: TBD)
 
 ### Stream: Workspace Settings Baseline
 93. [TODO] `phase35.stream2.task1` Add workspace settings seed/read/write helpers that resolve settings through the active workspace capsule and use global settings only as defaults (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: seed workspace settings from capsule`).

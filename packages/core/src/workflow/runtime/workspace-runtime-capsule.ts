@@ -8,6 +8,7 @@ export interface WorkspaceRuntimePath {
 }
 
 export interface WorkspaceRuntimeCapsule {
+  readonly gitignoreFile: WorkspaceRuntimePath;
   readonly localizationRoot: WorkspaceRuntimePath;
   readonly logsRoot: WorkspaceRuntimePath;
   readonly projectManagerRoot: WorkspaceRuntimePath;
@@ -156,6 +157,10 @@ export const resolveWorkspaceRuntimeCapsule = (
   );
 
   return {
+    gitignoreFile: resolvePath(
+      workspaceRoot,
+      buildWorkspaceCapsuleRelativePath(workspaceSlug, ".gitignore")
+    ),
     localizationRoot: buildRuntimePath(
       workspaceRoot,
       workspaceSlug,
