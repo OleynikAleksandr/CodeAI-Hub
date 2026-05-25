@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Request, Response } from "express";
 import type { Logger } from "../../telemetry/logger";
+import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
 import {
   buildDescriptionBranchSnapshot,
   DescriptionStepStore,
@@ -107,6 +108,10 @@ export const handleWorkspaceActivate = async (params: {
   readonly res: Response;
   readonly logger: Logger;
   readonly sessionHandler: SessionRequestHandler;
+  readonly workflowBoundaryFacade?: Pick<
+    WorkflowBoundaryFacade,
+    "ensureBoundary"
+  >;
   readonly onWorkspaceActivated?: (
     workspacePath: string,
     workspaceSlug: string
@@ -127,6 +132,13 @@ export const handleWorkspaceActivate = async (params: {
         recursive: true,
       }
     );
+    await (
+      params.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
+    ).ensureBoundary({
+      stage: "description",
+      workspaceRoot: workspacePath,
+      workspaceSlug,
+    });
     await Promise.resolve(
       params.onWorkspaceActivated?.(workspacePath, workspaceSlug)
     );

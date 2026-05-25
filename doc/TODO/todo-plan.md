@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "583c4b066",
+  "lastRecordedCommit": "3a0104819",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase2.stream1.task1",
-  "expectedCommitMessage": "feat: add workflow boundary git registry",
+  "currentTaskId": "phase3.stream1.task1",
+  "expectedCommitMessage": "feat: create description boundary on workspace activation",
   "debt": {
-    "expectedCommitMessage": "feat: add workflow boundary git registry",
-    "preCommitHead": "583c4b066",
+    "expectedCommitMessage": "feat: create description boundary on workspace activation",
+    "preCommitHead": "3a0104819",
     "stage": "commit_pending",
-    "taskId": "phase2.stream1.task1"
+    "taskId": "phase3.stream1.task1"
   }
 }
 ```
@@ -61,12 +61,12 @@
 
 ### Stream: Boundary Registry And Git Service
 3. [DONE] `phase2.stream1.task1` Add workflow boundary model, registry persistence, managed Git operations, facade and focused coverage for rollback anchors (scope: `packages/core/src/workflow/boundary/**`; scope exception reason: `check:knip` has no green intermediate while the new internal boundary model/registry/git files are not yet imported by a facade/test; expected commit: `feat: add workflow boundary git registry`).
-4. [PENDING] Git Commit: `feat: add workflow boundary git registry` (hash: TBD)
+4. [DONE] Git Commit: `feat: add workflow boundary git registry` (hash: 3a0104819)
 ## Phase 3 - Boundary Creation Hooks (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Workspace And Step Boundaries
-7. [TODO] `phase3.stream1.task1` Create or verify the Description boundary during workspace activation before questionnaire work starts (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: create description boundary on workspace activation`).
-8. [TODO] Git Commit: `feat: create description boundary on workspace activation` (hash: TBD)
+7. [DONE] `phase3.stream1.task1` Create or verify the Description boundary during workspace activation before questionnaire work starts (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: create description boundary on workspace activation`).
+8. [PENDING] Git Commit: `feat: create description boundary on workspace activation` (hash: TBD)
 9. [TODO] `phase3.stream1.task2` Create or verify a boundary before Project Manager starts each workflow stage session (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: create workflow boundaries before stage sessions`).
 10. [TODO] Git Commit: `feat: create workflow boundaries before stage sessions` (hash: TBD)
 11. [TODO] `phase3.stream1.task3` Wire managed technical-stage starts to the same boundary facade so Diagram Modules and later managed stages use one Core-owned rollback model (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: create boundaries for managed workflow stages`).

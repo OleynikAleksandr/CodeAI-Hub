@@ -31,4 +31,17 @@ test("workspace-activate-service preserves deterministic resume/reopen path afte
     true,
     "workspace activation response must include description snapshot for PM visibility"
   );
+  assert.equal(
+    source.includes(
+      'stage: "description",\n      workspaceRoot: workspacePath'
+    ),
+    true,
+    "workspace activation must create the Description Git boundary before PM workflow work"
+  );
+  assert.equal(
+    source.indexOf("ensureBoundary({") <
+      source.indexOf("params.onWorkspaceActivated?."),
+    true,
+    "Description boundary must be created before activation side effects"
+  );
 });
