@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.355] - 2026-05-25
+### Fixed
+- **Accepted preliminary workflow steps now leave Git clean.** Description and Virtual Simulation acceptance captures runtime session slices, commits accepted step output as `codeai-step: <Stage> accepted`, ignores local timer state, and blocks next-step unlock if Git still has unclassified dirty files.
+- **Clear now restores session slices as well as workspace files.** Core mirrors per-workspace unified sessions and provider-native session JSON/JSONL files into committed `runtime-slices` snapshots and restores them after boundary reset.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/boundary/workflow-runtime-slice-snapshot.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-routing.test.js`
+- `npm run plan:validate`
+
 ## [1.2.354] - 2026-05-25
 ### Changed
 - **Workflow Clear now restores Core-owned Git boundaries.** Core creates `codeai-boundary: <Stage>` commits before workflow stages start, records them in `.codeai-hub/<workspaceSlug>/workflow/boundaries.json`, and restores workflow-stage Clear from that boundary instead of using undo ledgers, checkpoints, fallback path deletion, or last-active repair.

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "9057a79b7",
+  "lastRecordedCommit": "4a417dd15",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase10.stream1.task1",
-  "expectedCommitMessage": "docs: document clean git workflow history",
+  "currentTaskId": "phase11.stream1.task1",
+  "expectedCommitMessage": "docs: prepare clean git workflow release",
   "debt": {
-    "expectedCommitMessage": "docs: document clean git workflow history",
-    "preCommitHead": "9057a79b7",
+    "expectedCommitMessage": "docs: prepare clean git workflow release",
+    "preCommitHead": "4a417dd15",
     "stage": "commit_pending",
-    "taskId": "phase10.stream1.task1"
+    "taskId": "phase11.stream1.task1"
   }
 }
 ```
@@ -124,14 +124,14 @@
 
 ### Stream: SSOT And Targeted Checks
 31. [DONE] `phase10.stream1.task1` Update workflow architecture docs for Git history as the development timeline, accepted-step commits, session slice snapshots, and clean-tree next-step gating (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document clean git workflow history`).
-32. [PENDING] Git Commit: `docs: document clean git workflow history` (hash: TBD)
-33. [TODO] `phase10.stream2.task1` Run targeted verification for boundary snapshot, preliminary review acceptance, Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+32. [DONE] Git Commit: `docs: document clean git workflow history` (hash: 4a417dd15)
+33. [DONE] `phase10.stream2.task1` Run targeted verification for boundary snapshot, preliminary review acceptance, Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification passed
 
 ## Phase 11 - Release Build (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Release Docs
-34. [TODO] `phase11.stream1.task1` Update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clean git workflow release`).
-35. [TODO] Git Commit: `docs: prepare clean git workflow release` (hash: TBD)
+34. [DONE] `phase11.stream1.task1` Update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clean git workflow release`).
+35. [PENDING] Git Commit: `docs: prepare clean git workflow release` (hash: TBD)
 
 ### Stream: Release Build
 36. [TODO] `phase11.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clean git workflow release`).
