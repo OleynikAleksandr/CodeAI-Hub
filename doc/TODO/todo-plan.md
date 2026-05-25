@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "cdb74cc45",
+  "lastRecordedCommit": "583c4b066",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: open git boundary clear implementation",
+  "currentTaskId": "phase2.stream1.task1",
+  "expectedCommitMessage": "feat: add workflow boundary git registry",
   "debt": {
-    "expectedCommitMessage": "docs: open git boundary clear implementation",
-    "preCommitHead": "cdb74cc45",
+    "expectedCommitMessage": "feat: add workflow boundary git registry",
+    "preCommitHead": "583c4b066",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase2.stream1.task1"
   }
 }
 ```
@@ -55,16 +55,13 @@
 
 ### Stream: Implementation Plan Setup
 1. [DONE] `phase1.stream1.task1` Create the active implementation todo plan for Git-boundary workflow Clear based on the accepted architecture document and current repository state (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: open git boundary clear implementation`).
-2. [PENDING] Git Commit: `docs: open git boundary clear implementation` (hash: TBD)
+2. [DONE] Git Commit: `docs: open git boundary clear implementation` (hash: 583c4b066)
 
 ## Phase 2 - Workflow Boundary Core (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Boundary Registry And Git Service
-3. [TODO] `phase2.stream1.task1` Add workflow boundary model, registry persistence and managed Git operations for rollback anchors (scope: `packages/core/src/workflow/boundary/workflow-boundary-model.ts, packages/core/src/workflow/boundary/workflow-boundary-registry.ts, packages/core/src/workflow/boundary/workflow-boundary-git.ts`; expected commit: `feat: add workflow boundary git registry`).
-4. [TODO] Git Commit: `feat: add workflow boundary git registry` (hash: TBD)
-5. [TODO] `phase2.stream1.task2` Add the workflow boundary facade and focused unit coverage for boundary creation, downstream pruning and restore result shape (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-git.ts`; expected commit: `feat: add workflow boundary facade`).
-6. [TODO] Git Commit: `feat: add workflow boundary facade` (hash: TBD)
-
+3. [DONE] `phase2.stream1.task1` Add workflow boundary model, registry persistence, managed Git operations, facade and focused coverage for rollback anchors (scope: `packages/core/src/workflow/boundary/**`; scope exception reason: `check:knip` has no green intermediate while the new internal boundary model/registry/git files are not yet imported by a facade/test; expected commit: `feat: add workflow boundary git registry`).
+4. [PENDING] Git Commit: `feat: add workflow boundary git registry` (hash: TBD)
 ## Phase 3 - Boundary Creation Hooks (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Workspace And Step Boundaries
