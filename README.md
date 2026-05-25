@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.359** (Diagram Modules Startup Boundary Hotfix)
+**Current Release — v1.2.360** (Workspace-Owned Git Rollback)
+
+This replacement build removes the hybrid Clear/Undo rollback path and moves
+workflow rollback truth into the workspace Git tree. Each workspace now owns a
+runtime capsule under `.codeai-hub/<workspaceSlug>/runtime/` for workflow
+settings, unified sessions, and provider homes, so Clear can use ordinary Git
+reset/clean semantics instead of copying session slices back from user-space
+folders.
+
+Workflow boundaries are resolved from Git history, accepted steps commit the
+tracked runtime capsule directly, and Project Manager settings load/save through
+the active workspace scope. Core also cleans its ignored `dist` directory before
+builds so retired Clear/Undo compiled files cannot leak into the packaged
+runtime.
+
+**Previous Release — v1.2.359** (Diagram Modules Startup Boundary Hotfix)
 
 This hotfix restores Diagram Modules session startup after the boundary-first
 Clear architecture changes. Project Manager websocket `session:create` no

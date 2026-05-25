@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "3f40c8018",
+  "lastRecordedCommit": "4b94405a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase45.stream1.task2",
-  "expectedCommitMessage": "test: harden workflow rollback verification",
+  "currentTaskId": "phase46.stream2.task1",
+  "expectedCommitMessage": "docs: prepare workspace rollback release",
   "debt": {
-    "expectedCommitMessage": "test: harden workflow rollback verification",
-    "preCommitHead": "3f40c8018",
+    "expectedCommitMessage": "docs: prepare workspace rollback release",
+    "preCommitHead": "4b94405a7",
     "stage": "commit_pending",
-    "taskId": "phase45.stream1.task2"
+    "taskId": "phase46.stream2.task1"
   }
 }
 ```
@@ -402,19 +402,19 @@
 ### Stream: Core Verification
 153. [DONE] `phase45.stream1.task1` Run targeted Core build and focused tests for capsule paths, boundary lookup, Clear coordinator, workspace activation/session ordering and managed workflow Git consolidation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification ran after core build: 53/55 focused tests passed; workflow-state rewrite-boundary fixtures failed against the current Diagram Modules/Application Skeleton contracts, and ignored core dist still contained retired Clear/Undo compiled files. Opened follow-up fix task before release.
 154. [DONE] `phase45.stream1.task2` Fix targeted verification findings by refreshing workflow-state regression fixtures for current Diagram Modules/Application Skeleton contracts and making the Core package build clean ignored `dist` before `tsc` (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts, packages/core/package.json, doc/TODO/todo-plan.md`; expected commit: `test: harden workflow rollback verification`).
-155. [PENDING] Git Commit: `test: harden workflow rollback verification` (hash: TBD)
+155. [DONE] Git Commit: `test: harden workflow rollback verification` (hash: 4b94405a7)
 
 ### Stream: Workflow Rollback Walkthrough
-156. [TODO] `phase45.stream2.task1` Run a real local workflow regression on a disposable workspace: Description, Virtual Simulation, Diagram Modules, Clear Diagram Modules, Clear Virtual Simulation, Clear Description, checking clean Git and capsule-owned sessions after every step (scope: local workflow verification; expected commit: no commit expected). Result: TBD.
+156. [DONE] `phase45.stream2.task1` Run a real local workflow regression on a disposable workspace: Description, Virtual Simulation, Diagram Modules, Clear Diagram Modules, Clear Virtual Simulation, Clear Description, checking clean Git and capsule-owned sessions after every step (scope: local workflow verification; expected commit: no commit expected). Result: Regression verification passed after the hardening fix: clean @codeai-hub/core build, 55/55 focused rollback/capsule/boundary/Clear/workspace/managed tests, workflow rollback architecture guard, plan validation, and disposable workspace walkthrough for Description -> Virtual Simulation -> Diagram Modules -> Clear Diagram Modules -> Clear Virtual Simulation -> Clear Description. The walkthrough confirmed clean Git after every boundary/accepted step/Clear, capsule-owned unified/provider sessions removed by rollback, Virtual/Description upstream artifacts preserved at the right boundaries, and Description returned to a sendable questionnaire.
 
 ## Phase 46 - Release Build (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Release Confirmation Gate
-157. [TODO] `phase46.stream1.task1` Stop after implementation and verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: TBD.
+157. [DONE] `phase46.stream1.task1` Stop after implementation and verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: Release build confirmation was already provided by the user in this thread on 2026-05-25: continue without pauses through building the new release.
 
 ### Stream: Release Docs
-158. [TODO] `phase46.stream2.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace rollback release`).
-159. [TODO] Git Commit: `docs: prepare workspace rollback release` (hash: TBD)
+158. [DONE] `phase46.stream2.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace rollback release`).
+159. [PENDING] Git Commit: `docs: prepare workspace rollback release` (hash: TBD)
 
 ### Stream: Release Build
 160. [TODO] `phase46.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace rollback release`).

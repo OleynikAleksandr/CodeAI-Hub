@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.360] - 2026-05-25
+### Changed
+- **Workflow Clear is now plain workspace Git rollback.** Clear resolves the selected workflow boundary from Git history and restores it with `git reset --hard <boundaryHash>` plus `git clean -fd`, without runtime-slice copy/restore or path-scoped cleanup fallbacks.
+- **Workflow runtime state now belongs to the workspace.** Workspace-scoped settings, unified sessions, and provider homes for workflow sessions live under `.codeai-hub/<workspaceSlug>/runtime/`, so Git rollback removes downstream native and unified sessions together with downstream artifacts.
+- **Project Manager settings are workspace-scoped for workflow workspaces.** The active workspace now owns the settings file used for provider/model choices, preventing one workspace's workflow settings from becoming another workspace's rollback state.
+- **Core release builds clean ignored `dist` before packaging.** `@codeai-hub/core` removes stale compiled output before `tsc`, preventing retired Clear/Undo files from entering the packaged runtime.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/runtime/workspace-runtime-capsule.test.js packages/core/dist/workflow/runtime/workspace-runtime-capsule-gitignore.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.test.js packages/core/dist/remote-bridge/handlers/workspace-activate-service.test.js packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js packages/core/dist/remote-bridge/handlers/settings-persistence-service.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-continuity-root.test.js packages/core/dist/remote-bridge/handlers/dialog-list-service.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-routing.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.js packages/core/dist/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.js packages/core/dist/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.js packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.js`
+- `npm run check:workflow-rollback`
+- Disposable workspace walkthrough: `Description -> Virtual Simulation -> Diagram Modules -> Clear Diagram Modules -> Clear Virtual Simulation -> Clear Description`
+- `npm run plan:validate`
+
 ## [1.2.359] - 2026-05-25
 ### Fixed
 - **Diagram Modules Start no longer times out on scaffold residue.** Project Manager websocket `session:create` now leaves the managed scaffold to the Core-owned managed start path, so Diagram Modules can create a clean pre-step Git boundary before `.husky`, `doc/TODO`, `package.json`, or `scripts` are written.
