@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "d9a5a5a2b",
+  "lastRecordedCommit": "c78fccfee",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase7.stream2.task1",
-  "expectedCommitMessage": "chore: build git boundary clear release",
+  "currentTaskId": "phase9.stream1.task1",
+  "expectedCommitMessage": "feat: snapshot workflow runtime session slices",
   "debt": {
-    "expectedCommitMessage": "chore: build git boundary clear release",
-    "preCommitHead": "d9a5a5a2b",
+    "expectedCommitMessage": "feat: snapshot workflow runtime session slices",
+    "preCommitHead": "c78fccfee",
     "stage": "commit_pending",
-    "taskId": "phase7.stream2.task1"
+    "taskId": "phase9.stream1.task1"
   }
 }
 ```
@@ -97,15 +97,53 @@
 
 ### Stream: Release Build
 20. [DONE] `phase7.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build git boundary clear release`). Result: Release 1.2.354 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.354.vsix` created at 4.7M; tarballs copied to `doc/tmp/releases/`; release build verified SDK exclusions, local artefacts, markdown links, duplication threshold, package surface, and restored development dependencies.
-21. [PENDING] Git Commit: `chore: build git boundary clear release` (hash: TBD)
+21. [DONE] Git Commit: `chore: build git boundary clear release` (hash: c78fccfee)
 
 ## Phase 8 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-22. [TODO] `phase8.stream1.task1` User installs the generated VSIX and verifies that clearing Virtual Simulation restores persisted workflow state to the pre-Virtual-Simulation boundary and removes downstream artifacts through Git restore (scope: user workflow acceptance; no commit expected).
+22. [DONE] `phase8.stream1.task1` User installs the generated VSIX and verifies that clearing Virtual Simulation restores persisted workflow state to the pre-Virtual-Simulation boundary and removes downstream artifacts through Git restore (scope: user workflow acceptance; no commit expected). Result: failed retest for release `1.2.354`; Git boundaries are created, but session/runtime slices are not captured and provider-direct step outputs can leave the workspace Git dirty before the next step.
 
-## Phase 9 - Scope Closeout (owner: Codex, updated: 2026-05-25)
+## Phase 9 - Dirty Tree And Runtime Slice Fixes (owner: Codex, updated: 2026-05-25)
+
+### Stream: Runtime Slice Snapshot
+23. [DONE] `phase9.stream1.task1` Add a Core-owned runtime slice snapshot service for per-workspace unified session history and provider-native session files needed by workflow rollback (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts`; expected commit: `feat: snapshot workflow runtime session slices`).
+24. [PENDING] Git Commit: `feat: snapshot workflow runtime session slices` (hash: TBD)
+
+### Stream: Accepted Step Commits
+25. [TODO] `phase9.stream2.task1` Add a workflow step commit facade that captures runtime slices, commits accepted step outputs, ignores local runtime timers, and fails if classified step completion leaves dirty Git (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `feat: commit accepted workflow step snapshots`).
+26. [TODO] Git Commit: `feat: commit accepted workflow step snapshots` (hash: TBD)
+27. [TODO] `phase9.stream2.task2` Wire preliminary Description and Virtual Simulation review acceptance through the step commit facade before Core opens the next-step return path (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.test.ts`; expected commit: `feat: keep preliminary workflow steps git clean`).
+28. [TODO] Git Commit: `feat: keep preliminary workflow steps git clean` (hash: TBD)
+
+### Stream: Clear Runtime Restore
+29. [TODO] `phase9.stream3.task1` Restore captured runtime session slices after Git boundary reset so Clear rolls back workspace files and user-space session histories together (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts`; expected commit: `feat: restore workflow runtime slices from boundaries`).
+30. [TODO] Git Commit: `feat: restore workflow runtime slices from boundaries` (hash: TBD)
+
+## Phase 10 - Architecture Documentation And Verification (owner: Codex, updated: 2026-05-25)
+
+### Stream: SSOT And Targeted Checks
+31. [TODO] `phase10.stream1.task1` Update workflow architecture docs for Git history as the development timeline, accepted-step commits, session slice snapshots, and clean-tree next-step gating (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document clean git workflow history`).
+32. [TODO] Git Commit: `docs: document clean git workflow history` (hash: TBD)
+33. [TODO] `phase10.stream2.task1` Run targeted verification for boundary snapshot, preliminary review acceptance, Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 11 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Docs
+34. [TODO] `phase11.stream1.task1` Update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clean git workflow release`).
+35. [TODO] Git Commit: `docs: prepare clean git workflow release` (hash: TBD)
+
+### Stream: Release Build
+36. [TODO] `phase11.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clean git workflow release`).
+37. [TODO] Git Commit: `chore: build clean git workflow release` (hash: TBD)
+
+## Phase 12 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+38. [TODO] `phase12.stream1.task1` User installs the generated VSIX and verifies that Git is initialized at workspace activation, accepted steps commit all workflow/session history needed for agent recovery, the next step cannot start on dirty Git, and Clear restores selected/downstream workflow state from the correct boundary (scope: user workflow acceptance; no commit expected).
+
+## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Closeout
-23. [TODO] `phase9.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
-24. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
+39. [TODO] `phase13.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
+40. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
