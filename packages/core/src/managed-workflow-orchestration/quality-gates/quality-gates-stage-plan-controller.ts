@@ -51,15 +51,22 @@ export type QualityGatesStagePlanAdvanceResult =
   | { readonly blocked: QualityGatesStagePlanBlocked; readonly commit: null };
 
 export interface QualityGatesStagePlanControllerOptions {
-  readonly gitBoundary?: DiagramModulesManagedGitBoundary;
+  readonly gitBoundary?: ManagedGitBoundaryDependency;
+}
+interface ManagedGitBoundaryDependency {
+  readonly commitManagedChanges: DiagramModulesManagedGitBoundary["commitManagedChanges"];
 }
 
 export class QualityGatesStagePlanController {
-  private readonly gitBoundary: DiagramModulesManagedGitBoundary;
+  private readonly gitBoundary: ManagedGitBoundaryDependency;
 
   constructor(options: QualityGatesStagePlanControllerOptions = {}) {
     this.gitBoundary =
       options.gitBoundary ?? new DiagramModulesManagedGitBoundary();
+  }
+
+  private get managedGitBoundary(): DiagramModulesManagedGitBoundary {
+    return this.gitBoundary as DiagramModulesManagedGitBoundary;
   }
 
   async openDraftPhase(params: {
@@ -91,7 +98,7 @@ export class QualityGatesStagePlanController {
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, QUALITY_GATES_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });
@@ -131,7 +138,7 @@ export class QualityGatesStagePlanController {
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, QUALITY_GATES_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });
@@ -312,7 +319,7 @@ export class QualityGatesStagePlanController {
   }): Promise<void> {
     if (params.next.taskId === PHASE4_TASK_ID) {
       await ensureManagedTerminalGitClean({
-        gitBoundary: this.gitBoundary,
+        gitBoundary: this.managedGitBoundary,
         stage: "quality_gates",
         workspaceRoot: params.workspaceRoot,
       });
@@ -353,7 +360,7 @@ export class QualityGatesStagePlanController {
         : null
     );
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, QUALITY_GATES_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });

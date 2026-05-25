@@ -53,7 +53,10 @@ export type ApplicationSkeletonStagePlanAdvanceResult =
       readonly commit: null;
     };
 export interface ApplicationSkeletonStagePlanControllerOptions {
-  readonly gitBoundary?: DiagramModulesManagedGitBoundary;
+  readonly gitBoundary?: ManagedGitBoundaryDependency;
+}
+interface ManagedGitBoundaryDependency {
+  readonly commitManagedChanges: DiagramModulesManagedGitBoundary["commitManagedChanges"];
 }
 const buildBlockedResult = (
   message: string,
@@ -64,11 +67,15 @@ const buildBlockedResult = (
 });
 
 export class ApplicationSkeletonStagePlanController {
-  private readonly gitBoundary: DiagramModulesManagedGitBoundary;
+  private readonly gitBoundary: ManagedGitBoundaryDependency;
 
   constructor(options: ApplicationSkeletonStagePlanControllerOptions = {}) {
     this.gitBoundary =
       options.gitBoundary ?? new DiagramModulesManagedGitBoundary();
+  }
+
+  private get managedGitBoundary(): DiagramModulesManagedGitBoundary {
+    return this.gitBoundary as DiagramModulesManagedGitBoundary;
   }
 
   async openDraftPhase(params: {
@@ -96,7 +103,7 @@ export class ApplicationSkeletonStagePlanController {
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });
@@ -135,7 +142,7 @@ export class ApplicationSkeletonStagePlanController {
       replaceStateBlock(acceptedPlan, PLAN_START, PLAN_END, nextStageState)
     );
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });
@@ -158,7 +165,7 @@ export class ApplicationSkeletonStagePlanController {
       throw new Error("Application Skeleton final review is not open.");
     }
     await ensureManagedTerminalGitClean({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       stage: "application_skeleton",
       workspaceRoot: params.workspaceRoot,
     });
@@ -184,7 +191,7 @@ export class ApplicationSkeletonStagePlanController {
       taskId: PHASE4_TASK_ID,
     });
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });
@@ -424,7 +431,7 @@ export class ApplicationSkeletonStagePlanController {
       taskId: params.stageState.currentTaskId,
     });
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });
@@ -463,7 +470,7 @@ export class ApplicationSkeletonStagePlanController {
     );
     await this.updateWorkspaceState(params.workspaceRoot, null);
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });

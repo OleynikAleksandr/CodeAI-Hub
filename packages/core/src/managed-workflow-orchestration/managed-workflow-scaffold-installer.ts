@@ -2,6 +2,10 @@ import { chmod, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { DiagramModulesManagedGitBoundary } from "./diagram-modules/diagram-modules-managed-git-boundary";
 
+interface ManagedGitBoundaryDependency {
+  readonly commitManagedChanges: DiagramModulesManagedGitBoundary["commitManagedChanges"];
+}
+
 const PLAN_SCRIPT_PATH = "scripts/plan-orchestrator/plan-cli.mjs";
 const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const SCRIPT_MODE = 0o755;
@@ -377,7 +381,7 @@ export class ManagedWorkflowScaffoldInstaller {
   async checkpointDiagramModulesInputs(params: {
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
-    readonly gitBoundary?: DiagramModulesManagedGitBoundary;
+    readonly gitBoundary?: ManagedGitBoundaryDependency;
   }): Promise<void> {
     const stagePlanPath = STAGE_PLAN_PATHS.diagram_modules;
     const stagePlan = await readText(params.workspaceRoot, stagePlanPath);

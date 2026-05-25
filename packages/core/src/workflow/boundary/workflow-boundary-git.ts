@@ -136,7 +136,7 @@ export class WorkflowBoundaryGit {
         params.paths === undefined ? [] : filterPathSpecs(params.paths);
       if (paths.length === 0 && !params.allowEmpty) {
         return {
-          hash: await this.revParseHead(params.workspaceRoot),
+          hash: await this.revParseHeadOrEmpty(params.workspaceRoot),
           noStagedChanges: true,
         };
       }
@@ -148,7 +148,7 @@ export class WorkflowBoundaryGit {
       );
       if (diff.exitCode === 0 && !params.allowEmpty) {
         return {
-          hash: await this.revParseHead(params.workspaceRoot),
+          hash: await this.revParseHeadOrEmpty(params.workspaceRoot),
           noStagedChanges: true,
         };
       }
@@ -189,6 +189,10 @@ export class WorkflowBoundaryGit {
 
   async revParseHead(workspaceRoot: string): Promise<string> {
     return await this.git(workspaceRoot, ["rev-parse", "--short", "HEAD"]);
+  }
+
+  private async revParseHeadOrEmpty(workspaceRoot: string): Promise<string> {
+    return await this.revParseHead(workspaceRoot).catch(() => "");
   }
 
   async findBoundaryCommit(params: {
