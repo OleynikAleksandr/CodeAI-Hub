@@ -110,7 +110,7 @@ export const useWorkspaceTreeClearMenu = (params: {
       close();
       return;
     }
-    await clearWorkflowStep({
+    const result = await clearWorkflowStep({
       httpUrl,
       target: menu.target,
       workspacePath: params.workspacePath,
@@ -119,9 +119,11 @@ export const useWorkspaceTreeClearMenu = (params: {
     window.dispatchEvent(
       new CustomEvent("pm:workflow-step:cleared", {
         detail: {
-          target: menu.target,
+          target: result.target,
+          deletedSessionIds: result.deletedSessionIds,
+          restore: result.restore,
           workspacePath: params.workspacePath,
-          workspaceSlug: params.workspaceSlug,
+          workspaceSlug: result.workspaceSlug,
         },
       })
     );
@@ -135,6 +137,10 @@ export const useWorkspaceTreeClearMenu = (params: {
         <div style={{ color: "#f8fafc", fontSize: 13, lineHeight: 1.4 }}>
           Clear "{menu.label}" and all downstream workflow data? This cannot be
           undone.
+        </div>
+        <div style={{ color: "#fca5a5", fontSize: 12, lineHeight: 1.4 }}>
+          Core will use Git rollback, then run git clean -fd. Untracked files
+          that are not ignored under this workspace will be removed.
         </div>
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
           <button

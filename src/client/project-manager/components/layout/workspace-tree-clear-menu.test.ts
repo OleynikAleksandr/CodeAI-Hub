@@ -26,12 +26,19 @@ test("workspace tree clear menu requires destructive confirmation and calls Core
   assert.match(hookSource, /mode: "confirm"/u);
   assert.match(hookSource, />\s*Cancel\s*</u);
   assert.match(hookSource, />\s*Clear\s*</u);
+  assert.match(hookSource, /Core will use Git rollback/u);
+  assert.match(hookSource, /git clean -fd/u);
   assert.match(hookSource, /onContextMenu/u);
   assert.match(hookSource, /onContextMenuCapture/u);
   assert.match(hookSource, /event\.button === 2/u);
   assert.match(hookSource, /event\.button === 2[\s\S]*openMenu/u);
+  assert.match(hookSource, /const result = await clearWorkflowStep/u);
+  assert.match(hookSource, /restore: result\.restore/u);
+  assert.match(hookSource, /deletedSessionIds: result\.deletedSessionIds/u);
   assert.match(hookSource, /pm:workflow-step:cleared/u);
   assert.match(clientSource, /workflow-step-clear/u);
+  assert.match(clientSource, /WorkflowStepClearResult/u);
+  assert.match(clientSource, /invalid Core response/u);
 });
 
 test("artifact availability probes immediately after workflow clear", async () => {

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "838d999bf",
+  "lastRecordedCommit": "18499e180",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase42.stream1.task3",
-  "expectedCommitMessage": "refactor: migrate managed stages to shared git timeline",
+  "currentTaskId": "phase43.stream1.task1",
+  "expectedCommitMessage": "refactor: retarget project manager clear to git rollback",
   "debt": {
-    "expectedCommitMessage": "refactor: migrate managed stages to shared git timeline",
-    "preCommitHead": "838d999bf",
+    "expectedCommitMessage": "refactor: retarget project manager clear to git rollback",
+    "preCommitHead": "18499e180",
     "stage": "commit_pending",
-    "taskId": "phase42.stream1.task3"
+    "taskId": "phase43.stream1.task1"
   }
 }
 ```
@@ -377,13 +377,13 @@
 141. [DONE] `phase42.stream1.task2` Migrate Diagram Modules stage/review/repair controllers to the shared Git dependency and remove direct `DiagramModulesManagedGitBoundary` construction where possible (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts`; expected commit: `refactor: migrate diagram controllers to shared git timeline`).
 142. [DONE] Git Commit: `refactor: migrate diagram controllers to shared git timeline` (hash: 838d999bf)
 143. [DONE] `phase42.stream1.task3` Migrate Application Skeleton, Quality Gates and scaffold installer managed commits to the shared Git dependency, including the fresh-repo no-HEAD shared Git no-op path exposed by those controllers (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/workflow/boundary/workflow-boundary-git.ts`; expected commit: `refactor: migrate managed stages to shared git timeline`).
-144. [PENDING] Git Commit: `refactor: migrate managed stages to shared git timeline` (hash: TBD)
+144. [DONE] Git Commit: `refactor: migrate managed stages to shared git timeline` (hash: 18499e180)
 
 ## Phase 43 - Project Manager Clear And Workspace Settings Surface (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Clear UI Retargeting
-145. [TODO] `phase43.stream1.task1` Retarget Project Manager Clear menu/client to the pure Git rollback response semantics and add explicit warning for untracked non-ignored files removed by `git clean -fd` (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `refactor: retarget project manager clear to git rollback`).
-146. [TODO] Git Commit: `refactor: retarget project manager clear to git rollback` (hash: TBD)
+145. [DONE] `phase43.stream1.task1` Retarget Project Manager Clear menu/client to the pure Git rollback response semantics and add explicit warning for untracked non-ignored files removed by `git clean -fd` (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `refactor: retarget project manager clear to git rollback`).
+146. [PENDING] Git Commit: `refactor: retarget project manager clear to git rollback` (hash: TBD)
 
 ### Stream: Workspace Settings Surface
 147. [TODO] `phase43.stream2.task1` Make Project Manager settings load/save against the active workspace settings snapshot and reload on workspace switch (scope: `src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/project-manager/services/project-manager-settings-client.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit: `feat: scope project manager settings to workspace`).

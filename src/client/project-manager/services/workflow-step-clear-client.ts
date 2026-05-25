@@ -9,12 +9,28 @@ export type WorkflowStepClearTarget =
       readonly workflowPath: string;
     };
 
+export interface WorkflowStepClearRestoreResult {
+  readonly boundaryHash: string;
+  readonly clearCommitHash: string;
+  readonly prunedStages: readonly string[];
+  readonly registryPath: string;
+  readonly stage: string;
+}
+
+export interface WorkflowStepClearResult {
+  readonly cleared: true;
+  readonly deletedSessionIds: readonly string[];
+  readonly restore: WorkflowStepClearRestoreResult;
+  readonly target: WorkflowStepClearTarget;
+  readonly workspaceSlug: string;
+}
+
 export const clearWorkflowStep = async (params: {
   readonly httpUrl: string;
   readonly target: WorkflowStepClearTarget;
   readonly workspacePath: string;
   readonly workspaceSlug: string;
-}): Promise<void> => {
+}): Promise<WorkflowStepClearResult> => {
   const response = await fetch(
     `${params.httpUrl}${WORKFLOW_STEP_CLEAR_ENDPOINT}`,
     {
@@ -35,6 +51,27 @@ export const clearWorkflowStep = async (params: {
         : `Workflow step clear failed: ${response.status}`
     );
   }
+  const payload = await response.json();
+  if (!isWorkflowStepClearResult(payload)) {
+    throw new Error("Workflow step clear failed: invalid Core response");
+  }
+  return payload;
+};
+
+const isWorkflowStepClearResult = (
+  value: unknown
+): value is WorkflowStepClearResult => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const record = value as Partial<WorkflowStepClearResult>;
+  return (
+    record.cleared === true &&
+    Array.isArray(record.deletedSessionIds) &&
+    typeof record.workspaceSlug === "string" &&
+    Boolean(record.restore) &&
+    Boolean(record.target)
+  );
 };
 
 const readWorkflowClearError = async (
