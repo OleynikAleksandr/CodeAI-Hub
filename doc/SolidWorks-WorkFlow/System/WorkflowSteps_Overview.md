@@ -84,6 +84,8 @@ The first boundary is created when a workspace is activated, before Description 
 
 Workflow-specific mutable runtime state lives inside the workspace-owned runtime capsule and is committed directly by Git: `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`, `.codeai-hub/<workspaceSlug>/runtime/sessions/unified/**`, and `.codeai-hub/<workspaceSlug>/runtime/providers/{codex,claude,gemini,kimi}/home/**`. Clear runs the selected boundary rollback as a normal Git transaction (`reset --hard` plus `clean -fd`), so downstream unified sessions, provider-native sessions, scaffold files, workflow state, and accepted artifacts disappear only because they are tracked or untracked files inside the workspace tree. Global auth/secret bridges, installed provider binaries, release caches, generic logs, and browser caches remain outside rollback truth; if a setting changes workflow behavior, Project Manager saves it through Core into the workspace capsule settings file.
 
+When a workflow start card changes the active provider model or reasoning, that explicit workspace settings change is committed as `codeai-settings: <Stage Label> start selection` before Core creates the next `codeai-boundary: <Stage Label>` anchor. This keeps the boundary clean while preserving the user's selected runtime settings as part of the workspace-owned Git timeline.
+
 ### Preliminary Review Gate — Description and Virtual Simulation
 
 `Description` и `Virtual Simulation` не используют managed technical stage plan, но их переход к следующему trunk step всё равно подтверждается Core-owned review gate:

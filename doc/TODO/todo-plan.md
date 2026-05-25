@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "cc64f488f",
+  "lastRecordedCommit": "04c6db5bc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase50.stream3.task1",
-  "expectedCommitMessage": "chore: build virtual simulation startup release",
+  "currentTaskId": "phase52.stream1.task1",
+  "expectedCommitMessage": "fix: commit workflow start settings before boundaries",
   "debt": {
-    "expectedCommitMessage": "chore: build virtual simulation startup release",
-    "preCommitHead": "cc64f488f",
+    "expectedCommitMessage": "fix: commit workflow start settings before boundaries",
+    "preCommitHead": "04c6db5bc",
     "stage": "commit_pending",
-    "taskId": "phase50.stream3.task1"
+    "taskId": "phase52.stream1.task1"
   }
 }
 ```
@@ -451,12 +451,21 @@
 
 ### Stream: Release Build
 171. [DONE] `phase50.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build virtual simulation startup release`). Result: Release `1.2.361` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.361.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-172. [PENDING] Git Commit: `chore: build virtual simulation startup release` (hash: TBD)
+172. [DONE] Git Commit: `chore: build virtual simulation startup release` (hash: 04c6db5bc)
 
 ## Phase 51 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-173. [TODO] `phase51.stream1.task1` User installs the generated VSIX and verifies Description acceptance leaves clean Git, Virtual Simulation session starts, start-card model changes persist to workspace runtime settings, and the full Clear rollback workflow remains clean (scope: user workflow acceptance; no commit expected). Result: TBD.
+173. [DONE] `phase51.stream1.task1` User installs the generated VSIX and verifies Description acceptance leaves clean Git, Virtual Simulation session starts, start-card model changes persist to workspace runtime settings, and the full Clear rollback workflow remains clean (scope: user workflow acceptance; no commit expected). Result: Failed release `1.2.361` retest: Virtual Simulation now starts, but Diagram Modules start is blocked because the Diagram Modules start-card model selection saves `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` before Core can create the clean `codeai-boundary: Diagram Modules` pre-step anchor.
+
+## Phase 52 - Start-Card Settings Boundary Regression Fix (owner: Codex, updated: 2026-05-25)
+
+### Stream: Boundary Preflight Settings Commit
+174. [DONE] `phase52.stream1.task1` Commit explicit workflow start-card settings changes before creating the next stage boundary so model selection does not dirty the pre-step anchor for Diagram Modules or later stages (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `fix: commit workflow start settings before boundaries`).
+175. [PENDING] Git Commit: `fix: commit workflow start settings before boundaries` (hash: TBD)
+
+### Stream: Full Start Walkthrough Verification
+176. [TODO] `phase52.stream2.task1` Run a local disposable workflow start walkthrough that exercises Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates start preflight/boundary paths at least once without user-driven release retest gaps (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
