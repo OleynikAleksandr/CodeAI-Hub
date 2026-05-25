@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "4a417dd15",
+  "lastRecordedCommit": "4e3b479b0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase11.stream1.task1",
-  "expectedCommitMessage": "docs: prepare clean git workflow release",
+  "currentTaskId": "phase11.stream2.task1",
+  "expectedCommitMessage": "chore: build clean git workflow release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare clean git workflow release",
-    "preCommitHead": "4a417dd15",
+    "expectedCommitMessage": "chore: build clean git workflow release",
+    "preCommitHead": "4e3b479b0",
     "stage": "commit_pending",
-    "taskId": "phase11.stream1.task1"
+    "taskId": "phase11.stream2.task1"
   }
 }
 ```
@@ -131,11 +131,11 @@
 
 ### Stream: Release Docs
 34. [DONE] `phase11.stream1.task1` Update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clean git workflow release`).
-35. [PENDING] Git Commit: `docs: prepare clean git workflow release` (hash: TBD)
+35. [DONE] Git Commit: `docs: prepare clean git workflow release` (hash: 4e3b479b0)
 
 ### Stream: Release Build
-36. [TODO] `phase11.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clean git workflow release`).
-37. [TODO] Git Commit: `chore: build clean git workflow release` (hash: TBD)
+36. [DONE] `phase11.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clean git workflow release`).
+37. [PENDING] Git Commit: `chore: build clean git workflow release` (hash: TBD)
 
 ## Phase 12 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
