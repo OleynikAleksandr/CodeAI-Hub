@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "1efad3513",
+  "lastRecordedCommit": "58ef91139",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase38.stream2.task2",
-  "expectedCommitMessage": "fix: require clean tree after accepted step commits",
+  "currentTaskId": "phase39.stream1.task1",
+  "expectedCommitMessage": "refactor: clear workflow steps through git rollback",
   "debt": {
-    "expectedCommitMessage": "fix: require clean tree after accepted step commits",
-    "preCommitHead": "1efad3513",
+    "expectedCommitMessage": "refactor: clear workflow steps through git rollback",
+    "preCommitHead": "58ef91139",
     "stage": "commit_pending",
-    "taskId": "phase38.stream2.task2"
+    "taskId": "phase39.stream1.task1"
   }
 }
 ```
@@ -335,13 +335,13 @@
 117. [DONE] `phase38.stream2.task1` Rewrite accepted-step commit logic to stage accepted artifacts and tracked capsule state directly without editing root `.gitignore` or copying external sessions, and delete the now-unused runtime-slice snapshot helper (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts`; expected commit: `refactor: commit workflow capsule state directly`).
 118. [DONE] Git Commit: `refactor: commit workflow capsule state directly` (hash: 1efad3513)
 119. [DONE] `phase38.stream2.task2` Keep the accepted-step clean-tree assertion in the facade, remove the runtime-slice count/result field, and replace downstream test expectations with direct capsule state expectations (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts`; expected commit: `fix: require clean tree after accepted step commits`).
-120. [PENDING] Git Commit: `fix: require clean tree after accepted step commits` (hash: TBD)
+120. [DONE] Git Commit: `fix: require clean tree after accepted step commits` (hash: 58ef91139)
 
 ## Phase 39 - Clear Endpoint As Pure Git Rollback (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Clear Coordinator Wiring
-121. [TODO] `phase39.stream1.task1` Rewrite the Core Clear endpoint to call the workflow rollback coordinator and stop active downstream sessions without manual file delete/restore side channels (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `refactor: clear workflow steps through git rollback`).
-122. [TODO] Git Commit: `refactor: clear workflow steps through git rollback` (hash: TBD)
+121. [DONE] `phase39.stream1.task1` Rewrite the Core Clear endpoint to call the workflow rollback coordinator and stop active downstream sessions without manual file delete/restore side channels (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `refactor: clear workflow steps through git rollback`).
+122. [PENDING] Git Commit: `refactor: clear workflow steps through git rollback` (hash: TBD)
 123. [TODO] `phase39.stream1.task2` Add regression coverage for Clear Diagram Modules, Clear Virtual Simulation and Clear Description clean-tree behavior through the HTTP handler contract (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `test: cover pure git workflow clear`).
 124. [TODO] Git Commit: `test: cover pure git workflow clear` (hash: TBD)
 

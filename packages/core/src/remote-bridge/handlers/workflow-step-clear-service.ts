@@ -162,6 +162,7 @@ export const handleWorkflowStepClear = async (
   }
 
   try {
+    const deletedSessionIds = clearRuntimeSessions(parsed, deps);
     const restore = await (
       deps.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
     ).restoreBoundary({
@@ -169,7 +170,6 @@ export const handleWorkflowStepClear = async (
       workspaceRoot: parsed.workspacePath,
       workspaceSlug: parsed.workspaceSlug,
     });
-    const deletedSessionIds = clearRuntimeSessions(parsed, deps);
     deps.resetWorkflowState(parsed.workspaceSlug);
     res.json({
       cleared: true,

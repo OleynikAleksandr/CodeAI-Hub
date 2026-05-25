@@ -26,6 +26,7 @@ const runClear = async (
   sessionManager = new SessionManager()
 ) => {
   const resetCalls: string[] = [];
+  const restoreObservedSessionIds: string[][] = [];
   const capture = createResponseCapture();
   await handleWorkflowStepClear({ body } as Request, capture.response, {
     logger: new Logger("error"),
@@ -34,17 +35,26 @@ const runClear = async (
     },
     sessionManager,
     workflowBoundaryFacade: {
-      restoreBoundary: (params) =>
-        Promise.resolve({
+      restoreBoundary: (params) => {
+        restoreObservedSessionIds.push(
+          sessionManager.listSessions().map((session: Session) => session.id)
+        );
+        return Promise.resolve({
           boundaryHash: "abc123",
           clearCommitHash: "def456",
           prunedStages: [params.stage],
           registryPath: "/tmp/boundaries.json",
           stage: params.stage,
-        }),
+        });
+      },
     },
   });
-  return { ...capture.read(), resetCalls, sessionManager };
+  return {
+    ...capture.read(),
+    resetCalls,
+    restoreObservedSessionIds,
+    sessionManager,
+  };
 };
 
 test("workflow step clear rejects invalid requests", async () => {
@@ -117,6 +127,9 @@ test("workflow step clear restores workflow stages from Git boundary", async () 
     workspaceSlug: "demo-workspace",
   });
   assert.deepEqual(result.resetCalls, ["demo-workspace"]);
+  assert.deepEqual(result.restoreObservedSessionIds, [
+    [description.id, other.id],
+  ]);
   assert.deepEqual(
     result.sessionManager.listSessions().map((session: Session) => session.id),
     [description.id, other.id]
