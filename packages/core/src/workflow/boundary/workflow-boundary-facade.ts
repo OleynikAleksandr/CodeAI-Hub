@@ -5,6 +5,7 @@ import {
   buildWorkflowBoundaryCommitMessage,
   buildWorkflowBoundaryRegistryCommitMessage,
   buildWorkflowClearCommitMessage,
+  compareWorkflowBoundaryStages,
   isStageAtOrAfter,
   type WorkflowBoundaryEnsureResult,
   type WorkflowBoundaryRestoreResult,
@@ -78,13 +79,9 @@ export class WorkflowBoundaryFacade {
   private async ensureBoundaryExclusive(
     params: WorkflowBoundaryEnsureParams
   ): Promise<WorkflowBoundaryEnsureResult> {
-    const registry = await this.#registryStore.read(params);
-    const existing = registry.entries.find(
-      (entry) => entry.stage === params.stage
-    );
     const registryPath = this.#registryStore.getRegistryPath(params);
+    const existing = await this.#git.findBoundaryCommit(params);
     if (existing) {
-      await this.#git.ensureRepository(params.workspaceRoot);
       return {
         boundaryHash: existing.boundaryHash,
         created: false,
@@ -135,19 +132,23 @@ export class WorkflowBoundaryFacade {
   async restoreBoundary(
     params: WorkflowBoundaryRestoreParams
   ): Promise<WorkflowBoundaryRestoreResult> {
-    const registry = await this.#registryStore.read(params);
-    const target = registry.entries.find(
-      (entry) => entry.stage === params.stage
+    const boundaries = await this.#git.readBoundaryCommits(
+      params.workspaceRoot
     );
+    const target = boundaries.find((entry) => entry.stage === params.stage);
     if (!target) {
       throw new Error(
         `Workflow boundary is missing for stage "${params.stage}".`
       );
     }
 
-    const prunedStages = registry.entries
-      .filter((entry) => isStageAtOrAfter(entry.stage, params.stage))
-      .map((entry) => entry.stage);
+    const prunedStages = [
+      ...new Set(
+        boundaries
+          .filter((entry) => isStageAtOrAfter(entry.stage, params.stage))
+          .map((entry) => entry.stage)
+      ),
+    ].sort(compareWorkflowBoundaryStages);
     await this.#git.resetHard({
       hash: target.boundaryHash,
       workspaceRoot: params.workspaceRoot,

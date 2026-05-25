@@ -219,6 +219,66 @@ test("WorkflowBoundaryGit resolves workflow boundary commits from Git history", 
   }
 });
 
+test("WorkflowBoundaryFacade restores from Git history when registry projection is stale", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    const facade = new WorkflowBoundaryFacade({
+      clock: () => "2026-05-25T00:00:00.000Z",
+    });
+    const git = new WorkflowBoundaryGit();
+    const descriptionBoundary = await facade.ensureBoundary({
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await writeText(path.join(workspaceRoot, "description.md"), "done\n");
+    await git.commit({
+      commitMessage: "codeai-step: Description accepted",
+      paths: ["description.md"],
+      workspaceRoot,
+    });
+    await facade.ensureBoundary({
+      stage: "virtual_simulation",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await writeText(path.join(workspaceRoot, "virtual.md"), "virtual\n");
+    await git.commit({
+      commitMessage: "codeai-step: Virtual Simulation accepted",
+      paths: ["virtual.md"],
+      workspaceRoot,
+    });
+    const diagramBoundary = await facade.ensureBoundary({
+      stage: "diagram_modules",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await writeText(path.join(workspaceRoot, "diagram.md"), "diagram\n");
+
+    await writeText(
+      descriptionBoundary.registryPath,
+      JSON.stringify({ entries: [], workspaceSlug: WORKSPACE_SLUG }, null, 2)
+    );
+    const restored = await facade.restoreBoundary({
+      cleanPaths: ["diagram.md"],
+      stage: "diagram_modules",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(
+      restored.boundaryHash.startsWith(diagramBoundary.boundaryHash),
+      true
+    );
+    assert.deepEqual(restored.prunedStages, ["diagram_modules"]);
+    await assert.rejects(
+      readFile(path.join(workspaceRoot, "diagram.md"), "utf8")
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("WorkflowBoundaryFacade heals pre-submit Description bootstrap residue", async () => {
   const workspaceRoot = await createWorkspace();
   try {

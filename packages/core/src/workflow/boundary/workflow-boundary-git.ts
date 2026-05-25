@@ -197,9 +197,14 @@ export class WorkflowBoundaryGit {
   ): Promise<readonly WorkflowBoundaryGitLogEntry[]> {
     return await this.runExclusive(workspaceRoot, async () => {
       await this.ensureRepositoryUnlocked(workspaceRoot);
+      if (
+        !(await this.tryGit(workspaceRoot, ["rev-parse", "--verify", "HEAD"]))
+      ) {
+        return [];
+      }
       const output = await this.git(workspaceRoot, [
         "log",
-        "--format=%H%x00%s",
+        "--format=%h%x00%s",
       ]);
       if (output.length === 0) {
         return [];
