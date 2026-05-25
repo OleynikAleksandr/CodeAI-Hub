@@ -12,6 +12,10 @@ import {
 const WORKSPACE_SLUG = "demo-workspace";
 const WORKSPACE_SNAPSHOT_PATH_RE = /^\.codeai-hub\/demo-workspace\//u;
 
+const waitForFilesystemTimestamp = async (): Promise<void> => {
+  await new Promise((resolve) => setTimeout(resolve, 20));
+};
+
 const writeText = async (filePath: string, content: string): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, content, "utf8");
@@ -50,6 +54,26 @@ test("captures and restores scoped unified and provider session slices", async (
     "provider-session-1",
     "rollout.jsonl"
   );
+  const previousCodexSessionPath = path.join(
+    homeDirectory,
+    ".codeai-hub",
+    "providers",
+    "codex",
+    "home",
+    "sessions",
+    "provider-session-1",
+    "previous.jsonl"
+  );
+  const downstreamCodexSessionPath = path.join(
+    homeDirectory,
+    ".codeai-hub",
+    "providers",
+    "codex",
+    "home",
+    "sessions",
+    "provider-session-1",
+    "diagram-modules.jsonl"
+  );
   const codexAuthPath = path.join(
     homeDirectory,
     ".codeai-hub",
@@ -61,6 +85,7 @@ test("captures and restores scoped unified and provider session slices", async (
   await writeText(unifiedPath, "unified-before\n");
   await writeText(claudeProviderPath, "claude-before\n");
   await writeText(codexProviderPath, "codex-before\n");
+  await writeText(previousCodexSessionPath, "previous-before-boundary\n");
   await writeText(codexAuthPath, "secret\n");
 
   try {
@@ -85,6 +110,8 @@ test("captures and restores scoped unified and provider session slices", async (
     await writeText(unifiedPath, "unified-after\n");
     await writeText(claudeProviderPath, "claude-after\n");
     await writeText(codexProviderPath, "codex-after\n");
+    await waitForFilesystemTimestamp();
+    await writeText(downstreamCodexSessionPath, "created-after-boundary\n");
 
     const restored = await restoreWorkflowRuntimeSlices({
       homeDirectory,
@@ -96,6 +123,11 @@ test("captures and restores scoped unified and provider session slices", async (
     assert.equal(await readFile(unifiedPath, "utf8"), "unified-before\n");
     assert.equal(await readFile(claudeProviderPath, "utf8"), "claude-before\n");
     assert.equal(await readFile(codexProviderPath, "utf8"), "codex-before\n");
+    assert.equal(
+      await readFile(previousCodexSessionPath, "utf8"),
+      "previous-before-boundary\n"
+    );
+    await assert.rejects(readFile(downstreamCodexSessionPath, "utf8"));
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
     await rm(workspaceRoot, { force: true, recursive: true });

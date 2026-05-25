@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "72cdc7f4c",
+  "lastRecordedCommit": "5ea9d033e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase13.stream1.task1",
-  "expectedCommitMessage": "fix: enforce clean workflow boundary anchors",
+  "currentTaskId": "phase13.stream2.task1",
+  "expectedCommitMessage": "fix: prune restored workflow runtime sessions",
   "debt": {
-    "expectedCommitMessage": "fix: enforce clean workflow boundary anchors",
-    "preCommitHead": "72cdc7f4c",
+    "expectedCommitMessage": "fix: prune restored workflow runtime sessions",
+    "preCommitHead": "5ea9d033e",
     "stage": "commit_pending",
-    "taskId": "phase13.stream1.task1"
+    "taskId": "phase13.stream2.task1"
   }
 }
 ```
@@ -146,11 +146,11 @@
 
 ### Stream: Clean Boundary Anchors
 39. [DONE] `phase13.stream1.task1` Make workflow boundary commits empty pre-step anchors, fail before stage start if the workspace Git tree is dirty, and preserve explicit path commits for accepted-step snapshots (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: enforce clean workflow boundary anchors`).
-40. [PENDING] Git Commit: `fix: enforce clean workflow boundary anchors` (hash: TBD)
+40. [DONE] Git Commit: `fix: enforce clean workflow boundary anchors` (hash: 5ea9d033e)
 
 ### Stream: Strict Runtime Restore
-41. [TODO] `phase13.stream2.task1` Make runtime slice restore prune provider-native session files created after the captured boundary within the recorded provider session directories, while keeping restore allowlisted to CodeAI Hub runtime roots (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: prune restored workflow runtime sessions`).
-42. [TODO] Git Commit: `fix: prune restored workflow runtime sessions` (hash: TBD)
+41. [DONE] `phase13.stream2.task1` Make runtime slice restore prune provider-native session files created after the captured boundary within the recorded provider session directories, while keeping restore allowlisted to CodeAI Hub runtime roots (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: prune restored workflow runtime sessions`).
+42. [PENDING] Git Commit: `fix: prune restored workflow runtime sessions` (hash: TBD)
 
 ### Stream: Managed Stage Acceptance
 43. [TODO] `phase13.stream3.task1` Route Diagram Modules user acceptance through the accepted-step commit facade before Core unlocks Application Skeleton, so final managed-stage outputs and runtime slices are committed and Git-clean (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules acceptance snapshots`).

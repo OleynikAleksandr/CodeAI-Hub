@@ -271,6 +271,50 @@ const isRestorableSourcePath = (
   );
 };
 
+const isSessionDataFileName = (fileName: string): boolean =>
+  SESSION_FILE_EXTENSIONS.has(path.extname(fileName)) &&
+  !SENSITIVE_FILE_NAMES.has(fileName);
+
+const pruneExtraSessionFiles = async (params: {
+  readonly capturedAtMs: number;
+  readonly homeDirectory: string;
+  readonly manifest: WorkflowRuntimeSliceManifest;
+}): Promise<void> => {
+  const keptFiles = new Set(
+    params.manifest.entries
+      .filter((entry) => entry.type === "file")
+      .map((entry) => path.resolve(entry.sourcePath))
+  );
+  const sourceDirectories = unique(
+    params.manifest.entries
+      .filter((entry) => entry.type === "file")
+      .filter((entry) =>
+        isRestorableSourcePath(entry.sourcePath, params.homeDirectory)
+      )
+      .map((entry) => path.dirname(path.resolve(entry.sourcePath)))
+  );
+
+  for (const directory of sourceDirectories) {
+    const entries = await readdir(directory, { withFileTypes: true }).catch(
+      () => []
+    );
+    for (const entry of entries) {
+      if (!(entry.isFile() && isSessionDataFileName(entry.name))) {
+        continue;
+      }
+      const sourcePath = path.join(directory, entry.name);
+      const resolvedSourcePath = path.resolve(sourcePath);
+      if (keptFiles.has(resolvedSourcePath)) {
+        continue;
+      }
+      const sourceStats = await stat(sourcePath).catch(() => null);
+      if (sourceStats && sourceStats.mtimeMs > params.capturedAtMs) {
+        await rm(sourcePath, { force: true });
+      }
+    }
+  }
+};
+
 export const captureWorkflowRuntimeSlices = async (
   params: WorkflowRuntimeSliceSnapshotParams
 ): Promise<WorkflowRuntimeSliceManifest> => {
@@ -323,6 +367,7 @@ export const restoreWorkflowRuntimeSlices = async (
     return null;
   }
   const homeDirectory = params.homeDirectory ?? homedir();
+  const capturedAtMs = Date.parse(manifest.updatedAt);
   for (const entry of manifest.entries) {
     if (!isRestorableSourcePath(entry.sourcePath, homeDirectory)) {
       continue;
@@ -340,6 +385,9 @@ export const restoreWorkflowRuntimeSlices = async (
       force: true,
       recursive: entry.type === "directory",
     });
+  }
+  if (Number.isFinite(capturedAtMs)) {
+    await pruneExtraSessionFiles({ capturedAtMs, homeDirectory, manifest });
   }
   return manifest;
 };
