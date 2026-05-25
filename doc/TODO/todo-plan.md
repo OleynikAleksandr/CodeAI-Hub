@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "4b94405a7",
+  "lastRecordedCommit": "eefa3cbf2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase46.stream2.task1",
-  "expectedCommitMessage": "docs: prepare workspace rollback release",
+  "currentTaskId": "phase46.stream3.task1",
+  "expectedCommitMessage": "chore: build workspace rollback release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare workspace rollback release",
-    "preCommitHead": "4b94405a7",
+    "expectedCommitMessage": "chore: build workspace rollback release",
+    "preCommitHead": "eefa3cbf2",
     "stage": "commit_pending",
-    "taskId": "phase46.stream2.task1"
+    "taskId": "phase46.stream3.task1"
   }
 }
 ```
@@ -414,11 +414,11 @@
 
 ### Stream: Release Docs
 158. [DONE] `phase46.stream2.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace rollback release`).
-159. [PENDING] Git Commit: `docs: prepare workspace rollback release` (hash: TBD)
+159. [DONE] Git Commit: `docs: prepare workspace rollback release` (hash: eefa3cbf2)
 
 ### Stream: Release Build
-160. [TODO] `phase46.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace rollback release`).
-161. [TODO] Git Commit: `chore: build workspace rollback release` (hash: TBD)
+160. [DONE] `phase46.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace rollback release`). Result: Release `1.2.360` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.360.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+161. [PENDING] Git Commit: `chore: build workspace rollback release` (hash: TBD)
 
 ## Phase 47 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
