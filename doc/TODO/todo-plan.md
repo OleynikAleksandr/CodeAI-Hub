@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "a8408fcf1",
+  "lastRecordedCommit": "d9a5a5a2b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase7.stream1.task1",
-  "expectedCommitMessage": "docs: prepare git boundary clear release",
+  "currentTaskId": "phase7.stream2.task1",
+  "expectedCommitMessage": "chore: build git boundary clear release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare git boundary clear release",
-    "preCommitHead": "a8408fcf1",
+    "expectedCommitMessage": "chore: build git boundary clear release",
+    "preCommitHead": "d9a5a5a2b",
     "stage": "commit_pending",
-    "taskId": "phase7.stream1.task1"
+    "taskId": "phase7.stream2.task1"
   }
 }
 ```
@@ -93,11 +93,11 @@
 
 ### Stream: Release Docs
 18. [DONE] `phase7.stream1.task1` Update release-facing docs for the next version before build-all, as required by the release checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare git boundary clear release`).
-19. [PENDING] Git Commit: `docs: prepare git boundary clear release` (hash: TBD)
+19. [DONE] Git Commit: `docs: prepare git boundary clear release` (hash: d9a5a5a2b)
 
 ### Stream: Release Build
-20. [TODO] `phase7.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build git boundary clear release`).
-21. [TODO] Git Commit: `chore: build git boundary clear release` (hash: TBD)
+20. [DONE] `phase7.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build git boundary clear release`). Result: Release 1.2.354 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.354.vsix` created at 4.7M; tarballs copied to `doc/tmp/releases/`; release build verified SDK exclusions, local artefacts, markdown links, duplication threshold, package surface, and restored development dependencies.
+21. [PENDING] Git Commit: `chore: build git boundary clear release` (hash: TBD)
 
 ## Phase 8 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
