@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "9546a873e",
+  "lastRecordedCommit": "2f3b88b96",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase34.stream1.task1",
-  "expectedCommitMessage": "docs: plan workspace owned rollback implementation",
+  "currentTaskId": "phase35.stream1.task1",
+  "expectedCommitMessage": "feat: add workspace runtime capsule paths",
   "debt": {
-    "expectedCommitMessage": "docs: plan workspace owned rollback implementation",
-    "preCommitHead": "9546a873e",
+    "expectedCommitMessage": "feat: add workspace runtime capsule paths",
+    "preCommitHead": "2f3b88b96",
     "stage": "commit_pending",
-    "taskId": "phase34.stream1.task1"
+    "taskId": "phase35.stream1.task1"
   }
 }
 ```
@@ -279,13 +279,13 @@
 
 ### Stream: Execution Plan Slicing
 87. [DONE] `phase34.stream1.task1` Replace the old closeout handoff with a concrete implementation plan for workspace-owned Git rollback, split into phases, streams and file-bounded microtasks based on the approved architecture audit (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan workspace owned rollback implementation`).
-88. [PENDING] Git Commit: `docs: plan workspace owned rollback implementation` (hash: TBD)
+88. [DONE] Git Commit: `docs: plan workspace owned rollback implementation` (hash: 2f3b88b96)
 
 ## Phase 35 - Runtime Capsule Foundation (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Capsule Path Contract
-89. [TODO] `phase35.stream1.task1` Add a `WorkspaceRuntimeCapsule` path resolver with deterministic workspace slug, runtime root, settings root, sessions root and provider home roots (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `feat: add workspace runtime capsule paths`).
-90. [TODO] Git Commit: `feat: add workspace runtime capsule paths` (hash: TBD)
+89. [DONE] `phase35.stream1.task1` Add a `WorkspaceRuntimeCapsule` path resolver with deterministic workspace slug, runtime root, settings root, sessions root and provider home roots (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `feat: add workspace runtime capsule paths`).
+90. [PENDING] Git Commit: `feat: add workspace runtime capsule paths` (hash: TBD)
 91. [TODO] `phase35.stream1.task2` Add capsule `.gitignore` contract generation for auth/cache/tmp exclusions while keeping rollback-relevant session/settings files trackable (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: define runtime capsule gitignore`).
 92. [TODO] Git Commit: `feat: define runtime capsule gitignore` (hash: TBD)
 

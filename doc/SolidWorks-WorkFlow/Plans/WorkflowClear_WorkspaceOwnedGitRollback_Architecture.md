@@ -114,6 +114,11 @@ These are workflow-specific and must be controlled by the workspace Git repo:
 | `~/.codeai-hub/localization/**` workspace-generated overlays | `.codeai-hub/<slug>/runtime/localization/**` | Global catalogs/cache can stay global; workspace effective localization state follows workspace settings. |
 | `<workspace>/.codeai-hub/state/task-timers.json` | `.codeai-hub/<slug>/runtime/state/task-timers.json` or `.codeai-hub/<slug>/workflow/task-timers.json` | Existing non-slug workspace state should move under the capsule so all workspace runtime state has one root. |
 
+Implementation foundation: Core owns the deterministic path contract in
+`packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`. All later
+settings/session/provider-home migrations must use that resolver instead of
+reconstructing `.codeai-hub/<slug>/runtime/**` paths locally.
+
 ### Must Stay Global And Outside Rollback
 
 These are application installation/cache concerns, not workflow rollback state:
