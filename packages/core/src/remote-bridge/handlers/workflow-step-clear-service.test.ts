@@ -1,9 +1,29 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
+import {
+  access,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import type { Request, Response } from "express";
 import { type Session, SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
+import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
+import { WorkflowStepCommitFacade } from "../../workflow/boundary/workflow-step-commit-facade";
+import { bootstrapWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { handleWorkflowStepClear } from "./workflow-step-clear-service";
+
+const WORKSPACE_SLUG = "demo-workspace";
+const DESCRIPTION_STAGE = "description";
+const VIRTUAL_STAGE = "virtual_simulation";
+const DIAGRAM_STAGE = "diagram_modules";
+const DESCRIPTION_QUESTIONNAIRE_RE = /Description Questionnaire/u;
 
 const createResponseCapture = () => {
   let statusCode = 200;
@@ -19,6 +39,38 @@ const createResponseCapture = () => {
     },
   } as unknown as Response;
   return { response, read: () => ({ payload, statusCode }) };
+};
+
+const writeText = async (filePath: string, content: string): Promise<void> => {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, content, "utf8");
+};
+
+const fileExists = async (filePath: string): Promise<boolean> => {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const git = async (
+  workspaceRoot: string,
+  args: readonly string[]
+): Promise<string> => {
+  const { stdout } = await new Promise<{
+    readonly stdout: string;
+  }>((resolve, reject) => {
+    execFile("git", args, { cwd: workspaceRoot }, (error, stdout) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve({ stdout });
+    });
+  });
+  return stdout.trim();
 };
 
 const runClear = async (
@@ -56,6 +108,107 @@ const runClear = async (
     sessionManager,
   };
 };
+
+const runRealClear = async (body: unknown) => {
+  const resetCalls: string[] = [];
+  const capture = createResponseCapture();
+  await handleWorkflowStepClear({ body } as Request, capture.response, {
+    logger: new Logger("error"),
+    resetWorkflowState: (workspaceSlug) => {
+      resetCalls.push(workspaceSlug);
+    },
+    sessionManager: new SessionManager(),
+  });
+  return { ...capture.read(), resetCalls };
+};
+
+const createPureGitWorkflowFixture = async () => {
+  const workspaceRoot = await mkdtemp(path.join(tmpdir(), "clear-git-"));
+  const { capsule } = await bootstrapWorkspaceRuntimeCapsule({
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  const boundaryFacade = new WorkflowBoundaryFacade({
+    clock: () => "2026-05-25T00:00:00.000Z",
+  });
+  const stepCommitFacade = new WorkflowStepCommitFacade();
+
+  await boundaryFacade.ensureBoundary({
+    stage: DESCRIPTION_STAGE,
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  const finalDescriptionPath = path.join(
+    capsule.descriptionRoot.absolutePath,
+    "Final_Description.md"
+  );
+  await writeText(finalDescriptionPath, "# Final Description\n");
+  await stepCommitFacade.commitAcceptedStep({
+    stage: DESCRIPTION_STAGE,
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+
+  await boundaryFacade.ensureBoundary({
+    stage: VIRTUAL_STAGE,
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  const virtualSimulationPath = path.join(
+    capsule.workspaceCapsuleRoot.absolutePath,
+    VIRTUAL_STAGE,
+    "virtual-simulation.md"
+  );
+  await writeText(virtualSimulationPath, "# Virtual Simulation\n");
+  await stepCommitFacade.commitAcceptedStep({
+    stage: VIRTUAL_STAGE,
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+
+  await boundaryFacade.ensureBoundary({
+    stage: DIAGRAM_STAGE,
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  const diagramPath = path.join(
+    capsule.workspaceCapsuleRoot.absolutePath,
+    DIAGRAM_STAGE,
+    "product-parts.index.md"
+  );
+  const scaffoldPath = path.join(
+    workspaceRoot,
+    "doc",
+    "TODO",
+    "stages",
+    "diagram-modules.md"
+  );
+  await writeText(diagramPath, "# Diagram Modules\n");
+  await writeText(scaffoldPath, "stage scaffold\n");
+
+  return {
+    descriptionQuestionnairePath:
+      capsule.descriptionQuestionnaireFile.absolutePath,
+    diagramPath,
+    finalDescriptionPath,
+    scaffoldPath,
+    virtualSimulationPath,
+    workspaceRoot,
+  };
+};
+
+const clearWorkflowStage = async (params: {
+  readonly stage:
+    | typeof DESCRIPTION_STAGE
+    | typeof VIRTUAL_STAGE
+    | typeof DIAGRAM_STAGE;
+  readonly workspaceRoot: string;
+}) =>
+  await runRealClear({
+    target: { kind: "workflow_stage", stage: params.stage },
+    workspacePath: params.workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
 
 test("workflow step clear rejects invalid requests", async () => {
   const result = await runClear({
@@ -159,4 +312,77 @@ test("workflow step clear keeps development-tree node clear fail-closed", async 
     },
   });
   assert.deepEqual(result.resetCalls, []);
+});
+
+test("workflow step clear removes Diagram Modules work through Git rollback", async () => {
+  const fixture = await createPureGitWorkflowFixture();
+  try {
+    const result = await clearWorkflowStage({
+      stage: DIAGRAM_STAGE,
+      workspaceRoot: fixture.workspaceRoot,
+    });
+
+    assert.equal(result.statusCode, 200);
+    assert.equal(await fileExists(fixture.finalDescriptionPath), true);
+    assert.equal(await fileExists(fixture.virtualSimulationPath), true);
+    assert.equal(await fileExists(fixture.diagramPath), false);
+    assert.equal(await fileExists(fixture.scaffoldPath), false);
+    assert.equal(
+      await git(fixture.workspaceRoot, ["status", "--porcelain"]),
+      ""
+    );
+    assert.deepEqual(result.resetCalls, [WORKSPACE_SLUG]);
+  } finally {
+    await rm(fixture.workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow step clear removes Virtual Simulation and downstream work through Git rollback", async () => {
+  const fixture = await createPureGitWorkflowFixture();
+  try {
+    const result = await clearWorkflowStage({
+      stage: VIRTUAL_STAGE,
+      workspaceRoot: fixture.workspaceRoot,
+    });
+
+    assert.equal(result.statusCode, 200);
+    assert.equal(await fileExists(fixture.finalDescriptionPath), true);
+    assert.equal(await fileExists(fixture.virtualSimulationPath), false);
+    assert.equal(await fileExists(fixture.diagramPath), false);
+    assert.equal(await fileExists(fixture.scaffoldPath), false);
+    assert.equal(
+      await git(fixture.workspaceRoot, ["status", "--porcelain"]),
+      ""
+    );
+    assert.deepEqual(result.resetCalls, [WORKSPACE_SLUG]);
+  } finally {
+    await rm(fixture.workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow step clear restores Description to a sendable questionnaire boundary through Git rollback", async () => {
+  const fixture = await createPureGitWorkflowFixture();
+  try {
+    const result = await clearWorkflowStage({
+      stage: DESCRIPTION_STAGE,
+      workspaceRoot: fixture.workspaceRoot,
+    });
+
+    assert.equal(result.statusCode, 200);
+    assert.match(
+      await readFile(fixture.descriptionQuestionnairePath, "utf8"),
+      DESCRIPTION_QUESTIONNAIRE_RE
+    );
+    assert.equal(await fileExists(fixture.finalDescriptionPath), false);
+    assert.equal(await fileExists(fixture.virtualSimulationPath), false);
+    assert.equal(await fileExists(fixture.diagramPath), false);
+    assert.equal(await fileExists(fixture.scaffoldPath), false);
+    assert.equal(
+      await git(fixture.workspaceRoot, ["status", "--porcelain"]),
+      ""
+    );
+    assert.deepEqual(result.resetCalls, [WORKSPACE_SLUG]);
+  } finally {
+    await rm(fixture.workspaceRoot, { force: true, recursive: true });
+  }
 });

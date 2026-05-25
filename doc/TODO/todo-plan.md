@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "58ef91139",
+  "lastRecordedCommit": "fbc4cca6c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase39.stream1.task1",
-  "expectedCommitMessage": "refactor: clear workflow steps through git rollback",
+  "currentTaskId": "phase39.stream1.task2",
+  "expectedCommitMessage": "test: cover pure git workflow clear",
   "debt": {
-    "expectedCommitMessage": "refactor: clear workflow steps through git rollback",
-    "preCommitHead": "58ef91139",
+    "expectedCommitMessage": "test: cover pure git workflow clear",
+    "preCommitHead": "fbc4cca6c",
     "stage": "commit_pending",
-    "taskId": "phase39.stream1.task1"
+    "taskId": "phase39.stream1.task2"
   }
 }
 ```
@@ -341,9 +341,9 @@
 
 ### Stream: Clear Coordinator Wiring
 121. [DONE] `phase39.stream1.task1` Rewrite the Core Clear endpoint to call the workflow rollback coordinator and stop active downstream sessions without manual file delete/restore side channels (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `refactor: clear workflow steps through git rollback`).
-122. [PENDING] Git Commit: `refactor: clear workflow steps through git rollback` (hash: TBD)
-123. [TODO] `phase39.stream1.task2` Add regression coverage for Clear Diagram Modules, Clear Virtual Simulation and Clear Description clean-tree behavior through the HTTP handler contract (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `test: cover pure git workflow clear`).
-124. [TODO] Git Commit: `test: cover pure git workflow clear` (hash: TBD)
+122. [DONE] Git Commit: `refactor: clear workflow steps through git rollback` (hash: fbc4cca6c)
+123. [DONE] `phase39.stream1.task2` Add regression coverage for Clear Diagram Modules, Clear Virtual Simulation and Clear Description clean-tree behavior through the HTTP handler contract (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `test: cover pure git workflow clear`).
+124. [PENDING] Git Commit: `test: cover pure git workflow clear` (hash: TBD)
 
 ## Phase 40 - Workspace-Owned Unified Sessions (owner: Codex, updated: 2026-05-25)
 
