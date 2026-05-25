@@ -1,15 +1,25 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
+import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import type { BridgeEvent } from "../types";
 import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 
+const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const DESCRIPTION_COMPLETE_RE = /Core: Description завершён и зафиксирован/u;
+const ACCEPTED_STEP_COMMIT_RE = /codeai-step: Description accepted/u;
+const FINAL_DESCRIPTION_RE =
+  /\.codeai-hub\/demo-workspace\/description\/Final_Description\.md/u;
+const RUNTIME_SLICES_RE =
+  /\.codeai-hub\/demo-workspace\/runtime-slices\/manifest\.json/u;
+const TASK_TIMERS_RE = /\.codeai-hub\/state\/task-timers\.json/u;
 
 interface CapturedMessage {
   readonly content: unknown;
@@ -72,6 +82,19 @@ const createActions = (sessionManager: SessionManager) => {
     dispatchedUserMessages,
     sentInternalMessages,
   };
+};
+
+const git = async (
+  workspaceRoot: string,
+  args: readonly string[]
+): Promise<string> => {
+  const { stdout } = await execFileAsync("git", args, { cwd: workspaceRoot });
+  return stdout.trim();
+};
+
+const writeText = async (filePath: string, content: string): Promise<void> => {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, content, "utf8");
 };
 
 const assertPreliminaryPromptReachesProvider = async (params: {
@@ -138,7 +161,37 @@ test("preliminary review accepts only explicit confirmation after Core gate", as
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "description-review-acceptance-")
   );
+  const homeDirectory = await mkdtemp(
+    path.join(tmpdir(), "description-review-home-")
+  );
+  const previousHome = process.env.HOME;
   try {
+    process.env.HOME = homeDirectory;
+    await writeText(
+      path.join(
+        workspaceRoot,
+        ".codeai-hub",
+        WORKSPACE_SLUG,
+        "description",
+        "Final_Description.md"
+      ),
+      "# Final Description\n"
+    );
+    await writeText(
+      path.join(workspaceRoot, ".codeai-hub", "state", "task-timers.json"),
+      "{}\n"
+    );
+    await writeText(
+      path.join(
+        homeDirectory,
+        ".codeai-hub",
+        "sessions",
+        sanitizeWorkspaceSlug(workspaceRoot),
+        "codex",
+        "description.jsonl"
+      ),
+      "session\n"
+    );
     const sessionManager = new SessionManager();
     const session = sessionManager.createSession(
       "codexCli",
@@ -162,7 +215,22 @@ test("preliminary review accepts only explicit confirmation after Core gate", as
       String(harness.coreMessages.at(-1)?.content ?? ""),
       DESCRIPTION_COMPLETE_RE
     );
+    assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
+    assert.match(
+      await git(workspaceRoot, ["log", "--oneline", "-1"]),
+      ACCEPTED_STEP_COMMIT_RE
+    );
+    const trackedFiles = await git(workspaceRoot, ["ls-files"]);
+    assert.match(trackedFiles, FINAL_DESCRIPTION_RE);
+    assert.match(trackedFiles, RUNTIME_SLICES_RE);
+    assert.doesNotMatch(trackedFiles, TASK_TIMERS_RE);
   } finally {
+    if (previousHome === undefined) {
+      process.env.HOME = undefined;
+    } else {
+      process.env.HOME = previousHome;
+    }
+    await rm(homeDirectory, { force: true, recursive: true });
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });

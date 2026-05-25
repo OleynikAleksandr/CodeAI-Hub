@@ -39,6 +39,7 @@ import {
 } from "./quality-gates-review-decision-flow";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
+import { SessionRequestHandlerPreliminaryReviewCommitter } from "./session-request-handler-preliminary-review-committer";
 
 type ManagedReviewIntent = "accept" | "none" | "revision";
 type ApplicationSkeletonReviewPhase = "draft" | "final";
@@ -63,14 +64,10 @@ interface ManagedReviewDecisionDeps {
 }
 
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
-const DESCRIPTION_STAGE = "description";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const QUALITY_GATES_STAGE = "quality_gates";
-const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
 const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
-const EXACT_ACCEPT_RE =
-  /^(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?|п[іi]дтверджую|подтверждаю)[\s.!?]*$/iu;
 const FENCED_JSON_END_RE = /\s*```$/u;
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const NEGATED_ACCEPT_RE =
@@ -155,17 +152,22 @@ export class SessionRequestHandlerManagedReviewDecisions {
   private readonly applicationSkeletonMaterializer =
     new ApplicationSkeletonCoreMaterializer();
   private readonly deps: ManagedReviewDecisionDeps;
+  private readonly preliminaryReviewCommitter: SessionRequestHandlerPreliminaryReviewCommitter;
   private readonly qualityGatesStagePlan =
     new QualityGatesStagePlanController();
 
   constructor(deps: ManagedReviewDecisionDeps) {
     this.deps = deps;
+    this.preliminaryReviewCommitter =
+      new SessionRequestHandlerPreliminaryReviewCommitter({
+        eventMessages: deps.eventMessages,
+      });
   }
 
   async handleReviewDecision(
     options: ManagedReviewDecisionOptions
   ): Promise<boolean> {
-    if (this.handlePreliminaryReviewDecision(options)) {
+    if (await this.preliminaryReviewCommitter.handle(options)) {
       return true;
     }
     if (
@@ -188,49 +190,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       ...options,
       intent: classifyManagedReviewIntent(options.content),
     });
-  }
-
-  private handlePreliminaryReviewDecision(
-    options: ManagedReviewDecisionOptions
-  ): boolean {
-    const stageLabel = this.resolvePreliminaryStageLabel(options.session.stage);
-    if (!stageLabel) {
-      return false;
-    }
-    if (!EXACT_ACCEPT_RE.test(options.content.trim())) {
-      return false;
-    }
-    if (!this.hasOpenPreliminaryReviewGate(options.session, stageLabel)) {
-      return false;
-    }
-    this.appendUserReviewMessage(options);
-    this.deps.eventMessages.appendCoreMessage(options.sessionId, {
-      content: buildManagedPersistentReturnHandoffMessage(stageLabel),
-      tag: "managed-workflow-complete",
-    });
-    return true;
-  }
-
-  private resolvePreliminaryStageLabel(
-    stage: string | null
-  ): "Description" | "Virtual Simulation" | null {
-    if (stage === DESCRIPTION_STAGE) {
-      return "Description";
-    }
-    return stage === VIRTUAL_SIMULATION_STAGE ? "Virtual Simulation" : null;
-  }
-
-  private hasOpenPreliminaryReviewGate(
-    session: Session,
-    stageLabel: "Description" | "Virtual Simulation"
-  ): boolean {
-    const prefix = `Core: ${stageLabel} перешёл в пользовательскую проверку.`;
-    return session.messages.some(
-      (message) =>
-        message.role === "system" &&
-        message.tag === "managed-workflow-user-review" &&
-        message.content.startsWith(prefix)
-    );
   }
 
   private async handleApplicationSkeletonReviewDecision(
