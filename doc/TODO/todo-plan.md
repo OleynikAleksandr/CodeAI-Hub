@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "6090ceacb",
+  "lastRecordedCommit": "1efad3513",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase38.stream2.task1",
-  "expectedCommitMessage": "refactor: commit workflow capsule state directly",
+  "currentTaskId": "phase38.stream2.task2",
+  "expectedCommitMessage": "fix: require clean tree after accepted step commits",
   "debt": {
-    "expectedCommitMessage": "refactor: commit workflow capsule state directly",
-    "preCommitHead": "6090ceacb",
+    "expectedCommitMessage": "fix: require clean tree after accepted step commits",
+    "preCommitHead": "1efad3513",
     "stage": "commit_pending",
-    "taskId": "phase38.stream2.task1"
+    "taskId": "phase38.stream2.task2"
   }
 }
 ```
@@ -333,9 +333,9 @@
 
 ### Stream: Accepted Step Commits
 117. [DONE] `phase38.stream2.task1` Rewrite accepted-step commit logic to stage accepted artifacts and tracked capsule state directly without editing root `.gitignore` or copying external sessions, and delete the now-unused runtime-slice snapshot helper (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts`; expected commit: `refactor: commit workflow capsule state directly`).
-118. [PENDING] Git Commit: `refactor: commit workflow capsule state directly` (hash: TBD)
-119. [TODO] `phase38.stream2.task2` Add clean-tree assertions after accepted-step commits and remove runtime-slice count/result fields from downstream expectations (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: require clean tree after accepted step commits`).
-120. [TODO] Git Commit: `fix: require clean tree after accepted step commits` (hash: TBD)
+118. [DONE] Git Commit: `refactor: commit workflow capsule state directly` (hash: 1efad3513)
+119. [DONE] `phase38.stream2.task2` Keep the accepted-step clean-tree assertion in the facade, remove the runtime-slice count/result field, and replace downstream test expectations with direct capsule state expectations (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts`; expected commit: `fix: require clean tree after accepted step commits`).
+120. [PENDING] Git Commit: `fix: require clean tree after accepted step commits` (hash: TBD)
 
 ## Phase 39 - Clear Endpoint As Pure Git Rollback (owner: Codex, updated: 2026-05-25)
 

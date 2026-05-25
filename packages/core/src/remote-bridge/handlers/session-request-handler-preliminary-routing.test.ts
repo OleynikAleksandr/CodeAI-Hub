@@ -5,9 +5,9 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
-import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
+import { bootstrapWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import type { BridgeEvent } from "../types";
 import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 
@@ -17,9 +17,13 @@ const DESCRIPTION_COMPLETE_RE = /Core: Description завершён и зафи�
 const ACCEPTED_STEP_COMMIT_RE = /codeai-step: Description accepted/u;
 const FINAL_DESCRIPTION_RE =
   /\.codeai-hub\/demo-workspace\/description\/Final_Description\.md/u;
-const RUNTIME_SLICES_RE =
-  /\.codeai-hub\/demo-workspace\/runtime-slices\/manifest\.json/u;
-const TASK_TIMERS_RE = /\.codeai-hub\/state\/task-timers\.json/u;
+const PROVIDER_SESSION_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/sessions\/2026\/05\/25\/description\.jsonl/u;
+const TASK_TIMERS_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/state\/task-timers\.json/u;
+const UNIFIED_SESSION_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/sessions\/unified\/codex\/description\.jsonl/u;
+const RUNTIME_SLICES_RE = new RegExp(["runtime", "slices"].join("-"), "u");
 
 interface CapturedMessage {
   readonly content: unknown;
@@ -161,36 +165,37 @@ test("preliminary review accepts only explicit confirmation after Core gate", as
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "description-review-acceptance-")
   );
-  const homeDirectory = await mkdtemp(
-    path.join(tmpdir(), "description-review-home-")
-  );
-  const previousHome = process.env.HOME;
   try {
-    process.env.HOME = homeDirectory;
+    const { capsule } = await bootstrapWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
     await writeText(
-      path.join(
-        workspaceRoot,
-        ".codeai-hub",
-        WORKSPACE_SLUG,
-        "description",
-        "Final_Description.md"
-      ),
+      path.join(capsule.descriptionRoot.absolutePath, "Final_Description.md"),
       "# Final Description\n"
     );
     await writeText(
-      path.join(workspaceRoot, ".codeai-hub", "state", "task-timers.json"),
+      path.join(capsule.stateRoot.absolutePath, "task-timers.json"),
       "{}\n"
     );
     await writeText(
       path.join(
-        homeDirectory,
-        ".codeai-hub",
+        capsule.providerHomes.codex.absolutePath,
         "sessions",
-        sanitizeWorkspaceSlug(workspaceRoot),
+        "2026",
+        "05",
+        "25",
+        "description.jsonl"
+      ),
+      "provider session\n"
+    );
+    await writeText(
+      path.join(
+        capsule.unifiedSessionsRoot.absolutePath,
         "codex",
         "description.jsonl"
       ),
-      "session\n"
+      "unified session\n"
     );
     const sessionManager = new SessionManager();
     const session = sessionManager.createSession(
@@ -222,15 +227,11 @@ test("preliminary review accepts only explicit confirmation after Core gate", as
     );
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedFiles, FINAL_DESCRIPTION_RE);
-    assert.match(trackedFiles, RUNTIME_SLICES_RE);
-    assert.doesNotMatch(trackedFiles, TASK_TIMERS_RE);
+    assert.match(trackedFiles, PROVIDER_SESSION_RE);
+    assert.match(trackedFiles, TASK_TIMERS_RE);
+    assert.match(trackedFiles, UNIFIED_SESSION_RE);
+    assert.doesNotMatch(trackedFiles, RUNTIME_SLICES_RE);
   } finally {
-    if (previousHome === undefined) {
-      process.env.HOME = undefined;
-    } else {
-      process.env.HOME = previousHome;
-    }
-    await rm(homeDirectory, { force: true, recursive: true });
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });

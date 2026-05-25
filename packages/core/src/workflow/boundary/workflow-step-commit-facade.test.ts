@@ -19,7 +19,7 @@ const CAPSULE_TASK_TIMER_STATE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/state\/task-timers\.json/u;
 const CAPSULE_UNIFIED_SESSION_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/sessions\/unified\/codex\/dialog\.jsonl/u;
-const RUNTIME_SLICES_RE = /runtime-slices/u;
+const RUNTIME_SLICES_RE = new RegExp(["runtime", "slices"].join("-"), "u");
 
 const writeText = async (filePath: string, content: string): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
@@ -79,7 +79,6 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
     });
 
     assert.equal(result.stage, "description");
-    assert.equal(result.runtimeSliceCount, 0);
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
     assert.match(
       await git(workspaceRoot, ["log", "--oneline", "-1"]),

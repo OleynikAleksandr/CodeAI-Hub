@@ -24,7 +24,6 @@ export interface WorkflowStepCommitParams {
 
 export interface WorkflowStepCommitResult {
   readonly commit: WorkflowBoundaryCommitResult;
-  readonly runtimeSliceCount: number;
   readonly stage: WorkflowStageId;
 }
 
@@ -61,7 +60,6 @@ export class WorkflowStepCommitFacade {
     }
     return {
       commit,
-      runtimeSliceCount: 0,
       stage: params.stage,
     };
   }
