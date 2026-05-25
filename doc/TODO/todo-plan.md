@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "3dc81cf32",
+  "lastRecordedCommit": "f81885495",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase23.stream1.task1",
-  "expectedCommitMessage": "docs: prepare boundary startup race release",
+  "currentTaskId": "phase23.stream2.task1",
+  "expectedCommitMessage": "chore: build boundary startup race release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare boundary startup race release",
-    "preCommitHead": "3dc81cf32",
+    "expectedCommitMessage": "chore: build boundary startup race release",
+    "preCommitHead": "f81885495",
     "stage": "commit_pending",
-    "taskId": "phase23.stream1.task1"
+    "taskId": "phase23.stream2.task1"
   }
 }
 ```
@@ -219,11 +219,11 @@
 
 ### Stream: Release Docs
 64. [DONE] `phase23.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare boundary startup race release`).
-65. [PENDING] Git Commit: `docs: prepare boundary startup race release` (hash: TBD)
+65. [DONE] Git Commit: `docs: prepare boundary startup race release` (hash: f81885495)
 
 ### Stream: Release Build
-66. [TODO] `phase23.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build boundary startup race release`).
-67. [TODO] Git Commit: `chore: build boundary startup race release` (hash: TBD)
+66. [DONE] `phase23.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build boundary startup race release`).
+67. [PENDING] Git Commit: `chore: build boundary startup race release` (hash: TBD)
 
 ## Phase 24 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
