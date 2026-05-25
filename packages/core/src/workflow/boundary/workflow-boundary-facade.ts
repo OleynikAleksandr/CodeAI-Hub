@@ -37,6 +37,14 @@ const DEFAULT_CLEAN_PATHS = [
   "product-parts",
 ] as const;
 
+const formatDirtyBoundaryError = (paths: readonly string[]): string =>
+  [
+    "Workflow boundary cannot be created because the workspace Git tree is dirty.",
+    "A boundary is a pre-step rollback anchor, so Core must create it before any stage bootstrap or provider output is written.",
+    "Commit, restore, or classify these paths before starting the workflow stage:",
+    ...paths.map((value) => `- ${value}`),
+  ].join("\n");
+
 export class WorkflowBoundaryFacade {
   readonly #clock: () => string;
   readonly #git: WorkflowBoundaryGit;
@@ -65,6 +73,11 @@ export class WorkflowBoundaryFacade {
         registryPath,
         stage: params.stage,
       };
+    }
+
+    const dirtyPaths = await this.#git.statusPorcelain(params.workspaceRoot);
+    if (dirtyPaths.length > 0) {
+      throw new Error(formatDirtyBoundaryError(dirtyPaths));
     }
 
     const commitMessage = buildWorkflowBoundaryCommitMessage(params.stage);

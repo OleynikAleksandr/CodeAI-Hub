@@ -5,9 +5,11 @@ import path from "node:path";
 import test from "node:test";
 import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import { WorkflowBoundaryFacade } from "./workflow-boundary-facade";
+import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 import { captureWorkflowRuntimeSlices } from "./workflow-runtime-slice-snapshot";
 
 const WORKSPACE_SLUG = "demo-workspace";
+const PRE_STEP_ROLLBACK_ANCHOR_RE = /pre-step rollback anchor/u;
 
 const createWorkspace = async (): Promise<string> =>
   await mkdtemp(path.join(tmpdir(), "codeai-boundary-"));
@@ -23,40 +25,48 @@ test("WorkflowBoundaryFacade restores selected stage boundary and prunes downstr
     const facade = new WorkflowBoundaryFacade({
       clock: () => "2026-05-25T00:00:00.000Z",
     });
-    await writeFile(
-      path.join(workspaceRoot, "description.md"),
-      "description\n"
-    );
+    const git = new WorkflowBoundaryGit();
     const descriptionBoundary = await facade.ensureBoundary({
       stage: "description",
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
     });
-    await writeFile(path.join(workspaceRoot, "virtual.md"), "virtual\n");
+    await writeFile(
+      path.join(workspaceRoot, "description.md"),
+      "description\n"
+    );
+    await git.commit({
+      commitMessage: "codeai-step: Description accepted",
+      paths: [".codeai-hub", "description.md"],
+      workspaceRoot,
+    });
     const virtualBoundary = await facade.ensureBoundary({
       stage: "virtual_simulation",
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
     });
-    await writeFile(path.join(workspaceRoot, "diagram.md"), "diagram\n");
+    await writeFile(path.join(workspaceRoot, "virtual.md"), "virtual\n");
+    await git.commit({
+      commitMessage: "codeai-step: Virtual Simulation accepted",
+      paths: [".codeai-hub", "virtual.md"],
+      workspaceRoot,
+    });
     await facade.ensureBoundary({
       stage: "diagram_modules",
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
     });
+    await writeFile(path.join(workspaceRoot, "diagram.md"), "diagram\n");
 
     const restored = await facade.restoreBoundary({
       cleanPaths: ["diagram.md"],
-      stage: "virtual_simulation",
+      stage: "diagram_modules",
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
     });
 
-    assert.equal(restored.boundaryHash, virtualBoundary.boundaryHash);
-    assert.deepEqual(restored.prunedStages, [
-      "virtual_simulation",
-      "diagram_modules",
-    ]);
+    assert.notEqual(virtualBoundary.boundaryHash, restored.boundaryHash);
+    assert.deepEqual(restored.prunedStages, ["diagram_modules"]);
     assert.equal(
       await readFile(path.join(workspaceRoot, "description.md"), "utf8"),
       "description\n"
@@ -75,7 +85,36 @@ test("WorkflowBoundaryFacade restores selected stage boundary and prunes downstr
       registryJson.entries.map(
         (entry: { readonly stage: string }) => entry.stage
       ),
-      ["description"]
+      ["description", "virtual_simulation"]
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("WorkflowBoundaryFacade refuses to create a boundary on a dirty tree", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    const facade = new WorkflowBoundaryFacade({
+      clock: () => "2026-05-25T00:00:00.000Z",
+    });
+    await facade.ensureBoundary({
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await writeText(
+      path.join(workspaceRoot, "doc", "TODO", "stages", "diagram.md"),
+      "stage bootstrap\n"
+    );
+
+    await assert.rejects(
+      facade.ensureBoundary({
+        stage: "diagram_modules",
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      }),
+      PRE_STEP_ROLLBACK_ANCHOR_RE
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
@@ -99,19 +138,30 @@ test("WorkflowBoundaryFacade restores runtime session slices from selected bound
     const facade = new WorkflowBoundaryFacade({
       clock: () => "2026-05-25T00:00:00.000Z",
     });
-    await writeText(
-      path.join(workspaceRoot, "description.md"),
-      "description\n"
-    );
+    const git = new WorkflowBoundaryGit();
     await facade.ensureBoundary({
       stage: "description",
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
     });
+    await writeText(
+      path.join(workspaceRoot, "description.md"),
+      "description\n"
+    );
+    await git.commit({
+      commitMessage: "codeai-step: Description accepted",
+      paths: [".codeai-hub", "description.md"],
+      workspaceRoot,
+    });
     await writeText(sessionPath, "description-session\n");
     await captureWorkflowRuntimeSlices({
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
+    });
+    await git.commit({
+      commitMessage: "codeai-step: Description runtime slices",
+      paths: [".codeai-hub"],
+      workspaceRoot,
     });
     const virtualBoundary = await facade.ensureBoundary({
       stage: "virtual_simulation",

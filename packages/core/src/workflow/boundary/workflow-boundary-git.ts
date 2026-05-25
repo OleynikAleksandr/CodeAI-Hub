@@ -120,7 +120,8 @@ export class WorkflowBoundaryGit {
     return await this.runExclusive(params.workspaceRoot, async () => {
       await this.ensureRepository(params.workspaceRoot);
       await removeMacMetadata(params.workspaceRoot);
-      const paths = filterPathSpecs(params.paths ?? ["."]);
+      const paths =
+        params.paths === undefined ? [] : filterPathSpecs(params.paths);
       if (paths.length === 0 && !params.allowEmpty) {
         return {
           hash: await this.revParseHead(params.workspaceRoot),

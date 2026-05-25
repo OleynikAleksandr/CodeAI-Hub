@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "4e3b479b0",
+  "lastRecordedCommit": "72cdc7f4c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase11.stream2.task1",
-  "expectedCommitMessage": "chore: build clean git workflow release",
+  "currentTaskId": "phase13.stream1.task1",
+  "expectedCommitMessage": "fix: enforce clean workflow boundary anchors",
   "debt": {
-    "expectedCommitMessage": "chore: build clean git workflow release",
-    "preCommitHead": "4e3b479b0",
+    "expectedCommitMessage": "fix: enforce clean workflow boundary anchors",
+    "preCommitHead": "72cdc7f4c",
     "stage": "commit_pending",
-    "taskId": "phase11.stream2.task1"
+    "taskId": "phase13.stream1.task1"
   }
 }
 ```
@@ -135,15 +135,51 @@
 
 ### Stream: Release Build
 36. [DONE] `phase11.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clean git workflow release`).
-37. [PENDING] Git Commit: `chore: build clean git workflow release` (hash: TBD)
+37. [DONE] Git Commit: `chore: build clean git workflow release` (hash: 72cdc7f4c)
 
 ## Phase 12 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-38. [TODO] `phase12.stream1.task1` User installs the generated VSIX and verifies that Git is initialized at workspace activation, accepted steps commit all workflow/session history needed for agent recovery, the next step cannot start on dirty Git, and Clear restores selected/downstream workflow state from the correct boundary (scope: user workflow acceptance; no commit expected).
+38. [DONE] `phase12.stream1.task1` User installs the generated VSIX and verifies that Git is initialized at workspace activation, accepted steps commit all workflow/session history needed for agent recovery, the next step cannot start on dirty Git, and Clear restores selected/downstream workflow state from the correct boundary (scope: user workflow acceptance; no commit expected). Result: Failed release 1.2.355 retest: Diagram Modules Clear restored to a boundary that already contained managed scaffold files, provider-native Codex sessions created after the boundary were not pruned, and workflow/state.json remained dirty after Clear.
 
-## Phase 13 - Scope Closeout (owner: Codex, updated: 2026-05-25)
+## Phase 13 - Boundary Anchor And Runtime Prune Fixes (owner: Codex, updated: 2026-05-25)
+
+### Stream: Clean Boundary Anchors
+39. [DONE] `phase13.stream1.task1` Make workflow boundary commits empty pre-step anchors, fail before stage start if the workspace Git tree is dirty, and preserve explicit path commits for accepted-step snapshots (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: enforce clean workflow boundary anchors`).
+40. [PENDING] Git Commit: `fix: enforce clean workflow boundary anchors` (hash: TBD)
+
+### Stream: Strict Runtime Restore
+41. [TODO] `phase13.stream2.task1` Make runtime slice restore prune provider-native session files created after the captured boundary within the recorded provider session directories, while keeping restore allowlisted to CodeAI Hub runtime roots (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: prune restored workflow runtime sessions`).
+42. [TODO] Git Commit: `fix: prune restored workflow runtime sessions` (hash: TBD)
+
+### Stream: Managed Stage Acceptance
+43. [TODO] `phase13.stream3.task1` Route Diagram Modules user acceptance through the accepted-step commit facade before Core unlocks Application Skeleton, so final managed-stage outputs and runtime slices are committed and Git-clean (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules acceptance snapshots`).
+44. [TODO] Git Commit: `fix: commit diagram modules acceptance snapshots` (hash: TBD)
+
+## Phase 14 - Architecture Documentation And Verification (owner: Codex, updated: 2026-05-25)
+
+### Stream: SSOT And Targeted Checks
+45. [TODO] `phase14.stream1.task1` Update workflow architecture docs for clean pre-step boundary anchors, strict runtime restore pruning, and managed-stage accepted-step commits (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document strict workflow boundary restore`).
+46. [TODO] Git Commit: `docs: document strict workflow boundary restore` (hash: TBD)
+47. [TODO] `phase14.stream2.task1` Run targeted Core build and focused tests for boundary anchors, runtime slice pruning, Clear restore, and managed Diagram Modules acceptance (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 15 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Docs
+48. [TODO] `phase15.stream1.task1` Update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare strict boundary restore release`).
+49. [TODO] Git Commit: `docs: prepare strict boundary restore release` (hash: TBD)
+
+### Stream: Release Build
+50. [TODO] `phase15.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build strict boundary restore release`).
+51. [TODO] Git Commit: `chore: build strict boundary restore release` (hash: TBD)
+
+## Phase 16 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+52. [TODO] `phase16.stream1.task1` User installs the generated VSIX and verifies that clearing Diagram Modules removes stage bootstrap/scaffold files, restores workflow state to Virtual Simulation, prunes provider-native sessions created by Diagram Modules, and leaves the workspace Git tree clean (scope: user workflow acceptance; no commit expected).
+
+## Phase 17 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Closeout
-39. [TODO] `phase13.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
-40. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
+53. [TODO] `phase17.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
+54. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
