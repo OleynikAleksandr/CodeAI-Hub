@@ -3,6 +3,8 @@ import path from "node:path";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
+import { isWorkflowBoundaryStage } from "../../workflow/boundary/workflow-boundary-model";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
@@ -102,6 +104,10 @@ export const handleWorkspaceSessionCreate = async (params: {
   readonly res: Response;
   readonly sessionManager: SessionManager;
   readonly logger: Logger;
+  readonly workflowBoundaryFacade?: Pick<
+    WorkflowBoundaryFacade,
+    "ensureBoundary"
+  >;
   readonly onWorkspaceSessionCreated?: (
     workspacePath: string,
     workspaceSlug: string
@@ -114,6 +120,19 @@ export const handleWorkspaceSessionCreate = async (params: {
   }
 
   try {
+    if (
+      parsed.value.initiativeSlug &&
+      parsed.value.stage &&
+      isWorkflowBoundaryStage(parsed.value.stage)
+    ) {
+      await (
+        params.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
+      ).ensureBoundary({
+        stage: parsed.value.stage,
+        workspaceRoot: parsed.value.workspacePath,
+        workspaceSlug: parsed.value.initiativeSlug,
+      });
+    }
     await prepareWorkflowStageDirectories({
       initiativeSlug: parsed.value.initiativeSlug,
       runSlug: parsed.value.runSlug,
