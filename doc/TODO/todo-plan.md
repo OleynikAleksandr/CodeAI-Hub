@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "c944057c8",
+  "lastRecordedCommit": "75194e639",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream70.task5",
-  "expectedCommitMessage": "refactor: disable legacy workflow clear backend",
+  "currentTaskId": "phase8.stream70.task8",
+  "expectedCommitMessage": "test: remove legacy clear rollback tests",
   "debt": {
-    "expectedCommitMessage": "refactor: disable legacy workflow clear backend",
-    "preCommitHead": "c944057c8",
+    "expectedCommitMessage": "test: remove legacy clear rollback tests",
+    "preCommitHead": "75194e639",
     "stage": "commit_pending",
-    "taskId": "phase8.stream70.task5"
+    "taskId": "phase8.stream70.task8"
   }
 }
 ```
@@ -709,9 +709,9 @@
 474. [DONE] `phase8.stream70.task4` Remove undo-ledger recording from artifact upsert, workspace file write, and development-tree materialization paths (scope: `packages/core/src/remote-bridge/handlers/http-api-artifact-upsert-service.ts, packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.ts`; expected commit: `refactor: remove workflow undo ledger writes`).
 475. [DONE] Git Commit: `refactor: remove workflow undo ledger writes` (hash: c944057c8)
 476. [DONE] `phase8.stream70.task5` Replace the legacy Clear backend with an explicit unavailable Core response that keeps request validation and the Project Manager endpoint contract for the future Git-boundary implementation, and delete the helper modules that become `check:knip` unused in the same green intermediate (scope: `packages/core/src/remote-bridge/handlers, src/client/project-manager/services/workflow-step-clear-client.ts`; scope exception reason: the plan orchestrator stages deleted files through the handlers directory, and no green intermediate exists after backend replacement because `check:knip` immediately flags the newly unused helper modules; expected commit: `refactor: disable legacy workflow clear backend`).
-477. [PENDING] Git Commit: `refactor: disable legacy workflow clear backend` (hash: TBD)
-482. [TODO] `phase8.stream70.task8` Delete obsolete Clear behavior tests that asserted checkpoint/undo/git-rollback fallback semantics (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.checkpoint-cleanup.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`; expected commit: `test: remove legacy clear rollback tests`).
-483. [TODO] Git Commit: `test: remove legacy clear rollback tests` (hash: TBD)
+477. [DONE] Git Commit: `refactor: disable legacy workflow clear backend` (hash: 75194e639)
+482. [DONE] `phase8.stream70.task8` Delete obsolete Clear behavior tests that asserted checkpoint/undo/git-rollback fallback semantics (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.checkpoint-cleanup.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`; expected commit: `test: remove legacy clear rollback tests`).
+483. [PENDING] Git Commit: `test: remove legacy clear rollback tests` (hash: TBD)
 484. [TODO] `phase8.stream70.task9` Delete the workflow undo module after all runtime imports are gone (scope: `packages/core/src/workflow/undo/workflow-mutation-journal-runtime.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.test.ts, packages/core/src/workflow/undo/workflow-step-undo-ledger.ts`; expected commit: `refactor: remove workflow undo module`).
 485. [TODO] Git Commit: `refactor: remove workflow undo module` (hash: TBD)
 486. [TODO] `phase8.stream70.task10` Delete the workflow step checkpoint module after session creation and Clear no longer depend on it (scope: `packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-facade.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts`; expected commit: `refactor: remove workflow step checkpoint module`).
