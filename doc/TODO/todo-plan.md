@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "a1eafa595",
+  "lastRecordedCommit": "3ccd02982",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase36.stream2.task1",
-  "expectedCommitMessage": "refactor: use full git clean for workflow rollback",
+  "currentTaskId": "phase36.stream2.task2",
+  "expectedCommitMessage": "feat: coordinate workflow git rollback",
   "debt": {
-    "expectedCommitMessage": "refactor: use full git clean for workflow rollback",
-    "preCommitHead": "a1eafa595",
+    "expectedCommitMessage": "feat: coordinate workflow git rollback",
+    "preCommitHead": "3ccd02982",
     "stage": "commit_pending",
-    "taskId": "phase36.stream2.task1"
+    "taskId": "phase36.stream2.task2"
   }
 }
 ```
@@ -305,9 +305,9 @@
 
 ### Stream: Full Git Rollback Primitive
 101. [DONE] `phase36.stream2.task1` Replace path-scoped `cleanPaths` with full-worktree clean and remove stage-specific cleanup lists from boundary restore params (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `refactor: use full git clean for workflow rollback`).
-102. [PENDING] Git Commit: `refactor: use full git clean for workflow rollback` (hash: TBD)
-103. [TODO] `phase36.stream2.task2` Introduce a workflow rollback coordinator that runs stop/quiesce, reset hard, full clean, projection rebuild and clean-tree assert as one Core-owned transaction (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: coordinate workflow git rollback`).
-104. [TODO] Git Commit: `feat: coordinate workflow git rollback` (hash: TBD)
+102. [DONE] Git Commit: `refactor: use full git clean for workflow rollback` (hash: 3ccd02982)
+103. [DONE] `phase36.stream2.task2` Introduce a workflow rollback coordinator that runs stop/quiesce, reset hard, full clean, projection rebuild and clean-tree assert as one Core-owned transaction (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: coordinate workflow git rollback`).
+104. [PENDING] Git Commit: `feat: coordinate workflow git rollback` (hash: TBD)
 
 ## Phase 37 - Boundary-First Workspace And Stage Starts (owner: Codex, updated: 2026-05-25)
 

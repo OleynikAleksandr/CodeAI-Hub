@@ -4,19 +4,19 @@ import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 import {
   buildWorkflowBoundaryCommitMessage,
   buildWorkflowBoundaryRegistryCommitMessage,
-  buildWorkflowClearCommitMessage,
   compareWorkflowBoundaryStages,
   isStageAtOrAfter,
   type WorkflowBoundaryEnsureResult,
   type WorkflowBoundaryRestoreResult,
 } from "./workflow-boundary-model";
 import { WorkflowBoundaryRegistryStore } from "./workflow-boundary-registry";
-import { restoreWorkflowRuntimeSlices } from "./workflow-runtime-slice-snapshot";
+import { WorkflowRollbackCoordinator } from "./workflow-rollback-coordinator";
 
 export interface WorkflowBoundaryFacadeOptions {
   readonly clock?: () => string;
   readonly git?: WorkflowBoundaryGit;
   readonly registryStore?: WorkflowBoundaryRegistryStore;
+  readonly rollbackCoordinator?: WorkflowRollbackCoordinator;
 }
 
 export interface WorkflowBoundaryEnsureParams {
@@ -52,12 +52,19 @@ export class WorkflowBoundaryFacade {
   readonly #clock: () => string;
   readonly #git: WorkflowBoundaryGit;
   readonly #registryStore: WorkflowBoundaryRegistryStore;
+  readonly #rollbackCoordinator: WorkflowRollbackCoordinator;
 
   constructor(options: WorkflowBoundaryFacadeOptions = {}) {
     this.#clock = options.clock ?? (() => new Date().toISOString());
     this.#git = options.git ?? new WorkflowBoundaryGit();
     this.#registryStore =
       options.registryStore ?? new WorkflowBoundaryRegistryStore();
+    this.#rollbackCoordinator =
+      options.rollbackCoordinator ??
+      new WorkflowRollbackCoordinator({
+        git: this.#git,
+        registryStore: this.#registryStore,
+      });
   }
 
   async ensureBoundary(
@@ -142,32 +149,11 @@ export class WorkflowBoundaryFacade {
           .map((entry) => entry.stage)
       ),
     ].sort(compareWorkflowBoundaryStages);
-    await this.#git.resetHard({
-      hash: target.boundaryHash,
-      workspaceRoot: params.workspaceRoot,
+    return await this.#rollbackCoordinator.rollback({
+      ...params,
+      prunedStages,
+      target,
     });
-    await this.#git.cleanWorktree({ workspaceRoot: params.workspaceRoot });
-    await restoreWorkflowRuntimeSlices({
-      workspaceRoot: params.workspaceRoot,
-      workspaceSlug: params.workspaceSlug,
-    });
-    const prunedRegistry = await this.#registryStore.pruneFromStage(params);
-    const registryPath = this.#registryStore.getRegistryPath(params);
-    const clearCommit = await this.#git.commit({
-      allowEmpty: true,
-      commitMessage: buildWorkflowClearCommitMessage(params.stage),
-      paths: [path.relative(params.workspaceRoot, registryPath)],
-      workspaceRoot: params.workspaceRoot,
-    });
-    return {
-      boundaryHash: target.boundaryHash,
-      clearCommitHash: clearCommit.hash,
-      prunedStages: prunedStages.filter((stage) =>
-        prunedRegistry.entries.every((entry) => entry.stage !== stage)
-      ),
-      registryPath,
-      stage: params.stage,
-    };
   }
 
   private static async runExclusive<T>(

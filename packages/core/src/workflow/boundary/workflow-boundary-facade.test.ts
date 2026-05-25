@@ -6,6 +6,8 @@ import test from "node:test";
 import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import { WorkflowBoundaryFacade } from "./workflow-boundary-facade";
 import { WorkflowBoundaryGit } from "./workflow-boundary-git";
+import { WorkflowBoundaryRegistryStore } from "./workflow-boundary-registry";
+import { WorkflowRollbackCoordinator } from "./workflow-rollback-coordinator";
 import { captureWorkflowRuntimeSlices } from "./workflow-runtime-slice-snapshot";
 
 const WORKSPACE_SLUG = "demo-workspace";
@@ -88,6 +90,7 @@ test("WorkflowBoundaryFacade restores selected stage boundary and prunes downstr
         "utf8"
       )
     );
+    assert.deepEqual(await git.statusPorcelain(workspaceRoot), []);
     const registryJson = JSON.parse(
       await readFile(descriptionBoundary.registryPath, "utf8")
     );
@@ -97,6 +100,71 @@ test("WorkflowBoundaryFacade restores selected stage boundary and prunes downstr
       ),
       ["description", "virtual_simulation"]
     );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("WorkflowRollbackCoordinator quiesces before Git rollback and asserts clean tree", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    const git = new WorkflowBoundaryGit();
+    const registryStore = new WorkflowBoundaryRegistryStore();
+    const facade = new WorkflowBoundaryFacade({
+      clock: () => "2026-05-25T00:00:00.000Z",
+      git,
+      registryStore,
+    });
+    await facade.ensureBoundary({
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await writeText(path.join(workspaceRoot, "description.md"), "done\n");
+    await git.commit({
+      commitMessage: "codeai-step: Description accepted",
+      paths: ["description.md"],
+      workspaceRoot,
+    });
+    await facade.ensureBoundary({
+      stage: "virtual_simulation",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await writeText(path.join(workspaceRoot, "virtual.md"), "virtual\n");
+
+    const target = await git.findBoundaryCommit({
+      stage: "virtual_simulation",
+      workspaceRoot,
+    });
+    assert.ok(target);
+    const events: string[] = [];
+    const coordinator = new WorkflowRollbackCoordinator({
+      git,
+      quiesce: async () => {
+        assert.equal(
+          await readFile(path.join(workspaceRoot, "virtual.md"), "utf8"),
+          "virtual\n"
+        );
+        events.push("quiesce");
+      },
+      registryStore,
+    });
+    const result = await coordinator.rollback({
+      prunedStages: ["virtual_simulation"],
+      stage: "virtual_simulation",
+      target,
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.deepEqual(events, ["quiesce"]);
+    assert.equal(result.boundaryHash, target.boundaryHash);
+    assert.deepEqual(result.prunedStages, ["virtual_simulation"]);
+    await assert.rejects(
+      readFile(path.join(workspaceRoot, "virtual.md"), "utf8")
+    );
+    assert.deepEqual(await git.statusPorcelain(workspaceRoot), []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
