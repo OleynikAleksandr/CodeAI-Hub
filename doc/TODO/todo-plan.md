@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "bb95c690a",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase33.stream1.task1",
-  "expectedCommitMessage": "docs: audit legacy clear undo removal",
+  "lastRecordedCommit": "9546a873e",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
+  "currentTaskId": "phase34.stream1.task1",
+  "expectedCommitMessage": "docs: plan workspace owned rollback implementation",
   "debt": {
-    "expectedCommitMessage": "docs: audit legacy clear undo removal",
-    "preCommitHead": "bb95c690a",
+    "expectedCommitMessage": "docs: plan workspace owned rollback implementation",
+    "preCommitHead": "9546a873e",
     "stage": "commit_pending",
-    "taskId": "phase33.stream1.task1"
+    "taskId": "phase34.stream1.task1"
   }
 }
 ```
@@ -24,7 +24,7 @@
 
 ## Context Pack For This Cycle
 
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`
 - **Release build confirmation:** user explicitly requested the new task to be planned and executed through a new release build on 2026-05-25.
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
@@ -273,7 +273,155 @@
 
 ### Stream: Architecture Planning
 85. [DONE] `phase33.stream1.task1` Expand the replacement planning document with a concrete audit of legacy Clear/Undo code paths to delete, rewrite, preserve, and test so the next implementation plan can be sliced into file-bounded microtasks (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: audit legacy clear undo removal`).
-86. [PENDING] Git Commit: `docs: audit legacy clear undo removal` (hash: TBD)
+86. [DONE] Git Commit: `docs: audit legacy clear undo removal` (hash: 9546a873e)
+
+## Phase 34 - Workspace-Owned Rollback Implementation Plan (owner: Codex, updated: 2026-05-25)
+
+### Stream: Execution Plan Slicing
+87. [DONE] `phase34.stream1.task1` Replace the old closeout handoff with a concrete implementation plan for workspace-owned Git rollback, split into phases, streams and file-bounded microtasks based on the approved architecture audit (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan workspace owned rollback implementation`).
+88. [PENDING] Git Commit: `docs: plan workspace owned rollback implementation` (hash: TBD)
+
+## Phase 35 - Runtime Capsule Foundation (owner: Codex, updated: 2026-05-25)
+
+### Stream: Capsule Path Contract
+89. [TODO] `phase35.stream1.task1` Add a `WorkspaceRuntimeCapsule` path resolver with deterministic workspace slug, runtime root, settings root, sessions root and provider home roots (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `feat: add workspace runtime capsule paths`).
+90. [TODO] Git Commit: `feat: add workspace runtime capsule paths` (hash: TBD)
+91. [TODO] `phase35.stream1.task2` Add capsule `.gitignore` contract generation for auth/cache/tmp exclusions while keeping rollback-relevant session/settings files trackable (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: define runtime capsule gitignore`).
+92. [TODO] Git Commit: `feat: define runtime capsule gitignore` (hash: TBD)
+
+### Stream: Workspace Settings Baseline
+93. [TODO] `phase35.stream2.task1` Add workspace settings seed/read/write helpers that resolve settings through the active workspace capsule and use global settings only as defaults (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: seed workspace settings from capsule`).
+94. [TODO] Git Commit: `feat: seed workspace settings from capsule` (hash: TBD)
+95. [TODO] `phase35.stream2.task2` Add focused tests proving settings changed in one workspace do not affect another workspace and Description baseline contains workspace settings (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`; expected commit: `test: cover workspace scoped settings`).
+96. [TODO] Git Commit: `test: cover workspace scoped settings` (hash: TBD)
+
+## Phase 36 - Git Timeline And Boundary Authority (owner: Codex, updated: 2026-05-25)
+
+### Stream: Git History Lookup
+97. [TODO] `phase36.stream1.task1` Add stable boundary commit parsing and Git-log lookup so `codeai-boundary: <Stage>` history is the rollback authority instead of tracked `boundaries.json` (scope: `packages/core/src/workflow/boundary/workflow-boundary-model.ts, packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: resolve workflow boundaries from git log`).
+98. [TODO] Git Commit: `feat: resolve workflow boundaries from git log` (hash: TBD)
+99. [TODO] `phase36.stream1.task2` Demote `workflow-boundary-registry` to rebuildable projection or remove it from rollback decision paths (scope: `packages/core/src/workflow/boundary/workflow-boundary-registry.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `refactor: demote boundary registry authority`).
+100. [TODO] Git Commit: `refactor: demote boundary registry authority` (hash: TBD)
+
+### Stream: Full Git Rollback Primitive
+101. [TODO] `phase36.stream2.task1` Replace path-scoped `cleanPaths` with full-worktree clean and remove stage-specific cleanup lists from boundary restore params (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `refactor: use full git clean for workflow rollback`).
+102. [TODO] Git Commit: `refactor: use full git clean for workflow rollback` (hash: TBD)
+103. [TODO] `phase36.stream2.task2` Introduce a workflow rollback coordinator that runs stop/quiesce, reset hard, full clean, projection rebuild and clean-tree assert as one Core-owned transaction (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: coordinate workflow git rollback`).
+104. [TODO] Git Commit: `feat: coordinate workflow git rollback` (hash: TBD)
+
+## Phase 37 - Boundary-First Workspace And Stage Starts (owner: Codex, updated: 2026-05-25)
+
+### Stream: Description Baseline
+105. [TODO] `phase37.stream1.task1` Move workspace capsule bootstrap before the Description boundary so the boundary contains questionnaire, workspace settings, capsule ignore rules and minimal tracked UI state (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: bootstrap capsule before description boundary`).
+106. [TODO] Git Commit: `feat: bootstrap capsule before description boundary` (hash: TBD)
+107. [TODO] `phase37.stream1.task2` Remove Description post-clear untracked projection writes or make them rebuildable without dirtying Git (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/workflow/description/description-step-store.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `fix: keep description clear tree clean`).
+108. [TODO] Git Commit: `fix: keep description clear tree clean` (hash: TBD)
+
+### Stream: Stage Start Ordering
+109. [TODO] `phase37.stream2.task1` Move Project Manager stage session creation behind target-stage boundary creation and capsule directory preparation (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: create stage sessions after boundaries`).
+110. [TODO] Git Commit: `feat: create stage sessions after boundaries` (hash: TBD)
+111. [TODO] `phase37.stream2.task2` Ensure websocket workflow `session:create` preflight cannot install scaffold, provider homes or session files before the selected stage boundary exists (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: gate websocket stage preflight by boundary`).
+112. [TODO] Git Commit: `fix: gate websocket stage preflight by boundary` (hash: TBD)
+
+## Phase 38 - Remove Runtime-Slices And Directly Commit Capsule State (owner: Codex, updated: 2026-05-25)
+
+### Stream: Runtime-Slice Deletion
+113. [TODO] `phase38.stream1.task1` Delete the runtime-slice snapshot module and update compile-time consumers to stop importing capture/restore types (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `refactor: remove workflow runtime slice snapshots`).
+114. [TODO] Git Commit: `refactor: remove workflow runtime slice snapshots` (hash: TBD)
+115. [TODO] `phase38.stream1.task2` Replace old runtime-slice tests and preliminary routing expectations with capsule/direct-commit expectations (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts`; expected commit: `test: replace runtime slice rollback coverage`).
+116. [TODO] Git Commit: `test: replace runtime slice rollback coverage` (hash: TBD)
+
+### Stream: Accepted Step Commits
+117. [TODO] `phase38.stream2.task1` Rewrite accepted-step commit logic to stage accepted artifacts and tracked capsule state directly without editing root `.gitignore` or copying external sessions (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `refactor: commit workflow capsule state directly`).
+118. [TODO] Git Commit: `refactor: commit workflow capsule state directly` (hash: TBD)
+119. [TODO] `phase38.stream2.task2` Add clean-tree assertions after accepted-step commits and remove runtime-slice count/result fields from downstream expectations (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: require clean tree after accepted step commits`).
+120. [TODO] Git Commit: `fix: require clean tree after accepted step commits` (hash: TBD)
+
+## Phase 39 - Clear Endpoint As Pure Git Rollback (owner: Codex, updated: 2026-05-25)
+
+### Stream: Clear Coordinator Wiring
+121. [TODO] `phase39.stream1.task1` Rewrite the Core Clear endpoint to call the workflow rollback coordinator and stop active downstream sessions without manual file delete/restore side channels (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `refactor: clear workflow steps through git rollback`).
+122. [TODO] Git Commit: `refactor: clear workflow steps through git rollback` (hash: TBD)
+123. [TODO] `phase39.stream1.task2` Add regression coverage for Clear Diagram Modules, Clear Virtual Simulation and Clear Description clean-tree behavior through the HTTP handler contract (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `test: cover pure git workflow clear`).
+124. [TODO] Git Commit: `test: cover pure git workflow clear` (hash: TBD)
+
+## Phase 40 - Workspace-Owned Unified Sessions (owner: Codex, updated: 2026-05-25)
+
+### Stream: Unified Session Storage
+125. [TODO] `phase40.stream1.task1` Move workflow unified session storage from global `~/.codeai-hub/sessions` into the active workspace runtime capsule while preserving non-workflow/global callers as explicit legacy paths (scope: `packages/core/src/unified-session/storage.ts, packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts, packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.test.ts`; expected commit: `feat: store workflow sessions in runtime capsule`).
+126. [TODO] Git Commit: `feat: store workflow sessions in runtime capsule` (hash: TBD)
+127. [TODO] `phase40.stream1.task2` Retarget dialog history/list/open services to read workflow sessions from the active workspace capsule and keep global reads only for explicit legacy/non-workflow dialogs (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts`; expected commit: `refactor: read workflow dialogs from capsule sessions`).
+128. [TODO] Git Commit: `refactor: read workflow dialogs from capsule sessions` (hash: TBD)
+129. [TODO] `phase40.stream1.task3` Retarget Description dialog sync and dialog segment metadata to capsule session roots so Clear removes native and unified workflow session history through Git (scope: `packages/core/src/remote-bridge/handlers/session-description-dialog-sync.ts, packages/core/src/remote-bridge/handlers/session-request-handler-dialog-segment-meta.ts, packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`; expected commit: `refactor: sync workflow dialogs through capsule`).
+130. [TODO] Git Commit: `refactor: sync workflow dialogs through capsule` (hash: TBD)
+
+## Phase 41 - Workspace-Owned Provider Homes (owner: Codex, updated: 2026-05-25)
+
+### Stream: Codex And Claude Homes
+131. [TODO] `phase41.stream1.task1` Resolve Codex workflow provider home/session state under `runtime/providers/codex/home` while keeping auth/installed binaries global or ignored (scope: `packages/core/src/provider-registry/index.ts, packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts, packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts`; expected commit: `feat: use workspace codex home for workflow sessions`).
+132. [TODO] Git Commit: `feat: use workspace codex home for workflow sessions` (hash: TBD)
+133. [TODO] `phase41.stream1.task2` Resolve Claude workflow provider home under `runtime/providers/claude/home` while preserving the auth bridge and secret-safe ignore rules (scope: `packages/core/src/provider-registry/index.ts, packages/Claude_Module/src/sdk/claude-provider-home.ts, packages/Claude_Module/src/auth/claude-auth-home-bridge.ts`; expected commit: `feat: use workspace claude home for workflow sessions`).
+134. [TODO] Git Commit: `feat: use workspace claude home for workflow sessions` (hash: TBD)
+
+### Stream: Gemini And Kimi Homes
+135. [TODO] `phase41.stream2.task1` Resolve Gemini workflow `HOME` / `.gemini` roots under `runtime/providers/gemini/home` without mutating process-global `HOME` in Core (scope: `packages/core/src/provider-registry/index.ts, packages/Gemini_Module/src/runtime/cli-bridge-root-resolver.ts, packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts`; expected commit: `feat: use workspace gemini home for workflow sessions`).
+136. [TODO] Git Commit: `feat: use workspace gemini home for workflow sessions` (hash: TBD)
+137. [TODO] `phase41.stream2.task2` Resolve Kimi managed-agent workflow home under `runtime/providers/kimi/home` and add focused provider-home tests (scope: `packages/core/src/provider-registry/index.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.test.ts`; expected commit: `feat: use workspace kimi home for workflow sessions`).
+138. [TODO] Git Commit: `feat: use workspace kimi home for workflow sessions` (hash: TBD)
+
+## Phase 42 - Managed Workflow Git Consolidation (owner: Codex, updated: 2026-05-25)
+
+### Stream: Shared Git Service Adoption
+139. [TODO] `phase42.stream1.task1` Replace Diagram Modules managed Git helper operations with the shared workspace Git timeline service without changing managed artifact validation semantics (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `refactor: share managed workflow git timeline`).
+140. [TODO] Git Commit: `refactor: share managed workflow git timeline` (hash: TBD)
+141. [TODO] `phase42.stream1.task2` Migrate Diagram Modules stage/review/repair controllers to the shared Git dependency and remove direct `DiagramModulesManagedGitBoundary` construction where possible (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts`; expected commit: `refactor: migrate diagram controllers to shared git timeline`).
+142. [TODO] Git Commit: `refactor: migrate diagram controllers to shared git timeline` (hash: TBD)
+143. [TODO] `phase42.stream1.task3` Migrate Application Skeleton, Quality Gates and scaffold installer managed commits to the shared Git dependency (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts`; expected commit: `refactor: migrate managed stages to shared git timeline`).
+144. [TODO] Git Commit: `refactor: migrate managed stages to shared git timeline` (hash: TBD)
+
+## Phase 43 - Project Manager Clear And Workspace Settings Surface (owner: Codex, updated: 2026-05-25)
+
+### Stream: Clear UI Retargeting
+145. [TODO] `phase43.stream1.task1` Retarget Project Manager Clear menu/client to the pure Git rollback response semantics and add explicit warning for untracked non-ignored files removed by `git clean -fd` (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `refactor: retarget project manager clear to git rollback`).
+146. [TODO] Git Commit: `refactor: retarget project manager clear to git rollback` (hash: TBD)
+
+### Stream: Workspace Settings Surface
+147. [TODO] `phase43.stream2.task1` Make Project Manager settings load/save against the active workspace settings snapshot and reload on workspace switch (scope: `src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/project-manager/services/project-manager-settings-client.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit: `feat: scope project manager settings to workspace`).
+148. [TODO] Git Commit: `feat: scope project manager settings to workspace` (hash: TBD)
+
+## Phase 44 - Cleanup Gates And Invariants (owner: Codex, updated: 2026-05-25)
+
+### Stream: Legacy Rollback Removal Gates
+149. [TODO] `phase44.stream1.task1` Add automated checks or targeted tests that fail on `runtime-slices`, `cleanPaths`, registry-authority commits, global workflow session roots and direct managed Git helper usage (scope: `scripts/check-workflow-rollback-architecture.mjs, package.json, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `test: guard workflow rollback architecture`).
+150. [TODO] Git Commit: `test: guard workflow rollback architecture` (hash: TBD)
+151. [TODO] `phase44.stream1.task2` Update canonical system documentation and docs index with stable workspace-owned rollback architecture decisions after code migration is in place (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document workspace owned git rollback`).
+152. [TODO] Git Commit: `docs: document workspace owned git rollback` (hash: TBD)
+
+## Phase 45 - Targeted Verification And Regression Walkthrough (owner: Codex, updated: 2026-05-25)
+
+### Stream: Core Verification
+153. [TODO] `phase45.stream1.task1` Run targeted Core build and focused tests for capsule paths, boundary lookup, Clear coordinator, workspace activation/session ordering and managed workflow Git consolidation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+
+### Stream: Workflow Rollback Walkthrough
+154. [TODO] `phase45.stream2.task1` Run a real local workflow regression on a disposable workspace: Description, Virtual Simulation, Diagram Modules, Clear Diagram Modules, Clear Virtual Simulation, Clear Description, checking clean Git and capsule-owned sessions after every step (scope: local workflow verification; expected commit: no commit expected). Result: TBD.
+
+## Phase 46 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Confirmation Gate
+155. [TODO] `phase46.stream1.task1` Stop after implementation and verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: TBD.
+
+### Stream: Release Docs
+156. [TODO] `phase46.stream2.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace rollback release`).
+157. [TODO] Git Commit: `docs: prepare workspace rollback release` (hash: TBD)
+
+### Stream: Release Build
+158. [TODO] `phase46.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace rollback release`).
+159. [TODO] Git Commit: `chore: build workspace rollback release` (hash: TBD)
+
+## Phase 47 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+160. [TODO] `phase47.stream1.task1` User installs the generated VSIX and verifies the full workspace-owned rollback workflow including clean Git, removed downstream artifacts, removed unified/provider sessions and sendable Description after Clear Description (scope: user workflow acceptance; no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
