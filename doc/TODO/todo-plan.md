@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "e63ee819f",
+  "lastRecordedCommit": "3f40c8018",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase44.stream1.task2",
-  "expectedCommitMessage": "docs: document workspace owned git rollback",
+  "currentTaskId": "phase45.stream1.task2",
+  "expectedCommitMessage": "test: harden workflow rollback verification",
   "debt": {
-    "expectedCommitMessage": "docs: document workspace owned git rollback",
-    "preCommitHead": "e63ee819f",
+    "expectedCommitMessage": "test: harden workflow rollback verification",
+    "preCommitHead": "3f40c8018",
     "stage": "commit_pending",
-    "taskId": "phase44.stream1.task2"
+    "taskId": "phase45.stream1.task2"
   }
 }
 ```
@@ -395,33 +395,35 @@
 149. [DONE] `phase44.stream1.task1` Add automated checks or targeted tests that fail on `runtime-slices`, `cleanPaths`, registry-authority commits, global workflow session roots and direct managed Git helper usage (scope: `scripts/check-workflow-rollback-architecture.mjs, scripts/check-architecture.sh, package.json, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `test: guard workflow rollback architecture`).
 150. [DONE] Git Commit: `test: guard workflow rollback architecture` (hash: e63ee819f)
 151. [DONE] `phase44.stream1.task2` Update canonical system documentation and docs index with stable workspace-owned rollback architecture decisions after code migration is in place (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document workspace owned git rollback`).
-152. [PENDING] Git Commit: `docs: document workspace owned git rollback` (hash: TBD)
+152. [DONE] Git Commit: `docs: document workspace owned git rollback` (hash: 3f40c8018)
 
 ## Phase 45 - Targeted Verification And Regression Walkthrough (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Core Verification
-153. [TODO] `phase45.stream1.task1` Run targeted Core build and focused tests for capsule paths, boundary lookup, Clear coordinator, workspace activation/session ordering and managed workflow Git consolidation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+153. [DONE] `phase45.stream1.task1` Run targeted Core build and focused tests for capsule paths, boundary lookup, Clear coordinator, workspace activation/session ordering and managed workflow Git consolidation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification ran after core build: 53/55 focused tests passed; workflow-state rewrite-boundary fixtures failed against the current Diagram Modules/Application Skeleton contracts, and ignored core dist still contained retired Clear/Undo compiled files. Opened follow-up fix task before release.
+154. [DONE] `phase45.stream1.task2` Fix targeted verification findings by refreshing workflow-state regression fixtures for current Diagram Modules/Application Skeleton contracts and making the Core package build clean ignored `dist` before `tsc` (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts, packages/core/package.json, doc/TODO/todo-plan.md`; expected commit: `test: harden workflow rollback verification`).
+155. [PENDING] Git Commit: `test: harden workflow rollback verification` (hash: TBD)
 
 ### Stream: Workflow Rollback Walkthrough
-154. [TODO] `phase45.stream2.task1` Run a real local workflow regression on a disposable workspace: Description, Virtual Simulation, Diagram Modules, Clear Diagram Modules, Clear Virtual Simulation, Clear Description, checking clean Git and capsule-owned sessions after every step (scope: local workflow verification; expected commit: no commit expected). Result: TBD.
+156. [TODO] `phase45.stream2.task1` Run a real local workflow regression on a disposable workspace: Description, Virtual Simulation, Diagram Modules, Clear Diagram Modules, Clear Virtual Simulation, Clear Description, checking clean Git and capsule-owned sessions after every step (scope: local workflow verification; expected commit: no commit expected). Result: TBD.
 
 ## Phase 46 - Release Build (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Release Confirmation Gate
-155. [TODO] `phase46.stream1.task1` Stop after implementation and verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: TBD.
+157. [TODO] `phase46.stream1.task1` Stop after implementation and verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: TBD.
 
 ### Stream: Release Docs
-156. [TODO] `phase46.stream2.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace rollback release`).
-157. [TODO] Git Commit: `docs: prepare workspace rollback release` (hash: TBD)
+158. [TODO] `phase46.stream2.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace rollback release`).
+159. [TODO] Git Commit: `docs: prepare workspace rollback release` (hash: TBD)
 
 ### Stream: Release Build
-158. [TODO] `phase46.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace rollback release`).
-159. [TODO] Git Commit: `chore: build workspace rollback release` (hash: TBD)
+160. [TODO] `phase46.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace rollback release`).
+161. [TODO] Git Commit: `chore: build workspace rollback release` (hash: TBD)
 
 ## Phase 47 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-160. [TODO] `phase47.stream1.task1` User installs the generated VSIX and verifies the full workspace-owned rollback workflow including clean Git, removed downstream artifacts, removed unified/provider sessions and sendable Description after Clear Description (scope: user workflow acceptance; no commit expected). Result: TBD.
+162. [TODO] `phase47.stream1.task1` User installs the generated VSIX and verifies the full workspace-owned rollback workflow including clean Git, removed downstream artifacts, removed unified/provider sessions and sendable Description after Clear Description (scope: user workflow acceptance; no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

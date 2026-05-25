@@ -98,6 +98,9 @@ test("workflow-state read unblocks Application Skeleton after Core restart with 
         "",
         "## Product Parts",
         "",
+        "- leadProductPartId: `project-manager`",
+        "- productPartLeadershipOrder: `project-manager`",
+        "",
         "### Product Part: project-manager",
         "- Id: project-manager",
         "- Title: Project Manager",
@@ -217,6 +220,20 @@ test("workflow-state read ignores malformed retired state while preserving skele
     }
     await writeWorkspaceFile(
       workspaceRoot,
+      "package.json",
+      `${JSON.stringify(
+        {
+          name: "demo-workspace",
+          private: true,
+          scripts: {},
+          version: "0.0.0",
+        },
+        null,
+        2
+      )}\n`
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
       `.codeai-hub/${workspaceSlug}/workflow/state.json`,
       '{ "workspaceSlug": "demo-workspace", "updatedAt": "broken" \n'
     );
@@ -261,6 +278,13 @@ test("workflow-state read ignores malformed retired state while preserving skele
           materialized: true,
           materializationState: "materialized",
           materializedPaths: codePaths,
+          openQuestions: [],
+          packageManager: "custom",
+          projectFoundation: {
+            configFiles: [],
+            firstWaveEntrypoints: [],
+            requiredScripts: [],
+          },
           productParts: [
             {
               clusters: [
