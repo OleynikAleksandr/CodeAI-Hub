@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.362** (Full Workflow Start Hotfix)
+**Current Release — v1.2.363** (Application Skeleton Unlock Hotfix)
+
+This hotfix restores the Diagram Modules -> Application Skeleton handoff in the
+workspace-owned Git rollback architecture. Diagram Modules acceptance now
+commits workspace-owned runtime session/provider state before unlocking the
+next stage, and the accepted-step commit removes previously tracked volatile
+Codex SQLite/cache/shell-snapshot residue from the workspace timeline.
+
+The upstream `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts.index.md`
+artifact remains the Application Skeleton source of truth. This release fixes
+the dirty-Git blocker that Project Manager previously surfaced as a misleading
+`product-parts.index.md not found` start-card message.
+
+**Previous Release — v1.2.362** (Full Workflow Start Hotfix)
 
 This hotfix restores the full workflow start chain after start-card model
 changes in the workspace-owned Git rollback architecture. Core now commits

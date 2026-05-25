@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.363] - 2026-05-25
+### Fixed
+- **Application Skeleton unlocks after Diagram Modules acceptance.** Diagram Modules user-return completion messages are persisted before the accepted-step commit, and workspace-owned runtime sessions/provider homes are classified as managed committable state instead of blocking the next stage.
+- **Volatile Codex runtime residue is removed from workflow commits.** Accepted-step commits now untrack previously committed provider SQLite/model-cache/shell-snapshot files and the workspace runtime capsule ignores them for future starts.
+- **Misleading `product-parts.index.md not found` blocker is avoided.** The file path was correct; the actual blocker was dirty Git state after Diagram Modules acceptance.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.js packages/core/dist/remote-bridge/handlers/technical-stage-dirty-gate.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.js`
+- `npm run plan:validate`
+
 ## [1.2.362] - 2026-05-25
 ### Fixed
 - **All workflow start cards can create clean boundaries after model changes.** Core now commits explicit workspace runtime settings changes as `codeai-settings: <Stage> start selection` before creating the next `codeai-boundary: <Stage>` anchor, so start-card model/reasoning changes do not dirty the pre-step boundary.

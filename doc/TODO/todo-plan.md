@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "f4cd63508",
+  "lastRecordedCommit": "e228022c4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase57.stream1.task2",
-  "expectedCommitMessage": "fix: commit diagram modules completion messages",
+  "currentTaskId": "phase59.stream1.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton unlock release",
   "debt": {
-    "expectedCommitMessage": "fix: commit diagram modules completion messages",
-    "preCommitHead": "f4cd63508",
+    "expectedCommitMessage": "docs: prepare application skeleton unlock release",
+    "preCommitHead": "e228022c4",
     "stage": "commit_pending",
-    "taskId": "phase57.stream1.task2"
+    "taskId": "phase59.stream1.task1"
   }
 }
 ```
@@ -502,10 +502,30 @@
 186. [DONE] `phase57.stream1.task1` Keep accepted workflow-step commits clean when provider homes already contain volatile Codex runtime files by excluding/untracking provider SQLite/cache/shell-snapshot residue from the workspace runtime capsule commit (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: keep diagram modules acceptance git clean`).
 187. [DONE] Git Commit: `fix: keep diagram modules acceptance git clean` (hash: f4cd63508)
 188. [DONE] `phase57.stream1.task2` Persist Diagram Modules user-return completion messages before the accepted-step commit and classify workspace-owned runtime sessions/provider homes as managed committable state so Application Skeleton unlocks from a clean tree (scope: `packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`; expected commit: `fix: commit diagram modules completion messages`).
-189. [PENDING] Git Commit: `fix: commit diagram modules completion messages` (hash: TBD)
+189. [DONE] Git Commit: `fix: commit diagram modules completion messages` (hash: e228022c4)
 
 ### Stream: Regression Verification
-190. [TODO] `phase57.stream2.task1` Run targeted Core build and focused regression tests for Diagram Modules acceptance clean-tree behavior and Application Skeleton gating readiness (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+190. [DONE] `phase57.stream2.task1` Run targeted Core build and focused regression tests for Diagram Modules acceptance clean-tree behavior and Application Skeleton gating readiness (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification passed: @codeai-hub/core build, accepted-step commit regression tests, managed terminal dirty classifier tests, Diagram Modules review acceptance clean-tree test, technical stage dirty-gate tests, and workflow-state rewrite-boundary Application Skeleton readiness tests completed successfully (24 focused node tests).
+
+## Phase 58 - Release Build Confirmation (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Confirmation Gate
+191. [DONE] `phase58.stream1.task1` Stop after Application Skeleton unlock regression fixes and targeted verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: Release build explicitly confirmed by user on 2026-05-25: build the next release for Application Skeleton unlock retest after successful Diagram Modules acceptance clean-tree verification.
+
+## Phase 59 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Docs
+192. [DONE] `phase59.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton unlock release`).
+193. [PENDING] Git Commit: `docs: prepare application skeleton unlock release` (hash: TBD)
+
+### Stream: Release Build
+194. [TODO] `phase59.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build application skeleton unlock release`). Result: TBD.
+195. [TODO] Git Commit: `chore: build application skeleton unlock release` (hash: TBD)
+
+## Phase 60 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+196. [TODO] `phase60.stream1.task1` User installs the generated VSIX and verifies Application Skeleton starts after Diagram Modules acceptance and the full workflow remains Git-clean through Quality Gates start (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
