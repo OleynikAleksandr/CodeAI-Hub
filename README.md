@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.355** (Clean Git Workflow History)
+**Current Release — v1.2.356** (Strict Workflow Boundary Restore)
+
+This replacement build tightens the Git-backed Clear contract for managed
+workflow stages. `codeai-boundary: <Stage>` commits are now clean pre-step
+anchors: Core blocks stage start if the workspace is already dirty, and boundary
+commits no longer absorb scaffold or provider output through implicit
+`git add -A`.
+
+Runtime restore now prunes provider-native session files created after the
+captured boundary inside recorded provider session directories, while preserving
+older session history. Diagram Modules review acceptance also creates a
+`codeai-step: Diagram Modules accepted` commit before Application Skeleton can
+open.
+
+**Previous Release — v1.2.355** (Clean Git Workflow History)
 
 This replacement build makes Core-owned Git history the workflow development
 timeline and rollback source. Accepted Description and Virtual Simulation steps

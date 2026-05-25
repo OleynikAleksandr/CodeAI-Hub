@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.356] - 2026-05-25
+### Fixed
+- **Workflow boundaries are now clean pre-step anchors.** `codeai-boundary: <Stage>` commits no longer stage implicit workspace changes, and Core blocks stage start if Git is already dirty before the boundary can be created.
+- **Runtime slice restore prunes downstream native sessions.** Provider session files created after the captured boundary are removed inside recorded provider session directories, while older session history remains intact.
+- **Diagram Modules acceptance now creates a final accepted-step commit.** Core commits `codeai-step: Diagram Modules accepted` with runtime slices before unlocking Application Skeleton.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/boundary/workflow-runtime-slice-snapshot.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-routing.test.js`
+- `npm run plan:validate`
+
 ## [1.2.355] - 2026-05-25
 ### Fixed
 - **Accepted preliminary workflow steps now leave Git clean.** Description and Virtual Simulation acceptance captures runtime session slices, commits accepted step output as `codeai-step: <Stage> accepted`, ignores local timer state, and blocks next-step unlock if Git still has unclassified dirty files.

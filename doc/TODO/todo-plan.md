@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "a39fd41b4",
+  "lastRecordedCommit": "55f3f949a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase14.stream1.task1",
-  "expectedCommitMessage": "docs: document strict workflow boundary restore",
+  "currentTaskId": "phase15.stream1.task1",
+  "expectedCommitMessage": "docs: prepare strict boundary restore release",
   "debt": {
-    "expectedCommitMessage": "docs: document strict workflow boundary restore",
-    "preCommitHead": "a39fd41b4",
+    "expectedCommitMessage": "docs: prepare strict boundary restore release",
+    "preCommitHead": "55f3f949a",
     "stage": "commit_pending",
-    "taskId": "phase14.stream1.task1"
+    "taskId": "phase15.stream1.task1"
   }
 }
 ```
@@ -160,14 +160,14 @@
 
 ### Stream: SSOT And Targeted Checks
 45. [DONE] `phase14.stream1.task1` Update workflow architecture docs for clean pre-step boundary anchors, strict runtime restore pruning, and managed-stage accepted-step commits (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document strict workflow boundary restore`).
-46. [PENDING] Git Commit: `docs: document strict workflow boundary restore` (hash: TBD)
-47. [TODO] `phase14.stream2.task1` Run targeted Core build and focused tests for boundary anchors, runtime slice pruning, Clear restore, and managed Diagram Modules acceptance (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+46. [DONE] Git Commit: `docs: document strict workflow boundary restore` (hash: 55f3f949a)
+47. [DONE] `phase14.stream2.task1` Run targeted Core build and focused tests for boundary anchors, runtime slice pruning, Clear restore, and managed Diagram Modules acceptance (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification passed: @codeai-hub/core build, focused boundary/runtime slice/accepted-step/preliminary/Diagram Modules acceptance tests (10 tests), and plan validation completed.
 
 ## Phase 15 - Release Build (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Release Docs
-48. [TODO] `phase15.stream1.task1` Update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare strict boundary restore release`).
-49. [TODO] Git Commit: `docs: prepare strict boundary restore release` (hash: TBD)
+48. [DONE] `phase15.stream1.task1` Update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare strict boundary restore release`).
+49. [PENDING] Git Commit: `docs: prepare strict boundary restore release` (hash: TBD)
 
 ### Stream: Release Build
 50. [TODO] `phase15.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build strict boundary restore release`).
