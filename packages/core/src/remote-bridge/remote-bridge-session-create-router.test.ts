@@ -25,6 +25,7 @@ test("session:create leaves Diagram Modules managed scaffold to the Core start b
   );
   const workspaceSlug = "demo-workspace";
   const warnings: unknown[] = [];
+  const calls: string[] = [];
   let handleCreateCalled = false;
 
   try {
@@ -34,6 +35,7 @@ test("session:create leaves Diagram Modules managed scaffold to the Core start b
         workspaceRoot: string | undefined,
         context: { readonly stage?: string | null } | undefined
       ): Promise<void> {
+        calls.push(`handle-create:${context?.stage ?? ""}`);
         assert.equal(providerId, "codexCli");
         assert.equal(workspaceRoot, workspacePath);
         assert.equal(context?.stage, "diagram_modules");
@@ -48,6 +50,28 @@ test("session:create leaves Diagram Modules managed scaffold to the Core start b
       getManager: () => undefined,
       logger: createLogger(warnings),
       sessionHandler,
+      workflowBoundaryFacade: {
+        ensureBoundary: async (params) => {
+          calls.push(`boundary:${params.stage}`);
+          assert.equal(params.workspaceRoot, workspacePath);
+          assert.equal(params.workspaceSlug, workspaceSlug);
+          await assertMissing(
+            path.join(
+              workspacePath,
+              ".codeai-hub",
+              workspaceSlug,
+              "diagram_modules"
+            )
+          );
+          await assertMissing(path.join(workspacePath, "doc", "TODO"));
+          return {
+            boundaryHash: "abc123",
+            created: true,
+            registryPath: path.join(workspacePath, "boundaries.json"),
+            stage: params.stage,
+          };
+        },
+      },
       workflowRuntime: {
         connectWorkspace: () => Promise.resolve(),
       } as unknown as WorkflowRuntime,
@@ -65,6 +89,10 @@ test("session:create leaves Diagram Modules managed scaffold to the Core start b
     });
 
     assert.equal(handleCreateCalled, true);
+    assert.deepEqual(calls, [
+      "boundary:diagram_modules",
+      "handle-create:diagram_modules",
+    ]);
     assert.deepEqual(warnings, []);
     await assertMissing(path.join(workspacePath, ".husky", "pre-commit"));
     await assertMissing(path.join(workspacePath, "doc", "TODO"));
@@ -83,6 +111,7 @@ test("session:create still prepares documentation workflow stage directories", a
     path.join(tmpdir(), "codeai-documentation-preflight-")
   );
   const workspaceSlug = "demo-workspace";
+  const calls: string[] = [];
   let handleCreateCalled = false;
 
   try {
@@ -92,6 +121,7 @@ test("session:create still prepares documentation workflow stage directories", a
         workspaceRoot: string | undefined,
         context: { readonly stage?: string | null } | undefined
       ): Promise<void> {
+        calls.push(`handle-create:${context?.stage ?? ""}`);
         assert.equal(providerId, "codexCli");
         assert.equal(workspaceRoot, workspacePath);
         assert.equal(context?.stage, "description");
@@ -103,6 +133,17 @@ test("session:create still prepares documentation workflow stage directories", a
       getManager: () => undefined,
       logger: createLogger(),
       sessionHandler,
+      workflowBoundaryFacade: {
+        ensureBoundary: (params) => {
+          calls.push(`boundary:${params.stage}`);
+          return Promise.resolve({
+            boundaryHash: "abc123",
+            created: true,
+            registryPath: path.join(workspacePath, "boundaries.json"),
+            stage: params.stage,
+          });
+        },
+      },
       workflowRuntime: {
         connectWorkspace: () => Promise.resolve(),
       } as unknown as WorkflowRuntime,
@@ -119,9 +160,22 @@ test("session:create still prepares documentation workflow stage directories", a
     });
 
     assert.equal(handleCreateCalled, true);
+    assert.deepEqual(calls, [
+      "boundary:description",
+      "handle-create:description",
+    ]);
     await access(path.join(workspacePath, ".codeai-hub", workspaceSlug));
     await access(
       path.join(workspacePath, ".codeai-hub", workspaceSlug, "description")
+    );
+    await access(
+      path.join(
+        workspacePath,
+        ".codeai-hub",
+        workspaceSlug,
+        "description",
+        "questionnaire.md"
+      )
     );
     await assertMissing(path.join(workspacePath, ".git"));
     await assertMissing(path.join(workspacePath, "doc", "TODO"));

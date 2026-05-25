@@ -1,5 +1,11 @@
 import type { Logger } from "../telemetry/logger";
+import { WorkflowBoundaryFacade } from "../workflow/boundary/workflow-boundary-facade";
+import { isWorkflowBoundaryStage } from "../workflow/boundary/workflow-boundary-model";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
+import {
+  bootstrapWorkspaceRuntimeCapsule,
+  prepareWorkspaceRuntimeCapsuleDirectories,
+} from "../workflow/runtime/workspace-runtime-capsule";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import {
   isTechnicalStageRewriteBlockedStage,
@@ -18,7 +24,18 @@ interface RemoteBridgeSessionCreateRouterDependencies {
   readonly getManager: () => WebSocketManager | undefined;
   readonly logger: Logger;
   readonly sessionHandler: SessionRequestHandler;
+  readonly workflowBoundaryFacade?: Pick<
+    WorkflowBoundaryFacade,
+    "ensureBoundary"
+  >;
   readonly workflowRuntime: WorkflowRuntime;
+}
+
+interface WorkflowSessionCreatePreflightParams {
+  readonly initiativeSlug: string;
+  readonly runSlug: string | null;
+  readonly stage: string | null;
+  readonly workspacePath: string;
 }
 
 export class RemoteBridgeSessionCreateRouter {
@@ -63,24 +80,18 @@ export class RemoteBridgeSessionCreateRouter {
     }
 
     try {
-      if (isTechnicalStageRewriteStage(createContext.stage)) {
-        this.deps.logger.warn(
-          "Session create skipped technical stage preflight during orchestration rewrite",
-          {
-            code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
-            stage: createContext.stage,
-            workspacePath: resolvedWorkspacePath,
-            workspaceSlug: initiativeSlug,
-          }
-        );
-      } else {
-        await prepareWorkflowStageDirectories({
-          initiativeSlug,
-          runSlug: createContext.runSlug,
-          stage: createContext.stage,
-          workspacePath: resolvedWorkspacePath,
-        });
-      }
+      await this.ensureWorkflowBoundary({
+        initiativeSlug,
+        runSlug: createContext.runSlug,
+        stage: createContext.stage,
+        workspacePath: resolvedWorkspacePath,
+      });
+      await this.prepareStagePreflight({
+        initiativeSlug,
+        runSlug: createContext.runSlug,
+        stage: createContext.stage,
+        workspacePath: resolvedWorkspacePath,
+      });
     } catch (error: unknown) {
       this.deps.logger.warn("Failed to prepare workflow stage directories", {
         workspacePath: resolvedWorkspacePath,
@@ -112,5 +123,54 @@ export class RemoteBridgeSessionCreateRouter {
         }
       );
     }
+  }
+
+  private async ensureWorkflowBoundary(
+    params: WorkflowSessionCreatePreflightParams
+  ): Promise<void> {
+    if (!(params.stage && isWorkflowBoundaryStage(params.stage))) {
+      return;
+    }
+    if (params.stage === "description") {
+      await bootstrapWorkspaceRuntimeCapsule({
+        workspaceRoot: params.workspacePath,
+        workspaceSlug: params.initiativeSlug,
+      });
+    } else {
+      await prepareWorkspaceRuntimeCapsuleDirectories({
+        workspaceRoot: params.workspacePath,
+        workspaceSlug: params.initiativeSlug,
+      });
+    }
+    await (
+      this.deps.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
+    ).ensureBoundary({
+      stage: params.stage,
+      workspaceRoot: params.workspacePath,
+      workspaceSlug: params.initiativeSlug,
+    });
+  }
+
+  private async prepareStagePreflight(
+    params: WorkflowSessionCreatePreflightParams
+  ): Promise<void> {
+    if (isTechnicalStageRewriteStage(params.stage)) {
+      this.deps.logger.warn(
+        "Session create skipped technical stage preflight during orchestration rewrite",
+        {
+          code: TECHNICAL_STAGE_REWRITE_BLOCKER_CODE,
+          stage: params.stage,
+          workspacePath: params.workspacePath,
+          workspaceSlug: params.initiativeSlug,
+        }
+      );
+      return;
+    }
+    await prepareWorkflowStageDirectories({
+      initiativeSlug: params.initiativeSlug,
+      runSlug: params.runSlug,
+      stage: params.stage,
+      workspacePath: params.workspacePath,
+    });
   }
 }

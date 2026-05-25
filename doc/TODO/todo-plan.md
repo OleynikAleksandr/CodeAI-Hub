@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "d734c8f5b",
+  "lastRecordedCommit": "690b40909",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase37.stream2.task1",
-  "expectedCommitMessage": "feat: create stage sessions after boundaries",
+  "currentTaskId": "phase37.stream2.task2",
+  "expectedCommitMessage": "fix: gate websocket stage preflight by boundary",
   "debt": {
-    "expectedCommitMessage": "feat: create stage sessions after boundaries",
-    "preCommitHead": "d734c8f5b",
+    "expectedCommitMessage": "fix: gate websocket stage preflight by boundary",
+    "preCommitHead": "690b40909",
     "stage": "commit_pending",
-    "taskId": "phase37.stream2.task1"
+    "taskId": "phase37.stream2.task2"
   }
 }
 ```
@@ -319,9 +319,9 @@
 
 ### Stream: Stage Start Ordering
 109. [DONE] `phase37.stream2.task1` Move Project Manager stage session creation behind target-stage boundary creation and capsule directory preparation (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: create stage sessions after boundaries`).
-110. [PENDING] Git Commit: `feat: create stage sessions after boundaries` (hash: TBD)
-111. [TODO] `phase37.stream2.task2` Ensure websocket workflow `session:create` preflight cannot install scaffold, provider homes or session files before the selected stage boundary exists (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: gate websocket stage preflight by boundary`).
-112. [TODO] Git Commit: `fix: gate websocket stage preflight by boundary` (hash: TBD)
+110. [DONE] Git Commit: `feat: create stage sessions after boundaries` (hash: 690b40909)
+111. [DONE] `phase37.stream2.task2` Ensure websocket workflow `session:create` preflight cannot install scaffold, provider homes or session files before the selected stage boundary exists (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: gate websocket stage preflight by boundary`).
+112. [PENDING] Git Commit: `fix: gate websocket stage preflight by boundary` (hash: TBD)
 
 ## Phase 38 - Remove Runtime-Slices And Directly Commit Capsule State (owner: Codex, updated: 2026-05-25)
 
