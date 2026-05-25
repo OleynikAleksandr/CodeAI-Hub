@@ -64,7 +64,10 @@ export class SessionRequestHandlerAppliedTurnConfig {
       return null;
     }
 
-    const settingsPath = this.resolveSharedSettingsPath();
+    const settingsPath = this.resolveSettingsPath(
+      options.sessionModelBinding,
+      providerId
+    );
     if (options.sessionModelBinding?.providerId === providerId) {
       return this.resolveFromSessionBinding({
         binding: options.sessionModelBinding,
@@ -167,5 +170,14 @@ export class SessionRequestHandlerAppliedTurnConfig {
       path.dirname(this.config.claudeSettingsPath),
       SETTINGS_FILE_NAME
     );
+  }
+
+  private resolveSettingsPath(
+    binding: SessionModelBinding | null | undefined,
+    providerId: string
+  ): string {
+    return binding?.providerId === providerId && binding.settingsPath
+      ? binding.settingsPath
+      : this.resolveSharedSettingsPath();
   }
 }

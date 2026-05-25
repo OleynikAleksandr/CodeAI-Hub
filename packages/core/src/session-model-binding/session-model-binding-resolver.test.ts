@@ -39,3 +39,40 @@ test("SessionModelBindingResolver clones inherited continuity binding without Se
   assert.equal(binding.modelId, "gpt-5.3-codex-spark reasoning:xhigh");
   assert.equal(binding.reasoningEffort, "xhigh");
 });
+
+test("SessionModelBindingResolver carries workspace settings path on bindings", () => {
+  const resolver = new SessionModelBindingResolver({
+    facade: new SessionModelBindingFacade({
+      clock: () => "2026-04-28T12:10:00.000Z",
+    }),
+    providerTurnConfig: {
+      env: {},
+      fallbackClaudeModel: "sonnet",
+      fallbackCodexModel: "gpt-5.5",
+      fallbackCodexReasoningEffort: "medium",
+      fallbackGeminiModel: "gemini-3.1-pro-preview",
+      settingsPath: "/global/settings.json",
+    },
+    settingsPathResolver: (key) =>
+      key.workspacePath ? `${key.workspacePath}/runtime/settings.json` : null,
+  });
+
+  const binding = resolver.bindFromSettingsDefault({
+    providerId: "codexCli",
+    sessionId: "workflow-session",
+    workspacePath: "/workspace/demo",
+    workspaceSlug: "demo",
+  });
+
+  assert.ok(binding);
+  assert.equal(binding?.settingsPath, "/workspace/demo/runtime/settings.json");
+
+  const inherited = resolver.inheritBinding({
+    providerId: "codexCli",
+    sessionId: "child-session",
+    continuityRootId: "workflow-session",
+    sourceBinding: binding,
+  });
+
+  assert.equal(inherited.settingsPath, "/workspace/demo/runtime/settings.json");
+});

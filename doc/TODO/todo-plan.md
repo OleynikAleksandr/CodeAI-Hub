@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "97b572dc4",
+  "lastRecordedCommit": "865f693c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase61.stream1.task2",
-  "expectedCommitMessage": "fix: resolve workflow sessions from workspace settings",
+  "currentTaskId": "phase61.stream1.task3",
+  "expectedCommitMessage": "fix: apply workspace settings to provider turns",
   "debt": {
-    "expectedCommitMessage": "fix: resolve workflow sessions from workspace settings",
-    "preCommitHead": "97b572dc4",
+    "expectedCommitMessage": "fix: apply workspace settings to provider turns",
+    "preCommitHead": "865f693c2",
     "stage": "commit_pending",
-    "taskId": "phase61.stream1.task2"
+    "taskId": "phase61.stream1.task3"
   }
 }
 ```
@@ -533,9 +533,9 @@
 197. [DONE] `phase61.stream1.task1` Make workflow start-card settings reads and default-model persistence use the active workspace runtime settings snapshot instead of the singleton last settings payload (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-settings-transport.ts, src/client/project-manager/services/**settings*.test.ts`; expected commit: `fix: use workspace settings for workflow starts`).
 198. [DONE] Git Commit: `fix: use workspace settings for workflow starts` (hash: 97b572dc4)
 199. [DONE] `phase61.stream1.task2` Make Core session model binding resolve default/effective provider identity from the active workspace runtime settings file and carry that path on the session binding (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/session-model-binding/session-model-binding-resolver.ts, packages/core/src/session-model-binding/session-model-binding-types.ts`; expected commit: `fix: resolve workflow sessions from workspace settings`).
-200. [PENDING] Git Commit: `fix: resolve workflow sessions from workspace settings` (hash: TBD)
-202. [TODO] `phase61.stream1.task3` Make applied provider turn config consume the session binding settings path so model metadata and reasoning translation policy stay workspace-scoped after session creation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/session-model-binding/session-model-binding-resolver.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply workspace settings to provider turns`).
-203. [TODO] Git Commit: `fix: apply workspace settings to provider turns` (hash: TBD)
+200. [DONE] Git Commit: `fix: resolve workflow sessions from workspace settings` (hash: 865f693c2)
+202. [DONE] `phase61.stream1.task3` Make applied provider turn config consume the session binding settings path so model metadata and reasoning translation policy stay workspace-scoped after session creation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/session-model-binding/session-model-binding-resolver.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply workspace settings to provider turns`).
+203. [PENDING] Git Commit: `fix: apply workspace settings to provider turns` (hash: TBD)
 
 ### Stream: Regression Verification
 201. [TODO] `phase61.stream2.task1` Run focused settings authority regression tests plus targeted Project Manager/Core builds before requesting the next release build confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
