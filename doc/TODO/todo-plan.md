@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "b193fa2dd",
+  "lastRecordedCommit": "d734c8f5b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase37.stream1.task2",
-  "expectedCommitMessage": "fix: keep description clear tree clean",
+  "currentTaskId": "phase37.stream2.task1",
+  "expectedCommitMessage": "feat: create stage sessions after boundaries",
   "debt": {
-    "expectedCommitMessage": "fix: keep description clear tree clean",
-    "preCommitHead": "b193fa2dd",
+    "expectedCommitMessage": "feat: create stage sessions after boundaries",
+    "preCommitHead": "d734c8f5b",
     "stage": "commit_pending",
-    "taskId": "phase37.stream1.task2"
+    "taskId": "phase37.stream2.task1"
   }
 }
 ```
@@ -315,11 +315,11 @@
 105. [DONE] `phase37.stream1.task1` Move workspace capsule bootstrap before the Description boundary so the boundary contains questionnaire, workspace settings, capsule ignore rules and minimal tracked UI state (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: bootstrap capsule before description boundary`).
 106. [DONE] Git Commit: `feat: bootstrap capsule before description boundary` (hash: b193fa2dd)
 107. [DONE] `phase37.stream1.task2` Remove Description post-clear untracked projection writes or make them rebuildable without dirtying Git (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/workflow/description/description-step-store.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `fix: keep description clear tree clean`).
-108. [PENDING] Git Commit: `fix: keep description clear tree clean` (hash: TBD)
+108. [DONE] Git Commit: `fix: keep description clear tree clean` (hash: d734c8f5b)
 
 ### Stream: Stage Start Ordering
-109. [TODO] `phase37.stream2.task1` Move Project Manager stage session creation behind target-stage boundary creation and capsule directory preparation (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: create stage sessions after boundaries`).
-110. [TODO] Git Commit: `feat: create stage sessions after boundaries` (hash: TBD)
+109. [DONE] `phase37.stream2.task1` Move Project Manager stage session creation behind target-stage boundary creation and capsule directory preparation (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: create stage sessions after boundaries`).
+110. [PENDING] Git Commit: `feat: create stage sessions after boundaries` (hash: TBD)
 111. [TODO] `phase37.stream2.task2` Ensure websocket workflow `session:create` preflight cannot install scaffold, provider homes or session files before the selected stage boundary exists (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: gate websocket stage preflight by boundary`).
 112. [TODO] Git Commit: `fix: gate websocket stage preflight by boundary` (hash: TBD)
 

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -48,8 +49,20 @@ test("handleWorkspaceSessionCreate creates workflow boundary before stage direct
       WORKSPACE_SLUG,
       "virtual_simulation"
     );
+    const codexHomePath = path.join(
+      workspacePath,
+      ".codeai-hub",
+      WORKSPACE_SLUG,
+      "runtime",
+      "providers",
+      "codex",
+      "home"
+    );
     const boundaryCalls: string[] = [];
+    let capsuleHomeExistedDuringBoundary = false;
+    let capsuleHomeExistedDuringSession = false;
     let stageDirectoryExistedDuringBoundary = true;
+    let stageDirectoryExistedDuringSession = false;
     const { payloads, res, statuses } = createResponse();
 
     await handleWorkspaceSessionCreate({
@@ -66,11 +79,16 @@ test("handleWorkspaceSessionCreate creates workflow boundary before stage direct
       } as unknown as Request,
       res,
       sessionManager: {
-        createSession: () => ({ id: "session-1" }),
+        createSession: () => {
+          capsuleHomeExistedDuringSession = existsSync(codexHomePath);
+          stageDirectoryExistedDuringSession = existsSync(stagePath);
+          return { id: "session-1" };
+        },
       } as unknown as SessionManager,
       workflowBoundaryFacade: {
         ensureBoundary: async (params) => {
           boundaryCalls.push(`${params.workspaceSlug}:${params.stage}`);
+          capsuleHomeExistedDuringBoundary = existsSync(codexHomePath);
           stageDirectoryExistedDuringBoundary = await exists(stagePath);
           return {
             boundaryHash: "abc123",
@@ -83,7 +101,10 @@ test("handleWorkspaceSessionCreate creates workflow boundary before stage direct
     });
 
     assert.deepEqual(boundaryCalls, [`${WORKSPACE_SLUG}:virtual_simulation`]);
+    assert.equal(capsuleHomeExistedDuringBoundary, true);
     assert.equal(stageDirectoryExistedDuringBoundary, false);
+    assert.equal(capsuleHomeExistedDuringSession, true);
+    assert.equal(stageDirectoryExistedDuringSession, true);
     assert.equal(await exists(stagePath), true);
     assert.deepEqual(statuses, []);
     assert.deepEqual(payloads, [{ sessionId: "session-1" }]);

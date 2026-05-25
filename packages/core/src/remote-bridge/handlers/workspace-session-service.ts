@@ -5,6 +5,7 @@ import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
 import { isWorkflowBoundaryStage } from "../../workflow/boundary/workflow-boundary-model";
+import { prepareWorkspaceRuntimeCapsuleDirectories } from "../../workflow/runtime/workspace-runtime-capsule";
 
 const HTTP_BAD_REQUEST = 400;
 const HTTP_INTERNAL_ERROR = 500;
@@ -120,6 +121,12 @@ export const handleWorkspaceSessionCreate = async (params: {
   }
 
   try {
+    if (parsed.value.initiativeSlug) {
+      await prepareWorkspaceRuntimeCapsuleDirectories({
+        workspaceRoot: parsed.value.workspacePath,
+        workspaceSlug: parsed.value.initiativeSlug,
+      });
+    }
     if (
       parsed.value.initiativeSlug &&
       parsed.value.stage &&

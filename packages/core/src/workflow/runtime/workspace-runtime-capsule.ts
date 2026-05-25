@@ -392,20 +392,7 @@ const buildWorkflowStateSeed = (params: {
 export const bootstrapWorkspaceRuntimeCapsule = async (
   params: ResolveWorkspaceRuntimeCapsuleParams
 ): Promise<BootstrapWorkspaceRuntimeCapsuleResult> => {
-  const capsule = resolveWorkspaceRuntimeCapsule(params);
-  await Promise.all([
-    mkdir(capsule.descriptionRoot.absolutePath, { recursive: true }),
-    mkdir(capsule.localizationRoot.absolutePath, { recursive: true }),
-    mkdir(capsule.logsRoot.absolutePath, { recursive: true }),
-    mkdir(capsule.projectManagerRoot.absolutePath, { recursive: true }),
-    mkdir(capsule.settingsRoot.absolutePath, { recursive: true }),
-    mkdir(capsule.stateRoot.absolutePath, { recursive: true }),
-    mkdir(capsule.unifiedSessionsRoot.absolutePath, { recursive: true }),
-    mkdir(capsule.workflowRoot.absolutePath, { recursive: true }),
-    ...Object.values(capsule.providerHomes).map((providerHome) =>
-      mkdir(providerHome.absolutePath, { recursive: true })
-    ),
-  ]);
+  const capsule = await prepareWorkspaceRuntimeCapsuleDirectories(params);
   const now = new Date().toISOString();
   const changedPaths = await Promise.all([
     writeTextIfMissing(
@@ -432,4 +419,24 @@ export const bootstrapWorkspaceRuntimeCapsule = async (
       Boolean(value)
     ),
   };
+};
+
+export const prepareWorkspaceRuntimeCapsuleDirectories = async (
+  params: ResolveWorkspaceRuntimeCapsuleParams
+): Promise<WorkspaceRuntimeCapsule> => {
+  const capsule = resolveWorkspaceRuntimeCapsule(params);
+  await Promise.all([
+    mkdir(capsule.descriptionRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.localizationRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.logsRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.projectManagerRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.settingsRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.stateRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.unifiedSessionsRoot.absolutePath, { recursive: true }),
+    mkdir(capsule.workflowRoot.absolutePath, { recursive: true }),
+    ...Object.values(capsule.providerHomes).map((providerHome) =>
+      mkdir(providerHome.absolutePath, { recursive: true })
+    ),
+  ]);
+  return capsule;
 };
