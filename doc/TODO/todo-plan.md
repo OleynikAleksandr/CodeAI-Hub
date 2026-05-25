@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "1db6bc6f2",
+  "lastRecordedCommit": "b193fa2dd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase37.stream1.task1",
-  "expectedCommitMessage": "feat: bootstrap capsule before description boundary",
+  "currentTaskId": "phase37.stream1.task2",
+  "expectedCommitMessage": "fix: keep description clear tree clean",
   "debt": {
-    "expectedCommitMessage": "feat: bootstrap capsule before description boundary",
-    "preCommitHead": "1db6bc6f2",
+    "expectedCommitMessage": "fix: keep description clear tree clean",
+    "preCommitHead": "b193fa2dd",
     "stage": "commit_pending",
-    "taskId": "phase37.stream1.task1"
+    "taskId": "phase37.stream1.task2"
   }
 }
 ```
@@ -313,9 +313,9 @@
 
 ### Stream: Description Baseline
 105. [DONE] `phase37.stream1.task1` Move workspace capsule bootstrap before the Description boundary so the boundary contains questionnaire, workspace settings, capsule ignore rules and minimal tracked UI state (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: bootstrap capsule before description boundary`).
-106. [PENDING] Git Commit: `feat: bootstrap capsule before description boundary` (hash: TBD)
-107. [TODO] `phase37.stream1.task2` Remove Description post-clear untracked projection writes or make them rebuildable without dirtying Git (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/workflow/description/description-step-store.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `fix: keep description clear tree clean`).
-108. [TODO] Git Commit: `fix: keep description clear tree clean` (hash: TBD)
+106. [DONE] Git Commit: `feat: bootstrap capsule before description boundary` (hash: b193fa2dd)
+107. [DONE] `phase37.stream1.task2` Remove Description post-clear untracked projection writes or make them rebuildable without dirtying Git (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/workflow/description/description-step-store.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `fix: keep description clear tree clean`).
+108. [PENDING] Git Commit: `fix: keep description clear tree clean` (hash: TBD)
 
 ### Stream: Stage Start Ordering
 109. [TODO] `phase37.stream2.task1` Move Project Manager stage session creation behind target-stage boundary creation and capsule directory preparation (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: create stage sessions after boundaries`).

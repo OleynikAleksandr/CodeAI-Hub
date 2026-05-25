@@ -7,6 +7,7 @@ import test from "node:test";
 import { promisify } from "node:util";
 import type { Request, Response } from "express";
 import { Logger } from "../../telemetry/logger";
+import { bootstrapWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const execFileAsync = promisify(execFile);
@@ -309,6 +310,75 @@ test("workflow-state read ignores malformed retired state while preserving skele
       ).catch(() => null),
       null
     );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state read after Description clear rebuilds projection without dirtying Git", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "workflow-state-service-description-clear-")
+  );
+  const workspaceSlug = "demo-workspace";
+
+  try {
+    await execFileAsync("git", ["init"], { cwd: workspaceRoot });
+    await execFileAsync("git", ["config", "user.email", "test@example.com"], {
+      cwd: workspaceRoot,
+    });
+    await execFileAsync("git", ["config", "user.name", "CodeAI Test"], {
+      cwd: workspaceRoot,
+    });
+    await bootstrapWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug,
+    });
+    await execFileAsync("git", ["add", "."], { cwd: workspaceRoot });
+    await execFileAsync(
+      "git",
+      ["commit", "-m", "codeai-boundary: Description"],
+      { cwd: workspaceRoot }
+    );
+
+    const service = new WorkflowStateService({ logger: new Logger("error") });
+    const { payload, status } = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug,
+    });
+    const description = payload.description as {
+      readonly questionnairePath?: string;
+    };
+    const lastActive = payload.lastActive as {
+      readonly artifactPath?: string;
+      readonly stage?: string;
+    };
+
+    assert.equal(status, 200);
+    assert.equal(
+      description.questionnairePath,
+      `.codeai-hub/${workspaceSlug}/description/questionnaire.md`
+    );
+    assert.equal(lastActive.stage, "description");
+    assert.equal(
+      lastActive.artifactPath,
+      `.codeai-hub/${workspaceSlug}/description/questionnaire.md`
+    );
+    assert.equal(
+      await stat(
+        path.join(
+          workspaceRoot,
+          `.codeai-hub/${workspaceSlug}/description/description-step.json`
+        )
+      ).catch(() => null),
+      null
+    );
+    const { stdout: statusOutput } = await execFileAsync(
+      "git",
+      ["status", "--porcelain"],
+      { cwd: workspaceRoot }
+    );
+    assert.equal(statusOutput.trim(), "");
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
