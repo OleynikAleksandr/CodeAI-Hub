@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "5379f8dab",
+  "lastRecordedCommit": "34d41651e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase31.stream1.task1",
-  "expectedCommitMessage": "docs: plan workspace owned git rollback capsule",
+  "currentTaskId": "phase32.stream1.task1",
+  "expectedCommitMessage": "docs: expand workspace owned runtime plan",
   "debt": {
-    "expectedCommitMessage": "docs: plan workspace owned git rollback capsule",
-    "preCommitHead": "5379f8dab",
+    "expectedCommitMessage": "docs: expand workspace owned runtime plan",
+    "preCommitHead": "34d41651e",
     "stage": "commit_pending",
-    "taskId": "phase31.stream1.task1"
+    "taskId": "phase32.stream1.task1"
   }
 }
 ```
@@ -31,6 +31,7 @@
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`
   - `doc/SolidWorks-WorkFlow/Docs_Index.md`
   - `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md`
+  - `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md`
   - `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`
   - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
@@ -260,7 +261,13 @@
 
 ### Stream: Architecture Planning
 81. [DONE] `phase31.stream1.task1` Create a replacement planning document for full Git-only workflow rollback, including the workspace-owned runtime capsule, external state inventory, non-goals for manual projection/restore, and implementation phases that remove the hybrid runtime-slice rollback system (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan workspace owned git rollback capsule`).
-82. [PENDING] Git Commit: `docs: plan workspace owned git rollback capsule` (hash: TBD)
+82. [DONE] Git Commit: `docs: plan workspace owned git rollback capsule` (hash: 34d41651e)
+
+## Phase 32 - Workspace Runtime Ownership Clarification (owner: Codex, updated: 2026-05-25)
+
+### Stream: Architecture Planning
+83. [DONE] `phase32.stream1.task1` Expand the replacement planning document with the accepted per-workspace provider home/settings decision, current `~/.codeai-hub` inventory, secrets/auth boundaries, Project Manager workspace settings behavior, and missing-risk checklist for implementation (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: expand workspace owned runtime plan`).
+84. [PENDING] Git Commit: `docs: expand workspace owned runtime plan` (hash: TBD)
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
