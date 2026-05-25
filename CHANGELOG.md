@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.358] - 2026-05-25
+### Fixed
+- **Description startup is serialized across activation/session requests.** Core now runs workflow boundary creation as a per-workspace transaction, so simultaneous Project Manager `workspace-activate` and `workspace-session` calls cannot race through `git init` or produce a dirty startup tree.
+- **Boundary commits now stage explicit paths correctly.** Explicit workflow boundary files are no longer combined with broad exclude pathspecs that prevented `boundaries.json` from being staged.
+- **Failed 1.2.357 pre-submit residue self-heals.** If a workspace only contains the pre-submit `.codeai-hub/<workspaceSlug>/description/questionnaire.md` bootstrap from the failed startup path, Description boundary creation commits it as the startup baseline instead of blocking the questionnaire.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/remote-bridge/handlers/workspace-activate-service.test.js packages/core/dist/remote-bridge/handlers/workspace-session-service.test.js`
+- `npm run plan:validate`
+
 ## [1.2.357] - 2026-05-25
 ### Fixed
 - **New workspaces can load the Description questionnaire again.** Workspace activation now creates the `Description` boundary before `.codeai-hub/<workspaceSlug>` bootstrap, so the strict dirty-tree boundary guard no longer rejects a brand-new workspace before Project Manager can create/read `description/questionnaire.md`.

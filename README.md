@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.357** (Description Activation Boundary Hotfix)
+**Current Release — v1.2.358** (Boundary Startup Race Hotfix)
+
+This hotfix closes the remaining new-workspace Description startup race. Project
+Manager can issue workspace activation and workspace session creation at nearly
+the same time, so Core now serializes workflow boundary creation per workspace
+and makes Git repository initialization queue-safe.
+
+Boundary startup also removes macOS `.DS_Store` metadata before dirty-tree
+checks, stages explicit workflow boundary paths correctly, and self-heals the
+pre-submit Description residue left by the failed `1.2.357` startup path.
+
+**Previous Release — v1.2.357** (Description Activation Boundary Hotfix)
 
 This hotfix restores new-workspace Description startup after the strict
 boundary changes. Core now creates the `Description` rollback boundary before

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "6f288714c",
+  "lastRecordedCommit": "3dc81cf32",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase21.stream1.task1",
-  "expectedCommitMessage": "fix: serialize workflow boundary startup",
+  "currentTaskId": "phase23.stream1.task1",
+  "expectedCommitMessage": "docs: prepare boundary startup race release",
   "debt": {
-    "expectedCommitMessage": "fix: serialize workflow boundary startup",
-    "preCommitHead": "6f288714c",
+    "expectedCommitMessage": "docs: prepare boundary startup race release",
+    "preCommitHead": "3dc81cf32",
     "stage": "commit_pending",
-    "taskId": "phase21.stream1.task1"
+    "taskId": "phase23.stream1.task1"
   }
 }
 ```
@@ -208,18 +208,18 @@
 
 ### Stream: Serialized Boundary Startup
 61. [DONE] `phase21.stream1.task1` Serialize workflow boundary creation per workspace, make Git repository initialization queue-safe, and remove macOS metadata before dirty-tree checks (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: serialize workflow boundary startup`).
-62. [PENDING] Git Commit: `fix: serialize workflow boundary startup` (hash: TBD)
+62. [DONE] Git Commit: `fix: serialize workflow boundary startup` (hash: 3dc81cf32)
 
 ## Phase 22 - Regression Verification (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Targeted Checks
-63. [TODO] `phase22.stream1.task1` Run targeted Core build and boundary/workspace activation tests for concurrent Project Manager startup (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+63. [DONE] `phase22.stream1.task1` Run targeted Core build and boundary/workspace activation tests for concurrent Project Manager startup (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification passed: @codeai-hub/core build, concurrent boundary startup test, pre-submit Description bootstrap self-heal test, workspace activation/session tests, accepted-step commit test, and plan validation completed.
 
 ## Phase 23 - Release Build (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Release Docs
-64. [TODO] `phase23.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare boundary startup race release`).
-65. [TODO] Git Commit: `docs: prepare boundary startup race release` (hash: TBD)
+64. [DONE] `phase23.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare boundary startup race release`).
+65. [PENDING] Git Commit: `docs: prepare boundary startup race release` (hash: TBD)
 
 ### Stream: Release Build
 66. [TODO] `phase23.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build boundary startup race release`).
