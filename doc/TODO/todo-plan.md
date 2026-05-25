@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "6e3ed07a9",
+  "lastRecordedCommit": "72b4853e5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase35.stream2.task1",
-  "expectedCommitMessage": "feat: seed workspace settings from capsule",
+  "currentTaskId": "phase35.stream2.task2",
+  "expectedCommitMessage": "test: cover workspace scoped settings",
   "debt": {
-    "expectedCommitMessage": "feat: seed workspace settings from capsule",
-    "preCommitHead": "6e3ed07a9",
+    "expectedCommitMessage": "test: cover workspace scoped settings",
+    "preCommitHead": "72b4853e5",
     "stage": "commit_pending",
-    "taskId": "phase35.stream2.task1"
+    "taskId": "phase35.stream2.task2"
   }
 }
 ```
@@ -291,9 +291,9 @@
 
 ### Stream: Workspace Settings Baseline
 93. [DONE] `phase35.stream2.task1` Add workspace settings seed/read/write helpers that resolve settings through the active workspace capsule and use global settings only as defaults (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: seed workspace settings from capsule`).
-94. [PENDING] Git Commit: `feat: seed workspace settings from capsule` (hash: TBD)
-95. [TODO] `phase35.stream2.task2` Add focused tests proving settings changed in one workspace do not affect another workspace and Description baseline contains workspace settings (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`; expected commit: `test: cover workspace scoped settings`).
-96. [TODO] Git Commit: `test: cover workspace scoped settings` (hash: TBD)
+94. [DONE] Git Commit: `feat: seed workspace settings from capsule` (hash: 72b4853e5)
+95. [DONE] `phase35.stream2.task2` Add focused tests proving settings changed in one workspace do not affect another workspace and Description baseline contains workspace settings (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`; expected commit: `test: cover workspace scoped settings`).
+96. [PENDING] Git Commit: `test: cover workspace scoped settings` (hash: TBD)
 
 ## Phase 36 - Git Timeline And Boundary Authority (owner: Codex, updated: 2026-05-25)
 
