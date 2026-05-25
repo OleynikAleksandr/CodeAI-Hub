@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "74c297192",
+  "lastRecordedCommit": "1080a7cfb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase41.stream2.task2",
-  "expectedCommitMessage": "feat: use workspace kimi home for workflow sessions",
+  "currentTaskId": "phase42.stream1.task1",
+  "expectedCommitMessage": "refactor: share managed workflow git timeline",
   "debt": {
-    "expectedCommitMessage": "feat: use workspace kimi home for workflow sessions",
-    "preCommitHead": "74c297192",
+    "expectedCommitMessage": "refactor: share managed workflow git timeline",
+    "preCommitHead": "1080a7cfb",
     "stage": "commit_pending",
-    "taskId": "phase41.stream2.task2"
+    "taskId": "phase42.stream1.task1"
   }
 }
 ```
@@ -367,13 +367,13 @@
 135. [DONE] `phase41.stream2.task1` Resolve Gemini workflow `HOME` / `.gemini` roots under `runtime/providers/gemini/home` without mutating process-global `HOME` in Core (scope: `packages/Gemini_Module/src/runtime/cli-bridge-provider-home.ts, packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts, packages/Gemini_Module/src/runtime/cli-bridge.test.ts`; expected commit: `feat: use workspace gemini home for workflow sessions`).
 136. [DONE] Git Commit: `feat: use workspace gemini home for workflow sessions` (hash: 74c297192)
 137. [DONE] `phase41.stream2.task2` Resolve Kimi managed-agent workflow home under `runtime/providers/kimi/home` and add focused provider-home tests (scope: `packages/core/src/provider-registry/index.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.test.ts`; expected commit: `feat: use workspace kimi home for workflow sessions`).
-138. [PENDING] Git Commit: `feat: use workspace kimi home for workflow sessions` (hash: TBD)
+138. [DONE] Git Commit: `feat: use workspace kimi home for workflow sessions` (hash: 1080a7cfb)
 
 ## Phase 42 - Managed Workflow Git Consolidation (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Shared Git Service Adoption
-139. [TODO] `phase42.stream1.task1` Replace Diagram Modules managed Git helper operations with the shared workspace Git timeline service without changing managed artifact validation semantics (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `refactor: share managed workflow git timeline`).
-140. [TODO] Git Commit: `refactor: share managed workflow git timeline` (hash: TBD)
+139. [DONE] `phase42.stream1.task1` Replace Diagram Modules managed Git helper operations with the shared workspace Git timeline service without changing managed artifact validation semantics (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `refactor: share managed workflow git timeline`).
+140. [PENDING] Git Commit: `refactor: share managed workflow git timeline` (hash: TBD)
 141. [TODO] `phase42.stream1.task2` Migrate Diagram Modules stage/review/repair controllers to the shared Git dependency and remove direct `DiagramModulesManagedGitBoundary` construction where possible (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts`; expected commit: `refactor: migrate diagram controllers to shared git timeline`).
 142. [TODO] Git Commit: `refactor: migrate diagram controllers to shared git timeline` (hash: TBD)
 143. [TODO] `phase42.stream1.task3` Migrate Application Skeleton, Quality Gates and scaffold installer managed commits to the shared Git dependency (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts`; expected commit: `refactor: migrate managed stages to shared git timeline`).

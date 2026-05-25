@@ -33,6 +33,7 @@ const GIT_INDEX_LOCK_RE =
 const BACKSLASH_RE = /\\/gu;
 const LEADING_DOT_SLASH_RE = /^\.\//u;
 const TRAILING_SLASH_RE = /\/+$/u;
+const DOT_PREFIX = ".";
 
 interface GitCommandResult {
   readonly exitCode: number;
@@ -77,6 +78,9 @@ const filterPathSpecs = (paths: readonly string[]): readonly string[] =>
   paths.map(normalizePathSpec).filter((value) => {
     return value.length > 0 && !isGeneratedOutputPath(value);
   });
+
+const isDotPrefixedPathSpec = (value: string): boolean =>
+  normalizePathSpec(value).startsWith(DOT_PREFIX);
 
 const extractGitErrorText = (error: unknown): string => {
   if (!(error instanceof Error)) {
@@ -265,10 +269,20 @@ export class WorkflowBoundaryGit {
     if (paths.length === 0) {
       return;
     }
-    const pathspecs = paths.includes(".")
-      ? [...paths, ...GIT_EXCLUDED_PATHS]
-      : paths;
-    await this.git(workspaceRoot, ["add", "-A", "--", ...pathspecs]);
+    const dotPrefixedPaths = paths.filter(isDotPrefixedPathSpec);
+    const regularPaths = paths.filter((value) => !isDotPrefixedPathSpec(value));
+    if (dotPrefixedPaths.length > 0) {
+      await this.git(workspaceRoot, ["add", "-A", "--", ...dotPrefixedPaths]);
+    }
+    if (regularPaths.length > 0) {
+      await this.git(workspaceRoot, [
+        "add",
+        "-A",
+        "--",
+        ...regularPaths,
+        ...GIT_EXCLUDED_PATHS,
+      ]);
+    }
   }
 
   private async git(

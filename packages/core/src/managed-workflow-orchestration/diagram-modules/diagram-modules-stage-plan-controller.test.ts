@@ -331,11 +331,6 @@ test("DiagramModulesManagedGitBoundary excludes generated outputs from managed c
   try {
     await writeWorkspaceFile(
       workspaceRoot,
-      ".gitignore",
-      "node_modules/\ndist/\n"
-    );
-    await writeWorkspaceFile(
-      workspaceRoot,
       "product-parts/project-manager/README.md",
       "# Project Manager\n"
     );
