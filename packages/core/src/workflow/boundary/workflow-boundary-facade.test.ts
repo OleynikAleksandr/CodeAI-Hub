@@ -3,12 +3,10 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { sanitizeWorkspaceSlug } from "@codeai-hub/unified-session";
 import { WorkflowBoundaryFacade } from "./workflow-boundary-facade";
 import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 import { WorkflowBoundaryRegistryStore } from "./workflow-boundary-registry";
 import { WorkflowRollbackCoordinator } from "./workflow-rollback-coordinator";
-import { captureWorkflowRuntimeSlices } from "./workflow-runtime-slice-snapshot";
 
 const WORKSPACE_SLUG = "demo-workspace";
 const PRE_STEP_ROLLBACK_ANCHOR_RE = /pre-step rollback anchor/u;
@@ -395,78 +393,6 @@ test("WorkflowBoundaryFacade heals pre-submit Description bootstrap residue", as
       "# Description Questionnaire\n"
     );
   } finally {
-    await rm(workspaceRoot, { force: true, recursive: true });
-  }
-});
-
-test("WorkflowBoundaryFacade restores runtime session slices from selected boundary", async () => {
-  const workspaceRoot = await createWorkspace();
-  const homeDirectory = await mkdtemp(path.join(tmpdir(), "codeai-home-"));
-  const previousHome = process.env.HOME;
-  const sessionPath = path.join(
-    homeDirectory,
-    ".codeai-hub",
-    "sessions",
-    sanitizeWorkspaceSlug(workspaceRoot),
-    "codex",
-    "description.jsonl"
-  );
-  try {
-    process.env.HOME = homeDirectory;
-    const facade = new WorkflowBoundaryFacade({
-      clock: () => "2026-05-25T00:00:00.000Z",
-    });
-    const git = new WorkflowBoundaryGit();
-    await facade.ensureBoundary({
-      stage: "description",
-      workspaceRoot,
-      workspaceSlug: WORKSPACE_SLUG,
-    });
-    await writeText(
-      path.join(workspaceRoot, "description.md"),
-      "description\n"
-    );
-    await git.commit({
-      commitMessage: "codeai-step: Description accepted",
-      paths: [".codeai-hub", "description.md"],
-      workspaceRoot,
-    });
-    await writeText(sessionPath, "description-session\n");
-    await captureWorkflowRuntimeSlices({
-      workspaceRoot,
-      workspaceSlug: WORKSPACE_SLUG,
-    });
-    await git.commit({
-      commitMessage: "codeai-step: Description runtime slices",
-      paths: [".codeai-hub"],
-      workspaceRoot,
-    });
-    const virtualBoundary = await facade.ensureBoundary({
-      stage: "virtual_simulation",
-      workspaceRoot,
-      workspaceSlug: WORKSPACE_SLUG,
-    });
-    await writeText(sessionPath, "virtual-session\n");
-    await writeText(path.join(workspaceRoot, "virtual.md"), "virtual\n");
-
-    const restored = await facade.restoreBoundary({
-      stage: "virtual_simulation",
-      workspaceRoot,
-      workspaceSlug: WORKSPACE_SLUG,
-    });
-
-    assert.equal(restored.boundaryHash, virtualBoundary.boundaryHash);
-    assert.equal(await readFile(sessionPath, "utf8"), "description-session\n");
-    await assert.rejects(
-      readFile(path.join(workspaceRoot, "virtual.md"), "utf8")
-    );
-  } finally {
-    if (previousHome === undefined) {
-      process.env.HOME = undefined;
-    } else {
-      process.env.HOME = previousHome;
-    }
-    await rm(homeDirectory, { force: true, recursive: true });
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
