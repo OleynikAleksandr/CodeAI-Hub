@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "43ccb5282",
+  "lastRecordedCommit": "8be5b2014",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase53.stream1.task1",
-  "expectedCommitMessage": "fix: parse workflow settings dirty status before boundaries",
+  "currentTaskId": "phase55.stream1.task1",
+  "expectedCommitMessage": "docs: prepare full workflow start release",
   "debt": {
-    "expectedCommitMessage": "fix: parse workflow settings dirty status before boundaries",
-    "preCommitHead": "43ccb5282",
+    "expectedCommitMessage": "docs: prepare full workflow start release",
+    "preCommitHead": "8be5b2014",
     "stage": "commit_pending",
-    "taskId": "phase53.stream1.task1"
+    "taskId": "phase55.stream1.task1"
   }
 }
 ```
@@ -471,10 +471,30 @@
 
 ### Stream: Dirty Status Parsing
 177. [DONE] `phase53.stream1.task1` Parse real trimmed Git porcelain status entries for workflow runtime settings before boundary creation so modified tracked settings and untracked settings are both recognized (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: parse workflow settings dirty status before boundaries`).
-178. [PENDING] Git Commit: `fix: parse workflow settings dirty status before boundaries` (hash: TBD)
+178. [DONE] Git Commit: `fix: parse workflow settings dirty status before boundaries` (hash: 8be5b2014)
 
 ### Stream: Full Start Walkthrough Verification
-179. [TODO] `phase53.stream2.task1` Re-run the disposable workflow start walkthrough across Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates with dirty settings before each post-Description boundary, plus targeted Core/PM checks (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+179. [DONE] `phase53.stream2.task1` Re-run the disposable workflow start walkthrough across Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates with dirty settings before each post-Description boundary, plus targeted Core/PM checks (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Full workflow start verification passed after the dirty-status parser fix: disposable walkthrough reached provider dispatch exactly once for Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates; settings commits were created before all post-Description boundaries; the disposable workspace ended Git-clean with no warnings; targeted Core router, managed-workspace, workspace-session, workspace-activation, Project Manager settings-barrier, build:webview, typecheck:webview, and plan validation checks passed.
+
+## Phase 54 - Release Build Confirmation (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Confirmation Gate
+180. [DONE] `phase54.stream1.task1` Stop after full workflow start verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: Release build explicitly confirmed by user on 2026-05-25: build the next release for the full workflow start regression retest after successful disposable walkthrough verification.
+
+## Phase 55 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Docs
+181. [DONE] `phase55.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare full workflow start release`).
+182. [PENDING] Git Commit: `docs: prepare full workflow start release` (hash: TBD)
+
+### Stream: Release Build
+183. [TODO] `phase55.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build full workflow start release`). Result: TBD.
+184. [TODO] Git Commit: `chore: build full workflow start release` (hash: TBD)
+
+## Phase 56 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+185. [TODO] `phase56.stream1.task1` User installs the generated VSIX and verifies Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates start without session creation timeouts after start-card model changes (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

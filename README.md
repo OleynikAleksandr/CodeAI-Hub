@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.361** (Virtual Simulation Startup Hotfix)
+**Current Release — v1.2.362** (Full Workflow Start Hotfix)
+
+This hotfix restores the full workflow start chain after start-card model
+changes in the workspace-owned Git rollback architecture. Core now commits
+explicit workspace runtime settings changes as
+`codeai-settings: <Stage> start selection` before creating the next
+`codeai-boundary: <Stage>` anchor, so model/reasoning changes cannot dirty the
+pre-step boundary for Virtual Simulation, Diagram Modules, Application
+Skeleton, or Quality Gates.
+
+The release also handles the real trimmed `git status --porcelain` form for
+tracked settings changes, and was verified with a disposable walkthrough across
+`Description -> Virtual Simulation -> Diagram Modules -> Application Skeleton ->
+Quality Gates` with dirty settings before each post-Description start.
+
+**Previous Release — v1.2.361** (Virtual Simulation Startup Hotfix)
 
 This hotfix restores the `Description -> Virtual Simulation` handoff in the
 workspace-owned Git rollback architecture. Preliminary workflow acceptance now

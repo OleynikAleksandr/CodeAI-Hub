@@ -8,6 +8,23 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.362] - 2026-05-25
+### Fixed
+- **All workflow start cards can create clean boundaries after model changes.** Core now commits explicit workspace runtime settings changes as `codeai-settings: <Stage> start selection` before creating the next `codeai-boundary: <Stage>` anchor, so start-card model/reasoning changes do not dirty the pre-step boundary.
+- **Real Git status output is parsed for settings changes.** The pre-boundary settings commit recognizes the trimmed `M .codeai-hub/<workspaceSlug>/runtime/settings/settings.json` status form emitted by the Git helper, preventing the next stage from timing out on an uncommitted tracked settings edit.
+
+### Tests
+- Disposable workflow start walkthrough: `Description -> Virtual Simulation -> Diagram Modules -> Application Skeleton -> Quality Gates` with dirty settings before each post-Description boundary.
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workspace-session-service.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workspace-activate-service.test.js`
+- `npx tsx --test src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `npm run plan:validate`
+
 ## [1.2.361] - 2026-05-25
 ### Fixed
 - **Virtual Simulation can start after accepting Description.** Preliminary acceptance now records the Core completion handoff before the accepted-step Git commit, keeping the committed unified session history complete and preventing the next boundary from timing out on a dirty tree.
