@@ -2,13 +2,17 @@ import path from "node:path";
 import type { Request, Response } from "express";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
+import { isStageAtOrAfter } from "../../workflow/boundary/workflow-boundary-model";
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
 
 const HTTP_BAD_REQUEST = 400;
+const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_IMPLEMENTED = 501;
-const WORKFLOW_CLEAR_PENDING_CODE = "workflow_clear_git_boundary_pending";
-const WORKFLOW_CLEAR_PENDING_ERROR =
-  "Workflow step clear is unavailable until Core-owned Git boundary rollback is implemented";
+const DEVELOPMENT_TREE_CLEAR_PENDING_CODE =
+  "workflow_clear_development_tree_boundary_pending";
+const DEVELOPMENT_TREE_CLEAR_PENDING_ERROR =
+  "Development Tree node clear is unavailable until node-level Git boundary rollback is implemented";
 const WORKFLOW_STAGES = [
   "description",
   "virtual_simulation",
@@ -30,6 +34,10 @@ export interface WorkflowStepClearDeps {
   readonly logger: Logger;
   readonly resetWorkflowState: (workspaceSlug: string) => void;
   readonly sessionManager: SessionManager;
+  readonly workflowBoundaryFacade?: Pick<
+    WorkflowBoundaryFacade,
+    "restoreBoundary"
+  >;
 }
 
 interface ParsedClearRequest {
@@ -108,11 +116,35 @@ const parseClearRequest = (body: unknown): ParsedClearRequest | null => {
   return { workspacePath, workspaceSlug, target };
 };
 
-export const handleWorkflowStepClear = (
+const clearRuntimeSessions = (
+  parsed: ParsedClearRequest,
+  deps: WorkflowStepClearDeps
+): readonly string[] => {
+  if (parsed.target.kind !== "workflow_stage") {
+    return [];
+  }
+  const deletedSessionIds: string[] = [];
+  for (const session of deps.sessionManager.getSessionsByWorkspacePath(
+    parsed.workspacePath
+  )) {
+    if (
+      session.initiativeSlug === parsed.workspaceSlug &&
+      session.stage &&
+      isWorkflowStageId(session.stage) &&
+      isStageAtOrAfter(session.stage, parsed.target.stage) &&
+      deps.sessionManager.deleteSession(session.id)
+    ) {
+      deletedSessionIds.push(session.id);
+    }
+  }
+  return deletedSessionIds;
+};
+
+export const handleWorkflowStepClear = async (
   req: Request,
   res: Response,
-  _deps: WorkflowStepClearDeps
-): void => {
+  deps: WorkflowStepClearDeps
+): Promise<void> => {
   const parsed = parseClearRequest(req.body);
   if (!parsed) {
     res
@@ -120,9 +152,44 @@ export const handleWorkflowStepClear = (
       .json({ error: "Invalid workflow clear request" });
     return;
   }
-  res.status(HTTP_NOT_IMPLEMENTED).json({
-    code: WORKFLOW_CLEAR_PENDING_CODE,
-    error: WORKFLOW_CLEAR_PENDING_ERROR,
-    target: parsed.target,
-  });
+  if (parsed.target.kind === "development_tree_node") {
+    res.status(HTTP_NOT_IMPLEMENTED).json({
+      code: DEVELOPMENT_TREE_CLEAR_PENDING_CODE,
+      error: DEVELOPMENT_TREE_CLEAR_PENDING_ERROR,
+      target: parsed.target,
+    });
+    return;
+  }
+
+  try {
+    const restore = await (
+      deps.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
+    ).restoreBoundary({
+      stage: parsed.target.stage,
+      workspaceRoot: parsed.workspacePath,
+      workspaceSlug: parsed.workspaceSlug,
+    });
+    const deletedSessionIds = clearRuntimeSessions(parsed, deps);
+    deps.resetWorkflowState(parsed.workspaceSlug);
+    res.json({
+      cleared: true,
+      deletedSessionIds,
+      restore,
+      target: parsed.target,
+      workspaceSlug: parsed.workspaceSlug,
+    });
+  } catch (error) {
+    deps.logger.error(
+      "Failed to clear workflow step from Git boundary",
+      error as Error,
+      {
+        stage: parsed.target.stage,
+        workspacePath: parsed.workspacePath,
+        workspaceSlug: parsed.workspaceSlug,
+      }
+    );
+    res.status(HTTP_INTERNAL_ERROR).json({
+      error: "Unable to clear workflow step from Git boundary",
+    });
+  }
 };
