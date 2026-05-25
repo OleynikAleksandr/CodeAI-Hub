@@ -144,7 +144,7 @@ test("Application Skeleton start waits for selected model settings before sessio
     reasoning: "high",
   });
 
-  await Promise.resolve();
+  await new Promise((resolve) => setImmediate(resolve));
   assert.deepEqual(events, ["save:opus:/tmp/demo:demo-workspace"]);
 
   releaseSettingsSave();
@@ -154,4 +154,65 @@ test("Application Skeleton start waits for selected model settings before sessio
     "saved",
     "session:create",
   ]);
+});
+
+test("workflow starts load workspace settings before persisting selected defaults", async () => {
+  installWindowStub();
+  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
+  const fallbackSettings = createSettings();
+  const baseWorkspaceSettings = createSettings();
+  const workspaceSettings: Settings = {
+    ...baseWorkspaceSettings,
+    general: {
+      ...baseWorkspaceSettings.general,
+      localization: {
+        ...baseWorkspaceSettings.general.localization,
+        categories: {
+          ...baseWorkspaceSettings.general.localization.categories,
+          artifactsForTheUser: "ru",
+          reasoning: "ru",
+        },
+      },
+    },
+    providers: {
+      ...baseWorkspaceSettings.providers,
+      claude: {
+        ...baseWorkspaceSettings.providers.claude,
+        defaultModel: "haiku",
+      },
+    },
+  };
+
+  const loadScopes: string[] = [];
+  const savedModels: string[] = [];
+  const service = new WorkflowStepStartService({
+    getWorkflowState: async () => createWorkflowState(),
+    getSettingsPayload: () => ({ settings: fallbackSettings }),
+    loadSettingsPayload: async (scope) => {
+      loadScopes.push(`${scope.workspacePath}:${scope.workspaceSlug}`);
+      return { settings: workspaceSettings };
+    },
+    saveSettings: (settings, scope) => {
+      savedModels.push(
+        `${settings.providers.claude.defaultModel}:${scope.workspacePath}:${scope.workspaceSlug}`
+      );
+    },
+    submitService: {
+      submitQuestionnaire: async (params) =>
+        `${params.artifactLanguage}:${params.chatLanguage}`,
+    },
+  });
+
+  const sessionId = await service.startApplicationSkeleton({
+    workspaceName: "Demo Workspace",
+    workspacePath: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+    providerId: "claudeCodeCli",
+    modelId: "opus",
+    reasoning: "high",
+  });
+
+  assert.deepEqual(loadScopes, ["/tmp/demo:demo-workspace"]);
+  assert.deepEqual(savedModels, ["opus:/tmp/demo:demo-workspace"]);
+  assert.equal(sessionId, "ru:ru");
 });

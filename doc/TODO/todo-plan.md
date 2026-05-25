@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "c92cafb0e",
+  "lastRecordedCommit": "8e8b5dfe0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase59.stream2.task1",
-  "expectedCommitMessage": "chore: build application skeleton unlock release",
+  "currentTaskId": "phase61.stream1.task1",
+  "expectedCommitMessage": "fix: use workspace settings for workflow starts",
   "debt": {
-    "expectedCommitMessage": "chore: build application skeleton unlock release",
-    "preCommitHead": "c92cafb0e",
+    "expectedCommitMessage": "fix: use workspace settings for workflow starts",
+    "preCommitHead": "8e8b5dfe0",
     "stage": "commit_pending",
-    "taskId": "phase59.stream2.task1"
+    "taskId": "phase61.stream1.task1"
   }
 }
 ```
@@ -520,12 +520,23 @@
 
 ### Stream: Release Build
 194. [DONE] `phase59.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build application skeleton unlock release`). Result: Release `1.2.363` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.363.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-195. [PENDING] Git Commit: `chore: build application skeleton unlock release` (hash: TBD)
+195. [DONE] Git Commit: `chore: build application skeleton unlock release` (hash: 8e8b5dfe0)
 
 ## Phase 60 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-196. [TODO] `phase60.stream1.task1` User installs the generated VSIX and verifies Application Skeleton starts after Diagram Modules acceptance and the full workflow remains Git-clean through Quality Gates start (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+196. [DONE] `phase60.stream1.task1` User installs the generated VSIX and verifies Application Skeleton starts after Diagram Modules acceptance and the full workflow remains Git-clean through Quality Gates start (scope: user workflow acceptance; expected commit: no commit expected). Result: failed release 1.2.363 retest: settings are split between workspace runtime and legacy/global reads, so saved selections can reset or be ignored
+
+## Phase 61 - Workspace Settings Authority Regression Fix (owner: Codex, updated: 2026-05-25)
+
+### Stream: Settings Runtime Authority
+197. [DONE] `phase61.stream1.task1` Make workflow start-card settings reads and default-model persistence use the active workspace runtime settings snapshot instead of the singleton last settings payload (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-settings-transport.ts, src/client/project-manager/services/**settings*.test.ts`; expected commit: `fix: use workspace settings for workflow starts`).
+198. [PENDING] Git Commit: `fix: use workspace settings for workflow starts` (hash: TBD)
+199. [TODO] `phase61.stream1.task2` Make Core session model binding, applied turn config and translation policy resolve settings from the active workspace runtime settings file for workspace sessions (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/session-model-binding/session-model-binding-resolver.ts`; expected commit: `fix: resolve workflow sessions from workspace settings`).
+200. [TODO] Git Commit: `fix: resolve workflow sessions from workspace settings` (hash: TBD)
+
+### Stream: Regression Verification
+201. [TODO] `phase61.stream2.task1` Run focused settings authority regression tests plus targeted Project Manager/Core builds before requesting the next release build confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

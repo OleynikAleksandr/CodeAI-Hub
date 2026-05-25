@@ -38,6 +38,12 @@ import {
   updateThinkingSettings,
 } from "../../ui/src/components/settings/settings-state-helpers";
 import { resolveWorkflowChatLanguage } from "./prompt-pack-builder";
+import {
+  loadWorkflowSettingsPayload,
+  saveWorkflowSettingsAndWait,
+  type WorkflowSettingsLoader,
+  type WorkflowSettingsSaver,
+} from "./workflow-step-settings-transport";
 
 type StartWorkflowStepParams = {
   readonly workspaceName?: string;
@@ -66,7 +72,6 @@ type WorkflowStateGetter = (
 ) => ReturnType<typeof api.getWorkflowState>;
 
 type SettingsPayloadGetter = () => SettingsLoadedPayload | null;
-type SettingsSaver = (settings: Settings, scope: StartWorkflowStepParams) => Promise<void> | void;
 
 type SubmitQuestionnaireService = Pick<
   DescriptionSubmitService,
@@ -82,8 +87,6 @@ const CODEX_REASONING_LEVEL_SET = new Set<string>(
 const GEMINI_THINKING_LEVEL_SET = new Set<string>(
   GEMINI_THINKING_LEVELS.map((level) => level.name)
 );
-const SETTINGS_SAVE_TIMEOUT_MS = 5_000;
-
 const isSettings = (value: unknown): value is Settings =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
 
@@ -194,40 +197,6 @@ const applyStartCardModelDefaults = (
   return nextSettings;
 };
 
-const saveSettingsAndWait: SettingsSaver = (settings, scope) =>
-  new Promise((resolve, reject) => {
-    let settled = false;
-    const cleanup = (): void => {
-      if (settled) {
-        return;
-      }
-      settled = true;
-      window.clearTimeout(timeoutId);
-      unsubscribe();
-    };
-    const timeoutId = window.setTimeout(() => {
-      cleanup();
-      reject(new Error("Settings save timed out before workflow start."));
-    }, SETTINGS_SAVE_TIMEOUT_MS);
-    const unsubscribe = api.onCoreEvent((message) => {
-      if (message.type === "settings:saved") {
-        cleanup();
-        resolve();
-        return;
-      }
-      if (message.type === "settings:save-error") {
-        cleanup();
-        const payload = message.payload;
-        const error =
-          payload && typeof payload === "object" && "error" in payload
-            ? String(payload.error)
-            : "Settings save failed before workflow start.";
-        reject(new Error(error));
-      }
-    });
-    api.saveSettings(settings, scope);
-  });
-
 const readDiagramModulesSubstep = (
   state: Awaited<ReturnType<typeof api.getWorkflowState>> | null
 ): string | null => {
@@ -303,28 +272,46 @@ const resolveExistingStageSessionIdForExplicitStart = (options: {
 export class WorkflowStepStartService {
   private readonly getWorkflowState: WorkflowStateGetter;
   private readonly getSettingsPayload: SettingsPayloadGetter;
-  private readonly saveSettings: SettingsSaver;
+  private readonly loadSettingsPayload: WorkflowSettingsLoader;
+  private readonly saveSettings: WorkflowSettingsSaver;
   private readonly submitService: SubmitQuestionnaireService;
 
   constructor(options?: {
     readonly getWorkflowState?: WorkflowStateGetter;
     readonly getSettingsPayload?: SettingsPayloadGetter;
-    readonly saveSettings?: SettingsSaver;
+    readonly loadSettingsPayload?: WorkflowSettingsLoader;
+    readonly saveSettings?: WorkflowSettingsSaver;
     readonly submitService?: SubmitQuestionnaireService;
   }) {
     this.getWorkflowState =
       options?.getWorkflowState ?? api.getWorkflowState.bind(api);
     this.getSettingsPayload =
       options?.getSettingsPayload ?? api.getLastSettingsPayload.bind(api);
-    this.saveSettings = options?.saveSettings ?? saveSettingsAndWait;
+    this.loadSettingsPayload =
+      options?.loadSettingsPayload ??
+      (options?.getSettingsPayload
+        ? async () => options.getSettingsPayload?.() ?? null
+        : loadWorkflowSettingsPayload);
+    this.saveSettings = options?.saveSettings ?? saveWorkflowSettingsAndWait;
     this.submitService =
       options?.submitService ?? new DescriptionSubmitService();
   }
 
-  private async persistStartCardModelDefaults(
+  private async resolveWorkflowSettingsPayload(
     params: StartWorkflowStepParams
+  ): Promise<SettingsLoadedPayload | null> {
+    try {
+      return await this.loadSettingsPayload(params);
+    } catch {
+      return this.getSettingsPayload();
+    }
+  }
+
+  private async persistStartCardModelDefaults(
+    params: StartWorkflowStepParams,
+    settingsPayload: SettingsLoadedPayload | null
   ): Promise<void> {
-    const settings = this.getSettingsPayload()?.settings;
+    const settings = settingsPayload?.settings;
     if (!isSettings(settings)) {
       return;
     }
@@ -362,8 +349,8 @@ export class WorkflowStepStartService {
     if (!finalDescriptionPath) {
       throw new Error("Missing Final_Description.md. Complete Description step first.");
     }
-    const settingsPayload = this.getSettingsPayload();
-    await this.persistStartCardModelDefaults(params);
+    const settingsPayload = await this.resolveWorkflowSettingsPayload(params);
+    await this.persistStartCardModelDefaults(params, settingsPayload);
     const artifactLanguage = resolveArtifactsForTheUserLanguage(settingsPayload);
     const chatLanguage = resolveWorkflowChatLanguage(settingsPayload);
     return this.submitService.submitQuestionnaire({
@@ -403,8 +390,8 @@ export class WorkflowStepStartService {
       );
     }
     const progressSubstep = readDiagramModulesSubstep(state);
-    const settingsPayload = this.getSettingsPayload();
-    await this.persistStartCardModelDefaults(params);
+    const settingsPayload = await this.resolveWorkflowSettingsPayload(params);
+    await this.persistStartCardModelDefaults(params, settingsPayload);
     const artifactLanguage = resolveArtifactsForTheUserLanguage(settingsPayload);
     const chatLanguage = resolveWorkflowChatLanguage(settingsPayload);
     const questionnairePath =
@@ -445,8 +432,8 @@ export class WorkflowStepStartService {
         "Application Skeleton is managed by the Core preview boundary."
       );
     }
-    const settingsPayload = this.getSettingsPayload();
-    await this.persistStartCardModelDefaults(params);
+    const settingsPayload = await this.resolveWorkflowSettingsPayload(params);
+    await this.persistStartCardModelDefaults(params, settingsPayload);
     return this.submitService.submitQuestionnaire({
       artifactLanguage: resolveArtifactsForTheUserLanguage(settingsPayload),
       chatLanguage: resolveWorkflowChatLanguage(settingsPayload),
@@ -481,8 +468,8 @@ export class WorkflowStepStartService {
         "Quality Gates is managed by the Core preview boundary."
       );
     }
-    const settingsPayload = this.getSettingsPayload();
-    await this.persistStartCardModelDefaults(params);
+    const settingsPayload = await this.resolveWorkflowSettingsPayload(params);
+    await this.persistStartCardModelDefaults(params, settingsPayload);
     return this.submitService.submitQuestionnaire({
       artifactLanguage: resolveArtifactsForTheUserLanguage(settingsPayload),
       chatLanguage: resolveWorkflowChatLanguage(settingsPayload),
