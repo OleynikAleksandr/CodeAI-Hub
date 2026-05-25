@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.360** (Workspace-Owned Git Rollback)
+**Current Release — v1.2.361** (Virtual Simulation Startup Hotfix)
+
+This hotfix restores the `Description -> Virtual Simulation` handoff in the
+workspace-owned Git rollback architecture. Preliminary workflow acceptance now
+writes the Core completion message before the `codeai-step: <Stage> accepted`
+commit, so the committed unified session history includes the final acceptance
+handoff and the next stage can create a clean Git boundary.
+
+The workspace runtime capsule also ignores volatile provider WAL/tmp files, and
+Project Manager start-card model/reasoning changes now save through the active
+workspace settings scope before session creation. Selecting a model on the
+Virtual Simulation start card updates
+`.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` instead of falling
+back to global settings.
+
+**Previous Release — v1.2.360** (Workspace-Owned Git Rollback)
 
 This replacement build removes the hybrid Clear/Undo rollback path and moves
 workflow rollback truth into the workspace Git tree. Each workspace now owns a

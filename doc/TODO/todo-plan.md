@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "695edf548",
+  "lastRecordedCommit": "f5e94c038",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase48.stream2.task1",
-  "expectedCommitMessage": "fix: persist workflow start settings to workspace",
+  "currentTaskId": "phase50.stream2.task1",
+  "expectedCommitMessage": "docs: prepare virtual simulation startup release",
   "debt": {
-    "expectedCommitMessage": "fix: persist workflow start settings to workspace",
-    "preCommitHead": "695edf548",
+    "expectedCommitMessage": "docs: prepare virtual simulation startup release",
+    "preCommitHead": "f5e94c038",
     "stage": "commit_pending",
-    "taskId": "phase48.stream2.task1"
+    "taskId": "phase50.stream2.task1"
   }
 }
 ```
@@ -433,12 +433,30 @@
 
 ### Stream: Workspace Settings Start Card
 165. [DONE] `phase48.stream2.task1` Persist workflow start-card model/reasoning selections through the active workspace settings scope so `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` is updated before session creation (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `fix: persist workflow start settings to workspace`).
-166. [PENDING] Git Commit: `fix: persist workflow start settings to workspace` (hash: TBD)
+166. [DONE] Git Commit: `fix: persist workflow start settings to workspace` (hash: f5e94c038)
 
 ## Phase 49 - Regression Verification (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Targeted Checks
-167. [TODO] `phase49.stream1.task1` Run targeted Core/Project Manager tests and plan validation for clean preliminary acceptance and workspace-scoped start settings (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+167. [DONE] `phase49.stream1.task1` Run targeted Core/Project Manager tests and plan validation for clean preliminary acceptance and workspace-scoped start settings (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification passed: @codeai-hub/core build, preliminary routing clean-tree regression test, build:webview, typecheck:webview, workflow start settings-barrier test, and plan validation completed.
+
+## Phase 50 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Confirmation Gate
+168. [DONE] `phase50.stream1.task1` Stop after regression fixes and targeted verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: Release build explicitly confirmed by user on 2026-05-25: build the next release for Virtual Simulation startup regression retest.
+
+### Stream: Release Docs
+169. [DONE] `phase50.stream2.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare virtual simulation startup release`).
+170. [PENDING] Git Commit: `docs: prepare virtual simulation startup release` (hash: TBD)
+
+### Stream: Release Build
+171. [TODO] `phase50.stream3.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build virtual simulation startup release`).
+172. [TODO] Git Commit: `chore: build virtual simulation startup release` (hash: TBD)
+
+## Phase 51 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+173. [TODO] `phase51.stream1.task1` User installs the generated VSIX and verifies Description acceptance leaves clean Git, Virtual Simulation session starts, start-card model changes persist to workspace runtime settings, and the full Clear rollback workflow remains clean (scope: user workflow acceptance; no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

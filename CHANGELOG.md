@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.361] - 2026-05-25
+### Fixed
+- **Virtual Simulation can start after accepting Description.** Preliminary acceptance now records the Core completion handoff before the accepted-step Git commit, keeping the committed unified session history complete and preventing the next boundary from timing out on a dirty tree.
+- **Volatile Codex runtime residue no longer blocks the next workflow stage.** The workspace runtime capsule ignores provider WAL/SHM/tmp files while keeping rollback-relevant settings, sessions, and provider home state trackable.
+- **Start-card model changes are saved to workspace settings.** Workflow stage start cards now persist model/reasoning selections with the active workspace scope, so `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` updates before session creation.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-routing.test.js`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `npx tsx --test src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`
+- `npm run plan:validate`
+
 ## [1.2.360] - 2026-05-25
 ### Changed
 - **Workflow Clear is now plain workspace Git rollback.** Clear resolves the selected workflow boundary from Git history and restores it with `git reset --hard <boundaryHash>` plus `git clean -fd`, without runtime-slice copy/restore or path-scoped cleanup fallbacks.
