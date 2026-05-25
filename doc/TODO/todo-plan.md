@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "867fe12df",
+  "lastRecordedCommit": "a514ea094",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream70.task2",
-  "expectedCommitMessage": "docs: plan legacy clear undo cleanup",
+  "currentTaskId": "phase8.stream70.task3",
+  "expectedCommitMessage": "refactor: remove workflow mutation journal captures",
   "debt": {
-    "expectedCommitMessage": "docs: plan legacy clear undo cleanup",
-    "preCommitHead": "867fe12df",
+    "expectedCommitMessage": "refactor: remove workflow mutation journal captures",
+    "preCommitHead": "a514ea094",
     "stage": "commit_pending",
-    "taskId": "phase8.stream70.task2"
+    "taskId": "phase8.stream70.task3"
   }
 }
 ```
@@ -703,9 +703,9 @@
 468. [DONE] `phase8.stream70.task1` Create the Core-owned Git boundary Clear architecture planning document and reopen the active scope after v1.2.353 Clear acceptance failed (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan git boundary clear architecture`).
 469. [DONE] Git Commit: `docs: plan git boundary clear architecture` (hash: 867fe12df)
 470. [DONE] `phase8.stream70.task2` Audit the legacy Clear/Undo implementation and split removal work into microtasks that preserve the Project Manager Clear button/menu contract (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan legacy clear undo cleanup`).
-471. [PENDING] Git Commit: `docs: plan legacy clear undo cleanup` (hash: TBD)
-472. [TODO] `phase8.stream70.task3` Remove mutation-journal capture from session/message workflow write paths while preserving the normal write/session behavior (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `refactor: remove workflow mutation journal captures`).
-473. [TODO] Git Commit: `refactor: remove workflow mutation journal captures` (hash: TBD)
+471. [DONE] Git Commit: `docs: plan legacy clear undo cleanup` (hash: a514ea094)
+472. [DONE] `phase8.stream70.task3` Remove mutation-journal capture from session/message workflow write paths while preserving the normal write/session behavior (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `refactor: remove workflow mutation journal captures`).
+473. [PENDING] Git Commit: `refactor: remove workflow mutation journal captures` (hash: TBD)
 474. [TODO] `phase8.stream70.task4` Remove undo-ledger recording from artifact upsert, workspace file write, and development-tree materialization paths (scope: `packages/core/src/remote-bridge/handlers/http-api-artifact-upsert-service.ts, packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.ts`; expected commit: `refactor: remove workflow undo ledger writes`).
 475. [TODO] Git Commit: `refactor: remove workflow undo ledger writes` (hash: TBD)
 476. [TODO] `phase8.stream70.task5` Replace the legacy Clear backend with an explicit unavailable Core response that keeps request validation and the Project Manager endpoint contract for the future Git-boundary implementation (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, src/client/project-manager/services/workflow-step-clear-client.ts`; expected commit: `refactor: disable legacy workflow clear backend`).

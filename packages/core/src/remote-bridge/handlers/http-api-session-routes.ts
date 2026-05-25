@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import { captureWorkflowMutation } from "../../workflow/undo/workflow-mutation-journal-runtime";
 import {
   buildWorkflowStageArtifactUpsertPlan,
   parseArtifactUpsertPayload,
@@ -118,15 +117,7 @@ export class HttpApiSessionRoutes {
       res.status(HTTP_BAD_REQUEST).json({ error: planResult.error });
       return;
     }
-    const writeResult = await captureWorkflowMutation(
-      {
-        source: "artifact_upsert_diff",
-        stage: planResult.value.stage,
-        workspaceRoot: planResult.value.workspacePath,
-        workspaceSlug: planResult.value.workspaceSlug,
-      },
-      async () => await writeArtifactUpsertPlan(planResult.value)
-    );
+    const writeResult = await writeArtifactUpsertPlan(planResult.value);
     if (!writeResult.ok) {
       this.deps.logger.error(
         "Failed to write artifact upserts",

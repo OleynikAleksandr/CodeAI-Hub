@@ -5,8 +5,6 @@ import type { SessionContinuityFacade } from "../../session-continuity/session-c
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
-import { captureWorkflowMutation } from "../../workflow/undo/workflow-mutation-journal-runtime";
-import type { WorkflowUndoStageId } from "../../workflow/undo/workflow-step-undo-ledger";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type {
@@ -415,21 +413,7 @@ export class SessionRequestHandler {
     sessionId: string,
     messagePayload: MessageContentPayload
   ): Promise<void> {
-    const session = this.sessionManager.getSession(sessionId);
-    if (!(session?.initiativeSlug && session.stage)) {
-      await this.sessionActions.handleMessage(sessionId, messagePayload);
-      return;
-    }
-    await captureWorkflowMutation(
-      {
-        source: "session_message_turn_diff",
-        stage: session.stage as WorkflowUndoStageId,
-        workspaceRoot: session.workspacePath,
-        workspaceSlug: session.initiativeSlug,
-      },
-      async () =>
-        await this.sessionActions.handleMessage(sessionId, messagePayload)
-    );
+    await this.sessionActions.handleMessage(sessionId, messagePayload);
   }
 
   async handleDelete(sessionId: string): Promise<void> {
