@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "f8decc490",
+  "lastRecordedCommit": "5342db787",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase26.stream1.task1",
-  "expectedCommitMessage": "fix: start diagram modules after boundary",
+  "currentTaskId": "phase28.stream1.task1",
+  "expectedCommitMessage": "docs: prepare diagram modules startup release",
   "debt": {
-    "expectedCommitMessage": "fix: start diagram modules after boundary",
-    "preCommitHead": "f8decc490",
+    "expectedCommitMessage": "docs: prepare diagram modules startup release",
+    "preCommitHead": "5342db787",
     "stage": "commit_pending",
-    "taskId": "phase26.stream1.task1"
+    "taskId": "phase28.stream1.task1"
   }
 }
 ```
@@ -234,18 +234,18 @@
 
 ### Stream: Boundary-First Managed Start
 71. [DONE] `phase26.stream1.task1` Move Diagram Modules managed scaffold installation fully behind the Core-owned managed start boundary and add regression coverage for websocket `session:create` preflight plus managed session startup order (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: start diagram modules after boundary`).
-72. [PENDING] Git Commit: `fix: start diagram modules after boundary` (hash: TBD)
+72. [DONE] Git Commit: `fix: start diagram modules after boundary` (hash: 5342db787)
 
 ## Phase 27 - Regression Verification (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Targeted Checks
-73. [TODO] `phase27.stream1.task1` Run targeted Core build and focused tests for Diagram Modules websocket start, managed scaffold checkpointing, boundary order, and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+73. [DONE] `phase27.stream1.task1` Run targeted Core build and focused tests for Diagram Modules websocket start, managed scaffold checkpointing, boundary order, and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification passed: `npm run build --workspace @codeai-hub/core`, `npm run plan:validate`, `node --test dist/remote-bridge/remote-bridge-session-create-router.test.js`, `node --test dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js`, and `node --test dist/workflow/boundary/workflow-boundary-facade.test.js`.
 
 ## Phase 28 - Release Build (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Release Docs
-74. [TODO] `phase28.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules startup release`).
-75. [TODO] Git Commit: `docs: prepare diagram modules startup release` (hash: TBD)
+74. [DONE] `phase28.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare diagram modules startup release`).
+75. [PENDING] Git Commit: `docs: prepare diagram modules startup release` (hash: TBD)
 
 ### Stream: Release Build
 76. [TODO] `phase28.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build diagram modules startup release`).

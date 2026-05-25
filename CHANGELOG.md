@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.359] - 2026-05-25
+### Fixed
+- **Diagram Modules Start no longer times out on scaffold residue.** Project Manager websocket `session:create` now leaves the managed scaffold to the Core-owned managed start path, so Diagram Modules can create a clean pre-step Git boundary before `.husky`, `doc/TODO`, `package.json`, or `scripts` are written.
+- **Managed scaffold checkpointing still happens before provider dispatch.** Core continues to install and commit the Diagram Modules managed workspace scaffold behind the boundary, preserving rollback semantics for Clear.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js`
+- `npm run plan:validate`
+
 ## [1.2.358] - 2026-05-25
 ### Fixed
 - **Description startup is serialized across activation/session requests.** Core now runs workflow boundary creation as a per-workspace transaction, so simultaneous Project Manager `workspace-activate` and `workspace-session` calls cannot race through `git init` or produce a dirty startup tree.
