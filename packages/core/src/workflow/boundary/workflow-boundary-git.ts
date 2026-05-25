@@ -50,6 +50,11 @@ export interface WorkflowBoundaryGitOptions {
   readonly sleep?: (ms: number) => Promise<void>;
 }
 
+type WorkflowBoundaryGitCleanWorktreeParams = Pick<
+  WorkflowBoundaryGitCleanParams,
+  "workspaceRoot"
+>;
+
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -163,14 +168,12 @@ export class WorkflowBoundaryGit {
     });
   }
 
-  async cleanPaths(params: WorkflowBoundaryGitCleanParams): Promise<void> {
+  async cleanWorktree(
+    params: WorkflowBoundaryGitCleanWorktreeParams
+  ): Promise<void> {
     await this.runExclusive(params.workspaceRoot, async () => {
-      const paths = filterPathSpecs(params.paths);
-      if (paths.length === 0) {
-        return;
-      }
       await this.ensureRepositoryUnlocked(params.workspaceRoot);
-      await this.git(params.workspaceRoot, ["clean", "-fd", "--", ...paths]);
+      await this.git(params.workspaceRoot, ["clean", "-fd"]);
     });
   }
 

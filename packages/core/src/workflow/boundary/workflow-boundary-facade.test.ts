@@ -58,9 +58,12 @@ test("WorkflowBoundaryFacade restores selected stage boundary and prunes downstr
       workspaceSlug: WORKSPACE_SLUG,
     });
     await writeFile(path.join(workspaceRoot, "diagram.md"), "diagram\n");
+    await writeText(
+      path.join(workspaceRoot, "scratch", "nested", "temp.txt"),
+      "untracked\n"
+    );
 
     const restored = await facade.restoreBoundary({
-      cleanPaths: ["diagram.md"],
       stage: "diagram_modules",
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
@@ -78,6 +81,12 @@ test("WorkflowBoundaryFacade restores selected stage boundary and prunes downstr
     );
     await assert.rejects(
       readFile(path.join(workspaceRoot, "diagram.md"), "utf8")
+    );
+    await assert.rejects(
+      readFile(
+        path.join(workspaceRoot, "scratch", "nested", "temp.txt"),
+        "utf8"
+      )
     );
     const registryJson = JSON.parse(
       await readFile(descriptionBoundary.registryPath, "utf8")
@@ -260,7 +269,6 @@ test("WorkflowBoundaryFacade restores from Git history when registry projection 
       JSON.stringify({ entries: [], workspaceSlug: WORKSPACE_SLUG }, null, 2)
     );
     const restored = await facade.restoreBoundary({
-      cleanPaths: ["diagram.md"],
       stage: "diagram_modules",
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
@@ -374,7 +382,6 @@ test("WorkflowBoundaryFacade restores runtime session slices from selected bound
     await writeText(path.join(workspaceRoot, "virtual.md"), "virtual\n");
 
     const restored = await facade.restoreBoundary({
-      cleanPaths: ["virtual.md"],
       stage: "virtual_simulation",
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,

@@ -26,17 +26,10 @@ export interface WorkflowBoundaryEnsureParams {
 }
 
 export interface WorkflowBoundaryRestoreParams {
-  readonly cleanPaths?: readonly string[];
   readonly stage: WorkflowStageId;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }
-
-const DEFAULT_CLEAN_PATHS = [
-  ".codeai-hub",
-  "doc/TODO/stages",
-  "product-parts",
-] as const;
 
 const formatDirtyBoundaryError = (paths: readonly string[]): string =>
   [
@@ -153,10 +146,7 @@ export class WorkflowBoundaryFacade {
       hash: target.boundaryHash,
       workspaceRoot: params.workspaceRoot,
     });
-    await this.#git.cleanPaths({
-      paths: params.cleanPaths ?? DEFAULT_CLEAN_PATHS,
-      workspaceRoot: params.workspaceRoot,
-    });
+    await this.#git.cleanWorktree({ workspaceRoot: params.workspaceRoot });
     await restoreWorkflowRuntimeSlices({
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,

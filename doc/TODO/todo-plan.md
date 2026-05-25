@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "c7885325b",
+  "lastRecordedCommit": "a1eafa595",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase36.stream1.task2",
-  "expectedCommitMessage": "refactor: demote boundary registry authority",
+  "currentTaskId": "phase36.stream2.task1",
+  "expectedCommitMessage": "refactor: use full git clean for workflow rollback",
   "debt": {
-    "expectedCommitMessage": "refactor: demote boundary registry authority",
-    "preCommitHead": "c7885325b",
+    "expectedCommitMessage": "refactor: use full git clean for workflow rollback",
+    "preCommitHead": "a1eafa595",
     "stage": "commit_pending",
-    "taskId": "phase36.stream1.task2"
+    "taskId": "phase36.stream2.task1"
   }
 }
 ```
@@ -301,11 +301,11 @@
 97. [DONE] `phase36.stream1.task1` Add stable boundary commit parsing and Git-log lookup so `codeai-boundary: <Stage>` history is the rollback authority instead of tracked `boundaries.json` (scope: `packages/core/src/workflow/boundary/workflow-boundary-model.ts, packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: resolve workflow boundaries from git log`).
 98. [DONE] Git Commit: `feat: resolve workflow boundaries from git log` (hash: c7885325b)
 99. [DONE] `phase36.stream1.task2` Demote `workflow-boundary-registry` to rebuildable projection or remove it from rollback decision paths (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `refactor: demote boundary registry authority`).
-100. [PENDING] Git Commit: `refactor: demote boundary registry authority` (hash: TBD)
+100. [DONE] Git Commit: `refactor: demote boundary registry authority` (hash: a1eafa595)
 
 ### Stream: Full Git Rollback Primitive
-101. [TODO] `phase36.stream2.task1` Replace path-scoped `cleanPaths` with full-worktree clean and remove stage-specific cleanup lists from boundary restore params (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `refactor: use full git clean for workflow rollback`).
-102. [TODO] Git Commit: `refactor: use full git clean for workflow rollback` (hash: TBD)
+101. [DONE] `phase36.stream2.task1` Replace path-scoped `cleanPaths` with full-worktree clean and remove stage-specific cleanup lists from boundary restore params (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `refactor: use full git clean for workflow rollback`).
+102. [PENDING] Git Commit: `refactor: use full git clean for workflow rollback` (hash: TBD)
 103. [TODO] `phase36.stream2.task2` Introduce a workflow rollback coordinator that runs stop/quiesce, reset hard, full clean, projection rebuild and clean-tree assert as one Core-owned transaction (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: coordinate workflow git rollback`).
 104. [TODO] Git Commit: `feat: coordinate workflow git rollback` (hash: TBD)
 
