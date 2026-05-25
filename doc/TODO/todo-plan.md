@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "f9f36e1aa",
+  "lastRecordedCommit": "b59e597f8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream70.task11",
-  "expectedCommitMessage": "refactor: remove legacy workflow git rollback facade",
+  "currentTaskId": "phase8.stream70.task12",
+  "expectedCommitMessage": "test: verify legacy clear undo cleanup",
   "debt": {
-    "expectedCommitMessage": "refactor: remove legacy workflow git rollback facade",
-    "preCommitHead": "f9f36e1aa",
+    "expectedCommitMessage": "test: verify legacy clear undo cleanup",
+    "preCommitHead": "b59e597f8",
     "stage": "commit_pending",
-    "taskId": "phase8.stream70.task11"
+    "taskId": "phase8.stream70.task12"
   }
 }
 ```
@@ -715,9 +715,9 @@
 484. [DONE] `phase8.stream70.task9` Delete the workflow undo and step-checkpoint modules after all runtime imports are gone, and update the workspace-file write test so it asserts direct file writes instead of undo-ledger side effects (scope: `packages/core/src/workflow/undo, packages/core/src/workflow/step-checkpoint, packages/core/src/remote-bridge/handlers/workspace-file-service.test.ts`; scope exception reason: deleting the undo module has no green intermediate while the workspace-file test imports its ledger store and the step-checkpoint module imports the undo stage type; expected commit: `refactor: remove workflow undo module`).
 485. [DONE] Git Commit: `refactor: remove workflow undo module` (hash: f9f36e1aa)
 488. [DONE] `phase8.stream70.task11` Delete the obsolete stage-bound Git rollback facade that predated the Core-owned boundary registry architecture (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts`; expected commit: `refactor: remove legacy workflow git rollback facade`).
-489. [PENDING] Git Commit: `refactor: remove legacy workflow git rollback facade` (hash: TBD)
-490. [TODO] `phase8.stream70.task12` Run targeted Core verification after legacy Clear/Undo removal and record the result before asking for the next release-build gate (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify legacy clear undo cleanup`).
-491. [TODO] Git Commit: `test: verify legacy clear undo cleanup` (hash: TBD)
+489. [DONE] Git Commit: `refactor: remove legacy workflow git rollback facade` (hash: b59e597f8)
+490. [DONE] `phase8.stream70.task12` Run targeted Core verification after legacy Clear/Undo removal and record the result before asking for the next release-build gate (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify legacy clear undo cleanup`). Result: `npm run build --workspace @codeai-hub/core` passed; `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.test.js packages/core/dist/remote-bridge/handlers/workspace-file-service.test.js` passed 4/4.
+491. [PENDING] Git Commit: `test: verify legacy clear undo cleanup` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
