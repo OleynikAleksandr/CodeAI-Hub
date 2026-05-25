@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "fbc4cca6c",
+  "lastRecordedCommit": "4abeaaf1b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase39.stream1.task2",
-  "expectedCommitMessage": "test: cover pure git workflow clear",
+  "currentTaskId": "phase40.stream1.task1",
+  "expectedCommitMessage": "feat: store workflow sessions in runtime capsule",
   "debt": {
-    "expectedCommitMessage": "test: cover pure git workflow clear",
-    "preCommitHead": "fbc4cca6c",
+    "expectedCommitMessage": "feat: store workflow sessions in runtime capsule",
+    "preCommitHead": "4abeaaf1b",
     "stage": "commit_pending",
-    "taskId": "phase39.stream1.task2"
+    "taskId": "phase40.stream1.task1"
   }
 }
 ```
@@ -343,13 +343,13 @@
 121. [DONE] `phase39.stream1.task1` Rewrite the Core Clear endpoint to call the workflow rollback coordinator and stop active downstream sessions without manual file delete/restore side channels (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `refactor: clear workflow steps through git rollback`).
 122. [DONE] Git Commit: `refactor: clear workflow steps through git rollback` (hash: fbc4cca6c)
 123. [DONE] `phase39.stream1.task2` Add regression coverage for Clear Diagram Modules, Clear Virtual Simulation and Clear Description clean-tree behavior through the HTTP handler contract (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-rewrite-boundary.test.ts`; expected commit: `test: cover pure git workflow clear`).
-124. [PENDING] Git Commit: `test: cover pure git workflow clear` (hash: TBD)
+124. [DONE] Git Commit: `test: cover pure git workflow clear` (hash: 4abeaaf1b)
 
 ## Phase 40 - Workspace-Owned Unified Sessions (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Unified Session Storage
-125. [TODO] `phase40.stream1.task1` Move workflow unified session storage from global `~/.codeai-hub/sessions` into the active workspace runtime capsule while preserving non-workflow/global callers as explicit legacy paths (scope: `packages/core/src/unified-session/storage.ts, packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts, packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.test.ts`; expected commit: `feat: store workflow sessions in runtime capsule`).
-126. [TODO] Git Commit: `feat: store workflow sessions in runtime capsule` (hash: TBD)
+125. [DONE] `phase40.stream1.task1` Move workflow unified session storage from global `~/.codeai-hub/sessions` into the active workspace runtime capsule while preserving non-workflow/global callers as explicit legacy paths (scope: `packages/core/src/unified-session/storage.ts, packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.ts, packages/core/src/remote-bridge/handlers/session-request-handler-continuity-root.test.ts`; expected commit: `feat: store workflow sessions in runtime capsule`).
+126. [PENDING] Git Commit: `feat: store workflow sessions in runtime capsule` (hash: TBD)
 127. [TODO] `phase40.stream1.task2` Retarget dialog history/list/open services to read workflow sessions from the active workspace capsule and keep global reads only for explicit legacy/non-workflow dialogs (scope: `packages/core/src/remote-bridge/handlers/dialog-history-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.ts, packages/core/src/remote-bridge/handlers/dialog-list-service.test.ts`; expected commit: `refactor: read workflow dialogs from capsule sessions`).
 128. [TODO] Git Commit: `refactor: read workflow dialogs from capsule sessions` (hash: TBD)
 129. [TODO] `phase40.stream1.task3` Retarget Description dialog sync and dialog segment metadata to capsule session roots so Clear removes native and unified workflow session history through Git (scope: `packages/core/src/remote-bridge/handlers/session-description-dialog-sync.ts, packages/core/src/remote-bridge/handlers/session-request-handler-dialog-segment-meta.ts, packages/core/src/remote-bridge/handlers/session-request-handler.create-resume.test.ts`; expected commit: `refactor: sync workflow dialogs through capsule`).

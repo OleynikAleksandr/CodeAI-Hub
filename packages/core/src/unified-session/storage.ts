@@ -13,6 +13,7 @@ import {
 import type { Session, SessionMessage } from "../session-manager";
 import { SessionMessageLocalizationProjector } from "../session-translation/session-message-localization-projector";
 import type { Logger } from "../telemetry/logger";
+import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import { getWorkspaceKeyFromPath } from "../workspaces/workspace-key";
 import {
   backfillUnifiedSessionHistory,
@@ -22,6 +23,7 @@ import { UnifiedSessionStorageDiagnostics } from "./unified-session-storage-diag
 import { listUnifiedSessionWorkspaceSlugs } from "./workspace-slugs";
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
+export const WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG = "unified";
 const sanitizeSessionId = (value: string): string =>
   sanitizeWorkspaceSlug(value);
 
@@ -30,10 +32,16 @@ interface PendingSession {
   readonly historySessionIdLocked: boolean;
   readonly providerId: string;
   providerSessionId?: string;
+  readonly rootDirectory: string;
   translationWriter?: SessionTranslationOverlayWriter;
   readonly workspaceSlug: string;
   writer?: UnifiedSessionWriter;
   writerSessionId?: string;
+}
+
+interface SessionHistoryTarget {
+  readonly rootDirectory: string;
+  readonly workspaceSlug: string;
 }
 
 export class UnifiedSessionStorage {
@@ -61,14 +69,31 @@ export class UnifiedSessionStorage {
     this.rootDirectory = options.rootDirectory ?? SESSION_ROOT;
   }
 
+  private resolveSessionHistoryTarget(session: Session): SessionHistoryTarget {
+    if (session.initiativeSlug && session.stage && session.workspacePath) {
+      const capsule = resolveWorkspaceRuntimeCapsule({
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+      return {
+        rootDirectory: capsule.sessionsRoot.absolutePath,
+        workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+      };
+    }
+    return {
+      rootDirectory: this.rootDirectory,
+      workspaceSlug: getWorkspaceKeyFromPath(
+        session.workspacePath,
+        this.defaultWorkspaceSlug
+      ),
+    };
+  }
+
   register(
     session: Session,
     options?: { readonly historySessionId?: string | null }
   ): void {
-    const workspaceSlug = getWorkspaceKeyFromPath(
-      session.workspacePath,
-      this.defaultWorkspaceSlug
-    );
+    const historyTarget = this.resolveSessionHistoryTarget(session);
     const overrideHistorySessionId =
       options?.historySessionId && options.historySessionId.trim().length > 0
         ? options.historySessionId.trim()
@@ -78,7 +103,8 @@ export class UnifiedSessionStorage {
     );
     const entry: PendingSession = {
       providerId: session.providerId,
-      workspaceSlug,
+      rootDirectory: historyTarget.rootDirectory,
+      workspaceSlug: historyTarget.workspaceSlug,
       providerSessionId: session.providerSessionId,
       historySessionId: initialHistorySessionId,
       historySessionIdLocked: Boolean(overrideHistorySessionId),
@@ -147,7 +173,7 @@ export class UnifiedSessionStorage {
     }
     if (!entry.translationWriter) {
       entry.translationWriter = new SessionTranslationOverlayWriter({
-        rootDirectory: this.rootDirectory,
+        rootDirectory: entry.rootDirectory,
         workspaceSlug: entry.workspaceSlug,
         provider: entry.providerId,
         sessionId: entry.historySessionId,
@@ -177,8 +203,9 @@ export class UnifiedSessionStorage {
     const preferredWorkspaceSlug =
       entry?.workspaceSlug ||
       getWorkspaceKeyFromPath(session.workspacePath, this.defaultWorkspaceSlug);
+    const rootDirectory = entry?.rootDirectory ?? this.rootDirectory;
     const workspaceSlugs = await listUnifiedSessionWorkspaceSlugs({
-      rootDirectory: this.rootDirectory,
+      rootDirectory,
       logger: this.logger,
     });
     const candidates = new Set<string>([
@@ -189,7 +216,7 @@ export class UnifiedSessionStorage {
     const translations = new Map<string, AppendMessageTranslationOptions>();
     for (const workspaceSlug of candidates) {
       const filePath = buildSessionTranslationFilePath({
-        rootDirectory: this.rootDirectory,
+        rootDirectory,
         workspaceSlug,
         provider: session.providerId,
         sessionId: historySessionId,
@@ -266,8 +293,9 @@ export class UnifiedSessionStorage {
     const preferredWorkspaceSlug =
       entry?.workspaceSlug ||
       getWorkspaceKeyFromPath(session.workspacePath, this.defaultWorkspaceSlug);
+    const rootDirectory = entry?.rootDirectory ?? this.rootDirectory;
     const workspaceSlugs = await listUnifiedSessionWorkspaceSlugs({
-      rootDirectory: this.rootDirectory,
+      rootDirectory,
       logger: this.logger,
     });
     const candidates = new Set<string>([
@@ -278,7 +306,7 @@ export class UnifiedSessionStorage {
     const messagesById = new Map<string, SessionMessage>();
     for (const workspaceSlug of candidates) {
       const filePath = buildSessionFilePath({
-        rootDirectory: this.rootDirectory,
+        rootDirectory,
         workspaceSlug,
         provider: session.providerId,
         sessionId: historySessionId,
@@ -344,6 +372,7 @@ export class UnifiedSessionStorage {
   }
 
   promoteHistoryFile(options: {
+    readonly rootDirectory?: string;
     readonly workspaceSlug: string;
     readonly providerId: string;
     readonly fromHistorySessionId: string;
@@ -361,6 +390,7 @@ export class UnifiedSessionStorage {
       workspaceSlug: sanitizeWorkspaceSlug(options.workspaceSlug),
       providerId: options.providerId,
       fromSessionId,
+      rootDirectory: options.rootDirectory ?? this.rootDirectory,
       toSessionId,
     });
   }
@@ -385,6 +415,7 @@ export class UnifiedSessionStorage {
           workspaceSlug,
           providerId: entry.providerId,
           fromSessionId: entry.writerSessionId,
+          rootDirectory: entry.rootDirectory,
           toSessionId: sanitizedHistorySessionId,
         });
       }
@@ -394,7 +425,7 @@ export class UnifiedSessionStorage {
     }
 
     entry.writer = new UnifiedSessionWriter({
-      rootDirectory: this.rootDirectory,
+      rootDirectory: entry.rootDirectory,
       workspaceSlug,
       provider: entry.providerId,
       sessionId: sanitizedHistorySessionId,
@@ -403,6 +434,7 @@ export class UnifiedSessionStorage {
   }
 
   private callPromoteSessionFile(options: {
+    readonly rootDirectory: string;
     readonly workspaceSlug: string;
     readonly providerId: string;
     readonly fromSessionId: string;
@@ -410,7 +442,6 @@ export class UnifiedSessionStorage {
   }): void {
     tryPromoteSessionFile({
       ...options,
-      rootDirectory: this.rootDirectory,
       logger: this.logger,
     });
   }

@@ -9,7 +9,11 @@ import { normalizeContinuityStageId } from "../../session-continuity/continuity-
 import { buildHumanReadableDialogId } from "../../session-continuity/dialog-id";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Logger } from "../../telemetry/logger";
-import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import {
+  type UnifiedSessionStorage,
+  WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+} from "../../unified-session/storage";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 
 const SESSION_ROOT = `${homedir()}/.codeai-hub/sessions`;
 const DEVELOPMENT_TREE_STAGE_PREFIX = "development_tree/";
@@ -55,6 +59,15 @@ const resolveDialogAgentRole = (context: {
   context.stage?.startsWith(DEVELOPMENT_TREE_STAGE_PREFIX)
     ? context.stage
     : (context.runSlug ?? context.stage ?? null);
+
+const resolveWorkflowSessionRootDirectory = (params: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): string =>
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: params.workspaceRoot,
+    workspaceSlug: params.workspaceSlug,
+  }).sessionsRoot.absolutePath;
 
 export { normalizeContinuityStageId } from "../../session-continuity/continuity-types";
 
@@ -131,6 +144,16 @@ export class SessionRequestHandlerContinuityRoot {
       toHistorySessionId: normalizedRootSessionId,
     });
     if (options.workspaceSlug) {
+      this.deps.sessionStorage.promoteHistoryFile({
+        rootDirectory: resolveWorkflowSessionRootDirectory({
+          workspaceRoot: options.workspaceRoot,
+          workspaceSlug: options.workspaceSlug,
+        }),
+        workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+        providerId: options.providerId,
+        fromHistorySessionId: options.rootSessionId,
+        toHistorySessionId: normalizedRootSessionId,
+      });
       try {
         await promoteContinuityChainRootIfPresent({
           workspaceRoot: options.workspaceRoot,
@@ -188,6 +211,7 @@ export class SessionRequestHandlerContinuityRoot {
           dialogId,
           providerId: options.providerId,
           workspaceRoot: options.workspaceRoot,
+          workspaceSlug: options.workspaceSlug,
         }))
       ) {
         return dialogId;
@@ -204,19 +228,32 @@ export class SessionRequestHandlerContinuityRoot {
     readonly dialogId: string;
     readonly providerId: string;
     readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
   }): Promise<boolean> {
-    const filePath = buildSessionFilePath({
-      rootDirectory: SESSION_ROOT,
-      workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
-      provider: options.providerId,
-      sessionId: sanitizeWorkspaceSlug(options.dialogId),
-    });
+    const sessionId = sanitizeWorkspaceSlug(options.dialogId);
+    const filePaths = [
+      buildSessionFilePath({
+        rootDirectory: resolveWorkflowSessionRootDirectory(options),
+        workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+        provider: options.providerId,
+        sessionId,
+      }),
+      buildSessionFilePath({
+        rootDirectory: SESSION_ROOT,
+        workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
+        provider: options.providerId,
+        sessionId,
+      }),
+    ];
 
-    try {
-      await stat(filePath);
-      return true;
-    } catch {
-      return false;
+    for (const filePath of filePaths) {
+      try {
+        await stat(filePath);
+        return true;
+      } catch {
+        // Try the next history root candidate.
+      }
     }
+    return false;
   }
 }
