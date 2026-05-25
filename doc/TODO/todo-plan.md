@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "2dd7d06fe",
+  "lastRecordedCommit": "6090ceacb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase38.stream1.task2",
-  "expectedCommitMessage": "test: replace runtime slice rollback coverage",
+  "currentTaskId": "phase38.stream2.task1",
+  "expectedCommitMessage": "refactor: commit workflow capsule state directly",
   "debt": {
-    "expectedCommitMessage": "test: replace runtime slice rollback coverage",
-    "preCommitHead": "2dd7d06fe",
+    "expectedCommitMessage": "refactor: commit workflow capsule state directly",
+    "preCommitHead": "6090ceacb",
     "stage": "commit_pending",
-    "taskId": "phase38.stream1.task2"
+    "taskId": "phase38.stream2.task1"
   }
 }
 ```
@@ -329,11 +329,11 @@
 113. [DONE] `phase38.stream1.task1` Remove runtime-slice restore from the rollback transaction and delete restore-side tests while capture imports remain only until the accepted-step commit rewrite (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `refactor: remove workflow runtime slice snapshots`).
 114. [DONE] Git Commit: `refactor: remove workflow runtime slice snapshots` (hash: 2dd7d06fe)
 115. [DONE] `phase38.stream1.task2` Replace old runtime-slice tests and preliminary routing expectations with capsule/direct-commit expectations (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts`; expected commit: `test: replace runtime slice rollback coverage`).
-116. [PENDING] Git Commit: `test: replace runtime slice rollback coverage` (hash: TBD)
+116. [DONE] Git Commit: `test: replace runtime slice rollback coverage` (hash: 6090ceacb)
 
 ### Stream: Accepted Step Commits
-117. [TODO] `phase38.stream2.task1` Rewrite accepted-step commit logic to stage accepted artifacts and tracked capsule state directly without editing root `.gitignore` or copying external sessions (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `refactor: commit workflow capsule state directly`).
-118. [TODO] Git Commit: `refactor: commit workflow capsule state directly` (hash: TBD)
+117. [DONE] `phase38.stream2.task1` Rewrite accepted-step commit logic to stage accepted artifacts and tracked capsule state directly without editing root `.gitignore` or copying external sessions, and delete the now-unused runtime-slice snapshot helper (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts`; expected commit: `refactor: commit workflow capsule state directly`).
+118. [PENDING] Git Commit: `refactor: commit workflow capsule state directly` (hash: TBD)
 119. [TODO] `phase38.stream2.task2` Add clean-tree assertions after accepted-step commits and remove runtime-slice count/result fields from downstream expectations (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: require clean tree after accepted step commits`).
 120. [TODO] Git Commit: `fix: require clean tree after accepted step commits` (hash: TBD)
 

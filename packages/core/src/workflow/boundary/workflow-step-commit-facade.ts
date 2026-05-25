@@ -1,27 +1,22 @@
-import { readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { resolveWorkspaceRuntimeCapsule } from "../runtime/workspace-runtime-capsule";
 import type { WorkflowStageId } from "../watcher/watcher-types";
 import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 import {
   getWorkflowBoundaryStageLabel,
   type WorkflowBoundaryCommitResult,
 } from "./workflow-boundary-model";
-import {
-  captureWorkflowRuntimeSlices,
-  type WorkflowRuntimeSliceSession,
-} from "./workflow-runtime-slice-snapshot";
-
-const GITIGNORE_PATH = ".gitignore";
-const LOCAL_STATE_IGNORE_PATTERN = ".codeai-hub/state/";
-const NEWLINE_RE = /\r?\n/u;
-const TRAILING_SLASHES_RE = /\/+$/u;
 
 export interface WorkflowStepCommitFacadeOptions {
   readonly git?: WorkflowBoundaryGit;
 }
 
+export interface WorkflowStepCommitSession {
+  readonly providerId: string;
+  readonly providerSessionId?: string;
+}
+
 export interface WorkflowStepCommitParams {
-  readonly sessions?: readonly WorkflowRuntimeSliceSession[];
+  readonly sessions?: readonly WorkflowStepCommitSession[];
   readonly stage: WorkflowStageId;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
@@ -32,30 +27,6 @@ export interface WorkflowStepCommitResult {
   readonly runtimeSliceCount: number;
   readonly stage: WorkflowStageId;
 }
-
-const normalizesToLocalStateIgnore = (line: string): boolean => {
-  const normalized = line.trim().replace(TRAILING_SLASHES_RE, "");
-  return normalized === ".codeai-hub/state";
-};
-
-const ensureLocalStateIgnored = async (
-  workspaceRoot: string
-): Promise<void> => {
-  const gitignorePath = path.join(workspaceRoot, GITIGNORE_PATH);
-  const existingContent = await readFile(gitignorePath, "utf8").catch(() => "");
-  if (existingContent.split(NEWLINE_RE).some(normalizesToLocalStateIgnore)) {
-    return;
-  }
-  const prefix =
-    existingContent.length === 0 || existingContent.endsWith("\n")
-      ? existingContent
-      : `${existingContent}\n`;
-  await writeFile(
-    gitignorePath,
-    `${prefix}${LOCAL_STATE_IGNORE_PATTERN}\n`,
-    "utf8"
-  );
-};
 
 const buildAcceptedStepCommitMessage = (stage: WorkflowStageId): string =>
   `codeai-step: ${getWorkflowBoundaryStageLabel(stage)} accepted`;
@@ -77,12 +48,11 @@ export class WorkflowStepCommitFacade {
   async commitAcceptedStep(
     params: WorkflowStepCommitParams
   ): Promise<WorkflowStepCommitResult> {
-    await ensureLocalStateIgnored(params.workspaceRoot);
-    const manifest = await captureWorkflowRuntimeSlices(params);
+    const capsule = resolveWorkspaceRuntimeCapsule(params);
     const commit = await this.#git.commit({
       allowEmpty: true,
       commitMessage: buildAcceptedStepCommitMessage(params.stage),
-      paths: [GITIGNORE_PATH, path.join(".codeai-hub", params.workspaceSlug)],
+      paths: [capsule.workspaceCapsuleRoot.relativePath],
       workspaceRoot: params.workspaceRoot,
     });
     const dirtyPaths = await this.#git.statusPorcelain(params.workspaceRoot);
@@ -91,7 +61,7 @@ export class WorkflowStepCommitFacade {
     }
     return {
       commit,
-      runtimeSliceCount: manifest.entries.length,
+      runtimeSliceCount: 0,
       stage: params.stage,
     };
   }
