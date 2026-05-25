@@ -9,6 +9,8 @@ import { SessionContinuityFacade } from "../../session-continuity/session-contin
 import type { Session, SessionManager } from "../../session-manager";
 import type { SessionModelBinding } from "../../session-model-binding";
 import type { Logger } from "../../telemetry/logger";
+import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
+import { isWorkflowBoundaryStage } from "../../workflow/boundary/workflow-boundary-model";
 import { type BridgeEvent, serializeSession } from "../types";
 import type { SessionRequestHandlerSessionBootstrap } from "./session-request-handler-session-bootstrap";
 
@@ -47,6 +49,10 @@ interface SessionRequestHandlerSessionResolutionDependencies {
   readonly scaffoldInstaller?: ManagedWorkflowScaffoldInstaller;
   readonly sessionBootstrap: SessionRequestHandlerSessionBootstrap;
   readonly sessionManager: SessionManager;
+  readonly workflowBoundaryFacade?: Pick<
+    WorkflowBoundaryFacade,
+    "ensureBoundary"
+  >;
   readonly workspacePathOverride?: string;
 }
 
@@ -336,6 +342,15 @@ export class SessionRequestHandlerSessionResolution {
     );
     if (managedDecision?.mode !== "managed_dispatch") {
       return;
+    }
+    if (isWorkflowBoundaryStage(stageId)) {
+      await (
+        this.deps.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
+      ).ensureBoundary({
+        stage: stageId,
+        workspaceRoot: options.workspacePath,
+        workspaceSlug,
+      });
     }
     await this.scaffoldInstaller.installDiagramModulesScaffold({
       workspaceRoot: options.workspacePath,

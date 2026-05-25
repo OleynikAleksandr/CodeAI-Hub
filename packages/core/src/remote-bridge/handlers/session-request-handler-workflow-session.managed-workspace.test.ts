@@ -71,6 +71,17 @@ test("managed technical stage starts route through managed dispatch without prev
       },
     } as unknown as ProviderRegistry,
     sessionManager: new SessionManager(),
+    workflowBoundaryFacade: {
+      ensureBoundary: (params) => {
+        calls.push(`boundary:${params.stage}`);
+        return Promise.resolve({
+          boundaryHash: "abc123",
+          created: true,
+          registryPath: "/tmp/boundaries.json",
+          stage: params.stage,
+        });
+      },
+    },
   });
 
   const session = await service.createSessionForWorkflow({
@@ -84,6 +95,7 @@ test("managed technical stage starts route through managed dispatch without prev
 
   assert.ok(session);
   assert.deepEqual(calls, [
+    "boundary:quality_gates",
     "get-adapter:codexCli",
     "create-session:quality_gates",
   ]);
@@ -115,6 +127,17 @@ test("Diagram Modules managed start creates workspace scaffold before provider d
       },
     } as unknown as ProviderRegistry,
     sessionManager: new SessionManager(),
+    workflowBoundaryFacade: {
+      ensureBoundary: (params) => {
+        calls.push(`boundary:${params.stage}`);
+        return Promise.resolve({
+          boundaryHash: "abc123",
+          created: true,
+          registryPath: path.join(workspacePath, "boundaries.json"),
+          stage: params.stage,
+        });
+      },
+    },
   });
 
   try {
@@ -149,6 +172,7 @@ test("Diagram Modules managed start creates workspace scaffold before provider d
 
     assert.ok(session);
     assert.deepEqual(calls, [
+      "boundary:diagram_modules",
       "get-adapter:codexCli",
       "create-session:diagram_modules",
     ]);
@@ -245,6 +269,17 @@ test("Project Manager-created Application Skeleton sessions open draft before pr
       }),
     } as unknown as SessionRequestHandlerSessionBootstrap,
     sessionManager,
+    workflowBoundaryFacade: {
+      ensureBoundary: (params) => {
+        calls.push(`boundary:${params.stage}`);
+        return Promise.resolve({
+          boundaryHash: "abc123",
+          created: true,
+          registryPath: path.join(workspacePath, "boundaries.json"),
+          stage: params.stage,
+        });
+      },
+    },
   });
 
   try {
@@ -255,6 +290,7 @@ test("Project Manager-created Application Skeleton sessions open draft before pr
 
     assert.deepEqual(failures, []);
     assert.deepEqual(calls, [
+      "boundary:application_skeleton",
       "get-adapter:codexCli",
       "create-session:application_skeleton",
     ]);

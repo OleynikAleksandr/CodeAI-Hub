@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "16068e1e1",
+  "lastRecordedCommit": "dc96bef7b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase3.stream1.task2",
-  "expectedCommitMessage": "feat: create workflow boundaries before stage sessions",
+  "currentTaskId": "phase3.stream1.task3",
+  "expectedCommitMessage": "feat: create boundaries for managed workflow stages",
   "debt": {
-    "expectedCommitMessage": "feat: create workflow boundaries before stage sessions",
-    "preCommitHead": "16068e1e1",
+    "expectedCommitMessage": "feat: create boundaries for managed workflow stages",
+    "preCommitHead": "dc96bef7b",
     "stage": "commit_pending",
-    "taskId": "phase3.stream1.task2"
+    "taskId": "phase3.stream1.task3"
   }
 }
 ```
@@ -68,9 +68,9 @@
 7. [DONE] `phase3.stream1.task1` Create or verify the Description boundary during workspace activation before questionnaire work starts (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: create description boundary on workspace activation`).
 8. [DONE] Git Commit: `feat: create description boundary on workspace activation` (hash: 16068e1e1)
 9. [DONE] `phase3.stream1.task2` Create or verify a boundary before Project Manager starts each workflow stage session (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/workspace-session-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: create workflow boundaries before stage sessions`).
-10. [PENDING] Git Commit: `feat: create workflow boundaries before stage sessions` (hash: TBD)
-11. [TODO] `phase3.stream1.task3` Wire managed technical-stage starts to the same boundary facade so Diagram Modules and later managed stages use one Core-owned rollback model (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: create boundaries for managed workflow stages`).
-12. [TODO] Git Commit: `feat: create boundaries for managed workflow stages` (hash: TBD)
+10. [DONE] Git Commit: `feat: create workflow boundaries before stage sessions` (hash: dc96bef7b)
+11. [DONE] `phase3.stream1.task3` Wire managed technical-stage starts to the same boundary facade so Diagram Modules and later managed stages use one Core-owned rollback model (scope: `packages/core/src/managed-workflow-orchestration/**, packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: create boundaries for managed workflow stages`).
+12. [PENDING] Git Commit: `feat: create boundaries for managed workflow stages` (hash: TBD)
 
 ## Phase 4 - Clear Restore Endpoint (owner: Codex, updated: 2026-05-25)
 

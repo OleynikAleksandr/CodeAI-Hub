@@ -7,6 +7,8 @@ import { QualityGatesStagePlanController } from "../../managed-workflow-orchestr
 import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { WorkflowBoundaryFacade } from "../../workflow/boundary/workflow-boundary-facade";
+import { isWorkflowBoundaryStage } from "../../workflow/boundary/workflow-boundary-model";
 import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { SessionProviderFailureRecovery } from "./session-provider-failure-recovery";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
@@ -56,6 +58,10 @@ interface SessionRequestHandlerWorkflowSessionDependencies {
   readonly qualityGatesStagePlan?: QualityGatesStagePlanController;
   readonly scaffoldInstaller?: ManagedWorkflowScaffoldInstaller;
   readonly sessionManager: SessionManager;
+  readonly workflowBoundaryFacade?: Pick<
+    WorkflowBoundaryFacade,
+    "ensureBoundary"
+  >;
 }
 
 export class SessionRequestHandlerWorkflowSession {
@@ -125,6 +131,15 @@ export class SessionRequestHandlerWorkflowSession {
       return session;
     }
     if (managedDecision?.mode === "managed_dispatch") {
+      if (isWorkflowBoundaryStage(options.context.stage)) {
+        await (
+          this.deps.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
+        ).ensureBoundary({
+          stage: options.context.stage,
+          workspaceRoot: options.workspacePath,
+          workspaceSlug: options.context.initiativeSlug,
+        });
+      }
       await this.scaffoldInstaller.installDiagramModulesScaffold({
         workspaceRoot: options.workspacePath,
       });
