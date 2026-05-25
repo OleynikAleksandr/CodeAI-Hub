@@ -1,10 +1,12 @@
 # Workflow Steps Overview — от идеи к реализации (SSOT)
 
 **Status:** Active SSOT
-**Updated:** 2026-05-16
+**Updated:** 2026-05-25
 **Owner:** Oleksandr
 
 **2026-05-15 orchestration rewrite note, updated 2026-05-18:** the previous managed workflow orchestration runtime for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline` is removed from active code paths. The replacement cluster now owns the active managed lifecycles for all three technical trunk stages: `Diagram Modules` runs Product Part Type A subturns and then opens user review, `Application Skeleton` runs draft review, accepted-only materialization, and a post-materialization user review gate before completion, and `Quality Gates Baseline` runs draft contract review followed by accepted-only gate integration and persistent user return. Core creates managed stage plans, validates provider turns, records Git commits, and dispatches continuations only after the commit boundary completes. Project Manager and future clients are projections only: they may collect user decisions and display Core state, but they are never the source of truth for stage phase, prompt selection, validation, Git, or unlock state.
+
+**2026-05-25 Clear/rollback note:** workflow stage `Clear` uses Core-owned Git boundary commits, not undo ledgers, checkpoints, or inferred path deletion. Core creates a `codeai-boundary: <Stage Label>` commit before each trunk stage starts, beginning with `Description` at workspace activation. The boundary registry lives at `.codeai-hub/<workspaceSlug>/workflow/boundaries.json`. Clear restores the selected boundary, prunes that stage and downstream boundary records, resets Core/PM projections, and keeps Development Tree node clear fail-closed until a separate node-boundary design exists.
 
 **2026-05-13 continuity note:** the post-`1.2.250` hotfix scope hardens the provider-neutral session continuity store used by every trunk and Development Tree step. Project Manager must prefer an existing continuity session over a Start/confirmation card whenever a recoverable `chain.json` exists, even if the file was left as a complete JSON object with trailing corrupt bytes by an interrupted concurrent write. Core now serializes chain/index writes per path, writes through temp-file rename, recovers legacy trailing-corrupt JSON on read, and rewrites recovered chains as clean JSON on the next save.
 
@@ -68,6 +70,17 @@ Diagram Modules
 - Artifact parsing, graph/read-model validation, and repair diagnostics for managed technical stages are Core-owned contract outputs. Project Manager, VS Code, future mobile clients, and Wi-Fi clients may render the parsed projection and submit user repair intent, but they must not own a separate parser schema or decide which artifact failed.
 
 Практическое следствие: если `Diagram Modules`, `Application Skeleton` или `Quality Gates Baseline` не могут продолжить работу без открытого Project Manager до явного user gate, контракт нарушен и должен чиниться в Core/orchestrator logic, а не в клиенте.
+
+### Workflow Clear Boundary
+
+Core creates one Git rollback boundary before each trunk step starts:
+- `codeai-boundary: Description`
+- `codeai-boundary: Virtual Simulation`
+- `codeai-boundary: Diagram Modules`
+- `codeai-boundary: Application Skeleton`
+- `codeai-boundary: Quality Gates`
+
+The first boundary is created when a workspace is activated, before Description questionnaire work. Later boundaries are created before Project Manager stage sessions and before managed technical-stage scaffold/plan side effects. Project Manager keeps the Clear command surface, but the endpoint delegates workflow-stage Clear to Core's boundary facade. Runtime session deletion and projection reset are follow-up projection cleanup; tracked workspace state comes from Git restore only.
 
 ### Preliminary Review Gate — Description and Virtual Simulation
 

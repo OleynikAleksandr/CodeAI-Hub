@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "76eb27c66",
+  "lastRecordedCommit": "8044e910b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase4.stream1.task1",
-  "expectedCommitMessage": "feat: restore workflow steps from git boundaries",
+  "currentTaskId": "phase5.stream1.task1",
+  "expectedCommitMessage": "docs: document git boundary workflow clear",
   "debt": {
-    "expectedCommitMessage": "feat: restore workflow steps from git boundaries",
-    "preCommitHead": "76eb27c66",
+    "expectedCommitMessage": "docs: document git boundary workflow clear",
+    "preCommitHead": "8044e910b",
     "stage": "commit_pending",
-    "taskId": "phase4.stream1.task1"
+    "taskId": "phase5.stream1.task1"
   }
 }
 ```
@@ -76,13 +76,13 @@
 
 ### Stream: Workflow Stage Restore
 13. [DONE] `phase4.stream1.task1` Replace the fail-closed workflow stage Clear endpoint with restore-to-boundary, registry pruning and projection reset while keeping development-tree clear fail-closed (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts`; expected commit: `feat: restore workflow steps from git boundaries`).
-14. [PENDING] Git Commit: `feat: restore workflow steps from git boundaries` (hash: TBD)
+14. [DONE] Git Commit: `feat: restore workflow steps from git boundaries` (hash: 8044e910b)
 
 ## Phase 5 - Architecture Documentation (owner: Codex, updated: 2026-05-25)
 
 ### Stream: SSOT Sync
-15. [TODO] `phase5.stream1.task1` Move stable Git-boundary Clear decisions into canonical workflow architecture documents and update the docs index if needed (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document git boundary workflow clear`).
-16. [TODO] Git Commit: `docs: document git boundary workflow clear` (hash: TBD)
+15. [DONE] `phase5.stream1.task1` Move stable Git-boundary Clear decisions into canonical workflow architecture documents and update the docs index if needed (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document git boundary workflow clear`).
+16. [PENDING] Git Commit: `docs: document git boundary workflow clear` (hash: TBD)
 
 ## Phase 6 - Tooling Verification (owner: Codex, updated: 2026-05-25)
 

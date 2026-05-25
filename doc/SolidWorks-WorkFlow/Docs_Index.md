@@ -21,10 +21,10 @@
 ## 1) Канонические документы (этот каталог)
 
 ### Workflow Overview
-- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→5 + Development Tree branches), артефактов, OUTDATED propagation, managed technical-stage runtime boundary, and Core Runtime continuity/read-model contracts.
+- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→5 + Development Tree branches), артефактов, OUTDATED propagation, managed technical-stage runtime boundary, Core-owned Git-boundary Clear, and Core Runtime continuity/read-model contracts.
 
 ### System
-- `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics and model invocation profile boundaries.
+- `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics, model invocation profile boundaries, and workflow Git-boundary rollback.
 - `System/ManagedDocumentationCommitOwnership.md` — suspended historical pointer for the removed pre-rewrite documentation-stage ownership model. It is not an active runtime contract; replacement ownership comes from `Clusters/ManagedWorkflowOrchestration.md`.
 - `System/Workflow_NewStep_Rollout_Guardrails.md` — SSOT protocol for adding or retrofitting workflow steps without split truth, startup asymmetry, continuity drift, release-time regressions, or managed-stage terminal-anchor drift.
 - `System/WorkflowStep_PromptTesting_Methodology.md` — SSOT methodology for live-testing any workflow step agent prompt, identifying prompt-level defects, and turning observed behavior into an ideal step front contract.
@@ -81,6 +81,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/WorkflowClear_GitBoundaryRollback_Architecture.md` — active planning source for the current Git-boundary workflow Clear implementation cycle; stable decisions are being synchronized into `System/SystemArchitecture.md` and `System/WorkflowSteps_Overview.md`.
 - `Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md` — archived accepted planning source for the first phase of Development Tree refactoring: Core-owned artifact workspace materialization after accepted Diagram Modules, Project Manager left sidebar projection rules, operation node lifecycle display, orphan disposition, and implementation slicing.
 - `Plans/Archive/DevelopmentTree_Implementation_Lifecycle_Planning_RU.md` — archived accepted planning source for the SolidWorks-like Development Tree implementation lifecycle: `Module / Facade Specification` as one design step with two artifacts, `Implementation` as the planning/orchestration step, Core-owned serial/parallel worker execution, mandatory Integration phase, and PM display rules for tree nodes, sessions, and artifacts.
 - `Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md` — archived planning source for the revised lead Product Part-owned Contract Graph orchestration model after Diagram Modules; Diagram Modules selects `leadProductPartId`, the lead Product Part agent owns the application-wide graph, participant Product Parts/Clusters review assigned contracts, and Core owns validation, graph UX projection, OUTDATED propagation, and execution-wave implications.
