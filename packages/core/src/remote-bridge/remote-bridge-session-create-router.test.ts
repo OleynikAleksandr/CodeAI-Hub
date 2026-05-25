@@ -170,7 +170,7 @@ test("session:create commits dirty workflow settings before every post-descripti
           connectWorkspace: () => Promise.resolve(),
         } as unknown as WorkflowRuntime,
         workflowGit: createWorkflowGit(
-          [" M .codeai-hub/demo-workspace/runtime/settings/settings.json"],
+          ["M .codeai-hub/demo-workspace/runtime/settings/settings.json"],
           calls
         ),
       });

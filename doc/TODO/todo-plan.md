@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "04c6db5bc",
+  "lastRecordedCommit": "43ccb5282",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase52.stream1.task1",
-  "expectedCommitMessage": "fix: commit workflow start settings before boundaries",
+  "currentTaskId": "phase53.stream1.task1",
+  "expectedCommitMessage": "fix: parse workflow settings dirty status before boundaries",
   "debt": {
-    "expectedCommitMessage": "fix: commit workflow start settings before boundaries",
-    "preCommitHead": "04c6db5bc",
+    "expectedCommitMessage": "fix: parse workflow settings dirty status before boundaries",
+    "preCommitHead": "43ccb5282",
     "stage": "commit_pending",
-    "taskId": "phase52.stream1.task1"
+    "taskId": "phase53.stream1.task1"
   }
 }
 ```
@@ -462,10 +462,19 @@
 
 ### Stream: Boundary Preflight Settings Commit
 174. [DONE] `phase52.stream1.task1` Commit explicit workflow start-card settings changes before creating the next stage boundary so model selection does not dirty the pre-step anchor for Diagram Modules or later stages (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `fix: commit workflow start settings before boundaries`).
-175. [PENDING] Git Commit: `fix: commit workflow start settings before boundaries` (hash: TBD)
+175. [DONE] Git Commit: `fix: commit workflow start settings before boundaries` (hash: 43ccb5282)
 
 ### Stream: Full Start Walkthrough Verification
-176. [TODO] `phase52.stream2.task1` Run a local disposable workflow start walkthrough that exercises Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates start preflight/boundary paths at least once without user-driven release retest gaps (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+176. [DONE] `phase52.stream2.task1` Run a local disposable workflow start walkthrough that exercises Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates start preflight/boundary paths at least once without user-driven release retest gaps (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Failed local disposable walkthrough before release: actual `git status --porcelain` output for the first modified tracked settings line is trimmed to `M .codeai-hub/.../runtime/settings/settings.json`, so the pre-boundary settings commit did not recognize the dirty settings path and Virtual Simulation boundary creation was blocked.
+
+## Phase 53 - Workflow Settings Dirty Status Regression Fix (owner: Codex, updated: 2026-05-25)
+
+### Stream: Dirty Status Parsing
+177. [DONE] `phase53.stream1.task1` Parse real trimmed Git porcelain status entries for workflow runtime settings before boundary creation so modified tracked settings and untracked settings are both recognized (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: parse workflow settings dirty status before boundaries`).
+178. [PENDING] Git Commit: `fix: parse workflow settings dirty status before boundaries` (hash: TBD)
+
+### Stream: Full Start Walkthrough Verification
+179. [TODO] `phase53.stream2.task1` Re-run the disposable workflow start walkthrough across Description, Virtual Simulation, Diagram Modules, Application Skeleton and Quality Gates with dirty settings before each post-Description boundary, plus targeted Core/PM checks (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

@@ -27,6 +27,9 @@ const isTechnicalStageRewriteStage = (
 ): boolean =>
   typeof stage === "string" && isTechnicalStageRewriteBlockedStage(stage);
 
+const TRIMMED_MODIFIED_STATUS_RE = /^[ACDMRTU?!] /u;
+const TWO_COLUMN_STATUS_RE = /^[ ACDMRTU?!]{2} /u;
+
 const pathExists = async (targetPath: string): Promise<boolean> => {
   try {
     await access(targetPath);
@@ -34,6 +37,17 @@ const pathExists = async (targetPath: string): Promise<boolean> => {
   } catch {
     return false;
   }
+};
+
+const extractGitStatusPath = (entry: string): string => {
+  const value = entry.trimEnd();
+  if (TWO_COLUMN_STATUS_RE.test(value)) {
+    return value.slice(3).trim();
+  }
+  if (TRIMMED_MODIFIED_STATUS_RE.test(value)) {
+    return value.slice(2).trim();
+  }
+  return value.slice(3).trim();
 };
 
 interface RemoteBridgeSessionCreateRouterDependencies {
@@ -218,7 +232,8 @@ export class RemoteBridgeSessionCreateRouter {
     const git = this.deps.workflowGit ?? new WorkflowBoundaryGit();
     const dirtyPaths = await git.statusPorcelain(params.workspacePath);
     const settingsDirty = dirtyPaths.some(
-      (entry) => entry.slice(3).trim() === capsule.settingsFile.relativePath
+      (entry) =>
+        extractGitStatusPath(entry) === capsule.settingsFile.relativePath
     );
     if (!settingsDirty) {
       return;
