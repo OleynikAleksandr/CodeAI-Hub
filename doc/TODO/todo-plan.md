@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "cff4d87fc",
+  "lastRecordedCommit": "c944057c8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream70.task4",
-  "expectedCommitMessage": "refactor: remove workflow undo ledger writes",
+  "currentTaskId": "phase8.stream70.task5",
+  "expectedCommitMessage": "refactor: disable legacy workflow clear backend",
   "debt": {
-    "expectedCommitMessage": "refactor: remove workflow undo ledger writes",
-    "preCommitHead": "cff4d87fc",
+    "expectedCommitMessage": "refactor: disable legacy workflow clear backend",
+    "preCommitHead": "c944057c8",
     "stage": "commit_pending",
-    "taskId": "phase8.stream70.task4"
+    "taskId": "phase8.stream70.task5"
   }
 }
 ```
@@ -707,13 +707,9 @@
 472. [DONE] `phase8.stream70.task3` Remove mutation-journal capture from session/message workflow write paths while preserving the normal write/session behavior (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `refactor: remove workflow mutation journal captures`).
 473. [DONE] Git Commit: `refactor: remove workflow mutation journal captures` (hash: cff4d87fc)
 474. [DONE] `phase8.stream70.task4` Remove undo-ledger recording from artifact upsert, workspace file write, and development-tree materialization paths (scope: `packages/core/src/remote-bridge/handlers/http-api-artifact-upsert-service.ts, packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.ts`; expected commit: `refactor: remove workflow undo ledger writes`).
-475. [PENDING] Git Commit: `refactor: remove workflow undo ledger writes` (hash: TBD)
-476. [TODO] `phase8.stream70.task5` Replace the legacy Clear backend with an explicit unavailable Core response that keeps request validation and the Project Manager endpoint contract for the future Git-boundary implementation (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, src/client/project-manager/services/workflow-step-clear-client.ts`; expected commit: `refactor: disable legacy workflow clear backend`).
-477. [TODO] Git Commit: `refactor: disable legacy workflow clear backend` (hash: TBD)
-478. [TODO] `phase8.stream70.task6` Delete legacy Clear helper modules and their helper-level tests now that the backend no longer uses fallback path cleanup/session cleanup/last-active repair (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-continuity-support.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.ts`; expected commit: `refactor: remove legacy clear helper modules`).
-479. [TODO] Git Commit: `refactor: remove legacy clear helper modules` (hash: TBD)
-480. [TODO] `phase8.stream70.task7` Delete remaining legacy Clear fallback helper modules after service replacement (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-stage-paths.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-last-active.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-workspace-plan.ts`; expected commit: `refactor: remove legacy clear fallback helpers`).
-481. [TODO] Git Commit: `refactor: remove legacy clear fallback helpers` (hash: TBD)
+475. [DONE] Git Commit: `refactor: remove workflow undo ledger writes` (hash: c944057c8)
+476. [DONE] `phase8.stream70.task5` Replace the legacy Clear backend with an explicit unavailable Core response that keeps request validation and the Project Manager endpoint contract for the future Git-boundary implementation, and delete the helper modules that become `check:knip` unused in the same green intermediate (scope: `packages/core/src/remote-bridge/handlers, src/client/project-manager/services/workflow-step-clear-client.ts`; scope exception reason: the plan orchestrator stages deleted files through the handlers directory, and no green intermediate exists after backend replacement because `check:knip` immediately flags the newly unused helper modules; expected commit: `refactor: disable legacy workflow clear backend`).
+477. [PENDING] Git Commit: `refactor: disable legacy workflow clear backend` (hash: TBD)
 482. [TODO] `phase8.stream70.task8` Delete obsolete Clear behavior tests that asserted checkpoint/undo/git-rollback fallback semantics (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.checkpoint-cleanup.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`; expected commit: `test: remove legacy clear rollback tests`).
 483. [TODO] Git Commit: `test: remove legacy clear rollback tests` (hash: TBD)
 484. [TODO] `phase8.stream70.task9` Delete the workflow undo module after all runtime imports are gone (scope: `packages/core/src/workflow/undo/workflow-mutation-journal-runtime.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.test.ts, packages/core/src/workflow/undo/workflow-step-undo-ledger.ts`; expected commit: `refactor: remove workflow undo module`).

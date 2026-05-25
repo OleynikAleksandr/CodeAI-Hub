@@ -28,6 +28,22 @@ export const clearWorkflowStep = async (params: {
     }
   );
   if (!response.ok) {
-    throw new Error(`Workflow step clear failed: ${response.status}`);
+    const detail = await readWorkflowClearError(response);
+    throw new Error(
+      detail
+        ? `Workflow step clear failed: ${response.status} ${detail}`
+        : `Workflow step clear failed: ${response.status}`
+    );
+  }
+};
+
+const readWorkflowClearError = async (
+  response: Response
+): Promise<string | null> => {
+  try {
+    const payload = (await response.json()) as { readonly error?: unknown };
+    return typeof payload.error === "string" ? payload.error : null;
+  } catch {
+    return null;
   }
 };
