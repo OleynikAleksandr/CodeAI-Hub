@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "865f693c2",
+  "lastRecordedCommit": "fa6000aa2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase61.stream1.task3",
-  "expectedCommitMessage": "fix: apply workspace settings to provider turns",
+  "currentTaskId": "phase63.stream1.task1",
+  "expectedCommitMessage": "docs: prepare workspace settings authority release",
   "debt": {
-    "expectedCommitMessage": "fix: apply workspace settings to provider turns",
-    "preCommitHead": "865f693c2",
+    "expectedCommitMessage": "docs: prepare workspace settings authority release",
+    "preCommitHead": "fa6000aa2",
     "stage": "commit_pending",
-    "taskId": "phase61.stream1.task3"
+    "taskId": "phase63.stream1.task1"
   }
 }
 ```
@@ -535,10 +535,30 @@
 199. [DONE] `phase61.stream1.task2` Make Core session model binding resolve default/effective provider identity from the active workspace runtime settings file and carry that path on the session binding (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/session-model-binding/session-model-binding-resolver.ts, packages/core/src/session-model-binding/session-model-binding-types.ts`; expected commit: `fix: resolve workflow sessions from workspace settings`).
 200. [DONE] Git Commit: `fix: resolve workflow sessions from workspace settings` (hash: 865f693c2)
 202. [DONE] `phase61.stream1.task3` Make applied provider turn config consume the session binding settings path so model metadata and reasoning translation policy stay workspace-scoped after session creation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts, packages/core/src/session-model-binding/session-model-binding-resolver.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: apply workspace settings to provider turns`).
-203. [PENDING] Git Commit: `fix: apply workspace settings to provider turns` (hash: TBD)
+203. [DONE] Git Commit: `fix: apply workspace settings to provider turns` (hash: fa6000aa2)
 
 ### Stream: Regression Verification
-201. [TODO] `phase61.stream2.task1` Run focused settings authority regression tests plus targeted Project Manager/Core builds before requesting the next release build confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+201. [DONE] `phase61.stream2.task1` Run focused settings authority regression tests plus targeted Project Manager/Core builds before requesting the next release build confirmation (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: passed settings authority verification: focused Project Manager workflow-start tests (9), session model binding tests (5), @codeai-hub/core build, build:webview, typecheck:webview, and plan validation completed
+
+## Phase 62 - Release Build Confirmation (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Confirmation Gate
+204. [DONE] `phase62.stream1.task1` Stop after workspace settings authority fixes and targeted verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: release build explicitly confirmed by user on 2026-05-25 for workspace settings authority retest
+
+## Phase 63 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Docs
+205. [DONE] `phase63.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace settings authority release`).
+206. [PENDING] Git Commit: `docs: prepare workspace settings authority release` (hash: TBD)
+
+### Stream: Release Build
+207. [TODO] `phase63.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings authority release`). Result: TBD.
+208. [TODO] Git Commit: `chore: build workspace settings authority release` (hash: TBD)
+
+## Phase 64 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+209. [TODO] `phase64.stream1.task1` User installs the generated VSIX and verifies workspace settings persist in `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`, workflow start cards do not reset provider/model defaults, and sessions use workspace-scoped model/reasoning policy (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

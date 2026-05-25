@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.364] - 2026-05-25
+### Fixed
+- **Workspace runtime settings are the workflow authority.** Workflow start cards now load the active workspace settings snapshot before saving selected provider/model defaults, preventing stale global settings from overwriting `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`.
+- **Provider sessions use workspace-scoped model policy.** Core session model binding resolves defaults from the workspace settings file and carries that path into applied provider turn config, so model/reasoning and reasoning translation policy no longer fall back to `~/.codeai-hub/settings/settings.json` for workflow sessions.
+
+### Tests
+- `npx tsx --test src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts`
+- `npx tsx --test packages/core/src/session-model-binding/session-model-binding-facade.test.ts packages/core/src/session-model-binding/session-model-binding-resolver.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `npm run plan:validate`
+
 ## [1.2.363] - 2026-05-25
 ### Fixed
 - **Application Skeleton unlocks after Diagram Modules acceptance.** Diagram Modules user-return completion messages are persisted before the accepted-step commit, and workspace-owned runtime sessions/provider homes are classified as managed committable state instead of blocking the next stage.

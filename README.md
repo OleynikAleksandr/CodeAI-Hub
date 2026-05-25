@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.363** (Application Skeleton Unlock Hotfix)
+**Current Release — v1.2.364** (Workspace Settings Authority Hotfix)
+
+This hotfix makes Project Manager workflow starts and Core provider turns use
+the same workspace runtime settings file:
+`.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`. Start cards now
+load the active workspace settings snapshot before persisting provider/model
+defaults, so selecting a model for Virtual Simulation, Diagram Modules,
+Application Skeleton, or Quality Gates no longer rewrites workspace settings
+from a stale global snapshot.
+
+Core session model binding now resolves defaults from the workspace runtime
+settings file and carries that path into provider turn configuration. Provider
+sessions therefore use the workspace-scoped model/reasoning and translation
+policy instead of falling back to `~/.codeai-hub/settings/settings.json`.
+
+**Previous Release — v1.2.363** (Application Skeleton Unlock Hotfix)
 
 This hotfix restores the Diagram Modules -> Application Skeleton handoff in the
 workspace-owned Git rollback architecture. Diagram Modules acceptance now
