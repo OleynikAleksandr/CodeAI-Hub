@@ -162,6 +162,63 @@ test("WorkflowBoundaryFacade serializes concurrent Description boundary startup"
   }
 });
 
+test("WorkflowBoundaryGit resolves workflow boundary commits from Git history", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    const facade = new WorkflowBoundaryFacade({
+      clock: () => "2026-05-25T00:00:00.000Z",
+    });
+    const git = new WorkflowBoundaryGit();
+    const descriptionBoundary = await facade.ensureBoundary({
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await writeText(path.join(workspaceRoot, "description.md"), "done\n");
+    await git.commit({
+      commitMessage: "codeai-step: Description accepted",
+      paths: ["description.md"],
+      workspaceRoot,
+    });
+    const virtualBoundary = await facade.ensureBoundary({
+      stage: "virtual_simulation",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    const allBoundaries = await git.readBoundaryCommits(workspaceRoot);
+    const resolvedVirtual = await git.findBoundaryCommit({
+      stage: "virtual_simulation",
+      workspaceRoot,
+    });
+    const resolvedDescription = await git.findBoundaryCommit({
+      stage: "description",
+      workspaceRoot,
+    });
+
+    assert.deepEqual(
+      allBoundaries.map((entry) => entry.stage),
+      ["virtual_simulation", "description"]
+    );
+    assert.equal(
+      resolvedVirtual?.boundaryHash.startsWith(virtualBoundary.boundaryHash),
+      true
+    );
+    assert.equal(
+      resolvedVirtual?.commitMessage,
+      "codeai-boundary: Virtual Simulation"
+    );
+    assert.equal(
+      resolvedDescription?.boundaryHash.startsWith(
+        descriptionBoundary.boundaryHash
+      ),
+      true
+    );
+    assert.equal(resolvedDescription?.stageLabel, "Description");
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("WorkflowBoundaryFacade heals pre-submit Description bootstrap residue", async () => {
   const workspaceRoot = await createWorkspace();
   try {

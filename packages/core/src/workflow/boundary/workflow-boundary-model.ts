@@ -18,6 +18,17 @@ const WORKFLOW_BOUNDARY_LABELS: Record<WorkflowStageId, string> = {
   quality_gates: "Quality Gates",
 };
 
+const WORKFLOW_BOUNDARY_LABEL_TO_STAGE = new Map<string, WorkflowStageId>(
+  WORKFLOW_BOUNDARY_STAGES.map((stage) => [
+    WORKFLOW_BOUNDARY_LABELS[stage],
+    stage,
+  ])
+);
+
+const BOUNDARY_COMMIT_PREFIX = "codeai-boundary: ";
+const GIT_LOG_FIELD_COUNT = 2;
+const GIT_LOG_FIELD_SEPARATOR = "\0";
+
 export interface WorkflowBoundaryEntry {
   readonly boundaryHash: string;
   readonly commitMessage: string;
@@ -57,6 +68,13 @@ export interface WorkflowBoundaryGitCommitParams {
 export interface WorkflowBoundaryGitCleanParams {
   readonly paths: readonly string[];
   readonly workspaceRoot: string;
+}
+
+export interface WorkflowBoundaryGitLogEntry {
+  readonly boundaryHash: string;
+  readonly commitMessage: string;
+  readonly stage: WorkflowStageId;
+  readonly stageLabel: string;
 }
 
 export interface WorkflowBoundaryGitResetParams {
@@ -104,3 +122,37 @@ export const buildWorkflowBoundaryRegistryCommitMessage = (
   stage: WorkflowStageId
 ): string =>
   `codeai-boundary-registry: ${getWorkflowBoundaryStageLabel(stage)}`;
+
+const parseWorkflowBoundaryCommitMessage = (
+  commitMessage: string
+): WorkflowStageId | null => {
+  const trimmed = commitMessage.trim();
+  if (!trimmed.startsWith(BOUNDARY_COMMIT_PREFIX)) {
+    return null;
+  }
+  const label = trimmed.slice(BOUNDARY_COMMIT_PREFIX.length);
+  return WORKFLOW_BOUNDARY_LABEL_TO_STAGE.get(label) ?? null;
+};
+
+export const parseWorkflowBoundaryGitLogLine = (
+  line: string
+): WorkflowBoundaryGitLogEntry | null => {
+  const fields = line.split(GIT_LOG_FIELD_SEPARATOR);
+  if (fields.length !== GIT_LOG_FIELD_COUNT) {
+    return null;
+  }
+  const [boundaryHash, commitMessage] = fields;
+  if (!(boundaryHash && commitMessage)) {
+    return null;
+  }
+  const stage = parseWorkflowBoundaryCommitMessage(commitMessage);
+  if (!stage) {
+    return null;
+  }
+  return {
+    boundaryHash,
+    commitMessage,
+    stage,
+    stageLabel: getWorkflowBoundaryStageLabel(stage),
+  };
+};

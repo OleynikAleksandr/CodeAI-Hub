@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "72b4853e5",
+  "lastRecordedCommit": "6b1c9c938",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase35.stream2.task2",
-  "expectedCommitMessage": "test: cover workspace scoped settings",
+  "currentTaskId": "phase36.stream1.task1",
+  "expectedCommitMessage": "feat: resolve workflow boundaries from git log",
   "debt": {
-    "expectedCommitMessage": "test: cover workspace scoped settings",
-    "preCommitHead": "72b4853e5",
+    "expectedCommitMessage": "feat: resolve workflow boundaries from git log",
+    "preCommitHead": "6b1c9c938",
     "stage": "commit_pending",
-    "taskId": "phase35.stream2.task2"
+    "taskId": "phase36.stream1.task1"
   }
 }
 ```
@@ -293,13 +293,13 @@
 93. [DONE] `phase35.stream2.task1` Add workspace settings seed/read/write helpers that resolve settings through the active workspace capsule and use global settings only as defaults (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-service.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `feat: seed workspace settings from capsule`).
 94. [DONE] Git Commit: `feat: seed workspace settings from capsule` (hash: 72b4853e5)
 95. [DONE] `phase35.stream2.task2` Add focused tests proving settings changed in one workspace do not affect another workspace and Description baseline contains workspace settings (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts`; expected commit: `test: cover workspace scoped settings`).
-96. [PENDING] Git Commit: `test: cover workspace scoped settings` (hash: TBD)
+96. [DONE] Git Commit: `test: cover workspace scoped settings` (hash: 6b1c9c938)
 
 ## Phase 36 - Git Timeline And Boundary Authority (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Git History Lookup
-97. [TODO] `phase36.stream1.task1` Add stable boundary commit parsing and Git-log lookup so `codeai-boundary: <Stage>` history is the rollback authority instead of tracked `boundaries.json` (scope: `packages/core/src/workflow/boundary/workflow-boundary-model.ts, packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: resolve workflow boundaries from git log`).
-98. [TODO] Git Commit: `feat: resolve workflow boundaries from git log` (hash: TBD)
+97. [DONE] `phase36.stream1.task1` Add stable boundary commit parsing and Git-log lookup so `codeai-boundary: <Stage>` history is the rollback authority instead of tracked `boundaries.json` (scope: `packages/core/src/workflow/boundary/workflow-boundary-model.ts, packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `feat: resolve workflow boundaries from git log`).
+98. [PENDING] Git Commit: `feat: resolve workflow boundaries from git log` (hash: TBD)
 99. [TODO] `phase36.stream1.task2` Demote `workflow-boundary-registry` to rebuildable projection or remove it from rollback decision paths (scope: `packages/core/src/workflow/boundary/workflow-boundary-registry.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `refactor: demote boundary registry authority`).
 100. [TODO] Git Commit: `refactor: demote boundary registry authority` (hash: TBD)
 

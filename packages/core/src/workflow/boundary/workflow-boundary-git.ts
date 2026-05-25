@@ -2,12 +2,15 @@ import { execFile } from "node:child_process";
 import { readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
+import type { WorkflowStageId } from "../watcher/watcher-types";
 import type {
   WorkflowBoundaryCommitResult,
   WorkflowBoundaryGitCleanParams,
   WorkflowBoundaryGitCommitParams,
+  WorkflowBoundaryGitLogEntry,
   WorkflowBoundaryGitResetParams,
 } from "./workflow-boundary-model";
+import { parseWorkflowBoundaryGitLogLine } from "./workflow-boundary-model";
 
 const execFileAsync = promisify(execFile);
 const DEFAULT_RETRY_DELAYS_MS = [100, 250, 500, 1000, 2000, 4000] as const;
@@ -179,6 +182,35 @@ export class WorkflowBoundaryGit {
 
   async revParseHead(workspaceRoot: string): Promise<string> {
     return await this.git(workspaceRoot, ["rev-parse", "--short", "HEAD"]);
+  }
+
+  async findBoundaryCommit(params: {
+    readonly stage: WorkflowStageId;
+    readonly workspaceRoot: string;
+  }): Promise<WorkflowBoundaryGitLogEntry | null> {
+    const entries = await this.readBoundaryCommits(params.workspaceRoot);
+    return entries.find((entry) => entry.stage === params.stage) ?? null;
+  }
+
+  async readBoundaryCommits(
+    workspaceRoot: string
+  ): Promise<readonly WorkflowBoundaryGitLogEntry[]> {
+    return await this.runExclusive(workspaceRoot, async () => {
+      await this.ensureRepositoryUnlocked(workspaceRoot);
+      const output = await this.git(workspaceRoot, [
+        "log",
+        "--format=%H%x00%s",
+      ]);
+      if (output.length === 0) {
+        return [];
+      }
+      return output
+        .split("\n")
+        .map(parseWorkflowBoundaryGitLogLine)
+        .filter((entry): entry is WorkflowBoundaryGitLogEntry =>
+          Boolean(entry)
+        );
+    });
   }
 
   async statusPorcelain(workspaceRoot: string): Promise<readonly string[]> {
