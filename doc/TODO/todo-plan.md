@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "5ea9d033e",
+  "lastRecordedCommit": "5c4e819c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase13.stream2.task1",
-  "expectedCommitMessage": "fix: prune restored workflow runtime sessions",
+  "currentTaskId": "phase13.stream3.task1",
+  "expectedCommitMessage": "fix: commit diagram modules acceptance snapshots",
   "debt": {
-    "expectedCommitMessage": "fix: prune restored workflow runtime sessions",
-    "preCommitHead": "5ea9d033e",
+    "expectedCommitMessage": "fix: commit diagram modules acceptance snapshots",
+    "preCommitHead": "5c4e819c2",
     "stage": "commit_pending",
-    "taskId": "phase13.stream2.task1"
+    "taskId": "phase13.stream3.task1"
   }
 }
 ```
@@ -150,11 +150,11 @@
 
 ### Stream: Strict Runtime Restore
 41. [DONE] `phase13.stream2.task1` Make runtime slice restore prune provider-native session files created after the captured boundary within the recorded provider session directories, while keeping restore allowlisted to CodeAI Hub runtime roots (scope: `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: prune restored workflow runtime sessions`).
-42. [PENDING] Git Commit: `fix: prune restored workflow runtime sessions` (hash: TBD)
+42. [DONE] Git Commit: `fix: prune restored workflow runtime sessions` (hash: 5c4e819c2)
 
 ### Stream: Managed Stage Acceptance
-43. [TODO] `phase13.stream3.task1` Route Diagram Modules user acceptance through the accepted-step commit facade before Core unlocks Application Skeleton, so final managed-stage outputs and runtime slices are committed and Git-clean (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules acceptance snapshots`).
-44. [TODO] Git Commit: `fix: commit diagram modules acceptance snapshots` (hash: TBD)
+43. [DONE] `phase13.stream3.task1` Route Diagram Modules user acceptance through the accepted-step commit facade before Core unlocks Application Skeleton, so final managed-stage outputs and runtime slices are committed and Git-clean (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.test.ts`; expected commit: `fix: commit diagram modules acceptance snapshots`).
+44. [PENDING] Git Commit: `fix: commit diagram modules acceptance snapshots` (hash: TBD)
 
 ## Phase 14 - Architecture Documentation And Verification (owner: Codex, updated: 2026-05-25)
 

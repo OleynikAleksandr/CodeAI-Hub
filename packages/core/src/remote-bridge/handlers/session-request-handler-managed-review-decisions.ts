@@ -32,6 +32,7 @@ import {
   QUALITY_GATES_STAGE_PLAN_PATH,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model";
 import type { Session } from "../../session-manager";
+import { WorkflowStepCommitFacade } from "../../workflow/boundary/workflow-step-commit-facade";
 import { persistApplicationSkeletonManagedDecision } from "./application-skeleton-managed-decision-persister";
 import {
   dispatchQualityGatesReviewRevision,
@@ -155,6 +156,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
   private readonly preliminaryReviewCommitter: SessionRequestHandlerPreliminaryReviewCommitter;
   private readonly qualityGatesStagePlan =
     new QualityGatesStagePlanController();
+  private readonly stepCommitFacade = new WorkflowStepCommitFacade();
 
   constructor(deps: ManagedReviewDecisionDeps) {
     this.deps = deps;
@@ -416,6 +418,17 @@ export class SessionRequestHandlerManagedReviewDecisions {
     try {
       await acceptDiagramModulesReviewWithoutRevision({
         workspaceRoot: session.workspacePath,
+      });
+      await this.stepCommitFacade.commitAcceptedStep({
+        sessions: [
+          {
+            providerId: session.providerId,
+            providerSessionId: session.providerSessionId,
+          },
+        ],
+        stage: DIAGRAM_MODULES_STAGE,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
       });
     } catch (error) {
       this.deps.eventMessages.appendCoreMessage(session.id, {

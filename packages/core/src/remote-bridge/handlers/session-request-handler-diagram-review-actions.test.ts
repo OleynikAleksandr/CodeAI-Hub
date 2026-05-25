@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
 import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
+import { WorkflowBoundaryGit } from "../../workflow/boundary/workflow-boundary-git";
 import type { BridgeEvent } from "../types";
 import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 
@@ -20,6 +23,8 @@ const DIAGRAM_COMPLETE_MESSAGE_RE =
   /Core: Diagram Modules завершён и зафиксирован/u;
 const DIAGRAM_COMPLETED_RE = /"diagram_modules"/u;
 const USER_ACCEPTANCE_RE = /подтверждаю/u;
+const DIAGRAM_ACCEPTED_COMMIT_RE = /codeai-step: Diagram Modules accepted/u;
+const execFileAsync = promisify(execFile);
 
 interface CapturedMessage {
   readonly content: unknown;
@@ -42,12 +47,23 @@ const readWorkspaceFile = (
   relativePath: string
 ): Promise<string> => readFile(path.join(workspaceRoot, relativePath), "utf8");
 
+const git = async (
+  workspaceRoot: string,
+  args: readonly string[]
+): Promise<string> => {
+  const { stdout } = await execFileAsync("git", args, {
+    cwd: workspaceRoot,
+  });
+  return stdout.trim();
+};
+
 const prepareDiagramReviewWorkspace = async (
   workspaceRoot: string
 ): Promise<void> => {
   await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
     workspaceRoot,
   });
+  await new WorkflowBoundaryGit().ensureRepository(workspaceRoot);
   await writeWorkspaceFile(
     workspaceRoot,
     "doc/TODO/stages/diagram-modules/todo-plan.md",
@@ -78,6 +94,11 @@ const prepareDiagramReviewWorkspace = async (
 14. [DONE] Git Commit: \`docs: open diagram modules user review\` (hash: 3836dc1)
 `
   );
+  await new WorkflowBoundaryGit().commit({
+    commitMessage: "docs: open diagram modules user review",
+    paths: [".husky", "doc/TODO", "package.json", "scripts"],
+    workspaceRoot,
+  });
 };
 
 const createActions = (sessionManager: SessionManager) => {
@@ -166,7 +187,11 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
     assert.deepEqual(harness.sentInternalMessages, []);
     assert.equal(harness.dialogMessages.at(-1)?.role, "user");
     assert.equal(harness.dialogMessages.at(-1)?.content, ACCEPTANCE);
-    assert.equal(harness.coreMessages.at(-1)?.tag, "managed-workflow-complete");
+    assert.equal(
+      harness.coreMessages.at(-1)?.tag,
+      "managed-workflow-complete",
+      String(harness.coreMessages.at(-1)?.content ?? "")
+    );
     assert.match(
       String(harness.coreMessages.at(-1)?.content ?? ""),
       DIAGRAM_COMPLETE_MESSAGE_RE
@@ -189,6 +214,11 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
     );
     assert.match(workspacePlan, APPLICATION_ACTIVE_RE);
     assert.match(workspacePlan, DIAGRAM_COMPLETED_RE);
+    assert.match(
+      await git(workspaceRoot, ["log", "--format=%s"]),
+      DIAGRAM_ACCEPTED_COMMIT_RE
+    );
+    assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
     assert.deepEqual(harness.events, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
