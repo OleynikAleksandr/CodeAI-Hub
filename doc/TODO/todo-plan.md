@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "4ab24a7ca",
+  "lastRecordedCommit": "e63ee819f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase44.stream1.task1",
-  "expectedCommitMessage": "test: guard workflow rollback architecture",
+  "currentTaskId": "phase44.stream1.task2",
+  "expectedCommitMessage": "docs: document workspace owned git rollback",
   "debt": {
-    "expectedCommitMessage": "test: guard workflow rollback architecture",
-    "preCommitHead": "4ab24a7ca",
+    "expectedCommitMessage": "docs: document workspace owned git rollback",
+    "preCommitHead": "e63ee819f",
     "stage": "commit_pending",
-    "taskId": "phase44.stream1.task1"
+    "taskId": "phase44.stream1.task2"
   }
 }
 ```
@@ -393,9 +393,9 @@
 
 ### Stream: Legacy Rollback Removal Gates
 149. [DONE] `phase44.stream1.task1` Add automated checks or targeted tests that fail on `runtime-slices`, `cleanPaths`, registry-authority commits, global workflow session roots and direct managed Git helper usage (scope: `scripts/check-workflow-rollback-architecture.mjs, scripts/check-architecture.sh, package.json, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `test: guard workflow rollback architecture`).
-150. [PENDING] Git Commit: `test: guard workflow rollback architecture` (hash: TBD)
-151. [TODO] `phase44.stream1.task2` Update canonical system documentation and docs index with stable workspace-owned rollback architecture decisions after code migration is in place (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document workspace owned git rollback`).
-152. [TODO] Git Commit: `docs: document workspace owned git rollback` (hash: TBD)
+150. [DONE] Git Commit: `test: guard workflow rollback architecture` (hash: e63ee819f)
+151. [DONE] `phase44.stream1.task2` Update canonical system documentation and docs index with stable workspace-owned rollback architecture decisions after code migration is in place (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document workspace owned git rollback`).
+152. [PENDING] Git Commit: `docs: document workspace owned git rollback` (hash: TBD)
 
 ## Phase 45 - Targeted Verification And Regression Walkthrough (owner: Codex, updated: 2026-05-25)
 
