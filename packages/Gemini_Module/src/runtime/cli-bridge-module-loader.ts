@@ -1,10 +1,14 @@
 import { existsSync, readFileSync } from "node:fs";
 import nodeModule from "node:module";
-import { homedir } from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { CompletedToolCall } from "@google/gemini-cli-core/dist/src/core/coreToolScheduler";
 import type { ToolCallRequestInfo } from "@google/gemini-cli-core/dist/src/core/turn";
+import {
+  type GeminiStorageModule,
+  patchGeminiStorageGlobalDir,
+  resolveGeminiProviderGeminiDir,
+} from "./cli-bridge-provider-home";
 import type { GeminiCliModules } from "./cli-types";
 
 const { createRequire } = nodeModule;
@@ -239,7 +243,10 @@ const createCompatSettingsModule = (
 ): typeof import("@google/gemini-cli/dist/src/config/settings") => {
   return {
     loadSettings: (workspaceDir = process.cwd()) => {
-      const userSettingsPath = path.join(homedir(), ".gemini", "settings.json");
+      const userSettingsPath = path.join(
+        resolveGeminiProviderGeminiDir(),
+        "settings.json"
+      );
       const workspaceSettingsPath = path.join(
         workspaceDir,
         ".gemini",
@@ -255,6 +262,18 @@ const createCompatSettingsModule = (
       // Bundle-only Gemini CLI no longer exposes the old migrator API.
     },
   } as unknown as typeof import("@google/gemini-cli/dist/src/config/settings");
+};
+
+const loadAndPatchGeminiStorageModule = async (
+  cliCoreRoot: string
+): Promise<void> => {
+  const storage = await tryFindAndLoadModule<GeminiStorageModule>(cliCoreRoot, [
+    ["dist", "src", "config", "storage.js"],
+    ["dist", "config", "storage.js"],
+  ]);
+  if (storage.module) {
+    patchGeminiStorageGlobalDir(storage.module);
+  }
 };
 
 interface LegacySchedulerOptions {
@@ -347,9 +366,10 @@ export const loadGeminiModules = async (
   cliRoot: string,
   cliCoreRoot: string
 ): Promise<GeminiCliModules> => {
+  await loadAndPatchGeminiStorageModule(cliCoreRoot);
+
   const [
     legacyConfig,
-    legacySettings,
     contentGenerator,
     toolScheduler,
     turn,
@@ -361,12 +381,6 @@ export const loadGeminiModules = async (
     >(cliRoot, [
       ["dist", "src", "config", "config.js"],
       ["dist", "config", "config.js"],
-    ]),
-    tryFindAndLoadModule<
-      typeof import("@google/gemini-cli/dist/src/config/settings")
-    >(cliRoot, [
-      ["dist", "src", "config", "settings.js"],
-      ["dist", "config", "settings.js"],
     ]),
     findAndLoadModule<
       typeof import("@google/gemini-cli-core/dist/src/core/contentGenerator")
@@ -396,10 +410,9 @@ export const loadGeminiModules = async (
     ),
   ]);
 
-  const [config, settings] = await Promise.all([
-    legacyConfig.module ?? createCompatConfigModule(cliCoreRoot),
-    legacySettings.module ?? createCompatSettingsModule(cliRoot),
-  ]);
+  const config =
+    legacyConfig.module ?? (await createCompatConfigModule(cliCoreRoot));
+  const settings = createCompatSettingsModule(cliRoot);
 
   return {
     config,

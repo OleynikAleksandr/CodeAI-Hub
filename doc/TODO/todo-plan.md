@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "b4c8a228d",
+  "lastRecordedCommit": "17be6d06e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase41.stream1.task2",
-  "expectedCommitMessage": "feat: use workspace claude home for workflow sessions",
+  "currentTaskId": "phase41.stream2.task1",
+  "expectedCommitMessage": "feat: use workspace gemini home for workflow sessions",
   "debt": {
-    "expectedCommitMessage": "feat: use workspace claude home for workflow sessions",
-    "preCommitHead": "b4c8a228d",
+    "expectedCommitMessage": "feat: use workspace gemini home for workflow sessions",
+    "preCommitHead": "17be6d06e",
     "stage": "commit_pending",
-    "taskId": "phase41.stream1.task2"
+    "taskId": "phase41.stream2.task1"
   }
 }
 ```
@@ -361,11 +361,11 @@
 131. [DONE] `phase41.stream1.task1` Resolve Codex workflow provider home/session state under `runtime/providers/codex/home` while keeping auth/installed binaries global or ignored (scope: `packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.ts, packages/Codex_AppServer_Module/src/app-server/process/codex-app-server-process.test.ts`; expected commit: `feat: use workspace codex home for workflow sessions`).
 132. [DONE] Git Commit: `feat: use workspace codex home for workflow sessions` (hash: b4c8a228d)
 133. [DONE] `phase41.stream1.task2` Resolve Claude workflow provider home under `runtime/providers/claude/home` while preserving the auth bridge and secret-safe ignore rules (scope: `packages/Claude_Module/src/sdk/claude-provider-home.ts, packages/Claude_Module/src/sdk/claude-provider-home.test.ts`; expected commit: `feat: use workspace claude home for workflow sessions`).
-134. [PENDING] Git Commit: `feat: use workspace claude home for workflow sessions` (hash: TBD)
+134. [DONE] Git Commit: `feat: use workspace claude home for workflow sessions` (hash: 17be6d06e)
 
 ### Stream: Gemini And Kimi Homes
-135. [TODO] `phase41.stream2.task1` Resolve Gemini workflow `HOME` / `.gemini` roots under `runtime/providers/gemini/home` without mutating process-global `HOME` in Core (scope: `packages/core/src/provider-registry/index.ts, packages/Gemini_Module/src/runtime/cli-bridge-root-resolver.ts, packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts`; expected commit: `feat: use workspace gemini home for workflow sessions`).
-136. [TODO] Git Commit: `feat: use workspace gemini home for workflow sessions` (hash: TBD)
+135. [DONE] `phase41.stream2.task1` Resolve Gemini workflow `HOME` / `.gemini` roots under `runtime/providers/gemini/home` without mutating process-global `HOME` in Core (scope: `packages/Gemini_Module/src/runtime/cli-bridge-provider-home.ts, packages/Gemini_Module/src/runtime/cli-bridge-module-loader.ts, packages/Gemini_Module/src/runtime/cli-bridge.test.ts`; expected commit: `feat: use workspace gemini home for workflow sessions`).
+136. [PENDING] Git Commit: `feat: use workspace gemini home for workflow sessions` (hash: TBD)
 137. [TODO] `phase41.stream2.task2` Resolve Kimi managed-agent workflow home under `runtime/providers/kimi/home` and add focused provider-home tests (scope: `packages/core/src/provider-registry/index.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.test.ts`; expected commit: `feat: use workspace kimi home for workflow sessions`).
 138. [TODO] Git Commit: `feat: use workspace kimi home for workflow sessions` (hash: TBD)
 

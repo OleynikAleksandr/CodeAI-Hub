@@ -7,6 +7,7 @@ import {
   isGeminiCliCompatibilityError,
   loadCliBridgeFromGlobal,
 } from "./cli-bridge";
+import { resolveGeminiProviderGeminiDir } from "./cli-bridge-provider-home";
 
 const writeTextFile = async (
   filePath: string,
@@ -200,10 +201,29 @@ test("loadCliBridgeFromGlobal supports bundle-only Gemini CLI layouts", async ()
     layout: "bundle",
   });
   const previousRoot = process.env.CODEAI_HUB_GEMINI_CLI_ROOT;
+  const previousHome = process.env.HOME;
+  const previousWorkspacePath = process.env.GEMINI_WORKSPACE_PATH;
   process.env.CODEAI_HUB_GEMINI_CLI_ROOT = fixture.cliRoot;
   try {
-    const bridge = await loadCliBridgeFromGlobal();
     const workspacePath = path.join(fixture.root, "workspace");
+    process.env.GEMINI_WORKSPACE_PATH = workspacePath;
+    const providerGeminiDir = resolveGeminiProviderGeminiDir();
+    await writeTextFile(
+      path.join(providerGeminiDir, "settings.json"),
+      JSON.stringify(
+        {
+          security: {
+            auth: {
+              selectedType: "oauth-personal",
+            },
+          },
+        },
+        null,
+        2
+      )
+    );
+
+    const bridge = await loadCliBridgeFromGlobal();
     await writeTextFile(
       path.join(workspacePath, ".gemini", "settings.json"),
       JSON.stringify(
@@ -224,6 +244,20 @@ test("loadCliBridgeFromGlobal supports bundle-only Gemini CLI layouts", async ()
       settings.merged?.security?.auth?.selectedType,
       "login_with_google"
     );
+    assert.equal(
+      providerGeminiDir,
+      path.join(
+        workspacePath,
+        ".codeai-hub",
+        "workspace",
+        "runtime",
+        "providers",
+        "gemini",
+        "home",
+        ".gemini"
+      )
+    );
+    assert.equal(process.env.HOME, previousHome);
 
     const config = await bridge.modules.config.loadCliConfig(
       settings.merged,
@@ -299,6 +333,11 @@ test("loadCliBridgeFromGlobal supports bundle-only Gemini CLI layouts", async ()
       process.env.CODEAI_HUB_GEMINI_CLI_ROOT = undefined;
     } else {
       process.env.CODEAI_HUB_GEMINI_CLI_ROOT = previousRoot;
+    }
+    if (previousWorkspacePath === undefined) {
+      process.env.GEMINI_WORKSPACE_PATH = undefined;
+    } else {
+      process.env.GEMINI_WORKSPACE_PATH = previousWorkspacePath;
     }
     await rm(fixture.root, { recursive: true, force: true });
   }
