@@ -21,6 +21,16 @@ const PERSISTENT_RETURN_DISPOSITION = "not-created-persistent-user-return-open";
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const FENCED_JSON_END_RE = /\s*```$/u;
 
+type DiagramModulesGitBoundaryDependency = Pick<
+  DiagramModulesManagedGitBoundary,
+  "commitManagedChanges"
+>;
+
+const asManagedGitBoundary = (
+  gitBoundary: DiagramModulesGitBoundaryDependency
+): DiagramModulesManagedGitBoundary =>
+  gitBoundary as DiagramModulesManagedGitBoundary;
+
 interface ManagedPlanState {
   currentTaskId: string | null;
   expectedCommitMessage: string | null;
@@ -190,7 +200,7 @@ export const isDiagramModulesReviewOpen = async (
 };
 
 export const acceptDiagramModulesReviewWithoutRevision = async (params: {
-  readonly gitBoundary?: DiagramModulesManagedGitBoundary;
+  readonly gitBoundary?: DiagramModulesGitBoundaryDependency;
   readonly workspaceRoot: string;
 }): Promise<void> => {
   const gitBoundary =
@@ -208,7 +218,7 @@ export const acceptDiagramModulesReviewWithoutRevision = async (params: {
     throw new Error("Diagram Modules stage plan is not in review.");
   }
   await ensureManagedTerminalGitClean({
-    gitBoundary,
+    gitBoundary: asManagedGitBoundary(gitBoundary),
     stage: "diagram_modules",
     workspaceRoot: params.workspaceRoot,
   });
@@ -230,7 +240,7 @@ export const acceptDiagramModulesReviewWithoutRevision = async (params: {
   );
   await updateWorkspacePlan(params.workspaceRoot);
   await commitManagedWorkflowLedger({
-    gitBoundary,
+    gitBoundary: asManagedGitBoundary(gitBoundary),
     ledgerPaths: [WORKSPACE_PLAN_PATH, DIAGRAM_STAGE_PLAN_PATH],
     workspaceRoot: params.workspaceRoot,
   });

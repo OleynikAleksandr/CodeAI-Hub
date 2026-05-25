@@ -19,6 +19,11 @@ const WORKSPACE_PLAN_PATH = "doc/TODO/workspace.plan.md";
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const FENCED_JSON_END_RE = /\s*```$/u;
 
+type DiagramModulesGitBoundaryDependency = Pick<
+  DiagramModulesManagedGitBoundary,
+  "commitManagedChanges"
+>;
+
 interface ManagedPlanState {
   currentTaskId: string | null;
   expectedCommitMessage: string | null;
@@ -161,7 +166,7 @@ const block = (
 
 export const commitDiagramModulesRejectedTurn = async (params: {
   readonly decision: DiagramModulesManagedValidationResult;
-  readonly gitBoundary?: DiagramModulesManagedGitBoundary;
+  readonly gitBoundary?: DiagramModulesGitBoundaryDependency;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): Promise<DiagramModulesStagePlanAdvanceResult> => {

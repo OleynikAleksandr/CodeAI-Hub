@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "1080a7cfb",
+  "lastRecordedCommit": "f829a20f7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase42.stream1.task1",
-  "expectedCommitMessage": "refactor: share managed workflow git timeline",
+  "currentTaskId": "phase42.stream1.task2",
+  "expectedCommitMessage": "refactor: migrate diagram controllers to shared git timeline",
   "debt": {
-    "expectedCommitMessage": "refactor: share managed workflow git timeline",
-    "preCommitHead": "1080a7cfb",
+    "expectedCommitMessage": "refactor: migrate diagram controllers to shared git timeline",
+    "preCommitHead": "f829a20f7",
     "stage": "commit_pending",
-    "taskId": "phase42.stream1.task1"
+    "taskId": "phase42.stream1.task2"
   }
 }
 ```
@@ -373,9 +373,9 @@
 
 ### Stream: Shared Git Service Adoption
 139. [DONE] `phase42.stream1.task1` Replace Diagram Modules managed Git helper operations with the shared workspace Git timeline service without changing managed artifact validation semantics (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts`; expected commit: `refactor: share managed workflow git timeline`).
-140. [PENDING] Git Commit: `refactor: share managed workflow git timeline` (hash: TBD)
-141. [TODO] `phase42.stream1.task2` Migrate Diagram Modules stage/review/repair controllers to the shared Git dependency and remove direct `DiagramModulesManagedGitBoundary` construction where possible (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts`; expected commit: `refactor: migrate diagram controllers to shared git timeline`).
-142. [TODO] Git Commit: `refactor: migrate diagram controllers to shared git timeline` (hash: TBD)
+140. [DONE] Git Commit: `refactor: share managed workflow git timeline` (hash: f829a20f7)
+141. [DONE] `phase42.stream1.task2` Migrate Diagram Modules stage/review/repair controllers to the shared Git dependency and remove direct `DiagramModulesManagedGitBoundary` construction where possible (scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts`; expected commit: `refactor: migrate diagram controllers to shared git timeline`).
+142. [PENDING] Git Commit: `refactor: migrate diagram controllers to shared git timeline` (hash: TBD)
 143. [TODO] `phase42.stream1.task3` Migrate Application Skeleton, Quality Gates and scaffold installer managed commits to the shared Git dependency (scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts`; expected commit: `refactor: migrate managed stages to shared git timeline`).
 144. [TODO] Git Commit: `refactor: migrate managed stages to shared git timeline` (hash: TBD)
 

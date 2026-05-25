@@ -69,8 +69,13 @@ export type DiagramModulesStagePlanAdvanceResult =
     };
 
 export interface DiagramModulesStagePlanControllerOptions {
-  readonly gitBoundary?: DiagramModulesManagedGitBoundary;
+  readonly gitBoundary?: DiagramModulesGitBoundaryDependency;
 }
+
+type DiagramModulesGitBoundaryDependency = Pick<
+  DiagramModulesManagedGitBoundary,
+  "commitManagedChanges"
+>;
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -290,7 +295,7 @@ const uniqueExistingPaths = async (
 };
 
 export class DiagramModulesStagePlanController {
-  private readonly gitBoundary: DiagramModulesManagedGitBoundary;
+  private readonly gitBoundary: DiagramModulesGitBoundaryDependency;
 
   constructor(options: DiagramModulesStagePlanControllerOptions = {}) {
     this.gitBoundary =
@@ -486,7 +491,7 @@ export class DiagramModulesStagePlanController {
       )
     );
     await commitManagedWorkflowLedger({
-      gitBoundary: this.gitBoundary,
+      gitBoundary: this.gitBoundary as DiagramModulesManagedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, DIAGRAM_STAGE_PLAN_PATH],
       workspaceRoot: params.workspaceRoot,
     });
