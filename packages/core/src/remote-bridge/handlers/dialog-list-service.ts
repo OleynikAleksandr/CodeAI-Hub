@@ -12,6 +12,8 @@ import type {
 } from "../../session-continuity/index-registry";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
+import { WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG } from "../../unified-session/storage";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 
 const CONTINUITY_ROOT = ".codeai-hub";
 const CONTINUITY_DIR = "continuity";
@@ -105,6 +107,24 @@ const buildDialogDeduplicationKey = (
   return [entry.stage, entry.providerId, entry.providerSessionId].join("|");
 };
 
+const resolveDialogHistoryLocations = (options: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): readonly {
+  readonly rootDirectory: string;
+  readonly workspaceSlug: string;
+}[] => [
+  {
+    rootDirectory:
+      resolveWorkspaceRuntimeCapsule(options).sessionsRoot.absolutePath,
+    workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+  },
+  {
+    rootDirectory: SESSION_ROOT,
+    workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
+  },
+];
+
 export class DialogListService {
   private readonly logger: Logger;
 
@@ -116,25 +136,31 @@ export class DialogListService {
     readonly dialogId: string;
     readonly providerId: string;
     readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
   }): Promise<boolean> {
-    const filePath = buildSessionFilePath({
-      rootDirectory: SESSION_ROOT,
-      workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
-      provider: options.providerId,
-      sessionId: sanitizeWorkspaceSlug(options.dialogId),
-    });
+    const sessionId = sanitizeWorkspaceSlug(options.dialogId);
 
-    try {
-      await stat(filePath);
-      return true;
-    } catch {
-      return false;
+    for (const location of resolveDialogHistoryLocations(options)) {
+      const filePath = buildSessionFilePath({
+        rootDirectory: location.rootDirectory,
+        workspaceSlug: location.workspaceSlug,
+        provider: options.providerId,
+        sessionId,
+      });
+      try {
+        await stat(filePath);
+        return true;
+      } catch {
+        // Try the next history root candidate.
+      }
     }
+    return false;
   }
 
   private async selectPreferredEntry(options: {
     readonly entries: readonly ContinuityIndexEntry[];
     readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
   }): Promise<ContinuityIndexEntry> {
     let preferred = options.entries[0];
     let preferredHasHistory = preferred?.providerId
@@ -142,6 +168,7 @@ export class DialogListService {
           dialogId: preferred.dialogId,
           providerId: preferred.providerId,
           workspaceRoot: options.workspaceRoot,
+          workspaceSlug: options.workspaceSlug,
         })
       : false;
 
@@ -152,6 +179,7 @@ export class DialogListService {
           dialogId: entry.dialogId,
           providerId: entry.providerId,
           workspaceRoot: options.workspaceRoot,
+          workspaceSlug: options.workspaceSlug,
         }));
       if (hasHistory && !preferredHasHistory) {
         preferred = entry;
@@ -172,6 +200,7 @@ export class DialogListService {
   private async dedupeDialogEntries(options: {
     readonly entries: readonly ContinuityIndexEntry[];
     readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
   }): Promise<readonly ContinuityIndexEntry[]> {
     const grouped = new Map<string, ContinuityIndexEntry[]>();
     const passthrough: ContinuityIndexEntry[] = [];
@@ -196,6 +225,7 @@ export class DialogListService {
         await this.selectPreferredEntry({
           entries,
           workspaceRoot: options.workspaceRoot,
+          workspaceSlug: options.workspaceSlug,
         })
       );
     }
@@ -256,6 +286,7 @@ export class DialogListService {
         options.runtimeSessions ?? []
       ),
       workspaceRoot: options.workspaceRoot,
+      workspaceSlug: options.workspaceSlug,
     });
   }
 }

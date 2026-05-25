@@ -11,6 +11,8 @@ import {
 } from "@codeai-hub/unified-session";
 import { SessionMessageLocalizationProjector } from "../../session-translation/session-message-localization-projector";
 import type { Logger } from "../../telemetry/logger";
+import { WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG } from "../../unified-session/storage";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { DialogOpenService } from "./dialog-open-service";
 
 const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
@@ -34,6 +36,24 @@ type SessionMessageRecord = Extract<
   SessionRecord,
   { readonly type: "message" }
 >;
+
+const resolveDialogHistoryLocations = (options: {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): readonly {
+  readonly rootDirectory: string;
+  readonly workspaceSlug: string;
+}[] => [
+  {
+    rootDirectory:
+      resolveWorkspaceRuntimeCapsule(options).sessionsRoot.absolutePath,
+    workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+  },
+  {
+    rootDirectory: SESSION_ROOT,
+    workspaceSlug: sanitizeWorkspaceSlug(options.workspaceRoot),
+  },
+];
 
 export class DialogHistoryService {
   private readonly logger: Logger;
@@ -121,7 +141,8 @@ export class DialogHistoryService {
   }
 
   private async resolveProviderIds(options: {
-    readonly workspaceKey: string;
+    readonly rootDirectory: string;
+    readonly workspaceSlug: string;
     readonly preferredProviderId: string | null;
   }): Promise<readonly string[]> {
     const providerIds: string[] = [];
@@ -130,7 +151,10 @@ export class DialogHistoryService {
     }
 
     try {
-      const workspaceDir = path.join(SESSION_ROOT, options.workspaceKey);
+      const workspaceDir = path.join(
+        options.rootDirectory,
+        options.workspaceSlug
+      );
       const entries = await readdir(workspaceDir, { withFileTypes: true });
       for (const entry of entries) {
         if (!entry.isDirectory()) {
@@ -159,40 +183,39 @@ export class DialogHistoryService {
       workspaceSlug: options.workspaceSlug,
       dialogId: options.dialogId,
     });
-    const workspaceKey = sanitizeWorkspaceSlug(options.workspaceRoot);
     const sessionId = sanitizeWorkspaceSlug(options.dialogId);
-    const providerIds = await this.resolveProviderIds({
-      workspaceKey,
-      preferredProviderId: dialog?.providerId ?? null,
-    });
-
-    if (providerIds.length === 0) {
-      return { messages: [], lastCursor: 0 };
-    }
+    const locations = resolveDialogHistoryLocations(options);
 
     let lastError: unknown = null;
-    for (const providerId of providerIds) {
-      const filePath = buildSessionFilePath({
-        rootDirectory: SESSION_ROOT,
-        workspaceSlug: workspaceKey,
-        provider: providerId,
-        sessionId,
+    for (const location of locations) {
+      const providerIds = await this.resolveProviderIds({
+        rootDirectory: location.rootDirectory,
+        workspaceSlug: location.workspaceSlug,
+        preferredProviderId: dialog?.providerId ?? null,
       });
-      const translationFilePath = buildSessionTranslationFilePath({
-        rootDirectory: SESSION_ROOT,
-        workspaceSlug: workspaceKey,
-        provider: providerId,
-        sessionId,
-      });
-
-      try {
-        return await this.readHistoryFromFile({
-          filePath,
-          translationFilePath,
-          cursor: options.cursor,
+      for (const providerId of providerIds) {
+        const filePath = buildSessionFilePath({
+          rootDirectory: location.rootDirectory,
+          workspaceSlug: location.workspaceSlug,
+          provider: providerId,
+          sessionId,
         });
-      } catch (error: unknown) {
-        lastError = error;
+        const translationFilePath = buildSessionTranslationFilePath({
+          rootDirectory: location.rootDirectory,
+          workspaceSlug: location.workspaceSlug,
+          provider: providerId,
+          sessionId,
+        });
+
+        try {
+          return await this.readHistoryFromFile({
+            filePath,
+            translationFilePath,
+            cursor: options.cursor,
+          });
+        } catch (error: unknown) {
+          lastError = error;
+        }
       }
     }
 
