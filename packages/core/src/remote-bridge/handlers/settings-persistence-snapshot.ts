@@ -5,6 +5,7 @@ import {
   type LocalizationRuntimeSettingsSnapshot,
 } from "@codeai-hub/localization";
 import type { CoreConfig } from "../../config";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { normalizeClaudeThinkingSettings } from "./settings-request-handler-claude-thinking";
 import { applyLocalizationSettingsMigration } from "./settings-request-handler-localization-migration";
 
@@ -130,6 +131,11 @@ export interface LocalizationComparisonSnapshot {
 export interface SettingsLoadEntry {
   readonly changed: boolean;
   readonly settings: Record<string, unknown>;
+}
+
+export interface WorkspaceSettingsScope {
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -286,6 +292,17 @@ export const buildDefaultSettingsSnapshot = (
     },
   };
 };
+
+export const resolveSettingsSnapshotPath = (params: {
+  readonly config: CoreConfig;
+  readonly workspace?: WorkspaceSettingsScope;
+}): string =>
+  params.workspace
+    ? resolveWorkspaceRuntimeCapsule({
+        workspaceRoot: params.workspace.workspaceRoot,
+        workspaceSlug: params.workspace.workspaceSlug,
+      }).settingsFile.absolutePath
+    : params.config.claudeSettingsPath;
 
 export const normalizeLoadedSettingsSnapshotWithDefaults = (
   settings: Record<string, unknown>,

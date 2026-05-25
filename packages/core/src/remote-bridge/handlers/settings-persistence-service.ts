@@ -8,7 +8,9 @@ import {
   normalizeLoadedSettingsSnapshotWithDefaults,
   persistSettingsSnapshot,
   resolveLocalizationComparisonSnapshot,
+  resolveSettingsSnapshotPath,
   type SettingsLoadEntry,
+  type WorkspaceSettingsScope,
 } from "./settings-persistence-snapshot";
 
 type ApprovedLocalizationGroupId =
@@ -46,6 +48,10 @@ export interface SettingsWriteResult {
   readonly affectedRuntimeBundleIds: readonly LocalizationRuntimeBundleId[];
   readonly settings: Record<string, unknown>;
   readonly syncMode: "best_effort" | "strict";
+}
+
+export interface SettingsPersistenceOptions {
+  readonly workspace?: WorkspaceSettingsScope;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -162,15 +168,20 @@ export class SettingsPersistenceService {
     });
   }
 
-  async load(): Promise<Record<string, unknown>> {
-    return (await this.loadSettingsEntry()).settings;
+  async load(
+    options: SettingsPersistenceOptions = {}
+  ): Promise<Record<string, unknown>> {
+    return (await this.loadSettingsEntry(options)).settings;
   }
 
-  async reset(): Promise<SettingsWriteResult> {
-    const current = await this.loadSettingsEntry();
+  async reset(
+    options: SettingsPersistenceOptions = {}
+  ): Promise<SettingsWriteResult> {
+    const settingsPath = this.resolveSettingsPath(options);
+    const current = await this.loadSettingsEntry(options);
     const settings = buildDefaultSettingsSnapshot(this.config);
-    await persistSettingsSnapshot(this.config.claudeSettingsPath, settings);
-    this.invalidateSettingsSnapshotCache();
+    await persistSettingsSnapshot(settingsPath, settings);
+    this.invalidateSettingsSnapshotCache(settingsPath);
 
     const impact = resolveLocalizationImpact(current.settings, settings);
     return {
@@ -180,20 +191,24 @@ export class SettingsPersistenceService {
     };
   }
 
-  async save(rawSettings: unknown): Promise<SettingsWriteResult> {
+  async save(
+    rawSettings: unknown,
+    options: SettingsPersistenceOptions = {}
+  ): Promise<SettingsWriteResult> {
     if (!this.isValidSettingsPayload(rawSettings)) {
       throw new Error(
         "Received invalid settings payload. Changes were not saved."
       );
     }
 
-    const current = await this.loadSettingsEntry();
+    const settingsPath = this.resolveSettingsPath(options);
+    const current = await this.loadSettingsEntry(options);
     const { settings } = normalizeLoadedSettingsSnapshotWithDefaults(
       rawSettings,
       this.config
     );
-    await persistSettingsSnapshot(this.config.claudeSettingsPath, settings);
-    this.invalidateSettingsSnapshotCache();
+    await persistSettingsSnapshot(settingsPath, settings);
+    this.invalidateSettingsSnapshotCache(settingsPath);
 
     const impact = resolveLocalizationImpact(current.settings, settings);
     return {
@@ -229,7 +244,7 @@ export class SettingsPersistenceService {
           settingsPath,
           buildDefaultSettingsSnapshot(this.config)
         );
-        this.invalidateSettingsSnapshotCache();
+        this.invalidateSettingsSnapshotCache(settingsPath);
       } catch (persistError) {
         this.logger.warn("Failed to persist default settings on startup", {
           error: toErrorMessage(persistError),
@@ -239,8 +254,17 @@ export class SettingsPersistenceService {
     }
   }
 
-  private async loadSettingsEntry(): Promise<SettingsLoadEntry> {
-    const settingsPath = this.config.claudeSettingsPath;
+  private resolveSettingsPath(options: SettingsPersistenceOptions): string {
+    return resolveSettingsSnapshotPath({
+      config: this.config,
+      workspace: options.workspace,
+    });
+  }
+
+  private async loadSettingsEntry(
+    options: SettingsPersistenceOptions = {}
+  ): Promise<SettingsLoadEntry> {
+    const settingsPath = this.resolveSettingsPath(options);
     try {
       const raw = await readFile(settingsPath, "utf8");
       const parsed = JSON.parse(raw) as unknown;
@@ -255,7 +279,7 @@ export class SettingsPersistenceService {
       if (normalized.changed) {
         try {
           await persistSettingsSnapshot(settingsPath, normalized.settings);
-          this.invalidateSettingsSnapshotCache();
+          this.invalidateSettingsSnapshotCache(settingsPath);
         } catch (persistError) {
           this.logger.warn("Failed to persist settings migration", {
             error: toErrorMessage(persistError),
@@ -273,11 +297,11 @@ export class SettingsPersistenceService {
         settingsPath,
       });
 
-      const snapshot = buildDefaultSettingsSnapshot(this.config);
+      const snapshot = await this.resolveMissingSettingsSnapshot(options);
       if (code === "ENOENT") {
         try {
           await persistSettingsSnapshot(settingsPath, snapshot);
-          this.invalidateSettingsSnapshotCache();
+          this.invalidateSettingsSnapshotCache(settingsPath);
         } catch (persistError) {
           this.logger.warn("Failed to persist default settings", {
             error: toErrorMessage(persistError),
@@ -290,7 +314,29 @@ export class SettingsPersistenceService {
     }
   }
 
-  private invalidateSettingsSnapshotCache(): void {
-    providerSettingsSnapshotCache.clear(this.config.claudeSettingsPath);
+  private async resolveMissingSettingsSnapshot(
+    options: SettingsPersistenceOptions
+  ): Promise<Record<string, unknown>> {
+    if (!options.workspace) {
+      return buildDefaultSettingsSnapshot(this.config);
+    }
+
+    try {
+      const raw = await readFile(this.config.claudeSettingsPath, "utf8");
+      const parsed = JSON.parse(raw) as unknown;
+      const baseSettings = isRecord(parsed)
+        ? parsed
+        : buildDefaultSettingsSnapshot(this.config);
+      return normalizeLoadedSettingsSnapshotWithDefaults(
+        baseSettings,
+        this.config
+      ).settings;
+    } catch {
+      return buildDefaultSettingsSnapshot(this.config);
+    }
+  }
+
+  private invalidateSettingsSnapshotCache(settingsPath: string): void {
+    providerSettingsSnapshotCache.clear(settingsPath);
   }
 }
