@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "9c20fe86b",
+  "lastRecordedCommit": "178fbaab8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream69.task4",
-  "expectedCommitMessage": "docs: record quality gates terminal residue release",
+  "currentTaskId": "phase8.stream70.task1",
+  "expectedCommitMessage": "docs: plan git boundary clear architecture",
   "debt": {
-    "expectedCommitMessage": "docs: record quality gates terminal residue release",
-    "preCommitHead": "9c20fe86b",
+    "expectedCommitMessage": "docs: plan git boundary clear architecture",
+    "preCommitHead": "178fbaab8",
     "stage": "commit_pending",
-    "taskId": "phase8.stream69.task4"
+    "taskId": "phase8.stream70.task1"
   }
 }
 ```
@@ -697,7 +697,13 @@
 464. [DONE] Git Commit: `chore: build quality gates terminal residue release` (hash: 9c20fe86b)
 465. [DONE] `phase8.stream69.task3` Run `./scripts/build-release.sh --use-current-version --allow-dirty`, verify VSIX output, and leave scope active for user workflow acceptance (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Release 1.2.353 built: build-all and build-release completed, VSIX codeai-hub-1.2.353.vsix created at 4.7M, SHA-256 24f4a1f1683cd93a41ee832df4582602408186882f4a2d2d4066ae63d6cf6ab6.
 466. [DONE] `phase8.stream69.task4` Record the completed v1.2.353 VSIX build result in the active plan before user workflow acceptance (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: record quality gates terminal residue release`).
-467. [PENDING] Git Commit: `docs: record quality gates terminal residue release` (hash: TBD)
+467. [DONE] Git Commit: `docs: record quality gates terminal residue release` (hash: 178fbaab8)
+
+### Stream: Workflow Clear Git Boundary Architecture Reset
+468. [DONE] `phase8.stream70.task1` Create the Core-owned Git boundary Clear architecture planning document and reopen the active scope after v1.2.353 Clear acceptance failed (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan git boundary clear architecture`).
+469. [PENDING] Git Commit: `docs: plan git boundary clear architecture` (hash: TBD)
+470. [TODO] `phase8.stream70.task2` Audit the legacy Clear/Undo implementation and split removal work into microtasks that preserve the Project Manager Clear button/menu contract (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan legacy clear undo cleanup`).
+471. [TODO] Git Commit: `docs: plan legacy clear undo cleanup` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
