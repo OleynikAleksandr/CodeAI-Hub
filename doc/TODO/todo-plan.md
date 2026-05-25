@@ -8,15 +8,15 @@
   "planId": "development-tree-lead-contract-orchestration-implementation-2026-05-22",
   "branch": "main",
   "baseHead": "ab59a2447",
-  "lastRecordedCommit": "178fbaab8",
+  "lastRecordedCommit": "867fe12df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
-  "currentTaskId": "phase8.stream70.task1",
-  "expectedCommitMessage": "docs: plan git boundary clear architecture",
+  "currentTaskId": "phase8.stream70.task2",
+  "expectedCommitMessage": "docs: plan legacy clear undo cleanup",
   "debt": {
-    "expectedCommitMessage": "docs: plan git boundary clear architecture",
-    "preCommitHead": "178fbaab8",
+    "expectedCommitMessage": "docs: plan legacy clear undo cleanup",
+    "preCommitHead": "867fe12df",
     "stage": "commit_pending",
-    "taskId": "phase8.stream70.task1"
+    "taskId": "phase8.stream70.task2"
   }
 }
 ```
@@ -701,9 +701,29 @@
 
 ### Stream: Workflow Clear Git Boundary Architecture Reset
 468. [DONE] `phase8.stream70.task1` Create the Core-owned Git boundary Clear architecture planning document and reopen the active scope after v1.2.353 Clear acceptance failed (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan git boundary clear architecture`).
-469. [PENDING] Git Commit: `docs: plan git boundary clear architecture` (hash: TBD)
-470. [TODO] `phase8.stream70.task2` Audit the legacy Clear/Undo implementation and split removal work into microtasks that preserve the Project Manager Clear button/menu contract (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan legacy clear undo cleanup`).
-471. [TODO] Git Commit: `docs: plan legacy clear undo cleanup` (hash: TBD)
+469. [DONE] Git Commit: `docs: plan git boundary clear architecture` (hash: 867fe12df)
+470. [DONE] `phase8.stream70.task2` Audit the legacy Clear/Undo implementation and split removal work into microtasks that preserve the Project Manager Clear button/menu contract (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan legacy clear undo cleanup`).
+471. [PENDING] Git Commit: `docs: plan legacy clear undo cleanup` (hash: TBD)
+472. [TODO] `phase8.stream70.task3` Remove mutation-journal capture from session/message workflow write paths while preserving the normal write/session behavior (scope: `packages/core/src/remote-bridge/handlers/workspace-session-service.ts, packages/core/src/remote-bridge/handlers/http-api-session-routes.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts`; expected commit: `refactor: remove workflow mutation journal captures`).
+473. [TODO] Git Commit: `refactor: remove workflow mutation journal captures` (hash: TBD)
+474. [TODO] `phase8.stream70.task4` Remove undo-ledger recording from artifact upsert, workspace file write, and development-tree materialization paths (scope: `packages/core/src/remote-bridge/handlers/http-api-artifact-upsert-service.ts, packages/core/src/remote-bridge/handlers/workspace-file-service.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-structurator-facade.ts`; expected commit: `refactor: remove workflow undo ledger writes`).
+475. [TODO] Git Commit: `refactor: remove workflow undo ledger writes` (hash: TBD)
+476. [TODO] `phase8.stream70.task5` Replace the legacy Clear backend with an explicit unavailable Core response that keeps request validation and the Project Manager endpoint contract for the future Git-boundary implementation (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, src/client/project-manager/services/workflow-step-clear-client.ts`; expected commit: `refactor: disable legacy workflow clear backend`).
+477. [TODO] Git Commit: `refactor: disable legacy workflow clear backend` (hash: TBD)
+478. [TODO] `phase8.stream70.task6` Delete legacy Clear helper modules and their helper-level tests now that the backend no longer uses fallback path cleanup/session cleanup/last-active repair (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-continuity-support.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-session-cleanup.test.ts`; expected commit: `refactor: remove legacy clear helper modules`).
+479. [TODO] Git Commit: `refactor: remove legacy clear helper modules` (hash: TBD)
+480. [TODO] `phase8.stream70.task7` Delete remaining legacy Clear fallback helper modules after service replacement (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-stage-paths.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-last-active.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-workspace-plan.ts`; expected commit: `refactor: remove legacy clear fallback helpers`).
+481. [TODO] Git Commit: `refactor: remove legacy clear fallback helpers` (hash: TBD)
+482. [TODO] `phase8.stream70.task8` Delete obsolete Clear behavior tests that asserted checkpoint/undo/git-rollback fallback semantics (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.undo.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.checkpoint-cleanup.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.git-rollback.test.ts`; expected commit: `test: remove legacy clear rollback tests`).
+483. [TODO] Git Commit: `test: remove legacy clear rollback tests` (hash: TBD)
+484. [TODO] `phase8.stream70.task9` Delete the workflow undo module after all runtime imports are gone (scope: `packages/core/src/workflow/undo/workflow-mutation-journal-runtime.ts, packages/core/src/workflow/undo/workflow-mutation-journal-runtime.test.ts, packages/core/src/workflow/undo/workflow-step-undo-ledger.ts`; expected commit: `refactor: remove workflow undo module`).
+485. [TODO] Git Commit: `refactor: remove workflow undo module` (hash: TBD)
+486. [TODO] `phase8.stream70.task10` Delete the workflow step checkpoint module after session creation and Clear no longer depend on it (scope: `packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-facade.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.ts, packages/core/src/workflow/step-checkpoint/workflow-step-checkpoint-store.test.ts`; expected commit: `refactor: remove workflow step checkpoint module`).
+487. [TODO] Git Commit: `refactor: remove workflow step checkpoint module` (hash: TBD)
+488. [TODO] `phase8.stream70.task11` Delete the obsolete stage-bound Git rollback facade that predated the Core-owned boundary registry architecture (scope: `packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.ts, packages/core/src/workflow/git-rollback/workflow-git-rollback-facade.test.ts`; expected commit: `refactor: remove legacy workflow git rollback facade`).
+489. [TODO] Git Commit: `refactor: remove legacy workflow git rollback facade` (hash: TBD)
+490. [TODO] `phase8.stream70.task12` Run targeted Core verification after legacy Clear/Undo removal and record the result before asking for the next release-build gate (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify legacy clear undo cleanup`).
+491. [TODO] Git Commit: `test: verify legacy clear undo cleanup` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
