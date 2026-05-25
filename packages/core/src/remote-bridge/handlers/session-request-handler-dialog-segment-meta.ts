@@ -1,5 +1,3 @@
-import { homedir } from "node:os";
-import path from "node:path";
 import {
   buildSessionFilePath,
   readSessionEvents,
@@ -14,10 +12,13 @@ import type {
   SessionMessage,
 } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
-import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import {
+  type UnifiedSessionStorage,
+  WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+} from "../../unified-session/storage";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import type { BridgeEvent } from "../types";
 
-const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
 const DIALOG_SEGMENT_BOUNDARY_MARKER = "__CODEAIHUB_SEGMENT_BOUNDARY__";
 const DIALOG_SEGMENT_META_MARKER = "__CODEAIHUB_SEGMENT_META__:";
 
@@ -84,6 +85,23 @@ export class SessionRequestHandlerDialogSegmentMeta {
     this.deps = deps;
   }
 
+  private buildDialogHistoryPath(options: {
+    readonly dialogId: string;
+    readonly providerId: string;
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): string {
+    return buildSessionFilePath({
+      rootDirectory: resolveWorkspaceRuntimeCapsule({
+        workspaceRoot: options.workspaceRoot,
+        workspaceSlug: options.workspaceSlug,
+      }).sessionsRoot.absolutePath,
+      workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+      provider: options.providerId,
+      sessionId: sanitizeWorkspaceSlug(options.dialogId),
+    });
+  }
+
   async appendDialogSegmentBoundaryMeta(options: {
     readonly session: Session;
     readonly workspaceSlug: string;
@@ -99,12 +117,11 @@ export class SessionRequestHandlerDialogSegmentMeta {
       options.session.id;
 
     try {
-      const workspaceKey = sanitizeWorkspaceSlug(options.session.workspacePath);
-      const jsonlPath = buildSessionFilePath({
-        rootDirectory: SESSION_ROOT,
-        workspaceSlug: workspaceKey,
-        provider: options.session.providerId,
-        sessionId: sanitizeWorkspaceSlug(rootDialogId),
+      const jsonlPath = this.buildDialogHistoryPath({
+        dialogId: rootDialogId,
+        providerId: options.session.providerId,
+        workspaceRoot: options.session.workspacePath,
+        workspaceSlug: options.workspaceSlug,
       });
 
       await this.deps.continuity.ensureTrackedOnOutboundMessage({

@@ -1,5 +1,3 @@
-import { homedir } from "node:os";
-import path from "node:path";
 import {
   buildSessionFilePath,
   sanitizeWorkspaceSlug,
@@ -7,11 +5,30 @@ import {
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { Session } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
-import type { UnifiedSessionStorage } from "../../unified-session/storage";
+import {
+  type UnifiedSessionStorage,
+  WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+} from "../../unified-session/storage";
 import { DescriptionStepStore } from "../../workflow/description";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 
 const DESCRIPTION_DIALOG_SESSION_SUFFIX_REGEX = /__collector$/;
-const SESSION_ROOT = path.join(homedir(), ".codeai-hub", "sessions");
+
+const buildWorkspaceDialogHistoryPath = (options: {
+  readonly dialogSessionId: string;
+  readonly providerId: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): string =>
+  buildSessionFilePath({
+    rootDirectory: resolveWorkspaceRuntimeCapsule({
+      workspaceRoot: options.workspaceRoot,
+      workspaceSlug: options.workspaceSlug,
+    }).sessionsRoot.absolutePath,
+    workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+    provider: options.providerId,
+    sessionId: sanitizeWorkspaceSlug(options.dialogSessionId),
+  });
 
 export type DescriptionDialogResolution = {
   readonly dialogSessionId: string;
@@ -76,6 +93,18 @@ export class SessionDescriptionDialogSync {
       fromHistorySessionId: legacyDialogSessionId,
       toHistorySessionId: dialogSessionId,
     });
+    if (session.initiativeSlug) {
+      this.deps.sessionStorage.promoteHistoryFile({
+        rootDirectory: resolveWorkspaceRuntimeCapsule({
+          workspaceRoot: session.workspacePath,
+          workspaceSlug: session.initiativeSlug,
+        }).sessionsRoot.absolutePath,
+        workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+        providerId: session.providerId,
+        fromHistorySessionId: legacyDialogSessionId,
+        toHistorySessionId: dialogSessionId,
+      });
+    }
   }
 
   async maybeBackfillDescriptionDialogHistory(options: {
@@ -108,11 +137,11 @@ export class SessionDescriptionDialogSync {
 
     const continuityRootSessionId =
       this.deps.continuityRootBySessionId.get(session.id) ?? session.id;
-    const jsonlPath = buildSessionFilePath({
-      rootDirectory: SESSION_ROOT,
-      workspaceSlug: sanitizeWorkspaceSlug(session.workspacePath),
-      provider: session.providerId,
-      sessionId: sanitizeWorkspaceSlug(continuityRootSessionId),
+    const jsonlPath = buildWorkspaceDialogHistoryPath({
+      dialogSessionId: continuityRootSessionId,
+      providerId: session.providerId,
+      workspaceRoot: session.workspacePath,
+      workspaceSlug: session.initiativeSlug,
     });
 
     try {

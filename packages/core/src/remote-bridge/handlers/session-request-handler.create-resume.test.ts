@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import {
+  buildSessionFilePath,
+  sanitizeWorkspaceSlug,
+} from "@codeai-hub/unified-session";
+import { WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG } from "../../unified-session/storage";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { readAppliedProviderTurnConfig } from "../types";
 import {
   collectTurnStateSequence,
@@ -350,10 +356,23 @@ test("SessionRequestHandler keeps primary description dialog contracts", async (
   ]);
   const primarySession = (
     capturedUpdate as {
-      readonly primarySession?: { readonly providerSessionId?: string };
+      readonly primarySession?: {
+        readonly jsonlPath?: string;
+        readonly providerSessionId?: string;
+      };
     } | null
   )?.primarySession;
+  const expectedJsonlPath = buildSessionFilePath({
+    rootDirectory: resolveWorkspaceRuntimeCapsule({
+      workspaceRoot: session.workspacePath,
+      workspaceSlug: "description-workspace",
+    }).sessionsRoot.absolutePath,
+    workspaceSlug: WORKFLOW_UNIFIED_SESSION_WORKSPACE_SLUG,
+    provider: session.providerId,
+    sessionId: sanitizeWorkspaceSlug(session.id),
+  });
   assert.equal(primarySession?.providerSessionId, "provider-session-updated");
+  assert.equal(primarySession?.jsonlPath, expectedJsonlPath);
   const source = await readFile(SOURCE_PATH, "utf8");
   assert.deepEqual(
     getHandlerSourceInvariantChecks(source),
