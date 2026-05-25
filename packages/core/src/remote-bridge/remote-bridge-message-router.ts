@@ -12,6 +12,10 @@ import { RemoteBridgeWorkbenchCommandRouter } from "./remote-bridge-workbench-co
 import { RemoteBridgeWorkspaceCommandRouter } from "./remote-bridge-workspace-command-router";
 import type { IncomingMessage } from "./types";
 
+interface SettingsWorkspaceScopePayload {
+  readonly workspacePath?: string | null;
+  readonly workspaceSlug?: string | null;
+}
 export class RemoteBridgeMessageRouter {
   private readonly deps: RemoteBridgeMessageRouterDependencies;
   private readonly developmentTreeNodeCommandRouter: RemoteBridgeDevelopmentTreeNodeCommandRouter;
@@ -83,16 +87,27 @@ export class RemoteBridgeMessageRouter {
         await this.sessionCreateRouter.handle(clientId, incoming);
         break;
       case "settings:load":
-        await this.deps.settingsHandler.handleLoad();
+        await this.deps.settingsHandler.handleLoad(
+          RemoteBridgeMessageRouter.resolveSettingsWorkspace(
+            "payload" in incoming ? incoming.payload : undefined
+          )
+        );
         break;
       case "settings:versions":
         await this.deps.settingsHandler.handleLoadVersions();
         break;
       case "settings:save":
-        await this.deps.settingsHandler.handleSave(incoming.payload.settings);
+        await this.deps.settingsHandler.handleSave(
+          incoming.payload.settings,
+          RemoteBridgeMessageRouter.resolveSettingsWorkspace(incoming.payload)
+        );
         break;
       case "settings:reset":
-        await this.deps.settingsHandler.handleReset();
+        await this.deps.settingsHandler.handleReset(
+          RemoteBridgeMessageRouter.resolveSettingsWorkspace(
+            "payload" in incoming ? incoming.payload : undefined
+          )
+        );
         break;
       case "settings:update-provider":
         await this.deps.settingsHandler.handleUpdateProvider(
@@ -260,6 +275,22 @@ export class RemoteBridgeMessageRouter {
     }
   }
 
+  private static resolveSettingsWorkspace(
+    payload: unknown
+  ):
+    | { readonly workspaceRoot: string; readonly workspaceSlug: string }
+    | undefined {
+    const scope =
+      payload && typeof payload === "object"
+        ? (payload as SettingsWorkspaceScopePayload)
+        : undefined;
+    return scope?.workspacePath && scope.workspaceSlug
+      ? {
+          workspaceRoot: scope.workspacePath,
+          workspaceSlug: scope.workspaceSlug,
+        }
+      : undefined;
+  }
   private ensureMessageAllowedForScope(
     clientId: string,
     incoming: IncomingMessage
@@ -340,7 +371,6 @@ export class RemoteBridgeMessageRouter {
     }
     await stopHandler.handleStop(sessionId);
   }
-
   private async handleDialogSwitchRequest(payload: {
     readonly mode?: unknown;
     readonly sessionId?: unknown;
@@ -366,7 +396,6 @@ export class RemoteBridgeMessageRouter {
           : undefined,
     });
   }
-
   private async handleNativeRequestCapture(
     clientId: string,
     payload: {
@@ -450,7 +479,6 @@ export class RemoteBridgeMessageRouter {
       },
     });
   }
-
   private sendCommandError(
     clientId: string,
     command: string,
@@ -468,6 +496,5 @@ export class RemoteBridgeMessageRouter {
     });
   }
 }
-
 const readOptionalString = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;

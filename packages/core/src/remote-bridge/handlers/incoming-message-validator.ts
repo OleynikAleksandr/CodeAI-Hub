@@ -17,9 +17,7 @@ type PayloadValidator = (payload: unknown) => boolean;
 
 const NO_PAYLOAD_COMMANDS = new Set([
   "projects:list",
-  "settings:load",
   "settings:open-user-glossary-file",
-  "settings:reset",
   "settings:template-updates",
   "settings:versions",
 ]);
@@ -208,6 +206,13 @@ const isDialogSwitchCancelPayload = (payload: unknown): boolean =>
 const isSettingsSavePayload = (payload: unknown): boolean =>
   isRecord(payload) && "settings" in payload;
 
+const isSettingsWorkspaceScopePayload = (payload: unknown): boolean =>
+  payload === undefined ||
+  payload === null ||
+  (isRecord(payload) &&
+    isOptionalStringOrNull(payload.workspacePath) &&
+    isOptionalStringOrNull(payload.workspaceSlug));
+
 const isSettingsUpdateProviderPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.provider === "string" &&
@@ -299,7 +304,9 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "session:speech:speak-message": isSessionSpeechSpeakPayload,
   "session:speech:stop": isSessionSpeechStopPayload,
   "session:stop": isSessionIdPayload,
+  "settings:load": isSettingsWorkspaceScopePayload,
   "settings:native-request-capture": isNativeRequestCapturePayload,
+  "settings:reset": isSettingsWorkspaceScopePayload,
   "settings:save": isSettingsSavePayload,
   "settings:template-update:resolve": isSettingsTemplateResolutionPayload,
   "settings:update-provider": isSettingsUpdateProviderPayload,

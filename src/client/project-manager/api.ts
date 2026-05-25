@@ -9,6 +9,7 @@ import {
   fetchWorkflowState,
   type WorkflowStateSnapshot,
 } from "./services/workflow-state-client";
+import type { WorkspaceSettingsScopePayload } from "./services/project-manager-settings-client";
 import type {
   CoreStatePayload,
   IncomingMessage,
@@ -129,7 +130,7 @@ class ProjectManagerApi {
   }
 
   listProjects(): void { this.send({ type: "projects:list" }); }
-  loadSettings(): void { this.send({ type: "settings:load" }); }
+  loadSettings(scope?: WorkspaceSettingsScopePayload): void { this.send({ type: "settings:load", payload: scope } as QueuedOutgoingMessage); }
   loadSettingsVersions(): void { this.send({ type: "settings:versions" }); }
   getLastSettingsPayload(): SettingsLoadedPayload | null { return this.lastSettingsPayload; }
   getLastSettingsSaveError(): string | null { return this.lastSettingsSaveError; }
@@ -138,13 +139,13 @@ class ProjectManagerApi {
     return this.lastUserGlossaryFilePayload;
   }
 
-  saveSettings(settings: unknown): void {
+  saveSettings(settings: unknown, scope?: WorkspaceSettingsScopePayload): void {
     this.lastSettingsSaveError = null;
-    this.send({ type: "settings:save", payload: { settings } });
+    this.send({ type: "settings:save", payload: { ...scope, settings } } as QueuedOutgoingMessage);
   }
-  resetSettings(): void {
+  resetSettings(scope?: WorkspaceSettingsScopePayload): void {
     this.lastSettingsSaveError = null;
-    this.send({ type: "settings:reset" });
+    this.send({ type: "settings:reset", payload: scope } as QueuedOutgoingMessage);
   }
   restartCore(): void {
     this.coreRestartTracker.requestRestart();

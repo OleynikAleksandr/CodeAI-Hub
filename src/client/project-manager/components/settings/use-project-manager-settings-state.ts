@@ -124,7 +124,10 @@ export const useProjectManagerSettingsState =
   (
     context: ProjectManagerSettingsContext = {}
   ): UseProjectManagerSettingsStateResult => {
-    const transport = useProjectManagerSettings();
+    const transport = useProjectManagerSettings({
+      workspacePath: context.activeWorkspacePath,
+      workspaceSlug: context.activeWorkspaceSlug,
+    });
     const initialSettingsRef = useRef<Settings>(
       normalizeLoadedLocalizationSettings(transport.settings)
     );

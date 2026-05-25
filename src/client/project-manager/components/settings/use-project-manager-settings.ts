@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "../../api";
 import type { BrowserLocalizationRuntimePayload } from "../../../ui/src/app-host/localization-runtime-contract";
 import { readBrowserLocalizationBootstrapSnapshot } from "../../../ui/src/app-host/localization-runtime-contract";
@@ -24,6 +24,8 @@ import type {
   SettingsUserGlossaryFilePayload,
   SettingsVersionsPayload,
 } from "../../core-stream-message-types";
+import { resolveWorkspaceSettingsScope } from "../../services/project-manager-settings-client";
+import type { WorkspaceSettingsScopePayload } from "../../services/project-manager-settings-client";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -102,7 +104,9 @@ export type UseProjectManagerSettingsResult = {
   readonly openUserGlossaryFile: () => void;
 };
 
-export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => {
+export const useProjectManagerSettings = (
+  scope: WorkspaceSettingsScopePayload = {}
+): UseProjectManagerSettingsResult => {
   const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
   const [localizationRuntime, setLocalizationRuntime] =
     useState<BrowserLocalizationRuntimePayload>(
@@ -136,9 +140,14 @@ export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => 
     updates: [],
   });
 
+  const settingsScope = useMemo(
+    () => resolveWorkspaceSettingsScope(scope),
+    [scope.workspacePath, scope.workspaceSlug]
+  );
+
   const reload = useCallback(() => {
-    api.loadSettings();
-  }, []);
+    api.loadSettings(settingsScope);
+  }, [settingsScope]);
 
   const reloadVersions = useCallback(() => {
     setVersions((current) => ({
@@ -152,14 +161,14 @@ export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => 
   const save = useCallback((nextSettings: Settings) => {
     setSaving(true);
     setSaveError(null);
-    api.saveSettings(nextSettings);
-  }, []);
+    api.saveSettings(nextSettings, settingsScope);
+  }, [settingsScope]);
 
   const reset = useCallback(() => {
     setResetting(true);
     setSaveError(null);
-    api.resetSettings();
-  }, []);
+    api.resetSettings(settingsScope);
+  }, [settingsScope]);
 
   const updateProvider = useCallback(
     (provider: ProviderId, target: SettingsProviderTarget) => {
@@ -274,7 +283,7 @@ export const useProjectManagerSettings = (): UseProjectManagerSettingsResult => 
       }
     });
 
-    const cachedPayload = api.getLastSettingsPayload();
+    const cachedPayload = settingsScope ? null : api.getLastSettingsPayload();
     if (cachedPayload) {
       applySettingsPayload({
         payload: cachedPayload,

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "18499e180",
+  "lastRecordedCommit": "664e3ce08",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase43.stream1.task1",
-  "expectedCommitMessage": "refactor: retarget project manager clear to git rollback",
+  "currentTaskId": "phase43.stream2.task1",
+  "expectedCommitMessage": "feat: scope project manager settings to workspace",
   "debt": {
-    "expectedCommitMessage": "refactor: retarget project manager clear to git rollback",
-    "preCommitHead": "18499e180",
+    "expectedCommitMessage": "feat: scope project manager settings to workspace",
+    "preCommitHead": "664e3ce08",
     "stage": "commit_pending",
-    "taskId": "phase43.stream1.task1"
+    "taskId": "phase43.stream2.task1"
   }
 }
 ```
@@ -383,11 +383,11 @@
 
 ### Stream: Clear UI Retargeting
 145. [DONE] `phase43.stream1.task1` Retarget Project Manager Clear menu/client to the pure Git rollback response semantics and add explicit warning for untracked non-ignored files removed by `git clean -fd` (scope: `src/client/project-manager/services/workflow-step-clear-client.ts, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`; expected commit: `refactor: retarget project manager clear to git rollback`).
-146. [PENDING] Git Commit: `refactor: retarget project manager clear to git rollback` (hash: TBD)
+146. [DONE] Git Commit: `refactor: retarget project manager clear to git rollback` (hash: 664e3ce08)
 
 ### Stream: Workspace Settings Surface
-147. [TODO] `phase43.stream2.task1` Make Project Manager settings load/save against the active workspace settings snapshot and reload on workspace switch (scope: `src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/project-manager/services/project-manager-settings-client.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.ts`; expected commit: `feat: scope project manager settings to workspace`).
-148. [TODO] Git Commit: `feat: scope project manager settings to workspace` (hash: TBD)
+147. [DONE] `phase43.stream2.task1` Make Project Manager settings load/save against the active workspace settings snapshot and reload on workspace switch across the Project Manager settings client and Core settings message route (scope: `src/client/project-manager/api.ts, src/client/project-manager/components/settings/use-project-manager-settings.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/project-manager/services/project-manager-settings-client.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts`; expected commit: `feat: scope project manager settings to workspace`).
+148. [PENDING] Git Commit: `feat: scope project manager settings to workspace` (hash: TBD)
 
 ## Phase 44 - Cleanup Gates And Invariants (owner: Codex, updated: 2026-05-25)
 

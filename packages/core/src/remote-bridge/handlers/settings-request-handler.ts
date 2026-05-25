@@ -19,14 +19,16 @@ import {
   SettingsPersistenceService,
   type SettingsWriteResult,
 } from "./settings-persistence-service";
-import { resolveLocalizationRuntimeSettings } from "./settings-persistence-snapshot";
+import {
+  resolveLocalizationRuntimeSettings,
+  type WorkspaceSettingsScope,
+} from "./settings-persistence-snapshot";
 import { SettingsProviderVersionService } from "./settings-provider-version-service";
 
 export { resolveLocalizationRuntimeSettings } from "./settings-persistence-snapshot";
 
 const toErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
-
 const APPLE_NATIVE_TRANSLATION_ENGINE_ID = "apple-native";
 const APPLE_NATIVE_PREFLIGHT_TIMEOUT_MS = 20_000;
 const APPLE_NATIVE_HELPER_RELATIVE_PATH = [
@@ -36,7 +38,6 @@ const APPLE_NATIVE_HELPER_RELATIVE_PATH = [
   "release",
   "apple-translation-helper",
 ] as const;
-
 interface AppleNativePreflightTarget {
   readonly sourceLanguage: string;
   readonly targetLanguage?: string;
@@ -287,11 +288,14 @@ export class SettingsRequestHandler {
     this.templateSyncFacade = new TemplateSyncFacade(options.logger);
   }
 
-  async handleSave(settings: unknown): Promise<void> {
+  async handleSave(
+    settings: unknown,
+    workspace?: WorkspaceSettingsScope
+  ): Promise<void> {
     try {
       await assertAppleNativeSettingsReady(settings);
       await this.publishSaved(
-        await this.settingsPersistenceService.save(settings)
+        await this.settingsPersistenceService.save(settings, { workspace })
       );
     } catch (error) {
       const reason = toErrorMessage(error);
@@ -300,9 +304,11 @@ export class SettingsRequestHandler {
     }
   }
 
-  async handleReset(): Promise<void> {
+  async handleReset(workspace?: WorkspaceSettingsScope): Promise<void> {
     try {
-      await this.publishSaved(await this.settingsPersistenceService.reset());
+      await this.publishSaved(
+        await this.settingsPersistenceService.reset({ workspace })
+      );
     } catch (error) {
       const reason = toErrorMessage(error);
       this.logger.warn("Failed to reset settings", { error: reason });
@@ -310,9 +316,9 @@ export class SettingsRequestHandler {
     }
   }
 
-  async handleLoad(): Promise<void> {
+  async handleLoad(workspace?: WorkspaceSettingsScope): Promise<void> {
     await this.settingsLoadedBroadcaster.publish(
-      await this.settingsPersistenceService.load()
+      await this.settingsPersistenceService.load({ workspace })
     );
   }
 
