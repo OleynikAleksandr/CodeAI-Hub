@@ -1,4 +1,3 @@
-import { WorkflowStepUndoLedgerStore } from "../../workflow/undo/workflow-step-undo-ledger";
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
 import {
   normalizeAndValidateWorkflowStageArtifact,
@@ -143,7 +142,6 @@ export const writeArtifactUpsertPlan = async (
         )
       );
     }
-    await recordUndoEntries(plan);
     return { ok: true };
   } catch (error) {
     await restoreBackups(backups);
@@ -152,26 +150,6 @@ export const writeArtifactUpsertPlan = async (
       error: error instanceof Error ? error : new Error(String(error)),
     };
   }
-};
-
-const recordUndoEntries = async (
-  plan: WorkflowStageArtifactUpsertPlan
-): Promise<void> => {
-  const entries = plan.upserts
-    .filter((upsert) => upsert.changed)
-    .map((upsert) => ({
-      kind: "write_file" as const,
-      relativePath: upsert.relativePath,
-      source: "artifact_upsert",
-      stage: plan.stage,
-    }));
-  if (entries.length === 0) {
-    return;
-  }
-  await new WorkflowStepUndoLedgerStore({
-    workspaceRoot: plan.workspacePath,
-    workspaceSlug: plan.workspaceSlug,
-  }).append(entries);
 };
 
 const readNonEmptyString = (value: unknown): string | null => {

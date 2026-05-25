@@ -1,27 +1,14 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type { Request, Response } from "express";
 import { isWorkspacePathAllowlisted } from "../../security/workspace-path-allowlist";
 import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
-import { captureWorkflowMutation } from "../../workflow/undo/workflow-mutation-journal-runtime";
-import { WorkflowStepUndoLedgerStore } from "../../workflow/undo/workflow-step-undo-ledger";
-import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
 import { readFileHead, resolveWorkspaceFilePath } from "./workspace-file-utils";
 
 const HTTP_INTERNAL_ERROR = 500;
 const HTTP_NOT_FOUND = 404;
 const HTTP_BAD_REQUEST = 400;
-const BACKSLASH_RE = /\\/g;
-const LEADING_DOT_SLASH_RE = /^\.?\//;
-const WORKFLOW_STAGE_IDS = new Set<WorkflowStageId>([
-  "description",
-  "virtual_simulation",
-  "diagram_modules",
-  "application_skeleton",
-  "quality_gates",
-]);
-
 const DEFAULT_MAX_BYTES = 300_000;
 const MIN_MAX_BYTES = 1000;
 const MAX_MAX_BYTES = 500_000;
@@ -204,105 +191,6 @@ const createWorkspaceFileHandler =
     }
   };
 
-const normalizeRelativeWorkspacePath = (value: string): string =>
-  path.posix.normalize(
-    value.replace(BACKSLASH_RE, "/").replace(LEADING_DOT_SLASH_RE, "")
-  );
-
-const resolveWorkflowUndoStage = (params: {
-  readonly relativePath: string;
-  readonly sessionStage: string | null;
-  readonly workspaceSlug: string | null;
-}): WorkflowStageId | null => {
-  if (!params.workspaceSlug) {
-    return null;
-  }
-  const normalized = normalizeRelativeWorkspacePath(params.relativePath);
-  const segments = normalized.split("/");
-  if (
-    !(
-      segments[0] === ".codeai-hub" &&
-      segments[1] === params.workspaceSlug &&
-      segments[2] &&
-      WORKFLOW_STAGE_IDS.has(segments[2] as WorkflowStageId)
-    )
-  ) {
-    return null;
-  }
-  const stage = segments[2] as WorkflowStageId;
-  return params.sessionStage && params.sessionStage !== stage ? null : stage;
-};
-
-const readPreviousContent = async (
-  absolutePath: string
-): Promise<string | null> => {
-  try {
-    return await readFile(absolutePath, "utf8");
-  } catch (error) {
-    const code =
-      typeof error === "object" && error !== null
-        ? (error as { code?: string }).code
-        : null;
-    if (code === "ENOENT") {
-      return null;
-    }
-    throw error;
-  }
-};
-
-const isDescriptionQuestionnairePath = (params: {
-  readonly relativePath: string;
-  readonly workspaceSlug: string;
-}): boolean =>
-  normalizeRelativeWorkspacePath(params.relativePath) ===
-  `.codeai-hub/${params.workspaceSlug}/description/questionnaire.md`;
-
-const resolveWorkspaceFileUndoBehavior = (params: {
-  readonly preserveQuestionnaire: boolean;
-  readonly previousContent: string | null;
-}): "delete_path" | "preserve_path" | "restore_previous" => {
-  if (params.preserveQuestionnaire) {
-    return "preserve_path";
-  }
-  return params.previousContent === null ? "delete_path" : "restore_previous";
-};
-
-const recordWorkspaceFileWriteUndo = async (params: {
-  readonly previousContent: string | null;
-  readonly relativePath: string;
-  readonly session: WorkspaceFileHandlerContext<WorkspaceFileWritePayload>["session"];
-}): Promise<void> => {
-  const workspaceSlug = params.session.initiativeSlug;
-  const stage = resolveWorkflowUndoStage({
-    relativePath: params.relativePath,
-    sessionStage: params.session.stage,
-    workspaceSlug,
-  });
-  if (!(workspaceSlug && stage)) {
-    return;
-  }
-  const preserveQuestionnaire = isDescriptionQuestionnairePath({
-    relativePath: params.relativePath,
-    workspaceSlug,
-  });
-  await new WorkflowStepUndoLedgerStore({
-    workspaceRoot: params.session.workspacePath,
-    workspaceSlug,
-  }).append([
-    {
-      kind: "write_file",
-      previousContent: params.previousContent,
-      relativePath: normalizeRelativeWorkspacePath(params.relativePath),
-      source: "workspace_file_write",
-      stage,
-      undoBehavior: resolveWorkspaceFileUndoBehavior({
-        preserveQuestionnaire,
-        previousContent: params.previousContent,
-      }),
-    },
-  ]);
-};
-
 export const handleWorkspaceFileRead =
   createWorkspaceFileHandler<WorkspaceFilePayload>({
     errorLogMessage: "Failed to read workspace file",
@@ -326,38 +214,12 @@ export const handleWorkspaceFileWrite =
     errorLogMessage: "Failed to write workspace file",
     errorResponse: "Unable to write file",
     parsePayload: parseWorkspaceFileWritePayload,
-    execute: async ({ absolutePath, payload, res, session }) => {
-      const writeFileContent = async () => {
-        const content = payload.content.endsWith("\n")
-          ? payload.content
-          : `${payload.content}\n`;
-        const previousContent = await readPreviousContent(absolutePath);
-        await mkdir(path.dirname(absolutePath), { recursive: true });
-        await writeFile(absolutePath, content, { encoding: "utf8" });
-        await recordWorkspaceFileWriteUndo({
-          previousContent,
-          relativePath: payload.path,
-          session,
-        });
-      };
-      const stage = resolveWorkflowUndoStage({
-        relativePath: payload.path,
-        sessionStage: session.stage,
-        workspaceSlug: session.initiativeSlug,
-      });
-      if (session.initiativeSlug && stage) {
-        await captureWorkflowMutation(
-          {
-            source: "workspace_file_write_diff",
-            stage,
-            workspaceRoot: session.workspacePath,
-            workspaceSlug: session.initiativeSlug,
-          },
-          writeFileContent
-        );
-      } else {
-        await writeFileContent();
-      }
+    execute: async ({ absolutePath, payload, res }) => {
+      const content = payload.content.endsWith("\n")
+        ? payload.content
+        : `${payload.content}\n`;
+      await mkdir(path.dirname(absolutePath), { recursive: true });
+      await writeFile(absolutePath, content, { encoding: "utf8" });
       res.json({ path: payload.path });
     },
   });
