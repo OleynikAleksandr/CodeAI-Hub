@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "34d41651e",
+  "lastRecordedCommit": "bb95c690a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase32.stream1.task1",
-  "expectedCommitMessage": "docs: expand workspace owned runtime plan",
+  "currentTaskId": "phase33.stream1.task1",
+  "expectedCommitMessage": "docs: audit legacy clear undo removal",
   "debt": {
-    "expectedCommitMessage": "docs: expand workspace owned runtime plan",
-    "preCommitHead": "34d41651e",
+    "expectedCommitMessage": "docs: audit legacy clear undo removal",
+    "preCommitHead": "bb95c690a",
     "stage": "commit_pending",
-    "taskId": "phase32.stream1.task1"
+    "taskId": "phase33.stream1.task1"
   }
 }
 ```
@@ -267,7 +267,13 @@
 
 ### Stream: Architecture Planning
 83. [DONE] `phase32.stream1.task1` Expand the replacement planning document with the accepted per-workspace provider home/settings decision, current `~/.codeai-hub` inventory, secrets/auth boundaries, Project Manager workspace settings behavior, and missing-risk checklist for implementation (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: expand workspace owned runtime plan`).
-84. [PENDING] Git Commit: `docs: expand workspace owned runtime plan` (hash: TBD)
+84. [DONE] Git Commit: `docs: expand workspace owned runtime plan` (hash: bb95c690a)
+
+## Phase 33 - Legacy Clear Undo Removal Audit (owner: Codex, updated: 2026-05-25)
+
+### Stream: Architecture Planning
+85. [DONE] `phase33.stream1.task1` Expand the replacement planning document with a concrete audit of legacy Clear/Undo code paths to delete, rewrite, preserve, and test so the next implementation plan can be sliced into file-bounded microtasks (scope: `doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: audit legacy clear undo removal`).
+86. [PENDING] Git Commit: `docs: audit legacy clear undo removal` (hash: TBD)
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

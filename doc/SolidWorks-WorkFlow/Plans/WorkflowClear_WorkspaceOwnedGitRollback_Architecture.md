@@ -296,19 +296,322 @@ Therefore the `codeai-boundary: Description` commit must include:
 
 After Clear Description, Core must not write untracked `description-step.json` or `workflow/state.json`. If those files are needed to render the UI, they belong in the Description boundary baseline and must be tracked.
 
-## 11. What Must Be Removed
+## 11. Legacy Clear/Undo Code Removal Audit
 
-The implementation must remove or retire these hybrid rollback mechanisms:
+This section is intentionally implementation-oriented. The next planning
+document must be able to turn every line below into small tasks without
+rediscovering the old rollback system.
 
-- `workflow-runtime-slice-snapshot.ts`
+### 11.1 Removal Principle
+
+The current implementation is not one rollback system. It is a mixture of at
+least four systems:
+
+- Git boundary commits and `git reset --hard`.
+- `runtime-slices`, which copy selected external files into the workspace and
+  later copy them back into `~/.codeai-hub` / `~/.gemini`.
+- path-scoped cleanup through `cleanPaths`, which manually deletes only the
+  paths the current code remembered to list.
+- Core/Project Manager projections that can rewrite files such as
+  `workflow/state.json` and `description-step.json` after rollback.
+
+The target implementation must remove the side channels. Clear is allowed to
+use only these rollback primitives:
+
+1. stop or quiesce active workspace writers;
+2. `git reset --hard <boundaryHash>`;
+3. full-worktree `git clean -fd` from the workspace root, with narrow
+   `.gitignore` rules for secrets and caches;
+4. rebuild in-memory/read-model projections from tracked workspace state;
+5. assert `git status --porcelain` is empty.
+
+There must be no manual copy-back, no manual prune, and no stage-specific delete
+list pretending to complete Git rollback.
+
+### 11.2 Delete Completely
+
+These files and concepts should disappear from production code:
+
+- `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts`
+- `packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.test.ts`
 - `captureWorkflowRuntimeSlices`
 - `restoreWorkflowRuntimeSlices`
-- runtime-slice restore tests as rollback authority
-- manual external session pruning after Clear
-- ad hoc recoverable dirty-tree exceptions for normal workflow state
-- stage-specific Clear cleanup lists except as Git pathspecs for `git clean`
+- `WorkflowRuntimeSliceSession`
+- `WorkflowRuntimeSliceManifest`
+- `runtime-slices/manifest.json`
 
-The only allowed rollback primitives are Git primitives plus temporary pausing/resuming of writers.
+Reason: this module exists only because workflow sessions and provider-native
+state currently live outside the workspace Git repository. After the runtime
+capsule exists, those files are ordinary tracked or ignored workspace files.
+Keeping `runtime-slices` would preserve the broken hybrid model and would make
+future failures hard to reason about.
+
+Concrete follow-up edits:
+
+- Remove imports from
+  `packages/core/src/workflow/boundary/workflow-boundary-facade.ts`.
+- Remove imports and result fields from
+  `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts`.
+- Replace test expectations in
+  `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`,
+  `packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`, and
+  `packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts`.
+
+Completion check:
+
+```bash
+rg "runtime-slices|WorkflowRuntimeSlice|captureWorkflowRuntimeSlices|restoreWorkflowRuntimeSlices" packages src
+```
+
+must return nothing except archived historical docs if those are intentionally
+kept.
+
+### 11.3 Rewrite, Do Not Preserve As-Is
+
+`packages/core/src/workflow/boundary/workflow-boundary-facade.ts`
+
+- Remove `cleanPaths` from `WorkflowBoundaryRestoreParams`.
+- Remove `DEFAULT_CLEAN_PATHS`.
+- Remove `restoreWorkflowRuntimeSlices`.
+- Remove normal-flow dirty exceptions such as recoverable Description bootstrap
+  state; those files must either be in the boundary commit or rebuilt in memory.
+- Keep the high-level responsibility: create a step boundary and restore to a
+  step boundary.
+- Replace the current restore body with a coordinator call that performs:
+  stop/quiesce, reset hard, full clean, projection rebuild, clean-tree assert.
+
+`packages/core/src/workflow/boundary/workflow-boundary-git.ts`
+
+- Keep low-level Git primitives if useful: init, status, stage, commit, reset,
+  log lookup.
+- Replace `cleanPaths(...)` with a full-worktree clean operation. It must not
+  accept arbitrary stage cleanup lists.
+- Keep macOS metadata handling only as preflight hygiene; it must not become a
+  rollback side channel.
+- Add or expose a boundary-commit lookup based on Git history, not
+  `boundaries.json` as the primary authority.
+
+`packages/core/src/workflow/boundary/workflow-boundary-registry.ts`
+
+- Retire it as rollback authority.
+- If the UI still needs a ledger, make it a rebuildable projection from Git log
+  messages and tracked workflow state.
+- Remove `codeai-boundary-registry` as a required commit in the Clear algorithm.
+
+`packages/core/src/workflow/boundary/workflow-boundary-model.ts`
+
+- Keep `codeai-boundary: <Stage>` and `codeai-clear: <Stage>` message builders.
+- Remove or demote `codeai-boundary-registry: <Stage>` once the registry stops
+  being authority.
+- Add stable parse/build helpers for Git-log boundary lookup if they do not
+  already exist.
+
+`packages/core/src/workflow/boundary/workflow-step-commit-facade.ts`
+
+- Remove `ensureLocalStateIgnored`; workflow state must not require editing the
+  root `.gitignore` during step acceptance.
+- Remove runtime-slice capture.
+- Commit accepted workspace artifacts and tracked capsule state directly.
+- Fail if accepted-step commit leaves a dirty tree.
+- The result should report Git commit data and dirty-state diagnostics, not
+  runtime-slice counts.
+
+`packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts`
+
+- Keep the endpoint and request/response contract shape for Project Manager.
+- Replace `restoreBoundary + clearRuntimeSessions + resetWorkflowState` with a
+  Core-owned `WorkflowClearCoordinator`.
+- The coordinator may stop active sessions and pause watchers before Git reset,
+  but it must not delete or restore session files manually.
+- Downstream sessions disappear because they live in the workspace capsule and
+  Git reset/clean removes them.
+
+`packages/core/src/remote-bridge/handlers/workspace-activate-service.ts`
+
+- Move workspace runtime capsule bootstrap before the Description boundary.
+- The Description boundary must include the sendable questionnaire, workspace
+  settings seed, capsule `.gitignore`, and minimal tracked state needed by the
+  UI.
+- Do not recreate untracked `description-step.json` or `workflow/state.json`
+  after Description Clear.
+
+`packages/core/src/remote-bridge/handlers/workspace-session-service.ts`
+
+- Ensure every stage boundary is created before stage bootstrap, scaffold
+  install, provider session creation, or Project Manager session creation.
+- Move `prepareWorkflowStageDirectories` responsibilities into the runtime
+  capsule/boundary coordinator if directories are needed before rendering.
+
+`packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.ts`
+and related session preflight files
+
+- Route workflow session creation through the boundary coordinator.
+- No websocket `session:create` preflight may create scaffold, session files, or
+  provider homes before the target stage boundary exists.
+- Important related files include
+  `session-request-handler-session-resolution.ts`,
+  `session-request-handler-preliminary-review-committer.ts`, and
+  `session-request-handler-managed-review-decisions.ts`.
+
+`packages/core/src/remote-bridge/handlers/workflow-state-service.ts` and
+projection helpers
+
+- Identify every writer of `.codeai-hub/<slug>/workflow/state.json`,
+  `.codeai-hub/<slug>/description/description-step.json`, progress files,
+  indexes, and hydrated read models.
+- Each file must be either tracked as part of the boundary/accepted-step history
+  or rebuilt without dirtying Git after Clear.
+- Tests that currently allow projection side effects after Clear must be
+  rewritten to assert a clean tree.
+
+### 11.4 Managed Workflow Git Boundary Consolidation
+
+The managed workflow currently has a second Git abstraction that can diverge
+from workflow boundary Git behavior:
+
+- `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-managed-git-boundary.ts`
+- `packages/core/src/managed-workflow-orchestration/diagram-modules/managed-workflow-ledger-git-boundary.ts`
+- `packages/core/src/managed-workflow-orchestration/managed-terminal-clean-git-boundary.ts`
+
+This must be consolidated into the same workspace Git timeline service used by
+Description, Virtual Simulation and Clear.
+
+Known consumers that need constructor/DI migration:
+
+- `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.ts`
+- `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller.ts`
+- `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.ts`
+- `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts`
+- `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts`
+- `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts`
+
+Migration rule: managed workflow commits may keep their managed commit messages
+and output filtering, but the actual Git status/stage/commit/reset/clean
+operations must come from one shared workspace Git service. There must not be a
+separate Diagram Modules Git queue that can disagree with the Clear boundary
+queue.
+
+### 11.5 Keep, But Retarget
+
+These are not old rollback mechanisms and should remain:
+
+- `src/client/project-manager/services/workflow-step-clear-client.ts`
+- `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx`
+- `src/client/project-manager/components/layout/workspace-tree-model.ts`
+- `src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes.ts`
+- `packages/core/src/remote-bridge/handlers/http-api-router.ts`
+
+The Project Manager button and popup menu are the user surface for Clear. They
+should be retargeted to the new Core-owned Git rollback coordinator, not
+removed. The UI should also make the destructive semantics explicit: untracked
+non-ignored files created after the selected boundary can be removed by
+`git clean -fd`.
+
+Development-tree Clear may remain fail-closed until development-node rollback
+has its own boundary design. Do not implement a second manual cleanup path for
+development-tree nodes.
+
+### 11.6 Tests To Remove Or Replace
+
+Remove or rewrite tests that prove the old hybrid system:
+
+- runtime-slice capture/restore tests;
+- tests that expect `.codeai-hub/<slug>/runtime-slices/manifest.json`;
+- tests that pass custom `cleanPaths` to Clear;
+- tests that allow manual external session pruning as success criteria;
+- tests that accept dirty projection files after Description Clear.
+
+Replace them with tests that prove the new invariant:
+
+- Description activation creates a Git repository and a sendable Description
+  boundary with tracked questionnaire/settings/baseline state.
+- Starting Virtual Simulation creates `codeai-boundary: Virtual Simulation`
+  before any stage bootstrap/provider work.
+- Starting Diagram Modules creates `codeai-boundary: Diagram Modules` before
+  managed scaffold, session, provider home, or progress files appear.
+- Accepted-step commit tracks all rollback-relevant capsule files and ends clean.
+- Clear Diagram Modules performs reset plus full clean and removes Diagram
+  Modules scaffold/session/provider state.
+- Clear Virtual Simulation works even after Diagram Modules was cleared.
+- Clear Description returns to a sendable questionnaire and clean tree.
+- No workflow session file is created under global
+  `~/.codeai-hub/sessions/**`, `~/.codeai-hub/providers/*/home/**`, or
+  `~/.gemini/**`.
+
+### 11.7 Suggested Microtask Slices For The Next TODO Plan
+
+The next execution plan should keep each task within three files where possible:
+
+1. Add `WorkspaceRuntimeCapsule` path resolver and capsule `.gitignore`
+   contract.
+   Scope candidates: new capsule module, capsule test, architecture doc.
+2. Move per-workspace settings bootstrap to the capsule.
+   Scope candidates: settings bootstrap service, workspace activation service,
+   focused tests.
+3. Delete `workflow-runtime-slice-snapshot.ts` and its test.
+   Scope candidates: snapshot file, snapshot test, one compile-fix consumer.
+4. Rewrite accepted-step commit to direct capsule commits.
+   Scope candidates: `workflow-step-commit-facade.ts`,
+   `workflow-step-commit-facade.test.ts`, boundary model if result types change.
+5. Rewrite boundary restore to pure Git rollback.
+   Scope candidates: `workflow-boundary-facade.ts`,
+   `workflow-boundary-git.ts`, `workflow-boundary-facade.test.ts`.
+6. Replace boundary registry authority with Git-log lookup/projection.
+   Scope candidates: `workflow-boundary-registry.ts`,
+   `workflow-boundary-model.ts`, boundary facade tests.
+7. Rewrite Clear endpoint around `WorkflowClearCoordinator`.
+   Scope candidates: `workflow-step-clear-service.ts`,
+   `workflow-step-clear-service.test.ts`, session stop/pause helper if needed.
+8. Move workspace activation to boundary-after-baseline order.
+   Scope candidates: `workspace-activate-service.ts`,
+   `workspace-activate-service.test.ts`, capsule bootstrap helper.
+9. Move stage session creation to boundary-before-bootstrap order.
+   Scope candidates: `workspace-session-service.ts`,
+   `workspace-session-service.test.ts`, websocket workflow-session test.
+10. Move unified session storage into the workspace capsule.
+    Scope candidates: `packages/core/src/unified-session/storage.ts`, dialog
+    history/list service tests, session-request handler integration test.
+11. Move Codex workflow home into the workspace capsule.
+    Scope candidates: provider registry/session resolver, Codex home resolver,
+    provider home tests.
+12. Move Claude workflow home into the workspace capsule while keeping auth
+    bridge outside Git.
+    Scope candidates: Claude provider home, auth home bridge tests, provider
+    registry wiring.
+13. Move Gemini workflow home into the workspace capsule.
+    Scope candidates: Gemini CLI root resolver, module loader/home resolver,
+    Gemini tests that currently point at `~/.gemini`.
+14. Move Kimi managed-agent home into the workspace capsule.
+    Scope candidates: Kimi managed profile, provider registry wiring, Kimi
+    tests.
+15. Consolidate managed Git helper into the shared workspace Git service.
+    Scope candidates: `diagram-modules-managed-git-boundary.ts`,
+    `managed-workflow-ledger-git-boundary.ts`, one controller test.
+16. Migrate remaining managed workflow controllers from
+    `DiagramModulesManagedGitBoundary` to shared Git timeline.
+    Scope candidates: at most three controllers per task.
+17. Retarget Project Manager Clear UI to new response/error semantics.
+    Scope candidates: clear client, clear menu hook, clear menu tests.
+18. Add end-to-end rollback regression.
+    Scope candidates: one integration test file plus test fixtures/helpers.
+
+### 11.8 Final Cleanup Gates
+
+Before implementation is considered ready for release, these searches must be
+clean or intentionally limited to archived docs:
+
+```bash
+rg "runtime-slices|WorkflowRuntimeSlice|captureWorkflowRuntimeSlices|restoreWorkflowRuntimeSlices" packages src
+rg "cleanPaths|DEFAULT_CLEAN_PATHS" packages/core/src
+rg "codeai-boundary-registry" packages/core/src
+rg "DiagramModulesManagedGitBoundary" packages/core/src
+rg "homedir\\(\\).*\\.codeai-hub.*sessions|SESSION_ROOT = path.join\\(homedir\\(\\), \"\\.codeai-hub\", \"sessions\"" packages/core/src
+```
+
+Release acceptance for this redesign must include a real workspace workflow
+test, not only unit tests: `Description -> Virtual Simulation -> Diagram
+Modules -> Clear Diagram Modules -> Clear Virtual Simulation -> Clear
+Description`, with clean Git after each boundary, accepted step and Clear.
 
 ## 12. Implementation Phases
 
