@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "37eec0b24",
+  "lastRecordedCommit": "260793041",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase15.stream2.task1",
-  "expectedCommitMessage": "chore: build strict boundary restore release",
+  "currentTaskId": "phase17.stream1.task1",
+  "expectedCommitMessage": "fix: allow description activation on new workspaces",
   "debt": {
-    "expectedCommitMessage": "chore: build strict boundary restore release",
-    "preCommitHead": "37eec0b24",
+    "expectedCommitMessage": "fix: allow description activation on new workspaces",
+    "preCommitHead": "260793041",
     "stage": "commit_pending",
-    "taskId": "phase15.stream2.task1"
+    "taskId": "phase17.stream1.task1"
   }
 }
 ```
@@ -171,15 +171,41 @@
 
 ### Stream: Release Build
 50. [DONE] `phase15.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build strict boundary restore release`).
-51. [PENDING] Git Commit: `chore: build strict boundary restore release` (hash: TBD)
+51. [DONE] Git Commit: `chore: build strict boundary restore release` (hash: 260793041)
 
 ## Phase 16 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-52. [TODO] `phase16.stream1.task1` User installs the generated VSIX and verifies that clearing Diagram Modules removes stage bootstrap/scaffold files, restores workflow state to Virtual Simulation, prunes provider-native sessions created by Diagram Modules, and leaves the workspace Git tree clean (scope: user workflow acceptance; no commit expected).
+52. [DONE] `phase16.stream1.task1` User installs the generated VSIX and verifies that clearing Diagram Modules removes stage bootstrap/scaffold files, restores workflow state to Virtual Simulation, prunes provider-native sessions created by Diagram Modules, and leaves the workspace Git tree clean (scope: user workflow acceptance; no commit expected). Result: Failed release `1.2.356` smoke test: a new workspace cannot load the Description questionnaire because workspace activation creates `.codeai-hub/<workspaceSlug>` before the strict Description boundary check, making the brand-new Git tree dirty and returning activation/session startup errors.
 
-## Phase 17 - Scope Closeout (owner: Codex, updated: 2026-05-25)
+## Phase 17 - Description Activation Regression Fix (owner: Codex, updated: 2026-05-25)
+
+### Stream: New Workspace Bootstrap
+53. [DONE] `phase17.stream1.task1` Move Description workspace activation boundary creation before any `.codeai-hub/<workspaceSlug>` filesystem bootstrap and add functional coverage for a brand-new workspace activation (scope: `packages/core/src/remote-bridge/handlers/workspace-activate-service.ts, packages/core/src/remote-bridge/handlers/workspace-activate-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: allow description activation on new workspaces`).
+54. [PENDING] Git Commit: `fix: allow description activation on new workspaces` (hash: TBD)
+
+## Phase 18 - Regression Verification (owner: Codex, updated: 2026-05-25)
+
+### Stream: Targeted Checks
+55. [TODO] `phase18.stream1.task1` Run targeted Core build and activation/boundary tests for new workspace Description questionnaire bootstrap (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 19 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Docs
+56. [TODO] `phase19.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare description activation regression release`).
+57. [TODO] Git Commit: `docs: prepare description activation regression release` (hash: TBD)
+
+### Stream: Release Build
+58. [TODO] `phase19.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build description activation regression release`).
+59. [TODO] Git Commit: `chore: build description activation regression release` (hash: TBD)
+
+## Phase 20 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+60. [TODO] `phase20.stream1.task1` User installs the generated VSIX and verifies that a new workspace loads/submits the Description questionnaire and that clearing Diagram Modules still removes downstream scaffold/runtime state cleanly (scope: user workflow acceptance; no commit expected).
+
+## Phase 21 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Closeout
-53. [TODO] `phase17.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
-54. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
+61. [TODO] `phase21.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
+62. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)

@@ -126,12 +126,6 @@ export const handleWorkspaceActivate = async (params: {
   const { workspacePath, workspaceSlug } = parsed.value;
 
   try {
-    await fs.mkdir(
-      path.join(workspacePath, WORKSPACE_ROOT_DIR, workspaceSlug),
-      {
-        recursive: true,
-      }
-    );
     await (
       params.workflowBoundaryFacade ?? new WorkflowBoundaryFacade()
     ).ensureBoundary({
@@ -139,6 +133,12 @@ export const handleWorkspaceActivate = async (params: {
       workspaceRoot: workspacePath,
       workspaceSlug,
     });
+    await fs.mkdir(
+      path.join(workspacePath, WORKSPACE_ROOT_DIR, workspaceSlug),
+      {
+        recursive: true,
+      }
+    );
     await Promise.resolve(
       params.onWorkspaceActivated?.(workspacePath, workspaceSlug)
     );
