@@ -118,7 +118,7 @@ export class WorkflowBoundaryGit {
     params: WorkflowBoundaryGitCommitParams
   ): Promise<WorkflowBoundaryCommitResult> {
     return await this.runExclusive(params.workspaceRoot, async () => {
-      await this.ensureRepository(params.workspaceRoot);
+      await this.ensureRepositoryUnlocked(params.workspaceRoot);
       await removeMacMetadata(params.workspaceRoot);
       const paths =
         params.paths === undefined ? [] : filterPathSpecs(params.paths);
@@ -155,7 +155,7 @@ export class WorkflowBoundaryGit {
 
   async resetHard(params: WorkflowBoundaryGitResetParams): Promise<void> {
     await this.runExclusive(params.workspaceRoot, async () => {
-      await this.ensureRepository(params.workspaceRoot);
+      await this.ensureRepositoryUnlocked(params.workspaceRoot);
       await this.git(params.workspaceRoot, ["reset", "--hard", params.hash]);
     });
   }
@@ -166,19 +166,49 @@ export class WorkflowBoundaryGit {
       if (paths.length === 0) {
         return;
       }
-      await this.ensureRepository(params.workspaceRoot);
+      await this.ensureRepositoryUnlocked(params.workspaceRoot);
       await this.git(params.workspaceRoot, ["clean", "-fd", "--", ...paths]);
     });
   }
 
   async ensureRepository(workspaceRoot: string): Promise<void> {
+    await this.runExclusive(workspaceRoot, async () => {
+      await this.ensureRepositoryUnlocked(workspaceRoot);
+    });
+  }
+
+  async revParseHead(workspaceRoot: string): Promise<string> {
+    return await this.git(workspaceRoot, ["rev-parse", "--short", "HEAD"]);
+  }
+
+  async statusPorcelain(workspaceRoot: string): Promise<readonly string[]> {
+    return await this.runExclusive(workspaceRoot, async () => {
+      await this.ensureRepositoryUnlocked(workspaceRoot);
+      await removeMacMetadata(workspaceRoot);
+      const output = await this.git(workspaceRoot, ["status", "--porcelain"]);
+      return output.length > 0 ? output.split("\n") : [];
+    });
+  }
+
+  private async ensureRepositoryUnlocked(workspaceRoot: string): Promise<void> {
     if (
       !(await this.tryGit(workspaceRoot, [
         "rev-parse",
         "--is-inside-work-tree",
       ]))
     ) {
-      await this.git(workspaceRoot, ["init"]);
+      try {
+        await this.git(workspaceRoot, ["init"]);
+      } catch (error) {
+        if (
+          !(await this.tryGit(workspaceRoot, [
+            "rev-parse",
+            "--is-inside-work-tree",
+          ]))
+        ) {
+          throw error;
+        }
+      }
     }
     if (!(await this.tryGit(workspaceRoot, ["config", "user.email"]))) {
       await this.git(workspaceRoot, ["config", "user.email", GIT_AUTHOR_EMAIL]);
@@ -188,16 +218,6 @@ export class WorkflowBoundaryGit {
     }
   }
 
-  async revParseHead(workspaceRoot: string): Promise<string> {
-    return await this.git(workspaceRoot, ["rev-parse", "--short", "HEAD"]);
-  }
-
-  async statusPorcelain(workspaceRoot: string): Promise<readonly string[]> {
-    await this.ensureRepository(workspaceRoot);
-    const output = await this.git(workspaceRoot, ["status", "--porcelain"]);
-    return output.length > 0 ? output.split("\n") : [];
-  }
-
   private async stagePaths(
     workspaceRoot: string,
     paths: readonly string[]
@@ -205,13 +225,10 @@ export class WorkflowBoundaryGit {
     if (paths.length === 0) {
       return;
     }
-    await this.git(workspaceRoot, [
-      "add",
-      "-A",
-      "--",
-      ...paths,
-      ...GIT_EXCLUDED_PATHS,
-    ]);
+    const pathspecs = paths.includes(".")
+      ? [...paths, ...GIT_EXCLUDED_PATHS]
+      : paths;
+    await this.git(workspaceRoot, ["add", "-A", "--", ...pathspecs]);
   }
 
   private async git(

@@ -10,6 +10,7 @@ import { captureWorkflowRuntimeSlices } from "./workflow-runtime-slice-snapshot"
 
 const WORKSPACE_SLUG = "demo-workspace";
 const PRE_STEP_ROLLBACK_ANCHOR_RE = /pre-step rollback anchor/u;
+const DESCRIPTION_BOUNDARY_STAGE = "description";
 
 const createWorkspace = async (): Promise<string> =>
   await mkdtemp(path.join(tmpdir(), "codeai-boundary-"));
@@ -115,6 +116,90 @@ test("WorkflowBoundaryFacade refuses to create a boundary on a dirty tree", asyn
         workspaceSlug: WORKSPACE_SLUG,
       }),
       PRE_STEP_ROLLBACK_ANCHOR_RE
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("WorkflowBoundaryFacade serializes concurrent Description boundary startup", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    await writeText(path.join(workspaceRoot, ".DS_Store"), "metadata\n");
+    const [first, second] = await Promise.all([
+      new WorkflowBoundaryFacade({
+        clock: () => "2026-05-25T00:00:00.000Z",
+      }).ensureBoundary({
+        stage: DESCRIPTION_BOUNDARY_STAGE,
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      }),
+      new WorkflowBoundaryFacade({
+        clock: () => "2026-05-25T00:00:00.000Z",
+      }).ensureBoundary({
+        stage: DESCRIPTION_BOUNDARY_STAGE,
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      }),
+    ]);
+
+    assert.equal([first, second].filter((result) => result.created).length, 1);
+    assert.equal(first.boundaryHash, second.boundaryHash);
+    assert.deepEqual(
+      await new WorkflowBoundaryGit().statusPorcelain(workspaceRoot),
+      []
+    );
+
+    const registryJson = JSON.parse(await readFile(first.registryPath, "utf8"));
+    assert.deepEqual(
+      registryJson.entries.map(
+        (entry: { readonly stage: string }) => entry.stage
+      ),
+      [DESCRIPTION_BOUNDARY_STAGE]
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("WorkflowBoundaryFacade heals pre-submit Description bootstrap residue", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    await writeText(
+      path.join(
+        workspaceRoot,
+        ".codeai-hub",
+        WORKSPACE_SLUG,
+        "description",
+        "questionnaire.md"
+      ),
+      "# Description Questionnaire\n"
+    );
+    const boundary = await new WorkflowBoundaryFacade({
+      clock: () => "2026-05-25T00:00:00.000Z",
+    }).ensureBoundary({
+      stage: DESCRIPTION_BOUNDARY_STAGE,
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(boundary.created, true);
+    assert.deepEqual(
+      await new WorkflowBoundaryGit().statusPorcelain(workspaceRoot),
+      []
+    );
+    assert.equal(
+      await readFile(
+        path.join(
+          workspaceRoot,
+          ".codeai-hub",
+          WORKSPACE_SLUG,
+          "description",
+          "questionnaire.md"
+        ),
+        "utf8"
+      ),
+      "# Description Questionnaire\n"
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

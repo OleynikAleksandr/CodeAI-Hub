@@ -45,7 +45,16 @@ const formatDirtyBoundaryError = (paths: readonly string[]): string =>
     ...paths.map((value) => `- ${value}`),
   ].join("\n");
 
+const isRecoverableDescriptionBootstrap = (params: {
+  readonly dirtyPaths: readonly string[];
+  readonly stage: WorkflowStageId;
+}): boolean =>
+  params.stage === "description" &&
+  params.dirtyPaths.length === 1 &&
+  params.dirtyPaths[0] === "?? .codeai-hub/";
+
 export class WorkflowBoundaryFacade {
+  private static readonly workspaceQueues = new Map<string, Promise<void>>();
   readonly #clock: () => string;
   readonly #git: WorkflowBoundaryGit;
   readonly #registryStore: WorkflowBoundaryRegistryStore;
@@ -58,6 +67,15 @@ export class WorkflowBoundaryFacade {
   }
 
   async ensureBoundary(
+    params: WorkflowBoundaryEnsureParams
+  ): Promise<WorkflowBoundaryEnsureResult> {
+    return await WorkflowBoundaryFacade.runExclusive(
+      params.workspaceRoot,
+      async () => await this.ensureBoundaryExclusive(params)
+    );
+  }
+
+  private async ensureBoundaryExclusive(
     params: WorkflowBoundaryEnsureParams
   ): Promise<WorkflowBoundaryEnsureResult> {
     const registry = await this.#registryStore.read(params);
@@ -76,7 +94,13 @@ export class WorkflowBoundaryFacade {
     }
 
     const dirtyPaths = await this.#git.statusPorcelain(params.workspaceRoot);
-    if (dirtyPaths.length > 0) {
+    if (
+      dirtyPaths.length > 0 &&
+      !isRecoverableDescriptionBootstrap({
+        dirtyPaths,
+        stage: params.stage,
+      })
+    ) {
       throw new Error(formatDirtyBoundaryError(dirtyPaths));
     }
 
@@ -84,6 +108,7 @@ export class WorkflowBoundaryFacade {
     const boundaryCommit = await this.#git.commit({
       allowEmpty: true,
       commitMessage,
+      paths: dirtyPaths.length > 0 ? [".codeai-hub"] : undefined,
       workspaceRoot: params.workspaceRoot,
     });
     await this.#registryStore.recordBoundary({
@@ -152,5 +177,33 @@ export class WorkflowBoundaryFacade {
       registryPath,
       stage: params.stage,
     };
+  }
+
+  private static async runExclusive<T>(
+    workspaceRoot: string,
+    task: () => Promise<T>
+  ): Promise<T> {
+    const key = path.resolve(workspaceRoot);
+    const previous =
+      WorkflowBoundaryFacade.workspaceQueues.get(key) ?? Promise.resolve();
+    let release: () => void = () => undefined;
+    const current = previous
+      .catch(() => undefined)
+      .then(
+        () =>
+          new Promise<void>((resolve) => {
+            release = resolve;
+          })
+      );
+    WorkflowBoundaryFacade.workspaceQueues.set(key, current);
+    await previous.catch(() => undefined);
+    try {
+      return await task();
+    } finally {
+      release();
+      if (WorkflowBoundaryFacade.workspaceQueues.get(key) === current) {
+        WorkflowBoundaryFacade.workspaceQueues.delete(key);
+      }
+    }
   }
 }

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "51ea352bb",
+  "lastRecordedCommit": "6f288714c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase19.stream2.task1",
-  "expectedCommitMessage": "chore: build description activation regression release",
+  "currentTaskId": "phase21.stream1.task1",
+  "expectedCommitMessage": "fix: serialize workflow boundary startup",
   "debt": {
-    "expectedCommitMessage": "chore: build description activation regression release",
-    "preCommitHead": "51ea352bb",
+    "expectedCommitMessage": "fix: serialize workflow boundary startup",
+    "preCommitHead": "6f288714c",
     "stage": "commit_pending",
-    "taskId": "phase19.stream2.task1"
+    "taskId": "phase21.stream1.task1"
   }
 }
 ```
@@ -197,15 +197,41 @@
 
 ### Stream: Release Build
 58. [DONE] `phase19.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build description activation regression release`).
-59. [PENDING] Git Commit: `chore: build description activation regression release` (hash: TBD)
+59. [DONE] Git Commit: `chore: build description activation regression release` (hash: 6f288714c)
 
 ## Phase 20 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
 
 ### Stream: User Retest
-60. [TODO] `phase20.stream1.task1` User installs the generated VSIX and verifies that a new workspace loads/submits the Description questionnaire and that clearing Diagram Modules still removes downstream scaffold/runtime state cleanly (scope: user workflow acceptance; no commit expected).
+60. [DONE] `phase20.stream1.task1` User installs the generated VSIX and verifies that a new workspace loads/submits the Description questionnaire and that clearing Diagram Modules still removes downstream scaffold/runtime state cleanly (scope: user workflow acceptance; no commit expected). Result: Failed release `1.2.357` retest: Project Manager still cannot show a sendable Description questionnaire. Core logs show `workspace-activate` and `workspace-session` racing through `ensureBoundary`, causing concurrent `git init` failure and then dirty-tree rejection on `.DS_Store` / `.codeai-hub/`.
 
-## Phase 21 - Scope Closeout (owner: Codex, updated: 2026-05-25)
+## Phase 21 - Boundary Startup Race Fix (owner: Codex, updated: 2026-05-25)
+
+### Stream: Serialized Boundary Startup
+61. [DONE] `phase21.stream1.task1` Serialize workflow boundary creation per workspace, make Git repository initialization queue-safe, and remove macOS metadata before dirty-tree checks (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: serialize workflow boundary startup`).
+62. [PENDING] Git Commit: `fix: serialize workflow boundary startup` (hash: TBD)
+
+## Phase 22 - Regression Verification (owner: Codex, updated: 2026-05-25)
+
+### Stream: Targeted Checks
+63. [TODO] `phase22.stream1.task1` Run targeted Core build and boundary/workspace activation tests for concurrent Project Manager startup (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 23 - Release Build (owner: Codex, updated: 2026-05-25)
+
+### Stream: Release Docs
+64. [TODO] `phase23.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare boundary startup race release`).
+65. [TODO] Git Commit: `docs: prepare boundary startup race release` (hash: TBD)
+
+### Stream: Release Build
+66. [TODO] `phase23.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build boundary startup race release`).
+67. [TODO] Git Commit: `chore: build boundary startup race release` (hash: TBD)
+
+## Phase 24 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-25)
+
+### Stream: User Retest
+68. [TODO] `phase24.stream1.task1` User installs the generated VSIX and verifies that a new workspace loads/submits the Description questionnaire and that clearing Diagram Modules still removes downstream scaffold/runtime state cleanly (scope: user workflow acceptance; no commit expected).
+
+## Phase 25 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Closeout
-61. [TODO] `phase21.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
-62. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
+69. [TODO] `phase25.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
+70. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
