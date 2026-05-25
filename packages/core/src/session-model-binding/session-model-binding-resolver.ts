@@ -16,15 +16,22 @@ import type {
 export interface SessionModelBindingResolverOptions {
   readonly facade: SessionModelBindingFacade;
   readonly providerTurnConfig: ProviderTurnConfigResolverOptions;
+  readonly settingsPathResolver?: (
+    key: SessionModelBindingKey
+  ) => string | null | undefined;
 }
 
 export class SessionModelBindingResolver {
   readonly #facade: SessionModelBindingFacade;
   readonly #providerTurnConfig: ProviderTurnConfigResolverOptions;
+  readonly #settingsPathResolver:
+    | ((key: SessionModelBindingKey) => string | null | undefined)
+    | undefined;
 
   constructor(options: SessionModelBindingResolverOptions) {
     this.#facade = options.facade;
     this.#providerTurnConfig = options.providerTurnConfig;
+    this.#settingsPathResolver = options.settingsPathResolver;
   }
 
   bindFromExplicitSelection(
@@ -66,7 +73,7 @@ export class SessionModelBindingResolver {
       readonly sourceBinding: SessionModelBinding;
     }
   ): SessionModelBinding {
-    return this.#facade.updateBinding({
+    const binding = this.#facade.updateBinding({
       providerId: options.providerId,
       sessionId: options.sessionId,
       continuityRootId: options.continuityRootId,
@@ -83,6 +90,7 @@ export class SessionModelBindingResolver {
       thinkingLevel: options.sourceBinding.thinkingLevel,
       source: "continuity_inherited",
     });
+    return this.attachSettingsPath(binding, options.sourceBinding.settingsPath);
   }
 
   private resolveAndStore(options: {
@@ -90,28 +98,35 @@ export class SessionModelBindingResolver {
     readonly source: SessionModelBindingSource;
     readonly targetModelId?: string;
   }): SessionModelBinding | null {
+    const settingsPath = this.resolveSettingsPath(options.key);
     const identity = this.resolveIdentity({
       providerId: options.key.providerId,
+      settingsPath,
       targetModelId: options.targetModelId,
     });
     if (!identity) {
       return null;
     }
 
-    return this.#facade.updateBinding({
-      ...options.key,
-      ...identity,
-      source: options.source,
-    });
+    return this.attachSettingsPath(
+      this.#facade.updateBinding({
+        ...options.key,
+        ...identity,
+        source: options.source,
+      }),
+      settingsPath
+    );
   }
 
   private resolveIdentity(options: {
     readonly providerId: string;
+    readonly settingsPath: string;
     readonly targetModelId?: string;
   }): ResolvedProviderEffectiveModelIdentity | null {
     const resolved = resolveProviderTurnConfigEntry({
       ...this.#providerTurnConfig,
       providerId: options.providerId,
+      settingsPath: options.settingsPath,
     });
     if (!resolved) {
       return null;
@@ -122,5 +137,18 @@ export class SessionModelBindingResolver {
       resolved,
       targetModelId: options.targetModelId,
     });
+  }
+
+  private resolveSettingsPath(key: SessionModelBindingKey): string {
+    return (
+      this.#settingsPathResolver?.(key) ?? this.#providerTurnConfig.settingsPath
+    );
+  }
+
+  private attachSettingsPath(
+    binding: SessionModelBinding,
+    settingsPath: string | null | undefined
+  ): SessionModelBinding {
+    return settingsPath ? { ...binding, settingsPath } : binding;
   }
 }

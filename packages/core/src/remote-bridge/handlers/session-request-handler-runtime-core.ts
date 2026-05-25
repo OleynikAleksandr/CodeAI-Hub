@@ -9,6 +9,7 @@ import {
 import { SessionModelBindingResolver } from "../../session-model-binding/session-model-binding-resolver";
 import { SessionTranslationFacade } from "../../session-translation/session-translation-facade";
 import { createCoreTranslationFacade } from "../../translation/core-translation-facade-factory";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { SessionContinuityLockService } from "./session-continuity-lock-service";
 import { SessionDescriptionDialogSync } from "./session-description-dialog-sync";
 import { SessionProviderBindingService } from "./session-provider-binding-service";
@@ -55,6 +56,29 @@ interface ClaudeTranslationServiceOwner {
   readonly getHaikuTranslationService?: () => ClaudeHaikuTranslationService;
 }
 
+const SETTINGS_FILE_NAME = "settings.json";
+
+const resolveGlobalSettingsPath = (
+  config: SessionRequestHandlerRuntimeDependencies["config"]
+): string =>
+  path.join(path.dirname(config.claudeSettingsPath), SETTINGS_FILE_NAME);
+
+const resolveWorkspaceSettingsPath = (options: {
+  readonly fallbackSettingsPath: string;
+  readonly workspacePath?: string | null;
+  readonly workspaceSlug?: string | null;
+}): string => {
+  const workspaceRoot = options.workspacePath?.trim();
+  const workspaceSlug = options.workspaceSlug?.trim();
+  if (!(workspaceRoot && workspaceSlug)) {
+    return options.fallbackSettingsPath;
+  }
+  return resolveWorkspaceRuntimeCapsule({
+    workspaceRoot,
+    workspaceSlug,
+  }).settingsFile.absolutePath;
+};
+
 const createDeferredRuntimeRef = <TDependency>(name: string) => {
   let value: TDependency | undefined;
   return {
@@ -85,6 +109,7 @@ export const createSessionRequestHandlerRuntimeCore = (
   options: SessionRequestHandlerRuntimeDependencies,
   continuityRolloverBridge: ContinuityRolloverBridge
 ): SessionRequestHandlerRuntimeCore => {
+  const globalSettingsPath = resolveGlobalSettingsPath(options.config);
   const messageDispatchRef =
     createDeferredRuntimeRef<SessionRequestHandlerMessageDispatch>(
       "messageDispatch"
@@ -153,10 +178,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     resolveClaudeHaikuTranslationServiceForRuntime(options);
   const sessionTranslation = new SessionTranslationFacade({
     logger: options.logger,
-    settingsPath: path.join(
-      path.dirname(options.config.claudeSettingsPath),
-      "settings.json"
-    ),
+    settingsPath: globalSettingsPath,
     translationFacadeFactory: ({ reporter }) =>
       createCoreTranslationFacade({
         claudeHaikuTranslationService,
@@ -207,11 +229,14 @@ export const createSessionRequestHandlerRuntimeCore = (
       fallbackCodexReasoningEffort:
         options.config.codexDefaultReasoningEffort ?? "medium",
       fallbackGeminiModel: options.config.geminiDefaultModel,
-      settingsPath: path.join(
-        path.dirname(options.config.claudeSettingsPath),
-        "settings.json"
-      ),
+      settingsPath: globalSettingsPath,
     },
+    settingsPathResolver: (key) =>
+      resolveWorkspaceSettingsPath({
+        fallbackSettingsPath: globalSettingsPath,
+        workspacePath: key.workspacePath,
+        workspaceSlug: key.workspaceSlug ?? key.initiativeSlug,
+      }),
   });
   const providerEventRouter = new SessionProviderEventRouter({
     sessionManager: options.sessionManager,

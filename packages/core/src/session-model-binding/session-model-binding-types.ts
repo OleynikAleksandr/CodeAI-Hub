@@ -29,6 +29,7 @@ export interface SessionModelBinding extends SessionModelBindingIdentity {
   readonly boundAt: string;
   readonly key: string;
   readonly providerId: string;
+  readonly settingsPath?: string;
   readonly source: SessionModelBindingSource;
   readonly updatedAt: string;
 }
