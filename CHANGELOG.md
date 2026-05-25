@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.354] - 2026-05-25
+### Changed
+- **Workflow Clear now restores Core-owned Git boundaries.** Core creates `codeai-boundary: <Stage>` commits before workflow stages start, records them in `.codeai-hub/<workspaceSlug>/workflow/boundaries.json`, and restores workflow-stage Clear from that boundary instead of using undo ledgers, checkpoints, fallback path deletion, or last-active repair.
+- **Description gets a boundary at workspace activation.** The first rollback anchor is created before questionnaire work and before workspace activation side effects.
+- **Managed technical stages use the same boundary model.** Project Manager starts and managed dispatch paths create/verify boundaries before scaffold and stage-plan side effects.
+- **Development Tree node Clear stays fail-closed.** Node-level Clear is left unavailable until it has a separate node-boundary design.
+
+### Tests
+- `node --test packages/core/dist/workflow/boundary/workflow-boundary-facade.test.js packages/core/dist/remote-bridge/handlers/workspace-activate-service.test.js packages/core/dist/remote-bridge/handlers/workspace-session-service.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.js packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.test.js`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run check:knip`
+- `npm run check:links`
+- `npm run plan:validate`
+
 ## [1.2.353] - 2026-05-24
 ### Fixed
 - **Quality Gates terminal cleanup now handles Core-managed residue.** When Quality Gates integration or repair leaves accepted upstream Application Skeleton managed artifacts, workflow runtime metadata, continuity files, or formatter output dirty, Core now treats those paths as managed terminal residue and commits them before step completion instead of blocking the workflow with a dirty Git prompt.

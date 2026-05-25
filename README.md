@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.353** (Quality Gates Terminal Residue)
+**Current Release — v1.2.354** (Git Boundary Workflow Clear)
+
+This replacement build rebuilds workflow `Clear` around Core-owned Git boundary
+commits. Core now creates `codeai-boundary: <Stage>` commits before workflow
+steps start, beginning with `Description` at workspace activation and continuing
+before Project Manager or managed technical-stage starts.
+
+Clearing a workflow stage now restores the selected boundary through the new
+workflow boundary facade, prunes that stage and downstream boundary records, and
+resets runtime projections from the restored filesystem instead of replaying
+undo ledgers, checkpoints, fallback path deletion, or last-active patches.
+
+Development Tree node Clear remains fail-closed until it gets a separate
+node-boundary design.
+
+**Previous Release — v1.2.353** (Quality Gates Terminal Residue)
 
 This replacement build fixes the Quality Gates terminal Git boundary. When the
 Quality Gates integration flow formats already accepted upstream Application

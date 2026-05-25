@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "8044e910b",
+  "lastRecordedCommit": "a8408fcf1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase5.stream1.task1",
-  "expectedCommitMessage": "docs: document git boundary workflow clear",
+  "currentTaskId": "phase7.stream1.task1",
+  "expectedCommitMessage": "docs: prepare git boundary clear release",
   "debt": {
-    "expectedCommitMessage": "docs: document git boundary workflow clear",
-    "preCommitHead": "8044e910b",
+    "expectedCommitMessage": "docs: prepare git boundary clear release",
+    "preCommitHead": "a8408fcf1",
     "stage": "commit_pending",
-    "taskId": "phase5.stream1.task1"
+    "taskId": "phase7.stream1.task1"
   }
 }
 ```
@@ -82,18 +82,18 @@
 
 ### Stream: SSOT Sync
 15. [DONE] `phase5.stream1.task1` Move stable Git-boundary Clear decisions into canonical workflow architecture documents and update the docs index if needed (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document git boundary workflow clear`).
-16. [PENDING] Git Commit: `docs: document git boundary workflow clear` (hash: TBD)
+16. [DONE] Git Commit: `docs: document git boundary workflow clear` (hash: a8408fcf1)
 
 ## Phase 6 - Tooling Verification (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Targeted Verification
-17. [TODO] `phase6.stream1.task1` Run targeted validation for Core boundary and Clear behavior: core build, focused node tests, plan validation and relevant diagnostics (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+17. [DONE] `phase6.stream1.task1` Run targeted validation for Core boundary and Clear behavior: core build, focused node tests, plan validation and relevant diagnostics (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification passed: @codeai-hub/core build, focused boundary/workspace/session/managed/Clear node tests (9 tests), plan validation, check:knip, and markdown link check completed.
 
 ## Phase 7 - Release Build (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Release Docs
-18. [TODO] `phase7.stream1.task1` Update release-facing docs for the next version before build-all, as required by the release checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare git boundary clear release`).
-19. [TODO] Git Commit: `docs: prepare git boundary clear release` (hash: TBD)
+18. [DONE] `phase7.stream1.task1` Update release-facing docs for the next version before build-all, as required by the release checklist (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare git boundary clear release`).
+19. [PENDING] Git Commit: `docs: prepare git boundary clear release` (hash: TBD)
 
 ### Stream: Release Build
 20. [TODO] `phase7.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build git boundary clear release`).
