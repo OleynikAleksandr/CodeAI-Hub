@@ -1,3 +1,18 @@
+# Plan Closeout: development-tree-lead-contract-orchestration-implementation-2026-05-22
+
+**Created:** 2026-05-25T06:36:47.665Z
+**Acceptance:** User accepted legacy Clear/Undo cleanup and requested a new Git-boundary Clear implementation cycle with release build on 2026-05-25.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase9.stream1.task1
+**Expected Commit:** docs: close development tree lead contract implementation
+**Last Recorded Commit:** 86317cc9d
+**Planning Source Disposition:** already_archived
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # План разработки (Development TODO Plan)
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_ProjectApplicationContractOrchestrator_Planning_RU.md",
   "currentTaskId": "phase9.stream1.task1",
   "expectedCommitMessage": "docs: close development tree lead contract implementation",
-  "debt": {
-    "expectedCommitMessage": "docs: close development tree lead contract implementation",
-    "preCommitHead": "86317cc9d",
-    "stage": "commit_pending",
-    "taskId": "phase9.stream1.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -722,5 +732,6 @@
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-22)
 
 ### Stream: Scope Closeout
-150. [DONE] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
-151. [PENDING] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+150. [IN_PROGRESS] `phase9.stream1.task1` Close implementation scope after explicit user acceptance, archive todo-plan and update Docs_Index if follow-up documents move (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree lead contract implementation`).
+151. [TODO] Git Commit: `docs: close development tree lead contract implementation` (hash: TBD)
+````
