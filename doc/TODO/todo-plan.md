@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "664e3ce08",
+  "lastRecordedCommit": "4ab24a7ca",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase43.stream2.task1",
-  "expectedCommitMessage": "feat: scope project manager settings to workspace",
+  "currentTaskId": "phase44.stream1.task1",
+  "expectedCommitMessage": "test: guard workflow rollback architecture",
   "debt": {
-    "expectedCommitMessage": "feat: scope project manager settings to workspace",
-    "preCommitHead": "664e3ce08",
+    "expectedCommitMessage": "test: guard workflow rollback architecture",
+    "preCommitHead": "4ab24a7ca",
     "stage": "commit_pending",
-    "taskId": "phase43.stream2.task1"
+    "taskId": "phase44.stream1.task1"
   }
 }
 ```
@@ -387,13 +387,13 @@
 
 ### Stream: Workspace Settings Surface
 147. [DONE] `phase43.stream2.task1` Make Project Manager settings load/save against the active workspace settings snapshot and reload on workspace switch across the Project Manager settings client and Core settings message route (scope: `src/client/project-manager/api.ts, src/client/project-manager/components/settings/use-project-manager-settings.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/project-manager/services/project-manager-settings-client.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts`; expected commit: `feat: scope project manager settings to workspace`).
-148. [PENDING] Git Commit: `feat: scope project manager settings to workspace` (hash: TBD)
+148. [DONE] Git Commit: `feat: scope project manager settings to workspace` (hash: 4ab24a7ca)
 
 ## Phase 44 - Cleanup Gates And Invariants (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Legacy Rollback Removal Gates
-149. [TODO] `phase44.stream1.task1` Add automated checks or targeted tests that fail on `runtime-slices`, `cleanPaths`, registry-authority commits, global workflow session roots and direct managed Git helper usage (scope: `scripts/check-workflow-rollback-architecture.mjs, package.json, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `test: guard workflow rollback architecture`).
-150. [TODO] Git Commit: `test: guard workflow rollback architecture` (hash: TBD)
+149. [DONE] `phase44.stream1.task1` Add automated checks or targeted tests that fail on `runtime-slices`, `cleanPaths`, registry-authority commits, global workflow session roots and direct managed Git helper usage (scope: `scripts/check-workflow-rollback-architecture.mjs, scripts/check-architecture.sh, package.json, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `test: guard workflow rollback architecture`).
+150. [PENDING] Git Commit: `test: guard workflow rollback architecture` (hash: TBD)
 151. [TODO] `phase44.stream1.task2` Update canonical system documentation and docs index with stable workspace-owned rollback architecture decisions after code migration is in place (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document workspace owned git rollback`).
 152. [TODO] Git Commit: `docs: document workspace owned git rollback` (hash: TBD)
 

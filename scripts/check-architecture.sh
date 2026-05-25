@@ -259,6 +259,14 @@ if ! bash scripts/check-architecture-rules/ui-style-ssot.sh; then
   HAS_VIOLATIONS=1
 fi
 
+# Check 8: Workflow rollback architecture guardrails
+echo ""
+echo "🧭 Running workflow rollback architecture guardrails..."
+echo "-----------------------------------"
+if ! node scripts/check-workflow-rollback-architecture.mjs; then
+  HAS_VIOLATIONS=1
+fi
+
 # Final verdict
 echo ""
 echo "================================"

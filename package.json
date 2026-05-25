@@ -62,6 +62,7 @@
   },
   "scripts": {
     "check:architecture": "./scripts/check-architecture.sh",
+    "check:workflow-rollback": "node ./scripts/check-workflow-rollback-architecture.mjs",
     "lint": "npx ultracite check",
     "check:knip": "knip",
     "check:dup": "npm run -s check:dup:repo",

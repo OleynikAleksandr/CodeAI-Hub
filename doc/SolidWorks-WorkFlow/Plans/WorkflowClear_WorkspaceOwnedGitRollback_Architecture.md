@@ -606,12 +606,19 @@ Before implementation is considered ready for release, these searches must be
 clean or intentionally limited to archived docs:
 
 ```bash
+node scripts/check-workflow-rollback-architecture.mjs
 rg "runtime-slices|WorkflowRuntimeSlice|captureWorkflowRuntimeSlices|restoreWorkflowRuntimeSlices" packages src
 rg "cleanPaths|DEFAULT_CLEAN_PATHS" packages/core/src
 rg "codeai-boundary-registry" packages/core/src
 rg "DiagramModulesManagedGitBoundary" packages/core/src
 rg "homedir\\(\\).*\\.codeai-hub.*sessions|SESSION_ROOT = path.join\\(homedir\\(\\), \"\\.codeai-hub\", \"sessions\"" packages/core/src
 ```
+
+The executable guard is wired through `scripts/check-architecture.sh`. It fails
+on removed rollback mechanisms and keeps transitional exceptions explicit:
+legacy Description continuity-root promotion and the remaining managed
+controller `DiagramModulesManagedGitBoundary` construction points are allowlisted
+until those adapters are fully collapsed into the shared Git boundary service.
 
 Release acceptance for this redesign must include a real workspace workflow
 test, not only unit tests: `Description -> Virtual Simulation -> Diagram
