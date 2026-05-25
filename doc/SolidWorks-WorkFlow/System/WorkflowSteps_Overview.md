@@ -80,7 +80,9 @@ Core creates one Git rollback boundary before each trunk step starts:
 - `codeai-boundary: Application Skeleton`
 - `codeai-boundary: Quality Gates`
 
-The first boundary is created when a workspace is activated, before Description questionnaire work. Later boundaries are created before Project Manager stage sessions and before managed technical-stage scaffold/plan side effects. Project Manager keeps the Clear command surface, but the endpoint delegates workflow-stage Clear to Core's boundary facade. Runtime session deletion and projection reset are follow-up projection cleanup; tracked workspace state comes from Git restore only.
+The first boundary is created when a workspace is activated, before Description questionnaire work. Later boundaries are created before Project Manager stage sessions and before managed technical-stage scaffold/plan side effects. Project Manager keeps the Clear command surface, but the endpoint delegates workflow-stage Clear to Core's boundary facade. Git history is also the Core-owned development timeline for future agent recovery: accepted step output is committed as `codeai-step: <Stage Label> accepted` before the next trunk step may start.
+
+Runtime session state that lives outside the workspace is captured as per-workspace/per-session slices under `.codeai-hub/<workspaceSlug>/runtime-slices/` with a committed manifest. Clear restores the selected Git boundary and then rehydrates those slices back into user-space session stores. Global settings, auth files, logs, provider binaries, and local timer state such as `.codeai-hub/state/` are not development artifacts and must not be committed as rollback truth.
 
 ### Preliminary Review Gate — Description and Virtual Simulation
 
@@ -89,7 +91,7 @@ The first boundary is created when a workspace is activated, before Description 
 - Core не показывает completion/review card перед первым provider turn и не перехватывает стартовый prompt как acceptance;
 - после каждого завершённого provider turn Core добавляет system review-card с inline-кнопкой `Подтверждаю`;
 - если пользователь отвечает на вопросы агента или просит правки, сообщение уходит агенту, а после следующего provider turn Core снова показывает ту же review-card;
-- нажатие `Подтверждаю` принимает текущий preliminary artifact и может сразу открыть карточку следующего шага, но Core остаётся источником статуса и unlock truth.
+- нажатие `Подтверждаю` принимает текущий preliminary artifact only after Core captures runtime session slices, commits the accepted step output, and verifies that `git status --porcelain` is clean; if Git remains dirty, Core blocks the next-step return path with a visible validation message.
 
 ### Core Runtime как Product Part с контрактами
 

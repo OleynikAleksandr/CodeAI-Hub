@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "0dafd4abe",
+  "lastRecordedCommit": "9057a79b7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_GitBoundaryRollback_Architecture.md",
-  "currentTaskId": "phase9.stream3.task1",
-  "expectedCommitMessage": "feat: restore workflow runtime slices from boundaries",
+  "currentTaskId": "phase10.stream1.task1",
+  "expectedCommitMessage": "docs: document clean git workflow history",
   "debt": {
-    "expectedCommitMessage": "feat: restore workflow runtime slices from boundaries",
-    "preCommitHead": "0dafd4abe",
+    "expectedCommitMessage": "docs: document clean git workflow history",
+    "preCommitHead": "9057a79b7",
     "stage": "commit_pending",
-    "taskId": "phase9.stream3.task1"
+    "taskId": "phase10.stream1.task1"
   }
 }
 ```
@@ -118,13 +118,13 @@
 
 ### Stream: Clear Runtime Restore
 29. [DONE] `phase9.stream3.task1` Restore captured runtime session slices after Git boundary reset so Clear rolls back workspace files and user-space session histories together (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-runtime-slice-snapshot.ts`; expected commit: `feat: restore workflow runtime slices from boundaries`).
-30. [PENDING] Git Commit: `feat: restore workflow runtime slices from boundaries` (hash: TBD)
+30. [DONE] Git Commit: `feat: restore workflow runtime slices from boundaries` (hash: 9057a79b7)
 
 ## Phase 10 - Architecture Documentation And Verification (owner: Codex, updated: 2026-05-25)
 
 ### Stream: SSOT And Targeted Checks
-31. [TODO] `phase10.stream1.task1` Update workflow architecture docs for Git history as the development timeline, accepted-step commits, session slice snapshots, and clean-tree next-step gating (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document clean git workflow history`).
-32. [TODO] Git Commit: `docs: document clean git workflow history` (hash: TBD)
+31. [DONE] `phase10.stream1.task1` Update workflow architecture docs for Git history as the development timeline, accepted-step commits, session slice snapshots, and clean-tree next-step gating (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document clean git workflow history`).
+32. [PENDING] Git Commit: `docs: document clean git workflow history` (hash: TBD)
 33. [TODO] `phase10.stream2.task1` Run targeted verification for boundary snapshot, preliminary review acceptance, Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 11 - Release Build (owner: Codex, updated: 2026-05-25)
