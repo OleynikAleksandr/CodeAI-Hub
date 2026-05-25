@@ -1,4 +1,3 @@
-import { ManagedWorkflowScaffoldInstaller } from "../managed-workflow-orchestration/managed-workflow-scaffold-installer";
 import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
@@ -18,19 +17,15 @@ const isTechnicalStageRewriteStage = (
 interface RemoteBridgeSessionCreateRouterDependencies {
   readonly getManager: () => WebSocketManager | undefined;
   readonly logger: Logger;
-  readonly scaffoldInstaller?: ManagedWorkflowScaffoldInstaller;
   readonly sessionHandler: SessionRequestHandler;
   readonly workflowRuntime: WorkflowRuntime;
 }
 
 export class RemoteBridgeSessionCreateRouter {
   private readonly deps: RemoteBridgeSessionCreateRouterDependencies;
-  private readonly scaffoldInstaller: ManagedWorkflowScaffoldInstaller;
 
   constructor(deps: RemoteBridgeSessionCreateRouterDependencies) {
     this.deps = deps;
-    this.scaffoldInstaller =
-      deps.scaffoldInstaller ?? new ManagedWorkflowScaffoldInstaller();
   }
 
   async handle(
@@ -85,11 +80,6 @@ export class RemoteBridgeSessionCreateRouter {
           stage: createContext.stage,
           workspacePath: resolvedWorkspacePath,
         });
-        if (createContext.stage === "diagram_modules") {
-          await this.scaffoldInstaller.installDiagramModulesScaffold({
-            workspaceRoot: resolvedWorkspacePath,
-          });
-        }
       }
     } catch (error: unknown) {
       this.deps.logger.warn("Failed to prepare workflow stage directories", {

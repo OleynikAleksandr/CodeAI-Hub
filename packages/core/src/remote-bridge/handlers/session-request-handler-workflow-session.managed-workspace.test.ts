@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  access,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -42,6 +49,10 @@ const createLogger = (warnings: unknown[] = []): Logger =>
       warnings.push(context);
     },
   }) as unknown as Logger;
+
+const assertMissing = async (targetPath: string): Promise<void> => {
+  await assert.rejects(access(targetPath));
+};
 
 test("managed technical stage starts route through managed dispatch without preview boundary", async () => {
   const calls: string[] = [];
@@ -128,14 +139,18 @@ test("Diagram Modules managed start creates workspace scaffold before provider d
     } as unknown as ProviderRegistry,
     sessionManager: new SessionManager(),
     workflowBoundaryFacade: {
-      ensureBoundary: (params) => {
+      ensureBoundary: async (params) => {
         calls.push(`boundary:${params.stage}`);
-        return Promise.resolve({
+        await assertMissing(path.join(workspacePath, "doc", "TODO"));
+        await assertMissing(path.join(workspacePath, ".husky"));
+        await assertMissing(path.join(workspacePath, "package.json"));
+        await assertMissing(path.join(workspacePath, "scripts"));
+        return {
           boundaryHash: "abc123",
           created: true,
           registryPath: path.join(workspacePath, "boundaries.json"),
           stage: params.stage,
-        });
+        };
       },
     },
   });

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -7,9 +7,6 @@ import type { Logger } from "../telemetry/logger";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
-
-const ACTIVE_DIAGRAM_MODULES_RE = /"activeStage": "diagram_modules"/u;
-const DIAGRAM_MODULES_INDEX_TASK_RE = /diagram-modules\.phase1\.index\.task1/u;
 
 const assertMissing = async (targetPath: string): Promise<void> => {
   await assert.rejects(access(targetPath));
@@ -22,9 +19,9 @@ const createLogger = (warnings: unknown[] = []): Logger =>
     },
   }) as unknown as Logger;
 
-test("session:create installs Diagram Modules managed scaffold before provider dispatch", async () => {
+test("session:create leaves Diagram Modules managed scaffold to the Core start boundary", async () => {
   const workspacePath = await mkdtemp(
-    path.join(tmpdir(), "codeai-diagram-scaffold-preflight-")
+    path.join(tmpdir(), "codeai-diagram-boundary-preflight-")
   );
   const workspaceSlug = "demo-workspace";
   const warnings: unknown[] = [];
@@ -40,19 +37,10 @@ test("session:create installs Diagram Modules managed scaffold before provider d
         assert.equal(providerId, "codexCli");
         assert.equal(workspaceRoot, workspacePath);
         assert.equal(context?.stage, "diagram_modules");
-        const workspacePlan = await readFile(
-          path.join(workspacePath, "doc/TODO/workspace.plan.md"),
-          "utf8"
-        );
-        const diagramPlan = await readFile(
-          path.join(
-            workspacePath,
-            "doc/TODO/stages/diagram-modules/todo-plan.md"
-          ),
-          "utf8"
-        );
-        assert.match(workspacePlan, ACTIVE_DIAGRAM_MODULES_RE);
-        assert.match(diagramPlan, DIAGRAM_MODULES_INDEX_TASK_RE);
+        await assertMissing(path.join(workspacePath, "doc", "TODO"));
+        await assertMissing(path.join(workspacePath, ".husky"));
+        await assertMissing(path.join(workspacePath, "package.json"));
+        await assertMissing(path.join(workspacePath, "scripts"));
         handleCreateCalled = true;
       },
     } as unknown as SessionRequestHandler;
@@ -78,7 +66,10 @@ test("session:create installs Diagram Modules managed scaffold before provider d
 
     assert.equal(handleCreateCalled, true);
     assert.deepEqual(warnings, []);
-    await access(path.join(workspacePath, ".husky", "pre-commit"));
+    await assertMissing(path.join(workspacePath, ".husky", "pre-commit"));
+    await assertMissing(path.join(workspacePath, "doc", "TODO"));
+    await assertMissing(path.join(workspacePath, "package.json"));
+    await assertMissing(path.join(workspacePath, "scripts"));
     await access(
       path.join(workspacePath, ".codeai-hub", workspaceSlug, "diagram_modules")
     );
