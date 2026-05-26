@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "c47de0207",
+  "lastRecordedCommit": "d9a4f611a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase100.stream3.task1",
-  "expectedCommitMessage": "test: cover ignored runtime git pollution",
+  "currentTaskId": "phase101.stream1.task1",
+  "expectedCommitMessage": "docs: document rollback ignored runtime paths",
   "debt": {
-    "expectedCommitMessage": "test: cover ignored runtime git pollution",
-    "preCommitHead": "c47de0207",
+    "expectedCommitMessage": "docs: document rollback ignored runtime paths",
+    "preCommitHead": "d9a4f611a",
     "stage": "commit_pending",
-    "taskId": "phase100.stream3.task1"
+    "taskId": "phase101.stream1.task1"
   }
 }
 ```
@@ -893,13 +893,13 @@
 
 ### Stream: Regression Coverage
 339. [DONE] `phase100.stream3.task1` Cover accepted-step and Clear behavior so legacy tracked localization/provider-native session files are removed from the rollback index and future runtime files do not leave Git dirty (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `test: cover ignored runtime git pollution`). Result: Accepted-step coverage now proves localization cache and provider-native session logs remain on disk but are not tracked, and legacy tracked settings/localization/provider-native runtime files are untracked from accepted commits without overwriting current runtime contents. Clear rollback coverage now proves legacy tracked mutable runtime is removed from the rollback index and the repository remains Git-clean.
-340. [PENDING] Git Commit: `test: cover ignored runtime git pollution` (hash: TBD)
+340. [DONE] Git Commit: `test: cover ignored runtime git pollution` (hash: d9a4f611a)
 
 ## Phase 101 - Architecture Documentation (owner: Codex, updated: 2026-05-26)
 
 ### Stream: SSOT Sync
-341. [TODO] `phase101.stream1.task1` Document that provider-native session logs and localization runtime cache are mutable workspace runtime outside Clear/Undo rollback truth, while Core logical sessions and accepted artifacts remain rollback-owned (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document rollback ignored runtime paths`).
-342. [TODO] Git Commit: `docs: document rollback ignored runtime paths` (hash: TBD)
+341. [DONE] `phase101.stream1.task1` Document that provider-native session logs and localization runtime cache are mutable workspace runtime outside Clear/Undo rollback truth, while Core logical sessions and accepted artifacts remain rollback-owned (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document rollback ignored runtime paths`). Result: System architecture, workflow overview and rollback architecture plan now state that workspace settings, workspace localization runtime and provider-native `home/sessions/**` logs are workspace-owned but rollback-ignored/legacy-untracked, while Core logical sessions, applied config/model binding and accepted artifacts remain the reproducibility and rollback proof. The planning doc now treats global localization as seed/compat only, not Project Manager runtime truth.
+342. [PENDING] Git Commit: `docs: document rollback ignored runtime paths` (hash: TBD)
 
 ## Phase 102 - Verification (owner: Codex, updated: 2026-05-26)
 
