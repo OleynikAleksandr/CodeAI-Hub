@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "582b00772",
+  "lastRecordedCommit": "d3da9fc70",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase98.stream1.task1",
-  "expectedCommitMessage": "fix: skip no-op workflow start settings saves",
+  "currentTaskId": "phase100.stream1.task1",
+  "expectedCommitMessage": "fix: ignore mutable runtime capsule paths",
   "debt": {
-    "expectedCommitMessage": "fix: skip no-op workflow start settings saves",
-    "preCommitHead": "582b00772",
+    "expectedCommitMessage": "fix: ignore mutable runtime capsule paths",
+    "preCommitHead": "d3da9fc70",
     "stage": "commit_pending",
-    "taskId": "phase98.stream1.task1"
+    "taskId": "phase100.stream1.task1"
   }
 }
 ```
@@ -874,12 +874,42 @@
 
 ### Stream: Workflow Start Settings Save
 332. [DONE] `phase98.stream1.task1` Prevent repeated workflow starts after Clear from timing out on a no-op start-card settings save by making selected provider defaults persist only when the workspace settings value actually changes (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `fix: skip no-op workflow start settings saves`). Result: Extracted start-card settings default application into a small service module and made it return `null` for unchanged provider defaults, so repeat starts after Clear skip the unnecessary settings save barrier. Verification passed: `node --test --import tsx src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` (11/11), `npm run build:project-manager`, `npm run typecheck:webview`.
-333. [PENDING] Git Commit: `fix: skip no-op workflow start settings saves` (hash: TBD)
+333. [DONE] Git Commit: `fix: skip no-op workflow start settings saves` (hash: d3da9fc70)
 
 ## Phase 99 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
 ### Stream: Release Gate
-334. [TODO] `phase99.stream1.task1` Await explicit user confirmation before preparing release docs or building the next release for the workflow start settings barrier hotfix (scope: release gate; expected commit: no commit expected).
+334. [DONE] `phase99.stream1.task1` Await explicit user confirmation before preparing release docs or building the next release for the workflow start settings barrier hotfix (scope: release gate; expected commit: no commit expected). Result: Release build deferred because user retest found additional Git pollution in the tested workspace: runtime localization files and provider-native Codex session JSONL files remain visible in Git after Clear/restart attempts.
+
+## Phase 100 - Mutable Runtime Git Pollution (owner: Codex, updated: 2026-05-26)
+
+### Stream: Runtime Ignore Contract
+335. [DONE] `phase100.stream1.task1` Classify workspace localization runtime and provider-native session logs as rollback-ignored mutable runtime alongside settings, update the capsule `.gitignore` contract, and add focused contract coverage (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore mutable runtime capsule paths`). Result: Capsule `.gitignore` now ignores `runtime/localization/` and `runtime/providers/**/home/sessions/` alongside settings, while rollback-owned `runtime/sessions/unified/**` stays trackable; the rollback ignore classifier/filter/untrack helper covers settings, localization runtime and provider-native session roots. Verification passed: `node --test --import tsx packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts` (6/6).
+336. [PENDING] Git Commit: `fix: ignore mutable runtime capsule paths` (hash: TBD)
+
+### Stream: Boundary Migration
+337. [TODO] `phase100.stream2.task1` Apply the rollback-ignored runtime classification before boundary creation, accepted step commits and Clear rollback, including legacy untracking and clean-tree filtering for existing workspaces (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `fix: untrack rollback ignored runtime paths`).
+338. [TODO] Git Commit: `fix: untrack rollback ignored runtime paths` (hash: TBD)
+
+### Stream: Regression Coverage
+339. [TODO] `phase100.stream3.task1` Cover accepted-step and Clear behavior so legacy tracked localization/provider-native session files are removed from the rollback index and future runtime files do not leave Git dirty (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `test: cover ignored runtime git pollution`).
+340. [TODO] Git Commit: `test: cover ignored runtime git pollution` (hash: TBD)
+
+## Phase 101 - Architecture Documentation (owner: Codex, updated: 2026-05-26)
+
+### Stream: SSOT Sync
+341. [TODO] `phase101.stream1.task1` Document that provider-native session logs and localization runtime cache are mutable workspace runtime outside Clear/Undo rollback truth, while Core logical sessions and accepted artifacts remain rollback-owned (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document rollback ignored runtime paths`).
+342. [TODO] Git Commit: `docs: document rollback ignored runtime paths` (hash: TBD)
+
+## Phase 102 - Verification (owner: Codex, updated: 2026-05-26)
+
+### Stream: Focused Runtime Checks
+343. [TODO] `phase102.stream1.task1` Run focused Core runtime/boundary tests plus Project Manager build/typecheck for the start barrier and mutable runtime Git pollution fixes (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 103 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+
+### Stream: Release Gate
+344. [TODO] `phase103.stream1.task1` Await explicit user confirmation before preparing release docs or building the next release after mutable runtime Git pollution verification (scope: release gate; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
