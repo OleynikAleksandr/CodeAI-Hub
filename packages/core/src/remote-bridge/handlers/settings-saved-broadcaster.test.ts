@@ -7,12 +7,37 @@ import type {
 import type { BridgeEvent } from "../types";
 import { SettingsSavedBroadcaster } from "./settings-saved-broadcaster";
 
-const createRuntimePayload = (): LocalizationRuntimePayload =>
-  ({
-    activeEngineId: "google-gtx",
-    availableEngines: [],
-    resolvedBundlesByCategory: {},
-  }) as LocalizationRuntimePayload;
+const createRuntimePayload = (): LocalizationRuntimePayload => ({
+  activeEngineId: "google-gtx",
+  availableEngines: [],
+  resolvedBundlesByCategory: {
+    interactive_templates: {
+      entries: {},
+      language: "en",
+      source: "source_fallback",
+    },
+    system_feedback: {
+      entries: {},
+      language: "en",
+      source: "source_fallback",
+    },
+    ui_interface: {
+      entries: {},
+      language: "en",
+      source: "source_fallback",
+    },
+    user_guidance: {
+      entries: {},
+      language: "en",
+      source: "source_fallback",
+    },
+    workflow_terms: {
+      entries: {},
+      language: "en",
+      source: "source_fallback",
+    },
+  },
+});
 
 test("SettingsSavedBroadcaster broadcasts saved settings when localization sync fails", async () => {
   const events: BridgeEvent[] = [];
@@ -38,7 +63,7 @@ test("SettingsSavedBroadcaster broadcasts saved settings when localization sync 
 
   await broadcaster.publish(
     {
-      affectedRuntimeBundleIds: ["ui_labels"],
+      affectedRuntimeBundleIds: ["ui_interface"],
       settings,
       syncMode: "strict",
     },
@@ -92,7 +117,7 @@ test("SettingsSavedBroadcaster reports preflight failure without invoking runtim
 
   await broadcaster.publish(
     {
-      affectedRuntimeBundleIds: ["ui_labels"],
+      affectedRuntimeBundleIds: ["ui_interface"],
       settings: { general: {}, providers: {} },
       syncMode: "strict",
     },
