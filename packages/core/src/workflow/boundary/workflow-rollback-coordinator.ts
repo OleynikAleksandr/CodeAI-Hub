@@ -5,6 +5,7 @@ import { WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT } from "../runtime/workspac
 import {
   readWorkspaceSettingsRollbackSnapshot,
   restoreWorkspaceSettingsRollbackSnapshot,
+  untrackWorkspaceRollbackIgnoredRuntimePaths,
   untrackWorkspaceSettingsForRollback,
 } from "../runtime/workspace-settings-rollback-ignore";
 import type { WorkflowStageId } from "../watcher/watcher-types";
@@ -87,11 +88,16 @@ export class WorkflowRollbackCoordinator {
       hash: params.target.boundaryHash,
       workspaceRoot: params.workspaceRoot,
     });
+    await writeCurrentRuntimeGitignore(capsule.gitignoreFile);
     await this.#git.cleanWorktree({ workspaceRoot: params.workspaceRoot });
     await writeCurrentRuntimeGitignore(capsule.gitignoreFile);
     await restoreWorkspaceSettingsRollbackSnapshot({
       settingsFile: capsule.settingsFile,
       snapshot: settingsSnapshot,
+    });
+    await untrackWorkspaceRollbackIgnoredRuntimePaths({
+      capsule,
+      workspaceRoot: params.workspaceRoot,
     });
     await untrackWorkspaceSettingsForRollback({
       settingsFile: capsule.settingsFile,

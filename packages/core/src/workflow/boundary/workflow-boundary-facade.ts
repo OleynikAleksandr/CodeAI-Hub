@@ -1,7 +1,9 @@
 import path from "node:path";
 import { resolveWorkspaceRuntimeCapsule } from "../runtime/workspace-runtime-capsule";
 import {
+  filterWorkspaceRollbackIgnoredGitStatusEntries,
   filterWorkspaceSettingsGitStatusEntries,
+  untrackWorkspaceRollbackIgnoredRuntimePaths,
   untrackWorkspaceSettingsForRollback,
 } from "../runtime/workspace-settings-rollback-ignore";
 import type { WorkflowStageId } from "../watcher/watcher-types";
@@ -97,14 +99,22 @@ export class WorkflowBoundaryFacade {
 
     const capsule = resolveWorkspaceRuntimeCapsule(params);
     await this.#git.ensureRepository(params.workspaceRoot);
+    await untrackWorkspaceRollbackIgnoredRuntimePaths({
+      capsule,
+      workspaceRoot: params.workspaceRoot,
+    });
     await untrackWorkspaceSettingsForRollback({
       settingsFile: capsule.settingsFile,
       workspaceRoot: params.workspaceRoot,
     });
     const dirtyPaths = await this.#git.statusPorcelain(params.workspaceRoot);
-    const blockingDirtyPaths = filterWorkspaceSettingsGitStatusEntries({
+    const nonSettingsDirtyPaths = filterWorkspaceSettingsGitStatusEntries({
       entries: dirtyPaths,
       settingsFile: capsule.settingsFile,
+    });
+    const blockingDirtyPaths = filterWorkspaceRollbackIgnoredGitStatusEntries({
+      capsule,
+      entries: nonSettingsDirtyPaths,
     });
     if (
       blockingDirtyPaths.length > 0 &&
@@ -120,7 +130,7 @@ export class WorkflowBoundaryFacade {
     const boundaryCommit = await this.#git.commit({
       allowEmpty: true,
       commitMessage,
-      paths: dirtyPaths.length > 0 ? [".codeai-hub"] : undefined,
+      paths: blockingDirtyPaths.length > 0 ? [".codeai-hub"] : undefined,
       workspaceRoot: params.workspaceRoot,
     });
     await this.#registryStore.recordBoundary({

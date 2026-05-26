@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "d3da9fc70",
+  "lastRecordedCommit": "594027437",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase100.stream1.task1",
-  "expectedCommitMessage": "fix: ignore mutable runtime capsule paths",
+  "currentTaskId": "phase100.stream2.task1",
+  "expectedCommitMessage": "fix: untrack rollback ignored runtime paths",
   "debt": {
-    "expectedCommitMessage": "fix: ignore mutable runtime capsule paths",
-    "preCommitHead": "d3da9fc70",
+    "expectedCommitMessage": "fix: untrack rollback ignored runtime paths",
+    "preCommitHead": "594027437",
     "stage": "commit_pending",
-    "taskId": "phase100.stream1.task1"
+    "taskId": "phase100.stream2.task1"
   }
 }
 ```
@@ -885,11 +885,11 @@
 
 ### Stream: Runtime Ignore Contract
 335. [DONE] `phase100.stream1.task1` Classify workspace localization runtime and provider-native session logs as rollback-ignored mutable runtime alongside settings, update the capsule `.gitignore` contract, and add focused contract coverage (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore mutable runtime capsule paths`). Result: Capsule `.gitignore` now ignores `runtime/localization/` and `runtime/providers/**/home/sessions/` alongside settings, while rollback-owned `runtime/sessions/unified/**` stays trackable; the rollback ignore classifier/filter/untrack helper covers settings, localization runtime and provider-native session roots. Verification passed: `node --test --import tsx packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts` (6/6).
-336. [PENDING] Git Commit: `fix: ignore mutable runtime capsule paths` (hash: TBD)
+336. [DONE] Git Commit: `fix: ignore mutable runtime capsule paths` (hash: 594027437)
 
 ### Stream: Boundary Migration
-337. [TODO] `phase100.stream2.task1` Apply the rollback-ignored runtime classification before boundary creation, accepted step commits and Clear rollback, including legacy untracking and clean-tree filtering for existing workspaces (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `fix: untrack rollback ignored runtime paths`).
-338. [TODO] Git Commit: `fix: untrack rollback ignored runtime paths` (hash: TBD)
+337. [DONE] `phase100.stream2.task1` Apply the rollback-ignored runtime classification before boundary creation, accepted step commits and Clear rollback, including legacy untracking and clean-tree filtering for existing workspaces (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `fix: untrack rollback ignored runtime paths`). Result: Boundary creation, accepted-step commits and Clear rollback now untrack/filter rollback-ignored runtime roots through the shared classifier; Clear writes the current capsule `.gitignore` before `git clean -fd` so old boundary commits do not delete ignored mutable runtime, then writes it again for the Clear commit. Verification passed: `npm run build --workspace @codeai-hub/core`, targeted Ultracite check and plan validation. Existing boundary suite now has only the old provider-native-session tracking expectation to update in the next regression-coverage task.
+338. [PENDING] Git Commit: `fix: untrack rollback ignored runtime paths` (hash: TBD)
 
 ### Stream: Regression Coverage
 339. [TODO] `phase100.stream3.task1` Cover accepted-step and Clear behavior so legacy tracked localization/provider-native session files are removed from the rollback index and future runtime files do not leave Git dirty (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `test: cover ignored runtime git pollution`).
