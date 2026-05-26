@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.375] - 2026-05-26
+### Fixed
+- **Workflow watcher ignores deleted artifacts during Clear rollback.** Filesystem `rename` events emitted by `git reset --hard` / `git clean -fd` now produce workflow updates only when the target path still exists, preventing deleted downstream artifacts from being recorded again as `workflow.artifact.written`.
+- **Clear no longer dirties `workflow/state.json` with stale downstream `lastActive`.** After clearing Application Skeleton / Diagram Modules back to the previous boundary, Core should keep the restored `lastActive` artifact instead of rewriting it to a removed Diagram Modules path.
+- **Deleted workflow stage directories no longer look like new runs.** Stage-directory deletion events are ignored, while real stage directory creation still emits `workflow.run.created`.
+
+### Tests
+- `node --test --import tsx packages/core/src/workflow/watcher/workflow-watcher.test.ts packages/core/src/workflow/runtime/workflow-runtime.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run plan:validate`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.374] - 2026-05-26
 ### Fixed
 - **Project Manager rehydrates session/status state after workflow Clear.** The session status hydrator now treats `pm:workflow-step:cleared` like a restart-equivalent signal, force-refreshing `/api/v1/status` and session histories so restored Description/Virtual Simulation sessions appear without manual Restart Core.

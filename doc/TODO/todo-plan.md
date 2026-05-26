@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "f4f2dfb9e",
+  "lastRecordedCommit": "e612393ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase119.stream1.task1",
-  "expectedCommitMessage": "fix: ignore deleted workflow artifacts in watcher",
+  "currentTaskId": "phase122.stream1.task1",
+  "expectedCommitMessage": "docs: prepare watcher deletion release",
   "debt": {
-    "expectedCommitMessage": "fix: ignore deleted workflow artifacts in watcher",
-    "preCommitHead": "f4f2dfb9e",
+    "expectedCommitMessage": "docs: prepare watcher deletion release",
+    "preCommitHead": "e612393ea",
     "stage": "commit_pending",
-    "taskId": "phase119.stream1.task1"
+    "taskId": "phase122.stream1.task1"
   }
 }
 ```
@@ -1010,17 +1010,34 @@
 
 ### Stream: Deleted Artifact Events
 374. [DONE] `phase119.stream1.task1` Prevent filesystem deletion events produced by Git Clear rollback from being treated as workflow artifact writes, so Clear cannot rewrite `workflow/state.json` to a removed downstream artifact after the clear commit (scope: `packages/core/src/workflow/watcher/workflow-watcher.ts, packages/core/src/workflow/watcher/workflow-watcher.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore deleted workflow artifacts in watcher`).
-375. [PENDING] Git Commit: `fix: ignore deleted workflow artifacts in watcher` (hash: TBD)
+375. [DONE] Git Commit: `fix: ignore deleted workflow artifacts in watcher` (hash: e612393ea)
 
 ## Phase 120 - Regression Verification (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Clear Watcher Checks
-376. [TODO] `phase120.stream1.task1` Run focused watcher/runtime/boundary tests plus Core build and plan validation proving deleted downstream artifacts do not dirty workflow Git state after Clear (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+376. [DONE] `phase120.stream1.task1` Run focused watcher/runtime/boundary tests plus Core build and plan validation proving deleted downstream artifacts do not dirty workflow Git state after Clear (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification passed: watcher/runtime/boundary regression tests 18/18, @codeai-hub/core build, focused Ultracite watcher check, plan validation, and plan commit hooks (architecture, lint, knip, staged format) completed successfully. Deleted workflow artifact and stage-directory events no longer produce workflow watcher state updates.
 
 ## Phase 121 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
 ### Stream: Release Gate
-377. [TODO] `phase121.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX for the watcher deletion hotfix (scope: release gate; expected commit: no commit expected).
+377. [DONE] `phase121.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX for the watcher deletion hotfix (scope: release gate; expected commit: no commit expected). Result: Release build explicitly confirmed by user on 2026-05-26: build the next VSIX for the workflow watcher deletion hotfix.
+
+## Phase 122 - Release Docs (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Metadata
+378. [DONE] `phase122.stream1.task1` Update release-facing docs for version 1.2.375 before build-all so the packaged VSIX carries the watcher deletion hotfix summary (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare watcher deletion release`).
+379. [PENDING] Git Commit: `docs: prepare watcher deletion release` (hash: TBD)
+
+## Phase 123 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Package
+380. [TODO] `phase123.stream1.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.375 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build watcher deletion release`).
+381. [TODO] Git Commit: `chore: build watcher deletion release` (hash: TBD)
+
+## Phase 124 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+382. [TODO] `phase124.stream1.task1` User installs release 1.2.375 and verifies clearing Application Skeleton / Diagram Modules no longer rewrites `workflow/state.json` to deleted downstream artifacts, Project Manager remains correct without Restart Core, and the tested workspace Git tree stays clean after Clear settles (scope: user workflow acceptance; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

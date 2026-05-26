@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.374** (Clear Rehydrate And Provider Home Runtime Hotfix)
+**Current Release — v1.2.375** (Workflow Watcher Clear Deletion Hotfix)
+
+This hotfix prevents workflow filesystem deletion events produced by Git Clear
+rollback from being treated as new workflow artifact writes. Clearing
+Application Skeleton, Diagram Modules, or other downstream stages should no
+longer rewrite `.codeai-hub/<workspaceSlug>/workflow/state.json` back to a
+deleted downstream `lastActive` artifact after the Clear commit has already
+restored the correct boundary.
+
+Project Manager visual state remains driven by the restart-equivalent Clear
+rehydration path from v1.2.374, while the workspace Git tree now stays clean
+after Clear settles.
+
+**Previous Release — v1.2.374** (Clear Rehydrate And Provider Home Runtime Hotfix)
 
 This hotfix makes Project Manager rehydrate session/status state immediately
 after workflow `Clear`, using the same status/session-history reload path that
