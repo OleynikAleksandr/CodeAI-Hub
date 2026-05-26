@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "6b33a0b7b",
+  "lastRecordedCommit": "f55227581",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase68.stream1.task1",
-  "expectedCommitMessage": "fix: persist settings before localization sync",
+  "currentTaskId": "phase68.stream1.task2",
+  "expectedCommitMessage": "fix: scope project manager settings panel events",
   "debt": {
-    "expectedCommitMessage": "fix: persist settings before localization sync",
-    "preCommitHead": "6b33a0b7b",
+    "expectedCommitMessage": "fix: scope project manager settings panel events",
+    "preCommitHead": "f55227581",
     "stage": "commit_pending",
-    "taskId": "phase68.stream1.task1"
+    "taskId": "phase68.stream1.task2"
   }
 }
 ```
@@ -606,9 +606,9 @@
 
 ### Stream: Settings Save Durability
 234. [DONE] `phase68.stream1.task1` Persist workspace settings before localization runtime synchronization and make localization sync failure report separately without cancelling the saved settings event (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.ts, packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.test.ts`; expected commit: `fix: persist settings before localization sync`).
-235. [PENDING] Git Commit: `fix: persist settings before localization sync` (hash: TBD)
-236. [TODO] `phase68.stream1.task2` Make Project Manager Settings consume only active-workspace settings events and reject stale unscoped settings replies while preserving active workspace save/reset scope (scope: `src/client/project-manager/services/project-manager-settings-client.ts, src/client/project-manager/components/settings/use-project-manager-settings.ts, src/client/project-manager/components/settings/use-project-manager-settings.test.ts`; expected commit: `fix: scope project manager settings panel events`).
-237. [TODO] Git Commit: `fix: scope project manager settings panel events` (hash: TBD)
+235. [DONE] Git Commit: `fix: persist settings before localization sync` (hash: f55227581)
+236. [DONE] `phase68.stream1.task2` Make Project Manager Settings consume only active-workspace settings events and reject stale unscoped settings replies while preserving active workspace save/reset scope (scope: `src/client/project-manager/services/project-manager-settings-client.ts, src/client/project-manager/components/settings/use-project-manager-settings.ts, src/client/project-manager/components/settings/use-project-manager-settings.test.ts`; expected commit: `fix: scope project manager settings panel events`).
+237. [PENDING] Git Commit: `fix: scope project manager settings panel events` (hash: TBD)
 
 ### Stream: Regression Verification
 238. [TODO] `phase68.stream2.task1` Run focused settings save/scope tests, Core build, Project Manager typecheck, settings reference scan, and then stop for explicit release build confirmation (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.

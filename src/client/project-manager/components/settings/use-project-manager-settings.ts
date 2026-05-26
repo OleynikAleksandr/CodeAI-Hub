@@ -24,7 +24,10 @@ import type {
   SettingsUserGlossaryFilePayload,
   SettingsVersionsPayload,
 } from "../../core-stream-message-types";
-import { resolveWorkspaceSettingsScope } from "../../services/project-manager-settings-client";
+import {
+  isWorkspaceSettingsPayloadForScope,
+  resolveWorkspaceSettingsScope,
+} from "../../services/project-manager-settings-client";
 import type { WorkspaceSettingsScopePayload } from "../../services/project-manager-settings-client";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -217,6 +220,11 @@ export const useProjectManagerSettings = (
       switch (message.type) {
         case "settings:loaded":
         case "settings:saved": {
+          if (
+            !isWorkspaceSettingsPayloadForScope(message.payload, settingsScope)
+          ) {
+            return;
+          }
           applySettingsPayload({
             payload: message.payload as SettingsPayload,
             setError,
@@ -229,6 +237,11 @@ export const useProjectManagerSettings = (
           return;
         }
         case "settings:save-error": {
+          if (
+            !isWorkspaceSettingsPayloadForScope(message.payload, settingsScope)
+          ) {
+            return;
+          }
           const payload = message.payload as SettingsSaveErrorPayload;
           setSaving(false);
           setResetting(false);
@@ -301,7 +314,7 @@ export const useProjectManagerSettings = (
     return () => {
       unsubscribe();
     };
-  }, [reload, reloadVersions]);
+  }, [reload, reloadVersions, settingsScope]);
 
   return {
     settings,
