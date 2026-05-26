@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.367] - 2026-05-26
+### Fixed
+- **Workspace localization runtime is the only localization authority.** Core, extension compatibility surfaces, metadata stores, browser bootstrap cache, and user glossary creation now resolve localization files under `.codeai-hub/<workspaceSlug>/runtime/localization/` instead of `~/.codeai-hub/localization`.
+- **Project Manager bootstrap reads workspace settings before localization.** Localization bootstrap now loads the active workspace settings snapshot before resolving translated helper text, so language and translation choices saved in Project Manager apply to workflow views.
+- **Provider and glossary fallbacks no longer write global runtime state.** Codex provider config sync writes to the active workspace provider home, and the Project Manager user glossary action creates files inside the workspace runtime localization capsule.
+
+### Tests
+- `node --import tsx --test src/extension-module/settings/codex-provider-config-sync.test.ts packages/localization/src/localization-runtime-bootstrap-store.test.ts packages/localization/src/localization-materializer.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts`
+- `npm run build --workspace @codeai-hub/localization`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+- Global runtime path scan/classification for settings, localization, glossary, and provider-home writes.
+
 ## [1.2.366] - 2026-05-26
 ### Fixed
 - **Project Manager Settings persist before localization sync.** Core writes `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` before running translation/localization runtime synchronization, so an Apple Native readiness/preflight failure no longer cancels the saved settings event.

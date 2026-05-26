@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "52eba3015",
+  "lastRecordedCommit": "c60912e6c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase73.stream1b.task1",
-  "expectedCommitMessage": "fix: scope codex provider config sync to workspace",
+  "currentTaskId": "phase73.stream2.task1",
+  "expectedCommitMessage": "chore: build workspace localization runtime release",
   "debt": {
-    "expectedCommitMessage": "fix: scope codex provider config sync to workspace",
-    "preCommitHead": "52eba3015",
+    "expectedCommitMessage": "chore: build workspace localization runtime release",
+    "preCommitHead": "c60912e6c",
     "stage": "commit_pending",
-    "taskId": "phase73.stream1b.task1"
+    "taskId": "phase73.stream2.task1"
   }
 }
 ```
@@ -682,14 +682,16 @@
 
 ### Stream: Workspace Runtime Provider Config Audit
 271. [DONE] `phase73.stream1b.task1` Scope extension-side Codex provider config sync to the active workspace provider home and verify remaining global path references are install/cache/auth/diagnostic only, not workspace runtime truth (scope: `src/extension-module/settings/codex-provider-config-sync.ts, src/extension-module/settings/codex-provider-config-sync.test.ts, src/extension-module/message-handlers/settings-message-handler.ts`; expected commit: `fix: scope codex provider config sync to workspace`).
-272. [PENDING] Git Commit: `fix: scope codex provider config sync to workspace` (hash: TBD)
+272. [DONE] Git Commit: `fix: scope codex provider config sync to workspace` (hash: c60912e6c)
 
 ### Stream: Workspace Runtime Audit Verification
-273. [TODO] `phase73.stream1b.task2` Re-run focused settings/localization/provider config tests, Core/localization builds, webview/project-manager builds, and classify global `.codeai-hub` references before release build (scope: `packages/localization, packages/core, src/extension-module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+273. [DONE] `phase73.stream1b.task2` Re-run focused settings/localization/provider config tests, Core/localization builds, webview/project-manager builds, and classify global `.codeai-hub` references before release build (scope: `packages/localization, packages/core, src/extension-module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Workspace runtime audit passed: 19 focused tests, @codeai-hub/localization build, @codeai-hub/core build, typecheck:webview, build:project-manager, build:webview. Remaining global references are package defaults/tests, install/cache/auth/diagnostic paths, or legacy-path guards; workspace runtime settings/localization/glossary/provider config entry points are workspace-rooted. Removed obsolete physical /Users/oleksandroliinyk/.codeai-hub/localization directory; no global settings directory existed.
 
 ### Stream: Release Build
-268. [TODO] `phase73.stream2.task1` After explicit confirmation, update release docs for the next version and run the release build checklist for the workspace localization runtime fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace localization runtime release`).
-269. [TODO] Git Commit: `chore: build workspace localization runtime release` (hash: TBD)
+268. [DONE] `phase73.stream2.task1` After explicit confirmation, update release docs for the next version before running release build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `chore: build workspace localization runtime release`).
+269. [PENDING] Git Commit: `chore: build workspace localization runtime release` (hash: TBD)
+274. [TODO] `phase73.stream2.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs and record release artifacts for the workspace localization runtime fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: package workspace localization runtime release`).
+275. [TODO] Git Commit: `chore: package workspace localization runtime release` (hash: TBD)
 
 ## Phase 74 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
