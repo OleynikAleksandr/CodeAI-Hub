@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "f570d5f8e",
+  "lastRecordedCommit": "52eba3015",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase72.stream6.task1",
-  "expectedCommitMessage": "fix: scope extension localization fallback to workspace",
+  "currentTaskId": "phase73.stream1b.task1",
+  "expectedCommitMessage": "fix: scope codex provider config sync to workspace",
   "debt": {
-    "expectedCommitMessage": "fix: scope extension localization fallback to workspace",
-    "preCommitHead": "f570d5f8e",
+    "expectedCommitMessage": "fix: scope codex provider config sync to workspace",
+    "preCommitHead": "52eba3015",
     "stage": "commit_pending",
-    "taskId": "phase72.stream6.task1"
+    "taskId": "phase73.stream1b.task1"
   }
 }
 ```
@@ -670,10 +670,31 @@
 
 ### Stream: Extension Settings Localization Runtime
 264. [DONE] `phase72.stream6.task1` Remove extension-side default global localization facade/glossary creation by rooting the compatibility settings surface in the current VS Code workspace runtime localization capsule fallback (scope: `src/extension-module/settings/localization-runtime-service.ts, src/extension-module/message-handlers/settings-message-handler.ts, src/extension-module/home-view-provider.ts`; expected commit: `fix: scope extension localization fallback to workspace`).
-265. [PENDING] Git Commit: `fix: scope extension localization fallback to workspace` (hash: TBD)
+265. [DONE] Git Commit: `fix: scope extension localization fallback to workspace` (hash: 52eba3015)
 
 ### Stream: Final Regression Verification
-266. [TODO] `phase72.stream7.task1` Re-run focused localization/core tests, Core/localization builds, Project Manager/webview builds, and global localization scan after extension fallback cleanup before release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, src/extension-module, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+266. [DONE] `phase72.stream7.task1` Re-run focused localization/core tests, Core/localization builds, Project Manager/webview builds, and global localization scan after extension fallback cleanup before release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, src/extension-module, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Final verification passed: 17 focused tests, @codeai-hub/localization build, @codeai-hub/core build, typecheck:webview, build:project-manager, build:webview. Empty-constructor global localization scan now reports only package internals/test defaults; Core, Project Manager, and extension runtime entry points are workspace-rooted.
+
+## Phase 73 - Release Build Confirmation And Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Build Confirmation
+267. [DONE] `phase73.stream1.task1` Request explicit user confirmation before preparing release notes, bumping versions, or running release build scripts for the workspace localization runtime fix release (scope: user confirmation gate; expected commit: no commit expected). Result: User explicitly requested fixing remaining workspace/global runtime references and building a new release after those fixes; release confirmation captured, but release build is held until the added provider-config audit task and verification pass.
+
+### Stream: Workspace Runtime Provider Config Audit
+271. [DONE] `phase73.stream1b.task1` Scope extension-side Codex provider config sync to the active workspace provider home and verify remaining global path references are install/cache/auth/diagnostic only, not workspace runtime truth (scope: `src/extension-module/settings/codex-provider-config-sync.ts, src/extension-module/settings/codex-provider-config-sync.test.ts, src/extension-module/message-handlers/settings-message-handler.ts`; expected commit: `fix: scope codex provider config sync to workspace`).
+272. [PENDING] Git Commit: `fix: scope codex provider config sync to workspace` (hash: TBD)
+
+### Stream: Workspace Runtime Audit Verification
+273. [TODO] `phase73.stream1b.task2` Re-run focused settings/localization/provider config tests, Core/localization builds, webview/project-manager builds, and classify global `.codeai-hub` references before release build (scope: `packages/localization, packages/core, src/extension-module, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+
+### Stream: Release Build
+268. [TODO] `phase73.stream2.task1` After explicit confirmation, update release docs for the next version and run the release build checklist for the workspace localization runtime fix release (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace localization runtime release`).
+269. [TODO] Git Commit: `chore: build workspace localization runtime release` (hash: TBD)
+
+## Phase 74 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+270. [TODO] `phase74.stream1.task1` User installs the generated VSIX and verifies Project Manager settings persist in workspace runtime settings, localization bundles/cache/glossary materialize under the workspace runtime localization capsule, global localization is not used as runtime truth, and translated helper text applies to Project Manager workflow views (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

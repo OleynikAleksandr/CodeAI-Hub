@@ -41,6 +41,13 @@ const STATUS_MESSAGE_TIMEOUT = 2000;
 const resolveActiveWorkspaceRoot = (): string | null =>
   workspace.workspaceFolders?.[0]?.uri.fsPath ?? null;
 
+const syncCodexProviderConfigForActiveWorkspace = (
+  enabled: boolean
+): Promise<void> =>
+  syncCodexProviderReasoningSummaryConfig(enabled, {
+    workspaceRoot: resolveActiveWorkspaceRoot(),
+  });
+
 export class SettingsMessageHandler {
   private settingsState: SettingsSnapshot = loadSettingsSnapshot();
   private readonly localizationRuntimeService: LocalizationRuntimeService;
@@ -94,7 +101,7 @@ export class SettingsMessageHandler {
         break;
       }
       case "settings:codex-reasoning-summary-preview": {
-        syncCodexProviderReasoningSummaryConfig(
+        syncCodexProviderConfigForActiveWorkspace(
           message.enabled !== false
         ).catch(() => {
           /* ignore sync errors */
@@ -113,7 +120,7 @@ export class SettingsMessageHandler {
         persistSettingsSnapshot(this.settingsState).catch(() => {
           /* ignore persistence errors */
         });
-        syncCodexProviderReasoningSummaryConfig(
+        syncCodexProviderConfigForActiveWorkspace(
           this.settingsState.providers.codex.reasoningSummaryEnabled
         ).catch(() => {
           /* ignore sync errors */
@@ -309,7 +316,7 @@ export class SettingsMessageHandler {
 
   private async persistAndSyncCodexConfig(): Promise<void> {
     await persistSettingsSnapshot(this.settingsState);
-    syncCodexProviderReasoningSummaryConfig(
+    syncCodexProviderConfigForActiveWorkspace(
       this.settingsState.providers.codex.reasoningSummaryEnabled
     ).catch(() => {
       /* ignore sync errors */

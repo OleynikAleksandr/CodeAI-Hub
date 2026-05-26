@@ -5,13 +5,7 @@ import path from "node:path";
 const CODEX_CONFIG_FILE = "config.toml";
 const DEFAULT_REASONING_SUMMARY_ENABLED = true;
 const LEGACY_CODEX_HOME = path.join(homedir(), ".codex");
-const PROVIDER_CODEX_HOME = path.join(
-  homedir(),
-  ".codeai-hub",
-  "providers",
-  "codex",
-  "home"
-);
+const WORKSPACE_FALLBACK_SLUG = "workspace";
 const MODEL_LINE_REGEX = /^\s*model\s*=\s*.+?$/mu;
 const LEGACY_REASONING_SUMMARY_LINE_REGEX =
   /^\s*default_reasoning_summary\s*=\s*.+?$/gmu;
@@ -22,10 +16,50 @@ const MODEL_REASONING_EFFORT_LINE_REGEX =
 const FIRST_SECTION_LINE_REGEX = /^\s*\[.+\]\s*$/mu;
 const PROVIDER_HOME_REASONING_SUMMARY_LITERAL = '"none"';
 
+export interface SyncCodexProviderConfigOptions {
+  readonly legacyCodexHome?: string;
+  readonly providerCodexHome?: string;
+  readonly workspaceRoot?: string | null;
+  readonly workspaceSlug?: string | null;
+}
+
 const normalizeOptionalString = (value: unknown): string | undefined =>
   typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : undefined;
+
+const normalizeWorkspaceRuntimeSlug = (value: string): string => {
+  const normalized = value
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[\u0300-\u036f]/g, "");
+  const parts = normalized.match(/[a-z0-9]+/gu);
+  return parts?.join("-") || WORKSPACE_FALLBACK_SLUG;
+};
+
+const resolveWorkspaceRoot = (workspaceRoot?: string | null): string =>
+  path.resolve(workspaceRoot?.trim() || process.cwd());
+
+const resolveWorkspaceCodexHome = (
+  options: SyncCodexProviderConfigOptions
+): string => {
+  if (options.providerCodexHome?.trim()) {
+    return path.resolve(options.providerCodexHome);
+  }
+  const workspaceRoot = resolveWorkspaceRoot(options.workspaceRoot);
+  const workspaceSlug = normalizeWorkspaceRuntimeSlug(
+    options.workspaceSlug?.trim() || path.basename(workspaceRoot)
+  );
+  return path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    workspaceSlug,
+    "runtime",
+    "providers",
+    "codex",
+    "home"
+  );
+};
 
 const resolveCodexDefaultModel = (): string | undefined => {
   const envModel = normalizeOptionalString(process.env.CODEX_DEFAULT_MODEL);
@@ -78,10 +112,10 @@ export const normalizeCodexProviderConfigToml = (
   return `${[withModel, reasoningSummaryLine].filter(Boolean).join("\n")}\n`;
 };
 
-const readBaseConfigToml = async (): Promise<string> => {
+const readBaseConfigToml = async (legacyCodexHome: string): Promise<string> => {
   try {
     return await readFile(
-      path.join(LEGACY_CODEX_HOME, CODEX_CONFIG_FILE),
+      path.join(legacyCodexHome, CODEX_CONFIG_FILE),
       "utf8"
     );
   } catch (error) {
@@ -94,7 +128,8 @@ const readBaseConfigToml = async (): Promise<string> => {
 };
 
 const readProviderConfigToml = async (
-  destination: string
+  destination: string,
+  legacyCodexHome: string
 ): Promise<{
   readonly raw: string;
   readonly shouldUnlink: boolean;
@@ -102,7 +137,10 @@ const readProviderConfigToml = async (
   try {
     const stats = await lstat(destination);
     if (stats.isSymbolicLink()) {
-      return { raw: await readBaseConfigToml(), shouldUnlink: true };
+      return {
+        raw: await readBaseConfigToml(legacyCodexHome),
+        shouldUnlink: true,
+      };
     }
     return {
       raw: await readFile(destination, "utf8"),
@@ -111,18 +149,26 @@ const readProviderConfigToml = async (
   } catch (error) {
     const candidate = error as NodeJS.ErrnoException;
     if (candidate.code === "ENOENT") {
-      return { raw: await readBaseConfigToml(), shouldUnlink: false };
+      return {
+        raw: await readBaseConfigToml(legacyCodexHome),
+        shouldUnlink: false,
+      };
     }
     throw error;
   }
 };
 
 export const syncCodexProviderReasoningSummaryConfig = async (
-  _enabled: boolean = DEFAULT_REASONING_SUMMARY_ENABLED
+  _enabled: boolean = DEFAULT_REASONING_SUMMARY_ENABLED,
+  options: SyncCodexProviderConfigOptions = {}
 ): Promise<void> => {
-  await mkdir(PROVIDER_CODEX_HOME, { recursive: true });
-  const destination = path.join(PROVIDER_CODEX_HOME, CODEX_CONFIG_FILE);
-  const { raw, shouldUnlink } = await readProviderConfigToml(destination);
+  const providerCodexHome = resolveWorkspaceCodexHome(options);
+  await mkdir(providerCodexHome, { recursive: true });
+  const destination = path.join(providerCodexHome, CODEX_CONFIG_FILE);
+  const { raw, shouldUnlink } = await readProviderConfigToml(
+    destination,
+    options.legacyCodexHome ?? LEGACY_CODEX_HOME
+  );
   const next = normalizeCodexProviderConfigToml(
     raw,
     resolveCodexDefaultModel()
