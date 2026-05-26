@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "a8b5fef70",
+  "lastRecordedCommit": "0ced69966",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase66.stream1.task1",
-  "expectedCommitMessage": "docs: prepare workspace settings ssot release",
+  "currentTaskId": "phase66.stream2.task1",
+  "expectedCommitMessage": "chore: build workspace settings ssot release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare workspace settings ssot release",
-    "preCommitHead": "a8b5fef70",
+    "expectedCommitMessage": "chore: build workspace settings ssot release",
+    "preCommitHead": "0ced69966",
     "stage": "commit_pending",
-    "taskId": "phase66.stream1.task1"
+    "taskId": "phase66.stream2.task1"
   }
 }
 ```
@@ -591,11 +591,11 @@
 
 ### Stream: Release Docs
 229. [DONE] `phase66.stream1.task1` After explicit release confirmation from the user request, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace settings ssot release`).
-230. [PENDING] Git Commit: `docs: prepare workspace settings ssot release` (hash: TBD)
+230. [DONE] Git Commit: `docs: prepare workspace settings ssot release` (hash: 0ced69966)
 
 ### Stream: Release Build
-231. [TODO] `phase66.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings ssot release`). Result: TBD.
-232. [TODO] Git Commit: `chore: build workspace settings ssot release` (hash: TBD)
+231. [DONE] `phase66.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings ssot release`). Result: TBD.
+232. [PENDING] Git Commit: `chore: build workspace settings ssot release` (hash: TBD)
 
 ## Phase 67 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
