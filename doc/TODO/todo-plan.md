@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "d19881f65",
+  "lastRecordedCommit": "c4d9bcfff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase112.stream1.task1",
-  "expectedCommitMessage": "fix: rehydrate project manager after workflow clear",
+  "currentTaskId": "phase113.stream1.task1",
+  "expectedCommitMessage": "docs: document clear projection rehydrate",
   "debt": {
-    "expectedCommitMessage": "fix: rehydrate project manager after workflow clear",
-    "preCommitHead": "d19881f65",
+    "expectedCommitMessage": "docs: document clear projection rehydrate",
+    "preCommitHead": "c4d9bcfff",
     "stage": "commit_pending",
-    "taskId": "phase112.stream1.task1"
+    "taskId": "phase113.stream1.task1"
   }
 }
 ```
@@ -971,13 +971,13 @@
 
 ### Stream: Project Manager Session Rehydrate
 363. [DONE] `phase112.stream1.task1` Refresh the Project Manager session/status hydration after workflow Clear so it follows the same filesystem-backed projection recovery path as a Core restart and does not leave stale read-only cards or hidden sessions (scope: `src/client/project-manager/components/sessions/status-hydrator.ts, src/client/project-manager/components/sessions/status-hydrator.test.ts`; expected commit: `fix: rehydrate project manager after workflow clear`).
-364. [PENDING] Git Commit: `fix: rehydrate project manager after workflow clear` (hash: TBD)
+364. [DONE] Git Commit: `fix: rehydrate project manager after workflow clear` (hash: c4d9bcfff)
 
 ## Phase 113 - Rehydrate Architecture Documentation (owner: Codex, updated: 2026-05-26)
 
 ### Stream: SSOT Sync
-365. [TODO] `phase113.stream1.task1` Document that workflow Clear must trigger restart-equivalent Project Manager session/status rehydration from Core-owned filesystem state instead of relying on stale client memory (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clear projection rehydrate`).
-366. [TODO] Git Commit: `docs: document clear projection rehydrate` (hash: TBD)
+365. [DONE] `phase113.stream1.task1` Document that workflow Clear must trigger restart-equivalent Project Manager session/status rehydration from Core-owned filesystem state instead of relying on stale client memory (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clear projection rehydrate`).
+366. [PENDING] Git Commit: `docs: document clear projection rehydrate` (hash: TBD)
 
 ## Phase 114 - Regression Verification (owner: Codex, updated: 2026-05-26)
 

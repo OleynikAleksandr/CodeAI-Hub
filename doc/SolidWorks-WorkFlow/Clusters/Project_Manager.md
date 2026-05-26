@@ -132,6 +132,7 @@ provider continuation directly.
 - Для idle completed dialogs PM не должен сам поднимать новый restore/bootstrap cycle только из-за повторного `dialog:list:result`, `dialog:message` или remount панели:
   - если latest workspace snapshot подтверждает, что live runtime session для dialog сейчас отсутствует, PM может держать bootstrap-ready session record и existing history, но не должен форсировать synthetic restore;
   - reread `dialog:history` остаётся допустимым для initial open, explicit send tail refresh и `core:state` recovery после restart.
+- После успешного workflow `Clear` PM обязан выполнить restart-equivalent rehydrate для session surfaces: тот же `status-hydrator` перечитывает `/api/v1/status` и session histories, как при `core:state` после Restart Core. Это предотвращает stale client-only read-only cards and hidden sessions after Git rollback; PM не должен ждать ручного restart Core, чтобы увидеть восстановленную filesystem/Core projection.
 - PM background observers обязаны соблюдать visibility-aware polling budget:
   - `workflow-state-store` — singleton внутри browser runtime, чтобы `MainArea` и соседние subscribers не плодили независимые workflow polling loops;
   - для workflow state/events normal cadence разрешена только в `foreground`, `background` замедляется до `30s`, `hidden` паркует polling до возврата окна и делает immediate catch-up при возврате в `foreground`;
