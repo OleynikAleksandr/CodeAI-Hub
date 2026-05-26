@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "c60912e6c",
+  "lastRecordedCommit": "fdfcbab4a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase73.stream2.task1",
-  "expectedCommitMessage": "chore: build workspace localization runtime release",
+  "currentTaskId": "phase73.stream2.task2",
+  "expectedCommitMessage": "chore: package workspace localization runtime release",
   "debt": {
-    "expectedCommitMessage": "chore: build workspace localization runtime release",
-    "preCommitHead": "c60912e6c",
+    "expectedCommitMessage": "chore: package workspace localization runtime release",
+    "preCommitHead": "fdfcbab4a",
     "stage": "commit_pending",
-    "taskId": "phase73.stream2.task1"
+    "taskId": "phase73.stream2.task2"
   }
 }
 ```
@@ -689,9 +689,9 @@
 
 ### Stream: Release Build
 268. [DONE] `phase73.stream2.task1` After explicit confirmation, update release docs for the next version before running release build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `chore: build workspace localization runtime release`).
-269. [PENDING] Git Commit: `chore: build workspace localization runtime release` (hash: TBD)
-274. [TODO] `phase73.stream2.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs and record release artifacts for the workspace localization runtime fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: package workspace localization runtime release`).
-275. [TODO] Git Commit: `chore: package workspace localization runtime release` (hash: TBD)
+269. [DONE] Git Commit: `chore: build workspace localization runtime release` (hash: fdfcbab4a)
+274. [DONE] `phase73.stream2.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs and record release artifacts for the workspace localization runtime fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: package workspace localization runtime release`). Result: Release `1.2.367` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.367.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+275. [PENDING] Git Commit: `chore: package workspace localization runtime release` (hash: TBD)
 
 ## Phase 74 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
