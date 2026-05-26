@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.374] - 2026-05-26
+### Fixed
+- **Project Manager rehydrates session/status state after workflow Clear.** The session status hydrator now treats `pm:workflow-step:cleared` like a restart-equivalent signal, force-refreshing `/api/v1/status` and session histories so restored Description/Virtual Simulation sessions appear without manual Restart Core.
+- **Complete provider homes are rollback-ignored workspace runtime.** The runtime capsule now excludes `.codeai-hub/<workspaceSlug>/runtime/providers/**/home/**` from workflow history while keeping Core logical sessions and accepted artifacts rollback-owned.
+- **Clear preserves legacy-tracked provider runtime config.** The rollback coordinator snapshots current rollback-ignored runtime files before `git reset --hard`, restores them after `git clean -fd`, and untracks legacy provider-home entries so `config.toml` and similar provider runtime files are not reset to stale boundary contents.
+
+### Tests
+- `node --test --import tsx packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`
+- `node --test --import tsx packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`
+- `node --test --import tsx packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`
+- `node --test --import tsx src/client/project-manager/components/sessions/status-hydrator.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.373] - 2026-05-26
 ### Fixed
 - **Workspace localization runtime no longer dirties workflow Git history.** The runtime capsule now ignores `.codeai-hub/<workspaceSlug>/runtime/localization/**`, updates existing capsule `.gitignore` files, and migrates legacy tracked localization files out of the Git index without deleting the active workspace localization cache.

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "c4d9bcfff",
+  "lastRecordedCommit": "29132dfdf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase113.stream1.task1",
-  "expectedCommitMessage": "docs: document clear projection rehydrate",
+  "currentTaskId": "phase116.stream1.task1",
+  "expectedCommitMessage": "docs: prepare clear rehydrate release",
   "debt": {
-    "expectedCommitMessage": "docs: document clear projection rehydrate",
-    "preCommitHead": "c4d9bcfff",
+    "expectedCommitMessage": "docs: prepare clear rehydrate release",
+    "preCommitHead": "29132dfdf",
     "stage": "commit_pending",
-    "taskId": "phase113.stream1.task1"
+    "taskId": "phase116.stream1.task1"
   }
 }
 ```
@@ -977,17 +977,34 @@
 
 ### Stream: SSOT Sync
 365. [DONE] `phase113.stream1.task1` Document that workflow Clear must trigger restart-equivalent Project Manager session/status rehydration from Core-owned filesystem state instead of relying on stale client memory (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clear projection rehydrate`).
-366. [PENDING] Git Commit: `docs: document clear projection rehydrate` (hash: TBD)
+366. [DONE] Git Commit: `docs: document clear projection rehydrate` (hash: 29132dfdf)
 
 ## Phase 114 - Regression Verification (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Clear And Provider Home Checks
-367. [TODO] `phase114.stream1.task1` Run focused runtime/boundary tests plus Core and Project Manager builds/typechecks to verify provider-home runtime no longer pollutes workflow Git and Description/Virtual Simulation session surfaces rehydrate after Clear without restarting Core (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+367. [DONE] `phase114.stream1.task1` Run focused runtime/boundary tests plus Core and Project Manager builds/typechecks to verify provider-home runtime no longer pollutes workflow Git and Description/Virtual Simulation session surfaces rehydrate after Clear without restarting Core (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Focused verification passed: workspace-runtime-capsule-gitignore 6/6, workflow-boundary-facade 8/8, workflow-step-commit-facade 3/3, Project Manager status-hydrator 1/1, @codeai-hub/core build, build:project-manager and typecheck:webview.
 
 ## Phase 115 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
 ### Stream: Release Gate
-368. [TODO] `phase115.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX (scope: release gate; expected commit: no commit expected).
+368. [DONE] `phase115.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX (scope: release gate; expected commit: no commit expected). Result: Release build explicitly confirmed by user on 2026-05-26: build the next release for provider-home rollback ignore and Clear restart-equivalent Project Manager rehydrate retest.
+
+## Phase 116 - Release Docs (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Metadata
+369. [DONE] `phase116.stream1.task1` Update release-facing docs for version 1.2.374 before build-all so the packaged VSIX carries the correct release number and summary (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear rehydrate release`).
+370. [PENDING] Git Commit: `docs: prepare clear rehydrate release` (hash: TBD)
+
+## Phase 117 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Package
+371. [TODO] `phase117.stream1.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.374 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear rehydrate release`).
+372. [TODO] Git Commit: `chore: build clear rehydrate release` (hash: TBD)
+
+## Phase 118 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+373. [TODO] `phase118.stream1.task1` User installs release 1.2.374 and verifies provider-home runtime changes no longer dirty workflow Git, Clear preserves workspace settings/provider config, and Project Manager shows restored Description/Virtual Simulation sessions immediately after Clear without manual Restart Core (scope: user workflow acceptance; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
