@@ -15,10 +15,14 @@ const CAPSULE_FINAL_DESCRIPTION_RE =
   /\.codeai-hub\/demo-workspace\/description\/Final_Description\.md/u;
 const CAPSULE_PROVIDER_SESSION_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/sessions\/2026\/05\/25\/native-session\.jsonl/u;
+const CAPSULE_PROVIDER_LEGACY_SESSION_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/sessions\/2026\/05\/25\/legacy-session\.jsonl/u;
 const CAPSULE_PROVIDER_SQLITE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/logs_2\.sqlite/u;
 const CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/shell_snapshots\/snapshot\.sh/u;
+const CAPSULE_LOCALIZATION_CACHE_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/localization\/cache\/browser-runtime-bootstrap\.json/u;
 const CAPSULE_SETTINGS_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/settings\/settings\.json/u;
 const CAPSULE_TASK_TIMER_STATE_RE =
@@ -50,6 +54,14 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
     await writeText(
       path.join(capsule.descriptionRoot.absolutePath, "Final_Description.md"),
       "# Final Description\n"
+    );
+    await writeText(
+      path.join(
+        capsule.localizationRoot.absolutePath,
+        "cache",
+        "browser-runtime-bootstrap.json"
+      ),
+      '{"language":"ru"}\n'
     );
     await writeText(
       path.join(
@@ -91,9 +103,24 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
       ACCEPTED_STEP_COMMIT_RE
     );
     await assert.rejects(readFile(path.join(workspaceRoot, ".gitignore")));
+    assert.equal(
+      await readFile(
+        path.join(
+          capsule.providerHomes.codex.absolutePath,
+          "sessions",
+          "2026",
+          "05",
+          "25",
+          "native-session.jsonl"
+        ),
+        "utf8"
+      ),
+      "native session\n"
+    );
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedFiles, CAPSULE_FINAL_DESCRIPTION_RE);
-    assert.match(trackedFiles, CAPSULE_PROVIDER_SESSION_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_LOCALIZATION_CACHE_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SESSION_RE);
     assert.match(trackedFiles, CAPSULE_TASK_TIMER_STATE_RE);
     assert.match(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
     assert.doesNotMatch(trackedFiles, RUNTIME_SLICES_RE);
@@ -156,7 +183,7 @@ test("accepted step commit untracks provider volatile files left by older capsul
   }
 });
 
-test("accepted step commit untracks legacy settings without overwriting workspace settings", async () => {
+test("accepted step commit untracks legacy mutable runtime without overwriting workspace settings", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "step-settings-workspace-")
   );
@@ -168,8 +195,33 @@ test("accepted step commit untracks legacy settings without overwriting workspac
     await git(workspaceRoot, ["init"]);
     await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
     await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
-    await git(workspaceRoot, ["add", "-f", capsule.settingsFile.relativePath]);
-    await git(workspaceRoot, ["commit", "-m", "test: legacy tracked settings"]);
+    const localizationCachePath = path.join(
+      capsule.localizationRoot.absolutePath,
+      "cache",
+      "browser-runtime-bootstrap.json"
+    );
+    const providerSessionPath = path.join(
+      capsule.providerHomes.codex.absolutePath,
+      "sessions",
+      "2026",
+      "05",
+      "25",
+      "legacy-session.jsonl"
+    );
+    await writeText(localizationCachePath, '{"language":"en"}\n');
+    await writeText(providerSessionPath, "legacy native session\n");
+    await git(workspaceRoot, [
+      "add",
+      "-f",
+      capsule.settingsFile.relativePath,
+      path.relative(workspaceRoot, localizationCachePath),
+      path.relative(workspaceRoot, providerSessionPath),
+    ]);
+    await git(workspaceRoot, [
+      "commit",
+      "-m",
+      "test: legacy tracked mutable runtime",
+    ]);
 
     const currentSettings = `${JSON.stringify(
       { general: { localization: { defaultLanguage: "ru" } } },
@@ -177,6 +229,8 @@ test("accepted step commit untracks legacy settings without overwriting workspac
       2
     )}\n`;
     await writeText(capsule.settingsFile.absolutePath, currentSettings);
+    await writeText(localizationCachePath, '{"language":"ru"}\n');
+    await writeText(providerSessionPath, "current native session\n");
     await writeText(
       path.join(capsule.descriptionRoot.absolutePath, "Final_Description.md"),
       "# Final Description\n"
@@ -192,9 +246,19 @@ test("accepted step commit untracks legacy settings without overwriting workspac
       await readFile(capsule.settingsFile.absolutePath, "utf8"),
       currentSettings
     );
+    assert.equal(
+      await readFile(localizationCachePath, "utf8"),
+      '{"language":"ru"}\n'
+    );
+    assert.equal(
+      await readFile(providerSessionPath, "utf8"),
+      "current native session\n"
+    );
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, CAPSULE_SETTINGS_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_LOCALIZATION_CACHE_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
     assert.match(
       await git(workspaceRoot, ["log", "--oneline", "-1"]),
       ACCEPTED_STEP_COMMIT_RE
@@ -206,6 +270,8 @@ test("accepted step commit untracks legacy settings without overwriting workspac
       "HEAD",
     ]);
     assert.doesNotMatch(headTreeFiles, CAPSULE_SETTINGS_RE);
+    assert.doesNotMatch(headTreeFiles, CAPSULE_LOCALIZATION_CACHE_RE);
+    assert.doesNotMatch(headTreeFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

@@ -18,6 +18,10 @@ const PRE_STEP_ROLLBACK_ANCHOR_RE = /pre-step rollback anchor/u;
 const DESCRIPTION_BOUNDARY_STAGE = "description";
 const SETTINGS_RELATIVE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/settings\/settings\.json/u;
+const LOCALIZATION_RELATIVE_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/localization\/cache\/browser-runtime-bootstrap\.json/u;
+const PROVIDER_SESSION_RELATIVE_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/sessions\/2026\/05\/25\/native-session\.jsonl/u;
 
 const createWorkspace = async (): Promise<string> =>
   await mkdtemp(path.join(tmpdir(), "codeai-boundary-"));
@@ -183,7 +187,7 @@ test("WorkflowRollbackCoordinator quiesces before Git rollback and asserts clean
   }
 });
 
-test("WorkflowRollbackCoordinator preserves current workspace settings outside Clear rollback", async () => {
+test("WorkflowRollbackCoordinator preserves mutable runtime outside Clear rollback", async () => {
   const workspaceRoot = await createWorkspace();
   try {
     const capsule = resolveWorkspaceRuntimeCapsule({
@@ -199,6 +203,16 @@ test("WorkflowRollbackCoordinator preserves current workspace settings outside C
       capsule.settingsFile.absolutePath,
       '{"general":{"localization":{"defaultLanguage":"en"}}}\n'
     );
+    const legacyLocalizationCachePath = path.join(
+      capsule.localizationRoot.absolutePath,
+      "cache/browser-runtime-bootstrap.json"
+    );
+    const legacyProviderSessionPath = path.join(
+      capsule.providerHomes.codex.absolutePath,
+      "sessions/2026/05/25/native-session.jsonl"
+    );
+    await writeText(legacyLocalizationCachePath, '{"language":"en"}\n');
+    await writeText(legacyProviderSessionPath, "legacy native session\n");
     const boundaryCommit = await git.commit({
       commitMessage: "codeai-boundary: Virtual Simulation",
       paths: [capsule.workspaceCapsuleRoot.relativePath],
@@ -234,14 +248,19 @@ test("WorkflowRollbackCoordinator preserves current workspace settings outside C
       readFile(path.join(workspaceRoot, "virtual.md"), "utf8")
     );
     assert.deepEqual(await git.statusPorcelain(workspaceRoot), []);
-    assert.doesNotMatch(
-      await runGit(workspaceRoot, ["ls-files"]),
-      SETTINGS_RELATIVE_RE
-    );
-    assert.doesNotMatch(
-      await runGit(workspaceRoot, ["ls-tree", "-r", "--name-only", "HEAD"]),
-      SETTINGS_RELATIVE_RE
-    );
+    const trackedFiles = await runGit(workspaceRoot, ["ls-files"]);
+    assert.doesNotMatch(trackedFiles, SETTINGS_RELATIVE_RE);
+    assert.doesNotMatch(trackedFiles, LOCALIZATION_RELATIVE_RE);
+    assert.doesNotMatch(trackedFiles, PROVIDER_SESSION_RELATIVE_RE);
+    const headTreeFiles = await runGit(workspaceRoot, [
+      "ls-tree",
+      "-r",
+      "--name-only",
+      "HEAD",
+    ]);
+    assert.doesNotMatch(headTreeFiles, SETTINGS_RELATIVE_RE);
+    assert.doesNotMatch(headTreeFiles, LOCALIZATION_RELATIVE_RE);
+    assert.doesNotMatch(headTreeFiles, PROVIDER_SESSION_RELATIVE_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "594027437",
+  "lastRecordedCommit": "c47de0207",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase100.stream2.task1",
-  "expectedCommitMessage": "fix: untrack rollback ignored runtime paths",
+  "currentTaskId": "phase100.stream3.task1",
+  "expectedCommitMessage": "test: cover ignored runtime git pollution",
   "debt": {
-    "expectedCommitMessage": "fix: untrack rollback ignored runtime paths",
-    "preCommitHead": "594027437",
+    "expectedCommitMessage": "test: cover ignored runtime git pollution",
+    "preCommitHead": "c47de0207",
     "stage": "commit_pending",
-    "taskId": "phase100.stream2.task1"
+    "taskId": "phase100.stream3.task1"
   }
 }
 ```
@@ -889,11 +889,11 @@
 
 ### Stream: Boundary Migration
 337. [DONE] `phase100.stream2.task1` Apply the rollback-ignored runtime classification before boundary creation, accepted step commits and Clear rollback, including legacy untracking and clean-tree filtering for existing workspaces (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `fix: untrack rollback ignored runtime paths`). Result: Boundary creation, accepted-step commits and Clear rollback now untrack/filter rollback-ignored runtime roots through the shared classifier; Clear writes the current capsule `.gitignore` before `git clean -fd` so old boundary commits do not delete ignored mutable runtime, then writes it again for the Clear commit. Verification passed: `npm run build --workspace @codeai-hub/core`, targeted Ultracite check and plan validation. Existing boundary suite now has only the old provider-native-session tracking expectation to update in the next regression-coverage task.
-338. [PENDING] Git Commit: `fix: untrack rollback ignored runtime paths` (hash: TBD)
+338. [DONE] Git Commit: `fix: untrack rollback ignored runtime paths` (hash: c47de0207)
 
 ### Stream: Regression Coverage
-339. [TODO] `phase100.stream3.task1` Cover accepted-step and Clear behavior so legacy tracked localization/provider-native session files are removed from the rollback index and future runtime files do not leave Git dirty (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `test: cover ignored runtime git pollution`).
-340. [TODO] Git Commit: `test: cover ignored runtime git pollution` (hash: TBD)
+339. [DONE] `phase100.stream3.task1` Cover accepted-step and Clear behavior so legacy tracked localization/provider-native session files are removed from the rollback index and future runtime files do not leave Git dirty (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `test: cover ignored runtime git pollution`). Result: Accepted-step coverage now proves localization cache and provider-native session logs remain on disk but are not tracked, and legacy tracked settings/localization/provider-native runtime files are untracked from accepted commits without overwriting current runtime contents. Clear rollback coverage now proves legacy tracked mutable runtime is removed from the rollback index and the repository remains Git-clean.
+340. [PENDING] Git Commit: `test: cover ignored runtime git pollution` (hash: TBD)
 
 ## Phase 101 - Architecture Documentation (owner: Codex, updated: 2026-05-26)
 
