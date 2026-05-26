@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "e612393ea",
+  "lastRecordedCommit": "bd35c770e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase122.stream1.task1",
-  "expectedCommitMessage": "docs: prepare watcher deletion release",
+  "currentTaskId": "phase123.stream1.task1",
+  "expectedCommitMessage": "chore: build watcher deletion release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare watcher deletion release",
-    "preCommitHead": "e612393ea",
+    "expectedCommitMessage": "chore: build watcher deletion release",
+    "preCommitHead": "bd35c770e",
     "stage": "commit_pending",
-    "taskId": "phase122.stream1.task1"
+    "taskId": "phase123.stream1.task1"
   }
 }
 ```
@@ -1026,13 +1026,13 @@
 
 ### Stream: Release Metadata
 378. [DONE] `phase122.stream1.task1` Update release-facing docs for version 1.2.375 before build-all so the packaged VSIX carries the watcher deletion hotfix summary (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare watcher deletion release`).
-379. [PENDING] Git Commit: `docs: prepare watcher deletion release` (hash: TBD)
+379. [DONE] Git Commit: `docs: prepare watcher deletion release` (hash: bd35c770e)
 
 ## Phase 123 - Release Build (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Release Package
-380. [TODO] `phase123.stream1.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.375 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build watcher deletion release`).
-381. [TODO] Git Commit: `chore: build watcher deletion release` (hash: TBD)
+380. [DONE] `phase123.stream1.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.375 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build watcher deletion release`). Result: Release 1.2.375 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.375.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+381. [PENDING] Git Commit: `chore: build watcher deletion release` (hash: TBD)
 
 ## Phase 124 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
