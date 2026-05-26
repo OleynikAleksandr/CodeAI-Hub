@@ -9,6 +9,7 @@ import {
 import type { TranslationReporter } from "@codeai-hub/translation";
 import type { CoreConfig } from "../config";
 import { CLAUDE_INSTALLER_PATHS } from "../provider-registry/provider-installer-paths";
+import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import { createCoreTranslationFacade } from "./core-translation-facade-factory";
 
 export interface CoreLocalizationFacadeFactoryOptions
@@ -26,11 +27,17 @@ interface SharedClaudeLocalizationServiceEntry {
 let sharedClaudeLocalizationServiceEntry: SharedClaudeLocalizationServiceEntry | null =
   null;
 
+const resolveSettingsPath = (config: CoreConfig): string =>
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
+    workspaceSlug: config.claudeProjectSlug,
+  }).settingsFile.absolutePath;
+
 const buildConfigKey = (config: CoreConfig): string =>
   JSON.stringify({
     claudeDefaultModel: config.claudeDefaultModel,
     claudeProjectSlug: config.claudeProjectSlug,
-    claudeSettingsPath: config.claudeSettingsPath,
+    claudeSettingsPath: resolveSettingsPath(config),
     claudeWorkspacePath: config.claudeWorkspacePath ?? process.cwd(),
   });
 
@@ -44,13 +51,14 @@ const resolveSharedClaudeHaikuTranslationService = (
   if (sharedClaudeLocalizationServiceEntry?.configKey === configKey) {
     return sharedClaudeLocalizationServiceEntry.service;
   }
+  const workspacePath = config.claudeWorkspacePath ?? process.cwd();
   const adapter = new ClaudeProviderAdapter({
     installerPaths: CLAUDE_INSTALLER_PATHS,
     workspace: {
       claudeProjectSlug: config.claudeProjectSlug,
       defaultModel: config.claudeDefaultModel,
-      settingsPath: config.claudeSettingsPath,
-      workspacePath: config.claudeWorkspacePath ?? process.cwd(),
+      settingsPath: resolveSettingsPath(config),
+      workspacePath,
     },
   });
   const service = adapter.getHaikuTranslationService();

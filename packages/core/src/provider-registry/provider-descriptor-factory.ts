@@ -1,6 +1,7 @@
 import type { ModuleReporter } from "@codeai-hub/claude-module";
 import type { KimiModuleOptions } from "@codeai-hub/kimi-module";
 import type { CoreConfig } from "../config";
+import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import {
   CLAUDE_INSTALLER_PATHS,
   CODEX_INSTALLER_PATHS,
@@ -126,6 +127,12 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
 const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "danger-full-access";
 
+const resolveWorkspaceSettingsPath = (config: CoreConfig): string =>
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
+    workspaceSlug: config.claudeProjectSlug,
+  }).settingsFile.absolutePath;
+
 export const resolveProviderImmediateBindingCapability = (
   providerId: string
 ): boolean => PROVIDER_IMMEDIATE_BINDING_CAPABILITIES[providerId] === true;
@@ -142,7 +149,7 @@ export const createClaudeAdapterInstance = (
     workspace: {
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
       claudeProjectSlug: options.config.claudeProjectSlug,
-      settingsPath: options.config.claudeSettingsPath,
+      settingsPath: resolveWorkspaceSettingsPath(options.config),
       defaultModel: options.config.claudeDefaultModel,
     },
     reporter: options.createReporter("claude"),
@@ -206,7 +213,7 @@ export const createGlmClaudeCodeAdapterInstance = (
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
       defaultModel: "glm-5.1",
       glmClaudeProjectSlug: `${options.config.claudeProjectSlug}-glm-claude-code`,
-      settingsPath: options.config.claudeSettingsPath,
+      settingsPath: resolveWorkspaceSettingsPath(options.config),
     },
     reporter: options.createReporter("glm-claude-code"),
   });

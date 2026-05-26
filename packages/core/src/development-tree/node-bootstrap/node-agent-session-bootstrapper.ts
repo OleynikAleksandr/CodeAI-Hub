@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
-import { homedir } from "node:os";
 import path from "node:path";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import type { DevelopmentTreeAgentPromptPackContract } from "../development-tree-types";
 import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detector";
 import {
@@ -55,9 +55,14 @@ const DETAILED_PART_CONTEXT_RETRY_COUNT = 6;
 const DETAILED_PART_CONTEXT_RETRY_DELAY_MS = 100;
 const WORKFLOW_PATH_SEPARATOR_RE = /[\\/]+/;
 
-const resolveSettingsPath = (): string =>
-  process.env.CLAUDE_SETTINGS_PATH ??
-  `${homedir()}/.codeai-hub/settings/settings.json`;
+const resolveSettingsPath = (options: {
+  readonly workspacePath: string;
+  readonly workspaceSlug: string;
+}): string =>
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: options.workspacePath,
+    workspaceSlug: options.workspaceSlug,
+  }).settingsFile.absolutePath;
 
 const splitWorkflowPath = (value: string): readonly string[] =>
   value
@@ -125,11 +130,12 @@ const readObject = (value: unknown): Record<string, unknown> =>
 
 const readSettingsLocalizationCategory = async (
   categoryKeys: readonly string[],
-  fallbackLanguage: string
+  fallbackLanguage: string,
+  settingsPath: string
 ): Promise<string> => {
   try {
     const settings = readObject(
-      JSON.parse(await readFile(resolveSettingsPath(), "utf8"))
+      JSON.parse(await readFile(settingsPath, "utf8"))
     );
     const general = readObject(settings.general);
     const localization = readObject(general.localization);
@@ -149,17 +155,27 @@ const readSettingsLocalizationCategory = async (
   }
 };
 
-const readReasoningLanguageFromSettings = (): Promise<string> =>
-  readSettingsLocalizationCategory(["reasoning"], DEFAULT_RESPONSE_LANGUAGE);
+const readReasoningLanguageFromSettings = (
+  settingsPath: string
+): Promise<string> =>
+  readSettingsLocalizationCategory(
+    ["reasoning"],
+    DEFAULT_RESPONSE_LANGUAGE,
+    settingsPath
+  );
 
-const readArtifactLanguageFromSettings = (): Promise<string> =>
+const readArtifactLanguageFromSettings = (
+  settingsPath: string
+): Promise<string> =>
   readSettingsLocalizationCategory(
     ["artifactsForTheUser", "artifacts_for_the_user"],
-    DEFAULT_ARTIFACT_LANGUAGE
+    DEFAULT_ARTIFACT_LANGUAGE,
+    settingsPath
   );
 
 const resolveResponseLanguage = async (
-  responseLanguage: NodeAgentSessionBootstrapperOptions["responseLanguage"]
+  responseLanguage: NodeAgentSessionBootstrapperOptions["responseLanguage"],
+  settingsPath: string
 ): Promise<string> => {
   if (typeof responseLanguage === "function") {
     const resolved = await responseLanguage();
@@ -168,11 +184,12 @@ const resolveResponseLanguage = async (
   if (typeof responseLanguage === "string" && responseLanguage.trim()) {
     return responseLanguage.trim();
   }
-  return readReasoningLanguageFromSettings();
+  return readReasoningLanguageFromSettings(settingsPath);
 };
 
 const resolveArtifactLanguage = async (
-  artifactLanguage: NodeAgentSessionBootstrapperOptions["artifactLanguage"]
+  artifactLanguage: NodeAgentSessionBootstrapperOptions["artifactLanguage"],
+  settingsPath: string
 ): Promise<string> => {
   if (typeof artifactLanguage === "function") {
     const resolved = await artifactLanguage();
@@ -181,7 +198,7 @@ const resolveArtifactLanguage = async (
   if (typeof artifactLanguage === "string" && artifactLanguage.trim()) {
     return artifactLanguage.trim();
   }
-  return readArtifactLanguageFromSettings();
+  return readArtifactLanguageFromSettings(settingsPath);
 };
 
 const createWorkflowArtifactSpecs = (
@@ -285,11 +302,14 @@ export class NodeAgentSessionBootstrapper {
   ): Promise<NodeAgentSessionBootstrapResult> {
     const stage = createNodeWorkflowPath(node, options.workspaceSlug);
     const providerId = await resolveProviderId(options.providerId);
+    const settingsPath = resolveSettingsPath(options);
     const responseLanguage = await resolveResponseLanguage(
-      options.responseLanguage
+      options.responseLanguage,
+      settingsPath
     );
     const artifactLanguage = await resolveArtifactLanguage(
-      options.artifactLanguage
+      options.artifactLanguage,
+      settingsPath
     );
     const artifactContext = await readArtifactContext(node, options);
     const session = await options.gateway.createSessionForWorkflow({
