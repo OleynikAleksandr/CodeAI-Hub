@@ -1,7 +1,10 @@
 import { spawn } from "node:child_process";
 import { existsSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { UserGlossaryStore } from "@codeai-hub/localization";
+import {
+  type LocalizationFacade,
+  UserGlossaryStore,
+} from "@codeai-hub/localization";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import { TemplateSyncFacade } from "../../templates/template-sync-facade";
@@ -29,12 +32,19 @@ export { resolveLocalizationRuntimeSettings } from "./settings-persistence-snaps
 const toErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
-const resolveDefaultWorkspaceScope = (
-  config: CoreConfig
-): WorkspaceSettingsScope => ({
-  workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
-  workspaceSlug: config.claudeProjectSlug,
-});
+const createScopedCoreLocalizationFacade = (
+  config: CoreConfig,
+  workspace?: WorkspaceSettingsScope
+): LocalizationFacade =>
+  createCoreLocalizationFacade({
+    config: workspace
+      ? {
+          ...config,
+          claudeProjectSlug: workspace.workspaceSlug,
+          claudeWorkspacePath: workspace.workspaceRoot,
+        }
+      : config,
+  });
 
 const createWorkspaceUserGlossaryStore = (
   workspace: WorkspaceSettingsScope
@@ -69,6 +79,10 @@ interface AppleNativePreflightResponse {
   readonly ok?: boolean;
   readonly userMessageCode?: string;
 }
+
+type LocalizationFacadeFactory = (
+  workspace?: WorkspaceSettingsScope
+) => LocalizationFacade;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -125,9 +139,6 @@ const collectAppleNativePreflightTargets = (
   const uiEngineId =
     normalizeSettingsString(localization.uiEngineId) ||
     normalizeSettingsString(localization.engineId);
-  const reasoningEngineId = normalizeSettingsString(
-    localization.reasoningEngineId
-  );
   const targets = new Set<string>();
 
   if (uiEngineId === APPLE_NATIVE_TRANSLATION_ENGINE_ID) {
@@ -148,16 +159,7 @@ const collectAppleNativePreflightTargets = (
       }
     }
   }
-  if (reasoningEngineId === APPLE_NATIVE_TRANSLATION_ENGINE_ID) {
-    const language = normalizeAppleNativeLanguage(categories.reasoning);
-    if (language.toLowerCase() !== "en") {
-      targets.add(language);
-    }
-  }
-  if (
-    uiEngineId === APPLE_NATIVE_TRANSLATION_ENGINE_ID ||
-    reasoningEngineId === APPLE_NATIVE_TRANSLATION_ENGINE_ID
-  ) {
+  if (uiEngineId === APPLE_NATIVE_TRANSLATION_ENGINE_ID) {
     return targets.size > 0
       ? [...targets].map((targetLanguage) => ({
           sourceLanguage: "en",
@@ -277,39 +279,34 @@ const assertAppleNativeSettingsReady = async (
 
 export class SettingsRequestHandler {
   private readonly broadcaster: (event: BridgeEvent) => void;
+  private readonly createLocalizationFacade: LocalizationFacadeFactory;
   private readonly defaultWorkspace: WorkspaceSettingsScope;
   private readonly logger: Logger;
-  private readonly settingsLoadedBroadcaster: SettingsLoadedBroadcaster;
   private readonly settingsPersistenceService: SettingsPersistenceService;
   private readonly settingsProviderVersionService: SettingsProviderVersionService;
-  private readonly settingsSavedBroadcaster: SettingsSavedBroadcaster;
   private readonly templateSyncFacade: TemplateSyncFacade;
 
   constructor(options: {
     readonly broadcaster: (event: BridgeEvent) => void;
     readonly config: CoreConfig;
+    readonly createLocalizationFacade?: LocalizationFacadeFactory;
     readonly logger: Logger;
   }) {
     this.broadcaster = options.broadcaster;
-    this.defaultWorkspace = resolveDefaultWorkspaceScope(options.config);
-    const localizationFacade = createCoreLocalizationFacade({
-      config: options.config,
-    });
+    this.createLocalizationFacade =
+      options.createLocalizationFacade ??
+      ((workspace) =>
+        createScopedCoreLocalizationFacade(options.config, workspace));
+    this.defaultWorkspace = {
+      workspaceRoot: options.config.claudeWorkspacePath ?? process.cwd(),
+      workspaceSlug: options.config.claudeProjectSlug,
+    };
     this.logger = options.logger;
-    this.settingsLoadedBroadcaster = new SettingsLoadedBroadcaster({
-      broadcaster: options.broadcaster,
-      localizationFacade,
-      resolveRuntimeSettings: resolveLocalizationRuntimeSettings,
-    });
     this.settingsPersistenceService = new SettingsPersistenceService({
       config: options.config,
       logger: options.logger,
     });
     this.settingsProviderVersionService = new SettingsProviderVersionService();
-    this.settingsSavedBroadcaster = new SettingsSavedBroadcaster({
-      broadcaster: options.broadcaster,
-      localizationFacade,
-    });
     this.templateSyncFacade = new TemplateSyncFacade(options.logger);
   }
 
@@ -330,9 +327,10 @@ export class SettingsRequestHandler {
           error: syncFailureMessage,
         });
       }
-      await this.settingsSavedBroadcaster.publish(result, workspace, {
-        syncFailureMessage,
-      });
+      await new SettingsSavedBroadcaster({
+        broadcaster: this.broadcaster,
+        localizationFacade: this.createLocalizationFacade(workspace),
+      }).publish(result, workspace, { syncFailureMessage });
     } catch (error) {
       const reason = toErrorMessage(error);
       this.logger.warn("Failed to save settings", { error: reason });
@@ -342,7 +340,10 @@ export class SettingsRequestHandler {
 
   async handleReset(workspace?: WorkspaceSettingsScope): Promise<void> {
     try {
-      await this.settingsSavedBroadcaster.publish(
+      await new SettingsSavedBroadcaster({
+        broadcaster: this.broadcaster,
+        localizationFacade: this.createLocalizationFacade(workspace),
+      }).publish(
         await this.settingsPersistenceService.reset({ workspace }),
         workspace
       );
@@ -354,7 +355,11 @@ export class SettingsRequestHandler {
   }
 
   async handleLoad(workspace?: WorkspaceSettingsScope): Promise<void> {
-    await this.settingsLoadedBroadcaster.publish(
+    await new SettingsLoadedBroadcaster({
+      broadcaster: this.broadcaster,
+      localizationFacade: this.createLocalizationFacade(workspace),
+      resolveRuntimeSettings: resolveLocalizationRuntimeSettings,
+    }).publish(
       await this.settingsPersistenceService.load({ workspace }),
       workspace
     );

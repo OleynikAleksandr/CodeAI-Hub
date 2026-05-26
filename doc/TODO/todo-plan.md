@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "fdfcbab4a",
+  "lastRecordedCommit": "94939845d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase73.stream2.task2",
-  "expectedCommitMessage": "chore: package workspace localization runtime release",
+  "currentTaskId": "phase75.stream1.task1",
+  "expectedCommitMessage": "fix: materialize settings localization in workspace runtime",
   "debt": {
-    "expectedCommitMessage": "chore: package workspace localization runtime release",
-    "preCommitHead": "fdfcbab4a",
+    "expectedCommitMessage": "fix: materialize settings localization in workspace runtime",
+    "preCommitHead": "94939845d",
     "stage": "commit_pending",
-    "taskId": "phase73.stream2.task2"
+    "taskId": "phase75.stream1.task1"
   }
 }
 ```
@@ -691,12 +691,26 @@
 268. [DONE] `phase73.stream2.task1` After explicit confirmation, update release docs for the next version before running release build scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `chore: build workspace localization runtime release`).
 269. [DONE] Git Commit: `chore: build workspace localization runtime release` (hash: fdfcbab4a)
 274. [DONE] `phase73.stream2.task2` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarballs and record release artifacts for the workspace localization runtime fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: package workspace localization runtime release`). Result: Release `1.2.367` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.367.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-275. [PENDING] Git Commit: `chore: package workspace localization runtime release` (hash: TBD)
+275. [DONE] Git Commit: `chore: package workspace localization runtime release` (hash: 94939845d)
 
 ## Phase 74 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-270. [TODO] `phase74.stream1.task1` User installs the generated VSIX and verifies Project Manager settings persist in workspace runtime settings, localization bundles/cache/glossary materialize under the workspace runtime localization capsule, global localization is not used as runtime truth, and translated helper text applies to Project Manager workflow views (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+270. [DONE] `phase74.stream1.task1` User installs the generated VSIX and verifies Project Manager settings persist in workspace runtime settings, localization bundles/cache/glossary materialize under the workspace runtime localization capsule, global localization is not used as runtime truth, and translated helper text applies to Project Manager workflow views (scope: user workflow acceptance; expected commit: no commit expected). Result: Failed release 1.2.367 retest: Project Manager saved localization settings to the workspace settings file, but workspace runtime/localization stayed empty after localization sync/preflight; Core must materialize localization runtime payloads under the active workspace scope.
+
+## Phase 75 - Workspace Localization Save Regression Fix (owner: Codex, updated: 2026-05-26)
+
+### Stream: Settings Save Localization Runtime
+276. [DONE] `phase75.stream1.task1` Scope Settings save/load localization facade and Apple Native preflight so Project Manager localization settings materialize UI runtime bundles under the active workspace runtime localization capsule, including the case where reasoning-only Apple Native is selected (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: materialize settings localization in workspace runtime`).
+277. [PENDING] Git Commit: `fix: materialize settings localization in workspace runtime` (hash: TBD)
+
+### Stream: Regression Verification
+278. [TODO] `phase75.stream2.task1` Re-run focused Settings localization runtime tests, Core/localization builds, webview/project-manager builds, and workspace/global localization path checks before release build confirmation (scope: `packages/core, packages/localization, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+
+## Phase 76 - Release Build Confirmation (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Confirmation Gate
+279. [TODO] `phase76.stream1.task1` Stop after the workspace localization save regression fix and verification, report results, and request explicit user confirmation before preparing release notes or running release scripts for the next release (scope: release gate; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
