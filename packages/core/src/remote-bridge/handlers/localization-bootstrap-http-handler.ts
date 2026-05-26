@@ -1,11 +1,28 @@
 import type { Request, Response } from "express";
-import { loadConfig } from "../../config";
+import { type CoreConfig, loadConfig } from "../../config";
+import { Logger } from "../../telemetry/logger";
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
-import { buildDefaultSettingsSnapshot } from "./settings-persistence-snapshot";
+import { SettingsPersistenceService } from "./settings-persistence-service";
+import type { WorkspaceSettingsScope } from "./settings-persistence-snapshot";
 import { resolveLocalizationRuntimeSettings } from "./settings-request-handler";
 
 const HTTP_NOT_FOUND = 404;
 const HTTP_INTERNAL_ERROR = 500;
+
+const resolveWorkspaceSettingsScope = (
+  config: CoreConfig
+): WorkspaceSettingsScope => ({
+  workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
+  workspaceSlug: config.claudeProjectSlug,
+});
+
+const loadWorkspaceSettings = (
+  config: CoreConfig
+): Promise<Record<string, unknown>> =>
+  new SettingsPersistenceService({
+    config,
+    logger: new Logger(),
+  }).load({ workspace: resolveWorkspaceSettingsScope(config) });
 
 export const handleLocalizationBootstrapRead = async (
   _req: Request,
@@ -17,7 +34,7 @@ export const handleLocalizationBootstrapRead = async (
       config,
     });
     const runtimeSettings = resolveLocalizationRuntimeSettings(
-      buildDefaultSettingsSnapshot(config)
+      await loadWorkspaceSettings(config)
     );
     const cachedSnapshot =
       await localizationFacade.loadRuntimeBootstrapSnapshot(runtimeSettings);

@@ -1,11 +1,19 @@
 import assert from "node:assert/strict";
+import { access, mkdtemp, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import type {
   ClaudeHaikuTranslationService,
   ClaudeHaikuTranslationServiceResult,
 } from "@codeai-hub/claude-module";
-import type { LocalizationRuntimeSettingsSnapshot } from "@codeai-hub/localization";
+import type {
+  LocalizationRuntimeSettingsSnapshot,
+  LocalizationSourceDictionary,
+} from "@codeai-hub/localization";
 import type { TranslationRequest } from "@codeai-hub/translation";
+import type { CoreConfig } from "../config";
+import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import { createCoreLocalizationFacade } from "./core-localization-facade-factory";
 
 const STRUCTURED_ENTRY_PATTERN =
@@ -41,46 +49,74 @@ const createRuntimeSettings = (): LocalizationRuntimeSettingsSnapshot => ({
   workflowTermsPolicy: "keep_english",
 });
 
+const createSourceDictionaries =
+  (): readonly LocalizationSourceDictionary[] => [
+    {
+      category: "interactive_templates",
+      entries: {
+        "artifact.help.body": "Artifact Help",
+      },
+      language: "en",
+    },
+    {
+      category: "system_feedback",
+      entries: {
+        "pm.description.help.title": "Description Help",
+      },
+      language: "en",
+    },
+    {
+      category: "ui_interface",
+      entries: {
+        "settings.header.title": "Settings",
+      },
+      language: "en",
+    },
+    {
+      category: "user_guidance",
+      entries: {
+        "settings.localization.intro": "Helper Intro",
+      },
+      language: "en",
+    },
+    {
+      category: "workflow_terms",
+      entries: {
+        "term.workflow": "Workflow",
+      },
+      language: "en",
+    },
+  ];
+
+const createCoreConfig = (params: {
+  readonly globalSettingsPath: string;
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): CoreConfig => ({
+  claudeContinuityRemainingPercentThreshold: 30,
+  claudeDefaultModel: "sonnet",
+  claudeProjectSlug: params.workspaceSlug,
+  claudeSettingsPath: params.globalSettingsPath,
+  claudeWorkspacePath: params.workspaceRoot,
+  codexDefaultModel: "gpt-5.3-codex",
+  codexDefaultReasoningEffort: "medium",
+  codexSkipGitRepoCheck: false,
+  continuityPreemptRemainingPercentThreshold: 50,
+  geminiDefaultModel: "gemini-3-pro-preview",
+  geminiSettingsPath: params.globalSettingsPath,
+  geminiThinkingLevelByModel: {},
+  host: "127.0.0.1",
+  idleTtlMinutes: null,
+  managedMode: null,
+  port: 8080,
+  shutdownGracePeriodMs: 0,
+  templatesDir: path.join(params.workspaceRoot, "templates"),
+});
+
 test("createCoreLocalizationFacade keeps labels in English while materializing helper categories through Haiku", async () => {
   const facade = createCoreLocalizationFacade({
     claudeHaikuTranslationService: createFakeService(),
-    sourceDictionaries: [
-      {
-        category: "interactive_templates",
-        entries: {
-          "artifact.help.body": "Artifact Help",
-        },
-        language: "en",
-      },
-      {
-        category: "system_feedback",
-        entries: {
-          "pm.description.help.title": "Description Help",
-        },
-        language: "en",
-      },
-      {
-        category: "ui_interface",
-        entries: {
-          "settings.header.title": "Settings",
-        },
-        language: "en",
-      },
-      {
-        category: "user_guidance",
-        entries: {
-          "settings.localization.intro": "Helper Intro",
-        },
-        language: "en",
-      },
-      {
-        category: "workflow_terms",
-        entries: {
-          "term.workflow": "Workflow",
-        },
-        language: "en",
-      },
-    ],
+    sourceDictionaries: createSourceDictionaries(),
   });
 
   const snapshot = await facade.resolveRuntimeBootstrapSnapshot(
@@ -139,4 +175,74 @@ test("createCoreLocalizationFacade keeps labels in English while materializing h
     snapshot.runtimePayload.resolvedBundlesByCategory.workflow_terms.language,
     "en"
   );
+});
+
+test("createCoreLocalizationFacade stores runtime localization under workspace capsule", async () => {
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-l10n-core-"));
+  const workspaceRoot = path.join(tempRoot, "workspace");
+  const workspaceSlug = "workspace-localization";
+  const fakeHome = path.join(tempRoot, "home");
+  const originalHome = process.env.HOME;
+  process.env.HOME = fakeHome;
+
+  try {
+    const config = createCoreConfig({
+      globalSettingsPath: path.join(tempRoot, "global", "settings.json"),
+      workspaceRoot,
+      workspaceSlug,
+    });
+    const facade = createCoreLocalizationFacade({
+      claudeHaikuTranslationService: createFakeService(),
+      config,
+      sourceDictionaries: createSourceDictionaries(),
+    });
+
+    await facade.resolveRuntimeBootstrapSnapshot(createRuntimeSettings());
+
+    const capsule = resolveWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug,
+    });
+    const bootstrapPath = path.join(
+      capsule.localizationRoot.absolutePath,
+      "cache",
+      "browser-runtime-bootstrap.json"
+    );
+    const userGuidanceBundlePath = path.join(
+      capsule.localizationRoot.absolutePath,
+      "catalogs",
+      "user_guidance",
+      "ru.json"
+    );
+    const snapshot = JSON.parse(await readFile(bootstrapPath, "utf8")) as {
+      readonly settings: LocalizationRuntimeSettingsSnapshot;
+    };
+    const userGuidanceBundle = JSON.parse(
+      await readFile(userGuidanceBundlePath, "utf8")
+    ) as { readonly entries: Record<string, string> };
+
+    assert.equal(snapshot.settings.categories.user_guidance, "ru");
+    assert.equal(
+      userGuidanceBundle.entries["settings.localization.intro"],
+      "[ru] Helper Intro"
+    );
+    await assert.rejects(
+      access(
+        path.join(
+          fakeHome,
+          ".codeai-hub",
+          "localization",
+          "cache",
+          "browser-runtime-bootstrap.json"
+        )
+      ),
+      { code: "ENOENT" }
+    );
+  } finally {
+    if (originalHome === undefined) {
+      process.env.HOME = undefined;
+    } else {
+      process.env.HOME = originalHome;
+    }
+  }
 });

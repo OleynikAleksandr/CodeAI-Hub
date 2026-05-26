@@ -33,12 +33,19 @@ const resolveSettingsPath = (config: CoreConfig): string =>
     workspaceSlug: config.claudeProjectSlug,
   }).settingsFile.absolutePath;
 
+const resolveLocalizationRootDirectory = (config: CoreConfig): string =>
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
+    workspaceSlug: config.claudeProjectSlug,
+  }).localizationRoot.absolutePath;
+
 const buildConfigKey = (config: CoreConfig): string =>
   JSON.stringify({
     claudeDefaultModel: config.claudeDefaultModel,
     claudeProjectSlug: config.claudeProjectSlug,
     claudeSettingsPath: resolveSettingsPath(config),
     claudeWorkspacePath: config.claudeWorkspacePath ?? process.cwd(),
+    localizationRootDirectory: resolveLocalizationRootDirectory(config),
   });
 
 const resolveSharedClaudeHaikuTranslationService = (
@@ -90,6 +97,9 @@ export const createCoreLocalizationFacade = (
     });
   return new LocalizationFacade({
     ...localizationOptions,
+    localizationRootDirectory:
+      localizationOptions.localizationRootDirectory ??
+      (config ? resolveLocalizationRootDirectory(config) : undefined),
     translationFacade: coreTranslationFacade,
   });
 };
