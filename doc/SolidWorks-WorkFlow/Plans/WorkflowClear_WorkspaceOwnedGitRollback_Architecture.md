@@ -57,12 +57,12 @@ Each workspace owns a Git-controlled runtime capsule:
         tmp/
 ```
 
-Only this workspace-owned capsule is rollback state. Core must route all workflow-specific mutable files there before a session starts.
+The workspace-owned capsule contains both rollback state and live workspace state. Core must route workflow-specific mutable files there before a session starts, but `runtime/settings/settings.json` is explicitly live workspace truth rather than rollback truth.
 
 Accepted refinement after architecture review:
 
 - Every workspace gets its own provider home on workspace open.
-- Every workspace gets its own `settings.json`.
+- Every workspace gets its own `settings.json`, preserved across workflow Clear/Undo.
 - Global app settings become a seed/default, not live workflow truth.
 - Shared provider binaries stay global; provider runtime state moves into the workspace.
 - Deleting a workspace deletes its sessions, provider homes, settings, temporary files and rollback history together.
@@ -103,7 +103,7 @@ These are workflow-specific and must be controlled by the workspace Git repo:
 
 | Current root | New workspace-owned root | Notes |
 |---|---|---|
-| `~/.codeai-hub/settings/settings.json` | `.codeai-hub/<slug>/runtime/settings/settings.json` | Workspace-owned settings are the source of truth for model choices, reasoning/thinking levels, localization policy, response policy, Project Manager preferences and future workspace-specific options. The global file is only a seed/default for new workspaces. |
+| `~/.codeai-hub/settings/settings.json` | `.codeai-hub/<slug>/runtime/settings/settings.json` | Workspace-owned settings are the source of truth for model choices, reasoning/thinking levels, localization policy, response policy, Project Manager preferences and future workspace-specific options. The global file is only a seed/default for new workspaces. The workspace file is ignored by workflow rollback and preserved across Clear/Undo; committed session/model-binding/applied-config artifacts carry reproducibility. |
 | `~/.codeai-hub/sessions/<workspaceKey>/**` | `.codeai-hub/<slug>/runtime/sessions/unified/**` | Unified dialog/session history. |
 | `~/.codeai-hub/providers/codex/home/**` | `.codeai-hub/<slug>/runtime/providers/codex/home/**` | Codex native sessions, shell snapshots, workspace-scoped memory and state indexes. Auth/secret files are ignored or provided by a global auth bridge. |
 | `~/.codeai-hub/providers/claude/home/**` | `.codeai-hub/<slug>/runtime/providers/claude/home/**` | Claude project/session state tied to this workspace. Auth/secret files are ignored or provided by a global auth bridge. |
@@ -168,12 +168,7 @@ Workspace settings include:
 - Project Manager UI/workflow preferences
 - future workflow behavior flags that must not leak across workspaces
 
-Settings have two classes:
-
-- rollback-governed settings that affect workflow output and must be tracked by Git
-- private per-workspace UI preferences that may survive Clear and should live in an ignored workspace-local preferences file
-
-The default assumption is tracked workspace settings. A setting is ignored only when it is explicitly classified as private UI state and cannot change workflow outputs.
+Workspace settings are live per-workspace authority, not rollback authority. They are written by Core, read by Project Manager and provider-turn resolution, ignored by the capsule `.gitignore`, and preserved across `Clear` reset/clean. If a workflow turn must be reproducible after settings later change, the immutable proof belongs to `Session.modelBinding`, applied turn config snapshots and provider/session artifacts committed with the accepted step, not to rolling back the mutable settings file.
 
 Workspace open behavior:
 
@@ -628,7 +623,7 @@ Description`, with clean Git after each boundary, accepted step and Clear.
 ## 12. Implementation Phases
 
 1. Add a `WorkspaceRuntimeCapsule` module that resolves all workspace-owned runtime paths and owns capsule `.gitignore`.
-2. Move workspace settings ownership into `runtime/settings/settings.json`; use global settings only as seed/default.
+2. Move workspace settings ownership into `runtime/settings/settings.json`; use global settings only as seed/default, and keep workspace settings rollback-ignored/preserved.
 3. Route Project Manager behavior-changing state through Core/workspace settings; remove workflow truth from browser Local Storage.
 4. Route unified sessions and dialog history readers/writers into `runtime/sessions/unified`.
 5. Route Codex provider home/session roots into `runtime/providers/codex/home` with secret-safe ignore rules.
@@ -653,16 +648,17 @@ These are the points most likely to break the solution if forgotten:
 - **Live session dirtiness:** active provider turns may dirty the tree. The invariant is: boundary starts on clean tree, accepted step ends with a commit, next step never starts dirty, Clear stops active writers first.
 - **Project Manager Local Storage:** any setting or state that changes workflow behavior must not live only in Chromium profile data.
 - **Global settings readers:** every code path reading `~/.codeai-hub/settings/settings.json` for workflow behavior must be changed to read the active workspace settings.
+- **Settings rollback exclusion:** workspace settings must be ignored by capsule Git, migrated out of legacy indexes with `git rm --cached`, and preserved across Clear. Workflow reproducibility must come from committed binding/applied-config/session artifacts, not from rolling settings back.
 - **Process-global Core config:** a single Core process may serve more than one workspace over time. Workspace settings and provider homes must be resolved per workspace/session, not cached once from environment at Core startup.
 - **Gemini global `.gemini`:** workflow Gemini sessions must not create `~/.gemini/tmp`, `~/.gemini/history`, `~/.gemini/settings.json` changes, or project registries outside the workspace provider home.
-- **Boundary ordering:** Description boundary must be after baseline questionnaire/settings/gitignore seed, and every later stage boundary must be before stage bootstrap/scaffold/provider session creation.
+- **Boundary ordering:** Description boundary must be after baseline questionnaire/gitignore seed, and every later stage boundary must be before stage bootstrap/scaffold/provider session creation. A boundary may include one-time legacy settings untracking but must not snapshot live settings.
 - **Projection files:** `workflow/state.json`, `description-step.json`, indexes and read models must either be tracked baseline/accepted-step files or rebuildable in memory without dirtying Git after Clear.
 - **Watchers after reset:** file watchers must pause around Clear and rebuild from disk after reset; they must not rewrite stale state into the restored tree.
 - **Native session retention:** old native and unified sessions after a cleared boundary are not needed. They must disappear through Git reset/clean because they live in the capsule.
 - **Workspace deletion:** deleting a workspace should remove provider homes, sessions, settings and rollback history. Only the global projects registry may need best-effort pruning of stale entries.
 - **Large caches:** provider caches, model caches, browser caches and tmp folders must be ignored or global. Only files required for workflow recovery/rollback are tracked.
 - **Manual untracked user files:** `git clean -fd` deletes untracked non-ignored files created after a boundary. The product must either commit accepted user/workflow files before Clear can target them, or show an explicit destructive-operation warning.
-- **Settings rollback semantics:** model/workflow settings are part of the development timeline and roll back with Git. UI-only per-workspace preferences that should survive Clear need an explicit ignored storage location.
+- **Settings rollback semantics:** model/workflow settings are workspace-owned live state and survive workflow Clear/Undo. Accepted steps must commit immutable applied model/config evidence so the workflow timeline remains auditable without tracking mutable settings.
 - **Template references:** global templates may seed prompts, but provider-visible prompts and workflow artifacts must contain the required inline contracts; rollback must not depend on reading mutable global templates.
 - **macOS metadata:** `.DS_Store` and similar files must be ignored/cleaned before boundary checks so they cannot block a clean tree.
 

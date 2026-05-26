@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "bcbc40a1f",
+  "lastRecordedCommit": "9ad5f7ae1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase92.stream5.task1",
-  "expectedCommitMessage": "fix: keep start settings out of workflow history",
+  "currentTaskId": "phase94.stream1.task1",
+  "expectedCommitMessage": "docs: document rollback-ignored workspace settings",
   "debt": {
-    "expectedCommitMessage": "fix: keep start settings out of workflow history",
-    "preCommitHead": "bcbc40a1f",
+    "expectedCommitMessage": "docs: document rollback-ignored workspace settings",
+    "preCommitHead": "9ad5f7ae1",
     "stage": "commit_pending",
-    "taskId": "phase92.stream5.task1"
+    "taskId": "phase94.stream1.task1"
   }
 }
 ```
@@ -837,18 +837,18 @@
 
 ### Stream: Session Start Settings History
 321. [DONE] `phase92.stream5.task1` Stop session-start model/settings selection from committing mutable runtime settings while keeping immutable per-session applied config/model binding snapshots for reproducibility (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts`; expected commit: `fix: keep start settings out of workflow history`).
-322. [PENDING] Git Commit: `fix: keep start settings out of workflow history` (hash: TBD)
+322. [DONE] Git Commit: `fix: keep start settings out of workflow history` (hash: 9ad5f7ae1)
 
 ## Phase 93 - Regression Verification (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Settings Rollback Checks
-323. [TODO] `phase93.stream1.task1` Run focused Core tests/build plus direct Git checks proving settings are ignored, legacy tracked settings are untracked, Clear preserves settings, and start-card settings changes do not create settings commits (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+323. [DONE] `phase93.stream1.task1` Run focused Core tests/build plus direct Git checks proving settings are ignored, legacy tracked settings are untracked, Clear preserves settings, and start-card settings changes do not create settings commits (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted settings rollback verification passed: @codeai-hub/core build, 25 focused Core tests covering workspace settings persistence/localization, capsule gitignore migration, accepted-step untracking, Clear preservation and session:create start path, plus build:project-manager, typecheck:webview and plan validation.
 
 ## Phase 94 - Architecture Documentation (owner: Codex, updated: 2026-05-26)
 
 ### Stream: SSOT Sync
-324. [TODO] `phase94.stream1.task1` Document that workspace settings are workspace-owned but rollback-ignored, while accepted workflow snapshots keep immutable applied config/model binding metadata (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document rollback-ignored workspace settings`).
-325. [TODO] Git Commit: `docs: document rollback-ignored workspace settings` (hash: TBD)
+324. [DONE] `phase94.stream1.task1` Document that workspace settings are workspace-owned but rollback-ignored, while accepted workflow snapshots keep immutable applied config/model binding metadata (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document rollback-ignored workspace settings`).
+325. [PENDING] Git Commit: `docs: document rollback-ignored workspace settings` (hash: TBD)
 
 ## Phase 95 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
