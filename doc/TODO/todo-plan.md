@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "abddd7073",
+  "lastRecordedCommit": "257d9fb8a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase109.stream2.task1",
-  "expectedCommitMessage": "test: cover provider home runtime untracking",
+  "currentTaskId": "phase110.stream1.task1",
+  "expectedCommitMessage": "docs: document provider home rollback ignore",
   "debt": {
-    "expectedCommitMessage": "test: cover provider home runtime untracking",
-    "preCommitHead": "abddd7073",
+    "expectedCommitMessage": "docs: document provider home rollback ignore",
+    "preCommitHead": "257d9fb8a",
     "stage": "commit_pending",
-    "taskId": "phase109.stream2.task1"
+    "taskId": "phase110.stream1.task1"
   }
 }
 ```
@@ -954,13 +954,13 @@
 
 ### Stream: Boundary Regression Coverage
 358. [DONE] `phase109.stream2.task1` Prove boundary/accepted-step flows untrack legacy provider-home files, preserve current provider-home contents across Clear rollback and do not leave provider runtime config changes visible in workflow Git status (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `test: cover provider home runtime untracking`).
-359. [PENDING] Git Commit: `test: cover provider home runtime untracking` (hash: TBD)
+359. [DONE] Git Commit: `test: cover provider home runtime untracking` (hash: 257d9fb8a)
 
 ## Phase 110 - Architecture Documentation (owner: Codex, updated: 2026-05-26)
 
 ### Stream: SSOT Sync
-360. [TODO] `phase110.stream1.task1` Document that provider homes are mutable workspace runtime outside rollback history; only provider-neutral Core logical session records under `runtime/sessions/unified/**` remain rollback-owned (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document provider home rollback ignore`).
-361. [TODO] Git Commit: `docs: document provider home rollback ignore` (hash: TBD)
+360. [DONE] `phase110.stream1.task1` Document that provider homes are mutable workspace runtime outside rollback history; only provider-neutral Core logical session records under `runtime/sessions/unified/**` remain rollback-owned (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document provider home rollback ignore`).
+361. [PENDING] Git Commit: `docs: document provider home rollback ignore` (hash: TBD)
 
 ## Phase 111 - Regression Verification (owner: Codex, updated: 2026-05-26)
 
