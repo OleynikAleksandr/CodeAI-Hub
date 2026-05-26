@@ -178,13 +178,20 @@ export class WorkflowWatcher {
     }
 
     if (match.filePath) {
+      if (!this.pathExists(normalized)) {
+        return;
+      }
       this.emit(this.createArtifactEvent(match, normalized));
       return;
     }
 
-    if (eventType === "rename") {
+    if (eventType === "rename" && this.pathExists(normalized)) {
       this.emit(this.createRunCreatedEvent(match));
     }
+  }
+
+  private pathExists(relativePath: string): boolean {
+    return existsSync(path.join(this.watchRoot, relativePath));
   }
 
   private createRunCreatedEvent(

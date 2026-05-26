@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "017aab947",
+  "lastRecordedCommit": "f4f2dfb9e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase117.stream1.task1",
-  "expectedCommitMessage": "chore: build clear rehydrate release",
+  "currentTaskId": "phase119.stream1.task1",
+  "expectedCommitMessage": "fix: ignore deleted workflow artifacts in watcher",
   "debt": {
-    "expectedCommitMessage": "chore: build clear rehydrate release",
-    "preCommitHead": "017aab947",
+    "expectedCommitMessage": "fix: ignore deleted workflow artifacts in watcher",
+    "preCommitHead": "f4f2dfb9e",
     "stage": "commit_pending",
-    "taskId": "phase117.stream1.task1"
+    "taskId": "phase119.stream1.task1"
   }
 }
 ```
@@ -999,12 +999,28 @@
 
 ### Stream: Release Package
 371. [DONE] `phase117.stream1.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.374 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear rehydrate release`). Result: Release 1.2.374 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.374.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-372. [PENDING] Git Commit: `chore: build clear rehydrate release` (hash: TBD)
+372. [DONE] Git Commit: `chore: build clear rehydrate release` (hash: f4f2dfb9e)
 
 ## Phase 118 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-373. [TODO] `phase118.stream1.task1` User installs release 1.2.374 and verifies provider-home runtime changes no longer dirty workflow Git, Clear preserves workspace settings/provider config, and Project Manager shows restored Description/Virtual Simulation sessions immediately after Clear without manual Restart Core (scope: user workflow acceptance; expected commit: no commit expected).
+373. [DONE] `phase118.stream1.task1` User installs release 1.2.374 and verifies provider-home runtime changes no longer dirty workflow Git, Clear preserves workspace settings/provider config, and Project Manager shows restored Description/Virtual Simulation sessions immediately after Clear without manual Restart Core (scope: user workflow acceptance; expected commit: no commit expected). Result: Visual Project Manager state after clearing Application Skeleton and Diagram Modules is correct, but Git invariant failed: `workflow/state.json` was rewritten after Clear with stale `lastActive.stage = "diagram_modules"` pointing at a removed artifact, leaving the workspace dirty.
+
+## Phase 119 - Workflow Watcher Clear Deletion Regression (owner: Codex, updated: 2026-05-26)
+
+### Stream: Deleted Artifact Events
+374. [DONE] `phase119.stream1.task1` Prevent filesystem deletion events produced by Git Clear rollback from being treated as workflow artifact writes, so Clear cannot rewrite `workflow/state.json` to a removed downstream artifact after the clear commit (scope: `packages/core/src/workflow/watcher/workflow-watcher.ts, packages/core/src/workflow/watcher/workflow-watcher.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore deleted workflow artifacts in watcher`).
+375. [PENDING] Git Commit: `fix: ignore deleted workflow artifacts in watcher` (hash: TBD)
+
+## Phase 120 - Regression Verification (owner: Codex, updated: 2026-05-26)
+
+### Stream: Clear Watcher Checks
+376. [TODO] `phase120.stream1.task1` Run focused watcher/runtime/boundary tests plus Core build and plan validation proving deleted downstream artifacts do not dirty workflow Git state after Clear (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 121 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+
+### Stream: Release Gate
+377. [TODO] `phase121.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX for the watcher deletion hotfix (scope: release gate; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
