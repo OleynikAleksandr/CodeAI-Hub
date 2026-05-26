@@ -58,7 +58,7 @@ test("workspace runtime gitignore keeps rollback state trackable", () => {
   );
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
-      "runtime/providers/**/home/sessions/"
+      "runtime/providers/**/home/"
     ),
     true
   );
@@ -99,6 +99,22 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
     isWorkspaceRollbackIgnoredRuntimePath({
       capsule,
       relativePath:
+        ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/config.toml",
+    }),
+    true
+  );
+  assert.equal(
+    isWorkspaceRollbackIgnoredRuntimePath({
+      capsule,
+      relativePath:
+        ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/skills/.system/imagegen/SKILL.md",
+    }),
+    true
+  );
+  assert.equal(
+    isWorkspaceRollbackIgnoredRuntimePath({
+      capsule,
+      relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/sessions/2026/05/26/session.jsonl",
     }),
     true
@@ -124,6 +140,14 @@ test("workspace rollback ignore untracks legacy mutable runtime files", async ()
       capsule.localizationRoot.relativePath,
       "cache",
       "browser-runtime-bootstrap.json"
+    ),
+    path.posix.join(capsule.providerHomes.codex.relativePath, "config.toml"),
+    path.posix.join(
+      capsule.providerHomes.codex.relativePath,
+      "skills",
+      ".system",
+      "imagegen",
+      "SKILL.md"
     ),
     path.posix.join(
       capsule.providerHomes.codex.relativePath,

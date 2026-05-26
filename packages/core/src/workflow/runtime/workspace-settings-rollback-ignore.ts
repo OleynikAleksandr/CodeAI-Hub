@@ -44,11 +44,11 @@ const isWorkspaceSettingsGitStatusEntry = (params: {
 }): boolean =>
   extractGitStatusPath(params.entry) === params.settingsFile.relativePath;
 
-const buildProviderNativeSessionRoots = (
+const buildProviderHomeRoots = (
   capsule: WorkspaceRuntimeCapsule
 ): readonly string[] =>
-  Object.values(capsule.providerHomes).map((providerHome) =>
-    path.posix.join(providerHome.relativePath, "sessions")
+  Object.values(capsule.providerHomes).map(
+    (providerHome) => providerHome.relativePath
   );
 
 const buildRollbackIgnoredRuntimeRoots = (
@@ -56,7 +56,7 @@ const buildRollbackIgnoredRuntimeRoots = (
 ): readonly string[] => [
   capsule.settingsRoot.relativePath,
   capsule.localizationRoot.relativePath,
-  ...buildProviderNativeSessionRoots(capsule),
+  ...buildProviderHomeRoots(capsule),
 ];
 
 export const isWorkspaceRollbackIgnoredRuntimePath = (params: {

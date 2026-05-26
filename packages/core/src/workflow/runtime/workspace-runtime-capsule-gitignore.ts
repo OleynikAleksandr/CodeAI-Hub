@@ -12,15 +12,12 @@ const TRACKED_RUNTIME_INTENT = [
   "!runtime/",
   "!runtime/sessions/",
   "!runtime/sessions/unified/",
-  "!runtime/providers/",
-  "!runtime/providers/*/",
-  "!runtime/providers/*/home/",
 ] as const;
 
 const WORKSPACE_OWNED_MUTABLE_PATTERNS = [
   "runtime/settings/",
   "runtime/localization/",
-  "runtime/providers/**/home/sessions/",
+  "runtime/providers/**/home/",
 ] as const;
 
 const SECRET_PATTERNS = [
@@ -64,7 +61,7 @@ const CACHE_PATTERNS = [
 export const WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT = [
   "# CodeAI Hub workspace runtime capsule",
   "# Core logical sessions are tracked by rollback snapshots.",
-  "# Workspace settings, localization runtime and provider-native session logs are mutable workspace state.",
+  "# Workspace settings, localization runtime and provider homes are mutable workspace state.",
   "# Secrets, credentials and caches are intentionally left outside Git.",
   "",
   ...TRACKED_RUNTIME_INTENT,

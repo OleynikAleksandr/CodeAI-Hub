@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "81afc4eb1",
+  "lastRecordedCommit": "631546304",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase106.stream2.task1",
-  "expectedCommitMessage": "fix: refresh workflow read-only projection in project manager",
+  "currentTaskId": "phase109.stream1.task1",
+  "expectedCommitMessage": "fix: ignore provider home runtime",
   "debt": {
-    "expectedCommitMessage": "fix: refresh workflow read-only projection in project manager",
-    "preCommitHead": "81afc4eb1",
+    "expectedCommitMessage": "fix: ignore provider home runtime",
+    "preCommitHead": "631546304",
     "stage": "commit_pending",
-    "taskId": "phase106.stream2.task1"
+    "taskId": "phase109.stream1.task1"
   }
 }
 ```
@@ -934,17 +934,43 @@
 
 ### Stream: Project Manager Snapshot Token
 352. [DONE] `phase106.stream2.task1` Include read-only boundary projection changes in the Project Manager workflow-state change token so the UI re-renders when Core clears or reapplies technical-stage read-only protection without a root timestamp change (scope: `src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts`; expected commit: `fix: refresh workflow read-only projection in project manager`).
-353. [PENDING] Git Commit: `fix: refresh workflow read-only projection in project manager` (hash: TBD)
+353. [DONE] Git Commit: `fix: refresh workflow read-only projection in project manager` (hash: 631546304)
 
 ## Phase 107 - Regression Verification (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Clear Rollback Checks
-354. [TODO] `phase107.stream1.task1` Run focused Core and Project Manager tests/builds for Clear rollback projection, read-only boundary refresh, and repeat Description/Virtual Simulation starts after clearing downstream state (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+354. [DONE] `phase107.stream1.task1` Run focused Core and Project Manager tests/builds for Clear rollback projection, read-only boundary refresh, and repeat Description/Virtual Simulation starts after clearing downstream state (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification passed: Core workflow-state/Clear regression tests 17/17, Project Manager workflow token/start/read-only tests 17/17, `npm run build --workspace @codeai-hub/core`, `npm run build:project-manager`, `npm run typecheck:webview`, and `npm run plan:validate`.
 
 ## Phase 108 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
 ### Stream: Release Gate
-355. [TODO] `phase108.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX for the Clear rollback projection fix (scope: release gate; expected commit: no commit expected).
+355. [DONE] `phase108.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX for the Clear rollback projection fix (scope: release gate; expected commit: no commit expected). Result: Release build deferred because user retest inspection found provider-home runtime files already tracked in the workspace Git history, including mutable Codex `config.toml`, provider skills, installation ids and Claude runtime/cache files.
+
+## Phase 109 - Provider Home Runtime Git Pollution (owner: Codex, updated: 2026-05-26)
+
+### Stream: Runtime Ignore Contract
+356. [DONE] `phase109.stream1.task1` Treat complete provider home directories as rollback-ignored mutable runtime while keeping Core logical unified sessions trackable, update the capsule `.gitignore` contract, shared classifier and focused runtime contract tests (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore provider home runtime`).
+357. [PENDING] Git Commit: `fix: ignore provider home runtime` (hash: TBD)
+
+### Stream: Boundary Regression Coverage
+358. [TODO] `phase109.stream2.task1` Prove boundary/accepted-step flows untrack legacy provider-home files and do not leave provider runtime config changes visible in workflow Git status (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `test: cover provider home runtime untracking`).
+359. [TODO] Git Commit: `test: cover provider home runtime untracking` (hash: TBD)
+
+## Phase 110 - Architecture Documentation (owner: Codex, updated: 2026-05-26)
+
+### Stream: SSOT Sync
+360. [TODO] `phase110.stream1.task1` Document that provider homes are mutable workspace runtime outside rollback history; only provider-neutral Core logical session records under `runtime/sessions/unified/**` remain rollback-owned (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document provider home rollback ignore`).
+361. [TODO] Git Commit: `docs: document provider home rollback ignore` (hash: TBD)
+
+## Phase 111 - Regression Verification (owner: Codex, updated: 2026-05-26)
+
+### Stream: Provider Home Git Checks
+362. [TODO] `phase111.stream1.task1` Run focused runtime/boundary tests plus Core and Project Manager builds/typechecks to verify provider-home runtime no longer pollutes workflow Git while Description/Virtual Simulation session surfaces still work after Clear (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 112 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+
+### Stream: Release Gate
+363. [TODO] `phase112.stream1.task1` After provider-home regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX (scope: release gate; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
