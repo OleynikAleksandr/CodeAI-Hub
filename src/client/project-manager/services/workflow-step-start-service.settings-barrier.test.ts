@@ -216,3 +216,41 @@ test("workflow starts load workspace settings before persisting selected default
   assert.deepEqual(savedModels, ["opus:/tmp/demo:demo-workspace"]);
   assert.equal(sessionId, "ru:ru");
 });
+
+test("workflow settings transport accepts only matching workspace settings events", async () => {
+  installWindowStub();
+  const { isSettingsEventForScope } = await import(
+    "./workflow-step-settings-transport"
+  );
+  const scope = {
+    workspacePath: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+  };
+
+  assert.equal(
+    isSettingsEventForScope({ settings: createSettings() }, scope),
+    false
+  );
+  assert.equal(
+    isSettingsEventForScope(
+      {
+        settings: createSettings(),
+        workspacePath: "/tmp/other",
+        workspaceSlug: "demo-workspace",
+      },
+      scope
+    ),
+    false
+  );
+  assert.equal(
+    isSettingsEventForScope(
+      {
+        settings: createSettings(),
+        workspacePath: "/tmp/demo",
+        workspaceSlug: "demo-workspace",
+      },
+      scope
+    ),
+    true
+  );
+});

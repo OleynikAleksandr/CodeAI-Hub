@@ -6,6 +6,7 @@ import type { WorkspaceSettingsScopePayload } from "./project-manager-settings-c
 const SETTINGS_IO_TIMEOUT_MS = 5_000;
 
 type WorkflowSettingsScope = WorkspaceSettingsScopePayload;
+type ScopedSettingsPayload = SettingsLoadedPayload & WorkspaceSettingsScopePayload;
 
 export type WorkflowSettingsLoader = (
   scope: WorkflowSettingsScope
@@ -15,6 +16,19 @@ export type WorkflowSettingsSaver = (
   settings: Settings,
   scope: WorkflowSettingsScope
 ) => Promise<void> | void;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+export const isSettingsEventForScope = (
+  payload: unknown,
+  scope: WorkflowSettingsScope
+): payload is ScopedSettingsPayload =>
+  typeof scope.workspacePath === "string" &&
+  typeof scope.workspaceSlug === "string" &&
+  isRecord(payload) &&
+  payload.workspacePath === scope.workspacePath &&
+  payload.workspaceSlug === scope.workspaceSlug;
 
 export const loadWorkflowSettingsPayload: WorkflowSettingsLoader = (scope) =>
   new Promise((resolve, reject) => {
@@ -35,8 +49,11 @@ export const loadWorkflowSettingsPayload: WorkflowSettingsLoader = (scope) =>
       if (message.type !== "settings:loaded") {
         return;
       }
+      if (!isSettingsEventForScope(message.payload, scope)) {
+        return;
+      }
       cleanup();
-      resolve(message.payload as SettingsLoadedPayload);
+      resolve(message.payload);
     });
     api.loadSettings(scope);
   });
@@ -61,11 +78,17 @@ export const saveWorkflowSettingsAndWait: WorkflowSettingsSaver = (
     }, SETTINGS_IO_TIMEOUT_MS);
     const unsubscribe = api.onCoreEvent((message) => {
       if (message.type === "settings:saved") {
+        if (!isSettingsEventForScope(message.payload, scope)) {
+          return;
+        }
         cleanup();
         resolve();
         return;
       }
       if (message.type === "settings:save-error") {
+        if (!isSettingsEventForScope(message.payload, scope)) {
+          return;
+        }
         cleanup();
         const payload = message.payload;
         const error =
