@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.369] - 2026-05-26
+### Fixed
+- **Project Manager localization follows the active workspace settings scope.** Project Manager no longer issues an unscoped settings load during websocket startup, and the shell settings hook now accepts the active workspace-scoped settings payload so UI/help localization reads the selected workspace runtime instead of fallback defaults.
+- **Settings commands no longer create fallback localization capsules.** User glossary opening now carries the active workspace scope through the remote bridge, preventing accidental writes under full-path slug folders such as `.codeai-hub/users-.../runtime/localization`.
+- **Workspace slug derivation is covered for spaced project paths.** Regression coverage now locks the expected `codeai-hub-codex-5-4` slug for `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4` and verifies localization/glossary paths stay inside that active workspace capsule.
+
+### Tests
+- `node --import tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts src/client/project-manager/services/workspace-settings-payload-hook.test.ts src/client/project-manager/services/workflow-step-settings-transport.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts packages/localization/src/localization-runtime-bootstrap-store.test.ts packages/localization/src/localization-materializer.test.ts`
+- `npm run build --workspace @codeai-hub/localization`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.368] - 2026-05-26
 ### Fixed
 - **Project Manager localization sync uses the active workspace slug.** Settings save/reset/load now create Core localization runtime facades from the same `workspaceRoot` and `workspaceSlug` scope used by the workspace settings file, preventing localization bundles from being written to sibling slug folders such as `.codeai-hub/users-.../runtime/localization`.

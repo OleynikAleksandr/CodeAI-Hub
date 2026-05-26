@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "1fdc0754f",
+  "lastRecordedCommit": "b3ba1a1a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase79.stream3.task1",
-  "expectedCommitMessage": "test: cover project manager workspace localization scope",
+  "currentTaskId": "phase82.stream1.task1",
+  "expectedCommitMessage": "docs: prepare project manager localization scope release",
   "debt": {
-    "expectedCommitMessage": "test: cover project manager workspace localization scope",
-    "preCommitHead": "1fdc0754f",
+    "expectedCommitMessage": "docs: prepare project manager localization scope release",
+    "preCommitHead": "b3ba1a1a7",
     "stage": "commit_pending",
-    "taskId": "phase79.stream3.task1"
+    "taskId": "phase82.stream1.task1"
   }
 }
 ```
@@ -739,23 +739,23 @@
 
 ### Stream: Bootstrap Scope Regression Coverage
 289. [DONE] `phase79.stream3.task1` Add focused regression coverage for the active workspace settings/localization path and the wrong `users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` fallback slug scenario (scope: `src/client/project-manager/components/settings/use-project-manager-settings.test.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts`; expected commit: `test: cover project manager workspace localization scope`).
-290. [PENDING] Git Commit: `test: cover project manager workspace localization scope` (hash: TBD)
+290. [DONE] Git Commit: `test: cover project manager workspace localization scope` (hash: b3ba1a1a7)
 
 ## Phase 80 - Regression Verification (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Settings And Localization Verification
-291. [TODO] `phase80.stream1.task1` Re-run focused Project Manager settings tests, Core settings/localization runtime tests, workspace runtime capsule tests, and targeted Project Manager/Core/localization builds before release docs (scope: `src/client/project-manager, packages/core, packages/localization`; expected commit: no commit expected). Result: TBD.
+291. [DONE] `phase80.stream1.task1` Re-run focused Project Manager settings tests, Core settings/localization runtime tests, workspace runtime capsule tests, and targeted Project Manager/Core/localization builds before release docs (scope: `src/client/project-manager, packages/core, packages/localization`; expected commit: no commit expected). Result: Verification passed: 27 focused settings/localization regression tests, @codeai-hub/localization build, @codeai-hub/core build, build:project-manager, typecheck:webview, and build:webview all succeeded for the Project Manager workspace localization scope fix.
 
 ## Phase 81 - Release Build Confirmation (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Release Confirmation Gate
-292. [TODO] `phase81.stream1.task1` Record the user's explicit 2026-05-26 request to fix the Project Manager localization scope regression and build the next release after verification (scope: release gate; expected commit: no commit expected). Result: TBD.
+292. [DONE] `phase81.stream1.task1` Record the user's explicit 2026-05-26 request to fix the Project Manager localization scope regression and build the next release after verification (scope: release gate; expected commit: no commit expected). Result: Release build is explicitly authorized by the user request on 2026-05-26: fix the Project Manager localization scope regression and build the next release after verification.
 
 ## Phase 82 - Release Build (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Release Docs
-293. [TODO] `phase82.stream1.task1` Update release-facing docs for version 1.2.369 before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare project manager localization scope release`).
-294. [TODO] Git Commit: `docs: prepare project manager localization scope release` (hash: TBD)
+293. [DONE] `phase82.stream1.task1` Update release-facing docs for version 1.2.369 before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare project manager localization scope release`).
+294. [PENDING] Git Commit: `docs: prepare project manager localization scope release` (hash: TBD)
 
 ### Stream: Release Build
 295. [TODO] `phase82.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Project Manager localization scope fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build project manager localization scope release`).
