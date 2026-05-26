@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "8e06a42e7",
+  "lastRecordedCommit": "200439133",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase68.stream1.task5",
-  "expectedCommitMessage": "fix: remove codex global settings fallbacks",
+  "currentTaskId": "phase68.stream3.task1",
+  "expectedCommitMessage": "fix: ignore legacy settings env path",
   "debt": {
-    "expectedCommitMessage": "fix: remove codex global settings fallbacks",
-    "preCommitHead": "8e06a42e7",
+    "expectedCommitMessage": "fix: ignore legacy settings env path",
+    "preCommitHead": "200439133",
     "stage": "commit_pending",
-    "taskId": "phase68.stream1.task5"
+    "taskId": "phase68.stream3.task1"
   }
 }
 ```
@@ -614,10 +614,17 @@
 240. [DONE] `phase68.stream1.task4` Fix focused settings broadcaster test types so the Core package build validates the regression coverage without unsafe runtime payload casts (scope: `packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.test.ts`; expected commit: `test: fix settings verification types`).
 241. [DONE] Git Commit: `test: fix settings verification types` (hash: 8e06a42e7)
 242. [DONE] `phase68.stream1.task5` Remove remaining Codex-side runtime fallbacks that read `~/.codeai-hub/settings/settings.json` when workspace settings env is absent; missing env now falls back to in-code defaults instead of the legacy global file (scope: `src/extension-module/settings/codex-provider-config-sync.ts, packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts, packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-applied-envelope.ts`; expected commit: `fix: remove codex global settings fallbacks`).
-243. [PENDING] Git Commit: `fix: remove codex global settings fallbacks` (hash: TBD)
+243. [DONE] Git Commit: `fix: remove codex global settings fallbacks` (hash: 200439133)
 
 ### Stream: Regression Verification
-244. [TODO] `phase68.stream2.task1` Run focused settings save/scope tests, Core build, Project Manager typecheck, settings reference scan, and then stop for explicit release build confirmation (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, src/extension-module/settings, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+244. [DONE] `phase68.stream2.task1` Run focused settings save/scope tests, Core build, Project Manager typecheck, settings reference scan, and then stop for explicit release build confirmation (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, src/extension-module/settings, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Focused settings tests, Codex AppServer build, Core build, Project Manager typecheck and settings scan were run; verification found one remaining legacy env guard risk, so a follow-up cleanup task was added before release confirmation.
+
+### Stream: Legacy Env Guard
+245. [DONE] `phase68.stream3.task1` Ignore legacy global settings env paths in Core config so inherited `CLAUDE_SETTINGS_PATH` cannot make `~/.codeai-hub/settings/settings.json` runtime truth, while preserving explicit non-legacy settings paths for tests and tools (scope: `packages/core/src/config/index.ts, packages/core/src/config/index.test.ts`; expected commit: `fix: ignore legacy settings env path`).
+246. [PENDING] Git Commit: `fix: ignore legacy settings env path` (hash: TBD)
+
+### Stream: Final Regression Verification
+247. [TODO] `phase68.stream4.task1` Re-run focused settings save/scope/config tests, Core build, Project Manager typecheck, Codex AppServer build, settings reference scan, plan validation, and then stop for explicit release build confirmation (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, src/extension-module/settings, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

@@ -47,6 +47,14 @@ const DEFAULT_PORT = 8080;
 const DEFAULT_GRACE_MS = 3_600_000;
 const MILLISECONDS_IN_MINUTE = 60_000;
 const DEFAULT_TEMPLATES_DIR = path.join(homedir(), ".codeai-hub", "templates");
+const LEGACY_GLOBAL_SETTINGS_FILE = path.join(
+  homedir(),
+  ".codeai-hub",
+  "settings",
+  "settings.json"
+);
+const LEGACY_GLOBAL_SETTINGS_FILE_TILDE =
+  "~/.codeai-hub/settings/settings.json";
 const DEFAULT_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 50;
 const MIN_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 0;
 const MAX_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 100;
@@ -82,6 +90,25 @@ const toBoolean = (value: string | undefined, fallback: boolean): boolean => {
   return BOOLEAN_TRUTHY.has(value.trim().toLowerCase());
 };
 
+const isLegacyGlobalSettingsPath = (value: string): boolean => {
+  const trimmedValue = value.trim();
+  return (
+    trimmedValue === LEGACY_GLOBAL_SETTINGS_FILE_TILDE ||
+    path.normalize(trimmedValue) === LEGACY_GLOBAL_SETTINGS_FILE
+  );
+};
+
+const resolveRuntimeSettingsPath = (
+  configuredPath: string | undefined,
+  fallbackPath: string
+): string => {
+  const trimmedPath = configuredPath?.trim();
+  if (!trimmedPath || isLegacyGlobalSettingsPath(trimmedPath)) {
+    return fallbackPath;
+  }
+  return trimmedPath;
+};
+
 export const loadConfig = (): CoreConfig => {
   const host = process.env.CORE_HOST ?? "127.0.0.1";
   const port = toNumber(process.env.CORE_PORT, DEFAULT_PORT);
@@ -104,8 +131,10 @@ export const loadConfig = (): CoreConfig => {
     workspaceSlug: slug,
   }).settingsFile.absolutePath;
   const codexWorkspacePath = process.env.CODEX_WORKSPACE_PATH ?? workspacePath;
-  const claudeSettingsPath =
-    process.env.CLAUDE_SETTINGS_PATH ?? defaultWorkspaceSettingsPath;
+  const claudeSettingsPath = resolveRuntimeSettingsPath(
+    process.env.CLAUDE_SETTINGS_PATH,
+    defaultWorkspaceSettingsPath
+  );
   const claudeDefaultModel = resolveClaudeDefaultModel(
     process.env.CLAUDE_DEFAULT_MODEL
   );
