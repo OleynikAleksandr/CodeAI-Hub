@@ -19,7 +19,12 @@ type HydratedState = {
   readonly sessions: readonly SessionRecord[];
 };
 
+type HydrateOptions = {
+  readonly force?: boolean;
+};
+
 const HYDRATE_THROTTLE_MS = 750;
+const WORKFLOW_CLEAR_EVENT = "pm:workflow-step:cleared";
 
 export const resolveProjectManagerCoreConfig = (): CoreBridgeConfig | null => {
   const httpUrl = api.getHttpUrl();
@@ -45,14 +50,21 @@ export const useProjectManagerCoreStatusHydrator = (params: {
   const hasSuccessfulHydrationRef = useRef(false);
   const lastHydrateAtRef = useRef(0);
   const hydrateInFlightRef = useRef<Promise<void> | null>(null);
+  const queuedHydrateConfigRef = useRef<CoreBridgeConfig | null>(null);
 
   const hydrateFromStatus = useCallback(
-    (config: CoreBridgeConfig) => {
+    (config: CoreBridgeConfig, options: HydrateOptions = {}) => {
       const now = Date.now();
-      if (now - lastHydrateAtRef.current < HYDRATE_THROTTLE_MS) {
+      if (
+        !options.force &&
+        now - lastHydrateAtRef.current < HYDRATE_THROTTLE_MS
+      ) {
         return;
       }
       if (hydrateInFlightRef.current) {
+        if (options.force) {
+          queuedHydrateConfigRef.current = config;
+        }
         return;
       }
       lastHydrateAtRef.current = now;
@@ -102,6 +114,12 @@ export const useProjectManagerCoreStatusHydrator = (params: {
         }
       })().finally(() => {
         hydrateInFlightRef.current = null;
+        const queuedConfig = queuedHydrateConfigRef.current;
+        queuedHydrateConfigRef.current = null;
+        if (queuedConfig) {
+          lastHydrateAtRef.current = 0;
+          hydrateFromStatus(queuedConfig, { force: true });
+        }
       });
     },
     [params.onHydrate, params.onSessionHistory]
@@ -127,8 +145,16 @@ export const useProjectManagerCoreStatusHydrator = (params: {
       }
       hydrateFromStatus(config);
     });
+    const handleWorkflowStepCleared = () => {
+      hydrateFromStatus(config, { force: true });
+    };
+    window.addEventListener(WORKFLOW_CLEAR_EVENT, handleWorkflowStepCleared);
 
     return () => {
+      window.removeEventListener(
+        WORKFLOW_CLEAR_EVENT,
+        handleWorkflowStepCleared
+      );
       unsubscribe();
     };
   }, [hydrateFromStatus]);

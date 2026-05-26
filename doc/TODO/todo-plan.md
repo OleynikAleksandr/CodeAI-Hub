@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "257d9fb8a",
+  "lastRecordedCommit": "d19881f65",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase110.stream1.task1",
-  "expectedCommitMessage": "docs: document provider home rollback ignore",
+  "currentTaskId": "phase112.stream1.task1",
+  "expectedCommitMessage": "fix: rehydrate project manager after workflow clear",
   "debt": {
-    "expectedCommitMessage": "docs: document provider home rollback ignore",
-    "preCommitHead": "257d9fb8a",
+    "expectedCommitMessage": "fix: rehydrate project manager after workflow clear",
+    "preCommitHead": "d19881f65",
     "stage": "commit_pending",
-    "taskId": "phase110.stream1.task1"
+    "taskId": "phase112.stream1.task1"
   }
 }
 ```
@@ -960,17 +960,34 @@
 
 ### Stream: SSOT Sync
 360. [DONE] `phase110.stream1.task1` Document that provider homes are mutable workspace runtime outside rollback history; only provider-neutral Core logical session records under `runtime/sessions/unified/**` remain rollback-owned (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document provider home rollback ignore`).
-361. [PENDING] Git Commit: `docs: document provider home rollback ignore` (hash: TBD)
+361. [DONE] Git Commit: `docs: document provider home rollback ignore` (hash: d19881f65)
 
-## Phase 111 - Regression Verification (owner: Codex, updated: 2026-05-26)
+## Phase 111 - Focused Provider-Home Checks (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Provider Home Git Checks
-362. [TODO] `phase111.stream1.task1` Run focused runtime/boundary tests plus Core and Project Manager builds/typechecks to verify provider-home runtime no longer pollutes workflow Git while Description/Virtual Simulation session surfaces still work after Clear (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+362. [DONE] `phase111.stream1.task1` Run focused runtime/boundary tests and plan validation for provider-home runtime exclusion before adding the follow-up Clear rehydrate scope (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Focused boundary and accepted-step provider-home tests passed, including legacy tracked provider config preservation across Clear rollback; plan validation passed. Broader Core/Project Manager verification is deferred until after the Clear rehydrate fix.
 
-## Phase 112 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+## Phase 112 - Clear Rehydrate Fix (owner: Codex, updated: 2026-05-26)
+
+### Stream: Project Manager Session Rehydrate
+363. [DONE] `phase112.stream1.task1` Refresh the Project Manager session/status hydration after workflow Clear so it follows the same filesystem-backed projection recovery path as a Core restart and does not leave stale read-only cards or hidden sessions (scope: `src/client/project-manager/components/sessions/status-hydrator.ts, src/client/project-manager/components/sessions/status-hydrator.test.ts`; expected commit: `fix: rehydrate project manager after workflow clear`).
+364. [PENDING] Git Commit: `fix: rehydrate project manager after workflow clear` (hash: TBD)
+
+## Phase 113 - Rehydrate Architecture Documentation (owner: Codex, updated: 2026-05-26)
+
+### Stream: SSOT Sync
+365. [TODO] `phase113.stream1.task1` Document that workflow Clear must trigger restart-equivalent Project Manager session/status rehydration from Core-owned filesystem state instead of relying on stale client memory (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md`; expected commit: `docs: document clear projection rehydrate`).
+366. [TODO] Git Commit: `docs: document clear projection rehydrate` (hash: TBD)
+
+## Phase 114 - Regression Verification (owner: Codex, updated: 2026-05-26)
+
+### Stream: Clear And Provider Home Checks
+367. [TODO] `phase114.stream1.task1` Run focused runtime/boundary tests plus Core and Project Manager builds/typechecks to verify provider-home runtime no longer pollutes workflow Git and Description/Virtual Simulation session surfaces rehydrate after Clear without restarting Core (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 115 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
 ### Stream: Release Gate
-363. [TODO] `phase112.stream1.task1` After provider-home regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX (scope: release gate; expected commit: no commit expected).
+368. [TODO] `phase115.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX (scope: release gate; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
