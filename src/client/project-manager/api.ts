@@ -130,23 +130,21 @@ class ProjectManagerApi {
   }
 
   listProjects(): void { this.send({ type: "projects:list" }); }
-  loadSettings(scope?: WorkspaceSettingsScopePayload): void { this.send({ type: "settings:load", payload: scope } as QueuedOutgoingMessage); }
+  loadSettings(scope?: WorkspaceSettingsScopePayload): void {
+    if (!(scope?.workspacePath && scope.workspaceSlug)) return;
+    this.send({ type: "settings:load", payload: scope } as QueuedOutgoingMessage);
+  }
   loadSettingsVersions(): void { this.send({ type: "settings:versions" }); }
   getLastSettingsPayload(): SettingsLoadedPayload | null { return this.lastSettingsPayload; }
   getLastSettingsSaveError(): string | null { return this.lastSettingsSaveError; }
   getLastSettingsVersionsPayload(): SettingsVersionsPayload | null { return this.lastSettingsVersionsPayload; }
-  getLastUserGlossaryFilePayload(): SettingsUserGlossaryFilePayload | null {
-    return this.lastUserGlossaryFilePayload;
-  }
+  getLastUserGlossaryFilePayload(): SettingsUserGlossaryFilePayload | null { return this.lastUserGlossaryFilePayload; }
 
   saveSettings(settings: unknown, scope?: WorkspaceSettingsScopePayload): void {
     this.lastSettingsSaveError = null;
     this.send({ type: "settings:save", payload: { ...scope, settings } } as QueuedOutgoingMessage);
   }
-  resetSettings(scope?: WorkspaceSettingsScopePayload): void {
-    this.lastSettingsSaveError = null;
-    this.send({ type: "settings:reset", payload: scope } as QueuedOutgoingMessage);
-  }
+  resetSettings(scope?: WorkspaceSettingsScopePayload): void { this.lastSettingsSaveError = null; this.send({ type: "settings:reset", payload: scope } as QueuedOutgoingMessage); }
   restartCore(): void {
     this.coreRestartTracker.requestRestart();
   }
@@ -492,7 +490,6 @@ class ProjectManagerApi {
       }
     });
     this.listProjects();
-    this.loadSettings();
     this.loadSettingsVersions();
   }
 }

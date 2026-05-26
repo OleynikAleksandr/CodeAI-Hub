@@ -80,6 +80,14 @@ const applySettingsPayload = (options: {
   setError(resolveSettingsPayloadError(payload));
 };
 
+const shouldApplySettingsPayload = (
+  payload: unknown,
+  settingsScope: WorkspaceSettingsScopePayload | undefined
+): boolean =>
+  settingsScope
+    ? isWorkspaceSettingsPayloadForScope(payload, settingsScope)
+    : true;
+
 export type UseProjectManagerSettingsResult = {
   readonly settings: Settings;
   readonly error: string | null;
@@ -149,7 +157,9 @@ export const useProjectManagerSettings = (
   );
 
   const reload = useCallback(() => {
-    api.loadSettings(settingsScope);
+    if (settingsScope) {
+      api.loadSettings(settingsScope);
+    }
   }, [settingsScope]);
 
   const reloadVersions = useCallback(() => {
@@ -220,9 +230,7 @@ export const useProjectManagerSettings = (
       switch (message.type) {
         case "settings:loaded":
         case "settings:saved": {
-          if (
-            !isWorkspaceSettingsPayloadForScope(message.payload, settingsScope)
-          ) {
+          if (!shouldApplySettingsPayload(message.payload, settingsScope)) {
             return;
           }
           applySettingsPayload({
@@ -237,9 +245,7 @@ export const useProjectManagerSettings = (
           return;
         }
         case "settings:save-error": {
-          if (
-            !isWorkspaceSettingsPayloadForScope(message.payload, settingsScope)
-          ) {
+          if (!shouldApplySettingsPayload(message.payload, settingsScope)) {
             return;
           }
           const payload = message.payload as SettingsSaveErrorPayload;
@@ -305,7 +311,9 @@ export const useProjectManagerSettings = (
         setSettings,
       });
     } else {
-      reload();
+      if (settingsScope) {
+        reload();
+      }
     }
     if (api.getLastSettingsVersionsPayload() === null) {
       reloadVersions();

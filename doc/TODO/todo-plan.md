@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "5c065cba9",
+  "lastRecordedCommit": "723298955",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase77.stream2.task1",
-  "expectedCommitMessage": "chore: build workspace localization slug release",
+  "currentTaskId": "phase79.stream1.task1",
+  "expectedCommitMessage": "fix: load project manager settings from active workspace",
   "debt": {
-    "expectedCommitMessage": "chore: build workspace localization slug release",
-    "preCommitHead": "5c065cba9",
+    "expectedCommitMessage": "fix: load project manager settings from active workspace",
+    "preCommitHead": "723298955",
     "stage": "commit_pending",
-    "taskId": "phase77.stream2.task1"
+    "taskId": "phase79.stream1.task1"
   }
 }
 ```
@@ -720,12 +720,51 @@
 
 ### Stream: Release Build
 282. [DONE] `phase77.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the workspace localization slug fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace localization slug release`). Result: Release `1.2.368` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.368.vsix` created at `4.2M`; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-283. [PENDING] Git Commit: `chore: build workspace localization slug release` (hash: TBD)
+283. [DONE] Git Commit: `chore: build workspace localization slug release` (hash: 723298955)
 
 ## Phase 78 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-284. [TODO] `phase78.stream1.task1` User installs release 1.2.368 and verifies Project Manager localization settings write/read bundles, metadata, browser bootstrap cache, and glossary under `.codeai-hub/codeai-hub-codex-5-4/runtime/localization` rather than the `users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` mismatch slug or global localization paths (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+284. [DONE] `phase78.stream1.task1` User installs release 1.2.368 and verifies Project Manager localization settings write/read bundles, metadata, browser bootstrap cache, and glossary under `.codeai-hub/codeai-hub-codex-5-4/runtime/localization` rather than the `users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` mismatch slug or global localization paths (scope: user workflow acceptance; expected commit: no commit expected). Result: Release 1.2.368 failed user retest: Project Manager and help text stayed English while Core still created the fallback full-path slug runtime ; investigation continues in Phase 79.
+
+## Phase 79 - Project Manager Workspace Localization Scope (owner: Codex, updated: 2026-05-26)
+
+### Stream: Active Workspace Settings Runtime
+285. [DONE] `phase79.stream1.task1` Make Project Manager load and apply settings/localization from the active workspace scope instead of the fallback unscoped runtime, and stop startup from issuing no-scope settings loads that create the full-path slug capsule (scope: `src/client/project-manager/api.ts, src/client/project-manager/components/settings/use-project-manager-settings.ts, src/client/project-manager/components/layout/workspace-scope-sync.ts`; expected commit: `fix: load project manager settings from active workspace`).
+286. [PENDING] Git Commit: `fix: load project manager settings from active workspace` (hash: TBD)
+
+### Stream: Scoped Settings Commands
+287. [TODO] `phase79.stream2.task1` Route Project Manager settings side commands, including user glossary open, through the same workspace scope so Core does not fall back to `claudeProjectSlug` or global/default localization roots (scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.ts, src/client/project-manager/api.ts`; expected commit: `fix: scope project manager settings commands`).
+288. [TODO] Git Commit: `fix: scope project manager settings commands` (hash: TBD)
+
+### Stream: Bootstrap Scope Regression Coverage
+289. [TODO] `phase79.stream3.task1` Add focused regression coverage for the active workspace settings/localization path and the wrong `users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` fallback slug scenario (scope: `src/client/project-manager/components/settings/use-project-manager-settings.test.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts`; expected commit: `test: cover project manager workspace localization scope`).
+290. [TODO] Git Commit: `test: cover project manager workspace localization scope` (hash: TBD)
+
+## Phase 80 - Regression Verification (owner: Codex, updated: 2026-05-26)
+
+### Stream: Settings And Localization Verification
+291. [TODO] `phase80.stream1.task1` Re-run focused Project Manager settings tests, Core settings/localization runtime tests, workspace runtime capsule tests, and targeted Project Manager/Core/localization builds before release docs (scope: `src/client/project-manager, packages/core, packages/localization`; expected commit: no commit expected). Result: TBD.
+
+## Phase 81 - Release Build Confirmation (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Confirmation Gate
+292. [TODO] `phase81.stream1.task1` Record the user's explicit 2026-05-26 request to fix the Project Manager localization scope regression and build the next release after verification (scope: release gate; expected commit: no commit expected). Result: TBD.
+
+## Phase 82 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Docs
+293. [TODO] `phase82.stream1.task1` Update release-facing docs for version 1.2.369 before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare project manager localization scope release`).
+294. [TODO] Git Commit: `docs: prepare project manager localization scope release` (hash: TBD)
+
+### Stream: Release Build
+295. [TODO] `phase82.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Project Manager localization scope fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build project manager localization scope release`).
+296. [TODO] Git Commit: `chore: build project manager localization scope release` (hash: TBD)
+
+## Phase 83 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+297. [TODO] `phase83.stream1.task1` User installs release 1.2.369 and verifies Project Manager help/settings localization loads from `.codeai-hub/codeai-hub-codex-5-4/runtime/localization`, no new `.codeai-hub/users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` runtime capsule is created, and workspace settings remain scoped to `.codeai-hub/codeai-hub-codex-5-4/runtime/settings/settings.json` (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

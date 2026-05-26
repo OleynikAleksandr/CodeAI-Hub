@@ -44,6 +44,12 @@ const syncWorkspaceSelection = async (params: {
   });
   if (ack && ack.status === "applied") {
     workspaceSnapshotStore.applySelectAck(ack);
+    if (params.workspace && ack.workspaceRoot === params.workspace.path) {
+      api.loadSettings({
+        workspacePath: params.workspace.path,
+        workspaceSlug: params.workspace.slug,
+      });
+    }
     if (ack.workspaceRoot) {
       api.requestWorkspaceSnapshot({
         requestId: createWorkspaceSelectRequestId(),
