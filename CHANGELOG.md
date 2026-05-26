@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.373] - 2026-05-26
+### Fixed
+- **Workspace localization runtime no longer dirties workflow Git history.** The runtime capsule now ignores `.codeai-hub/<workspaceSlug>/runtime/localization/**`, updates existing capsule `.gitignore` files, and migrates legacy tracked localization files out of the Git index without deleting the active workspace localization cache.
+- **Provider-native session logs are rollback-ignored live runtime.** Provider session logs under `.codeai-hub/<workspaceSlug>/runtime/providers/**/home/sessions/**` are preserved as workspace runtime diagnostics but are removed from accepted-step/Clear commits and legacy indexes.
+- **Clear/Undo keeps rollback truth focused on Core-owned artifacts.** Settings, localization runtime, and provider-native logs stay live and untracked, while Core logical sessions, applied config/model binding, and accepted workflow artifacts remain the reproducibility and rollback proof.
+
+### Tests
+- `node --test --import tsx packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test --import tsx src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.372] - 2026-05-26
 ### Fixed
 - **Workspace settings are no longer part of workflow Clear/Undo rollback.** The runtime capsule now ignores `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`, updates existing capsule `.gitignore` files, and migrates legacy tracked settings out of the Git index without deleting the workspace settings file.

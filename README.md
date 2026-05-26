@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.372** (Rollback-Ignored Workspace Settings Hotfix)
+**Current Release — v1.2.373** (Rollback-Ignored Mutable Runtime Hotfix)
+
+This hotfix extends the rollback-ignored workspace runtime contract beyond
+settings. Project Manager localization bundles/cache and provider-native
+session logs now remain workspace-owned live runtime state without being added
+to workflow Clear/Undo Git history.
+
+Core updates existing workspace capsule `.gitignore` files, untracks legacy
+committed settings/localization/provider-native session entries, and keeps
+accepted-step and Clear commits clean while preserving the live workspace
+runtime files. Workflow rollback truth stays in Core logical sessions,
+`Session.modelBinding`, applied turn config, and accepted workflow artifacts.
+
+**Previous Release — v1.2.372** (Rollback-Ignored Workspace Settings Hotfix)
 
 This hotfix keeps Project Manager/workflow settings as workspace-owned live
 state while removing `runtime/settings/settings.json` from workflow Clear/Undo

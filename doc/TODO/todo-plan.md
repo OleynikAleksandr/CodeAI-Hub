@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "d9a4f611a",
+  "lastRecordedCommit": "b79f30ef9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase101.stream1.task1",
-  "expectedCommitMessage": "docs: document rollback ignored runtime paths",
+  "currentTaskId": "phase104.stream1.task1",
+  "expectedCommitMessage": "docs: prepare mutable runtime git pollution release",
   "debt": {
-    "expectedCommitMessage": "docs: document rollback ignored runtime paths",
-    "preCommitHead": "d9a4f611a",
+    "expectedCommitMessage": "docs: prepare mutable runtime git pollution release",
+    "preCommitHead": "b79f30ef9",
     "stage": "commit_pending",
-    "taskId": "phase101.stream1.task1"
+    "taskId": "phase104.stream1.task1"
   }
 }
 ```
@@ -899,17 +899,32 @@
 
 ### Stream: SSOT Sync
 341. [DONE] `phase101.stream1.task1` Document that provider-native session logs and localization runtime cache are mutable workspace runtime outside Clear/Undo rollback truth, while Core logical sessions and accepted artifacts remain rollback-owned (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document rollback ignored runtime paths`). Result: System architecture, workflow overview and rollback architecture plan now state that workspace settings, workspace localization runtime and provider-native `home/sessions/**` logs are workspace-owned but rollback-ignored/legacy-untracked, while Core logical sessions, applied config/model binding and accepted artifacts remain the reproducibility and rollback proof. The planning doc now treats global localization as seed/compat only, not Project Manager runtime truth.
-342. [PENDING] Git Commit: `docs: document rollback ignored runtime paths` (hash: TBD)
+342. [DONE] Git Commit: `docs: document rollback ignored runtime paths` (hash: b79f30ef9)
 
 ## Phase 102 - Verification (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Focused Runtime Checks
-343. [TODO] `phase102.stream1.task1` Run focused Core runtime/boundary tests plus Project Manager build/typecheck for the start barrier and mutable runtime Git pollution fixes (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+343. [DONE] `phase102.stream1.task1` Run focused Core runtime/boundary tests plus Project Manager build/typecheck for the start barrier and mutable runtime Git pollution fixes (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Focused runtime verification passed: Core runtime/boundary tests 17/17, Project Manager workflow start tests 11/11, @codeai-hub/core build, build:project-manager and typecheck:webview all completed successfully.
 
 ## Phase 103 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
 ### Stream: Release Gate
-344. [TODO] `phase103.stream1.task1` Await explicit user confirmation before preparing release docs or building the next release after mutable runtime Git pollution verification (scope: release gate; expected commit: no commit expected).
+344. [DONE] `phase103.stream1.task1` Await explicit user confirmation before preparing release docs or building the next release after mutable runtime Git pollution verification (scope: release gate; expected commit: no commit expected). Result: Release build explicitly confirmed by user on 2026-05-26: fix is verified and the next release should be built now.
+
+## Phase 104 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Docs
+345. [DONE] `phase104.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare mutable runtime git pollution release`). Result: Prepared release-facing documentation for v1.2.373, documenting rollback-ignored workspace localization runtime and provider-native session logs while keeping Core logical sessions, applied config/model binding and accepted artifacts as rollback/reproducibility proof.
+346. [PENDING] Git Commit: `docs: prepare mutable runtime git pollution release` (hash: TBD)
+
+### Stream: Release Build
+347. [TODO] `phase104.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the mutable runtime Git pollution fix (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build mutable runtime git pollution release`).
+348. [TODO] Git Commit: `chore: build mutable runtime git pollution release` (hash: TBD)
+
+## Phase 105 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+349. [TODO] `phase105.stream1.task1` User installs the generated VSIX and verifies Clear/Undo no longer leaves settings, localization runtime, or provider-native session logs as Git-visible changes, while settings/localization still persist in the active workspace runtime (scope: user workflow acceptance; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
