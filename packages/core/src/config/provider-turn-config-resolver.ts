@@ -360,7 +360,7 @@ const buildResolvedProviderConfigRegistry = (resolved: {
   },
 });
 
-export const resolveProviderTurnConfig = (
+const resolveProviderTurnConfig = (
   options: ProviderTurnConfigResolverOptions
 ): ResolvedProviderTurnConfig => {
   const claude = resolveClaudeTurnConfig(options);

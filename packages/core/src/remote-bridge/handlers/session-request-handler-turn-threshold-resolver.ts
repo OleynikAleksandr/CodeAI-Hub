@@ -74,6 +74,7 @@ export class SessionRequestHandlerTurnThresholdResolver {
   private readonly config: CoreConfig;
   private settingsCache: {
     readonly mtimeMs: number;
+    readonly settingsPath: string;
     readonly settings: unknown;
   } | null = null;
 
@@ -85,7 +86,9 @@ export class SessionRequestHandlerTurnThresholdResolver {
     session: Session
   ): Promise<number> {
     const providerKey = this.resolveSettingsProviderKey(session.providerId);
-    const settings = await this.loadContinuitySettingsSnapshot();
+    const settings = await this.loadContinuitySettingsSnapshot(
+      session.modelBinding?.settingsPath
+    );
     return extractContinuityThresholdPercentFromSettings({
       settings,
       providerKey,
@@ -107,18 +110,27 @@ export class SessionRequestHandlerTurnThresholdResolver {
     return "claude";
   }
 
-  private async loadContinuitySettingsSnapshot(): Promise<unknown> {
-    const settingsPath = this.config.claudeSettingsPath;
+  private async loadContinuitySettingsSnapshot(
+    settingsPath: string | undefined
+  ): Promise<unknown> {
+    if (!settingsPath) {
+      return null;
+    }
+
     try {
       const fileStat = await stat(settingsPath);
       const mtimeMs = fileStat.mtimeMs;
-      if (this.settingsCache && this.settingsCache.mtimeMs === mtimeMs) {
+      if (
+        this.settingsCache &&
+        this.settingsCache.settingsPath === settingsPath &&
+        this.settingsCache.mtimeMs === mtimeMs
+      ) {
         return this.settingsCache.settings;
       }
 
       const raw = await readFile(settingsPath, "utf8");
       const parsed = JSON.parse(raw) as unknown;
-      this.settingsCache = { mtimeMs, settings: parsed };
+      this.settingsCache = { mtimeMs, settings: parsed, settingsPath };
       return parsed;
     } catch {
       return null;

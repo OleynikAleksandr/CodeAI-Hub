@@ -185,13 +185,6 @@ export const loadClaudeProviderSettingsSnapshot = (
   };
 };
 
-export const loadClaudeSettingsSnapshot = (
-  settingsPath: string
-): ClaudeSettingsSnapshot | null => {
-  const parsed = loadJsonSnapshot(settingsPath);
-  return parsed ? (parsed as ClaudeSettingsSnapshot) : null;
-};
-
 export const loadUITranslationEngineId = (settingsPath: string): string => {
   const parsed = loadJsonSnapshot(settingsPath);
   if (!parsed) {

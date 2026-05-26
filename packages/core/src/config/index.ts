@@ -6,13 +6,12 @@ import {
   type CodexSandboxMode,
   DEFAULT_CODEX_MODEL_ID,
   DEFAULT_CODEX_REASONING_EFFORT,
+  normalizeCodexReasoningEffort,
   resolveClaudeContinuityRemainingPercentThreshold,
   resolveClaudeDefaultModel,
   toApprovalMode,
   toSandboxMode,
 } from "./provider-defaults-resolver";
-import { loadClaudeSettingsSnapshot } from "./provider-settings-snapshot";
-import { resolveProviderTurnConfig } from "./provider-turn-config-resolver";
 
 export { resolvePreferredCodexDefaultModel } from "./provider-defaults-resolver";
 
@@ -49,12 +48,6 @@ const MILLISECONDS_IN_MINUTE = 60_000;
 const DEFAULT_TEMPLATES_DIR = path.join(homedir(), ".codeai-hub", "templates");
 const CLAUDE_SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
 const CLAUDE_SETTINGS_FILE = path.join(CLAUDE_SETTINGS_DIR, "settings.json");
-const CODEX_SETTINGS_PATH = path.join(
-  homedir(),
-  ".codeai-hub",
-  "settings",
-  "settings.json"
-);
 const DEFAULT_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 50;
 const MIN_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 0;
 const MAX_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 100;
@@ -119,32 +112,23 @@ export const loadConfig = (): CoreConfig => {
     process.env.CODEX_SKIP_GIT_REPO_CHECK,
     false
   );
-  const providerTurnConfig = resolveProviderTurnConfig({
-    settingsPath: CODEX_SETTINGS_PATH,
-    env: process.env,
-    fallbackClaudeModel: claudeDefaultModel,
-    fallbackCodexModel: DEFAULT_CODEX_MODEL_ID,
-    fallbackCodexReasoningEffort: DEFAULT_CODEX_REASONING_EFFORT,
-    fallbackGeminiModel: process.env.GEMINI_DEFAULT_MODEL ?? undefined,
-    fallbackKimiModel: process.env.KIMI_DEFAULT_MODEL ?? undefined,
-  });
-  const codexDefaultModel = providerTurnConfig.codex.defaultModel;
+  const codexDefaultModel =
+    process.env.CODEX_DEFAULT_MODEL?.trim() || DEFAULT_CODEX_MODEL_ID;
   const codexDefaultReasoningEffort =
-    providerTurnConfig.codex.defaultReasoningEffort;
+    normalizeCodexReasoningEffort(process.env.CODEX_DEFAULT_REASONING_EFFORT) ??
+    DEFAULT_CODEX_REASONING_EFFORT;
   const geminiWorkspacePath =
     process.env.GEMINI_WORKSPACE_PATH ?? workspacePath;
-  const geminiDefaultModel = providerTurnConfig.gemini.defaultModel;
+  const geminiDefaultModel = process.env.GEMINI_DEFAULT_MODEL ?? undefined;
   const geminiSettingsPath = claudeSettingsPath;
   const geminiCredentialsDirectory =
     process.env.GEMINI_CREDENTIALS_DIRECTORY ??
     process.env.GEMINI_CREDENTIALS_DIR ??
     undefined;
-  const geminiThinkingLevelByModel =
-    providerTurnConfig.gemini.thinkingLevelByModel;
-  const kimiDefaultModel = providerTurnConfig.kimi.defaultModel;
-  const claudeSettings = loadClaudeSettingsSnapshot(claudeSettingsPath);
+  const geminiThinkingLevelByModel = {};
+  const kimiDefaultModel = process.env.KIMI_DEFAULT_MODEL ?? undefined;
   const claudeContinuityRemainingPercentThreshold =
-    resolveClaudeContinuityRemainingPercentThreshold(claudeSettings);
+    resolveClaudeContinuityRemainingPercentThreshold(null);
   const continuityPreemptRemainingPercentThreshold = Math.min(
     MAX_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD,
     Math.max(
