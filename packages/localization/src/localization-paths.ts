@@ -14,19 +14,40 @@ export interface LocalizationPaths {
   readonly rootDirectory: string;
 }
 
+export interface LocalizationPathOptions {
+  readonly homeDirectory?: string;
+  readonly rootDirectory?: string;
+}
+
+export type LocalizationPathScope = string | LocalizationPathOptions;
+
 const normalizeLanguage = (value: string): string => {
   const trimmed = value.trim().toLowerCase();
   return trimmed.length > 0 ? trimmed : DEFAULT_LOCALIZATION_SOURCE_LANGUAGE;
 };
 
+const normalizeRootDirectory = (value: string | undefined): string | null => {
+  const trimmed = value?.trim();
+  return trimmed ? path.resolve(trimmed) : null;
+};
+
 export const resolveLocalizationRootDirectory = (
-  homeDirectory = homedir()
-): string => path.join(homeDirectory, ".codeai-hub", "localization");
+  scope: LocalizationPathScope = homedir()
+): string => {
+  if (typeof scope === "string") {
+    return path.join(scope, ".codeai-hub", "localization");
+  }
+
+  return (
+    normalizeRootDirectory(scope.rootDirectory) ??
+    path.join(scope.homeDirectory ?? homedir(), ".codeai-hub", "localization")
+  );
+};
 
 export const resolveLocalizationPaths = (
-  homeDirectory = homedir()
+  scope: LocalizationPathScope = homedir()
 ): LocalizationPaths => {
-  const rootDirectory = resolveLocalizationRootDirectory(homeDirectory);
+  const rootDirectory = resolveLocalizationRootDirectory(scope);
   return {
     rootDirectory,
     catalogsDirectory: path.join(rootDirectory, "catalogs"),
@@ -43,19 +64,16 @@ export const resolveLocalizationPaths = (
 
 export const resolveLocalizationCatalogDirectory = (
   category: LocalizationCategoryId,
-  homeDirectory = homedir()
+  scope: LocalizationPathScope = homedir()
 ): string =>
-  path.join(
-    resolveLocalizationPaths(homeDirectory).catalogsDirectory,
-    category
-  );
+  path.join(resolveLocalizationPaths(scope).catalogsDirectory, category);
 
 export const resolveLocalizationBundlePath = (
   category: LocalizationCategoryId,
   language: string,
-  homeDirectory = homedir()
+  scope: LocalizationPathScope = homedir()
 ): string =>
   path.join(
-    resolveLocalizationCatalogDirectory(category, homeDirectory),
+    resolveLocalizationCatalogDirectory(category, scope),
     `${normalizeLanguage(language)}.json`
   );

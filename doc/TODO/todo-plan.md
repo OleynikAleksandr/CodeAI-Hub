@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "a520b41b0",
+  "lastRecordedCommit": "64cc85c02",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase70.stream2.task1",
-  "expectedCommitMessage": "chore: build settings save durability release",
+  "currentTaskId": "phase72.stream1.task1",
+  "expectedCommitMessage": "fix: scope localization bundle storage to workspace",
   "debt": {
-    "expectedCommitMessage": "chore: build settings save durability release",
-    "preCommitHead": "a520b41b0",
+    "expectedCommitMessage": "fix: scope localization bundle storage to workspace",
+    "preCommitHead": "64cc85c02",
     "stage": "commit_pending",
-    "taskId": "phase70.stream2.task1"
+    "taskId": "phase72.stream1.task1"
   }
 }
 ```
@@ -639,12 +639,27 @@
 
 ### Stream: Release Build
 251. [DONE] `phase70.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build settings save durability release`). Result: Release `1.2.366` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.366.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-252. [PENDING] Git Commit: `chore: build settings save durability release` (hash: TBD)
+252. [DONE] Git Commit: `chore: build settings save durability release` (hash: 64cc85c02)
 
 ## Phase 71 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-253. [TODO] `phase71.stream1.task1` User installs the generated VSIX and verifies Project Manager Settings changes persist to the active workspace runtime settings file before localization sync, stale workspace settings events are ignored, legacy global settings do not become runtime truth, and translation/localization settings apply from workspace settings (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+253. [DONE] `phase71.stream1.task1` User installs the generated VSIX and verifies Project Manager Settings changes persist to the active workspace runtime settings file before localization sync, stale workspace settings events are ignored, legacy global settings do not become runtime truth, and translation/localization settings apply from workspace settings (scope: user workflow acceptance; expected commit: no commit expected). Result: Failed release 1.2.366 retest: settings now persist, but localization bundles/cache are still written under ~/.codeai-hub/localization while the workspace runtime localization capsule stays empty; Project Manager therefore keeps English helper text when workspace localization settings request Russian helper categories.
+
+## Phase 72 - Workspace Localization Runtime Regression Fix (owner: Codex, updated: 2026-05-26)
+
+### Stream: Localization Runtime Storage
+254. [DONE] `phase72.stream1.task1` Make localization package bundle and metadata stores accept an explicit localization root so materialized catalogs and metadata can live inside the active workspace runtime localization capsule instead of `~/.codeai-hub/localization` (scope: `packages/localization/src/localization-paths.ts, packages/localization/src/localization-bundle-store.ts, packages/localization/src/localization-metadata-store.ts`; expected commit: `fix: scope localization bundle storage to workspace`).
+255. [PENDING] Git Commit: `fix: scope localization bundle storage to workspace` (hash: TBD)
+256. [TODO] `phase72.stream1.task2` Make LocalizationFacade and browser bootstrap cache use the same explicit localization root, including user glossary reads used by bundle cache keys (scope: `packages/localization/src/localization-contract.ts, packages/localization/src/localization-facade.ts, packages/localization/src/localization-runtime-bootstrap-store.ts`; expected commit: `fix: scope localization bootstrap cache to workspace`).
+257. [TODO] Git Commit: `fix: scope localization bootstrap cache to workspace` (hash: TBD)
+
+### Stream: Core Workspace Wiring
+258. [TODO] `phase72.stream2.task1` Wire Core localization facade creation and bootstrap HTTP reads to the active workspace runtime localization/settings capsule instead of global localization defaults or in-code settings defaults (scope: `packages/core/src/translation/core-localization-facade-factory.ts, packages/core/src/translation/core-localization-facade-factory.test.ts, packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit: `fix: use workspace localization runtime in core`).
+259. [TODO] Git Commit: `fix: use workspace localization runtime in core` (hash: TBD)
+
+### Stream: Regression Verification
+260. [TODO] `phase72.stream3.task1` Run focused localization storage/bootstrap tests, settings save/load tests, Core build, Project Manager typecheck, and scan for global localization runtime writes before requesting release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

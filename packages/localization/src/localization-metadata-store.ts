@@ -4,7 +4,10 @@ import {
   LOCALIZATION_CATEGORY_IDS,
   type LocalizationCategoryId,
 } from "./localization-contract";
-import { resolveLocalizationPaths } from "./localization-paths";
+import {
+  type LocalizationPathOptions,
+  resolveLocalizationPaths,
+} from "./localization-paths";
 
 export interface LocalizationBundleMetadataRecord {
   readonly category: LocalizationCategoryId;
@@ -19,6 +22,8 @@ export interface LocalizationMetadataRecord {
   readonly schemaVersion: 1;
   readonly updatedAt: string;
 }
+
+export type LocalizationMetadataStoreOptions = LocalizationPathOptions;
 
 const LOCALIZATION_METADATA_SCHEMA_VERSION = 1;
 
@@ -101,6 +106,12 @@ const parseMetadataRecord = (value: unknown): LocalizationMetadataRecord => {
 };
 
 export class LocalizationMetadataStore {
+  private readonly pathOptions: LocalizationMetadataStoreOptions;
+
+  constructor(options: LocalizationMetadataStoreOptions = {}) {
+    this.pathOptions = options;
+  }
+
   async getBundle(
     category: LocalizationCategoryId,
     language: string
@@ -112,7 +123,7 @@ export class LocalizationMetadataStore {
   async load(): Promise<LocalizationMetadataRecord> {
     try {
       const raw = await fs.readFile(
-        resolveLocalizationPaths().metadataFilePath,
+        resolveLocalizationPaths(this.pathOptions).metadataFilePath,
         "utf8"
       );
       return parseMetadataRecord(JSON.parse(raw) as unknown);
@@ -122,7 +133,9 @@ export class LocalizationMetadataStore {
   }
 
   async save(metadata: LocalizationMetadataRecord): Promise<void> {
-    const { metadataFilePath, rootDirectory } = resolveLocalizationPaths();
+    const { metadataFilePath, rootDirectory } = resolveLocalizationPaths(
+      this.pathOptions
+    );
     await fs.mkdir(rootDirectory, { recursive: true });
     await fs.writeFile(
       metadataFilePath,
