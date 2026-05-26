@@ -1,4 +1,12 @@
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { resolveWorkspaceRuntimeCapsule } from "../runtime/workspace-runtime-capsule";
+import { WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT } from "../runtime/workspace-runtime-capsule-gitignore";
+import {
+  readWorkspaceSettingsRollbackSnapshot,
+  restoreWorkspaceSettingsRollbackSnapshot,
+  untrackWorkspaceSettingsForRollback,
+} from "../runtime/workspace-settings-rollback-ignore";
 import type { WorkflowStageId } from "../watcher/watcher-types";
 import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 import {
@@ -39,6 +47,17 @@ const formatDirtyRollbackError = (paths: readonly string[]): string =>
 
 const defaultQuiesce = async (): Promise<void> => undefined;
 
+const writeCurrentRuntimeGitignore = async (params: {
+  readonly absolutePath: string;
+}): Promise<void> => {
+  await mkdir(path.dirname(params.absolutePath), { recursive: true });
+  await writeFile(
+    params.absolutePath,
+    WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT,
+    "utf8"
+  );
+};
+
 export class WorkflowRollbackCoordinator {
   readonly #git: WorkflowBoundaryGit;
   readonly #quiesce: (params: WorkflowRollbackQuiesceParams) => Promise<void>;
@@ -54,22 +73,38 @@ export class WorkflowRollbackCoordinator {
   async rollback(
     params: WorkflowRollbackCoordinatorParams
   ): Promise<WorkflowBoundaryRestoreResult> {
+    const capsule = resolveWorkspaceRuntimeCapsule(params);
     await this.#quiesce({
       boundaryHash: params.target.boundaryHash,
       stage: params.stage,
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
+    const settingsSnapshot = await readWorkspaceSettingsRollbackSnapshot(
+      capsule.settingsFile
+    );
     await this.#git.resetHard({
       hash: params.target.boundaryHash,
       workspaceRoot: params.workspaceRoot,
     });
     await this.#git.cleanWorktree({ workspaceRoot: params.workspaceRoot });
+    await writeCurrentRuntimeGitignore(capsule.gitignoreFile);
+    await restoreWorkspaceSettingsRollbackSnapshot({
+      settingsFile: capsule.settingsFile,
+      snapshot: settingsSnapshot,
+    });
+    await untrackWorkspaceSettingsForRollback({
+      settingsFile: capsule.settingsFile,
+      workspaceRoot: params.workspaceRoot,
+    });
     const projection = await this.rebuildProjection(params);
     const clearCommit = await this.#git.commit({
       allowEmpty: true,
       commitMessage: buildWorkflowClearCommitMessage(params.stage),
-      paths: [path.relative(params.workspaceRoot, projection.registryPath)],
+      paths: [
+        path.relative(params.workspaceRoot, projection.registryPath),
+        capsule.gitignoreFile.relativePath,
+      ],
       workspaceRoot: params.workspaceRoot,
     });
     await this.assertCleanWorktree(params.workspaceRoot);

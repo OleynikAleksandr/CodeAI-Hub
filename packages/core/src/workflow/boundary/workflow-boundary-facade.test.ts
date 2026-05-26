@@ -1,16 +1,23 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { promisify } from "node:util";
+import { resolveWorkspaceRuntimeCapsule } from "../runtime/workspace-runtime-capsule";
+import { WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT } from "../runtime/workspace-runtime-capsule-gitignore";
 import { WorkflowBoundaryFacade } from "./workflow-boundary-facade";
 import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 import { WorkflowBoundaryRegistryStore } from "./workflow-boundary-registry";
 import { WorkflowRollbackCoordinator } from "./workflow-rollback-coordinator";
 
+const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PRE_STEP_ROLLBACK_ANCHOR_RE = /pre-step rollback anchor/u;
 const DESCRIPTION_BOUNDARY_STAGE = "description";
+const SETTINGS_RELATIVE_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/settings\/settings\.json/u;
 
 const createWorkspace = async (): Promise<string> =>
   await mkdtemp(path.join(tmpdir(), "codeai-boundary-"));
@@ -18,6 +25,14 @@ const createWorkspace = async (): Promise<string> =>
 const writeText = async (filePath: string, content: string): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, content, "utf8");
+};
+
+const runGit = async (
+  workspaceRoot: string,
+  args: readonly string[]
+): Promise<string> => {
+  const { stdout } = await execFileAsync("git", args, { cwd: workspaceRoot });
+  return stdout.trim();
 };
 
 test("WorkflowBoundaryFacade restores selected stage boundary and prunes downstream registry", async () => {
@@ -163,6 +178,70 @@ test("WorkflowRollbackCoordinator quiesces before Git rollback and asserts clean
       readFile(path.join(workspaceRoot, "virtual.md"), "utf8")
     );
     assert.deepEqual(await git.statusPorcelain(workspaceRoot), []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("WorkflowRollbackCoordinator preserves current workspace settings outside Clear rollback", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    const capsule = resolveWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    const git = new WorkflowBoundaryGit();
+    await writeText(
+      capsule.gitignoreFile.absolutePath,
+      "# legacy runtime capsule\n"
+    );
+    await writeText(
+      capsule.settingsFile.absolutePath,
+      '{"general":{"localization":{"defaultLanguage":"en"}}}\n'
+    );
+    const boundaryCommit = await git.commit({
+      commitMessage: "codeai-boundary: Virtual Simulation",
+      paths: [capsule.workspaceCapsuleRoot.relativePath],
+      workspaceRoot,
+    });
+    const currentSettings =
+      '{"general":{"localization":{"defaultLanguage":"ru"}}}\n';
+    await writeText(capsule.settingsFile.absolutePath, currentSettings);
+    await writeText(path.join(workspaceRoot, "virtual.md"), "downstream\n");
+
+    await new WorkflowRollbackCoordinator({ git }).rollback({
+      prunedStages: ["virtual_simulation"],
+      stage: "virtual_simulation",
+      target: {
+        boundaryHash: boundaryCommit.hash,
+        commitMessage: "codeai-boundary: Virtual Simulation",
+        stage: "virtual_simulation",
+        stageLabel: "Virtual Simulation",
+      },
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(
+      await readFile(capsule.settingsFile.absolutePath, "utf8"),
+      currentSettings
+    );
+    assert.equal(
+      await readFile(capsule.gitignoreFile.absolutePath, "utf8"),
+      WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT
+    );
+    await assert.rejects(
+      readFile(path.join(workspaceRoot, "virtual.md"), "utf8")
+    );
+    assert.deepEqual(await git.statusPorcelain(workspaceRoot), []);
+    assert.doesNotMatch(
+      await runGit(workspaceRoot, ["ls-files"]),
+      SETTINGS_RELATIVE_RE
+    );
+    assert.doesNotMatch(
+      await runGit(workspaceRoot, ["ls-tree", "-r", "--name-only", "HEAD"]),
+      SETTINGS_RELATIVE_RE
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

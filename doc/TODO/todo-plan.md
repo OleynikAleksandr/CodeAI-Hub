@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "6b116ae80",
+  "lastRecordedCommit": "c5cbf7d74",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase92.stream3.task1",
-  "expectedCommitMessage": "test: cover rollback ignored settings commits",
+  "currentTaskId": "phase92.stream4.task1",
+  "expectedCommitMessage": "fix: preserve settings across workflow clear",
   "debt": {
-    "expectedCommitMessage": "test: cover rollback ignored settings commits",
-    "preCommitHead": "6b116ae80",
+    "expectedCommitMessage": "fix: preserve settings across workflow clear",
+    "preCommitHead": "c5cbf7d74",
     "stage": "commit_pending",
-    "taskId": "phase92.stream3.task1"
+    "taskId": "phase92.stream4.task1"
   }
 }
 ```
@@ -829,11 +829,11 @@
 
 ### Stream: Accepted-Step Regression Coverage
 317. [DONE] `phase92.stream3.task1` Add focused accepted-step coverage proving a legacy tracked settings file is untracked, preserved on disk, and absent from workflow snapshot commits (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `test: cover rollback ignored settings commits`).
-318. [PENDING] Git Commit: `test: cover rollback ignored settings commits` (hash: TBD)
+318. [DONE] Git Commit: `test: cover rollback ignored settings commits` (hash: c5cbf7d74)
 
 ### Stream: Clear Rollback Preservation
-319. [TODO] `phase92.stream4.task1` Preserve the current workspace settings file across Clear reset/clean rollback and remove any restored legacy settings entry from Git tracking (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: preserve settings across workflow clear`).
-320. [TODO] Git Commit: `fix: preserve settings across workflow clear` (hash: TBD)
+319. [DONE] `phase92.stream4.task1` Preserve the current workspace settings file across Clear reset/clean rollback and remove any restored legacy settings entry from Git tracking (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: preserve settings across workflow clear`).
+320. [PENDING] Git Commit: `fix: preserve settings across workflow clear` (hash: TBD)
 
 ### Stream: Session Start Settings History
 321. [TODO] `phase92.stream5.task1` Stop session-start model/settings selection from committing mutable runtime settings while keeping immutable per-session applied config/model binding snapshots for reproducibility (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts`; expected commit: `fix: keep start settings out of workflow history`).
