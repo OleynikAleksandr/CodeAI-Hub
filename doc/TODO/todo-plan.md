@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "2b0362087",
+  "lastRecordedCommit": "232023b70",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase65.stream1.task3",
-  "expectedCommitMessage": "fix: filter workflow settings by workspace",
+  "currentTaskId": "phase65.stream1.task4",
+  "expectedCommitMessage": "fix: read workspace settings in project manager ui",
   "debt": {
-    "expectedCommitMessage": "fix: filter workflow settings by workspace",
-    "preCommitHead": "2b0362087",
+    "expectedCommitMessage": "fix: read workspace settings in project manager ui",
+    "preCommitHead": "232023b70",
     "stage": "commit_pending",
-    "taskId": "phase65.stream1.task3"
+    "taskId": "phase65.stream1.task4"
   }
 }
 ```
@@ -568,9 +568,9 @@
 212. [DONE] `phase65.stream1.task2` Make settings bridge load/save/reset events carry workspace scope through small Core broadcaster classes instead of growing the settings request handler (scope: `packages/core/src/remote-bridge/handlers/settings-loaded-broadcaster.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.ts`; expected commit: `fix: scope project manager settings events`).
 213. [DONE] Git Commit: `fix: scope project manager settings events` (hash: 2b0362087)
 214. [DONE] `phase65.stream1.task3` Make workflow settings transport ignore unscoped or wrong-workspace settings replies before workflow starts persist defaults (scope: `src/client/project-manager/services/workflow-step-settings-transport.ts, src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/**settings*.test.ts`; expected commit: `fix: filter workflow settings by workspace`).
-215. [PENDING] Git Commit: `fix: filter workflow settings by workspace` (hash: TBD)
-216. [TODO] `phase65.stream1.task4` Make Project Manager settings consumers and start-card model defaults resolve the active workspace settings payload instead of singleton unscoped settings state (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/services/workspace-settings-payload-hook.ts`; expected commit: `fix: read workspace settings in project manager ui`).
-217. [TODO] Git Commit: `fix: read workspace settings in project manager ui` (hash: TBD)
+215. [DONE] Git Commit: `fix: filter workflow settings by workspace` (hash: 232023b70)
+216. [DONE] `phase65.stream1.task4` Make Project Manager settings consumers and start-card model defaults resolve the active workspace settings payload instead of singleton unscoped settings state (scope: `src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/services/workspace-settings-payload-hook.ts`; expected commit: `fix: read workspace settings in project manager ui`).
+217. [PENDING] Git Commit: `fix: read workspace settings in project manager ui` (hash: TBD)
 218. [TODO] `phase65.stream1.task5` Remove remaining runtime reads of `~/.codeai-hub/settings/settings.json` from workflow/provider paths or convert them to in-memory defaults until workspace scope is known (scope: `packages/core/src/config/index.ts, packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts, packages/core/src/remote-bridge/handlers/session-request-handler-turn-threshold-resolver.ts`; expected commit: `fix: remove global settings runtime reads`).
 219. [TODO] Git Commit: `fix: remove global settings runtime reads` (hash: TBD)
 

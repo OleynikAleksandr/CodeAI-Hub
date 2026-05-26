@@ -9,6 +9,7 @@ import {
   resolvePreferredWorkflowProviderId,
 } from "../../services/workflow-provider-resolver";
 import { WorkflowStepStartService } from "../../services/workflow-step-start-service";
+import { useWorkspaceSettingsPayload } from "../../services/workspace-settings-payload-hook";
 import { CaptureWorkbenchDomListboxSelector } from "../capture-workbench/dom-listbox-selector";
 import { PROVIDER_TINT_TOKENS } from "./stage-confirmation-card-provider-tint";
 import {
@@ -92,6 +93,10 @@ export const StageConfirmationCard: React.FC<{
   const mountedRef = useRef(true);
   const cardRef = useRef<HTMLDivElement>(null);
   const selectionScopeKeyRef = useRef<string | null>(null);
+  const settingsPayload = useWorkspaceSettingsPayload({
+    workspacePath,
+    workspaceSlug,
+  });
 
   useEffect(
     () => () => {
@@ -182,12 +187,12 @@ export const StageConfirmationCard: React.FC<{
       return;
     }
     const selection = resolveDefaultStartCardModelSelection(
-      api.getLastSettingsPayload(),
+      settingsPayload,
       selectedProviderId
     );
     setSelectedModelId(selection.modelId);
     setSelectedReasoning(selection.reasoning);
-  }, [selectedProviderId]);
+  }, [selectedProviderId, settingsPayload]);
 
   useEffect(() => {
     if (reasoningOptions.length === 0) {

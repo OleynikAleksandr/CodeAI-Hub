@@ -2,6 +2,7 @@ import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
 import { api } from "../../api";
+import { useWorkspaceSettingsPayload } from "../../services/workspace-settings-payload-hook";
 import { CaptureWorkbenchDomListboxSelector } from "../capture-workbench/dom-listbox-selector";
 import type { BranchNodeKind, BranchNodeSelection } from "./main-area-utils";
 import {
@@ -51,6 +52,10 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
     useState<ProviderStackId | null>(firstProvider?.id ?? null);
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
   const [selectedReasoning, setSelectedReasoning] = useState<string | null>(null);
+  const settingsPayload = useWorkspaceSettingsPayload({
+    workspacePath,
+    workspaceSlug,
+  });
 
   const modelOptions = useMemo(
     () =>
@@ -74,12 +79,12 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
       return;
     }
     const selection = resolveDefaultStartCardModelSelection(
-      api.getLastSettingsPayload(),
+      settingsPayload,
       selectedProviderId
     );
     setSelectedModelId(selection.modelId);
     setSelectedReasoning(selection.reasoning);
-  }, [selectedProviderId]);
+  }, [selectedProviderId, settingsPayload]);
 
   useEffect(() => {
     if (
