@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "13b2e196b",
+  "lastRecordedCommit": "81afc4eb1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase106.stream1.task1",
-  "expectedCommitMessage": "fix: reset clear rollback workflow projection",
+  "currentTaskId": "phase106.stream2.task1",
+  "expectedCommitMessage": "fix: refresh workflow read-only projection in project manager",
   "debt": {
-    "expectedCommitMessage": "fix: reset clear rollback workflow projection",
-    "preCommitHead": "13b2e196b",
+    "expectedCommitMessage": "fix: refresh workflow read-only projection in project manager",
+    "preCommitHead": "81afc4eb1",
     "stage": "commit_pending",
-    "taskId": "phase106.stream1.task1"
+    "taskId": "phase106.stream2.task1"
   }
 }
 ```
@@ -930,11 +930,11 @@
 
 ### Stream: Backend Projection Reset
 350. [DONE] `phase106.stream1.task1` Make workflow-state reads demote stale post-Clear in-memory stage statuses when rollback-owned artifacts/progress are gone, so read-only upstream protection and sidebar markers return to idle after clearing back to Description (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-cleared-projection.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: reset clear rollback workflow projection`).
-351. [PENDING] Git Commit: `fix: reset clear rollback workflow projection` (hash: TBD)
+351. [DONE] Git Commit: `fix: reset clear rollback workflow projection` (hash: 81afc4eb1)
 
 ### Stream: Project Manager Snapshot Token
-352. [TODO] `phase106.stream2.task1` Include read-only boundary projection changes in the Project Manager workflow-state change token so the UI re-renders when Core clears or reapplies technical-stage read-only protection without a root timestamp change (scope: `src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts`; expected commit: `fix: refresh workflow read-only projection in project manager`).
-353. [TODO] Git Commit: `fix: refresh workflow read-only projection in project manager` (hash: TBD)
+352. [DONE] `phase106.stream2.task1` Include read-only boundary projection changes in the Project Manager workflow-state change token so the UI re-renders when Core clears or reapplies technical-stage read-only protection without a root timestamp change (scope: `src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts`; expected commit: `fix: refresh workflow read-only projection in project manager`).
+353. [PENDING] Git Commit: `fix: refresh workflow read-only projection in project manager` (hash: TBD)
 
 ## Phase 107 - Regression Verification (owner: Codex, updated: 2026-05-26)
 

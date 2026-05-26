@@ -60,6 +60,19 @@ const progressFieldsToken = (
   return keys.map((key) => `${key}:${scalarToken(progress[key])}`).join("|");
 };
 
+const readOnlyProjectionToken = (
+  snapshot: WorkflowStateSnapshot | null
+): string => {
+  if (!snapshot) {
+    return "";
+  }
+  return [
+    snapshot.technicalStageRewriteBoundary?.active === true ? "active" : "idle",
+    stringArrayToken(snapshot.technicalStageRewriteBoundary?.readOnlyStages),
+    stringArrayToken(snapshot.managedWorkflowPreview?.readOnlyStages),
+  ].join(":");
+};
+
 const activeSubturnToken = (
   progress: Record<string, unknown> | null | undefined
 ): string => {
@@ -110,6 +123,7 @@ export const buildWorkflowStateChangeToken = (
     `continuity:${continuityToken(snapshot.continuity.chains)}`,
     `description:${snapshot.description?.draftPath ?? ""}:${snapshot.description?.finalPath ?? ""}`,
     `last:${snapshot.lastActive?.stage ?? ""}:${snapshot.lastActive?.artifactPath ?? ""}:${snapshot.lastActive?.updatedAt ?? ""}`,
+    `readonly:${readOnlyProjectionToken(snapshot)}`,
     `diagram:${progressFieldsToken(
       diagramModulesProgress,
       DIAGRAM_MODULES_PROGRESS_KEYS

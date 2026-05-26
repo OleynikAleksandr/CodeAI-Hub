@@ -130,3 +130,39 @@ test("workflow state token keeps continuity-chain changes observable", () => {
     buildWorkflowStateChangeToken(next)
   );
 });
+
+test("workflow state token keeps read-only projection changes observable", () => {
+  const previous = createSnapshot({
+    managedWorkflowPreview: {
+      active: true,
+      mode: "preview",
+      readOnlyStages: ["description", "virtual_simulation"],
+      reason: "Managed workflow preview is enabled.",
+      stages: [],
+    },
+    technicalStageRewriteBoundary: {
+      active: true,
+      blockers: [],
+      readOnlyStages: ["description", "virtual_simulation"],
+    },
+  });
+  const next = createSnapshot({
+    managedWorkflowPreview: {
+      active: true,
+      mode: "preview",
+      readOnlyStages: [],
+      reason: "Managed workflow preview is enabled.",
+      stages: [],
+    },
+    technicalStageRewriteBoundary: {
+      active: false,
+      blockers: [],
+      readOnlyStages: [],
+    },
+  });
+
+  assert.notEqual(
+    buildWorkflowStateChangeToken(previous),
+    buildWorkflowStateChangeToken(next)
+  );
+});
