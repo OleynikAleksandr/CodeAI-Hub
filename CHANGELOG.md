@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.368] - 2026-05-26
+### Fixed
+- **Project Manager localization sync uses the active workspace slug.** Settings save/reset/load now create Core localization runtime facades from the same `workspaceRoot` and `workspaceSlug` scope used by the workspace settings file, preventing localization bundles from being written to sibling slug folders such as `.codeai-hub/users-.../runtime/localization`.
+- **Reasoning-only Apple Native settings no longer block UI localization materialization.** Apple Native readiness preflight now applies to UI-owned localization sync targets only, so selecting Apple Native for reasoning translation does not prevent Project Manager helper bundles from materializing through the selected UI engine.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts packages/localization/src/localization-runtime-bootstrap-store.test.ts packages/localization/src/localization-materializer.test.ts`
+- `npm run build --workspace @codeai-hub/localization`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+- Workspace/global localization path check for the `users-...` slug mismatch.
+
 ## [1.2.367] - 2026-05-26
 ### Fixed
 - **Workspace localization runtime is the only localization authority.** Core, extension compatibility surfaces, metadata stores, browser bootstrap cache, and user glossary creation now resolve localization files under `.codeai-hub/<workspaceSlug>/runtime/localization/` instead of `~/.codeai-hub/localization`.

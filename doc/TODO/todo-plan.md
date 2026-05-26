@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "94939845d",
+  "lastRecordedCommit": "897f39e47",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase75.stream1.task1",
-  "expectedCommitMessage": "fix: materialize settings localization in workspace runtime",
+  "currentTaskId": "phase77.stream1.task1",
+  "expectedCommitMessage": "docs: prepare workspace localization slug release",
   "debt": {
-    "expectedCommitMessage": "fix: materialize settings localization in workspace runtime",
-    "preCommitHead": "94939845d",
+    "expectedCommitMessage": "docs: prepare workspace localization slug release",
+    "preCommitHead": "897f39e47",
     "stage": "commit_pending",
-    "taskId": "phase75.stream1.task1"
+    "taskId": "phase77.stream1.task1"
   }
 }
 ```
@@ -702,15 +702,30 @@
 
 ### Stream: Settings Save Localization Runtime
 276. [DONE] `phase75.stream1.task1` Scope Settings save/load localization facade and Apple Native preflight so Project Manager localization settings materialize UI runtime bundles under the active workspace runtime localization capsule, including the case where reasoning-only Apple Native is selected (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: materialize settings localization in workspace runtime`).
-277. [PENDING] Git Commit: `fix: materialize settings localization in workspace runtime` (hash: TBD)
+277. [DONE] Git Commit: `fix: materialize settings localization in workspace runtime` (hash: 897f39e47)
 
 ### Stream: Regression Verification
-278. [TODO] `phase75.stream2.task1` Re-run focused Settings localization runtime tests, Core/localization builds, webview/project-manager builds, and workspace/global localization path checks before release build confirmation (scope: `packages/core, packages/localization, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+278. [DONE] `phase75.stream2.task1` Re-run focused Settings localization runtime tests, Core/localization builds, webview/project-manager builds, and workspace/global localization path checks before release build confirmation (scope: `packages/core, packages/localization, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification passed after workspace slug mismatch fix: 19 focused settings/localization tests, @codeai-hub/localization build, @codeai-hub/core build, typecheck:webview, build:project-manager, build:webview, and workspace/global path checks. Confirmed the user-reported wrong slug was users-oleksandroliinyk-vscode-codeai-hub-codex-5-4 while the active workspace slug is codeai-hub-codex-5-4; removed test-created ~/.codeai-hub/localization and confirmed ~/.codeai-hub/settings is absent.
 
 ## Phase 76 - Release Build Confirmation (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Release Confirmation Gate
-279. [TODO] `phase76.stream1.task1` Stop after the workspace localization save regression fix and verification, report results, and request explicit user confirmation before preparing release notes or running release scripts for the next release (scope: release gate; expected commit: no commit expected). Result: TBD.
+279. [DONE] `phase76.stream1.task1` Stop after the workspace localization save regression fix and verification, report results, and request explicit user confirmation before preparing release notes or running release scripts for the next release (scope: release gate; expected commit: no commit expected). Result: Release build explicitly confirmed by user on 2026-05-26: build the next release for the workspace localization slug mismatch fix after focused verification passed.
+
+## Phase 77 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Docs
+280. [DONE] `phase77.stream1.task1` After explicit release confirmation, update release-facing docs for version 1.2.368 before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace localization slug release`).
+281. [PENDING] Git Commit: `docs: prepare workspace localization slug release` (hash: TBD)
+
+### Stream: Release Build
+282. [TODO] `phase77.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the workspace localization slug fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace localization slug release`).
+283. [TODO] Git Commit: `chore: build workspace localization slug release` (hash: TBD)
+
+## Phase 78 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+284. [TODO] `phase78.stream1.task1` User installs release 1.2.368 and verifies Project Manager localization settings write/read bundles, metadata, browser bootstrap cache, and glossary under `.codeai-hub/codeai-hub-codex-5-4/runtime/localization` rather than the `users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` mismatch slug or global localization paths (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

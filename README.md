@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.367** (Workspace Localization Runtime Hotfix)
+**Current Release — v1.2.368** (Workspace Localization Slug Hotfix)
+
+This hotfix fixes a workspace slug mismatch in Project Manager Settings
+localization sync. Saved settings already used the active workspace capsule,
+but Core localization materialization could still use the fallback/config slug
+and write bundles to a sibling runtime folder such as
+`.codeai-hub/users-.../runtime/localization`.
+
+Settings save, reset, and load now create the localization runtime facade from
+the same `workspaceRoot` and `workspaceSlug` scope that Project Manager sends
+for the active workspace settings file. Localization bundles, metadata,
+browser bootstrap cache, and glossary state therefore resolve under the same
+workspace runtime folder as
+`.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`.
+
+**Previous Release — v1.2.367** (Workspace Localization Runtime Hotfix)
 
 This hotfix makes Project Manager localization runtime state workspace-owned.
 Core and extension compatibility surfaces now materialize localization bundles,
