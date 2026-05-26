@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "53bf6f27f",
+  "lastRecordedCommit": "4bffec167",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase65.stream3.task2",
-  "expectedCommitMessage": "fix: remove global settings fallback paths",
+  "currentTaskId": "phase65.stream3.task4",
+  "expectedCommitMessage": "fix: default config settings path to workspace runtime",
   "debt": {
-    "expectedCommitMessage": "fix: remove global settings fallback paths",
-    "preCommitHead": "53bf6f27f",
+    "expectedCommitMessage": "fix: default config settings path to workspace runtime",
+    "preCommitHead": "4bffec167",
     "stage": "commit_pending",
-    "taskId": "phase65.stream3.task2"
+    "taskId": "phase65.stream3.task4"
   }
 }
 ```
@@ -581,23 +581,26 @@
 221. [DONE] `phase65.stream3.task1` Route provider, localization and node bootstrap settings paths through workspace runtime capsules instead of `~/.codeai-hub/settings/settings.json` fallbacks (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/translation/core-localization-facade-factory.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts`; expected commit: `fix: use workspace settings paths for provider bootstrap`).
 222. [DONE] Git Commit: `fix: use workspace settings paths for provider bootstrap` (hash: 53bf6f27f)
 223. [DONE] `phase65.stream3.task2` Remove session runtime and applied turn config fallback derivation from global settings directory when no binding is available (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`; expected commit: `fix: remove global settings fallback paths`).
-224. [PENDING] Git Commit: `fix: remove global settings fallback paths` (hash: TBD)
-225. [TODO] `phase65.stream3.task3` Re-run settings reference scan, focused tests and targeted Core/webview builds after remaining global reference cleanup (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+224. [DONE] Git Commit: `fix: remove global settings fallback paths` (hash: 4bffec167)
+225. [DONE] `phase65.stream3.task3` Re-run settings reference scan, focused tests and targeted Core/webview builds after remaining global reference cleanup (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: focused settings tests passed; scan still showed config default claudeSettingsPath pointing to legacy home settings, so added final config-default cleanup before release
+226. [DONE] `phase65.stream3.task4` Make `loadConfig` default `claudeSettingsPath` resolve to the current workspace runtime settings capsule instead of `~/.codeai-hub/settings/settings.json` (scope: `packages/core/src/config/index.ts`; expected commit: `fix: default config settings path to workspace runtime`).
+227. [PENDING] Git Commit: `fix: default config settings path to workspace runtime` (hash: TBD)
+228. [TODO] `phase65.stream3.task5` Re-run final settings reference scan, focused tests and targeted Core/webview builds after config default cleanup (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 66 - Release Build (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Release Docs
-226. [TODO] `phase66.stream1.task1` After explicit release confirmation from the user request, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace settings ssot release`).
-227. [TODO] Git Commit: `docs: prepare workspace settings ssot release` (hash: TBD)
+229. [TODO] `phase66.stream1.task1` After explicit release confirmation from the user request, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace settings ssot release`).
+230. [TODO] Git Commit: `docs: prepare workspace settings ssot release` (hash: TBD)
 
 ### Stream: Release Build
-228. [TODO] `phase66.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings ssot release`). Result: TBD.
-229. [TODO] Git Commit: `chore: build workspace settings ssot release` (hash: TBD)
+231. [TODO] `phase66.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings ssot release`). Result: TBD.
+232. [TODO] Git Commit: `chore: build workspace settings ssot release` (hash: TBD)
 
 ## Phase 67 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-230. [TODO] `phase67.stream1.task1` User installs the generated VSIX and verifies settings are materialized only inside each workspace runtime, new workspaces inherit configured workspace settings when available, Project Manager changes persist to the active workspace file, and workflow sessions use those workspace settings (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+233. [TODO] `phase67.stream1.task1` User installs the generated VSIX and verifies settings are materialized only inside each workspace runtime, new workspaces inherit configured workspace settings when available, Project Manager changes persist to the active workspace file, and workflow sessions use those workspace settings (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

@@ -1,5 +1,6 @@
 import { homedir } from "node:os";
 import path from "node:path";
+import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import {
   type CodexApprovalMode,
   type CodexReasoningEffort,
@@ -46,8 +47,6 @@ const DEFAULT_PORT = 8080;
 const DEFAULT_GRACE_MS = 3_600_000;
 const MILLISECONDS_IN_MINUTE = 60_000;
 const DEFAULT_TEMPLATES_DIR = path.join(homedir(), ".codeai-hub", "templates");
-const CLAUDE_SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
-const CLAUDE_SETTINGS_FILE = path.join(CLAUDE_SETTINGS_DIR, "settings.json");
 const DEFAULT_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 50;
 const MIN_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 0;
 const MAX_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 100;
@@ -100,9 +99,13 @@ export const loadConfig = (): CoreConfig => {
   const slug =
     process.env.CLAUDE_PROJECT_SLUG ??
     (workspacePath ? sanitizeSlug(workspacePath) : "default-workspace");
+  const defaultWorkspaceSettingsPath = resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: workspacePath ?? process.cwd(),
+    workspaceSlug: slug,
+  }).settingsFile.absolutePath;
   const codexWorkspacePath = process.env.CODEX_WORKSPACE_PATH ?? workspacePath;
   const claudeSettingsPath =
-    process.env.CLAUDE_SETTINGS_PATH ?? CLAUDE_SETTINGS_FILE;
+    process.env.CLAUDE_SETTINGS_PATH ?? defaultWorkspaceSettingsPath;
   const claudeDefaultModel = resolveClaudeDefaultModel(
     process.env.CLAUDE_DEFAULT_MODEL
   );
