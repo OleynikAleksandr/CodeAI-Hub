@@ -58,12 +58,22 @@ test("Project Manager settings payload scope matcher rejects stale workspace eve
   );
 });
 
-test("useProjectManagerSettings filters settings events by active workspace scope", async () => {
+test("useProjectManagerSettings keeps scoped settings strict but allows the shell to follow active workspace payloads", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
 
   assert.equal(
-    source.includes("isWorkspaceSettingsPayloadForScope(message.payload, settingsScope)"),
+    source.includes("shouldApplySettingsPayload(message.payload, settingsScope)"),
     true,
-    "settings panel must ignore loaded/saved/save-error events outside active workspace scope"
+    "settings panel must ignore stale scoped events while the Project Manager shell can consume active scoped payloads"
+  );
+  assert.equal(
+    source.includes("settingsScope ? null : api.getLastSettingsPayload()"),
+    true,
+    "unscoped Project Manager shell should hydrate from the last active workspace settings payload"
+  );
+  assert.equal(
+    source.includes("if (settingsScope) {\n      api.loadSettings(settingsScope);"),
+    true,
+    "settings hook must not issue fallback no-scope settings loads"
   );
 });

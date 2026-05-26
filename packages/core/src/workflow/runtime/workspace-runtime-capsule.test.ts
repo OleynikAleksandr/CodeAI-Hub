@@ -55,6 +55,21 @@ test("resolveWorkspaceRuntimeCapsule resolves workspace-owned runtime roots", ()
   );
 });
 
+test("resolveWorkspaceRuntimeCapsule derives the slug from the workspace basename, not the full path", () => {
+  const workspaceRoot = "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4";
+  const capsule = resolveWorkspaceRuntimeCapsule({ workspaceRoot });
+
+  assert.equal(capsule.workspaceSlug, "codeai-hub-codex-5-4");
+  assert.notEqual(
+    capsule.workspaceSlug,
+    "users-oleksandroliinyk-vscode-codeai-hub-codex-5-4"
+  );
+  assert.equal(
+    capsule.localizationRoot.relativePath,
+    ".codeai-hub/codeai-hub-codex-5-4/runtime/localization"
+  );
+});
+
 test("resolveWorkspaceRuntimeCapsule prefers an explicit workspace slug", () => {
   const capsule = resolveWorkspaceRuntimeCapsule({
     workspaceRoot: WORKSPACE_ROOT,

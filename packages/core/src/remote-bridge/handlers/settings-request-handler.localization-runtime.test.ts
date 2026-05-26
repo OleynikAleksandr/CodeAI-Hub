@@ -303,3 +303,60 @@ test("SettingsRequestHandler resolves loaded localization through the active wor
     2
   );
 });
+
+test("SettingsRequestHandler opens user glossary in the active workspace runtime", async () => {
+  const tempRoot = await mkdtemp(
+    path.join(tmpdir(), "settings-l10n-glossary-")
+  );
+  const defaultWorkspaceRoot = path.join(tempRoot, "default-workspace");
+  const defaultWorkspaceSlug =
+    "users-oleksandroliinyk-vscode-codeai-hub-codex-5-4";
+  const targetWorkspaceRoot = path.join(tempRoot, "target-workspace");
+  const targetWorkspaceSlug = "codeai-hub-codex-5-4";
+  const events: BridgeEvent[] = [];
+  const config = createConfig({
+    globalSettingsPath: path.join(tempRoot, "global", "settings.json"),
+    workspaceRoot: defaultWorkspaceRoot,
+    workspaceSlug: defaultWorkspaceSlug,
+  });
+  const handler = new SettingsRequestHandler({
+    broadcaster: (event) => events.push(event),
+    config,
+    logger,
+  });
+
+  await handler.handleOpenUserGlossaryFile({
+    workspaceRoot: targetWorkspaceRoot,
+    workspaceSlug: targetWorkspaceSlug,
+  });
+
+  const targetCapsule = resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: targetWorkspaceRoot,
+    workspaceSlug: targetWorkspaceSlug,
+  });
+  const defaultCapsule = resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: defaultWorkspaceRoot,
+    workspaceSlug: defaultWorkspaceSlug,
+  });
+  const expectedPath = path.join(
+    targetCapsule.localizationRoot.absolutePath,
+    "glossary",
+    "do-not-translate-terms.txt"
+  );
+
+  assert.deepEqual(events.at(-1), {
+    type: "settings:user-glossary-file",
+    payload: { path: expectedPath },
+  });
+  await access(expectedPath);
+  await assert.rejects(
+    access(
+      path.join(
+        defaultCapsule.localizationRoot.absolutePath,
+        "glossary",
+        "do-not-translate-terms.txt"
+      )
+    ),
+    { code: "ENOENT" }
+  );
+});

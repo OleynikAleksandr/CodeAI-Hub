@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "268c6e681",
+  "lastRecordedCommit": "1fdc0754f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase79.stream2.task1",
-  "expectedCommitMessage": "fix: scope project manager settings commands",
+  "currentTaskId": "phase79.stream3.task1",
+  "expectedCommitMessage": "test: cover project manager workspace localization scope",
   "debt": {
-    "expectedCommitMessage": "fix: scope project manager settings commands",
-    "preCommitHead": "268c6e681",
+    "expectedCommitMessage": "test: cover project manager workspace localization scope",
+    "preCommitHead": "1fdc0754f",
     "stage": "commit_pending",
-    "taskId": "phase79.stream2.task1"
+    "taskId": "phase79.stream3.task1"
   }
 }
 ```
@@ -735,11 +735,11 @@
 
 ### Stream: Scoped Settings Commands
 287. [DONE] `phase79.stream2.task1` Route Project Manager settings side commands, including user glossary open, through the same workspace scope so Core does not fall back to `claudeProjectSlug` or global/default localization roots (scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.ts, src/client/project-manager/api.ts`; expected commit: `fix: scope project manager settings commands`).
-288. [PENDING] Git Commit: `fix: scope project manager settings commands` (hash: TBD)
+288. [DONE] Git Commit: `fix: scope project manager settings commands` (hash: 1fdc0754f)
 
 ### Stream: Bootstrap Scope Regression Coverage
-289. [TODO] `phase79.stream3.task1` Add focused regression coverage for the active workspace settings/localization path and the wrong `users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` fallback slug scenario (scope: `src/client/project-manager/components/settings/use-project-manager-settings.test.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts`; expected commit: `test: cover project manager workspace localization scope`).
-290. [TODO] Git Commit: `test: cover project manager workspace localization scope` (hash: TBD)
+289. [DONE] `phase79.stream3.task1` Add focused regression coverage for the active workspace settings/localization path and the wrong `users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` fallback slug scenario (scope: `src/client/project-manager/components/settings/use-project-manager-settings.test.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts`; expected commit: `test: cover project manager workspace localization scope`).
+290. [PENDING] Git Commit: `test: cover project manager workspace localization scope` (hash: TBD)
 
 ## Phase 80 - Regression Verification (owner: Codex, updated: 2026-05-26)
 
