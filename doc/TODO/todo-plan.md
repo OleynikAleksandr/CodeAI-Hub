@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "cd52ed4c1",
+  "lastRecordedCommit": "5a25b2d44",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase90.stream1.task1",
-  "expectedCommitMessage": "docs: prepare clear confirmation rebuild release",
+  "currentTaskId": "phase90.stream2.task1",
+  "expectedCommitMessage": "chore: build clear confirmation rebuild release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare clear confirmation rebuild release",
-    "preCommitHead": "cd52ed4c1",
+    "expectedCommitMessage": "chore: build clear confirmation rebuild release",
+    "preCommitHead": "5a25b2d44",
     "stage": "commit_pending",
-    "taskId": "phase90.stream1.task1"
+    "taskId": "phase90.stream2.task1"
   }
 }
 ```
@@ -806,11 +806,11 @@
 
 ### Stream: Release Docs
 308. [DONE] `phase90.stream1.task1` Update release-facing docs for version 1.2.371 before build-all, noting that this is a rebuild of the Clear confirmation UI fix with no additional code changes after 1.2.370 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear confirmation rebuild release`).
-309. [PENDING] Git Commit: `docs: prepare clear confirmation rebuild release` (hash: TBD)
+309. [DONE] Git Commit: `docs: prepare clear confirmation rebuild release` (hash: 5a25b2d44)
 
 ### Stream: Release Build
-310. [TODO] `phase90.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.371 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear confirmation rebuild release`).
-311. [TODO] Git Commit: `chore: build clear confirmation rebuild release` (hash: TBD)
+310. [DONE] `phase90.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.371 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear confirmation rebuild release`). Result: Release 1.2.371 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.371.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+311. [PENDING] Git Commit: `chore: build clear confirmation rebuild release` (hash: TBD)
 
 ## Phase 91 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
