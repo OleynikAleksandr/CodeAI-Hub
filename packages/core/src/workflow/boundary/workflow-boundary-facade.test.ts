@@ -20,8 +20,8 @@ const SETTINGS_RELATIVE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/settings\/settings\.json/u;
 const LOCALIZATION_RELATIVE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/localization\/cache\/browser-runtime-bootstrap\.json/u;
-const PROVIDER_SESSION_RELATIVE_RE =
-  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/sessions\/2026\/05\/25\/native-session\.jsonl/u;
+const PROVIDER_CONFIG_RELATIVE_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/config\.toml/u;
 
 const createWorkspace = async (): Promise<string> =>
   await mkdtemp(path.join(tmpdir(), "codeai-boundary-"));
@@ -199,28 +199,26 @@ test("WorkflowRollbackCoordinator preserves mutable runtime outside Clear rollba
       capsule.gitignoreFile.absolutePath,
       "# legacy runtime capsule\n"
     );
-    await writeText(
-      capsule.settingsFile.absolutePath,
-      '{"general":{"localization":{"defaultLanguage":"en"}}}\n'
-    );
+    await writeText(capsule.settingsFile.absolutePath, '{"language":"en"}\n');
     const legacyLocalizationCachePath = path.join(
       capsule.localizationRoot.absolutePath,
       "cache/browser-runtime-bootstrap.json"
     );
-    const legacyProviderSessionPath = path.join(
+    const providerConfigPath = path.join(
       capsule.providerHomes.codex.absolutePath,
-      "sessions/2026/05/25/native-session.jsonl"
+      "config.toml"
     );
     await writeText(legacyLocalizationCachePath, '{"language":"en"}\n');
-    await writeText(legacyProviderSessionPath, "legacy native session\n");
+    await writeText(providerConfigPath, 'model = "legacy"\n');
     const boundaryCommit = await git.commit({
       commitMessage: "codeai-boundary: Virtual Simulation",
       paths: [capsule.workspaceCapsuleRoot.relativePath],
       workspaceRoot,
     });
-    const currentSettings =
-      '{"general":{"localization":{"defaultLanguage":"ru"}}}\n';
+    const currentSettings = '{"language":"ru"}\n';
+    const currentProviderConfig = 'model = "current"\n';
     await writeText(capsule.settingsFile.absolutePath, currentSettings);
+    await writeText(providerConfigPath, currentProviderConfig);
     await writeText(path.join(workspaceRoot, "virtual.md"), "downstream\n");
 
     await new WorkflowRollbackCoordinator({ git }).rollback({
@@ -241,6 +239,10 @@ test("WorkflowRollbackCoordinator preserves mutable runtime outside Clear rollba
       currentSettings
     );
     assert.equal(
+      await readFile(providerConfigPath, "utf8"),
+      currentProviderConfig
+    );
+    assert.equal(
       await readFile(capsule.gitignoreFile.absolutePath, "utf8"),
       WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT
     );
@@ -251,7 +253,7 @@ test("WorkflowRollbackCoordinator preserves mutable runtime outside Clear rollba
     const trackedFiles = await runGit(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, SETTINGS_RELATIVE_RE);
     assert.doesNotMatch(trackedFiles, LOCALIZATION_RELATIVE_RE);
-    assert.doesNotMatch(trackedFiles, PROVIDER_SESSION_RELATIVE_RE);
+    assert.doesNotMatch(trackedFiles, PROVIDER_CONFIG_RELATIVE_RE);
     const headTreeFiles = await runGit(workspaceRoot, [
       "ls-tree",
       "-r",
@@ -260,7 +262,7 @@ test("WorkflowRollbackCoordinator preserves mutable runtime outside Clear rollba
     ]);
     assert.doesNotMatch(headTreeFiles, SETTINGS_RELATIVE_RE);
     assert.doesNotMatch(headTreeFiles, LOCALIZATION_RELATIVE_RE);
-    assert.doesNotMatch(headTreeFiles, PROVIDER_SESSION_RELATIVE_RE);
+    assert.doesNotMatch(headTreeFiles, PROVIDER_CONFIG_RELATIVE_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

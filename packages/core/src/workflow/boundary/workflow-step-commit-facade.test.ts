@@ -17,6 +17,8 @@ const CAPSULE_PROVIDER_SESSION_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/sessions\/2026\/05\/25\/native-session\.jsonl/u;
 const CAPSULE_PROVIDER_LEGACY_SESSION_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/sessions\/2026\/05\/25\/legacy-session\.jsonl/u;
+const CAPSULE_PROVIDER_CONFIG_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/config\.toml/u;
 const CAPSULE_PROVIDER_SQLITE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/logs_2\.sqlite/u;
 const CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE =
@@ -62,6 +64,10 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
         "browser-runtime-bootstrap.json"
       ),
       '{"language":"ru"}\n'
+    );
+    await writeText(
+      path.join(capsule.providerHomes.codex.absolutePath, "config.toml"),
+      'model = "gpt-5.3-codex-spark"\n'
     );
     await writeText(
       path.join(
@@ -120,6 +126,7 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedFiles, CAPSULE_FINAL_DESCRIPTION_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_LOCALIZATION_CACHE_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SESSION_RE);
     assert.match(trackedFiles, CAPSULE_TASK_TIMER_STATE_RE);
     assert.match(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
@@ -208,14 +215,20 @@ test("accepted step commit untracks legacy mutable runtime without overwriting w
       "25",
       "legacy-session.jsonl"
     );
+    const providerConfigPath = path.join(
+      capsule.providerHomes.codex.absolutePath,
+      "config.toml"
+    );
     await writeText(localizationCachePath, '{"language":"en"}\n');
     await writeText(providerSessionPath, "legacy native session\n");
+    await writeText(providerConfigPath, 'model = "legacy"\n');
     await git(workspaceRoot, [
       "add",
       "-f",
       capsule.settingsFile.relativePath,
       path.relative(workspaceRoot, localizationCachePath),
       path.relative(workspaceRoot, providerSessionPath),
+      path.relative(workspaceRoot, providerConfigPath),
     ]);
     await git(workspaceRoot, [
       "commit",
@@ -231,6 +244,7 @@ test("accepted step commit untracks legacy mutable runtime without overwriting w
     await writeText(capsule.settingsFile.absolutePath, currentSettings);
     await writeText(localizationCachePath, '{"language":"ru"}\n');
     await writeText(providerSessionPath, "current native session\n");
+    await writeText(providerConfigPath, 'model = "current"\n');
     await writeText(
       path.join(capsule.descriptionRoot.absolutePath, "Final_Description.md"),
       "# Final Description\n"
@@ -254,10 +268,15 @@ test("accepted step commit untracks legacy mutable runtime without overwriting w
       await readFile(providerSessionPath, "utf8"),
       "current native session\n"
     );
+    assert.equal(
+      await readFile(providerConfigPath, "utf8"),
+      'model = "current"\n'
+    );
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, CAPSULE_SETTINGS_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_LOCALIZATION_CACHE_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
     assert.match(
       await git(workspaceRoot, ["log", "--oneline", "-1"]),
@@ -271,6 +290,7 @@ test("accepted step commit untracks legacy mutable runtime without overwriting w
     ]);
     assert.doesNotMatch(headTreeFiles, CAPSULE_SETTINGS_RE);
     assert.doesNotMatch(headTreeFiles, CAPSULE_LOCALIZATION_CACHE_RE);
+    assert.doesNotMatch(headTreeFiles, CAPSULE_PROVIDER_CONFIG_RE);
     assert.doesNotMatch(headTreeFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

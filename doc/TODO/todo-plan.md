@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "631546304",
+  "lastRecordedCommit": "abddd7073",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase109.stream1.task1",
-  "expectedCommitMessage": "fix: ignore provider home runtime",
+  "currentTaskId": "phase109.stream2.task1",
+  "expectedCommitMessage": "test: cover provider home runtime untracking",
   "debt": {
-    "expectedCommitMessage": "fix: ignore provider home runtime",
-    "preCommitHead": "631546304",
+    "expectedCommitMessage": "test: cover provider home runtime untracking",
+    "preCommitHead": "abddd7073",
     "stage": "commit_pending",
-    "taskId": "phase109.stream1.task1"
+    "taskId": "phase109.stream2.task1"
   }
 }
 ```
@@ -950,11 +950,11 @@
 
 ### Stream: Runtime Ignore Contract
 356. [DONE] `phase109.stream1.task1` Treat complete provider home directories as rollback-ignored mutable runtime while keeping Core logical unified sessions trackable, update the capsule `.gitignore` contract, shared classifier and focused runtime contract tests (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore provider home runtime`).
-357. [PENDING] Git Commit: `fix: ignore provider home runtime` (hash: TBD)
+357. [DONE] Git Commit: `fix: ignore provider home runtime` (hash: abddd7073)
 
 ### Stream: Boundary Regression Coverage
-358. [TODO] `phase109.stream2.task1` Prove boundary/accepted-step flows untrack legacy provider-home files and do not leave provider runtime config changes visible in workflow Git status (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `test: cover provider home runtime untracking`).
-359. [TODO] Git Commit: `test: cover provider home runtime untracking` (hash: TBD)
+358. [DONE] `phase109.stream2.task1` Prove boundary/accepted-step flows untrack legacy provider-home files, preserve current provider-home contents across Clear rollback and do not leave provider runtime config changes visible in workflow Git status (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts`; expected commit: `test: cover provider home runtime untracking`).
+359. [PENDING] Git Commit: `test: cover provider home runtime untracking` (hash: TBD)
 
 ## Phase 110 - Architecture Documentation (owner: Codex, updated: 2026-05-26)
 
