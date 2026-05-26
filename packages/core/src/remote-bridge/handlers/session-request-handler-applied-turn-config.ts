@@ -1,4 +1,3 @@
-import path from "node:path";
 import type { CoreConfig } from "../../config";
 import {
   buildProviderEffectiveModelId,
@@ -7,13 +6,19 @@ import {
 import { resolveProviderModelSyncCapabilities } from "../../provider-registry/provider-descriptor-factory";
 import type { SessionModelBinding } from "../../session-model-binding";
 import { SessionTranslationPolicyResolver } from "../../session-translation/session-translation-policy-resolver";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import {
   type AppliedProviderTurnConfig,
   withAppliedProviderTurnConfig,
 } from "../types";
 
-const SETTINGS_FILE_NAME = "settings.json";
 const translationPolicyResolver = new SessionTranslationPolicyResolver();
+
+const resolveDefaultSettingsPath = (config: CoreConfig): string =>
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
+    workspaceSlug: config.claudeProjectSlug,
+  }).settingsFile.absolutePath;
 
 export class SessionRequestHandlerAppliedTurnConfig {
   private readonly config: CoreConfig;
@@ -166,10 +171,7 @@ export class SessionRequestHandlerAppliedTurnConfig {
   }
 
   private resolveSharedSettingsPath(): string {
-    return path.join(
-      path.dirname(this.config.claudeSettingsPath),
-      SETTINGS_FILE_NAME
-    );
+    return resolveDefaultSettingsPath(this.config);
   }
 
   private resolveSettingsPath(

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "b097d8f17",
+  "lastRecordedCommit": "53bf6f27f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase65.stream3.task1",
-  "expectedCommitMessage": "fix: use workspace settings paths for provider bootstrap",
+  "currentTaskId": "phase65.stream3.task2",
+  "expectedCommitMessage": "fix: remove global settings fallback paths",
   "debt": {
-    "expectedCommitMessage": "fix: use workspace settings paths for provider bootstrap",
-    "preCommitHead": "b097d8f17",
+    "expectedCommitMessage": "fix: remove global settings fallback paths",
+    "preCommitHead": "53bf6f27f",
     "stage": "commit_pending",
-    "taskId": "phase65.stream3.task1"
+    "taskId": "phase65.stream3.task2"
   }
 }
 ```
@@ -579,9 +579,9 @@
 
 ### Stream: Remaining Global Reference Cleanup
 221. [DONE] `phase65.stream3.task1` Route provider, localization and node bootstrap settings paths through workspace runtime capsules instead of `~/.codeai-hub/settings/settings.json` fallbacks (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/translation/core-localization-facade-factory.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts`; expected commit: `fix: use workspace settings paths for provider bootstrap`).
-222. [PENDING] Git Commit: `fix: use workspace settings paths for provider bootstrap` (hash: TBD)
-223. [TODO] `phase65.stream3.task2` Remove session runtime and applied turn config fallback derivation from global settings directory when no binding is available (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`; expected commit: `fix: remove global settings fallback paths`).
-224. [TODO] Git Commit: `fix: remove global settings fallback paths` (hash: TBD)
+222. [DONE] Git Commit: `fix: use workspace settings paths for provider bootstrap` (hash: 53bf6f27f)
+223. [DONE] `phase65.stream3.task2` Remove session runtime and applied turn config fallback derivation from global settings directory when no binding is available (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-applied-turn-config.ts`; expected commit: `fix: remove global settings fallback paths`).
+224. [PENDING] Git Commit: `fix: remove global settings fallback paths` (hash: TBD)
 225. [TODO] `phase65.stream3.task3` Re-run settings reference scan, focused tests and targeted Core/webview builds after remaining global reference cleanup (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 66 - Release Build (owner: Codex, updated: 2026-05-26)

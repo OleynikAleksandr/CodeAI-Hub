@@ -1,4 +1,3 @@
-import path from "node:path";
 import type { ClaudeHaikuTranslationService } from "@codeai-hub/claude-module";
 import { FlowNodeContinuityFacade } from "../../flow-node-continuity/flow-node-continuity-facade";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
@@ -56,12 +55,13 @@ interface ClaudeTranslationServiceOwner {
   readonly getHaikuTranslationService?: () => ClaudeHaikuTranslationService;
 }
 
-const SETTINGS_FILE_NAME = "settings.json";
-
-const resolveGlobalSettingsPath = (
+const resolveDefaultSettingsPath = (
   config: SessionRequestHandlerRuntimeDependencies["config"]
 ): string =>
-  path.join(path.dirname(config.claudeSettingsPath), SETTINGS_FILE_NAME);
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
+    workspaceSlug: config.claudeProjectSlug,
+  }).settingsFile.absolutePath;
 
 const resolveWorkspaceSettingsPath = (options: {
   readonly fallbackSettingsPath: string;
@@ -109,7 +109,7 @@ export const createSessionRequestHandlerRuntimeCore = (
   options: SessionRequestHandlerRuntimeDependencies,
   continuityRolloverBridge: ContinuityRolloverBridge
 ): SessionRequestHandlerRuntimeCore => {
-  const globalSettingsPath = resolveGlobalSettingsPath(options.config);
+  const defaultSettingsPath = resolveDefaultSettingsPath(options.config);
   const messageDispatchRef =
     createDeferredRuntimeRef<SessionRequestHandlerMessageDispatch>(
       "messageDispatch"
@@ -178,7 +178,7 @@ export const createSessionRequestHandlerRuntimeCore = (
     resolveClaudeHaikuTranslationServiceForRuntime(options);
   const sessionTranslation = new SessionTranslationFacade({
     logger: options.logger,
-    settingsPath: globalSettingsPath,
+    settingsPath: defaultSettingsPath,
     translationFacadeFactory: ({ reporter }) =>
       createCoreTranslationFacade({
         claudeHaikuTranslationService,
@@ -229,11 +229,11 @@ export const createSessionRequestHandlerRuntimeCore = (
       fallbackCodexReasoningEffort:
         options.config.codexDefaultReasoningEffort ?? "medium",
       fallbackGeminiModel: options.config.geminiDefaultModel,
-      settingsPath: globalSettingsPath,
+      settingsPath: defaultSettingsPath,
     },
     settingsPathResolver: (key) =>
       resolveWorkspaceSettingsPath({
-        fallbackSettingsPath: globalSettingsPath,
+        fallbackSettingsPath: defaultSettingsPath,
         workspacePath: key.workspacePath,
         workspaceSlug: key.workspaceSlug ?? key.initiativeSlug,
       }),
