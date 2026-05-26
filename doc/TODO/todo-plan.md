@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "319bbb32f",
+  "lastRecordedCommit": "cd52ed4c1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase87.stream2.task1",
-  "expectedCommitMessage": "chore: build clear confirmation ui release",
+  "currentTaskId": "phase90.stream1.task1",
+  "expectedCommitMessage": "docs: prepare clear confirmation rebuild release",
   "debt": {
-    "expectedCommitMessage": "chore: build clear confirmation ui release",
-    "preCommitHead": "319bbb32f",
+    "expectedCommitMessage": "docs: prepare clear confirmation rebuild release",
+    "preCommitHead": "cd52ed4c1",
     "stage": "commit_pending",
-    "taskId": "phase87.stream2.task1"
+    "taskId": "phase90.stream1.task1"
   }
 }
 ```
@@ -790,12 +790,32 @@
 
 ### Stream: Release Build
 304. [DONE] `phase87.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Clear confirmation UI-state fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear confirmation ui release`). Result: Release 1.2.370 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.370.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-305. [PENDING] Git Commit: `chore: build clear confirmation ui release` (hash: TBD)
+305. [DONE] Git Commit: `chore: build clear confirmation ui release` (hash: cd52ed4c1)
 
 ## Phase 88 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-306. [TODO] `phase88.stream1.task1` User installs the next release and verifies Clear Undo rollback still restores Virtual Simulation/downstream workflow state and the Project Manager Clear confirmation popover disappears immediately after pressing Clear (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+306. [DONE] `phase88.stream1.task1` User installs the next release and verifies Clear Undo rollback still restores Virtual Simulation/downstream workflow state and the Project Manager Clear confirmation popover disappears immediately after pressing Clear (scope: user workflow acceptance; expected commit: no commit expected). Result: Release 1.2.370 retest is superseded by the user request on 2026-05-26 to build another release; Clear confirmation acceptance moves to the next release retest.
+
+## Phase 89 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+
+### Stream: Release Gate
+307. [DONE] `phase89.stream1.task1` Confirm a new release build after release 1.2.370, without additional code changes, so the current Clear confirmation UI fix is repackaged as the next release (scope: user release confirmation; expected commit: no commit expected). Result: User explicitly requested another release build on 2026-05-26.
+
+## Phase 90 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Docs
+308. [DONE] `phase90.stream1.task1` Update release-facing docs for version 1.2.371 before build-all, noting that this is a rebuild of the Clear confirmation UI fix with no additional code changes after 1.2.370 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear confirmation rebuild release`).
+309. [PENDING] Git Commit: `docs: prepare clear confirmation rebuild release` (hash: TBD)
+
+### Stream: Release Build
+310. [TODO] `phase90.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.371 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear confirmation rebuild release`).
+311. [TODO] Git Commit: `chore: build clear confirmation rebuild release` (hash: TBD)
+
+## Phase 91 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+312. [TODO] `phase91.stream1.task1` User installs release 1.2.371 and verifies Clear Undo rollback still restores Virtual Simulation/downstream workflow state and the Project Manager Clear confirmation popover disappears immediately after pressing Clear (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

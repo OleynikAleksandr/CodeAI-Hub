@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.370** (Clear Confirmation UI Hotfix)
+**Current Release — v1.2.371** (Clear Confirmation UI Rebuild)
+
+This release rebuilds the Clear confirmation UI hotfix as a fresh package. It
+contains the same Project Manager behavior change from v1.2.370: the Clear
+confirmation popover closes immediately after the destructive action is
+accepted, while the Git rollback request continues and refreshes workflow state
+when Core reports completion.
+
+No additional runtime logic changed after v1.2.370; this package is provided as
+the next installable release for retesting Clear Undo.
+
+**Previous Release — v1.2.370** (Clear Confirmation UI Hotfix)
 
 This hotfix closes the Project Manager Clear confirmation popover immediately
 after the user accepts the destructive Clear action. The Git rollback request

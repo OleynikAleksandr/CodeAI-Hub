@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.371] - 2026-05-26
+### Changed
+- **Rebuilt the Clear confirmation UI fix as the next installable release.** No additional runtime logic changed after v1.2.370; this release packages the existing Project Manager Clear confirmation behavior for the next Clear Undo retest.
+
+### Tests
+- `./scripts/build-all.sh --allow-dirty`
+- `./scripts/build-release.sh --use-current-version --allow-dirty`
+
 ## [1.2.370] - 2026-05-26
 ### Fixed
 - **Clear confirmation closes when the Clear action is accepted.** The Project Manager workspace tree Clear confirmation popover now closes before the rollback HTTP request is awaited, so the destructive confirmation dialog does not remain visible after a successful Virtual Simulation rollback.
