@@ -1,10 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
-import {
-  type LocalizationFacade,
-  UserGlossaryStore,
-} from "@codeai-hub/localization";
+import { UserGlossaryStore } from "@codeai-hub/localization";
 import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import { TemplateSyncFacade } from "../../templates/template-sync-facade";
@@ -14,21 +11,23 @@ import type {
 } from "../../templates/template-update-resolution-service";
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
 import type { BridgeEvent } from "../types";
-import { SettingsLoadedBroadcaster } from "./settings-loaded-broadcaster";
 import {
-  SettingsPersistenceService,
-  type SettingsWriteResult,
-} from "./settings-persistence-service";
+  SettingsLoadedBroadcaster,
+  toWorkspaceScopePayload,
+} from "./settings-loaded-broadcaster";
+import { SettingsPersistenceService } from "./settings-persistence-service";
 import {
   resolveLocalizationRuntimeSettings,
   type WorkspaceSettingsScope,
 } from "./settings-persistence-snapshot";
 import { SettingsProviderVersionService } from "./settings-provider-version-service";
+import { SettingsSavedBroadcaster } from "./settings-saved-broadcaster";
 
 export { resolveLocalizationRuntimeSettings } from "./settings-persistence-snapshot";
 
 const toErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
+
 const APPLE_NATIVE_TRANSLATION_ENGINE_ID = "apple-native";
 const APPLE_NATIVE_PREFLIGHT_TIMEOUT_MS = 20_000;
 const APPLE_NATIVE_HELPER_RELATIVE_PATH = [
@@ -258,11 +257,11 @@ const assertAppleNativeSettingsReady = async (
 
 export class SettingsRequestHandler {
   private readonly broadcaster: (event: BridgeEvent) => void;
-  private readonly localizationFacade: LocalizationFacade;
   private readonly logger: Logger;
   private readonly settingsLoadedBroadcaster: SettingsLoadedBroadcaster;
   private readonly settingsPersistenceService: SettingsPersistenceService;
   private readonly settingsProviderVersionService: SettingsProviderVersionService;
+  private readonly settingsSavedBroadcaster: SettingsSavedBroadcaster;
   private readonly templateSyncFacade: TemplateSyncFacade;
 
   constructor(options: {
@@ -271,13 +270,13 @@ export class SettingsRequestHandler {
     readonly logger: Logger;
   }) {
     this.broadcaster = options.broadcaster;
-    this.localizationFacade = createCoreLocalizationFacade({
+    const localizationFacade = createCoreLocalizationFacade({
       config: options.config,
     });
     this.logger = options.logger;
     this.settingsLoadedBroadcaster = new SettingsLoadedBroadcaster({
       broadcaster: options.broadcaster,
-      localizationFacade: this.localizationFacade,
+      localizationFacade,
       resolveRuntimeSettings: resolveLocalizationRuntimeSettings,
     });
     this.settingsPersistenceService = new SettingsPersistenceService({
@@ -285,6 +284,10 @@ export class SettingsRequestHandler {
       logger: options.logger,
     });
     this.settingsProviderVersionService = new SettingsProviderVersionService();
+    this.settingsSavedBroadcaster = new SettingsSavedBroadcaster({
+      broadcaster: options.broadcaster,
+      localizationFacade,
+    });
     this.templateSyncFacade = new TemplateSyncFacade(options.logger);
   }
 
@@ -294,31 +297,34 @@ export class SettingsRequestHandler {
   ): Promise<void> {
     try {
       await assertAppleNativeSettingsReady(settings);
-      await this.publishSaved(
-        await this.settingsPersistenceService.save(settings, { workspace })
+      await this.settingsSavedBroadcaster.publish(
+        await this.settingsPersistenceService.save(settings, { workspace }),
+        workspace
       );
     } catch (error) {
       const reason = toErrorMessage(error);
       this.logger.warn("Failed to save settings", { error: reason });
-      this.broadcastSaveError(reason);
+      this.broadcastSaveError(reason, workspace);
     }
   }
 
   async handleReset(workspace?: WorkspaceSettingsScope): Promise<void> {
     try {
-      await this.publishSaved(
-        await this.settingsPersistenceService.reset({ workspace })
+      await this.settingsSavedBroadcaster.publish(
+        await this.settingsPersistenceService.reset({ workspace }),
+        workspace
       );
     } catch (error) {
       const reason = toErrorMessage(error);
       this.logger.warn("Failed to reset settings", { error: reason });
-      this.broadcastSaveError(reason);
+      this.broadcastSaveError(reason, workspace);
     }
   }
 
   async handleLoad(workspace?: WorkspaceSettingsScope): Promise<void> {
     await this.settingsLoadedBroadcaster.publish(
-      await this.settingsPersistenceService.load({ workspace })
+      await this.settingsPersistenceService.load({ workspace }),
+      workspace
     );
   }
 
@@ -334,18 +340,14 @@ export class SettingsRequestHandler {
     }
   }
 
-  private broadcastLocalizationSyncStatus(payload: {
-    readonly busy: boolean;
-    readonly message: string;
-  }): void {
+  private broadcastSaveError(
+    error: string,
+    workspace?: WorkspaceSettingsScope
+  ): void {
     this.broadcaster({
-      type: "settings:localization-sync-status",
-      payload,
+      type: "settings:save-error",
+      payload: { error, ...toWorkspaceScopePayload(workspace) },
     });
-  }
-
-  private broadcastSaveError(error: string): void {
-    this.broadcaster({ type: "settings:save-error", payload: { error } });
   }
 
   private broadcastVersionsError(error: string): void {
@@ -413,51 +415,6 @@ export class SettingsRequestHandler {
           error: toErrorMessage(error),
         },
       });
-    }
-  }
-
-  private async publishSaved(result: SettingsWriteResult): Promise<void> {
-    if (result.syncMode === "strict") {
-      this.broadcastLocalizationSyncStatus({
-        busy: true,
-        message:
-          "Localization sync is running. Project Manager and new sessions stay blocked until translated interface bundles are ready.",
-      });
-    }
-
-    try {
-      const localizationRuntime =
-        result.syncMode === "strict"
-          ? await this.localizationFacade.synchronizeRuntimePayload(
-              resolveLocalizationRuntimeSettings(result.settings),
-              { affectedRuntimeBundleIds: result.affectedRuntimeBundleIds }
-            )
-          : await this.localizationFacade.resolveRuntimePayload(
-              resolveLocalizationRuntimeSettings(result.settings)
-            );
-
-      this.broadcaster({
-        type: "settings:saved",
-        payload: {
-          localizationRuntime,
-          settings: result.settings,
-        },
-      });
-
-      if (result.syncMode === "strict") {
-        this.broadcastLocalizationSyncStatus({
-          busy: false,
-          message: "Localization sync completed.",
-        });
-      }
-    } catch (error) {
-      if (result.syncMode === "strict") {
-        this.broadcastLocalizationSyncStatus({
-          busy: false,
-          message: `Localization sync failed: ${toErrorMessage(error)}`,
-        });
-      }
-      throw error;
     }
   }
 

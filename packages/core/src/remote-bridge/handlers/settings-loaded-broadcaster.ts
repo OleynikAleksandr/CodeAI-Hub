@@ -3,6 +3,17 @@ import type {
   LocalizationRuntimeSettingsSnapshot,
 } from "@codeai-hub/localization";
 import type { BridgeEvent } from "../types";
+import type { WorkspaceSettingsScope } from "./settings-persistence-snapshot";
+
+export const toWorkspaceScopePayload = (
+  workspace?: WorkspaceSettingsScope
+): Record<string, string> =>
+  workspace
+    ? {
+        workspacePath: workspace.workspaceRoot,
+        workspaceSlug: workspace.workspaceSlug,
+      }
+    : {};
 
 export class SettingsLoadedBroadcaster {
   private readonly broadcaster: (event: BridgeEvent) => void;
@@ -23,13 +34,18 @@ export class SettingsLoadedBroadcaster {
     this.resolveRuntimeSettings = options.resolveRuntimeSettings;
   }
 
-  async publish(settings: Record<string, unknown>): Promise<void> {
+  async publish(
+    settings: Record<string, unknown>,
+    workspace?: WorkspaceSettingsScope
+  ): Promise<void> {
+    const scopePayload = toWorkspaceScopePayload(workspace);
     this.broadcaster({
       type: "settings:loaded",
       payload: {
         localizationRuntime: null,
         settings,
         error: null,
+        ...scopePayload,
       },
     });
 
@@ -43,6 +59,7 @@ export class SettingsLoadedBroadcaster {
         localizationRuntime,
         settings,
         error: null,
+        ...scopePayload,
       },
     });
   }
