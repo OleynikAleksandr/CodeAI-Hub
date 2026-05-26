@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.366] - 2026-05-26
+### Fixed
+- **Project Manager Settings persist before localization sync.** Core writes `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` before running translation/localization runtime synchronization, so an Apple Native readiness/preflight failure no longer cancels the saved settings event.
+- **Settings events are scoped to the active workspace.** The Project Manager Settings panel ignores stale load/save/error events from other workspaces and continues to save/reset with the active workspace scope.
+- **Legacy global settings cannot become runtime truth through fallbacks.** Extension compatibility storage, Codex app-server fallbacks, request-capture diagnostics, and Core config now avoid `~/.codeai-hub/settings/settings.json` as a mutable settings source; an inherited `CLAUDE_SETTINGS_PATH` pointing there is ignored.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.test.ts packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts src/client/project-manager/components/settings/use-project-manager-settings.test.ts src/extension-module/settings/settings-storage.test.ts src/extension-module/settings/codex-provider-config-sync.test.ts packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.test.ts packages/core/src/config/index.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build --workspace @codeai-hub/codex-app-server-module`
+- Settings reference scan for legacy global settings runtime reads.
+- `npm run plan:validate`
+
 ## [1.2.365] - 2026-05-26
 ### Fixed
 - **Workspace runtime settings are the only mutable settings authority.** Core no longer creates, reads, or seeds workflow settings from `~/.codeai-hub/settings/settings.json`; missing workspace settings are materialized in `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` from an existing configured workspace first, then from in-code defaults.

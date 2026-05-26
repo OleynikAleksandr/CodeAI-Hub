@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.365** (Workspace Settings SSOT Hotfix)
+**Current Release — v1.2.366** (Settings Save Durability Hotfix)
+
+This hotfix makes Project Manager Settings durable even when localization
+runtime synchronization fails. Core now persists the active workspace settings
+file first, then runs localization sync/preflight and reports any translation
+runtime problem separately instead of cancelling the saved settings event.
+
+Project Manager settings panels now ignore stale settings events from other
+workspaces, Codex-side fallbacks no longer read the legacy global settings file,
+and Core ignores an inherited `CLAUDE_SETTINGS_PATH` when it points at
+`~/.codeai-hub/settings/settings.json`. The workspace runtime file remains the
+only mutable settings authority for workflow workspaces.
+
+**Previous Release — v1.2.365** (Workspace Settings SSOT Hotfix)
 
 This hotfix removes `~/.codeai-hub/settings/settings.json` as runtime settings
 truth for workflow workspaces. Core no longer primes or seeds that global file:

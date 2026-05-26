@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "200439133",
+  "lastRecordedCommit": "da3b351fe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase68.stream3.task1",
-  "expectedCommitMessage": "fix: ignore legacy settings env path",
+  "currentTaskId": "phase70.stream1.task1",
+  "expectedCommitMessage": "docs: prepare settings save durability release",
   "debt": {
-    "expectedCommitMessage": "fix: ignore legacy settings env path",
-    "preCommitHead": "200439133",
+    "expectedCommitMessage": "docs: prepare settings save durability release",
+    "preCommitHead": "da3b351fe",
     "stage": "commit_pending",
-    "taskId": "phase68.stream3.task1"
+    "taskId": "phase70.stream1.task1"
   }
 }
 ```
@@ -621,10 +621,30 @@
 
 ### Stream: Legacy Env Guard
 245. [DONE] `phase68.stream3.task1` Ignore legacy global settings env paths in Core config so inherited `CLAUDE_SETTINGS_PATH` cannot make `~/.codeai-hub/settings/settings.json` runtime truth, while preserving explicit non-legacy settings paths for tests and tools (scope: `packages/core/src/config/index.ts, packages/core/src/config/index.test.ts`; expected commit: `fix: ignore legacy settings env path`).
-246. [PENDING] Git Commit: `fix: ignore legacy settings env path` (hash: TBD)
+246. [DONE] Git Commit: `fix: ignore legacy settings env path` (hash: da3b351fe)
 
 ### Stream: Final Regression Verification
-247. [TODO] `phase68.stream4.task1` Re-run focused settings save/scope/config tests, Core build, Project Manager typecheck, Codex AppServer build, settings reference scan, plan validation, and then stop for explicit release build confirmation (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, src/extension-module/settings, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+247. [DONE] `phase68.stream4.task1` Re-run focused settings save/scope/config tests, Core build, Project Manager typecheck, Codex AppServer build, settings reference scan, plan validation, and then stop for explicit release build confirmation (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, src/extension-module/settings, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Final settings regression verification passed: 19 focused settings/config/Codex tests, @codeai-hub/core build, Project Manager typecheck, Codex AppServer build, plan validation, and settings reference scan completed. Remaining scan hits are env overrides, tests, provider wiring to config.claudeSettingsPath/geminiSettingsPath, and legacy-path guard constants; no runtime fallback reads the global settings file as settings truth.
+
+## Phase 69 - Release Build Confirmation (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Confirmation Gate
+248. [DONE] `phase69.stream1.task1` Stop after Project Manager settings save durability fixes and final targeted verification, report results, and request explicit user confirmation before preparing release notes or running release scripts (scope: release gate; expected commit: no commit expected). Result: Release build explicitly confirmed by user on 2026-05-26: build the next release for Project Manager settings save durability and workspace settings runtime truth retest.
+
+## Phase 70 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Docs
+249. [DONE] `phase70.stream1.task1` After explicit release confirmation, update release-facing docs for version 1.2.366 before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare settings save durability release`).
+250. [PENDING] Git Commit: `docs: prepare settings save durability release` (hash: TBD)
+
+### Stream: Release Build
+251. [TODO] `phase70.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build settings save durability release`). Result: TBD.
+252. [TODO] Git Commit: `chore: build settings save durability release` (hash: TBD)
+
+## Phase 71 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+253. [TODO] `phase71.stream1.task1` User installs the generated VSIX and verifies Project Manager Settings changes persist to the active workspace runtime settings file before localization sync, stale workspace settings events are ignored, legacy global settings do not become runtime truth, and translation/localization settings apply from workspace settings (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
