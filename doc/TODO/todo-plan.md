@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "64cc85c02",
+  "lastRecordedCommit": "e850680db",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase72.stream1.task1",
-  "expectedCommitMessage": "fix: scope localization bundle storage to workspace",
+  "currentTaskId": "phase72.stream1.task2",
+  "expectedCommitMessage": "fix: scope localization bootstrap cache to workspace",
   "debt": {
-    "expectedCommitMessage": "fix: scope localization bundle storage to workspace",
-    "preCommitHead": "64cc85c02",
+    "expectedCommitMessage": "fix: scope localization bootstrap cache to workspace",
+    "preCommitHead": "e850680db",
     "stage": "commit_pending",
-    "taskId": "phase72.stream1.task1"
+    "taskId": "phase72.stream1.task2"
   }
 }
 ```
@@ -650,9 +650,9 @@
 
 ### Stream: Localization Runtime Storage
 254. [DONE] `phase72.stream1.task1` Make localization package bundle and metadata stores accept an explicit localization root so materialized catalogs and metadata can live inside the active workspace runtime localization capsule instead of `~/.codeai-hub/localization` (scope: `packages/localization/src/localization-paths.ts, packages/localization/src/localization-bundle-store.ts, packages/localization/src/localization-metadata-store.ts`; expected commit: `fix: scope localization bundle storage to workspace`).
-255. [PENDING] Git Commit: `fix: scope localization bundle storage to workspace` (hash: TBD)
-256. [TODO] `phase72.stream1.task2` Make LocalizationFacade and browser bootstrap cache use the same explicit localization root, including user glossary reads used by bundle cache keys (scope: `packages/localization/src/localization-contract.ts, packages/localization/src/localization-facade.ts, packages/localization/src/localization-runtime-bootstrap-store.ts`; expected commit: `fix: scope localization bootstrap cache to workspace`).
-257. [TODO] Git Commit: `fix: scope localization bootstrap cache to workspace` (hash: TBD)
+255. [DONE] Git Commit: `fix: scope localization bundle storage to workspace` (hash: e850680db)
+256. [DONE] `phase72.stream1.task2` Make LocalizationFacade and browser bootstrap cache use the same explicit localization root, including user glossary reads used by bundle cache keys (scope: `packages/localization/src/localization-contract.ts, packages/localization/src/localization-facade.ts, packages/localization/src/localization-runtime-bootstrap-store.ts`; expected commit: `fix: scope localization bootstrap cache to workspace`).
+257. [PENDING] Git Commit: `fix: scope localization bootstrap cache to workspace` (hash: TBD)
 
 ### Stream: Core Workspace Wiring
 258. [TODO] `phase72.stream2.task1` Wire Core localization facade creation and bootstrap HTTP reads to the active workspace runtime localization/settings capsule instead of global localization defaults or in-code settings defaults (scope: `packages/core/src/translation/core-localization-facade-factory.ts, packages/core/src/translation/core-localization-facade-factory.test.ts, packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit: `fix: use workspace localization runtime in core`).

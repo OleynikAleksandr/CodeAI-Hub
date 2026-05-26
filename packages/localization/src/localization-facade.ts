@@ -21,6 +21,8 @@ import {
   type LocalizationMaterializationRequest,
   LocalizationMaterializer,
 } from "./localization-materializer";
+import { LocalizationMetadataStore } from "./localization-metadata-store";
+import { resolveLocalizationPaths } from "./localization-paths";
 import {
   type LocalizationRuntimeBootstrapSnapshot,
   LocalizationRuntimeBootstrapStore,
@@ -67,20 +69,12 @@ type ResolvedRuntimeBundles = Record<
   LocalizationResolvedRuntimeBundle
 >;
 
-type ApprovedUserFacingCategoryId =
-  | "ui_labels"
-  | "ui_helper_text"
-  | "messages_for_the_user"
-  | "artifacts_for_the_user";
-
 const APPROVED_CATEGORY_SELECTION_PRIORITY = {
   ui_labels: ["ui_labels", "ui_interface", "workflow_terms"],
   ui_helper_text: ["ui_helper_text", "user_guidance"],
   messages_for_the_user: ["messages_for_the_user", "system_feedback"],
   artifacts_for_the_user: ["artifacts_for_the_user", "interactive_templates"],
-} as const satisfies Readonly<
-  Record<ApprovedUserFacingCategoryId, readonly string[]>
->;
+} as const;
 
 const LEGACY_CATEGORY_SELECTION_PRIORITY = {
   interactive_templates:
@@ -146,6 +140,13 @@ export class LocalizationFacade {
   private readonly userGlossaryStore: UserGlossaryStore;
 
   constructor(options: LocalizationFacadeOptions = {}) {
+    const pathOptions = options.localizationRootDirectory
+      ? { rootDirectory: options.localizationRootDirectory }
+      : {};
+    const userGlossaryStore = new UserGlossaryStore({
+      glossaryDirectory:
+        resolveLocalizationPaths(pathOptions).glossaryDirectory,
+    });
     this.defaultSourceLanguage = normalizeLanguage(
       options.defaultSourceLanguage
     );
@@ -155,7 +156,7 @@ export class LocalizationFacade {
     this.sourceDictionaryRegistry = new SourceDictionaryRegistry(
       options.sourceDictionaries
     );
-    this.bundleStore = new LocalizationBundleStore();
+    this.bundleStore = new LocalizationBundleStore(pathOptions);
     this.glossaryBundleLoader = new GlossaryBundleLoader();
     this.languageCatalogService = new LanguageCatalogService({
       defaultEngineId: DEFAULT_LOCALIZATION_ENGINE_ID,
@@ -166,11 +167,15 @@ export class LocalizationFacade {
       defaultEngineId: DEFAULT_LOCALIZATION_ENGINE_ID,
       defaultSourceLanguage: this.defaultSourceLanguage,
       languageCatalogService: this.languageCatalogService,
+      metadataStore: new LocalizationMetadataStore(pathOptions),
       sourceDictionaryRegistry: this.sourceDictionaryRegistry,
       translationFacade: options.translationFacade,
+      userGlossaryStore,
     });
-    this.runtimeBootstrapStore = new LocalizationRuntimeBootstrapStore();
-    this.userGlossaryStore = new UserGlossaryStore();
+    this.runtimeBootstrapStore = new LocalizationRuntimeBootstrapStore(
+      pathOptions
+    );
+    this.userGlossaryStore = userGlossaryStore;
   }
 
   registerSourceDictionary(dictionary: LocalizationSourceDictionary): void {

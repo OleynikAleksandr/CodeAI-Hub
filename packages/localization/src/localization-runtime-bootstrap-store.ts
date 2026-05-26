@@ -8,7 +8,10 @@ import type {
   LocalizationSourceDictionaryEntries,
 } from "./localization-contract";
 import { LOCALIZATION_CATEGORY_IDS } from "./localization-contract";
-import { resolveLocalizationPaths } from "./localization-paths";
+import {
+  type LocalizationPathOptions,
+  resolveLocalizationPaths,
+} from "./localization-paths";
 
 const LOCALIZATION_RUNTIME_BOOTSTRAP_SCHEMA_VERSION = 1;
 
@@ -20,9 +23,7 @@ export interface LocalizationRuntimeBootstrapSnapshot {
   readonly settings: LocalizationRuntimeSettingsSnapshot;
 }
 
-interface LocalizationRuntimeBootstrapStoreOptions {
-  readonly homeDirectory?: string;
-}
+type LocalizationRuntimeBootstrapStoreOptions = LocalizationPathOptions;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -233,16 +234,16 @@ const parseSnapshot = (
 };
 
 export class LocalizationRuntimeBootstrapStore {
-  private readonly homeDirectory?: string;
+  private readonly pathOptions: LocalizationRuntimeBootstrapStoreOptions;
 
   constructor(options: LocalizationRuntimeBootstrapStoreOptions = {}) {
-    this.homeDirectory = options.homeDirectory;
+    this.pathOptions = options;
   }
 
   async load(): Promise<LocalizationRuntimeBootstrapSnapshot | null> {
     try {
       const raw = await fs.readFile(
-        resolveLocalizationPaths(this.homeDirectory)
+        resolveLocalizationPaths(this.pathOptions)
           .browserRuntimeBootstrapFilePath,
         "utf8"
       );
@@ -254,7 +255,7 @@ export class LocalizationRuntimeBootstrapStore {
 
   async save(snapshot: LocalizationRuntimeBootstrapSnapshot): Promise<void> {
     const { browserRuntimeBootstrapFilePath, cacheDirectory } =
-      resolveLocalizationPaths(this.homeDirectory);
+      resolveLocalizationPaths(this.pathOptions);
     await fs.mkdir(cacheDirectory, { recursive: true });
     await fs.writeFile(
       browserRuntimeBootstrapFilePath,
@@ -266,7 +267,7 @@ export class LocalizationRuntimeBootstrapStore {
   async remove(): Promise<void> {
     try {
       await fs.unlink(
-        resolveLocalizationPaths(this.homeDirectory)
+        resolveLocalizationPaths(this.pathOptions)
           .browserRuntimeBootstrapFilePath
       );
     } catch {

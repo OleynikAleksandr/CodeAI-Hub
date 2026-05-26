@@ -85,6 +85,7 @@ export interface LocalizationTranslationFacadeContract {
 export interface LocalizationFacadeOptions {
   readonly defaultSourceLanguage?: string;
   readonly engineCatalogs?: readonly LocalizationEngineLanguageCatalog[];
+  readonly localizationRootDirectory?: string;
   readonly sourceDictionaries?: readonly LocalizationSourceDictionary[];
   readonly translationFacade?: LocalizationTranslationFacadeContract;
 }
