@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile } from "node:fs/promises";
+import { access, mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -7,10 +7,7 @@ import type { CoreConfig } from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import { SettingsPersistenceService } from "./settings-persistence-service";
-import {
-  buildDefaultSettingsSnapshot,
-  persistSettingsSnapshot,
-} from "./settings-persistence-snapshot";
+import { buildDefaultSettingsSnapshot } from "./settings-persistence-snapshot";
 
 const createConfig = (settingsPath: string): CoreConfig => ({
   claudeContinuityRemainingPercentThreshold: 30,
@@ -36,6 +33,9 @@ const logger = {
   },
 } as unknown as Logger;
 
+const WORKSPACE_SETTINGS_SCOPE_REQUIRED =
+  /Workspace settings scope is required/;
+
 const cloneSettings = (
   settings: Record<string, unknown>
 ): Record<string, unknown> =>
@@ -58,17 +58,10 @@ const readCodexDefaultModel = (settings: Record<string, unknown>): string => {
   return String(codex.defaultModel);
 };
 
-test("SettingsPersistenceService seeds workspace settings from global defaults and isolates changes", async () => {
+test("SettingsPersistenceService seeds workspace settings from existing workspace settings and isolates changes", async () => {
   const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-settings-"));
   const globalSettingsPath = path.join(tempRoot, "global", "settings.json");
   const config = createConfig(globalSettingsPath);
-  const seedSettings = setCodexDefaultModel(
-    buildDefaultSettingsSnapshot(config),
-    "seed-codex-model"
-  );
-  await persistSettingsSnapshot(globalSettingsPath, seedSettings);
-
-  const service = new SettingsPersistenceService({ config, logger });
   const workspaceA = {
     workspaceRoot: path.join(tempRoot, "workspace-a"),
     workspaceSlug: "workspace-a",
@@ -77,9 +70,17 @@ test("SettingsPersistenceService seeds workspace settings from global defaults a
     workspaceRoot: path.join(tempRoot, "workspace-b"),
     workspaceSlug: "workspace-b",
   };
+  const service = new SettingsPersistenceService({
+    config,
+    listWorkspaceSettingsSeeds: () => [
+      { ...workspaceA, lastUsed: "2026-05-25T12:00:00.000Z" },
+      { ...workspaceB, lastUsed: "2026-05-25T13:00:00.000Z" },
+    ],
+    logger,
+  });
 
   const loadedA = await service.load({ workspace: workspaceA });
-  assert.equal(readCodexDefaultModel(loadedA), "seed-codex-model");
+  assert.equal(readCodexDefaultModel(loadedA), "gpt-5.3-codex");
 
   await service.save(setCodexDefaultModel(loadedA, "workspace-a-model"), {
     workspace: workspaceA,
@@ -88,7 +89,7 @@ test("SettingsPersistenceService seeds workspace settings from global defaults a
   const reloadedA = await service.load({ workspace: workspaceA });
   const loadedB = await service.load({ workspace: workspaceB });
   assert.equal(readCodexDefaultModel(reloadedA), "workspace-a-model");
-  assert.equal(readCodexDefaultModel(loadedB), "seed-codex-model");
+  assert.equal(readCodexDefaultModel(loadedB), "workspace-a-model");
 
   const capsuleA = resolveWorkspaceRuntimeCapsule(workspaceA);
   const capsuleB = resolveWorkspaceRuntimeCapsule(workspaceB);
@@ -100,12 +101,7 @@ test("SettingsPersistenceService seeds workspace settings from global defaults a
     capsuleB.settingsFile.relativePath,
     ".codeai-hub/workspace-b/runtime/settings/settings.json"
   );
-  assert.equal(
-    readCodexDefaultModel(
-      JSON.parse(await readFile(globalSettingsPath, "utf8"))
-    ),
-    "seed-codex-model"
-  );
+  await assert.rejects(access(globalSettingsPath), { code: "ENOENT" });
   assert.equal(
     readCodexDefaultModel(
       JSON.parse(await readFile(capsuleA.settingsFile.absolutePath, "utf8"))
@@ -116,6 +112,21 @@ test("SettingsPersistenceService seeds workspace settings from global defaults a
     readCodexDefaultModel(
       JSON.parse(await readFile(capsuleB.settingsFile.absolutePath, "utf8"))
     ),
-    "seed-codex-model"
+    "workspace-a-model"
   );
+});
+
+test("SettingsPersistenceService rejects unscoped writes without creating global settings", async () => {
+  const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-settings-"));
+  const globalSettingsPath = path.join(tempRoot, "global", "settings.json");
+  const config = createConfig(globalSettingsPath);
+  const service = new SettingsPersistenceService({ config, logger });
+
+  await assert.rejects(
+    service.save(buildDefaultSettingsSnapshot(config)),
+    WORKSPACE_SETTINGS_SCOPE_REQUIRED
+  );
+  await assert.rejects(service.reset(), WORKSPACE_SETTINGS_SCOPE_REQUIRED);
+  assert.equal(readCodexDefaultModel(await service.load()), "gpt-5.3-codex");
+  await assert.rejects(access(globalSettingsPath), { code: "ENOENT" });
 });

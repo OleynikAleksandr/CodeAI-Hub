@@ -12,6 +12,11 @@ import {
   type SettingsLoadEntry,
   type WorkspaceSettingsScope,
 } from "./settings-persistence-snapshot";
+import {
+  listRegisteredWorkspaceSettingsSeeds,
+  resolveWorkspaceSettingsSeed,
+  type WorkspaceSettingsSeedCandidateProvider,
+} from "./workspace-settings-seed-resolver";
 
 type ApprovedLocalizationGroupId =
   | "artifacts_for_the_user"
@@ -152,20 +157,19 @@ const planSelectiveSync = (
 
 export class SettingsPersistenceService {
   private readonly config: CoreConfig;
+  private readonly listWorkspaceSettingsSeeds: WorkspaceSettingsSeedCandidateProvider;
   private readonly logger: Logger;
 
   constructor(options: {
     readonly config: CoreConfig;
     readonly logger: Logger;
+    readonly listWorkspaceSettingsSeeds?: WorkspaceSettingsSeedCandidateProvider;
   }) {
     this.config = options.config;
+    this.listWorkspaceSettingsSeeds =
+      options.listWorkspaceSettingsSeeds ??
+      listRegisteredWorkspaceSettingsSeeds;
     this.logger = options.logger;
-    this.primeDefaultsIfMissing().catch((error: unknown) => {
-      this.logger.warn("Failed to prime default settings on startup", {
-        error: toErrorMessage(error),
-        settingsPath: this.config.claudeSettingsPath,
-      });
-    });
   }
 
   async load(
@@ -177,6 +181,7 @@ export class SettingsPersistenceService {
   async reset(
     options: SettingsPersistenceOptions = {}
   ): Promise<SettingsWriteResult> {
+    this.assertWorkspaceScopedWrite(options);
     const settingsPath = this.resolveSettingsPath(options);
     const current = await this.loadSettingsEntry(options);
     const settings = buildDefaultSettingsSnapshot(this.config);
@@ -195,6 +200,7 @@ export class SettingsPersistenceService {
     rawSettings: unknown,
     options: SettingsPersistenceOptions = {}
   ): Promise<SettingsWriteResult> {
+    this.assertWorkspaceScopedWrite(options);
     if (!this.isValidSettingsPayload(rawSettings)) {
       throw new Error(
         "Received invalid settings payload. Changes were not saved."
@@ -230,27 +236,11 @@ export class SettingsPersistenceService {
     );
   }
 
-  private async primeDefaultsIfMissing(): Promise<void> {
-    const settingsPath = this.config.claudeSettingsPath;
-    try {
-      await readFile(settingsPath, "utf8");
-    } catch (error: unknown) {
-      const code = resolveErrorCode(error);
-      if (code !== "ENOENT") {
-        return;
-      }
-      try {
-        await persistSettingsSnapshot(
-          settingsPath,
-          buildDefaultSettingsSnapshot(this.config)
-        );
-        this.invalidateSettingsSnapshotCache(settingsPath);
-      } catch (persistError) {
-        this.logger.warn("Failed to persist default settings on startup", {
-          error: toErrorMessage(persistError),
-          settingsPath,
-        });
-      }
+  private assertWorkspaceScopedWrite(
+    options: SettingsPersistenceOptions
+  ): void {
+    if (!options.workspace) {
+      throw new Error("Workspace settings scope is required to save settings.");
     }
   }
 
@@ -264,6 +254,13 @@ export class SettingsPersistenceService {
   private async loadSettingsEntry(
     options: SettingsPersistenceOptions = {}
   ): Promise<SettingsLoadEntry> {
+    if (!options.workspace) {
+      return {
+        changed: false,
+        settings: buildDefaultSettingsSnapshot(this.config),
+      };
+    }
+
     const settingsPath = this.resolveSettingsPath(options);
     try {
       const raw = await readFile(settingsPath, "utf8");
@@ -297,7 +294,9 @@ export class SettingsPersistenceService {
         settingsPath,
       });
 
-      const snapshot = await this.resolveMissingSettingsSnapshot(options);
+      const snapshot = await this.resolveMissingSettingsSnapshot(
+        options.workspace
+      );
       if (code === "ENOENT") {
         try {
           await persistSettingsSnapshot(settingsPath, snapshot);
@@ -314,26 +313,14 @@ export class SettingsPersistenceService {
     }
   }
 
-  private async resolveMissingSettingsSnapshot(
-    options: SettingsPersistenceOptions
+  private resolveMissingSettingsSnapshot(
+    workspace: WorkspaceSettingsScope
   ): Promise<Record<string, unknown>> {
-    if (!options.workspace) {
-      return buildDefaultSettingsSnapshot(this.config);
-    }
-
-    try {
-      const raw = await readFile(this.config.claudeSettingsPath, "utf8");
-      const parsed = JSON.parse(raw) as unknown;
-      const baseSettings = isRecord(parsed)
-        ? parsed
-        : buildDefaultSettingsSnapshot(this.config);
-      return normalizeLoadedSettingsSnapshotWithDefaults(
-        baseSettings,
-        this.config
-      ).settings;
-    } catch {
-      return buildDefaultSettingsSnapshot(this.config);
-    }
+    return resolveWorkspaceSettingsSeed({
+      config: this.config,
+      listCandidates: this.listWorkspaceSettingsSeeds,
+      targetWorkspace: workspace,
+    });
   }
 
   private invalidateSettingsSnapshotCache(settingsPath: string): void {
