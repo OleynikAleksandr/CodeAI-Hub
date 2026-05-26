@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "723298955",
+  "lastRecordedCommit": "268c6e681",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase79.stream1.task1",
-  "expectedCommitMessage": "fix: load project manager settings from active workspace",
+  "currentTaskId": "phase79.stream2.task1",
+  "expectedCommitMessage": "fix: scope project manager settings commands",
   "debt": {
-    "expectedCommitMessage": "fix: load project manager settings from active workspace",
-    "preCommitHead": "723298955",
+    "expectedCommitMessage": "fix: scope project manager settings commands",
+    "preCommitHead": "268c6e681",
     "stage": "commit_pending",
-    "taskId": "phase79.stream1.task1"
+    "taskId": "phase79.stream2.task1"
   }
 }
 ```
@@ -731,11 +731,11 @@
 
 ### Stream: Active Workspace Settings Runtime
 285. [DONE] `phase79.stream1.task1` Make Project Manager load and apply settings/localization from the active workspace scope instead of the fallback unscoped runtime, and stop startup from issuing no-scope settings loads that create the full-path slug capsule (scope: `src/client/project-manager/api.ts, src/client/project-manager/components/settings/use-project-manager-settings.ts, src/client/project-manager/components/layout/workspace-scope-sync.ts`; expected commit: `fix: load project manager settings from active workspace`).
-286. [PENDING] Git Commit: `fix: load project manager settings from active workspace` (hash: TBD)
+286. [DONE] Git Commit: `fix: load project manager settings from active workspace` (hash: 268c6e681)
 
 ### Stream: Scoped Settings Commands
-287. [TODO] `phase79.stream2.task1` Route Project Manager settings side commands, including user glossary open, through the same workspace scope so Core does not fall back to `claudeProjectSlug` or global/default localization roots (scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.ts, src/client/project-manager/api.ts`; expected commit: `fix: scope project manager settings commands`).
-288. [TODO] Git Commit: `fix: scope project manager settings commands` (hash: TBD)
+287. [DONE] `phase79.stream2.task1` Route Project Manager settings side commands, including user glossary open, through the same workspace scope so Core does not fall back to `claudeProjectSlug` or global/default localization roots (scope: `packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.ts, src/client/project-manager/api.ts`; expected commit: `fix: scope project manager settings commands`).
+288. [PENDING] Git Commit: `fix: scope project manager settings commands` (hash: TBD)
 
 ### Stream: Bootstrap Scope Regression Coverage
 289. [TODO] `phase79.stream3.task1` Add focused regression coverage for the active workspace settings/localization path and the wrong `users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` fallback slug scenario (scope: `src/client/project-manager/components/settings/use-project-manager-settings.test.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.localization-runtime.test.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts`; expected commit: `test: cover project manager workspace localization scope`).

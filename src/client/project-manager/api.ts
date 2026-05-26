@@ -160,7 +160,9 @@ class ProjectManagerApi {
   }
   openUserGlossaryFile(): void {
     this.lastUserGlossaryFilePayload = null;
-    this.send({ type: "settings:open-user-glossary-file" });
+    const settingsScope = this.lastSettingsPayload as WorkspaceSettingsScopePayload | null;
+    const payload = settingsScope?.workspacePath && settingsScope.workspaceSlug ? { workspacePath: settingsScope.workspacePath, workspaceSlug: settingsScope.workspaceSlug } : undefined;
+    this.send({ type: "settings:open-user-glossary-file", payload } as QueuedOutgoingMessage);
   }
   loadTemplateUpdates(): void {
     this.send({ type: "settings:template-updates" });

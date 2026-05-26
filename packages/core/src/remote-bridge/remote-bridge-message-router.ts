@@ -12,10 +12,10 @@ import { RemoteBridgeWorkbenchCommandRouter } from "./remote-bridge-workbench-co
 import { RemoteBridgeWorkspaceCommandRouter } from "./remote-bridge-workspace-command-router";
 import type { IncomingMessage } from "./types";
 
-interface SettingsWorkspaceScopePayload {
-  readonly workspacePath?: string | null;
-  readonly workspaceSlug?: string | null;
-}
+type SettingsWorkspaceScopePayload = Readonly<{
+  workspacePath?: string | null;
+  workspaceSlug?: string | null;
+}>;
 export class RemoteBridgeMessageRouter {
   private readonly deps: RemoteBridgeMessageRouterDependencies;
   private readonly developmentTreeNodeCommandRouter: RemoteBridgeDevelopmentTreeNodeCommandRouter;
@@ -23,7 +23,6 @@ export class RemoteBridgeMessageRouter {
   private readonly sessionCreateRouter: RemoteBridgeSessionCreateRouter;
   private readonly workbenchCommandRouter: RemoteBridgeWorkbenchCommandRouter;
   private readonly workspaceCommandRouter: RemoteBridgeWorkspaceCommandRouter;
-
   constructor(deps: RemoteBridgeMessageRouterDependencies) {
     this.deps = deps;
     this.dialogCommandRouter = new RemoteBridgeDialogCommandRouter({
@@ -32,9 +31,8 @@ export class RemoteBridgeMessageRouter {
       dialogOpenService: deps.dialogOpenService,
       getManager: deps.getManager,
       providerBindingService: deps.sessionHandler.getProviderBindingService(),
-      sendScopeViolation: (clientId, command, message) => {
-        this.sendScopeViolation(clientId, command, message);
-      },
+      sendScopeViolation: (clientId, command, message) =>
+        this.sendScopeViolation(clientId, command, message),
       sessionHandler: deps.sessionHandler,
       sessionManager: deps.sessionManager,
       workspaceRuntime: deps.workspaceRuntime,
@@ -48,23 +46,20 @@ export class RemoteBridgeMessageRouter {
     this.developmentTreeNodeCommandRouter =
       new RemoteBridgeDevelopmentTreeNodeCommandRouter({
         sessionCreateRouter: this.sessionCreateRouter,
-        sendCommandError: (clientId, command, message, code) => {
-          this.sendCommandError(clientId, command, message, code);
-        },
+        sendCommandError: (clientId, command, message, code) =>
+          this.sendCommandError(clientId, command, message, code),
       });
     this.workbenchCommandRouter = new RemoteBridgeWorkbenchCommandRouter({
       getManager: deps.getManager,
     });
     this.workspaceCommandRouter = new RemoteBridgeWorkspaceCommandRouter({
       getManager: deps.getManager,
-      sendScopeViolation: (clientId, command, message) => {
-        this.sendScopeViolation(clientId, command, message);
-      },
+      sendScopeViolation: (clientId, command, message) =>
+        this.sendScopeViolation(clientId, command, message),
       sessionManager: deps.sessionManager,
       workspaceRuntime: deps.workspaceRuntime,
     });
   }
-
   async handleIncomingMessage(
     clientId: string,
     incoming: IncomingMessage
@@ -116,7 +111,11 @@ export class RemoteBridgeMessageRouter {
         );
         break;
       case "settings:open-user-glossary-file":
-        await this.deps.settingsHandler.handleOpenUserGlossaryFile();
+        await this.deps.settingsHandler.handleOpenUserGlossaryFile(
+          RemoteBridgeMessageRouter.resolveSettingsWorkspace(
+            "payload" in incoming ? incoming.payload : undefined
+          )
+        );
         break;
       case "settings:template-updates":
         await this.deps.settingsHandler.handleListTemplateUpdates();
@@ -274,22 +273,22 @@ export class RemoteBridgeMessageRouter {
         break;
     }
   }
-
   private static resolveSettingsWorkspace(
     payload: unknown
   ):
     | { readonly workspaceRoot: string; readonly workspaceSlug: string }
     | undefined {
-    const scope =
-      payload && typeof payload === "object"
-        ? (payload as SettingsWorkspaceScopePayload)
-        : undefined;
-    return scope?.workspacePath && scope.workspaceSlug
-      ? {
-          workspaceRoot: scope.workspacePath,
-          workspaceSlug: scope.workspaceSlug,
-        }
-      : undefined;
+    if (!(payload && typeof payload === "object")) {
+      return undefined;
+    }
+    const scope = payload as SettingsWorkspaceScopePayload;
+    if (!(scope.workspacePath && scope.workspaceSlug)) {
+      return undefined;
+    }
+    return {
+      workspaceRoot: scope.workspacePath,
+      workspaceSlug: scope.workspaceSlug,
+    };
   }
   private ensureMessageAllowedForScope(
     clientId: string,

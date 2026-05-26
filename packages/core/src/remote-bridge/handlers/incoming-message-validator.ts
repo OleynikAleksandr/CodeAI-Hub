@@ -17,7 +17,6 @@ type PayloadValidator = (payload: unknown) => boolean;
 
 const NO_PAYLOAD_COMMANDS = new Set([
   "projects:list",
-  "settings:open-user-glossary-file",
   "settings:template-updates",
   "settings:versions",
 ]);
@@ -306,6 +305,7 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "session:stop": isSessionIdPayload,
   "settings:load": isSettingsWorkspaceScopePayload,
   "settings:native-request-capture": isNativeRequestCapturePayload,
+  "settings:open-user-glossary-file": isSettingsWorkspaceScopePayload,
   "settings:reset": isSettingsWorkspaceScopePayload,
   "settings:save": isSettingsSavePayload,
   "settings:template-update:resolve": isSettingsTemplateResolutionPayload,
