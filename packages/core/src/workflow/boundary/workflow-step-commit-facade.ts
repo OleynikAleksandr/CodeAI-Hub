@@ -106,6 +106,7 @@ export class WorkflowStepCommitFacade {
     params: WorkflowStepCommitParams
   ): Promise<WorkflowStepCommitResult> {
     const capsule = resolveWorkspaceRuntimeCapsule(params);
+    await this.#git.ensureRepository(params.workspaceRoot);
     await untrackVolatileProviderRuntimePaths({
       capsuleRoot: capsule.workspaceCapsuleRoot.relativePath,
       workspaceRoot: params.workspaceRoot,

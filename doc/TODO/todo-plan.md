@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "6d94b3c88",
+  "lastRecordedCommit": "6b116ae80",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase92.stream2.task1",
-  "expectedCommitMessage": "fix: untrack settings from workflow commits",
+  "currentTaskId": "phase92.stream3.task1",
+  "expectedCommitMessage": "test: cover rollback ignored settings commits",
   "debt": {
-    "expectedCommitMessage": "fix: untrack settings from workflow commits",
-    "preCommitHead": "6d94b3c88",
+    "expectedCommitMessage": "test: cover rollback ignored settings commits",
+    "preCommitHead": "6b116ae80",
     "stage": "commit_pending",
-    "taskId": "phase92.stream2.task1"
+    "taskId": "phase92.stream3.task1"
   }
 }
 ```
@@ -825,11 +825,11 @@
 
 ### Stream: Boundary And Accepted-Step Migration
 315. [DONE] `phase92.stream2.task1` Add a reusable settings untrack/preserve helper and untrack workspace settings during boundary creation and accepted-step commits so legacy tracked settings migrate out of workflow history without data loss (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts`; expected commit: `fix: untrack settings from workflow commits`).
-316. [PENDING] Git Commit: `fix: untrack settings from workflow commits` (hash: TBD)
+316. [DONE] Git Commit: `fix: untrack settings from workflow commits` (hash: 6b116ae80)
 
 ### Stream: Accepted-Step Regression Coverage
-317. [TODO] `phase92.stream3.task1` Add focused accepted-step coverage proving a legacy tracked settings file is untracked, preserved on disk, and absent from workflow snapshot commits (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `test: cover rollback ignored settings commits`).
-318. [TODO] Git Commit: `test: cover rollback ignored settings commits` (hash: TBD)
+317. [DONE] `phase92.stream3.task1` Add focused accepted-step coverage proving a legacy tracked settings file is untracked, preserved on disk, and absent from workflow snapshot commits (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `test: cover rollback ignored settings commits`).
+318. [PENDING] Git Commit: `test: cover rollback ignored settings commits` (hash: TBD)
 
 ### Stream: Clear Rollback Preservation
 319. [TODO] `phase92.stream4.task1` Preserve the current workspace settings file across Clear reset/clean rollback and remove any restored legacy settings entry from Git tracking (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: preserve settings across workflow clear`).

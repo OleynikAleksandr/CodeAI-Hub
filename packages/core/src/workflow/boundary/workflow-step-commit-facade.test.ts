@@ -19,6 +19,8 @@ const CAPSULE_PROVIDER_SQLITE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/logs_2\.sqlite/u;
 const CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/shell_snapshots\/snapshot\.sh/u;
+const CAPSULE_SETTINGS_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/settings\/settings\.json/u;
 const CAPSULE_TASK_TIMER_STATE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/state\/task-timers\.json/u;
 const CAPSULE_UNIFIED_SESSION_RE =
@@ -149,6 +151,61 @@ test("accepted step commit untracks provider volatile files left by older capsul
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SQLITE_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("accepted step commit untracks legacy settings without overwriting workspace settings", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "step-settings-workspace-")
+  );
+  try {
+    const { capsule } = await bootstrapWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
+    await git(workspaceRoot, ["add", "-f", capsule.settingsFile.relativePath]);
+    await git(workspaceRoot, ["commit", "-m", "test: legacy tracked settings"]);
+
+    const currentSettings = `${JSON.stringify(
+      { general: { localization: { defaultLanguage: "ru" } } },
+      null,
+      2
+    )}\n`;
+    await writeText(capsule.settingsFile.absolutePath, currentSettings);
+    await writeText(
+      path.join(capsule.descriptionRoot.absolutePath, "Final_Description.md"),
+      "# Final Description\n"
+    );
+
+    await new WorkflowStepCommitFacade().commitAcceptedStep({
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(
+      await readFile(capsule.settingsFile.absolutePath, "utf8"),
+      currentSettings
+    );
+    assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
+    const trackedFiles = await git(workspaceRoot, ["ls-files"]);
+    assert.doesNotMatch(trackedFiles, CAPSULE_SETTINGS_RE);
+    assert.match(
+      await git(workspaceRoot, ["log", "--oneline", "-1"]),
+      ACCEPTED_STEP_COMMIT_RE
+    );
+    const headTreeFiles = await git(workspaceRoot, [
+      "ls-tree",
+      "-r",
+      "--name-only",
+      "HEAD",
+    ]);
+    assert.doesNotMatch(headTreeFiles, CAPSULE_SETTINGS_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
