@@ -1,4 +1,3 @@
-import { existsSync, promises as fs, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import { normalizeClaudeSettings } from "./claude-settings";
@@ -10,75 +9,6 @@ import { DEFAULT_SETTINGS_SNAPSHOT, type SettingsSnapshot } from "./types";
 
 const SETTINGS_DIR = path.join(homedir(), ".codeai-hub", "settings");
 const SETTINGS_FILE = path.join(SETTINGS_DIR, "settings.json");
-
-const normalizeSnapshotForStorage = (
-  value: unknown
-): SettingsSnapshot | null => {
-  if (!isRecord(value)) {
-    return null;
-  }
-
-  const providers = isRecord(value.providers) ? value.providers : {};
-  const general = isRecord(value.general) ? value.general : {};
-
-  return {
-    general: normalizeGeneralSettings(general),
-    providers: {
-      claude: normalizeClaudeSettings(providers.claude),
-      codex: normalizeCodexSettings(providers.codex),
-      gemini: normalizeGeminiSettings(providers.gemini),
-    },
-  };
-};
-
-const needsThinkingDisplayBackfill = (value: unknown): boolean => {
-  if (!isRecord(value)) {
-    return false;
-  }
-
-  const providers = isRecord(value.providers) ? value.providers : {};
-  const claude = isRecord(providers.claude) ? providers.claude : {};
-  const gemini = isRecord(providers.gemini) ? providers.gemini : {};
-
-  return (
-    typeof claude.thinkingDisplaySyncEnabled !== "boolean" ||
-    typeof gemini.thinkingDisplaySyncEnabled !== "boolean"
-  );
-};
-
-const needsClaudeThinkingEffortBackfill = (value: unknown): boolean => {
-  if (!isRecord(value)) {
-    return false;
-  }
-
-  const providers = isRecord(value.providers) ? value.providers : {};
-  const claude = isRecord(providers.claude) ? providers.claude : {};
-  const thinking = isRecord(claude.thinking) ? claude.thinking : null;
-  if (!thinking) {
-    return false;
-  }
-
-  return (
-    typeof thinking.effort !== "string" ||
-    Object.getOwnPropertyDescriptor(thinking, "maxTokens") !== undefined
-  );
-};
-
-const needsLocalizationBackfill = (value: unknown): boolean => {
-  if (!isRecord(value)) {
-    return false;
-  }
-
-  const general = isRecord(value.general) ? value.general : {};
-  const rawLocalization = isRecord(general.localization)
-    ? general.localization
-    : null;
-  const normalizedLocalization = normalizeGeneralSettings(general).localization;
-
-  return (
-    JSON.stringify(rawLocalization) !== JSON.stringify(normalizedLocalization)
-  );
-};
 
 export const parseSettingsSnapshot = (
   value: unknown
@@ -103,55 +33,19 @@ export const parseSettingsSnapshot = (
 };
 
 export const loadSettingsSnapshot = (): SettingsSnapshot => {
-  const hadSettingsFile = existsSync(SETTINGS_FILE);
-  try {
-    const raw = readFileSync(SETTINGS_FILE, "utf8");
-    const parsed = JSON.parse(raw) as unknown;
-    const normalized = normalizeSnapshotForStorage(parsed);
-    if (normalized) {
-      if (
-        hadSettingsFile &&
-        (needsThinkingDisplayBackfill(parsed) ||
-          needsClaudeThinkingEffortBackfill(parsed) ||
-          needsLocalizationBackfill(parsed))
-      ) {
-        persistSettingsSnapshot(normalized).catch(() => {
-          /* ignore persistence errors */
-        });
-      }
-      return normalized;
-    }
-  } catch {
-    // ignore missing/invalid files and fall back to defaults
-  }
-
-  if (!hadSettingsFile) {
-    persistSettingsSnapshot(DEFAULT_SETTINGS_SNAPSHOT).catch(() => {
-      /* ignore persistence errors */
-    });
-  }
-
-  return DEFAULT_SETTINGS_SNAPSHOT;
+  return structuredClone(DEFAULT_SETTINGS_SNAPSHOT);
 };
 
 export const persistSettingsSnapshot = async (
-  snapshot: SettingsSnapshot
+  _snapshot?: SettingsSnapshot
 ): Promise<void> => {
-  try {
-    await fs.mkdir(SETTINGS_DIR, { recursive: true });
-    await fs.writeFile(
-      SETTINGS_FILE,
-      `${JSON.stringify(snapshot, null, 2)}\n`,
-      "utf8"
-    );
-  } catch {
-    // swallow persistence errors; settings UI will continue to function with in-memory state
-  }
+  // Project Manager/Core own runtime settings persistence per workspace.
+  // The extension-side settings surface is compatibility-only and must not
+  // resurrect ~/.codeai-hub/settings/settings.json as mutable runtime truth.
 };
 
-export const applyDefaultModelsEnv = (snapshot: SettingsSnapshot): void => {
-  process.env.CLAUDE_DEFAULT_MODEL = snapshot.providers.claude.defaultModel;
-  process.env.CODEX_DEFAULT_MODEL = snapshot.providers.codex.defaultModel;
-  process.env.GEMINI_DEFAULT_MODEL = snapshot.providers.gemini.defaultModel;
-  process.env.CLAUDE_SETTINGS_PATH = SETTINGS_FILE;
+export const applyDefaultModelsEnv = (_snapshot: SettingsSnapshot): void => {
+  if (process.env.CLAUDE_SETTINGS_PATH === SETTINGS_FILE) {
+    Reflect.deleteProperty(process.env, "CLAUDE_SETTINGS_PATH");
+  }
 };
