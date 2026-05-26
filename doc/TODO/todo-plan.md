@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "d7fa9376b",
+  "lastRecordedCommit": "8e06a42e7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase68.stream1.task4",
-  "expectedCommitMessage": "test: fix settings verification types",
+  "currentTaskId": "phase68.stream1.task5",
+  "expectedCommitMessage": "fix: remove codex global settings fallbacks",
   "debt": {
-    "expectedCommitMessage": "test: fix settings verification types",
-    "preCommitHead": "d7fa9376b",
+    "expectedCommitMessage": "fix: remove codex global settings fallbacks",
+    "preCommitHead": "8e06a42e7",
     "stage": "commit_pending",
-    "taskId": "phase68.stream1.task4"
+    "taskId": "phase68.stream1.task5"
   }
 }
 ```
@@ -612,10 +612,12 @@
 238. [DONE] `phase68.stream1.task3` Stop extension-side compatibility settings storage from materializing or exporting the legacy global settings file as Core runtime environment, keeping workspace runtime settings as the only mutable authority (scope: `src/extension-module/settings/settings-storage.ts, src/extension-module/settings/settings-storage.test.ts`; expected commit: `fix: stop extension settings from seeding global runtime path`).
 239. [DONE] Git Commit: `fix: stop extension settings from seeding global runtime path` (hash: d7fa9376b)
 240. [DONE] `phase68.stream1.task4` Fix focused settings broadcaster test types so the Core package build validates the regression coverage without unsafe runtime payload casts (scope: `packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.test.ts`; expected commit: `test: fix settings verification types`).
-241. [PENDING] Git Commit: `test: fix settings verification types` (hash: TBD)
+241. [DONE] Git Commit: `test: fix settings verification types` (hash: 8e06a42e7)
+242. [DONE] `phase68.stream1.task5` Remove remaining Codex-side runtime fallbacks that read `~/.codeai-hub/settings/settings.json` when workspace settings env is absent; missing env now falls back to in-code defaults instead of the legacy global file (scope: `src/extension-module/settings/codex-provider-config-sync.ts, packages/Codex_AppServer_Module/src/app-server/codex-app-server-facade.ts, packages/Codex_AppServer_Module/src/diagnostics/codex-native-request-capture-applied-envelope.ts`; expected commit: `fix: remove codex global settings fallbacks`).
+243. [PENDING] Git Commit: `fix: remove codex global settings fallbacks` (hash: TBD)
 
 ### Stream: Regression Verification
-242. [TODO] `phase68.stream2.task1` Run focused settings save/scope tests, Core build, Project Manager typecheck, settings reference scan, and then stop for explicit release build confirmation (scope: `packages/core, src/client/project-manager, src/extension-module/settings, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+244. [TODO] `phase68.stream2.task1` Run focused settings save/scope tests, Core build, Project Manager typecheck, settings reference scan, and then stop for explicit release build confirmation (scope: `packages/core, packages/Codex_AppServer_Module, src/client/project-manager, src/extension-module/settings, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

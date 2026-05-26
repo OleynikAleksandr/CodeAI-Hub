@@ -12,12 +12,6 @@ const PROVIDER_CODEX_HOME = path.join(
   "codex",
   "home"
 );
-const SETTINGS_FILE = path.join(
-  homedir(),
-  ".codeai-hub",
-  "settings",
-  "settings.json"
-);
 const MODEL_LINE_REGEX = /^\s*model\s*=\s*.+?$/mu;
 const LEGACY_REASONING_SUMMARY_LINE_REGEX =
   /^\s*default_reasoning_summary\s*=\s*.+?$/gmu;
@@ -33,27 +27,12 @@ const normalizeOptionalString = (value: unknown): string | undefined =>
     ? value.trim()
     : undefined;
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const resolveCodexDefaultModel = async (): Promise<string | undefined> => {
+const resolveCodexDefaultModel = (): string | undefined => {
   const envModel = normalizeOptionalString(process.env.CODEX_DEFAULT_MODEL);
   if (envModel) {
     return envModel;
   }
-
-  try {
-    const parsed = JSON.parse(await readFile(SETTINGS_FILE, "utf8")) as unknown;
-    if (!(isRecord(parsed) && isRecord(parsed.providers))) {
-      return undefined;
-    }
-    const codex = parsed.providers.codex;
-    return isRecord(codex)
-      ? normalizeOptionalString(codex.defaultModel)
-      : undefined;
-  } catch {
-    return undefined;
-  }
+  return undefined;
 };
 
 export const normalizeCodexProviderConfigToml = (
@@ -146,7 +125,7 @@ export const syncCodexProviderReasoningSummaryConfig = async (
   const { raw, shouldUnlink } = await readProviderConfigToml(destination);
   const next = normalizeCodexProviderConfigToml(
     raw,
-    await resolveCodexDefaultModel()
+    resolveCodexDefaultModel()
   );
 
   if (shouldUnlink) {

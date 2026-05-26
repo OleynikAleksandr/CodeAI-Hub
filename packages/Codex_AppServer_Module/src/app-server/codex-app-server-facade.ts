@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import path from "node:path";
 import { CodexSessionStaleBindingError } from "../provider/codex-session-stale-binding-error";
 import {
@@ -23,12 +22,6 @@ const CODEX_WORKFLOW_DEFAULT_APPROVAL_POLICY = "never";
 const CODEX_WORKFLOW_DEFAULT_SANDBOX = "danger-full-access";
 const DEFAULT_REASONING_SUMMARY_ENABLED = true;
 const REASONING_SUMMARY_SETTINGS_CACHE_TTL_MS = 500;
-const DEFAULT_SETTINGS_PATH = path.join(
-  homedir(),
-  ".codeai-hub",
-  "settings",
-  "settings.json"
-);
 
 interface ReasoningSummarySettingsCacheEntry {
   readonly enabled: boolean;
@@ -72,10 +65,9 @@ const buildModelSwitchInputItem = (
   };
 };
 
-const resolveSettingsPath = (): string =>
+const resolveSettingsPath = (): string | null =>
   asString(process.env.CODEX_SETTINGS_PATH) ??
-  asString(process.env.CLAUDE_SETTINGS_PATH) ??
-  DEFAULT_SETTINGS_PATH;
+  asString(process.env.CLAUDE_SETTINGS_PATH);
 
 const readReasoningSummaryEnabled = (settingsPath: string): boolean => {
   try {
@@ -100,7 +92,11 @@ const readReasoningSummaryEnabled = (settingsPath: string): boolean => {
 };
 
 const resolveReasoningSummaryEnabled = (): boolean => {
-  const settingsPath = path.resolve(resolveSettingsPath());
+  const settingsPathValue = resolveSettingsPath();
+  if (!settingsPathValue) {
+    return DEFAULT_REASONING_SUMMARY_ENABLED;
+  }
+  const settingsPath = path.resolve(settingsPathValue);
   const nowMs = Date.now();
   if (
     reasoningSummarySettingsCache?.settingsPath === settingsPath &&

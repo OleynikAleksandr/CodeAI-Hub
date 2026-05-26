@@ -1,17 +1,9 @@
 import { readFileSync } from "node:fs";
-import { homedir } from "node:os";
-import path from "node:path";
 import type { CodexAppServerProcessProfileKey } from "../app-server/process/codex-app-server-process-profile";
 import type { CodexReasoningSummaryMode } from "../types";
 
 const DEFAULT_REASONING_SUMMARY: CodexReasoningSummaryMode = "detailed";
 const DEFAULT_REASONING_SUMMARY_ENABLED = true;
-const DEFAULT_SETTINGS_PATH = path.join(
-  homedir(),
-  ".codeai-hub",
-  "settings",
-  "settings.json"
-);
 
 export interface CodexNativeRequestCaptureAppliedInputEnvelope {
   readonly approvalPolicy: string | null;
@@ -72,15 +64,18 @@ const asRecordOrNull = (value: unknown): Record<string, unknown> | null =>
 const asStringOrNull = (value: unknown): string | null =>
   typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 
-const resolveSettingsPath = (): string =>
+const resolveSettingsPath = (): string | null =>
   asStringOrNull(process.env.CODEX_SETTINGS_PATH) ??
-  asStringOrNull(process.env.CLAUDE_SETTINGS_PATH) ??
-  DEFAULT_SETTINGS_PATH;
+  asStringOrNull(process.env.CLAUDE_SETTINGS_PATH);
 
 const resolveReasoningSummaryEnabled = (): boolean => {
+  const settingsPath = resolveSettingsPath();
+  if (!settingsPath) {
+    return DEFAULT_REASONING_SUMMARY_ENABLED;
+  }
   try {
     const parsed = asRecordOrNull(
-      JSON.parse(readFileSync(resolveSettingsPath(), "utf8")) as unknown
+      JSON.parse(readFileSync(settingsPath, "utf8")) as unknown
     );
     const providers = asRecordOrNull(parsed?.providers);
     const codex = asRecordOrNull(providers?.codex);
