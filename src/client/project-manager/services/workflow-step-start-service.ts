@@ -1,27 +1,4 @@
 import type { ProviderStackId } from "../../../types/provider";
-import {
-  CLAUDE_MODEL_ALIAS_SET,
-  CLAUDE_THINKING_EFFORT_SET,
-  type ClaudeModelAliasId,
-  type ClaudeThinkingEffort,
-} from "../../../types/claude-model-registry";
-import {
-  CODEX_SETTINGS_MODELS,
-  CODEX_REASONING_LEVELS,
-  type CodexModelId,
-  type CodexReasoningLevel,
-} from "../../../types/codex-model-registry";
-import {
-  GEMINI_MODEL_ID_SET,
-  GEMINI_THINKING_LEVELS,
-  type GeminiModelId,
-  type GeminiThinkingLevel,
-} from "../../../types/gemini-model-registry";
-import {
-  DEFAULT_KIMI_MODEL_ID,
-  KIMI_MODEL_ID_SET,
-  type KimiModelId,
-} from "../../../types/kimi-model-registry";
 import { api } from "../api";
 import {
   DescriptionSubmitService,
@@ -29,15 +6,8 @@ import {
 } from "./description-submit-service";
 import type { SettingsLoadedPayload } from "../core-stream-message-types";
 import type { Settings } from "../../ui/src/components/settings/settings-state-model";
-import {
-  updateClaudeDefaultModel,
-  updateCodexDefaultModel,
-  updateCodexReasoning,
-  updateGeminiDefaultModel,
-  updateGeminiThinking,
-  updateThinkingSettings,
-} from "../../ui/src/components/settings/settings-state-helpers";
 import { resolveWorkflowChatLanguage } from "./prompt-pack-builder";
+import { applyStartCardModelDefaults } from "./workflow-step-start-settings-defaults";
 import {
   loadWorkflowSettingsPayload,
   saveWorkflowSettingsAndWait,
@@ -78,124 +48,8 @@ type SubmitQuestionnaireService = Pick<
   "submitQuestionnaire"
 >;
 
-const CODEX_MODEL_ID_SET = new Set<string>(
-  CODEX_SETTINGS_MODELS.map((model) => model.id)
-);
-const CODEX_REASONING_LEVEL_SET = new Set<string>(
-  CODEX_REASONING_LEVELS.map((level) => level.name)
-);
-const GEMINI_THINKING_LEVEL_SET = new Set<string>(
-  GEMINI_THINKING_LEVELS.map((level) => level.name)
-);
 const isSettings = (value: unknown): value is Settings =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
-
-const isClaudeModelAliasId = (value: string): value is ClaudeModelAliasId =>
-  CLAUDE_MODEL_ALIAS_SET.has(value as ClaudeModelAliasId);
-
-const isClaudeThinkingEffort = (value: string): value is ClaudeThinkingEffort =>
-  CLAUDE_THINKING_EFFORT_SET.has(value as ClaudeThinkingEffort);
-
-const isCodexModelId = (value: string): value is CodexModelId =>
-  CODEX_MODEL_ID_SET.has(value);
-
-const isCodexReasoningLevel = (value: string): value is CodexReasoningLevel =>
-  CODEX_REASONING_LEVEL_SET.has(value);
-
-const isGeminiModelId = (value: string): value is GeminiModelId =>
-  GEMINI_MODEL_ID_SET.has(value as GeminiModelId);
-
-const isGeminiThinkingLevel = (value: string): value is GeminiThinkingLevel =>
-  GEMINI_THINKING_LEVEL_SET.has(value);
-
-const isKimiModelId = (value: string): value is KimiModelId =>
-  KIMI_MODEL_ID_SET.has(value as KimiModelId);
-
-const normalizeStartCardSelection = (value: string | null | undefined): string | null => {
-  const normalized = typeof value === "string" ? value.trim() : "";
-  return normalized.length > 0 ? normalized : null;
-};
-
-const applyStartCardModelDefaults = (
-  settings: Settings,
-  params: Pick<StartWorkflowStepParams, "modelId" | "providerId" | "reasoning">
-): Settings | null => {
-  const modelId = normalizeStartCardSelection(params.modelId);
-  const reasoning = normalizeStartCardSelection(params.reasoning);
-  if (!modelId && !reasoning) {
-    return null;
-  }
-
-  if (params.providerId === "claudeCodeCli") {
-    const nextModelId =
-      modelId && isClaudeModelAliasId(modelId)
-        ? modelId
-        : settings.providers.claude.defaultModel;
-    let nextSettings =
-      modelId && isClaudeModelAliasId(modelId)
-        ? updateClaudeDefaultModel(settings, modelId)
-        : settings;
-    if (reasoning && isClaudeThinkingEffort(reasoning)) {
-      nextSettings = updateThinkingSettings(nextSettings, true, reasoning);
-    }
-    return nextSettings.providers.claude.defaultModel === nextModelId
-      ? nextSettings
-      : null;
-  }
-
-  if (params.providerId === "codexCli") {
-    if (!modelId || !isCodexModelId(modelId)) {
-      return null;
-    }
-    let nextSettings = updateCodexDefaultModel(settings, modelId);
-    if (reasoning && isCodexReasoningLevel(reasoning)) {
-      nextSettings = updateCodexReasoning(nextSettings, modelId, reasoning);
-    }
-    return nextSettings;
-  }
-
-  if (
-    params.providerId === "kimiCode" ||
-    params.providerId === "glmClaudeCode"
-  ) {
-    if (!modelId || !isKimiModelId(modelId)) {
-      return null;
-    }
-    const providerSettingsKey =
-      params.providerId === "glmClaudeCode" ? "glmClaudeCode" : "kimi";
-    const fallbackProviderSettings =
-      providerSettingsKey === "kimi"
-        ? {
-            autoUpdate: { enabled: false },
-            defaultModel: DEFAULT_KIMI_MODEL_ID,
-            thinkingDisplaySyncEnabled: true,
-          }
-        : {
-            defaultModel: DEFAULT_KIMI_MODEL_ID,
-            thinkingDisplaySyncEnabled: true,
-          };
-    return {
-      ...settings,
-      providers: {
-        ...settings.providers,
-        [providerSettingsKey]: {
-          ...(settings.providers[providerSettingsKey] ??
-            fallbackProviderSettings),
-          defaultModel: modelId,
-        },
-      },
-    };
-  }
-
-  if (!modelId || !isGeminiModelId(modelId)) {
-    return null;
-  }
-  let nextSettings = updateGeminiDefaultModel(settings, modelId);
-  if (reasoning && isGeminiThinkingLevel(reasoning)) {
-    nextSettings = updateGeminiThinking(nextSettings, modelId, reasoning);
-  }
-  return nextSettings;
-};
 
 const readDiagramModulesSubstep = (
   state: Awaited<ReturnType<typeof api.getWorkflowState>> | null

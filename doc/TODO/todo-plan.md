@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "2e741f5a4",
+  "lastRecordedCommit": "582b00772",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase96.stream2.task1",
-  "expectedCommitMessage": "chore: build rollback ignored settings release",
+  "currentTaskId": "phase98.stream1.task1",
+  "expectedCommitMessage": "fix: skip no-op workflow start settings saves",
   "debt": {
-    "expectedCommitMessage": "chore: build rollback ignored settings release",
-    "preCommitHead": "2e741f5a4",
+    "expectedCommitMessage": "fix: skip no-op workflow start settings saves",
+    "preCommitHead": "582b00772",
     "stage": "commit_pending",
-    "taskId": "phase96.stream2.task1"
+    "taskId": "phase98.stream1.task1"
   }
 }
 ```
@@ -863,12 +863,23 @@
 
 ### Stream: Release Build
 329. [DONE] `phase96.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the rollback-ignored workspace settings release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build rollback ignored settings release`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` completed for v1.2.372; SDK exclusions, local artefact validation, markdown links, duplication check, production dependency pruning and VSIX runtime surface verification passed. Artifacts: `codeai-hub-1.2.372.vsix` plus v1.2.372 provider/core/launcher/UI tarballs in `doc/tmp/releases/`.
-330. [PENDING] Git Commit: `chore: build rollback ignored settings release` (hash: TBD)
+330. [DONE] Git Commit: `chore: build rollback ignored settings release` (hash: 582b00772)
 
 ## Phase 97 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-331. [TODO] `phase97.stream1.task1` User installs the generated VSIX and verifies settings changes persist through workflow Undo/Clear, settings are not committed into workflow history, Clear still restores selected/downstream workflow artifacts, and Project Manager localization/settings continue to read the active workspace runtime settings file (scope: user workflow acceptance; expected commit: no commit expected).
+331. [DONE] `phase97.stream1.task1` User installs the generated VSIX and verifies settings changes persist through workflow Undo/Clear, settings are not committed into workflow history, Clear still restores selected/downstream workflow artifacts, and Project Manager localization/settings continue to read the active workspace runtime settings file (scope: user workflow acceptance; expected commit: no commit expected). Result: User retest found a blocker after Clear Description: the next Virtual Simulation start can time out while waiting for a start-card settings save acknowledgement.
+
+## Phase 98 - Settings Start Barrier Regression (owner: Codex, updated: 2026-05-26)
+
+### Stream: Workflow Start Settings Save
+332. [DONE] `phase98.stream1.task1` Prevent repeated workflow starts after Clear from timing out on a no-op start-card settings save by making selected provider defaults persist only when the workspace settings value actually changes (scope: `src/client/project-manager/services/workflow-step-start-service.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts, src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`; expected commit: `fix: skip no-op workflow start settings saves`). Result: Extracted start-card settings default application into a small service module and made it return `null` for unchanged provider defaults, so repeat starts after Clear skip the unnecessary settings save barrier. Verification passed: `node --test --import tsx src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts src/client/project-manager/services/workflow-step-start-service.gating.test.ts` (11/11), `npm run build:project-manager`, `npm run typecheck:webview`.
+333. [PENDING] Git Commit: `fix: skip no-op workflow start settings saves` (hash: TBD)
+
+## Phase 99 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+
+### Stream: Release Gate
+334. [TODO] `phase99.stream1.task1` Await explicit user confirmation before preparing release docs or building the next release for the workflow start settings barrier hotfix (scope: release gate; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

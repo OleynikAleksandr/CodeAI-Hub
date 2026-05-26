@@ -217,6 +217,49 @@ test("workflow starts load workspace settings before persisting selected default
   assert.equal(sessionId, "ru:ru");
 });
 
+test("workflow starts skip settings save when selected defaults are unchanged", async () => {
+  installWindowStub();
+  const { WorkflowStepStartService } = await import("./workflow-step-start-service");
+  const settings = createSettings();
+  const modelId = settings.providers.codex.defaultModel;
+  const reasoning = settings.providers.codex.reasoningByModel[modelId];
+  const events: string[] = [];
+
+  const service = new WorkflowStepStartService({
+    getWorkflowState: async () => ({
+      ...createWorkflowState(),
+      description: {
+        finalPath: ".codeai-hub/demo-workspace/description/Final_Description.md",
+        questionnairePath:
+          ".codeai-hub/demo-workspace/description/questionnaire.md",
+        updatedAt: "2026-05-26T12:00:00.000Z",
+      },
+    }),
+    loadSettingsPayload: async () => ({ settings }),
+    saveSettings: () => {
+      throw new Error("No-op start-card settings save should be skipped.");
+    },
+    submitService: {
+      submitQuestionnaire: async () => {
+        events.push("session:create");
+        return "virtual-simulation-session";
+      },
+    },
+  });
+
+  const sessionId = await service.startVirtualSimulation({
+    workspaceName: "Demo Workspace",
+    workspacePath: "/tmp/demo",
+    workspaceSlug: "demo-workspace",
+    providerId: "codexCli",
+    modelId,
+    reasoning,
+  });
+
+  assert.equal(sessionId, "virtual-simulation-session");
+  assert.deepEqual(events, ["session:create"]);
+});
+
 test("workflow settings transport accepts only matching workspace settings events", async () => {
   installWindowStub();
   const { isSettingsEventForScope } = await import(
