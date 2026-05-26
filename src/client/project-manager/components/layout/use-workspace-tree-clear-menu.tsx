@@ -15,6 +15,9 @@ interface ClearMenuState {
   readonly y: number;
 }
 
+const normalizeClearError = (error: unknown): string =>
+  error instanceof Error ? error.message : "Workflow step clear failed.";
+
 export const useWorkspaceTreeClearMenu = (params: {
   readonly workspacePath?: string;
   readonly workspaceSlug?: string | null;
@@ -110,25 +113,40 @@ export const useWorkspaceTreeClearMenu = (params: {
       close();
       return;
     }
-    const result = await clearWorkflowStep({
-      httpUrl,
-      target: menu.target,
-      workspacePath: params.workspacePath,
-      workspaceSlug: params.workspaceSlug,
-    });
-    window.dispatchEvent(
-      new CustomEvent("pm:workflow-step:cleared", {
-        detail: {
-          target: result.target,
-          deletedSessionIds: result.deletedSessionIds,
-          restore: result.restore,
-          workspacePath: params.workspacePath,
-          workspaceSlug: result.workspaceSlug,
-        },
-      })
-    );
-    workflowStateStore.requestImmediatePoll();
+
+    const activeMenu = menu;
     close();
+    try {
+      const result = await clearWorkflowStep({
+        httpUrl,
+        target: activeMenu.target,
+        workspacePath: params.workspacePath,
+        workspaceSlug: params.workspaceSlug,
+      });
+      window.dispatchEvent(
+        new CustomEvent("pm:workflow-step:cleared", {
+          detail: {
+            target: result.target,
+            deletedSessionIds: result.deletedSessionIds,
+            restore: result.restore,
+            workspacePath: params.workspacePath,
+            workspaceSlug: result.workspaceSlug,
+          },
+        })
+      );
+      workflowStateStore.requestImmediatePoll();
+    } catch (error) {
+      window.dispatchEvent(
+        new CustomEvent("pm:workflow-step:clear-failed", {
+          detail: {
+            error: normalizeClearError(error),
+            target: activeMenu.target,
+            workspacePath: params.workspacePath,
+            workspaceSlug: params.workspaceSlug,
+          },
+        })
+      );
+    }
   }, [close, menu, params.workspacePath, params.workspaceSlug]);
 
   const menuContent =

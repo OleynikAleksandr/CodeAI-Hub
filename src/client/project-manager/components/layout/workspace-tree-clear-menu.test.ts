@@ -32,10 +32,13 @@ test("workspace tree clear menu requires destructive confirmation and calls Core
   assert.match(hookSource, /onContextMenuCapture/u);
   assert.match(hookSource, /event\.button === 2/u);
   assert.match(hookSource, /event\.button === 2[\s\S]*openMenu/u);
+  assert.match(hookSource, /const activeMenu = menu[\s\S]*close\(\)[\s\S]*const result = await clearWorkflowStep/u);
+  assert.match(hookSource, /target: activeMenu\.target/u);
   assert.match(hookSource, /const result = await clearWorkflowStep/u);
   assert.match(hookSource, /restore: result\.restore/u);
   assert.match(hookSource, /deletedSessionIds: result\.deletedSessionIds/u);
   assert.match(hookSource, /pm:workflow-step:cleared/u);
+  assert.match(hookSource, /pm:workflow-step:clear-failed/u);
   assert.match(clientSource, /workflow-step-clear/u);
   assert.match(clientSource, /WorkflowStepClearResult/u);
   assert.match(clientSource, /invalid Core response/u);

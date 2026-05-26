@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "7d2dc8f29",
+  "lastRecordedCommit": "09705c5d0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase82.stream2.task1",
-  "expectedCommitMessage": "chore: build project manager localization scope release",
+  "currentTaskId": "phase84.stream1.task1",
+  "expectedCommitMessage": "fix: close clear confirmation after rollback",
   "debt": {
-    "expectedCommitMessage": "chore: build project manager localization scope release",
-    "preCommitHead": "7d2dc8f29",
+    "expectedCommitMessage": "fix: close clear confirmation after rollback",
+    "preCommitHead": "09705c5d0",
     "stage": "commit_pending",
-    "taskId": "phase82.stream2.task1"
+    "taskId": "phase84.stream1.task1"
   }
 }
 ```
@@ -759,12 +759,43 @@
 
 ### Stream: Release Build
 295. [DONE] `phase82.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Project Manager localization scope fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build project manager localization scope release`). Result: Release 1.2.369 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.369.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-296. [PENDING] Git Commit: `chore: build project manager localization scope release` (hash: TBD)
+296. [DONE] Git Commit: `chore: build project manager localization scope release` (hash: 09705c5d0)
 
 ## Phase 83 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-297. [TODO] `phase83.stream1.task1` User installs release 1.2.369 and verifies Project Manager help/settings localization loads from `.codeai-hub/codeai-hub-codex-5-4/runtime/localization`, no new `.codeai-hub/users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` runtime capsule is created, and workspace settings remain scoped to `.codeai-hub/codeai-hub-codex-5-4/runtime/settings/settings.json` (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+297. [DONE] `phase83.stream1.task1` User installs release 1.2.369 and verifies Project Manager help/settings localization loads from `.codeai-hub/codeai-hub-codex-5-4/runtime/localization`, no new `.codeai-hub/users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` runtime capsule is created, and workspace settings remain scoped to `.codeai-hub/codeai-hub-codex-5-4/runtime/settings/settings.json` (scope: user workflow acceptance; expected commit: no commit expected). Result: Release 1.2.369 user retest found a UI-only Clear confirmation regression: Virtual Simulation rollback succeeds, but the Project Manager Clear confirmation popover remains visible after the Clear action completes.
+
+## Phase 84 - Clear Confirmation UI State Fix (owner: Codex, updated: 2026-05-26)
+
+### Stream: Project Manager Clear Menu
+298. [DONE] `phase84.stream1.task1` Close the Project Manager Clear confirmation popover immediately when the destructive action is accepted, keep the rollback request running in the background, and cover the behavior with a focused Project Manager regression check (scope: `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: close clear confirmation after rollback`).
+299. [PENDING] Git Commit: `fix: close clear confirmation after rollback` (hash: TBD)
+
+## Phase 85 - Regression Verification (owner: Codex, updated: 2026-05-26)
+
+### Stream: Targeted Checks
+300. [TODO] `phase85.stream1.task1` Run focused Project Manager Clear menu coverage plus Project Manager build/typecheck for the Clear confirmation UI-state regression (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+
+## Phase 86 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+
+### Stream: Release Gate
+301. [TODO] `phase86.stream1.task1` Ask for explicit confirmation before preparing release docs or running release scripts for the Clear confirmation UI-state fix (scope: user release confirmation; expected commit: no commit expected). Result: TBD.
+
+## Phase 87 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Docs
+302. [TODO] `phase87.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear confirmation ui release`).
+303. [TODO] Git Commit: `docs: prepare clear confirmation ui release` (hash: TBD)
+
+### Stream: Release Build
+304. [TODO] `phase87.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Clear confirmation UI-state fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear confirmation ui release`).
+305. [TODO] Git Commit: `chore: build clear confirmation ui release` (hash: TBD)
+
+## Phase 88 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+306. [TODO] `phase88.stream1.task1` User installs the next release and verifies Clear Undo rollback still restores Virtual Simulation/downstream workflow state and the Project Manager Clear confirmation popover disappears immediately after pressing Clear (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
