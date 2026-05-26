@@ -29,6 +29,10 @@ import {
   attachValidationDirtyGate,
   readTechnicalStageDirtyStatus,
 } from "./technical-stage-dirty-gate";
+import {
+  normalizeClearedWorkflowProjection,
+  workflowArtifactFileExists,
+} from "./workflow-state-cleared-projection";
 import { hydrateWorkflowStateFromContinuity } from "./workflow-state-continuity-hydration";
 import { applyDevelopmentTreeFreshnessToState } from "./workflow-state-development-tree-freshness";
 import { hydrateDiagramModulesStateFromProgress } from "./workflow-state-diagram-modules-hydration";
@@ -157,6 +161,12 @@ export class WorkflowStateService {
       workspaceRoot,
       workspaceSlugResult.value
     );
+    const virtualSimulationArtifactExistsPromise = workflowArtifactFileExists({
+      workspaceRoot,
+      workspaceSlug: workspaceSlugResult.value,
+      stage: "virtual_simulation",
+      fileName: "virtual-simulation.md",
+    });
 
     Promise.all([
       continuityPromise,
@@ -166,6 +176,7 @@ export class WorkflowStateService {
       applicationSkeletonProgressPromise,
       qualityGatesProgressPromise,
       technicalStageDirtyStatusPromise,
+      virtualSimulationArtifactExistsPromise,
     ])
       .then(
         ([
@@ -176,6 +187,7 @@ export class WorkflowStateService {
           rawApplicationSkeletonProgress,
           rawQualityGatesProgress,
           technicalStageDirtyStatus,
+          virtualSimulationArtifactExists,
         ]) => {
           const description = descriptionSnapshot
             ? buildDescriptionBranchSnapshot(descriptionSnapshot)
@@ -231,6 +243,23 @@ export class WorkflowStateService {
                   technicalStageProgress.applicationSkeletonProgress,
                 qualityGatesProgress:
                   technicalStageProgress.qualityGatesProgress,
+              })
+            )
+            .then((validatedState) =>
+              normalizeClearedWorkflowProjection({
+                state: validatedState,
+                chains,
+                description,
+                diagramModulesProgress:
+                  technicalStageProgress.diagramModulesProgress,
+                applicationSkeletonProgress:
+                  technicalStageProgress.applicationSkeletonProgress,
+                qualityGatesProgress:
+                  technicalStageProgress.qualityGatesProgress,
+                sessionManager: this.sessionManager,
+                virtualSimulationArtifactExists,
+                workspaceRoot,
+                workspaceSlug: workspaceSlugResult.value,
               })
             )
             .then((validatedState) =>

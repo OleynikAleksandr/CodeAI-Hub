@@ -9,6 +9,7 @@ import {
   ManagedWorkflowReadModelProjector,
 } from "../../managed-workflow-orchestration";
 import { ContinuityChainStore } from "../../session-continuity/continuity-store";
+import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
@@ -160,7 +161,15 @@ test("workflow-state projects managed read-only upstream stages from downstream 
     path.join(os.tmpdir(), "managed-workflow-readonly-")
   );
   try {
-    const service = new WorkflowStateService({ logger: new Logger("error") });
+    const sessionManager = new SessionManager();
+    sessionManager.createSession("codexCli", workspaceRoot, undefined, {
+      initiativeSlug: "demo-workspace",
+      stage: "diagram_modules",
+    });
+    const service = new WorkflowStateService({
+      logger: new Logger("error"),
+      sessionManager,
+    });
     service.record({
       stage: "diagram_modules",
       timestamp: "2026-05-15T10:00:00.000Z",
@@ -180,6 +189,47 @@ test("workflow-state projects managed read-only upstream stages from downstream 
       "description",
       "virtual_simulation",
     ]);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("workflow-state clears stale read-only projection after Clear removes technical evidence", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "managed-workflow-clear-projection-")
+  );
+  try {
+    const service = new WorkflowStateService({ logger: new Logger("error") });
+    service.record({
+      stage: "description",
+      timestamp: "2026-05-15T10:00:00.000Z",
+      type: "workflow.stage.invalidated",
+      workspaceSlug: "demo-workspace",
+    });
+    service.record({
+      stage: "diagram_modules",
+      timestamp: "2026-05-15T10:01:00.000Z",
+      type: "workflow.run.created",
+      workspaceSlug: "demo-workspace",
+    });
+    const payload = await readWorkflowState({
+      service,
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+    const projection = payload.managedWorkflowPreview as {
+      readonly readOnlyStages?: readonly string[];
+    };
+    const stages = readStageStatuses(payload);
+    const gating = payload.gating as {
+      readonly blocked?: Record<string, boolean>;
+    };
+
+    assert.deepEqual(projection.readOnlyStages, []);
+    assert.equal(stages.description?.status, "idle");
+    assert.equal(stages.virtual_simulation?.status, "idle");
+    assert.equal(stages.diagram_modules?.status, "idle");
+    assert.equal(gating.blocked?.description, false);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

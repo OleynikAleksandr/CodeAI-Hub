@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "088660a11",
+  "lastRecordedCommit": "13b2e196b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase104.stream2.task1",
-  "expectedCommitMessage": "chore: build mutable runtime git pollution release",
+  "currentTaskId": "phase106.stream1.task1",
+  "expectedCommitMessage": "fix: reset clear rollback workflow projection",
   "debt": {
-    "expectedCommitMessage": "chore: build mutable runtime git pollution release",
-    "preCommitHead": "088660a11",
+    "expectedCommitMessage": "fix: reset clear rollback workflow projection",
+    "preCommitHead": "13b2e196b",
     "stage": "commit_pending",
-    "taskId": "phase104.stream2.task1"
+    "taskId": "phase106.stream1.task1"
   }
 }
 ```
@@ -919,12 +919,32 @@
 
 ### Stream: Release Build
 347. [DONE] `phase104.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the mutable runtime Git pollution fix (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build mutable runtime git pollution release`). Result: Release `1.2.373` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.373.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-348. [PENDING] Git Commit: `chore: build mutable runtime git pollution release` (hash: TBD)
+348. [DONE] Git Commit: `chore: build mutable runtime git pollution release` (hash: 13b2e196b)
 
 ## Phase 105 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-349. [TODO] `phase105.stream1.task1` User installs the generated VSIX and verifies Clear/Undo no longer leaves settings, localization runtime, or provider-native session logs as Git-visible changes, while settings/localization still persist in the active workspace runtime (scope: user workflow acceptance; expected commit: no commit expected).
+349. [DONE] `phase105.stream1.task1` User installs the generated VSIX and verifies Clear/Undo no longer leaves settings, localization runtime, or provider-native session logs as Git-visible changes, while settings/localization still persist in the active workspace runtime (scope: user workflow acceptance; expected commit: no commit expected). Result: Release `1.2.373` retest failed after clearing Diagram Modules, Virtual Simulation and Description: Project Manager kept stale read-only upstream protection, stale red/yellow stage markers, and a newly submitted Description session ran in Core without appearing in Project Manager.
+
+## Phase 106 - Clear Rollback Projection Regression (owner: Codex, updated: 2026-05-26)
+
+### Stream: Backend Projection Reset
+350. [DONE] `phase106.stream1.task1` Make workflow-state reads demote stale post-Clear in-memory stage statuses when rollback-owned artifacts/progress are gone, so read-only upstream protection and sidebar markers return to idle after clearing back to Description (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-cleared-projection.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-managed-state.test.ts`; expected commit: `fix: reset clear rollback workflow projection`).
+351. [PENDING] Git Commit: `fix: reset clear rollback workflow projection` (hash: TBD)
+
+### Stream: Project Manager Snapshot Token
+352. [TODO] `phase106.stream2.task1` Include read-only boundary projection changes in the Project Manager workflow-state change token so the UI re-renders when Core clears or reapplies technical-stage read-only protection without a root timestamp change (scope: `src/client/project-manager/services/workflow-state-change-token.ts, src/client/project-manager/services/workflow-state-change-token.test.ts`; expected commit: `fix: refresh workflow read-only projection in project manager`).
+353. [TODO] Git Commit: `fix: refresh workflow read-only projection in project manager` (hash: TBD)
+
+## Phase 107 - Regression Verification (owner: Codex, updated: 2026-05-26)
+
+### Stream: Clear Rollback Checks
+354. [TODO] `phase107.stream1.task1` Run focused Core and Project Manager tests/builds for Clear rollback projection, read-only boundary refresh, and repeat Description/Virtual Simulation starts after clearing downstream state (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 108 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+
+### Stream: Release Gate
+355. [TODO] `phase108.stream1.task1` After regression verification passes, ask the user for explicit confirmation before preparing release docs or building the next VSIX for the Clear rollback projection fix (scope: release gate; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
