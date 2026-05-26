@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "b79f30ef9",
+  "lastRecordedCommit": "088660a11",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase104.stream1.task1",
-  "expectedCommitMessage": "docs: prepare mutable runtime git pollution release",
+  "currentTaskId": "phase104.stream2.task1",
+  "expectedCommitMessage": "chore: build mutable runtime git pollution release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare mutable runtime git pollution release",
-    "preCommitHead": "b79f30ef9",
+    "expectedCommitMessage": "chore: build mutable runtime git pollution release",
+    "preCommitHead": "088660a11",
     "stage": "commit_pending",
-    "taskId": "phase104.stream1.task1"
+    "taskId": "phase104.stream2.task1"
   }
 }
 ```
@@ -915,11 +915,11 @@
 
 ### Stream: Release Docs
 345. [DONE] `phase104.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare mutable runtime git pollution release`). Result: Prepared release-facing documentation for v1.2.373, documenting rollback-ignored workspace localization runtime and provider-native session logs while keeping Core logical sessions, applied config/model binding and accepted artifacts as rollback/reproducibility proof.
-346. [PENDING] Git Commit: `docs: prepare mutable runtime git pollution release` (hash: TBD)
+346. [DONE] Git Commit: `docs: prepare mutable runtime git pollution release` (hash: 088660a11)
 
 ### Stream: Release Build
-347. [TODO] `phase104.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the mutable runtime Git pollution fix (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build mutable runtime git pollution release`).
-348. [TODO] Git Commit: `chore: build mutable runtime git pollution release` (hash: TBD)
+347. [DONE] `phase104.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the mutable runtime Git pollution fix (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build mutable runtime git pollution release`). Result: Release `1.2.373` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.373.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+348. [PENDING] Git Commit: `chore: build mutable runtime git pollution release` (hash: TBD)
 
 ## Phase 105 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
