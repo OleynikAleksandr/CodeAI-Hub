@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.365] - 2026-05-26
+### Fixed
+- **Workspace runtime settings are the only mutable settings authority.** Core no longer creates, reads, or seeds workflow settings from `~/.codeai-hub/settings/settings.json`; missing workspace settings are materialized in `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` from an existing configured workspace first, then from in-code defaults.
+- **Project Manager settings traffic is workspace-scoped.** Settings load/save events carry workspace scope, workflow transport ignores unscoped or wrong-workspace replies, and start cards resolve model/reasoning defaults from the active workspace settings snapshot.
+- **Provider/session fallbacks use workspace runtime capsules.** Provider bootstrap, localization bootstrap, session model binding, applied turn config, continuity thresholds, and default Core config settings paths no longer derive runtime settings from the legacy global settings directory.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts src/client/project-manager/services/workflow-step-start-service.settings-barrier.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- Settings reference scan for legacy global settings runtime reads.
+- `npm run plan:validate`
+
 ## [1.2.364] - 2026-05-25
 ### Fixed
 - **Workspace runtime settings are the workflow authority.** Workflow start cards now load the active workspace settings snapshot before saving selected provider/model defaults, preventing stale global settings from overwriting `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`.

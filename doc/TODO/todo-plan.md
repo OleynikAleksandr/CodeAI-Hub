@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "4bffec167",
+  "lastRecordedCommit": "a8b5fef70",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase65.stream3.task4",
-  "expectedCommitMessage": "fix: default config settings path to workspace runtime",
+  "currentTaskId": "phase66.stream1.task1",
+  "expectedCommitMessage": "docs: prepare workspace settings ssot release",
   "debt": {
-    "expectedCommitMessage": "fix: default config settings path to workspace runtime",
-    "preCommitHead": "4bffec167",
+    "expectedCommitMessage": "docs: prepare workspace settings ssot release",
+    "preCommitHead": "a8b5fef70",
     "stage": "commit_pending",
-    "taskId": "phase65.stream3.task4"
+    "taskId": "phase66.stream1.task1"
   }
 }
 ```
@@ -584,14 +584,14 @@
 224. [DONE] Git Commit: `fix: remove global settings fallback paths` (hash: 4bffec167)
 225. [DONE] `phase65.stream3.task3` Re-run settings reference scan, focused tests and targeted Core/webview builds after remaining global reference cleanup (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: focused settings tests passed; scan still showed config default claudeSettingsPath pointing to legacy home settings, so added final config-default cleanup before release
 226. [DONE] `phase65.stream3.task4` Make `loadConfig` default `claudeSettingsPath` resolve to the current workspace runtime settings capsule instead of `~/.codeai-hub/settings/settings.json` (scope: `packages/core/src/config/index.ts`; expected commit: `fix: default config settings path to workspace runtime`).
-227. [PENDING] Git Commit: `fix: default config settings path to workspace runtime` (hash: TBD)
-228. [TODO] `phase65.stream3.task5` Re-run final settings reference scan, focused tests and targeted Core/webview builds after config default cleanup (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+227. [DONE] Git Commit: `fix: default config settings path to workspace runtime` (hash: a8b5fef70)
+228. [DONE] `phase65.stream3.task5` Re-run final settings reference scan, focused tests and targeted Core/webview builds after config default cleanup (scope: `src/client/project-manager, packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: final verification passed: focused settings tests (5), @codeai-hub/core build, typecheck:webview, and settings reference scan. Remaining scan hits are not workspace settings truth: workbench UI state under ~/.codeai-hub/settings, Gemini CLI quota settings under ~/.gemini, and resolveSettingsSnapshotPath unscoped fallback now points to the config default workspace runtime path rather than ~/.codeai-hub/settings/settings.json.
 
 ## Phase 66 - Release Build (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Release Docs
-229. [TODO] `phase66.stream1.task1` After explicit release confirmation from the user request, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace settings ssot release`).
-230. [TODO] Git Commit: `docs: prepare workspace settings ssot release` (hash: TBD)
+229. [DONE] `phase66.stream1.task1` After explicit release confirmation from the user request, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workspace settings ssot release`).
+230. [PENDING] Git Commit: `docs: prepare workspace settings ssot release` (hash: TBD)
 
 ### Stream: Release Build
 231. [TODO] `phase66.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings ssot release`). Result: TBD.
