@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "e5754bd3a",
+  "lastRecordedCommit": "2e741f5a4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase96.stream1.task1",
-  "expectedCommitMessage": "docs: prepare rollback ignored settings release",
+  "currentTaskId": "phase96.stream2.task1",
+  "expectedCommitMessage": "chore: build rollback ignored settings release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare rollback ignored settings release",
-    "preCommitHead": "e5754bd3a",
+    "expectedCommitMessage": "chore: build rollback ignored settings release",
+    "preCommitHead": "2e741f5a4",
     "stage": "commit_pending",
-    "taskId": "phase96.stream1.task1"
+    "taskId": "phase96.stream2.task1"
   }
 }
 ```
@@ -859,11 +859,11 @@
 
 ### Stream: Release Docs
 327. [DONE] `phase96.stream1.task1` Update release-facing docs for the next version before build-all, noting workspace settings are no longer part of Clear/Undo rollback history (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare rollback ignored settings release`).
-328. [PENDING] Git Commit: `docs: prepare rollback ignored settings release` (hash: TBD)
+328. [DONE] Git Commit: `docs: prepare rollback ignored settings release` (hash: 2e741f5a4)
 
 ### Stream: Release Build
-329. [TODO] `phase96.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the rollback-ignored workspace settings release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build rollback ignored settings release`).
-330. [TODO] Git Commit: `chore: build rollback ignored settings release` (hash: TBD)
+329. [DONE] `phase96.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the rollback-ignored workspace settings release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build rollback ignored settings release`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` completed for v1.2.372; SDK exclusions, local artefact validation, markdown links, duplication check, production dependency pruning and VSIX runtime surface verification passed. Artifacts: `codeai-hub-1.2.372.vsix` plus v1.2.372 provider/core/launcher/UI tarballs in `doc/tmp/releases/`.
+330. [PENDING] Git Commit: `chore: build rollback ignored settings release` (hash: TBD)
 
 ## Phase 97 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
