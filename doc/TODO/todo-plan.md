@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "09705c5d0",
+  "lastRecordedCommit": "9ccebcfda",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase84.stream1.task1",
-  "expectedCommitMessage": "fix: close clear confirmation after rollback",
+  "currentTaskId": "phase87.stream1.task1",
+  "expectedCommitMessage": "docs: prepare clear confirmation ui release",
   "debt": {
-    "expectedCommitMessage": "fix: close clear confirmation after rollback",
-    "preCommitHead": "09705c5d0",
+    "expectedCommitMessage": "docs: prepare clear confirmation ui release",
+    "preCommitHead": "9ccebcfda",
     "stage": "commit_pending",
-    "taskId": "phase84.stream1.task1"
+    "taskId": "phase87.stream1.task1"
   }
 }
 ```
@@ -770,23 +770,23 @@
 
 ### Stream: Project Manager Clear Menu
 298. [DONE] `phase84.stream1.task1` Close the Project Manager Clear confirmation popover immediately when the destructive action is accepted, keep the rollback request running in the background, and cover the behavior with a focused Project Manager regression check (scope: `src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx, src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: close clear confirmation after rollback`).
-299. [PENDING] Git Commit: `fix: close clear confirmation after rollback` (hash: TBD)
+299. [DONE] Git Commit: `fix: close clear confirmation after rollback` (hash: 9ccebcfda)
 
 ## Phase 85 - Regression Verification (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Targeted Checks
-300. [TODO] `phase85.stream1.task1` Run focused Project Manager Clear menu coverage plus Project Manager build/typecheck for the Clear confirmation UI-state regression (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+300. [DONE] `phase85.stream1.task1` Run focused Project Manager Clear menu coverage plus Project Manager build/typecheck for the Clear confirmation UI-state regression (scope: `src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification passed: focused Project Manager Clear menu regression test, plan validation, build:project-manager, typecheck:webview, and commit hooks architecture/lint/knip/format checks all succeeded for the Clear confirmation UI-state fix.
 
 ## Phase 86 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
 ### Stream: Release Gate
-301. [TODO] `phase86.stream1.task1` Ask for explicit confirmation before preparing release docs or running release scripts for the Clear confirmation UI-state fix (scope: user release confirmation; expected commit: no commit expected). Result: TBD.
+301. [DONE] `phase86.stream1.task1` Ask for explicit confirmation before preparing release docs or running release scripts for the Clear confirmation UI-state fix (scope: user release confirmation; expected commit: no commit expected). Result: Release build explicitly authorized by the user on 2026-05-26 after the Clear confirmation UI-state fix; proceed with release docs and build scripts for the next version.
 
 ## Phase 87 - Release Build (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Release Docs
-302. [TODO] `phase87.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear confirmation ui release`).
-303. [TODO] Git Commit: `docs: prepare clear confirmation ui release` (hash: TBD)
+302. [DONE] `phase87.stream1.task1` After explicit release confirmation, update release-facing docs for the next version before build-all (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare clear confirmation ui release`).
+303. [PENDING] Git Commit: `docs: prepare clear confirmation ui release` (hash: TBD)
 
 ### Stream: Release Build
 304. [TODO] `phase87.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Clear confirmation UI-state fix release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear confirmation ui release`).

@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.370] - 2026-05-26
+### Fixed
+- **Clear confirmation closes when the Clear action is accepted.** The Project Manager workspace tree Clear confirmation popover now closes before the rollback HTTP request is awaited, so the destructive confirmation dialog does not remain visible after a successful Virtual Simulation rollback.
+- **Clear rollback completion still refreshes Project Manager state.** The background request still dispatches `pm:workflow-step:cleared` on success and requests an immediate workflow-state poll; failures are normalized into `pm:workflow-step:clear-failed` instead of leaving an unhandled promise path.
+
+### Tests
+- `node --import tsx --test src/client/project-manager/components/layout/workspace-tree-clear-menu.test.ts`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.369] - 2026-05-26
 ### Fixed
 - **Project Manager localization follows the active workspace settings scope.** Project Manager no longer issues an unscoped settings load during websocket startup, and the shell settings hook now accepts the active workspace-scoped settings payload so UI/help localization reads the selected workspace runtime instead of fallback defaults.
