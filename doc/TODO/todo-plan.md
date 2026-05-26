@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "2e1134110",
+  "lastRecordedCommit": "88deae346",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase72.stream2.task1",
-  "expectedCommitMessage": "fix: use workspace localization runtime in core",
+  "currentTaskId": "phase72.stream4.task1",
+  "expectedCommitMessage": "fix: scope project manager glossary to workspace",
   "debt": {
-    "expectedCommitMessage": "fix: use workspace localization runtime in core",
-    "preCommitHead": "2e1134110",
+    "expectedCommitMessage": "fix: scope project manager glossary to workspace",
+    "preCommitHead": "88deae346",
     "stage": "commit_pending",
-    "taskId": "phase72.stream2.task1"
+    "taskId": "phase72.stream4.task1"
   }
 }
 ```
@@ -656,10 +656,17 @@
 
 ### Stream: Core Workspace Wiring
 258. [DONE] `phase72.stream2.task1` Wire Core localization facade creation and bootstrap HTTP reads to the active workspace runtime localization/settings capsule instead of global localization defaults or in-code settings defaults (scope: `packages/core/src/translation/core-localization-facade-factory.ts, packages/core/src/translation/core-localization-facade-factory.test.ts, packages/core/src/remote-bridge/handlers/localization-bootstrap-http-handler.ts`; expected commit: `fix: use workspace localization runtime in core`).
-259. [PENDING] Git Commit: `fix: use workspace localization runtime in core` (hash: TBD)
+259. [DONE] Git Commit: `fix: use workspace localization runtime in core` (hash: 88deae346)
 
 ### Stream: Regression Verification
-260. [TODO] `phase72.stream3.task1` Run focused localization storage/bootstrap tests, settings save/load tests, Core build, Project Manager typecheck, and scan for global localization runtime writes before requesting release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+260. [DONE] `phase72.stream3.task1` Run focused localization storage/bootstrap tests, settings save/load tests, Core build, Project Manager typecheck, and scan for global localization runtime writes before requesting release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification scan found one remaining Project Manager/Core glossary opener using the package default global localization path; follow-up workspace glossary task added before release build confirmation.
+
+### Stream: Project Manager Glossary Runtime
+261. [DONE] `phase72.stream4.task1` Scope Project Manager user glossary file creation/opening to the active workspace runtime localization capsule instead of the package default global localization path (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts`; expected commit: `fix: scope project manager glossary to workspace`).
+262. [PENDING] Git Commit: `fix: scope project manager glossary to workspace` (hash: TBD)
+
+### Stream: Regression Verification Rerun
+263. [TODO] `phase72.stream5.task1` Re-run focused localization/core tests, Core build, Project Manager typecheck, and global localization scan after glossary cleanup before requesting release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

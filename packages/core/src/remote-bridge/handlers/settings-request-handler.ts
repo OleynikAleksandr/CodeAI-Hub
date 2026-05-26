@@ -10,6 +10,7 @@ import type {
   TemplateUpdateResolutionRequest,
 } from "../../templates/template-update-resolution-service";
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
+import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import type { BridgeEvent } from "../types";
 import {
   SettingsLoadedBroadcaster,
@@ -27,6 +28,25 @@ export { resolveLocalizationRuntimeSettings } from "./settings-persistence-snaps
 
 const toErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
+
+const resolveDefaultWorkspaceScope = (
+  config: CoreConfig
+): WorkspaceSettingsScope => ({
+  workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
+  workspaceSlug: config.claudeProjectSlug,
+});
+
+const createWorkspaceUserGlossaryStore = (
+  workspace: WorkspaceSettingsScope
+): UserGlossaryStore => {
+  const capsule = resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: workspace.workspaceRoot,
+    workspaceSlug: workspace.workspaceSlug,
+  });
+  return new UserGlossaryStore({
+    glossaryDirectory: join(capsule.localizationRoot.absolutePath, "glossary"),
+  });
+};
 
 const APPLE_NATIVE_TRANSLATION_ENGINE_ID = "apple-native";
 const APPLE_NATIVE_PREFLIGHT_TIMEOUT_MS = 20_000;
@@ -257,6 +277,7 @@ const assertAppleNativeSettingsReady = async (
 
 export class SettingsRequestHandler {
   private readonly broadcaster: (event: BridgeEvent) => void;
+  private readonly defaultWorkspace: WorkspaceSettingsScope;
   private readonly logger: Logger;
   private readonly settingsLoadedBroadcaster: SettingsLoadedBroadcaster;
   private readonly settingsPersistenceService: SettingsPersistenceService;
@@ -270,6 +291,7 @@ export class SettingsRequestHandler {
     readonly logger: Logger;
   }) {
     this.broadcaster = options.broadcaster;
+    this.defaultWorkspace = resolveDefaultWorkspaceScope(options.config);
     const localizationFacade = createCoreLocalizationFacade({
       config: options.config,
     });
@@ -386,10 +408,14 @@ export class SettingsRequestHandler {
     }
   }
 
-  async handleOpenUserGlossaryFile(): Promise<void> {
+  async handleOpenUserGlossaryFile(
+    workspace: WorkspaceSettingsScope = this.defaultWorkspace
+  ): Promise<void> {
     try {
       this.broadcastUserGlossaryFile(
-        await new UserGlossaryStore().ensureEditableGlossaryFile()
+        await createWorkspaceUserGlossaryStore(
+          workspace
+        ).ensureEditableGlossaryFile()
       );
     } catch (error) {
       this.broadcastUserGlossaryFileError(toErrorMessage(error));
