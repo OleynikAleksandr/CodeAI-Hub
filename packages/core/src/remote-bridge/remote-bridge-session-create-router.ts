@@ -1,17 +1,10 @@
-import { access } from "node:fs/promises";
-import path from "node:path";
 import type { Logger } from "../telemetry/logger";
 import { WorkflowBoundaryFacade } from "../workflow/boundary/workflow-boundary-facade";
-import { WorkflowBoundaryGit } from "../workflow/boundary/workflow-boundary-git";
-import {
-  getWorkflowBoundaryStageLabel,
-  isWorkflowBoundaryStage,
-} from "../workflow/boundary/workflow-boundary-model";
+import { isWorkflowBoundaryStage } from "../workflow/boundary/workflow-boundary-model";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import {
   bootstrapWorkspaceRuntimeCapsule,
   prepareWorkspaceRuntimeCapsuleDirectories,
-  resolveWorkspaceRuntimeCapsule,
 } from "../workflow/runtime/workspace-runtime-capsule";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import {
@@ -27,29 +20,6 @@ const isTechnicalStageRewriteStage = (
 ): boolean =>
   typeof stage === "string" && isTechnicalStageRewriteBlockedStage(stage);
 
-const TRIMMED_MODIFIED_STATUS_RE = /^[ACDMRTU?!] /u;
-const TWO_COLUMN_STATUS_RE = /^[ ACDMRTU?!]{2} /u;
-
-const pathExists = async (targetPath: string): Promise<boolean> => {
-  try {
-    await access(targetPath);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-const extractGitStatusPath = (entry: string): string => {
-  const value = entry.trimEnd();
-  if (TWO_COLUMN_STATUS_RE.test(value)) {
-    return value.slice(3).trim();
-  }
-  if (TRIMMED_MODIFIED_STATUS_RE.test(value)) {
-    return value.slice(2).trim();
-  }
-  return value.slice(3).trim();
-};
-
 interface RemoteBridgeSessionCreateRouterDependencies {
   readonly getManager: () => WebSocketManager | undefined;
   readonly logger: Logger;
@@ -57,10 +27,6 @@ interface RemoteBridgeSessionCreateRouterDependencies {
   readonly workflowBoundaryFacade?: Pick<
     WorkflowBoundaryFacade,
     "ensureBoundary"
-  >;
-  readonly workflowGit?: Pick<
-    WorkflowBoundaryGit,
-    "commit" | "statusPorcelain"
   >;
   readonly workflowRuntime: WorkflowRuntime;
 }
@@ -114,11 +80,6 @@ export class RemoteBridgeSessionCreateRouter {
     }
 
     try {
-      await this.commitWorkflowStartSettings({
-        initiativeSlug,
-        stage: createContext.stage,
-        workspacePath: resolvedWorkspacePath,
-      });
       await this.ensureWorkflowBoundary({
         initiativeSlug,
         runSlug: createContext.runSlug,
@@ -210,39 +171,6 @@ export class RemoteBridgeSessionCreateRouter {
       runSlug: params.runSlug,
       stage: params.stage,
       workspacePath: params.workspacePath,
-    });
-  }
-
-  private async commitWorkflowStartSettings(
-    params: Pick<
-      WorkflowSessionCreatePreflightParams,
-      "initiativeSlug" | "stage" | "workspacePath"
-    >
-  ): Promise<void> {
-    if (!(params.stage && isWorkflowBoundaryStage(params.stage))) {
-      return;
-    }
-    const capsule = resolveWorkspaceRuntimeCapsule({
-      workspaceRoot: params.workspacePath,
-      workspaceSlug: params.initiativeSlug,
-    });
-    if (!(await pathExists(path.join(params.workspacePath, ".git")))) {
-      return;
-    }
-    const git = this.deps.workflowGit ?? new WorkflowBoundaryGit();
-    const dirtyPaths = await git.statusPorcelain(params.workspacePath);
-    const settingsDirty = dirtyPaths.some(
-      (entry) =>
-        extractGitStatusPath(entry) === capsule.settingsFile.relativePath
-    );
-    if (!settingsDirty) {
-      return;
-    }
-    await git.commit({
-      allowEmpty: false,
-      commitMessage: `codeai-settings: ${getWorkflowBoundaryStageLabel(params.stage)} start selection`,
-      paths: [capsule.settingsFile.relativePath],
-      workspaceRoot: params.workspacePath,
     });
   }
 }

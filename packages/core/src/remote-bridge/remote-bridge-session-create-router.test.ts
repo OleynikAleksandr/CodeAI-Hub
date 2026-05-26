@@ -4,7 +4,6 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import type { Logger } from "../telemetry/logger";
-import type { WorkflowBoundaryGit } from "../workflow/boundary/workflow-boundary-git";
 import type { WorkflowRuntime } from "../workflow/runtime/workflow-runtime";
 import type { SessionRequestHandler } from "./handlers/session-request-handler";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
@@ -19,17 +18,6 @@ const createLogger = (warnings: unknown[] = []): Logger =>
       warnings.push(context);
     },
   }) as unknown as Logger;
-
-const createWorkflowGit = (
-  status: readonly string[],
-  calls: string[]
-): Pick<WorkflowBoundaryGit, "commit" | "statusPorcelain"> => ({
-  statusPorcelain: () => Promise.resolve(status),
-  commit: (params) => {
-    calls.push(`commit:${params.commitMessage}:${params.paths?.join(",")}`);
-    return Promise.resolve({ hash: "settings123", noStagedChanges: false });
-  },
-});
 
 test("session:create leaves Diagram Modules managed scaffold to the Core start boundary", async () => {
   const workspacePath = await mkdtemp(
@@ -87,7 +75,6 @@ test("session:create leaves Diagram Modules managed scaffold to the Core start b
       workflowRuntime: {
         connectWorkspace: () => Promise.resolve(),
       } as unknown as WorkflowRuntime,
-      workflowGit: createWorkflowGit([], calls),
     });
 
     await router.handle("client-1", {
@@ -119,15 +106,15 @@ test("session:create leaves Diagram Modules managed scaffold to the Core start b
   }
 });
 
-test("session:create commits dirty workflow settings before every post-description boundary", async () => {
+test("session:create keeps dirty workflow settings out of workflow history before every post-description boundary", async () => {
   const cases = [
-    ["virtual_simulation", "Virtual Simulation"],
-    ["diagram_modules", "Diagram Modules"],
-    ["application_skeleton", "Application Skeleton"],
-    ["quality_gates", "Quality Gates"],
+    "virtual_simulation",
+    "diagram_modules",
+    "application_skeleton",
+    "quality_gates",
   ] as const;
 
-  for (const [stage, label] of cases) {
+  for (const stage of cases) {
     const workspacePath = await mkdtemp(
       path.join(tmpdir(), `codeai-${stage}-settings-boundary-`)
     );
@@ -169,10 +156,6 @@ test("session:create commits dirty workflow settings before every post-descripti
         workflowRuntime: {
           connectWorkspace: () => Promise.resolve(),
         } as unknown as WorkflowRuntime,
-        workflowGit: createWorkflowGit(
-          ["M .codeai-hub/demo-workspace/runtime/settings/settings.json"],
-          calls
-        ),
       });
 
       await router.handle("client-1", {
@@ -185,11 +168,7 @@ test("session:create commits dirty workflow settings before every post-descripti
         },
       });
 
-      assert.deepEqual(calls, [
-        `commit:codeai-settings: ${label} start selection:.codeai-hub/demo-workspace/runtime/settings/settings.json`,
-        `boundary:${stage}`,
-        "handle-create",
-      ]);
+      assert.deepEqual(calls, [`boundary:${stage}`, "handle-create"]);
     } finally {
       await rm(workspacePath, { force: true, recursive: true });
     }
