@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.372] - 2026-05-26
+### Fixed
+- **Workspace settings are no longer part of workflow Clear/Undo rollback.** The runtime capsule now ignores `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`, updates existing capsule `.gitignore` files, and migrates legacy tracked settings out of the Git index without deleting the workspace settings file.
+- **Clear preserves current settings across Git reset/clean.** The rollback coordinator snapshots the current workspace settings file before `git reset --hard`, restores it after `git clean -fd`, rewrites the current capsule `.gitignore`, and untracks any restored legacy settings entry before committing the Clear projection.
+- **Session starts no longer create settings commits.** Project Manager start-card model/settings changes remain live workspace settings, while accepted-step commits keep the immutable model binding, applied config, and provider/session artifacts needed for reproducibility.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test dist/workflow/runtime/workspace-runtime-capsule-gitignore.test.js dist/workflow/boundary/workflow-step-commit-facade.test.js dist/workflow/boundary/workflow-boundary-facade.test.js dist/remote-bridge/remote-bridge-session-create-router.test.js dist/remote-bridge/handlers/settings-persistence-service.test.js dist/remote-bridge/handlers/settings-saved-broadcaster.test.js dist/remote-bridge/handlers/settings-request-handler.localization-runtime.test.js`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.371] - 2026-05-26
 ### Changed
 - **Rebuilt the Clear confirmation UI fix as the next installable release.** No additional runtime logic changed after v1.2.370; this release packages the existing Project Manager Clear confirmation behavior for the next Clear Undo retest.

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "9ad5f7ae1",
+  "lastRecordedCommit": "e5754bd3a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase94.stream1.task1",
-  "expectedCommitMessage": "docs: document rollback-ignored workspace settings",
+  "currentTaskId": "phase96.stream1.task1",
+  "expectedCommitMessage": "docs: prepare rollback ignored settings release",
   "debt": {
-    "expectedCommitMessage": "docs: document rollback-ignored workspace settings",
-    "preCommitHead": "9ad5f7ae1",
+    "expectedCommitMessage": "docs: prepare rollback ignored settings release",
+    "preCommitHead": "e5754bd3a",
     "stage": "commit_pending",
-    "taskId": "phase94.stream1.task1"
+    "taskId": "phase96.stream1.task1"
   }
 }
 ```
@@ -848,18 +848,18 @@
 
 ### Stream: SSOT Sync
 324. [DONE] `phase94.stream1.task1` Document that workspace settings are workspace-owned but rollback-ignored, while accepted workflow snapshots keep immutable applied config/model binding metadata (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document rollback-ignored workspace settings`).
-325. [PENDING] Git Commit: `docs: document rollback-ignored workspace settings` (hash: TBD)
+325. [DONE] Git Commit: `docs: document rollback-ignored workspace settings` (hash: e5754bd3a)
 
 ## Phase 95 - Release Build Confirmation (owner: User, updated: 2026-05-26)
 
 ### Stream: Release Gate
-326. [TODO] `phase95.stream1.task1` Record the user's explicit request to fix settings rollback ownership and build the next release after targeted verification (scope: release gate; expected commit: no commit expected).
+326. [DONE] `phase95.stream1.task1` Record the user's explicit request to fix settings rollback ownership and build the next release after targeted verification (scope: release gate; expected commit: no commit expected). Result: Release build explicitly authorized by the user on 2026-05-26 with the request: fix settings rollback ownership and build the new release after verification.
 
 ## Phase 96 - Release Build (owner: Codex, updated: 2026-05-26)
 
 ### Stream: Release Docs
-327. [TODO] `phase96.stream1.task1` Update release-facing docs for the next version before build-all, noting workspace settings are no longer part of Clear/Undo rollback history (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare rollback ignored settings release`).
-328. [TODO] Git Commit: `docs: prepare rollback ignored settings release` (hash: TBD)
+327. [DONE] `phase96.stream1.task1` Update release-facing docs for the next version before build-all, noting workspace settings are no longer part of Clear/Undo rollback history (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare rollback ignored settings release`).
+328. [PENDING] Git Commit: `docs: prepare rollback ignored settings release` (hash: TBD)
 
 ### Stream: Release Build
 329. [TODO] `phase96.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the rollback-ignored workspace settings release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build rollback ignored settings release`).

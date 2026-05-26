@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.371** (Clear Confirmation UI Rebuild)
+**Current Release — v1.2.372** (Rollback-Ignored Workspace Settings Hotfix)
+
+This hotfix keeps Project Manager/workflow settings as workspace-owned live
+state while removing `runtime/settings/settings.json` from workflow Clear/Undo
+Git rollback history. Settings changes now persist through clearing workflow
+stages instead of being reset to an older boundary snapshot.
+
+Core updates existing workspace runtime capsule `.gitignore` files, untracks
+legacy committed settings entries, preserves current workspace settings across
+`git reset --hard` + `git clean -fd`, and keeps session-start model/settings
+selection out of workflow commits. Reproducibility remains captured by
+`Session.modelBinding`, applied turn config, and provider/session artifacts.
+
+**Previous Release — v1.2.371** (Clear Confirmation UI Rebuild)
 
 This release rebuilds the Clear confirmation UI hotfix as a fresh package. It
 contains the same Project Manager behavior change from v1.2.370: the Clear
