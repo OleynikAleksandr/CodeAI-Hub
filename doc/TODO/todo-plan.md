@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "5a25b2d44",
+  "lastRecordedCommit": "013e80bb7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase90.stream2.task1",
-  "expectedCommitMessage": "chore: build clear confirmation rebuild release",
+  "currentTaskId": "phase92.stream1.task1",
+  "expectedCommitMessage": "fix: ignore workspace settings in rollback capsule",
   "debt": {
-    "expectedCommitMessage": "chore: build clear confirmation rebuild release",
-    "preCommitHead": "5a25b2d44",
+    "expectedCommitMessage": "fix: ignore workspace settings in rollback capsule",
+    "preCommitHead": "013e80bb7",
     "stage": "commit_pending",
-    "taskId": "phase90.stream2.task1"
+    "taskId": "phase92.stream1.task1"
   }
 }
 ```
@@ -810,12 +810,65 @@
 
 ### Stream: Release Build
 310. [DONE] `phase90.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.371 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build clear confirmation rebuild release`). Result: Release 1.2.371 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.371.vsix` created at 4.2M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-311. [PENDING] Git Commit: `chore: build clear confirmation rebuild release` (hash: TBD)
+311. [DONE] Git Commit: `chore: build clear confirmation rebuild release` (hash: 013e80bb7)
 
 ## Phase 91 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-312. [TODO] `phase91.stream1.task1` User installs release 1.2.371 and verifies Clear Undo rollback still restores Virtual Simulation/downstream workflow state and the Project Manager Clear confirmation popover disappears immediately after pressing Clear (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+312. [DONE] `phase91.stream1.task1` User installs release 1.2.371 and verifies Clear Undo rollback still restores Virtual Simulation/downstream workflow state and the Project Manager Clear confirmation popover disappears immediately after pressing Clear (scope: user workflow acceptance; expected commit: no commit expected). Result: Release 1.2.371 retest surfaced a settings ownership change: workflow Undo/Clear must ignore and preserve workspace runtime settings instead of tracking them in rollback history. Acceptance moves to the next release after this fix.
+
+## Phase 92 - Workspace Settings Rollback Exclusion (owner: Codex, updated: 2026-05-26)
+
+### Stream: Runtime Ignore Contract
+313. [DONE] `phase92.stream1.task1` Make workspace runtime settings rollback-ignored at the capsule gitignore level and migrate existing capsule gitignore files to the current contract during bootstrap (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore workspace settings in rollback capsule`).
+314. [PENDING] Git Commit: `fix: ignore workspace settings in rollback capsule` (hash: TBD)
+
+### Stream: Boundary And Accepted-Step Migration
+315. [TODO] `phase92.stream2.task1` Add a reusable settings untrack/preserve helper and untrack workspace settings during boundary creation and accepted-step commits so legacy tracked settings migrate out of workflow history without data loss (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.ts`; expected commit: `fix: untrack settings from workflow commits`).
+316. [TODO] Git Commit: `fix: untrack settings from workflow commits` (hash: TBD)
+
+### Stream: Accepted-Step Regression Coverage
+317. [TODO] `phase92.stream3.task1` Add focused accepted-step coverage proving a legacy tracked settings file is untracked, preserved on disk, and absent from workflow snapshot commits (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `test: cover rollback ignored settings commits`).
+318. [TODO] Git Commit: `test: cover rollback ignored settings commits` (hash: TBD)
+
+### Stream: Clear Rollback Preservation
+319. [TODO] `phase92.stream4.task1` Preserve the current workspace settings file across Clear reset/clean rollback and remove any restored legacy settings entry from Git tracking (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: preserve settings across workflow clear`).
+320. [TODO] Git Commit: `fix: preserve settings across workflow clear` (hash: TBD)
+
+### Stream: Session Start Settings History
+321. [TODO] `phase92.stream5.task1` Stop session-start model/settings selection from committing mutable runtime settings while keeping immutable per-session applied config/model binding snapshots for reproducibility (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts`; expected commit: `fix: keep start settings out of workflow history`).
+322. [TODO] Git Commit: `fix: keep start settings out of workflow history` (hash: TBD)
+
+## Phase 93 - Regression Verification (owner: Codex, updated: 2026-05-26)
+
+### Stream: Settings Rollback Checks
+323. [TODO] `phase93.stream1.task1` Run focused Core tests/build plus direct Git checks proving settings are ignored, legacy tracked settings are untracked, Clear preserves settings, and start-card settings changes do not create settings commits (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 94 - Architecture Documentation (owner: Codex, updated: 2026-05-26)
+
+### Stream: SSOT Sync
+324. [TODO] `phase94.stream1.task1` Document that workspace settings are workspace-owned but rollback-ignored, while accepted workflow snapshots keep immutable applied config/model binding metadata (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md`; expected commit: `docs: document rollback-ignored workspace settings`).
+325. [TODO] Git Commit: `docs: document rollback-ignored workspace settings` (hash: TBD)
+
+## Phase 95 - Release Build Confirmation (owner: User, updated: 2026-05-26)
+
+### Stream: Release Gate
+326. [TODO] `phase95.stream1.task1` Record the user's explicit request to fix settings rollback ownership and build the next release after targeted verification (scope: release gate; expected commit: no commit expected).
+
+## Phase 96 - Release Build (owner: Codex, updated: 2026-05-26)
+
+### Stream: Release Docs
+327. [TODO] `phase96.stream1.task1` Update release-facing docs for the next version before build-all, noting workspace settings are no longer part of Clear/Undo rollback history (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare rollback ignored settings release`).
+328. [TODO] Git Commit: `docs: prepare rollback ignored settings release` (hash: TBD)
+
+### Stream: Release Build
+329. [TODO] `phase96.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the rollback-ignored workspace settings release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build rollback ignored settings release`).
+330. [TODO] Git Commit: `chore: build rollback ignored settings release` (hash: TBD)
+
+## Phase 97 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
+
+### Stream: User Retest
+331. [TODO] `phase97.stream1.task1` User installs the generated VSIX and verifies settings changes persist through workflow Undo/Clear, settings are not committed into workflow history, Clear still restores selected/downstream workflow artifacts, and Project Manager localization/settings continue to read the active workspace runtime settings file (scope: user workflow acceptance; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

@@ -369,6 +369,19 @@ const writeTextIfMissing = async (
   return target.relativePath;
 };
 
+const writeTextIfChanged = async (
+  target: WorkspaceRuntimePath,
+  content: string
+): Promise<string | null> => {
+  const current = await readFile(target.absolutePath, "utf8").catch(() => null);
+  if (current === content) {
+    return null;
+  }
+  await mkdir(path.dirname(target.absolutePath), { recursive: true });
+  await writeFile(target.absolutePath, content, "utf8");
+  return target.relativePath;
+};
+
 const writeJsonIfMissing = async (
   target: WorkspaceRuntimePath,
   value: unknown
@@ -395,7 +408,7 @@ export const bootstrapWorkspaceRuntimeCapsule = async (
   const capsule = await prepareWorkspaceRuntimeCapsuleDirectories(params);
   const now = new Date().toISOString();
   const changedPaths = await Promise.all([
-    writeTextIfMissing(
+    writeTextIfChanged(
       capsule.gitignoreFile,
       WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT
     ),
