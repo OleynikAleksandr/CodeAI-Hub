@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { resolveWorkspaceRuntimeCapsule } from "../runtime/workspace-runtime-capsule";
+import { untrackWorkspaceSettingsForRollback } from "../runtime/workspace-settings-rollback-ignore";
 import type { WorkflowStageId } from "../watcher/watcher-types";
 import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 import {
@@ -107,6 +108,10 @@ export class WorkflowStepCommitFacade {
     const capsule = resolveWorkspaceRuntimeCapsule(params);
     await untrackVolatileProviderRuntimePaths({
       capsuleRoot: capsule.workspaceCapsuleRoot.relativePath,
+      workspaceRoot: params.workspaceRoot,
+    });
+    await untrackWorkspaceSettingsForRollback({
+      settingsFile: capsule.settingsFile,
       workspaceRoot: params.workspaceRoot,
     });
     const commit = await this.#git.commit({

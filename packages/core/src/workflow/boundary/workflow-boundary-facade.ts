@@ -1,4 +1,9 @@
 import path from "node:path";
+import { resolveWorkspaceRuntimeCapsule } from "../runtime/workspace-runtime-capsule";
+import {
+  filterWorkspaceSettingsGitStatusEntries,
+  untrackWorkspaceSettingsForRollback,
+} from "../runtime/workspace-settings-rollback-ignore";
 import type { WorkflowStageId } from "../watcher/watcher-types";
 import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 import {
@@ -90,15 +95,25 @@ export class WorkflowBoundaryFacade {
       };
     }
 
+    const capsule = resolveWorkspaceRuntimeCapsule(params);
+    await this.#git.ensureRepository(params.workspaceRoot);
+    await untrackWorkspaceSettingsForRollback({
+      settingsFile: capsule.settingsFile,
+      workspaceRoot: params.workspaceRoot,
+    });
     const dirtyPaths = await this.#git.statusPorcelain(params.workspaceRoot);
+    const blockingDirtyPaths = filterWorkspaceSettingsGitStatusEntries({
+      entries: dirtyPaths,
+      settingsFile: capsule.settingsFile,
+    });
     if (
-      dirtyPaths.length > 0 &&
+      blockingDirtyPaths.length > 0 &&
       !isRecoverableDescriptionBootstrap({
-        dirtyPaths,
+        dirtyPaths: blockingDirtyPaths,
         stage: params.stage,
       })
     ) {
-      throw new Error(formatDirtyBoundaryError(dirtyPaths));
+      throw new Error(formatDirtyBoundaryError(blockingDirtyPaths));
     }
 
     const commitMessage = buildWorkflowBoundaryCommitMessage(params.stage);
