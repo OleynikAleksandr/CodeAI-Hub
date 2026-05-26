@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "88deae346",
+  "lastRecordedCommit": "f570d5f8e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase72.stream4.task1",
-  "expectedCommitMessage": "fix: scope project manager glossary to workspace",
+  "currentTaskId": "phase72.stream6.task1",
+  "expectedCommitMessage": "fix: scope extension localization fallback to workspace",
   "debt": {
-    "expectedCommitMessage": "fix: scope project manager glossary to workspace",
-    "preCommitHead": "88deae346",
+    "expectedCommitMessage": "fix: scope extension localization fallback to workspace",
+    "preCommitHead": "f570d5f8e",
     "stage": "commit_pending",
-    "taskId": "phase72.stream4.task1"
+    "taskId": "phase72.stream6.task1"
   }
 }
 ```
@@ -663,10 +663,17 @@
 
 ### Stream: Project Manager Glossary Runtime
 261. [DONE] `phase72.stream4.task1` Scope Project Manager user glossary file creation/opening to the active workspace runtime localization capsule instead of the package default global localization path (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts`; expected commit: `fix: scope project manager glossary to workspace`).
-262. [PENDING] Git Commit: `fix: scope project manager glossary to workspace` (hash: TBD)
+262. [DONE] Git Commit: `fix: scope project manager glossary to workspace` (hash: f570d5f8e)
 
 ### Stream: Regression Verification Rerun
-263. [TODO] `phase72.stream5.task1` Re-run focused localization/core tests, Core build, Project Manager typecheck, and global localization scan after glossary cleanup before requesting release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
+263. [DONE] `phase72.stream5.task1` Re-run focused localization/core tests, Core build, Project Manager typecheck, and global localization scan after glossary cleanup before requesting release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification rerun passed focused tests, localization/core builds, webview typecheck, and Project Manager/webview builds; global localization scan found only package defaults/tests plus legacy extension settings fallback, so extension fallback cleanup was added before release build confirmation.
+
+### Stream: Extension Settings Localization Runtime
+264. [DONE] `phase72.stream6.task1` Remove extension-side default global localization facade/glossary creation by rooting the compatibility settings surface in the current VS Code workspace runtime localization capsule fallback (scope: `src/extension-module/settings/localization-runtime-service.ts, src/extension-module/message-handlers/settings-message-handler.ts, src/extension-module/home-view-provider.ts`; expected commit: `fix: scope extension localization fallback to workspace`).
+265. [PENDING] Git Commit: `fix: scope extension localization fallback to workspace` (hash: TBD)
+
+### Stream: Final Regression Verification
+266. [TODO] `phase72.stream7.task1` Re-run focused localization/core tests, Core/localization builds, Project Manager/webview builds, and global localization scan after extension fallback cleanup before release build confirmation (scope: `packages/localization, packages/core, src/client/project-manager, src/extension-module, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

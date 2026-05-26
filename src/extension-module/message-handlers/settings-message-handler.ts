@@ -1,7 +1,10 @@
-import { UserGlossaryStore } from "@codeai-hub/localization";
 import { type Webview, window, workspace } from "vscode";
 import { syncCodexProviderReasoningSummaryConfig } from "../settings/codex-provider-config-sync";
-import { LocalizationRuntimeService } from "../settings/localization-runtime-service";
+import {
+  createExtensionLocalizationFacade,
+  createExtensionUserGlossaryStore,
+  LocalizationRuntimeService,
+} from "../settings/localization-runtime-service";
 import {
   type LocalizationSelectiveSyncPlan,
   LocalizationSelectiveSyncPlanner,
@@ -34,6 +37,10 @@ export type SettingsMessage =
   | { type: "settings:closed" };
 
 const STATUS_MESSAGE_TIMEOUT = 2000;
+
+const resolveActiveWorkspaceRoot = (): string | null =>
+  workspace.workspaceFolders?.[0]?.uri.fsPath ?? null;
+
 export class SettingsMessageHandler {
   private settingsState: SettingsSnapshot = loadSettingsSnapshot();
   private readonly localizationRuntimeService: LocalizationRuntimeService;
@@ -42,7 +49,9 @@ export class SettingsMessageHandler {
   private readonly versionService: ProviderVersionService;
 
   constructor(_extensionPath: string) {
-    this.localizationRuntimeService = new LocalizationRuntimeService();
+    this.localizationRuntimeService = new LocalizationRuntimeService(
+      createExtensionLocalizationFacade(resolveActiveWorkspaceRoot())
+    );
     this.impactClassifier = new LocalizationSettingsImpactClassifier();
     this.selectiveSyncPlanner = new LocalizationSelectiveSyncPlanner();
     this.versionService = new ProviderVersionService();
@@ -309,8 +318,9 @@ export class SettingsMessageHandler {
 
   private async handleOpenUserGlossaryFile(): Promise<void> {
     try {
-      const glossaryFilePath =
-        await new UserGlossaryStore().ensureEditableGlossaryFile();
+      const glossaryFilePath = await createExtensionUserGlossaryStore(
+        resolveActiveWorkspaceRoot()
+      ).ensureEditableGlossaryFile();
       const document = await workspace.openTextDocument(glossaryFilePath);
       await window.showTextDocument(document, {
         preview: false,

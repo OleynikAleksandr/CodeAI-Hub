@@ -4,12 +4,16 @@ import {
   type WebviewView,
   type WebviewViewProvider,
   window,
+  workspace,
 } from "vscode";
 import { WebviewHtmlGenerator } from "../core/webview-module/webview-html-generator";
 import type { CoreProcessManager } from "./core/core-process-manager";
 import type { WebviewMessage } from "./home-view-message-router";
 import { HomeViewMessageRouter } from "./home-view-message-router";
-import { LocalizationRuntimeService } from "./settings/localization-runtime-service";
+import {
+  createExtensionLocalizationFacade,
+  LocalizationRuntimeService,
+} from "./settings/localization-runtime-service";
 import { loadSettingsSnapshot } from "./settings/settings-storage";
 
 export class HomeViewProvider implements WebviewViewProvider {
@@ -45,8 +49,12 @@ export class HomeViewProvider implements WebviewViewProvider {
       extensionUri.fsPath,
       coreProcessManager
     );
-    this.localizationRuntimeService = new LocalizationRuntimeService();
     this.coreConfig = coreConfig;
+    this.localizationRuntimeService = new LocalizationRuntimeService(
+      createExtensionLocalizationFacade(
+        coreConfig?.workspacePath ?? workspace.workspaceFolders?.[0]?.uri.fsPath
+      )
+    );
   }
 
   async resolveWebviewView(webviewView: WebviewView): Promise<void> {
