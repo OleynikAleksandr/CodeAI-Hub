@@ -296,11 +296,21 @@ export class SettingsRequestHandler {
     workspace?: WorkspaceSettingsScope
   ): Promise<void> {
     try {
-      await assertAppleNativeSettingsReady(settings);
-      await this.settingsSavedBroadcaster.publish(
-        await this.settingsPersistenceService.save(settings, { workspace }),
-        workspace
-      );
+      const result = await this.settingsPersistenceService.save(settings, {
+        workspace,
+      });
+      let syncFailureMessage: string | null = null;
+      try {
+        await assertAppleNativeSettingsReady(settings);
+      } catch (error) {
+        syncFailureMessage = toErrorMessage(error);
+        this.logger.warn("Settings saved but localization preflight failed", {
+          error: syncFailureMessage,
+        });
+      }
+      await this.settingsSavedBroadcaster.publish(result, workspace, {
+        syncFailureMessage,
+      });
     } catch (error) {
       const reason = toErrorMessage(error);
       this.logger.warn("Failed to save settings", { error: reason });

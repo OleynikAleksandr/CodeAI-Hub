@@ -1,4 +1,7 @@
-import type { LocalizationFacade } from "@codeai-hub/localization";
+import type {
+  LocalizationFacade,
+  LocalizationRuntimePayload,
+} from "@codeai-hub/localization";
 import type { BridgeEvent } from "../types";
 import { toWorkspaceScopePayload } from "./settings-loaded-broadcaster";
 import type { SettingsWriteResult } from "./settings-persistence-service";
@@ -24,7 +27,8 @@ export class SettingsSavedBroadcaster {
 
   async publish(
     result: SettingsWriteResult,
-    workspace?: WorkspaceSettingsScope
+    workspace?: WorkspaceSettingsScope,
+    options: { readonly syncFailureMessage?: string | null } = {}
   ): Promise<void> {
     if (result.syncMode === "strict") {
       this.broadcastLocalizationSyncStatus({
@@ -34,40 +38,41 @@ export class SettingsSavedBroadcaster {
       });
     }
 
-    try {
-      const localizationRuntime =
-        result.syncMode === "strict"
-          ? await this.localizationFacade.synchronizeRuntimePayload(
-              resolveLocalizationRuntimeSettings(result.settings),
-              { affectedRuntimeBundleIds: result.affectedRuntimeBundleIds }
-            )
-          : await this.localizationFacade.resolveRuntimePayload(
-              resolveLocalizationRuntimeSettings(result.settings)
-            );
+    let localizationRuntime: LocalizationRuntimePayload | null = null;
+    let syncFailureMessage = options.syncFailureMessage ?? null;
 
-      this.broadcaster({
-        type: "settings:saved",
-        payload: {
-          localizationRuntime,
-          settings: result.settings,
-          ...toWorkspaceScopePayload(workspace),
-        },
+    if (!syncFailureMessage) {
+      try {
+        localizationRuntime =
+          result.syncMode === "strict"
+            ? await this.localizationFacade.synchronizeRuntimePayload(
+                resolveLocalizationRuntimeSettings(result.settings),
+                { affectedRuntimeBundleIds: result.affectedRuntimeBundleIds }
+              )
+            : await this.localizationFacade.resolveRuntimePayload(
+                resolveLocalizationRuntimeSettings(result.settings)
+              );
+      } catch (error) {
+        syncFailureMessage = toErrorMessage(error);
+      }
+    }
+
+    this.broadcaster({
+      type: "settings:saved",
+      payload: {
+        localizationRuntime,
+        settings: result.settings,
+        ...toWorkspaceScopePayload(workspace),
+      },
+    });
+
+    if (result.syncMode === "strict" || syncFailureMessage) {
+      this.broadcastLocalizationSyncStatus({
+        busy: false,
+        message: syncFailureMessage
+          ? `Localization sync failed: ${syncFailureMessage}`
+          : "Localization sync completed.",
       });
-
-      if (result.syncMode === "strict") {
-        this.broadcastLocalizationSyncStatus({
-          busy: false,
-          message: "Localization sync completed.",
-        });
-      }
-    } catch (error) {
-      if (result.syncMode === "strict") {
-        this.broadcastLocalizationSyncStatus({
-          busy: false,
-          message: `Localization sync failed: ${toErrorMessage(error)}`,
-        });
-      }
-      throw error;
     }
   }
 

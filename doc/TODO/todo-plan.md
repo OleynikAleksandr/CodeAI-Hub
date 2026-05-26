@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "0ced69966",
+  "lastRecordedCommit": "6b33a0b7b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase66.stream2.task1",
-  "expectedCommitMessage": "chore: build workspace settings ssot release",
+  "currentTaskId": "phase68.stream1.task1",
+  "expectedCommitMessage": "fix: persist settings before localization sync",
   "debt": {
-    "expectedCommitMessage": "chore: build workspace settings ssot release",
-    "preCommitHead": "0ced69966",
+    "expectedCommitMessage": "fix: persist settings before localization sync",
+    "preCommitHead": "6b33a0b7b",
     "stage": "commit_pending",
-    "taskId": "phase66.stream2.task1"
+    "taskId": "phase68.stream1.task1"
   }
 }
 ```
@@ -595,12 +595,23 @@
 
 ### Stream: Release Build
 231. [DONE] `phase66.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build workspace settings ssot release`). Result: TBD.
-232. [PENDING] Git Commit: `chore: build workspace settings ssot release` (hash: TBD)
+232. [DONE] Git Commit: `chore: build workspace settings ssot release` (hash: 6b33a0b7b)
 
 ## Phase 67 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-233. [TODO] `phase67.stream1.task1` User installs the generated VSIX and verifies settings are materialized only inside each workspace runtime, new workspaces inherit configured workspace settings when available, Project Manager changes persist to the active workspace file, and workflow sessions use those workspace settings (scope: user workflow acceptance; expected commit: no commit expected). Result: TBD.
+233. [DONE] `phase67.stream1.task1` User installs the generated VSIX and verifies settings are materialized only inside each workspace runtime, new workspaces inherit configured workspace settings when available, Project Manager changes persist to the active workspace file, and workflow sessions use those workspace settings (scope: user workflow acceptance; expected commit: no commit expected). Result: failed release 1.2.365 retest: Project Manager Settings changes did not persist to `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` when localization language/tool selections triggered Apple Native readiness preflight before settings persistence.
+
+## Phase 68 - Project Manager Settings Save Regression Fix (owner: Codex, updated: 2026-05-26)
+
+### Stream: Settings Save Durability
+234. [DONE] `phase68.stream1.task1` Persist workspace settings before localization runtime synchronization and make localization sync failure report separately without cancelling the saved settings event (scope: `packages/core/src/remote-bridge/handlers/settings-request-handler.ts, packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.ts, packages/core/src/remote-bridge/handlers/settings-saved-broadcaster.test.ts`; expected commit: `fix: persist settings before localization sync`).
+235. [PENDING] Git Commit: `fix: persist settings before localization sync` (hash: TBD)
+236. [TODO] `phase68.stream1.task2` Make Project Manager Settings consume only active-workspace settings events and reject stale unscoped settings replies while preserving active workspace save/reset scope (scope: `src/client/project-manager/services/project-manager-settings-client.ts, src/client/project-manager/components/settings/use-project-manager-settings.ts, src/client/project-manager/components/settings/use-project-manager-settings.test.ts`; expected commit: `fix: scope project manager settings panel events`).
+237. [TODO] Git Commit: `fix: scope project manager settings panel events` (hash: TBD)
+
+### Stream: Regression Verification
+238. [TODO] `phase68.stream2.task1` Run focused settings save/scope tests, Core build, Project Manager typecheck, settings reference scan, and then stop for explicit release build confirmation (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: TBD.
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
