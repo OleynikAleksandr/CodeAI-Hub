@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "3343c99f7",
+  "lastRecordedCommit": "43eba22dc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8b.release-build.task1",
-  "expectedCommitMessage": "chore: build provider readiness repair release",
+  "currentTaskId": "provider-readiness.phase8b.release-package.task1",
+  "expectedCommitMessage": "chore: package provider readiness repair vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build provider readiness repair release",
-    "preCommitHead": "3343c99f7",
+    "expectedCommitMessage": "chore: package provider readiness repair vsix",
+    "preCommitHead": "43eba22dc",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8b.release-build.task1"
+    "taskId": "provider-readiness.phase8b.release-package.task1"
   }
 }
 ```
@@ -196,9 +196,12 @@
 62. [DONE] `provider-readiness.phase8b.release-build.task1` Run the approved unified release build for the provider readiness fixes, including GLM standalone provider runtime artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, scripts/release-utils.sh, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build provider readiness repair release`).
     - Result 2026-05-27: `./scripts/build-all.sh` — PASS, produced unified release artifacts for `1.2.380`.
     - Result 2026-05-27: Verified `doc/tmp/releases/glm-claude-code-module-1.2.380.tar.bz2` is retained with the other provider tarballs.
-63. [PENDING] Git Commit: `chore: build provider readiness repair release` (hash: TBD)
-64. [TODO] `provider-readiness.phase8b.release-package.task1` Run the approved VSIX packaging step for the current release version, verify SDK exclusions/package output, and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package provider readiness repair vsix`).
-65. [TODO] Git Commit: `chore: package provider readiness repair vsix` (hash: TBD)
+63. [DONE] Git Commit: `chore: build provider readiness repair release` (hash: 43eba22dc)
+64. [DONE] `provider-readiness.phase8b.release-package.task1` Run the approved VSIX packaging step for the current release version, verify SDK exclusions/package output, and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package provider readiness repair vsix`).
+    - Result 2026-05-27: `./scripts/build-release.sh --use-current-version` — PASS.
+    - Result 2026-05-27: Verified release output lines: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
+    - Result 2026-05-27: VSIX ready at `codeai-hub-1.2.380.vsix` (4.3M).
+65. [PENDING] Git Commit: `chore: package provider readiness repair vsix` (hash: TBD)
 66. [TODO] `provider-readiness.phase8b.user-retest.task1` User installs the produced release and retests GLM provider artifact/home, Gemini startup, provider recovery after failed startup, System/Reasoning translation routing, and Kimi Description to Virtual Simulation handoff (scope: chat/process observation only; no commit required).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
