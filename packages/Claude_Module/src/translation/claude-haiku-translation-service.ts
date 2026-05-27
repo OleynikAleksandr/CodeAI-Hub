@@ -1,4 +1,4 @@
-import { mkdir } from "node:fs/promises";
+import { mkdir, readdir, rm } from "node:fs/promises";
 import type { TranslationRequest } from "@codeai-hub/translation";
 import type { SDKAuthManager } from "../auth/sdk-auth-manager";
 import type { SDKInstaller } from "../installer/sdk-installer";
@@ -83,6 +83,19 @@ const buildPrompt = (request: TranslationRequest): string =>
 
 const resolveTranslationRuntimeCwd = (): string =>
   resolveClaudeProviderProjectDir(CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG);
+
+const readProjectJsonlFiles = async (
+  projectPath: string
+): Promise<ReadonlySet<string>> => {
+  const entries = await readdir(projectPath, { withFileTypes: true }).catch(
+    () => []
+  );
+  return new Set(
+    entries
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".jsonl"))
+      .map((entry) => entry.name)
+  );
+};
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -206,6 +219,10 @@ export class ClaudeHaikuTranslationService {
         executablePath,
         workspacePath: resolveClaudeProviderHome(),
       });
+      const projectPath = resolveClaudeProviderProjectDir(
+        CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG
+      );
+      const beforeSessionFiles = await readProjectJsonlFiles(projectPath);
       const systemPrompt = buildClaudeHaikuTranslatorInstruction(request);
       const queryOptions = this.buildQueryOptions({
         cwd: workspaceCwd,
@@ -224,6 +241,10 @@ export class ClaudeHaikuTranslationService {
       if (!translated) {
         return { errorCode: "empty_translation", text: null };
       }
+      await this.discardCompletedTranslationSessions({
+        beforeSessionFiles,
+        projectPath,
+      });
       return { text: restorePromptTriggerLiterals(translated) };
     } catch (error) {
       this.options.reporter?.warn?.(
@@ -231,6 +252,25 @@ export class ClaudeHaikuTranslationService {
       );
       return { errorCode: "request_failed", text: null };
     }
+  }
+
+  private async discardCompletedTranslationSessions(params: {
+    readonly beforeSessionFiles: ReadonlySet<string>;
+    readonly projectPath: string;
+  }): Promise<void> {
+    const afterSessionFiles = await readProjectJsonlFiles(params.projectPath);
+    const createdFiles = [...afterSessionFiles].filter(
+      (fileName) => !params.beforeSessionFiles.has(fileName)
+    );
+    await Promise.all(
+      createdFiles.map((fileName) =>
+        rm(`${params.projectPath}/${fileName}`, { force: true })
+      )
+    ).catch((error) => {
+      this.options.reporter?.warn?.(
+        `Claude Haiku translation session cleanup failed: ${error instanceof Error ? error.message : String(error)}`
+      );
+    });
   }
 
   private async initialize(): Promise<void> {

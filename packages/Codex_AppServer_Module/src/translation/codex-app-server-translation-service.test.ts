@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { access } from "node:fs/promises";
+import { access, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import {
   CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
@@ -160,6 +162,46 @@ test("CodexAppServerTranslationService uses strict translation thread profile", 
   assert.equal(turnStart.summary, "none");
   assert.equal(typeof threadStart.cwd, "string");
   await assert.rejects(() => access(threadStart.cwd as string));
+});
+
+test("CodexAppServerTranslationService discards completed native translation session", async () => {
+  const providerHomePath = await mkdtemp(
+    path.join(tmpdir(), "codex-translation-provider-home-")
+  );
+  const sessionPath = path.join(
+    providerHomePath,
+    "sessions/2026/05/27",
+    "rollout-2026-05-27T08-00-00-translation-thread.jsonl"
+  );
+  const unrelatedPath = path.join(
+    providerHomePath,
+    "sessions/2026/05/27",
+    "rollout-2026-05-27T08-00-00-other-thread.jsonl"
+  );
+  await mkdir(path.dirname(sessionPath), { recursive: true });
+  await writeFile(sessionPath, "{}\n", "utf8");
+  await writeFile(unrelatedPath, "{}\n", "utf8");
+
+  try {
+    const service = new CodexAppServerTranslationService({
+      modelId: "gpt-5.4-mini",
+      processFactory: () => new FakeCodexProcess(),
+      providerHomePath,
+      turnTimeoutMs: 1000,
+    });
+
+    const result = await service.translate({
+      sourceLanguage: "en",
+      targetLanguage: "es",
+      text: "Settings",
+    });
+
+    assert.equal(result.status, "translated");
+    await assert.rejects(() => access(sessionPath));
+    await access(unrelatedPath);
+  } finally {
+    await rm(providerHomePath, { force: true, recursive: true });
+  }
 });
 
 test("CodexAppServerTranslationService sends summary none for Spark translation turns", async () => {

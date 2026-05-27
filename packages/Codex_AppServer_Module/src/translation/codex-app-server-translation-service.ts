@@ -1,8 +1,11 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { buildCodexReasoningSummaryParams } from "../app-server/codex-reasoning-summary-params";
-import { CodexAppServerProcess } from "../app-server/process/codex-app-server-process";
+import {
+  CodexAppServerProcess,
+  resolveProviderCodexHome,
+} from "../app-server/process/codex-app-server-process";
 import {
   CODEX_TRANSLATION_PROCESS_PROFILE_KEY,
   type CodexAppServerProcessProfileKey,
@@ -90,17 +93,21 @@ const createTimeoutError = (): Error =>
 
 export class CodexAppServerTranslationService {
   readonly #modelId: string;
+  readonly #providerHomePath: string;
   readonly #processFactory: CodexProcessFactory;
   readonly #reporter?: ModuleReporter;
   readonly #turnTimeoutMs: number;
 
   constructor(options: {
     readonly modelId: string;
+    readonly providerHomePath?: string;
     readonly processFactory?: CodexProcessFactory;
     readonly reporter?: ModuleReporter;
     readonly turnTimeoutMs?: number;
   }) {
     this.#modelId = options.modelId;
+    this.#providerHomePath =
+      options.providerHomePath ?? resolveProviderCodexHome();
     this.#processFactory =
       options.processFactory ??
       ((processOptions) => new CodexAppServerProcess(processOptions));
@@ -120,6 +127,7 @@ export class CodexAppServerTranslationService {
       path.join(tmpdir(), "codeai-codex-translation-")
     );
     const turnCollector = this.#createTurnCollector(process, request);
+    let completedThreadId: string | null = null;
     try {
       const promptProfile = buildCodexAppServerTranslationPromptProfile({
         modelId: this.#modelId,
@@ -137,6 +145,7 @@ export class CodexAppServerTranslationService {
       if (!translatedText) {
         return createFallbackResult(request, "empty_translation");
       }
+      completedThreadId = threadId;
       return createTranslatedResult(request, translatedText);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -147,8 +156,43 @@ export class CodexAppServerTranslationService {
     } finally {
       turnCollector.unsubscribe();
       await process.stop();
+      if (completedThreadId) {
+        await this.#discardCompletedTranslationSession(completedThreadId);
+      }
       await rm(workspacePath, { force: true, recursive: true });
     }
+  }
+
+  async #discardCompletedTranslationSession(threadId: string): Promise<void> {
+    const sessionsRoot = path.join(this.#providerHomePath, "sessions");
+    const candidates = await this.#findNativeSessionFiles(sessionsRoot);
+    await Promise.all(
+      candidates
+        .filter((filePath) => path.basename(filePath).includes(threadId))
+        .map((filePath) => rm(filePath, { force: true }))
+    ).catch((error) => {
+      this.#reporter?.warn?.(
+        `Codex translation session cleanup failed: ${error instanceof Error ? error.message : String(error)}`
+      );
+    });
+  }
+
+  async #findNativeSessionFiles(root: string): Promise<readonly string[]> {
+    const entries = await readdir(root, { withFileTypes: true }).catch(
+      () => []
+    );
+    const files: string[] = [];
+    for (const entry of entries) {
+      const absolutePath = path.join(root, entry.name);
+      if (entry.isDirectory()) {
+        files.push(...(await this.#findNativeSessionFiles(absolutePath)));
+        continue;
+      }
+      if (entry.isFile() && entry.name.endsWith(".jsonl")) {
+        files.push(absolutePath);
+      }
+    }
+    return files;
   }
 
   async #startThread(

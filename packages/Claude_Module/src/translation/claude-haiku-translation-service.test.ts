@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { access, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import type { ClaudeStreamMessage } from "../types";
 import {
@@ -141,6 +144,68 @@ test("ClaudeHaikuTranslationService runs ensure/auth/bootstrap before query and 
     recorded[0]?.prompt,
     "Translate the source text into ru.\nReturn only the translation.\n\nSource text:\nHello world"
   );
+});
+
+test("ClaudeHaikuTranslationService discards completed native translation session", async () => {
+  const providerHome = await mkdtemp(
+    path.join(tmpdir(), "claude-translation-provider-home-")
+  );
+  const previousHome = process.env.CODEAI_CLAUDE_HOME;
+  process.env.CODEAI_CLAUDE_HOME = providerHome;
+  const auth = createFakeAuthManager();
+  const installer = createFakeInstaller();
+  const existingPath = path.join(
+    providerHome,
+    ".claude/projects",
+    CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG,
+    "existing.jsonl"
+  );
+  const createdPath = path.join(
+    providerHome,
+    ".claude/projects",
+    CLAUDE_HAIKU_TRANSLATION_PROJECT_SLUG,
+    "created-translation-session.jsonl"
+  );
+  const recorded: RecordedQueryCall[] = [];
+  const query = ((payload: {
+    readonly options: Record<string, unknown>;
+    readonly prompt: string;
+  }) => {
+    recorded.push({ options: payload.options, prompt: payload.prompt });
+    async function* generate(): AsyncGenerator<ClaudeStreamMessage> {
+      await writeFile(createdPath, "{}\n", "utf8");
+      yield { result: "Привет мир", type: "result" };
+    }
+    return generate();
+  }) as ClaudeHaikuTranslationQueryFunction;
+
+  try {
+    await mkdir(path.dirname(existingPath), { recursive: true });
+    await writeFile(existingPath, "{}\n", "utf8");
+    const service = new ClaudeHaikuTranslationService({
+      authManager: auth as never,
+      installer: installer as never,
+      queryLoader: () => Promise.resolve({ query }),
+    });
+
+    const result = await service.translate({
+      sourceLanguage: "en",
+      targetLanguage: "ru",
+      text: "Hello world",
+    });
+
+    assert.equal(result.text, "Привет мир");
+    assert.equal(recorded.length, 1);
+    await access(existingPath);
+    await assert.rejects(() => access(createdPath));
+  } finally {
+    if (previousHome === undefined) {
+      Reflect.deleteProperty(process.env, "CODEAI_CLAUDE_HOME");
+    } else {
+      process.env.CODEAI_CLAUDE_HOME = previousHome;
+    }
+    await rm(providerHome, { force: true, recursive: true });
+  }
 });
 
 test("ClaudeHaikuTranslationService applies translation-only query profile", async () => {

@@ -1,7 +1,7 @@
 # Shared Runtime Translation Module - Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-28
+**Updated:** 2026-05-27
 **Owner:** Oleksandr + Codex
 **Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.1.854`)
 
@@ -97,6 +97,7 @@ Implementation notes:
 - `apple-native` is explicit-only and never falls back to Apple network translation; helper/platform/language-pack failures return source text with `errorCode` such as `apple_native_helper_unavailable`, `apple_native_requires_xcode`, or `apple_native_language_pack_missing`.
 - `apple-native` may retry a bounded transient helper fallback when Apple `Translation` reports `TranslationError.Cause.notInstalled` during the first runtime call even though the language pair has already passed installed availability. This retry is intentionally narrow: missing helper, missing language packs, unsupported pairs, invalid input, empty results, and ordinary request timeouts still fail closed without hidden engine substitution.
 - provider-owned Codex App Server translation instructions are translation-only: they instruct the model to translate only supplied text, return only translated text, avoid workflow-agent behavior, and not use tools, shell commands, files, patches, web search, planning, or user-input requests.
+- provider-owned Codex App Server and Claude Haiku translation sessions are transient implementation detail, not resumable workflow history. After a successful translation call, the provider adapter deletes the native session file(s) it created under the workspace provider home; only finalized localization/runtime translation artifacts remain. Failed translation attempts may leave provider-native files for diagnostic evidence.
 - long requests are no longer sent as one monolithic string by default for generic/document translation; `TranslationFacade` resolves an engine-specific chunk policy, plans safe boundaries, and dispatches chunks sequentially through the same engine contract, while `reasoning` defaults to one translate call per provider-emitted block.
 - safe boundary priority is paragraph break -> list boundary -> sentence boundary -> clause boundary -> hard split outside protected regions.
 - protected regions currently include fenced code, inline code, Markdown links, `{placeholders}`, and glossary markers such as `[[CAIHUB_TERM_n]]`.

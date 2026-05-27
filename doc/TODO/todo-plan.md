@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "065c9aa94",
+  "lastRecordedCommit": "3a973fc66",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase125.stream1.task3",
-  "expectedCommitMessage": "fix: prune cleared provider workflow sessions",
+  "currentTaskId": "phase125.stream1.task4",
+  "expectedCommitMessage": "fix: discard completed translation sessions",
   "debt": {
-    "expectedCommitMessage": "fix: prune cleared provider workflow sessions",
-    "preCommitHead": "065c9aa94",
+    "expectedCommitMessage": "fix: discard completed translation sessions",
+    "preCommitHead": "3a973fc66",
     "stage": "commit_pending",
-    "taskId": "phase125.stream1.task3"
+    "taskId": "phase125.stream1.task4"
   }
 }
 ```
@@ -1047,9 +1047,24 @@
 385. [DONE] `phase125.stream1.task2` Fix Clear Description post-rollback projection dirtiness discovered during release 1.2.375 retest: after clearing all workflow stages back through `Description`, downstream artifacts/sessions were removed and the boundary registry became empty, but Core/Project Manager rewrote tracked `description/questionnaire.md` help copy, rewrote timestamp-only `workflow/state.json`, and created untracked `description/description-step.json`. Clear Description must leave the Git tree clean while still showing a sendable questionnaire, by restoring a tracked baseline or keeping projection metadata out of managed Git state, with regression coverage for clean Git after Clear Description (scope: `src/client/project-manager/services/description-questionnaire-service.ts, src/client/project-manager/services/description-questionnaire-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep description clear tree clean`).
 386. [DONE] Git Commit: `fix: keep description clear tree clean` (hash: 065c9aa94)
 387. [DONE] `phase125.stream1.task3` Define and implement a provider-native workflow session cleanup policy for Clear discovered during release 1.2.375 retest: `runtime/providers/codex/home/sessions/**` and `runtime/providers/claude/home/.claude/projects/**` correctly stay ignored by Git rollback today, but Clear leaves downstream workflow-native JSONL files behind, so a fully cleared workflow still shows old provider-native workflow sessions. Core must prune provider-native workflow sessions for cleared downstream stages through a provider-home-safe manifest/metadata path across Codex, Claude and other provider homes without tracking provider secrets/caches in Git (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune cleared provider workflow sessions`).
-388. [PENDING] Git Commit: `fix: prune cleared provider workflow sessions` (hash: TBD)
-389. [TODO] `phase125.stream1.task4` Delete provider-native translation sessions automatically after successful localization/translation work, independent of workflow Clear/Undo/Rollback. Translation sessions are not resumable workflow history and should not remain in `runtime/providers/**/home/**`; keep only the finalized workspace localization artifacts and any explicit diagnostic artifact requested by native request capture, while preserving failure logs only when needed for error reporting (scope: `packages/localization/**, packages/core/src/provider-network-capture/**, doc/TODO/todo-plan.md`; expected commit: `fix: discard completed translation sessions`).
-390. [TODO] Git Commit: `fix: discard completed translation sessions` (hash: TBD)
+388. [DONE] Git Commit: `fix: prune cleared provider workflow sessions` (hash: 3a973fc66)
+389. [DONE] `phase125.stream1.task4` Delete provider-native translation sessions automatically after successful localization/translation work, independent of workflow Clear/Undo/Rollback. Translation sessions are not resumable workflow history and should not remain in `runtime/providers/**/home/**`; keep only the finalized workspace localization artifacts and any explicit diagnostic artifact requested by native request capture, while preserving failure logs only when needed for error reporting (scope: `packages/Codex_AppServer_Module/src/translation/**, packages/Claude_Module/src/translation/**, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/TODO/todo-plan.md`; expected commit: `fix: discard completed translation sessions`).
+390. [PENDING] Git Commit: `fix: discard completed translation sessions` (hash: TBD)
+
+## Phase 126 - Provider Session Cleanup Release Build (owner: Codex, updated: 2026-05-27)
+
+### Stream: Release Docs
+391. [TODO] `phase126.stream1.task1` Update release-facing docs for the next version after the retest fix backlog and before running release automation; user explicitly requested the new release in this session on 2026-05-27 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare provider session cleanup release`).
+392. [TODO] Git Commit: `docs: prepare provider session cleanup release` (hash: TBD)
+
+### Stream: Release Build
+393. [TODO] `phase126.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the provider session cleanup retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build provider session cleanup release`).
+394. [TODO] Git Commit: `chore: build provider session cleanup release` (hash: TBD)
+
+## Phase 127 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
+
+### Stream: User Retest
+395. [TODO] `phase127.stream1.task1` User installs the generated VSIX and verifies full rollback plus provider-native session cleanup: workflow Clear removes cleared workflow sessions, completed translation sessions disappear automatically, localization artifacts remain, and failed translation diagnostics remain available when needed (scope: user workflow acceptance; no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
