@@ -179,6 +179,20 @@ export interface ClaudeThinkingSwitchRequestPayload {
   readonly thinkingEnabled: boolean;
 }
 
+export interface ManagedReviewConfirmActionPayload {
+  readonly reviewMessageId?: string | null;
+  readonly type: "confirm";
+}
+
+export interface SessionMessageObjectPayload {
+  readonly content?: string;
+  readonly text?: string;
+  readonly turnOptions?: {
+    readonly managedReviewAction?: ManagedReviewConfirmActionPayload;
+    readonly [key: string]: unknown;
+  };
+}
+
 export interface SessionMessageTranslationPayload {
   readonly localizedContent: string;
   readonly messageId: string;
@@ -249,7 +263,7 @@ export type SessionIncomingMessage =
       readonly type: "session:message";
       readonly payload: {
         readonly sessionId: string;
-        readonly content: string;
+        readonly content: string | SessionMessageObjectPayload;
       };
     }
   | {

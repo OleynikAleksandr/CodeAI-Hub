@@ -45,6 +45,44 @@ interface SessionRequestHandlerSessionActionsOptions {
   readonly workspaceRuntime?: WorkspaceRuntimeFacade;
 }
 
+const MANAGED_REVIEW_CONFIRM_CONTENT = "подтверждаю";
+const MANAGED_REVIEW_ACTION_KEY = "managedReviewAction";
+
+interface ManagedReviewConfirmAction {
+  readonly reviewMessageId: string | null;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const readManagedReviewConfirmAction = (
+  turnOptions: Record<string, unknown> | undefined
+): ManagedReviewConfirmAction | null => {
+  const action = turnOptions?.[MANAGED_REVIEW_ACTION_KEY];
+  if (!isRecord(action) || action.type !== "confirm") {
+    return null;
+  }
+  return {
+    reviewMessageId:
+      typeof action.reviewMessageId === "string"
+        ? action.reviewMessageId
+        : null,
+  };
+};
+
+const resolveCurrentReviewGateMessageId = (session: Session): string | null => {
+  for (let index = session.messages.length - 1; index >= 0; index -= 1) {
+    const message = session.messages[index];
+    if (
+      message?.role === "system" &&
+      message.tag === "managed-workflow-user-review"
+    ) {
+      return index === session.messages.length - 1 ? message.id : null;
+    }
+  }
+  return null;
+};
+
 export class SessionRequestHandlerSessionActions {
   private readonly deps: SessionRequestHandlerSessionActionsOptions;
   private readonly managedReviewDecisions: SessionRequestHandlerManagedReviewDecisions;
@@ -238,6 +276,16 @@ export class SessionRequestHandlerSessionActions {
       return;
     }
     const hiddenUserMessage = shouldHideUserMessage(turnOptions);
+    const reviewAction = readManagedReviewConfirmAction(turnOptions);
+    if (reviewAction) {
+      await this.handleManagedReviewConfirmAction({
+        hiddenUserMessage,
+        reviewMessageId: reviewAction.reviewMessageId,
+        session,
+        sessionId,
+      });
+      return;
+    }
     if (
       await this.managedReviewDecisions.handleReviewDecision({
         content,
@@ -254,6 +302,50 @@ export class SessionRequestHandlerSessionActions {
       content,
       turnOptions,
       hiddenUserMessage,
+    });
+  }
+
+  private async handleManagedReviewConfirmAction(options: {
+    readonly hiddenUserMessage: boolean;
+    readonly reviewMessageId: string | null;
+    readonly session: Session;
+    readonly sessionId: string;
+  }): Promise<void> {
+    const currentReviewMessageId = resolveCurrentReviewGateMessageId(
+      options.session
+    );
+    if (
+      !currentReviewMessageId ||
+      (options.reviewMessageId &&
+        options.reviewMessageId !== currentReviewMessageId)
+    ) {
+      this.deps.broadcaster({
+        type: "session:error",
+        payload: {
+          sessionId: options.sessionId,
+          code: "managed_review_gate_stale",
+          message: "Managed review confirmation is stale or already closed.",
+        },
+      });
+      return;
+    }
+    if (
+      await this.managedReviewDecisions.handleReviewDecision({
+        content: MANAGED_REVIEW_CONFIRM_CONTENT,
+        hiddenUserMessage: options.hiddenUserMessage,
+        session: options.session,
+        sessionId: options.sessionId,
+      })
+    ) {
+      return;
+    }
+    this.deps.broadcaster({
+      type: "session:error",
+      payload: {
+        sessionId: options.sessionId,
+        code: "managed_review_gate_unhandled",
+        message: "Managed review confirmation could not be applied.",
+      },
     });
   }
 

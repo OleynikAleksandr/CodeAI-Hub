@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "a7536ca6b",
+  "lastRecordedCommit": "64f8f07a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase131.stream1.task1",
-  "expectedCommitMessage": "fix: hold managed turns until core settles",
+  "currentTaskId": "phase131.stream1.task2",
+  "expectedCommitMessage": "fix: route review confirms through core gates",
   "debt": {
-    "expectedCommitMessage": "fix: hold managed turns until core settles",
-    "preCommitHead": "a7536ca6b",
+    "expectedCommitMessage": "fix: route review confirms through core gates",
+    "preCommitHead": "64f8f07a7",
     "stage": "commit_pending",
-    "taskId": "phase131.stream1.task1"
+    "taskId": "phase131.stream1.task2"
   }
 }
 ```
@@ -1096,9 +1096,9 @@
 
 ### Stream: Fix
 408. [DONE] `phase131.stream1.task1` Fix premature user-input unlock for Claude/Core managed turns: provider-level `turn_completed` must not make Project Manager idle until provider message persistence, flow-node arbitration, and `handleManagedWorkflowTurnCompleted` have settled or explicitly opened a user gate. Regression coverage must reproduce a Claude-style assistant `end_turn` boundary where Core-managed post-turn validation is still running and prove the input remains locked until Core settles (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `fix: hold managed turns until core settles`).
-409. [PENDING] Git Commit: `fix: hold managed turns until core settles` (hash: TBD)
-410. [TODO] `phase131.stream1.task2` Route managed review confirmation through a Core-owned review action instead of treating the button click as an ordinary provider-visible user message. The action must be idempotent for the active review gate, reject stale gates, avoid dispatching duplicate provider turns, and keep Core as the authority for accepting/revising managed workflow phases (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: route review confirms through core gates`).
-411. [TODO] Git Commit: `fix: route review confirms through core gates` (hash: TBD)
+409. [DONE] Git Commit: `fix: hold managed turns until core settles` (hash: 64f8f07a7)
+410. [DONE] `phase131.stream1.task2` Route managed review confirmation through a Core-owned review action instead of treating the button click as an ordinary provider-visible user message. The action must be idempotent for the active review gate, reject stale gates, avoid dispatching duplicate provider turns, and keep Core as the authority for accepting/revising managed workflow phases (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.managed-review.test.ts`; expected commit: `fix: route review confirms through core gates`).
+411. [PENDING] Git Commit: `fix: route review confirms through core gates` (hash: TBD)
 412. [TODO] `phase131.stream1.task3` Make Project Manager render only the current managed review confirmation as actionable and lock the input/buttons while the Core review decision is in flight. Old `managed-workflow-user-review` messages must remain readable history but must not expose active `Подтверждаю` buttons after a newer gate opens or after confirmation starts (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/session-view.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `fix: prevent stale review confirmations`).
 413. [TODO] Git Commit: `fix: prevent stale review confirmations` (hash: TBD)
 414. [TODO] `phase131.stream1.task4` Split Application Skeleton review handoff copy by phase so users can distinguish accepting the draft contract before materialization from accepting the materialized filesystem skeleton before Quality Gates unlock. Tests must prove the two gates render distinct Core messages and keep the expected managed lifecycle sequence (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-handoff-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: label application skeleton review gates`).
