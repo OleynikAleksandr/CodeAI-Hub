@@ -73,10 +73,7 @@ export class SessionShellFactory {
   shouldBroadcastCreatedEarly(
     options: CreateAndRegisterSessionOptions
   ): boolean {
-    return (
-      options.context.stage === "description" &&
-      !options.context.providerSessionId
-    );
+    return !options.context.providerSessionId;
   }
 
   async createShellSession(

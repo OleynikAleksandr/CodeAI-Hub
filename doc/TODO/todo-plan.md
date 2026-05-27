@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "dd6bb71f5",
+  "lastRecordedCommit": "6e46b8769",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.gemini-timeout-diagnose.task1",
-  "expectedCommitMessage": "test: characterize gemini session creation timeout",
+  "currentTaskId": "provider-readiness.phase8a.gemini-startup.task1",
+  "expectedCommitMessage": "fix: resolve gemini session creation timeout",
   "debt": {
-    "expectedCommitMessage": "test: characterize gemini session creation timeout",
-    "preCommitHead": "dd6bb71f5",
+    "expectedCommitMessage": "fix: resolve gemini session creation timeout",
+    "preCommitHead": "6e46b8769",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.gemini-timeout-diagnose.task1"
+    "taskId": "provider-readiness.phase8a.gemini-startup.task1"
   }
 }
 ```
@@ -143,9 +143,9 @@
     - Diagnostic 2026-05-27: `src/client/project-manager/services/description-submit-service.ts` owns the visible `Session creation timed out.` error after its session-create watchdog expires.
     - Diagnostic 2026-05-27: `packages/core/src/remote-bridge/handlers/session-request-handler-session-bootstrap.ts` only creates an early shell for the Description stage. Virtual Simulation waits for `resolveProviderSessionId()` before broadcasting `session:created`, so a slow Gemini `adapter.createSession()` leaves the client without a Core session id or binding failure.
     - Diagnostic 2026-05-27: `packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts` runs provider-home auth bootstrap, `config.refreshAuth()`, and `config.initialize()` without a Core-visible startup deadline or readiness failure classification.
-37. [PENDING] Git Commit: `test: characterize gemini session creation timeout` (hash: TBD)
-38. [TODO] `provider-readiness.phase8a.gemini-startup.task1` Fix Gemini startup readiness so provider selection is not reported as usable until the workspace-home auth/bootstrap and CLI bridge are able to create a session within the expected lifecycle window, with a clear non-timeout error when auth or CLI readiness is missing (scope: `packages/Gemini_Module/src/session, packages/Gemini_Module/src/runtime, packages/core/src/provider-registry`; expected commit: `fix: resolve gemini session creation timeout`).
-39. [TODO] Git Commit: `fix: resolve gemini session creation timeout` (hash: TBD)
+37. [DONE] Git Commit: `test: characterize gemini session creation timeout` (hash: 6e46b8769)
+38. [DONE] `provider-readiness.phase8a.gemini-startup.task1` Fix Gemini startup readiness so provider selection is not reported as usable until the workspace-home auth/bootstrap and CLI bridge are able to create a session within the expected lifecycle window, with a clear non-timeout error when auth or CLI readiness is missing (scope: `packages/core/src/remote-bridge/handlers, packages/Gemini_Module/src/session, packages/Gemini_Module/src/runtime, packages/core/src/provider-registry, doc/TODO/todo-plan.md`; expected commit: `fix: resolve gemini session creation timeout`).
+39. [PENDING] Git Commit: `fix: resolve gemini session creation timeout` (hash: TBD)
 40. [TODO] `provider-readiness.phase8a.gemini-ui-gating.task1` Ensure Project Manager disables or explains Gemini when Core readiness predicts session startup failure, so the user cannot reach a generic `Session creation timed out` after selecting an apparently available Gemini provider (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/components/description, packages/core/src/provider-registry`; expected commit: `fix: gate gemini provider on startup readiness`).
 41. [TODO] Git Commit: `fix: gate gemini provider on startup readiness` (hash: TBD)
 42. [TODO] `provider-readiness.phase8a.gemini-verify.task1` Add targeted checks for Gemini session startup success/failure projection and timeout-free UI error handling on the Virtual Simulation start path (scope: `packages/Gemini_Module, packages/core, src/client/project-manager`; expected commit: `test: verify gemini startup readiness gating`).
