@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "041e432e6",
+  "lastRecordedCommit": "8285b81c3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.translation-latest-system.task1",
-  "expectedCommitMessage": "fix: translate latest system workflow messages",
+  "currentTaskId": "provider-readiness.phase8a.translation-verify.task1",
+  "expectedCommitMessage": "test: verify system and reasoning translation routing",
   "debt": {
-    "expectedCommitMessage": "fix: translate latest system workflow messages",
-    "preCommitHead": "041e432e6",
+    "expectedCommitMessage": "test: verify system and reasoning translation routing",
+    "preCommitHead": "8285b81c3",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.translation-latest-system.task1"
+    "taskId": "provider-readiness.phase8a.translation-verify.task1"
   }
 }
 ```
@@ -132,9 +132,11 @@
 30. [DONE] `provider-readiness.phase8a.translation-system-tags.task1` Align System orchestrator message labels with the same translation category/engine path used for Reasoning, so System workflow/status/error messages do not use the interface/UI translation engine (scope: `packages/core/src/session-translation, src/client/project-manager/services, src/client/project-manager/components/sessions, doc/TODO/todo-plan.md`; expected commit: `fix: route system messages through reasoning translation`).
 31. [DONE] Git Commit: `fix: route system messages through reasoning translation` (hash: 041e432e6)
 32. [DONE] `provider-readiness.phase8a.translation-latest-system.task1` Fix the untranslated-tail case where the latest System messages are not passed through the session translation pipeline after workflow state updates/errors, including the dirty Git blocker message path from the screenshot (scope: `packages/core/src/remote-bridge/handlers, src/client/project-manager/services, src/client/project-manager/components/sessions, doc/TODO/todo-plan.md`; expected commit: `fix: translate latest system workflow messages`).
-33. [PENDING] Git Commit: `fix: translate latest system workflow messages` (hash: TBD)
-34. [TODO] `provider-readiness.phase8a.translation-verify.task1` Add targeted verification that System and Reasoning messages carry equivalent translation labels/engine selection, last System messages are translated, and UI/interface labels still use the interface translation engine (scope: `packages/core, src/client/project-manager, packages/localization`; expected commit: `test: verify system and reasoning translation routing`).
-35. [TODO] Git Commit: `test: verify system and reasoning translation routing` (hash: TBD)
+33. [DONE] Git Commit: `fix: translate latest system workflow messages` (hash: 8285b81c3)
+34. [DONE] `provider-readiness.phase8a.translation-verify.task1` Add targeted verification that System and Reasoning messages carry equivalent translation labels/engine selection, last System messages are translated, and UI/interface labels still use the interface translation engine (scope: `packages/core, src/client/project-manager, packages/localization, doc/TODO/todo-plan.md`; expected commit: `test: verify system and reasoning translation routing`).
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-27: `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js` — PASS (9 tests).
+35. [PENDING] Git Commit: `test: verify system and reasoning translation routing` (hash: TBD)
 
 ### Stream: Gemini Session Creation Timeout
 36. [TODO] `provider-readiness.phase8a.gemini-timeout-diagnose.task1` Retest finding 2026-05-27: Gemini is selectable for the Virtual Simulation step with model `Gemini 3.1 Pro`, but `Start Step` fails with `Session creation timed out`; inspect Gemini session creation timing, process readiness signals, auth bootstrap, and first-turn startup logs from the installed runtime path (scope: `packages/Gemini_Module/src/session, packages/Gemini_Module/src/runtime, packages/core/src/provider-registry`; expected commit: `test: characterize gemini session creation timeout`).
