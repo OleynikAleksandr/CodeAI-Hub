@@ -16,6 +16,7 @@ interface InputPanelProps {
   readonly isQueued?: boolean;
   readonly onSubmit: (text: string) => void;
   readonly providerTheme?: ProviderTheme | null;
+  readonly resumingLockActive?: boolean;
   readonly sessionId?: string;
   readonly taskTimer?: TaskTimerSnapshot | null;
   readonly terminalNoResume?: boolean;
@@ -30,6 +31,7 @@ const InputPanel = ({
   continuityErrorCopy = null,
   isQueued = false,
   providerTheme = null,
+  resumingLockActive,
   sessionId,
   terminalNoResume = false,
   taskTimer = null,
@@ -58,8 +60,12 @@ const InputPanel = ({
   const placeholder = resolveInputPlaceholder({
     isQueued,
     terminalNoResume,
-    connectionState,
-    continuityLockActive,
+    connectionState:
+      connectionState === "blocked" &&
+      !(resumingLockActive ?? continuityLockActive)
+        ? "running"
+        : connectionState,
+    continuityLockActive: resumingLockActive ?? continuityLockActive,
     continuityErrorCopy,
   });
   const [value, setValue] = useState(draft);

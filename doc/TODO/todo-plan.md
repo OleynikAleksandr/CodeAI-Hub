@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "c23ee6034",
+  "lastRecordedCommit": "a3181e765",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8d.wait-copy-diagnose.task1",
-  "expectedCommitMessage": "test: characterize session wait copy classification",
+  "currentTaskId": "provider-readiness.phase8d.wait-copy-fix.task1",
+  "expectedCommitMessage": "fix: separate session working and resume placeholders",
   "debt": {
-    "expectedCommitMessage": "test: characterize session wait copy classification",
-    "preCommitHead": "c23ee6034",
+    "expectedCommitMessage": "fix: separate session working and resume placeholders",
+    "preCommitHead": "a3181e765",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8d.wait-copy-diagnose.task1"
+    "taskId": "provider-readiness.phase8d.wait-copy-fix.task1"
   }
 }
 ```
@@ -250,9 +250,11 @@
     - Diagnostic 2026-05-27: `resolveInputPlaceholder()` maps any `connectionState === "blocked"` to `Agent is resuming your session... Please wait.`, while Project Manager uses `blocked` for ordinary non-editable waits beyond context rollover/resume.
     - Result 2026-05-27: `npx tsx --test src/client/ui/src/session/input-panel.test.tsx` — PASS (13 tests).
     - Result 2026-05-27: `npm run typecheck:webview` — PASS.
-87. [PENDING] Git Commit: `test: characterize session wait copy classification` (hash: TBD)
-88. [TODO] `provider-readiness.phase8d.wait-copy-fix.task1` Make `Agent is resuming your session... Please wait.` appear only for context continuity/resume reasons, while ordinary active/blocked provider work shows `Agent is working... Please wait.` (scope: `src/client/ui/src/session/input-panel-placeholders.ts, src/client/ui/src/session/session-view.tsx, src/client/ui/src/session/input-panel.test.tsx`; expected commit: `fix: separate session working and resume placeholders`).
-89. [TODO] Git Commit: `fix: separate session working and resume placeholders` (hash: TBD)
+87. [DONE] Git Commit: `test: characterize session wait copy classification` (hash: a3181e765)
+88. [DONE] `provider-readiness.phase8d.wait-copy-fix.task1` Make `Agent is resuming your session... Please wait.` appear only for context continuity/resume reasons, while ordinary active/blocked provider work shows `Agent is working... Please wait.` (scope: `src/client/ui/src/session/input-panel.tsx, src/client/ui/src/session/session-view.tsx, src/client/ui/src/session/input-panel.test.tsx`; expected commit: `fix: separate session working and resume placeholders`).
+    - Result 2026-05-27: `npx tsx --test src/client/ui/src/session/input-panel.test.tsx` — PASS (13 tests).
+    - Result 2026-05-27: `npm run typecheck:webview` — PASS.
+89. [PENDING] Git Commit: `fix: separate session working and resume placeholders` (hash: TBD)
 90. [TODO] `provider-readiness.phase8d.wait-copy-verify.task1` Verify running, generic blocked, managed review, binding-pending, and resume-bootstrap input placeholder states so non-rollover waits cannot regress to resume copy (scope: `src/client/ui/src/session/input-panel.test.tsx, src/client/project-manager/components/sessions/session-stream.test.ts, src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify session wait placeholder states`).
 91. [TODO] Git Commit: `test: verify session wait placeholder states` (hash: TBD)
 

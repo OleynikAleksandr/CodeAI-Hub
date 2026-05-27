@@ -187,9 +187,11 @@ const SessionViewBody = ({
   const continuityLockReason = activeSession?.status.continuityLock?.reason;
   const terminalNoResume = continuityLockReason === "terminal_no_resume";
   const continuityLockActive =
-    activeSession?.status.continuityLock?.active === true ||
-    connectionState === "blocked" ||
-    terminalNoResume;
+    activeSession?.status.continuityLock?.active === true || terminalNoResume;
+  const resumingLockActive =
+    continuityLockActive &&
+    continuityLockReason !== undefined &&
+    RESUMING_LOCK_REASONS.has(continuityLockReason as never);
   const inputConnectionState = resolveInputConnectionState({
     connectionState,
     bindingStatus: activeSession?.binding.status ?? null,
@@ -319,6 +321,7 @@ const SessionViewBody = ({
             isQueued={isQueued}
             onSubmit={submitMessage}
             providerTheme={providerTheme}
+            resumingLockActive={resumingLockActive}
             sessionId={activeSessionId}
             taskTimer={activeSession.status.taskTimer ?? null}
             terminalNoResume={terminalNoResume}

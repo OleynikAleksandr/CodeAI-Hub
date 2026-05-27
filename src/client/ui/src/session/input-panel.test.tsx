@@ -58,6 +58,7 @@ const renderInputPanel = async (overrides?: {
   readonly continuityLockActive?: boolean;
   readonly continuityErrorCopy?: string | null;
   readonly isQueued?: boolean;
+  readonly resumingLockActive?: boolean;
 }): Promise<string> => {
   ensureBrowserLikeGlobals();
   (globalThis as typeof globalThis & { React?: unknown }).React = await import(
@@ -130,29 +131,30 @@ test("InputPanel disables fieldset while running", async () => {
   );
 });
 
-test("InputPanel keeps read-only mode when connection stays blocked after continuity flag clears", async () => {
+test("InputPanel keeps working copy when connection stays blocked after continuity flag clears", async () => {
   const html = await renderInputPanel({
     connectionState: "blocked",
     continuityLockActive: false,
   });
 
   assert.equal(html.includes("disabled"), true);
+  assert.equal(html.includes("Agent is working… Please wait."), true);
   assert.equal(
     html.includes("Agent is resuming your session… Please wait."),
-    true
+    false
   );
 });
 
-test("InputPanel currently maps generic blocked waits to resuming copy", async () => {
+test("InputPanel maps generic blocked waits to working copy", async () => {
   const html = await renderInputPanel({
     connectionState: "blocked",
     continuityLockActive: false,
   });
 
-  assert.equal(html.includes("Agent is working… Please wait."), false);
+  assert.equal(html.includes("Agent is working… Please wait."), true);
   assert.equal(
     html.includes("Agent is resuming your session… Please wait."),
-    true
+    false
   );
 });
 
