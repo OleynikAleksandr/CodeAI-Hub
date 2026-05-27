@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "bd35c770e",
+  "lastRecordedCommit": "5f02696fe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase123.stream1.task1",
-  "expectedCommitMessage": "chore: build watcher deletion release",
+  "currentTaskId": "phase125.stream1.task1",
+  "expectedCommitMessage": "fix: write workflow state atomically",
   "debt": {
-    "expectedCommitMessage": "chore: build watcher deletion release",
-    "preCommitHead": "bd35c770e",
+    "expectedCommitMessage": "fix: write workflow state atomically",
+    "preCommitHead": "5f02696fe",
     "stage": "commit_pending",
-    "taskId": "phase123.stream1.task1"
+    "taskId": "phase125.stream1.task1"
   }
 }
 ```
@@ -1032,12 +1032,24 @@
 
 ### Stream: Release Package
 380. [DONE] `phase123.stream1.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for release 1.2.375 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build watcher deletion release`). Result: Release 1.2.375 built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.375.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-381. [PENDING] Git Commit: `chore: build watcher deletion release` (hash: TBD)
+381. [DONE] Git Commit: `chore: build watcher deletion release` (hash: 5f02696fe)
 
 ## Phase 124 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-26)
 
 ### Stream: User Retest
-382. [TODO] `phase124.stream1.task1` User installs release 1.2.375 and verifies clearing Application Skeleton / Diagram Modules no longer rewrites `workflow/state.json` to deleted downstream artifacts, Project Manager remains correct without Restart Core, and the tested workspace Git tree stays clean after Clear settles (scope: user workflow acceptance; expected commit: no commit expected).
+382. [DONE] `phase124.stream1.task1` User installs release 1.2.375 and verifies clearing Application Skeleton / Diagram Modules no longer rewrites `workflow/state.json` to deleted downstream artifacts, Project Manager remains correct without Restart Core, and the tested workspace Git tree stays clean after Clear settles (scope: user workflow acceptance; expected commit: no commit expected). Result: Failed release 1.2.375 retest: full rollback exposed malformed workflow/state.json boundary data, dirty Clear Description projection files, and rollback-ignored provider-native workflow/translation sessions that require Fix backlog implementation.
+
+## Phase 125 - Retest Fix Backlog (owner: Codex, updated: 2026-05-27)
+
+### Stream: Fix
+383. [DONE] `phase125.stream1.task1` Fix malformed `workflow/state.json` rollback target discovered during release 1.2.375 retest: after clearing `Quality Gates Baseline`, Clear removed the correct Quality Gates files and left Git clean, but restored boundary `3a6cd2b codeai-boundary: Quality Gates` contains invalid JSON with trailing duplicate braces. Investigation shows corruption starts at `3730b52 feat: materialize application skeleton attempt 1`, when `lastActive` changed from `diagram_modules` to `application_skeleton`; the fix must prevent partial/append-style state writes and add regression coverage for Application Skeleton -> Quality Gates boundary creation restoring a valid `workflow/state.json` (scope: `packages/core/src/workflow/state/**, packages/core/src/workflow/runtime/**, doc/TODO/todo-plan.md`; expected commit: `fix: write workflow state atomically`).
+384. [PENDING] Git Commit: `fix: write workflow state atomically` (hash: TBD)
+385. [TODO] `phase125.stream1.task2` Fix Clear Description post-rollback projection dirtiness discovered during release 1.2.375 retest: after clearing all workflow stages back through `Description`, downstream artifacts/sessions were removed and the boundary registry became empty, but Core/Project Manager rewrote tracked `description/questionnaire.md` help copy, rewrote timestamp-only `workflow/state.json`, and created untracked `description/description-step.json`. Clear Description must leave the Git tree clean while still showing a sendable questionnaire, by restoring a tracked baseline or keeping projection metadata out of managed Git state, with regression coverage for clean Git after Clear Description (scope: `packages/core/src/workflow/description/**, packages/core/src/workflow/state/**, doc/TODO/todo-plan.md`; expected commit: `fix: keep description clear tree clean`).
+386. [TODO] Git Commit: `fix: keep description clear tree clean` (hash: TBD)
+387. [TODO] `phase125.stream1.task3` Define and implement a provider-native workflow session cleanup policy for Clear discovered during release 1.2.375 retest: `runtime/providers/codex/home/sessions/**` and `runtime/providers/claude/home/.claude/projects/**` correctly stay ignored by Git rollback today, but Clear leaves downstream workflow-native JSONL files behind, so a fully cleared workflow still shows old provider-native workflow sessions. Core must prune provider-native workflow sessions for cleared downstream stages through a provider-home-safe manifest/metadata path across Codex, Claude and other provider homes without tracking provider secrets/caches in Git (scope: `packages/core/src/workflow/**, packages/core/src/providers/**, doc/TODO/todo-plan.md`; expected commit: `fix: prune cleared provider workflow sessions`).
+388. [TODO] Git Commit: `fix: prune cleared provider workflow sessions` (hash: TBD)
+389. [TODO] `phase125.stream1.task4` Delete provider-native translation sessions automatically after successful localization/translation work, independent of workflow Clear/Undo/Rollback. Translation sessions are not resumable workflow history and should not remain in `runtime/providers/**/home/**`; keep only the finalized workspace localization artifacts and any explicit diagnostic artifact requested by native request capture, while preserving failure logs only when needed for error reporting (scope: `packages/localization/**, packages/core/src/provider-network-capture/**, doc/TODO/todo-plan.md`; expected commit: `fix: discard completed translation sessions`).
+390. [TODO] Git Commit: `fix: discard completed translation sessions` (hash: TBD)
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

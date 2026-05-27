@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdtempSync } from "node:fs";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -34,6 +35,47 @@ test("WorkflowLastActiveStore restores diagram modules as the last active stage"
     ".codeai-hub/demo-workspace/diagram_modules/product-parts.index.md"
   );
   assert.equal(restored.updatedAt, "2026-04-05T12:55:00.000Z");
+});
+
+test("WorkflowLastActiveStore replaces malformed state with valid JSON", async () => {
+  const workspaceRoot = mkdtempSync(
+    path.join(os.tmpdir(), "workflow-last-active-repair-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const statePath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    workspaceSlug,
+    "workflow",
+    "state.json"
+  );
+  await mkdir(path.dirname(statePath), { recursive: true });
+  await writeFile(
+    statePath,
+    [
+      "{",
+      '  "workspaceSlug": "demo-workspace",',
+      '  "updatedAt": "2026-04-05T12:00:00.000Z"',
+      "}",
+      "}",
+      "",
+    ].join("\n"),
+    "utf8"
+  );
+
+  await new WorkflowLastActiveStore({
+    clock: () => "2026-04-05T12:55:00.000Z",
+  }).upsert(workspaceRoot, workspaceSlug, {
+    stage: "application_skeleton",
+    artifactPath:
+      ".codeai-hub/demo-workspace/application_skeleton/application-skeleton.md",
+  });
+
+  const repaired = JSON.parse(await readFile(statePath, "utf8")) as {
+    readonly lastActive: { readonly stage: string };
+  };
+
+  assert.equal(repaired.lastActive.stage, "application_skeleton");
 });
 
 test("resolvePreferredWorkflowLastActive prefers the latest trunk stage when timestamps tie", () => {
