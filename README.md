@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.377** (Quality Gates Clear Restart Hotfix)
+**Current Release — v1.2.378** (Managed Review Gate Hotfix)
+
+This hotfix closes the managed user-review regressions found after v1.2.377.
+Managed provider turns now stay locked until Core finishes its post-turn
+arbitration, Core-owned review confirmations are idempotent, and stale
+confirmation buttons remain visible only as history instead of starting another
+provider turn.
+
+Project Manager now renders Application Skeleton and Quality Gates user-review
+states as in-progress review stages instead of stale invalid markers. Quality
+Gates draft review also removes prohibited pre-acceptance integration edits
+such as `package.json`, hooks, and gate scripts before the review commit, so the
+workspace stays clean until the user explicitly accepts integration.
+
+**Previous Release — v1.2.377** (Quality Gates Clear Restart Hotfix)
 
 This hotfix closes the Clear restart regression found after v1.2.376. Quality
 Gates now commits the final Core handoff message together with the accepted

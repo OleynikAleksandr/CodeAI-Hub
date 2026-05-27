@@ -8,6 +8,24 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.378] - 2026-05-27
+### Fixed
+- **Managed provider turns stay locked until Core settles.** Provider `turn_completed` events no longer unlock Project Manager input while Core is still persisting messages, arbitrating managed flow nodes, or opening a user-review gate.
+- **Review confirmations are Core-owned and idempotent.** The Project Manager confirmation button now calls the active Core review action, rejects stale gates, suppresses duplicate actionable buttons, and does not send ordinary provider-visible text.
+- **Application Skeleton review gates are distinguishable.** Core now labels draft-contract review separately from filesystem-skeleton review, so the two managed acceptance points are clear in history.
+- **Managed review markers render as progress.** Application Skeleton and Quality Gates stages with current review artifacts now show the in-progress/yellow state instead of a stale invalid/red marker.
+- **Quality Gates draft review keeps integration files clean.** Before pre-acceptance review commits, Core restores or removes prohibited integration edits such as `package.json`, hooks, lockfiles, and gate scripts so they cannot dirty the workspace before the user confirms integration.
+
+### Tests
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.managed-review.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`
+- `node --test --import tsx src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`
+- `node --test --import tsx packages/core/src/remote-bridge/handlers/technical-root-progress-projection.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run plan:validate`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.377] - 2026-05-27
 ### Fixed
 - **Quality Gates completion leaves Git clean.** Core now waits for the final `managed-workflow-complete` message to persist and commits that terminal handoff residue before returning control to Project Manager.

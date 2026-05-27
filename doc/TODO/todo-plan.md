@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "52ea07491",
+  "lastRecordedCommit": "ed6d6f23c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase132.stream1.task3",
-  "expectedCommitMessage": "test: type managed progress projection coverage",
+  "currentTaskId": "phase133.stream1.task1",
+  "expectedCommitMessage": "docs: prepare managed review gate release",
   "debt": {
-    "expectedCommitMessage": "test: type managed progress projection coverage",
-    "preCommitHead": "52ea07491",
+    "expectedCommitMessage": "docs: prepare managed review gate release",
+    "preCommitHead": "ed6d6f23c",
     "stage": "commit_pending",
-    "taskId": "phase132.stream1.task3"
+    "taskId": "phase133.stream1.task1"
   }
 }
 ```
@@ -1113,8 +1113,23 @@
 419. [DONE] `phase132.stream1.task2` Restore or clean prohibited Quality Gates integration file edits before draft/review commits, so pre-acceptance contract review cannot leave `package.json`, hooks, or gate scripts dirty before the user confirms integration (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-draft-scope-cleaner.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; scope exception: helper extraction keeps the controller under the 500-line class/file limit while preserving focused coverage; expected commit: `fix: clean quality gates draft scope`).
 420. [DONE] Git Commit: `fix: clean quality gates draft scope` (hash: 52ea07491)
 421. [DONE] `phase132.stream1.task3` Fix the managed review projection regression test state builder so `@codeai-hub/core` TypeScript build accepts the coverage added for stale invalid markers (scope: `packages/core/src/remote-bridge/handlers/technical-root-progress-projection.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: type managed progress projection coverage`).
-422. [PENDING] Git Commit: `test: type managed progress projection coverage` (hash: TBD)
-423. [TODO] `phase132.stream1.task4` Run targeted verification for managed review progress markers, Quality Gates draft-scope cleanup, Core build, Project Manager/webview checks and plan validation before any release build request (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+422. [DONE] Git Commit: `test: type managed progress projection coverage` (hash: ed6d6f23c)
+423. [DONE] `phase132.stream1.task4` Run targeted verification for managed review progress markers, Quality Gates draft-scope cleanup, Core build, Project Manager/webview checks and plan validation before any release build request (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted Phase 132 verification passed: managed review projection and Quality Gates draft-scope regression tests passed, @codeai-hub/core build passed, webview typecheck/build passed, and plan validation passed. Release build intentionally not run until explicit confirmation.
+
+## Phase 133 - Release Build (owner: Codex, updated: 2026-05-27)
+
+### Stream: Release Docs
+424. [DONE] `phase133.stream1.task1` Update release-facing docs for v1.2.378 after explicit user request to build the managed review gate and Quality Gates draft-scope fix release (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed review gate release`).
+425. [PENDING] Git Commit: `docs: prepare managed review gate release` (hash: TBD)
+
+### Stream: Release Build
+426. [TODO] `phase133.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record artifacts for release 1.2.378 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build managed review gate release`).
+427. [TODO] Git Commit: `chore: build managed review gate release` (hash: TBD)
+
+## Phase 134 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
+
+### Stream: User Retest
+428. [TODO] `phase134.stream1.task1` User installs release 1.2.378 and verifies managed review gates, yellow review markers, stale confirmation suppression, and Quality Gates draft review Git cleanliness before acceptance (scope: user workflow acceptance; no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
