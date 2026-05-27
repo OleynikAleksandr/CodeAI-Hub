@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "905f273ac",
+  "lastRecordedCommit": "efd13b6f2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.gemini-ui-gating.task1",
-  "expectedCommitMessage": "fix: gate gemini provider on startup readiness",
+  "currentTaskId": "provider-readiness.phase8a.gemini-verify.task1",
+  "expectedCommitMessage": "test: verify gemini startup readiness gating",
   "debt": {
-    "expectedCommitMessage": "fix: gate gemini provider on startup readiness",
-    "preCommitHead": "905f273ac",
+    "expectedCommitMessage": "test: verify gemini startup readiness gating",
+    "preCommitHead": "efd13b6f2",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.gemini-ui-gating.task1"
+    "taskId": "provider-readiness.phase8a.gemini-verify.task1"
   }
 }
 ```
@@ -147,9 +147,12 @@
 38. [DONE] `provider-readiness.phase8a.gemini-startup.task1` Fix Gemini startup readiness so provider selection is not reported as usable until the workspace-home auth/bootstrap and CLI bridge are able to create a session within the expected lifecycle window, with a clear non-timeout error when auth or CLI readiness is missing (scope: `packages/core/src/remote-bridge/handlers, packages/Gemini_Module/src/session, packages/Gemini_Module/src/runtime, packages/core/src/provider-registry, doc/TODO/todo-plan.md`; expected commit: `fix: resolve gemini session creation timeout`).
 39. [DONE] Git Commit: `fix: resolve gemini session creation timeout` (hash: 905f273ac)
 40. [DONE] `provider-readiness.phase8a.gemini-ui-gating.task1` Ensure Project Manager disables or explains Gemini when Core readiness predicts session startup failure, so the user cannot reach a generic `Session creation timed out` after selecting an apparently available Gemini provider (scope: `packages/core/src/remote-bridge/handlers, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/components/description, packages/core/src/provider-registry, doc/TODO/todo-plan.md`; expected commit: `fix: gate gemini provider on startup readiness`).
-41. [PENDING] Git Commit: `fix: gate gemini provider on startup readiness` (hash: TBD)
-42. [TODO] `provider-readiness.phase8a.gemini-verify.task1` Add targeted checks for Gemini session startup success/failure projection and timeout-free UI error handling on the Virtual Simulation start path (scope: `packages/Gemini_Module, packages/core, src/client/project-manager`; expected commit: `test: verify gemini startup readiness gating`).
-43. [TODO] Git Commit: `test: verify gemini startup readiness gating` (hash: TBD)
+41. [DONE] Git Commit: `fix: gate gemini provider on startup readiness` (hash: efd13b6f2)
+42. [DONE] `provider-readiness.phase8a.gemini-verify.task1` Add targeted checks for Gemini session startup success/failure projection and timeout-free UI error handling on the Virtual Simulation start path (scope: `packages/Gemini_Module, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify gemini startup readiness gating`).
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-27: `npm run typecheck:webview` — PASS.
+    - Result 2026-05-27: `node --test packages/core/dist/remote-bridge/handlers/session-provider-session-resolver.test.js packages/core/dist/remote-bridge/handlers/session-shell-factory.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-session-bootstrap.test.js` — PASS (5 tests).
+43. [PENDING] Git Commit: `test: verify gemini startup readiness gating` (hash: TBD)
 
 ### Stream: Failed Provider Startup Recovery
 44. [TODO] `provider-readiness.phase8a.failed-startup-recovery-diagnose.task1` Retest finding 2026-05-27: after Gemini times out on the Virtual Simulation start path, Codex cannot be started either, even after Restart Core; diagnose leaked session/provider locks, pending workflow state, runtime process state, workspace capsule state, and client-side provider selection state after failed startup (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/provider-registry, src/client/project-manager/services`; expected commit: `test: characterize failed provider startup recovery`).
