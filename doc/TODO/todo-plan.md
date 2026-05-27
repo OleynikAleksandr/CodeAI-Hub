@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "7c7aafe45",
+  "lastRecordedCommit": "f6aa6490b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.cross-step-kimi-cleanup.task1",
-  "expectedCommitMessage": "fix: clear kimi session state before next step",
+  "currentTaskId": "provider-readiness.phase8a.cross-step-start-gate.task1",
+  "expectedCommitMessage": "fix: unblock providers after description acceptance",
   "debt": {
-    "expectedCommitMessage": "fix: clear kimi session state before next step",
-    "preCommitHead": "7c7aafe45",
+    "expectedCommitMessage": "fix: unblock providers after description acceptance",
+    "preCommitHead": "f6aa6490b",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.cross-step-kimi-cleanup.task1"
+    "taskId": "provider-readiness.phase8a.cross-step-start-gate.task1"
   }
 }
 ```
@@ -177,9 +177,11 @@
     - Diagnostic 2026-05-27: `WorkflowStepCommitFacade` commits the workspace capsule and then checks raw `git status`; unlike `ensureManagedTerminalGitClean()`, it does not enforce `.codeai-hub/state/` ignore before the dirty check, so local timer state can leave `.codeai-hub/state/` untracked and block the next preliminary step.
 53. [DONE] Git Commit: `test: characterize provider start block after kimi description` (hash: 7c7aafe45)
 54. [DONE] `provider-readiness.phase8a.cross-step-kimi-cleanup.task1` Ensure successful Kimi completion on Description releases provider/session resources, clears step-local active provider markers, and persists only workflow-owned artifact acceptance state before entering Virtual Simulation (scope: `packages/core/src/workflow/boundary, packages/core/src/remote-bridge/handlers, packages/core/src/session-continuity, packages/Kimi_Module/src/provider, doc/TODO/todo-plan.md`; expected commit: `fix: clear kimi session state before next step`).
-55. [PENDING] Git Commit: `fix: clear kimi session state before next step` (hash: TBD)
-56. [TODO] `provider-readiness.phase8a.cross-step-start-gate.task1` Fix Virtual Simulation provider start gating so a clean accepted Description result allows any available provider to start, and blockers identify the exact dirty workflow/provider state instead of generically preventing all providers (scope: `packages/core/src/workflow, packages/core/src/provider-registry, src/client/project-manager/components/sessions`; expected commit: `fix: unblock providers after description acceptance`).
-57. [TODO] Git Commit: `fix: unblock providers after description acceptance` (hash: TBD)
+55. [DONE] Git Commit: `fix: clear kimi session state before next step` (hash: f6aa6490b)
+56. [DONE] `provider-readiness.phase8a.cross-step-start-gate.task1` Fix Virtual Simulation provider start gating so a clean accepted Description result allows any available provider to start, and blockers identify the exact dirty workflow/provider state instead of generically preventing all providers (scope: `packages/core/src/workflow, packages/core/src/provider-registry, src/client/project-manager/components/sessions, doc/TODO/todo-plan.md`; expected commit: `fix: unblock providers after description acceptance`).
+    - Disposition 2026-05-27: the start gate itself already depends on clean workflow/Git state; the blocker was the Description acceptance commit leaving `.codeai-hub/state/` visible as dirty local runtime state.
+    - Disposition 2026-05-27: `fix: clear kimi session state before next step` moved the local runtime-state ignore enforcement into the preliminary acceptance commit path, so a clean accepted Description result now reaches Virtual Simulation without a provider-wide blocker.
+57. [PENDING] Git Commit: `fix: unblock providers after description acceptance` (hash: TBD)
 58. [TODO] `provider-readiness.phase8a.cross-step-verify.task1` Add targeted workflow tests for Kimi Description success followed by Virtual Simulation startup with Codex, Claude, Gemini-readiness-gated, and Kimi, including Restart Core behavior (scope: `packages/core, packages/Kimi_Module, src/client/project-manager`; expected commit: `test: verify cross-step provider startup after kimi`).
 59. [TODO] Git Commit: `test: verify cross-step provider startup after kimi` (hash: TBD)
 
