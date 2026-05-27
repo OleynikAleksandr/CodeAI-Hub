@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "59524158a",
+  "lastRecordedCommit": "874721a19",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8c.release-package.task1",
-  "expectedCommitMessage": "chore: package glm settings repair vsix",
+  "currentTaskId": "provider-readiness.phase8d.gemini-artifact-diagnose.task1",
+  "expectedCommitMessage": "test: characterize gemini virtual simulation artifact handoff",
   "debt": {
-    "expectedCommitMessage": "chore: package glm settings repair vsix",
-    "preCommitHead": "59524158a",
+    "expectedCommitMessage": "test: characterize gemini virtual simulation artifact handoff",
+    "preCommitHead": "874721a19",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8c.release-package.task1"
+    "taskId": "provider-readiness.phase8d.gemini-artifact-diagnose.task1"
   }
 }
 ```
@@ -225,11 +225,27 @@
     - Result 2026-05-27: `./scripts/build-release.sh --use-current-version` — PASS.
     - Result 2026-05-27: Verified release output lines: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
     - Result 2026-05-27: VSIX ready at `codeai-hub-1.2.381.vsix` (4.3M).
-78. [PENDING] Git Commit: `chore: package glm settings repair vsix` (hash: TBD)
-79. [TODO] `provider-readiness.phase8c.user-retest.task1` User installs the produced replacement release and retests GLM API key entry, GLM availability after Restart Core, and GLM provider startup (scope: chat/process observation only; no commit required).
+78. [DONE] Git Commit: `chore: package glm settings repair vsix` (hash: 874721a19)
+79. [BLOCKED] `provider-readiness.phase8c.user-retest.task1` User installs the produced replacement release and retests GLM API key entry, GLM availability after Restart Core, and GLM provider startup (scope: chat/process observation only; no commit required).
+    - Finding 2026-05-27: During broader retest, Gemini completed Virtual Simulation and Core allowed next-step transition, but Diagram Modules could not start because canonical `virtual-simulation.md` was missing; rerunning Virtual Simulation with Claude materialized the expected artifact and unblocked the next step.
+
+## Phase 8d — Gemini Virtual Simulation Artifact Handoff (owner: Codex, updated: 2026-05-27)
+### Stream: Canonical Artifact Acceptance
+80. [DONE] `provider-readiness.phase8d.gemini-artifact-diagnose.task1` Characterize why Gemini Virtual Simulation can be accepted without canonical `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md`, leaving the tree marker incomplete and Diagram Modules blocked (scope: `packages/core/src/workflow, packages/core/src/remote-bridge/handlers, src/client/project-manager/services, doc/TODO/todo-plan.md`; expected commit: `test: characterize gemini virtual simulation artifact handoff`).
+    - Diagnostic 2026-05-27: `SessionRequestHandlerManagedWorkflowTurn.handleTurnCompleted()` emits the Virtual Simulation `managed-workflow-user-review` handoff unconditionally after provider turn completion; it does not check that `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` exists before the user can accept the step.
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-27: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js` — PASS (2 tests, including characterization of missing-artifact review handoff).
+81. [PENDING] Git Commit: `test: characterize gemini virtual simulation artifact handoff` (hash: TBD)
+82. [TODO] `provider-readiness.phase8d.gemini-artifact-fix.task1` Ensure Virtual Simulation acceptance and next-step readiness require or materialize the canonical artifact path for every provider, including Gemini, before Core reports the step ready for Diagram Modules (scope: `packages/core/src/workflow, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: require virtual simulation artifact before next step`).
+83. [TODO] Git Commit: `fix: require virtual simulation artifact before next step` (hash: TBD)
+84. [TODO] `provider-readiness.phase8d.gemini-artifact-verify.task1` Verify Gemini/Claude Virtual Simulation handoff, tree marker status, and Diagram Modules start gating against missing/mislocated `virtual-simulation.md` (scope: `packages/core, src/client/project-manager/services, doc/TODO/todo-plan.md`; expected commit: `test: verify virtual simulation artifact handoff`).
+85. [TODO] Git Commit: `test: verify virtual simulation artifact handoff` (hash: TBD)
+86. [TODO] `provider-readiness.phase8d.release-rebuild.task1` Build a replacement release for the Virtual Simulation artifact handoff fix after implementation and verification (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, codeai-hub-*.vsix, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build virtual simulation handoff repair release`).
+87. [TODO] Git Commit: `chore: build virtual simulation handoff repair release` (hash: TBD)
+88. [TODO] `provider-readiness.phase8d.user-retest.task1` User installs the produced replacement release and retests Gemini Virtual Simulation completion, tree marker status, and Diagram Modules startup (scope: chat/process observation only; no commit required).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-80. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-81. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-82. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+89. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+90. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+91. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).

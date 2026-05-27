@@ -102,3 +102,23 @@ test("managed workflow turn emits preliminary review handoffs after provider tur
     }
   }
 });
+
+test("managed workflow turn currently emits Virtual Simulation review even when artifact is missing", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "preliminary-review-missing-virtual-simulation-")
+  );
+  try {
+    const { coreMessages, handler, sessionId } = createHandler({
+      stage: VIRTUAL_SIMULATION_STAGE,
+      workspaceRoot,
+    });
+
+    await handler.handleTurnCompleted(sessionId);
+
+    assert.equal(coreMessages.length, 1);
+    assert.equal(coreMessages[0]?.tag, "managed-workflow-user-review");
+    assert.match(coreMessages[0]?.content ?? "", PRELIMINARY_REVIEW_GATE_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
