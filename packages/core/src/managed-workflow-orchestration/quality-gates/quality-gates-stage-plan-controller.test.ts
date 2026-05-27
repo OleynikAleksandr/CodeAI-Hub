@@ -242,6 +242,69 @@ test("QualityGatesStagePlanController commits draft, accepts review, and commits
   }
 });
 
+test("QualityGatesStagePlanController cleans pre-acceptance integration residue", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "quality-gates-draft-scope-clean-")
+  );
+  const controller = new QualityGatesStagePlanController();
+  try {
+    await prepareWorkspace(workspaceRoot);
+    await controller.openDraftPhase({ workspaceRoot });
+    await git(workspaceRoot, ["add", "package.json"]);
+    await git(workspaceRoot, ["commit", "-m", "test: package baseline"]);
+    const packageBefore = await readWorkspaceFile(
+      workspaceRoot,
+      "package.json"
+    ).catch(() => null);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "package.json",
+      '{"scripts":{"plan:commit":"node ./scripts/plan-orchestrator/plan-cli.mjs commit"}}\n'
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".husky/pre-commit",
+      "#!/bin/sh\nnpm run qg:secret-scan\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      "scripts/quality-gates/secret-scan.mjs",
+      "console.log('premature');\n"
+    );
+    await writeWorkspaceFile(
+      workspaceRoot,
+      MANAGED_DECISION_PATH,
+      '{"stage":"quality_gates","phase":"draft"}\n'
+    );
+
+    const draftCommit = await controller.commitManagedTurn({
+      decision: createDraftDecision(),
+      sessionId: "session-1",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(draftCommit.blocked, null);
+    assert.equal(
+      await readWorkspaceFile(workspaceRoot, "package.json").catch(() => null),
+      packageBefore
+    );
+    assert.equal(
+      await git(workspaceRoot, [
+        "status",
+        "--short",
+        "--",
+        "package.json",
+        ".husky/pre-commit",
+        "scripts/quality-gates",
+      ]),
+      ""
+    );
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
 test("QualityGatesStagePlanController records integration repair after rejected commit", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "quality-gates-integration-repair-")

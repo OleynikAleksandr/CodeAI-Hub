@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "7106ee20d",
+  "lastRecordedCommit": "313ec4906",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase132.stream1.task1",
-  "expectedCommitMessage": "fix: show managed review stages as progress",
+  "currentTaskId": "phase132.stream1.task2",
+  "expectedCommitMessage": "fix: clean quality gates draft scope",
   "debt": {
-    "expectedCommitMessage": "fix: show managed review stages as progress",
-    "preCommitHead": "7106ee20d",
+    "expectedCommitMessage": "fix: clean quality gates draft scope",
+    "preCommitHead": "313ec4906",
     "stage": "commit_pending",
-    "taskId": "phase132.stream1.task1"
+    "taskId": "phase132.stream1.task2"
   }
 }
 ```
@@ -1109,9 +1109,9 @@
 
 ### Stream: Fix
 417. [DONE] `phase132.stream1.task1` Show managed technical stages with current review artifacts as in-progress even if an earlier invalidation event is still in memory, so Application Skeleton and Quality Gates user-review gates render yellow instead of stale red (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/technical-root-progress-projection.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: show managed review stages as progress`).
-418. [PENDING] Git Commit: `fix: show managed review stages as progress` (hash: TBD)
-419. [TODO] `phase132.stream1.task2` Restore or clean prohibited Quality Gates integration file edits before draft/review commits, so pre-acceptance contract review cannot leave `package.json`, hooks, or gate scripts dirty before the user confirms integration (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-draft-scope-cleaner.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; scope exception: helper extraction keeps the controller under the 500-line class/file limit while preserving focused coverage; expected commit: `fix: clean quality gates draft scope`).
-420. [TODO] Git Commit: `fix: clean quality gates draft scope` (hash: TBD)
+418. [DONE] Git Commit: `fix: show managed review stages as progress` (hash: 313ec4906)
+419. [DONE] `phase132.stream1.task2` Restore or clean prohibited Quality Gates integration file edits before draft/review commits, so pre-acceptance contract review cannot leave `package.json`, hooks, or gate scripts dirty before the user confirms integration (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-draft-scope-cleaner.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; scope exception: helper extraction keeps the controller under the 500-line class/file limit while preserving focused coverage; expected commit: `fix: clean quality gates draft scope`).
+420. [PENDING] Git Commit: `fix: clean quality gates draft scope` (hash: TBD)
 421. [TODO] `phase132.stream1.task3` Run targeted verification for managed review progress markers, Quality Gates draft-scope cleanup, Core build, Project Manager/webview checks and plan validation before any release build request (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)

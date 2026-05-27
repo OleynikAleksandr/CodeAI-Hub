@@ -1,6 +1,7 @@
 import { DiagramModulesManagedGitBoundary } from "../diagram-modules/diagram-modules-managed-git-boundary";
 import { commitManagedWorkflowLedger } from "../diagram-modules/managed-workflow-ledger-git-boundary";
 import { ensureManagedTerminalGitClean } from "../managed-terminal-clean-git-boundary";
+import { cleanQualityGatesDraftScope } from "./quality-gates-draft-scope-cleaner";
 import {
   addUnique,
   appendIntegrationStep,
@@ -250,6 +251,11 @@ export class QualityGatesStagePlanController {
     );
     if (!(stageState.currentTaskId && stageState.expectedCommitMessage)) {
       return this.blockPlanMismatch();
+    }
+    if (params.decision.phase !== "integration") {
+      await cleanQualityGatesDraftScope({
+        workspaceRoot: params.workspaceRoot,
+      });
     }
     const next =
       params.next ??
