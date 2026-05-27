@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "141cba600",
+  "lastRecordedCommit": "4f803f0fe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase3.kimi.task1",
-  "expectedCommitMessage": "fix: resolve kimi workspace provider home",
+  "currentTaskId": "provider-readiness.phase4.glm.task1",
+  "expectedCommitMessage": "fix: resolve glm workspace auth settings",
   "debt": {
-    "expectedCommitMessage": "fix: resolve kimi workspace provider home",
-    "preCommitHead": "141cba600",
+    "expectedCommitMessage": "fix: resolve glm workspace auth settings",
+    "preCommitHead": "4f803f0fe",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase3.kimi.task1"
+    "taskId": "provider-readiness.phase4.glm.task1"
   }
 }
 ```
@@ -65,12 +65,12 @@
 ## Phase 3 — Kimi Workspace Path And Config (owner: Codex, updated: 2026-05-27)
 ### Stream: Kimi Runtime Home
 7. [DONE] `provider-readiness.phase3.kimi.task1` Pass the active workspace path into Kimi adapter construction, resolve `KIMI_SHARE_DIR` inside the workspace capsule, and preserve the existing `~/.kimi/config.toml` credential source unless an explicit config path is provided (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `fix: resolve kimi workspace provider home`).
-8. [PENDING] Git Commit: `fix: resolve kimi workspace provider home` (hash: TBD)
+8. [DONE] Git Commit: `fix: resolve kimi workspace provider home` (hash: 4f803f0fe)
 
 ## Phase 4 — GLM-Claude-Code Settings/Auth Resolution (owner: Codex, updated: 2026-05-27)
 ### Stream: GLM API Key Source
-9. [TODO] `provider-readiness.phase4.glm.task1` Thread workspace `providers.glmClaudeCode` settings into the GLM runtime profile without persisting secrets to tracked files, preserve env/config precedence, and make empty settings values non-overriding (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-sdk-auth-manager.ts`; expected commit: `fix: resolve glm workspace auth settings`).
-10. [TODO] Git Commit: `fix: resolve glm workspace auth settings` (hash: TBD)
+9. [DONE] `provider-readiness.phase4.glm.task1` Thread workspace `providers.glmClaudeCode` settings into the GLM runtime profile without persisting secrets to tracked files, preserve env/config precedence, and make empty settings values non-overriding (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-sdk-auth-manager.ts`; expected commit: `fix: resolve glm workspace auth settings`).
+10. [PENDING] Git Commit: `fix: resolve glm workspace auth settings` (hash: TBD)
 
 ## Phase 5 — Provider Picker Truthfulness (owner: Codex, updated: 2026-05-27)
 ### Stream: Availability Projection

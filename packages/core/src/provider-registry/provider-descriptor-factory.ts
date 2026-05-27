@@ -126,6 +126,8 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
 const CODEX_WORKFLOW_DEFAULT_SANDBOX_MODE = "danger-full-access";
+const GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH_ENV =
+  "CODEAI_GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH";
 
 const resolveWorkspaceSettingsPath = (config: CoreConfig): string =>
   resolveWorkspaceRuntimeCapsule({
@@ -206,8 +208,11 @@ export const createGlmClaudeCodeAdapterInstance = (
     ProviderDescriptorFactoryOptions,
     "config" | "createReporter" | "glmClaudeCodeAdapterCtor"
   >
-): ProviderAdapter =>
-  new options.glmClaudeCodeAdapterCtor({
+): ProviderAdapter => {
+  process.env[GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH_ENV] =
+    resolveWorkspaceSettingsPath(options.config);
+
+  return new options.glmClaudeCodeAdapterCtor({
     installerPaths: CLAUDE_INSTALLER_PATHS,
     workspace: {
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
@@ -217,6 +222,7 @@ export const createGlmClaudeCodeAdapterInstance = (
     },
     reporter: options.createReporter("glm-claude-code"),
   });
+};
 
 const buildClaudeDescriptor = (
   options: ProviderDescriptorFactoryOptions
