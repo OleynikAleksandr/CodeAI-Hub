@@ -19,6 +19,7 @@ const normalizeWorkspaceRuntimeSlug = (value: string): string => {
 
 test("Kimi managed profile resolves provider home inside workspace capsule", async () => {
   const workspacePath = await mkdtemp(path.join(tmpdir(), "Kimi Home Demo "));
+  const homeDir = await mkdtemp(path.join(tmpdir(), "Kimi User Home "));
 
   try {
     const expectedProviderHome = path.join(
@@ -32,18 +33,19 @@ test("Kimi managed profile resolves provider home inside workspace capsule", asy
     );
     const runtime = buildKimiCliEnvironment({
       env: { PATH: "/usr/bin" },
+      homeDir,
       workspacePath,
     });
 
     assert.equal(runtime.runtimeHome.providerHomePath, expectedProviderHome);
     assert.equal(
       runtime.runtimeHome.userConfigPath,
-      path.join(expectedProviderHome, ".kimi", "config.toml")
+      path.join(homeDir, ".kimi", "config.toml")
     );
     assert.equal(runtime.env.KIMI_SHARE_DIR, expectedProviderHome);
     assert.deepEqual(runtime.args.slice(0, 2), [
       "--config-file",
-      path.join(expectedProviderHome, ".kimi", "config.toml"),
+      path.join(homeDir, ".kimi", "config.toml"),
     ]);
     assert.equal(runtime.args.at(-2), "--work-dir");
     assert.equal(runtime.args.at(-1), workspacePath);
@@ -57,6 +59,7 @@ test("Kimi managed profile resolves provider home inside workspace capsule", asy
     );
   } finally {
     await rm(workspacePath, { force: true, recursive: true });
+    await rm(homeDir, { force: true, recursive: true });
   }
 });
 
