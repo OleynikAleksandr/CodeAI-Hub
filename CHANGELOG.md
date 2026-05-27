@@ -8,6 +8,24 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.380] - 2026-05-27
+### Fixed
+- **GLM-Claude-Code is a standalone provider artifact.** Release builds now produce and validate a `glm-claude-code` provider tarball/manifest, and workspace runtime capsules include a GLM-specific provider home distinct from original Claude.
+- **Gemini startup no longer strands workflow start.** Core creates an early shell session for new workflow stages, applies a provider-session startup timeout, cleans up late Gemini sessions, and routes startup failures through provider recovery instead of leaving Project Manager at `Session creation timed out`.
+- **Provider recovery clears failed startup shells.** Failed bootstrap now marks shell sessions failed even before a provider binding exists, so Codex/Claude/Kimi can be started after a Gemini startup failure or Core restart.
+- **System messages use Reasoning translation routing.** Core workflow/status/error messages now use the same translation category as Reasoning, and latest System messages wait for translation persistence before UI binding returns.
+- **Kimi Description handoff leaves Git clean.** Preliminary step acceptance enforces `.codeai-hub/state/` as ignored local runtime state before the clean-Git gate, preventing local timer metadata from blocking Virtual Simulation.
+
+### Tests
+- `npm run build --workspace @codeai-hub/claude-module`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `npm run typecheck:webview`
+- `node --test packages/core/dist/remote-bridge/handlers/session-provider-session-resolver.test.js packages/core/dist/remote-bridge/handlers/session-shell-factory.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-session-bootstrap.test.js packages/core/dist/remote-bridge/handlers/session-provider-failure-recovery.test.js`
+- `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js`
+- `node --test packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/remote-bridge/handlers/technical-stage-dirty-gate.test.js`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.379] - 2026-05-27
 ### Fixed
 - **Gemini workspace auth is bootstrapped before session startup.** The Gemini provider home now copies missing auth/settings files from an existing `~/.gemini` login into the active workspace `.gemini` runtime home and reports missing login auth clearly.

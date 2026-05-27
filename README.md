@@ -2,7 +2,24 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.379** (Provider Workspace Home Readiness Hotfix)
+**Current Release — v1.2.380** (Provider Retest Recovery Hotfix)
+
+This hotfix closes the provider retest regressions found after v1.2.379.
+GLM-Claude-Code is packaged as its own provider runtime artifact and gets its
+own workspace provider home while still running through the Claude-compatible
+client.
+
+Gemini startup now creates a Core-owned shell session before provider bootstrap,
+reports startup timeout/readiness failures through provider recovery, and closes
+late provider sessions so another provider can start afterward. System workflow
+messages now use the same translation policy as Reasoning messages, including
+the latest Core status/error cards.
+
+Description acceptance now ignores local `.codeai-hub/state/` runtime metadata
+before the clean-Git handoff, so a successful Kimi Description run no longer
+blocks Virtual Simulation provider startup.
+
+**Previous Release — v1.2.379** (Provider Workspace Home Readiness Hotfix)
 
 This hotfix repairs the provider readiness regressions found after the
 workspace-owned provider-home refactor. Gemini now bootstraps its workspace
