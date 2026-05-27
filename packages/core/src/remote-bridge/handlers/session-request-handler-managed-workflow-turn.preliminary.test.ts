@@ -12,6 +12,8 @@ const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
 const PRELIMINARY_REVIEW_GATE_RE =
   /Core: (Description|Virtual Simulation) перешёл в пользовательскую проверку/u;
 const CONFIRMATION_BUTTON_RE = /Подтверждаю/u;
+const VIRTUAL_SIMULATION_ARTIFACT_RE =
+  /virtual_simulation\/virtual-simulation\.md/u;
 interface CapturedCoreMessage {
   readonly content: string;
   readonly tag: string;
@@ -103,7 +105,7 @@ test("managed workflow turn emits preliminary review handoffs after provider tur
   }
 });
 
-test("managed workflow turn currently emits Virtual Simulation review even when artifact is missing", async () => {
+test("managed workflow turn blocks Virtual Simulation review when artifact is missing", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "preliminary-review-missing-virtual-simulation-")
   );
@@ -116,8 +118,11 @@ test("managed workflow turn currently emits Virtual Simulation review even when 
     await handler.handleTurnCompleted(sessionId);
 
     assert.equal(coreMessages.length, 1);
-    assert.equal(coreMessages[0]?.tag, "managed-workflow-user-review");
-    assert.match(coreMessages[0]?.content ?? "", PRELIMINARY_REVIEW_GATE_RE);
+    assert.equal(coreMessages[0]?.tag, "managed-workflow-validation");
+    assert.match(
+      coreMessages[0]?.content ?? "",
+      VIRTUAL_SIMULATION_ARTIFACT_RE
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

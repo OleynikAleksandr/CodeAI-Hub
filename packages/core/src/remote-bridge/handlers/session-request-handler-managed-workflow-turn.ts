@@ -40,6 +40,7 @@ import {
 import type { SessionManager } from "../../session-manager";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
+import { resolvePreliminaryArtifactGate } from "./session-request-handler-preliminary-artifact-gate";
 
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const DESCRIPTION_STAGE = "description";
@@ -143,18 +144,19 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     if (!(session?.workspacePath && session.initiativeSlug && session.stage)) {
       return "not_managed";
     }
-    if (session.stage === DESCRIPTION_STAGE) {
-      this.appendCoreMessage(sessionId, {
-        content: buildManagedUserLedReviewHandoffMessage("Description"),
-        tag: "managed-workflow-user-review",
+    if (
+      session.stage === DESCRIPTION_STAGE ||
+      session.stage === VIRTUAL_SIMULATION_STAGE
+    ) {
+      const gate = await resolvePreliminaryArtifactGate({
+        stage: session.stage,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
       });
-      return "settled";
-    }
-    if (session.stage === VIRTUAL_SIMULATION_STAGE) {
-      this.appendCoreMessage(sessionId, {
-        content: buildManagedUserLedReviewHandoffMessage("Virtual Simulation"),
-        tag: "managed-workflow-user-review",
-      });
+      if (!gate) {
+        return "not_managed";
+      }
+      this.appendCoreMessage(sessionId, gate);
       return "settled";
     }
     if (session.stage === DIAGRAM_MODULES_STAGE) {

@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "874721a19",
+  "lastRecordedCommit": "9c9516639",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8d.gemini-artifact-diagnose.task1",
-  "expectedCommitMessage": "test: characterize gemini virtual simulation artifact handoff",
+  "currentTaskId": "provider-readiness.phase8d.gemini-artifact-fix.task1",
+  "expectedCommitMessage": "fix: require virtual simulation artifact before next step",
   "debt": {
-    "expectedCommitMessage": "test: characterize gemini virtual simulation artifact handoff",
-    "preCommitHead": "874721a19",
+    "expectedCommitMessage": "fix: require virtual simulation artifact before next step",
+    "preCommitHead": "9c9516639",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8d.gemini-artifact-diagnose.task1"
+    "taskId": "provider-readiness.phase8d.gemini-artifact-fix.task1"
   }
 }
 ```
@@ -235,9 +235,11 @@
     - Diagnostic 2026-05-27: `SessionRequestHandlerManagedWorkflowTurn.handleTurnCompleted()` emits the Virtual Simulation `managed-workflow-user-review` handoff unconditionally after provider turn completion; it does not check that `.codeai-hub/<workspaceSlug>/virtual_simulation/virtual-simulation.md` exists before the user can accept the step.
     - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-27: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js` — PASS (2 tests, including characterization of missing-artifact review handoff).
-81. [PENDING] Git Commit: `test: characterize gemini virtual simulation artifact handoff` (hash: TBD)
-82. [TODO] `provider-readiness.phase8d.gemini-artifact-fix.task1` Ensure Virtual Simulation acceptance and next-step readiness require or materialize the canonical artifact path for every provider, including Gemini, before Core reports the step ready for Diagram Modules (scope: `packages/core/src/workflow, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: require virtual simulation artifact before next step`).
-83. [TODO] Git Commit: `fix: require virtual simulation artifact before next step` (hash: TBD)
+81. [DONE] Git Commit: `test: characterize gemini virtual simulation artifact handoff` (hash: 9c9516639)
+82. [DONE] `provider-readiness.phase8d.gemini-artifact-fix.task1` Ensure Virtual Simulation acceptance and next-step readiness require or materialize the canonical artifact path for every provider, including Gemini, before Core reports the step ready for Diagram Modules (scope: `packages/core/src/workflow, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: require virtual simulation artifact before next step`).
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-27: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js` — PASS (2 tests).
+83. [PENDING] Git Commit: `fix: require virtual simulation artifact before next step` (hash: TBD)
 84. [TODO] `provider-readiness.phase8d.gemini-artifact-verify.task1` Verify Gemini/Claude Virtual Simulation handoff, tree marker status, and Diagram Modules start gating against missing/mislocated `virtual-simulation.md` (scope: `packages/core, src/client/project-manager/services, doc/TODO/todo-plan.md`; expected commit: `test: verify virtual simulation artifact handoff`).
 85. [TODO] Git Commit: `test: verify virtual simulation artifact handoff` (hash: TBD)
 86. [TODO] `provider-readiness.phase8d.release-rebuild.task1` Build a replacement release for the Virtual Simulation artifact handoff fix after implementation and verification (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, codeai-hub-*.vsix, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build virtual simulation handoff repair release`).
