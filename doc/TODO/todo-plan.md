@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "01247fc99",
+  "lastRecordedCommit": "7504787f4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase7.release-build.task1",
-  "expectedCommitMessage": "chore: build provider readiness release",
+  "currentTaskId": "provider-readiness.phase7.vsix.task1",
+  "expectedCommitMessage": "test: verify provider readiness vsix package",
   "debt": {
-    "expectedCommitMessage": "chore: build provider readiness release",
-    "preCommitHead": "01247fc99",
+    "expectedCommitMessage": "test: verify provider readiness vsix package",
+    "preCommitHead": "7504787f4",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase7.release-build.task1"
+    "taskId": "provider-readiness.phase7.vsix.task1"
   }
 }
 ```
@@ -99,9 +99,12 @@
     - Result 2026-05-27: release build version bump/artifact generation — PASS for v1.2.379.
     - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.379.tar.bz2`, `codex-module-1.2.379.tar.bz2`, `gemini-module-1.2.379.tar.bz2`, `kimi-module-1.2.379.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.379.tar.bz2`, `vscode-webview-1.2.379.tar.bz2`, `project-manager-1.2.379.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.379.tar.bz2`.
     - Artifact SHA1 check: Gemini `470c30b4e817069773c241834b07f1448ce95bc3`; Kimi `cb14720bbe98d32b5df7c5f0eab088afff0c93bd`; Claude `e61515bb16cd0774c8a687e9189ac2d86609422f`; Core `5d34b631de4ff30213cf9a3785788b5c1766ee06`; Launcher `659ac26ea139aa6935974f2d9dd7b374b7987e35`.
-18. [PENDING] Git Commit: `chore: build provider readiness release` (hash: TBD)
-19. [TODO] `provider-readiness.phase7.vsix.task1` Run final VSIX packaging from the committed release version with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify provider readiness vsix package`).
-20. [TODO] Git Commit: `test: verify provider readiness vsix package` (hash: TBD)
+18. [DONE] Git Commit: `chore: build provider readiness release` (hash: 7504787f4)
+19. [DONE] `provider-readiness.phase7.vsix.task1` Run final VSIX packaging from the committed release version with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify provider readiness vsix package`).
+    - Result 2026-05-27: `./scripts/build-release.sh --use-current-version` — PASS.
+    - Verified release output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
+    - VSIX: `codeai-hub-1.2.379.vsix` (4.3M), SHA1 `b1c7a32057a64f1dcff04ef4d8fbaf95a285ffa8`.
+20. [PENDING] Git Commit: `test: verify provider readiness vsix package` (hash: TBD)
 
 ## Phase 8 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-27)
 ### Stream: Manual Provider Retest
