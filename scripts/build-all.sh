@@ -74,6 +74,7 @@ copy_release_artifacts() {
     "claude-module-${version}.tar.bz2"
     "codex-module-${version}.tar.bz2"
     "gemini-module-${version}.tar.bz2"
+    "glm-claude-code-module-${version}.tar.bz2"
     "kimi-module-${version}.tar.bz2"
     "codeai-hub-core-${CORE_PLATFORM_KEY}-${version}.tar.bz2"
     "CodeAIHubLauncher-${LAUNCHER_FILE_PLATFORM}-${version}.tar.bz2"
@@ -213,12 +214,15 @@ clean_local_artifacts() {
   done
 
   if [[ -d "$providers_root" ]]; then
-    find "$providers_root" -mindepth 1 -maxdepth 1 ! -name "codex" ! -name "claude" -exec rm -rf {} +
+    find "$providers_root" -mindepth 1 -maxdepth 1 ! -name "codex" ! -name "claude" ! -name "glm-claude-code" -exec rm -rf {} +
     if [[ -d "$providers_root/codex" ]]; then
       find "$providers_root/codex" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
     fi
     if [[ -d "$providers_root/claude" ]]; then
       find "$providers_root/claude" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
+    fi
+    if [[ -d "$providers_root/glm-claude-code" ]]; then
+      find "$providers_root/glm-claude-code" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
     fi
   fi
 }
@@ -270,6 +274,7 @@ clean_local_artifacts
 
 echo "🏗️  Building provider modules..."
 "$SCRIPT_DIR/build-claude-module.sh" --version "$new_version"
+"$SCRIPT_DIR/build-glm-claude-code-module.sh" --version "$new_version"
 "$SCRIPT_DIR/build-codex-module.sh" --version "$new_version"
 "$SCRIPT_DIR/build-gemini-module.sh" --version "$new_version"
 "$SCRIPT_DIR/build-kimi-module.sh" --version "$new_version"
@@ -288,8 +293,7 @@ copy_release_artifacts "$new_version"
 
 echo ""
 echo "✅ Unified provider/core/UI build complete."
-echo "📦 Providers: claude/codex/gemini/kimi-module-${new_version}.tar.bz2"
-echo "📦 GLM-Claude-Code: bundled in claude-module-${new_version}.tar.bz2"
+echo "📦 Providers: claude/codex/gemini/kimi/glm-claude-code module tarballs for ${new_version}"
 echo "📦 Core: codeai-hub-core-<platform>-${new_version}.tar.bz2"
 echo "📦 Launcher: CodeAIHubLauncher-<platform>-${new_version}.tar.bz2"
 echo "📦 UI: vscode-webview-${new_version}.tar.bz2, project-manager-${new_version}.tar.bz2"

@@ -262,6 +262,7 @@ declare -a REQUIRED_FILES=(
   "claude-module-${VERSION}.tar.bz2"
   "codex-module-${VERSION}.tar.bz2"
   "gemini-module-${VERSION}.tar.bz2"
+  "glm-claude-code-module-${VERSION}.tar.bz2"
   "kimi-module-${VERSION}.tar.bz2"
   "codeai-hub-core-${CORE_PLATFORM_KEY}-${VERSION}.tar.bz2"
   "CodeAIHubLauncher-${LAUNCHER_FILE_PLATFORM}-${VERSION}.tar.bz2"
@@ -304,6 +305,20 @@ echo "✅ Gemini provider bundle loads with bundled shared translation package"
 KIMI_INSTALL_ROOT="$HOME/.codeai-hub/providers/kimi/$VERSION"
 node -e "require('$KIMI_INSTALL_ROOT/dist/index.js')"
 echo "✅ Kimi provider bundle loads"
+
+GLM_INSTALL_ROOT="$HOME/.codeai-hub/providers/glm-claude-code/$VERSION"
+if [[ ! -f "$GLM_INSTALL_ROOT/node_modules/@codeai-hub/translation/package.json" ]]; then
+  echo "❌ Missing bundled @codeai-hub/translation package in $GLM_INSTALL_ROOT" >&2
+  exit 1
+fi
+
+GLM_MODULE_PATH="$GLM_INSTALL_ROOT/dist/index.js" node <<'NODE'
+const loaded = require(process.env.GLM_MODULE_PATH);
+if (typeof loaded.GlmClaudeCodeProviderAdapter !== "function") {
+  throw new Error("Missing GlmClaudeCodeProviderAdapter export");
+}
+NODE
+echo "✅ GLM-Claude-Code provider bundle loads with standalone provider package"
 
 CORE_INSTALL_ROOT="$HOME/.codeai-hub/core/$CORE_PLATFORM_KEY/$VERSION"
 CORE_NODE_PATH="$CORE_INSTALL_ROOT/$CORE_NODE_RELATIVE_PATH"
@@ -367,6 +382,7 @@ const manifestChecks = [
   ["assets/providers/claude/manifest.json", (manifest) => manifest.module?.version],
   ["assets/providers/codex/manifest.json", (manifest) => manifest.module?.version],
   ["assets/providers/gemini/manifest.json", (manifest) => manifest.module?.version],
+  ["assets/providers/glm-claude-code/manifest.json", (manifest) => manifest.module?.version],
   ["assets/providers/kimi/manifest.json", (manifest) => manifest.module?.version],
 ];
 

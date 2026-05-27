@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "7504787f4",
+  "lastRecordedCommit": "1976475ee",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase7.vsix.task1",
-  "expectedCommitMessage": "test: verify provider readiness vsix package",
+  "currentTaskId": "provider-readiness.phase8a.glm-artifact.task1",
+  "expectedCommitMessage": "fix: package glm provider runtime artifact",
   "debt": {
-    "expectedCommitMessage": "test: verify provider readiness vsix package",
-    "preCommitHead": "7504787f4",
+    "expectedCommitMessage": "fix: package glm provider runtime artifact",
+    "preCommitHead": "1976475ee",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase7.vsix.task1"
+    "taskId": "provider-readiness.phase8a.glm-artifact.task1"
   }
 }
 ```
@@ -104,14 +104,63 @@
     - Result 2026-05-27: `./scripts/build-release.sh --use-current-version` — PASS.
     - Verified release output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
     - VSIX: `codeai-hub-1.2.379.vsix` (4.3M), SHA1 `b1c7a32057a64f1dcff04ef4d8fbaf95a285ffa8`.
-20. [PENDING] Git Commit: `test: verify provider readiness vsix package` (hash: TBD)
+20. [DONE] Git Commit: `test: verify provider readiness vsix package` (hash: 1976475ee)
 
 ## Phase 8 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-27)
 ### Stream: Manual Provider Retest
-21. [TODO] `provider-readiness.phase8.user-acceptance.task1` User installs the new release, restarts Core, opens the Description provider picker, verifies provider statuses, and retests Gemini first-turn startup plus Kimi/GLM readiness after credentials are available (scope: user workflow observation; expected commit: none).
+21. [DONE] `provider-readiness.phase8.user-acceptance.task1` User installs the new release, restarts Core, opens the Description provider picker, verifies provider statuses, and retests Gemini first-turn startup plus Kimi/GLM readiness after credentials are available (scope: user workflow observation; expected commit: none). Result: Retest failed: captured GLM artifact/home, System/Reasoning translation, Gemini timeout/recovery, and cross-step provider startup blockers for implementation.
+
+## Phase 8A — Retest Findings Fix Backlog (owner: Codex, updated: 2026-05-27)
+### Stream: GLM Standalone Provider Artifact And Home
+22. [DONE] `provider-readiness.phase8a.glm-artifact.task1` Retest finding 2026-05-27: installed release still has no GLM provider under `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/providers/`; diagnose and implement a standalone GLM provider runtime artifact/manifest even though GLM executes through the Claude-compatible client (scope: `scripts/build-all.sh, scripts/build-release.sh, scripts/build-glm-claude-code-module.sh, assets/providers/glm*/manifest.json, doc/TODO/todo-plan.md`; expected commit: `fix: package glm provider runtime artifact`).
+23. [PENDING] Git Commit: `fix: package glm provider runtime artifact` (hash: TBD)
+24. [TODO] `provider-readiness.phase8a.glm-home.task1` Ensure GLM gets its own provider home/runtime capsule distinct from original Claude home while preserving the Claude Agent SDK-compatible execution path and GLM-specific settings/API key source (scope: `packages/core/src/provider-registry, packages/Claude_Module/src/glm-claude-code, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md`; expected commit: `fix: isolate glm provider workspace home`).
+25. [TODO] Git Commit: `fix: isolate glm provider workspace home` (hash: TBD)
+26. [TODO] `provider-readiness.phase8a.glm-verify.task1` Add/adjust targeted checks proving the installed runtime exposes GLM as its own provider artifact, uses a separate GLM home, and still launches through the Claude-compatible runtime (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify glm standalone provider runtime`).
+27. [TODO] Git Commit: `test: verify glm standalone provider runtime` (hash: TBD)
+
+### Stream: System And Reasoning Translation Routing
+28. [TODO] `provider-readiness.phase8a.translation-diagnose.task1` Retest finding 2026-05-27: System orchestrator messages in Project Manager appear to translate slowly through the UI/interface translation engine, while the latest System messages may remain untranslated; inspect message metadata/translation labels for System, Reasoning, and interface text to confirm the routing mismatch shown in the screenshot (scope: `src/client/project-manager, packages/core/src/session-translation, packages/localization`; expected commit: `test: characterize system message translation routing`).
+29. [TODO] Git Commit: `test: characterize system message translation routing` (hash: TBD)
+30. [TODO] `provider-readiness.phase8a.translation-system-tags.task1` Align System orchestrator message labels with the same translation category/engine path used for Reasoning, so System workflow/status/error messages do not use the interface/UI translation engine (scope: `packages/core/src/session-translation, src/client/project-manager/services, src/client/project-manager/components/sessions`; expected commit: `fix: route system messages through reasoning translation`).
+31. [TODO] Git Commit: `fix: route system messages through reasoning translation` (hash: TBD)
+32. [TODO] `provider-readiness.phase8a.translation-latest-system.task1` Fix the untranslated-tail case where the latest System messages are not passed through the session translation pipeline after workflow state updates/errors, including the dirty Git blocker message path from the screenshot (scope: `packages/core/src/remote-bridge/handlers, src/client/project-manager/services, src/client/project-manager/components/sessions`; expected commit: `fix: translate latest system workflow messages`).
+33. [TODO] Git Commit: `fix: translate latest system workflow messages` (hash: TBD)
+34. [TODO] `provider-readiness.phase8a.translation-verify.task1` Add targeted verification that System and Reasoning messages carry equivalent translation labels/engine selection, last System messages are translated, and UI/interface labels still use the interface translation engine (scope: `packages/core, src/client/project-manager, packages/localization`; expected commit: `test: verify system and reasoning translation routing`).
+35. [TODO] Git Commit: `test: verify system and reasoning translation routing` (hash: TBD)
+
+### Stream: Gemini Session Creation Timeout
+36. [TODO] `provider-readiness.phase8a.gemini-timeout-diagnose.task1` Retest finding 2026-05-27: Gemini is selectable for the Virtual Simulation step with model `Gemini 3.1 Pro`, but `Start Step` fails with `Session creation timed out`; inspect Gemini session creation timing, process readiness signals, auth bootstrap, and first-turn startup logs from the installed runtime path (scope: `packages/Gemini_Module/src/session, packages/Gemini_Module/src/runtime, packages/core/src/provider-registry`; expected commit: `test: characterize gemini session creation timeout`).
+37. [TODO] Git Commit: `test: characterize gemini session creation timeout` (hash: TBD)
+38. [TODO] `provider-readiness.phase8a.gemini-startup.task1` Fix Gemini startup readiness so provider selection is not reported as usable until the workspace-home auth/bootstrap and CLI bridge are able to create a session within the expected lifecycle window, with a clear non-timeout error when auth or CLI readiness is missing (scope: `packages/Gemini_Module/src/session, packages/Gemini_Module/src/runtime, packages/core/src/provider-registry`; expected commit: `fix: resolve gemini session creation timeout`).
+39. [TODO] Git Commit: `fix: resolve gemini session creation timeout` (hash: TBD)
+40. [TODO] `provider-readiness.phase8a.gemini-ui-gating.task1` Ensure Project Manager disables or explains Gemini when Core readiness predicts session startup failure, so the user cannot reach a generic `Session creation timed out` after selecting an apparently available Gemini provider (scope: `src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/components/description, packages/core/src/provider-registry`; expected commit: `fix: gate gemini provider on startup readiness`).
+41. [TODO] Git Commit: `fix: gate gemini provider on startup readiness` (hash: TBD)
+42. [TODO] `provider-readiness.phase8a.gemini-verify.task1` Add targeted checks for Gemini session startup success/failure projection and timeout-free UI error handling on the Virtual Simulation start path (scope: `packages/Gemini_Module, packages/core, src/client/project-manager`; expected commit: `test: verify gemini startup readiness gating`).
+43. [TODO] Git Commit: `test: verify gemini startup readiness gating` (hash: TBD)
+
+### Stream: Failed Provider Startup Recovery
+44. [TODO] `provider-readiness.phase8a.failed-startup-recovery-diagnose.task1` Retest finding 2026-05-27: after Gemini times out on the Virtual Simulation start path, Codex cannot be started either, even after Restart Core; diagnose leaked session/provider locks, pending workflow state, runtime process state, workspace capsule state, and client-side provider selection state after failed startup (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/provider-registry, src/client/project-manager/services`; expected commit: `test: characterize failed provider startup recovery`).
+45. [TODO] Git Commit: `test: characterize failed provider startup recovery` (hash: TBD)
+46. [TODO] `provider-readiness.phase8a.failed-startup-cleanup.task1` Ensure failed provider session creation always releases workflow/session locks, cancels or kills partial provider startup processes, clears pending start markers, and returns the step to a state where another provider such as Codex can start without a full workspace reset (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/session-continuity, packages/core/src/provider-registry`; expected commit: `fix: recover after failed provider startup`).
+47. [TODO] Git Commit: `fix: recover after failed provider startup` (hash: TBD)
+48. [TODO] `provider-readiness.phase8a.failed-startup-restart.task1` Verify Restart Core fully rebuilds provider registry/runtime capsules and does not preserve stale failed Gemini startup state that blocks Codex or other providers after restart (scope: `packages/core/src/workspace-runtime, packages/core/src/provider-registry, src/client/project-manager/services`; expected commit: `fix: reset provider startup state on core restart`).
+49. [TODO] Git Commit: `fix: reset provider startup state on core restart` (hash: TBD)
+50. [TODO] `provider-readiness.phase8a.failed-startup-verify.task1` Add targeted tests covering Gemini timeout/failure followed by successful Codex start in the same workflow step and after Restart Core (scope: `packages/core, src/client/project-manager, packages/Gemini_Module`; expected commit: `test: verify provider startup failure recovery`).
+51. [TODO] Git Commit: `test: verify provider startup failure recovery` (hash: TBD)
+
+### Stream: Cross-Step Provider Start After Kimi Description
+52. [TODO] `provider-readiness.phase8a.cross-step-kimi-diagnose.task1` Retest finding 2026-05-27: after Kimi succeeds on the Description step, the Virtual Simulation step cannot start any provider; diagnose workflow stage transition state, accepted Description artifact state, provider/session cleanup after Kimi, and next-step provider start gating (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/workflow, src/client/project-manager/services`; expected commit: `test: characterize provider start block after kimi description`).
+53. [TODO] Git Commit: `test: characterize provider start block after kimi description` (hash: TBD)
+54. [TODO] `provider-readiness.phase8a.cross-step-kimi-cleanup.task1` Ensure successful Kimi completion on Description releases provider/session resources, clears step-local active provider markers, and persists only workflow-owned artifact acceptance state before entering Virtual Simulation (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/session-continuity, packages/Kimi_Module/src/provider`; expected commit: `fix: clear kimi session state before next step`).
+55. [TODO] Git Commit: `fix: clear kimi session state before next step` (hash: TBD)
+56. [TODO] `provider-readiness.phase8a.cross-step-start-gate.task1` Fix Virtual Simulation provider start gating so a clean accepted Description result allows any available provider to start, and blockers identify the exact dirty workflow/provider state instead of generically preventing all providers (scope: `packages/core/src/workflow, packages/core/src/provider-registry, src/client/project-manager/components/sessions`; expected commit: `fix: unblock providers after description acceptance`).
+57. [TODO] Git Commit: `fix: unblock providers after description acceptance` (hash: TBD)
+58. [TODO] `provider-readiness.phase8a.cross-step-verify.task1` Add targeted workflow tests for Kimi Description success followed by Virtual Simulation startup with Codex, Claude, Gemini-readiness-gated, and Kimi, including Restart Core behavior (scope: `packages/core, packages/Kimi_Module, src/client/project-manager`; expected commit: `test: verify cross-step provider startup after kimi`).
+59. [TODO] Git Commit: `test: verify cross-step provider startup after kimi` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-22. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-23. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-24. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+60. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+61. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+62. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
