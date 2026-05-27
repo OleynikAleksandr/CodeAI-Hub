@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.381] - 2026-05-27
+### Fixed
+- **GLM-Claude-Code Settings can provide the API key.** The GLM provider settings card now exposes a masked API key input and editable config/base/model fields, and Project Manager persists the GLM settings object so Core can read `providers.glmClaudeCode.apiKey` after Save and Restart Core.
+
+### Tests
+- `npm run build --workspace @codeai-hub/claude-module`
+- `npm run typecheck:webview`
+- `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.380] - 2026-05-27
 ### Fixed
 - **GLM-Claude-Code is a standalone provider artifact.** Release builds now produce and validate a `glm-claude-code` provider tarball/manifest, and workspace runtime capsules include a GLM-specific provider home distinct from original Claude.

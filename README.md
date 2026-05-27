@@ -2,7 +2,14 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.380** (Provider Retest Recovery Hotfix)
+**Current Release — v1.2.381** (GLM Settings Repair Hotfix)
+
+This hotfix repairs the remaining GLM-Claude-Code retest blocker found in
+v1.2.380. The GLM provider settings card now exposes a masked API key input and
+editable config/base/model fields, and Project Manager persists those values to
+the workspace settings source read by Core on Restart Core.
+
+**Previous Release — v1.2.380** (Provider Retest Recovery Hotfix)
 
 This hotfix closes the provider retest regressions found after v1.2.379.
 GLM-Claude-Code is packaged as its own provider runtime artifact and gets its
@@ -19,7 +26,7 @@ Description acceptance now ignores local `.codeai-hub/state/` runtime metadata
 before the clean-Git handoff, so a successful Kimi Description run no longer
 blocks Virtual Simulation provider startup.
 
-**Previous Release — v1.2.379** (Provider Workspace Home Readiness Hotfix)
+**Earlier Release — v1.2.379** (Provider Workspace Home Readiness Hotfix)
 
 This hotfix repairs the provider readiness regressions found after the
 workspace-owned provider-home refactor. Gemini now bootstraps its workspace
