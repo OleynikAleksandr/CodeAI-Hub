@@ -268,6 +268,7 @@ test("workflow step clear restores workflow stages from Git boundary", async () 
   assert.equal(result.statusCode, 200);
   assert.deepEqual(result.payload, {
     cleared: true,
+    deletedProviderNativeSessionPaths: [],
     deletedSessionIds: [virtual.id, diagram.id],
     restore: {
       boundaryHash: "abc123",
@@ -287,6 +288,79 @@ test("workflow step clear restores workflow stages from Git boundary", async () 
     result.sessionManager.listSessions().map((session: Session) => session.id),
     [description.id, other.id]
   );
+});
+
+test("workflow step clear prunes provider-native workflow sessions only", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "clear-provider-native-")
+  );
+  const sessionManager = new SessionManager();
+  const codex = sessionManager.createSession(
+    "codex",
+    workspaceRoot,
+    "codex-workflow-provider-session",
+    {
+      initiativeSlug: WORKSPACE_SLUG,
+      stage: "virtual_simulation",
+    }
+  );
+  const claude = sessionManager.createSession(
+    "claude",
+    workspaceRoot,
+    "claude-workflow-provider-session",
+    {
+      initiativeSlug: WORKSPACE_SLUG,
+      stage: "diagram_modules",
+    }
+  );
+  const codexWorkflowPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "runtime/providers/codex/home/sessions/2026/05/27",
+    "rollout-2026-05-27T08-00-00-codex-workflow-provider-session.jsonl"
+  );
+  const codexTranslationPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "runtime/providers/codex/home/sessions/2026/05/27",
+    "rollout-2026-05-27T08-00-00-translation-provider-session.jsonl"
+  );
+  const claudeWorkflowPath = path.join(
+    workspaceRoot,
+    ".codeai-hub",
+    WORKSPACE_SLUG,
+    "runtime/providers/claude/home/.claude/projects/demo",
+    "claude-workflow-provider-session.jsonl"
+  );
+
+  try {
+    await writeText(codexWorkflowPath, "{}\n");
+    await writeText(codexTranslationPath, "{}\n");
+    await writeText(claudeWorkflowPath, "{}\n");
+
+    const result = await runClear(
+      {
+        target: { kind: "workflow_stage", stage: VIRTUAL_STAGE },
+        workspacePath: workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      },
+      sessionManager
+    );
+
+    assert.equal(result.statusCode, 200);
+    assert.equal(await fileExists(codexWorkflowPath), false);
+    assert.equal(await fileExists(claudeWorkflowPath), false);
+    assert.equal(await fileExists(codexTranslationPath), true);
+    assert.deepEqual(
+      (result.payload as { readonly deletedSessionIds: readonly string[] })
+        .deletedSessionIds,
+      [codex.id, claude.id]
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
 });
 
 test("workflow step clear keeps development-tree node clear fail-closed", async () => {

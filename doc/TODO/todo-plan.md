@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "b2e85004f",
+  "lastRecordedCommit": "065c9aa94",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase125.stream1.task2",
-  "expectedCommitMessage": "fix: keep description clear tree clean",
+  "currentTaskId": "phase125.stream1.task3",
+  "expectedCommitMessage": "fix: prune cleared provider workflow sessions",
   "debt": {
-    "expectedCommitMessage": "fix: keep description clear tree clean",
-    "preCommitHead": "b2e85004f",
+    "expectedCommitMessage": "fix: prune cleared provider workflow sessions",
+    "preCommitHead": "065c9aa94",
     "stage": "commit_pending",
-    "taskId": "phase125.stream1.task2"
+    "taskId": "phase125.stream1.task3"
   }
 }
 ```
@@ -1045,9 +1045,9 @@
 383. [DONE] `phase125.stream1.task1` Fix malformed `workflow/state.json` rollback target discovered during release 1.2.375 retest: after clearing `Quality Gates Baseline`, Clear removed the correct Quality Gates files and left Git clean, but restored boundary `3a6cd2b codeai-boundary: Quality Gates` contains invalid JSON with trailing duplicate braces. Investigation shows corruption starts at `3730b52 feat: materialize application skeleton attempt 1`, when `lastActive` changed from `diagram_modules` to `application_skeleton`; the fix must prevent partial/append-style state writes and add regression coverage for Application Skeleton -> Quality Gates boundary creation restoring a valid `workflow/state.json` (scope: `packages/core/src/workflow/state/**, packages/core/src/workflow/runtime/**, doc/TODO/todo-plan.md`; expected commit: `fix: write workflow state atomically`).
 384. [DONE] Git Commit: `fix: write workflow state atomically` (hash: b2e85004f)
 385. [DONE] `phase125.stream1.task2` Fix Clear Description post-rollback projection dirtiness discovered during release 1.2.375 retest: after clearing all workflow stages back through `Description`, downstream artifacts/sessions were removed and the boundary registry became empty, but Core/Project Manager rewrote tracked `description/questionnaire.md` help copy, rewrote timestamp-only `workflow/state.json`, and created untracked `description/description-step.json`. Clear Description must leave the Git tree clean while still showing a sendable questionnaire, by restoring a tracked baseline or keeping projection metadata out of managed Git state, with regression coverage for clean Git after Clear Description (scope: `src/client/project-manager/services/description-questionnaire-service.ts, src/client/project-manager/services/description-questionnaire-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep description clear tree clean`).
-386. [PENDING] Git Commit: `fix: keep description clear tree clean` (hash: TBD)
-387. [TODO] `phase125.stream1.task3` Define and implement a provider-native workflow session cleanup policy for Clear discovered during release 1.2.375 retest: `runtime/providers/codex/home/sessions/**` and `runtime/providers/claude/home/.claude/projects/**` correctly stay ignored by Git rollback today, but Clear leaves downstream workflow-native JSONL files behind, so a fully cleared workflow still shows old provider-native workflow sessions. Core must prune provider-native workflow sessions for cleared downstream stages through a provider-home-safe manifest/metadata path across Codex, Claude and other provider homes without tracking provider secrets/caches in Git (scope: `packages/core/src/workflow/**, packages/core/src/providers/**, doc/TODO/todo-plan.md`; expected commit: `fix: prune cleared provider workflow sessions`).
-388. [TODO] Git Commit: `fix: prune cleared provider workflow sessions` (hash: TBD)
+386. [DONE] Git Commit: `fix: keep description clear tree clean` (hash: 065c9aa94)
+387. [DONE] `phase125.stream1.task3` Define and implement a provider-native workflow session cleanup policy for Clear discovered during release 1.2.375 retest: `runtime/providers/codex/home/sessions/**` and `runtime/providers/claude/home/.claude/projects/**` correctly stay ignored by Git rollback today, but Clear leaves downstream workflow-native JSONL files behind, so a fully cleared workflow still shows old provider-native workflow sessions. Core must prune provider-native workflow sessions for cleared downstream stages through a provider-home-safe manifest/metadata path across Codex, Claude and other provider homes without tracking provider secrets/caches in Git (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune cleared provider workflow sessions`).
+388. [PENDING] Git Commit: `fix: prune cleared provider workflow sessions` (hash: TBD)
 389. [TODO] `phase125.stream1.task4` Delete provider-native translation sessions automatically after successful localization/translation work, independent of workflow Clear/Undo/Rollback. Translation sessions are not resumable workflow history and should not remain in `runtime/providers/**/home/**`; keep only the finalized workspace localization artifacts and any explicit diagnostic artifact requested by native request capture, while preserving failure logs only when needed for error reporting (scope: `packages/localization/**, packages/core/src/provider-network-capture/**, doc/TODO/todo-plan.md`; expected commit: `fix: discard completed translation sessions`).
 390. [TODO] Git Commit: `fix: discard completed translation sessions` (hash: TBD)
 
