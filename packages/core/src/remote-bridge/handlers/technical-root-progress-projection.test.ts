@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { WorkflowState } from "../../workflow/state/workflow-state-types";
+import type {
+  WorkflowStageState,
+  WorkflowState,
+} from "../../workflow/state/workflow-state-types";
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import {
@@ -16,19 +19,19 @@ const WORKFLOW_STAGES = [
   "quality_gates",
 ] as const satisfies readonly WorkflowStageId[];
 
+const createStageState = (stage: WorkflowStageId): WorkflowStageState => ({
+  artifacts: [],
+  gates: [],
+  stage,
+  status: stage === "application_skeleton" ? "completed" : "idle",
+  updatedAt: "2026-05-27T00:00:00.000Z",
+});
+
 const createState = (workspaceSlug: string): WorkflowState => {
-  const stages = Object.fromEntries(
-    WORKFLOW_STAGES.map((stage) => [
-      stage,
-      {
-        artifacts: [],
-        gates: [],
-        stage,
-        status: stage === "application_skeleton" ? "completed" : "idle",
-        updatedAt: "2026-05-27T00:00:00.000Z",
-      },
-    ])
-  ) as WorkflowState["stages"];
+  const stages = {} as WorkflowState["stages"];
+  for (const stage of WORKFLOW_STAGES) {
+    stages[stage] = createStageState(stage);
+  }
   return {
     gates: [],
     stages,
