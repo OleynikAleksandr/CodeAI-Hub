@@ -45,7 +45,7 @@ export const DescriptionProviderPicker = ({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!selected) {
+    if (!selected || !selectedProvider?.connected) {
       return;
     }
     onConfirm(selected);
@@ -194,7 +194,7 @@ export const DescriptionProviderPicker = ({
               </button>
               <button
                 className="pm-provider-picker__button pm-provider-picker__button--primary"
-                disabled={!selected}
+                disabled={!selectedProvider?.connected}
                 type="submit"
               >
                 {startLabel}

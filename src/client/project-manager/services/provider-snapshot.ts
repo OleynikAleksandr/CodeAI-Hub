@@ -80,7 +80,7 @@ const toProviderDescriptor = (
     id: providerId,
     title: provider.name ?? getDefaultProviderTitle(providerId),
     description: provider.description ?? getDefaultProviderDescription(providerId),
-    connected: provider.status !== "inactive",
+    connected: provider.status === "active",
     statusMessage: provider.statusMessage ?? null,
   };
 };

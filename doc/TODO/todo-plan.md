@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "4f803f0fe",
+  "lastRecordedCommit": "01f97fafe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase4.glm.task1",
-  "expectedCommitMessage": "fix: resolve glm workspace auth settings",
+  "currentTaskId": "provider-readiness.phase5.status.task1",
+  "expectedCommitMessage": "fix: show truthful provider readiness",
   "debt": {
-    "expectedCommitMessage": "fix: resolve glm workspace auth settings",
-    "preCommitHead": "4f803f0fe",
+    "expectedCommitMessage": "fix: show truthful provider readiness",
+    "preCommitHead": "01f97fafe",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase4.glm.task1"
+    "taskId": "provider-readiness.phase5.status.task1"
   }
 }
 ```
@@ -70,12 +70,12 @@
 ## Phase 4 — GLM-Claude-Code Settings/Auth Resolution (owner: Codex, updated: 2026-05-27)
 ### Stream: GLM API Key Source
 9. [DONE] `provider-readiness.phase4.glm.task1` Thread workspace `providers.glmClaudeCode` settings into the GLM runtime profile without persisting secrets to tracked files, preserve env/config precedence, and make empty settings values non-overriding (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.ts, packages/Claude_Module/src/glm-claude-code/glm-claude-code-sdk-auth-manager.ts`; expected commit: `fix: resolve glm workspace auth settings`).
-10. [PENDING] Git Commit: `fix: resolve glm workspace auth settings` (hash: TBD)
+10. [DONE] Git Commit: `fix: resolve glm workspace auth settings` (hash: 01f97fafe)
 
 ## Phase 5 — Provider Picker Truthfulness (owner: Codex, updated: 2026-05-27)
 ### Stream: Availability Projection
-11. [TODO] `provider-readiness.phase5.status.task1` Make provider picker availability reflect Core readiness after provider preflight/recovery, so Gemini cannot be selectable as available when auth/session bootstrap is known to fail, while Kimi/GLM show actionable messages (scope: `packages/core/src/provider-registry/**, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/components/description/description-provider-picker.tsx`; expected commit: `fix: show truthful provider readiness`).
-12. [TODO] Git Commit: `fix: show truthful provider readiness` (hash: TBD)
+11. [DONE] `provider-readiness.phase5.status.task1` Make provider picker availability reflect Core readiness after provider preflight/recovery, so Gemini cannot be selectable as available when auth/session bootstrap is known to fail, while Kimi/GLM show actionable messages (scope: `packages/core/src/provider-registry/**, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/components/description/description-provider-picker.tsx`; expected commit: `fix: show truthful provider readiness`).
+12. [PENDING] Git Commit: `fix: show truthful provider readiness` (hash: TBD)
 
 ## Phase 6 — Tooling Verification (owner: Codex, updated: 2026-05-27)
 ### Stream: Targeted Verification

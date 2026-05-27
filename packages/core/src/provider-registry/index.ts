@@ -1,4 +1,7 @@
+import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
+import { homedir } from "node:os";
+import path from "node:path";
 import type { ModuleReporter } from "@codeai-hub/claude-module";
 import type { CoreConfig } from "../config";
 import type {
@@ -7,6 +10,7 @@ import type {
   RuntimeStatusReporter,
 } from "../status/runtime-status-reporter";
 import type { Logger } from "../telemetry/logger";
+import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import {
   createClaudeAdapterInstance,
   createCodexAdapterInstance,
@@ -44,6 +48,8 @@ export type {
   Provider,
   ProviderDescriptor,
 } from "./provider-module-loader.types";
+
+const GEMINI_AUTH_FILENAMES = ["oauth_creds.json", "credentials.json"] as const;
 
 export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
@@ -176,7 +182,7 @@ export class ProviderRegistry {
   }
 
   listProviders(): Provider[] {
-    return this.providers.map(({ adapter, ...rest }) => rest);
+    return this.providers.map((provider) => this.toProviderSnapshot(provider));
   }
 
   getAdapter(providerId: string): ProviderAdapter | undefined {
@@ -302,6 +308,46 @@ export class ProviderRegistry {
     await this.recoveryCoordinator.attemptProviderRecovery(
       providerId,
       this.providers
+    );
+  }
+
+  private toProviderSnapshot(provider: ProviderDescriptor): Provider {
+    const { adapter: _adapter, ...snapshot } = provider;
+    if (
+      snapshot.id !== "geminiCli" ||
+      snapshot.status !== "active" ||
+      this.isGeminiAuthReady()
+    ) {
+      return snapshot;
+    }
+    return {
+      ...snapshot,
+      status: "inactive",
+      statusMessage:
+        "Gemini CLI is unavailable. Run `gemini login`, confirm ~/.gemini/oauth_creds.json exists, then use Settings → General → Restart Core to retry",
+    };
+  }
+
+  private isGeminiAuthReady(): boolean {
+    return (
+      this.hasGeminiAuthFile(this.resolveWorkspaceGeminiDir()) ||
+      this.hasGeminiAuthFile(path.join(homedir(), ".gemini"))
+    );
+  }
+
+  private resolveWorkspaceGeminiDir(): string {
+    return path.join(
+      resolveWorkspaceRuntimeCapsule({
+        workspaceRoot: this.geminiWorkspacePath,
+        workspaceSlug: this.options.config.claudeProjectSlug,
+      }).providerHomes.gemini.absolutePath,
+      ".gemini"
+    );
+  }
+
+  private hasGeminiAuthFile(geminiDir: string): boolean {
+    return GEMINI_AUTH_FILENAMES.some((fileName) =>
+      existsSync(path.join(geminiDir, fileName))
     );
   }
 }
