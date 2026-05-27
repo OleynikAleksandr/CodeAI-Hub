@@ -111,3 +111,71 @@ test("DescriptionQuestionnaireService refreshes stale cached session before rend
     ["stale-session", "stale-session", "fresh-session"]
   );
 });
+
+test("DescriptionQuestionnaireService does not rewrite existing questionnaire on load", async () => {
+  installWindowConfig();
+  const calls: Array<{
+    readonly body: Record<string, unknown> | null;
+    readonly url: string;
+  }> = [];
+  const localizedTemplate = `# Project Name
+
+<small><i>Updated helper copy.</i></small>
+
+<!-- field:meta.title -->
+<Name>
+<!-- /field -->
+`;
+  const existingQuestionnaire = `# Project Name
+
+<small><i>Older helper copy.</i></small>
+
+<!-- field:meta.title -->
+Filled Title
+<!-- /field -->
+`;
+  const handlers: FetchHandler[] = [
+    async () => jsonResponse({ sessionId: "description-session" }),
+    async () =>
+      jsonResponse({ questionnaire: { templateMarkdown: localizedTemplate } }),
+    async () =>
+      jsonResponse({
+        content: existingQuestionnaire,
+        maxBytes: 300_000,
+        path: ".codeai-hub/demo-existing/description/questionnaire.md",
+        truncated: false,
+      }),
+  ];
+  Object.defineProperty(globalThis, "fetch", {
+    configurable: true,
+    value: async (input: string | URL, init?: RequestInit) => {
+      const body =
+        typeof init?.body === "string"
+          ? (JSON.parse(init.body) as Record<string, unknown>)
+          : null;
+      calls.push({ body, url: String(input) });
+      const handler = handlers.shift();
+      assert.ok(handler, `Unexpected fetch call to ${String(input)}`);
+      return await handler(String(input), init);
+    },
+  });
+
+  const service = new DescriptionQuestionnaireService();
+  const result = await service.load({
+    name: "Demo Existing",
+    path: "/tmp/description-questionnaire-existing",
+    slug: "demo-existing",
+  });
+
+  assert.equal(result.status, "ok");
+  assert.equal(
+    result.status === "ok" ? result.value.answers["meta.title"] : null,
+    "Filled Title"
+  );
+  assert.equal(
+    calls.some((call) =>
+      call.url.endsWith("/api/v1/orchestrator/workspace-file-write")
+    ),
+    false
+  );
+});

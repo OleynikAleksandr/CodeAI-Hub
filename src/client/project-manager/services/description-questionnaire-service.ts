@@ -212,7 +212,7 @@ export class DescriptionQuestionnaireService {
       nextAnswers
     );
 
-    if (!existingContent || rendered.trim() !== existingContent.trim()) {
+    if (!existingContent) {
       await writeWorkspaceFile(sessionId, questionnairePath, rendered);
     }
 
