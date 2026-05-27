@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "a3181e765",
+  "lastRecordedCommit": "5dbfc4ffd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8d.wait-copy-fix.task1",
-  "expectedCommitMessage": "fix: separate session working and resume placeholders",
+  "currentTaskId": "provider-readiness.phase8d.wait-copy-verify.task1",
+  "expectedCommitMessage": "test: verify session wait placeholder states",
   "debt": {
-    "expectedCommitMessage": "fix: separate session working and resume placeholders",
-    "preCommitHead": "a3181e765",
+    "expectedCommitMessage": "test: verify session wait placeholder states",
+    "preCommitHead": "5dbfc4ffd",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8d.wait-copy-fix.task1"
+    "taskId": "provider-readiness.phase8d.wait-copy-verify.task1"
   }
 }
 ```
@@ -254,9 +254,11 @@
 88. [DONE] `provider-readiness.phase8d.wait-copy-fix.task1` Make `Agent is resuming your session... Please wait.` appear only for context continuity/resume reasons, while ordinary active/blocked provider work shows `Agent is working... Please wait.` (scope: `src/client/ui/src/session/input-panel.tsx, src/client/ui/src/session/session-view.tsx, src/client/ui/src/session/input-panel.test.tsx`; expected commit: `fix: separate session working and resume placeholders`).
     - Result 2026-05-27: `npx tsx --test src/client/ui/src/session/input-panel.test.tsx` — PASS (13 tests).
     - Result 2026-05-27: `npm run typecheck:webview` — PASS.
-89. [PENDING] Git Commit: `fix: separate session working and resume placeholders` (hash: TBD)
-90. [TODO] `provider-readiness.phase8d.wait-copy-verify.task1` Verify running, generic blocked, managed review, binding-pending, and resume-bootstrap input placeholder states so non-rollover waits cannot regress to resume copy (scope: `src/client/ui/src/session/input-panel.test.tsx, src/client/project-manager/components/sessions/session-stream.test.ts, src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify session wait placeholder states`).
-91. [TODO] Git Commit: `test: verify session wait placeholder states` (hash: TBD)
+89. [DONE] Git Commit: `fix: separate session working and resume placeholders` (hash: 5dbfc4ffd)
+90. [DONE] `provider-readiness.phase8d.wait-copy-verify.task1` Verify running, generic blocked, managed review, binding-pending, and resume-bootstrap input placeholder states so non-rollover waits cannot regress to resume copy (scope: `src/client/ui/src/session/input-panel.test.tsx, src/client/project-manager/components/sessions/session-stream.test.ts, src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify session wait placeholder states`).
+    - Result 2026-05-27: `npx tsx --test src/client/ui/src/session/input-panel.test.tsx` — PASS (15 tests).
+    - Result 2026-05-27: `npm run typecheck:webview` — PASS.
+91. [PENDING] Git Commit: `test: verify session wait placeholder states` (hash: TBD)
 
 ### Stream: Deferred Release Rebuild
 92. [TODO] `provider-readiness.phase8d.release-rebuild.task1` Build a replacement release for the Virtual Simulation artifact handoff fix and retest-finding fixes only after user confirms no more blocker findings should be batched (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, codeai-hub-*.vsix, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build virtual simulation handoff repair release`).

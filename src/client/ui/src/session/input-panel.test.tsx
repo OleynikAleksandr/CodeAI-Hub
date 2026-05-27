@@ -158,6 +158,34 @@ test("InputPanel maps generic blocked waits to working copy", async () => {
   );
 });
 
+test("InputPanel maps non-resume lock waits to working copy", async () => {
+  const html = await renderInputPanel({
+    connectionState: "blocked",
+    continuityLockActive: true,
+    resumingLockActive: false,
+  });
+
+  assert.equal(html.includes("Agent is working… Please wait."), true);
+  assert.equal(
+    html.includes("Agent is resuming your session… Please wait."),
+    false
+  );
+});
+
+test("InputPanel keeps resuming copy for explicit resume locks", async () => {
+  const html = await renderInputPanel({
+    connectionState: "blocked",
+    continuityLockActive: true,
+    resumingLockActive: true,
+  });
+
+  assert.equal(html.includes("Agent is working… Please wait."), false);
+  assert.equal(
+    html.includes("Agent is resuming your session… Please wait."),
+    true
+  );
+});
+
 test("InputPanel enables fieldset when continuity unlock is resolved", async () => {
   const html = await renderInputPanel({
     connectionState: "idle",
