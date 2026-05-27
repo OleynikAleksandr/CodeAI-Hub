@@ -103,9 +103,11 @@ export class SessionProviderFailureRecovery {
     binding: ProviderSessionBindingLike | undefined,
     classification: ProviderFailureClassification
   ): void {
-    if (classification.shouldRemoveBinding && binding) {
-      binding.unsubscribe();
-      this.deps.providerSessions.delete(sessionId);
+    if (classification.shouldRemoveBinding) {
+      if (binding) {
+        binding.unsubscribe();
+        this.deps.providerSessions.delete(sessionId);
+      }
       this.deps.sessionManager.markProviderSessionFailed(sessionId);
       this.deps.sessionStorage.close(sessionId, "provider-failure");
       this.deps.broadcastSessionBinding(sessionId);

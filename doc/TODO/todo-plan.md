@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "69ff31e07",
+  "lastRecordedCommit": "4a9243a4b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.failed-startup-recovery-diagnose.task1",
-  "expectedCommitMessage": "test: characterize failed provider startup recovery",
+  "currentTaskId": "provider-readiness.phase8a.failed-startup-cleanup.task1",
+  "expectedCommitMessage": "fix: recover after failed provider startup",
   "debt": {
-    "expectedCommitMessage": "test: characterize failed provider startup recovery",
-    "preCommitHead": "69ff31e07",
+    "expectedCommitMessage": "fix: recover after failed provider startup",
+    "preCommitHead": "4a9243a4b",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.failed-startup-recovery-diagnose.task1"
+    "taskId": "provider-readiness.phase8a.failed-startup-cleanup.task1"
   }
 }
 ```
@@ -158,9 +158,9 @@
 44. [DONE] `provider-readiness.phase8a.failed-startup-recovery-diagnose.task1` Retest finding 2026-05-27: after Gemini times out on the Virtual Simulation start path, Codex cannot be started either, even after Restart Core; diagnose leaked session/provider locks, pending workflow state, runtime process state, workspace capsule state, and client-side provider selection state after failed startup (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/provider-registry, src/client/project-manager/services, doc/TODO/todo-plan.md`; expected commit: `test: characterize failed provider startup recovery`).
     - Diagnostic 2026-05-27: after the Gemini fixes, failed bootstrap enters `SessionProviderFailureRecovery`, but `applyClassifiedSessionCleanup()` only closes/marks failed sessions when a provider binding already exists.
     - Diagnostic 2026-05-27: failed provider creation has a Core shell session but no provider binding yet, so the existing cleanup path can leave the session/binding projection in a pending state and block a later Codex start in the same workflow step.
-45. [PENDING] Git Commit: `test: characterize failed provider startup recovery` (hash: TBD)
-46. [TODO] `provider-readiness.phase8a.failed-startup-cleanup.task1` Ensure failed provider session creation always releases workflow/session locks, cancels or kills partial provider startup processes, clears pending start markers, and returns the step to a state where another provider such as Codex can start without a full workspace reset (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/session-continuity, packages/core/src/provider-registry`; expected commit: `fix: recover after failed provider startup`).
-47. [TODO] Git Commit: `fix: recover after failed provider startup` (hash: TBD)
+45. [DONE] Git Commit: `test: characterize failed provider startup recovery` (hash: 4a9243a4b)
+46. [DONE] `provider-readiness.phase8a.failed-startup-cleanup.task1` Ensure failed provider session creation always releases workflow/session locks, cancels or kills partial provider startup processes, clears pending start markers, and returns the step to a state where another provider such as Codex can start without a full workspace reset (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/session-continuity, packages/core/src/provider-registry, doc/TODO/todo-plan.md`; expected commit: `fix: recover after failed provider startup`).
+47. [PENDING] Git Commit: `fix: recover after failed provider startup` (hash: TBD)
 48. [TODO] `provider-readiness.phase8a.failed-startup-restart.task1` Verify Restart Core fully rebuilds provider registry/runtime capsules and does not preserve stale failed Gemini startup state that blocks Codex or other providers after restart (scope: `packages/core/src/workspace-runtime, packages/core/src/provider-registry, src/client/project-manager/services`; expected commit: `fix: reset provider startup state on core restart`).
 49. [TODO] Git Commit: `fix: reset provider startup state on core restart` (hash: TBD)
 50. [TODO] `provider-readiness.phase8a.failed-startup-verify.task1` Add targeted tests covering Gemini timeout/failure followed by successful Codex start in the same workflow step and after Restart Core (scope: `packages/core, src/client/project-manager, packages/Gemini_Module`; expected commit: `test: verify provider startup failure recovery`).
