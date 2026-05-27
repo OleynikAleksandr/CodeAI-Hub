@@ -21,8 +21,8 @@ import {
   isDiagramModulesReviewOpen,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
 import {
+  buildApplicationSkeletonReviewHandoffMessage,
   buildManagedPersistentReturnHandoffMessage,
-  buildManagedUserLedReviewHandoffMessage,
 } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
 import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import {
@@ -370,7 +370,9 @@ export class SessionRequestHandlerManagedReviewDecisions {
       return;
     }
     this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: buildManagedUserLedReviewHandoffMessage("Application Skeleton"),
+      content: buildApplicationSkeletonReviewHandoffMessage(
+        "materialized_skeleton"
+      ),
       tag: "managed-workflow-user-review",
     });
   }

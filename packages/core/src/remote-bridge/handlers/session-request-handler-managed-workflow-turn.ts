@@ -23,6 +23,7 @@ import {
   validateDiagramModulesManagedArtifacts,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import {
+  buildApplicationSkeletonReviewHandoffMessage,
   buildManagedPersistentReturnHandoffMessage,
   buildManagedUserLedReviewHandoffMessage,
 } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
@@ -326,17 +327,15 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     }
     if (decision.nextAction === "open_user_review") {
       this.appendCoreMessage(params.sessionId, {
-        content: buildManagedUserLedReviewHandoffMessage(
-          "Application Skeleton"
-        ),
+        content: buildApplicationSkeletonReviewHandoffMessage("draft_contract"),
         tag: "managed-workflow-user-review",
       });
       return "settled";
     }
     if (decision.nextAction === "open_persistent_return") {
       this.appendCoreMessage(params.sessionId, {
-        content: buildManagedUserLedReviewHandoffMessage(
-          "Application Skeleton"
+        content: buildApplicationSkeletonReviewHandoffMessage(
+          "materialized_skeleton"
         ),
         tag: "managed-workflow-user-review",
       });

@@ -16,8 +16,9 @@ const USER_REVIEW_RE =
   /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
 const CONFIRMATION_RE = /нажмите кнопку «Подтверждаю» ниже/u;
 const TYPE_CONFIRMATION_RE = /напишите `подтверждаю`/u;
-const APP_REVIEW_RE =
-  /Core: Application Skeleton перешёл в пользовательскую проверку/u;
+const APP_DRAFT_RE = /Application Skeleton draft contract/u;
+const APP_MATERIALIZED_RE =
+  /Application Skeleton materialized filesystem skeleton/u;
 const DIAGRAM_REVIEW_RE =
   /Core: Diagram Modules перешёл в пользовательскую проверку/u;
 const APP_MARKDOWN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
@@ -239,12 +240,12 @@ const writeDiagramProductPart = (workspaceRoot: string): Promise<void> =>
 test("managed workflow turn emits Core-owned user review handoff messages", async () => {
   const cases = [
     {
-      expected: APP_REVIEW_RE,
+      expected: APP_DRAFT_RE,
       prepare: prepareApplicationDraft,
       stage: APP_STAGE,
     },
     {
-      expected: APP_REVIEW_RE,
+      expected: APP_MATERIALIZED_RE,
       prepare: prepareApplicationMaterialization,
       stage: APP_STAGE,
     },
