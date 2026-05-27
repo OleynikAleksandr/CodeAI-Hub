@@ -224,9 +224,7 @@ const resolveKimiRuntimeHome = (
     providerHomePath,
     userConfigPath:
       options.userConfigPath ??
-      (options.workspacePath
-        ? path.join(providerHomePath, KIMI_DEFAULT_CONFIG_RELATIVE_PATH)
-        : path.join(homeDir, KIMI_DEFAULT_CONFIG_RELATIVE_PATH)),
+      path.join(homeDir, KIMI_DEFAULT_CONFIG_RELATIVE_PATH),
   };
 };
 

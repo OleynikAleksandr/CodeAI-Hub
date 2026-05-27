@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "df77fd1be",
+  "lastRecordedCommit": "141cba600",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase2.gemini.task1",
-  "expectedCommitMessage": "fix: bootstrap gemini workspace provider home",
+  "currentTaskId": "provider-readiness.phase3.kimi.task1",
+  "expectedCommitMessage": "fix: resolve kimi workspace provider home",
   "debt": {
-    "expectedCommitMessage": "fix: bootstrap gemini workspace provider home",
-    "preCommitHead": "df77fd1be",
+    "expectedCommitMessage": "fix: resolve kimi workspace provider home",
+    "preCommitHead": "141cba600",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase2.gemini.task1"
+    "taskId": "provider-readiness.phase3.kimi.task1"
   }
 }
 ```
@@ -60,12 +60,12 @@
 ## Phase 2 — Gemini Workspace Auth Readiness (owner: Codex, updated: 2026-05-27)
 ### Stream: Gemini Provider Home Bootstrap
 5. [DONE] `provider-readiness.phase2.gemini.task1` Implement Gemini workspace provider-home auth bootstrap from existing user Gemini auth/settings, keep storage resolution scoped to the active workspace, and fail readiness clearly when auth is unavailable (scope: `packages/Gemini_Module/src/runtime/cli-bridge-provider-home.ts, packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts, packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`; expected commit: `fix: bootstrap gemini workspace provider home`).
-6. [PENDING] Git Commit: `fix: bootstrap gemini workspace provider home` (hash: TBD)
+6. [DONE] Git Commit: `fix: bootstrap gemini workspace provider home` (hash: 141cba600)
 
 ## Phase 3 — Kimi Workspace Path And Config (owner: Codex, updated: 2026-05-27)
 ### Stream: Kimi Runtime Home
-7. [TODO] `provider-readiness.phase3.kimi.task1` Pass the active workspace path into Kimi adapter construction, resolve `KIMI_SHARE_DIR` inside the workspace capsule, and preserve the existing `~/.kimi/config.toml` credential source unless an explicit config path is provided (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `fix: resolve kimi workspace provider home`).
-8. [TODO] Git Commit: `fix: resolve kimi workspace provider home` (hash: TBD)
+7. [DONE] `provider-readiness.phase3.kimi.task1` Pass the active workspace path into Kimi adapter construction, resolve `KIMI_SHARE_DIR` inside the workspace capsule, and preserve the existing `~/.kimi/config.toml` credential source unless an explicit config path is provided (scope: `packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/Kimi_Module/src/provider/kimi-managed-agent-profile.ts, packages/Kimi_Module/src/provider/kimi-provider-adapter.ts`; expected commit: `fix: resolve kimi workspace provider home`).
+8. [PENDING] Git Commit: `fix: resolve kimi workspace provider home` (hash: TBD)
 
 ## Phase 4 — GLM-Claude-Code Settings/Auth Resolution (owner: Codex, updated: 2026-05-27)
 ### Stream: GLM API Key Source

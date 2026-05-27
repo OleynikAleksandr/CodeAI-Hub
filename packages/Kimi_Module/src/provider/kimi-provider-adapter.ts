@@ -88,7 +88,7 @@ export class KimiProviderAdapter {
   constructor(options: KimiModuleOptions) {
     this.options = options;
     this.workspaceOverride = new KimiWorkspaceOverrideState(
-      options.workspace.workspacePath
+      this.resolveRuntimeWorkspacePath(options.workspace.workspacePath)
     );
   }
 
@@ -101,7 +101,9 @@ export class KimiProviderAdapter {
 
   async createSession(workspacePath?: string): Promise<string> {
     this.assertInitialized();
-    const override = this.workspaceOverride.resolve(workspacePath);
+    const override = this.workspaceOverride.resolve(
+      this.resolveRuntimeWorkspacePath(workspacePath)
+    );
     reportKimiWorkspaceOverride(this.options.reporter, override);
     if (override.applied) {
       await this.configureWireRuntime(override.workspacePath ?? undefined);
@@ -278,7 +280,9 @@ export class KimiProviderAdapter {
     return new KimiWireProcessBridge({
       args: cliEnvironment.args,
       command: cliEnvironment.command,
-      cwd: this.workspaceOverride.getActiveWorkspacePath() ?? process.cwd(),
+      cwd:
+        this.workspaceOverride.getActiveWorkspacePath() ??
+        this.requireRuntimeHome().providerHomePath,
       env: cliEnvironment.env,
       onLine: (line) => {
         this.requireWireRouter().handleLine(line);
@@ -289,6 +293,24 @@ export class KimiProviderAdapter {
         });
       },
     });
+  }
+
+  private resolveRuntimeWorkspacePath(
+    workspacePath: string | undefined
+  ): string | undefined {
+    const trimmedWorkspacePath = workspacePath?.trim();
+    if (!trimmedWorkspacePath) {
+      return;
+    }
+    const resolvedWorkspacePath = path.resolve(trimmedWorkspacePath);
+    if (resolvedWorkspacePath === path.parse(resolvedWorkspacePath).root) {
+      this.options.reporter?.warn?.(
+        "Kimi workspace root resolved to filesystem root; using provider home fallback",
+        { workspacePath: resolvedWorkspacePath }
+      );
+      return;
+    }
+    return resolvedWorkspacePath;
   }
 
   private createWireRouter(): KimiWireRouter {

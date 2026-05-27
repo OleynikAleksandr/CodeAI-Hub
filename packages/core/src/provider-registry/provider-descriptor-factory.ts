@@ -195,8 +195,8 @@ export const createKimiAdapterInstance = (
 ): ProviderAdapter =>
   new options.kimiAdapterCtor({
     workspace: {
-      workspacePath: process.cwd(),
-      defaultModel: "kimi-for-coding",
+      workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
+      defaultModel: options.config.kimiDefaultModel ?? "kimi-for-coding",
     },
     reporter: options.createReporter("kimi"),
   });
