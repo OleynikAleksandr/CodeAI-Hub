@@ -1,3 +1,4 @@
+import { copyFile, mkdir, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -15,6 +16,14 @@ const INSTALLATION_ID_FILENAME = "installation_id";
 const GOOGLE_ACCOUNTS_FILENAME = "google_accounts.json";
 const GLOBAL_MEMORY_FILENAME = "memory.md";
 const OAUTH_CREDS_FILENAME = "oauth_creds.json";
+const CREDENTIALS_FILENAME = "credentials.json";
+const AUTH_BOOTSTRAP_FILENAMES = [
+  OAUTH_CREDS_FILENAME,
+  CREDENTIALS_FILENAME,
+  GOOGLE_ACCOUNTS_FILENAME,
+  SETTINGS_FILENAME,
+  INSTALLATION_ID_FILENAME,
+] as const;
 
 type EnvironmentMap = Readonly<Record<string, string | undefined>>;
 
@@ -34,6 +43,18 @@ interface GeminiStorageStatic {
 
 export interface GeminiStorageModule {
   readonly Storage?: GeminiStorageStatic;
+}
+
+export interface GeminiProviderHomeBootstrapOptions {
+  readonly legacyGeminiDir?: string;
+  readonly providerGeminiDir?: string;
+}
+
+export interface GeminiProviderHomeBootstrapResult {
+  readonly authAvailable: boolean;
+  readonly copiedFiles: string[];
+  readonly legacyGeminiDir: string;
+  readonly providerGeminiDir: string;
 }
 
 const normalizeWorkspaceRuntimeSlug = (value: string): string => {
@@ -80,6 +101,47 @@ const resolveGeminiProviderHome = (
 export const resolveGeminiProviderGeminiDir = (
   environment: EnvironmentMap = process.env
 ): string => path.join(resolveGeminiProviderHome(environment), ".gemini");
+
+const fileExists = async (filePath: string): Promise<boolean> => {
+  try {
+    return (await stat(filePath)).isFile();
+  } catch {
+    return false;
+  }
+};
+
+export const bootstrapGeminiProviderHomeFromLegacyAuth = async (
+  options: GeminiProviderHomeBootstrapOptions = {}
+): Promise<GeminiProviderHomeBootstrapResult> => {
+  const providerGeminiDir =
+    options.providerGeminiDir ?? resolveGeminiProviderGeminiDir();
+  const legacyGeminiDir =
+    options.legacyGeminiDir ?? path.join(homedir(), ".gemini");
+  const copiedFiles: string[] = [];
+
+  await mkdir(providerGeminiDir, { recursive: true });
+  for (const filename of AUTH_BOOTSTRAP_FILENAMES) {
+    const targetPath = path.join(providerGeminiDir, filename);
+    if (await fileExists(targetPath)) {
+      continue;
+    }
+    const sourcePath = path.join(legacyGeminiDir, filename);
+    if (!(await fileExists(sourcePath))) {
+      continue;
+    }
+    await copyFile(sourcePath, targetPath);
+    copiedFiles.push(filename);
+  }
+
+  return {
+    authAvailable:
+      (await fileExists(path.join(providerGeminiDir, OAUTH_CREDS_FILENAME))) ||
+      (await fileExists(path.join(providerGeminiDir, CREDENTIALS_FILENAME))),
+    copiedFiles,
+    legacyGeminiDir,
+    providerGeminiDir,
+  };
+};
 
 export const patchGeminiStorageGlobalDir = (
   storageModule: GeminiStorageModule,

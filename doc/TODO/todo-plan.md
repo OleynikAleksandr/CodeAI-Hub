@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "34e6fadc2",
+  "lastRecordedCommit": "df77fd1be",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase1.tests.task1",
-  "expectedCommitMessage": "test: cover provider workspace readiness failures",
+  "currentTaskId": "provider-readiness.phase2.gemini.task1",
+  "expectedCommitMessage": "fix: bootstrap gemini workspace provider home",
   "debt": {
-    "expectedCommitMessage": "test: cover provider workspace readiness failures",
-    "preCommitHead": "34e6fadc2",
+    "expectedCommitMessage": "fix: bootstrap gemini workspace provider home",
+    "preCommitHead": "df77fd1be",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase1.tests.task1"
+    "taskId": "provider-readiness.phase2.gemini.task1"
   }
 }
 ```
@@ -55,12 +55,12 @@
 ## Phase 1 — Reproduce And Guard Failures (owner: Codex, updated: 2026-05-27)
 ### Stream: Provider Readiness Regression Coverage
 3. [DONE] `provider-readiness.phase1.tests.task1` Add focused regression tests for the known readiness failures: Gemini workspace-home auth is missing while UI says available, Kimi must not resolve provider home from `/`, and GLM must not ignore workspace settings/config precedence (scope: `packages/Gemini_Module/src/**, packages/Kimi_Module/src/**, packages/Claude_Module/src/glm-claude-code/**`; expected commit: `test: cover provider workspace readiness failures`).
-4. [PENDING] Git Commit: `test: cover provider workspace readiness failures` (hash: TBD)
+4. [DONE] Git Commit: `test: cover provider workspace readiness failures` (hash: df77fd1be)
 
 ## Phase 2 — Gemini Workspace Auth Readiness (owner: Codex, updated: 2026-05-27)
 ### Stream: Gemini Provider Home Bootstrap
-5. [TODO] `provider-readiness.phase2.gemini.task1` Implement Gemini workspace provider-home auth bootstrap from existing user Gemini auth/settings, keep storage resolution scoped to the active workspace, and fail readiness clearly when auth is unavailable (scope: `packages/Gemini_Module/src/runtime/cli-bridge-provider-home.ts, packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts, packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`; expected commit: `fix: bootstrap gemini workspace provider home`).
-6. [TODO] Git Commit: `fix: bootstrap gemini workspace provider home` (hash: TBD)
+5. [DONE] `provider-readiness.phase2.gemini.task1` Implement Gemini workspace provider-home auth bootstrap from existing user Gemini auth/settings, keep storage resolution scoped to the active workspace, and fail readiness clearly when auth is unavailable (scope: `packages/Gemini_Module/src/runtime/cli-bridge-provider-home.ts, packages/Gemini_Module/src/session/gemini-session-bootstrapper.ts, packages/Gemini_Module/src/provider/gemini-provider-adapter.ts`; expected commit: `fix: bootstrap gemini workspace provider home`).
+6. [PENDING] Git Commit: `fix: bootstrap gemini workspace provider home` (hash: TBD)
 
 ## Phase 3 — Kimi Workspace Path And Config (owner: Codex, updated: 2026-05-27)
 ### Stream: Kimi Runtime Home

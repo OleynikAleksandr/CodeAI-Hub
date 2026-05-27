@@ -3,6 +3,10 @@ import { EventEmitter } from "node:events";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { GeminiClient } from "@google/gemini-cli-core/dist/src/core/client";
+import {
+  bootstrapGeminiProviderHomeFromLegacyAuth,
+  resolveGeminiProviderGeminiDir,
+} from "../runtime/cli-bridge-provider-home";
 import type {
   GeminiCliModules,
   GeminiConversationRecord,
@@ -56,10 +60,16 @@ export class GeminiSessionBootstrapper {
         : undefined;
     const requestedSessionId = requestedResumeSessionId ?? randomUUID();
     const eventEmitter = new EventEmitter();
+    const providerHomeBootstrap = await this.bootstrapProviderHomeAuth(options);
     const resolvedSettings = this.settingsResolver.resolve(
       options,
       requestedResumeSessionId
     );
+    this.assertAuthAvailable({
+      authAvailable: providerHomeBootstrap.authAvailable,
+      authType: resolvedSettings.authType,
+      providerGeminiDir: providerHomeBootstrap.providerGeminiDir,
+    });
 
     const loadCliConfig = this.modules.config
       .loadCliConfig as typeof this.modules.config.loadCliConfig;
@@ -242,6 +252,38 @@ export class GeminiSessionBootstrapper {
         delete process.env[key];
       }
     }
+  }
+
+  private async bootstrapProviderHomeAuth(options: SessionCreationOptions) {
+    const providerGeminiDir = resolveGeminiProviderGeminiDir({
+      ...process.env,
+      GEMINI_WORKSPACE_PATH: options.workspacePath,
+    });
+    const result = await bootstrapGeminiProviderHomeFromLegacyAuth({
+      providerGeminiDir,
+    });
+    if (result.copiedFiles.length > 0) {
+      options.reporter?.info?.("Gemini provider home auth bootstrapped", {
+        copiedFiles: result.copiedFiles,
+        providerGeminiDir: result.providerGeminiDir,
+      });
+    }
+    return result;
+  }
+
+  private assertAuthAvailable(options: {
+    readonly authAvailable: boolean;
+    readonly authType: unknown;
+    readonly providerGeminiDir: string;
+  }): void {
+    const loginWithGoogle =
+      this.modules.contentGenerator.AuthType.LOGIN_WITH_GOOGLE;
+    if (options.authType !== loginWithGoogle || options.authAvailable) {
+      return;
+    }
+    throw new Error(
+      `Gemini login auth was not found in workspace provider home ${options.providerGeminiDir}. Run Gemini CLI login or keep ~/.gemini/oauth_creds.json available, then restart Core.`
+    );
   }
 
   private async hydrateResumedChat(
