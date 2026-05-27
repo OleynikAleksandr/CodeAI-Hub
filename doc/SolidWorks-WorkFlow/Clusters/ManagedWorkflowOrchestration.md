@@ -25,11 +25,13 @@ Managed Workflow Orchestration is Core-owned. Project Manager, VS Code UI surfac
 
 Clients may submit raw user intent and render Core-owned snapshots, but they must never own or infer managed workflow truth: stage phase, active microtask, expected commit, prompt/template selection, source-artifact selection, artifact validity, gating decisions, localization target for Core/system messages, provider continuation policy, managed state, or Git commit lifecycle.
 
-User-review acceptance can be submitted through a client-rendered inline button on the Core/system `managed-workflow-user-review` dialog card. The button label and placement are UI projection details; the submitted acceptance intent enters the same Core-managed review decision path as typed acceptance. Clients must not mark the stage accepted, open materialization/integration, write `### Stream: User Return And Revisions`, or publish a green marker on their own.
+User-review acceptance is submitted through a client-rendered inline button on the Core/system `managed-workflow-user-review` dialog card. The button label and placement are UI projection details; the click sends a Core-owned review action scoped to the active review message id. It is not an ordinary provider-visible user message, must be idempotent for the current gate, and must reject stale or already-closed review cards without dispatching a provider turn. Clients must not mark the stage accepted, open materialization/integration, write `### Stream: User Return And Revisions`, or publish a green marker on their own.
 
 The same Core/system card tag is also used for provider-direct preliminary review gates on `Description` and `Virtual Simulation`. Those preliminary steps are not managed technical stage-plan flows: Core must dispatch startup prompts and user revision text directly to the provider, then append the review card after each provider turn. The inline `Подтверждаю` button is the expected acceptance surface; if the user answers the agent's questions instead, Core routes that text to the provider and shows a fresh review card after the next completed turn. Only button acceptance or an equivalent short acceptance command while the gate is open may advance the preliminary step and let Project Manager activate the next step card.
 
 Every Type A, Type B, and Persistent Return managed flow must continue with all clients closed until Core explicitly opens a user review, revision, acceptance, or configuration gate. If a managed step depends on an open Project Manager window to advance before such a user gate, the step contract is invalid and the defect belongs in Core orchestration.
+
+Provider terminal events are not sufficient UI unlock signals for managed workflow turns. On `turn_completed`, Core must persist provider messages, run managed post-turn validation/arbitration, perform any required commit or cleanup effect, and then either open a current review gate or settle the turn before Project Manager input is considered idle. This covers Claude-style pauses where the provider is done but Core-owned validation is still running.
 
 ## Stage Marker And Terminal Git Boundary
 
@@ -40,6 +42,8 @@ Core owns the trunk step marker state for every managed technical stage. `Diagra
 - `completed` / green only after Core reaches the terminal `### Stream: User Return And Revisions` boundary, records the stage in the managed workspace `completedStages` ledger, and passes the terminal clean-Git checkpoint.
 
 For `Application Skeleton`, validated materialization is not that terminal boundary. The marker stays `in_progress` after the materialization commit and turns `completed` only after explicit post-materialization user acceptance.
+
+Current review artifacts dominate stale invalid projection. If `Application Skeleton` or `Quality Gates Baseline` has a current Core review gate/progress artifact, the stage must project `in_progress`/yellow even when an older in-memory invalidation event still exists. Invalid/blocked state may surface diagnostics, but it must not repaint an active user-review stage red unless Core has actually closed or rejected that current review gate.
 
 Artifact presence is not completion truth. `aggregateReady`, `reviewReady`, Markdown/JSON sidecars, local Project Manager parser results, or generated root files cannot promote a managed trunk marker to green. Clients render the Core workflow-state snapshot only.
 
@@ -85,6 +89,8 @@ The boundary is strict: Application Skeleton owns stack/package/workspace decisi
 Validated Application Skeleton materialization is still not final user acceptance. After Core commits a valid materialization attempt, Core must open a post-materialization `managed-workflow-user-review` card instead of publishing `managed-workflow-complete`. At that gate, user corrections are sent as materialized-scope Application Skeleton revision prompts, and `quality_gates` remains locked. Only explicit final acceptance through the review card completes `Application Skeleton`, opens persistent user return, and unlocks/activates `Quality Gates Baseline`.
 
 Quality Gates integration has an additional artifact consistency gate. In the integration phase, `quality-gates.json` is the machine-readable source of truth and `quality-gates.md` is the user-facing projection of the same state. Core must reject an integrated Quality Gates result when any required gate remains marked `not_integrated` in JSON or Markdown, when required package scripts or lifecycle hook calls are missing, or when declared `integratedPaths` do not exist in the workspace. Draft/proposal phases may describe planned or not-yet-integrated gates, but terminal integration cannot open persistent return or publish a green marker until JSON, Markdown, package scripts, hooks, and filesystem evidence agree.
+
+Quality Gates draft/review phases are pre-acceptance and must not leave integration residue. Before Core records a draft/review managed commit, it restores or cleans prohibited integration paths (`package.json`, package-manager lockfiles, `.husky/pre-commit`, `.husky/pre-push`, and `scripts/quality-gates/**`). Those files become valid managed output only after the user accepts the draft contract and Core enters the integration phase.
 
 The generated project foundation must also separate tracked managed artifacts from local runtime state. `.gitignore` must cover install output, build output, and `.codeai-hub/state/` so Project Manager/Core telemetry cannot dirty Git after a step has completed.
 

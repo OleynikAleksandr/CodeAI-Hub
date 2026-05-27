@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  renameSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -47,6 +53,7 @@ const createRepository = () => {
   mkdirSync(join(cwd, "src"), { recursive: true });
   writeFileSync(join(cwd, "doc/TODO/todo-plan.md"), createPlanMarkdown());
   writeFileSync(join(cwd, "src/app.ts"), "export const value = 1;\n");
+  writeFileSync(join(cwd, "src/remove.ts"), "export const oldValue = 1;\n");
   runGit(cwd, ["init", "-b", "main"]);
   runGit(cwd, ["config", "user.email", "test@example.com"]);
   runGit(cwd, ["config", "user.name", "Plan Test"]);
@@ -81,6 +88,20 @@ test("plan commit stages dirty files inside current task scope", () => {
     "src/new.ts",
   ]);
   assert.equal(runGit(cwd, ["status", "--short"]), "");
+});
+
+test("plan commit stages scoped renames and deletes", () => {
+  const cwd = createRepository();
+  renameSync(join(cwd, "src/remove.ts"), join(cwd, "src/renamed.ts"));
+
+  runPlanCommit({
+    cwd,
+    message: "fix: let plan commit stage scoped files",
+  });
+
+  assert.equal(runGit(cwd, ["status", "--short"]), "");
+  assert.equal(runGit(cwd, ["ls-files", "src/remove.ts"]), "");
+  assert.equal(runGit(cwd, ["ls-files", "src/renamed.ts"]), "src/renamed.ts\n");
 });
 
 test("plan commit blocks dirty files outside current task scope", () => {

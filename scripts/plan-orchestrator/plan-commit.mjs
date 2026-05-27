@@ -32,7 +32,7 @@ const stagePaths = (cwd, paths) => {
     return;
   }
 
-  runGit(["add", "--", ...uniqueDirtyPaths], cwd);
+  runGit(["add", "-A", "--", "."], cwd);
 };
 
 const assertValidForCommit = ({ message, validation }) => {

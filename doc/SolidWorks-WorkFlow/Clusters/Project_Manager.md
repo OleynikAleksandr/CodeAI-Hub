@@ -38,9 +38,12 @@ read path, ни из client-owned helpers.
 
 PM/shared Session UI may render an inline `Подтверждаю` button at the end of a
 Core/system dialog card tagged `managed-workflow-user-review`. This button sends
-the normal user acceptance intent back to Core; it is not a PM-owned acceptance
-decision and it must not mutate managed plan state, Git state, stage markers, or
-provider continuation directly.
+the Core-owned review action for the current review card back to Core; it is not
+a PM-owned acceptance decision and it must not mutate managed plan state, Git
+state, stage markers, or provider continuation directly. Older review cards stay
+in dialog history as readable system messages, but PM must render an actionable
+button only for the latest active Core review gate and must disable input/buttons
+while that review action is in flight.
 
 ## 2) Где живёт код
 
@@ -80,11 +83,13 @@ provider continuation directly.
 - Workflow Tree status markers are a Core-state projection, not a PM readiness heuristic:
   - `idle` renders as gray/todo, `in_progress` renders as yellow/progress, and `completed` renders as green/active;
   - `blocked`, `invalid`, and `outdated` may add warning visuals or prevent downstream actions, but they are not completion signals;
+  - a current Core user-review/progress artifact for Application Skeleton or Quality Gates projects `in_progress` even when older invalid diagnostics are still available for display;
   - PM must not promote a trunk stage to green from `hasArtifact`, `reviewReady`, `aggregateReady`, Markdown/JSON sidecar presence, local parser success, or generated root files;
   - if Core blocks terminal completion on an unclassified dirty Git tree, PM may show the resolution surface and submit the user's decision back to Core, but PM must not stage, commit, or mutate managed plan state itself.
 - Managed user-review system cards:
   - cards tagged `managed-workflow-user-review` render the Core review handoff plus an inline `Подтверждаю` action at the bottom of the same card;
-  - clicking it sends the same acceptance intent as the old typed `подтверждаю` path through the existing session/dialog send transport;
+  - clicking it sends a Core review action scoped to the current review message id, not ordinary typed text to the provider;
+  - stale review cards remain readable but must not expose active `Подтверждаю` buttons after a newer gate opens or after confirmation starts;
   - after sending the intent, PM may activate the next trunk step card for navigation convenience, but Core still decides whether acceptance is valid and remains the source of completion/phase truth.
 - Settings surface belongs to PM:
   - bottom footer/status bar удалён из Project Manager layout: `Workflow Tree MVP` больше не рендерится, а session/artifact panes используют освобождённую вертикальную область;

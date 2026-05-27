@@ -15,7 +15,7 @@
 
 - `modelId` в transport/runtime/UI contract означает полную effective model identity, а не только base model.
 - `reasoning` и `thinking` являются частью identity, а не декоративным metadata.
-- persisted settings snapshot в `~/.codeai-hub/settings/settings.json` остаётся source of truth для defaults/seed на новую session и для presentation-only flags.
+- persisted settings snapshot is workspace-scoped once a workspace is active: Project Manager/workflow sessions use `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`; the global `~/.codeai-hub/settings/settings.json` file is only a bootstrap/default seed for first workspace materialization or contexts without an active workspace.
 - после создания logical session source of truth для next-turn identity становится `session.modelBinding`; live Settings saves не переписывают уже bound session.
 - legacy `~/.codeai-hub/settings/claude.json` is not part of the supported runtime contract anymore: no live read/write path may depend on it.
 - `ModelInvocationProfile` controls the provider process/session/turn envelope around that identity; it is a separate contract from effective model identity.
@@ -68,7 +68,7 @@ Provider-neutral payload, вычисленный Core-ом из `session.modelBi
 
 ### 3.4. `settings snapshot`
 
-Persisted user-facing settings state, из которого Core вычисляет default identity for a new session binding and presentation/localization policy.
+Persisted user-facing settings state, из которого Core вычисляет default identity for a new session binding and presentation/localization policy. In an active workspace this is `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json`. Global `~/.codeai-hub/settings/settings.json` is a seed/compat path only; it must not be treated as live Project Manager truth after workspace activation.
 Provider modules могут читать local settings только как fallback/continuity helper, но не как source of truth for a bound session identity.
 Settings snapshot reads may be cached only as short, path-scoped read-through snapshots. Core-owned settings save/reset/default-materialization paths must invalidate the canonical path immediately after write; provider-local fallback caches are bounded helpers and never become a second settings owner.
 
@@ -107,7 +107,8 @@ Clone of an existing `session.modelBinding` assigned to a restored or threshold-
 
 Core обязана вычислять effective turn config through the session binding path:
 
-- new session: resolve `session.modelBinding` from explicit selection or `~/.codeai-hub/settings/settings.json`;
+- active workspace new session: resolve `session.modelBinding` from explicit selection or the workspace runtime settings file;
+- unscoped/bootstrap new session: resolve `session.modelBinding` from explicit selection or the global seed `~/.codeai-hub/settings/settings.json`;
 - existing session: read identity from serialized `Session.modelBinding`;
 - restored session: hydrate identity from continuity index/segment `modelBinding`;
 - threshold-created continuation session: clone the previous binding as a continuity-inherited binding;

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "c19f48943",
+  "lastRecordedCommit": "95f02b960",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase133.stream2.task1",
-  "expectedCommitMessage": "chore: build managed review gate release",
+  "currentTaskId": "phase135.stream1.task1",
+  "expectedCommitMessage": "docs: sync workflow clear release architecture",
   "debt": {
-    "expectedCommitMessage": "chore: build managed review gate release",
-    "preCommitHead": "c19f48943",
+    "expectedCommitMessage": "docs: sync workflow clear release architecture",
+    "preCommitHead": "95f02b960",
     "stage": "commit_pending",
-    "taskId": "phase133.stream2.task1"
+    "taskId": "phase135.stream1.task1"
   }
 }
 ```
@@ -1124,12 +1124,18 @@
 
 ### Stream: Release Build
 426. [DONE] `phase133.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record artifacts for release 1.2.378 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build managed review gate release`). Result: Release `1.2.378` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.378.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-427. [PENDING] Git Commit: `chore: build managed review gate release` (hash: TBD)
+427. [DONE] Git Commit: `chore: build managed review gate release` (hash: 95f02b960)
 
 ## Phase 134 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
 
 ### Stream: User Retest
-428. [TODO] `phase134.stream1.task1` User installs release 1.2.378 and verifies managed review gates, yellow review markers, stale confirmation suppression, and Quality Gates draft review Git cleanliness before acceptance (scope: user workflow acceptance; no commit expected).
+428. [DONE] `phase134.stream1.task1` User installs release 1.2.378 and verifies managed review gates, yellow review markers, stale confirmation suppression, and Quality Gates draft review Git cleanliness before acceptance (scope: user workflow acceptance; no commit expected). Result: User accepted release 1.2.378 and requested closeout documentation audit, planning-doc disposition, archive, and GitHub push.
+
+## Phase 135 - Closeout Documentation Audit (owner: Codex, updated: 2026-05-27)
+
+### Stream: SSOT Sync
+429. [DONE] `phase135.stream1.task1` Synchronize SolidWorks workflow SSOT documents with the accepted 1.2.378 codebase: workspace-owned settings/localization runtime truth, managed review Core action/idempotency, stale confirmation suppression, managed review progress markers, and Quality Gates pre-acceptance draft cleanup; archive superseded WorkflowClear planning sources after moving their stable decisions into SSOT, and repair plan commit staging for closeout archive renames (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/CoreOrchestrator.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md, doc/SolidWorks-WorkFlow/Contracts/SessionInputLock_SSOT_StateMachine.md, doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md, doc/SolidWorks-WorkFlow/Contracts/WorkspaceRuntime.md, doc/SolidWorks-WorkFlow/Modules/Localization.md, doc/SolidWorks-WorkFlow/Plans, doc/SolidWorks-WorkFlow/Docs_Index.md, scripts/plan-orchestrator/plan-commit.mjs, scripts/plan-orchestrator/plan-commit.test.mjs, doc/TODO/todo-plan.md`; scope exception: closeout audit updates cross-cutting SSOT documents, the accepted planning-source disposition, and the narrow plan-commit rename staging guard needed to archive planning sources; expected commit: `docs: sync workflow clear release architecture`).
+430. [PENDING] Git Commit: `docs: sync workflow clear release architecture` (hash: TBD)
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

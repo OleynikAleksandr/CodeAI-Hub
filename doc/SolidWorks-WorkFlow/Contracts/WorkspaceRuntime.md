@@ -9,6 +9,17 @@
 - `sessionId` — текущий runtime сегмент Core (live status/usage/lock)
 - `providerSessionId` — native id провайдера (resume)
 
+## Workspace Runtime Capsule
+
+Active workspace-owned mutable runtime lives under `.codeai-hub/<workspaceSlug>/runtime/**` inside the selected workspace. Core/PM must scope behavior-changing settings and localization to that capsule once a workspace is active:
+
+- `runtime/settings/settings.json` — live workspace Settings truth for Project Manager/workflow defaults;
+- `runtime/localization/**` — live workspace localization catalogs, metadata, glossary overrides and browser bootstrap cache;
+- `runtime/providers/**/home/**` — provider native homes/session logs/config for workflow runtime;
+- `runtime/sessions/unified/**` — Core logical session history that participates in workflow recovery/accepted-step commits.
+
+Settings, localization runtime and provider homes are rollback-ignored live state and must be preserved across workflow Clear/Undo. Core logical sessions, accepted artifacts and applied model/config evidence remain the rollback/recovery proof.
+
 ## Wire Boundary / Diagnostics (runtime stability)
 - PM/Core WebSocket frames проходят owner-layer validators до dispatch. PM валидирует входящий Core stream на своей границе, Core валидирует входящие PM commands на remote-bridge границе; invalid frame не должен попадать в downstream handlers.
 - `ProjectManagerApi.connect()` обязан быть idempotent для состояний `OPEN` и `CONNECTING`; повторный `connect` не создаёт параллельный socket. `disconnect()` является intentional cleanup boundary and clears pending reconnect/retry state.

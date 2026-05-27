@@ -167,10 +167,14 @@ Scope: в первую очередь для resume-сессий.
 Для `Description` и `Virtual Simulation` Core показывает review-card только после завершения provider turn-а. До первого provider ответа такой system card быть не должно: стартовый prompt обязан уйти агенту.
 
 Review-card содержит inline-кнопку `Подтверждаю`. Пользователь не обязан печатать это слово вручную:
-- кнопка отправляет Core acceptance intent;
+- кнопка отправляет Core acceptance/review action for the active review message id, not provider-visible typed text;
 - свободный текст пользователя считается ответом/правкой и уходит агенту;
 - если агент после этого обновляет артефакт и завершает turn, Core снова показывает такую же review-card;
 - подтверждение кнопкой принимает текущий артефакт и открывает карточку следующего шага (`Description -> Virtual Simulation`, `Virtual Simulation -> Diagram Modules`).
+- предыдущие review-card остаются в истории, но не показывают активную кнопку после появления более свежего gate или после начала подтверждения;
+- пока Core применяет review action, поле ввода и кнопки подтверждения остаются locked до нового snapshot/Core outcome.
+
+Для managed technical stages применяется тот же UI card tag, но другой backend path: `Подтверждаю` always calls the Core review decision path for the current gate. It must not be sent as ordinary text to the provider and must not create duplicate provider turns.
 
 ---
 
@@ -189,6 +193,11 @@ Review-card содержит inline-кнопку `Подтверждаю`. По�
    - Дождаться завершения turn.
    - Ввод доступен для следующего сообщения, а Core показывает review-card с кнопкой `Подтверждаю`.
    - Нажатие кнопки открывает карточку `Diagram Modules`.
+
+3a. **Managed review confirmation → no duplicate action**
+   - Дождаться `managed-workflow-user-review` card на Application Skeleton или Quality Gates.
+   - Активная кнопка есть только на последнем gate.
+   - Нажатие кнопки блокирует input/action до Core outcome; старые cards остаются без активной кнопки и не отправляют provider-visible `подтверждаю`.
 
 4. **Rollover happy path → unlock after bootstrap**
    - В rollover ввод временно блокирован.

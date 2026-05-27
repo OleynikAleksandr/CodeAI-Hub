@@ -1,7 +1,7 @@
 # Localization — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-04-16
+**Updated:** 2026-05-27
 **Owner:** Oleksandr + Codex
 **Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.1.881`)
 
@@ -34,7 +34,7 @@ This module depends on `@codeai-hub/translation`, but it is a separate boundary.
 - source dictionaries under `assets/localization/source/en/`;
 - localization categories and source-language invariant;
 - glossary baselines and user override storage;
-- bundle persistence under `~/.codeai-hub/localization/`;
+- bundle persistence under the active workspace runtime localization root;
 - bundle reuse / invalidation via metadata hash;
 - resolved runtime payload snapshots keyed by category/language/engine policy;
 - persisted browser bootstrap snapshots used for first paint on cold start.
@@ -62,7 +62,7 @@ Current high-signal files:
 - `src/language-catalog.ts`, `src/language-catalog-service.ts` — engine language catalog exposure.
 - `src/glossary-contract.ts`, `src/glossary-merge-service.ts`, `src/glossary-protector.ts`, `src/glossary-validator.ts` — glossary and protected-term pipeline.
 - `src/user-glossary-store.ts` — user-managed seeded glossary text file for English preserve terms.
-- `src/localization-paths.ts` — canonical `~/.codeai-hub/localization/` layout.
+- `src/localization-paths.ts` — canonical localization root resolver; Core passes the active workspace runtime root, while the package default/global home path remains seed/compat only.
 - `src/localization-bundle-store.ts` — persisted bundle read/write.
 - `src/localization-runtime-bootstrap-store.ts` — persisted startup-ready browser localization snapshot read/write.
 - `src/localization-metadata-store.ts` — source-hash metadata and regeneration reuse contract.
@@ -113,16 +113,17 @@ Legacy runtime categories kept only as compatibility aliases during the bridge m
 - `system_feedback`
 - `interactive_templates`
 
-User-owned mutable data lives under:
+User-owned mutable data lives under the active workspace runtime capsule:
 
-- `~/.codeai-hub/localization/metadata.json`
-- `~/.codeai-hub/localization/catalogs/<category>/<language>.json`
-- `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json`
-- `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt`
+- `.codeai-hub/<workspaceSlug>/runtime/localization/metadata.json`
+- `.codeai-hub/<workspaceSlug>/runtime/localization/catalogs/<category>/<language>.json`
+- `.codeai-hub/<workspaceSlug>/runtime/localization/cache/browser-runtime-bootstrap.json`
+- `.codeai-hub/<workspaceSlug>/runtime/localization/glossary/do-not-translate-terms.txt`
 
 User settings policy lives separately in:
 
-- `~/.codeai-hub/settings/settings.json`
+- `.codeai-hub/<workspaceSlug>/runtime/settings/settings.json` for the active workspace;
+- `~/.codeai-hub/settings/settings.json` only as bootstrap/default seed before a workspace-scoped file exists.
 
 Current settings contract stores:
 
@@ -149,7 +150,7 @@ Current glossary contract stores:
   - `assets/localization/glossary/base.json`
   - `assets/localization/glossary/<language>.json`
 - user-owned glossary overrides:
-  - `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt`
+  - `.codeai-hub/<workspaceSlug>/runtime/localization/glossary/do-not-translate-terms.txt`
 - baseline protected terms cover provider/product names, technical brands, environment/config tokens, and workflow artifact filenames; language-specific glossaries may additionally pin approved translated forms such as Russian workflow terminology.
 
 Current user-facing settings contract:
@@ -253,7 +254,7 @@ Current live browser behavior:
 
 - browser surfaces resolve copy by message id through the shared lookup helper;
 - extension settings load/save and Project Manager settings load materialize a `LocalizationRuntimePayload` through `LocalizationFacade.resolveRuntimePayload(...)`;
-- the localization package also persists a startup-ready browser bootstrap snapshot under `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json`;
+- the localization package also persists a startup-ready browser bootstrap snapshot under `.codeai-hub/<workspaceSlug>/runtime/localization/cache/browser-runtime-bootstrap.json` for the active workspace;
 - Settings WebView reads that snapshot through HTML bootstrap injection (`window.__CODEAI_LOCALIZATION_BOOTSTRAP__`) before JS mounts;
 - Project Manager reads the same persisted snapshot through core HTTP endpoint `/api/v1/localization/bootstrap` before `root.render(...)`;
 - for `anthropic-claude-haiku-4-5`, `/api/v1/localization/bootstrap` is authoritative: Core must rebuild a strict snapshot from current normalized `settings.json` before returning it, instead of serving stale persisted cache only;
@@ -261,7 +262,7 @@ Current live browser behavior:
 - Settings `Save Changes` enters a blocking strict localization sync through `LocalizationFacade.synchronizeRuntimePayload(...)` only when the save actually changes localization-impacting fields (engine, approved category selections, or glossary-enabled flag). For those saves the settings surface stays busy and Project Manager/new session sends stay blocked until translated interface bundles are ready. Provider-only, response-policy, and continuity-only saves skip the busy overlay entirely and persist through the best-effort envelope path;
 - when `anthropic-claude-haiku-4-5` is selected, extension-host save/bootstrap flows must fetch the authoritative Core snapshot and verify that the returned settings match the requested runtime settings. Missing or mismatched Core bootstrap is a blocking failure, not a reason to rematerialize helper/messages bundles locally;
 - workflow prompt-pack assembly in Project Manager must treat the persisted browser bootstrap snapshot as a valid fallback source for `Artifacts for the User` language when live `settings:loaded` cache is not ready yet; reconnect/cold-start paths must not silently degrade staged artifact language back to default `en` while persisted localization state still says `ru`;
-- the Settings glossary card no longer keeps an inline browser draft; it opens `~/.codeai-hub/localization/glossary/do-not-translate-terms.txt` in the current VS Code window and lets the user edit one preserve term per line;
+- the Settings glossary card no longer keeps an inline browser draft; it opens the active workspace glossary file at `.codeai-hub/<workspaceSlug>/runtime/localization/glossary/do-not-translate-terms.txt` in the current VS Code window and lets the user edit one preserve term per line;
 - Project Manager help/questionnaire/navigation leaves now consume the shared provider instead of reloading settings in each localized component;
 - the browser runtime no longer embeds bundled English source catalogs as the live data source; translated and source bundles come from persisted/bootstrap or host-resolved payloads, while component-level fallback strings are only a last-resort safety path;
 - the settings card exposes a constrained `Translation engine` selector with `Google GTX Free`, `OpenAI Codex · GPT-5.4 Mini`, `OpenAI Codex · GPT-5.3 Codex Spark`, and `Anthropic Claude · Haiku 4.5`, plus language catalogs through a searchable combobox; the visible `English` source choice persists as canonical `source`.
@@ -273,7 +274,7 @@ Current live browser behavior:
 ## 7. Invariants
 
 1. Product-owned localizable source copy must live in bundled English dictionaries, not in React components.
-2. User-owned mutable localization data must live under `~/.codeai-hub/localization/`, not inside the installed extension bundle.
+2. User-owned mutable localization data for an active workspace must live under `.codeai-hub/<workspaceSlug>/runtime/localization/`, not inside the installed extension bundle and not in the global user home path. Global `~/.codeai-hub/localization/` is seed/compat data only.
 3. `@codeai-hub/translation` remains translation-only and must not absorb persistence/glossary/UI lookup concerns.
 4. Glossary protection must be able to preserve branded names, technical terms, env vars, and workflow vocabulary.
 5. Lookup keys must remain stable when the semantics stay the same.

@@ -94,6 +94,27 @@ Canonical code:
 - `packages/core/src/remote-bridge/handlers/session-continuity-materializer.ts` — `materializeContinuityEntries`.
 - `packages/core/src/remote-bridge/remote-bridge-dialog-command-router.ts` — integration в `handleDialogList`.
 
+## 3.4 Managed review turn completion gate (release `1.2.378`)
+
+Provider terminal events alone are not an unlock source for managed workflow turns. A provider may emit `turn_completed` while Core still needs to persist assistant messages, run managed post-turn validation, clean/commit stage-owned residue, or open a Core review gate.
+
+Current implemented rule:
+
+1. For managed workflow sessions, provider `turn_completed` is delayed behind Core post-turn arbitration.
+2. PM/shared UI may unlock input only after Core has settled the managed turn through snapshot/session state and either:
+   - opened the current `managed-workflow-user-review` gate; or
+   - completed/failed the managed transition with an explicit Core outcome.
+3. Inline review confirmation actions lock the input/buttons while the Core review decision is in flight.
+4. Older review cards are historical messages only and do not provide active buttons, so they cannot create duplicate provider turns or unlock the UI prematurely.
+
+Canonical code:
+- `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`
+- `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts`
+- `src/client/ui/src/session/dialog-panel.tsx`
+- `src/client/ui/src/session/session-view.tsx`
+- `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx`
+- `src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts`
+
 ---
 
 ## 4) Target-state planning вынесен из текущего контракта
