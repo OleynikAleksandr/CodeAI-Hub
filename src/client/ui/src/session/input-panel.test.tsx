@@ -143,6 +143,19 @@ test("InputPanel keeps read-only mode when connection stays blocked after contin
   );
 });
 
+test("InputPanel currently maps generic blocked waits to resuming copy", async () => {
+  const html = await renderInputPanel({
+    connectionState: "blocked",
+    continuityLockActive: false,
+  });
+
+  assert.equal(html.includes("Agent is working… Please wait."), false);
+  assert.equal(
+    html.includes("Agent is resuming your session… Please wait."),
+    true
+  );
+});
+
 test("InputPanel enables fieldset when continuity unlock is resolved", async () => {
   const html = await renderInputPanel({
     connectionState: "idle",

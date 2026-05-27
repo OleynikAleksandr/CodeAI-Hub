@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "851363173",
+  "lastRecordedCommit": "c23ee6034",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8d.gemini-artifact-verify.task1",
-  "expectedCommitMessage": "test: verify virtual simulation artifact handoff",
+  "currentTaskId": "provider-readiness.phase8d.wait-copy-diagnose.task1",
+  "expectedCommitMessage": "test: characterize session wait copy classification",
   "debt": {
-    "expectedCommitMessage": "test: verify virtual simulation artifact handoff",
-    "preCommitHead": "851363173",
+    "expectedCommitMessage": "test: characterize session wait copy classification",
+    "preCommitHead": "c23ee6034",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8d.gemini-artifact-verify.task1"
+    "taskId": "provider-readiness.phase8d.wait-copy-diagnose.task1"
   }
 }
 ```
@@ -243,11 +243,14 @@
 84. [DONE] `provider-readiness.phase8d.gemini-artifact-verify.task1` Verify Gemini/Claude Virtual Simulation handoff, tree marker status, and Diagram Modules start gating against missing/mislocated `virtual-simulation.md` (scope: `packages/core, src/client/project-manager/services, doc/TODO/todo-plan.md`; expected commit: `test: verify virtual simulation artifact handoff`).
     - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-27: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js` — PASS (5 tests).
-85. [PENDING] Git Commit: `test: verify virtual simulation artifact handoff` (hash: TBD)
+85. [DONE] Git Commit: `test: verify virtual simulation artifact handoff` (hash: c23ee6034)
 
 ### Stream: Session Wait Copy Classification
-86. [TODO] `provider-readiness.phase8d.wait-copy-diagnose.task1` Retest finding 2026-05-27: normal Kimi work can show `Agent is resuming your session... Please wait.`; characterize how `connectionState=blocked`, `continuityLockActive`, and lock reasons are mapped to input placeholder copy (scope: `src/client/ui/src/session/input-panel-placeholders.ts, src/client/ui/src/session/session-view.tsx, src/client/ui/src/session/input-panel.test.tsx, doc/TODO/todo-plan.md`; expected commit: `test: characterize session wait copy classification`).
-87. [TODO] Git Commit: `test: characterize session wait copy classification` (hash: TBD)
+86. [DONE] `provider-readiness.phase8d.wait-copy-diagnose.task1` Retest finding 2026-05-27: normal Kimi work can show `Agent is resuming your session... Please wait.`; characterize how `connectionState=blocked`, `continuityLockActive`, and lock reasons are mapped to input placeholder copy (scope: `src/client/ui/src/session/input-panel-placeholders.ts, src/client/ui/src/session/session-view.tsx, src/client/ui/src/session/input-panel.test.tsx, doc/TODO/todo-plan.md`; expected commit: `test: characterize session wait copy classification`).
+    - Diagnostic 2026-05-27: `resolveInputPlaceholder()` maps any `connectionState === "blocked"` to `Agent is resuming your session... Please wait.`, while Project Manager uses `blocked` for ordinary non-editable waits beyond context rollover/resume.
+    - Result 2026-05-27: `npx tsx --test src/client/ui/src/session/input-panel.test.tsx` — PASS (13 tests).
+    - Result 2026-05-27: `npm run typecheck:webview` — PASS.
+87. [PENDING] Git Commit: `test: characterize session wait copy classification` (hash: TBD)
 88. [TODO] `provider-readiness.phase8d.wait-copy-fix.task1` Make `Agent is resuming your session... Please wait.` appear only for context continuity/resume reasons, while ordinary active/blocked provider work shows `Agent is working... Please wait.` (scope: `src/client/ui/src/session/input-panel-placeholders.ts, src/client/ui/src/session/session-view.tsx, src/client/ui/src/session/input-panel.test.tsx`; expected commit: `fix: separate session working and resume placeholders`).
 89. [TODO] Git Commit: `fix: separate session working and resume placeholders` (hash: TBD)
 90. [TODO] `provider-readiness.phase8d.wait-copy-verify.task1` Verify running, generic blocked, managed review, binding-pending, and resume-bootstrap input placeholder states so non-rollover waits cannot regress to resume copy (scope: `src/client/ui/src/session/input-panel.test.tsx, src/client/project-manager/components/sessions/session-stream.test.ts, src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify session wait placeholder states`).
