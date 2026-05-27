@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "c24d1c370",
+  "lastRecordedCommit": "28e56ea6f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase129.stream1.task1",
-  "expectedCommitMessage": "docs: prepare quality gates clear restart release",
+  "currentTaskId": "phase129.stream2.task1",
+  "expectedCommitMessage": "chore: build quality gates clear restart release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare quality gates clear restart release",
-    "preCommitHead": "c24d1c370",
+    "expectedCommitMessage": "chore: build quality gates clear restart release",
+    "preCommitHead": "28e56ea6f",
     "stage": "commit_pending",
-    "taskId": "phase129.stream1.task1"
+    "taskId": "phase129.stream2.task1"
   }
 }
 ```
@@ -1081,11 +1081,11 @@
 
 ### Stream: Release Docs
 403. [DONE] `phase129.stream1.task1` Update release-facing docs for the next retest version after the Quality Gates/Clear dirty-Git fixes and before running release automation; user explicitly requested a new release in this session on 2026-05-27 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates clear restart release`).
-404. [PENDING] Git Commit: `docs: prepare quality gates clear restart release` (hash: TBD)
+404. [DONE] Git Commit: `docs: prepare quality gates clear restart release` (hash: 28e56ea6f)
 
 ### Stream: Release Build
-405. [TODO] `phase129.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Quality Gates Clear restart retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates clear restart release`).
-406. [TODO] Git Commit: `chore: build quality gates clear restart release` (hash: TBD)
+405. [DONE] `phase129.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Quality Gates Clear restart retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates clear restart release`). Result: Release `1.2.377` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.377.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+406. [PENDING] Git Commit: `chore: build quality gates clear restart release` (hash: TBD)
 
 ## Phase 130 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
 
