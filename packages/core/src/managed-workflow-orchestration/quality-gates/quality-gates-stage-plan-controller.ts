@@ -180,6 +180,18 @@ export class QualityGatesStagePlanController {
     });
   }
 
+  async commitTerminalHandoffResidue(params: {
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<void> {
+    await ensureManagedTerminalGitClean({
+      gitBoundary: this.managedGitBoundary,
+      stage: "quality_gates",
+      workspaceRoot: params.workspaceRoot,
+      workspaceSlug: params.workspaceSlug,
+    });
+  }
+
   async recordRejectedTurn(params: {
     readonly decision: QualityGatesManagedValidationResult;
     readonly rejectedCommitHash: string;

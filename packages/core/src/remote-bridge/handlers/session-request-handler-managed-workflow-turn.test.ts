@@ -6,31 +6,22 @@ import test from "node:test";
 import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
 import type { ApplicationSkeletonManagedValidationResult } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-validator";
 import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
-import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
-import type { QualityGatesManagedValidationResult } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
 import { SessionManager } from "../../session-manager";
 import { SessionRequestHandlerManagedWorkflowTurn } from "./session-request-handler-managed-workflow-turn";
 
 const WORKSPACE_SLUG = "demo-workspace";
 const APP_STAGE = "application_skeleton";
 const DIAGRAM_STAGE = "diagram_modules";
-const QUALITY_STAGE = "quality_gates";
 const USER_REVIEW_RE =
   /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
 const CONFIRMATION_RE = /нажмите кнопку «Подтверждаю» ниже/u;
 const TYPE_CONFIRMATION_RE = /напишите `подтверждаю`/u;
-const RETURN_RE = /Можно переходить к следующему шагу/u;
 const APP_REVIEW_RE =
   /Core: Application Skeleton перешёл в пользовательскую проверку/u;
 const DIAGRAM_REVIEW_RE =
   /Core: Diagram Modules перешёл в пользовательскую проверку/u;
-const QUALITY_REVIEW_RE =
-  /Core: Quality Gates перешёл в пользовательскую проверку/u;
-const QUALITY_RETURN_RE = /Core: Quality Gates завершён и зафиксирован/u;
 const APP_MARKDOWN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
 const APP_MAP_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`;
-const QUALITY_MARKDOWN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`;
-const QUALITY_JSON_PATH = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.json`;
 
 interface CapturedCoreMessage {
   readonly content: string;
@@ -97,83 +88,17 @@ const appMaterializedDecision =
     valid: true,
   });
 
-const qualityContract = (
-  overrides: Record<string, unknown> = {}
-): Record<string, unknown> => ({
-  accepted: false,
-  advisory: [],
-  commands: {
-    "qg-secret-scan": {
-      availability: "not_integrated",
-      desiredStatus: "active",
-      id: "qg-secret-scan",
-      integrationRequired: true,
-      plannedIntegrationPaths: ["package.json", ".husky/pre-commit"],
-      proposedCommand: "npm run qg:secret-scan",
-    },
-  },
-  deferred: [],
-  integrated: false,
-  integratedPaths: [],
-  integrationState: "not_started",
-  plannedRequiredAfterIntegration: [],
-  requiredBeforeCommit: ["qg-secret-scan"],
-  requiredBeforeModuleExecution: [],
-  requiredBeforePush: [],
-  requiredBeforeRelease: [],
-  schema: "codeai-quality-gates-v1",
-  verification: [],
-  ...overrides,
-});
-
-const qualityDraftDecision = (): QualityGatesManagedValidationResult => ({
-  contractJson: qualityContract(),
-  diagnostics: [],
-  nextAction: "open_user_review",
-  nextPrompt: null,
-  phase: "draft",
-  valid: true,
-});
-
-const qualityIntegratedDecision = (): QualityGatesManagedValidationResult => ({
-  contractJson: qualityContract({
-    accepted: true,
-    commands: {
-      "qg-secret-scan": {
-        availability: "executable",
-        desiredStatus: "active",
-        id: "qg-secret-scan",
-        integrationRequired: true,
-        proposedCommand: "npm run qg:secret-scan",
-      },
-    },
-    integrated: true,
-    integratedPaths: [
-      "package.json",
-      ".husky/pre-commit",
-      "scripts/quality-gates/secret-scan.mjs",
-    ],
-    integrationState: "integrated",
-  }),
-  diagnostics: [],
-  nextAction: "open_persistent_return",
-  nextPrompt: null,
-  phase: "integration",
-  valid: true,
-});
-
 const createHandler = (params: {
-  readonly stage:
-    | typeof APP_STAGE
-    | typeof DIAGRAM_STAGE
-    | typeof QUALITY_STAGE;
+  readonly stage: typeof APP_STAGE | typeof DIAGRAM_STAGE;
   readonly workspaceRoot: string;
 }): {
   readonly coreMessages: CapturedCoreMessage[];
   readonly handler: SessionRequestHandlerManagedWorkflowTurn;
   readonly sessionId: string;
+  readonly waitEvents: string[];
 } => {
   const coreMessages: CapturedCoreMessage[] = [];
+  const waitEvents: string[] = [];
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
     "codexCli",
@@ -186,6 +111,10 @@ const createHandler = (params: {
       appendCoreMessage: (_sessionId: string, message: CapturedCoreMessage) => {
         coreMessages.push(message);
       },
+      waitForMessagePersistence: (waitSessionId: string) => {
+        waitEvents.push(waitSessionId);
+        return Promise.resolve();
+      },
     },
     getMessageDispatch: () =>
       ({
@@ -193,7 +122,7 @@ const createHandler = (params: {
       }) as never,
     sessionManager,
   });
-  return { coreMessages, handler, sessionId: session.id };
+  return { coreMessages, handler, sessionId: session.id, waitEvents };
 };
 
 const prepareApplicationDraft = async (
@@ -273,6 +202,9 @@ const prepareDiagramIndex = async (workspaceRoot: string): Promise<void> => {
     [
       "# Product Parts",
       "",
+      "- leadProductPartId: `project-manager`",
+      "- productPartLeadershipOrder: `project-manager`",
+      "",
       "1. `project-manager` - `.codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md`",
     ].join("\n")
   );
@@ -304,57 +236,6 @@ const writeDiagramProductPart = (workspaceRoot: string): Promise<void> =>
     ].join("\n")
   );
 
-const prepareQualityDraft = async (workspaceRoot: string): Promise<void> => {
-  await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
-    workspaceRoot,
-  });
-  await writeWorkspaceFile(
-    workspaceRoot,
-    QUALITY_MARKDOWN_PATH,
-    "# Quality Gates Baseline\n\n## Overview\n\nGate contract.\n"
-  );
-  await writeWorkspaceFile(
-    workspaceRoot,
-    QUALITY_JSON_PATH,
-    `${JSON.stringify(qualityContract(), null, 2)}\n`
-  );
-  await new QualityGatesStagePlanController().openDraftPhase({ workspaceRoot });
-};
-
-const prepareQualityIntegration = async (
-  workspaceRoot: string
-): Promise<void> => {
-  const controller = new QualityGatesStagePlanController();
-  await prepareQualityDraft(workspaceRoot);
-  await controller.commitManagedTurn({
-    decision: qualityDraftDecision(),
-    sessionId: "setup-session",
-    workspaceRoot,
-    workspaceSlug: WORKSPACE_SLUG,
-  });
-  await controller.acceptUserReviewWithoutRevision({ workspaceRoot });
-  await writeWorkspaceFile(
-    workspaceRoot,
-    QUALITY_JSON_PATH,
-    `${JSON.stringify(qualityIntegratedDecision().contractJson, null, 2)}\n`
-  );
-  await writeWorkspaceFile(
-    workspaceRoot,
-    "package.json",
-    '{"scripts":{"qg:secret-scan":"node scripts/quality-gates/secret-scan.mjs"}}\n'
-  );
-  await writeWorkspaceFile(
-    workspaceRoot,
-    "scripts/quality-gates/secret-scan.mjs",
-    "console.log('ok');\n"
-  );
-  await writeWorkspaceFile(
-    workspaceRoot,
-    ".husky/pre-commit",
-    "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
-  );
-};
-
 test("managed workflow turn emits Core-owned user review handoff messages", async () => {
   const cases = [
     {
@@ -367,11 +248,6 @@ test("managed workflow turn emits Core-owned user review handoff messages", asyn
       prepare: prepareApplicationMaterialization,
       stage: APP_STAGE,
     },
-    {
-      expected: QUALITY_REVIEW_RE,
-      prepare: prepareQualityDraft,
-      stage: QUALITY_STAGE,
-    },
   ] as const;
   for (const testCase of cases) {
     const workspaceRoot = await mkdtemp(
@@ -379,7 +255,7 @@ test("managed workflow turn emits Core-owned user review handoff messages", asyn
     );
     try {
       await testCase.prepare(workspaceRoot);
-      const { coreMessages, handler, sessionId } = createHandler({
+      const { coreMessages, handler, sessionId, waitEvents } = createHandler({
         stage: testCase.stage,
         workspaceRoot,
       });
@@ -394,6 +270,7 @@ test("managed workflow turn emits Core-owned user review handoff messages", asyn
         coreMessages.at(-1)?.content ?? "",
         TYPE_CONFIRMATION_RE
       );
+      assert.deepEqual(waitEvents, []);
     } finally {
       await rm(workspaceRoot, { force: true, recursive: true });
     }
@@ -425,35 +302,5 @@ test("managed workflow turn emits Core-owned Diagram Modules review handoff", as
     );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
-  }
-});
-
-test("managed workflow turn emits Core-owned persistent return messages", async () => {
-  const cases = [
-    {
-      expected: QUALITY_RETURN_RE,
-      prepare: prepareQualityIntegration,
-      stage: QUALITY_STAGE,
-    },
-  ] as const;
-  for (const testCase of cases) {
-    const workspaceRoot = await mkdtemp(
-      path.join(tmpdir(), `managed-return-${testCase.stage}-`)
-    );
-    try {
-      await testCase.prepare(workspaceRoot);
-      const { coreMessages, handler, sessionId } = createHandler({
-        stage: testCase.stage,
-        workspaceRoot,
-      });
-
-      await handler.handleTurnCompleted(sessionId);
-
-      assert.equal(coreMessages.at(-1)?.tag, "managed-workflow-complete");
-      assert.match(coreMessages.at(-1)?.content ?? "", testCase.expected);
-      assert.match(coreMessages.at(-1)?.content ?? "", RETURN_RE);
-    } finally {
-      await rm(workspaceRoot, { force: true, recursive: true });
-    }
   }
 });

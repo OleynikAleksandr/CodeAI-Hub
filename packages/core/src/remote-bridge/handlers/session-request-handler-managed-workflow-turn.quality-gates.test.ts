@@ -1,0 +1,322 @@
+import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
+import { appendFileSync, mkdirSync } from "node:fs";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import test from "node:test";
+import { promisify } from "node:util";
+import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
+import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
+import type { QualityGatesManagedValidationResult } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
+import { SessionManager } from "../../session-manager";
+import { SessionRequestHandlerManagedWorkflowTurn } from "./session-request-handler-managed-workflow-turn";
+
+const execFileAsync = promisify(execFile);
+const WORKSPACE_SLUG = "demo-workspace";
+const QUALITY_STAGE = "quality_gates";
+const QUALITY_MARKDOWN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.md`;
+const QUALITY_JSON_PATH = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.json`;
+const QUALITY_REVIEW_RE =
+  /Core: Quality Gates перешёл в пользовательскую проверку/u;
+const QUALITY_RETURN_RE = /Core: Quality Gates завершён и зафиксирован/u;
+const RETURN_RE = /Можно переходить к следующему шагу/u;
+const MANAGED_TERMINAL_RESIDUE_COMMIT_RE =
+  /chore: commit managed terminal residue/u;
+const USER_REVIEW_RE =
+  /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
+
+interface CapturedCoreMessage {
+  readonly content: string;
+  readonly tag: string;
+}
+
+const writeWorkspaceFile = async (
+  workspaceRoot: string,
+  relativePath: string,
+  content: string
+): Promise<void> => {
+  const absolutePath = path.join(workspaceRoot, relativePath);
+  await mkdir(path.dirname(absolutePath), { recursive: true });
+  await writeFile(absolutePath, content, "utf8");
+};
+
+const qualityDraftDecision = (): QualityGatesManagedValidationResult => ({
+  contractJson: null,
+  diagnostics: [],
+  nextAction: "open_user_review",
+  nextPrompt: null,
+  phase: "draft",
+  valid: true,
+});
+
+const integratedCommands = (): Record<string, unknown> => ({
+  "qg-max-file-lines": {
+    availability: "executable",
+    baseline: ["minimal", "recommended", "strict"],
+    blockingIn: ["beforeCommit"],
+    desiredStatus: "active",
+    id: "qg-max-file-lines",
+    integrationRequired: true,
+    proposedCommand: "npm run qg:max-file-lines",
+    purpose: "Enforce source files and classes <= 500 lines.",
+  },
+  "qg-secret-scan": {
+    availability: "executable",
+    baseline: ["recommended"],
+    blockingIn: ["beforeCommit"],
+    desiredStatus: "active",
+    id: "qg-secret-scan",
+    integrationRequired: true,
+    proposedCommand: "npm run qg:secret-scan",
+  },
+});
+
+const qualityIntegratedDecision = (): QualityGatesManagedValidationResult => ({
+  contractJson: {
+    accepted: true,
+    advisory: [],
+    commands: integratedCommands(),
+    deferred: [],
+    integrated: true,
+    integratedPaths: [
+      "package.json",
+      ".husky/pre-commit",
+      "scripts/quality-gates/max-file-lines.mjs",
+      "scripts/quality-gates/secret-scan.mjs",
+    ],
+    integrationState: "integrated",
+    requiredBeforeCommit: ["qg-secret-scan", "qg-max-file-lines"],
+    requiredBeforeModuleExecution: [],
+    requiredBeforePush: [],
+    requiredBeforeRelease: [],
+    schema: "codeai-quality-gates-v1",
+  },
+  diagnostics: [],
+  nextAction: "open_persistent_return",
+  nextPrompt: null,
+  phase: "integration",
+  valid: true,
+});
+
+const createHandler = (params: {
+  readonly persistCoreMessages?: boolean;
+  readonly workspaceRoot: string;
+}): {
+  readonly coreMessages: CapturedCoreMessage[];
+  readonly handler: SessionRequestHandlerManagedWorkflowTurn;
+  readonly sessionId: string;
+  readonly waitEvents: string[];
+} => {
+  const coreMessages: CapturedCoreMessage[] = [];
+  const waitEvents: string[] = [];
+  const sessionManager = new SessionManager();
+  const session = sessionManager.createSession(
+    "codexCli",
+    params.workspaceRoot,
+    "provider-session-1",
+    { initiativeSlug: WORKSPACE_SLUG, stage: QUALITY_STAGE }
+  );
+  const handler = new SessionRequestHandlerManagedWorkflowTurn({
+    eventMessages: {
+      appendCoreMessage: (_sessionId: string, message: CapturedCoreMessage) => {
+        coreMessages.push(message);
+        if (!params.persistCoreMessages) {
+          return;
+        }
+        const unifiedSessionPath = path.join(
+          params.workspaceRoot,
+          ".codeai-hub",
+          WORKSPACE_SLUG,
+          "runtime",
+          "sessions",
+          "unified",
+          `${session.id}.jsonl`
+        );
+        mkdirSync(path.dirname(unifiedSessionPath), { recursive: true });
+        appendFileSync(
+          unifiedSessionPath,
+          `${JSON.stringify({ role: "system", ...message })}\n`,
+          "utf8"
+        );
+      },
+      waitForMessagePersistence: (waitSessionId: string) => {
+        waitEvents.push(waitSessionId);
+        return Promise.resolve();
+      },
+    },
+    getMessageDispatch: () =>
+      ({
+        sendInternalMessage: () => Promise.resolve(),
+      }) as never,
+    sessionManager,
+  });
+  return { coreMessages, handler, sessionId: session.id, waitEvents };
+};
+
+const researchJson = (): string =>
+  `${JSON.stringify(
+    {
+      recommendations: [
+        {
+          purpose: "security",
+          recommendation: "Add a secret scanning gate.",
+          requiredChecks: ["qg-secret-scan"],
+          sourceUrls: ["https://docs.npmjs.com/"],
+          tradeoff: "Adds pre-commit runtime.",
+          userApprovalRequired: false,
+          whyUse: "Prevents committing credentials.",
+        },
+      ],
+      schema: "codeai-quality-gates-research-v1",
+      sources: [
+        {
+          retrievedAt: "2026-05-22T00:00:00.000Z",
+          sourceType: "official",
+          title: "Official npm docs",
+          url: "https://docs.npmjs.com/",
+          whyRelevant: "Defines npm script behavior for hooks.",
+        },
+      ],
+      stackSummary: "Node.js workspace",
+    },
+    null,
+    2
+  )}\n`;
+
+const prepareQualityDraft = async (workspaceRoot: string): Promise<void> => {
+  await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
+    workspaceRoot,
+  });
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.md`,
+    "# Quality Gates Research\n\nSecret scanning is recommended.\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates-research.json`,
+    researchJson()
+  );
+  await new QualityGatesStagePlanController().openDraftPhase({ workspaceRoot });
+};
+
+const settleSetupResidue = async (workspaceRoot: string): Promise<void> => {
+  await execFileAsync(
+    "git",
+    [
+      "add",
+      "doc/TODO/stages/application-skeleton",
+      "doc/TODO/stages/diagram-modules",
+      "scripts/plan-orchestrator",
+    ],
+    { cwd: workspaceRoot }
+  ).catch(() => undefined);
+  await execFileAsync(
+    "git",
+    [
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-m",
+      "test: settle managed setup residue",
+    ],
+    { cwd: workspaceRoot }
+  ).catch(() => undefined);
+};
+
+const prepareQualityIntegration = async (
+  workspaceRoot: string
+): Promise<void> => {
+  const controller = new QualityGatesStagePlanController();
+  await prepareQualityDraft(workspaceRoot);
+  await controller.commitManagedTurn({
+    decision: qualityDraftDecision(),
+    sessionId: "setup-session",
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  await controller.acceptUserReviewWithoutRevision({ workspaceRoot });
+  await settleSetupResidue(workspaceRoot);
+  await writeWorkspaceFile(
+    workspaceRoot,
+    QUALITY_MARKDOWN_PATH,
+    "# Quality Gates Baseline\n\n## Overview\n\nGate contract.\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    QUALITY_JSON_PATH,
+    `${JSON.stringify(qualityIntegratedDecision().contractJson, null, 2)}\n`
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "package.json",
+    '{"scripts":{"qg:max-file-lines":"node scripts/quality-gates/max-file-lines.mjs","qg:secret-scan":"node scripts/quality-gates/secret-scan.mjs"}}\n'
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "scripts/quality-gates/max-file-lines.mjs",
+    "console.log('ok');\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    "scripts/quality-gates/secret-scan.mjs",
+    "console.log('ok');\n"
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    ".husky/pre-commit",
+    "#!/bin/sh\nset -e\nnpm run qg:secret-scan\nnpm run qg:max-file-lines\n"
+  );
+};
+
+test("Quality Gates turn emits Core-owned user review handoff", async () => {
+  const workspaceRoot = await mkdtemp(path.join(tmpdir(), "qg-review-"));
+  try {
+    await prepareQualityDraft(workspaceRoot);
+    const { coreMessages, handler, sessionId, waitEvents } = createHandler({
+      workspaceRoot,
+    });
+
+    await handler.handleTurnCompleted(sessionId);
+
+    assert.equal(coreMessages.at(-1)?.tag, "managed-workflow-user-review");
+    assert.match(coreMessages.at(-1)?.content ?? "", QUALITY_REVIEW_RE);
+    assert.match(coreMessages.at(-1)?.content ?? "", USER_REVIEW_RE);
+    assert.deepEqual(waitEvents, []);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates completion commits persisted Core handoff residue", async () => {
+  const workspaceRoot = await mkdtemp(path.join(tmpdir(), "qg-clean-"));
+  try {
+    await prepareQualityIntegration(workspaceRoot);
+    const { coreMessages, handler, sessionId, waitEvents } = createHandler({
+      persistCoreMessages: true,
+      workspaceRoot,
+    });
+
+    await handler.handleTurnCompleted(sessionId);
+
+    assert.equal(coreMessages.at(-1)?.tag, "managed-workflow-complete");
+    assert.match(coreMessages.at(-1)?.content ?? "", QUALITY_RETURN_RE);
+    assert.match(coreMessages.at(-1)?.content ?? "", RETURN_RE);
+    assert.deepEqual(waitEvents, [sessionId]);
+    const { stdout: statusOutput } = await execFileAsync(
+      "git",
+      ["status", "--porcelain"],
+      { cwd: workspaceRoot }
+    );
+    assert.equal(statusOutput.trim(), "");
+    const { stdout: logOutput } = await execFileAsync(
+      "git",
+      ["log", "--oneline", "-5"],
+      { cwd: workspaceRoot }
+    );
+    assert.match(logOutput, MANAGED_TERMINAL_RESIDUE_COMMIT_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});

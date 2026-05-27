@@ -56,13 +56,15 @@ interface ManagedWorkflowTurnSession {
   readonly workspacePath?: string | null;
 }
 
+interface ManagedWorkflowTurnEventMessages {
+  readonly appendCoreMessage: SessionRequestHandlerEventMessages["appendCoreMessage"];
+  readonly waitForMessagePersistence?: SessionRequestHandlerEventMessages["waitForMessagePersistence"];
+}
+
 interface SessionRequestHandlerManagedWorkflowTurnOptions {
   readonly applicationStagePlan?: ApplicationSkeletonStagePlanController;
   readonly diagramStagePlan?: DiagramModulesStagePlanController;
-  readonly eventMessages: Pick<
-    SessionRequestHandlerEventMessages,
-    "appendCoreMessage"
-  >;
+  readonly eventMessages: ManagedWorkflowTurnEventMessages;
   readonly getMessageDispatch: () => SessionRequestHandlerMessageDispatch;
   readonly qualityGatesStagePlan?: QualityGatesStagePlanController;
   readonly sessionManager: Pick<SessionManager, "getSession">;
@@ -430,19 +432,24 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       });
       return;
     }
-    if (
-      decision.nextAction === "open_user_review" ||
-      decision.nextAction === "open_persistent_return"
-    ) {
-      this.appendCoreMessage(params.sessionId, {
-        content:
-          decision.nextAction === "open_user_review"
-            ? buildManagedUserLedReviewHandoffMessage("Quality Gates")
-            : buildManagedPersistentReturnHandoffMessage("Quality Gates"),
-        tag:
-          decision.nextAction === "open_user_review"
-            ? "managed-workflow-user-review"
-            : "managed-workflow-complete",
+    const completesStage = decision.nextAction === "open_persistent_return";
+    if (decision.nextAction !== "open_user_review" && !completesStage) {
+      return;
+    }
+    this.appendCoreMessage(params.sessionId, {
+      content: completesStage
+        ? buildManagedPersistentReturnHandoffMessage("Quality Gates")
+        : buildManagedUserLedReviewHandoffMessage("Quality Gates"),
+      tag: completesStage
+        ? "managed-workflow-complete"
+        : "managed-workflow-user-review",
+    });
+    if (completesStage) {
+      const { eventMessages } = this.options;
+      await eventMessages.waitForMessagePersistence?.(params.sessionId);
+      await this.qualityGatesStagePlan.commitTerminalHandoffResidue({
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
       });
     }
   }

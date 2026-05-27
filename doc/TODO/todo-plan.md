@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "2bccaf7ff",
+  "lastRecordedCommit": "a749c7514",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase126.stream2.task1",
-  "expectedCommitMessage": "chore: build provider session cleanup release",
+  "currentTaskId": "phase128.stream1.task1",
+  "expectedCommitMessage": "fix: commit quality gates completion handoff",
   "debt": {
-    "expectedCommitMessage": "chore: build provider session cleanup release",
-    "preCommitHead": "2bccaf7ff",
+    "expectedCommitMessage": "fix: commit quality gates completion handoff",
+    "preCommitHead": "a749c7514",
     "stage": "commit_pending",
-    "taskId": "phase126.stream2.task1"
+    "taskId": "phase128.stream1.task1"
   }
 }
 ```
@@ -1059,12 +1059,38 @@
 
 ### Stream: Release Build
 393. [DONE] `phase126.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the provider session cleanup retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build provider session cleanup release`). Result: Release `1.2.376` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.376.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-394. [PENDING] Git Commit: `chore: build provider session cleanup release` (hash: TBD)
+394. [DONE] Git Commit: `chore: build provider session cleanup release` (hash: a749c7514)
 
 ## Phase 127 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
 
 ### Stream: User Retest
-395. [TODO] `phase127.stream1.task1` User installs the generated VSIX and verifies full rollback plus provider-native session cleanup: workflow Clear removes cleared workflow sessions, completed translation sessions disappear automatically, localization artifacts remain, and failed translation diagnostics remain available when needed (scope: user workflow acceptance; no commit expected).
+395. [DONE] `phase127.stream1.task1` User installs the generated VSIX and verifies full rollback plus provider-native session cleanup: workflow Clear removes cleared workflow sessions, completed translation sessions disappear automatically, localization artifacts remain, and failed translation diagnostics remain available when needed (scope: user workflow acceptance; no commit expected). Result: Failed release 1.2.376 retest: after clearing Quality Gates, Core can leave the workspace on a boundary commit with service-owned Git residue, which blocks Quality Gates restart while Project Manager reports the blocker as application-skeleton-map.json not found instead of explaining the Git cleanup condition.
+
+## Phase 128 - Quality Gates Completion Clean Tree Fix (owner: Codex, updated: 2026-05-27)
+
+### Stream: Fix
+396. [DONE] `phase128.stream1.task1` Fix the Quality Gates managed completion handoff ordering exposed during release 1.2.376 retest: Core appends the `managed-workflow-complete` system message to the tracked unified Quality Gates session after `commitManagedTurn(...)`, leaving `.codeai-hub/<workspaceSlug>/runtime/sessions/unified/**quality-gates.jsonl` dirty immediately after the step is accepted. The fix must persist the completion handoff before the accepted/managed commit, or otherwise include it in the same Core-owned commit transaction, with regression coverage matching the Diagram Modules clean-tree pattern (`appendCoreMessage` -> `waitForMessagePersistence` -> `commit`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts`; scope exception: split Quality Gates coverage out of the oversized shared managed-workflow-turn test so architecture gates stay under 500 lines; expected commit: `fix: commit quality gates completion handoff`).
+397. [PENDING] Git Commit: `fix: commit quality gates completion handoff` (hash: TBD)
+398. [TODO] `phase128.stream1.task2` Fix Clear rollback Git reconciliation exposed by the same retest: Core-owned Clear commits must not be blocked by workspace Husky hooks, and pruning an already-pruned boundary registry must not rewrite `workflow/boundaries.json` with a timestamp-only diff. Regression coverage must prove Clear creates a clean `codeai-clear:*` commit even when a workspace pre-commit hook exits non-zero (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-registry.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: keep workflow clear commits clean`).
+399. [TODO] Git Commit: `fix: keep workflow clear commits clean` (hash: TBD)
+400. [TODO] `phase128.stream1.task3` Fix Project Manager start-card diagnostics for dirty technical-stage blockers: when Core blocks a technical stage because workspace Git is dirty, the card must not report the upstream artifact as `not found`; it must show that Core cleanup/review is required and preserve the blocking file list from workflow-state (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, src/client/project-manager/services/workflow-gating-client.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `fix: explain dirty workflow start blockers`).
+401. [TODO] Git Commit: `fix: explain dirty workflow start blockers` (hash: TBD)
+402. [TODO] `phase128.stream1.task4` Run targeted verification for Quality Gates completion, Clear rollback clean-tree behavior, dirty-gating diagnostics, Core build, Project Manager webview checks and plan validation (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+## Phase 129 - Release Build (owner: Codex, updated: 2026-05-27)
+
+### Stream: Release Docs
+403. [TODO] `phase129.stream1.task1` Update release-facing docs for the next retest version after the Quality Gates/Clear dirty-Git fixes and before running release automation; user explicitly requested a new release in this session on 2026-05-27 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates clear restart release`).
+404. [TODO] Git Commit: `docs: prepare quality gates clear restart release` (hash: TBD)
+
+### Stream: Release Build
+405. [TODO] `phase129.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Quality Gates Clear restart retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates clear restart release`).
+406. [TODO] Git Commit: `chore: build quality gates clear restart release` (hash: TBD)
+
+## Phase 130 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
+
+### Stream: User Retest
+407. [TODO] `phase130.stream1.task1` User installs the generated VSIX and verifies Quality Gates completion leaves the workspace Git tree clean, Clear Quality Gates creates a clean restartable state, dirty technical-stage blockers show an explicit Git cleanup/review message instead of an artifact-not-found status, and provider/translation cleanup from release 1.2.376 still holds (scope: user workflow acceptance; no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
