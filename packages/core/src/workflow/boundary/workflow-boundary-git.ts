@@ -154,6 +154,7 @@ export class WorkflowBoundaryGit {
       }
       await this.git(params.workspaceRoot, [
         "commit",
+        "--no-verify",
         ...(params.allowEmpty ? ["--allow-empty"] : []),
         "-m",
         params.commitMessage,

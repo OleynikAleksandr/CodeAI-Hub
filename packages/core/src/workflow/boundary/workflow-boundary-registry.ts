@@ -146,11 +146,15 @@ export class WorkflowBoundaryRegistryStore {
     readonly workspaceSlug: string;
   }): Promise<WorkflowBoundaryRegistry> {
     const current = await this.read(params);
+    const entries = current.entries.filter(
+      (entry) => !isStageAtOrAfter(entry.stage, params.stage)
+    );
+    if (entries.length === current.entries.length) {
+      return current;
+    }
     const registry = {
       ...current,
-      entries: current.entries.filter(
-        (entry) => !isStageAtOrAfter(entry.stage, params.stage)
-      ),
+      entries,
     };
     await this.write({ ...params, registry });
     return registry;

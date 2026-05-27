@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "a749c7514",
+  "lastRecordedCommit": "29e5650b5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase128.stream1.task1",
-  "expectedCommitMessage": "fix: commit quality gates completion handoff",
+  "currentTaskId": "phase128.stream1.task2",
+  "expectedCommitMessage": "fix: keep workflow clear commits clean",
   "debt": {
-    "expectedCommitMessage": "fix: commit quality gates completion handoff",
-    "preCommitHead": "a749c7514",
+    "expectedCommitMessage": "fix: keep workflow clear commits clean",
+    "preCommitHead": "29e5650b5",
     "stage": "commit_pending",
-    "taskId": "phase128.stream1.task1"
+    "taskId": "phase128.stream1.task2"
   }
 }
 ```
@@ -1070,9 +1070,9 @@
 
 ### Stream: Fix
 396. [DONE] `phase128.stream1.task1` Fix the Quality Gates managed completion handoff ordering exposed during release 1.2.376 retest: Core appends the `managed-workflow-complete` system message to the tracked unified Quality Gates session after `commitManagedTurn(...)`, leaving `.codeai-hub/<workspaceSlug>/runtime/sessions/unified/**quality-gates.jsonl` dirty immediately after the step is accepted. The fix must persist the completion handoff before the accepted/managed commit, or otherwise include it in the same Core-owned commit transaction, with regression coverage matching the Diagram Modules clean-tree pattern (`appendCoreMessage` -> `waitForMessagePersistence` -> `commit`) (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts`; scope exception: split Quality Gates coverage out of the oversized shared managed-workflow-turn test so architecture gates stay under 500 lines; expected commit: `fix: commit quality gates completion handoff`).
-397. [PENDING] Git Commit: `fix: commit quality gates completion handoff` (hash: TBD)
-398. [TODO] `phase128.stream1.task2` Fix Clear rollback Git reconciliation exposed by the same retest: Core-owned Clear commits must not be blocked by workspace Husky hooks, and pruning an already-pruned boundary registry must not rewrite `workflow/boundaries.json` with a timestamp-only diff. Regression coverage must prove Clear creates a clean `codeai-clear:*` commit even when a workspace pre-commit hook exits non-zero (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-registry.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts`; expected commit: `fix: keep workflow clear commits clean`).
-399. [TODO] Git Commit: `fix: keep workflow clear commits clean` (hash: TBD)
+397. [DONE] Git Commit: `fix: commit quality gates completion handoff` (hash: 29e5650b5)
+398. [DONE] `phase128.stream1.task2` Fix Clear rollback Git reconciliation exposed by the same retest: Core-owned Clear commits must not be blocked by workspace Husky hooks, and pruning an already-pruned boundary registry must not rewrite `workflow/boundaries.json` with a timestamp-only diff. Regression coverage must prove Clear creates a clean `codeai-clear:*` commit even when a workspace pre-commit hook exits non-zero (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-registry.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.test.ts`; scope exception: avoid adding rollback coverage to the existing 498-line facade test; expected commit: `fix: keep workflow clear commits clean`).
+399. [PENDING] Git Commit: `fix: keep workflow clear commits clean` (hash: TBD)
 400. [TODO] `phase128.stream1.task3` Fix Project Manager start-card diagnostics for dirty technical-stage blockers: when Core blocks a technical stage because workspace Git is dirty, the card must not report the upstream artifact as `not found`; it must show that Core cleanup/review is required and preserve the blocking file list from workflow-state (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, src/client/project-manager/services/workflow-gating-client.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; expected commit: `fix: explain dirty workflow start blockers`).
 401. [TODO] Git Commit: `fix: explain dirty workflow start blockers` (hash: TBD)
 402. [TODO] `phase128.stream1.task4` Run targeted verification for Quality Gates completion, Clear rollback clean-tree behavior, dirty-gating diagnostics, Core build, Project Manager webview checks and plan validation (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
