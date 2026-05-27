@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "a215b6c3e",
+  "lastRecordedCommit": "59524158a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8c.release-rebuild.task1",
-  "expectedCommitMessage": "chore: build glm settings repair release",
+  "currentTaskId": "provider-readiness.phase8c.release-package.task1",
+  "expectedCommitMessage": "chore: package glm settings repair vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build glm settings repair release",
-    "preCommitHead": "a215b6c3e",
+    "expectedCommitMessage": "chore: package glm settings repair vsix",
+    "preCommitHead": "59524158a",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8c.release-rebuild.task1"
+    "taskId": "provider-readiness.phase8c.release-package.task1"
   }
 }
 ```
@@ -220,9 +220,12 @@
 74. [DONE] Git Commit: `docs: prepare glm settings repair release` (hash: a215b6c3e)
 75. [DONE] `provider-readiness.phase8c.release-rebuild.task1` Run the approved unified release build for the GLM settings repair replacement release (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm settings repair release`).
     - Result 2026-05-27: `./scripts/build-all.sh` — PASS, produced unified release artifacts for `1.2.381`.
-76. [PENDING] Git Commit: `chore: build glm settings repair release` (hash: TBD)
-77. [TODO] `provider-readiness.phase8c.release-package.task1` Run VSIX packaging for the current GLM settings repair release version, verify SDK exclusions/package output, and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package glm settings repair vsix`).
-78. [TODO] Git Commit: `chore: package glm settings repair vsix` (hash: TBD)
+76. [DONE] Git Commit: `chore: build glm settings repair release` (hash: 59524158a)
+77. [DONE] `provider-readiness.phase8c.release-package.task1` Run VSIX packaging for the current GLM settings repair release version, verify SDK exclusions/package output, and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package glm settings repair vsix`).
+    - Result 2026-05-27: `./scripts/build-release.sh --use-current-version` — PASS.
+    - Result 2026-05-27: Verified release output lines: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
+    - Result 2026-05-27: VSIX ready at `codeai-hub-1.2.381.vsix` (4.3M).
+78. [PENDING] Git Commit: `chore: package glm settings repair vsix` (hash: TBD)
 79. [TODO] `provider-readiness.phase8c.user-retest.task1` User installs the produced replacement release and retests GLM API key entry, GLM availability after Restart Core, and GLM provider startup (scope: chat/process observation only; no commit required).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
