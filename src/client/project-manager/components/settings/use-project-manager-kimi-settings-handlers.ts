@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import type { KimiModelId } from "../../../../types/kimi-model-registry";
+import type { GlmClaudeCodeSettings } from "../../../ui/src/components/settings/kimi-settings-state";
 import type { Settings } from "../../../ui/src/components/settings/settings-state-model";
 import {
   updateKimiDefaultModel,
@@ -35,8 +36,18 @@ export const useProjectManagerKimiSettingsHandlers = ({
     },
     [settings, updateSettings]
   );
+  const handleGlmClaudeCodeSettingsChange = useCallback(
+    (glmClaudeCode: GlmClaudeCodeSettings) => {
+      updateSettings({
+        ...settings,
+        providers: { ...settings.providers, glmClaudeCode },
+      });
+    },
+    [settings, updateSettings]
+  );
 
   return {
+    handleGlmClaudeCodeSettingsChange,
     handleGlmClaudeCodeThinkingDisplaySyncChange,
     handleKimiDefaultModelChange,
     handleKimiThinkingDisplaySyncChange,

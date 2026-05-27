@@ -19,6 +19,7 @@ import type {
   NativeRequestCaptureState,
 } from "../../../ui/src/components/settings/use-settings-state-support";
 import type { TemplateUpdateSettingsControls } from "../../../ui/src/components/settings/template-update-settings-model";
+import type { GlmClaudeCodeSettings } from "../../../ui/src/components/settings/kimi-settings-state";
 import {
   clampGeminiContextWindowTokenLimit,
   clampRemainingPercentThreshold,
@@ -105,6 +106,9 @@ export type UseProjectManagerSettingsStateResult =
   UseSettingsStateResult &
     TemplateUpdateSettingsControls & {
       readonly handleKimiDefaultModelChange: (modelId: KimiModelId) => void;
+      readonly handleGlmClaudeCodeSettingsChange: (
+        settings: GlmClaudeCodeSettings
+      ) => void;
       readonly handleGlmClaudeCodeThinkingDisplaySyncChange: (
         enabled: boolean
       ) => void;
@@ -370,6 +374,7 @@ export const useProjectManagerSettingsState =
       [settings, updateSettings]
     );
     const {
+      handleGlmClaudeCodeSettingsChange,
       handleGlmClaudeCodeThinkingDisplaySyncChange,
       handleKimiDefaultModelChange,
       handleKimiThinkingDisplaySyncChange,
@@ -459,6 +464,7 @@ export const useProjectManagerSettingsState =
       handleCodexDefaultModelChange,
       handleGeminiDefaultModelChange,
       handleKimiDefaultModelChange,
+      handleGlmClaudeCodeSettingsChange,
       handleGeminiThinkingChange,
       handleClaudeThinkingDisplaySyncChange,
       handleCodexReasoningChange,

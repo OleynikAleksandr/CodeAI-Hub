@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "33e593648",
+  "lastRecordedCommit": "36a0d8d95",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8c.glm-settings-card.task1",
-  "expectedCommitMessage": "fix: expose glm api key controls",
+  "currentTaskId": "provider-readiness.phase8c.glm-settings-persist.task1",
+  "expectedCommitMessage": "fix: persist glm api key settings",
   "debt": {
-    "expectedCommitMessage": "fix: expose glm api key controls",
-    "preCommitHead": "33e593648",
+    "expectedCommitMessage": "fix: persist glm api key settings",
+    "preCommitHead": "36a0d8d95",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8c.glm-settings-card.task1"
+    "taskId": "provider-readiness.phase8c.glm-settings-persist.task1"
   }
 }
 ```
@@ -208,9 +208,9 @@
 ## Phase 8c — GLM Retest Fixes (owner: Codex, updated: 2026-05-27)
 ### Stream: GLM Settings Source
 67. [DONE] `provider-readiness.phase8c.glm-settings-card.task1` Expose editable GLM-Claude-Code API key/config controls in the shared provider settings card without logging or rendering saved secrets as plain text (scope: `src/client/ui/src/components/settings/glm-claude-code-settings-card.tsx, src/client/ui/src/components/settings/settings-provider-tab-content.tsx`; expected commit: `fix: expose glm api key controls`).
-68. [PENDING] Git Commit: `fix: expose glm api key controls` (hash: TBD)
-69. [TODO] `provider-readiness.phase8c.glm-settings-persist.task1` Wire Project Manager GLM settings changes into persisted workspace settings so `providers.glmClaudeCode.apiKey` reaches the backend availability check after Save and Restart Core (scope: `src/client/project-manager/components/settings/use-project-manager-kimi-settings-handlers.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `fix: persist glm api key settings`).
-70. [TODO] Git Commit: `fix: persist glm api key settings` (hash: TBD)
+68. [DONE] Git Commit: `fix: expose glm api key controls` (hash: 36a0d8d95)
+69. [DONE] `provider-readiness.phase8c.glm-settings-persist.task1` Wire Project Manager GLM settings changes into persisted workspace settings so `providers.glmClaudeCode.apiKey` reaches the backend availability check after Save and Restart Core (scope: `src/client/project-manager/components/settings/use-project-manager-kimi-settings-handlers.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `fix: persist glm api key settings`).
+70. [PENDING] Git Commit: `fix: persist glm api key settings` (hash: TBD)
 71. [TODO] `provider-readiness.phase8c.glm-settings-verify.task1` Add targeted tests/build verification for GLM settings persistence and availability key routing without logging secrets (scope: `src/client/ui/src/components/settings, packages/Claude_Module/src/glm-claude-code, doc/TODO/todo-plan.md`; expected commit: `test: verify glm api key settings`).
 72. [TODO] Git Commit: `test: verify glm api key settings` (hash: TBD)
 73. [TODO] `provider-readiness.phase8c.release-rebuild.task1` After GLM settings fixes pass, build a replacement release for user retest (scope: `README.md, CHANGELOG.md, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, codeai-hub-*.vsix, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm settings repair release`).
