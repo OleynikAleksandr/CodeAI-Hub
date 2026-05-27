@@ -1,3 +1,18 @@
+# Plan Closeout: workflow-clear-git-boundary-rollback-implementation-2026-05-25
+
+**Created:** 2026-05-27T14:41:39.763Z
+**Acceptance:** User accepted release 1.2.378 and requested ToDoPlan closeout, documentation audit, planning-doc archival, and GitHub push.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase30.stream1.task1
+**Expected Commit:** docs: close git boundary clear implementation
+**Last Recorded Commit:** 9c8c8e793
+**Planning Source Disposition:** already_archived
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
   "currentTaskId": "phase30.stream1.task1",
   "expectedCommitMessage": "docs: close git boundary clear implementation",
-  "debt": {
-    "expectedCommitMessage": "docs: close git boundary clear implementation",
-    "preCommitHead": "9c8c8e793",
-    "stage": "commit_pending",
-    "taskId": "phase30.stream1.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -1140,5 +1150,6 @@
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 
 ### Stream: Closeout
-79. [DONE] `phase30.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
-80. [PENDING] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
+79. [IN_PROGRESS] `phase30.stream1.task1` After explicit user acceptance, archive this todo plan and dispose the planning document according to its final SSOT status (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close git boundary clear implementation`).
+80. [TODO] Git Commit: `docs: close git boundary clear implementation` (hash: TBD)
+````
