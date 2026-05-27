@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.375** (Workflow Watcher Clear Deletion Hotfix)
+**Current Release — v1.2.376** (Provider Session Cleanup And Clear Retest Hotfix)
+
+This hotfix hardens the Clear/Undo Git boundary after the v1.2.375 retest.
+Workflow `state.json` writes are now atomic, Description Clear no longer rewrites
+questionnaire projection files just by loading them, and Clear prunes
+provider-native workflow sessions for the stages it removes.
+
+Localization/translation provider sessions are now treated as one-shot runtime
+implementation detail: successful Codex App Server and Claude Haiku translation
+calls delete their native session files automatically, while finalized workspace
+localization artifacts remain intact.
+
+**Previous Release — v1.2.375** (Workflow Watcher Clear Deletion Hotfix)
 
 This hotfix prevents workflow filesystem deletion events produced by Git Clear
 rollback from being treated as new workflow artifact writes. Clearing

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "3a973fc66",
+  "lastRecordedCommit": "daf02b6e2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase125.stream1.task4",
-  "expectedCommitMessage": "fix: discard completed translation sessions",
+  "currentTaskId": "phase126.stream1.task1",
+  "expectedCommitMessage": "docs: prepare provider session cleanup release",
   "debt": {
-    "expectedCommitMessage": "fix: discard completed translation sessions",
-    "preCommitHead": "3a973fc66",
+    "expectedCommitMessage": "docs: prepare provider session cleanup release",
+    "preCommitHead": "daf02b6e2",
     "stage": "commit_pending",
-    "taskId": "phase125.stream1.task4"
+    "taskId": "phase126.stream1.task1"
   }
 }
 ```
@@ -1049,13 +1049,13 @@
 387. [DONE] `phase125.stream1.task3` Define and implement a provider-native workflow session cleanup policy for Clear discovered during release 1.2.375 retest: `runtime/providers/codex/home/sessions/**` and `runtime/providers/claude/home/.claude/projects/**` correctly stay ignored by Git rollback today, but Clear leaves downstream workflow-native JSONL files behind, so a fully cleared workflow still shows old provider-native workflow sessions. Core must prune provider-native workflow sessions for cleared downstream stages through a provider-home-safe manifest/metadata path across Codex, Claude and other provider homes without tracking provider secrets/caches in Git (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prune cleared provider workflow sessions`).
 388. [DONE] Git Commit: `fix: prune cleared provider workflow sessions` (hash: 3a973fc66)
 389. [DONE] `phase125.stream1.task4` Delete provider-native translation sessions automatically after successful localization/translation work, independent of workflow Clear/Undo/Rollback. Translation sessions are not resumable workflow history and should not remain in `runtime/providers/**/home/**`; keep only the finalized workspace localization artifacts and any explicit diagnostic artifact requested by native request capture, while preserving failure logs only when needed for error reporting (scope: `packages/Codex_AppServer_Module/src/translation/**, packages/Claude_Module/src/translation/**, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/TODO/todo-plan.md`; expected commit: `fix: discard completed translation sessions`).
-390. [PENDING] Git Commit: `fix: discard completed translation sessions` (hash: TBD)
+390. [DONE] Git Commit: `fix: discard completed translation sessions` (hash: daf02b6e2)
 
 ## Phase 126 - Provider Session Cleanup Release Build (owner: Codex, updated: 2026-05-27)
 
 ### Stream: Release Docs
-391. [TODO] `phase126.stream1.task1` Update release-facing docs for the next version after the retest fix backlog and before running release automation; user explicitly requested the new release in this session on 2026-05-27 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare provider session cleanup release`).
-392. [TODO] Git Commit: `docs: prepare provider session cleanup release` (hash: TBD)
+391. [DONE] `phase126.stream1.task1` Update release-facing docs for the next version after the retest fix backlog and before running release automation; user explicitly requested the new release in this session on 2026-05-27 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare provider session cleanup release`).
+392. [PENDING] Git Commit: `docs: prepare provider session cleanup release` (hash: TBD)
 
 ### Stream: Release Build
 393. [TODO] `phase126.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the provider session cleanup retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build provider session cleanup release`).

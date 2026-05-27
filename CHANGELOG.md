@@ -8,6 +8,25 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.376] - 2026-05-27
+### Fixed
+- **Workflow state writes are atomic.** Core now writes workflow `state.json` through a temporary file and rename, preventing malformed rollback boundary JSON after managed stages advance.
+- **Clear Description keeps the Git tree clean.** Project Manager no longer rewrites an existing Description questionnaire just by loading it after Clear, avoiding projection-only dirtiness.
+- **Clear prunes removed workflow provider sessions.** When Clear removes downstream workflow sessions, Core deletes the matching provider-native Codex/Claude session files while leaving unrelated runtime sessions alone.
+- **Completed translation sessions are discarded automatically.** Successful Codex App Server and Claude Haiku localization/translation calls delete their native session files; finalized workspace localization artifacts remain the retained output.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/state/workflow-last-active-store.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.test.js`
+- `node --test --import tsx src/client/project-manager/services/description-questionnaire-service.test.ts`
+- `npm run typecheck:webview`
+- `npm run build --workspace @codeai-hub/codex-app-server-module`
+- `node --test packages/Codex_AppServer_Module/dist/translation/codex-app-server-translation-service.test.js`
+- `npm run build --workspace @codeai-hub/claude-module`
+- `node --test packages/Claude_Module/dist/translation/claude-haiku-translation-service.test.js`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.375] - 2026-05-26
 ### Fixed
 - **Workflow watcher ignores deleted artifacts during Clear rollback.** Filesystem `rename` events emitted by `git reset --hard` / `git clean -fd` now produce workflow updates only when the target path still exists, preventing deleted downstream artifacts from being recorded again as `workflow.artifact.written`.
