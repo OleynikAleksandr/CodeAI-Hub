@@ -29,6 +29,7 @@ export type GlmClaudeCodeSessionListener = (payload: unknown) => void;
 export interface GlmClaudeCodeWorkspaceOptions {
   readonly defaultModel?: string;
   readonly glmClaudeProjectSlug?: string;
+  readonly providerHome?: string;
   readonly settingsPath?: string;
   readonly workspacePath: string;
 }
@@ -62,12 +63,18 @@ export class GlmClaudeCodeProviderAdapter {
       options.workspace.glmClaudeProjectSlug ??
       GLM_CLAUDE_CODE_DEFAULT_PROJECT_SLUG;
     const sdkWorkspace = this.buildSDKWorkspace(options.workspace, projectSlug);
-    const runtimeProfile = buildGlmClaudeCodeRuntimeProfile({ projectSlug });
+    const runtimeProfile = buildGlmClaudeCodeRuntimeProfile({
+      home: options.workspace.providerHome,
+      projectSlug,
+    });
     const installer = new SDKInstaller(options.installerPaths, {
       logger: options.reporter,
     });
     this.authManager = new GlmClaudeCodeSDKAuthManager({
+      home: options.workspace.providerHome,
+      projectSlug,
       reporter: options.reporter,
+      workspaceSettingsPath: options.workspace.settingsPath,
     });
     const sessions = new SDKSessionManager();
     const processor = new SDKMessageProcessor(sessions, {

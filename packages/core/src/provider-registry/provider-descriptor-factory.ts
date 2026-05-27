@@ -135,6 +135,12 @@ const resolveWorkspaceSettingsPath = (config: CoreConfig): string =>
     workspaceSlug: config.claudeProjectSlug,
   }).settingsFile.absolutePath;
 
+const resolveWorkspaceRuntimeCapsuleForConfig = (config: CoreConfig) =>
+  resolveWorkspaceRuntimeCapsule({
+    workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
+    workspaceSlug: config.claudeProjectSlug,
+  });
+
 export const resolveProviderImmediateBindingCapability = (
   providerId: string
 ): boolean => PROVIDER_IMMEDIATE_BINDING_CAPABILITIES[providerId] === true;
@@ -209,16 +215,18 @@ export const createGlmClaudeCodeAdapterInstance = (
     "config" | "createReporter" | "glmClaudeCodeAdapterCtor"
   >
 ): ProviderAdapter => {
+  const capsule = resolveWorkspaceRuntimeCapsuleForConfig(options.config);
   process.env[GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH_ENV] =
-    resolveWorkspaceSettingsPath(options.config);
+    capsule.settingsFile.absolutePath;
 
   return new options.glmClaudeCodeAdapterCtor({
     installerPaths: CLAUDE_INSTALLER_PATHS,
     workspace: {
       workspacePath: options.config.claudeWorkspacePath ?? process.cwd(),
       defaultModel: "glm-5.1",
-      glmClaudeProjectSlug: `${options.config.claudeProjectSlug}-glm-claude-code`,
-      settingsPath: resolveWorkspaceSettingsPath(options.config),
+      glmClaudeProjectSlug: `${capsule.workspaceSlug}-glm-claude-code`,
+      providerHome: capsule.providerHomes["glm-claude-code"].absolutePath,
+      settingsPath: capsule.settingsFile.absolutePath,
     },
     reporter: options.createReporter("glm-claude-code"),
   });

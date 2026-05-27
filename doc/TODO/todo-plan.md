@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "1976475ee",
+  "lastRecordedCommit": "70dcc39a5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.glm-artifact.task1",
-  "expectedCommitMessage": "fix: package glm provider runtime artifact",
+  "currentTaskId": "provider-readiness.phase8a.glm-home.task1",
+  "expectedCommitMessage": "fix: isolate glm provider workspace home",
   "debt": {
-    "expectedCommitMessage": "fix: package glm provider runtime artifact",
-    "preCommitHead": "1976475ee",
+    "expectedCommitMessage": "fix: isolate glm provider workspace home",
+    "preCommitHead": "70dcc39a5",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.glm-artifact.task1"
+    "taskId": "provider-readiness.phase8a.glm-home.task1"
   }
 }
 ```
@@ -113,9 +113,9 @@
 ## Phase 8A — Retest Findings Fix Backlog (owner: Codex, updated: 2026-05-27)
 ### Stream: GLM Standalone Provider Artifact And Home
 22. [DONE] `provider-readiness.phase8a.glm-artifact.task1` Retest finding 2026-05-27: installed release still has no GLM provider under `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/providers/`; diagnose and implement a standalone GLM provider runtime artifact/manifest even though GLM executes through the Claude-compatible client (scope: `scripts/build-all.sh, scripts/build-release.sh, scripts/build-glm-claude-code-module.sh, assets/providers/glm*/manifest.json, doc/TODO/todo-plan.md`; expected commit: `fix: package glm provider runtime artifact`).
-23. [PENDING] Git Commit: `fix: package glm provider runtime artifact` (hash: TBD)
-24. [TODO] `provider-readiness.phase8a.glm-home.task1` Ensure GLM gets its own provider home/runtime capsule distinct from original Claude home while preserving the Claude Agent SDK-compatible execution path and GLM-specific settings/API key source (scope: `packages/core/src/provider-registry, packages/Claude_Module/src/glm-claude-code, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md`; expected commit: `fix: isolate glm provider workspace home`).
-25. [TODO] Git Commit: `fix: isolate glm provider workspace home` (hash: TBD)
+23. [DONE] Git Commit: `fix: package glm provider runtime artifact` (hash: 70dcc39a5)
+24. [DONE] `provider-readiness.phase8a.glm-home.task1` Ensure GLM gets its own provider home/runtime capsule distinct from original Claude home while preserving the Claude Agent SDK-compatible execution path and GLM-specific settings/API key source (scope: `packages/core/src/provider-registry, packages/core/src/workflow/runtime, packages/Claude_Module/src/glm-claude-code, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/TODO/todo-plan.md`; expected commit: `fix: isolate glm provider workspace home`).
+25. [PENDING] Git Commit: `fix: isolate glm provider workspace home` (hash: TBD)
 26. [TODO] `provider-readiness.phase8a.glm-verify.task1` Add/adjust targeted checks proving the installed runtime exposes GLM as its own provider artifact, uses a separate GLM home, and still launches through the Claude-compatible runtime (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify glm standalone provider runtime`).
 27. [TODO] Git Commit: `test: verify glm standalone provider runtime` (hash: TBD)
 

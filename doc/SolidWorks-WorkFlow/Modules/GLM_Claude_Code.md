@@ -26,7 +26,8 @@ GLM-Claude-Code provider module подключает GLM 5.1 к Core через 
 - Core registry loads the adapter from the Claude module export; external code must enter the runtime through `GlmClaudeCodeProviderAdapter` and must not import runtime/auth/session internals directly.
 
 ## Runtime profile and provider-home
-- CodeAI-managed runtime state lives under `~/.codeai-hub/providers/glm-claude-code/home`.
+- In managed workspace runs, CodeAI-managed runtime state lives under the workspace capsule at `.codeai-hub/<workspace-slug>/runtime/providers/glm-claude-code/home`.
+- The global fallback/diagnostic provider home remains `~/.codeai-hub/providers/glm-claude-code/home` when no workspace capsule home is supplied.
 - Local provider config lives at `~/.codeai-hub/providers/glm-claude-code/config.json`.
 - Claude project path for this provider is isolated below that home and uses the `glm-claude-code` project slug.
 - Runtime env maps the Z.AI Anthropic-compatible endpoint into Claude SDK variables:
@@ -76,13 +77,13 @@ GLM-Claude-Code provider module подключает GLM 5.1 к Core через 
 - First release surfaces usage/context telemetry as explicitly unavailable rather than fake or indefinitely loading data.
 
 ## Packaging
-- GLM-Claude-Code does not produce a separate provider tarball while it reuses the Claude module runtime artifact.
+- GLM-Claude-Code produces a standalone `glm-claude-code-module-<version>.tar.bz2` provider tarball and manifest entry while reusing the Claude module runtime implementation internally.
 - `@codeai-hub/claude-module` must export `GlmClaudeCodeProviderAdapter` and its public runtime/model helpers.
-- Release packaging continues to build/package the Claude module artifact; Core treats GLM-Claude-Code as an additional provider descriptor loaded from that artifact.
+- Release packaging installs GLM under its own provider id/home so runtime surfaces can show and manage it independently from the original Claude provider.
 
 ## Инварианты
 - `glmClaudeCode` is a distinct provider id, not an alias of `claudeCode`, `kimiCode`, or the archived `kimiClaudeCode` experiment.
-- Provider home is always `~/.codeai-hub/providers/glm-claude-code/home` unless an explicit diagnostic override is supplied.
+- Provider home is always the workspace capsule GLM home for managed workspace runs, or `~/.codeai-hub/providers/glm-claude-code/home` for global fallback/diagnostic runs, unless an explicit diagnostic override is supplied.
 - Z.AI API keys are secret runtime inputs and must not be logged or persisted into tracked files.
 - Existing Claude and native Kimi behavior must remain unchanged by this module.
 - Every user-facing provider surface that offers GLM-Claude-Code must send raw provider/model intent to Core; Project Manager must not own separate workflow truth.

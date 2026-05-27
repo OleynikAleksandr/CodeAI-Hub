@@ -10,6 +10,7 @@ import {
 
 export interface GlmClaudeCodeSDKAuthManagerOptions
   extends GlmClaudeCodeRuntimeProbeProfileOptions {
+  readonly projectSlug?: string;
   readonly reporter?: ModuleReporter;
 }
 
@@ -37,9 +38,13 @@ export class GlmClaudeCodeSDKAuthManager implements ClaudeSDKAuthProvider {
     const profile = await this.resolveProfile();
     await this.ensureSubscriptionAuth();
     await mkdir(profile.home, { recursive: true });
-    await mkdir(resolveGlmClaudeCodeProjectPath({ home: profile.home }), {
-      recursive: true,
-    });
+    await mkdir(
+      resolveGlmClaudeCodeProjectPath({
+        home: profile.home,
+        projectSlug: this.options.projectSlug,
+      }),
+      { recursive: true }
+    );
   }
 
   getAuthEnvironment(): NodeJS.ProcessEnv {

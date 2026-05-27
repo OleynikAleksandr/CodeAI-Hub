@@ -47,6 +47,10 @@ test("resolveWorkspaceRuntimeCapsule resolves workspace-owned runtime roots", ()
     ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/gemini/home"
   );
   assert.equal(
+    capsule.providerHomes["glm-claude-code"].relativePath,
+    ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home"
+  );
+  assert.equal(
     capsule.providerHomes.codex.absolutePath,
     path.join(
       resolvedRoot,

@@ -2,7 +2,12 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT } from "./workspace-runtime-capsule-gitignore";
 
-export type WorkspaceRuntimeProviderId = "codex" | "claude" | "gemini" | "kimi";
+export type WorkspaceRuntimeProviderId =
+  | "codex"
+  | "claude"
+  | "gemini"
+  | "glm-claude-code"
+  | "kimi";
 
 export interface WorkspaceRuntimePath {
   readonly absolutePath: string;
@@ -47,7 +52,13 @@ const WORKFLOW_ROOT_DIR = "workflow";
 const WORKFLOW_STATE_FILE_NAME = "state.json";
 const WORKSPACE_FALLBACK_SLUG = "workspace";
 
-const PROVIDER_IDS = ["codex", "claude", "gemini", "kimi"] as const;
+const PROVIDER_IDS = [
+  "codex",
+  "claude",
+  "gemini",
+  "glm-claude-code",
+  "kimi",
+] as const;
 const DESCRIPTION_STAGE_ID = "description";
 const DESCRIPTION_QUESTIONNAIRE_SEED = "# Description Questionnaire\n\n";
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
