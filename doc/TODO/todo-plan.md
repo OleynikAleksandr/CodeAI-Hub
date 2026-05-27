@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "895a789fe",
+  "lastRecordedCommit": "7106ee20d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase131.stream1.task4",
-  "expectedCommitMessage": "fix: label application skeleton review gates",
+  "currentTaskId": "phase132.stream1.task1",
+  "expectedCommitMessage": "fix: show managed review stages as progress",
   "debt": {
-    "expectedCommitMessage": "fix: label application skeleton review gates",
-    "preCommitHead": "895a789fe",
+    "expectedCommitMessage": "fix: show managed review stages as progress",
+    "preCommitHead": "7106ee20d",
     "stage": "commit_pending",
-    "taskId": "phase131.stream1.task4"
+    "taskId": "phase132.stream1.task1"
   }
 }
 ```
@@ -1102,8 +1102,17 @@
 412. [DONE] `phase131.stream1.task3` Make Project Manager render only the current managed review confirmation as actionable and lock the input/buttons while the Core review decision is in flight. Old `managed-workflow-user-review` messages must remain readable history but must not expose active `Подтверждаю` buttons after a newer gate opens or after confirmation starts (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/session-view.tsx, src/client/project-manager/components/sessions/session-message-sender.ts, src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts, src/client/project-manager/components/sessions/project-manager-session-view.test.tsx`; scope exception: the PM sender, dialog adapter, and dialog controller are the transport edge required for the same review-confirm action, and the source tests lock that contract; expected commit: `fix: prevent stale review confirmations`).
 413. [DONE] Git Commit: `fix: prevent stale review confirmations` (hash: 895a789fe)
 414. [DONE] `phase131.stream1.task4` Split Application Skeleton review handoff copy by phase so users can distinguish accepting the draft contract before materialization from accepting the materialized filesystem skeleton before Quality Gates unlock. Tests must prove the two gates render distinct Core messages and keep the expected managed lifecycle sequence (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-handoff-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; scope exception: review decisions emit the second Application Skeleton gate after Core materializes the filesystem skeleton; expected commit: `fix: label application skeleton review gates`).
-415. [PENDING] Git Commit: `fix: label application skeleton review gates` (hash: TBD)
-416. [TODO] `phase131.stream1.task5` Run targeted verification for managed-turn locking, Core review action routing, stale review-button suppression, Application Skeleton phase-specific handoffs, Core build, webview typecheck/build, and plan validation before requesting the next release build confirmation (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+415. [DONE] Git Commit: `fix: label application skeleton review gates` (hash: 7106ee20d)
+416. [DONE] `phase131.stream1.task5` Run targeted verification for managed-turn locking, Core review action routing, stale review-button suppression, Application Skeleton phase-specific handoffs, Core build, webview typecheck/build, and plan validation before requesting the next release build confirmation (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted Phase 131 verification passed: managed-turn locking tests, Core managed review action tests, stale review-button Project Manager tests, Application Skeleton phase-specific handoff tests, @codeai-hub/core build, webview typecheck/build, and plan validation. Release build intentionally not run per user request.
+
+## Phase 132 - Managed Review Progress And Draft Scope Fixes (owner: Codex, updated: 2026-05-27)
+
+### Stream: Fix
+417. [DONE] `phase132.stream1.task1` Show managed technical stages with current review artifacts as in-progress even if an earlier invalidation event is still in memory, so Application Skeleton and Quality Gates user-review gates render yellow instead of stale red (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/remote-bridge/handlers/technical-root-progress-projection.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: show managed review stages as progress`).
+418. [PENDING] Git Commit: `fix: show managed review stages as progress` (hash: TBD)
+419. [TODO] `phase132.stream1.task2` Restore or clean prohibited Quality Gates integration file edits before draft/review commits, so pre-acceptance contract review cannot leave `package.json`, hooks, or gate scripts dirty before the user confirms integration (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-draft-scope-cleaner.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; scope exception: helper extraction keeps the controller under the 500-line class/file limit while preserving focused coverage; expected commit: `fix: clean quality gates draft scope`).
+420. [TODO] Git Commit: `fix: clean quality gates draft scope` (hash: TBD)
+421. [TODO] `phase132.stream1.task3` Run targeted verification for managed review progress markers, Quality Gates draft-scope cleanup, Core build, Project Manager/webview checks and plan validation before any release build request (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

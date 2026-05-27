@@ -303,7 +303,7 @@ const resolveTechnicalStageStatus = (params: {
   if (params.complete) {
     return "completed";
   }
-  if (params.hasArtifact && params.current === "completed") {
+  if (params.hasArtifact && params.current !== "outdated") {
     return "in_progress";
   }
   return params.current;
