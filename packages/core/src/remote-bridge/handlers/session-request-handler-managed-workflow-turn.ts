@@ -49,18 +49,19 @@ const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
   /^application-skeleton\.phase3\.repair\.task(\d+)$/u;
 const QUALITY_GATES_INTEGRATION_REPAIR_TASK_RE =
   /^quality-gates\.phase3\.repair\.task(\d+)$/u;
-
+export type ManagedWorkflowTurnCompletionResult =
+  | "continued"
+  | "not_managed"
+  | "settled";
 interface ManagedWorkflowTurnSession {
   readonly initiativeSlug?: string | null;
   readonly stage?: string | null;
   readonly workspacePath?: string | null;
 }
-
 interface ManagedWorkflowTurnEventMessages {
   readonly appendCoreMessage: SessionRequestHandlerEventMessages["appendCoreMessage"];
   readonly waitForMessagePersistence?: SessionRequestHandlerEventMessages["waitForMessagePersistence"];
 }
-
 interface SessionRequestHandlerManagedWorkflowTurnOptions {
   readonly applicationStagePlan?: ApplicationSkeletonStagePlanController;
   readonly diagramStagePlan?: DiagramModulesStagePlanController;
@@ -69,7 +70,6 @@ interface SessionRequestHandlerManagedWorkflowTurnOptions {
   readonly qualityGatesStagePlan?: QualityGatesStagePlanController;
   readonly sessionManager: Pick<SessionManager, "getSession">;
 }
-
 const persistManagedDecision = async (params: {
   readonly decision:
     | ApplicationSkeletonManagedValidationResult
@@ -77,10 +77,7 @@ const persistManagedDecision = async (params: {
     | QualityGatesManagedValidationResult;
   readonly schema: string;
   readonly sessionId: string;
-  readonly stage:
-    | typeof APPLICATION_SKELETON_STAGE
-    | typeof DIAGRAM_MODULES_STAGE
-    | typeof QUALITY_GATES_STAGE;
+  readonly stage: "application_skeleton" | "diagram_modules" | "quality_gates";
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): Promise<void> => {
@@ -98,7 +95,6 @@ const persistManagedDecision = async (params: {
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, `${JSON.stringify(snapshot, null, 2)}\n`);
 };
-
 const resolveMaterializationRepairAttemptNumber = (
   taskId: string | null
 ): number => {
@@ -108,7 +104,6 @@ const resolveMaterializationRepairAttemptNumber = (
   const value = Number(match?.[1]);
   return Number.isInteger(value) && value > 0 ? value : 1;
 };
-
 const resolveQualityGatesIntegrationRepairAttemptNumber = (
   taskId: string | null
 ): number => {
@@ -116,7 +111,6 @@ const resolveQualityGatesIntegrationRepairAttemptNumber = (
   const value = Number(match?.[1]);
   return Number.isInteger(value) && value > 0 ? value : 1;
 };
-
 const resolveDiagramModulesRepairAttemptNumber = (
   taskId: string | null
 ): number => parseDiagramModulesRepairTaskNumber(taskId ?? "") ?? 1;
@@ -138,58 +132,59 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       options.qualityGatesStagePlan ?? new QualityGatesStagePlanController();
   }
 
-  async handleTurnCompleted(sessionId: string): Promise<void> {
+  async handleTurnCompleted(
+    sessionId: string
+  ): Promise<ManagedWorkflowTurnCompletionResult> {
     const session = this.options.sessionManager.getSession(sessionId) as
       | ManagedWorkflowTurnSession
       | null
       | undefined;
     if (!(session?.workspacePath && session.initiativeSlug && session.stage)) {
-      return;
+      return "not_managed";
     }
     if (session.stage === DESCRIPTION_STAGE) {
       this.appendCoreMessage(sessionId, {
         content: buildManagedUserLedReviewHandoffMessage("Description"),
         tag: "managed-workflow-user-review",
       });
-      return;
+      return "settled";
     }
     if (session.stage === VIRTUAL_SIMULATION_STAGE) {
       this.appendCoreMessage(sessionId, {
         content: buildManagedUserLedReviewHandoffMessage("Virtual Simulation"),
         tag: "managed-workflow-user-review",
       });
-      return;
+      return "settled";
     }
     if (session.stage === DIAGRAM_MODULES_STAGE) {
-      await this.handleDiagramModulesTurn({
+      return await this.handleDiagramModulesTurn({
         sessionId,
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
       });
-      return;
     }
     if (session.stage === APPLICATION_SKELETON_STAGE) {
-      await this.handleApplicationSkeletonTurn({
+      return await this.handleApplicationSkeletonTurn({
         sessionId,
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
       });
-      return;
     }
     if (session.stage === QUALITY_GATES_STAGE) {
-      await this.handleQualityGatesTurn({
+      return await this.handleQualityGatesTurn({
         sessionId,
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
       });
     }
+    return "not_managed";
   }
 
   private async handleDiagramModulesTurn(params: {
     readonly sessionId: string;
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
-  }): Promise<void> {
+  }): Promise<ManagedWorkflowTurnCompletionResult> {
     const decision = await validateDiagramModulesManagedArtifacts(params);
     await persistManagedDecision({
       decision,
@@ -213,7 +208,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
           ),
           tag: "managed-workflow-validation",
         });
-        return;
+        return "settled";
       }
       const repairPrompt = buildDiagramModulesProductPartRepairPrompt({
         attemptNumber: resolveDiagramModulesRepairAttemptNumber(
@@ -238,7 +233,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         tag: "managed-workflow-validation",
       });
       await messageDispatch.sendInternalMessage(params.sessionId, repairPrompt);
-      return;
+      return "continued";
     }
     const planAdvance = await this.diagramStagePlan.commitAcceptedTurn({
       decision,
@@ -253,7 +248,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         ),
         tag: "managed-workflow-validation",
       });
-      return;
+      return "settled";
     }
     if (decision.nextAction === "dispatch_next_product_part") {
       this.appendCoreMessage(params.sessionId, {
@@ -268,7 +263,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
           decision.nextPrompt
         );
       }
-      return;
+      return decision.nextPrompt ? "continued" : "settled";
     }
     if (decision.nextAction === "open_user_review") {
       this.appendCoreMessage(params.sessionId, {
@@ -276,13 +271,14 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         tag: "managed-workflow-user-review",
       });
     }
+    return "settled";
   }
 
   private async handleApplicationSkeletonTurn(params: {
     readonly sessionId: string;
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
-  }): Promise<void> {
+  }): Promise<ManagedWorkflowTurnCompletionResult> {
     const decision = await validateApplicationSkeletonManagedArtifacts(params);
     await persistManagedDecision({
       decision,
@@ -305,13 +301,13 @@ export class SessionRequestHandlerManagedWorkflowTurn {
           ),
           tag: "managed-workflow-validation",
         });
-        return;
+        return "settled";
       }
       await this.dispatchApplicationRepairPrompt(params, decision, {
         rejectedCommitHash: planAdvance.commit.hash,
         repairTaskId: planAdvance.commit.nextTaskId,
       });
-      return;
+      return "continued";
     }
     const planAdvance = await this.applicationStagePlan.commitManagedTurn({
       decision,
@@ -326,7 +322,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         ),
         tag: "managed-workflow-validation",
       });
-      return;
+      return "settled";
     }
     if (decision.nextAction === "open_user_review") {
       this.appendCoreMessage(params.sessionId, {
@@ -335,7 +331,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         ),
         tag: "managed-workflow-user-review",
       });
-      return;
+      return "settled";
     }
     if (decision.nextAction === "open_persistent_return") {
       this.appendCoreMessage(params.sessionId, {
@@ -345,6 +341,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         tag: "managed-workflow-user-review",
       });
     }
+    return "settled";
   }
 
   private async dispatchApplicationRepairPrompt(
@@ -386,7 +383,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     readonly sessionId: string;
     readonly workspaceRoot: string;
     readonly workspaceSlug: string;
-  }): Promise<void> {
+  }): Promise<ManagedWorkflowTurnCompletionResult> {
     const decision = await validateQualityGatesManagedArtifacts(params);
     await persistManagedDecision({
       decision,
@@ -409,13 +406,13 @@ export class SessionRequestHandlerManagedWorkflowTurn {
           ),
           tag: "managed-workflow-validation",
         });
-        return;
+        return "settled";
       }
       await this.dispatchQualityGatesRepairPrompt(params, decision, {
         rejectedCommitHash: planAdvance.commit.hash,
         repairTaskId: planAdvance.commit.nextTaskId,
       });
-      return;
+      return "continued";
     }
     const planAdvance = await this.qualityGatesStagePlan.commitManagedTurn({
       decision,
@@ -430,11 +427,11 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         ),
         tag: "managed-workflow-validation",
       });
-      return;
+      return "settled";
     }
     const completesStage = decision.nextAction === "open_persistent_return";
     if (decision.nextAction !== "open_user_review" && !completesStage) {
-      return;
+      return "settled";
     }
     this.appendCoreMessage(params.sessionId, {
       content: completesStage
@@ -452,6 +449,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         workspaceSlug: params.workspaceSlug,
       });
     }
+    return "settled";
   }
 
   private async dispatchQualityGatesRepairPrompt(

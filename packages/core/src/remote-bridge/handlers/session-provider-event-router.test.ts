@@ -239,7 +239,7 @@ test("SessionProviderEventRouter appends deferred user_input when provider turn 
   ]);
 });
 
-test("SessionProviderEventRouter delays turn_completed until provider messages flush", async () => {
+test("SessionProviderEventRouter delays turn_completed and skips idle arbitration for managed continuations", async () => {
   const events: string[] = [];
   let releaseFlush: () => void = () => {
     // assigned by Promise executor below
@@ -276,7 +276,7 @@ test("SessionProviderEventRouter delays turn_completed until provider messages f
     },
     handleManagedWorkflowTurnCompleted: () => {
       events.push("managed");
-      return Promise.resolve();
+      return Promise.resolve("continued");
     },
     handleSessionContinuityProviderEvent: async () => {
       // noop
@@ -323,7 +323,6 @@ test("SessionProviderEventRouter delays turn_completed until provider messages f
     "flow-node",
     "messages-flushed",
     "turn_completed",
-    "arbitration",
     "managed",
   ]);
 });

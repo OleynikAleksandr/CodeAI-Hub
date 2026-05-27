@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "28e56ea6f",
+  "lastRecordedCommit": "a7536ca6b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase129.stream2.task1",
-  "expectedCommitMessage": "chore: build quality gates clear restart release",
+  "currentTaskId": "phase131.stream1.task1",
+  "expectedCommitMessage": "fix: hold managed turns until core settles",
   "debt": {
-    "expectedCommitMessage": "chore: build quality gates clear restart release",
-    "preCommitHead": "28e56ea6f",
+    "expectedCommitMessage": "fix: hold managed turns until core settles",
+    "preCommitHead": "a7536ca6b",
     "stage": "commit_pending",
-    "taskId": "phase129.stream2.task1"
+    "taskId": "phase131.stream1.task1"
   }
 }
 ```
@@ -1085,12 +1085,25 @@
 
 ### Stream: Release Build
 405. [DONE] `phase129.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Quality Gates Clear restart retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates clear restart release`). Result: Release `1.2.377` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.377.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
-406. [PENDING] Git Commit: `chore: build quality gates clear restart release` (hash: TBD)
+406. [DONE] Git Commit: `chore: build quality gates clear restart release` (hash: a7536ca6b)
 
 ## Phase 130 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
 
 ### Stream: User Retest
-407. [TODO] `phase130.stream1.task1` User installs the generated VSIX and verifies Quality Gates completion leaves the workspace Git tree clean, Clear Quality Gates creates a clean restartable state, dirty technical-stage blockers show an explicit Git cleanup/review message instead of an artifact-not-found status, and provider/translation cleanup from release 1.2.376 still holds (scope: user workflow acceptance; no commit expected).
+407. [DONE] `phase130.stream1.task1` User installs the generated VSIX and verifies Quality Gates completion leaves the workspace Git tree clean, Clear Quality Gates creates a clean restartable state, dirty technical-stage blockers show an explicit Git cleanup/review message instead of an artifact-not-found status, and provider/translation cleanup from release 1.2.376 still holds (scope: user workflow acceptance; no commit expected). Result: Release 1.2.377 retest exposed managed-turn/user-review gate regressions: Claude/Core managed turns can unlock input before Core settles, and Application Skeleton review confirmation can show duplicate/stale buttons with indistinguishable gate copy. Follow-up fixes were added in Phase 131 and implementation starts now; release build remains held.
+
+## Phase 131 - Managed Turn And Review Gate Fix Backlog (owner: Codex, updated: 2026-05-27)
+
+### Stream: Fix
+408. [DONE] `phase131.stream1.task1` Fix premature user-input unlock for Claude/Core managed turns: provider-level `turn_completed` must not make Project Manager idle until provider message persistence, flow-node arbitration, and `handleManagedWorkflowTurnCompleted` have settled or explicitly opened a user gate. Regression coverage must reproduce a Claude-style assistant `end_turn` boundary where Core-managed post-turn validation is still running and prove the input remains locked until Core settles (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `fix: hold managed turns until core settles`).
+409. [PENDING] Git Commit: `fix: hold managed turns until core settles` (hash: TBD)
+410. [TODO] `phase131.stream1.task2` Route managed review confirmation through a Core-owned review action instead of treating the button click as an ordinary provider-visible user message. The action must be idempotent for the active review gate, reject stale gates, avoid dispatching duplicate provider turns, and keep Core as the authority for accepting/revising managed workflow phases (scope: `packages/core/src/remote-bridge/session-stream-contracts.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts`; expected commit: `fix: route review confirms through core gates`).
+411. [TODO] Git Commit: `fix: route review confirms through core gates` (hash: TBD)
+412. [TODO] `phase131.stream1.task3` Make Project Manager render only the current managed review confirmation as actionable and lock the input/buttons while the Core review decision is in flight. Old `managed-workflow-user-review` messages must remain readable history but must not expose active `Подтверждаю` buttons after a newer gate opens or after confirmation starts (scope: `src/client/ui/src/session/dialog-panel.tsx, src/client/ui/src/session/session-view.tsx, src/client/project-manager/components/sessions/project-manager-dialog-session-view-helpers.test.ts`; expected commit: `fix: prevent stale review confirmations`).
+413. [TODO] Git Commit: `fix: prevent stale review confirmations` (hash: TBD)
+414. [TODO] `phase131.stream1.task4` Split Application Skeleton review handoff copy by phase so users can distinguish accepting the draft contract before materialization from accepting the materialized filesystem skeleton before Quality Gates unlock. Tests must prove the two gates render distinct Core messages and keep the expected managed lifecycle sequence (scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-user-handoff-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: label application skeleton review gates`).
+415. [TODO] Git Commit: `fix: label application skeleton review gates` (hash: TBD)
+416. [TODO] `phase131.stream1.task5` Run targeted verification for managed-turn locking, Core review action routing, stale review-button suppression, Application Skeleton phase-specific handoffs, Core build, webview typecheck/build, and plan validation before requesting the next release build confirmation (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ## Phase 30 - Scope Closeout (owner: Codex, updated: 2026-05-25)
 

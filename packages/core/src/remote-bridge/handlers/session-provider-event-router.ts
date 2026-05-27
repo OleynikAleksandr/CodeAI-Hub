@@ -2,6 +2,7 @@ import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import { type BridgeEvent, serializeSessionModelBinding } from "../types";
+import type { ManagedWorkflowTurnCompletionResult } from "./session-request-handler-managed-workflow-turn";
 
 interface ProviderEventEnvelope {
   readonly payload?: unknown;
@@ -53,7 +54,7 @@ interface SessionProviderEventRouterDependencies {
   ) => Promise<void>;
   readonly handleManagedWorkflowTurnCompleted?: (
     sessionId: string
-  ) => Promise<void>;
+  ) => Promise<ManagedWorkflowTurnCompletionResult | undefined>;
   readonly handleSessionContinuityProviderEvent: (
     sessionId: string,
     event: unknown
@@ -305,12 +306,12 @@ export class SessionProviderEventRouter {
           type: "session:stream",
           payload: { sessionId, event },
         });
-        this.deps.handleTurnCompletedWithFlowNodeArbitration(
-          sessionId,
-          flowNodeContinuityTask
-        );
-        this.deps
-          .handleManagedWorkflowTurnCompleted?.(sessionId)
+        (
+          this.deps.handleManagedWorkflowTurnCompleted?.(sessionId) ??
+          Promise.resolve<ManagedWorkflowTurnCompletionResult | undefined>(
+            "settled"
+          )
+        )
           .catch((error: unknown) => {
             this.deps.logger.warn(
               "Managed workflow turn completion handler failed",
@@ -318,6 +319,19 @@ export class SessionProviderEventRouter {
                 sessionId,
                 error: error instanceof Error ? error.message : String(error),
               }
+            );
+            return "settled" as const;
+          })
+          .then((managedResult) => {
+            if (managedResult === "continued") {
+              flowNodeContinuityTask.catch((error: unknown) => {
+                this.logFlowNodeContinuityHandlerFailure(sessionId, error);
+              });
+              return;
+            }
+            this.deps.handleTurnCompletedWithFlowNodeArbitration(
+              sessionId,
+              flowNodeContinuityTask
             );
           });
       });
