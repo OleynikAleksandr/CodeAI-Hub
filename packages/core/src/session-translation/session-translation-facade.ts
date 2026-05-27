@@ -75,9 +75,8 @@ const isThinkingTranslationCandidate = (
   (candidate.role === "assistant" && candidate.tag === "thinking");
 
 const resolveTranslationPolicyCategory = (
-  candidate: SessionTranslationDispatchCandidate
-): SessionTranslationPolicyCategory =>
-  candidate.role === "system" ? "messages_for_the_user" : "reasoning";
+  _candidate: SessionTranslationDispatchCandidate
+): SessionTranslationPolicyCategory => "reasoning";
 
 const buildLogPreview = (content: string): string => {
   const normalized = content.replace(/\s+/gu, " ").trim();

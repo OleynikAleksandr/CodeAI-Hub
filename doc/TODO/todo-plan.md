@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "a3229cce7",
+  "lastRecordedCommit": "4a5d56865",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.translation-diagnose.task1",
-  "expectedCommitMessage": "test: characterize system message translation routing",
+  "currentTaskId": "provider-readiness.phase8a.translation-system-tags.task1",
+  "expectedCommitMessage": "fix: route system messages through reasoning translation",
   "debt": {
-    "expectedCommitMessage": "test: characterize system message translation routing",
-    "preCommitHead": "a3229cce7",
+    "expectedCommitMessage": "fix: route system messages through reasoning translation",
+    "preCommitHead": "4a5d56865",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.translation-diagnose.task1"
+    "taskId": "provider-readiness.phase8a.translation-system-tags.task1"
   }
 }
 ```
@@ -128,9 +128,9 @@
 28. [DONE] `provider-readiness.phase8a.translation-diagnose.task1` Retest finding 2026-05-27: System orchestrator messages in Project Manager appear to translate slowly through the UI/interface translation engine, while the latest System messages may remain untranslated; inspect message metadata/translation labels for System, Reasoning, and interface text to confirm the routing mismatch shown in the screenshot (scope: `src/client/project-manager, packages/core/src/session-translation, packages/localization, doc/TODO/todo-plan.md`; expected commit: `test: characterize system message translation routing`).
     - Diagnostic 2026-05-27: `packages/core/src/session-translation/session-translation-facade.ts` maps `role === "system"` to `messages_for_the_user`; `packages/core/src/session-translation/session-translation-policy-resolver.ts` then resolves that category through `loadUITranslationEngineId()`, while Reasoning uses `loadReasoningTranslationEngineId()`.
     - Diagnostic 2026-05-27: the screenshot's slow System translation matches this routing mismatch; System workflow/status/error cards are not using the same engine path as Reasoning.
-29. [PENDING] Git Commit: `test: characterize system message translation routing` (hash: TBD)
-30. [TODO] `provider-readiness.phase8a.translation-system-tags.task1` Align System orchestrator message labels with the same translation category/engine path used for Reasoning, so System workflow/status/error messages do not use the interface/UI translation engine (scope: `packages/core/src/session-translation, src/client/project-manager/services, src/client/project-manager/components/sessions`; expected commit: `fix: route system messages through reasoning translation`).
-31. [TODO] Git Commit: `fix: route system messages through reasoning translation` (hash: TBD)
+29. [DONE] Git Commit: `test: characterize system message translation routing` (hash: 4a5d56865)
+30. [DONE] `provider-readiness.phase8a.translation-system-tags.task1` Align System orchestrator message labels with the same translation category/engine path used for Reasoning, so System workflow/status/error messages do not use the interface/UI translation engine (scope: `packages/core/src/session-translation, src/client/project-manager/services, src/client/project-manager/components/sessions, doc/TODO/todo-plan.md`; expected commit: `fix: route system messages through reasoning translation`).
+31. [PENDING] Git Commit: `fix: route system messages through reasoning translation` (hash: TBD)
 32. [TODO] `provider-readiness.phase8a.translation-latest-system.task1` Fix the untranslated-tail case where the latest System messages are not passed through the session translation pipeline after workflow state updates/errors, including the dirty Git blocker message path from the screenshot (scope: `packages/core/src/remote-bridge/handlers, src/client/project-manager/services, src/client/project-manager/components/sessions`; expected commit: `fix: translate latest system workflow messages`).
 33. [TODO] Git Commit: `fix: translate latest system workflow messages` (hash: TBD)
 34. [TODO] `provider-readiness.phase8a.translation-verify.task1` Add targeted verification that System and Reasoning messages carry equivalent translation labels/engine selection, last System messages are translated, and UI/interface labels still use the interface translation engine (scope: `packages/core, src/client/project-manager, packages/localization`; expected commit: `test: verify system and reasoning translation routing`).

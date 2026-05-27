@@ -254,7 +254,7 @@ test("SessionTranslationFacade gives short reasoning translations at least 15 se
   }
 });
 
-test("SessionTranslationFacade uses Messages for the User policy for Core system messages", async () => {
+test("SessionTranslationFacade uses Reasoning policy for Core system messages", async () => {
   const homeDirectory = await createTempHomeDirectory();
   try {
     const settingsPath = await writeSettingsAndBootstrap(homeDirectory);
@@ -291,7 +291,7 @@ test("SessionTranslationFacade uses Messages for the User policy for Core system
     assert.equal(outcome?.translatedContent, translatedText);
     assert.equal(outcome?.targetLanguage, "ru");
     assert.ok(recordedRequest);
-    assert.equal(recordedRequest.category, "messages_for_the_user");
+    assert.equal(recordedRequest.category, "reasoning");
     assert.equal(recordedRequest.targetLanguage, "ru");
   } finally {
     await rm(homeDirectory, { recursive: true, force: true });
