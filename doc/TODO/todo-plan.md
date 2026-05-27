@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "5d396e189",
+  "lastRecordedCommit": "3343c99f7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8b.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare provider readiness repair release",
+  "currentTaskId": "provider-readiness.phase8b.release-build.task1",
+  "expectedCommitMessage": "chore: build provider readiness repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare provider readiness repair release",
-    "preCommitHead": "5d396e189",
+    "expectedCommitMessage": "chore: build provider readiness repair release",
+    "preCommitHead": "3343c99f7",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8b.release-prep.task1"
+    "taskId": "provider-readiness.phase8b.release-build.task1"
   }
 }
 ```
@@ -192,9 +192,11 @@
 ## Phase 8b — Release Build (owner: Codex, updated: 2026-05-27)
 ### Stream: Release Packaging
 60. [DONE] `provider-readiness.phase8b.release-prep.task1` Prepare release metadata for the approved provider readiness retest fixes by updating README/CHANGELOG to the next release version and recording release intent (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare provider readiness repair release`).
-61. [PENDING] Git Commit: `docs: prepare provider readiness repair release` (hash: TBD)
-62. [TODO] `provider-readiness.phase8b.release-build.task1` Run the approved unified release build for the provider readiness fixes, including GLM standalone provider runtime artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build provider readiness repair release`).
-63. [TODO] Git Commit: `chore: build provider readiness repair release` (hash: TBD)
+61. [DONE] Git Commit: `docs: prepare provider readiness repair release` (hash: 3343c99f7)
+62. [DONE] `provider-readiness.phase8b.release-build.task1` Run the approved unified release build for the provider readiness fixes, including GLM standalone provider runtime artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, scripts/release-utils.sh, doc/TODO/todo-plan.md, doc/tmp/releases/**`; expected commit: `chore: build provider readiness repair release`).
+    - Result 2026-05-27: `./scripts/build-all.sh` — PASS, produced unified release artifacts for `1.2.380`.
+    - Result 2026-05-27: Verified `doc/tmp/releases/glm-claude-code-module-1.2.380.tar.bz2` is retained with the other provider tarballs.
+63. [PENDING] Git Commit: `chore: build provider readiness repair release` (hash: TBD)
 64. [TODO] `provider-readiness.phase8b.release-package.task1` Run the approved VSIX packaging step for the current release version, verify SDK exclusions/package output, and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package provider readiness repair vsix`).
 65. [TODO] Git Commit: `chore: package provider readiness repair vsix` (hash: TBD)
 66. [TODO] `provider-readiness.phase8b.user-retest.task1` User installs the produced release and retests GLM provider artifact/home, Gemini startup, provider recovery after failed startup, System/Reasoning translation routing, and Kimi Description to Virtual Simulation handoff (scope: chat/process observation only; no commit required).
