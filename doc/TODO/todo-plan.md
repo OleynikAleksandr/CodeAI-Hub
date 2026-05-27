@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "70dcc39a5",
+  "lastRecordedCommit": "bb53a2d2c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.glm-home.task1",
-  "expectedCommitMessage": "fix: isolate glm provider workspace home",
+  "currentTaskId": "provider-readiness.phase8a.glm-verify.task1",
+  "expectedCommitMessage": "test: verify glm standalone provider runtime",
   "debt": {
-    "expectedCommitMessage": "fix: isolate glm provider workspace home",
-    "preCommitHead": "70dcc39a5",
+    "expectedCommitMessage": "test: verify glm standalone provider runtime",
+    "preCommitHead": "bb53a2d2c",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.glm-home.task1"
+    "taskId": "provider-readiness.phase8a.glm-verify.task1"
   }
 }
 ```
@@ -115,9 +115,14 @@
 22. [DONE] `provider-readiness.phase8a.glm-artifact.task1` Retest finding 2026-05-27: installed release still has no GLM provider under `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/providers/`; diagnose and implement a standalone GLM provider runtime artifact/manifest even though GLM executes through the Claude-compatible client (scope: `scripts/build-all.sh, scripts/build-release.sh, scripts/build-glm-claude-code-module.sh, assets/providers/glm*/manifest.json, doc/TODO/todo-plan.md`; expected commit: `fix: package glm provider runtime artifact`).
 23. [DONE] Git Commit: `fix: package glm provider runtime artifact` (hash: 70dcc39a5)
 24. [DONE] `provider-readiness.phase8a.glm-home.task1` Ensure GLM gets its own provider home/runtime capsule distinct from original Claude home while preserving the Claude Agent SDK-compatible execution path and GLM-specific settings/API key source (scope: `packages/core/src/provider-registry, packages/core/src/workflow/runtime, packages/Claude_Module/src/glm-claude-code, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/TODO/todo-plan.md`; expected commit: `fix: isolate glm provider workspace home`).
-25. [PENDING] Git Commit: `fix: isolate glm provider workspace home` (hash: TBD)
-26. [TODO] `provider-readiness.phase8a.glm-verify.task1` Add/adjust targeted checks proving the installed runtime exposes GLM as its own provider artifact, uses a separate GLM home, and still launches through the Claude-compatible runtime (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify glm standalone provider runtime`).
-27. [TODO] Git Commit: `test: verify glm standalone provider runtime` (hash: TBD)
+25. [DONE] Git Commit: `fix: isolate glm provider workspace home` (hash: bb53a2d2c)
+26. [DONE] `provider-readiness.phase8a.glm-verify.task1` Add/adjust targeted checks proving the installed runtime exposes GLM as its own provider artifact, uses a separate GLM home, and still launches through the Claude-compatible runtime (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify glm standalone provider runtime`).
+    - Result 2026-05-27: `node -e` manifest check for `assets/providers/glm-claude-code/manifest.json` — PASS (`glm-claude-code-module-1.2.379.tar.bz2`, SHA1 `b38ed8e4582668d476f4d464cf9148b2b79793f9`).
+    - Result 2026-05-27: `node -e` load check for `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/1.2.379/dist/index.js` — PASS (`GlmClaudeCodeProviderAdapter` export present).
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-27: `node --test packages/core/dist/workflow/runtime/workspace-runtime-capsule.test.js packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js` — PASS (6 tests).
+27. [PENDING] Git Commit: `test: verify glm standalone provider runtime` (hash: TBD)
 
 ### Stream: System And Reasoning Translation Routing
 28. [TODO] `provider-readiness.phase8a.translation-diagnose.task1` Retest finding 2026-05-27: System orchestrator messages in Project Manager appear to translate slowly through the UI/interface translation engine, while the latest System messages may remain untranslated; inspect message metadata/translation labels for System, Reasoning, and interface text to confirm the routing mismatch shown in the screenshot (scope: `src/client/project-manager, packages/core/src/session-translation, packages/localization`; expected commit: `test: characterize system message translation routing`).
