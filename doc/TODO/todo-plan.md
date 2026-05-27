@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "ed6d6f23c",
+  "lastRecordedCommit": "c19f48943",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase133.stream1.task1",
-  "expectedCommitMessage": "docs: prepare managed review gate release",
+  "currentTaskId": "phase133.stream2.task1",
+  "expectedCommitMessage": "chore: build managed review gate release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed review gate release",
-    "preCommitHead": "ed6d6f23c",
+    "expectedCommitMessage": "chore: build managed review gate release",
+    "preCommitHead": "c19f48943",
     "stage": "commit_pending",
-    "taskId": "phase133.stream1.task1"
+    "taskId": "phase133.stream2.task1"
   }
 }
 ```
@@ -1120,11 +1120,11 @@
 
 ### Stream: Release Docs
 424. [DONE] `phase133.stream1.task1` Update release-facing docs for v1.2.378 after explicit user request to build the managed review gate and Quality Gates draft-scope fix release (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed review gate release`).
-425. [PENDING] Git Commit: `docs: prepare managed review gate release` (hash: TBD)
+425. [DONE] Git Commit: `docs: prepare managed review gate release` (hash: c19f48943)
 
 ### Stream: Release Build
-426. [TODO] `phase133.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record artifacts for release 1.2.378 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build managed review gate release`).
-427. [TODO] Git Commit: `chore: build managed review gate release` (hash: TBD)
+426. [DONE] `phase133.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record artifacts for release 1.2.378 (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build managed review gate release`). Result: Release `1.2.378` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.378.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+427. [PENDING] Git Commit: `chore: build managed review gate release` (hash: TBD)
 
 ## Phase 134 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
 
