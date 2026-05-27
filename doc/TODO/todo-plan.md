@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "01f97fafe",
+  "lastRecordedCommit": "afe2a0590",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase5.status.task1",
-  "expectedCommitMessage": "fix: show truthful provider readiness",
+  "currentTaskId": "provider-readiness.phase6.verify.task1",
+  "expectedCommitMessage": "test: verify provider readiness repair",
   "debt": {
-    "expectedCommitMessage": "fix: show truthful provider readiness",
-    "preCommitHead": "01f97fafe",
+    "expectedCommitMessage": "test: verify provider readiness repair",
+    "preCommitHead": "afe2a0590",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase5.status.task1"
+    "taskId": "provider-readiness.phase6.verify.task1"
   }
 }
 ```
@@ -75,12 +75,21 @@
 ## Phase 5 — Provider Picker Truthfulness (owner: Codex, updated: 2026-05-27)
 ### Stream: Availability Projection
 11. [DONE] `provider-readiness.phase5.status.task1` Make provider picker availability reflect Core readiness after provider preflight/recovery, so Gemini cannot be selectable as available when auth/session bootstrap is known to fail, while Kimi/GLM show actionable messages (scope: `packages/core/src/provider-registry/**, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/components/description/description-provider-picker.tsx`; expected commit: `fix: show truthful provider readiness`).
-12. [PENDING] Git Commit: `fix: show truthful provider readiness` (hash: TBD)
+12. [DONE] Git Commit: `fix: show truthful provider readiness` (hash: afe2a0590)
 
 ## Phase 6 — Tooling Verification (owner: Codex, updated: 2026-05-27)
 ### Stream: Targeted Verification
-13. [TODO] `provider-readiness.phase6.verify.task1` Run targeted provider/core/UI checks for Gemini, Kimi, GLM, and provider picker readiness; record exact commands/results in this plan (scope: `packages/Gemini_Module, packages/Kimi_Module, packages/Claude_Module, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify provider readiness repair`).
-14. [TODO] Git Commit: `test: verify provider readiness repair` (hash: TBD)
+13. [DONE] `provider-readiness.phase6.verify.task1` Run targeted provider/core/UI checks for Gemini, Kimi, GLM, and provider picker readiness; record exact commands/results in this plan (scope: `packages/Gemini_Module, packages/Kimi_Module, packages/Claude_Module, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify provider readiness repair`).
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/gemini-module` — PASS.
+    - Result 2026-05-27: `node --test packages/Gemini_Module/dist/runtime/cli-bridge-provider-home.test.js packages/Gemini_Module/dist/session/gemini-session-bootstrapper.test.js` — PASS (4 tests).
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/kimi-module` — PASS.
+    - Result 2026-05-27: `node --test packages/Kimi_Module/dist/provider/kimi-managed-agent-profile.test.js` — PASS (2 tests).
+    - Result 2026-05-27: `npm run test --workspace @codeai-hub/kimi-module` — PASS.
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+    - Result 2026-05-27: `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js` — PASS (1 test).
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-27: `npm run typecheck:webview` — PASS.
+14. [PENDING] Git Commit: `test: verify provider readiness repair` (hash: TBD)
 
 ## Phase 7 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-27)
 ### Stream: Manual Provider Retest
