@@ -32,6 +32,11 @@ interface SessionRequestHandlerSessionBootstrapDependencies {
   readonly continuity: SessionContinuityFacade;
   readonly continuityRootBySessionId: Map<string, string>;
   readonly handleProviderEvent: (sessionId: string, event: unknown) => void;
+  readonly handleProviderFailure: (
+    providerId: string,
+    error: unknown,
+    sessionId?: string
+  ) => void;
   readonly maybeBackfillDescriptionDialogHistory: (options: {
     readonly session: Session;
     readonly providerSessionId: string;
@@ -135,18 +140,16 @@ export class SessionRequestHandlerSessionBootstrap {
       requestedProviderSessionId: options.context.providerSessionId,
     });
     if ("error" in providerSessionResolution) {
+      const failure = new Error(providerSessionResolution.error);
       if (shell) {
-        this.sessionShellFactory.handleProviderResolutionError({
-          session: shell.session,
-          providerId: options.providerId,
-          error: providerSessionResolution.error,
-        });
+        this.deps.handleProviderFailure(
+          options.providerId,
+          failure,
+          shell.session.id
+        );
         return shell.session;
       }
-      this.deps.broadcaster({
-        type: "session:error",
-        payload: { message: providerSessionResolution.error },
-      });
+      this.deps.handleProviderFailure(options.providerId, failure);
       return null;
     }
 

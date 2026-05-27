@@ -380,6 +380,7 @@ export const createSessionRequestHandlerRuntimeCore = (
         providerSessionId
       ),
     handleProviderEvent: options.callbacks.handleProviderEvent,
+    handleProviderFailure: options.callbacks.handleProviderFailure,
     updateProviderBinding: (sessionId, providerSessionId) =>
       providerBindingService.updateProviderBinding(
         sessionId,
