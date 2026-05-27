@@ -19,9 +19,11 @@ const AUTO_SCROLL_EPSILON = 32;
 const USER_MESSAGES_CATEGORY = "system_feedback";
 
 interface DialogPanelProps {
+  readonly activeManagedReviewMessageId?: string | null;
+  readonly managedReviewAcceptPending?: boolean;
   readonly messages: readonly SessionMessage[];
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
-  readonly onManagedReviewAccept?: () => void;
+  readonly onManagedReviewAccept?: (message: SessionMessage) => void;
   readonly onSpeakMessage?: (message: SessionMessage) => void;
   readonly providerLabel?: string | null;
   readonly providerTheme?: ProviderTheme | null;
@@ -38,11 +40,13 @@ interface ThinkingMessageProps {
 }
 
 interface StandardMessageProps {
+  readonly activeManagedReviewMessageId?: string | null;
   readonly className: string;
   readonly label: string;
+  readonly managedReviewAcceptPending?: boolean;
   readonly message: SessionMessage;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
-  readonly onManagedReviewAccept?: () => void;
+  readonly onManagedReviewAccept?: (message: SessionMessage) => void;
   readonly onSpeakMessage?: (message: SessionMessage) => void;
   readonly speakingMessageId?: string | null;
 }
@@ -54,6 +58,8 @@ interface SpeakMessageButtonProps {
 }
 
 const DialogPanel = ({
+  activeManagedReviewMessageId = null,
+  managedReviewAcceptPending = false,
   messages,
   onManagedReviewAccept,
   onSpeakMessage,
@@ -165,9 +171,11 @@ const DialogPanel = ({
 
           return (
             <StandardMessage
+              activeManagedReviewMessageId={activeManagedReviewMessageId}
               className={className}
               key={message.id}
               label={label}
+              managedReviewAcceptPending={managedReviewAcceptPending}
               message={message}
               onFileLinkActivate={onFileLinkActivate}
               onManagedReviewAccept={onManagedReviewAccept}
@@ -214,6 +222,8 @@ const StandardMessage = ({
   message,
   label,
   className,
+  activeManagedReviewMessageId,
+  managedReviewAcceptPending = false,
   onManagedReviewAccept,
   onSpeakMessage,
   onFileLinkActivate,
@@ -224,6 +234,7 @@ const StandardMessage = ({
   const showManagedReviewAccept =
     message.role === "system" &&
     message.tag === "managed-workflow-user-review" &&
+    message.id === activeManagedReviewMessageId &&
     typeof onManagedReviewAccept === "function";
   const confirmLabel = t(
     "ui_interface",
@@ -256,7 +267,8 @@ const StandardMessage = ({
           <button
             aria-label={confirmLabel}
             className="session-dialog__managed-review-confirm"
-            onClick={onManagedReviewAccept}
+            disabled={managedReviewAcceptPending}
+            onClick={() => onManagedReviewAccept?.(message)}
             type="button"
           >
             {confirmLabel}

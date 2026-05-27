@@ -14,7 +14,11 @@ export const useSessionMessageSender = (
   onBeforeSend?: () => void
 ) =>
   useCallback(
-    (sessionId: string, content: string) => {
+    (
+      sessionId: string,
+      content: string,
+      turnOptions?: Record<string, unknown>
+    ) => {
       const record = sessionsRef.current.find(
         (session) => session.id === sessionId
       );
@@ -28,7 +32,11 @@ export const useSessionMessageSender = (
       onBeforeSend?.();
       const schemaStage = resolveSchemaStage(record?.stage);
       if (!schemaStage) {
-        api.sendSessionMessage(sessionId, content);
+        api.sendSessionMessage(sessionId, content, turnOptions);
+        return;
+      }
+      if (turnOptions?.managedReviewAction) {
+        api.sendSessionMessage(sessionId, content, turnOptions);
         return;
       }
       const shouldFinalize = isFinalizeTrigger(content);
@@ -37,10 +45,13 @@ export const useSessionMessageSender = (
           const outputSchema = shouldFinalize
             ? enforceArtifactsRequired(schema)
             : schema;
-          api.sendSessionMessage(sessionId, content, { outputSchema });
+          api.sendSessionMessage(sessionId, content, {
+            ...turnOptions,
+            outputSchema,
+          });
         })
         .catch(() => {
-          api.sendSessionMessage(sessionId, content);
+          api.sendSessionMessage(sessionId, content, turnOptions);
         });
     },
     [onBeforeSend, sessionsRef, workspacePath]

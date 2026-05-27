@@ -220,15 +220,23 @@ test("DialogPanel keeps Speak button available for assistant thinking bubbles", 
 });
 
 test("DialogPanel renders managed review confirm action only for review handoff", () => {
+  const activeReview = createSystemMessage(
+    "review-1",
+    "Core: Diagram Modules перешёл в пользовательскую проверку.",
+    "managed-workflow-user-review"
+  );
   const reviewHtml = renderToStaticMarkup(
     createElement(DialogPanel, {
-      messages: [
-        createSystemMessage(
-          "review-1",
-          "Core: Diagram Modules перешёл в пользовательскую проверку.",
-          "managed-workflow-user-review"
-        ),
-      ],
+      activeManagedReviewMessageId: activeReview.id,
+      messages: [activeReview],
+      onManagedReviewAccept: () => undefined,
+      speakingMessageId: null,
+    })
+  );
+  const staleHtml = renderToStaticMarkup(
+    createElement(DialogPanel, {
+      activeManagedReviewMessageId: null,
+      messages: [activeReview],
       onManagedReviewAccept: () => undefined,
       speakingMessageId: null,
     })
@@ -246,6 +254,10 @@ test("DialogPanel renders managed review confirm action only for review handoff"
     true
   );
   assert.equal(reviewHtml.includes("Подтверждаю"), true);
+  assert.equal(
+    staleHtml.includes("session-dialog__managed-review-confirm"),
+    false
+  );
   assert.equal(
     ordinaryHtml.includes("session-dialog__managed-review-confirm"),
     false

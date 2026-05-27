@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type {
   ClaudeModelAliasId,
   ClaudeThinkingEffort,
@@ -29,11 +30,7 @@ import {
 type ConnectionState = SessionSnapshot["status"]["connectionState"];
 type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
 const MANAGED_REVIEW_ACCEPTANCE_CONTENT = "подтверждаю";
-const NEXT_STAGE_BY_REVIEW_STAGE: Readonly<Record<string, string>> = {
-  description: "virtual_simulation",
-  diagram_modules: "application_skeleton",
-  virtual_simulation: "diagram_modules",
-};
+type SessionSendTurnOptions = Record<string, unknown>;
 
 const RESUMING_LOCK_REASONS = new Set([
   "context_check_pending",
@@ -87,7 +84,11 @@ interface SessionViewProps {
     reasoning: CodexReasoningLevel
   ) => void;
   readonly onSelectSession: (sessionId: string) => void;
-  readonly onSendMessage: (sessionId: string, content: string) => void;
+  readonly onSendMessage: (
+    sessionId: string,
+    content: string,
+    turnOptions?: SessionSendTurnOptions
+  ) => void;
   readonly onSpeakMessage?: (request: {
     readonly messageId: string;
     readonly providerId?: string | null;
@@ -112,16 +113,23 @@ const resolveContinuityErrorCopy = (
   return activeSession.status.rollover?.error ?? "Rollover failed.";
 };
 
-const activateNextWorkflowStageAfterReview = (stage: string | null): void => {
-  const nextStage = stage ? NEXT_STAGE_BY_REVIEW_STAGE[stage] : undefined;
-  if (!nextStage) {
-    return;
+const resolveActiveManagedReviewMessageId = (
+  messages: readonly {
+    readonly id: string;
+    readonly role: string;
+    readonly tag?: string;
+  }[]
+): string | null => {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const message = messages[index];
+    if (
+      message?.role === "system" &&
+      message.tag === "managed-workflow-user-review"
+    ) {
+      return index === messages.length - 1 ? message.id : null;
+    }
   }
-  window.dispatchEvent(
-    new CustomEvent("pm:stage:activated", {
-      detail: { source: "managed-review-confirm", stage: nextStage },
-    })
-  );
+  return null;
 };
 
 const SessionViewBody = ({
@@ -160,6 +168,9 @@ const SessionViewBody = ({
     providerId: primaryProviderId,
     providerLabels,
   });
+  const [managedReviewPendingId, setManagedReviewPendingId] = useState<
+    string | null
+  >(null);
 
   const header = (
     <SessionHeader
@@ -185,7 +196,8 @@ const SessionViewBody = ({
     continuityLockActive,
     continuityLockReason,
   });
-  const effectiveContinuityLockActive = continuityLockActive;
+  const effectiveContinuityLockActive =
+    continuityLockActive || managedReviewPendingId !== null;
   const queueConnectionState: ConnectionState =
     effectiveContinuityLockActive && connectionState !== "running"
       ? "blocked"
@@ -209,6 +221,18 @@ const SessionViewBody = ({
     showThinkingMessages,
     snapshots,
   });
+  const activeManagedReviewMessageId = resolveActiveManagedReviewMessageId(
+    virtualConversationMessages
+  );
+
+  useEffect(() => {
+    if (
+      managedReviewPendingId &&
+      managedReviewPendingId !== activeManagedReviewMessageId
+    ) {
+      setManagedReviewPendingId(null);
+    }
+  }, [activeManagedReviewMessageId, managedReviewPendingId]);
 
   if (!(activeSession && activeSessionId)) {
     return (
@@ -241,11 +265,29 @@ const SessionViewBody = ({
       <div className="session-app__content">
         <div className="session-app__dialog">
           <DialogPanel
+            activeManagedReviewMessageId={activeManagedReviewMessageId}
+            managedReviewAcceptPending={managedReviewPendingId !== null}
             messages={virtualConversationMessages}
             onFileLinkActivate={onFileLinkActivate}
-            onManagedReviewAccept={() => {
-              submitMessage(MANAGED_REVIEW_ACCEPTANCE_CONTENT);
-              activateNextWorkflowStageAfterReview(activeRecord?.stage ?? null);
+            onManagedReviewAccept={(message) => {
+              if (
+                !(
+                  activeSessionId && message.id === activeManagedReviewMessageId
+                )
+              ) {
+                return;
+              }
+              setManagedReviewPendingId(message.id);
+              onSendMessage(
+                activeSessionId,
+                MANAGED_REVIEW_ACCEPTANCE_CONTENT,
+                {
+                  managedReviewAction: {
+                    reviewMessageId: message.id,
+                    type: "confirm",
+                  },
+                }
+              );
             }}
             onSpeakMessage={
               onSpeakMessage

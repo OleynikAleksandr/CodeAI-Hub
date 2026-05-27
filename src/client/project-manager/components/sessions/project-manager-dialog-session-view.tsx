@@ -158,7 +158,9 @@ const ProjectManagerDialogSessionView = (props: {
         requestCodexReasoningSwitch(reasoning)
       }
       onSelectSession={() => {}}
-      onSendMessage={(_sessionId, content) => sendMessage(content)}
+      onSendMessage={(_sessionId, content, turnOptions) =>
+        sendMessage(content, turnOptions)
+      }
       onSpeakMessage={handleSpeakMessage}
       providerLabels={providerLabels}
       sessions={[session]}

@@ -195,6 +195,10 @@ test("project-manager-session-view clears dialog override when selected startup 
 
 test("project-manager-dialog-session-view keeps runtime model sync and dialog send wiring local", async () => {
   const source = await readFile(DIALOG_SOURCE_PATH, "utf8");
+  const controllerSource = await readFile(
+    DIALOG_SESSION_CONTROLLER_SOURCE_PATH,
+    "utf8"
+  );
 
   assert.equal(
     source.includes("useRuntimeModelSync(session?.id ?? null, setSnapshots);"),
@@ -203,7 +207,17 @@ test("project-manager-dialog-session-view keeps runtime model sync and dialog se
   assert.equal(source.includes("api.refreshUsageLimits("), false);
   assert.equal(source.includes("onRefreshUsageLimits={"), false);
   assert.equal(
-    source.includes("onSendMessage={(_sessionId, content) => sendMessage(content)}"),
+    source.includes(
+      "onSendMessage={(_sessionId, content, turnOptions) =>"
+    ),
+    true
+  );
+  assert.equal(source.includes("sendMessage(content, turnOptions)"), true);
+  assert.equal(controllerSource.includes("turnOptions?.managedReviewAction"), true);
+  assert.equal(
+    controllerSource.includes(
+      "api.sendSessionMessage(currentSessionId, content, turnOptions);"
+    ),
     true
   );
   assert.equal(source.includes("activeSessionId={session.id}"), true);

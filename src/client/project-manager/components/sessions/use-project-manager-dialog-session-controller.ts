@@ -415,16 +415,20 @@ export const useProjectManagerDialogSessionController = (
     setTokenDebugSummaryOverride,
   });
 
-  const sendMessage = useCallback((content: string) => {
+  const sendMessage = useCallback((content: string, turnOptions?: Record<string, unknown>) => {
     const intent = pendingIntentRef.current;
     const currentDialogId = dialogIdRef.current;
     if (!intent || !currentDialogId) {
       return;
     }
     reload();
+    const currentSessionId = sessionRef.current?.id ?? currentDialogId;
+    if (turnOptions?.managedReviewAction) {
+      api.sendSessionMessage(currentSessionId, content, turnOptions);
+      return;
+    }
     api.dialogs.sendDialogMessage(intent.workspaceSlug, currentDialogId, content);
     // Optimistic: render user message immediately instead of waiting for dialog:history:result
-    const currentSessionId = sessionRef.current?.id ?? currentDialogId;
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
 
