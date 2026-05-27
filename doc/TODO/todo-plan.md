@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "4a9243a4b",
+  "lastRecordedCommit": "98adf222f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.failed-startup-cleanup.task1",
-  "expectedCommitMessage": "fix: recover after failed provider startup",
+  "currentTaskId": "provider-readiness.phase8a.failed-startup-restart.task1",
+  "expectedCommitMessage": "fix: reset provider startup state on core restart",
   "debt": {
-    "expectedCommitMessage": "fix: recover after failed provider startup",
-    "preCommitHead": "4a9243a4b",
+    "expectedCommitMessage": "fix: reset provider startup state on core restart",
+    "preCommitHead": "98adf222f",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.failed-startup-cleanup.task1"
+    "taskId": "provider-readiness.phase8a.failed-startup-restart.task1"
   }
 }
 ```
@@ -160,9 +160,11 @@
     - Diagnostic 2026-05-27: failed provider creation has a Core shell session but no provider binding yet, so the existing cleanup path can leave the session/binding projection in a pending state and block a later Codex start in the same workflow step.
 45. [DONE] Git Commit: `test: characterize failed provider startup recovery` (hash: 4a9243a4b)
 46. [DONE] `provider-readiness.phase8a.failed-startup-cleanup.task1` Ensure failed provider session creation always releases workflow/session locks, cancels or kills partial provider startup processes, clears pending start markers, and returns the step to a state where another provider such as Codex can start without a full workspace reset (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/session-continuity, packages/core/src/provider-registry, doc/TODO/todo-plan.md`; expected commit: `fix: recover after failed provider startup`).
-47. [PENDING] Git Commit: `fix: recover after failed provider startup` (hash: TBD)
-48. [TODO] `provider-readiness.phase8a.failed-startup-restart.task1` Verify Restart Core fully rebuilds provider registry/runtime capsules and does not preserve stale failed Gemini startup state that blocks Codex or other providers after restart (scope: `packages/core/src/workspace-runtime, packages/core/src/provider-registry, src/client/project-manager/services`; expected commit: `fix: reset provider startup state on core restart`).
-49. [TODO] Git Commit: `fix: reset provider startup state on core restart` (hash: TBD)
+47. [DONE] Git Commit: `fix: recover after failed provider startup` (hash: 98adf222f)
+48. [DONE] `provider-readiness.phase8a.failed-startup-restart.task1` Verify Restart Core fully rebuilds provider registry/runtime capsules and does not preserve stale failed Gemini startup state that blocks Codex or other providers after restart (scope: `packages/core/src/workspace-runtime, packages/core/src/provider-registry, src/client/project-manager/services, doc/TODO/todo-plan.md`; expected commit: `fix: reset provider startup state on core restart`).
+    - Disposition 2026-05-27: restart-specific stale provider state is not persisted in `ProviderRegistry`; a restarted Core creates a fresh registry/runtime capsule set.
+    - Disposition 2026-05-27: the restart-visible blocker was the same pre-restart pending shell/session cleanup defect fixed in `fix: recover after failed provider startup`; after that fix there is no additional restart-state mutation required.
+49. [PENDING] Git Commit: `fix: reset provider startup state on core restart` (hash: TBD)
 50. [TODO] `provider-readiness.phase8a.failed-startup-verify.task1` Add targeted tests covering Gemini timeout/failure followed by successful Codex start in the same workflow step and after Restart Core (scope: `packages/core, src/client/project-manager, packages/Gemini_Module`; expected commit: `test: verify provider startup failure recovery`).
 51. [TODO] Git Commit: `test: verify provider startup failure recovery` (hash: TBD)
 
