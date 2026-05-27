@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "daf02b6e2",
+  "lastRecordedCommit": "2bccaf7ff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase126.stream1.task1",
-  "expectedCommitMessage": "docs: prepare provider session cleanup release",
+  "currentTaskId": "phase126.stream2.task1",
+  "expectedCommitMessage": "chore: build provider session cleanup release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare provider session cleanup release",
-    "preCommitHead": "daf02b6e2",
+    "expectedCommitMessage": "chore: build provider session cleanup release",
+    "preCommitHead": "2bccaf7ff",
     "stage": "commit_pending",
-    "taskId": "phase126.stream1.task1"
+    "taskId": "phase126.stream2.task1"
   }
 }
 ```
@@ -1055,11 +1055,11 @@
 
 ### Stream: Release Docs
 391. [DONE] `phase126.stream1.task1` Update release-facing docs for the next version after the retest fix backlog and before running release automation; user explicitly requested the new release in this session on 2026-05-27 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare provider session cleanup release`).
-392. [PENDING] Git Commit: `docs: prepare provider session cleanup release` (hash: TBD)
+392. [DONE] Git Commit: `docs: prepare provider session cleanup release` (hash: 2bccaf7ff)
 
 ### Stream: Release Build
-393. [TODO] `phase126.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the provider session cleanup retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build provider session cleanup release`).
-394. [TODO] Git Commit: `chore: build provider session cleanup release` (hash: TBD)
+393. [DONE] `phase126.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the provider session cleanup retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build provider session cleanup release`). Result: Release `1.2.376` built successfully with `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty`; VSIX `codeai-hub-1.2.376.vsix` created at 4.3M; tarballs copied to `doc/tmp/releases/`; release build verified architecture, type-check, compile, SDK exclusions, local artefacts, markdown links, duplication threshold, VSIX runtime package surface, and restored development dependencies.
+394. [PENDING] Git Commit: `chore: build provider session cleanup release` (hash: TBD)
 
 ## Phase 127 - User Workflow Acceptance Testing (owner: User, updated: 2026-05-27)
 
