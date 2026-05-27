@@ -32,6 +32,8 @@ const CAPSULE_TASK_TIMER_STATE_RE =
 const CAPSULE_UNIFIED_SESSION_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/sessions\/unified\/codex\/dialog\.jsonl/u;
 const RUNTIME_SLICES_RE = new RegExp(["runtime", "slices"].join("-"), "u");
+const LOCAL_STATE_IGNORE_RE = /\.codeai-hub\/state\//u;
+const LOCAL_STATE_TIMER_RE = /\.codeai-hub\/state\/task-timers\.json/u;
 
 const writeText = async (filePath: string, content: string): Promise<void> => {
   await mkdir(path.dirname(filePath), { recursive: true });
@@ -108,7 +110,10 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
       await git(workspaceRoot, ["log", "--oneline", "-1"]),
       ACCEPTED_STEP_COMMIT_RE
     );
-    await assert.rejects(readFile(path.join(workspaceRoot, ".gitignore")));
+    assert.match(
+      await readFile(path.join(workspaceRoot, ".gitignore"), "utf8"),
+      LOCAL_STATE_IGNORE_RE
+    );
     assert.equal(
       await readFile(
         path.join(
@@ -131,6 +136,46 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
     assert.match(trackedFiles, CAPSULE_TASK_TIMER_STATE_RE);
     assert.match(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
     assert.doesNotMatch(trackedFiles, RUNTIME_SLICES_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("accepted step commit ignores local CodeAI runtime state before clean-git gate", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "step-local-state-workspace-")
+  );
+  try {
+    const { capsule } = await bootstrapWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await writeText(
+      path.join(capsule.descriptionRoot.absolutePath, "Final_Description.md"),
+      "# Final Description\n"
+    );
+    await writeText(
+      path.join(workspaceRoot, ".codeai-hub", "state", "task-timers.json"),
+      "{}\n"
+    );
+
+    await new WorkflowStepCommitFacade().commitAcceptedStep({
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
+    assert.match(
+      await readFile(path.join(workspaceRoot, ".gitignore"), "utf8"),
+      LOCAL_STATE_IGNORE_RE
+    );
+    const trackedFiles = await git(workspaceRoot, ["ls-files"]);
+    assert.doesNotMatch(trackedFiles, LOCAL_STATE_TIMER_RE);
+    assert.match(
+      await git(workspaceRoot, ["log", "--oneline", "-1"]),
+      ACCEPTED_STEP_COMMIT_RE
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

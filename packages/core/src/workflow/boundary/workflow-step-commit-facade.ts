@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { readFile, writeFile } from "node:fs/promises";
 import { promisify } from "node:util";
 import { resolveWorkspaceRuntimeCapsule } from "../runtime/workspace-runtime-capsule";
 import {
@@ -34,6 +35,10 @@ export interface WorkflowStepCommitResult {
 }
 
 const execFileAsync = promisify(execFile);
+const GITIGNORE_PATH = ".gitignore";
+const LOCAL_STATE_IGNORE_PATTERN = ".codeai-hub/state/";
+const NEWLINE_RE = /\r?\n/u;
+const TRAILING_SLASHES_RE = /\/+$/u;
 
 const buildAcceptedStepCommitMessage = (stage: WorkflowStageId): string =>
   `codeai-step: ${getWorkflowBoundaryStageLabel(stage)} accepted`;
@@ -64,6 +69,33 @@ const isVolatileProviderRuntimePath = (value: string): boolean => {
     providerHomePath === "models_cache.json" ||
     providerHomePath.endsWith(".sqlite") ||
     providerHomePath.startsWith("shell_snapshots/")
+  );
+};
+
+const normalizesToLocalStateIgnore = (line: string): boolean => {
+  const normalized = line.trim().replace(TRAILING_SLASHES_RE, "");
+  return normalized === ".codeai-hub/state";
+};
+
+const ensureLocalStateIgnored = async (
+  workspaceRoot: string
+): Promise<void> => {
+  const existingContent = await readFile(
+    `${workspaceRoot}/${GITIGNORE_PATH}`,
+    "utf8"
+  ).catch(() => "");
+  const lines = existingContent.split(NEWLINE_RE);
+  if (lines.some(normalizesToLocalStateIgnore)) {
+    return;
+  }
+  const prefix =
+    existingContent.length === 0 || existingContent.endsWith("\n")
+      ? existingContent
+      : `${existingContent}\n`;
+  await writeFile(
+    `${workspaceRoot}/${GITIGNORE_PATH}`,
+    `${prefix}${LOCAL_STATE_IGNORE_PATTERN}\n`,
+    "utf8"
   );
 };
 
@@ -122,10 +154,11 @@ export class WorkflowStepCommitFacade {
       settingsFile: capsule.settingsFile,
       workspaceRoot: params.workspaceRoot,
     });
+    await ensureLocalStateIgnored(params.workspaceRoot);
     const commit = await this.#git.commit({
       allowEmpty: true,
       commitMessage: buildAcceptedStepCommitMessage(params.stage),
-      paths: [capsule.workspaceCapsuleRoot.relativePath],
+      paths: [capsule.workspaceCapsuleRoot.relativePath, GITIGNORE_PATH],
       workspaceRoot: params.workspaceRoot,
     });
     const dirtyPaths = await this.#git.statusPorcelain(params.workspaceRoot);
