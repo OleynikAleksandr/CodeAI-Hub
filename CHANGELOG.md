@@ -8,6 +8,26 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.379] - 2026-05-27
+### Fixed
+- **Gemini workspace auth is bootstrapped before session startup.** The Gemini provider home now copies missing auth/settings files from an existing `~/.gemini` login into the active workspace `.gemini` runtime home and reports missing login auth clearly.
+- **Kimi runtime home follows the active workspace.** Core passes the configured workspace into Kimi adapter construction, Kimi avoids filesystem-root workspace fallbacks, and `~/.kimi/config.toml` remains the default credential source unless explicitly overridden.
+- **GLM-Claude-Code reads workspace Settings as an auth fallback.** Non-empty `providers.glmClaudeCode` workspace settings can provide API key/base URL/model defaults after env/config precedence, without writing secrets to tracked files.
+- **Description provider picker shows truthful readiness.** Project Manager only enables providers that Core reports as active, while inactive/degraded providers keep their actionable recovery message visible.
+
+### Tests
+- `npm run build --workspace @codeai-hub/gemini-module`
+- `node --test packages/Gemini_Module/dist/runtime/cli-bridge-provider-home.test.js packages/Gemini_Module/dist/session/gemini-session-bootstrapper.test.js`
+- `npm run build --workspace @codeai-hub/kimi-module`
+- `node --test packages/Kimi_Module/dist/provider/kimi-managed-agent-profile.test.js`
+- `npm run test --workspace @codeai-hub/kimi-module`
+- `npm run build --workspace @codeai-hub/claude-module`
+- `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run plan:validate`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.378] - 2026-05-27
 ### Fixed
 - **Managed provider turns stay locked until Core settles.** Provider `turn_completed` events no longer unlock Project Manager input while Core is still persisting messages, arbitrating managed flow nodes, or opening a user-review gate.

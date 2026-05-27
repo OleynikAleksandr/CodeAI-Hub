@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "afe2a0590",
+  "lastRecordedCommit": "99e0e820c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase6.verify.task1",
-  "expectedCommitMessage": "test: verify provider readiness repair",
+  "currentTaskId": "provider-readiness.phase7.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare provider readiness release build",
   "debt": {
-    "expectedCommitMessage": "test: verify provider readiness repair",
-    "preCommitHead": "afe2a0590",
+    "expectedCommitMessage": "docs: prepare provider readiness release build",
+    "preCommitHead": "99e0e820c",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase6.verify.task1"
+    "taskId": "provider-readiness.phase7.release-prep.task1"
   }
 }
 ```
@@ -89,14 +89,21 @@
     - Result 2026-05-27: `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js` — PASS (1 test).
     - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-27: `npm run typecheck:webview` — PASS.
-14. [PENDING] Git Commit: `test: verify provider readiness repair` (hash: TBD)
+14. [DONE] Git Commit: `test: verify provider readiness repair` (hash: 99e0e820c)
 
-## Phase 7 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-27)
+## Phase 7 — Release Build (owner: Codex, updated: 2026-05-27)
+### Stream: Release Preparation And Packaging
+15. [DONE] `provider-readiness.phase7.release-prep.task1` User explicitly confirmed release build on 2026-05-27; update README/CHANGELOG for future release v1.2.379 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare provider readiness release build`).
+16. [PENDING] Git Commit: `docs: prepare provider readiness release build` (hash: TBD)
+17. [TODO] `provider-readiness.phase7.release-build.task1` Run release build scripts using the committed future-version docs, collect generated VSIX/tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, README.md, CHANGELOG.md, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build provider readiness release`).
+18. [TODO] Git Commit: `chore: build provider readiness release` (hash: TBD)
+
+## Phase 8 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-27)
 ### Stream: Manual Provider Retest
-15. [TODO] `provider-readiness.phase7.user-acceptance.task1` User restarts Core, opens the Description provider picker, verifies provider statuses, and retests Gemini first-turn startup plus Kimi/GLM readiness after credentials are available (scope: user workflow observation; expected commit: none).
+19. [TODO] `provider-readiness.phase8.user-acceptance.task1` User installs the new release, restarts Core, opens the Description provider picker, verifies provider statuses, and retests Gemini first-turn startup plus Kimi/GLM readiness after credentials are available (scope: user workflow observation; expected commit: none).
 
-## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-27)
+## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-16. [TODO] `provider-readiness.phase8.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-17. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-18. [TODO] `provider-readiness.phase8.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+20. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+21. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+22. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
