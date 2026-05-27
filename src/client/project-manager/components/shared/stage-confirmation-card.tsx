@@ -117,6 +117,8 @@ export const StageConfirmationCard: React.FC<{
 
   const upstream = resolveUpstreamArtifactInfo(stage, workflowSnapshot);
   const blocked = !upstream.available;
+  const dirtyFiles = workflowSnapshot.gating.dirtyFiles ?? [];
+  const blockedByDirtyGit = blocked && dirtyFiles.length > 0;
   const managedPreviewStage =
     workflowSnapshot.managedWorkflowPreview?.stages.find(
       (item) => item.controllerId === stage
@@ -218,6 +220,10 @@ export const StageConfirmationCard: React.FC<{
   );
   const availableLabel = uiLabel("pm.confirmation_card.artifact_available", "available");
   const notFoundLabel = uiLabel("pm.confirmation_card.artifact_not_found", "not found");
+  const cleanupRequiredLabel = uiLabel(
+    "pm.confirmation_card.artifact_cleanup_required",
+    "cleanup required"
+  );
   const providerLabelText = uiLabel("pm.confirmation_card.provider_label", "Agent provider");
   const modelLabelText = uiLabel("pm.confirmation_card.model_label", "Model");
   const reasoningLabelText = uiLabel(
@@ -238,8 +244,13 @@ export const StageConfirmationCard: React.FC<{
     { upstreamStage: UPSTREAM_STAGE_LABELS[stage] }
   );
   const blockedText = helperText(
-    `pm.confirmation_card.blocked.${stage}`,
-    `Complete the ${UPSTREAM_STAGE_LABELS[stage]} step first.`
+    blockedByDirtyGit
+      ? "pm.confirmation_card.blocked.dirty_git"
+      : `pm.confirmation_card.blocked.${stage}`,
+    blockedByDirtyGit
+      ? "Core found workspace Git changes that must be committed, cleaned up, or reviewed before this step can start: {files}"
+      : `Complete the ${UPSTREAM_STAGE_LABELS[stage]} step first.`,
+    { files: dirtyFiles.slice(0, 5).join(", ") }
   );
   const selectedProviderHintText = helperText(
     isUsingInheritedProvider
@@ -342,7 +353,7 @@ export const StageConfirmationCard: React.FC<{
             </span>
           ) : (
             <span style={{ color: "#e5534b", fontSize: 11, marginLeft: 8 }}>
-              {notFoundLabel}
+              {blockedByDirtyGit ? cleanupRequiredLabel : notFoundLabel}
             </span>
           )}
         </div>

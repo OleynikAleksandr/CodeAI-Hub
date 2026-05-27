@@ -2,10 +2,16 @@ import type { WorkflowStageId } from "./workflow-state-client";
 
 export type WorkflowGatingSnapshot = {
   readonly blocked: Record<WorkflowStageId, boolean>;
+  readonly dirtyFiles?: readonly string[];
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const parseStringArray = (value: unknown): readonly string[] =>
+  Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === "string")
+    : [];
 
 const buildDefaultBlockedStages = (
   stageOrder: readonly WorkflowStageId[]
@@ -24,7 +30,7 @@ export const parseWorkflowGating = (params: {
 }): WorkflowGatingSnapshot => {
   const blocked = buildDefaultBlockedStages(params.stageOrder);
   if (!isRecord(params.payload)) {
-    return { blocked };
+    return { blocked, dirtyFiles: [] };
   }
   const blockedPayload = params.payload.blocked;
   if (isRecord(blockedPayload)) {
@@ -35,6 +41,5 @@ export const parseWorkflowGating = (params: {
       }
     }
   }
-  return { blocked };
+  return { blocked, dirtyFiles: parseStringArray(params.payload.dirtyFiles) };
 };
-

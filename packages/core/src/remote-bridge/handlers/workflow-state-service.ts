@@ -305,6 +305,9 @@ export class WorkflowStateService {
                           technicalStageProgress.technicalStageDirtyStatus
                             .clean,
                       }),
+                      dirtyFiles:
+                        technicalStageProgress.technicalStageDirtyStatus
+                          .dirtyFiles,
                     };
                     const technicalStageRewriteBoundary =
                       resolveTechnicalStageRewriteBoundary({
