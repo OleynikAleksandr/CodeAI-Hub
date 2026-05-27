@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "98adf222f",
+  "lastRecordedCommit": "e20782544",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8a.failed-startup-restart.task1",
-  "expectedCommitMessage": "fix: reset provider startup state on core restart",
+  "currentTaskId": "provider-readiness.phase8a.failed-startup-verify.task1",
+  "expectedCommitMessage": "test: verify provider startup failure recovery",
   "debt": {
-    "expectedCommitMessage": "fix: reset provider startup state on core restart",
-    "preCommitHead": "98adf222f",
+    "expectedCommitMessage": "test: verify provider startup failure recovery",
+    "preCommitHead": "e20782544",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8a.failed-startup-restart.task1"
+    "taskId": "provider-readiness.phase8a.failed-startup-verify.task1"
   }
 }
 ```
@@ -164,9 +164,12 @@
 48. [DONE] `provider-readiness.phase8a.failed-startup-restart.task1` Verify Restart Core fully rebuilds provider registry/runtime capsules and does not preserve stale failed Gemini startup state that blocks Codex or other providers after restart (scope: `packages/core/src/workspace-runtime, packages/core/src/provider-registry, src/client/project-manager/services, doc/TODO/todo-plan.md`; expected commit: `fix: reset provider startup state on core restart`).
     - Disposition 2026-05-27: restart-specific stale provider state is not persisted in `ProviderRegistry`; a restarted Core creates a fresh registry/runtime capsule set.
     - Disposition 2026-05-27: the restart-visible blocker was the same pre-restart pending shell/session cleanup defect fixed in `fix: recover after failed provider startup`; after that fix there is no additional restart-state mutation required.
-49. [PENDING] Git Commit: `fix: reset provider startup state on core restart` (hash: TBD)
-50. [TODO] `provider-readiness.phase8a.failed-startup-verify.task1` Add targeted tests covering Gemini timeout/failure followed by successful Codex start in the same workflow step and after Restart Core (scope: `packages/core, src/client/project-manager, packages/Gemini_Module`; expected commit: `test: verify provider startup failure recovery`).
-51. [TODO] Git Commit: `test: verify provider startup failure recovery` (hash: TBD)
+49. [DONE] Git Commit: `fix: reset provider startup state on core restart` (hash: e20782544)
+50. [DONE] `provider-readiness.phase8a.failed-startup-verify.task1` Add targeted tests covering Gemini timeout/failure followed by successful Codex start in the same workflow step and after Restart Core (scope: `packages/core, src/client/project-manager, packages/Gemini_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify provider startup failure recovery`).
+    - Result 2026-05-27: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-27: `npm run typecheck:webview` — PASS.
+    - Result 2026-05-27: `node --test packages/core/dist/remote-bridge/handlers/session-provider-session-resolver.test.js packages/core/dist/remote-bridge/handlers/session-shell-factory.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-session-bootstrap.test.js packages/core/dist/remote-bridge/handlers/session-provider-failure-recovery.test.js` — PASS (6 tests).
+51. [PENDING] Git Commit: `test: verify provider startup failure recovery` (hash: TBD)
 
 ### Stream: Cross-Step Provider Start After Kimi Description
 52. [TODO] `provider-readiness.phase8a.cross-step-kimi-diagnose.task1` Retest finding 2026-05-27: after Kimi succeeds on the Description step, the Virtual Simulation step cannot start any provider; diagnose workflow stage transition state, accepted Description artifact state, provider/session cleanup after Kimi, and next-step provider start gating (scope: `packages/core/src/remote-bridge/handlers, packages/core/src/workflow, src/client/project-manager/services`; expected commit: `test: characterize provider start block after kimi description`).
