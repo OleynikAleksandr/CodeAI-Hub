@@ -6,6 +6,7 @@ import GeminiDefaultModelCard from "./gemini-default-model/gemini-default-model-
 import GeneralResponseModeFacade from "./general-response-mode/general-response-mode-facade";
 import GeneralSettings from "./general-settings";
 import GlmClaudeCodeSettingsCard from "./glm-claude-code-settings-card";
+import type { GlmClaudeCodeSettings } from "./kimi-settings-state";
 import KimiSettingsTab from "./kimi-settings-tab";
 import LocalizationSettingsCard from "./localization-settings-card";
 import ProviderVersions from "./provider-versions";
@@ -21,6 +22,9 @@ type SettingsBooleanHandler = (enabled: boolean) => void;
 
 export type SettingsViewState = UseSettingsStateResult & {
   readonly handleKimiDefaultModelChange?: (modelId: KimiModelId) => void;
+  readonly handleGlmClaudeCodeSettingsChange?: (
+    settings: GlmClaudeCodeSettings
+  ) => void;
   readonly handleGlmClaudeCodeThinkingDisplaySyncChange?: SettingsBooleanHandler;
   readonly handleKimiThinkingDisplaySyncChange?: SettingsBooleanHandler;
   readonly handleNativeRequestCaptureWorkbenchOpen?: () => void;
@@ -76,6 +80,7 @@ export const SettingsProviderTabContent: React.FC<
     handleClaudeDefaultModelChange,
     handleGeminiDefaultModelChange,
     handleKimiDefaultModelChange,
+    handleGlmClaudeCodeSettingsChange,
     handleGlmClaudeCodeThinkingDisplaySyncChange,
     handleGeminiThinkingChange,
     handleClaudeThinkingDisplaySyncChange,
@@ -198,6 +203,7 @@ export const SettingsProviderTabContent: React.FC<
     return (
       <div style={stackStyles}>
         <GlmClaudeCodeSettingsCard
+          onSettingsChange={handleGlmClaudeCodeSettingsChange}
           onThinkingDisplaySyncChange={
             handleGlmClaudeCodeThinkingDisplaySyncChange
           }
