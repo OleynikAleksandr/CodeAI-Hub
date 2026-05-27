@@ -81,6 +81,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md` — active planning source for repairing Gemini/Kimi/GLM-Claude-Code provider readiness after the workspace-owned provider-home refactor: Gemini workspace auth bootstrap and truthful availability, Kimi active-workspace home/config resolution, and GLM workspace settings/API-key resolution.
 - `Plans/Archive/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md` — archived accepted planning source for the workspace-owned Git rollback Clear refactor closed by release `1.2.378`; stable decisions live in `System/SystemArchitecture.md`, `System/WorkflowSteps_Overview.md`, `Clusters/ManagedWorkflowOrchestration.md`, `Clusters/Project_Manager.md`, `Contracts/WorkspaceRuntime.md`, `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, and `Modules/Localization.md`.
 - `Plans/Archive/WorkflowClear_GitBoundaryRollback_Architecture.md` — archived early planning source for the Git-boundary Clear model; superseded by the workspace-owned runtime capsule refinement and current SSOT documents above.
 - `Plans/Archive/DevelopmentTree_LeftSidebar_Phase1_Planning_RU.md` — archived accepted planning source for the first phase of Development Tree refactoring: Core-owned artifact workspace materialization after accepted Diagram Modules, Project Manager left sidebar projection rules, operation node lifecycle display, orphan disposition, and implementation slicing.
