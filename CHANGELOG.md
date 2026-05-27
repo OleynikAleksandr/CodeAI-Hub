@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.382] - 2026-05-27
+### Fixed
+- **Virtual Simulation handoff requires the canonical artifact.** Core now blocks the preliminary user-review handoff when `virtual_simulation/virtual-simulation.md` is missing, preventing Gemini Virtual Simulation from appearing accepted while Diagram Modules later fails with `virtual-simulation.md not found`.
+- **Session wait copy distinguishes work from resume.** Project Manager now shows `Agent is working... Please wait.` for ordinary running/blocked provider work and reserves `Agent is resuming your session... Please wait.` for explicit continuity/resume locks.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js`
+- `npx tsx --test src/client/ui/src/session/input-panel.test.tsx`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.381] - 2026-05-27
 ### Fixed
 - **GLM-Claude-Code Settings can provide the API key.** The GLM provider settings card now exposes a masked API key input and editable config/base/model fields, and Project Manager persists the GLM settings object so Core can read `providers.glmClaudeCode.apiKey` after Save and Restart Core.
