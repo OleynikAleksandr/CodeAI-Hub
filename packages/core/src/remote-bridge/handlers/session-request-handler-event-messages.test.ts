@@ -252,3 +252,67 @@ test("SessionRequestHandlerEventMessages translates Core system messages through
     true
   );
 });
+
+test("SessionRequestHandlerEventMessages waits for latest Core system translation", async () => {
+  const sessionManager = new SessionManager();
+  const session = sessionManager.createSession(
+    "codex",
+    "/tmp/core-message-localization-tail",
+    "provider-session-id"
+  );
+  const storedTranslations: string[] = [];
+  let releaseTranslation: (() => void) | undefined;
+  let resolveTranslationStarted: (() => void) | undefined;
+  const translationStarted = new Promise<void>((resolve) => {
+    resolveTranslationStarted = resolve;
+  });
+  const handler = new SessionRequestHandlerEventMessages({
+    broadcaster: noop,
+    continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
+    logger: {
+      error: noop,
+      info: noop,
+      warn: noop,
+    } as never,
+    sessionManager,
+    sessionStorage: {
+      appendMessage: () => Promise.resolve(),
+      appendMessageTranslation: (
+        _sessionId: string,
+        translation: { readonly translatedContent: string }
+      ) => {
+        storedTranslations.push(translation.translatedContent);
+        return Promise.resolve();
+      },
+    } as never,
+    sessionTranslation: {
+      resolveThinkingVisibilityForProvider: () => true,
+      translateDialogMessage: async () => {
+        resolveTranslationStarted?.();
+        await new Promise<void>((resolve) => {
+          releaseTranslation = resolve;
+        });
+        return {
+          messageId: session.messages[0]?.id ?? "message-1",
+          sessionId: session.id,
+          sourceHash: "hash",
+          targetLanguage: "ru",
+          translatedContent: "Последнее системное сообщение.",
+        };
+      },
+    } as never,
+  });
+
+  handler.appendCoreMessage(session.id, {
+    content: "Latest system message.",
+  });
+
+  const waitForPersistence = handler.waitForMessagePersistence(session.id);
+
+  await translationStarted;
+  await flushAsync();
+  assert.deepEqual(storedTranslations, []);
+  releaseTranslation?.();
+  await waitForPersistence;
+  assert.deepEqual(storedTranslations, ["Последнее системное сообщение."]);
+});

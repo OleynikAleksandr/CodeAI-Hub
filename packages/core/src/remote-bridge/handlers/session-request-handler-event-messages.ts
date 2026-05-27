@@ -86,6 +86,10 @@ export class SessionRequestHandlerEventMessages {
     string,
     Promise<void>
   >();
+  private readonly translationPersistenceTailBySessionId = new Map<
+    string,
+    Promise<void>
+  >();
 
   constructor(deps: SessionRequestHandlerEventMessagesDependencies) {
     this.deps = deps;
@@ -150,6 +154,8 @@ export class SessionRequestHandlerEventMessages {
 
   async waitForMessagePersistence(sessionId: string): Promise<void> {
     await (this.messagePersistenceTailBySessionId.get(sessionId) ??
+      Promise.resolve());
+    await (this.translationPersistenceTailBySessionId.get(sessionId) ??
       Promise.resolve());
   }
 
@@ -255,15 +261,7 @@ export class SessionRequestHandlerEventMessages {
           contentLength: message.content.length,
         });
       }
-      this.maybeTranslateDialogMessage(options.sessionId, message).catch(
-        (error: unknown) => {
-          this.deps.logger.warn("Failed to translate dialog message", {
-            sessionId: options.sessionId,
-            messageId: message.id,
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
-      );
+      this.enqueueTranslationPersistence(options.sessionId, message);
     });
   }
 
@@ -290,6 +288,35 @@ export class SessionRequestHandlerEventMessages {
     current.finally(() => {
       if (this.messagePersistenceTailBySessionId.get(sessionId) === current) {
         this.messagePersistenceTailBySessionId.delete(sessionId);
+      }
+    });
+  }
+
+  private enqueueTranslationPersistence(
+    sessionId: string,
+    message: PersistedSessionMessage
+  ): void {
+    const previous =
+      this.translationPersistenceTailBySessionId.get(sessionId) ??
+      Promise.resolve();
+    const current = previous
+      .catch(() => {
+        // The original failure was already logged by its own queued task.
+      })
+      .then(() => this.maybeTranslateDialogMessage(sessionId, message))
+      .catch((error: unknown) => {
+        this.deps.logger.warn("Failed to translate dialog message", {
+          sessionId,
+          messageId: message.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      });
+    this.translationPersistenceTailBySessionId.set(sessionId, current);
+    current.finally(() => {
+      if (
+        this.translationPersistenceTailBySessionId.get(sessionId) === current
+      ) {
+        this.translationPersistenceTailBySessionId.delete(sessionId);
       }
     });
   }
