@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.377] - 2026-05-27
+### Fixed
+- **Quality Gates completion leaves Git clean.** Core now waits for the final `managed-workflow-complete` message to persist and commits that terminal handoff residue before returning control to Project Manager.
+- **Clear rollback commits bypass workspace hooks.** Core-owned workflow boundary and Clear commits use `--no-verify`, so a user workspace pre-commit hook cannot strand Clear in a half-restored dirty state.
+- **Boundary registry pruning is no-op stable.** Clearing a stage no longer rewrites `workflow/boundaries.json` with a timestamp-only diff when the target/downstream entries are already absent.
+- **Project Manager explains dirty-Git blockers.** Start cards now show `cleanup required` plus the dirty file list from Core instead of misreporting the upstream artifact as `not found`.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts packages/core/src/workflow/boundary/workflow-rollback-coordinator.test.ts src/client/project-manager/services/workflow-gating-client.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run plan:validate`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.376] - 2026-05-27
 ### Fixed
 - **Workflow state writes are atomic.** Core now writes workflow `state.json` through a temporary file and rename, preventing malformed rollback boundary JSON after managed stages advance.

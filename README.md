@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.376** (Provider Session Cleanup And Clear Retest Hotfix)
+**Current Release — v1.2.377** (Quality Gates Clear Restart Hotfix)
+
+This hotfix closes the Clear restart regression found after v1.2.376. Quality
+Gates now commits the final Core handoff message together with the accepted
+managed step state, so completing the step no longer leaves the tracked unified
+session dirty.
+
+Workflow Clear commits are now Core-owned even inside workspaces with failing
+Git hooks, and boundary registry pruning no longer rewrites
+`workflow/boundaries.json` when no entries were actually removed. Project
+Manager also reports dirty-Git start blockers as cleanup/review conditions with
+the blocking file list instead of showing the upstream artifact as `not found`.
+
+**Previous Release — v1.2.376** (Provider Session Cleanup And Clear Retest Hotfix)
 
 This hotfix hardens the Clear/Undo Git boundary after the v1.2.375 retest.
 Workflow `state.json` writes are now atomic, Description Clear no longer rewrites

@@ -8,15 +8,15 @@
   "planId": "workflow-clear-git-boundary-rollback-implementation-2026-05-25",
   "branch": "main",
   "baseHead": "cdb74cc45",
-  "lastRecordedCommit": "1a7a4814d",
+  "lastRecordedCommit": "c24d1c370",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md",
-  "currentTaskId": "phase128.stream1.task3",
-  "expectedCommitMessage": "fix: explain dirty workflow start blockers",
+  "currentTaskId": "phase129.stream1.task1",
+  "expectedCommitMessage": "docs: prepare quality gates clear restart release",
   "debt": {
-    "expectedCommitMessage": "fix: explain dirty workflow start blockers",
-    "preCommitHead": "1a7a4814d",
+    "expectedCommitMessage": "docs: prepare quality gates clear restart release",
+    "preCommitHead": "c24d1c370",
     "stage": "commit_pending",
-    "taskId": "phase128.stream1.task3"
+    "taskId": "phase129.stream1.task1"
   }
 }
 ```
@@ -1074,14 +1074,14 @@
 398. [DONE] `phase128.stream1.task2` Fix Clear rollback Git reconciliation exposed by the same retest: Core-owned Clear commits must not be blocked by workspace Husky hooks, and pruning an already-pruned boundary registry must not rewrite `workflow/boundaries.json` with a timestamp-only diff. Regression coverage must prove Clear creates a clean `codeai-clear:*` commit even when a workspace pre-commit hook exits non-zero (scope: `packages/core/src/workflow/boundary/workflow-boundary-git.ts, packages/core/src/workflow/boundary/workflow-boundary-registry.ts, packages/core/src/workflow/boundary/workflow-rollback-coordinator.test.ts`; scope exception: avoid adding rollback coverage to the existing 498-line facade test; expected commit: `fix: keep workflow clear commits clean`).
 399. [DONE] Git Commit: `fix: keep workflow clear commits clean` (hash: 1a7a4814d)
 400. [DONE] `phase128.stream1.task3` Fix Project Manager start-card diagnostics for dirty technical-stage blockers: when Core blocks a technical stage because workspace Git is dirty, the card must not report the upstream artifact as `not found`; it must show that Core cleanup/review is required and preserve the blocking file list from workflow-state (scope: `packages/core/src/remote-bridge/handlers/workflow-state-service.ts, src/client/project-manager/services/workflow-gating-client.ts, src/client/project-manager/services/workflow-gating-client.test.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx`; scope exception: add focused parser coverage without expanding existing near-limit PM tests; expected commit: `fix: explain dirty workflow start blockers`).
-401. [PENDING] Git Commit: `fix: explain dirty workflow start blockers` (hash: TBD)
-402. [TODO] `phase128.stream1.task4` Run targeted verification for Quality Gates completion, Clear rollback clean-tree behavior, dirty-gating diagnostics, Core build, Project Manager webview checks and plan validation (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+401. [DONE] Git Commit: `fix: explain dirty workflow start blockers` (hash: c24d1c370)
+402. [DONE] `phase128.stream1.task4` Run targeted verification for Quality Gates completion, Clear rollback clean-tree behavior, dirty-gating diagnostics, Core build, Project Manager webview checks and plan validation (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Targeted verification passed: Quality Gates managed-turn tests, Clear rollback hook/no-op registry tests, dirty-gating parser test, @codeai-hub/core build, webview typecheck, build:webview, and plan validation completed.
 
 ## Phase 129 - Release Build (owner: Codex, updated: 2026-05-27)
 
 ### Stream: Release Docs
-403. [TODO] `phase129.stream1.task1` Update release-facing docs for the next retest version after the Quality Gates/Clear dirty-Git fixes and before running release automation; user explicitly requested a new release in this session on 2026-05-27 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates clear restart release`).
-404. [TODO] Git Commit: `docs: prepare quality gates clear restart release` (hash: TBD)
+403. [DONE] `phase129.stream1.task1` Update release-facing docs for the next retest version after the Quality Gates/Clear dirty-Git fixes and before running release automation; user explicitly requested a new release in this session on 2026-05-27 (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare quality gates clear restart release`).
+404. [PENDING] Git Commit: `docs: prepare quality gates clear restart release` (hash: TBD)
 
 ### Stream: Release Build
 405. [TODO] `phase129.stream2.task1` Run `./scripts/build-all.sh`, then `./scripts/build-release.sh --use-current-version`, verify VSIX/tarball output and record release artifacts for the Quality Gates Clear restart retest build (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/TODO/todo-plan.md, doc/tmp/releases/**, *.vsix`; expected commit: `chore: build quality gates clear restart release`).
