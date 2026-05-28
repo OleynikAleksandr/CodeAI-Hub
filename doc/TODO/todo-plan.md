@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "13216e16e",
+  "lastRecordedCommit": "03aa0dde2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8i.app-skeleton-verify.task1",
-  "expectedCommitMessage": "test: verify application skeleton managed repair",
+  "currentTaskId": "provider-readiness.phase8j.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare application skeleton repair release",
   "debt": {
-    "expectedCommitMessage": "test: verify application skeleton managed repair",
-    "preCommitHead": "13216e16e",
+    "expectedCommitMessage": "docs: prepare application skeleton repair release",
+    "preCommitHead": "03aa0dde2",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8i.app-skeleton-verify.task1"
+    "taskId": "provider-readiness.phase8j.release-prep.task1"
   }
 }
 ```
@@ -381,11 +381,23 @@
     - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/runtime/workflow-runtime.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts` — PASS (17 tests).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: No release build was started; Phase 8i remains in user retest handoff after this verification.
-136. [PENDING] Git Commit: `test: verify application skeleton managed repair` (hash: TBD)
-137. [TODO] `provider-readiness.phase8i.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+136. [DONE] Git Commit: `test: verify application skeleton managed repair` (hash: 03aa0dde2)
+137. [DONE] `provider-readiness.phase8i.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+    - Result 2026-05-28: User explicitly requested that all current fixes be included and a new release be built.
+
+## Phase 8j — Release Build (owner: Codex, updated: 2026-05-28)
+### Stream: Application Skeleton Repair Release
+138. [DONE] `provider-readiness.phase8j.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.384 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare application skeleton repair release`).
+    - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.384 before running release scripts.
+139. [PENDING] Git Commit: `docs: prepare application skeleton repair release` (hash: TBD)
+140. [TODO] `provider-readiness.phase8j.release-build.task1` Run the approved unified release build for the Application Skeleton managed repair fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build application skeleton repair release`).
+141. [TODO] Git Commit: `chore: build application skeleton repair release` (hash: TBD)
+142. [TODO] `provider-readiness.phase8j.release-vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton repair vsix`).
+143. [TODO] Git Commit: `test: verify application skeleton repair vsix` (hash: TBD)
+144. [TODO] `provider-readiness.phase8j.user-retest.task1` User installs the produced replacement release and retests Application Skeleton with Kimi, managed System message language, and artifact handoff (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-138. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-139. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-140. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+145. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+146. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+147. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).

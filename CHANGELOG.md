@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.384] - 2026-05-28
+### Fixed
+- **Application Skeleton artifact directory is prepared by Core.** `WorkflowRuntime.connectWorkspace()` now creates canonical workflow stage directories, including `.codeai-hub/<workspace>/application_skeleton/`, before provider prompts ask agents to write managed Application Skeleton artifacts.
+- **Managed validation no longer exposes raw provider repair prompts.** Application Skeleton repair now displays a short Core-owned Russian System message while the full English repair prompt is sent only through the provider internal message path.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npx tsx --test packages/core/src/workflow/runtime/workflow-runtime.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.383] - 2026-05-28
 ### Fixed
 - **Description acceptance no longer blocks on tracked local timer state.** Core now untracks legacy workspace-local `.codeai-hub/state/` runtime files before the accepted-step clean-Git gate, including files that were already tracked, while leaving the runtime files on disk.

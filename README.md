@@ -2,7 +2,22 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.383** (Workflow Blocker Repair Hotfix)
+**Current Release — v1.2.384** (Application Skeleton Managed Repair Hotfix)
+
+This hotfix repairs the Application Skeleton managed workflow startup and
+repair loop observed with Kimi. Core now prepares canonical workflow stage
+directories, including `.codeai-hub/<workspace>/application_skeleton/`, when a
+workspace connects, so provider write tools do not fail on missing parent
+directories before creating `application-skeleton.md` and
+`application-skeleton-map.json`.
+
+Application Skeleton validation repairs now keep the full provider repair
+prompt internal to the agent turn while the visible System card receives a
+short Core-owned Russian status message. This prevents raw English
+orchestrator prompts from appearing in the user session log while preserving
+the detailed repair instructions for the provider.
+
+**Previous Release — v1.2.383** (Workflow Blocker Repair Hotfix)
 
 This hotfix repairs the Description-to-Virtual-Simulation handoff regression
 found in v1.2.382. Core now untracks legacy workspace-local
