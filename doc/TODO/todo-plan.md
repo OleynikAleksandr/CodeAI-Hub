@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "6426dae90",
+  "lastRecordedCommit": "f4491a4af",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase6.release-build.task1",
-  "expectedCommitMessage": "chore: build local models release",
+  "currentTaskId": "local-models.phase6.release-package.task1",
+  "expectedCommitMessage": "chore: package local models vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build local models release",
-    "preCommitHead": "6426dae90",
+    "expectedCommitMessage": "chore: package local models vsix",
+    "preCommitHead": "f4491a4af",
     "stage": "commit_pending",
-    "taskId": "local-models.phase6.release-build.task1"
+    "taskId": "local-models.phase6.release-package.task1"
   }
 }
 ```
@@ -107,9 +107,12 @@
 21. [DONE] `local-models.phase6.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local models release`).
     - Release build 2026-05-28: `./scripts/build-all.sh` completed successfully for version `1.2.392`.
     - Release build artifacts copied to `doc/tmp/releases/`: `claude-module-1.2.392.tar.bz2`, `codex-module-1.2.392.tar.bz2`, `gemini-module-1.2.392.tar.bz2`, `kimi-module-1.2.392.tar.bz2`, `glm-claude-code-module-1.2.392.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.392.tar.bz2`, `vscode-webview-1.2.392.tar.bz2`, `project-manager-1.2.392.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.392.tar.bz2`.
-22. [PENDING] Git Commit: `chore: build local models release` (hash: TBD)
-23. [TODO] `local-models.phase6.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local models vsix`).
-24. [TODO] Git Commit: `chore: package local models vsix` (hash: TBD)
+22. [DONE] Git Commit: `chore: build local models release` (hash: f4491a4af)
+23. [DONE] `local-models.phase6.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local models vsix`).
+    - Release package 2026-05-28: `./scripts/build-release.sh --use-current-version` completed successfully for version `1.2.392`.
+    - Release package 2026-05-28: VSIX created at `codeai-hub-1.2.392.vsix` (`4.4M`); runtime package surface verification passed.
+    - Release package 2026-05-28: output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
+24. [PENDING] Git Commit: `chore: package local models vsix` (hash: TBD)
 
 ## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-28)
 ### Stream: Closeout
