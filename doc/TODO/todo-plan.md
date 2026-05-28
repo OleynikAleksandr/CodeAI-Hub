@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "19bc0d871",
+  "lastRecordedCommit": "de9914465",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8g.glm-availability-fix.task1",
-  "expectedCommitMessage": "fix: resolve glm availability after settings repair",
+  "currentTaskId": "provider-readiness.phase8g.glm-availability-verify.task1",
+  "expectedCommitMessage": "test: verify glm availability repair",
   "debt": {
-    "expectedCommitMessage": "fix: resolve glm availability after settings repair",
-    "preCommitHead": "19bc0d871",
+    "expectedCommitMessage": "test: verify glm availability repair",
+    "preCommitHead": "de9914465",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8g.glm-availability-fix.task1"
+    "taskId": "provider-readiness.phase8g.glm-availability-verify.task1"
   }
 }
 ```
@@ -329,9 +329,15 @@
     - Result 2026-05-28: Provider descriptor now labels GLM as requiring a separate Z.AI/GLM API key while still running through the Claude Agent SDK-compatible runtime.
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS after rerunning once the parallel Claude build had restored its `dist` package surface.
-118. [PENDING] Git Commit: `fix: resolve glm availability after settings repair` (hash: TBD)
-119. [TODO] `provider-readiness.phase8g.glm-availability-verify.task1` Verify masked GLM key routing, provider readiness projection, and settings persistence with targeted builds/tests; do not build a release in this stream (scope: `packages/Claude_Module, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify glm availability repair`).
-120. [TODO] Git Commit: `test: verify glm availability repair` (hash: TBD)
+118. [DONE] Git Commit: `fix: resolve glm availability after settings repair` (hash: de9914465)
+119. [DONE] `provider-readiness.phase8g.glm-availability-verify.task1` Verify masked GLM key routing, provider readiness projection, and settings persistence with targeted builds/tests; do not build a release in this stream (scope: `packages/Claude_Module, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify glm availability repair`).
+    - Result 2026-05-28: Masked runtime probe with empty env/settings reports `apiKeyAvailable=false`, `apiKeySource=missing`.
+    - Result 2026-05-28: Masked runtime probe with synthetic workspace `providers.glmClaudeCode.apiKey` reports `apiKeyAvailable=true`, `apiKeySource=workspace_settings`, and sets the Anthropic-compatible auth env without printing the secret.
+    - Result 2026-05-28: Source checks confirmed the GLM auth error, Core recovery hint, and provider descriptor all state that a separate Z.AI/GLM key is required and Claude login is not reused.
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS when run sequentially after Claude build; the earlier parallel attempt hit a transient workspace `dist` race.
+    - Result 2026-05-28: `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js` — PASS (2 tests).
+120. [PENDING] Git Commit: `test: verify glm availability repair` (hash: TBD)
 121. [TODO] `provider-readiness.phase8g.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
