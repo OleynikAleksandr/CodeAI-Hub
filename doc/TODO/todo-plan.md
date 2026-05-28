@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "78a31eeb8",
+  "lastRecordedCommit": "bd0bd75b2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8t.boundary-runtime-session-diagnose.task1",
-  "expectedCommitMessage": "test: characterize boundary runtime session dirty files",
+  "currentTaskId": "provider-readiness.phase8t.boundary-runtime-session-gitignore.task1",
+  "expectedCommitMessage": "fix: ignore provider session logs in runtime gitignore",
   "debt": {
-    "expectedCommitMessage": "test: characterize boundary runtime session dirty files",
-    "preCommitHead": "78a31eeb8",
+    "expectedCommitMessage": "fix: ignore provider session logs in runtime gitignore",
+    "preCommitHead": "bd0bd75b2",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8t.boundary-runtime-session-diagnose.task1"
+    "taskId": "provider-readiness.phase8t.boundary-runtime-session-gitignore.task1"
   }
 }
 ```
@@ -617,13 +617,15 @@
 219. [DONE] `provider-readiness.phase8t.boundary-runtime-session-diagnose.task1` Characterize the regression where tracked provider session JSONL and translation JSONL under `runtime/sessions/unified/<provider>/` are treated as rollback-owned dirty files and block the next workflow boundary (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize boundary runtime session dirty files`).
     - Diagnostic 2026-05-28: tracked GLM Description transcripts under `runtime/sessions/unified/glmClaudeCode/*.jsonl` and `*.translations.jsonl` remain in `git status` as modified files and currently make `WorkflowBoundaryFacade.ensureBoundary("virtual_simulation")` throw the pre-step rollback anchor dirty-tree error.
     - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts` — PASS.
-220. [PENDING] Git Commit: `test: characterize boundary runtime session dirty files` (hash: TBD)
-221. [TODO] `provider-readiness.phase8t.boundary-runtime-session-fix.task1` Classify provider-owned unified session transcript files as mutable runtime state for boundary clean-Git checks while keeping Core-owned unified session registry files rollback-owned (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore tracked runtime session logs for boundaries`).
-222. [TODO] Git Commit: `fix: ignore tracked runtime session logs for boundaries` (hash: TBD)
-223. [TODO] `provider-readiness.phase8t.boundary-runtime-session-verify.task1` Verify direct rollback-ignore classification/untracking for tracked provider session JSONL and translations without excluding Core-owned unified session registry files (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify boundary runtime session cleanup`).
-224. [TODO] Git Commit: `test: verify boundary runtime session cleanup` (hash: TBD)
-225. [TODO] `provider-readiness.phase8t.targeted-verification.task1` Run targeted Core tests/build for boundary runtime session cleanup and record exact results before any release decision (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: run boundary runtime session verification`).
-226. [TODO] Git Commit: `test: run boundary runtime session verification` (hash: TBD)
+220. [DONE] Git Commit: `test: characterize boundary runtime session dirty files` (hash: bd0bd75b2)
+221. [DONE] `provider-readiness.phase8t.boundary-runtime-session-gitignore.task1` Update the workspace capsule `.gitignore` contract so provider-owned unified session directories are ignored while the Core-owned unified session root remains available for rollback-owned registry files (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore provider session logs in runtime gitignore`).
+    - Result 2026-05-28: capsule `.gitignore` now ignores `runtime/sessions/unified/*/`, so provider transcript directories are not re-added by future capsule-wide commits while files directly under `runtime/sessions/unified/` remain eligible for rollback-owned tracking.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts` — PASS.
+222. [PENDING] Git Commit: `fix: ignore provider session logs in runtime gitignore` (hash: TBD)
+223. [TODO] `provider-readiness.phase8t.boundary-runtime-session-classifier.task1` Classify already-tracked provider-owned unified session transcript files as mutable runtime state for boundary clean-Git checks while keeping Core-owned unified session registry files rollback-owned (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: untrack provider session logs for boundaries`).
+224. [TODO] Git Commit: `fix: untrack provider session logs for boundaries` (hash: TBD)
+225. [TODO] `provider-readiness.phase8t.targeted-verification.task1` Run targeted Core tests/build for boundary runtime session cleanup and record exact results before any release decision (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify boundary runtime session cleanup`).
+226. [TODO] Git Commit: `test: verify boundary runtime session cleanup` (hash: TBD)
 227. [TODO] `provider-readiness.phase8t.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)

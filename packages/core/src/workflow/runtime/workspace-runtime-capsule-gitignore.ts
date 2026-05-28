@@ -18,6 +18,7 @@ const WORKSPACE_OWNED_MUTABLE_PATTERNS = [
   "runtime/settings/",
   "runtime/localization/",
   "runtime/providers/**/home/",
+  "runtime/sessions/unified/*/",
 ] as const;
 
 const SECRET_PATTERNS = [

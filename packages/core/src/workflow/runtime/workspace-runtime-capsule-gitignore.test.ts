@@ -64,6 +64,12 @@ test("workspace runtime gitignore keeps rollback state trackable", () => {
   );
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
+      "runtime/sessions/unified/*/"
+    ),
+    true
+  );
+  assert.equal(
+    WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
       "!runtime/sessions/unified/"
     ),
     true
