@@ -5,7 +5,7 @@ import { useLocalization } from "../../app-host/use-localization";
 import { isCoreBridgeStatePayload } from "../../app-host/webview-message-types";
 import { getCachedProviders } from "../../core-bridge/core-bridge";
 import {
-  APPLE_NATIVE_TRANSLATION_ENGINE_ID,
+  formatUnknownLocalizationEngineLabel,
   resolveLocalizationEngineAvailability,
   shouldExposeLocalizationEngineOption,
 } from "./localization-engine-availability";
@@ -97,16 +97,6 @@ const checkboxStyles: CSSProperties = {
   marginTop: "2px",
 };
 
-const formatUnknownTranslationEngineLabel = (engineId: string): string => {
-  if (engineId === APPLE_NATIVE_TRANSLATION_ENGINE_ID) {
-    return "Apple Native - On-Device";
-  }
-  if (engineId.startsWith("codex-")) {
-    return `OpenAI Codex · ${engineId.slice("codex-".length)}`;
-  }
-  return engineId;
-};
-
 const resolveTranslationEngineLabel = (
   engineId: string,
   t: ReturnType<typeof useLocalization>["t"]
@@ -139,7 +129,7 @@ const resolveTranslationEngineLabel = (
       "Anthropic Claude · Haiku 4.5"
     );
   }
-  return formatUnknownTranslationEngineLabel(engineId);
+  return formatUnknownLocalizationEngineLabel(engineId);
 };
 
 const LocalizationSettingsCard: FC<LocalizationSettingsCardProps> = ({

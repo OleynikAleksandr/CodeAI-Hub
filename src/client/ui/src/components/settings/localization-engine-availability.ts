@@ -11,7 +11,8 @@ const LOCALIZATION_ENGINE_PROVIDER_MAP: Readonly<
   "codex-gpt-5.4-mini": "codexCli",
 };
 
-export const APPLE_NATIVE_TRANSLATION_ENGINE_ID = "apple-native";
+const APPLE_NATIVE_TRANSLATION_ENGINE_ID = "apple-native";
+const LM_STUDIO_TRANSLATION_ENGINE_PREFIX = "lmstudio:";
 const MAC_PLATFORM_PATTERN = /mac/iu;
 
 export interface LocalizationEngineAvailability {
@@ -33,6 +34,22 @@ export const shouldExposeLocalizationEngineOption = (
   engineId: string
 ): boolean =>
   engineId !== APPLE_NATIVE_TRANSLATION_ENGINE_ID || isAppleNativePlatform();
+
+export const formatUnknownLocalizationEngineLabel = (
+  engineId: string
+): string => {
+  if (engineId === APPLE_NATIVE_TRANSLATION_ENGINE_ID) {
+    return "Apple Native - On-Device";
+  }
+  if (engineId.startsWith("codex-")) {
+    return `OpenAI Codex · ${engineId.slice("codex-".length)}`;
+  }
+  if (engineId.startsWith(LM_STUDIO_TRANSLATION_ENGINE_PREFIX)) {
+    const modelKey = engineId.slice(LM_STUDIO_TRANSLATION_ENGINE_PREFIX.length);
+    return `LM Studio · ${modelKey.split("/").pop() ?? modelKey}`;
+  }
+  return engineId;
+};
 
 const resolveLocalizationEngineProviderId = (
   engineId: string

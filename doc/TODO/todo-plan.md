@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "6e755df66",
+  "lastRecordedCommit": "7c9a126e3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase1.tests.task1",
-  "expectedCommitMessage": "test: cover lm studio local translation engine",
+  "currentTaskId": "local-models.phase2.settings.task1",
+  "expectedCommitMessage": "feat: expose local models in translation settings",
   "debt": {
-    "expectedCommitMessage": "test: cover lm studio local translation engine",
-    "preCommitHead": "6e755df66",
+    "expectedCommitMessage": "feat: expose local models in translation settings",
+    "preCommitHead": "7c9a126e3",
     "stage": "commit_pending",
-    "taskId": "local-models.phase1.tests.task1"
+    "taskId": "local-models.phase2.settings.task1"
   }
 }
 ```
@@ -54,12 +54,12 @@
 3. [DONE] `local-models.phase1.core.task1` Add the Core local-model discovery facade and LM Studio translation engine with model-key engine ids and fail-closed OpenAI-compatible calls (scope: `packages/core/src/local-models/**, packages/core/src/translation/core-translation-facade-factory.ts, packages/core/src/translation/core-localization-facade-factory.ts`; expected commit: `feat: add lm studio local translation engine`).
 4. [DONE] Git Commit: `feat: add lm studio local translation engine` (hash: 6e755df66)
 5. [DONE] `local-models.phase1.tests.task1` Add focused Core tests for model discovery, engine catalog exposure, and translation request/response handling including `/no_think` for Qwen-family models (scope: `packages/core/src/local-models/**, packages/core/src/translation/core-translation-facade-factory.test.ts, packages/core/src/translation/core-localization-facade-factory.test.ts`; expected commit: `test: cover lm studio local translation engine`).
-6. [PENDING] Git Commit: `test: cover lm studio local translation engine` (hash: TBD)
+6. [DONE] Git Commit: `test: cover lm studio local translation engine` (hash: 7c9a126e3)
 
 ## Phase 2 — Settings Selection Surface (owner: Codex, updated: 2026-05-28)
 ### Stream: Local Engine Settings
-7. [TODO] `local-models.phase2.settings.task1` Preserve `lmstudio:*` engine ids in Settings state and render local model engine labels in the UI/Reasoning translation engine selectors (scope: `src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/localization-settings-card.tsx, src/client/ui/src/components/settings/localization-engine-availability.ts`; expected commit: `feat: expose local models in translation settings`).
-8. [TODO] Git Commit: `feat: expose local models in translation settings` (hash: TBD)
+7. [DONE] `local-models.phase2.settings.task1` Preserve `lmstudio:*` engine ids in Settings state and render local model engine labels in the UI/Reasoning translation engine selectors (scope: `src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/localization-settings-card.tsx, src/client/ui/src/components/settings/localization-engine-availability.ts`; expected commit: `feat: expose local models in translation settings`).
+8. [PENDING] Git Commit: `feat: expose local models in translation settings` (hash: TBD)
 9. [TODO] `local-models.phase2.defaults.task1` Normalize persisted settings snapshots so local engine ids round-trip through Core load/save without fallback while keeping old snapshots compatible (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`; expected commit: `fix: persist local translation engine selections`).
 10. [TODO] Git Commit: `fix: persist local translation engine selections` (hash: TBD)
 

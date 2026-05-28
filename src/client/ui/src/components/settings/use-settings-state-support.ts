@@ -146,6 +146,7 @@ export const clampGeminiContextWindowTokenLimit = (value: number): number =>
 const LEGACY_SOURCE_LANGUAGE = "source";
 const DEFAULT_LOCALIZATION_LANGUAGE = "en";
 const DEFAULT_LOCALIZATION_ENGINE_ID = "google-gtx";
+const LM_STUDIO_LOCALIZATION_ENGINE_PREFIX = "lmstudio:";
 export const SUPPORTED_LOCALIZATION_ENGINE_IDS = [
   "apple-native",
   "google-gtx",
@@ -171,6 +172,10 @@ const normalizeLocalizationEngineId = (value: string): string => {
   const trimmed = value.trim();
   if (!(trimmed.length > 0)) {
     return DEFAULT_LOCALIZATION_ENGINE_ID;
+  }
+
+  if (trimmed.startsWith(LM_STUDIO_LOCALIZATION_ENGINE_PREFIX)) {
+    return trimmed;
   }
 
   return SUPPORTED_LOCALIZATION_ENGINE_ID_SET.has(trimmed)
