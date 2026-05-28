@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "de0437c27",
+  "lastRecordedCommit": "8f409cbc8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8r.glm-config-preservation-fix.task1",
-  "expectedCommitMessage": "fix: preserve existing glm global config",
+  "currentTaskId": "provider-readiness.phase8r.glm-config-preservation-verify.task1",
+  "expectedCommitMessage": "test: verify glm config preservation",
   "debt": {
-    "expectedCommitMessage": "fix: preserve existing glm global config",
-    "preCommitHead": "de0437c27",
+    "expectedCommitMessage": "test: verify glm config preservation",
+    "preCommitHead": "8f409cbc8",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8r.glm-config-preservation-fix.task1"
+    "taskId": "provider-readiness.phase8r.glm-config-preservation-verify.task1"
   }
 }
 ```
@@ -557,9 +557,14 @@
     - Result 2026-05-28: GLM runtime profile tests isolate `CODEAI_GLM_CLAUDE_CODE_CONFIG_PATH` from the user's real global config, so a filled personal `apiKey` cannot mask workspace-settings routing assertions.
     - Result 2026-05-28: `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts` — PASS (6 tests).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
-201. [PENDING] Git Commit: `fix: preserve existing glm global config` (hash: TBD)
-202. [TODO] `provider-readiness.phase8r.glm-config-preservation-verify.task1` Verify existing GLM global config preservation, missing-template creation, provider availability after filled `apiKey`, and installer behavior without building a release (scope: `packages/Claude_Module, scripts/build-glm-claude-code-module.sh, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config preservation`).
-203. [TODO] Git Commit: `test: verify glm config preservation` (hash: TBD)
+201. [DONE] Git Commit: `fix: preserve existing glm global config` (hash: 8f409cbc8)
+202. [DONE] `provider-readiness.phase8r.glm-config-preservation-verify.task1` Verify existing GLM global config preservation, missing-template creation, provider availability after filled `apiKey`, and installer behavior without building a release (scope: `packages/Claude_Module, scripts/build-glm-claude-code-module.sh, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config preservation`).
+    - Result 2026-05-28: `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts` — PASS (6 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+    - Result 2026-05-28: `bash -n scripts/build-glm-claude-code-module.sh` — PASS.
+    - Result 2026-05-28: install script guard verified: it creates `~/.codeai-hub/providers/glm-claude-code/config.json` only when `[[ ! -e "$CONFIG_PATH" ]]`; existing user config is not rewritten during version installation.
+    - Result 2026-05-28: live config path `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` is currently absent in this shell context, so no live user config was created or mutated during this verification stream.
+203. [PENDING] Git Commit: `test: verify glm config preservation` (hash: TBD)
 
 ### Stream: Global General Settings Split
 204. [TODO] `provider-readiness.phase8r.global-settings-diagnose.task1` Characterize current ownership for user-level `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech`, including workspace runtime settings, Project Manager settings persistence, and session-translation engine readers, before moving these blocks to global app userspace settings (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/session-translation/session-translation-policy-resolver.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize global general settings ownership`).
