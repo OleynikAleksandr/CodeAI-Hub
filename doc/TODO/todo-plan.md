@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "d267f1829",
+  "lastRecordedCommit": "19bc0d871",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8g.glm-availability-diagnose.task1",
-  "expectedCommitMessage": "test: characterize glm availability after settings repair",
+  "currentTaskId": "provider-readiness.phase8g.glm-availability-fix.task1",
+  "expectedCommitMessage": "fix: resolve glm availability after settings repair",
   "debt": {
-    "expectedCommitMessage": "test: characterize glm availability after settings repair",
-    "preCommitHead": "d267f1829",
+    "expectedCommitMessage": "fix: resolve glm availability after settings repair",
+    "preCommitHead": "19bc0d871",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8g.glm-availability-diagnose.task1"
+    "taskId": "provider-readiness.phase8g.glm-availability-fix.task1"
   }
 }
 ```
@@ -323,9 +323,13 @@
     - Diagnostic 2026-05-28: Workspace settings at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/settings/settings.json` contain `providers.glmClaudeCode`, but the saved `apiKey` length is `0`.
     - Diagnostic 2026-05-28: `~/.codeai-hub/providers/glm-claude-code/config.json` does not exist, and `CODEAI_GLM_CLAUDE_CODE_API_KEY`, `GLM_CLAUDE_CODE_API_KEY`, `ZAI_API_KEY`, and `Z_AI_API_KEY` are not present in the current environment.
     - Diagnostic 2026-05-28: Installed runtime `1.2.383` resolves a synthetic `providers.glmClaudeCode.apiKey` from workspace settings as `apiKeySource=workspace_settings`, so the remaining retest failure is a missing/unclear credential source rather than a missing provider runtime artifact.
-116. [PENDING] Git Commit: `test: characterize glm availability after settings repair` (hash: TBD)
-117. [TODO] `provider-readiness.phase8g.glm-availability-fix.task1` Fix the confirmed GLM availability source break so a saved workspace/global GLM key reaches Core readiness and provider startup without exposing the secret, and improve the unavailable message if no key is configured (scope: ≤3 files after diagnosis; expected commit: `fix: resolve glm availability after settings repair`).
-118. [TODO] Git Commit: `fix: resolve glm availability after settings repair` (hash: TBD)
+116. [DONE] Git Commit: `test: characterize glm availability after settings repair` (hash: 19bc0d871)
+117. [DONE] `provider-readiness.phase8g.glm-availability-fix.task1` Fix the confirmed GLM availability source break so a saved workspace/global GLM key reaches Core readiness and provider startup without exposing the secret, and improve the unavailable message if no key is configured (scope: `packages/Claude_Module/src/glm-claude-code/glm-claude-code-sdk-auth-manager.ts, packages/core/src/provider-registry/provider-recovery-coordinator.ts, packages/core/src/provider-registry/provider-descriptor-factory.ts, doc/TODO/todo-plan.md`; expected commit: `fix: resolve glm availability after settings repair`).
+    - Result 2026-05-28: GLM unavailable reason now says a separate Z.AI/GLM API key is required and Claude login is not reused.
+    - Result 2026-05-28: Provider descriptor now labels GLM as requiring a separate Z.AI/GLM API key while still running through the Claude Agent SDK-compatible runtime.
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS after rerunning once the parallel Claude build had restored its `dist` package surface.
+118. [PENDING] Git Commit: `fix: resolve glm availability after settings repair` (hash: TBD)
 119. [TODO] `provider-readiness.phase8g.glm-availability-verify.task1` Verify masked GLM key routing, provider readiness projection, and settings persistence with targeted builds/tests; do not build a release in this stream (scope: `packages/Claude_Module, packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify glm availability repair`).
 120. [TODO] Git Commit: `test: verify glm availability repair` (hash: TBD)
 121. [TODO] `provider-readiness.phase8g.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).

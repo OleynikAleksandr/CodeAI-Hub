@@ -26,7 +26,7 @@ export class GlmClaudeCodeSDKAuthManager implements ClaudeSDKAuthProvider {
     const profile = await this.resolveProfile();
     if (!profile.env.ANTHROPIC_API_KEY) {
       throw new Error(
-        "GLM-Claude-Code API key was not found. Set CODEAI_GLM_CLAUDE_CODE_API_KEY, GLM_CLAUDE_CODE_API_KEY, ZAI_API_KEY, apiKey in ~/.codeai-hub/providers/glm-claude-code/config.json, or providers.glmClaudeCode.apiKey in workspace Settings."
+        "GLM-Claude-Code requires a separate Z.AI/GLM API key; Claude login is not reused. Set CODEAI_GLM_CLAUDE_CODE_API_KEY, GLM_CLAUDE_CODE_API_KEY, ZAI_API_KEY, apiKey in ~/.codeai-hub/providers/glm-claude-code/config.json, or providers.glmClaudeCode.apiKey in workspace Settings."
       );
     }
     this.options.reporter?.info?.(

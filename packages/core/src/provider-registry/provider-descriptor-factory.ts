@@ -329,7 +329,8 @@ const buildGlmClaudeCodeDescriptor = (
     },
     id: "glmClaudeCode",
     name: "GLM-Claude-Code",
-    description: "Using GLM 5.1 through Claude Agent SDK-compatible runtime",
+    description:
+      "Requires separate Z.AI/GLM API key; runs GLM 5.1 through Claude Agent SDK-compatible runtime",
     status: "active",
   };
   tryAttachAdapter(
