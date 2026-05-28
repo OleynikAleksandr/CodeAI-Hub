@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "d2b2075cc",
+  "lastRecordedCommit": "2bbccc0f2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8w.managed-message-lock.task1",
-  "expectedCommitMessage": "fix: lock input during managed workflow continuation",
+  "currentTaskId": "provider-readiness.phase8w.diagram-input-lock.task1",
+  "expectedCommitMessage": "fix: keep diagram modules locked until user handoff",
   "debt": {
-    "expectedCommitMessage": "fix: lock input during managed workflow continuation",
-    "preCommitHead": "d2b2075cc",
+    "expectedCommitMessage": "fix: keep diagram modules locked until user handoff",
+    "preCommitHead": "2bbccc0f2",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8w.managed-message-lock.task1"
+    "taskId": "provider-readiness.phase8w.diagram-input-lock.task1"
   }
 }
 ```
@@ -675,9 +675,10 @@
 ### Stream: Core Managed Handoff Lock
 242. [DONE] `provider-readiness.phase8w.managed-message-lock.task1` Retest finding 2026-05-28: while Core is internally handing managed workflow control from itself to the agent, the session input can become editable before Core hands control back to the user; lock input on Core-managed continuation messages and release only on explicit Core user-review/complete handoff messages (scope: `src/client/project-manager/components/sessions/session-message-dedupe.ts, src/client/project-manager/components/sessions/session-message-dedupe.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: lock input during managed workflow continuation`).
     - Result 2026-05-28: `npx tsx --test src/client/project-manager/components/sessions/session-message-dedupe.test.ts` — PASS (3 tests).
-243. [PENDING] Git Commit: `fix: lock input during managed workflow continuation` (hash: TBD)
-244. [TODO] `provider-readiness.phase8w.diagram-input-lock.task1` Keep the Project Manager session input locked through the Diagram Modules product-part managed sequence until aggregate/review readiness instead of releasing on a narrow `pending` active-subturn status check (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts, src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep diagram modules locked until user handoff`).
-245. [TODO] Git Commit: `fix: keep diagram modules locked until user handoff` (hash: TBD)
+243. [DONE] Git Commit: `fix: lock input during managed workflow continuation` (hash: 2bbccc0f2)
+244. [DONE] `provider-readiness.phase8w.diagram-input-lock.task1` Keep the Project Manager session input locked through the Diagram Modules product-part managed sequence until aggregate/review readiness instead of releasing on a narrow `pending` active-subturn status check (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts, src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep diagram modules locked until user handoff`).
+    - Result 2026-05-28: `npx tsx --test src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts` — PASS (10 tests).
+245. [PENDING] Git Commit: `fix: keep diagram modules locked until user handoff` (hash: TBD)
 246. [TODO] `provider-readiness.phase8w.diagram-input-lock-verify.task1` Run targeted PM/UI tests plus webview typecheck/build for the managed-continuation input lock and record exact results before any release decision (scope: `src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation input lock`).
 247. [TODO] Git Commit: `test: verify managed continuation input lock` (hash: TBD)
 248. [TODO] `provider-readiness.phase8w.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).

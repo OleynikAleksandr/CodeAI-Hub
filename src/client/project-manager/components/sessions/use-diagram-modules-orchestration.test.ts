@@ -8,6 +8,21 @@ import { buildDiagramModulesSkeletonFromIndex, loadDiagramModulesProgressiveResu
 
 const ORCHESTRATION_SOURCE_PATH = path.resolve(process.cwd(), "src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts");
 
+const loadDiagramModulesOrchestration = async () => {
+  if (typeof globalThis.window === "undefined") {
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: {
+        codeaiBridgeConfig: {
+          httpUrl: "http://127.0.0.1:8080",
+          wsUrl: "ws://127.0.0.1:8080",
+        },
+      },
+    });
+  }
+  return await import("./use-diagram-modules-orchestration");
+};
+
 const createProductPartsIndex = (): string =>
   [
     "# Product Parts Index",
@@ -17,6 +32,10 @@ const createProductPartsIndex = (): string =>
     "- Stage: diagram_modules",
     "- Revision: 00000000",
     "- Updated: 2026-03-23T00:00:00Z",
+    "",
+    "## Leadership",
+    "- leadProductPartId: `local-core-runtime`",
+    "- productPartLeadershipOrder: `local-core-runtime`, `project-manager-ui`",
     "",
     "## Product Parts",
     "",
@@ -37,6 +56,10 @@ const createCanonicalOrderIndex = (): string =>
   [
     "# Product Parts Index",
     "",
+    "## Leadership",
+    "- leadProductPartId: `local-core-runtime`",
+    "- productPartLeadershipOrder: `local-core-runtime`, `project-manager-ui`",
+    "",
     "## Canonical order",
     "",
     "### 1. `local-core-runtime`", "",
@@ -51,6 +74,10 @@ const createCanonicalOrderIndex = (): string =>
 const createCanonicalTableIndex = (): string =>
   [
     "# Product Parts Index",
+    "",
+    "## Leadership",
+    "- leadProductPartId: `local-core-runtime`",
+    "- productPartLeadershipOrder: `local-core-runtime`, `project-manager-ui`",
     "",
     "## Canonical Product Parts",
     "",
@@ -108,12 +135,12 @@ test("diagram modules orchestration source code invariants", async () => {
   );
   assert.ok(source.includes('if (eventType === "turn_failed") {'), "turn_failed unlocks sequence");
   assert.ok(
-    source.includes('progress.activeSubturnStatus === "pending"'),
-    "pending product part state keeps PM input locked"
+    source.includes("shouldKeepDiagramModulesSequenceLock(progress)"),
+    "workflow state check uses the sequence-lock projection"
   );
   assert.ok(
-    source.includes("progress?.hasTechnicalStageDirtyGate"),
-    "technical-stage dirty/blocked state keeps PM input locked"
+    source.includes("progress.aggregateReady !== true"),
+    "product part generation keeps PM input locked until aggregate/review readiness"
   );
   assert.equal(
     source.includes(".finally(() => {\n        setSequenceLock"),
@@ -167,6 +194,63 @@ test("diagram modules progress snapshot points to next product part after index-
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
+});
+
+test("diagram modules sequence lock stays active for the whole product-part generation phase", async () => {
+  const { shouldKeepDiagramModulesSequenceLock } =
+    await loadDiagramModulesOrchestration();
+  for (const activeSubturnStatus of [
+    "accepted",
+    "pending",
+    "repair_pending",
+    undefined,
+  ]) {
+    assert.equal(
+      shouldKeepDiagramModulesSequenceLock({
+        activeSubturnStatus,
+        aggregateReady: false,
+        hasTechnicalStageDirtyGate: false,
+        substep: "generate_product_part",
+      }),
+      true
+    );
+  }
+});
+
+test("diagram modules sequence lock releases after aggregate readiness or user handoff", async () => {
+  const { shouldKeepDiagramModulesSequenceLock } =
+    await loadDiagramModulesOrchestration();
+  assert.equal(
+    shouldKeepDiagramModulesSequenceLock({
+      activeSubturnStatus: "accepted",
+      aggregateReady: true,
+      hasTechnicalStageDirtyGate: false,
+      substep: "generate_product_part",
+    }),
+    false
+  );
+  assert.equal(
+    shouldKeepDiagramModulesSequenceLock({
+      aggregateReady: false,
+      hasTechnicalStageDirtyGate: false,
+      substep: "awaiting_review",
+    }),
+    false
+  );
+  assert.equal(shouldKeepDiagramModulesSequenceLock(null), false);
+});
+
+test("diagram modules sequence lock remains active for technical dirty gates", async () => {
+  const { shouldKeepDiagramModulesSequenceLock } =
+    await loadDiagramModulesOrchestration();
+  assert.equal(
+    shouldKeepDiagramModulesSequenceLock({
+      aggregateReady: true,
+      hasTechnicalStageDirtyGate: true,
+      substep: "awaiting_review",
+    }),
+    true
+  );
 });
 
 test("diagram modules progressive skeleton parses the canonical order heading format", () => {
@@ -293,10 +377,9 @@ test("diagram modules progressive loader parses the live identity-table product 
       if (artifactPath.endsWith("product-parts.index.md")) {
         return {
           status: "ok",
-          content: createCanonicalTableIndex().replace(
-            "local-core-runtime",
-            "vs-code-extension-shell"
-          ).replace("Local Core Runtime", "VS Code Extension Shell"),
+          content: createCanonicalTableIndex()
+            .replaceAll("local-core-runtime", "vs-code-extension-shell")
+            .replaceAll("Local Core Runtime", "VS Code Extension Shell"),
         } as const;
       }
       if (artifactPath.endsWith("product-parts/vs-code-extension-shell.md")) {

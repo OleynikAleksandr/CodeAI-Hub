@@ -18,13 +18,31 @@ const readStringArray = (value: unknown): readonly string[] =>
     ? value.filter((entry): entry is string => typeof entry === "string")
     : [];
 
-const readDiagramModulesProgress = (
-  value: unknown
-): {
+export interface DiagramModulesProgressLockProjection {
   readonly activeSubturnStatus?: string;
+  readonly aggregateReady: boolean;
   readonly hasTechnicalStageDirtyGate: boolean;
   readonly substep: string;
-} | null => {
+}
+
+export const shouldKeepDiagramModulesSequenceLock = (
+  progress: DiagramModulesProgressLockProjection | null
+): boolean => {
+  if (!progress) {
+    return false;
+  }
+  if (progress.hasTechnicalStageDirtyGate) {
+    return true;
+  }
+  return (
+    progress.substep === "generate_product_part" &&
+    progress.aggregateReady !== true
+  );
+};
+
+const readDiagramModulesProgress = (
+  value: unknown
+): DiagramModulesProgressLockProjection | null => {
   if (!isRecord(value) || typeof value.substep !== "string") {
     return null;
   }
@@ -41,6 +59,7 @@ const readDiagramModulesProgress = (
       : undefined;
   return {
     activeSubturnStatus,
+    aggregateReady: value.aggregateReady === true,
     hasTechnicalStageDirtyGate:
       technicalStageDirtyFiles.length > 0 || outOfOwnerDirtyFiles.length > 0,
     substep: value.substep,
@@ -148,13 +167,7 @@ export const useDiagramModulesOrchestration = (options: {
         const progress = readDiagramModulesProgress(
           state?.diagramModulesProgress
         );
-        if (
-          progress?.substep === "generate_product_part" &&
-          progress.activeSubturnStatus === "pending"
-        ) {
-          return;
-        }
-        if (progress?.hasTechnicalStageDirtyGate) {
+        if (shouldKeepDiagramModulesSequenceLock(progress)) {
           return;
         }
         setSequenceLock(params.sessionId, false);
