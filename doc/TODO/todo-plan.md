@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "eb6bf3cc9",
+  "lastRecordedCommit": "f3571e80c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8l.kimi-reasoning-verify.task1",
-  "expectedCommitMessage": "test: verify kimi reasoning translation settings",
+  "currentTaskId": "provider-readiness.phase8m.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare kimi reasoning repair release",
   "debt": {
-    "expectedCommitMessage": "test: verify kimi reasoning translation settings",
-    "preCommitHead": "eb6bf3cc9",
+    "expectedCommitMessage": "docs: prepare kimi reasoning repair release",
+    "preCommitHead": "f3571e80c",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8l.kimi-reasoning-verify.task1"
+    "taskId": "provider-readiness.phase8m.release-prep.task1"
   }
 }
 ```
@@ -443,11 +443,23 @@
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS after tightening the Kimi settings-path assertion so TypeScript build and source tests agree.
     - Result 2026-05-28: `node --test packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-policy-resolver.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js` — PASS (17 tests).
     - Release build intentionally not run for this retest fix stream.
-157. [PENDING] Git Commit: `test: verify kimi reasoning translation settings` (hash: TBD)
-158. [TODO] `provider-readiness.phase8l.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+157. [DONE] Git Commit: `test: verify kimi reasoning translation settings` (hash: f3571e80c)
+158. [DONE] `provider-readiness.phase8l.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+    - Result 2026-05-28: User explicitly requested a new release build after the GLM standalone loader and Kimi reasoning translation fixes.
+
+## Phase 8m — Release Build (owner: Codex, updated: 2026-05-28)
+### Stream: GLM Loader And Kimi Reasoning Release
+159. [DONE] `provider-readiness.phase8m.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.385 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi reasoning repair release`).
+    - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.385 before running release scripts.
+160. [PENDING] Git Commit: `docs: prepare kimi reasoning repair release` (hash: TBD)
+161. [TODO] `provider-readiness.phase8m.release-build.task1` Run the approved unified release build for the GLM standalone loader and Kimi reasoning translation fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build kimi reasoning repair release`).
+162. [TODO] Git Commit: `chore: build kimi reasoning repair release` (hash: TBD)
+163. [TODO] `provider-readiness.phase8m.release-vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify kimi reasoning repair vsix`).
+164. [TODO] Git Commit: `test: verify kimi reasoning repair vsix` (hash: TBD)
+165. [TODO] `provider-readiness.phase8m.user-retest.task1` User installs the replacement release and retests GLM standalone runtime loading plus Kimi reasoning/System translation (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-159. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-160. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-161. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+166. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+167. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+168. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).

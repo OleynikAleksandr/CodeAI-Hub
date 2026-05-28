@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.385] - 2026-05-28
+### Fixed
+- **GLM-Claude-Code loads from its standalone provider runtime.** Core now resolves `~/.codeai-hub/providers/glm-claude-code/<version>` before any Claude-module fallback, so the installed GLM provider package is the adapter source while GLM keeps its separate provider home and settings contract.
+- **Kimi reasoning translation uses the active session settings path.** Visible `Thinking`/reasoning bubbles and Core System translation now resolve language/engine policy from `session.modelBinding.settingsPath` before falling back to default settings, preventing Kimi reasoning from skipping Russian translation with `missing_target_language`.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build --workspace @codeai-hub/claude-module`
+- `node --test packages/core/dist/provider-registry/provider-installed-path-resolver.test.js packages/core/dist/session-translation/session-translation-facade.test.js packages/core/dist/session-translation/session-translation-policy-resolver.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js`
+- `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.384] - 2026-05-28
 ### Fixed
 - **Application Skeleton artifact directory is prepared by Core.** `WorkflowRuntime.connectWorkspace()` now creates canonical workflow stage directories, including `.codeai-hub/<workspace>/application_skeleton/`, before provider prompts ask agents to write managed Application Skeleton artifacts.

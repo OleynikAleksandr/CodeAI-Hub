@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.384** (Application Skeleton Managed Repair Hotfix)
+**Current Release — v1.2.385** (GLM Loader And Kimi Reasoning Hotfix)
+
+This hotfix makes Core prefer the standalone GLM-Claude-Code provider runtime
+installed under `~/.codeai-hub/providers/glm-claude-code/<version>` instead of
+loading GLM classes through the original Claude provider package. GLM keeps its
+own provider home/settings path while still using the Claude Agent
+SDK-compatible runtime; it still requires a separate Z.AI/GLM API key.
+
+Kimi visible `Thinking`/reasoning bubbles and Core System translation now read
+the active workflow session settings path before falling back to global
+defaults. Reasoning content therefore uses the same target language and engine
+as the workflow prompt instead of silently skipping translation through the
+default settings path.
+
+**Previous Release — v1.2.384** (Application Skeleton Managed Repair Hotfix)
 
 This hotfix repairs the Application Skeleton managed workflow startup and
 repair loop observed with Kimi. Core now prepares canonical workflow stage
@@ -17,7 +31,7 @@ short Core-owned Russian status message. This prevents raw English
 orchestrator prompts from appearing in the user session log while preserving
 the detailed repair instructions for the provider.
 
-**Previous Release — v1.2.383** (Workflow Blocker Repair Hotfix)
+**Earlier Release — v1.2.383** (Workflow Blocker Repair Hotfix)
 
 This hotfix repairs the Description-to-Virtual-Simulation handoff regression
 found in v1.2.382. Core now untracks legacy workspace-local
