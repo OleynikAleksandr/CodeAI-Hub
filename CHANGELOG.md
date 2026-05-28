@@ -8,6 +8,27 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.392] - 2026-05-28
+### Added
+- **LM Studio local models are selectable translation engines.** Core discovers downloaded LM Studio LLMs with `lms ls --json`, registers each model as `lmstudio:<modelKey>`, loads the selected model before first use, and calls the local OpenAI-compatible chat completions API.
+- **Local models can drive both UI localization and visible Reasoning translation.** Settings now preserves `lmstudio:*` selections for `uiEngineId` and `reasoningEngineId`, and displays local entries as `LM Studio · <model>`.
+
+### Fixed
+- **Local model translation prompts use explicit payload delimiters.** The LM Studio prompt now names target languages as `Russian (ru)` style labels and wraps source text in `<text>...</text>` so instruction-like strings are translated instead of being treated as a request for more input.
+
+### Tests
+- `npm run build --workspace @codeai-hub/translation`
+- `npm run build --workspace @codeai-hub/localization`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+- `node --test dist/local-models/local-models-facade.test.js` from `packages/core`
+- `node --test dist/translation/core-translation-facade-factory.test.js` from `packages/core`
+- `node --test dist/translation/core-localization-facade-factory.test.js` from `packages/core`
+- `npx tsx --test src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`
+- Real LM Studio smoke with `lmstudio:gemma-4-26b-a4b-it` for reasoning translation, localization materialization, and unavailable-API fail-closed behavior.
+
 ## [1.2.391] - 2026-05-28
 ### Packaging
 - Rebuilt the managed input lock hotfix under a new release number for installation and retest.

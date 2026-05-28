@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "83505a48d",
+  "lastRecordedCommit": "ff2ea2380",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase5.smoke-fix.task1",
-  "expectedCommitMessage": "fix: improve local model translation prompt",
+  "currentTaskId": "local-models.phase6.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare local models release build",
   "debt": {
-    "expectedCommitMessage": "fix: improve local model translation prompt",
-    "preCommitHead": "83505a48d",
+    "expectedCommitMessage": "docs: prepare local models release build",
+    "preCommitHead": "ff2ea2380",
     "stage": "commit_pending",
-    "taskId": "local-models.phase5.smoke-fix.task1"
+    "taskId": "local-models.phase6.release-prep.task1"
   }
 }
 ```
@@ -92,16 +92,18 @@
     - Smoke 2026-05-28: Reasoning/local translation through `lmstudio:gemma-4-26b-a4b-it` — PASS; returned Russian translation and preserved `API`, `JSON`, and `{providerId}`.
     - Smoke 2026-05-28: Localization bundle materialization through `createCoreLocalizationFacade` + `lmstudio:gemma-4-26b-a4b-it` — PASS; produced Russian `ui_interface` bundle and preserved `{providerId}`.
     - Smoke 2026-05-28: unavailable LM Studio API (`CODEAI_LMSTUDIO_BASE_URL=http://127.0.0.1:9`) — PASS; explicit local engine returned fallback with `errorCode = "lmstudio_request_failed"` and did not substitute another engine.
-16. [PENDING] Git Commit: `fix: improve local model translation prompt` (hash: TBD)
+16. [DONE] Git Commit: `fix: improve local model translation prompt` (hash: ff2ea2380)
 
 ### Stream: Local Runtime Retest
-17. [TODO] `local-models.phase5.user-acceptance.task1` User retests three local-model scenarios in Project Manager: Reasoning translation, UI localization bundle materialization, and unavailable LM Studio failure handling (scope: user workflow observation; expected commit: none).
+17. [DONE] `local-models.phase5.user-acceptance.task1` User retests three local-model scenarios in Project Manager: Reasoning translation, UI localization bundle materialization, and unavailable LM Studio failure handling (scope: user workflow observation; expected commit: none). Result: User approved release build after local-model smoke tests passed
 
 ## Phase 6 — Release Build (owner: Codex, updated: 2026-05-28)
 ### Stream: Release Confirmation And Packaging
-18. [TODO] `local-models.phase6.release-confirm.task1` Ask for and receive separate explicit user confirmation for release build after implementation and verification pass (scope: chat/process gate; expected commit: none).
-19. [TODO] `local-models.phase6.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local models release build`).
-20. [TODO] Git Commit: `docs: prepare local models release build` (hash: TBD)
+18. [DONE] `local-models.phase6.release-confirm.task1` Ask for and receive separate explicit user confirmation for release build after implementation and verification pass (scope: chat/process gate; expected commit: none). Result: User explicitly confirmed release build in chat on 2026-05-28
+19. [DONE] `local-models.phase6.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local models release build`).
+    - Release prep 2026-05-28: future release version is `1.2.392` (current root `package.json` version `1.2.391` + 1).
+    - Release prep 2026-05-28: `README.md` Current Release updated to `v1.2.392` and `CHANGELOG.md` entry `## [1.2.392] - 2026-05-28` added before release scripts.
+20. [PENDING] Git Commit: `docs: prepare local models release build` (hash: TBD)
 21. [TODO] `local-models.phase6.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local models release`).
 22. [TODO] Git Commit: `chore: build local models release` (hash: TBD)
 23. [TODO] `local-models.phase6.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local models vsix`).

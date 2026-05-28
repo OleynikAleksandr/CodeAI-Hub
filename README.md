@@ -2,13 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.391** (Managed Input Lock Rebuild)
+**Current Release — v1.2.392** (LM Studio Local Models)
+
+This release adds LM Studio local models as selectable translation engines for
+both live Reasoning translation and interface localization materialization. Core
+discovers downloaded LM Studio LLMs, registers them as `lmstudio:<modelKey>`,
+loads the selected model on demand, and calls the local OpenAI-compatible API.
+
+The Settings localization selectors now preserve local model selections for UI
+and Reasoning translation. Local model download, deletion, and context tuning
+remain in LM Studio for this release.
+
+**Previous Release — v1.2.391** (Managed Input Lock Rebuild)
 
 This release rebuilds the managed input lock hotfix under a fresh package
 number for installation and retest. Runtime behavior is the same hotfix line as
 v1.2.390: Core-owned managed workflow continuations keep the session input
 locked until an explicit user handoff.
-
 **Previous Release — v1.2.390** (Managed Input Lock Hotfix)
 
 This hotfix keeps the session input locked while Core owns a managed workflow
