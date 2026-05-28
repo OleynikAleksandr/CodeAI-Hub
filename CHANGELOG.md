@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.390] - 2026-05-28
+### Fixed
+- **Session input stays locked during Core-managed continuations.** Project Manager now locks the user input when Core emits `managed-workflow-continuation` and releases that managed lock only when Core hands control back through user review or completion.
+- **Diagram Modules no longer unlocks input between product-part turns.** The Diagram Modules sequence lock now stays active for the full `generate_product_part` phase until aggregate/review readiness instead of relying on a narrow `pending` active-subturn status.
+
+### Tests
+- `npx tsx --test src/client/project-manager/components/sessions/session-message-dedupe.test.ts src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts src/client/project-manager/components/sessions/turn-state-stream.test.ts src/client/ui/src/session/input-panel.test.tsx`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.389] - 2026-05-28
 ### Fixed
 - **Provider session JSONL no longer blocks workflow boundaries.** Core now treats provider-owned transcript directories under `.codeai-hub/<workspace>/runtime/sessions/unified/<provider>/` as mutable runtime state, including translation JSONL logs, while keeping Core-owned unified-session root files eligible for rollback ownership.
