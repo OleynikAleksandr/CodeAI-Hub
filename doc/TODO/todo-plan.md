@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "0a1c21375",
+  "lastRecordedCommit": "674edf859",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8y.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare managed input lock rebuild release",
+  "currentTaskId": "provider-readiness.phase8y.release-build.task1",
+  "expectedCommitMessage": "chore: build managed input lock rebuild release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare managed input lock rebuild release",
-    "preCommitHead": "0a1c21375",
+    "expectedCommitMessage": "chore: build managed input lock rebuild release",
+    "preCommitHead": "674edf859",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8y.release-prep.task1"
+    "taskId": "provider-readiness.phase8y.release-build.task1"
   }
 }
 ```
@@ -706,9 +706,12 @@
 ## Phase 8y — Managed Input Lock Rebuild Release (owner: Codex, updated: 2026-05-28)
 ### Stream: Release Rebuild Packaging
 256. [DONE] `provider-readiness.phase8y.release-prep.task1` User explicitly requested another release build with a new number on 2026-05-28; update README/CHANGELOG for future release v1.2.391 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed input lock rebuild release`).
-257. [PENDING] Git Commit: `docs: prepare managed input lock rebuild release` (hash: TBD)
-258. [TODO] `provider-readiness.phase8y.release-build.task1` Run `./scripts/build-all.sh` using committed future-version docs, collect generated tarballs, preserve user GLM global config during release cleanup, and record exact outputs/results in this plan (scope: `scripts/build-all.sh, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build managed input lock rebuild release`).
-259. [TODO] Git Commit: `chore: build managed input lock rebuild release` (hash: TBD)
+257. [DONE] Git Commit: `docs: prepare managed input lock rebuild release` (hash: 674edf859)
+258. [DONE] `provider-readiness.phase8y.release-build.task1` Run `./scripts/build-all.sh` using committed future-version docs, collect generated tarballs, preserve user GLM global config during release cleanup, and record exact outputs/results in this plan (scope: `scripts/build-all.sh, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build managed input lock rebuild release`).
+    - Result 2026-05-28: `./scripts/build-all.sh --allow-dirty` — PASS for v1.2.391. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-build transition.
+    - Artifacts 2026-05-28: produced `claude-module-1.2.391.tar.bz2`, `codex-module-1.2.391.tar.bz2`, `gemini-module-1.2.391.tar.bz2`, `glm-claude-code-module-1.2.391.tar.bz2`, `kimi-module-1.2.391.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.391.tar.bz2`, `vscode-webview-1.2.391.tar.bz2`, `project-manager-1.2.391.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.391.tar.bz2` in `doc/tmp/releases/`.
+    - SHA1 check 2026-05-28: GLM provider tarball `2ccf721cfa34cc3ed5844f040668b46446341495`; Project Manager tarball `285395783f58bc7006bb5cb11e60cdbbcf4b7c60`; webview tarball `cd44701d7b3c7ae927702b1b2cef81ff99f17862`.
+259. [PENDING] Git Commit: `chore: build managed input lock rebuild release` (hash: TBD)
 260. [TODO] `provider-readiness.phase8y.vsix.task1` Run final VSIX packaging with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify managed input lock rebuild vsix package`).
 261. [TODO] Git Commit: `test: verify managed input lock rebuild vsix package` (hash: TBD)
 262. [TODO] `provider-readiness.phase8y.user-retest.task1` User installs the produced v1.2.391 release and retests that the session input stays locked while Core internally continues managed workflow turns and unlocks only on explicit user handoff (scope: chat/process observation only; expected commit: none).
