@@ -134,7 +134,7 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SESSION_RE);
     assert.match(trackedFiles, CAPSULE_TASK_TIMER_STATE_RE);
-    assert.match(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
     assert.doesNotMatch(trackedFiles, RUNTIME_SLICES_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

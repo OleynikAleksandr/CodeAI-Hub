@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "291ac27b5",
+  "lastRecordedCommit": "ebb712ea0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8u.residual-docs-fix.task1",
-  "expectedCommitMessage": "fix: auto-commit residual workflow documents",
+  "currentTaskId": "provider-readiness.phase8u.residual-docs-verify.task1",
+  "expectedCommitMessage": "test: verify residual document commit policy",
   "debt": {
-    "expectedCommitMessage": "fix: auto-commit residual workflow documents",
-    "preCommitHead": "291ac27b5",
+    "expectedCommitMessage": "test: verify residual document commit policy",
+    "preCommitHead": "ebb712ea0",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8u.residual-docs-fix.task1"
+    "taskId": "provider-readiness.phase8u.residual-docs-verify.task1"
   }
 }
 ```
@@ -645,9 +645,12 @@
     - Result 2026-05-28: accepted preliminary step commit now auto-commits workflow-neutral residual document paths such as `docs/` in a separate `codeai-step: <Stage> residual documents` commit, then only blocks if non-document dirty paths remain.
     - Result 2026-05-28: Core appends a follow-up `managed-workflow-validation` message listing the auto-committed document paths so the user sees what was committed.
     - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts` — PASS.
-231. [PENDING] Git Commit: `fix: auto-commit residual workflow documents` (hash: TBD)
-232. [TODO] `provider-readiness.phase8u.residual-docs-verify.task1` Run targeted Core source/dist tests and build for residual document auto-commit policy and provider session cleanup (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify residual document commit policy`).
-233. [TODO] Git Commit: `test: verify residual document commit policy` (hash: TBD)
+231. [DONE] Git Commit: `fix: auto-commit residual workflow documents` (hash: ebb712ea0)
+232. [DONE] `provider-readiness.phase8u.residual-docs-verify.task1` Run targeted Core source/dist tests and build for residual document auto-commit policy and provider session cleanup (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify residual document commit policy`).
+    - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts` — PASS (15 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `node --test packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade-residual-docs.test.js packages/core/dist/workflow/runtime/workspace-runtime-capsule-gitignore.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.js` — PASS (15 tests).
+233. [PENDING] Git Commit: `test: verify residual document commit policy` (hash: TBD)
 234. [TODO] `provider-readiness.phase8u.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
