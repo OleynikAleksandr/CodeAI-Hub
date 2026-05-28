@@ -393,12 +393,12 @@ test("SessionRequestHandlerEventMessages passes workflow settings path for Kimi 
   });
 
   let visibilityArgs: readonly unknown[] = [];
-  let translatedCandidate: {
+  const translatedCandidates: Array<{
     readonly providerId?: string;
     readonly role: string;
     readonly settingsPath?: string;
     readonly tag?: string;
-  } | null = null;
+  }> = [];
   const handler = new SessionRequestHandlerEventMessages({
     broadcaster: noop,
     continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
@@ -417,8 +417,10 @@ test("SessionRequestHandlerEventMessages passes workflow settings path for Kimi 
         visibilityArgs = args;
         return true;
       },
-      translateDialogMessage: (candidate: typeof translatedCandidate) => {
-        translatedCandidate = candidate;
+      translateDialogMessage: (
+        candidate: (typeof translatedCandidates)[number]
+      ) => {
+        translatedCandidates.push(candidate);
         return Promise.resolve(null);
       },
     } as never,
@@ -435,6 +437,8 @@ test("SessionRequestHandlerEventMessages passes workflow settings path for Kimi 
     "kimi",
     "/tmp/workflow/runtime/settings/settings.json",
   ]);
+  const translatedCandidate = translatedCandidates[0];
+  assert.ok(translatedCandidate);
   assert.equal(translatedCandidate?.providerId, "kimi");
   assert.equal(translatedCandidate?.role, "thinking");
   assert.equal(translatedCandidate?.tag, "thinking");
