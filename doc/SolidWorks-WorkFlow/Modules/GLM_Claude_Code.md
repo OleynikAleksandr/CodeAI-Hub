@@ -23,7 +23,7 @@ GLM-Claude-Code provider module подключает GLM 5.1 к Core через 
 - Status/session model label: `GLM 5.1 / Claude-Code`.
 - Runtime client family: Claude Code SDK/protocol.
 - Model/account family: Z.AI / GLM Anthropic-compatible endpoint.
-- Core registry loads the adapter from the Claude module export; external code must enter the runtime through `GlmClaudeCodeProviderAdapter` and must not import runtime/auth/session internals directly.
+- Core registry resolves the standalone installed provider runtime `~/.codeai-hub/providers/glm-claude-code/<version>` before any bundled fallback; external code must enter through `GlmClaudeCodeProviderAdapter` and must not import runtime/auth/session internals directly.
 
 ## Runtime profile and provider-home
 - In managed workspace runs, CodeAI-managed runtime state lives under the workspace capsule at `.codeai-hub/<workspace-slug>/runtime/providers/glm-claude-code/home`.

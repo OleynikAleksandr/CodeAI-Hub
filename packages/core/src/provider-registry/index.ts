@@ -24,6 +24,7 @@ import {
   resolveClaudeModulePath,
   resolveCodexModulePath,
   resolveGeminiModulePath,
+  resolveGlmClaudeCodeModulePath,
 } from "./provider-installed-path-resolver";
 import {
   loadClaudeAdapterCtor,
@@ -91,7 +92,7 @@ export class ProviderRegistry {
     );
     this.kimiAdapterCtor = loadBundledKimiAdapterCtor();
     this.glmClaudeCodeAdapterCtor = loadGlmClaudeCodeAdapterCtor(
-      resolveClaudeModulePath(),
+      resolveGlmClaudeCodeModulePath(),
       this.options.logger
     );
     this.geminiAdapterCtorPromise = loadGeminiAdapterCtor(

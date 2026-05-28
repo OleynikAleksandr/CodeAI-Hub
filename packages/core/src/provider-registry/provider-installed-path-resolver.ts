@@ -2,9 +2,13 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 
-type ProviderModuleId = "claude" | "codex" | "gemini";
+type ProviderModuleId = "claude" | "codex" | "gemini" | "glm-claude-code";
 
 const PROVIDERS_ROOT = path.join(homedir(), ".codeai-hub", "providers");
+
+const hasInstalledProviderPackage = (installDirectory: string): boolean =>
+  existsSync(path.join(installDirectory, "package.json")) &&
+  existsSync(path.join(installDirectory, "dist", "index.js"));
 
 const resolveInstalledProviderPathFromPointer = (
   providerRoot: string
@@ -19,8 +23,7 @@ const resolveInstalledProviderPathFromPointer = (
       return null;
     }
     const installDirectory = path.join(providerRoot, raw);
-    const installMarker = path.join(installDirectory, "install.json");
-    if (!existsSync(installMarker)) {
+    if (!hasInstalledProviderPackage(installDirectory)) {
       return null;
     }
     return installDirectory;
@@ -40,12 +43,8 @@ const resolveInstalledProviderPathByScan = (
         continue;
       }
       const candidateVersion = entry.name;
-      const markerPath = path.join(
-        providerRoot,
-        candidateVersion,
-        "install.json"
-      );
-      if (!existsSync(markerPath)) {
+      const installDirectory = path.join(providerRoot, candidateVersion);
+      if (!hasInstalledProviderPackage(installDirectory)) {
         continue;
       }
       if (!bestVersion || candidateVersion > bestVersion) {
@@ -95,3 +94,6 @@ export const resolveCodexModulePath = (): string | undefined =>
 
 export const resolveGeminiModulePath = (): string | undefined =>
   resolveProviderModulePath("gemini", "GEMINI_MODULE_PATH");
+
+export const resolveGlmClaudeCodeModulePath = (): string | undefined =>
+  resolveProviderModulePath("glm-claude-code", "GLM_CLAUDE_CODE_MODULE_PATH");

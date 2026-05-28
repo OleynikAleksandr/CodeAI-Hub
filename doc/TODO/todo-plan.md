@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "7ba79bc2f",
+  "lastRecordedCommit": "afd449de6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8k.glm-live-diagnose.task1",
-  "expectedCommitMessage": "test: characterize glm live runtime loading",
+  "currentTaskId": "provider-readiness.phase8k.glm-standalone-loader.task1",
+  "expectedCommitMessage": "fix: load glm standalone provider runtime",
   "debt": {
-    "expectedCommitMessage": "test: characterize glm live runtime loading",
-    "preCommitHead": "7ba79bc2f",
+    "expectedCommitMessage": "fix: load glm standalone provider runtime",
+    "preCommitHead": "afd449de6",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8k.glm-live-diagnose.task1"
+    "taskId": "provider-readiness.phase8k.glm-standalone-loader.task1"
   }
 }
 ```
@@ -409,9 +409,10 @@
     - Diagnostic 2026-05-28: Workspace settings at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/settings/settings.json` contain `providers.glmClaudeCode.apiKey` with length `0`; `~/.codeai-hub/providers/glm-claude-code/config.json` is absent; GLM env keys are absent in the shell and running Core process.
     - Diagnostic 2026-05-28: Installed standalone GLM runtime exists at `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/1.2.384/dist/index.js` and a synthetic workspace key resolves to `apiKeySource=workspace_settings`.
     - Diagnostic 2026-05-28: Live Core log stack still loads GLM classes from `/Users/oleksandroliinyk/.codeai-hub/providers/claude/1.2.384/dist/glm-claude-code/...`, proving Core does not prefer the standalone GLM provider runtime even when it is installed.
-146. [PENDING] Git Commit: `test: characterize glm live runtime loading` (hash: TBD)
-147. [TODO] `provider-readiness.phase8k.glm-standalone-loader.task1` Make Core resolve and load `~/.codeai-hub/providers/glm-claude-code/<version>` as the GLM adapter source before any Claude-module fallback, while preserving the Claude Agent SDK-compatible execution path and GLM-specific home/settings (scope: `packages/core/src/provider-registry/provider-installed-path-resolver.ts, packages/core/src/provider-registry/index.ts, packages/core/src/provider-registry/provider-module-loader.ts`; expected commit: `fix: load glm standalone provider runtime`).
-148. [TODO] Git Commit: `fix: load glm standalone provider runtime` (hash: TBD)
+146. [DONE] Git Commit: `test: characterize glm live runtime loading` (hash: afd449de6)
+147. [DONE] `provider-readiness.phase8k.glm-standalone-loader.task1` Make Core resolve and load `~/.codeai-hub/providers/glm-claude-code/<version>` as the GLM adapter source before any Claude-module fallback, while preserving the Claude Agent SDK-compatible execution path and GLM-specific home/settings (scope: `packages/core/src/provider-registry/provider-installed-path-resolver.ts, packages/core/src/provider-registry/index.ts, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md`; expected commit: `fix: load glm standalone provider runtime`).
+    - Result 2026-05-28: Core now resolves GLM with `resolveGlmClaudeCodeModulePath()` instead of reusing `resolveClaudeModulePath()`, so an installed standalone GLM provider runtime is selected independently from the original Claude provider package.
+148. [PENDING] Git Commit: `fix: load glm standalone provider runtime` (hash: TBD)
 149. [TODO] `provider-readiness.phase8k.glm-live-verify.task1` Verify GLM standalone runtime loading and readiness diagnostics with installed v1.2.384 artifacts plus targeted core/module tests; do not run release build scripts (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify glm standalone runtime loading`).
 150. [TODO] Git Commit: `test: verify glm standalone runtime loading` (hash: TBD)
 
