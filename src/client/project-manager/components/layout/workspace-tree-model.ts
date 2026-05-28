@@ -63,14 +63,17 @@ export const resolveTreeStatus = (
   if (status === "outdated") {
     return "outdated";
   }
-  if (blocked || status === "invalid") {
+  if (status === "invalid") {
+    return "blocked";
+  }
+  if (status === "in_progress") {
+    return "progress";
+  }
+  if (blocked) {
     return "blocked";
   }
   if (status === "completed") {
     return "active";
-  }
-  if (status === "in_progress") {
-    return "progress";
   }
   return "todo";
 };
