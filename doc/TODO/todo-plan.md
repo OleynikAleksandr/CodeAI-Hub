@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "7679d28ed",
+  "lastRecordedCommit": "cd262baac",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8j.release-build.task1",
-  "expectedCommitMessage": "chore: build application skeleton repair release",
+  "currentTaskId": "provider-readiness.phase8j.release-vsix.task1",
+  "expectedCommitMessage": "test: verify application skeleton repair vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build application skeleton repair release",
-    "preCommitHead": "7679d28ed",
+    "expectedCommitMessage": "test: verify application skeleton repair vsix",
+    "preCommitHead": "cd262baac",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8j.release-build.task1"
+    "taskId": "provider-readiness.phase8j.release-vsix.task1"
   }
 }
 ```
@@ -393,9 +393,12 @@
 140. [DONE] `provider-readiness.phase8j.release-build.task1` Run the approved unified release build for the Application Skeleton managed repair fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build application skeleton repair release`).
     - Result 2026-05-28: `./scripts/build-all.sh --allow-dirty` — PASS for v1.2.384. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-build transition.
     - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.384.tar.bz2`, `codex-module-1.2.384.tar.bz2`, `gemini-module-1.2.384.tar.bz2`, `glm-claude-code-module-1.2.384.tar.bz2`, `kimi-module-1.2.384.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.384.tar.bz2`, `vscode-webview-1.2.384.tar.bz2`, `project-manager-1.2.384.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.384.tar.bz2`.
-141. [PENDING] Git Commit: `chore: build application skeleton repair release` (hash: TBD)
-142. [TODO] `provider-readiness.phase8j.release-vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton repair vsix`).
-143. [TODO] Git Commit: `test: verify application skeleton repair vsix` (hash: TBD)
+141. [DONE] Git Commit: `chore: build application skeleton repair release` (hash: cd262baac)
+142. [DONE] `provider-readiness.phase8j.release-vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton repair vsix`).
+    - Result 2026-05-28: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-vsix transition.
+    - Verified release output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `✅ VSIX runtime package surface verified`.
+    - VSIX: `codeai-hub-1.2.384.vsix` (4.3M), SHA1 `176a2c6b92b4f49868ca332a9d5400f912f8d052`.
+143. [PENDING] Git Commit: `test: verify application skeleton repair vsix` (hash: TBD)
 144. [TODO] `provider-readiness.phase8j.user-retest.task1` User installs the produced replacement release and retests Application Skeleton with Kimi, managed System message language, and artifact handoff (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
