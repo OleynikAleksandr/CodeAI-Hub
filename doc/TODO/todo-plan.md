@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "17725eed0",
+  "lastRecordedCommit": "f85f6380f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8r.global-settings-diagnose.task1",
-  "expectedCommitMessage": "test: characterize global general settings ownership",
+  "currentTaskId": "provider-readiness.phase8r.global-settings-core.task1",
+  "expectedCommitMessage": "fix: split general settings into global store",
   "debt": {
-    "expectedCommitMessage": "test: characterize global general settings ownership",
-    "preCommitHead": "17725eed0",
+    "expectedCommitMessage": "fix: split general settings into global store",
+    "preCommitHead": "f85f6380f",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8r.global-settings-diagnose.task1"
+    "taskId": "provider-readiness.phase8r.global-settings-core.task1"
   }
 }
 ```
@@ -572,9 +572,15 @@
     - Diagnostic 2026-05-28: `SettingsPersistenceService` rejects unscoped writes and does not create the configured global settings file; all save/reset writes require a workspace scope and persist the full settings snapshot to the workspace settings path.
     - Diagnostic 2026-05-28: localization runtime assets are still workspace-owned: `WorkspaceRuntimeCapsule` creates `runtime/localization`, `CoreLocalizationFacadeFactory` passes the workspace localization root into `LocalizationFacade`, `SettingsRequestHandler` opens the user glossary under the workspace localization root, and `SessionTranslationPolicyResolver` derives the browser bootstrap path from the workspace settings path.
     - Diagnostic 2026-05-28: session translation engine/language readers (`loadUITranslationEngineId`, `loadReasoningTranslationEngineId`, `loadReasoningLanguage`) read `general.localization` from the same workspace settings path used for provider settings.
-205. [PENDING] Git Commit: `test: characterize global general settings ownership` (hash: TBD)
-206. [TODO] `provider-readiness.phase8r.global-settings-core.task1` Introduce Core-owned global user settings storage under the app userspace for `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech`, while workspace settings remain responsible for workspace-specific providers/models/runtime values (scope: `packages/core/src/workflow/runtime, packages/core/src/config, doc/TODO/todo-plan.md`; expected commit: `fix: split general settings into global store`).
-207. [TODO] Git Commit: `fix: split general settings into global store` (hash: TBD)
+205. [DONE] Git Commit: `test: characterize global general settings ownership` (hash: f85f6380f)
+206. [DONE] `provider-readiness.phase8r.global-settings-core.task1` Introduce Core-owned global user settings storage under the app userspace for `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech`, while workspace settings remain responsible for workspace-specific providers/models/runtime values (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `fix: split general settings into global store`).
+    - Result 2026-05-28: Core config now resolves a global app settings file separately from workspace settings; default path remains `~/.codeai-hub/settings/settings.json`, with test/config override support.
+    - Result 2026-05-28: Settings persistence splits snapshots on save/reset/load: `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech` are persisted in the global settings file, while workspace settings persist provider/workspace-specific values without `general`.
+    - Result 2026-05-28: Legacy workspace `general` values are adopted into global settings when global settings are missing, and workspace settings are migrated back to provider-only snapshots.
+    - Result 2026-05-28: localization runtime/bootstrap/glossary paths now resolve under the global app localization root instead of the workspace capsule localization root.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts packages/core/src/session-translation/session-translation-policy-resolver.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts` — PASS (16 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+207. [PENDING] Git Commit: `fix: split general settings into global store` (hash: TBD)
 208. [TODO] `provider-readiness.phase8r.global-settings-ui.task1` Update Project Manager settings load/save behavior so the user-level `general` blocks read/write global app userspace settings while provider/model/workspace options remain workspace-local (scope: `src/client/project-manager/components/settings, src/client/project-manager/services, src/client/ui/src/components/settings, doc/TODO/todo-plan.md`; expected commit: `fix: route general settings to global store`).
 209. [TODO] Git Commit: `fix: route general settings to global store` (hash: TBD)
 210. [TODO] `provider-readiness.phase8r.global-settings-verify.task1` Verify global general settings migration/read path, workspace settings without ownership of the moved `general` blocks, and System/Reasoning translation engine selection from global settings (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify global general settings split`).

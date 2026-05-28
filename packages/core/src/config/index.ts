@@ -37,6 +37,7 @@ export interface CoreConfig {
   readonly geminiSettingsPath: string;
   readonly geminiThinkingLevelByModel: Record<string, string>;
   readonly geminiWorkspacePath?: string;
+  readonly globalSettingsPath?: string;
   readonly host: string;
   readonly idleTtlMinutes: number | null;
   readonly kimiDefaultModel?: string;
@@ -118,6 +119,25 @@ const resolveRuntimeSettingsPath = (
   return trimmedPath;
 };
 
+export const resolveGlobalSettingsPath = (config?: {
+  readonly claudeSettingsPath?: string;
+  readonly globalSettingsPath?: string;
+}): string =>
+  config?.globalSettingsPath?.trim() ||
+  process.env.CODEAI_GLOBAL_SETTINGS_PATH?.trim() ||
+  config?.claudeSettingsPath?.trim() ||
+  LEGACY_GLOBAL_SETTINGS_FILE;
+
+const resolveGlobalAppRootPath = (config?: {
+  readonly claudeSettingsPath?: string;
+  readonly globalSettingsPath?: string;
+}): string => path.dirname(path.dirname(resolveGlobalSettingsPath(config)));
+
+export const resolveGlobalLocalizationRootPath = (config?: {
+  readonly claudeSettingsPath?: string;
+  readonly globalSettingsPath?: string;
+}): string => path.join(resolveGlobalAppRootPath(config), "localization");
+
 export const loadConfig = (): CoreConfig => {
   const host = process.env.CORE_HOST ?? "127.0.0.1";
   const port = toNumber(process.env.CORE_PORT, DEFAULT_PORT);
@@ -145,6 +165,7 @@ export const loadConfig = (): CoreConfig => {
     process.env.CLAUDE_SETTINGS_PATH,
     defaultWorkspaceSettingsPath
   );
+  const globalSettingsPath = resolveGlobalSettingsPath();
   const claudeDefaultModel = resolveClaudeDefaultModel(
     process.env.CLAUDE_DEFAULT_MODEL
   );
@@ -204,6 +225,7 @@ export const loadConfig = (): CoreConfig => {
     geminiThinkingLevelByModel,
     geminiSettingsPath,
     geminiCredentialsDirectory,
+    globalSettingsPath,
     kimiDefaultModel,
     claudeContinuityRemainingPercentThreshold,
     continuityPreemptRemainingPercentThreshold,

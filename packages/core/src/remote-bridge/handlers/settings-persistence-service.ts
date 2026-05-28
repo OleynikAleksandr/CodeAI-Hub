@@ -1,7 +1,13 @@
-import { readFile } from "node:fs/promises";
 import type { CoreConfig } from "../../config";
+import { resolveGlobalSettingsPath } from "../../config";
 import { providerSettingsSnapshotCache } from "../../config/json-file-snapshot-cache";
 import type { Logger } from "../../telemetry/logger";
+import {
+  combineGlobalGeneralWithWorkspaceSettings,
+  readJsonObjectFile,
+  toGlobalGeneralSettingsSnapshot,
+  toWorkspaceSettingsSnapshot,
+} from "./settings-global-general-store";
 import {
   buildDefaultSettingsSnapshot,
   type LocalizationComparisonSnapshot,
@@ -185,8 +191,7 @@ export class SettingsPersistenceService {
     const settingsPath = this.resolveSettingsPath(options);
     const current = await this.loadSettingsEntry(options);
     const settings = buildDefaultSettingsSnapshot(this.config);
-    await persistSettingsSnapshot(settingsPath, settings);
-    this.invalidateSettingsSnapshotCache(settingsPath);
+    await this.persistSplitSettingsSnapshot(settingsPath, settings);
 
     const impact = resolveLocalizationImpact(current.settings, settings);
     return {
@@ -213,8 +218,7 @@ export class SettingsPersistenceService {
       rawSettings,
       this.config
     );
-    await persistSettingsSnapshot(settingsPath, settings);
-    this.invalidateSettingsSnapshotCache(settingsPath);
+    await this.persistSplitSettingsSnapshot(settingsPath, settings);
 
     const impact = resolveLocalizationImpact(current.settings, settings);
     return {
@@ -255,28 +259,26 @@ export class SettingsPersistenceService {
     options: SettingsPersistenceOptions = {}
   ): Promise<SettingsLoadEntry> {
     if (!options.workspace) {
-      return {
-        changed: false,
-        settings: buildDefaultSettingsSnapshot(this.config),
-      };
+      return await this.loadGlobalSettingsEntry();
     }
 
     const settingsPath = this.resolveSettingsPath(options);
     try {
-      const raw = await readFile(settingsPath, "utf8");
-      const parsed = JSON.parse(raw) as unknown;
-      const baseSettings = isRecord(parsed)
-        ? parsed
-        : buildDefaultSettingsSnapshot(this.config);
-      const normalized = normalizeLoadedSettingsSnapshotWithDefaults(
-        baseSettings,
-        this.config
-      );
+      const baseSettings =
+        (await readJsonObjectFile(settingsPath)) ??
+        buildDefaultSettingsSnapshot(this.config);
+      const normalized = await this.combineWithGlobalGeneral(baseSettings);
 
-      if (normalized.changed) {
+      if (
+        normalized.changed ||
+        !normalized.globalHadGeneral ||
+        normalized.workspaceHadGeneral
+      ) {
         try {
-          await persistSettingsSnapshot(settingsPath, normalized.settings);
-          this.invalidateSettingsSnapshotCache(settingsPath);
+          await this.persistSplitSettingsSnapshot(
+            settingsPath,
+            normalized.settings
+          );
         } catch (persistError) {
           this.logger.warn("Failed to persist settings migration", {
             error: toErrorMessage(persistError),
@@ -297,10 +299,13 @@ export class SettingsPersistenceService {
       const snapshot = await this.resolveMissingSettingsSnapshot(
         options.workspace
       );
+      const normalized = await this.combineWithGlobalGeneral(snapshot);
       if (code === "ENOENT") {
         try {
-          await persistSettingsSnapshot(settingsPath, snapshot);
-          this.invalidateSettingsSnapshotCache(settingsPath);
+          await this.persistSplitSettingsSnapshot(
+            settingsPath,
+            normalized.settings
+          );
         } catch (persistError) {
           this.logger.warn("Failed to persist default settings", {
             error: toErrorMessage(persistError),
@@ -309,7 +314,7 @@ export class SettingsPersistenceService {
         }
       }
 
-      return { changed: code === "ENOENT", settings: snapshot };
+      return { changed: code === "ENOENT", settings: normalized.settings };
     }
   }
 
@@ -325,5 +330,69 @@ export class SettingsPersistenceService {
 
   private invalidateSettingsSnapshotCache(settingsPath: string): void {
     providerSettingsSnapshotCache.clear(settingsPath);
+  }
+
+  private resolveGlobalSettingsPath(): string {
+    return resolveGlobalSettingsPath(this.config);
+  }
+
+  private async loadGlobalSettingsEntry(): Promise<SettingsLoadEntry> {
+    const globalSettingsPath = this.resolveGlobalSettingsPath();
+    const globalSettings = await readJsonObjectFile(globalSettingsPath).catch(
+      () => null
+    );
+    const combined = combineGlobalGeneralWithWorkspaceSettings({
+      config: this.config,
+      globalSettings,
+      workspaceSettings: buildDefaultSettingsSnapshot(this.config),
+    });
+    if (!combined.globalHadGeneral || combined.changed) {
+      try {
+        await persistSettingsSnapshot(
+          globalSettingsPath,
+          toGlobalGeneralSettingsSnapshot(combined.settings)
+        );
+        this.invalidateSettingsSnapshotCache(globalSettingsPath);
+      } catch (persistError) {
+        this.logger.warn("Failed to persist global settings migration", {
+          error: toErrorMessage(persistError),
+          settingsPath: globalSettingsPath,
+        });
+      }
+    }
+    return {
+      changed: !combined.globalHadGeneral || combined.changed,
+      settings: combined.settings,
+    };
+  }
+
+  private async combineWithGlobalGeneral(
+    workspaceSettings: Record<string, unknown>
+  ) {
+    const globalSettings = await readJsonObjectFile(
+      this.resolveGlobalSettingsPath()
+    ).catch(() => null);
+    return combineGlobalGeneralWithWorkspaceSettings({
+      config: this.config,
+      globalSettings,
+      workspaceSettings,
+    });
+  }
+
+  private async persistSplitSettingsSnapshot(
+    workspaceSettingsPath: string,
+    settings: Record<string, unknown>
+  ): Promise<void> {
+    const globalSettingsPath = this.resolveGlobalSettingsPath();
+    await persistSettingsSnapshot(
+      globalSettingsPath,
+      toGlobalGeneralSettingsSnapshot(settings)
+    );
+    await persistSettingsSnapshot(
+      workspaceSettingsPath,
+      toWorkspaceSettingsSnapshot(settings)
+    );
+    this.invalidateSettingsSnapshotCache(globalSettingsPath);
+    this.invalidateSettingsSnapshotCache(workspaceSettingsPath);
   }
 }

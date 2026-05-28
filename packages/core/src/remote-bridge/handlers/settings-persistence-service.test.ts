@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -19,6 +19,7 @@ const createConfig = (settingsPath: string): CoreConfig => ({
   geminiDefaultModel: "gemini-3-pro-preview",
   geminiSettingsPath: settingsPath,
   geminiThinkingLevelByModel: {},
+  globalSettingsPath: settingsPath,
   host: "127.0.0.1",
   idleTtlMinutes: null,
   managedMode: null,
@@ -57,6 +58,9 @@ const readCodexDefaultModel = (settings: Record<string, unknown>): string => {
   const codex = providers.codex as Record<string, unknown>;
   return String(codex.defaultModel);
 };
+
+const hasGeneralSettings = (settings: Record<string, unknown>): boolean =>
+  typeof settings.general === "object" && settings.general !== null;
 
 test("SettingsPersistenceService seeds workspace settings from existing workspace settings and isolates changes", async () => {
   const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-settings-"));
@@ -101,22 +105,24 @@ test("SettingsPersistenceService seeds workspace settings from existing workspac
     capsuleB.settingsFile.relativePath,
     ".codeai-hub/workspace-b/runtime/settings/settings.json"
   );
-  await assert.rejects(access(globalSettingsPath), { code: "ENOENT" });
-  assert.equal(
-    readCodexDefaultModel(
-      JSON.parse(await readFile(capsuleA.settingsFile.absolutePath, "utf8"))
-    ),
-    "workspace-a-model"
-  );
-  assert.equal(
-    readCodexDefaultModel(
-      JSON.parse(await readFile(capsuleB.settingsFile.absolutePath, "utf8"))
-    ),
-    "workspace-a-model"
-  );
+  const globalSettings = JSON.parse(
+    await readFile(globalSettingsPath, "utf8")
+  ) as Record<string, unknown>;
+  assert.equal(hasGeneralSettings(globalSettings), true);
+
+  const persistedWorkspaceA = JSON.parse(
+    await readFile(capsuleA.settingsFile.absolutePath, "utf8")
+  ) as Record<string, unknown>;
+  const persistedWorkspaceB = JSON.parse(
+    await readFile(capsuleB.settingsFile.absolutePath, "utf8")
+  ) as Record<string, unknown>;
+  assert.equal(hasGeneralSettings(persistedWorkspaceA), false);
+  assert.equal(hasGeneralSettings(persistedWorkspaceB), false);
+  assert.equal(readCodexDefaultModel(persistedWorkspaceA), "workspace-a-model");
+  assert.equal(readCodexDefaultModel(persistedWorkspaceB), "workspace-a-model");
 });
 
-test("SettingsPersistenceService rejects unscoped writes without creating global settings", async () => {
+test("SettingsPersistenceService rejects unscoped writes and can seed global general settings", async () => {
   const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-settings-"));
   const globalSettingsPath = path.join(tempRoot, "global", "settings.json");
   const config = createConfig(globalSettingsPath);
@@ -128,5 +134,8 @@ test("SettingsPersistenceService rejects unscoped writes without creating global
   );
   await assert.rejects(service.reset(), WORKSPACE_SETTINGS_SCOPE_REQUIRED);
   assert.equal(readCodexDefaultModel(await service.load()), "gpt-5.3-codex");
-  await assert.rejects(access(globalSettingsPath), { code: "ENOENT" });
+  const globalSettings = JSON.parse(
+    await readFile(globalSettingsPath, "utf8")
+  ) as Record<string, unknown>;
+  assert.equal(hasGeneralSettings(globalSettings), true);
 });

@@ -1,4 +1,3 @@
-import path from "node:path";
 import {
   DEFAULT_LOCALIZATION_ENGINE_ID,
   DEFAULT_LOCALIZATION_SOURCE_LANGUAGE,
@@ -6,7 +5,12 @@ import {
   LOCALIZATION_SOURCE_SELECTION,
   type LocalizationRuntimeSettingsSnapshot,
   type LocalizationWorkflowTermsPolicy,
+  resolveLocalizationPaths,
 } from "@codeai-hub/localization";
+import {
+  resolveGlobalLocalizationRootPath,
+  resolveGlobalSettingsPath,
+} from "../config";
 import { providerSettingsSnapshotCache } from "../config/json-file-snapshot-cache";
 import {
   loadClaudeProviderSettingsSnapshot,
@@ -83,16 +87,10 @@ const resolveLocalizationCategory = (
   return fallback;
 };
 
-const resolveCodeAiHomeDirectory = (settingsPath: string): string =>
-  path.dirname(path.dirname(settingsPath));
-
-const resolveBrowserRuntimeBootstrapPath = (settingsPath: string): string =>
-  path.join(
-    resolveCodeAiHomeDirectory(settingsPath),
-    "localization",
-    "cache",
-    "browser-runtime-bootstrap.json"
-  );
+const resolveBrowserRuntimeBootstrapPath = (): string =>
+  resolveLocalizationPaths({
+    rootDirectory: resolveGlobalLocalizationRootPath(),
+  }).browserRuntimeBootstrapFilePath;
 
 const parseSettingsSnapshot = (
   value: unknown
@@ -199,7 +197,7 @@ export class SessionTranslationPolicyResolver {
       };
     }
 
-    const persistedSnapshot = this.loadPersistedBootstrapSnapshot(settingsPath);
+    const persistedSnapshot = this.loadPersistedBootstrapSnapshot();
     const matchingBootstrap =
       persistedSnapshot &&
       settingsMatch(persistedSnapshot.settings, runtimeSettings) &&
@@ -307,16 +305,26 @@ export class SessionTranslationPolicyResolver {
   }
 
   private loadJsonSnapshot(settingsPath: string): JsonRecord | null {
-    return providerSettingsSnapshotCache.readObject(settingsPath);
+    const workspace = providerSettingsSnapshotCache.readObject(settingsPath);
+    const global = providerSettingsSnapshotCache.readObject(
+      resolveGlobalSettingsPath()
+    );
+    if (global && isRecord(global.general)) {
+      return {
+        ...(workspace ?? {}),
+        general: global.general,
+      };
+    }
+    return workspace;
   }
 
-  private loadPersistedBootstrapSnapshot(settingsPath: string): {
+  private loadPersistedBootstrapSnapshot(): {
     readonly activeEngineId: string;
     readonly settings: LocalizationRuntimeSettingsSnapshot;
     readonly systemFeedbackSource: "materialized" | "source_fallback";
   } | null {
     const parsed = providerSettingsSnapshotCache.readObject(
-      resolveBrowserRuntimeBootstrapPath(settingsPath)
+      resolveBrowserRuntimeBootstrapPath()
     );
     if (!(parsed && isRecord(parsed.runtimePayload))) {
       return null;

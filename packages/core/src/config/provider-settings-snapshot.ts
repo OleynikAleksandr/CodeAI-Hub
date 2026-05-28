@@ -1,4 +1,5 @@
 import { LOCALIZATION_SOURCE_SELECTION } from "@codeai-hub/localization";
+import { resolveGlobalSettingsPath } from "./index";
 import { providerSettingsSnapshotCache } from "./json-file-snapshot-cache";
 
 export interface CodexSettingsSnapshot {
@@ -105,6 +106,20 @@ const loadProviderSnapshot = (
   return provider;
 };
 
+const loadLocalizationSettingsSnapshot = (
+  settingsPath: string
+): Record<string, unknown> | null => {
+  const workspace = loadJsonSnapshot(settingsPath);
+  const global = loadJsonSnapshot(resolveGlobalSettingsPath());
+  if (global && isRecord(global.general)) {
+    return {
+      ...(workspace ?? {}),
+      general: global.general,
+    };
+  }
+  return workspace;
+};
+
 export const loadCodexSettingsSnapshot = (
   settingsPath: string
 ): CodexSettingsSnapshot | null => {
@@ -186,7 +201,7 @@ export const loadClaudeProviderSettingsSnapshot = (
 };
 
 export const loadUITranslationEngineId = (settingsPath: string): string => {
-  const parsed = loadJsonSnapshot(settingsPath);
+  const parsed = loadLocalizationSettingsSnapshot(settingsPath);
   if (!parsed) {
     return DEFAULT_TRANSLATION_ENGINE_ID;
   }
@@ -206,7 +221,7 @@ export const loadUITranslationEngineId = (settingsPath: string): string => {
 export const loadReasoningTranslationEngineId = (
   settingsPath: string
 ): string => {
-  const parsed = loadJsonSnapshot(settingsPath);
+  const parsed = loadLocalizationSettingsSnapshot(settingsPath);
   if (!parsed) {
     return DEFAULT_TRANSLATION_ENGINE_ID;
   }
@@ -223,7 +238,7 @@ export const loadReasoningTranslationEngineId = (
 };
 
 export const loadReasoningLanguage = (settingsPath: string): string => {
-  const parsed = loadJsonSnapshot(settingsPath);
+  const parsed = loadLocalizationSettingsSnapshot(settingsPath);
   if (!parsed) {
     return DEFAULT_LOCALIZATION_LANGUAGE;
   }

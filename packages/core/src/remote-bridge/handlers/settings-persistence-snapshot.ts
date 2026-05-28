@@ -66,6 +66,9 @@ const DEFAULT_SETTINGS_SNAPSHOT = {
         ].join("\n"),
       },
     },
+    textToSpeech: {
+      rate: 1,
+    },
   },
   providers: {
     claude: {

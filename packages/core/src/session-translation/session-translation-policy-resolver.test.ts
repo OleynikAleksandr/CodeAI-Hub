@@ -16,6 +16,18 @@ const createTempHomeDirectory = async (): Promise<string> =>
 const buildSettingsPath = (homeDirectory: string): string =>
   path.join(homeDirectory, ".codeai-hub", "settings", "settings.json");
 
+const setGlobalSettingsPathForTest = (settingsPath: string): (() => void) => {
+  const original = process.env.CODEAI_GLOBAL_SETTINGS_PATH;
+  process.env.CODEAI_GLOBAL_SETTINGS_PATH = settingsPath;
+  return () => {
+    if (original === undefined) {
+      process.env.CODEAI_GLOBAL_SETTINGS_PATH = undefined;
+      return;
+    }
+    process.env.CODEAI_GLOBAL_SETTINGS_PATH = original;
+  };
+};
+
 const writeJsonSnapshot = async (
   filePath: string,
   snapshot: unknown
@@ -121,6 +133,8 @@ test("SessionTranslationPolicyResolver enables translation through the dedicated
 
   try {
     const settingsPath = buildSettingsPath(homeDirectory);
+    const restoreGlobalSettingsPath =
+      setGlobalSettingsPathForTest(settingsPath);
     await mkdir(path.dirname(settingsPath), { recursive: true });
     await writeFile(
       settingsPath,
@@ -148,6 +162,7 @@ test("SessionTranslationPolicyResolver enables translation through the dedicated
       sourceLanguage: "en",
       targetLanguage: "ru",
     });
+    restoreGlobalSettingsPath();
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }
@@ -158,6 +173,8 @@ test("SessionTranslationPolicyResolver keeps translation disabled while the pers
 
   try {
     const settingsPath = buildSettingsPath(homeDirectory);
+    const restoreGlobalSettingsPath =
+      setGlobalSettingsPathForTest(settingsPath);
     await mkdir(path.dirname(settingsPath), { recursive: true });
     await writeFile(
       settingsPath,
@@ -176,6 +193,7 @@ test("SessionTranslationPolicyResolver keeps translation disabled while the pers
       sourceLanguage: "en",
       targetLanguage: "ru",
     });
+    restoreGlobalSettingsPath();
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }
@@ -186,6 +204,8 @@ test("SessionTranslationPolicyResolver decouples reasoning language from Message
 
   try {
     const settingsPath = buildSettingsPath(homeDirectory);
+    const restoreGlobalSettingsPath =
+      setGlobalSettingsPathForTest(settingsPath);
     await mkdir(path.dirname(settingsPath), { recursive: true });
     await writeFile(
       settingsPath,
@@ -224,6 +244,7 @@ test("SessionTranslationPolicyResolver decouples reasoning language from Message
     assert.equal(messagesPolicy.category, "messages_for_the_user");
     assert.equal(messagesPolicy.targetLanguage, "ru");
     assert.equal(messagesPolicy.engineId, "codex-gpt-5.3-codex-spark");
+    restoreGlobalSettingsPath();
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }
@@ -234,6 +255,8 @@ test("SessionTranslationPolicyResolver falls back to the Messages for the User l
 
   try {
     const settingsPath = buildSettingsPath(homeDirectory);
+    const restoreGlobalSettingsPath =
+      setGlobalSettingsPathForTest(settingsPath);
     await mkdir(path.dirname(settingsPath), { recursive: true });
     const legacySettings = createSettingsSnapshot();
     const legacyLocalization = (
@@ -267,6 +290,7 @@ test("SessionTranslationPolicyResolver falls back to the Messages for the User l
     assert.equal(policy.engineId, "google-gtx");
     assert.equal(messagesPolicy.targetLanguage, "ru");
     assert.equal(messagesPolicy.engineId, "codex-gpt-5.3-codex-spark");
+    restoreGlobalSettingsPath();
   } finally {
     await rm(homeDirectory, { force: true, recursive: true });
   }
@@ -279,6 +303,8 @@ test("SessionTranslationPolicyResolver keeps cached settings until the settings 
     resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
 
   try {
+    const restoreGlobalSettingsPath =
+      setGlobalSettingsPathForTest(settingsPath);
     providerSettingsSnapshotCache.clear(settingsPath);
     providerSettingsSnapshotCache.clear(bootstrapPath);
     await writeJsonSnapshot(settingsPath, createSettingsSnapshot());
@@ -299,6 +325,7 @@ test("SessionTranslationPolicyResolver keeps cached settings until the settings 
     assert.equal(firstPolicy.targetLanguage, "ru");
     assert.equal(cachedPolicy.targetLanguage, "ru");
     assert.equal(invalidatedPolicy.targetLanguage, "fr");
+    restoreGlobalSettingsPath();
   } finally {
     providerSettingsSnapshotCache.clear(settingsPath);
     providerSettingsSnapshotCache.clear(bootstrapPath);
@@ -313,6 +340,8 @@ test("SessionTranslationPolicyResolver keeps cached missing bootstrap until the 
     resolveLocalizationPaths(homeDirectory).browserRuntimeBootstrapFilePath;
 
   try {
+    const restoreGlobalSettingsPath =
+      setGlobalSettingsPathForTest(settingsPath);
     providerSettingsSnapshotCache.clear(settingsPath);
     providerSettingsSnapshotCache.clear(bootstrapPath);
     await writeJsonSnapshot(settingsPath, createSettingsSnapshot());
@@ -338,6 +367,7 @@ test("SessionTranslationPolicyResolver keeps cached missing bootstrap until the 
     );
     assert.equal(invalidatedBootstrapPolicy.enabled, true);
     assert.equal(invalidatedBootstrapPolicy.skipReason, null);
+    restoreGlobalSettingsPath();
   } finally {
     providerSettingsSnapshotCache.clear(settingsPath);
     providerSettingsSnapshotCache.clear(bootstrapPath);

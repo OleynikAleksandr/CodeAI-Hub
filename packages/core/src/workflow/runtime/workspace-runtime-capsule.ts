@@ -61,61 +61,7 @@ const PROVIDER_IDS = [
 ] as const;
 const DESCRIPTION_STAGE_ID = "description";
 const DESCRIPTION_QUESTIONNAIRE_SEED = "# Description Questionnaire\n\n";
-const DEFAULT_LOCALIZATION_LANGUAGE = "en";
-const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
 const WORKSPACE_SETTINGS_SEED = {
-  general: {
-    coreControls: {
-      allowRestart: true,
-    },
-    localization: {
-      defaultLanguage: DEFAULT_LOCALIZATION_LANGUAGE,
-      categories: {
-        artifactsForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
-        interactiveTemplates: DEFAULT_LOCALIZATION_LANGUAGE,
-        messagesForTheUser: DEFAULT_LOCALIZATION_LANGUAGE,
-        reasoning: DEFAULT_LOCALIZATION_LANGUAGE,
-        systemFeedback: DEFAULT_LOCALIZATION_LANGUAGE,
-        uiHelperText: DEFAULT_LOCALIZATION_LANGUAGE,
-        uiInterface: DEFAULT_LOCALIZATION_LANGUAGE,
-        uiLabels: DEFAULT_LOCALIZATION_LANGUAGE,
-        userGuidance: DEFAULT_LOCALIZATION_LANGUAGE,
-        workflowTerms: DEFAULT_LOCALIZATION_LANGUAGE,
-      },
-      workflowTermsPolicy: "keep_english",
-      uiEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
-      reasoningEngineId: DEFAULT_TRANSLATION_ENGINE_ID,
-      glossaryEnabled: true,
-    },
-    responsePolicy: {
-      mode: "hybrid",
-      strictOutput: {
-        schemaText: `${JSON.stringify(
-          {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              answer: {
-                type: "string",
-                description: "Final answer for the user. Markdown allowed.",
-              },
-            },
-            required: ["answer"],
-          },
-          null,
-          2
-        )}\n`,
-        instructionText: [
-          "You must respond with a JSON object that matches the provided schema.",
-          "Populate the field:",
-          "- answer: the user-facing answer.",
-          "Return only JSON, no extra text.",
-          "",
-          "User request:",
-        ].join("\n"),
-      },
-    },
-  },
   providers: {
     claude: {
       thinking: {
@@ -451,7 +397,6 @@ export const prepareWorkspaceRuntimeCapsuleDirectories = async (
   const capsule = resolveWorkspaceRuntimeCapsule(params);
   await Promise.all([
     mkdir(capsule.descriptionRoot.absolutePath, { recursive: true }),
-    mkdir(capsule.localizationRoot.absolutePath, { recursive: true }),
     mkdir(capsule.logsRoot.absolutePath, { recursive: true }),
     mkdir(capsule.projectManagerRoot.absolutePath, { recursive: true }),
     mkdir(capsule.settingsRoot.absolutePath, { recursive: true }),

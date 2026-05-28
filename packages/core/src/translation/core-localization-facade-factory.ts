@@ -5,9 +5,10 @@ import {
 import {
   LocalizationFacade,
   type LocalizationFacadeOptions,
+  resolveLocalizationPaths,
 } from "@codeai-hub/localization";
 import type { TranslationReporter } from "@codeai-hub/translation";
-import type { CoreConfig } from "../config";
+import { type CoreConfig, resolveGlobalLocalizationRootPath } from "../config";
 import { CLAUDE_INSTALLER_PATHS } from "../provider-registry/provider-installer-paths";
 import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import { createCoreTranslationFacade } from "./core-translation-facade-factory";
@@ -34,10 +35,9 @@ const resolveSettingsPath = (config: CoreConfig): string =>
   }).settingsFile.absolutePath;
 
 const resolveLocalizationRootDirectory = (config: CoreConfig): string =>
-  resolveWorkspaceRuntimeCapsule({
-    workspaceRoot: config.claudeWorkspacePath ?? process.cwd(),
-    workspaceSlug: config.claudeProjectSlug,
-  }).localizationRoot.absolutePath;
+  resolveLocalizationPaths({
+    rootDirectory: resolveGlobalLocalizationRootPath(config),
+  }).rootDirectory;
 
 const buildConfigKey = (config: CoreConfig): string =>
   JSON.stringify({

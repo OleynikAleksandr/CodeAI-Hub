@@ -3,9 +3,13 @@ import { existsSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import {
   type LocalizationFacade,
+  resolveLocalizationPaths,
   UserGlossaryStore,
 } from "@codeai-hub/localization";
-import type { CoreConfig } from "../../config";
+import {
+  type CoreConfig,
+  resolveGlobalLocalizationRootPath,
+} from "../../config";
 import type { Logger } from "../../telemetry/logger";
 import { TemplateSyncFacade } from "../../templates/template-sync-facade";
 import type {
@@ -13,7 +17,6 @@ import type {
   TemplateUpdateResolutionRequest,
 } from "../../templates/template-update-resolution-service";
 import { createCoreLocalizationFacade } from "../../translation/core-localization-facade-factory";
-import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import type { BridgeEvent } from "../types";
 import {
   SettingsLoadedBroadcaster,
@@ -46,17 +49,12 @@ const createScopedCoreLocalizationFacade = (
       : config,
   });
 
-const createWorkspaceUserGlossaryStore = (
-  workspace: WorkspaceSettingsScope
-): UserGlossaryStore => {
-  const capsule = resolveWorkspaceRuntimeCapsule({
-    workspaceRoot: workspace.workspaceRoot,
-    workspaceSlug: workspace.workspaceSlug,
+const createGlobalUserGlossaryStore = (config: CoreConfig): UserGlossaryStore =>
+  new UserGlossaryStore({
+    glossaryDirectory: resolveLocalizationPaths({
+      rootDirectory: resolveGlobalLocalizationRootPath(config),
+    }).glossaryDirectory,
   });
-  return new UserGlossaryStore({
-    glossaryDirectory: join(capsule.localizationRoot.absolutePath, "glossary"),
-  });
-};
 
 const APPLE_NATIVE_TRANSLATION_ENGINE_ID = "apple-native";
 const APPLE_NATIVE_PREFLIGHT_TIMEOUT_MS = 20_000;
@@ -279,6 +277,7 @@ const assertAppleNativeSettingsReady = async (
 
 export class SettingsRequestHandler {
   private readonly broadcaster: (event: BridgeEvent) => void;
+  private readonly config: CoreConfig;
   private readonly createLocalizationFacade: LocalizationFacadeFactory;
   private readonly defaultWorkspace: WorkspaceSettingsScope;
   private readonly logger: Logger;
@@ -293,6 +292,7 @@ export class SettingsRequestHandler {
     readonly logger: Logger;
   }) {
     this.broadcaster = options.broadcaster;
+    this.config = options.config;
     this.createLocalizationFacade =
       options.createLocalizationFacade ??
       ((workspace) =>
@@ -414,12 +414,12 @@ export class SettingsRequestHandler {
   }
 
   async handleOpenUserGlossaryFile(
-    workspace: WorkspaceSettingsScope = this.defaultWorkspace
+    _workspace: WorkspaceSettingsScope = this.defaultWorkspace
   ): Promise<void> {
     try {
       this.broadcastUserGlossaryFile(
-        await createWorkspaceUserGlossaryStore(
-          workspace
+        await createGlobalUserGlossaryStore(
+          this.config
         ).ensureEditableGlossaryFile()
       );
     } catch (error) {

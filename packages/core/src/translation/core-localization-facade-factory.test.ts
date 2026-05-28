@@ -12,7 +12,7 @@ import type {
   LocalizationSourceDictionary,
 } from "@codeai-hub/localization";
 import type { TranslationRequest } from "@codeai-hub/translation";
-import type { CoreConfig } from "../config";
+import { type CoreConfig, resolveGlobalLocalizationRootPath } from "../config";
 import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import { createCoreLocalizationFacade } from "./core-localization-facade-factory";
 
@@ -105,6 +105,7 @@ const createCoreConfig = (params: {
   geminiDefaultModel: "gemini-3-pro-preview",
   geminiSettingsPath: params.globalSettingsPath,
   geminiThinkingLevelByModel: {},
+  globalSettingsPath: params.globalSettingsPath,
   host: "127.0.0.1",
   idleTtlMinutes: null,
   managedMode: null,
@@ -177,7 +178,7 @@ test("createCoreLocalizationFacade keeps labels in English while materializing h
   );
 });
 
-test("createCoreLocalizationFacade stores runtime localization under workspace capsule", async () => {
+test("createCoreLocalizationFacade stores runtime localization under global app root", async () => {
   const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-l10n-core-"));
   const workspaceRoot = path.join(tempRoot, "workspace");
   const workspaceSlug = "workspace-localization";
@@ -199,17 +200,18 @@ test("createCoreLocalizationFacade stores runtime localization under workspace c
 
     await facade.resolveRuntimeBootstrapSnapshot(createRuntimeSettings());
 
+    const localizationRoot = resolveGlobalLocalizationRootPath(config);
     const capsule = resolveWorkspaceRuntimeCapsule({
       workspaceRoot,
       workspaceSlug,
     });
     const bootstrapPath = path.join(
-      capsule.localizationRoot.absolutePath,
+      localizationRoot,
       "cache",
       "browser-runtime-bootstrap.json"
     );
     const userGuidanceBundlePath = path.join(
-      capsule.localizationRoot.absolutePath,
+      localizationRoot,
       "catalogs",
       "user_guidance",
       "ru.json"
@@ -229,9 +231,7 @@ test("createCoreLocalizationFacade stores runtime localization under workspace c
     await assert.rejects(
       access(
         path.join(
-          fakeHome,
-          ".codeai-hub",
-          "localization",
+          capsule.localizationRoot.absolutePath,
           "cache",
           "browser-runtime-bootstrap.json"
         )

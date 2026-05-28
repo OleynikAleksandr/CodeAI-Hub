@@ -26,6 +26,7 @@ const createConfig = (params: {
   geminiDefaultModel: "gemini-3-pro-preview",
   geminiSettingsPath: params.globalSettingsPath,
   geminiThinkingLevelByModel: {},
+  globalSettingsPath: params.globalSettingsPath,
   host: "127.0.0.1",
   idleTtlMinutes: null,
   managedMode: null,
@@ -40,7 +41,7 @@ const logger = {
   },
 } as unknown as Logger;
 
-test("SettingsRequestHandler opens user glossary in workspace localization runtime", async () => {
+test("SettingsRequestHandler opens user glossary in global localization runtime", async () => {
   const tempRoot = await mkdtemp(path.join(tmpdir(), "codeai-glossary-"));
   const workspaceRoot = path.join(tempRoot, "workspace");
   const workspaceSlug = "workspace-glossary";
@@ -68,7 +69,8 @@ test("SettingsRequestHandler opens user glossary in workspace localization runti
       workspaceSlug,
     });
     const expectedPath = path.join(
-      capsule.localizationRoot.absolutePath,
+      tempRoot,
+      "localization",
       "glossary",
       "do-not-translate-terms.txt"
     );
@@ -78,15 +80,7 @@ test("SettingsRequestHandler opens user glossary in workspace localization runti
     });
     await access(expectedPath);
     await assert.rejects(
-      access(
-        path.join(
-          fakeHome,
-          ".codeai-hub",
-          "localization",
-          "glossary",
-          "do-not-translate-terms.txt"
-        )
-      ),
+      access(path.join(capsule.localizationRoot.absolutePath, "glossary")),
       { code: "ENOENT" }
     );
   } finally {
