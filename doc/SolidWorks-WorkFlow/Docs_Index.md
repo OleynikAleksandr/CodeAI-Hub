@@ -81,6 +81,7 @@
 
 ### Plans (pre-implementation / non-SSOT)
 - `Plans/README.md` — правила жизненного цикла planning-доков.
+- `Plans/Local_Models_LMStudio_Module_Planning.md` — active planning source for the LM Studio local-model translation module: discovered MLX/local models exposed as selectable UI/Reasoning translation engines, Core-owned fail-closed OpenAI-compatible local translation boundary, and deferred download/delete controls.
 - `Plans/Archive/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md` — archived accepted planning source for releases `1.2.379` through `1.2.391`: Gemini/Kimi/GLM-Claude-Code provider readiness after the workspace-owned provider-home refactor, GLM global config bootstrap/preservation, provider runtime capsule alignment, global/workspace settings split, residual boundary cleanup, and managed workflow input locking.
 - `Plans/Archive/WorkflowClear_WorkspaceOwnedGitRollback_Architecture.md` — archived accepted planning source for the workspace-owned Git rollback Clear refactor closed by release `1.2.378`; stable decisions live in `System/SystemArchitecture.md`, `System/WorkflowSteps_Overview.md`, `Clusters/ManagedWorkflowOrchestration.md`, `Clusters/Project_Manager.md`, `Contracts/WorkspaceRuntime.md`, `Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`, and `Modules/Localization.md`.
 - `Plans/Archive/WorkflowClear_GitBoundaryRollback_Architecture.md` — archived early planning source for the Git-boundary Clear model; superseded by the workspace-owned runtime capsule refinement and current SSOT documents above.
