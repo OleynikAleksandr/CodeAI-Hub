@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "5b3f5ab7c",
+  "lastRecordedCommit": "83505a48d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase4.verify.task1",
-  "expectedCommitMessage": "test: verify local models module",
+  "currentTaskId": "local-models.phase5.smoke-fix.task1",
+  "expectedCommitMessage": "fix: improve local model translation prompt",
   "debt": {
-    "expectedCommitMessage": "test: verify local models module",
-    "preCommitHead": "5b3f5ab7c",
+    "expectedCommitMessage": "fix: improve local model translation prompt",
+    "preCommitHead": "83505a48d",
     "stage": "commit_pending",
-    "taskId": "local-models.phase4.verify.task1"
+    "taskId": "local-models.phase5.smoke-fix.task1"
   }
 }
 ```
@@ -81,23 +81,33 @@
     - Verification 2026-05-28: `node --test dist/translation/core-translation-facade-factory.test.js` from `packages/core` — PASS (9 tests).
     - Verification 2026-05-28: `node --test dist/translation/core-localization-facade-factory.test.js` from `packages/core` — PASS (3 tests).
     - Verification 2026-05-28: `npx tsx --test src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts` — PASS (2 tests).
-14. [PENDING] Git Commit: `test: verify local models module` (hash: TBD)
+14. [DONE] Git Commit: `test: verify local models module` (hash: 83505a48d)
 
-## Phase 5 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-28)
+## Phase 5 — Local Runtime Acceptance Testing (owner: Codex + Oleksandr, updated: 2026-05-28)
+### Stream: Local Runtime Smoke Fix
+15. [DONE] `local-models.phase5.smoke-fix.task1` Fix the LM Studio prompt language naming after real Gemma smoke returned English prompt-help text instead of Russian translation; add regression coverage for human-readable language names (scope: `packages/core/src/local-models/**, doc/TODO/todo-plan.md`; expected commit: `fix: improve local model translation prompt`).
+    - Smoke 2026-05-28: `lmstudio:gemma-4-26b-a4b-it` through `createCoreTranslationFacade` returned `Please provide the text you would like me to translate.` for a Russian translation request when the prompt used raw target code `ru`; acceptance blocked until prompt repair is verified.
+    - Verification 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-28: `node --test dist/local-models/local-models-facade.test.js` from `packages/core` — PASS (3 tests).
+    - Smoke 2026-05-28: Reasoning/local translation through `lmstudio:gemma-4-26b-a4b-it` — PASS; returned Russian translation and preserved `API`, `JSON`, and `{providerId}`.
+    - Smoke 2026-05-28: Localization bundle materialization through `createCoreLocalizationFacade` + `lmstudio:gemma-4-26b-a4b-it` — PASS; produced Russian `ui_interface` bundle and preserved `{providerId}`.
+    - Smoke 2026-05-28: unavailable LM Studio API (`CODEAI_LMSTUDIO_BASE_URL=http://127.0.0.1:9`) — PASS; explicit local engine returned fallback with `errorCode = "lmstudio_request_failed"` and did not substitute another engine.
+16. [PENDING] Git Commit: `fix: improve local model translation prompt` (hash: TBD)
+
 ### Stream: Local Runtime Retest
-15. [TODO] `local-models.phase5.user-acceptance.task1` User retests three local-model scenarios in Project Manager: Reasoning translation, UI localization bundle materialization, and unavailable LM Studio failure handling (scope: user workflow observation; expected commit: none).
+17. [TODO] `local-models.phase5.user-acceptance.task1` User retests three local-model scenarios in Project Manager: Reasoning translation, UI localization bundle materialization, and unavailable LM Studio failure handling (scope: user workflow observation; expected commit: none).
 
 ## Phase 6 — Release Build (owner: Codex, updated: 2026-05-28)
 ### Stream: Release Confirmation And Packaging
-16. [TODO] `local-models.phase6.release-confirm.task1` Ask for and receive separate explicit user confirmation for release build after implementation and verification pass (scope: chat/process gate; expected commit: none).
-17. [TODO] `local-models.phase6.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local models release build`).
-18. [TODO] Git Commit: `docs: prepare local models release build` (hash: TBD)
-19. [TODO] `local-models.phase6.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local models release`).
-20. [TODO] Git Commit: `chore: build local models release` (hash: TBD)
-21. [TODO] `local-models.phase6.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local models vsix`).
-22. [TODO] Git Commit: `chore: package local models vsix` (hash: TBD)
+18. [TODO] `local-models.phase6.release-confirm.task1` Ask for and receive separate explicit user confirmation for release build after implementation and verification pass (scope: chat/process gate; expected commit: none).
+19. [TODO] `local-models.phase6.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local models release build`).
+20. [TODO] Git Commit: `docs: prepare local models release build` (hash: TBD)
+21. [TODO] `local-models.phase6.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local models release`).
+22. [TODO] Git Commit: `chore: build local models release` (hash: TBD)
+23. [TODO] `local-models.phase6.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local models vsix`).
+24. [TODO] Git Commit: `chore: package local models vsix` (hash: TBD)
 
 ## Phase 7 — Scope Closeout (owner: Codex, updated: 2026-05-28)
 ### Stream: Closeout
-23. [TODO] `local-models.phase7.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-24. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+25. [TODO] `local-models.phase7.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+26. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

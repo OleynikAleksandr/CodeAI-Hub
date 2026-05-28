@@ -124,7 +124,16 @@ test("LocalModelsFacade sends OpenAI-compatible translation requests through LM 
     "8192",
   ]);
   assert.equal(payloads[0]?.model, modelKey);
-  assert.equal(payloads[0]?.messages?.[1]?.content, "Open Settings.");
+  assert.equal(
+    payloads[0]?.messages?.[0]?.content?.includes("Russian (ru)"),
+    true
+  );
+  assert.equal(
+    payloads[0]?.messages?.[1]?.content?.includes(
+      "<text>\nOpen Settings.\n</text>"
+    ),
+    true
+  );
 });
 
 test("LocalModelsFacade disables Qwen thinking and fails closed when model load fails", async () => {
@@ -161,8 +170,14 @@ test("LocalModelsFacade disables Qwen thinking and fails closed when model load 
   );
 
   assert.equal(
-    qwenPayloads[0]?.messages?.[1]?.content,
-    "/no_think\nFast translation."
+    qwenPayloads[0]?.messages?.[1]?.content?.startsWith("/no_think\n"),
+    true
+  );
+  assert.equal(
+    qwenPayloads[0]?.messages?.[1]?.content?.includes(
+      "<text>\nFast translation.\n</text>"
+    ),
+    true
   );
 
   const failingModelKey = "mlx-community/load-failure-test";

@@ -21,6 +21,35 @@ const LM_STUDIO_JSON_HEADERS = {
 } as const;
 const QWEN_MODEL_PATTERN = /qwen/i;
 const TRAILING_SLASHES_PATTERN = /\/+$/;
+const TARGET_LANGUAGE_LABELS = new Map<string, string>([
+  ["bg", "Bulgarian"],
+  ["ca", "Catalan"],
+  ["cs", "Czech"],
+  ["da", "Danish"],
+  ["de", "German"],
+  ["el", "Greek"],
+  ["en", "English"],
+  ["es", "Spanish"],
+  ["et", "Estonian"],
+  ["fi", "Finnish"],
+  ["fr", "French"],
+  ["hr", "Croatian"],
+  ["hu", "Hungarian"],
+  ["it", "Italian"],
+  ["lt", "Lithuanian"],
+  ["lv", "Latvian"],
+  ["nl", "Dutch"],
+  ["no", "Norwegian"],
+  ["pl", "Polish"],
+  ["pt", "Portuguese"],
+  ["ro", "Romanian"],
+  ["ru", "Russian"],
+  ["sk", "Slovak"],
+  ["sl", "Slovenian"],
+  ["sv", "Swedish"],
+  ["tr", "Turkish"],
+  ["uk", "Ukrainian"],
+]);
 
 const LM_STUDIO_TRANSLATION_ENGINE_PREFIX = "lmstudio:";
 
@@ -189,14 +218,35 @@ const shouldDisableThinking = (model: LocalModelDescriptor): boolean =>
   QWEN_MODEL_PATTERN.test(model.displayName) ||
   QWEN_MODEL_PATTERN.test(model.architecture ?? "");
 
+const resolveTargetLanguageLabel = (targetLanguage: string): string => {
+  const normalizedLanguage = targetLanguage.trim();
+  const label = TARGET_LANGUAGE_LABELS.get(normalizedLanguage.toLowerCase());
+  return label ? `${label} (${normalizedLanguage})` : normalizedLanguage;
+};
+
 const buildSystemPrompt = (targetLanguage: string): string =>
   [
     "You are CodeAI Hub's local localization translation engine.",
-    `Translate the supplied English text to ${targetLanguage}.`,
+    `Translate the supplied English text to ${resolveTargetLanguageLabel(targetLanguage)}.`,
     "Return only the translated text, with no explanations.",
+    "Never ask the user for text; the text to translate is already supplied between <text> and </text> tags.",
     "Preserve placeholders, ICU tokens, Markdown, code spans, JSON keys, file paths, API routes, CLI commands, URLs, model IDs, provider names, and product names.",
     "If the input is structured with __CODEAI_HUB_LOCALIZATION_ENTRY__ markers, keep every marker exactly unchanged and translate only the text between markers.",
   ].join("\n");
+
+const buildUserPrompt = (
+  request: NormalizedTranslationRequest,
+  model: LocalModelDescriptor
+): string => {
+  const prompt = [
+    `Translate the exact text inside <text> tags to ${resolveTargetLanguageLabel(request.targetLanguage)}.`,
+    "Return only the translated text. Do not include the <text> tags.",
+    "<text>",
+    request.text,
+    "</text>",
+  ].join("\n");
+  return shouldDisableThinking(model) ? `/no_think\n${prompt}` : prompt;
+};
 
 class LmStudioLocalTranslationEngine implements TranslationEngine {
   readonly id: string;
@@ -275,9 +325,6 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
   }
 
   private buildPayload(request: NormalizedTranslationRequest): object {
-    const userText = shouldDisableThinking(this.model)
-      ? `/no_think\n${request.text}`
-      : request.text;
     return {
       max_tokens: DEFAULT_MAX_TOKENS,
       messages: [
@@ -286,7 +333,7 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
           role: "system",
         },
         {
-          content: userText,
+          content: buildUserPrompt(request, this.model),
           role: "user",
         },
       ],
