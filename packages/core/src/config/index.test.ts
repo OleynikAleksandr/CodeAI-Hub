@@ -118,3 +118,33 @@ test("loadConfig preserves explicit non-legacy settings env path", async () => {
     await rm(workspacePath, { force: true, recursive: true });
   }
 });
+
+test("loadConfig derives project slug from workspace basename", async () => {
+  const parentPath = await mkdtemp(path.join(tmpdir(), "core-config-"));
+  const workspacePath = path.join(parentPath, "CodeAI-Hub codex 5.4");
+  try {
+    await withConfigEnv(
+      {
+        CLAUDE_WORKSPACE_PATH: workspacePath,
+      },
+      () => {
+        const config = loadConfig();
+
+        assert.equal(config.claudeProjectSlug, "codeai-hub-codex-5-4");
+        assert.equal(
+          config.claudeSettingsPath,
+          path.join(
+            workspacePath,
+            ".codeai-hub",
+            "codeai-hub-codex-5-4",
+            "runtime",
+            "settings",
+            "settings.json"
+          )
+        );
+      }
+    );
+  } finally {
+    await rm(parentPath, { force: true, recursive: true });
+  }
+});

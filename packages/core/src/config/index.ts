@@ -1,6 +1,9 @@
 import { homedir } from "node:os";
 import path from "node:path";
-import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
+import {
+  normalizeWorkspaceRuntimeSlug,
+  resolveWorkspaceRuntimeCapsule,
+} from "../workflow/runtime/workspace-runtime-capsule";
 import {
   type CodexApprovalMode,
   type CodexReasoningEffort,
@@ -58,10 +61,8 @@ const LEGACY_GLOBAL_SETTINGS_FILE_TILDE =
 const DEFAULT_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 50;
 const MIN_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 0;
 const MAX_CLAUDE_CONTINUITY_PREEMPT_THRESHOLD = 100;
-const NON_ALPHANUMERIC_REGEX = /[^a-zA-Z0-9]/g;
-const MULTIPLE_DASHES_REGEX = /-+/g;
-const TRAILING_DASH_REGEX = /-$/;
 const BOOLEAN_TRUTHY = new Set(["1", "true", "yes", "on"]);
+const DEFAULT_PROJECT_SLUG = "default-workspace";
 
 const toNumber = (value: string | undefined, fallback: number): number => {
   if (!value) {
@@ -76,18 +77,26 @@ const toNumber = (value: string | undefined, fallback: number): number => {
   return parsed;
 };
 
-const sanitizeSlug = (input: string): string =>
-  input
-    .replace(NON_ALPHANUMERIC_REGEX, "-")
-    .replace(MULTIPLE_DASHES_REGEX, "-")
-    .replace(TRAILING_DASH_REGEX, "")
-    .trim() || "default-workspace";
-
 const toBoolean = (value: string | undefined, fallback: boolean): boolean => {
   if (!value) {
     return fallback;
   }
   return BOOLEAN_TRUTHY.has(value.trim().toLowerCase());
+};
+
+const resolveProjectSlug = (options: {
+  readonly explicitSlug?: string;
+  readonly workspacePath?: string;
+}): string => {
+  const explicitSlug = options.explicitSlug?.trim();
+  if (explicitSlug) {
+    return normalizeWorkspaceRuntimeSlug(explicitSlug);
+  }
+  const workspacePath = options.workspacePath?.trim();
+  if (workspacePath) {
+    return normalizeWorkspaceRuntimeSlug(path.basename(workspacePath));
+  }
+  return DEFAULT_PROJECT_SLUG;
 };
 
 const isLegacyGlobalSettingsPath = (value: string): boolean => {
@@ -123,9 +132,10 @@ export const loadConfig = (): CoreConfig => {
   const managedMode = process.env.CORE_MANAGED_MODE ?? null;
   const templatesDir = process.env.CORE_TEMPLATES_DIR ?? DEFAULT_TEMPLATES_DIR;
   const workspacePath = process.env.CLAUDE_WORKSPACE_PATH;
-  const slug =
-    process.env.CLAUDE_PROJECT_SLUG ??
-    (workspacePath ? sanitizeSlug(workspacePath) : "default-workspace");
+  const slug = resolveProjectSlug({
+    explicitSlug: process.env.CLAUDE_PROJECT_SLUG,
+    workspacePath,
+  });
   const defaultWorkspaceSettingsPath = resolveWorkspaceRuntimeCapsule({
     workspaceRoot: workspacePath ?? process.cwd(),
     workspaceSlug: slug,

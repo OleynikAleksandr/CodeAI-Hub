@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "3d1bd8874",
+  "lastRecordedCommit": "ac5c50ac8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8o.release-vsix.task1",
-  "expectedCommitMessage": "test: verify glm config bootstrap vsix",
+  "currentTaskId": "provider-readiness.phase8p.glm-capsule-slug.task1",
+  "expectedCommitMessage": "fix: align core workspace slug fallback",
   "debt": {
-    "expectedCommitMessage": "test: verify glm config bootstrap vsix",
-    "preCommitHead": "3d1bd8874",
+    "expectedCommitMessage": "fix: align core workspace slug fallback",
+    "preCommitHead": "ac5c50ac8",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8o.release-vsix.task1"
+    "taskId": "provider-readiness.phase8p.glm-capsule-slug.task1"
   }
 }
 ```
@@ -504,11 +504,26 @@
     - Result 2026-05-28: Verified release output lines: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `✅ VSIX runtime package surface verified`.
     - Result 2026-05-28: VSIX ready at `codeai-hub-1.2.386.vsix` (4.3M), SHA1 `f776a2ab411c6ccd9a8625f1f46e794cded13987`.
     - Result 2026-05-28: live GLM config remains `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` with only empty `apiKey` for the user to fill.
-184. [PENDING] Git Commit: `test: verify glm config bootstrap vsix` (hash: TBD)
-185. [TODO] `provider-readiness.phase8o.user-retest.task1` User installs the replacement release and retests that GLM card points to the generated global config file and that GLM becomes available after the user fills `apiKey` and restarts Core (scope: chat/process observation only; expected commit: none).
+184. [DONE] Git Commit: `test: verify glm config bootstrap vsix` (hash: ac5c50ac8)
+185. [DONE] `provider-readiness.phase8o.user-retest.task1` User installs the replacement release and retests that GLM card points to the generated global config file and that GLM becomes available after the user fills `apiKey` and restarts Core (scope: chat/process observation only; expected commit: none).
+    - Finding 2026-05-28: GLM becomes available after the global config key is filled, but the provider creates a second workspace runtime capsule under `.codeai-hub/users-oleksandroliinyk-vscode-codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home/` instead of the existing `.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home/`.
+
+## Phase 8p — GLM Workspace Capsule Slug Retest Repair (owner: Codex, updated: 2026-05-28)
+### Stream: Core Config Slug Alignment
+186. [DONE] `provider-readiness.phase8p.glm-capsule-slug.task1` Diagnose and fix the GLM provider-home capsule slug mismatch so Core config uses the same workspace basename/project slug fallback as Project Registry and Workspace Runtime Capsule instead of sanitizing the full absolute workspace path when `CLAUDE_PROJECT_SLUG` is missing (scope: `packages/core/src/config/index.ts, packages/core/src/config/index.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: align core workspace slug fallback`).
+    - Diagnostic 2026-05-28: live v1.2.386 Core log shows `Self-test: session storage ready` at `/Users/oleksandroliinyk/.codeai-hub/sessions/-Users-oleksandroliinyk-VSCODE-CodeAI-Hub-codex-5-4`, while Project Registry/workflow watcher use `codeai-hub-codex-5-4`; provider registry therefore builds GLM `providerHome` from a Core config slug derived from the full absolute path.
+    - Result 2026-05-28: `loadConfig()` now normalizes an explicit `CLAUDE_PROJECT_SLUG` or, when missing, derives the fallback slug from `path.basename(CLAUDE_WORKSPACE_PATH)` so Core config, Project Registry, Workspace Runtime Capsule, and GLM provider homes share `codeai-hub-codex-5-4`.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/config/index.test.ts` — PASS (5 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `node --test packages/core/dist/config/index.test.js` — PASS (5 tests).
+    - Result 2026-05-28: local compiled smoke check without `CLAUDE_PROJECT_SLUG` returned `slug=codeai-hub-codex-5-4` and settings path `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/settings/settings.json`.
+187. [PENDING] Git Commit: `fix: align core workspace slug fallback` (hash: TBD)
+188. [TODO] `provider-readiness.phase8p.glm-capsule-verify.task1` Verify config fallback, runtime capsule path, and targeted Core build/tests; do not build a release until explicitly requested (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify glm workspace capsule slug`).
+189. [TODO] Git Commit: `test: verify glm workspace capsule slug` (hash: TBD)
+190. [TODO] `provider-readiness.phase8p.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-186. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-187. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-188. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+191. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+192. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+193. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
