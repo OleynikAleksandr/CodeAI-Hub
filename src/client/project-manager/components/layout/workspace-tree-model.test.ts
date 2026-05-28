@@ -13,3 +13,7 @@ test("resolveTreeStatus preserves warning states before completion visuals", () 
   assert.equal(resolveTreeStatus("invalid", false), "blocked");
   assert.equal(resolveTreeStatus("outdated", false), "outdated");
 });
+
+test("resolveTreeStatus currently lets stale blocked gating override an active running stage", () => {
+  assert.equal(resolveTreeStatus("in_progress", true), "blocked");
+});
