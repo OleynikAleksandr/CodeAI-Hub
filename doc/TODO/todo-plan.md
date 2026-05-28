@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "19665046a",
+  "lastRecordedCommit": "270091be2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8q.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare glm capsule slug release",
+  "currentTaskId": "provider-readiness.phase8q.release-build.task1",
+  "expectedCommitMessage": "chore: build glm capsule slug release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare glm capsule slug release",
-    "preCommitHead": "19665046a",
+    "expectedCommitMessage": "chore: build glm capsule slug release",
+    "preCommitHead": "270091be2",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8q.release-prep.task1"
+    "taskId": "provider-readiness.phase8q.release-build.task1"
   }
 }
 ```
@@ -532,9 +532,12 @@
 ### Stream: Release Packaging
 191. [DONE] `provider-readiness.phase8q.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.387 and record release intent before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm capsule slug release`).
     - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.387 before running release scripts.
-192. [PENDING] Git Commit: `docs: prepare glm capsule slug release` (hash: TBD)
-193. [TODO] `provider-readiness.phase8q.release-build.task1` Run the approved unified release build for the GLM workspace capsule slug fix, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm capsule slug release`).
-194. [TODO] Git Commit: `chore: build glm capsule slug release` (hash: TBD)
+192. [DONE] Git Commit: `docs: prepare glm capsule slug release` (hash: 270091be2)
+193. [DONE] `provider-readiness.phase8q.release-build.task1` Run the approved unified release build for the GLM workspace capsule slug fix, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm capsule slug release`).
+    - Result 2026-05-28: `./scripts/build-all.sh --allow-dirty` — PASS for v1.2.387. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-build transition.
+    - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.387.tar.bz2`, `codex-module-1.2.387.tar.bz2`, `gemini-module-1.2.387.tar.bz2`, `glm-claude-code-module-1.2.387.tar.bz2`, `kimi-module-1.2.387.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.387.tar.bz2`, `vscode-webview-1.2.387.tar.bz2`, `project-manager-1.2.387.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.387.tar.bz2`.
+    - Artifact SHA1 check: GLM `1a3fae16140246ca9cbfb1224380ddb16c671777`; Core `e4d40058212a5405d54038727d751744a467c126`; Launcher `a5fa75f53d794ca4a1cd700860aa2d0d68a12a24`; Claude `2f2707e3d2e2813914b7b36dc81bb2f79eb8d4f6`; Codex `dea76a2bae20b1921643ff6eef09c03185708294`; Gemini `d63b5d6893888884df1d6ff3951e70b33d72023d`; Kimi `46936585b8bf8317aa1bb1c834159a9f90f943d4`; webview `046ea8d57aebfb6310b4c5d24bc74be421e2b1cb`; Project Manager `a16e3bfec6913dec640ec57dca1ba4d85e5e6e2e`.
+194. [PENDING] Git Commit: `chore: build glm capsule slug release` (hash: TBD)
 195. [TODO] `provider-readiness.phase8q.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify glm capsule slug vsix`).
 196. [TODO] Git Commit: `test: verify glm capsule slug vsix` (hash: TBD)
 197. [TODO] `provider-readiness.phase8q.user-retest.task1` User installs the replacement release and retests GLM startup after API key fill/restart, confirming provider-home writes stay under `.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home` and no `.codeai-hub/users-...` capsule is created (scope: chat/process observation only; expected commit: none).
