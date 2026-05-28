@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { WorkflowRuntime } from "./workflow-runtime";
@@ -8,6 +9,13 @@ const SOURCE_PATH = path.resolve(
   process.cwd(),
   "packages/core/src/workflow/runtime/workflow-runtime.ts"
 );
+const CANONICAL_STAGE_ROOTS = [
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
+] as const;
 
 interface DescriptionSnapshot {
   readonly createdAt: string;
@@ -98,6 +106,40 @@ const createHarness = (
 
   return { runtime, descriptionUpserts, lastActiveUpserts };
 };
+
+const stopRuntimeWatchers = (runtime: WorkflowRuntime): void => {
+  const watchers = (
+    runtime as unknown as {
+      watchers: Map<string, { stop: () => void }>;
+    }
+  ).watchers;
+  for (const watcher of watchers.values()) {
+    watcher.stop();
+  }
+};
+
+test("WorkflowRuntime prepares canonical stage artifact directories on workspace connect", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "workflow-runtime-stage-roots-")
+  );
+  const { runtime } = createHarness();
+  try {
+    await runtime.connectWorkspace({
+      workspaceRoot,
+      workspaceSlug: "demo-workspace",
+    });
+
+    for (const stageRoot of CANONICAL_STAGE_ROOTS) {
+      const stageStats = await stat(
+        path.join(workspaceRoot, ".codeai-hub", "demo-workspace", stageRoot)
+      );
+      assert.equal(stageStats.isDirectory(), true);
+    }
+  } finally {
+    stopRuntimeWatchers(runtime);
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
 
 const emitDescriptionWrite = async (
   harness: RuntimeHarness,

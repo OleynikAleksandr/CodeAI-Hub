@@ -12,6 +12,13 @@ import type {
 import { WorkflowWatcher } from "../watcher/workflow-watcher";
 
 const WORKSPACE_ROOT_DIR = ".codeai-hub";
+const WORKFLOW_STAGE_ROOTS = [
+  "description",
+  "virtual_simulation",
+  "diagram_modules",
+  "application_skeleton",
+  "quality_gates",
+] as const;
 
 const BACKSLASH_RE = /\\/g;
 const LEADING_DOT_SLASH_RE = /^\.?\//;
@@ -136,20 +143,23 @@ export class WorkflowRuntime {
     }
 
     this.workspaces.set(key, params.workspaceRoot);
-    await fs.mkdir(
-      path.join(params.workspaceRoot, WORKSPACE_ROOT_DIR, params.workspaceSlug),
-      { recursive: true }
+    const workflowRoot = path.join(
+      params.workspaceRoot,
+      WORKSPACE_ROOT_DIR,
+      params.workspaceSlug
+    );
+    await fs.mkdir(workflowRoot, { recursive: true });
+    await Promise.all(
+      WORKFLOW_STAGE_ROOTS.map((stageRoot) =>
+        fs.mkdir(path.join(workflowRoot, stageRoot), { recursive: true })
+      )
     );
 
     if (this.watchers.has(key)) {
       return;
     }
 
-    const watchRoot = path.join(
-      params.workspaceRoot,
-      WORKSPACE_ROOT_DIR,
-      params.workspaceSlug
-    );
+    const watchRoot = workflowRoot;
 
     const watcher = new WorkflowWatcher({
       logger: this.logger,

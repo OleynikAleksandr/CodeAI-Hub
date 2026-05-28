@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "a9d1f2e77",
+  "lastRecordedCommit": "9b0f74f95",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8i.app-skeleton-diagnose.task1",
-  "expectedCommitMessage": "test: characterize application skeleton repair loop",
+  "currentTaskId": "provider-readiness.phase8i.app-skeleton-directory.task1",
+  "expectedCommitMessage": "fix: prepare application skeleton artifact directory",
   "debt": {
-    "expectedCommitMessage": "test: characterize application skeleton repair loop",
-    "preCommitHead": "a9d1f2e77",
+    "expectedCommitMessage": "fix: prepare application skeleton artifact directory",
+    "preCommitHead": "9b0f74f95",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8i.app-skeleton-diagnose.task1"
+    "taskId": "provider-readiness.phase8i.app-skeleton-directory.task1"
   }
 }
 ```
@@ -365,9 +365,13 @@
     - Diagnostic 2026-05-28: The Kimi unified session contains three Core `system` messages tagged `managed-workflow-validation`; each stores the full English Application Skeleton repair prompt in the user-visible JSONL stream while the same text is sent as the provider internal repair instruction.
     - Diagnostic 2026-05-28: Kimi correctly identified the target artifacts, but `WriteFile` failed because `.codeai-hub/codeai-hub-codex-5-4/application_skeleton/` did not exist; Core validation then treated the missing files as generic artifact repair instead of preparing the Core-owned workflow artifact directory.
     - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` — PASS (3 tests, including the current raw-prompt/missing-directory characterization).
-130. [PENDING] Git Commit: `test: characterize application skeleton repair loop` (hash: TBD)
-131. [TODO] `provider-readiness.phase8i.app-skeleton-directory.task1` Ensure Core prepares managed Application Skeleton artifact directories before dispatching or repairing the provider turn, so WriteFile-capable agents do not fail on missing parent directories (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prepare application skeleton artifact directory`).
-132. [TODO] Git Commit: `fix: prepare application skeleton artifact directory` (hash: TBD)
+130. [DONE] Git Commit: `test: characterize application skeleton repair loop` (hash: 9b0f74f95)
+131. [DONE] `provider-readiness.phase8i.app-skeleton-directory.task1` Ensure Core prepares managed Application Skeleton artifact directories before dispatching or repairing the provider turn, so WriteFile-capable agents do not fail on missing parent directories (scope: `packages/core/src/workflow/runtime/workflow-runtime.ts, packages/core/src/workflow/runtime/workflow-runtime.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prepare application skeleton artifact directory`).
+    - Result 2026-05-28: `WorkflowRuntime.connectWorkspace()` now prepares canonical workflow stage roots, including `.codeai-hub/<workspaceSlug>/application_skeleton/`, before any provider prompt can ask an agent to write Application Skeleton artifacts.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/runtime/workflow-runtime.test.ts` — PASS (9 tests).
+    - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` — PASS (3 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+132. [PENDING] Git Commit: `fix: prepare application skeleton artifact directory` (hash: TBD)
 133. [TODO] `provider-readiness.phase8i.validation-message.task1` Split provider-internal repair prompts from user-visible Core System messages so managed validation cards are concise, Russian/translation-routed, and do not display raw English repair instructions while the agent still receives the full internal prompt (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: localize managed validation system messages`).
 134. [TODO] Git Commit: `fix: localize managed validation system messages` (hash: TBD)
 135. [TODO] `provider-readiness.phase8i.app-skeleton-verify.task1` Verify Application Skeleton managed repair, artifact directory preparation, and user-visible validation message routing; do not build a release in this stream (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton managed repair`).
