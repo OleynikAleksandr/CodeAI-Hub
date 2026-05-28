@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.387** (GLM Workspace Capsule Slug Hotfix)
+**Current Release — v1.2.388** (Global Settings Split Hotfix)
+
+This hotfix preserves an existing GLM-Claude-Code global config at
+`~/.codeai-hub/providers/glm-claude-code/config.json` during install/runtime
+bootstrap, so extension upgrades do not rewrite a user's API-key file.
+
+General user preferences are now split from workspace settings. Core-owned
+`general.coreControls`, `general.localization`, `general.responsePolicy`, and
+`general.textToSpeech` persist in the global app settings file, while workspace
+settings keep provider/model/runtime values. Localization runtime assets,
+bootstrap payloads, and the user glossary also resolve under the global app
+localization root instead of each workspace capsule.
+
+**Previous Release — v1.2.387** (GLM Workspace Capsule Slug Hotfix)
 
 This hotfix aligns Core startup config with the same workspace slug contract used
 by Project Registry and Workspace Runtime Capsule. When `CLAUDE_PROJECT_SLUG`

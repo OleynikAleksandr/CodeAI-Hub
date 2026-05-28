@@ -8,6 +8,21 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.388] - 2026-05-28
+### Fixed
+- **Existing GLM-Claude-Code config is preserved during upgrades.** Runtime bootstrap now returns immediately when `~/.codeai-hub/providers/glm-claude-code/config.json` already exists, avoiding any write-open attempt against a user's API-key file while keeping first-time template creation for missing configs.
+- **General user settings moved to global app settings.** Core now persists `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech` in the global app settings file while workspace settings keep provider/model/runtime values only.
+- **Localization runtime is global.** Localization bundles, browser bootstrap payloads, and the user glossary now resolve under the global app localization root, and Project Manager saves the selected UI translation engine as canonical `general.localization.uiEngineId`.
+
+### Tests
+- `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts`
+- `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts packages/core/src/session-translation/session-translation-policy-resolver.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts src/client/project-manager/components/settings/use-project-manager-settings.test.ts src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`
+- `npm run build --workspace @codeai-hub/claude-module`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.387] - 2026-05-28
 ### Fixed
 - **GLM-Claude-Code uses the existing workspace capsule.** Core config now derives the fallback project slug from `path.basename(CLAUDE_WORKSPACE_PATH)` when `CLAUDE_PROJECT_SLUG` is missing, matching Project Registry and Workspace Runtime Capsule. GLM provider home now resolves to `.codeai-hub/<workspace-slug>/runtime/providers/glm-claude-code/home` instead of creating a second `.codeai-hub/users-...` capsule from the absolute workspace path.

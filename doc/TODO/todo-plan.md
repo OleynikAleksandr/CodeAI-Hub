@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "455591b41",
+  "lastRecordedCommit": "625138145",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8r.global-settings-verify.task1",
-  "expectedCommitMessage": "test: verify global general settings split",
+  "currentTaskId": "provider-readiness.phase8s.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare global settings release",
   "debt": {
-    "expectedCommitMessage": "test: verify global general settings split",
-    "preCommitHead": "455591b41",
+    "expectedCommitMessage": "docs: prepare global settings release",
+    "preCommitHead": "625138145",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8r.global-settings-verify.task1"
+    "taskId": "provider-readiness.phase8s.release-prep.task1"
   }
 }
 ```
@@ -591,10 +591,21 @@
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: `npm run typecheck:webview` — PASS.
     - Result 2026-05-28: `npm run build:webview` — PASS.
-211. [PENDING] Git Commit: `test: verify global general settings split` (hash: TBD)
+211. [DONE] Git Commit: `test: verify global general settings split` (hash: 625138145)
+
+## Phase 8s — Global Settings Split Release Build (owner: Codex, updated: 2026-05-28)
+### Stream: Release Packaging
+212. [DONE] `provider-readiness.phase8s.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.388 and record release intent before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare global settings release`).
+    - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.388 before running release scripts.
+213. [PENDING] Git Commit: `docs: prepare global settings release` (hash: TBD)
+214. [TODO] `provider-readiness.phase8s.release-build.task1` Run the approved unified release build for the GLM config preservation and global settings split fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build global settings release`).
+215. [TODO] Git Commit: `chore: build global settings release` (hash: TBD)
+216. [TODO] `provider-readiness.phase8s.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify global settings vsix`).
+217. [TODO] Git Commit: `test: verify global settings vsix` (hash: TBD)
+218. [TODO] `provider-readiness.phase8s.user-retest.task1` User installs the replacement release and retests GLM global config preservation plus global General/Localization settings behavior (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-212. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-213. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-214. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+219. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+220. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+221. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
