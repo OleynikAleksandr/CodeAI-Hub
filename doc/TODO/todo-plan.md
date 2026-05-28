@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "6820c1068",
+  "lastRecordedCommit": "68247aceb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8o.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare glm config bootstrap release",
+  "currentTaskId": "provider-readiness.phase8o.release-build.task1",
+  "expectedCommitMessage": "chore: build glm config bootstrap release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare glm config bootstrap release",
-    "preCommitHead": "6820c1068",
+    "expectedCommitMessage": "chore: build glm config bootstrap release",
+    "preCommitHead": "68247aceb",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8o.release-prep.task1"
+    "taskId": "provider-readiness.phase8o.release-build.task1"
   }
 }
 ```
@@ -492,9 +492,13 @@
 ### Stream: Release Packaging
 179. [DONE] `provider-readiness.phase8o.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.386 and record release intent before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm config bootstrap release`).
     - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.386 before running release scripts.
-180. [PENDING] Git Commit: `docs: prepare glm config bootstrap release` (hash: TBD)
-181. [TODO] `provider-readiness.phase8o.release-build.task1` Run the approved unified release build for the GLM config bootstrap and recovery-card copy fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm config bootstrap release`).
-182. [TODO] Git Commit: `chore: build glm config bootstrap release` (hash: TBD)
+180. [DONE] Git Commit: `docs: prepare glm config bootstrap release` (hash: 68247aceb)
+181. [DONE] `provider-readiness.phase8o.release-build.task1` Run the approved unified release build for the GLM config bootstrap and recovery-card copy fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm config bootstrap release`).
+    - Result 2026-05-28: `./scripts/build-all.sh --allow-dirty` — PASS for v1.2.386. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-build transition.
+    - Result 2026-05-28: GLM install step created `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` with only the `apiKey` field and an empty value.
+    - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.386.tar.bz2`, `codex-module-1.2.386.tar.bz2`, `gemini-module-1.2.386.tar.bz2`, `glm-claude-code-module-1.2.386.tar.bz2`, `kimi-module-1.2.386.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.386.tar.bz2`, `vscode-webview-1.2.386.tar.bz2`, `project-manager-1.2.386.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.386.tar.bz2`.
+    - Artifact SHA1 check: GLM `9390cc07c85345b5a766020f1c5287971c284aa9`; Core `025ab1ab5627f267211c57acaa40bd2023f552cd`; Launcher `b40c5a397b10e3e2a70269aab4cf4d5016ae4fd0`; Claude `65e457582fd741e6c8b72000798017008a3511e7`; Codex `b6ec4fc9852995f088b88b36478ffbad18432b05`; Gemini `4cd5d1d32f968ac878601ecfbcff1f8495002483`; Kimi `b45451d24b076c6f088806a03827a7ba09826856`.
+182. [PENDING] Git Commit: `chore: build glm config bootstrap release` (hash: TBD)
 183. [TODO] `provider-readiness.phase8o.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config bootstrap vsix`).
 184. [TODO] Git Commit: `test: verify glm config bootstrap vsix` (hash: TBD)
 185. [TODO] `provider-readiness.phase8o.user-retest.task1` User installs the replacement release and retests that GLM card points to the generated global config file and that GLM becomes available after the user fills `apiKey` and restarts Core (scope: chat/process observation only; expected commit: none).
