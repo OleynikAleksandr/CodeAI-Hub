@@ -252,3 +252,63 @@ test("session:create still prepares documentation workflow stage directories", a
     await rm(workspacePath, { force: true, recursive: true });
   }
 });
+
+test("session:create reports workflow preflight failures to the requesting client", async () => {
+  const workspacePath = await mkdtemp(
+    path.join(tmpdir(), "codeai-preflight-error-")
+  );
+  const workspaceSlug = "demo-workspace";
+  const sentEvents: unknown[] = [];
+  let handleCreateCalled = false;
+
+  try {
+    const router = new RemoteBridgeSessionCreateRouter({
+      getManager: () =>
+        ({
+          sendToClient: (_clientId: string, event: unknown) => {
+            sentEvents.push(event);
+          },
+        }) as never,
+      logger: createLogger(),
+      sessionHandler: {
+        handleCreate: () => {
+          handleCreateCalled = true;
+          return Promise.resolve();
+        },
+      } as unknown as SessionRequestHandler,
+      workflowBoundaryFacade: {
+        ensureBoundary: () => {
+          throw new Error("Workflow step is blocked because Git is dirty.");
+        },
+      },
+      workflowRuntime: {
+        connectWorkspace: () => Promise.resolve(),
+      } as unknown as WorkflowRuntime,
+    });
+
+    await router.handle("client-1", {
+      type: "session:create",
+      payload: {
+        initiativeSlug: workspaceSlug,
+        providerId: "codexCli",
+        stage: "virtual_simulation",
+        workspacePath,
+      },
+    });
+
+    assert.equal(handleCreateCalled, false);
+    assert.deepEqual(sentEvents, [
+      {
+        type: "session:error",
+        payload: {
+          message: "Workflow step is blocked because Git is dirty.",
+          providerId: "codexCli",
+          stage: "virtual_simulation",
+          workspacePath,
+        },
+      },
+    ]);
+  } finally {
+    await rm(workspacePath, { force: true, recursive: true });
+  }
+});

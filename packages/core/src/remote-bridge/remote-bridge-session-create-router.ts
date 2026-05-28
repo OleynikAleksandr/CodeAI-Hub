@@ -99,6 +99,18 @@ export class RemoteBridgeSessionCreateRouter {
         stage: createContext.stage,
         error: error instanceof Error ? error.message : String(error),
       });
+      this.deps.getManager()?.sendToClient(clientId, {
+        type: "session:error",
+        payload: {
+          message:
+            error instanceof Error
+              ? error.message
+              : `Failed to prepare workflow stage directories: ${String(error)}`,
+          providerId: requestedProviderId,
+          stage: createContext.stage,
+          workspacePath: resolvedWorkspacePath,
+        },
+      });
       return;
     }
 
