@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -21,6 +21,8 @@ const APP_MATERIALIZED_RE =
   /Application Skeleton materialized filesystem skeleton/u;
 const DIAGRAM_REVIEW_RE =
   /Core: Diagram Modules перешёл в пользовательскую проверку/u;
+const RAW_APPLICATION_SKELETON_REPAIR_PROMPT_RE =
+  /Core rejected the current Application Skeleton draft/u;
 const APP_MARKDOWN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
 const APP_MAP_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`;
 
@@ -90,15 +92,18 @@ const appMaterializedDecision =
   });
 
 const createHandler = (params: {
+  readonly applicationStagePlan?: ApplicationSkeletonStagePlanController;
   readonly stage: typeof APP_STAGE | typeof DIAGRAM_STAGE;
   readonly workspaceRoot: string;
 }): {
   readonly coreMessages: CapturedCoreMessage[];
   readonly handler: SessionRequestHandlerManagedWorkflowTurn;
+  readonly internalMessages: string[];
   readonly sessionId: string;
   readonly waitEvents: string[];
 } => {
   const coreMessages: CapturedCoreMessage[] = [];
+  const internalMessages: string[] = [];
   const waitEvents: string[] = [];
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
@@ -108,6 +113,9 @@ const createHandler = (params: {
     { initiativeSlug: WORKSPACE_SLUG, stage: params.stage }
   );
   const handler = new SessionRequestHandlerManagedWorkflowTurn({
+    ...(params.applicationStagePlan
+      ? { applicationStagePlan: params.applicationStagePlan }
+      : {}),
     eventMessages: {
       appendCoreMessage: (_sessionId: string, message: CapturedCoreMessage) => {
         coreMessages.push(message);
@@ -119,11 +127,20 @@ const createHandler = (params: {
     },
     getMessageDispatch: () =>
       ({
-        sendInternalMessage: () => Promise.resolve(),
+        sendInternalMessage: (_sessionId: string, content: string) => {
+          internalMessages.push(content);
+          return Promise.resolve();
+        },
       }) as never,
     sessionManager,
   });
-  return { coreMessages, handler, sessionId: session.id, waitEvents };
+  return {
+    coreMessages,
+    handler,
+    internalMessages,
+    sessionId: session.id,
+    waitEvents,
+  };
 };
 
 const prepareApplicationDraft = async (
@@ -236,6 +253,53 @@ const writeDiagramProductPart = (workspaceRoot: string): Promise<void> =>
       "| `workflow-tree` | Renders workflow navigation. |",
     ].join("\n")
   );
+
+test("managed workflow repair currently exposes raw Application Skeleton prompt while artifact directory is missing", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "managed-review-missing-application-skeleton-")
+  );
+  try {
+    const { coreMessages, handler, internalMessages, sessionId } =
+      createHandler({
+        applicationStagePlan: {
+          commitRejectedTurn: () =>
+            Promise.resolve({
+              blocked: null,
+              commit: {
+                expectedCommitMessage:
+                  "docs: draft application skeleton contract",
+                hash: "rejected-draft",
+                nextTaskId: "application-skeleton.phase1.repair.task1",
+              },
+            }),
+        } as never,
+        stage: APP_STAGE,
+        workspaceRoot,
+      });
+
+    const result = await handler.handleTurnCompleted(sessionId);
+
+    assert.equal(result, "continued");
+    assert.equal(coreMessages.length, 1);
+    assert.equal(coreMessages[0]?.tag, "managed-workflow-validation");
+    assert.match(
+      coreMessages[0]?.content ?? "",
+      RAW_APPLICATION_SKELETON_REPAIR_PROMPT_RE
+    );
+    assert.equal(internalMessages.length, 1);
+    assert.equal(internalMessages[0], coreMessages[0]?.content);
+    await assert.rejects(
+      access(
+        path.join(
+          workspaceRoot,
+          `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton`
+        )
+      )
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
 
 test("managed workflow turn emits Core-owned user review handoff messages", async () => {
   const cases = [

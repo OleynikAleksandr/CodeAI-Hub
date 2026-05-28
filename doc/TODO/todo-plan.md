@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "8f1414257",
+  "lastRecordedCommit": "a9d1f2e77",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8h.stage-marker-verify.task1",
-  "expectedCommitMessage": "test: verify active stage marker repair",
+  "currentTaskId": "provider-readiness.phase8i.app-skeleton-diagnose.task1",
+  "expectedCommitMessage": "test: characterize application skeleton repair loop",
   "debt": {
-    "expectedCommitMessage": "test: verify active stage marker repair",
-    "preCommitHead": "8f1414257",
+    "expectedCommitMessage": "test: characterize application skeleton repair loop",
+    "preCommitHead": "a9d1f2e77",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8h.stage-marker-verify.task1"
+    "taskId": "provider-readiness.phase8i.app-skeleton-diagnose.task1"
   }
 }
 ```
@@ -355,11 +355,27 @@
 126. [DONE] `provider-readiness.phase8h.stage-marker-verify.task1` Verify workflow tree marker status mapping and Project Manager typecheck; do not build a release in this stream (scope: `src/client/project-manager/components/layout, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify active stage marker repair`).
     - Result 2026-05-28: `npx tsx --test src/client/project-manager/components/layout/workspace-tree-model.test.ts` — PASS (3 tests).
     - Result 2026-05-28: `npm run typecheck:webview` — PASS.
-127. [PENDING] Git Commit: `test: verify active stage marker repair` (hash: TBD)
-128. [TODO] `provider-readiness.phase8h.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+127. [DONE] Git Commit: `test: verify active stage marker repair` (hash: a9d1f2e77)
+128. [BLOCKED] `provider-readiness.phase8h.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+    - Finding 2026-05-28: Application Skeleton with Kimi repeatedly fails to create the managed artifacts because `.codeai-hub/<workspaceSlug>/application_skeleton/` is missing; Core records English `managed-workflow-validation` repair prompts in the user-visible session log instead of translating or summarizing them. Continue in Phase 8i before any release build.
+
+## Phase 8i — Application Skeleton Managed Repair Retest (owner: Codex, updated: 2026-05-28)
+### Stream: Managed Repair Prompt And Artifact Directory
+129. [DONE] `provider-readiness.phase8i.app-skeleton-diagnose.task1` Characterize why Kimi Application Skeleton repair loops on missing artifact parent directories and why Core `managed-workflow-validation` messages are persisted in English instead of translated/user-facing text (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize application skeleton repair loop`).
+    - Diagnostic 2026-05-28: The Kimi unified session contains three Core `system` messages tagged `managed-workflow-validation`; each stores the full English Application Skeleton repair prompt in the user-visible JSONL stream while the same text is sent as the provider internal repair instruction.
+    - Diagnostic 2026-05-28: Kimi correctly identified the target artifacts, but `WriteFile` failed because `.codeai-hub/codeai-hub-codex-5-4/application_skeleton/` did not exist; Core validation then treated the missing files as generic artifact repair instead of preparing the Core-owned workflow artifact directory.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` — PASS (3 tests, including the current raw-prompt/missing-directory characterization).
+130. [PENDING] Git Commit: `test: characterize application skeleton repair loop` (hash: TBD)
+131. [TODO] `provider-readiness.phase8i.app-skeleton-directory.task1` Ensure Core prepares managed Application Skeleton artifact directories before dispatching or repairing the provider turn, so WriteFile-capable agents do not fail on missing parent directories (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: prepare application skeleton artifact directory`).
+132. [TODO] Git Commit: `fix: prepare application skeleton artifact directory` (hash: TBD)
+133. [TODO] `provider-readiness.phase8i.validation-message.task1` Split provider-internal repair prompts from user-visible Core System messages so managed validation cards are concise, Russian/translation-routed, and do not display raw English repair instructions while the agent still receives the full internal prompt (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: localize managed validation system messages`).
+134. [TODO] Git Commit: `fix: localize managed validation system messages` (hash: TBD)
+135. [TODO] `provider-readiness.phase8i.app-skeleton-verify.task1` Verify Application Skeleton managed repair, artifact directory preparation, and user-visible validation message routing; do not build a release in this stream (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton managed repair`).
+136. [TODO] Git Commit: `test: verify application skeleton managed repair` (hash: TBD)
+137. [TODO] `provider-readiness.phase8i.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-129. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-130. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-131. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+138. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+139. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+140. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
