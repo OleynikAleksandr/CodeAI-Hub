@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "674edf859",
+  "lastRecordedCommit": "fdef632a2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8y.release-build.task1",
-  "expectedCommitMessage": "chore: build managed input lock rebuild release",
+  "currentTaskId": "provider-readiness.phase8y.vsix.task1",
+  "expectedCommitMessage": "test: verify managed input lock rebuild vsix package",
   "debt": {
-    "expectedCommitMessage": "chore: build managed input lock rebuild release",
-    "preCommitHead": "674edf859",
+    "expectedCommitMessage": "test: verify managed input lock rebuild vsix package",
+    "preCommitHead": "fdef632a2",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8y.release-build.task1"
+    "taskId": "provider-readiness.phase8y.vsix.task1"
   }
 }
 ```
@@ -711,9 +711,11 @@
     - Result 2026-05-28: `./scripts/build-all.sh --allow-dirty` — PASS for v1.2.391. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-build transition.
     - Artifacts 2026-05-28: produced `claude-module-1.2.391.tar.bz2`, `codex-module-1.2.391.tar.bz2`, `gemini-module-1.2.391.tar.bz2`, `glm-claude-code-module-1.2.391.tar.bz2`, `kimi-module-1.2.391.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.391.tar.bz2`, `vscode-webview-1.2.391.tar.bz2`, `project-manager-1.2.391.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.391.tar.bz2` in `doc/tmp/releases/`.
     - SHA1 check 2026-05-28: GLM provider tarball `2ccf721cfa34cc3ed5844f040668b46446341495`; Project Manager tarball `285395783f58bc7006bb5cb11e60cdbbcf4b7c60`; webview tarball `cd44701d7b3c7ae927702b1b2cef81ff99f17862`.
-259. [PENDING] Git Commit: `chore: build managed input lock rebuild release` (hash: TBD)
-260. [TODO] `provider-readiness.phase8y.vsix.task1` Run final VSIX packaging with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify managed input lock rebuild vsix package`).
-261. [TODO] Git Commit: `test: verify managed input lock rebuild vsix package` (hash: TBD)
+259. [DONE] Git Commit: `chore: build managed input lock rebuild release` (hash: fdef632a2)
+260. [DONE] `provider-readiness.phase8y.vsix.task1` Run final VSIX packaging with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify managed input lock rebuild vsix package`).
+    - Result 2026-05-28: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS for v1.2.391. Verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, `VSIX runtime package surface verified`, and local artefact validation for Claude, Codex, Gemini, Kimi, GLM-Claude-Code, Core localization bridge, Gemini provider module, and Kimi provider module.
+    - VSIX 2026-05-28: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.391.vsix` (`4.4M`, SHA1 `9323ec8d38f340050cafb150471ad294c7513346`).
+261. [PENDING] Git Commit: `test: verify managed input lock rebuild vsix package` (hash: TBD)
 262. [TODO] `provider-readiness.phase8y.user-retest.task1` User installs the produced v1.2.391 release and retests that the session input stays locked while Core internally continues managed workflow turns and unlocks only on explicit user handoff (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
