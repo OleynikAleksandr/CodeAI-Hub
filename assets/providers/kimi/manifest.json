@@ -2,9 +2,9 @@
   "schema": 1,
   "baseUrl": "file:///Users/oleksandroliinyk/.codeai-hub/releases/",
   "module": {
-    "version": "1.2.389",
-    "package": "kimi-module-1.2.389.tar.bz2",
-    "size": 19984,
-    "sha1": "25e68b342e5919fffe5588ed14e3fa1798615f89"
+    "version": "1.2.390",
+    "package": "kimi-module-1.2.390.tar.bz2",
+    "size": 19918,
+    "sha1": "e2ef79fcef7e84db3e847aa33eeb8a5b93a57b46"
   }
 }
