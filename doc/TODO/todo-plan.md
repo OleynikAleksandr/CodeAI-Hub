@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "afd449de6",
+  "lastRecordedCommit": "839b56006",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8k.glm-standalone-loader.task1",
-  "expectedCommitMessage": "fix: load glm standalone provider runtime",
+  "currentTaskId": "provider-readiness.phase8k.glm-live-verify.task1",
+  "expectedCommitMessage": "test: verify glm standalone runtime loading",
   "debt": {
-    "expectedCommitMessage": "fix: load glm standalone provider runtime",
-    "preCommitHead": "afd449de6",
+    "expectedCommitMessage": "test: verify glm standalone runtime loading",
+    "preCommitHead": "839b56006",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8k.glm-standalone-loader.task1"
+    "taskId": "provider-readiness.phase8k.glm-live-verify.task1"
   }
 }
 ```
@@ -412,9 +412,16 @@
 146. [DONE] Git Commit: `test: characterize glm live runtime loading` (hash: afd449de6)
 147. [DONE] `provider-readiness.phase8k.glm-standalone-loader.task1` Make Core resolve and load `~/.codeai-hub/providers/glm-claude-code/<version>` as the GLM adapter source before any Claude-module fallback, while preserving the Claude Agent SDK-compatible execution path and GLM-specific home/settings (scope: `packages/core/src/provider-registry/provider-installed-path-resolver.ts, packages/core/src/provider-registry/index.ts, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md`; expected commit: `fix: load glm standalone provider runtime`).
     - Result 2026-05-28: Core now resolves GLM with `resolveGlmClaudeCodeModulePath()` instead of reusing `resolveClaudeModulePath()`, so an installed standalone GLM provider runtime is selected independently from the original Claude provider package.
-148. [PENDING] Git Commit: `fix: load glm standalone provider runtime` (hash: TBD)
-149. [TODO] `provider-readiness.phase8k.glm-live-verify.task1` Verify GLM standalone runtime loading and readiness diagnostics with installed v1.2.384 artifacts plus targeted core/module tests; do not run release build scripts (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify glm standalone runtime loading`).
-150. [TODO] Git Commit: `test: verify glm standalone runtime loading` (hash: TBD)
+148. [DONE] Git Commit: `fix: load glm standalone provider runtime` (hash: 839b56006)
+149. [DONE] `provider-readiness.phase8k.glm-live-verify.task1` Verify GLM standalone runtime loading and readiness diagnostics with installed v1.2.384 artifacts plus targeted core/module tests; do not run release build scripts (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify glm standalone runtime loading`).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `node --test packages/core/dist/provider-registry/provider-installed-path-resolver.test.js` — PASS (1 test).
+    - Result 2026-05-28: Core loader smoke test resolved GLM module path to `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/1.2.384`, loaded a function constructor, and confirmed the override path came from `/providers/glm-claude-code/`.
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+    - Result 2026-05-28: `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js` — PASS (2 tests).
+    - Result 2026-05-28: Installed v1.2.384 runtime probe with actual workspace settings reports `apiKeyAvailable=false`, `apiKeySource=missing`; the same probe with a synthetic workspace key reports `apiKeyAvailable=true`, `apiKeySource=workspace_settings`, `ANTHROPIC_API_KEY=true`, and `ANTHROPIC_AUTH_TOKEN=true`.
+    - Release build intentionally not run for this retest fix stream.
+150. [PENDING] Git Commit: `test: verify glm standalone runtime loading` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
