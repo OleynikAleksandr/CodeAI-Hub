@@ -222,7 +222,7 @@ clean_local_artifacts() {
       find "$providers_root/claude" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
     fi
     if [[ -d "$providers_root/glm-claude-code" ]]; then
-      find "$providers_root/glm-claude-code" -mindepth 1 -maxdepth 1 ! -name "home" -exec rm -rf {} +
+      find "$providers_root/glm-claude-code" -mindepth 1 -maxdepth 1 ! -name "home" ! -name "config.json" -exec rm -rf {} +
     fi
   fi
 }
