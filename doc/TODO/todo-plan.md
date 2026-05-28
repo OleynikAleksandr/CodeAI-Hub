@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "7c9a126e3",
+  "lastRecordedCommit": "1c3a96765",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase2.settings.task1",
-  "expectedCommitMessage": "feat: expose local models in translation settings",
+  "currentTaskId": "local-models.phase2.defaults.task1",
+  "expectedCommitMessage": "fix: persist local translation engine selections",
   "debt": {
-    "expectedCommitMessage": "feat: expose local models in translation settings",
-    "preCommitHead": "7c9a126e3",
+    "expectedCommitMessage": "fix: persist local translation engine selections",
+    "preCommitHead": "1c3a96765",
     "stage": "commit_pending",
-    "taskId": "local-models.phase2.settings.task1"
+    "taskId": "local-models.phase2.defaults.task1"
   }
 }
 ```
@@ -59,9 +59,9 @@
 ## Phase 2 — Settings Selection Surface (owner: Codex, updated: 2026-05-28)
 ### Stream: Local Engine Settings
 7. [DONE] `local-models.phase2.settings.task1` Preserve `lmstudio:*` engine ids in Settings state and render local model engine labels in the UI/Reasoning translation engine selectors (scope: `src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/localization-settings-card.tsx, src/client/ui/src/components/settings/localization-engine-availability.ts`; expected commit: `feat: expose local models in translation settings`).
-8. [PENDING] Git Commit: `feat: expose local models in translation settings` (hash: TBD)
-9. [TODO] `local-models.phase2.defaults.task1` Normalize persisted settings snapshots so local engine ids round-trip through Core load/save without fallback while keeping old snapshots compatible (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`; expected commit: `fix: persist local translation engine selections`).
-10. [TODO] Git Commit: `fix: persist local translation engine selections` (hash: TBD)
+8. [DONE] Git Commit: `feat: expose local models in translation settings` (hash: 1c3a96765)
+9. [DONE] `local-models.phase2.defaults.task1` Normalize persisted settings snapshots so local engine ids round-trip through Core load/save without fallback while keeping old snapshots compatible (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`; expected commit: `fix: persist local translation engine selections`).
+10. [PENDING] Git Commit: `fix: persist local translation engine selections` (hash: TBD)
 
 ## Phase 3 — Documentation Sync (owner: Codex, updated: 2026-05-28)
 ### Stream: SSOT Updates

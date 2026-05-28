@@ -3,6 +3,7 @@ import test from "node:test";
 import { serializeSettingsForPersistence } from "./settings-state-helpers";
 import {
   createDefaultSettings,
+  mapSettingsSnapshot,
   type RawSettingsSnapshot,
 } from "./settings-state-model";
 
@@ -29,4 +30,25 @@ test("settings persistence payload writes localization engine under global uiEng
     (payload as RawSettingsSnapshot).providers?.claude?.defaultModel,
     settings.providers.claude.defaultModel
   );
+});
+
+test("settings persistence round-trips LM Studio local translation engine ids", () => {
+  const localEngineId = "lmstudio:mlx-community/gemma-4-26b-a4b-it";
+  const settings = mapSettingsSnapshot({
+    general: {
+      localization: {
+        reasoningEngineId: localEngineId,
+        uiEngineId: localEngineId,
+      },
+    },
+  });
+  const payload = serializeSettingsForPersistence(settings);
+  const remapped = mapSettingsSnapshot(payload);
+
+  assert.equal(settings.general.localization.engineId, localEngineId);
+  assert.equal(settings.general.localization.reasoningEngineId, localEngineId);
+  assert.equal(payload.general?.localization?.uiEngineId, localEngineId);
+  assert.equal(payload.general?.localization?.reasoningEngineId, localEngineId);
+  assert.equal(remapped.general.localization.engineId, localEngineId);
+  assert.equal(remapped.general.localization.reasoningEngineId, localEngineId);
 });
