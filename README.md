@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.385** (GLM Loader And Kimi Reasoning Hotfix)
+**Current Release — v1.2.386** (GLM Config Bootstrap Hotfix)
+
+This hotfix creates the global GLM-Claude-Code config template automatically at
+`~/.codeai-hub/providers/glm-claude-code/config.json` during install/runtime
+bootstrap when it is missing. The template contains only the `apiKey` field and
+existing files are preserved, so user secrets are not overwritten.
+
+The provider picker recovery card now tells the user exactly where to paste the
+separate Z.AI/GLM API key: open
+`~/.codeai-hub/providers/glm-claude-code/config.json`, set JSON field
+`"apiKey"`, then use Settings -> General -> Restart Core. The card also makes
+clear that Claude login is not reused for GLM.
+
+**Previous Release — v1.2.385** (GLM Loader And Kimi Reasoning Hotfix)
 
 This hotfix makes Core prefer the standalone GLM-Claude-Code provider runtime
 installed under `~/.codeai-hub/providers/glm-claude-code/<version>` instead of

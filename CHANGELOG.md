@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.386] - 2026-05-28
+### Fixed
+- **GLM-Claude-Code config is created automatically.** Install/runtime bootstrap now creates `~/.codeai-hub/providers/glm-claude-code/config.json` with only `{ "apiKey": "" }` when the file is missing, while preserving any existing user config or secret.
+- **GLM provider card gives exact API-key instructions.** The unavailable-provider message now explains that Claude login is not reused and tells the user to paste the Z.AI/GLM key into the JSON field `"apiKey"` in `~/.codeai-hub/providers/glm-claude-code/config.json`, then restart Core.
+
+### Tests
+- `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts packages/core/src/provider-registry/provider-recovery-coordinator.test.ts`
+- `npm run build --workspace @codeai-hub/claude-module`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/Claude_Module/dist/auth/glm-claude-code-auth-profile.test.js packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js packages/core/dist/provider-registry/provider-recovery-coordinator.test.js`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.385] - 2026-05-28
 ### Fixed
 - **GLM-Claude-Code loads from its standalone provider runtime.** Core now resolves `~/.codeai-hub/providers/glm-claude-code/<version>` before any Claude-module fallback, so the installed GLM provider package is the adapter source while GLM keeps its separate provider home and settings contract.

@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "adef33ef0",
+  "lastRecordedCommit": "6820c1068",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8n.glm-config-verify.task1",
-  "expectedCommitMessage": "test: verify glm config bootstrap",
+  "currentTaskId": "provider-readiness.phase8o.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare glm config bootstrap release",
   "debt": {
-    "expectedCommitMessage": "test: verify glm config bootstrap",
-    "preCommitHead": "adef33ef0",
+    "expectedCommitMessage": "docs: prepare glm config bootstrap release",
+    "preCommitHead": "6820c1068",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8n.glm-config-verify.task1"
+    "taskId": "provider-readiness.phase8o.release-prep.task1"
   }
 }
 ```
@@ -485,11 +485,22 @@
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS after rerunning sequentially once the Claude module build had restored its `dist` outputs.
     - Result 2026-05-28: `node --test packages/Claude_Module/dist/auth/glm-claude-code-auth-profile.test.js packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js packages/core/dist/provider-registry/provider-recovery-coordinator.test.js` — PASS (6 tests).
-174. [PENDING] Git Commit: `test: verify glm config bootstrap` (hash: TBD)
+174. [DONE] Git Commit: `test: verify glm config bootstrap` (hash: 6820c1068)
 175. [TODO] `provider-readiness.phase8n.user-retest.task1` User installs the eventual replacement release and retests that GLM card points to the generated global config file and that GLM becomes available after the user fills `apiKey` and restarts Core (scope: chat/process observation only; expected commit: none).
+
+## Phase 8o — GLM Config Bootstrap Release Build (owner: Codex, updated: 2026-05-28)
+### Stream: Release Packaging
+179. [DONE] `provider-readiness.phase8o.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.386 and record release intent before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm config bootstrap release`).
+    - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.386 before running release scripts.
+180. [PENDING] Git Commit: `docs: prepare glm config bootstrap release` (hash: TBD)
+181. [TODO] `provider-readiness.phase8o.release-build.task1` Run the approved unified release build for the GLM config bootstrap and recovery-card copy fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm config bootstrap release`).
+182. [TODO] Git Commit: `chore: build glm config bootstrap release` (hash: TBD)
+183. [TODO] `provider-readiness.phase8o.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config bootstrap vsix`).
+184. [TODO] Git Commit: `test: verify glm config bootstrap vsix` (hash: TBD)
+185. [TODO] `provider-readiness.phase8o.user-retest.task1` User installs the replacement release and retests that GLM card points to the generated global config file and that GLM becomes available after the user fills `apiKey` and restarts Core (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-176. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-177. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-178. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+186. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+187. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+188. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
