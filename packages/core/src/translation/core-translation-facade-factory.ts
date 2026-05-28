@@ -6,6 +6,7 @@ import {
   TranslationFacade,
   type TranslationReporter,
 } from "@codeai-hub/translation";
+import { LocalModelsFacade } from "../local-models/local-models-facade";
 import { ClaudeHaikuTranslationEngine } from "./claude-haiku-translation-engine";
 import {
   CODEX_GPT_5_4_MINI_TRANSLATION_ENGINE_ID,
@@ -72,6 +73,9 @@ export const buildCoreTranslationEngines = (
   if (options.extraEngines) {
     providerEngines.push(...options.extraEngines);
   }
+  providerEngines.push(
+    ...new LocalModelsFacade({ reporter }).createTranslationEngines()
+  );
   return [...registryBuiltInEngines, ...providerEngines];
 };
 

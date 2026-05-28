@@ -1,0 +1,387 @@
+import { execFileSync } from "node:child_process";
+import {
+  DEFAULT_ENGINE_LANGUAGE_CATALOGS,
+  type LocalizationEngineLanguageCatalog,
+  type LocalizationLanguageCatalogEntry,
+} from "@codeai-hub/localization";
+import type {
+  NormalizedTranslationRequest,
+  TranslationEngine,
+  TranslationReporter,
+  TranslationResult,
+} from "@codeai-hub/translation";
+
+const DEFAULT_LM_STUDIO_BASE_URL = "http://127.0.0.1:1234";
+const DISCOVERY_TIMEOUT_MS = 5000;
+const MODEL_LOAD_TIMEOUT_MS = 120_000;
+const DEFAULT_CONTEXT_LENGTH = "8192";
+const DEFAULT_MAX_TOKENS = 4096;
+const LM_STUDIO_JSON_HEADERS = {
+  "content-type": "application/json",
+} as const;
+const QWEN_MODEL_PATTERN = /qwen/i;
+const TRAILING_SLASHES_PATTERN = /\/+$/;
+
+const LM_STUDIO_TRANSLATION_ENGINE_PREFIX = "lmstudio:";
+
+export interface LocalModelDescriptor {
+  readonly architecture?: string;
+  readonly displayName: string;
+  readonly engineId: string;
+  readonly maxContextLength?: number;
+  readonly modelKey: string;
+  readonly paramsString?: string;
+  readonly publisher?: string;
+  readonly sizeBytes?: number;
+}
+
+type LmsCommandRunner = (
+  args: readonly string[],
+  options: { readonly timeoutMs: number }
+) => string;
+
+interface LocalModelsFacadeOptions {
+  readonly baseUrl?: string;
+  readonly commandRunner?: LmsCommandRunner;
+  readonly fetchImplementation?: typeof fetch;
+  readonly reporter?: TranslationReporter;
+}
+
+interface LmsCliModelRecord {
+  readonly architecture?: unknown;
+  readonly displayName?: unknown;
+  readonly maxContextLength?: unknown;
+  readonly modelKey?: unknown;
+  readonly paramsString?: unknown;
+  readonly publisher?: unknown;
+  readonly sizeBytes?: unknown;
+  readonly type?: unknown;
+}
+
+interface ChatCompletionChoice {
+  readonly message?: {
+    readonly content?: unknown;
+  };
+}
+
+interface ChatCompletionResponse {
+  readonly choices?: readonly ChatCompletionChoice[];
+}
+
+const loadedModelKeys = new Set<string>();
+
+const resolveBaseUrl = (baseUrl?: string): string =>
+  (
+    baseUrl ??
+    process.env.CODEAI_LMSTUDIO_BASE_URL ??
+    DEFAULT_LM_STUDIO_BASE_URL
+  )
+    .trim()
+    .replace(TRAILING_SLASHES_PATTERN, "");
+
+const defaultCommandRunner: LmsCommandRunner = (args, options) =>
+  execFileSync("lms", [...args], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "ignore"],
+    timeout: options.timeoutMs,
+  });
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const asString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+
+const asNumber = (value: unknown): number | undefined =>
+  typeof value === "number" && Number.isFinite(value) ? value : undefined;
+
+const resolveLmStudioRecords = (payload: unknown): readonly unknown[] => {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+  if (isRecord(payload) && Array.isArray(payload.models)) {
+    return payload.models;
+  }
+  return [];
+};
+
+const parseLmStudioModels = (
+  rawJson: string
+): readonly LocalModelDescriptor[] => {
+  const payload = JSON.parse(rawJson) as unknown;
+  const records = resolveLmStudioRecords(payload);
+  const models: LocalModelDescriptor[] = [];
+  for (const record of records) {
+    if (!isRecord(record)) {
+      continue;
+    }
+    const typedRecord = record as LmsCliModelRecord;
+    if (typedRecord.type !== "llm") {
+      continue;
+    }
+    const modelKey = asString(typedRecord.modelKey);
+    if (!modelKey) {
+      continue;
+    }
+    const displayName = asString(typedRecord.displayName) ?? modelKey;
+    models.push({
+      architecture: asString(typedRecord.architecture),
+      displayName,
+      engineId: `${LM_STUDIO_TRANSLATION_ENGINE_PREFIX}${modelKey}`,
+      maxContextLength: asNumber(typedRecord.maxContextLength),
+      modelKey,
+      paramsString: asString(typedRecord.paramsString),
+      publisher: asString(typedRecord.publisher),
+      sizeBytes: asNumber(typedRecord.sizeBytes),
+    });
+  }
+  return models;
+};
+
+const createFallbackResult = (
+  request: NormalizedTranslationRequest,
+  engineId: string,
+  errorCode: string
+): TranslationResult => ({
+  engine: engineId,
+  errorCode,
+  finalText: request.text,
+  originalText: request.text,
+  sourceLanguage: request.sourceLanguage,
+  status: "fallback",
+  targetLanguage: request.targetLanguage,
+  translatedText: null,
+});
+
+const createTranslatedResult = (
+  request: NormalizedTranslationRequest,
+  engineId: string,
+  translatedText: string
+): TranslationResult => ({
+  engine: engineId,
+  finalText: translatedText,
+  originalText: request.text,
+  sourceLanguage: request.sourceLanguage,
+  status: "translated",
+  targetLanguage: request.targetLanguage,
+  translatedText,
+});
+
+const resolveLocalModelLanguages =
+  (): readonly LocalizationLanguageCatalogEntry[] =>
+    DEFAULT_ENGINE_LANGUAGE_CATALOGS.find(
+      (catalog) => catalog.engineId === "google-gtx"
+    )?.languages ?? [];
+
+const parseChatCompletionText = (payload: unknown): string | null => {
+  if (!isRecord(payload)) {
+    return null;
+  }
+  const typedPayload = payload as ChatCompletionResponse;
+  const content = typedPayload.choices?.[0]?.message?.content;
+  return asString(content) ?? null;
+};
+
+const shouldDisableThinking = (model: LocalModelDescriptor): boolean =>
+  QWEN_MODEL_PATTERN.test(model.modelKey) ||
+  QWEN_MODEL_PATTERN.test(model.displayName) ||
+  QWEN_MODEL_PATTERN.test(model.architecture ?? "");
+
+const buildSystemPrompt = (targetLanguage: string): string =>
+  [
+    "You are CodeAI Hub's local localization translation engine.",
+    `Translate the supplied English text to ${targetLanguage}.`,
+    "Return only the translated text, with no explanations.",
+    "Preserve placeholders, ICU tokens, Markdown, code spans, JSON keys, file paths, API routes, CLI commands, URLs, model IDs, provider names, and product names.",
+    "If the input is structured with __CODEAI_HUB_LOCALIZATION_ENTRY__ markers, keep every marker exactly unchanged and translate only the text between markers.",
+  ].join("\n");
+
+class LmStudioLocalTranslationEngine implements TranslationEngine {
+  readonly id: string;
+  private readonly baseUrl: string;
+  private readonly commandRunner: LmsCommandRunner;
+  private readonly fetchImplementation: typeof fetch;
+  private readonly model: LocalModelDescriptor;
+  private readonly reporter?: TranslationReporter;
+
+  constructor(options: {
+    readonly baseUrl: string;
+    readonly commandRunner: LmsCommandRunner;
+    readonly fetchImplementation: typeof fetch;
+    readonly model: LocalModelDescriptor;
+    readonly reporter?: TranslationReporter;
+  }) {
+    this.baseUrl = options.baseUrl;
+    this.commandRunner = options.commandRunner;
+    this.fetchImplementation = options.fetchImplementation;
+    this.id = options.model.engineId;
+    this.model = options.model;
+    this.reporter = options.reporter;
+  }
+
+  async translate(
+    request: NormalizedTranslationRequest
+  ): Promise<TranslationResult> {
+    const loadErrorCode = this.ensureModelLoaded();
+    if (loadErrorCode) {
+      return createFallbackResult(request, this.id, loadErrorCode);
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), request.timeoutMs);
+    try {
+      const response = await this.fetchImplementation(
+        `${this.baseUrl}/v1/chat/completions`,
+        {
+          body: JSON.stringify(this.buildPayload(request)),
+          headers: LM_STUDIO_JSON_HEADERS,
+          method: "POST",
+          signal: controller.signal,
+        }
+      );
+      if (!response.ok) {
+        this.reporter?.warn?.("LM Studio translation returned non-OK", {
+          engine: this.id,
+          modelKey: this.model.modelKey,
+          status: response.status,
+        });
+        return createFallbackResult(request, this.id, "lmstudio_non_ok");
+      }
+      const translatedText = parseChatCompletionText(await response.json());
+      if (!translatedText) {
+        this.reporter?.warn?.("LM Studio translation response was empty", {
+          engine: this.id,
+          modelKey: this.model.modelKey,
+        });
+        return createFallbackResult(
+          request,
+          this.id,
+          "lmstudio_empty_response"
+        );
+      }
+      return createTranslatedResult(request, this.id, translatedText);
+    } catch (error) {
+      this.reporter?.warn?.("LM Studio translation failed", {
+        engine: this.id,
+        error: error instanceof Error ? error.message : String(error),
+        modelKey: this.model.modelKey,
+      });
+      return createFallbackResult(request, this.id, "lmstudio_request_failed");
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  private buildPayload(request: NormalizedTranslationRequest): object {
+    const userText = shouldDisableThinking(this.model)
+      ? `/no_think\n${request.text}`
+      : request.text;
+    return {
+      max_tokens: DEFAULT_MAX_TOKENS,
+      messages: [
+        {
+          content: buildSystemPrompt(request.targetLanguage),
+          role: "system",
+        },
+        {
+          content: userText,
+          role: "user",
+        },
+      ],
+      model: this.model.modelKey,
+      stream: false,
+      temperature: 0.1,
+      top_p: 0.8,
+    };
+  }
+
+  private ensureModelLoaded(): string | null {
+    if (loadedModelKeys.has(this.model.modelKey)) {
+      return null;
+    }
+    try {
+      this.commandRunner(
+        [
+          "load",
+          this.model.modelKey,
+          "--context-length",
+          process.env.CODEAI_LMSTUDIO_CONTEXT_LENGTH ?? DEFAULT_CONTEXT_LENGTH,
+        ],
+        { timeoutMs: MODEL_LOAD_TIMEOUT_MS }
+      );
+      loadedModelKeys.add(this.model.modelKey);
+      return null;
+    } catch (error) {
+      this.reporter?.warn?.("LM Studio model load failed", {
+        engine: this.id,
+        error: error instanceof Error ? error.message : String(error),
+        modelKey: this.model.modelKey,
+      });
+      return "lmstudio_model_load_failed";
+    }
+  }
+}
+
+export class LocalModelsFacade {
+  private readonly baseUrl: string;
+  private readonly commandRunner: LmsCommandRunner;
+  private readonly fetchImplementation: typeof fetch;
+  private readonly reporter?: TranslationReporter;
+
+  constructor(options: LocalModelsFacadeOptions = {}) {
+    this.baseUrl = resolveBaseUrl(options.baseUrl);
+    this.commandRunner = options.commandRunner ?? defaultCommandRunner;
+    this.fetchImplementation = options.fetchImplementation ?? fetch;
+    this.reporter = options.reporter;
+  }
+
+  createLocalizationEngineCatalogs(): readonly LocalizationEngineLanguageCatalog[] {
+    const engineIds = new Set(
+      DEFAULT_ENGINE_LANGUAGE_CATALOGS.map((catalog) => catalog.engineId)
+    );
+    const catalogs: LocalizationEngineLanguageCatalog[] = [
+      ...DEFAULT_ENGINE_LANGUAGE_CATALOGS,
+    ];
+    const localLanguages = resolveLocalModelLanguages();
+    for (const model of this.listModels()) {
+      if (engineIds.has(model.engineId)) {
+        continue;
+      }
+      catalogs.push({
+        engineId: model.engineId,
+        languages: localLanguages,
+      });
+      engineIds.add(model.engineId);
+    }
+    return catalogs;
+  }
+
+  createTranslationEngines(): readonly TranslationEngine[] {
+    return this.listModels().map(
+      (model) =>
+        new LmStudioLocalTranslationEngine({
+          baseUrl: this.baseUrl,
+          commandRunner: this.commandRunner,
+          fetchImplementation: this.fetchImplementation,
+          model,
+          reporter: this.reporter,
+        })
+    );
+  }
+
+  listModels(): readonly LocalModelDescriptor[] {
+    try {
+      const rawJson = this.commandRunner(["ls", "--json"], {
+        timeoutMs: DISCOVERY_TIMEOUT_MS,
+      });
+      return parseLmStudioModels(rawJson);
+    } catch (error) {
+      this.reporter?.warn?.("LM Studio local model discovery failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return [];
+    }
+  }
+}

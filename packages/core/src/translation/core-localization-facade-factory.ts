@@ -9,6 +9,7 @@ import {
 } from "@codeai-hub/localization";
 import type { TranslationReporter } from "@codeai-hub/translation";
 import { type CoreConfig, resolveGlobalLocalizationRootPath } from "../config";
+import { LocalModelsFacade } from "../local-models/local-models-facade";
 import { CLAUDE_INSTALLER_PATHS } from "../provider-registry/provider-installer-paths";
 import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import { createCoreTranslationFacade } from "./core-translation-facade-factory";
@@ -95,8 +96,14 @@ export const createCoreLocalizationFacade = (
       claudeHaikuTranslationService: resolvedClaudeHaikuTranslationService,
       reporter: translationReporter,
     });
+  const engineCatalogs =
+    localizationOptions.engineCatalogs ??
+    new LocalModelsFacade({
+      reporter: translationReporter,
+    }).createLocalizationEngineCatalogs();
   return new LocalizationFacade({
     ...localizationOptions,
+    engineCatalogs,
     localizationRootDirectory:
       localizationOptions.localizationRootDirectory ??
       (config ? resolveLocalizationRootDirectory(config) : undefined),

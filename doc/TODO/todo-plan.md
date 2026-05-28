@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "f4bc0e6a1",
+  "lastRecordedCommit": "31bc5b6f2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase0.plan.task1",
-  "expectedCommitMessage": "docs: plan local models lm studio module",
+  "currentTaskId": "local-models.phase1.core.task1",
+  "expectedCommitMessage": "feat: add lm studio local translation engine",
   "debt": {
-    "expectedCommitMessage": "docs: plan local models lm studio module",
-    "preCommitHead": "f4bc0e6a1",
+    "expectedCommitMessage": "feat: add lm studio local translation engine",
+    "preCommitHead": "31bc5b6f2",
     "stage": "commit_pending",
-    "taskId": "local-models.phase0.plan.task1"
+    "taskId": "local-models.phase1.core.task1"
   }
 }
 ```
@@ -47,12 +47,12 @@
 ## Phase 0 — Planning Intake (owner: Codex, updated: 2026-05-28)
 ### Stream: Planning Package
 1. [DONE] `local-models.phase0.plan.task1` Create the local models planning source, register it in Docs Index, and replace the NONE stub with this active execution todo plan (scope: `doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan local models lm studio module`).
-2. [PENDING] Git Commit: `docs: plan local models lm studio module` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan local models lm studio module` (hash: 31bc5b6f2)
 
 ## Phase 1 — Local Models Translation Boundary (owner: Codex, updated: 2026-05-28)
 ### Stream: Core Local Models Module
-3. [TODO] `local-models.phase1.core.task1` Add the Core local-model discovery facade and LM Studio translation engine with model-key engine ids and fail-closed OpenAI-compatible calls (scope: `packages/core/src/local-models/**, packages/core/src/translation/core-translation-facade-factory.ts, packages/core/src/translation/core-localization-facade-factory.ts`; expected commit: `feat: add lm studio local translation engine`).
-4. [TODO] Git Commit: `feat: add lm studio local translation engine` (hash: TBD)
+3. [DONE] `local-models.phase1.core.task1` Add the Core local-model discovery facade and LM Studio translation engine with model-key engine ids and fail-closed OpenAI-compatible calls (scope: `packages/core/src/local-models/**, packages/core/src/translation/core-translation-facade-factory.ts, packages/core/src/translation/core-localization-facade-factory.ts`; expected commit: `feat: add lm studio local translation engine`).
+4. [PENDING] Git Commit: `feat: add lm studio local translation engine` (hash: TBD)
 5. [TODO] `local-models.phase1.tests.task1` Add focused Core tests for model discovery, engine catalog exposure, and translation request/response handling including `/no_think` for Qwen-family models (scope: `packages/core/src/local-models/**, packages/core/src/translation/core-translation-facade-factory.test.ts, packages/core/src/translation/core-localization-facade-factory.test.ts`; expected commit: `test: cover lm studio local translation engine`).
 6. [TODO] Git Commit: `test: cover lm studio local translation engine` (hash: TBD)
 
