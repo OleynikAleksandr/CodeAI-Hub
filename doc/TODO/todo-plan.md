@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "d8d7f4027",
+  "lastRecordedCommit": "2a57345ad",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8f.release-build.task1",
-  "expectedCommitMessage": "chore: build workflow blocker repair release",
+  "currentTaskId": "provider-readiness.phase8f.release-vsix.task1",
+  "expectedCommitMessage": "test: verify workflow blocker repair vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build workflow blocker repair release",
-    "preCommitHead": "d8d7f4027",
+    "expectedCommitMessage": "test: verify workflow blocker repair vsix",
+    "preCommitHead": "2a57345ad",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8f.release-build.task1"
+    "taskId": "provider-readiness.phase8f.release-vsix.task1"
   }
 }
 ```
@@ -307,9 +307,12 @@
 110. [DONE] `provider-readiness.phase8f.release-build.task1` Run the approved unified release build for the workflow blocker/session-create repair (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build workflow blocker repair release`).
     - Result 2026-05-28: `./scripts/build-all.sh --allow-dirty` — PASS for v1.2.383. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-build transition.
     - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.383.tar.bz2`, `codex-module-1.2.383.tar.bz2`, `gemini-module-1.2.383.tar.bz2`, `kimi-module-1.2.383.tar.bz2`, `glm-claude-code-module-1.2.383.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.383.tar.bz2`, `vscode-webview-1.2.383.tar.bz2`, `project-manager-1.2.383.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.383.tar.bz2`.
-111. [PENDING] Git Commit: `chore: build workflow blocker repair release` (hash: TBD)
-112. [TODO] `provider-readiness.phase8f.release-vsix.task1` Run the approved VSIX packaging step, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow blocker repair vsix`).
-113. [TODO] Git Commit: `test: verify workflow blocker repair vsix` (hash: TBD)
+111. [DONE] Git Commit: `chore: build workflow blocker repair release` (hash: 2a57345ad)
+112. [DONE] `provider-readiness.phase8f.release-vsix.task1` Run the approved VSIX packaging step, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow blocker repair vsix`).
+    - Result 2026-05-28: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-vsix transition.
+    - Verified release output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and VSIX runtime package surface verification.
+    - VSIX: `codeai-hub-1.2.383.vsix` (4.3M), SHA1 `fc7ab883fa33e58590f781a81a8dca915602a1f6`.
+113. [PENDING] Git Commit: `test: verify workflow blocker repair vsix` (hash: TBD)
 114. [TODO] `provider-readiness.phase8f.user-retest.task1` User installs the produced replacement release and retests Description acceptance, Virtual Simulation startup with multiple providers, and absence/translation of Core workflow blocker messages (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
