@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "1c948186f",
+  "lastRecordedCommit": "291ac27b5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8u.residual-docs-diagnose.task1",
-  "expectedCommitMessage": "test: characterize residual document dirty blocker",
+  "currentTaskId": "provider-readiness.phase8u.residual-docs-fix.task1",
+  "expectedCommitMessage": "fix: auto-commit residual workflow documents",
   "debt": {
-    "expectedCommitMessage": "test: characterize residual document dirty blocker",
-    "preCommitHead": "1c948186f",
+    "expectedCommitMessage": "fix: auto-commit residual workflow documents",
+    "preCommitHead": "291ac27b5",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8u.residual-docs-diagnose.task1"
+    "taskId": "provider-readiness.phase8u.residual-docs-fix.task1"
   }
 }
 ```
@@ -640,9 +640,12 @@
 228. [DONE] `provider-readiness.phase8u.residual-docs-diagnose.task1` Characterize the post-acceptance dirty-Git blocker for workflow-neutral residual documents outside the accepted workspace capsule commit (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize residual document dirty blocker`).
     - Diagnostic 2026-05-28: after Core commits the accepted preliminary step, an unrelated untracked `docs/` markdown note remains in `git status` and currently triggers the same dirty-Git blocker that prevents the next workflow step.
     - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts` — PASS.
-229. [PENDING] Git Commit: `test: characterize residual document dirty blocker` (hash: TBD)
-230. [TODO] `provider-readiness.phase8u.residual-docs-fix.task1` Auto-commit workflow-neutral residual document changes after the accepted step commit, keep blocking code/config/runtime-unknown dirtiness, and append a Core warning that lists auto-committed paths (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts`; expected commit: `fix: auto-commit residual workflow documents`).
-231. [TODO] Git Commit: `fix: auto-commit residual workflow documents` (hash: TBD)
+229. [DONE] Git Commit: `test: characterize residual document dirty blocker` (hash: 291ac27b5)
+230. [DONE] `provider-readiness.phase8u.residual-docs-fix.task1` Auto-commit workflow-neutral residual document changes after the accepted step commit, keep blocking code/config/runtime-unknown dirtiness, and append a Core warning that lists auto-committed paths (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts`; expected commit: `fix: auto-commit residual workflow documents`).
+    - Result 2026-05-28: accepted preliminary step commit now auto-commits workflow-neutral residual document paths such as `docs/` in a separate `codeai-step: <Stage> residual documents` commit, then only blocks if non-document dirty paths remain.
+    - Result 2026-05-28: Core appends a follow-up `managed-workflow-validation` message listing the auto-committed document paths so the user sees what was committed.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts` — PASS.
+231. [PENDING] Git Commit: `fix: auto-commit residual workflow documents` (hash: TBD)
 232. [TODO] `provider-readiness.phase8u.residual-docs-verify.task1` Run targeted Core source/dist tests and build for residual document auto-commit policy and provider session cleanup (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify residual document commit policy`).
 233. [TODO] Git Commit: `test: verify residual document commit policy` (hash: TBD)
 234. [TODO] `provider-readiness.phase8u.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).

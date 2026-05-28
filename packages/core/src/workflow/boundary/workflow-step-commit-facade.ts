@@ -31,18 +31,48 @@ export interface WorkflowStepCommitParams {
 
 export interface WorkflowStepCommitResult {
   readonly commit: WorkflowBoundaryCommitResult;
+  readonly residualDocumentCommit?: WorkflowStepResidualDocumentCommit;
   readonly stage: WorkflowStageId;
 }
 
+export interface WorkflowStepResidualDocumentCommit {
+  readonly commit: WorkflowBoundaryCommitResult;
+  readonly paths: readonly string[];
+}
+
 const execFileAsync = promisify(execFile);
+const DOCUMENT_EXTENSIONS = new Set([
+  ".adoc",
+  ".csv",
+  ".doc",
+  ".docx",
+  ".drawio",
+  ".md",
+  ".mdx",
+  ".mmd",
+  ".pdf",
+  ".plantuml",
+  ".puml",
+  ".rst",
+  ".tsv",
+  ".txt",
+  ".xls",
+  ".xlsx",
+]);
+const DOCUMENT_ROOTS = new Set(["doc", "docs"]);
 const GITIGNORE_PATH = ".gitignore";
+const GIT_STATUS_PATH_OFFSET = 3;
 const LOCAL_STATE_ROOT = ".codeai-hub/state";
 const LOCAL_STATE_IGNORE_PATTERN = ".codeai-hub/state/";
 const NEWLINE_RE = /\r?\n/u;
+const RENAME_SEPARATOR = " -> ";
 const TRAILING_SLASHES_RE = /\/+$/u;
 
 const buildAcceptedStepCommitMessage = (stage: WorkflowStageId): string =>
   `codeai-step: ${getWorkflowBoundaryStageLabel(stage)} accepted`;
+
+const buildResidualDocumentsCommitMessage = (stage: WorkflowStageId): string =>
+  `codeai-step: ${getWorkflowBoundaryStageLabel(stage)} residual documents`;
 
 const formatDirtyTreeError = (paths: readonly string[]): string =>
   [
@@ -52,6 +82,38 @@ const formatDirtyTreeError = (paths: readonly string[]): string =>
   ].join("\n");
 
 const splitGitPath = (value: string): readonly string[] => value.split("/");
+
+const trimTrailingSlash = (value: string): string =>
+  value.replace(TRAILING_SLASHES_RE, "");
+
+const extractGitStatusPath = (entry: string): string => {
+  const value = entry.slice(GIT_STATUS_PATH_OFFSET).trim();
+  return value.includes(RENAME_SEPARATOR)
+    ? (value.split(RENAME_SEPARATOR).at(-1) ?? value).trim()
+    : value;
+};
+
+const isWorkflowNeutralDocumentPath = (value: string): boolean => {
+  const normalized = trimTrailingSlash(value);
+  const parts = splitGitPath(normalized);
+  const root = parts[0] ?? "";
+  if (!root || root.startsWith(".")) {
+    return false;
+  }
+  if (DOCUMENT_ROOTS.has(root)) {
+    return true;
+  }
+  if (parts.length === 1 && ["CHANGELOG.md", "README.md"].includes(root)) {
+    return true;
+  }
+  return DOCUMENT_EXTENSIONS.has(pathExtension(normalized));
+};
+
+const pathExtension = (value: string): string => {
+  const basename = value.split("/").at(-1) ?? "";
+  const dotIndex = basename.lastIndexOf(".");
+  return dotIndex >= 0 ? basename.slice(dotIndex).toLowerCase() : "";
+};
 
 const isProviderRuntimePath = (parts: readonly string[]): boolean =>
   parts.length > 6 &&
@@ -72,6 +134,14 @@ const isVolatileProviderRuntimePath = (value: string): boolean => {
     providerHomePath.startsWith("shell_snapshots/")
   );
 };
+
+const selectWorkflowNeutralDocumentPaths = (
+  dirtyPaths: readonly string[]
+): readonly string[] => [
+  ...new Set(
+    dirtyPaths.map(extractGitStatusPath).filter(isWorkflowNeutralDocumentPath)
+  ),
+];
 
 const normalizesToLocalStateIgnore = (line: string): boolean => {
   const normalized = line.trim().replace(TRAILING_SLASHES_RE, "");
@@ -141,6 +211,27 @@ const untrackLocalStateRuntimePaths = async (
   );
 };
 
+const commitWorkflowNeutralResidualDocuments = async (params: {
+  readonly dirtyPaths: readonly string[];
+  readonly git: WorkflowBoundaryGit;
+  readonly stage: WorkflowStageId;
+  readonly workspaceRoot: string;
+}): Promise<WorkflowStepResidualDocumentCommit | undefined> => {
+  const paths = selectWorkflowNeutralDocumentPaths(params.dirtyPaths);
+  if (paths.length === 0) {
+    return undefined;
+  }
+  const commit = await params.git.commit({
+    commitMessage: buildResidualDocumentsCommitMessage(params.stage),
+    paths,
+    workspaceRoot: params.workspaceRoot,
+  });
+  if (commit.noStagedChanges) {
+    return undefined;
+  }
+  return { commit, paths };
+};
+
 export class WorkflowStepCommitFacade {
   readonly #git: WorkflowBoundaryGit;
 
@@ -174,11 +265,23 @@ export class WorkflowStepCommitFacade {
       workspaceRoot: params.workspaceRoot,
     });
     const dirtyPaths = await this.#git.statusPorcelain(params.workspaceRoot);
-    if (dirtyPaths.length > 0) {
-      throw new Error(formatDirtyTreeError(dirtyPaths));
+    const residualDocumentCommit = await commitWorkflowNeutralResidualDocuments(
+      {
+        dirtyPaths,
+        git: this.#git,
+        stage: params.stage,
+        workspaceRoot: params.workspaceRoot,
+      }
+    );
+    const remainingDirtyPaths = await this.#git.statusPorcelain(
+      params.workspaceRoot
+    );
+    if (remainingDirtyPaths.length > 0) {
+      throw new Error(formatDirtyTreeError(remainingDirtyPaths));
     }
     return {
       commit,
+      residualDocumentCommit,
       stage: params.stage,
     };
   }

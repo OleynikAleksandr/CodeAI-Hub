@@ -1,6 +1,9 @@
 import { buildManagedPersistentReturnHandoffMessage } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
 import type { Session } from "../../session-manager";
-import { WorkflowStepCommitFacade } from "../../workflow/boundary/workflow-step-commit-facade";
+import {
+  WorkflowStepCommitFacade,
+  type WorkflowStepCommitResult,
+} from "../../workflow/boundary/workflow-step-commit-facade";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 
 type PreliminaryStageLabel = "Description" | "Virtual Simulation";
@@ -62,6 +65,21 @@ const formatCommitBlockedMessage = (error: unknown): string =>
     error instanceof Error ? error.message : String(error),
   ].join("\n");
 
+const formatResidualDocumentCommitMessage = (
+  result: WorkflowStepCommitResult
+): string | null => {
+  const residual = result.residualDocumentCommit;
+  if (!residual) {
+    return null;
+  }
+  return [
+    "Core: обнаружены изменения документов, не влияющие на управляемый workflow.",
+    `Core зафиксировал их отдельным commit ${residual.commit.hash}, чтобы следующий шаг мог стартовать без Git-блокировки.`,
+    "Зафиксированные пути:",
+    ...residual.paths.map((value) => `- ${value}`),
+  ].join("\n");
+};
+
 export class SessionRequestHandlerPreliminaryReviewCommitter {
   readonly #deps: PreliminaryReviewCommitterDeps;
   readonly #stepCommitFacade: Pick<
@@ -93,12 +111,20 @@ export class SessionRequestHandlerPreliminaryReviewCommitter {
     });
     if (options.session.workspacePath && options.session.initiativeSlug) {
       try {
-        await this.#stepCommitFacade.commitAcceptedStep({
+        const commitResult = await this.#stepCommitFacade.commitAcceptedStep({
           sessions: [options.session],
           stage: stage.stage,
           workspaceRoot: options.session.workspacePath,
           workspaceSlug: options.session.initiativeSlug,
         });
+        const residualMessage =
+          formatResidualDocumentCommitMessage(commitResult);
+        if (residualMessage) {
+          this.#deps.eventMessages.appendCoreMessage(options.sessionId, {
+            content: residualMessage,
+            tag: "managed-workflow-validation",
+          });
+        }
       } catch (error) {
         this.#deps.eventMessages.appendCoreMessage(options.sessionId, {
           content: formatCommitBlockedMessage(error),
