@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "97a7283cd",
+  "lastRecordedCommit": "13216e16e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8i.validation-message.task1",
-  "expectedCommitMessage": "fix: localize managed validation system messages",
+  "currentTaskId": "provider-readiness.phase8i.app-skeleton-verify.task1",
+  "expectedCommitMessage": "test: verify application skeleton managed repair",
   "debt": {
-    "expectedCommitMessage": "fix: localize managed validation system messages",
-    "preCommitHead": "97a7283cd",
+    "expectedCommitMessage": "test: verify application skeleton managed repair",
+    "preCommitHead": "13216e16e",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8i.validation-message.task1"
+    "taskId": "provider-readiness.phase8i.app-skeleton-verify.task1"
   }
 }
 ```
@@ -376,9 +376,12 @@
     - Result 2026-05-28: Application Skeleton repair handling now writes a concise Russian Core System card and sends the full English provider repair prompt only through `sendInternalMessage()`.
     - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` — PASS (3 tests).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
-134. [PENDING] Git Commit: `fix: localize managed validation system messages` (hash: TBD)
-135. [TODO] `provider-readiness.phase8i.app-skeleton-verify.task1` Verify Application Skeleton managed repair, artifact directory preparation, and user-visible validation message routing; do not build a release in this stream (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton managed repair`).
-136. [TODO] Git Commit: `test: verify application skeleton managed repair` (hash: TBD)
+134. [DONE] Git Commit: `fix: localize managed validation system messages` (hash: 13216e16e)
+135. [DONE] `provider-readiness.phase8i.app-skeleton-verify.task1` Verify Application Skeleton managed repair, artifact directory preparation, and user-visible validation message routing; do not build a release in this stream (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton managed repair`).
+    - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/runtime/workflow-runtime.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts` — PASS (17 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: No release build was started; Phase 8i remains in user retest handoff after this verification.
+136. [PENDING] Git Commit: `test: verify application skeleton managed repair` (hash: TBD)
 137. [TODO] `provider-readiness.phase8i.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
