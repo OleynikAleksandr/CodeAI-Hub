@@ -1,3 +1,18 @@
+# Plan Closeout: provider-workspace-home-readiness-repair-2026-05-27
+
+**Created:** 2026-05-28T16:30:43.866Z
+**Acceptance:** User accepted v1.2.391 retest and requested closing the provider readiness repair plan before pushing release to GitHub.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** provider-readiness.phase9.closeout.task1
+**Expected Commit:** docs: close provider readiness repair scope
+**Last Recorded Commit:** 24228e631
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
   "currentTaskId": "provider-readiness.phase9.closeout.task1",
   "expectedCommitMessage": "docs: close provider readiness repair scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close provider readiness repair scope",
-    "preCommitHead": "24228e631",
-    "stage": "commit_pending",
-    "taskId": "provider-readiness.phase9.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -720,6 +730,7 @@
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-263. [DONE] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive, doc/TODO/todo-plan.md, doc/TODO/Archive`; expected commit: `docs: close provider readiness repair scope`).
-264. [PENDING] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+263. [IN_PROGRESS] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Archive/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+264. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
 265. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+````
