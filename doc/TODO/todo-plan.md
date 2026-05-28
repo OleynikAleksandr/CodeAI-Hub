@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "9d6543819",
+  "lastRecordedCommit": "7024b2ac1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8v.release-build.task1",
-  "expectedCommitMessage": "chore: build residual boundary cleanup release",
+  "currentTaskId": "provider-readiness.phase8v.vsix.task1",
+  "expectedCommitMessage": "test: verify residual boundary cleanup vsix package",
   "debt": {
-    "expectedCommitMessage": "chore: build residual boundary cleanup release",
-    "preCommitHead": "9d6543819",
+    "expectedCommitMessage": "test: verify residual boundary cleanup vsix package",
+    "preCommitHead": "7024b2ac1",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8v.release-build.task1"
+    "taskId": "provider-readiness.phase8v.vsix.task1"
   }
 }
 ```
@@ -663,9 +663,12 @@
     - Result 2026-05-28: release cleanup was corrected to preserve `~/.codeai-hub/providers/glm-claude-code/config.json` alongside GLM `home` before committing this release build.
     - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.389.tar.bz2`, `codex-module-1.2.389.tar.bz2`, `gemini-module-1.2.389.tar.bz2`, `glm-claude-code-module-1.2.389.tar.bz2`, `kimi-module-1.2.389.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.389.tar.bz2`, `vscode-webview-1.2.389.tar.bz2`, `project-manager-1.2.389.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.389.tar.bz2`.
     - Artifact SHA1 check: Claude `8e0c057abc94b228ce593aa947987a234d338522`; Codex `806e403eb470f18e40fa74580b4e5d317d28c338`; Gemini `e125d3ce94fe4214b8c87f244b3f2b3de5d4b64e`; GLM `105c00a7842fa0a84dc60c06ab7a9e96a609cd70`; Kimi `25e68b342e5919fffe5588ed14e3fa1798615f89`; Core `df61bd85f5622257d7c8e2ba06cb90cbb538a909`; Project Manager `52a2338cddd3e01f077f3024817f7ae66b720f4f`; VS Code Webview `97ffb507a03a4c013230a188f69d8b5a3a7531c1`; Launcher `2e65fda98e73c5a976165f11a5fd8c38a58ac8e0`.
-238. [PENDING] Git Commit: `chore: build residual boundary cleanup release` (hash: TBD)
-239. [TODO] `provider-readiness.phase8v.vsix.task1` Run final VSIX packaging with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify residual boundary cleanup vsix package`).
-240. [TODO] Git Commit: `test: verify residual boundary cleanup vsix package` (hash: TBD)
+238. [DONE] Git Commit: `chore: build residual boundary cleanup release` (hash: 7024b2ac1)
+239. [DONE] `provider-readiness.phase8v.vsix.task1` Run final VSIX packaging with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify residual boundary cleanup vsix package`).
+    - Result 2026-05-28: `./scripts/build-release.sh --use-current-version` — PASS for v1.2.389.
+    - Verified release output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
+    - VSIX: `codeai-hub-1.2.389.vsix` (4.4M), SHA1 `e46948e96fc703b103e0873c08ac8e796141046e`.
+240. [PENDING] Git Commit: `test: verify residual boundary cleanup vsix package` (hash: TBD)
 241. [TODO] `provider-readiness.phase8v.user-retest.task1` User installs the produced v1.2.389 release and retests provider session log cleanup, residual document auto-commit, GLM availability/home, localization, and next-step startup (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
