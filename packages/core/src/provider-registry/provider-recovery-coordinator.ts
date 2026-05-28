@@ -219,7 +219,7 @@ export class ProviderRecoveryCoordinator {
       case "kimiCode":
         return "Kimi CLI is unavailable. Confirm `kimi` is installed and logged in, then use Settings → General → Restart Core to retry";
       case "glmClaudeCode":
-        return "GLM-Claude-Code is unavailable because it needs a separate Z.AI/GLM API key; Claude login is not reused. Add the key in Settings → Providers → GLM-Claude-Code, CODEAI_GLM_CLAUDE_CODE_API_KEY, GLM_CLAUDE_CODE_API_KEY, ZAI_API_KEY, or ~/.codeai-hub/providers/glm-claude-code/config.json, then use Settings → General → Restart Core to retry";
+        return 'GLM-Claude-Code is unavailable because it needs a separate Z.AI/GLM API key; Claude login is not reused. CodeAI Hub creates ~/.codeai-hub/providers/glm-claude-code/config.json automatically. Open that file and paste your key into the JSON field "apiKey", for example { "apiKey": "zai-..." }. Then use Settings → General → Restart Core to retry. You can also set CODEAI_GLM_CLAUDE_CODE_API_KEY, GLM_CLAUDE_CODE_API_KEY, or ZAI_API_KEY';
       default:
         return "Claude CLI is unavailable. CodeAI Hub runs provider-home auth bootstrap automatically; if it still fails, run `claude /login`, then use Settings → General → Restart Core to retry. If it still fails, run `HOME=~/.codeai-hub/providers/claude/home claude /login`, then restart Core";
     }
