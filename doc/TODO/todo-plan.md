@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "ccb5f8a11",
+  "lastRecordedCommit": "8b7527b11",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8s.release-build.task1",
-  "expectedCommitMessage": "chore: build global settings release",
+  "currentTaskId": "provider-readiness.phase8s.release-vsix.task1",
+  "expectedCommitMessage": "test: verify global settings vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build global settings release",
-    "preCommitHead": "ccb5f8a11",
+    "expectedCommitMessage": "test: verify global settings vsix",
+    "preCommitHead": "8b7527b11",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8s.release-build.task1"
+    "taskId": "provider-readiness.phase8s.release-vsix.task1"
   }
 }
 ```
@@ -602,9 +602,12 @@
     - Result 2026-05-28: `./scripts/build-all.sh --allow-dirty` — PASS for v1.2.388. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-build transition.
     - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.388.tar.bz2`, `codex-module-1.2.388.tar.bz2`, `gemini-module-1.2.388.tar.bz2`, `glm-claude-code-module-1.2.388.tar.bz2`, `kimi-module-1.2.388.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.388.tar.bz2`, `vscode-webview-1.2.388.tar.bz2`, `project-manager-1.2.388.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.388.tar.bz2`.
     - Artifact SHA1 check: GLM `7aa70efdf7326c804733407a52cafeb6d7dd9dfe`; Core `93ce53d0964ae1c554159685bc609852f1dbe640`; Launcher `b43a040d7668270e28c3ee6ef57de7adf6263262`; Claude `7d9f3e3936f374b06729d460fc0f54ecd844f9b8`; Codex `a99402c1346ba83064dc3319c5f72f7221b6d7f8`; Gemini `0cbcd1ccd6144a0dbb2fca1499aeb461ebc4d649`; Kimi `7f2d23617661a5152936859475b8b81ef5a53f02`; webview `882dfa8dae3d3b4575e5abaccc0c202b80b62062`; Project Manager `9333dae75374536d4881b654dcaee37c35cabf9f`.
-215. [PENDING] Git Commit: `chore: build global settings release` (hash: TBD)
-216. [TODO] `provider-readiness.phase8s.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify global settings vsix`).
-217. [TODO] Git Commit: `test: verify global settings vsix` (hash: TBD)
+215. [DONE] Git Commit: `chore: build global settings release` (hash: 8b7527b11)
+216. [DONE] `provider-readiness.phase8s.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify global settings vsix`).
+    - Result 2026-05-28: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-vsix transition.
+    - Result 2026-05-28: Verified release output lines: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `✅ VSIX runtime package surface verified`.
+    - Result 2026-05-28: VSIX ready at `codeai-hub-1.2.388.vsix` (4.4M), SHA1 `699c5353d149f8ff55bfdca85021843bf0fd4787`.
+217. [PENDING] Git Commit: `test: verify global settings vsix` (hash: TBD)
 218. [TODO] `provider-readiness.phase8s.user-retest.task1` User installs the replacement release and retests GLM global config preservation plus global General/Localization settings behavior (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
