@@ -11,6 +11,7 @@ import {
 } from "../../../ui/src/components/settings/settings-state-model";
 import type { VersionsState } from "../../../ui/src/components/settings/use-settings-state-support";
 import { createBootstrapSettings } from "../../../ui/src/shared-hooks/use-bootstrap-settings";
+import { serializeSettingsForPersistence } from "../../../ui/src/components/settings/settings-state-helpers";
 import type {
   IncomingMessage,
   SettingsLoadedPayload,
@@ -174,7 +175,10 @@ export const useProjectManagerSettings = (
   const save = useCallback((nextSettings: Settings) => {
     setSaving(true);
     setSaveError(null);
-    api.saveSettings(nextSettings, settingsScope);
+    api.saveSettings(
+      serializeSettingsForPersistence(nextSettings),
+      settingsScope
+    );
   }, [settingsScope]);
 
   const reset = useCallback(() => {

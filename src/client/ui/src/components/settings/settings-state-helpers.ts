@@ -15,8 +15,25 @@ import type {
   CodexReasoningLevel,
   GeneralResponseMode,
   ProviderId,
+  RawSettingsSnapshot,
   Settings,
 } from "./settings-state-model";
+
+export const serializeSettingsForPersistence = (
+  settings: Settings
+): RawSettingsSnapshot => {
+  const { engineId, ...localization } = settings.general.localization;
+  return {
+    ...settings,
+    general: {
+      ...settings.general,
+      localization: {
+        ...localization,
+        uiEngineId: engineId,
+      },
+    },
+  };
+};
 
 export const updateThinkingSettings = (
   settings: Settings,

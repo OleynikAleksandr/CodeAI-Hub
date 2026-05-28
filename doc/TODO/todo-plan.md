@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "f85f6380f",
+  "lastRecordedCommit": "487960586",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8r.global-settings-core.task1",
-  "expectedCommitMessage": "fix: split general settings into global store",
+  "currentTaskId": "provider-readiness.phase8r.global-settings-ui.task1",
+  "expectedCommitMessage": "fix: route general settings to global store",
   "debt": {
-    "expectedCommitMessage": "fix: split general settings into global store",
-    "preCommitHead": "f85f6380f",
+    "expectedCommitMessage": "fix: route general settings to global store",
+    "preCommitHead": "487960586",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8r.global-settings-core.task1"
+    "taskId": "provider-readiness.phase8r.global-settings-ui.task1"
   }
 }
 ```
@@ -580,9 +580,12 @@
     - Result 2026-05-28: localization runtime/bootstrap/glossary paths now resolve under the global app localization root instead of the workspace capsule localization root.
     - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts packages/core/src/session-translation/session-translation-policy-resolver.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts` — PASS (16 tests).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
-207. [PENDING] Git Commit: `fix: split general settings into global store` (hash: TBD)
-208. [TODO] `provider-readiness.phase8r.global-settings-ui.task1` Update Project Manager settings load/save behavior so the user-level `general` blocks read/write global app userspace settings while provider/model/workspace options remain workspace-local (scope: `src/client/project-manager/components/settings, src/client/project-manager/services, src/client/ui/src/components/settings, doc/TODO/todo-plan.md`; expected commit: `fix: route general settings to global store`).
-209. [TODO] Git Commit: `fix: route general settings to global store` (hash: TBD)
+207. [DONE] Git Commit: `fix: split general settings into global store` (hash: 487960586)
+208. [DONE] `provider-readiness.phase8r.global-settings-ui.task1` Update Project Manager settings load/save behavior so the user-level `general` blocks read/write global app userspace settings while provider/model/workspace options remain workspace-local (scope: `src/client/project-manager/components/settings, src/client/project-manager/services, src/client/ui/src/components/settings, doc/TODO/todo-plan.md`; expected commit: `fix: route general settings to global store`).
+    - Result 2026-05-28: Project Manager settings saves now serialize the UI translation engine selection as canonical `general.localization.uiEngineId` before Core persists the split global `general` snapshot.
+    - Result 2026-05-28: `npm run typecheck:webview` — PASS.
+    - Result 2026-05-28: `npm run build:webview` — PASS.
+209. [PENDING] Git Commit: `fix: route general settings to global store` (hash: TBD)
 210. [TODO] `provider-readiness.phase8r.global-settings-verify.task1` Verify global general settings migration/read path, workspace settings without ownership of the moved `general` blocks, and System/Reasoning translation engine selection from global settings (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify global general settings split`).
 211. [TODO] Git Commit: `test: verify global general settings split` (hash: TBD)
 
