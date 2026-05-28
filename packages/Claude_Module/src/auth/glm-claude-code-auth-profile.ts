@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -104,11 +104,23 @@ const isFileAlreadyExistsError = (error: unknown): boolean =>
       (error as { readonly code?: unknown }).code === "EEXIST"
   );
 
+const fileExists = async (filePath: string): Promise<boolean> => {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const ensureGlmClaudeCodeConfigFile = async (
   options: GlmClaudeCodeApiKeyOptions = {}
 ): Promise<string> => {
   const env = options.env ?? process.env;
   const configPath = options.configPath ?? resolveGlmClaudeCodeConfigPath(env);
+  if (await fileExists(configPath)) {
+    return configPath;
+  }
   await mkdir(path.dirname(configPath), { recursive: true });
   try {
     await writeFile(configPath, buildGlmClaudeCodeConfigTemplate(), {

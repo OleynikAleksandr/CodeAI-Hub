@@ -6,30 +6,42 @@ import test from "node:test";
 import { buildGlmClaudeCodeRuntimeProbeProfile } from "./glm-claude-code-runtime-profile";
 
 test("GLM-Claude-Code probe profile resolves non-empty workspace settings without persisting secrets", async () => {
-  const profile = await buildGlmClaudeCodeRuntimeProbeProfile({
-    env: {
-      ANTHROPIC_API_KEY: " ",
-      CODEAI_GLM_CLAUDE_CODE_API_KEY: " ",
-      GLM_CLAUDE_CODE_API_KEY: " ",
-      ZAI_API_KEY: " ",
-    },
-    home: "/tmp/glm-provider-home",
-    workspaceSettings: {
-      apiKey: "workspace-secret",
-      baseUrl: "https://workspace.example/anthropic",
-      haikuModel: "workspace-haiku",
-      sonnetModel: "workspace-sonnet",
-    },
-  });
+  const dir = await mkdtemp(path.join(tmpdir(), "glm-settings-inline-"));
+  try {
+    const profile = await buildGlmClaudeCodeRuntimeProbeProfile({
+      env: {
+        ANTHROPIC_API_KEY: " ",
+        CODEAI_GLM_CLAUDE_CODE_API_KEY: " ",
+        CODEAI_GLM_CLAUDE_CODE_CONFIG_PATH: path.join(
+          dir,
+          "global-config.json"
+        ),
+        GLM_CLAUDE_CODE_API_KEY: " ",
+        ZAI_API_KEY: " ",
+      },
+      home: "/tmp/glm-provider-home",
+      workspaceSettings: {
+        apiKey: "workspace-secret",
+        baseUrl: "https://workspace.example/anthropic",
+        haikuModel: "workspace-haiku",
+        sonnetModel: "workspace-sonnet",
+      },
+    });
 
-  assert.equal(profile.diagnostics.apiKeySource, "workspace_settings");
-  assert.equal(profile.env.ANTHROPIC_API_KEY, "workspace-secret");
-  assert.equal(
-    profile.env.ANTHROPIC_BASE_URL,
-    "https://workspace.example/anthropic"
-  );
-  assert.equal(profile.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, "workspace-haiku");
-  assert.equal(profile.env.ANTHROPIC_DEFAULT_SONNET_MODEL, "workspace-sonnet");
+    assert.equal(profile.diagnostics.apiKeySource, "workspace_settings");
+    assert.equal(profile.env.ANTHROPIC_API_KEY, "workspace-secret");
+    assert.equal(
+      profile.env.ANTHROPIC_BASE_URL,
+      "https://workspace.example/anthropic"
+    );
+    assert.equal(profile.env.ANTHROPIC_DEFAULT_HAIKU_MODEL, "workspace-haiku");
+    assert.equal(
+      profile.env.ANTHROPIC_DEFAULT_SONNET_MODEL,
+      "workspace-sonnet"
+    );
+  } finally {
+    await rm(dir, { force: true, recursive: true });
+  }
 });
 
 test("GLM-Claude-Code probe profile reads persisted workspace settings path", async () => {
@@ -53,6 +65,10 @@ test("GLM-Claude-Code probe profile reads persisted workspace settings path", as
 
     const profile = await buildGlmClaudeCodeRuntimeProbeProfile({
       env: {
+        CODEAI_GLM_CLAUDE_CODE_CONFIG_PATH: path.join(
+          dir,
+          "global-config.json"
+        ),
         CODEAI_GLM_CLAUDE_CODE_WORKSPACE_SETTINGS_PATH: settingsPath,
       },
       home: path.join(dir, "home"),

@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "ed072c0ee",
+  "lastRecordedCommit": "de0437c27",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8r.glm-config-preservation-diagnose.task1",
-  "expectedCommitMessage": "test: characterize glm config preservation",
+  "currentTaskId": "provider-readiness.phase8r.glm-config-preservation-fix.task1",
+  "expectedCommitMessage": "fix: preserve existing glm global config",
   "debt": {
-    "expectedCommitMessage": "test: characterize glm config preservation",
-    "preCommitHead": "ed072c0ee",
+    "expectedCommitMessage": "fix: preserve existing glm global config",
+    "preCommitHead": "de0437c27",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8r.glm-config-preservation-diagnose.task1"
+    "taskId": "provider-readiness.phase8r.glm-config-preservation-fix.task1"
   }
 }
 ```
@@ -551,9 +551,13 @@
     - Diagnostic 2026-05-28: runtime bootstrap already uses create-only `writeFile(..., flag: "wx")`, so it does not overwrite existing config contents, but it still attempts a write-open against an existing config on every auth resolution.
     - Diagnostic 2026-05-28: installer script writes the template only when `~/.codeai-hub/providers/glm-claude-code/config.json` is missing; existing config is skipped and not copied into versioned runtime directories.
     - Result 2026-05-28: `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts` — PASS (4 tests), including byte-for-byte and mtime preservation of an existing GLM config file.
-199. [PENDING] Git Commit: `test: characterize glm config preservation` (hash: TBD)
-200. [TODO] `provider-readiness.phase8r.glm-config-preservation-fix.task1` Ensure extension/version installation and runtime bootstrap never modify an existing GLM global config file while still providing a safe missing-template path for first-time users (scope: `packages/Claude_Module/src/auth/glm-claude-code-auth-profile.ts, packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts, scripts/build-glm-claude-code-module.sh, doc/TODO/todo-plan.md`; expected commit: `fix: preserve existing glm global config`).
-201. [TODO] Git Commit: `fix: preserve existing glm global config` (hash: TBD)
+199. [DONE] Git Commit: `test: characterize glm config preservation` (hash: de0437c27)
+200. [DONE] `provider-readiness.phase8r.glm-config-preservation-fix.task1` Ensure extension/version installation and runtime bootstrap never modify an existing GLM global config file while still providing a safe missing-template path for first-time users (scope: `packages/Claude_Module, scripts/build-glm-claude-code-module.sh, doc/TODO/todo-plan.md`; expected commit: `fix: preserve existing glm global config`).
+    - Result 2026-05-28: `ensureGlmClaudeCodeConfigFile()` now returns immediately when the target config exists, so runtime bootstrap no longer attempts a create/write-open against an existing `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json`.
+    - Result 2026-05-28: GLM runtime profile tests isolate `CODEAI_GLM_CLAUDE_CODE_CONFIG_PATH` from the user's real global config, so a filled personal `apiKey` cannot mask workspace-settings routing assertions.
+    - Result 2026-05-28: `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts` — PASS (6 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+201. [PENDING] Git Commit: `fix: preserve existing glm global config` (hash: TBD)
 202. [TODO] `provider-readiness.phase8r.glm-config-preservation-verify.task1` Verify existing GLM global config preservation, missing-template creation, provider availability after filled `apiKey`, and installer behavior without building a release (scope: `packages/Claude_Module, scripts/build-glm-claude-code-module.sh, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config preservation`).
 203. [TODO] Git Commit: `test: verify glm config preservation` (hash: TBD)
 
