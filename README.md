@@ -2,7 +2,21 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.388** (Global Settings Split Hotfix)
+**Current Release — v1.2.389** (Residual Boundary Cleanup Hotfix)
+
+This hotfix stops provider runtime session transcripts from blocking the next
+workflow boundary. Files under
+`.codeai-hub/<workspace>/runtime/sessions/unified/<provider>/`, including
+translation JSONL logs, are treated as mutable provider runtime state instead of
+rollback-owned workflow artifacts.
+
+After Core accepts a preliminary workflow step, it now auto-commits
+workflow-neutral residual document changes in a separate
+`codeai-step: <Stage> residual documents` commit and shows the committed paths
+to the user. Code/config/unknown dirty paths still block the next workflow step
+because they may affect the generated design output.
+
+**Previous Release — v1.2.388** (Global Settings Split Hotfix)
 
 This hotfix preserves an existing GLM-Claude-Code global config at
 `~/.codeai-hub/providers/glm-claude-code/config.json` during install/runtime

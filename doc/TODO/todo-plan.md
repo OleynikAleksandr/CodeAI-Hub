@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "ebb712ea0",
+  "lastRecordedCommit": "cc8453a50",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8u.residual-docs-verify.task1",
-  "expectedCommitMessage": "test: verify residual document commit policy",
+  "currentTaskId": "provider-readiness.phase8v.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare residual boundary cleanup release",
   "debt": {
-    "expectedCommitMessage": "test: verify residual document commit policy",
-    "preCommitHead": "ebb712ea0",
+    "expectedCommitMessage": "docs: prepare residual boundary cleanup release",
+    "preCommitHead": "cc8453a50",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8u.residual-docs-verify.task1"
+    "taskId": "provider-readiness.phase8v.release-prep.task1"
   }
 }
 ```
@@ -650,11 +650,22 @@
     - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts` — PASS (15 tests).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: `node --test packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade-residual-docs.test.js packages/core/dist/workflow/runtime/workspace-runtime-capsule-gitignore.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.js` — PASS (15 tests).
-233. [PENDING] Git Commit: `test: verify residual document commit policy` (hash: TBD)
-234. [TODO] `provider-readiness.phase8u.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+233. [DONE] Git Commit: `test: verify residual document commit policy` (hash: cc8453a50)
+234. [DONE] `provider-readiness.phase8u.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none). Result: User explicitly confirmed release build for the residual boundary cleanup fixes on 2026-05-28.
+
+## Phase 8v — Release Build (owner: Codex, updated: 2026-05-28)
+### Stream: Residual Boundary Cleanup Release
+235. [DONE] `provider-readiness.phase8v.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.389 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare residual boundary cleanup release`).
+    - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.389 before running release scripts.
+236. [PENDING] Git Commit: `docs: prepare residual boundary cleanup release` (hash: TBD)
+237. [TODO] `provider-readiness.phase8v.release-build.task1` Run `./scripts/build-all.sh` using committed future-version docs, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build residual boundary cleanup release`).
+238. [TODO] Git Commit: `chore: build residual boundary cleanup release` (hash: TBD)
+239. [TODO] `provider-readiness.phase8v.vsix.task1` Run final VSIX packaging with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify residual boundary cleanup vsix package`).
+240. [TODO] Git Commit: `test: verify residual boundary cleanup vsix package` (hash: TBD)
+241. [TODO] `provider-readiness.phase8v.user-retest.task1` User installs the produced v1.2.389 release and retests provider session log cleanup, residual document auto-commit, GLM availability/home, localization, and next-step startup (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-235. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-236. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-237. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+242. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+243. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+244. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).

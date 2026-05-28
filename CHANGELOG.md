@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.389] - 2026-05-28
+### Fixed
+- **Provider session JSONL no longer blocks workflow boundaries.** Core now treats provider-owned transcript directories under `.codeai-hub/<workspace>/runtime/sessions/unified/<provider>/` as mutable runtime state, including translation JSONL logs, while keeping Core-owned unified-session root files eligible for rollback ownership.
+- **Residual workflow-neutral documents are committed automatically after step acceptance.** After the accepted step commit, Core auto-commits document-only leftovers in a separate `codeai-step: <Stage> residual documents` commit and appends a system message that lists the committed paths. Non-document code/config/unknown dirty files still block the next workflow step.
+
+### Tests
+- `npx tsx --test packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade-residual-docs.test.js packages/core/dist/workflow/runtime/workspace-runtime-capsule-gitignore.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.js`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.388] - 2026-05-28
 ### Fixed
 - **Existing GLM-Claude-Code config is preserved during upgrades.** Runtime bootstrap now returns immediately when `~/.codeai-hub/providers/glm-claude-code/config.json` already exists, avoiding any write-open attempt against a user's API-key file while keeping first-time template creation for missing configs.
