@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "8f409cbc8",
+  "lastRecordedCommit": "17725eed0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8r.glm-config-preservation-verify.task1",
-  "expectedCommitMessage": "test: verify glm config preservation",
+  "currentTaskId": "provider-readiness.phase8r.global-settings-diagnose.task1",
+  "expectedCommitMessage": "test: characterize global general settings ownership",
   "debt": {
-    "expectedCommitMessage": "test: verify glm config preservation",
-    "preCommitHead": "8f409cbc8",
+    "expectedCommitMessage": "test: characterize global general settings ownership",
+    "preCommitHead": "17725eed0",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8r.glm-config-preservation-verify.task1"
+    "taskId": "provider-readiness.phase8r.global-settings-diagnose.task1"
   }
 }
 ```
@@ -564,11 +564,15 @@
     - Result 2026-05-28: `bash -n scripts/build-glm-claude-code-module.sh` — PASS.
     - Result 2026-05-28: install script guard verified: it creates `~/.codeai-hub/providers/glm-claude-code/config.json` only when `[[ ! -e "$CONFIG_PATH" ]]`; existing user config is not rewritten during version installation.
     - Result 2026-05-28: live config path `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` is currently absent in this shell context, so no live user config was created or mutated during this verification stream.
-203. [PENDING] Git Commit: `test: verify glm config preservation` (hash: TBD)
+203. [DONE] Git Commit: `test: verify glm config preservation` (hash: 17725eed0)
 
 ### Stream: Global General Settings Split
-204. [TODO] `provider-readiness.phase8r.global-settings-diagnose.task1` Characterize current ownership for user-level `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech`, including workspace runtime settings, Project Manager settings persistence, and session-translation engine readers, before moving these blocks to global app userspace settings (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/session-translation/session-translation-policy-resolver.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize global general settings ownership`).
-205. [TODO] Git Commit: `test: characterize global general settings ownership` (hash: TBD)
+204. [DONE] `provider-readiness.phase8r.global-settings-diagnose.task1` Characterize current ownership for user-level `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech`, including workspace runtime settings, Project Manager settings persistence, and session-translation engine readers, before moving these blocks to global app userspace settings (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/session-translation/session-translation-policy-resolver.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize global general settings ownership`).
+    - Diagnostic 2026-05-28: `WORKSPACE_SETTINGS_SEED` currently persists `general.coreControls`, `general.localization`, and `general.responsePolicy` directly into each workspace `runtime/settings/settings.json`; `textToSpeech` is normalized in UI defaults but is still saved back through the same workspace settings payload.
+    - Diagnostic 2026-05-28: `SettingsPersistenceService` rejects unscoped writes and does not create the configured global settings file; all save/reset writes require a workspace scope and persist the full settings snapshot to the workspace settings path.
+    - Diagnostic 2026-05-28: localization runtime assets are still workspace-owned: `WorkspaceRuntimeCapsule` creates `runtime/localization`, `CoreLocalizationFacadeFactory` passes the workspace localization root into `LocalizationFacade`, `SettingsRequestHandler` opens the user glossary under the workspace localization root, and `SessionTranslationPolicyResolver` derives the browser bootstrap path from the workspace settings path.
+    - Diagnostic 2026-05-28: session translation engine/language readers (`loadUITranslationEngineId`, `loadReasoningTranslationEngineId`, `loadReasoningLanguage`) read `general.localization` from the same workspace settings path used for provider settings.
+205. [PENDING] Git Commit: `test: characterize global general settings ownership` (hash: TBD)
 206. [TODO] `provider-readiness.phase8r.global-settings-core.task1` Introduce Core-owned global user settings storage under the app userspace for `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech`, while workspace settings remain responsible for workspace-specific providers/models/runtime values (scope: `packages/core/src/workflow/runtime, packages/core/src/config, doc/TODO/todo-plan.md`; expected commit: `fix: split general settings into global store`).
 207. [TODO] Git Commit: `fix: split general settings into global store` (hash: TBD)
 208. [TODO] `provider-readiness.phase8r.global-settings-ui.task1` Update Project Manager settings load/save behavior so the user-level `general` blocks read/write global app userspace settings while provider/model/workspace options remain workspace-local (scope: `src/client/project-manager/components/settings, src/client/project-manager/services, src/client/ui/src/components/settings, doc/TODO/todo-plan.md`; expected commit: `fix: route general settings to global store`).
