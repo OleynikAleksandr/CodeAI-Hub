@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 
@@ -87,11 +87,51 @@ export const resolveGlmClaudeCodeConfigPath = (
 ): string =>
   trimOptional(env.CODEAI_GLM_CLAUDE_CODE_CONFIG_PATH) ?? DEFAULT_CONFIG_PATH;
 
+const buildGlmClaudeCodeConfigTemplate = (): string =>
+  `${JSON.stringify(
+    {
+      apiKey: "",
+    },
+    null,
+    2
+  )}\n`;
+
+const isFileAlreadyExistsError = (error: unknown): boolean =>
+  Boolean(
+    error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { readonly code?: unknown }).code === "EEXIST"
+  );
+
+export const ensureGlmClaudeCodeConfigFile = async (
+  options: GlmClaudeCodeApiKeyOptions = {}
+): Promise<string> => {
+  const env = options.env ?? process.env;
+  const configPath = options.configPath ?? resolveGlmClaudeCodeConfigPath(env);
+  await mkdir(path.dirname(configPath), { recursive: true });
+  try {
+    await writeFile(configPath, buildGlmClaudeCodeConfigTemplate(), {
+      encoding: "utf8",
+      flag: "wx",
+    });
+  } catch (error) {
+    if (!isFileAlreadyExistsError(error)) {
+      throw error;
+    }
+  }
+  return configPath;
+};
+
 export const resolveGlmClaudeCodeApiKey = async (
   options: GlmClaudeCodeApiKeyOptions = {}
 ): Promise<GlmClaudeCodeApiKeyResolution> => {
   const env = options.env ?? process.env;
   const configPath = options.configPath ?? resolveGlmClaudeCodeConfigPath(env);
+  await ensureGlmClaudeCodeConfigFile({ configPath, env }).catch(() => {
+    // Auth can still come from env/workspace settings even if the template path
+    // is not writable, so template creation is best-effort during resolution.
+  });
   const configText = await readFile(configPath, "utf8").catch(() => "");
   const config = parseGlmClaudeCodeConfig(configText);
 

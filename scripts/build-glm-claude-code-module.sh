@@ -86,6 +86,19 @@ mkdir -p "$TARGET_DIR"
 cp -R "$STAGE_DIR"/* "$TARGET_DIR"
 echo -n "$MODULE_VERSION" > "$INSTALL_ROOT/latest"
 
+CONFIG_PATH="$INSTALL_ROOT/config.json"
+if [[ ! -e "$CONFIG_PATH" ]]; then
+  mkdir -p "$(dirname "$CONFIG_PATH")"
+  cat > "$CONFIG_PATH" <<'EOF'
+{
+  "apiKey": ""
+}
+EOF
+  echo "📝 Created GLM-Claude-Code config template: $CONFIG_PATH"
+else
+  echo "📝 Preserved existing GLM-Claude-Code config: $CONFIG_PATH"
+fi
+
 find "$INSTALL_ROOT" -mindepth 1 -maxdepth 1 -type d ! -name "$MODULE_VERSION" ! -name "home" -exec rm -rf {} +
 rm -rf "$INSTALL_ROOT/downloads"
 
