@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.382** (Virtual Simulation Handoff Repair Hotfix)
+**Current Release — v1.2.383** (Workflow Blocker Repair Hotfix)
+
+This hotfix repairs the Description-to-Virtual-Simulation handoff regression
+found in v1.2.382. Core now untracks legacy workspace-local
+`.codeai-hub/state/` runtime metadata before the accepted-step clean-Git gate,
+including files that were already tracked, so timer state cannot block the
+next workflow step.
+
+If workflow session creation is rejected before `session:created`, Project
+Manager now receives the real Core `session:error` instead of waiting until
+`Session creation timed out.`. Remaining workflow validation blockers are also
+covered by the System/Reasoning translation overlay.
+
+**Previous Release — v1.2.382** (Virtual Simulation Handoff Repair Hotfix)
 
 This hotfix prevents Gemini Virtual Simulation runs from reaching user review
 unless the canonical

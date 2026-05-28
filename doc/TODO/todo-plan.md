@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "3cea22311",
+  "lastRecordedCommit": "af9ee944f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8e.translation-verify.task1",
-  "expectedCommitMessage": "test: verify workflow blocker translation and cleanup",
+  "currentTaskId": "provider-readiness.phase8f.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare workflow blocker repair release",
   "debt": {
-    "expectedCommitMessage": "test: verify workflow blocker translation and cleanup",
-    "preCommitHead": "3cea22311",
+    "expectedCommitMessage": "docs: prepare workflow blocker repair release",
+    "preCommitHead": "af9ee944f",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8e.translation-verify.task1"
+    "taskId": "provider-readiness.phase8f.release-prep.task1"
   }
 }
 ```
@@ -295,10 +295,23 @@
 105. [DONE] `provider-readiness.phase8e.translation-verify.task1` Verify that any remaining Core workflow blocker message is carried through the System/Reasoning translation route and that the tracked timer-state case no longer emits the blocker at all (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow blocker translation and cleanup`).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-routing.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js` — PASS (20 tests).
-106. [PENDING] Git Commit: `test: verify workflow blocker translation and cleanup` (hash: TBD)
+106. [DONE] Git Commit: `test: verify workflow blocker translation and cleanup` (hash: af9ee944f)
+
+## Phase 8f — Release Build Gate (owner: Oleksandr, updated: 2026-05-28)
+### Stream: Await Explicit Release Confirmation
+107. [DONE] `provider-readiness.phase8f.release-confirmation.task1` Await explicit user confirmation before preparing metadata or building the next replacement release for the Description-to-Virtual-Simulation regression fixes (scope: chat/process observation only; expected commit: none).
+    - Result 2026-05-28: User explicitly requested a new release build.
+108. [DONE] `provider-readiness.phase8f.release-prep.task1` If the user confirms release build, update README/CHANGELOG for the next version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare workflow blocker repair release`).
+    - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.383 before running release scripts.
+109. [PENDING] Git Commit: `docs: prepare workflow blocker repair release` (hash: TBD)
+110. [TODO] `provider-readiness.phase8f.release-build.task1` Run the approved unified release build for the workflow blocker/session-create repair (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build workflow blocker repair release`).
+111. [TODO] Git Commit: `chore: build workflow blocker repair release` (hash: TBD)
+112. [TODO] `provider-readiness.phase8f.release-vsix.task1` Run the approved VSIX packaging step, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow blocker repair vsix`).
+113. [TODO] Git Commit: `test: verify workflow blocker repair vsix` (hash: TBD)
+114. [TODO] `provider-readiness.phase8f.user-retest.task1` User installs the produced replacement release and retests Description acceptance, Virtual Simulation startup with multiple providers, and absence/translation of Core workflow blocker messages (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-107. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-108. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-109. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+115. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+116. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+117. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).

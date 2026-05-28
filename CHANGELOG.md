@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.383] - 2026-05-28
+### Fixed
+- **Description acceptance no longer blocks on tracked local timer state.** Core now untracks legacy workspace-local `.codeai-hub/state/` runtime files before the accepted-step clean-Git gate, including files that were already tracked, while leaving the runtime files on disk.
+- **Workflow session creation reports the real Core error.** When workflow preflight rejects session creation before `session:created`, Project Manager receives `session:error` for the requesting client instead of falling through to `Session creation timed out.`.
+- **Workflow blocker translation is covered.** Remaining Core workflow validation blockers stay on the System/Reasoning translation overlay, and the tracked timer-state case no longer emits the blocker at all.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-routing.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.382] - 2026-05-27
 ### Fixed
 - **Virtual Simulation handoff requires the canonical artifact.** Core now blocks the preliminary user-review handoff when `virtual_simulation/virtual-simulation.md` is missing, preventing Gemini Virtual Simulation from appearing accepted while Diagram Modules later fails with `virtual-simulation.md not found`.
