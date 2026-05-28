@@ -8134,6 +8134,7 @@
   var LEGACY_SOURCE_LANGUAGE2 = "source";
   var DEFAULT_LOCALIZATION_LANGUAGE2 = "en";
   var DEFAULT_LOCALIZATION_ENGINE_ID2 = "google-gtx";
+  var LM_STUDIO_LOCALIZATION_ENGINE_PREFIX = "lmstudio:";
   var SUPPORTED_LOCALIZATION_ENGINE_IDS = [
     "apple-native",
     "google-gtx",
@@ -8155,6 +8156,9 @@
     const trimmed = value.trim();
     if (!(trimmed.length > 0)) {
       return DEFAULT_LOCALIZATION_ENGINE_ID2;
+    }
+    if (trimmed.startsWith(LM_STUDIO_LOCALIZATION_ENGINE_PREFIX)) {
+      return trimmed;
     }
     return SUPPORTED_LOCALIZATION_ENGINE_ID_SET.has(trimmed) ? trimmed : DEFAULT_LOCALIZATION_ENGINE_ID2;
   };

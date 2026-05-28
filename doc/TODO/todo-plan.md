@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "e26bdc2c1",
+  "lastRecordedCommit": "5b3f5ab7c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase3.docs.task1",
-  "expectedCommitMessage": "docs: document local models translation boundary",
+  "currentTaskId": "local-models.phase4.verify.task1",
+  "expectedCommitMessage": "test: verify local models module",
   "debt": {
-    "expectedCommitMessage": "docs: document local models translation boundary",
-    "preCommitHead": "e26bdc2c1",
+    "expectedCommitMessage": "test: verify local models module",
+    "preCommitHead": "5b3f5ab7c",
     "stage": "commit_pending",
-    "taskId": "local-models.phase3.docs.task1"
+    "taskId": "local-models.phase4.verify.task1"
   }
 }
 ```
@@ -66,12 +66,22 @@
 ## Phase 3 — Documentation Sync (owner: Codex, updated: 2026-05-28)
 ### Stream: SSOT Updates
 11. [DONE] `local-models.phase3.docs.task1` Update canonical architecture/module docs for the LM Studio local translation boundary, Settings selection semantics, and release-gated limitation that download/delete remains deferred (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/SolidWorks-WorkFlow/Modules/Localization.md`; expected commit: `docs: document local models translation boundary`).
-12. [PENDING] Git Commit: `docs: document local models translation boundary` (hash: TBD)
+12. [DONE] Git Commit: `docs: document local models translation boundary` (hash: 5b3f5ab7c)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-28)
 ### Stream: Targeted Verification
-13. [TODO] `local-models.phase4.verify.task1` Run targeted package builds/tests for Core, translation/localization settings, and Project Manager typecheck; record exact commands/results in this plan (scope: `packages/core, packages/localization, packages/translation, src/client/ui, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify local models module`).
-14. [TODO] Git Commit: `test: verify local models module` (hash: TBD)
+13. [DONE] `local-models.phase4.verify.task1` Run targeted package builds/tests for Core, translation/localization settings, and Project Manager typecheck; record exact commands/results in this plan (scope: `packages/core, packages/localization, packages/translation, src/client/ui, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local models module`).
+    - Verification 2026-05-28: `npm run build --workspace @codeai-hub/translation` — PASS.
+    - Verification 2026-05-28: `npm run build --workspace @codeai-hub/localization` — PASS.
+    - Verification 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-28: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-28: `npm run build:webview` — PASS.
+    - Verification 2026-05-28: `npm run build:project-manager` — PASS.
+    - Verification 2026-05-28: `node --test dist/local-models/local-models-facade.test.js` from `packages/core` — PASS (3 tests).
+    - Verification 2026-05-28: `node --test dist/translation/core-translation-facade-factory.test.js` from `packages/core` — PASS (9 tests).
+    - Verification 2026-05-28: `node --test dist/translation/core-localization-facade-factory.test.js` from `packages/core` — PASS (3 tests).
+    - Verification 2026-05-28: `npx tsx --test src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts` — PASS (2 tests).
+14. [PENDING] Git Commit: `test: verify local models module` (hash: TBD)
 
 ## Phase 5 — User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-05-28)
 ### Stream: Local Runtime Retest
