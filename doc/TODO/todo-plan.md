@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "ac5c50ac8",
+  "lastRecordedCommit": "a306b3fbb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8p.glm-capsule-slug.task1",
-  "expectedCommitMessage": "fix: align core workspace slug fallback",
+  "currentTaskId": "provider-readiness.phase8p.glm-capsule-verify.task1",
+  "expectedCommitMessage": "test: verify glm workspace capsule slug",
   "debt": {
-    "expectedCommitMessage": "fix: align core workspace slug fallback",
-    "preCommitHead": "ac5c50ac8",
+    "expectedCommitMessage": "test: verify glm workspace capsule slug",
+    "preCommitHead": "a306b3fbb",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8p.glm-capsule-slug.task1"
+    "taskId": "provider-readiness.phase8p.glm-capsule-verify.task1"
   }
 }
 ```
@@ -517,9 +517,14 @@
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: `node --test packages/core/dist/config/index.test.js` — PASS (5 tests).
     - Result 2026-05-28: local compiled smoke check without `CLAUDE_PROJECT_SLUG` returned `slug=codeai-hub-codex-5-4` and settings path `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/settings/settings.json`.
-187. [PENDING] Git Commit: `fix: align core workspace slug fallback` (hash: TBD)
-188. [TODO] `provider-readiness.phase8p.glm-capsule-verify.task1` Verify config fallback, runtime capsule path, and targeted Core build/tests; do not build a release until explicitly requested (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify glm workspace capsule slug`).
-189. [TODO] Git Commit: `test: verify glm workspace capsule slug` (hash: TBD)
+187. [DONE] Git Commit: `fix: align core workspace slug fallback` (hash: a306b3fbb)
+188. [DONE] `provider-readiness.phase8p.glm-capsule-verify.task1` Verify config fallback, runtime capsule path, and targeted Core build/tests; do not build a release until explicitly requested (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify glm workspace capsule slug`).
+    - Result 2026-05-28: `npx tsx --test packages/core/src/config/index.test.ts` — PASS (5 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `node --test packages/core/dist/config/index.test.js` — PASS (5 tests).
+    - Result 2026-05-28: compiled `createGlmClaudeCodeAdapterInstance()` smoke check with `CLAUDE_WORKSPACE_PATH=/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4` and no `CLAUDE_PROJECT_SLUG` produced `glmClaudeProjectSlug=codeai-hub-codex-5-4-glm-claude-code`, `providerHome=/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home`, and the matching `settingsPath` in the same capsule.
+    - Result 2026-05-28: local workspace search found no existing `.codeai-hub/users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` capsule at verification time.
+189. [PENDING] Git Commit: `test: verify glm workspace capsule slug` (hash: TBD)
 190. [TODO] `provider-readiness.phase8p.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
