@@ -23,6 +23,8 @@ const DIAGRAM_REVIEW_RE =
   /Core: Diagram Modules перешёл в пользовательскую проверку/u;
 const RAW_APPLICATION_SKELETON_REPAIR_PROMPT_RE =
   /Core rejected the current Application Skeleton draft/u;
+const APPLICATION_SKELETON_REPAIR_USER_MESSAGE_RE =
+  /Core: Application Skeleton требует исправить черновик/u;
 const APP_MARKDOWN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
 const APP_MAP_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`;
 
@@ -254,7 +256,7 @@ const writeDiagramProductPart = (workspaceRoot: string): Promise<void> =>
     ].join("\n")
   );
 
-test("managed workflow repair currently exposes raw Application Skeleton prompt while artifact directory is missing", async () => {
+test("managed workflow repair shows concise Application Skeleton user message and keeps full prompt internal", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "managed-review-missing-application-skeleton-")
   );
@@ -284,10 +286,18 @@ test("managed workflow repair currently exposes raw Application Skeleton prompt 
     assert.equal(coreMessages[0]?.tag, "managed-workflow-validation");
     assert.match(
       coreMessages[0]?.content ?? "",
+      APPLICATION_SKELETON_REPAIR_USER_MESSAGE_RE
+    );
+    assert.doesNotMatch(
+      coreMessages[0]?.content ?? "",
       RAW_APPLICATION_SKELETON_REPAIR_PROMPT_RE
     );
     assert.equal(internalMessages.length, 1);
-    assert.equal(internalMessages[0], coreMessages[0]?.content);
+    assert.match(
+      internalMessages[0] ?? "",
+      RAW_APPLICATION_SKELETON_REPAIR_PROMPT_RE
+    );
+    assert.notEqual(internalMessages[0], coreMessages[0]?.content);
     await assert.rejects(
       access(
         path.join(

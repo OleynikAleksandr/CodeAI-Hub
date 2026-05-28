@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "9b0f74f95",
+  "lastRecordedCommit": "97a7283cd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8i.app-skeleton-directory.task1",
-  "expectedCommitMessage": "fix: prepare application skeleton artifact directory",
+  "currentTaskId": "provider-readiness.phase8i.validation-message.task1",
+  "expectedCommitMessage": "fix: localize managed validation system messages",
   "debt": {
-    "expectedCommitMessage": "fix: prepare application skeleton artifact directory",
-    "preCommitHead": "9b0f74f95",
+    "expectedCommitMessage": "fix: localize managed validation system messages",
+    "preCommitHead": "97a7283cd",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8i.app-skeleton-directory.task1"
+    "taskId": "provider-readiness.phase8i.validation-message.task1"
   }
 }
 ```
@@ -371,9 +371,12 @@
     - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/runtime/workflow-runtime.test.ts` — PASS (9 tests).
     - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` — PASS (3 tests).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
-132. [PENDING] Git Commit: `fix: prepare application skeleton artifact directory` (hash: TBD)
-133. [TODO] `provider-readiness.phase8i.validation-message.task1` Split provider-internal repair prompts from user-visible Core System messages so managed validation cards are concise, Russian/translation-routed, and do not display raw English repair instructions while the agent still receives the full internal prompt (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: localize managed validation system messages`).
-134. [TODO] Git Commit: `fix: localize managed validation system messages` (hash: TBD)
+132. [DONE] Git Commit: `fix: prepare application skeleton artifact directory` (hash: 97a7283cd)
+133. [DONE] `provider-readiness.phase8i.validation-message.task1` Split provider-internal repair prompts from user-visible Core System messages so managed validation cards are concise, Russian/translation-routed, and do not display raw English repair instructions while the agent still receives the full internal prompt (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: localize managed validation system messages`).
+    - Result 2026-05-28: Application Skeleton repair handling now writes a concise Russian Core System card and sends the full English provider repair prompt only through `sendInternalMessage()`.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts` — PASS (3 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+134. [PENDING] Git Commit: `fix: localize managed validation system messages` (hash: TBD)
 135. [TODO] `provider-readiness.phase8i.app-skeleton-verify.task1` Verify Application Skeleton managed repair, artifact directory preparation, and user-visible validation message routing; do not build a release in this stream (scope: `packages/core, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify application skeleton managed repair`).
 136. [TODO] Git Commit: `test: verify application skeleton managed repair` (hash: TBD)
 137. [TODO] `provider-readiness.phase8i.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).

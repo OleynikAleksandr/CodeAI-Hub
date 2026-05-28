@@ -116,7 +116,6 @@ const resolveQualityGatesIntegrationRepairAttemptNumber = (
 const resolveDiagramModulesRepairAttemptNumber = (
   taskId: string | null
 ): number => parseDiagramModulesRepairTaskNumber(taskId ?? "") ?? 1;
-
 export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly applicationStagePlan: ApplicationSkeletonStagePlanController;
   private readonly diagramStagePlan: DiagramModulesStagePlanController;
@@ -372,14 +371,18 @@ export class SessionRequestHandlerManagedWorkflowTurn {
             workspaceSlug: params.workspaceSlug,
           }));
     this.appendCoreMessage(params.sessionId, {
-      content: repairPrompt,
+      content: [
+        `Core: Application Skeleton требует исправить ${
+          decision.phase === "materialization" ? "материализацию" : "черновик"
+        }.`,
+        "Полный repair prompt отправлен агенту внутренним сообщением.",
+      ].join("\n"),
       tag: "managed-workflow-validation",
     });
     await this.options
       .getMessageDispatch()
       .sendInternalMessage(params.sessionId, repairPrompt);
   }
-
   private async handleQualityGatesTurn(params: {
     readonly sessionId: string;
     readonly workspaceRoot: string;
@@ -487,7 +490,6 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       .getMessageDispatch()
       .sendInternalMessage(params.sessionId, repairPrompt);
   }
-
   private appendCoreMessage(
     sessionId: string,
     payload: { readonly content: string; readonly tag: string }
