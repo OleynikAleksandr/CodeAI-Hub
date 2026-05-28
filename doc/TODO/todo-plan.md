@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "487960586",
+  "lastRecordedCommit": "455591b41",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8r.global-settings-ui.task1",
-  "expectedCommitMessage": "fix: route general settings to global store",
+  "currentTaskId": "provider-readiness.phase8r.global-settings-verify.task1",
+  "expectedCommitMessage": "test: verify global general settings split",
   "debt": {
-    "expectedCommitMessage": "fix: route general settings to global store",
-    "preCommitHead": "487960586",
+    "expectedCommitMessage": "test: verify global general settings split",
+    "preCommitHead": "455591b41",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8r.global-settings-ui.task1"
+    "taskId": "provider-readiness.phase8r.global-settings-verify.task1"
   }
 }
 ```
@@ -585,9 +585,13 @@
     - Result 2026-05-28: Project Manager settings saves now serialize the UI translation engine selection as canonical `general.localization.uiEngineId` before Core persists the split global `general` snapshot.
     - Result 2026-05-28: `npm run typecheck:webview` — PASS.
     - Result 2026-05-28: `npm run build:webview` — PASS.
-209. [PENDING] Git Commit: `fix: route general settings to global store` (hash: TBD)
-210. [TODO] `provider-readiness.phase8r.global-settings-verify.task1` Verify global general settings migration/read path, workspace settings without ownership of the moved `general` blocks, and System/Reasoning translation engine selection from global settings (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify global general settings split`).
-211. [TODO] Git Commit: `test: verify global general settings split` (hash: TBD)
+209. [DONE] Git Commit: `fix: route general settings to global store` (hash: 455591b41)
+210. [DONE] `provider-readiness.phase8r.global-settings-verify.task1` Verify global general settings migration/read path, workspace settings without ownership of the moved `general` blocks, and System/Reasoning translation engine selection from global settings (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify global general settings split`).
+    - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/settings-persistence-service.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule.test.ts packages/core/src/session-translation/session-translation-policy-resolver.test.ts packages/core/src/translation/core-localization-facade-factory.test.ts packages/core/src/remote-bridge/handlers/settings-request-handler.user-glossary.test.ts src/client/project-manager/components/settings/use-project-manager-settings.test.ts src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts` — PASS (19 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `npm run typecheck:webview` — PASS.
+    - Result 2026-05-28: `npm run build:webview` — PASS.
+211. [PENDING] Git Commit: `test: verify global general settings split` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
