@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "0dc1758f9",
+  "lastRecordedCommit": "6b8eee65c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8d.release-vsix.task1",
-  "expectedCommitMessage": "test: verify virtual simulation handoff repair vsix",
+  "currentTaskId": "provider-readiness.phase8e.local-state-diagnose.task1",
+  "expectedCommitMessage": "test: characterize tracked local runtime state blocker",
   "debt": {
-    "expectedCommitMessage": "test: verify virtual simulation handoff repair vsix",
-    "preCommitHead": "0dc1758f9",
+    "expectedCommitMessage": "test: characterize tracked local runtime state blocker",
+    "preCommitHead": "6b8eee65c",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8d.release-vsix.task1"
+    "taskId": "provider-readiness.phase8e.local-state-diagnose.task1"
   }
 }
 ```
@@ -272,11 +272,27 @@
     - Result 2026-05-27: `./scripts/build-release.sh --use-current-version` — PASS.
     - Verified release output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and VSIX runtime package surface verification.
     - VSIX: `codeai-hub-1.2.382.vsix` (4.3M), SHA1 `1f605cdd2181f9b75ddac6198f6c39da620f4199`.
-97. [PENDING] Git Commit: `test: verify virtual simulation handoff repair vsix` (hash: TBD)
-98. [TODO] `provider-readiness.phase8d.user-retest.task1` User installs the produced replacement release and retests Gemini Virtual Simulation completion, tree marker status, Diagram Modules startup, and session wait copy behavior (scope: chat/process observation only; no commit required).
+97. [DONE] Git Commit: `test: verify virtual simulation handoff repair vsix` (hash: 6b8eee65c)
+98. [BLOCKED] `provider-readiness.phase8d.user-retest.task1` User installs the produced replacement release and retests Gemini Virtual Simulation completion, tree marker status, Diagram Modules startup, and session wait copy behavior (scope: chat/process observation only; no commit required).
+    - Finding 2026-05-28: Description acceptance can still leave the workspace blocked when legacy local runtime state is already tracked and modified as `M .codeai-hub/state/task-timers.json`; after that Virtual Simulation start does not create a provider session and the Project Manager surfaces a generic `Session creation timed out.` for every provider.
+    - Finding 2026-05-28: The blocker Core message is still visible as untranslated English in the latest System card, and it should not appear for local timer state at all.
+
+## Phase 8e — Description To Virtual Simulation Regression Repair (owner: Codex, updated: 2026-05-28)
+### Stream: Tracked Local Runtime State Blocker
+99. [DONE] `provider-readiness.phase8e.local-state-diagnose.task1` Characterize the retest regression where tracked local runtime state (`M .codeai-hub/state/task-timers.json`) survives Description acceptance, emits the dirty Core blocker, and makes Virtual Simulation start time out for every provider (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize tracked local runtime state blocker`).
+    - Diagnostic 2026-05-28: The user's retest workspace has `.codeai-hub/state/task-timers.json` tracked in Git and modified, so adding `.codeai-hub/state/` to `.gitignore` is insufficient; the step acceptance path must also untrack already-indexed local runtime state before the clean-Git gate.
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `node --test packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js` — PASS (5 tests).
+100. [PENDING] Git Commit: `test: characterize tracked local runtime state blocker` (hash: TBD)
+101. [TODO] `provider-readiness.phase8e.local-state-fix.task1` Untrack and ignore legacy workspace-local `.codeai-hub/state/` runtime files before the clean-Git gate, including files that were already tracked, so Description acceptance leaves Git clean and Virtual Simulation can start normally (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: untrack local runtime state before step commit`).
+102. [TODO] Git Commit: `fix: untrack local runtime state before step commit` (hash: TBD)
+103. [TODO] `provider-readiness.phase8e.timeout-error.task1` Ensure workflow step start reports the Core blocker/error directly instead of falling through to generic `Session creation timed out.` when Core rejects session creation before `session:created` (scope: `src/client/project-manager/services/description-submit-service.ts, src/client/project-manager/services/description-submit-service.localization.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: surface workflow session creation errors`).
+104. [TODO] Git Commit: `fix: surface workflow session creation errors` (hash: TBD)
+105. [TODO] `provider-readiness.phase8e.translation-verify.task1` Verify that any remaining Core workflow blocker message is carried through the System/Reasoning translation route and that the tracked timer-state case no longer emits the blocker at all (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow blocker translation and cleanup`).
+106. [TODO] Git Commit: `test: verify workflow blocker translation and cleanup` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-99. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-100. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-101. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+107. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+108. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+109. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).

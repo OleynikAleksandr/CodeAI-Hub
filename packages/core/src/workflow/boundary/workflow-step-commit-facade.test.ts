@@ -181,6 +181,43 @@ test("accepted step commit ignores local CodeAI runtime state before clean-git g
   }
 });
 
+test("legacy local CodeAI runtime state can be tracked before step acceptance", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "step-tracked-local-state-workspace-")
+  );
+  try {
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
+    await writeText(
+      path.join(workspaceRoot, ".codeai-hub", "state", "task-timers.json"),
+      '{"schemaVersion":2,"totals":{"description":1}}\n'
+    );
+    await git(workspaceRoot, ["add", ".codeai-hub/state/task-timers.json"]);
+    await git(workspaceRoot, ["commit", "-m", "test: old local runtime state"]);
+
+    await writeText(
+      path.join(workspaceRoot, ".codeai-hub", "state", "task-timers.json"),
+      '{"schemaVersion":2,"totals":{"description":2}}\n'
+    );
+
+    assert.equal(
+      await git(workspaceRoot, [
+        "ls-files",
+        "--",
+        ".codeai-hub/state/task-timers.json",
+      ]),
+      ".codeai-hub/state/task-timers.json"
+    );
+    assert.equal(
+      await git(workspaceRoot, ["status", "--short", "--untracked-files=all"]),
+      "M .codeai-hub/state/task-timers.json"
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("accepted step commit untracks provider volatile files left by older capsule commits", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "step-volatile-workspace-")
