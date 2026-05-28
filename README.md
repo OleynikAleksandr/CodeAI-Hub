@@ -2,7 +2,20 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.386** (GLM Config Bootstrap Hotfix)
+**Current Release — v1.2.387** (GLM Workspace Capsule Slug Hotfix)
+
+This hotfix aligns Core startup config with the same workspace slug contract used
+by Project Registry and Workspace Runtime Capsule. When `CLAUDE_PROJECT_SLUG`
+is not provided, Core now derives the fallback slug from the workspace basename
+instead of sanitizing the full absolute path.
+
+GLM-Claude-Code therefore writes its provider home into the existing workspace
+capsule, for example
+`.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home`,
+instead of creating a second `.codeai-hub/users-...` capsule for the same
+workspace.
+
+**Previous Release — v1.2.386** (GLM Config Bootstrap Hotfix)
 
 This hotfix creates the global GLM-Claude-Code config template automatically at
 `~/.codeai-hub/providers/glm-claude-code/config.json` during install/runtime

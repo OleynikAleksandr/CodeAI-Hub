@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.387] - 2026-05-28
+### Fixed
+- **GLM-Claude-Code uses the existing workspace capsule.** Core config now derives the fallback project slug from `path.basename(CLAUDE_WORKSPACE_PATH)` when `CLAUDE_PROJECT_SLUG` is missing, matching Project Registry and Workspace Runtime Capsule. GLM provider home now resolves to `.codeai-hub/<workspace-slug>/runtime/providers/glm-claude-code/home` instead of creating a second `.codeai-hub/users-...` capsule from the absolute workspace path.
+
+### Tests
+- `npx tsx --test packages/core/src/config/index.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/config/index.test.js`
+- Compiled `createGlmClaudeCodeAdapterInstance()` smoke check for `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4` with no `CLAUDE_PROJECT_SLUG`
+- Commit hooks: architecture, lint, knip, staged formatting
+
 ## [1.2.386] - 2026-05-28
 ### Fixed
 - **GLM-Claude-Code config is created automatically.** Install/runtime bootstrap now creates `~/.codeai-hub/providers/glm-claude-code/config.json` with only `{ "apiKey": "" }` when the file is missing, while preserving any existing user config or secret.

@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "a306b3fbb",
+  "lastRecordedCommit": "19665046a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8p.glm-capsule-verify.task1",
-  "expectedCommitMessage": "test: verify glm workspace capsule slug",
+  "currentTaskId": "provider-readiness.phase8q.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare glm capsule slug release",
   "debt": {
-    "expectedCommitMessage": "test: verify glm workspace capsule slug",
-    "preCommitHead": "a306b3fbb",
+    "expectedCommitMessage": "docs: prepare glm capsule slug release",
+    "preCommitHead": "19665046a",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8p.glm-capsule-verify.task1"
+    "taskId": "provider-readiness.phase8q.release-prep.task1"
   }
 }
 ```
@@ -524,11 +524,23 @@
     - Result 2026-05-28: `node --test packages/core/dist/config/index.test.js` — PASS (5 tests).
     - Result 2026-05-28: compiled `createGlmClaudeCodeAdapterInstance()` smoke check with `CLAUDE_WORKSPACE_PATH=/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4` and no `CLAUDE_PROJECT_SLUG` produced `glmClaudeProjectSlug=codeai-hub-codex-5-4-glm-claude-code`, `providerHome=/Users/oleksandroliinyk/VSCODE/CodeAI-Hub codex 5.4/.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home`, and the matching `settingsPath` in the same capsule.
     - Result 2026-05-28: local workspace search found no existing `.codeai-hub/users-oleksandroliinyk-vscode-codeai-hub-codex-5-4` capsule at verification time.
-189. [PENDING] Git Commit: `test: verify glm workspace capsule slug` (hash: TBD)
-190. [TODO] `provider-readiness.phase8p.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+189. [DONE] Git Commit: `test: verify glm workspace capsule slug` (hash: 19665046a)
+190. [DONE] `provider-readiness.phase8p.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+    - Result 2026-05-28: User explicitly requested a new release build after the GLM workspace capsule slug fix.
+
+## Phase 8q — GLM Capsule Slug Release Build (owner: Codex, updated: 2026-05-28)
+### Stream: Release Packaging
+191. [DONE] `provider-readiness.phase8q.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.387 and record release intent before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare glm capsule slug release`).
+    - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.387 before running release scripts.
+192. [PENDING] Git Commit: `docs: prepare glm capsule slug release` (hash: TBD)
+193. [TODO] `provider-readiness.phase8q.release-build.task1` Run the approved unified release build for the GLM workspace capsule slug fix, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build glm capsule slug release`).
+194. [TODO] Git Commit: `chore: build glm capsule slug release` (hash: TBD)
+195. [TODO] `provider-readiness.phase8q.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify glm capsule slug vsix`).
+196. [TODO] Git Commit: `test: verify glm capsule slug vsix` (hash: TBD)
+197. [TODO] `provider-readiness.phase8q.user-retest.task1` User installs the replacement release and retests GLM startup after API key fill/restart, confirming provider-home writes stay under `.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home` and no `.codeai-hub/users-...` capsule is created (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-191. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-192. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-193. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+198. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+199. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+200. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
