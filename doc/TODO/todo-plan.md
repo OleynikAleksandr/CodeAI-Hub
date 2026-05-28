@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "b9ebd149b",
+  "lastRecordedCommit": "adef33ef0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8n.glm-card-copy.task1",
-  "expectedCommitMessage": "fix: show exact glm api key instructions",
+  "currentTaskId": "provider-readiness.phase8n.glm-config-verify.task1",
+  "expectedCommitMessage": "test: verify glm config bootstrap",
   "debt": {
-    "expectedCommitMessage": "fix: show exact glm api key instructions",
-    "preCommitHead": "b9ebd149b",
+    "expectedCommitMessage": "test: verify glm config bootstrap",
+    "preCommitHead": "adef33ef0",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8n.glm-card-copy.task1"
+    "taskId": "provider-readiness.phase8n.glm-config-verify.task1"
   }
 }
 ```
@@ -478,9 +478,14 @@
     - Result 2026-05-28: `npx tsx --test packages/core/src/provider-registry/provider-recovery-coordinator.test.ts` — PASS (1 test).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: `node --test packages/core/dist/provider-registry/provider-recovery-coordinator.test.js` — PASS (1 test).
-172. [PENDING] Git Commit: `fix: show exact glm api key instructions` (hash: TBD)
-173. [TODO] `provider-readiness.phase8n.glm-config-verify.task1` Verify GLM config bootstrap, recovery-card copy, Claude module build, and Core build; do not build a release until explicitly requested (scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config bootstrap`).
-174. [TODO] Git Commit: `test: verify glm config bootstrap` (hash: TBD)
+172. [DONE] Git Commit: `fix: show exact glm api key instructions` (hash: adef33ef0)
+173. [DONE] `provider-readiness.phase8n.glm-config-verify.task1` Verify GLM config bootstrap, recovery-card copy, Claude module build, and Core build; do not build a release until explicitly requested (scope: `packages/Claude_Module, packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config bootstrap`).
+    - Result 2026-05-28: live config exists at `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` with only the `apiKey` field and empty value for the user to fill.
+    - Result 2026-05-28: `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts packages/Claude_Module/src/glm-claude-code/glm-claude-code-runtime-profile.test.ts packages/core/src/provider-registry/provider-recovery-coordinator.test.ts` — PASS (6 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS after rerunning sequentially once the Claude module build had restored its `dist` outputs.
+    - Result 2026-05-28: `node --test packages/Claude_Module/dist/auth/glm-claude-code-auth-profile.test.js packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js packages/core/dist/provider-registry/provider-recovery-coordinator.test.js` — PASS (6 tests).
+174. [PENDING] Git Commit: `test: verify glm config bootstrap` (hash: TBD)
 175. [TODO] `provider-readiness.phase8n.user-retest.task1` User installs the eventual replacement release and retests that GLM card points to the generated global config file and that GLM becomes available after the user fills `apiKey` and restarts Core (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
