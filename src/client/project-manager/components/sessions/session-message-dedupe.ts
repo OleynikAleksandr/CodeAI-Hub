@@ -1,9 +1,16 @@
-import type { SessionMessage } from "../../../../types/session";
+import type { SessionMessage, SessionSnapshot } from "../../../../types/session";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
 
 const RECENT_DEDUPE_SCAN_LIMIT = 200;
 const OPTIMISTIC_MESSAGE_ID_PREFIX = "optimistic-";
 const OPTIMISTIC_USER_RECONCILIATION_WINDOW_MS = 30_000;
+const MANAGED_WORKFLOW_CONTINUATION_LOCK_REASON =
+  "managed_workflow_core_agent_turn";
+const MANAGED_WORKFLOW_CONTINUATION_TAG = "managed-workflow-continuation";
+const MANAGED_WORKFLOW_RELEASE_TAGS = new Set([
+  "managed-workflow-complete",
+  "managed-workflow-user-review",
+]);
 
 const isReplayDuplicate = (options: {
   readonly existing: SessionMessage;
@@ -84,13 +91,103 @@ const updateSnapshotMessages = (options: {
   readonly snapshot: SessionSnapshots[string];
   readonly sessionId: string;
   readonly messages: readonly SessionMessage[];
-}): SessionSnapshots => ({
-  ...options.snapshots,
-  [options.sessionId]: {
+  readonly triggerMessage: SessionMessage;
+}): SessionSnapshots => {
+  const snapshotWithMessages = applyManagedWorkflowInputLock({
+    message: options.triggerMessage,
+    snapshot: {
+      ...options.snapshot,
+      messages: [...options.messages],
+    },
+  });
+  return {
+    ...options.snapshots,
+    [options.sessionId]: snapshotWithMessages,
+  };
+};
+
+const updateSnapshotForMessageSideEffects = (options: {
+  readonly message: SessionMessage;
+  readonly sessionId: string;
+  readonly snapshot: SessionSnapshot;
+  readonly snapshots: SessionSnapshots;
+}): SessionSnapshots => {
+  const updated = applyManagedWorkflowInputLock({
+    message: options.message,
+    snapshot: options.snapshot,
+  });
+  if (updated === options.snapshot) {
+    return options.snapshots;
+  }
+  return {
+    ...options.snapshots,
+    [options.sessionId]: updated,
+  };
+};
+
+const shouldReleaseManagedWorkflowLock = (
+  snapshot: SessionSnapshot
+): boolean => {
+  const reason = snapshot.status.continuityLock?.reason;
+  return (
+    reason === MANAGED_WORKFLOW_CONTINUATION_LOCK_REASON ||
+    reason === "diagram_modules_sequence"
+  );
+};
+
+const applyManagedWorkflowInputLock = (options: {
+  readonly message: SessionMessage;
+  readonly snapshot: SessionSnapshot;
+}): SessionSnapshot => {
+  if (options.message.role !== "system") {
+    return options.snapshot;
+  }
+  const tag = options.message.tag;
+  const now = Date.now();
+  if (tag === MANAGED_WORKFLOW_CONTINUATION_TAG) {
+    return {
+      ...options.snapshot,
+      status: {
+        ...options.snapshot.status,
+        connectionState:
+          options.snapshot.status.connectionState === "running"
+            ? "running"
+            : "blocked",
+        continuityLock: {
+          ...(options.snapshot.status.continuityLock ?? {
+            active: false,
+            updatedAt: now,
+          }),
+          active: true,
+          reason: MANAGED_WORKFLOW_CONTINUATION_LOCK_REASON,
+          updatedAt: now,
+        },
+        updatedAt: now,
+      },
+    };
+  }
+  if (!MANAGED_WORKFLOW_RELEASE_TAGS.has(tag ?? "")) {
+    return options.snapshot;
+  }
+  if (!shouldReleaseManagedWorkflowLock(options.snapshot)) {
+    return options.snapshot;
+  }
+  return {
     ...options.snapshot,
-    messages: [...options.messages],
-  },
-});
+    status: {
+      ...options.snapshot.status,
+      connectionState:
+        options.snapshot.status.connectionState === "blocked"
+          ? "idle"
+          : options.snapshot.status.connectionState,
+      continuityLock: {
+        active: false,
+        updatedAt: now,
+      },
+      updatedAt: now,
+    },
+  };
+};
 
 export const appendOptimisticUserMessage = (
   snapshots: SessionSnapshots,
@@ -143,10 +240,16 @@ export const appendDedupedSessionMessageToSnapshots = (
     }
 
     if (!messages) {
-      return snapshots;
+      return updateSnapshotForMessageSideEffects({
+        message: payload.message,
+        sessionId: payload.sessionId,
+        snapshot,
+        snapshots,
+      });
     }
 
     return updateSnapshotMessages({
+      triggerMessage: payload.message,
       snapshots,
       snapshot,
       sessionId: payload.sessionId,
@@ -158,6 +261,7 @@ export const appendDedupedSessionMessageToSnapshots = (
     const messages = [...snapshot.messages];
     messages[optimisticCandidateIndex] = payload.message;
     return updateSnapshotMessages({
+      triggerMessage: payload.message,
       snapshots,
       snapshot,
       sessionId: payload.sessionId,
@@ -171,7 +275,12 @@ export const appendDedupedSessionMessageToSnapshots = (
     last.role === payload.message.role &&
     last.content === payload.message.content
   ) {
-    return snapshots;
+    return updateSnapshotForMessageSideEffects({
+      message: payload.message,
+      sessionId: payload.sessionId,
+      snapshot,
+      snapshots,
+    });
   }
 
   // Reconnect/replay can deliver the same message multiple times with new ids
@@ -188,10 +297,16 @@ export const appendDedupedSessionMessageToSnapshots = (
       candidate &&
       isReplayDuplicate({ existing: candidate, incoming: payload.message })
     ) {
-      return snapshots;
+      return updateSnapshotForMessageSideEffects({
+        message: payload.message,
+        sessionId: payload.sessionId,
+        snapshot,
+        snapshots,
+      });
     }
   }
   return updateSnapshotMessages({
+    triggerMessage: payload.message,
     snapshots,
     snapshot,
     sessionId: payload.sessionId,

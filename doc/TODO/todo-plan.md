@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "7024b2ac1",
+  "lastRecordedCommit": "d2b2075cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8v.vsix.task1",
-  "expectedCommitMessage": "test: verify residual boundary cleanup vsix package",
+  "currentTaskId": "provider-readiness.phase8w.managed-message-lock.task1",
+  "expectedCommitMessage": "fix: lock input during managed workflow continuation",
   "debt": {
-    "expectedCommitMessage": "test: verify residual boundary cleanup vsix package",
-    "preCommitHead": "7024b2ac1",
+    "expectedCommitMessage": "fix: lock input during managed workflow continuation",
+    "preCommitHead": "d2b2075cc",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8v.vsix.task1"
+    "taskId": "provider-readiness.phase8w.managed-message-lock.task1"
   }
 }
 ```
@@ -668,11 +668,22 @@
     - Result 2026-05-28: `./scripts/build-release.sh --use-current-version` — PASS for v1.2.389.
     - Verified release output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `✅ Package created`.
     - VSIX: `codeai-hub-1.2.389.vsix` (4.4M), SHA1 `e46948e96fc703b103e0873c08ac8e796141046e`.
-240. [PENDING] Git Commit: `test: verify residual boundary cleanup vsix package` (hash: TBD)
-241. [TODO] `provider-readiness.phase8v.user-retest.task1` User installs the produced v1.2.389 release and retests provider session log cleanup, residual document auto-commit, GLM availability/home, localization, and next-step startup (scope: chat/process observation only; expected commit: none).
+240. [DONE] Git Commit: `test: verify residual boundary cleanup vsix package` (hash: d2b2075cc)
+241. [DONE] `provider-readiness.phase8v.user-retest.task1` User installs the produced v1.2.389 release and retests provider session log cleanup, residual document auto-commit, GLM availability/home, localization, and next-step startup (scope: chat/process observation only; expected commit: none). Result: v1.2.389 retest found that Diagram Modules can leave the user input editable while Core still owns a managed continuation and the provider is still working.
+
+## Phase 8w — Managed Continuation Input Lock Retest Repair (owner: Codex, updated: 2026-05-28)
+### Stream: Core Managed Handoff Lock
+242. [DONE] `provider-readiness.phase8w.managed-message-lock.task1` Retest finding 2026-05-28: while Core is internally handing managed workflow control from itself to the agent, the session input can become editable before Core hands control back to the user; lock input on Core-managed continuation messages and release only on explicit Core user-review/complete handoff messages (scope: `src/client/project-manager/components/sessions/session-message-dedupe.ts, src/client/project-manager/components/sessions/session-message-dedupe.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: lock input during managed workflow continuation`).
+    - Result 2026-05-28: `npx tsx --test src/client/project-manager/components/sessions/session-message-dedupe.test.ts` — PASS (3 tests).
+243. [PENDING] Git Commit: `fix: lock input during managed workflow continuation` (hash: TBD)
+244. [TODO] `provider-readiness.phase8w.diagram-input-lock.task1` Keep the Project Manager session input locked through the Diagram Modules product-part managed sequence until aggregate/review readiness instead of releasing on a narrow `pending` active-subturn status check (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts, src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep diagram modules locked until user handoff`).
+245. [TODO] Git Commit: `fix: keep diagram modules locked until user handoff` (hash: TBD)
+246. [TODO] `provider-readiness.phase8w.diagram-input-lock-verify.task1` Run targeted PM/UI tests plus webview typecheck/build for the managed-continuation input lock and record exact results before any release decision (scope: `src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation input lock`).
+247. [TODO] Git Commit: `test: verify managed continuation input lock` (hash: TBD)
+248. [TODO] `provider-readiness.phase8w.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-242. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-243. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-244. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+249. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+250. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+251. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
