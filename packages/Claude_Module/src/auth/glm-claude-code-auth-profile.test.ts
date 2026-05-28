@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -30,14 +30,51 @@ test("GLM-Claude-Code config bootstrap preserves existing user secrets", async (
   const dir = await mkdtemp(path.join(tmpdir(), "glm-config-preserve-"));
   try {
     const configPath = path.join(dir, "config.json");
-    await writeFile(configPath, '{"apiKey":"user-secret"}\n', "utf8");
+    const existingConfigText = [
+      "{",
+      '  "apiKey": "user-secret",',
+      '  "baseUrl": "https://api.z.ai/api/anthropic",',
+      '  "timeoutMs": 123456',
+      "}",
+      "",
+    ].join("\n");
+    await writeFile(configPath, existingConfigText, "utf8");
+    const before = await stat(configPath);
 
     await ensureGlmClaudeCodeConfigFile({ configPath });
 
-    assert.equal(
-      await readFile(configPath, "utf8"),
-      '{"apiKey":"user-secret"}\n'
-    );
+    const after = await stat(configPath);
+    assert.equal(await readFile(configPath, "utf8"), existingConfigText);
+    assert.equal(after.mtimeMs, before.mtimeMs);
+  } finally {
+    await rm(dir, { force: true, recursive: true });
+  }
+});
+
+test("GLM-Claude-Code auth resolution preserves existing global config before reading it", async () => {
+  const dir = await mkdtemp(
+    path.join(tmpdir(), "glm-config-resolve-preserve-")
+  );
+  try {
+    const configPath = path.join(dir, "config.json");
+    const existingConfigText = '{"apiKey":"persisted-secret"}\n';
+    await writeFile(configPath, existingConfigText, "utf8");
+    const before = await stat(configPath);
+
+    const result = await resolveGlmClaudeCodeApiKey({
+      configPath,
+      env: {
+        CODEAI_GLM_CLAUDE_CODE_API_KEY: "",
+        GLM_CLAUDE_CODE_API_KEY: "",
+        ZAI_API_KEY: "",
+      },
+    });
+
+    const after = await stat(configPath);
+    assert.equal(result.apiKey, "persisted-secret");
+    assert.equal(result.source, "glm_config");
+    assert.equal(await readFile(configPath, "utf8"), existingConfigText);
+    assert.equal(after.mtimeMs, before.mtimeMs);
   } finally {
     await rm(dir, { force: true, recursive: true });
   }

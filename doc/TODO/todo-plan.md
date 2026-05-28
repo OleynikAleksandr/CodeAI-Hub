@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "5d6c3f511",
+  "lastRecordedCommit": "ed072c0ee",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8q.release-vsix.task1",
-  "expectedCommitMessage": "test: verify glm capsule slug vsix",
+  "currentTaskId": "provider-readiness.phase8r.glm-config-preservation-diagnose.task1",
+  "expectedCommitMessage": "test: characterize glm config preservation",
   "debt": {
-    "expectedCommitMessage": "test: verify glm capsule slug vsix",
-    "preCommitHead": "5d6c3f511",
+    "expectedCommitMessage": "test: characterize glm config preservation",
+    "preCommitHead": "ed072c0ee",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8q.release-vsix.task1"
+    "taskId": "provider-readiness.phase8r.glm-config-preservation-diagnose.task1"
   }
 }
 ```
@@ -542,11 +542,33 @@
     - Result 2026-05-28: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-vsix transition.
     - Result 2026-05-28: Verified release output lines: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `✅ VSIX runtime package surface verified`.
     - Result 2026-05-28: VSIX ready at `codeai-hub-1.2.387.vsix` (4.3M), SHA1 `168f71dee293346587b94129bb1a64d11b68bf39`.
-196. [PENDING] Git Commit: `test: verify glm capsule slug vsix` (hash: TBD)
-197. [TODO] `provider-readiness.phase8q.user-retest.task1` User installs the replacement release and retests GLM startup after API key fill/restart, confirming provider-home writes stay under `.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home` and no `.codeai-hub/users-...` capsule is created (scope: chat/process observation only; expected commit: none).
+196. [DONE] Git Commit: `test: verify glm capsule slug vsix` (hash: ed072c0ee)
+197. [DONE] `provider-readiness.phase8q.user-retest.task1` User installs the replacement release and retests GLM startup after API key fill/restart, confirming provider-home writes stay under `.codeai-hub/codeai-hub-codex-5-4/runtime/providers/glm-claude-code/home` and no `.codeai-hub/users-...` capsule is created (scope: chat/process observation only; expected commit: none). Result: v1.2.387 retest confirms GLM now writes under the correct workspace provider home; new findings opened for preserving the existing GLM global config during extension upgrades and splitting user-level general settings into global app userspace.
+
+## Phase 8r — Global Settings And GLM Config Preservation Retest Repair (owner: Codex, updated: 2026-05-28)
+### Stream: GLM Global Config Preservation
+198. [DONE] `provider-readiness.phase8r.glm-config-preservation-diagnose.task1` Characterize every install/runtime path that can create, rewrite, chmod, or otherwise touch `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` during extension upgrades, and lock the expected behavior that existing user config must be preserved byte-for-byte (scope: `packages/Claude_Module/src/auth/glm-claude-code-auth-profile.ts, packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts, scripts/build-glm-claude-code-module.sh, doc/TODO/todo-plan.md`; expected commit: `test: characterize glm config preservation`).
+    - Diagnostic 2026-05-28: runtime bootstrap already uses create-only `writeFile(..., flag: "wx")`, so it does not overwrite existing config contents, but it still attempts a write-open against an existing config on every auth resolution.
+    - Diagnostic 2026-05-28: installer script writes the template only when `~/.codeai-hub/providers/glm-claude-code/config.json` is missing; existing config is skipped and not copied into versioned runtime directories.
+    - Result 2026-05-28: `npx tsx --test packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts` — PASS (4 tests), including byte-for-byte and mtime preservation of an existing GLM config file.
+199. [PENDING] Git Commit: `test: characterize glm config preservation` (hash: TBD)
+200. [TODO] `provider-readiness.phase8r.glm-config-preservation-fix.task1` Ensure extension/version installation and runtime bootstrap never modify an existing GLM global config file while still providing a safe missing-template path for first-time users (scope: `packages/Claude_Module/src/auth/glm-claude-code-auth-profile.ts, packages/Claude_Module/src/auth/glm-claude-code-auth-profile.test.ts, scripts/build-glm-claude-code-module.sh, doc/TODO/todo-plan.md`; expected commit: `fix: preserve existing glm global config`).
+201. [TODO] Git Commit: `fix: preserve existing glm global config` (hash: TBD)
+202. [TODO] `provider-readiness.phase8r.glm-config-preservation-verify.task1` Verify existing GLM global config preservation, missing-template creation, provider availability after filled `apiKey`, and installer behavior without building a release (scope: `packages/Claude_Module, scripts/build-glm-claude-code-module.sh, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config preservation`).
+203. [TODO] Git Commit: `test: verify glm config preservation` (hash: TBD)
+
+### Stream: Global General Settings Split
+204. [TODO] `provider-readiness.phase8r.global-settings-diagnose.task1` Characterize current ownership for user-level `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech`, including workspace runtime settings, Project Manager settings persistence, and session-translation engine readers, before moving these blocks to global app userspace settings (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule.ts, packages/core/src/session-translation/session-translation-policy-resolver.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize global general settings ownership`).
+205. [TODO] Git Commit: `test: characterize global general settings ownership` (hash: TBD)
+206. [TODO] `provider-readiness.phase8r.global-settings-core.task1` Introduce Core-owned global user settings storage under the app userspace for `general.coreControls`, `general.localization`, `general.responsePolicy`, and `general.textToSpeech`, while workspace settings remain responsible for workspace-specific providers/models/runtime values (scope: `packages/core/src/workflow/runtime, packages/core/src/config, doc/TODO/todo-plan.md`; expected commit: `fix: split general settings into global store`).
+207. [TODO] Git Commit: `fix: split general settings into global store` (hash: TBD)
+208. [TODO] `provider-readiness.phase8r.global-settings-ui.task1` Update Project Manager settings load/save behavior so the user-level `general` blocks read/write global app userspace settings while provider/model/workspace options remain workspace-local (scope: `src/client/project-manager/components/settings, src/client/project-manager/services, src/client/ui/src/components/settings, doc/TODO/todo-plan.md`; expected commit: `fix: route general settings to global store`).
+209. [TODO] Git Commit: `fix: route general settings to global store` (hash: TBD)
+210. [TODO] `provider-readiness.phase8r.global-settings-verify.task1` Verify global general settings migration/read path, workspace settings without ownership of the moved `general` blocks, and System/Reasoning translation engine selection from global settings (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify global general settings split`).
+211. [TODO] Git Commit: `test: verify global general settings split` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-198. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-199. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-200. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+212. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+213. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+214. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
