@@ -378,8 +378,10 @@ test("diagram modules progressive loader parses the live identity-table product 
         return {
           status: "ok",
           content: createCanonicalTableIndex()
-            .replaceAll("local-core-runtime", "vs-code-extension-shell")
-            .replaceAll("Local Core Runtime", "VS Code Extension Shell"),
+            .split("local-core-runtime")
+            .join("vs-code-extension-shell")
+            .split("Local Core Runtime")
+            .join("VS Code Extension Shell"),
         } as const;
       }
       if (artifactPath.endsWith("product-parts/vs-code-extension-shell.md")) {

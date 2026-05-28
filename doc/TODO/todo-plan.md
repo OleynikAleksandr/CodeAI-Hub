@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "2bbccc0f2",
+  "lastRecordedCommit": "9dfbf503c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8w.diagram-input-lock.task1",
-  "expectedCommitMessage": "fix: keep diagram modules locked until user handoff",
+  "currentTaskId": "provider-readiness.phase8w.diagram-input-lock-verify.task1",
+  "expectedCommitMessage": "test: verify managed continuation input lock",
   "debt": {
-    "expectedCommitMessage": "fix: keep diagram modules locked until user handoff",
-    "preCommitHead": "2bbccc0f2",
+    "expectedCommitMessage": "test: verify managed continuation input lock",
+    "preCommitHead": "9dfbf503c",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8w.diagram-input-lock.task1"
+    "taskId": "provider-readiness.phase8w.diagram-input-lock-verify.task1"
   }
 }
 ```
@@ -678,9 +678,12 @@
 243. [DONE] Git Commit: `fix: lock input during managed workflow continuation` (hash: 2bbccc0f2)
 244. [DONE] `provider-readiness.phase8w.diagram-input-lock.task1` Keep the Project Manager session input locked through the Diagram Modules product-part managed sequence until aggregate/review readiness instead of releasing on a narrow `pending` active-subturn status check (scope: `src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts, src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep diagram modules locked until user handoff`).
     - Result 2026-05-28: `npx tsx --test src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts` — PASS (10 tests).
-245. [PENDING] Git Commit: `fix: keep diagram modules locked until user handoff` (hash: TBD)
-246. [TODO] `provider-readiness.phase8w.diagram-input-lock-verify.task1` Run targeted PM/UI tests plus webview typecheck/build for the managed-continuation input lock and record exact results before any release decision (scope: `src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation input lock`).
-247. [TODO] Git Commit: `test: verify managed continuation input lock` (hash: TBD)
+245. [DONE] Git Commit: `fix: keep diagram modules locked until user handoff` (hash: 9dfbf503c)
+246. [DONE] `provider-readiness.phase8w.diagram-input-lock-verify.task1` Run targeted PM/UI tests plus webview typecheck/build for the managed-continuation input lock and record exact results before any release decision (scope: `src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify managed continuation input lock`).
+    - Result 2026-05-28: `npx tsx --test src/client/project-manager/components/sessions/session-message-dedupe.test.ts src/client/project-manager/components/sessions/use-diagram-modules-orchestration.test.ts src/client/project-manager/components/sessions/turn-state-stream.test.ts src/client/ui/src/session/input-panel.test.tsx` — PASS (31 tests).
+    - Result 2026-05-28: `npm run typecheck:webview` — PASS.
+    - Result 2026-05-28: `npm run build:webview` — PASS.
+247. [PENDING] Git Commit: `test: verify managed continuation input lock` (hash: TBD)
 248. [TODO] `provider-readiness.phase8w.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
