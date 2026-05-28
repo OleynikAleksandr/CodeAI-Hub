@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "f3571e80c",
+  "lastRecordedCommit": "6803716fc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8m.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare kimi reasoning repair release",
+  "currentTaskId": "provider-readiness.phase8m.release-build.task1",
+  "expectedCommitMessage": "chore: build kimi reasoning repair release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare kimi reasoning repair release",
-    "preCommitHead": "f3571e80c",
+    "expectedCommitMessage": "chore: build kimi reasoning repair release",
+    "preCommitHead": "6803716fc",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8m.release-prep.task1"
+    "taskId": "provider-readiness.phase8m.release-build.task1"
   }
 }
 ```
@@ -451,9 +451,11 @@
 ### Stream: GLM Loader And Kimi Reasoning Release
 159. [DONE] `provider-readiness.phase8m.release-prep.task1` User explicitly confirmed release build on 2026-05-28; update README/CHANGELOG for future release v1.2.385 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare kimi reasoning repair release`).
     - Result 2026-05-28: README Current Release and CHANGELOG updated for future v1.2.385 before running release scripts.
-160. [PENDING] Git Commit: `docs: prepare kimi reasoning repair release` (hash: TBD)
-161. [TODO] `provider-readiness.phase8m.release-build.task1` Run the approved unified release build for the GLM standalone loader and Kimi reasoning translation fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build kimi reasoning repair release`).
-162. [TODO] Git Commit: `chore: build kimi reasoning repair release` (hash: TBD)
+160. [DONE] Git Commit: `docs: prepare kimi reasoning repair release` (hash: 6803716fc)
+161. [DONE] `provider-readiness.phase8m.release-build.task1` Run the approved unified release build for the GLM standalone loader and Kimi reasoning translation fixes, collect generated tarballs, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build kimi reasoning repair release`).
+    - Result 2026-05-28: `./scripts/build-all.sh --allow-dirty` — PASS for v1.2.385. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-build transition.
+    - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.385.tar.bz2`, `codex-module-1.2.385.tar.bz2`, `gemini-module-1.2.385.tar.bz2`, `glm-claude-code-module-1.2.385.tar.bz2`, `kimi-module-1.2.385.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.385.tar.bz2`, `vscode-webview-1.2.385.tar.bz2`, `project-manager-1.2.385.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.385.tar.bz2`.
+162. [PENDING] Git Commit: `chore: build kimi reasoning repair release` (hash: TBD)
 163. [TODO] `provider-readiness.phase8m.release-vsix.task1` Run `./scripts/build-release.sh --use-current-version`, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify kimi reasoning repair vsix`).
 164. [TODO] Git Commit: `test: verify kimi reasoning repair vsix` (hash: TBD)
 165. [TODO] `provider-readiness.phase8m.user-retest.task1` User installs the replacement release and retests GLM standalone runtime loading plus Kimi reasoning/System translation (scope: chat/process observation only; expected commit: none).
