@@ -243,7 +243,7 @@ test("preliminary review accepts only explicit confirmation after Core gate", as
     );
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedFiles, FINAL_DESCRIPTION_RE);
-    assert.match(trackedFiles, PROVIDER_SESSION_RE);
+    assert.doesNotMatch(trackedFiles, PROVIDER_SESSION_RE);
     assert.match(trackedFiles, TASK_TIMERS_RE);
     assert.match(trackedFiles, UNIFIED_SESSION_RE);
     assert.doesNotMatch(trackedFiles, RUNTIME_SLICES_RE);

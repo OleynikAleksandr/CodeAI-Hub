@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "6b8eee65c",
+  "lastRecordedCommit": "ab0e9024d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8e.local-state-diagnose.task1",
-  "expectedCommitMessage": "test: characterize tracked local runtime state blocker",
+  "currentTaskId": "provider-readiness.phase8e.local-state-fix.task1",
+  "expectedCommitMessage": "fix: untrack local runtime state before step commit",
   "debt": {
-    "expectedCommitMessage": "test: characterize tracked local runtime state blocker",
-    "preCommitHead": "6b8eee65c",
+    "expectedCommitMessage": "fix: untrack local runtime state before step commit",
+    "preCommitHead": "ab0e9024d",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8e.local-state-diagnose.task1"
+    "taskId": "provider-readiness.phase8e.local-state-fix.task1"
   }
 }
 ```
@@ -283,9 +283,11 @@
     - Diagnostic 2026-05-28: The user's retest workspace has `.codeai-hub/state/task-timers.json` tracked in Git and modified, so adding `.codeai-hub/state/` to `.gitignore` is insufficient; the step acceptance path must also untrack already-indexed local runtime state before the clean-Git gate.
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: `node --test packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js` — PASS (5 tests).
-100. [PENDING] Git Commit: `test: characterize tracked local runtime state blocker` (hash: TBD)
-101. [TODO] `provider-readiness.phase8e.local-state-fix.task1` Untrack and ignore legacy workspace-local `.codeai-hub/state/` runtime files before the clean-Git gate, including files that were already tracked, so Description acceptance leaves Git clean and Virtual Simulation can start normally (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: untrack local runtime state before step commit`).
-102. [TODO] Git Commit: `fix: untrack local runtime state before step commit` (hash: TBD)
+100. [DONE] Git Commit: `test: characterize tracked local runtime state blocker` (hash: ab0e9024d)
+101. [DONE] `provider-readiness.phase8e.local-state-fix.task1` Untrack and ignore legacy workspace-local `.codeai-hub/state/` runtime files before the clean-Git gate, including files that were already tracked, so Description acceptance leaves Git clean and Virtual Simulation can start normally (scope: `packages/core/src/workflow/boundary, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: untrack local runtime state before step commit`).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `node --test packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-routing.test.js` — PASS (10 tests).
+102. [PENDING] Git Commit: `fix: untrack local runtime state before step commit` (hash: TBD)
 103. [TODO] `provider-readiness.phase8e.timeout-error.task1` Ensure workflow step start reports the Core blocker/error directly instead of falling through to generic `Session creation timed out.` when Core rejects session creation before `session:created` (scope: `src/client/project-manager/services/description-submit-service.ts, src/client/project-manager/services/description-submit-service.localization.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: surface workflow session creation errors`).
 104. [TODO] Git Commit: `fix: surface workflow session creation errors` (hash: TBD)
 105. [TODO] `provider-readiness.phase8e.translation-verify.task1` Verify that any remaining Core workflow blocker message is carried through the System/Reasoning translation route and that the tracked timer-state case no longer emits the blocker at all (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow blocker translation and cleanup`).

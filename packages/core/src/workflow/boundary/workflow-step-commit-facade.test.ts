@@ -218,6 +218,60 @@ test("legacy local CodeAI runtime state can be tracked before step acceptance", 
   }
 });
 
+test("accepted step commit untracks already tracked local CodeAI runtime state", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "step-untrack-local-state-workspace-")
+  );
+  try {
+    const { capsule } = await bootstrapWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
+    await writeText(
+      path.join(workspaceRoot, ".codeai-hub", "state", "task-timers.json"),
+      '{"schemaVersion":2,"totals":{"description":1}}\n'
+    );
+    await git(workspaceRoot, ["add", ".codeai-hub/state/task-timers.json"]);
+    await git(workspaceRoot, ["commit", "-m", "test: old local runtime state"]);
+    await writeText(
+      path.join(capsule.descriptionRoot.absolutePath, "Final_Description.md"),
+      "# Final Description\n"
+    );
+    await writeText(
+      path.join(workspaceRoot, ".codeai-hub", "state", "task-timers.json"),
+      '{"schemaVersion":2,"totals":{"description":2}}\n'
+    );
+
+    await new WorkflowStepCommitFacade().commitAcceptedStep({
+      stage: "description",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
+    assert.equal(
+      await git(workspaceRoot, [
+        "ls-files",
+        "--",
+        ".codeai-hub/state/task-timers.json",
+      ]),
+      ""
+    );
+    assert.equal(
+      await readFile(
+        path.join(workspaceRoot, ".codeai-hub", "state", "task-timers.json"),
+        "utf8"
+      ),
+      '{"schemaVersion":2,"totals":{"description":2}}\n'
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("accepted step commit untracks provider volatile files left by older capsule commits", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "step-volatile-workspace-")

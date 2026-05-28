@@ -36,6 +36,7 @@ export interface WorkflowStepCommitResult {
 
 const execFileAsync = promisify(execFile);
 const GITIGNORE_PATH = ".gitignore";
+const LOCAL_STATE_ROOT = ".codeai-hub/state";
 const LOCAL_STATE_IGNORE_PATTERN = ".codeai-hub/state/";
 const NEWLINE_RE = /\r?\n/u;
 const TRAILING_SLASHES_RE = /\/+$/u;
@@ -130,6 +131,16 @@ const untrackVolatileProviderRuntimePaths = async (params: {
   );
 };
 
+const untrackLocalStateRuntimePaths = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await execFileAsync(
+    "git",
+    ["rm", "--cached", "-r", "--ignore-unmatch", "--", LOCAL_STATE_ROOT],
+    { cwd: workspaceRoot }
+  );
+};
+
 export class WorkflowStepCommitFacade {
   readonly #git: WorkflowBoundaryGit;
 
@@ -154,6 +165,7 @@ export class WorkflowStepCommitFacade {
       settingsFile: capsule.settingsFile,
       workspaceRoot: params.workspaceRoot,
     });
+    await untrackLocalStateRuntimePaths(params.workspaceRoot);
     await ensureLocalStateIgnored(params.workspaceRoot);
     const commit = await this.#git.commit({
       allowEmpty: true,
