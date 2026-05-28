@@ -252,6 +252,76 @@ test("preliminary review accepts only explicit confirmation after Core gate", as
   }
 });
 
+test("preliminary review does not emit blocker for tracked local timer state", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "description-review-tracked-timer-")
+  );
+  try {
+    const { capsule } = await bootstrapWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await git(workspaceRoot, ["init"]);
+    await git(workspaceRoot, ["config", "user.email", "test@example.com"]);
+    await git(workspaceRoot, ["config", "user.name", "CodeAI Test"]);
+    const localTimerPath = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      "state",
+      "task-timers.json"
+    );
+    await writeText(
+      localTimerPath,
+      '{"schemaVersion":2,"totals":{"description":1}}\n'
+    );
+    await git(workspaceRoot, ["add", ".codeai-hub/state/task-timers.json"]);
+    await git(workspaceRoot, ["commit", "-m", "test: tracked local timer"]);
+    await writeText(
+      localTimerPath,
+      '{"schemaVersion":2,"totals":{"description":2}}\n'
+    );
+    await writeText(
+      path.join(capsule.descriptionRoot.absolutePath, "Final_Description.md"),
+      "# Final Description\n"
+    );
+
+    const sessionManager = new SessionManager();
+    const session = sessionManager.createSession(
+      "codexCli",
+      workspaceRoot,
+      "provider-session-1",
+      { initiativeSlug: WORKSPACE_SLUG, stage: "description" }
+    );
+    seedPreliminaryReviewGate({
+      sessionId: session.id,
+      sessionManager,
+      stageLabel: "Description",
+    });
+    const harness = createActions(sessionManager);
+
+    await harness.actions.handleMessage(session.id, "подтверждаю");
+
+    assert.equal(
+      harness.coreMessages.some(
+        (message) => message.tag === "managed-workflow-validation"
+      ),
+      false
+    );
+    assert.equal(harness.coreMessages.at(-1)?.tag, "managed-workflow-complete");
+    assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
+    assert.equal(
+      await git(workspaceRoot, [
+        "ls-files",
+        "--",
+        ".codeai-hub/state/task-timers.json",
+      ]),
+      ""
+    );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("preliminary review sends non-exact confirmation text to provider", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "description-review-feedback-")

@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "8add47029",
+  "lastRecordedCommit": "3cea22311",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8e.timeout-error.task1",
-  "expectedCommitMessage": "fix: surface workflow session creation errors",
+  "currentTaskId": "provider-readiness.phase8e.translation-verify.task1",
+  "expectedCommitMessage": "test: verify workflow blocker translation and cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: surface workflow session creation errors",
-    "preCommitHead": "8add47029",
+    "expectedCommitMessage": "test: verify workflow blocker translation and cleanup",
+    "preCommitHead": "3cea22311",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8e.timeout-error.task1"
+    "taskId": "provider-readiness.phase8e.translation-verify.task1"
   }
 }
 ```
@@ -291,9 +291,11 @@
 103. [DONE] `provider-readiness.phase8e.timeout-error.task1` Ensure workflow step start reports the Core blocker/error directly instead of falling through to generic `Session creation timed out.` when Core rejects session creation before `session:created` (scope: `packages/core/src/remote-bridge/remote-bridge-session-create-router.ts, packages/core/src/remote-bridge/remote-bridge-session-create-router.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: surface workflow session creation errors`).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: `node --test packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js` — PASS (4 tests).
-104. [PENDING] Git Commit: `fix: surface workflow session creation errors` (hash: TBD)
-105. [TODO] `provider-readiness.phase8e.translation-verify.task1` Verify that any remaining Core workflow blocker message is carried through the System/Reasoning translation route and that the tracked timer-state case no longer emits the blocker at all (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow blocker translation and cleanup`).
-106. [TODO] Git Commit: `test: verify workflow blocker translation and cleanup` (hash: TBD)
+104. [DONE] Git Commit: `fix: surface workflow session creation errors` (hash: 3cea22311)
+105. [DONE] `provider-readiness.phase8e.translation-verify.task1` Verify that any remaining Core workflow blocker message is carried through the System/Reasoning translation route and that the tracked timer-state case no longer emits the blocker at all (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-routing.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify workflow blocker translation and cleanup`).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-routing.test.js packages/core/dist/workflow/boundary/workflow-step-commit-facade.test.js packages/core/dist/remote-bridge/remote-bridge-session-create-router.test.js` — PASS (20 tests).
+106. [PENDING] Git Commit: `test: verify workflow blocker translation and cleanup` (hash: TBD)
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance

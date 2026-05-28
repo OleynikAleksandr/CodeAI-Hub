@@ -8,6 +8,8 @@ const noop = (): void => {
   // Intentional test stub.
 };
 
+const WORKFLOW_BLOCKER_RE = /Git must be clean/u;
+
 const flushAsync = (): Promise<void> =>
   new Promise((resolve) => {
     setImmediate(resolve);
@@ -315,4 +317,60 @@ test("SessionRequestHandlerEventMessages waits for latest Core system translatio
   releaseTranslation?.();
   await waitForPersistence;
   assert.deepEqual(storedTranslations, ["Последнее системное сообщение."]);
+});
+
+test("SessionRequestHandlerEventMessages translates workflow validation blockers", async () => {
+  const sessionManager = new SessionManager();
+  const session = sessionManager.createSession(
+    "codex",
+    "/tmp/core-workflow-blocker-localization",
+    "provider-session-id"
+  );
+  const translatedTags: Array<string | undefined> = [];
+  const handler = new SessionRequestHandlerEventMessages({
+    broadcaster: noop,
+    continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
+    logger: {
+      error: noop,
+      info: noop,
+      warn: noop,
+    } as never,
+    sessionManager,
+    sessionStorage: {
+      appendMessage: () => Promise.resolve(),
+      appendMessageTranslation: () => Promise.resolve(),
+    } as never,
+    sessionTranslation: {
+      resolveThinkingVisibilityForProvider: () => true,
+      translateDialogMessage: (candidate: {
+        readonly content: string;
+        readonly messageId: string;
+        readonly role: string;
+        readonly sessionId: string;
+        readonly tag?: string;
+      }) => {
+        translatedTags.push(candidate.tag);
+        assert.equal(candidate.role, "system");
+        assert.equal(candidate.tag, "managed-workflow-validation");
+        assert.match(candidate.content, WORKFLOW_BLOCKER_RE);
+        return Promise.resolve({
+          messageId: candidate.messageId,
+          sessionId: candidate.sessionId,
+          sourceHash: computeSessionMessageSourceHash(candidate.content),
+          targetLanguage: "ru",
+          translatedContent: "Шаг заблокирован: Git должен быть чистым.",
+        });
+      },
+    } as never,
+  });
+
+  handler.appendCoreMessage(session.id, {
+    content:
+      "The next workflow step remains blocked because Git must be clean first.",
+    tag: "managed-workflow-validation",
+  });
+
+  await handler.waitForMessagePersistence(session.id);
+
+  assert.deepEqual(translatedTags, ["managed-workflow-validation"]);
 });
