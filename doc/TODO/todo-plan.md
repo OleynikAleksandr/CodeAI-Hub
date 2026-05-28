@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "68247aceb",
+  "lastRecordedCommit": "3d1bd8874",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8o.release-build.task1",
-  "expectedCommitMessage": "chore: build glm config bootstrap release",
+  "currentTaskId": "provider-readiness.phase8o.release-vsix.task1",
+  "expectedCommitMessage": "test: verify glm config bootstrap vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build glm config bootstrap release",
-    "preCommitHead": "68247aceb",
+    "expectedCommitMessage": "test: verify glm config bootstrap vsix",
+    "preCommitHead": "3d1bd8874",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8o.release-build.task1"
+    "taskId": "provider-readiness.phase8o.release-vsix.task1"
   }
 }
 ```
@@ -498,9 +498,13 @@
     - Result 2026-05-28: GLM install step created `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` with only the `apiKey` field and an empty value.
     - Generated tarballs copied to `doc/tmp/releases/`: `claude-module-1.2.386.tar.bz2`, `codex-module-1.2.386.tar.bz2`, `gemini-module-1.2.386.tar.bz2`, `glm-claude-code-module-1.2.386.tar.bz2`, `kimi-module-1.2.386.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.386.tar.bz2`, `vscode-webview-1.2.386.tar.bz2`, `project-manager-1.2.386.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.386.tar.bz2`.
     - Artifact SHA1 check: GLM `9390cc07c85345b5a766020f1c5287971c284aa9`; Core `025ab1ab5627f267211c57acaa40bd2023f552cd`; Launcher `b40c5a397b10e3e2a70269aab4cf4d5016ae4fd0`; Claude `65e457582fd741e6c8b72000798017008a3511e7`; Codex `b6ec4fc9852995f088b88b36478ffbad18432b05`; Gemini `4cd5d1d32f968ac878601ecfbcff1f8495002483`; Kimi `b45451d24b076c6f088806a03827a7ba09826856`.
-182. [PENDING] Git Commit: `chore: build glm config bootstrap release` (hash: TBD)
-183. [TODO] `provider-readiness.phase8o.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config bootstrap vsix`).
-184. [TODO] Git Commit: `test: verify glm config bootstrap vsix` (hash: TBD)
+182. [DONE] Git Commit: `chore: build glm config bootstrap release` (hash: 3d1bd8874)
+183. [DONE] `provider-readiness.phase8o.release-vsix.task1` Run final VSIX packaging for the current release version, verify SDK exclusions/package output, and record the replacement VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `test: verify glm config bootstrap vsix`).
+    - Result 2026-05-28: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-vsix transition.
+    - Result 2026-05-28: Verified release output lines: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `✅ VSIX runtime package surface verified`.
+    - Result 2026-05-28: VSIX ready at `codeai-hub-1.2.386.vsix` (4.3M), SHA1 `f776a2ab411c6ccd9a8625f1f46e794cded13987`.
+    - Result 2026-05-28: live GLM config remains `/Users/oleksandroliinyk/.codeai-hub/providers/glm-claude-code/config.json` with only empty `apiKey` for the user to fill.
+184. [PENDING] Git Commit: `test: verify glm config bootstrap vsix` (hash: TBD)
 185. [TODO] `provider-readiness.phase8o.user-retest.task1` User installs the replacement release and retests that GLM card points to the generated global config file and that GLM becomes available after the user fills `apiKey` and restarts Core (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
