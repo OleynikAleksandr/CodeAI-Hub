@@ -1,7 +1,7 @@
 # Shared Runtime Translation Module - Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-05-27
+**Updated:** 2026-05-28
 **Owner:** Oleksandr + Codex
 **Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.1.854`)
 
@@ -87,6 +87,7 @@ Externally-composed provider-owned engines registered by Core (not bundled insid
 
 - `anthropic-claude-haiku-4-5` — provider-owned wrapper around `ClaudeHaikuTranslationService`; the shared package stays engine-neutral and only carries the chunk profile for this engine, while the runtime adapter lives beside the Claude provider. Core builds the translation facade with this engine through `createCoreTranslationFacade(...)` and passes the shared built-in engines plus the Haiku wrapper together.
 - `codex-gpt-5.4-mini` and `codex-gpt-5.3-codex-spark` — Core replaces the shared Codex CLI entries with `CodexAppServerTranslationEngine` wrappers backed by `CodexAppServerTranslationService`. The shared `codex exec` engine stays as each wrapper's internal fallback during migration, so the public engine ids do not change.
+- `lmstudio:<modelKey>` — dynamic Core-owned local model engines discovered from LM Studio through `lms ls --json`. Each downloaded LM Studio LLM becomes a selectable translation engine with a stable model-key id. Core loads the selected model through `lms load <modelKey>` before the first request and calls the local OpenAI-compatible `/v1/chat/completions` endpoint. Qwen-family models receive `/no_think` in the user prompt so translation requests do not spend tokens on visible reasoning.
 - explicit selection of a provider-owned engine is fail-closed when the engine is unavailable. If Core or Localization requests an explicit engine id that the active runtime did not register, the shared facade must return a fallback result with `errorCode = "no_engine"` instead of silently substituting the default engine.
 
 Implementation notes:
@@ -97,6 +98,7 @@ Implementation notes:
 - `apple-native` is explicit-only and never falls back to Apple network translation; helper/platform/language-pack failures return source text with `errorCode` such as `apple_native_helper_unavailable`, `apple_native_requires_xcode`, or `apple_native_language_pack_missing`.
 - `apple-native` may retry a bounded transient helper fallback when Apple `Translation` reports `TranslationError.Cause.notInstalled` during the first runtime call even though the language pair has already passed installed availability. This retry is intentionally narrow: missing helper, missing language packs, unsupported pairs, invalid input, empty results, and ordinary request timeouts still fail closed without hidden engine substitution.
 - provider-owned Codex App Server translation instructions are translation-only: they instruct the model to translate only supplied text, return only translated text, avoid workflow-agent behavior, and not use tools, shell commands, files, patches, web search, planning, or user-input requests.
+- LM Studio local translation instructions follow the same translation-only boundary. The local prompt preserves localization markers, placeholders, Markdown/code spans, JSON keys, API routes, CLI commands, model ids, provider names, and product names; the engine returns only translated text and fail-closes to the source string on load/API/empty-response errors.
 - provider-owned Codex App Server and Claude Haiku translation sessions are transient implementation detail, not resumable workflow history. After a successful translation call, the provider adapter deletes the native session file(s) it created under the workspace provider home; only finalized localization/runtime translation artifacts remain. Failed translation attempts may leave provider-native files for diagnostic evidence.
 - long requests are no longer sent as one monolithic string by default for generic/document translation; `TranslationFacade` resolves an engine-specific chunk policy, plans safe boundaries, and dispatches chunks sequentially through the same engine contract, while `reasoning` defaults to one translate call per provider-emitted block.
 - safe boundary priority is paragraph break -> list boundary -> sentence boundary -> clause boundary -> hard split outside protected regions.
@@ -108,6 +110,7 @@ Implementation notes:
   - `anthropic-claude-haiku-4-5` = `soft 400 / hard 600` (registry placeholder — live localization/reasoning paths currently dispatch without chunking)
 - the shared isolated Codex `codex exec` fallback resolves authentication artifacts from provider home first and falls back to legacy `~/.codex` artifacts when the provider-owned home has not been materialized yet; missing `models_cache.json` is tolerated, but missing auth is still a hard failure.
 - The package stays engine-pluggable so a different backend can be added later without changing consumer contracts.
+- Downloading, deleting, and deep per-model tuning of local models is intentionally outside the shared translation package and currently remains a LM Studio responsibility. The application consumes the downloaded model catalog and persists selected `lmstudio:*` engine ids; a future local-model management UI may wrap LM Studio/MLX lifecycle commands without changing the translation facade contract.
 
 ---
 

@@ -1,7 +1,7 @@
 # Localization — Module (SSOT)
 
 **Status:** Implemented on `main`
-**Updated:** 2026-05-27
+**Updated:** 2026-05-28
 **Owner:** Oleksandr + Codex
 **Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.1.881`)
 
@@ -134,6 +134,8 @@ Current settings contract stores:
 - reasoning translation engine id (`general.localization.reasoningEngineId`) — drives live visible provider `Thinking / Reasoning` translation only;
 - glossary enabled flag.
 
+Engine ids are open strings owned by the runtime catalog, not a fixed UI enum. Built-in ids remain stable, while downloaded LM Studio local models appear as `lmstudio:<modelKey>` and must round-trip through `uiEngineId` and `reasoningEngineId` without normalization back to `google-gtx`.
+
 Settings contract migration from the unified engine contract:
 
 - legacy `general.localization.engineId` is migrated into `general.localization.uiEngineId` on first normalized load and the legacy key is dropped from persisted state;
@@ -220,7 +222,9 @@ Important live behaviors:
   - `codex-gpt-5.4-mini`
   - `codex-gpt-5.3-codex-spark`
   - `anthropic-claude-haiku-4-5` (provider-owned, materialized through a strict Core-backed localization path; extension-host does not locally translate with this engine and must not downgrade to a local fallback path)
+  - `lmstudio:<modelKey>` entries discovered by Core from downloaded LM Studio LLMs; they share the Google/LLM language catalog for Settings selection, are displayed as `LM Studio · <model>`, and use the same explicit fail-closed materialization path as other non-default engines
 - Settings save blocks `apple-native` selections before persistence when Core helper preflight fails. The blocker covers unsupported platform, missing helper, Xcode not ready, unsupported language pair, and supported-but-not-installed Translation Languages packs; the user-facing message tells the user whether to update macOS, install Xcode, build/install the helper, or download languages in System Settings -> General -> Language & Region -> Translation Languages with On-Device Mode enabled.
+- LM Studio local model download, deletion, context-window tuning, and runtime server startup remain outside Localization and are currently performed in LM Studio. Localization consumes only the Core-provided model catalog and selected engine id; if the server/model is unavailable, materialization fails closed instead of silently changing engines.
 - after the UI/Reasoning translation split, the persisted `uiEngineId` continues to be the SSOT for UI localization bundle materialization, while Core-owned live thinking overlay translation is driven by a dedicated `reasoningEngineId` and `reasoningLanguage`; Localization still does not own the overlay storage or replay path.
 - matching runtime settings now reuse the persisted browser bootstrap snapshot instead of rebuilding startup payloads unconditionally.
 - Settings save-path now classifies every save through `LocalizationSettingsImpactClassifier` (in `src/extension-module/settings/localization-settings-impact-classifier.ts`) before deciding whether to enter the blocking strict sync path. Provider-only saves, `general.responsePolicy` changes, continuity-only changes, and any other setting that does not touch `general.localization.engineId`, the four approved category language selections, or the glossary-enabled flag return `no_localization_impact` and persist through a best-effort envelope without posting the localization busy overlay and without blocking Project Manager/new session sends.

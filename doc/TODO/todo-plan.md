@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "1c3a96765",
+  "lastRecordedCommit": "e26bdc2c1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase2.defaults.task1",
-  "expectedCommitMessage": "fix: persist local translation engine selections",
+  "currentTaskId": "local-models.phase3.docs.task1",
+  "expectedCommitMessage": "docs: document local models translation boundary",
   "debt": {
-    "expectedCommitMessage": "fix: persist local translation engine selections",
-    "preCommitHead": "1c3a96765",
+    "expectedCommitMessage": "docs: document local models translation boundary",
+    "preCommitHead": "e26bdc2c1",
     "stage": "commit_pending",
-    "taskId": "local-models.phase2.defaults.task1"
+    "taskId": "local-models.phase3.docs.task1"
   }
 }
 ```
@@ -61,12 +61,12 @@
 7. [DONE] `local-models.phase2.settings.task1` Preserve `lmstudio:*` engine ids in Settings state and render local model engine labels in the UI/Reasoning translation engine selectors (scope: `src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/localization-settings-card.tsx, src/client/ui/src/components/settings/localization-engine-availability.ts`; expected commit: `feat: expose local models in translation settings`).
 8. [DONE] Git Commit: `feat: expose local models in translation settings` (hash: 1c3a96765)
 9. [DONE] `local-models.phase2.defaults.task1` Normalize persisted settings snapshots so local engine ids round-trip through Core load/save without fallback while keeping old snapshots compatible (scope: `packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, src/client/ui/src/components/settings/settings-state-model.ts, src/client/ui/src/components/settings/settings-state-helpers.persistence.test.ts`; expected commit: `fix: persist local translation engine selections`).
-10. [PENDING] Git Commit: `fix: persist local translation engine selections` (hash: TBD)
+10. [DONE] Git Commit: `fix: persist local translation engine selections` (hash: e26bdc2c1)
 
 ## Phase 3 — Documentation Sync (owner: Codex, updated: 2026-05-28)
 ### Stream: SSOT Updates
-11. [TODO] `local-models.phase3.docs.task1` Update canonical architecture/module docs for the LM Studio local translation boundary, Settings selection semantics, and release-gated limitation that download/delete remains deferred (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/SolidWorks-WorkFlow/Modules/Localization.md`; expected commit: `docs: document local models translation boundary`).
-12. [TODO] Git Commit: `docs: document local models translation boundary` (hash: TBD)
+11. [DONE] `local-models.phase3.docs.task1` Update canonical architecture/module docs for the LM Studio local translation boundary, Settings selection semantics, and release-gated limitation that download/delete remains deferred (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/SolidWorks-WorkFlow/Modules/Localization.md`; expected commit: `docs: document local models translation boundary`).
+12. [PENDING] Git Commit: `docs: document local models translation boundary` (hash: TBD)
 
 ## Phase 4 — Tooling Verification (owner: Codex, updated: 2026-05-28)
 ### Stream: Targeted Verification
