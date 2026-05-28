@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "8b7527b11",
+  "lastRecordedCommit": "78a31eeb8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8s.release-vsix.task1",
-  "expectedCommitMessage": "test: verify global settings vsix",
+  "currentTaskId": "provider-readiness.phase8t.boundary-runtime-session-diagnose.task1",
+  "expectedCommitMessage": "test: characterize boundary runtime session dirty files",
   "debt": {
-    "expectedCommitMessage": "test: verify global settings vsix",
-    "preCommitHead": "8b7527b11",
+    "expectedCommitMessage": "test: characterize boundary runtime session dirty files",
+    "preCommitHead": "78a31eeb8",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8s.release-vsix.task1"
+    "taskId": "provider-readiness.phase8t.boundary-runtime-session-diagnose.task1"
   }
 }
 ```
@@ -607,11 +607,27 @@
     - Result 2026-05-28: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS. Dirty input was limited to the machine-managed post-commit `doc/TODO/todo-plan.md` release-vsix transition.
     - Result 2026-05-28: Verified release output lines: `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and `✅ VSIX runtime package surface verified`.
     - Result 2026-05-28: VSIX ready at `codeai-hub-1.2.388.vsix` (4.4M), SHA1 `699c5353d149f8ff55bfdca85021843bf0fd4787`.
-217. [PENDING] Git Commit: `test: verify global settings vsix` (hash: TBD)
-218. [TODO] `provider-readiness.phase8s.user-retest.task1` User installs the replacement release and retests GLM global config preservation plus global General/Localization settings behavior (scope: chat/process observation only; expected commit: none).
+217. [DONE] Git Commit: `test: verify global settings vsix` (hash: 78a31eeb8)
+218. [DONE] `provider-readiness.phase8s.user-retest.task1` User installs the replacement release and retests GLM global config preservation plus global General/Localization settings behavior (scope: chat/process observation only; expected commit: none).
+    - Result 2026-05-28: v1.2.388 retest confirms global settings are now saved in the expected global/workspace split.
+    - Finding 2026-05-28: Virtual Simulation startup is blocked after GLM Description because tracked mutable session logs remain dirty: `M .codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/*.jsonl` and `*.translations.jsonl`.
+
+## Phase 8t — Runtime Session Boundary Dirty Retest Repair (owner: Codex, updated: 2026-05-28)
+### Stream: Provider Session Logs And Boundary Cleanliness
+219. [DONE] `provider-readiness.phase8t.boundary-runtime-session-diagnose.task1` Characterize the regression where tracked provider session JSONL and translation JSONL under `runtime/sessions/unified/<provider>/` are treated as rollback-owned dirty files and block the next workflow boundary (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize boundary runtime session dirty files`).
+    - Diagnostic 2026-05-28: tracked GLM Description transcripts under `runtime/sessions/unified/glmClaudeCode/*.jsonl` and `*.translations.jsonl` remain in `git status` as modified files and currently make `WorkflowBoundaryFacade.ensureBoundary("virtual_simulation")` throw the pre-step rollback anchor dirty-tree error.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts` — PASS.
+220. [PENDING] Git Commit: `test: characterize boundary runtime session dirty files` (hash: TBD)
+221. [TODO] `provider-readiness.phase8t.boundary-runtime-session-fix.task1` Classify provider-owned unified session transcript files as mutable runtime state for boundary clean-Git checks while keeping Core-owned unified session registry files rollback-owned (scope: `packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: ignore tracked runtime session logs for boundaries`).
+222. [TODO] Git Commit: `fix: ignore tracked runtime session logs for boundaries` (hash: TBD)
+223. [TODO] `provider-readiness.phase8t.boundary-runtime-session-verify.task1` Verify direct rollback-ignore classification/untracking for tracked provider session JSONL and translations without excluding Core-owned unified session registry files (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: verify boundary runtime session cleanup`).
+224. [TODO] Git Commit: `test: verify boundary runtime session cleanup` (hash: TBD)
+225. [TODO] `provider-readiness.phase8t.targeted-verification.task1` Run targeted Core tests/build for boundary runtime session cleanup and record exact results before any release decision (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: run boundary runtime session verification`).
+226. [TODO] Git Commit: `test: run boundary runtime session verification` (hash: TBD)
+227. [TODO] `provider-readiness.phase8t.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-219. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-220. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-221. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+228. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+229. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+230. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
