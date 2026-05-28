@@ -5,8 +5,12 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
-import { resolveWorkspaceRuntimeCapsule } from "../runtime/workspace-runtime-capsule";
+import {
+  bootstrapWorkspaceRuntimeCapsule,
+  resolveWorkspaceRuntimeCapsule,
+} from "../runtime/workspace-runtime-capsule";
 import { WorkflowBoundaryFacade } from "./workflow-boundary-facade";
+import { WorkflowBoundaryGit } from "./workflow-boundary-git";
 
 const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
@@ -24,17 +28,22 @@ const writeText = async (filePath: string, content: string): Promise<void> => {
 const runGit = async (
   workspaceRoot: string,
   args: readonly string[]
-): Promise<void> => {
-  await execFileAsync("git", args, { cwd: workspaceRoot });
+): Promise<string> => {
+  const { stdout } = await execFileAsync("git", args, { cwd: workspaceRoot });
+  return stdout.trim();
 };
 
-test("WorkflowBoundaryFacade currently blocks tracked provider session transcripts", async () => {
+test("WorkflowBoundaryFacade untracks dirty provider session transcripts before the next boundary", async () => {
   const workspaceRoot = await createWorkspace();
   try {
     const facade = new WorkflowBoundaryFacade({
       clock: () => "2026-05-25T00:00:00.000Z",
     });
     const capsule = resolveWorkspaceRuntimeCapsule({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    await bootstrapWorkspaceRuntimeCapsule({
       workspaceRoot,
       workspaceSlug: WORKSPACE_SLUG,
     });
@@ -57,6 +66,7 @@ test("WorkflowBoundaryFacade currently blocks tracked provider session transcrip
     await writeText(translationsLogPath, '{"message":"seed"}\n');
     await runGit(workspaceRoot, [
       "add",
+      "-f",
       "--",
       path.relative(workspaceRoot, sessionLogPath),
       path.relative(workspaceRoot, translationsLogPath),
@@ -69,12 +79,19 @@ test("WorkflowBoundaryFacade currently blocks tracked provider session transcrip
     await writeText(sessionLogPath, '{"message":"changed"}\n');
     await writeText(translationsLogPath, '{"message":"changed"}\n');
 
-    await assert.rejects(
-      facade.ensureBoundary({
-        stage: "virtual_simulation",
-        workspaceRoot,
-        workspaceSlug: WORKSPACE_SLUG,
-      }),
+    const boundary = await facade.ensureBoundary({
+      stage: "virtual_simulation",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(boundary.created, true);
+    assert.deepEqual(
+      await new WorkflowBoundaryGit().statusPorcelain(workspaceRoot),
+      []
+    );
+    assert.doesNotMatch(
+      await runGit(workspaceRoot, ["ls-files"]),
       PROVIDER_SESSION_LOG_RE
     );
   } finally {
