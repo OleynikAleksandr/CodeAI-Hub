@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "c5867fc13",
+  "lastRecordedCommit": "1c948186f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8t.targeted-verification.task1",
-  "expectedCommitMessage": "test: verify boundary runtime session cleanup",
+  "currentTaskId": "provider-readiness.phase8u.residual-docs-diagnose.task1",
+  "expectedCommitMessage": "test: characterize residual document dirty blocker",
   "debt": {
-    "expectedCommitMessage": "test: verify boundary runtime session cleanup",
-    "preCommitHead": "c5867fc13",
+    "expectedCommitMessage": "test: characterize residual document dirty blocker",
+    "preCommitHead": "1c948186f",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8t.targeted-verification.task1"
+    "taskId": "provider-readiness.phase8u.residual-docs-diagnose.task1"
   }
 }
 ```
@@ -631,11 +631,24 @@
     - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts` — PASS (7 tests).
     - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
     - Result 2026-05-28: `node --test packages/core/dist/workflow/runtime/workspace-runtime-capsule-gitignore.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.js` — PASS (7 tests).
-226. [PENDING] Git Commit: `test: verify boundary runtime session cleanup` (hash: TBD)
-227. [TODO] `provider-readiness.phase8t.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+226. [DONE] Git Commit: `test: verify boundary runtime session cleanup` (hash: 1c948186f)
+227. [DONE] `provider-readiness.phase8t.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
+    - Finding 2026-05-28: User reports the post-acceptance Core dirty-Git blocker still appears for a provider translation JSONL path and requests a broader policy: Core should not ask the user to resolve workflow-neutral dirty documents after accepting a preliminary step; it should commit them itself and warn which paths were committed.
+
+## Phase 8u — Residual Document Commit Policy (owner: Codex, updated: 2026-05-28)
+### Stream: Workflow-Neutral Residual Documents
+228. [DONE] `provider-readiness.phase8u.residual-docs-diagnose.task1` Characterize the post-acceptance dirty-Git blocker for workflow-neutral residual documents outside the accepted workspace capsule commit (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: characterize residual document dirty blocker`).
+    - Diagnostic 2026-05-28: after Core commits the accepted preliminary step, an unrelated untracked `docs/` markdown note remains in `git status` and currently triggers the same dirty-Git blocker that prevents the next workflow step.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts` — PASS.
+229. [PENDING] Git Commit: `test: characterize residual document dirty blocker` (hash: TBD)
+230. [TODO] `provider-readiness.phase8u.residual-docs-fix.task1` Auto-commit workflow-neutral residual document changes after the accepted step commit, keep blocking code/config/runtime-unknown dirtiness, and append a Core warning that lists auto-committed paths (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts`; expected commit: `fix: auto-commit residual workflow documents`).
+231. [TODO] Git Commit: `fix: auto-commit residual workflow documents` (hash: TBD)
+232. [TODO] `provider-readiness.phase8u.residual-docs-verify.task1` Run targeted Core source/dist tests and build for residual document auto-commit policy and provider session cleanup (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify residual document commit policy`).
+233. [TODO] Git Commit: `test: verify residual document commit policy` (hash: TBD)
+234. [TODO] `provider-readiness.phase8u.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-228. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-229. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-230. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+235. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+236. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+237. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
