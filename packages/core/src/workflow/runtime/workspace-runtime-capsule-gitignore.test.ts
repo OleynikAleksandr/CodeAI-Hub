@@ -129,6 +129,22 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
     isWorkspaceRollbackIgnoredRuntimePath({
       capsule,
       relativePath:
+        ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/glmclaudecode-description.jsonl",
+    }),
+    true
+  );
+  assert.equal(
+    isWorkspaceRollbackIgnoredRuntimePath({
+      capsule,
+      relativePath:
+        ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/glmclaudecode-description.translations.jsonl",
+    }),
+    true
+  );
+  assert.equal(
+    isWorkspaceRollbackIgnoredRuntimePath({
+      capsule,
+      relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/session.json",
     }),
     false
@@ -162,6 +178,16 @@ test("workspace rollback ignore untracks legacy mutable runtime files", async ()
       "05",
       "26",
       "session.jsonl"
+    ),
+    path.posix.join(
+      capsule.unifiedSessionsRoot.relativePath,
+      "glmClaudeCode",
+      "glmclaudecode-description.jsonl"
+    ),
+    path.posix.join(
+      capsule.unifiedSessionsRoot.relativePath,
+      "glmClaudeCode",
+      "glmclaudecode-description.translations.jsonl"
     ),
   ];
   const rollbackOwnedPath = path.posix.join(

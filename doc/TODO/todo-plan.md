@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "cb1f71bdb",
+  "lastRecordedCommit": "c5867fc13",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8t.boundary-runtime-session-classifier.task1",
-  "expectedCommitMessage": "fix: untrack provider session logs for boundaries",
+  "currentTaskId": "provider-readiness.phase8t.targeted-verification.task1",
+  "expectedCommitMessage": "test: verify boundary runtime session cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: untrack provider session logs for boundaries",
-    "preCommitHead": "cb1f71bdb",
+    "expectedCommitMessage": "test: verify boundary runtime session cleanup",
+    "preCommitHead": "c5867fc13",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8t.boundary-runtime-session-classifier.task1"
+    "taskId": "provider-readiness.phase8t.targeted-verification.task1"
   }
 }
 ```
@@ -626,9 +626,12 @@
     - Result 2026-05-28: rollback-ignore classification now treats `runtime/sessions/unified/<provider>/...` as provider-owned mutable runtime state, so already-tracked JSONL/translations are removed from the index before boundary status checks.
     - Result 2026-05-28: the regression test now forces legacy tracked GLM transcript files, modifies them, and verifies `ensureBoundary("virtual_simulation")` succeeds with a clean Git status and no tracked provider transcript files.
     - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts` — PASS.
-224. [PENDING] Git Commit: `fix: untrack provider session logs for boundaries` (hash: TBD)
-225. [TODO] `provider-readiness.phase8t.targeted-verification.task1` Run targeted Core tests/build for boundary runtime session cleanup and record exact results before any release decision (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify boundary runtime session cleanup`).
-226. [TODO] Git Commit: `test: verify boundary runtime session cleanup` (hash: TBD)
+224. [DONE] Git Commit: `fix: untrack provider session logs for boundaries` (hash: c5867fc13)
+225. [DONE] `provider-readiness.phase8t.targeted-verification.task1` Run targeted Core tests/build for boundary runtime session cleanup and record exact results before any release decision (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify boundary runtime session cleanup`).
+    - Result 2026-05-28: `npx tsx --test packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts` — PASS (7 tests).
+    - Result 2026-05-28: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Result 2026-05-28: `node --test packages/core/dist/workflow/runtime/workspace-runtime-capsule-gitignore.test.js packages/core/dist/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.js` — PASS (7 tests).
+226. [PENDING] Git Commit: `test: verify boundary runtime session cleanup` (hash: TBD)
 227. [TODO] `provider-readiness.phase8t.user-retest.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
