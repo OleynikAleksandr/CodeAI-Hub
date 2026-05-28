@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "839b56006",
+  "lastRecordedCommit": "56c8638f6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8k.glm-live-verify.task1",
-  "expectedCommitMessage": "test: verify glm standalone runtime loading",
+  "currentTaskId": "provider-readiness.phase8l.kimi-reasoning-diagnose.task1",
+  "expectedCommitMessage": "test: characterize kimi reasoning translation settings path",
   "debt": {
-    "expectedCommitMessage": "test: verify glm standalone runtime loading",
-    "preCommitHead": "839b56006",
+    "expectedCommitMessage": "test: characterize kimi reasoning translation settings path",
+    "preCommitHead": "56c8638f6",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8k.glm-live-verify.task1"
+    "taskId": "provider-readiness.phase8l.kimi-reasoning-diagnose.task1"
   }
 }
 ```
@@ -421,10 +421,26 @@
     - Result 2026-05-28: `node --test packages/Claude_Module/dist/glm-claude-code/glm-claude-code-runtime-profile.test.js` — PASS (2 tests).
     - Result 2026-05-28: Installed v1.2.384 runtime probe with actual workspace settings reports `apiKeyAvailable=false`, `apiKeySource=missing`; the same probe with a synthetic workspace key reports `apiKeyAvailable=true`, `apiKeySource=workspace_settings`, `ANTHROPIC_API_KEY=true`, and `ANTHROPIC_AUTH_TOKEN=true`.
     - Release build intentionally not run for this retest fix stream.
-150. [PENDING] Git Commit: `test: verify glm standalone runtime loading` (hash: TBD)
+150. [DONE] Git Commit: `test: verify glm standalone runtime loading` (hash: 56c8638f6)
+151. [BLOCKED] `provider-readiness.phase8k.user-retest.task1` User continues testing the current work-in-progress fixes without a new release build; collect any further feedback before release packaging is requested (scope: chat/process observation only; expected commit: none).
+    - Finding 2026-05-28: Kimi visible `Thinking` bubbles in `kimicode-3ef41b7d-adec-47da-bb35-6e279a6d79eb-virtual-simulation.jsonl` are persisted/displayed in English at the beginning of the turn. Core logs show each Kimi `thinking` message enters the session translation pipeline, but translation is skipped with `skipReason=missing_target_language` and `targetLanguage=null`, while the runtime prompt for the same session correctly uses `Chat language code: ru`.
+
+## Phase 8l — Kimi Reasoning Translation Retest Repair (owner: Codex, updated: 2026-05-28)
+### Stream: Session Translation Settings Path
+152. [DONE] `provider-readiness.phase8l.kimi-reasoning-diagnose.task1` Characterize why Kimi visible `Thinking`/reasoning bubbles use the fallback translation settings path instead of the workflow session settings path, causing Core to resolve the target language as `en` and skip translation (scope: `packages/core/src/session-translation, packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `test: characterize kimi reasoning translation settings path`).
+    - Diagnostic 2026-05-28: Live Core log for `kimicode-3ef41b7d-adec-47da-bb35-6e279a6d79eb-virtual-simulation` shows Kimi `thinking` messages enter the translation pipeline and are accepted by the dispatcher, then skip with `skipReason=missing_target_language`, `targetLanguage=null`, and fallback `engineId=google-gtx`.
+    - Diagnostic 2026-05-28: The same workspace settings file contains `general.localization.categories.reasoning=ru` and `reasoningEngineId=apple-native`, and the provider prompt correctly included `Chat language code: ru`, proving the prompt path and translation path read different settings.
+    - Diagnostic 2026-05-28: `SessionRequestHandlerRuntimeCore` constructs `SessionTranslationFacade` with only `defaultSettingsPath`; `SessionRequestHandlerEventMessages` does not pass `session.modelBinding.settingsPath` to thinking visibility or `translateDialogMessage()`.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts` — PASS (6 tests, including the current missing settings-path characterization).
+153. [PENDING] Git Commit: `test: characterize kimi reasoning translation settings path` (hash: TBD)
+154. [TODO] `provider-readiness.phase8l.kimi-reasoning-fix.task1` Route session translation policy and thinking-visibility decisions through the active session's `modelBinding.settingsPath` when available, so Kimi `thinking` uses the same Reasoning language/engine as the workflow prompt (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, doc/TODO/todo-plan.md`; expected commit: `fix: use session settings for reasoning translation`).
+155. [TODO] Git Commit: `fix: use session settings for reasoning translation` (hash: TBD)
+156. [TODO] `provider-readiness.phase8l.kimi-reasoning-verify.task1` Verify Kimi `thinking`, Core system messages, and fallback/default sessions choose the correct translation target and still preserve hidden-thinking behavior; do not build a release in this stream (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify kimi reasoning translation settings`).
+157. [TODO] Git Commit: `test: verify kimi reasoning translation settings` (hash: TBD)
+158. [TODO] `provider-readiness.phase8l.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-151. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-152. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-153. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+159. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+160. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+161. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).

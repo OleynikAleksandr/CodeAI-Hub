@@ -374,3 +374,66 @@ test("SessionRequestHandlerEventMessages translates workflow validation blockers
 
   assert.deepEqual(translatedTags, ["managed-workflow-validation"]);
 });
+
+test("SessionRequestHandlerEventMessages currently omits workflow settings path for Kimi thinking translation", async () => {
+  const sessionManager = new SessionManager();
+  const session = sessionManager.createSession(
+    "kimiCode",
+    "/tmp/kimi-workflow-settings-path",
+    "provider-session-id"
+  );
+  sessionManager.setModelBinding(session.id, {
+    boundAt: "2026-05-28T07:19:31.139Z",
+    key: "session:kimi-workflow-settings-path",
+    modelId: "kimi-for-coding",
+    providerId: "kimiCode",
+    settingsPath: "/tmp/workflow/runtime/settings/settings.json",
+    source: "start_step_selection",
+    updatedAt: "2026-05-28T07:19:31.139Z",
+  });
+
+  let visibilityArgs: readonly unknown[] = [];
+  let translatedCandidate: {
+    readonly providerId?: string;
+    readonly role: string;
+    readonly settingsPath?: string;
+    readonly tag?: string;
+  } | null = null;
+  const handler = new SessionRequestHandlerEventMessages({
+    broadcaster: noop,
+    continuityRootBySessionId: new Map([[session.id, "dialog-1"]]),
+    logger: {
+      error: noop,
+      info: noop,
+      warn: noop,
+    } as never,
+    sessionManager,
+    sessionStorage: {
+      appendMessage: () => Promise.resolve(),
+      appendMessageTranslation: () => Promise.resolve(),
+    } as never,
+    sessionTranslation: {
+      resolveThinkingVisibilityForProvider: (...args: readonly unknown[]) => {
+        visibilityArgs = args;
+        return true;
+      },
+      translateDialogMessage: (candidate: typeof translatedCandidate) => {
+        translatedCandidate = candidate;
+        return Promise.resolve(null);
+      },
+    } as never,
+  });
+
+  handler.appendProviderMessage(session.id, "thinking", {
+    content: "The user wants me to create the initial draft.",
+    tag: "thinking",
+  });
+
+  await handler.waitForMessagePersistence(session.id);
+
+  assert.deepEqual(visibilityArgs, ["kimi"]);
+  assert.equal(translatedCandidate?.providerId, "kimi");
+  assert.equal(translatedCandidate?.role, "thinking");
+  assert.equal(translatedCandidate?.tag, "thinking");
+  assert.equal(translatedCandidate?.settingsPath, undefined);
+});
