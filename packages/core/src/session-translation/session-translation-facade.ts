@@ -58,6 +58,7 @@ export interface SessionMessageTranslationCandidate
   readonly messageId: string;
   readonly providerId?: SessionTranslationProviderId;
   readonly sessionId: string;
+  readonly settingsPath?: string;
 }
 
 export interface SessionMessageTranslationResult {
@@ -67,6 +68,11 @@ export interface SessionMessageTranslationResult {
   readonly targetLanguage: string;
   readonly translatedContent: string;
 }
+
+const resolveCandidateSettingsPath = (
+  candidate: Pick<SessionMessageTranslationCandidate, "settingsPath">,
+  fallback: string
+): string => candidate.settingsPath ?? fallback;
 
 const isThinkingTranslationCandidate = (
   candidate: SessionTranslationDispatchCandidate
@@ -143,10 +149,11 @@ export class SessionTranslationFacade {
   }
 
   resolveThinkingVisibilityForProvider(
-    providerId: SessionTranslationProviderId
+    providerId: SessionTranslationProviderId,
+    settingsPath?: string
   ): boolean {
     return this.policyResolver.resolveThinkingVisibility(
-      this.settingsPath,
+      settingsPath ?? this.settingsPath,
       providerId
     );
   }
@@ -335,6 +342,10 @@ export class SessionTranslationFacade {
   async translateDialogMessage(
     candidate: SessionMessageTranslationCandidate
   ): Promise<SessionMessageTranslationResult | null> {
+    const settingsPath = resolveCandidateSettingsPath(
+      candidate,
+      this.settingsPath
+    );
     const thinkingCandidate = isThinkingTranslationCandidate(candidate);
     const dispatcherAccepted =
       this.dispatcher.shouldTranslateDialogMessage(candidate);
@@ -342,7 +353,7 @@ export class SessionTranslationFacade {
       thinkingCandidate &&
       candidate.providerId &&
       !this.policyResolver.resolveThinkingVisibility(
-        this.settingsPath,
+        settingsPath,
         candidate.providerId
       )
     ) {
@@ -380,7 +391,7 @@ export class SessionTranslationFacade {
 
     const sourceHash = computeSessionMessageSourceHash(candidate.content);
     const policy = this.policyResolver.resolve(
-      this.settingsPath,
+      settingsPath,
       resolveTranslationPolicyCategory(candidate)
     );
     const dedupeKey =

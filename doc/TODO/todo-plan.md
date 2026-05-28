@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "56c8638f6",
+  "lastRecordedCommit": "b6fa87a82",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8l.kimi-reasoning-diagnose.task1",
-  "expectedCommitMessage": "test: characterize kimi reasoning translation settings path",
+  "currentTaskId": "provider-readiness.phase8l.kimi-reasoning-fix.task1",
+  "expectedCommitMessage": "fix: use session settings for reasoning translation",
   "debt": {
-    "expectedCommitMessage": "test: characterize kimi reasoning translation settings path",
-    "preCommitHead": "56c8638f6",
+    "expectedCommitMessage": "fix: use session settings for reasoning translation",
+    "preCommitHead": "b6fa87a82",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8l.kimi-reasoning-diagnose.task1"
+    "taskId": "provider-readiness.phase8l.kimi-reasoning-fix.task1"
   }
 }
 ```
@@ -432,9 +432,12 @@
     - Diagnostic 2026-05-28: The same workspace settings file contains `general.localization.categories.reasoning=ru` and `reasoningEngineId=apple-native`, and the provider prompt correctly included `Chat language code: ru`, proving the prompt path and translation path read different settings.
     - Diagnostic 2026-05-28: `SessionRequestHandlerRuntimeCore` constructs `SessionTranslationFacade` with only `defaultSettingsPath`; `SessionRequestHandlerEventMessages` does not pass `session.modelBinding.settingsPath` to thinking visibility or `translateDialogMessage()`.
     - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts` — PASS (6 tests, including the current missing settings-path characterization).
-153. [PENDING] Git Commit: `test: characterize kimi reasoning translation settings path` (hash: TBD)
-154. [TODO] `provider-readiness.phase8l.kimi-reasoning-fix.task1` Route session translation policy and thinking-visibility decisions through the active session's `modelBinding.settingsPath` when available, so Kimi `thinking` uses the same Reasoning language/engine as the workflow prompt (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, doc/TODO/todo-plan.md`; expected commit: `fix: use session settings for reasoning translation`).
-155. [TODO] Git Commit: `fix: use session settings for reasoning translation` (hash: TBD)
+153. [DONE] Git Commit: `test: characterize kimi reasoning translation settings path` (hash: b6fa87a82)
+154. [DONE] `provider-readiness.phase8l.kimi-reasoning-fix.task1` Route session translation policy and thinking-visibility decisions through the active session's `modelBinding.settingsPath` when available, so Kimi `thinking` uses the same Reasoning language/engine as the workflow prompt (scope: `packages/core/src/session-translation/session-translation-facade.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts, packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: use session settings for reasoning translation`).
+    - Result 2026-05-28: `SessionRequestHandlerEventMessages` now passes `session.modelBinding.settingsPath` into thinking visibility checks and translation candidates when available.
+    - Result 2026-05-28: `SessionTranslationFacade` now resolves reasoning target language/engine from the candidate settings path before falling back to the default settings path.
+    - Result 2026-05-28: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts` — PASS (6 tests).
+155. [PENDING] Git Commit: `fix: use session settings for reasoning translation` (hash: TBD)
 156. [TODO] `provider-readiness.phase8l.kimi-reasoning-verify.task1` Verify Kimi `thinking`, Core system messages, and fallback/default sessions choose the correct translation target and still preserve hidden-thinking behavior; do not build a release in this stream (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify kimi reasoning translation settings`).
 157. [TODO] Git Commit: `test: verify kimi reasoning translation settings` (hash: TBD)
 158. [TODO] `provider-readiness.phase8l.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).

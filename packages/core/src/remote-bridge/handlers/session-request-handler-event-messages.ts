@@ -209,11 +209,13 @@ export class SessionRequestHandlerEventMessages {
       : options.content;
     const session = this.deps.sessionManager.getSession(options.sessionId);
     const providerId = resolveTranslationProviderId(session?.providerId);
+    const settingsPath = session?.modelBinding?.settingsPath;
     let visibilityAtEmission: "visible" | "hidden" | undefined;
     if (emissionThinking && providerId) {
       visibilityAtEmission =
         this.deps.sessionTranslation.resolveThinkingVisibilityForProvider(
-          providerId
+          providerId,
+          settingsPath
         )
           ? "visible"
           : "hidden";
@@ -358,6 +360,7 @@ export class SessionRequestHandlerEventMessages {
     }
     const session = this.deps.sessionManager.getSession(sessionId);
     const providerId = resolveTranslationProviderId(session?.providerId);
+    const settingsPath = session?.modelBinding?.settingsPath;
     const translated =
       await this.deps.sessionTranslation.translateDialogMessage({
         sessionId,
@@ -366,6 +369,7 @@ export class SessionRequestHandlerEventMessages {
         tag: message.tag,
         content: message.content,
         ...(providerId ? { providerId } : {}),
+        ...(settingsPath ? { settingsPath } : {}),
       });
     if (!translated) {
       return;

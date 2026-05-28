@@ -375,7 +375,7 @@ test("SessionRequestHandlerEventMessages translates workflow validation blockers
   assert.deepEqual(translatedTags, ["managed-workflow-validation"]);
 });
 
-test("SessionRequestHandlerEventMessages currently omits workflow settings path for Kimi thinking translation", async () => {
+test("SessionRequestHandlerEventMessages passes workflow settings path for Kimi thinking translation", async () => {
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
     "kimiCode",
@@ -431,9 +431,15 @@ test("SessionRequestHandlerEventMessages currently omits workflow settings path 
 
   await handler.waitForMessagePersistence(session.id);
 
-  assert.deepEqual(visibilityArgs, ["kimi"]);
+  assert.deepEqual(visibilityArgs, [
+    "kimi",
+    "/tmp/workflow/runtime/settings/settings.json",
+  ]);
   assert.equal(translatedCandidate?.providerId, "kimi");
   assert.equal(translatedCandidate?.role, "thinking");
   assert.equal(translatedCandidate?.tag, "thinking");
-  assert.equal(translatedCandidate?.settingsPath, undefined);
+  assert.equal(
+    translatedCandidate?.settingsPath,
+    "/tmp/workflow/runtime/settings/settings.json"
+  );
 });
