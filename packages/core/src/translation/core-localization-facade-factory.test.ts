@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile } from "node:fs/promises";
+import { access, chmod, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -113,6 +113,34 @@ const createCoreConfig = (params: {
   shutdownGracePeriodMs: 0,
   templatesDir: path.join(params.workspaceRoot, "templates"),
 });
+
+const withFakeLmStudioCli = async (
+  runTest: () => Promise<void> | void
+): Promise<void> => {
+  const binDirectory = await mkdtemp(path.join(tmpdir(), "codeai-lms-bin-"));
+  const lmsPath = path.join(binDirectory, "lms");
+  const originalPath = process.env.PATH;
+  await writeFile(
+    lmsPath,
+    [
+      "#!/bin/sh",
+      'if [ "$1" = "ls" ] && [ "$2" = "--json" ]; then',
+      'printf \'%s\\n\' \'[{"type":"llm","modelKey":"mlx-community/catalog-test","displayName":"Catalog Test","architecture":"gemma"}]\'',
+      "exit 0",
+      "fi",
+      "exit 0",
+      "",
+    ].join("\n"),
+    "utf8"
+  );
+  await chmod(lmsPath, 0o755);
+  process.env.PATH = `${binDirectory}:${originalPath ?? ""}`;
+  try {
+    await runTest();
+  } finally {
+    process.env.PATH = originalPath;
+  }
+};
 
 test("createCoreLocalizationFacade keeps labels in English while materializing helper categories through Haiku", async () => {
   const facade = createCoreLocalizationFacade({
@@ -245,4 +273,22 @@ test("createCoreLocalizationFacade stores runtime localization under global app 
       process.env.HOME = originalHome;
     }
   }
+});
+
+test("createCoreLocalizationFacade exposes LM Studio local model language catalogs", async () => {
+  await withFakeLmStudioCli(() => {
+    const facade = createCoreLocalizationFacade({
+      sourceDictionaries: createSourceDictionaries(),
+    });
+    const localCatalog = facade
+      .listAvailableEngines()
+      .find(
+        (catalog) => catalog.engineId === "lmstudio:mlx-community/catalog-test"
+      );
+
+    assert.equal(
+      localCatalog?.languages.some((language) => language.code === "ru"),
+      true
+    );
+  });
 });
