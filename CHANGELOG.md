@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.391] - 2026-05-28
+### Packaging
+- Rebuilt the managed input lock hotfix under a new release number for installation and retest.
+- Runtime behavior remains the v1.2.390 managed continuation lock fix: Project Manager keeps user input locked while Core owns internal agent turns and unlocks only on explicit user handoff.
+
+### Tests
+- Release build flow: `./scripts/build-all.sh`
+- VSIX packaging flow: `./scripts/build-release.sh --use-current-version`
+
 ## [1.2.390] - 2026-05-28
 ### Fixed
 - **Session input stays locked during Core-managed continuations.** Project Manager now locks the user input when Core emits `managed-workflow-continuation` and releases that managed lock only when Core hands control back through user review or completion.

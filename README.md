@@ -2,7 +2,14 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.390** (Managed Input Lock Hotfix)
+**Current Release — v1.2.391** (Managed Input Lock Rebuild)
+
+This release rebuilds the managed input lock hotfix under a fresh package
+number for installation and retest. Runtime behavior is the same hotfix line as
+v1.2.390: Core-owned managed workflow continuations keep the session input
+locked until an explicit user handoff.
+
+**Previous Release — v1.2.390** (Managed Input Lock Hotfix)
 
 This hotfix keeps the session input locked while Core owns a managed workflow
 continuation and is internally handing work to the agent. Project Manager now

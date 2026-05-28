@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "730498d2c",
+  "lastRecordedCommit": "0a1c21375",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8x.vsix.task1",
-  "expectedCommitMessage": "test: verify managed input lock vsix package",
+  "currentTaskId": "provider-readiness.phase8y.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare managed input lock rebuild release",
   "debt": {
-    "expectedCommitMessage": "test: verify managed input lock vsix package",
-    "preCommitHead": "730498d2c",
+    "expectedCommitMessage": "docs: prepare managed input lock rebuild release",
+    "preCommitHead": "0a1c21375",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8x.vsix.task1"
+    "taskId": "provider-readiness.phase8y.release-prep.task1"
   }
 }
 ```
@@ -699,11 +699,22 @@
 253. [DONE] `provider-readiness.phase8x.vsix.task1` Run final VSIX packaging with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify managed input lock vsix package`).
     - Result 2026-05-28: `./scripts/build-release.sh --use-current-version --allow-dirty` — PASS for v1.2.390. Verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
     - VSIX 2026-05-28: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.390.vsix` (`4.4M`, SHA1 `866cd8465d72f65ef9039ab6061456f03853a82a`).
-254. [PENDING] Git Commit: `test: verify managed input lock vsix package` (hash: TBD)
-255. [TODO] `provider-readiness.phase8x.user-retest.task1` User installs the produced v1.2.390 release and retests that the session input stays locked while Core internally continues managed workflow turns and unlocks only on explicit user handoff (scope: chat/process observation only; expected commit: none).
+254. [DONE] Git Commit: `test: verify managed input lock vsix package` (hash: 0a1c21375)
+255. [DONE] `provider-readiness.phase8x.user-retest.task1` User installs the produced v1.2.390 release and retests that the session input stays locked while Core internally continues managed workflow turns and unlocks only on explicit user handoff (scope: chat/process observation only; expected commit: none).
+    - Result 2026-05-28: Superseded by user request to rebuild the same managed input lock release under a new release number before further retest.
+
+## Phase 8y — Managed Input Lock Rebuild Release (owner: Codex, updated: 2026-05-28)
+### Stream: Release Rebuild Packaging
+256. [DONE] `provider-readiness.phase8y.release-prep.task1` User explicitly requested another release build with a new number on 2026-05-28; update README/CHANGELOG for future release v1.2.391 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare managed input lock rebuild release`).
+257. [PENDING] Git Commit: `docs: prepare managed input lock rebuild release` (hash: TBD)
+258. [TODO] `provider-readiness.phase8y.release-build.task1` Run `./scripts/build-all.sh` using committed future-version docs, collect generated tarballs, preserve user GLM global config during release cleanup, and record exact outputs/results in this plan (scope: `scripts/build-all.sh, package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, README.md, CHANGELOG.md, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build managed input lock rebuild release`).
+259. [TODO] Git Commit: `chore: build managed input lock rebuild release` (hash: TBD)
+260. [TODO] `provider-readiness.phase8y.vsix.task1` Run final VSIX packaging with `./scripts/build-release.sh --use-current-version`, verify SDK exclusions and package creation output, and record the VSIX path in this plan (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify managed input lock rebuild vsix package`).
+261. [TODO] Git Commit: `test: verify managed input lock rebuild vsix package` (hash: TBD)
+262. [TODO] `provider-readiness.phase8y.user-retest.task1` User installs the produced v1.2.391 release and retests that the session input stays locked while Core internally continues managed workflow turns and unlocks only on explicit user handoff (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
 ### Stream: Closeout After Acceptance
-256. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
-257. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
-258. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
+263. [TODO] `provider-readiness.phase9.closeout.task1` After explicit user acceptance only, sync stable outcomes into provider/module SSOT docs as needed, update Docs Index, archive the planning source and active todo plan, and leave terminal NONE state (scope: `doc/SolidWorks-WorkFlow/Modules/Gemini.md, doc/SolidWorks-WorkFlow/Modules/Kimi.md, doc/SolidWorks-WorkFlow/Modules/GLM_Claude_Code.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md, doc/SolidWorks-WorkFlow/Plans/Archive/, doc/TODO/todo-plan.md, doc/TODO/Archive/`; expected commit: `docs: close provider readiness repair scope`).
+264. [TODO] Git Commit: `docs: close provider readiness repair scope` (hash: TBD)
+265. [TODO] `provider-readiness.phase9.post-closeout.anchor` Reserved post-closeout handoff anchor; no implementation work belongs here (scope: `doc/TODO/todo-plan.md`; expected commit: none).
