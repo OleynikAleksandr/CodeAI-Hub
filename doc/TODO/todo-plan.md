@@ -8,15 +8,15 @@
   "planId": "provider-workspace-home-readiness-repair-2026-05-27",
   "branch": "main",
   "baseHead": "82b4a5113",
-  "lastRecordedCommit": "245b47405",
+  "lastRecordedCommit": "8f1414257",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Provider_WorkspaceHome_Readiness_Repair_Planning_RU.md",
-  "currentTaskId": "provider-readiness.phase8h.stage-marker-fix.task1",
-  "expectedCommitMessage": "fix: render active workflow stage marker as progress",
+  "currentTaskId": "provider-readiness.phase8h.stage-marker-verify.task1",
+  "expectedCommitMessage": "test: verify active stage marker repair",
   "debt": {
-    "expectedCommitMessage": "fix: render active workflow stage marker as progress",
-    "preCommitHead": "245b47405",
+    "expectedCommitMessage": "test: verify active stage marker repair",
+    "preCommitHead": "8f1414257",
     "stage": "commit_pending",
-    "taskId": "provider-readiness.phase8h.stage-marker-fix.task1"
+    "taskId": "provider-readiness.phase8h.stage-marker-verify.task1"
   }
 }
 ```
@@ -351,9 +351,11 @@
     - Result 2026-05-28: `resolveTreeStatus("in_progress", true)` now returns `progress`; invalid remains `blocked`, and completed-with-blocker remains `blocked`.
     - Result 2026-05-28: `npx tsx --test src/client/project-manager/components/layout/workspace-tree-model.test.ts` — PASS (3 tests).
     - Result 2026-05-28: `npm run typecheck:webview` — PASS.
-125. [PENDING] Git Commit: `fix: render active workflow stage marker as progress` (hash: TBD)
-126. [TODO] `provider-readiness.phase8h.stage-marker-verify.task1` Verify workflow tree marker status mapping and Project Manager typecheck; do not build a release in this stream (scope: `src/client/project-manager/components/layout, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify active stage marker repair`).
-127. [TODO] Git Commit: `test: verify active stage marker repair` (hash: TBD)
+125. [DONE] Git Commit: `fix: render active workflow stage marker as progress` (hash: 8f1414257)
+126. [DONE] `provider-readiness.phase8h.stage-marker-verify.task1` Verify workflow tree marker status mapping and Project Manager typecheck; do not build a release in this stream (scope: `src/client/project-manager/components/layout, src/client/project-manager, doc/TODO/todo-plan.md`; expected commit: `test: verify active stage marker repair`).
+    - Result 2026-05-28: `npx tsx --test src/client/project-manager/components/layout/workspace-tree-model.test.ts` — PASS (3 tests).
+    - Result 2026-05-28: `npm run typecheck:webview` — PASS.
+127. [PENDING] Git Commit: `test: verify active stage marker repair` (hash: TBD)
 128. [TODO] `provider-readiness.phase8h.user-retest-handoff.task1` Wait for the user's continuing retest notes and explicit release confirmation; no release build is allowed from this phase without a separate user command (scope: chat/process observation only; expected commit: none).
 
 ## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-27)
