@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "406935306",
+  "lastRecordedCommit": "3fbd95ce2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase16.provider-config.task1",
-  "expectedCommitMessage": "feat: resolve local model defaults from settings",
+  "currentTaskId": "local-models.phase16.verify.task1",
+  "expectedCommitMessage": "test: verify local provider model selection",
   "debt": {
-    "expectedCommitMessage": "feat: resolve local model defaults from settings",
-    "preCommitHead": "406935306",
+    "expectedCommitMessage": "test: verify local provider model selection",
+    "preCommitHead": "3fbd95ce2",
     "stage": "commit_pending",
-    "taskId": "local-models.phase16.provider-config.task1"
+    "taskId": "local-models.phase16.verify.task1"
   }
 }
 ```
@@ -292,9 +292,15 @@
 
 ### Stream: Provider Config And Verification
 104. [DONE] `local-models.phase16.provider-config.task1` Resolve Local Models provider defaults from persisted settings for Core-created sessions and model info labels (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: resolve local model defaults from settings`).
-105. [PENDING] Git Commit: `feat: resolve local model defaults from settings` (hash: TBD)
-106. [TODO] `local-models.phase16.verify.task1` Run targeted tests/builds and smoke checks for Settings default model, step-card model selection, and per-turn Local Models switching (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider model selection`).
-107. [TODO] Git Commit: `test: verify local provider model selection` (hash: TBD)
+105. [DONE] Git Commit: `feat: resolve local model defaults from settings` (hash: 3fbd95ce2)
+106. [DONE] `local-models.phase16.verify.task1` Run targeted tests/builds and smoke checks for Settings default model, step-card model selection, and per-turn Local Models switching (scope: `packages/core, src/client/project-manager, src/client/ui, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider model selection`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Verification 2026-05-29: `npm run build:webview` — PASS.
+    - Smoke 2026-05-29: built Project Manager bundle contains `requestLocalModelsModelSwitch`, `session:local-models:model-switch`, Local Models dialog picker handling, Local Models Settings default selection, and step-card default persistence.
+    - Smoke 2026-05-29: built Core resolves `providers.localModels.defaultModel=gemma-4-26b-a4b-it` into Local Models provider turn config and exposes the local model switch route through validator/router/session handler.
+107. [PENDING] Git Commit: `test: verify local provider model selection` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout

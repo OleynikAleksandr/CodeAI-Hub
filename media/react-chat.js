@@ -7849,6 +7849,14 @@
   });
   var areKimiProviderSettingsEqual = (left, right) => JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
 
+  // src/client/ui/src/components/settings/local-models-settings-state.ts
+  var DEFAULT_LOCAL_MODELS_MODEL_ID = "local-model";
+  var normalizeLocalModelsModelId = (value, fallback = DEFAULT_LOCAL_MODELS_MODEL_ID) => typeof value === "string" && value.trim().length > 0 ? value.trim() : fallback;
+  var mapLocalModelsSettings = (value) => ({
+    defaultModel: normalizeLocalModelsModelId(value?.defaultModel)
+  });
+  var areLocalModelsSettingsEqual = (left, right) => (left?.defaultModel ?? DEFAULT_LOCAL_MODELS_MODEL_ID) === (right?.defaultModel ?? DEFAULT_LOCAL_MODELS_MODEL_ID);
+
   // src/client/ui/src/components/settings/text-to-speech-settings.ts
   var DEFAULT_TEXT_TO_SPEECH_RATE = 1;
   var MAX_TEXT_TO_SPEECH_RATE = 2;
@@ -7889,6 +7897,7 @@
     return accumulator;
   }, {});
   var isRecord3 = (value) => Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  var mapBoolean = (value, fallback) => typeof value === "boolean" ? value : fallback;
   var mapLocalizationString = (value, fallback) => {
     const normalized = typeof value === "string" ? value.trim() : "";
     if (normalized.length === 0) {
@@ -7906,15 +7915,10 @@
     return fallback;
   };
   var deriveWorkflowTermsPolicy = (uiLabelsLanguage) => uiLabelsLanguage.toLowerCase() === DEFAULT_LOCALIZATION_LANGUAGE ? "keep_english" : "translate";
-  var mapThinkingDisplaySyncEnabled = (value) => typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
-  var mapCodexReasoningSummaryEnabled = (value, legacyValue) => {
-    if (typeof value === "boolean") {
-      return value;
-    }
-    return mapThinkingDisplaySyncEnabled(legacyValue);
-  };
+  var mapThinkingDisplaySyncEnabled = (value) => mapBoolean(value, DEFAULT_THINKING_DISPLAY_SYNC_ENABLED);
+  var mapCodexReasoningSummaryEnabled = (value, legacyValue) => mapBoolean(value, mapThinkingDisplaySyncEnabled(legacyValue));
   var mapAutoUpdateSettings = (value) => ({
-    enabled: typeof value?.enabled === "boolean" ? value.enabled : DEFAULT_AUTO_UPDATE_ENABLED
+    enabled: mapBoolean(value?.enabled, DEFAULT_AUTO_UPDATE_ENABLED)
   });
   var mapLocalizationCategories = (value, defaultLanguage) => {
     const resolve = (keys, fallback) => resolveLocalizationCategory(value, keys, fallback);
@@ -7969,12 +7973,15 @@
       ),
       engineId: uiEngineId,
       reasoningEngineId,
-      glossaryEnabled: typeof value?.glossaryEnabled === "boolean" ? value.glossaryEnabled : true
+      glossaryEnabled: mapBoolean(value?.glossaryEnabled, true)
     };
   };
   var mapGeneralSettings = (value) => ({
     coreControls: {
-      allowRestart: typeof value?.coreControls?.allowRestart === "boolean" ? value.coreControls.allowRestart : DEFAULT_CORE_RESTART_ENABLED
+      allowRestart: mapBoolean(
+        value?.coreControls?.allowRestart,
+        DEFAULT_CORE_RESTART_ENABLED
+      )
     },
     localization: mapLocalizationSettings(value?.localization),
     responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy),
@@ -8055,6 +8062,9 @@
       glmClaudeCode: mapGlmClaudeCodeSettings(
         value?.providers?.glmClaudeCode,
         mapThinkingDisplaySyncEnabled
+      ),
+      localModels: mapLocalModelsSettings(
+        value?.providers?.localModels
       )
     }
   });
@@ -8081,6 +8091,9 @@
   var areSettingsEqual = (left, right) => areGeneralSettingsEqual(left.general, right.general) && areClaudeSettingsEqual(left.providers.claude, right.providers.claude) && areCodexSettingsEqual(left.providers.codex, right.providers.codex) && areGeminiSettingsEqual(left.providers.gemini, right.providers.gemini) && areKimiProviderSettingsEqual(left.providers.kimi, right.providers.kimi) && areKimiProviderSettingsEqual(
     left.providers.glmClaudeCode,
     right.providers.glmClaudeCode
+  ) && areLocalModelsSettingsEqual(
+    left.providers.localModels,
+    right.providers.localModels
   );
 
   // src/client/ui/src/components/settings/native-request-capture-state.ts
@@ -9331,6 +9344,16 @@
       }
     }
   });
+  var updateLocalModelsDefaultModel = (settings, defaultModel) => ({
+    ...settings,
+    providers: {
+      ...settings.providers,
+      localModels: {
+        ...settings.providers.localModels ?? {},
+        defaultModel: defaultModel.trim() || "local-model"
+      }
+    }
+  });
   var updateCodexContinuityRemainingPercentThreshold = (settings, remainingPercentThreshold) => ({
     ...settings,
     providers: {
@@ -9822,6 +9845,7 @@
       handleLocalizationEngineIdChange,
       handleLocalizationGlossaryEnabledChange,
       handleLocalizationWorkflowTermsPolicyChange,
+      handleLocalModelsDefaultModelChange: (modelId) => updateSettings(updateLocalModelsDefaultModel(settings, modelId)),
       handleNativeRequestCapture,
       handleReasoningTranslationEngineIdChange,
       handleProviderAutoUpdateChange,
