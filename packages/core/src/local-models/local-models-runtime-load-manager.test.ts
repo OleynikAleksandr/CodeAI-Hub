@@ -57,6 +57,8 @@ test("LocalModelsRuntimeLoadManager uses a bounded adaptive context for localiza
       "16384",
       "--identifier",
       "codeaihub-translation-localization-hy-mt2-30b-a3b-mlx-16384",
+      "--ttl",
+      "300",
     ],
   ]);
 });
@@ -81,6 +83,7 @@ test("LocalModelsRuntimeLoadManager keeps reasoning translation on the small pro
     "codeaihub-translation-reasoning-gemma-4-26b-a4b-it-8192"
   );
   assert.equal(commandCalls[1]?.[3], "8192");
+  assert.equal(commandCalls[1]?.at(-1), "600");
 });
 
 test("LocalModelsRuntimeLoadManager reuses sufficient loads and unloads only idle duplicate clones", () => {
@@ -194,5 +197,73 @@ test("LocalModelsRuntimeLoadManager unloads idle CodeAI workers across model key
     "16384",
     "--identifier",
     "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384",
+    "--ttl",
+    "1800",
   ]);
+});
+
+test("LocalModelsRuntimeLoadManager supports TTL overrides per purpose", () => {
+  const previousTtl = process.env.CODEAI_LMSTUDIO_AGENT_TTL_SECONDS;
+  process.env.CODEAI_LMSTUDIO_AGENT_TTL_SECONDS = "45";
+  const commandCalls: string[][] = [];
+  try {
+    const manager = new LocalModelsRuntimeLoadManager({
+      commandRunner: (args) => {
+        commandCalls.push([...args]);
+        return args[0] === "ps" ? "[]" : "";
+      },
+    });
+
+    manager.ensureModelLoaded({
+      model: createModel("qwen3.6-27b-mlx"),
+      purpose: "workflow-agent",
+    });
+  } finally {
+    if (previousTtl === undefined) {
+      Reflect.deleteProperty(process.env, "CODEAI_LMSTUDIO_AGENT_TTL_SECONDS");
+    } else {
+      process.env.CODEAI_LMSTUDIO_AGENT_TTL_SECONDS = previousTtl;
+    }
+  }
+
+  assert.equal(commandCalls.at(-1)?.at(-1), "45");
+});
+
+test("LocalModelsRuntimeLoadManager unloads only idle CodeAI-owned workers on cleanup", () => {
+  const commandCalls: string[][] = [];
+  const manager = new LocalModelsRuntimeLoadManager({
+    commandRunner: (args) => {
+      commandCalls.push([...args]);
+      if (args[0] === "ps") {
+        return createLoadedModelsJson([
+          {
+            contextLength: 16_384,
+            identifier: "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384",
+            modelKey: "gemma-4-26b-a4b-it",
+            status: "idle",
+          },
+          {
+            contextLength: 8192,
+            identifier: "codeaihub-translation-reasoning-hy-mt2-8192",
+            modelKey: "hy-mt2-30b-a3b-mlx",
+            status: "generating",
+          },
+          {
+            contextLength: 8192,
+            identifier: "hy-mt2-30b-a3b-mlx",
+            modelKey: "hy-mt2-30b-a3b-mlx",
+            status: "idle",
+          },
+        ]);
+      }
+      return "";
+    },
+  });
+
+  manager.unloadIdleCodeAiOwnedWorkers();
+
+  assert.deepEqual(
+    commandCalls.filter((args) => args[0] === "unload"),
+    [["unload", "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384"]]
+  );
 });

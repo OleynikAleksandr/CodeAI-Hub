@@ -33,6 +33,10 @@ const DEFAULT_REASONING_CONTEXT_LENGTH = 8192;
 const DEFAULT_GENERIC_TRANSLATION_CONTEXT_LENGTH = 16_384;
 const DEFAULT_LOCALIZATION_CONTEXT_CAP = 32_768;
 const DEFAULT_AGENT_CONTEXT_LENGTH = 16_384;
+const DEFAULT_GENERIC_TRANSLATION_TTL_SECONDS = 300;
+const DEFAULT_LOCALIZATION_TTL_SECONDS = 300;
+const DEFAULT_REASONING_TTL_SECONDS = 600;
+const DEFAULT_AGENT_TTL_SECONDS = 1800;
 const DEFAULT_RESPONSE_TOKEN_BUDGET = 4096;
 const ESTIMATED_PROMPT_OVERHEAD_TOKENS = 1200;
 const ESTIMATED_CHARS_PER_TOKEN = 3;
@@ -117,6 +121,44 @@ const resolveRequestedContextLength = (
   return clampToModelContext(requested, options.model);
 };
 
+const resolvePurposeTtlSeconds = (
+  purpose: LocalModelRuntimePurpose
+): number => {
+  const globalOverride = parsePositiveInteger(
+    process.env.CODEAI_LMSTUDIO_TTL_SECONDS
+  );
+  if (globalOverride) {
+    return globalOverride;
+  }
+
+  if (purpose === "workflow-agent") {
+    return (
+      parsePositiveInteger(process.env.CODEAI_LMSTUDIO_AGENT_TTL_SECONDS) ??
+      DEFAULT_AGENT_TTL_SECONDS
+    );
+  }
+
+  if (purpose === "translation-reasoning") {
+    return (
+      parsePositiveInteger(process.env.CODEAI_LMSTUDIO_REASONING_TTL_SECONDS) ??
+      DEFAULT_REASONING_TTL_SECONDS
+    );
+  }
+
+  if (purpose === "translation-localization") {
+    return (
+      parsePositiveInteger(
+        process.env.CODEAI_LMSTUDIO_LOCALIZATION_TTL_SECONDS
+      ) ?? DEFAULT_LOCALIZATION_TTL_SECONDS
+    );
+  }
+
+  return (
+    parsePositiveInteger(process.env.CODEAI_LMSTUDIO_TRANSLATION_TTL_SECONDS) ??
+    DEFAULT_GENERIC_TRANSLATION_TTL_SECONDS
+  );
+};
+
 const buildCodeAiIdentifier = (
   modelKey: string,
   purpose: LocalModelRuntimePurpose,
@@ -192,6 +234,17 @@ const isIdleCodeAiWorkerCandidate = (
   );
 };
 
+const isIdleCodeAiOwnedWorker = (
+  record: LoadedLmStudioModelRecord
+): boolean => {
+  const identifier = asIdentifier(record);
+  return (
+    !!identifier &&
+    record.status === "idle" &&
+    identifier.startsWith(`${CODEAI_IDENTIFIER_PREFIX}-`)
+  );
+};
+
 export class LocalModelsRuntimeLoadManager {
   private readonly commandRunner: LmsCommandRunner;
   private readonly modelLoadTimeoutMs: number;
@@ -204,6 +257,7 @@ export class LocalModelsRuntimeLoadManager {
 
   ensureModelLoaded(options: EnsureLocalModelLoadedOptions): string {
     const contextLength = resolveRequestedContextLength(options);
+    const ttlSeconds = resolvePurposeTtlSeconds(options.purpose);
     const preferredIdentifier = buildCodeAiIdentifier(
       options.model.modelKey,
       options.purpose,
@@ -243,11 +297,32 @@ export class LocalModelsRuntimeLoadManager {
           String(contextLength),
           "--identifier",
           preferredIdentifier,
+          "--ttl",
+          String(ttlSeconds),
         ],
         { timeoutMs: this.modelLoadTimeoutMs }
       );
     }
     return selectedIdentifier;
+  }
+
+  unloadIdleCodeAiOwnedWorkers(): void {
+    const loadedModels = parseLoadedModels(
+      this.commandRunner(["ps", "--json"], {
+        timeoutMs: this.modelLoadTimeoutMs,
+      })
+    ).filter(isLoadedLlm);
+    for (const record of loadedModels) {
+      if (!isIdleCodeAiOwnedWorker(record)) {
+        continue;
+      }
+      const identifier = asIdentifier(record);
+      if (identifier) {
+        this.commandRunner(["unload", identifier], {
+          timeoutMs: this.modelLoadTimeoutMs,
+        });
+      }
+    }
   }
 
   private resolveReusableLoadedModel(
