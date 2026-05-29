@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "9a08c6ef0",
+  "lastRecordedCommit": "860bceb41",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase25.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare local preliminary artifact release",
+  "currentTaskId": "local-models.phase25.release-build.task1",
+  "expectedCommitMessage": "chore: build local preliminary artifact release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare local preliminary artifact release",
-    "preCommitHead": "9a08c6ef0",
+    "expectedCommitMessage": "chore: build local preliminary artifact release",
+    "preCommitHead": "860bceb41",
     "stage": "commit_pending",
-    "taskId": "local-models.phase25.release-prep.task1"
+    "taskId": "local-models.phase25.release-build.task1"
   }
 }
 ```
@@ -446,9 +446,11 @@
 153. [DONE] `local-models.phase25.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local preliminary artifact release`).
     - Release prep 2026-05-29: future release version is `1.2.399` (current root `package.json` version `1.2.398` + 1).
     - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.399` and `CHANGELOG.md` entry `## [1.2.399] - 2026-05-29` added before release scripts.
-154. [PENDING] Git Commit: `docs: prepare local preliminary artifact release` (hash: TBD)
-155. [TODO] `local-models.phase25.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local preliminary artifact release`).
-156. [TODO] Git Commit: `chore: build local preliminary artifact release` (hash: TBD)
+154. [DONE] Git Commit: `docs: prepare local preliminary artifact release` (hash: 860bceb41)
+155. [DONE] `local-models.phase25.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local preliminary artifact release`).
+    - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.399`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release build artifacts copied to `doc/tmp/releases/`: `claude-module-1.2.399.tar.bz2`, `codex-module-1.2.399.tar.bz2`, `gemini-module-1.2.399.tar.bz2`, `kimi-module-1.2.399.tar.bz2`, `glm-claude-code-module-1.2.399.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.399.tar.bz2`, `vscode-webview-1.2.399.tar.bz2`, `project-manager-1.2.399.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.399.tar.bz2`.
+156. [PENDING] Git Commit: `chore: build local preliminary artifact release` (hash: TBD)
 157. [TODO] `local-models.phase25.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local preliminary artifact vsix`).
 158. [TODO] Git Commit: `chore: package local preliminary artifact vsix` (hash: TBD)
 159. [TODO] `local-models.phase25.user-acceptance.task1` User retests the new release and confirms Local Models can complete a Description step, materialize `Final_Description.md`, unlock the input after review, and preserve fast translation context behavior (scope: user workflow observation; expected commit: none).
