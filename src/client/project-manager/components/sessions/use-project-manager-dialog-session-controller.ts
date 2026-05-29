@@ -431,7 +431,6 @@ export const useProjectManagerDialogSessionController = (
     // Optimistic: render user message immediately instead of waiting for dialog:history:result
     setSnapshots((previous) => appendOptimisticUserMessage(previous, currentSessionId, content));
   }, [reload, setSnapshots]);
-
   const requestCodexModelSwitch = useCallback((modelId: string) => {
     const currentSession = sessionRef.current;
     if (currentSession?.providerIds[0] !== "codexCli") {
@@ -439,7 +438,13 @@ export const useProjectManagerDialogSessionController = (
     }
     api.requestCodexModelSwitch(currentSession.id, modelId);
   }, []);
-
+  const requestLocalModelsModelSwitch = useCallback((modelId: string) => {
+    const currentSession = sessionRef.current;
+    if (currentSession?.providerIds[0] !== "localModels") {
+      return;
+    }
+    api.requestLocalModelsModelSwitch(currentSession.id, modelId);
+  }, []);
   const requestCodexReasoningSwitch = useCallback(
     (reasoning: CodexReasoningLevel) => {
       const currentSession = sessionRef.current;
@@ -450,7 +455,6 @@ export const useProjectManagerDialogSessionController = (
     },
     []
   );
-
   const requestClaudeModelSwitch = useCallback(
     (modelId: ClaudeModelAliasId) => {
       const currentSession = sessionRef.current;
@@ -461,7 +465,6 @@ export const useProjectManagerDialogSessionController = (
     },
     []
   );
-
   const requestClaudeThinkingSwitch = useCallback(
     (thinking: ClaudeThinkingSelection) => {
       const currentSession = sessionRef.current;
@@ -477,11 +480,11 @@ export const useProjectManagerDialogSessionController = (
     },
     []
   );
-
   return {
     connection,
     providerLabels,
     requestCodexModelSwitch,
+    requestLocalModelsModelSwitch,
     requestCodexReasoningSwitch,
     requestClaudeModelSwitch,
     requestClaudeThinkingSwitch,

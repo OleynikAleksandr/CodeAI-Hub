@@ -16,9 +16,11 @@ import { useRuntimeModelSync } from "./use-runtime-model-sync";
 import { api } from "../../api";
 import { isDisplayOnlyKimiModelSwitch } from "../../services/switch-api";
 import { useProjectManagerSettings } from "../settings/use-project-manager-settings";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 export type { DialogOpenIntent } from "./project-manager-dialog-session-view-helpers";
 
 type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
+const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
 type DialogControllerClaudeSwitch = {
   readonly requestClaudeModelSwitch?: (
     modelId: ClaudeModelAliasId,
@@ -28,6 +30,13 @@ type DialogControllerClaudeSwitch = {
     thinking: ClaudeThinkingSelection
   ) => void;
 };
+
+const formatLocalModelName = (modelKey: string): string =>
+  modelKey
+    .split("/")
+    .pop()
+    ?.replace(/[-_]+/gu, " ")
+    .replace(/\b\w/gu, (match) => match.toUpperCase()) ?? modelKey;
 
 const isSpeechStatePayload = (payload: unknown): payload is SpeechStatePayload =>
   typeof payload === "object" &&
@@ -57,9 +66,18 @@ const ProjectManagerDialogSessionView = (props: {
     requestCodexReasoningSwitch,
     requestClaudeModelSwitch,
     requestClaudeThinkingSwitch,
+    requestLocalModelsModelSwitch,
     sendMessage,
   } = controller;
   const { settings } = useProjectManagerSettings();
+  const { availableEngines } = useLocalization();
+  const localModelOptions = availableEngines
+    .map((engine) => engine.engineId)
+    .filter((engineId) => engineId.startsWith(LOCAL_MODEL_ENGINE_PREFIX))
+    .map((engineId) => {
+      const modelKey = engineId.slice(LOCAL_MODEL_ENGINE_PREFIX.length);
+      return { id: modelKey, displayName: formatLocalModelName(modelKey) };
+    });
   const [speechState, setSpeechState] = useState<SpeechStatePayload | null>(
     null
   );
@@ -100,9 +118,18 @@ const ProjectManagerDialogSessionView = (props: {
       if (isDisplayOnlyKimiModelSwitch({ providerId, targetModelId: modelId })) {
         return;
       }
+      if (providerId === "localModels") {
+        requestLocalModelsModelSwitch(modelId);
+        return;
+      }
       requestCodexModelSwitch(modelId);
     },
-    [props.intent?.providerId, requestCodexModelSwitch, session?.providerIds]
+    [
+      props.intent?.providerId,
+      requestCodexModelSwitch,
+      requestLocalModelsModelSwitch,
+      session?.providerIds,
+    ]
   );
 
   if (!session) {
@@ -113,6 +140,7 @@ const ProjectManagerDialogSessionView = (props: {
         allSessions={[]}
         coreConnectionDetail={connection.detail}
         coreConnectionStatus={connection.status}
+        localModelOptions={localModelOptions}
         onCloseSession={() => props.onExit()}
         onFileLinkActivate={props.onFileLinkActivate}
         onSelectClaudeModel={(_sessionId, modelId) =>
@@ -145,6 +173,7 @@ const ProjectManagerDialogSessionView = (props: {
       allSessions={[session]}
       coreConnectionDetail={connection.detail}
       coreConnectionStatus={connection.status}
+      localModelOptions={localModelOptions}
       onCloseSession={() => props.onExit()}
       onFileLinkActivate={props.onFileLinkActivate}
       onSelectClaudeModel={(_sessionId, modelId) =>
