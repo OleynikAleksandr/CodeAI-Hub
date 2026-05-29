@@ -23,6 +23,7 @@ import {
   type LocalizationTranslationFacadeContract,
 } from "./localization-contract";
 import { LocalizationMetadataStore } from "./localization-metadata-store";
+import { resolveLikelyUntranslatedEntryCount } from "./localization-translation-quality";
 import type { SourceDictionaryRegistry } from "./source-dictionary-registry";
 import {
   buildStructuredBatchText,
@@ -242,7 +243,11 @@ export class LocalizationMaterializer {
         );
     const bundle = translationResult.bundle;
 
-    if (!skipTranslation) {
+    const completeTranslation =
+      translationResult.fallbackTranslationCount === 0 &&
+      translationResult.partialFallbackTranslationCount === 0;
+
+    if (!skipTranslation && completeTranslation) {
       await Promise.all([
         this.bundleStore.save(bundle),
         this.metadataStore.upsertBundle({
@@ -412,6 +417,10 @@ export class LocalizationMaterializer {
           }),
         targetLanguage,
       });
+    const likelyUntranslatedEntryCount = resolveLikelyUntranslatedEntryCount({
+      sourceEntries: sourceDictionary.entries,
+      translatedEntries,
+    });
 
     return {
       bundle: {
@@ -420,7 +429,8 @@ export class LocalizationMaterializer {
         language: targetLanguage,
       },
       fallbackTranslationCount,
-      partialFallbackTranslationCount,
+      partialFallbackTranslationCount:
+        partialFallbackTranslationCount + likelyUntranslatedEntryCount,
     };
   }
 

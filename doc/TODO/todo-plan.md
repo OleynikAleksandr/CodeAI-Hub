@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "03e7a962b",
+  "lastRecordedCommit": "f923375df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase11.lmstudio-tests.task1",
-  "expectedCommitMessage": "test: cover lm studio server preflight",
+  "currentTaskId": "local-models.phase11.localization-sync.task1",
+  "expectedCommitMessage": "fix: sync local ui translation settings",
   "debt": {
-    "expectedCommitMessage": "test: cover lm studio server preflight",
-    "preCommitHead": "03e7a962b",
+    "expectedCommitMessage": "fix: sync local ui translation settings",
+    "preCommitHead": "f923375df",
     "stage": "commit_pending",
-    "taskId": "local-models.phase11.lmstudio-tests.task1"
+    "taskId": "local-models.phase11.localization-sync.task1"
   }
 }
 ```
@@ -195,9 +195,13 @@
 59. [DONE] `local-models.phase11.lmstudio-tests.task1` Add regression coverage for LM Studio server status/start before translation and provider turns (scope: `packages/core/src/local-models/local-models-facade.test.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lm studio server preflight`).
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test dist/local-models/local-models-facade.test.js dist/local-models/local-models-provider-adapter.test.js` from `packages/core` — PASS (6 tests).
-60. [PENDING] Git Commit: `test: cover lm studio server preflight` (hash: TBD)
-61. [TODO] `local-models.phase11.localization-sync.task1` Verify and, if needed, fix localization runtime settings so saved `uiEngineId` and non-English UI categories rebuild the browser bootstrap with the selected local model (scope: `packages/core/src/remote-bridge/handlers/**, packages/localization/src/**, src/client/**`; expected commit: `fix: sync local ui translation settings`).
-62. [TODO] Git Commit: `fix: sync local ui translation settings` (hash: TBD)
+60. [DONE] Git Commit: `test: cover lm studio server preflight` (hash: f923375df)
+61. [DONE] `local-models.phase11.localization-sync.task1` Verify and, if needed, fix localization runtime settings so saved `uiEngineId` and non-English UI categories rebuild the browser bootstrap with the selected local model (scope: `packages/core/src/remote-bridge/handlers/**, packages/localization/src/**, src/client/**`; expected commit: `fix: sync local ui translation settings`).
+    - Finding 2026-05-29: current user settings have `uiInterface`, `uiLabels`, and `workflowTerms` set to `en`, so the main UI categories intentionally remain source English until those categories are switched to `ru`.
+    - Finding 2026-05-29: generated `ru` catalogs can contain unchanged English entries when a local model returns source text with a translated status; this must fail closed instead of being saved as a ready localized bundle.
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/localization` — PASS.
+    - Verification 2026-05-29: `node --test dist/localization-translation-quality.test.js dist/localization-materializer.test.js` from `packages/localization` — PASS (8 tests).
+62. [PENDING] Git Commit: `fix: sync local ui translation settings` (hash: TBD)
 63. [TODO] `local-models.phase11.verify.task1` Run targeted Core tests/builds plus real LM Studio smoke for direct translation and localized runtime bootstrap with local engine (scope: `packages/core, packages/localization, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local translation runtime reliability`).
 64. [TODO] Git Commit: `test: verify local translation runtime reliability` (hash: TBD)
 
