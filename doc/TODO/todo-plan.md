@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "41ef58338",
+  "lastRecordedCommit": "2d9729259",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase18.localization-runtime-hardening-verify.task1",
-  "expectedCommitMessage": "test: verify localization runtime reload guards",
+  "currentTaskId": "local-models.phase19.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare localization runtime guard release",
   "debt": {
-    "expectedCommitMessage": "test: verify localization runtime reload guards",
-    "preCommitHead": "41ef58338",
+    "expectedCommitMessage": "docs: prepare localization runtime guard release",
+    "preCommitHead": "2d9729259",
     "stage": "commit_pending",
-    "taskId": "local-models.phase18.localization-runtime-hardening-verify.task1"
+    "taskId": "local-models.phase19.release-prep.task1"
   }
 }
 ```
@@ -333,13 +333,15 @@
     - Verification 2026-05-29: `npm run build:webview` — PASS.
     - Verification 2026-05-29: `npm run build:project-manager` — PASS.
     - Smoke 2026-05-29: built `media/react-chat.js` preserves current runtime on null localization payloads, and built `packages/ui/project-manager/dist/app.js` keeps the Project Manager non-null runtime guard.
-115. [PENDING] Git Commit: `test: verify localization runtime reload guards` (hash: TBD)
+115. [DONE] Git Commit: `test: verify localization runtime reload guards` (hash: 2d9729259)
 
 ## Phase 19 — Localization Runtime Guard Release Build (owner: Codex, updated: 2026-05-29)
 ### Stream: Release Confirmation And Packaging
 116. [DONE] `local-models.phase19.release-confirm.task1` Ask for and receive separate explicit user confirmation for a new release build after localization runtime guard fixes are verified (scope: chat/process gate; expected commit: none). Result: user explicitly confirmed "Исправишь всё и собери новый релиз" in chat on 2026-05-29.
-117. [TODO] `local-models.phase19.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare localization runtime guard release`).
-118. [TODO] Git Commit: `docs: prepare localization runtime guard release` (hash: TBD)
+117. [DONE] `local-models.phase19.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare localization runtime guard release`).
+    - Release prep 2026-05-29: future release version is `1.2.396` (current root `package.json` version `1.2.395` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.396` and `CHANGELOG.md` entry `## [1.2.396] - 2026-05-29` added before release scripts.
+118. [PENDING] Git Commit: `docs: prepare localization runtime guard release` (hash: TBD)
 119. [TODO] `local-models.phase19.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build localization runtime guard release`).
 120. [TODO] Git Commit: `chore: build localization runtime guard release` (hash: TBD)
 121. [TODO] `local-models.phase19.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package localization runtime guard vsix`).

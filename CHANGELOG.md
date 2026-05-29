@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.396] - 2026-05-29
+### Fixed
+- **Project Manager no longer drops translated runtime text during clear/rollback reloads.** Intermediate `settings:loaded` events with `localizationRuntime: null` now preserve the active translated runtime until Core sends a non-null replacement payload.
+- **The shared Settings surface uses the same localization runtime guard.** Settings reloads no longer clear active browser localization while LM Studio resolves or refreshes localized payloads.
+
+### Tests
+- `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run build:project-manager`
+- Bundle smoke checks for `media/react-chat.js` and `packages/ui/project-manager/dist/app.js`.
+
 ## [1.2.395] - 2026-05-29
 ### Fixed
 - **LM Studio UI localization bundles are sent in bounded batches.** Runtime localization materialization now splits structured bundle entries by entry count and character count before calling local models, avoiding one large request per UI category.
