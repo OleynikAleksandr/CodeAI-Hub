@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "e33887ad8",
+  "lastRecordedCommit": "2b5013754",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase27.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare session wait copy release",
+  "currentTaskId": "local-models.phase27.release-build.task1",
+  "expectedCommitMessage": "chore: build session wait copy release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare session wait copy release",
-    "preCommitHead": "e33887ad8",
+    "expectedCommitMessage": "chore: build session wait copy release",
+    "preCommitHead": "2b5013754",
     "stage": "commit_pending",
-    "taskId": "local-models.phase27.release-prep.task1"
+    "taskId": "local-models.phase27.release-build.task1"
   }
 }
 ```
@@ -479,9 +479,12 @@
 165. [DONE] `local-models.phase27.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare session wait copy release`).
     - Release prep 2026-05-29: future release version is `1.2.400` (current root `package.json` version `1.2.399` + 1).
     - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.400` and `CHANGELOG.md` entry `## [1.2.400] - 2026-05-29` added before release scripts.
-166. [PENDING] Git Commit: `docs: prepare session wait copy release` (hash: TBD)
-167. [TODO] `local-models.phase27.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build session wait copy release`).
-168. [TODO] Git Commit: `chore: build session wait copy release` (hash: TBD)
+166. [DONE] Git Commit: `docs: prepare session wait copy release` (hash: 2b5013754)
+167. [DONE] `local-models.phase27.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build session wait copy release`).
+    - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` succeeded from release-prepared version `1.2.399` and produced unified version `1.2.400`.
+    - Release build 2026-05-29: installed Core runtime `/Users/oleksandroliinyk/.codeai-hub/core/darwin-arm64/1.2.400` and CEF launcher `/Users/oleksandroliinyk/.codeai-hub/cef-launcher/darwin-arm64`.
+    - Release build 2026-05-29: copied release tarballs into `doc/tmp/releases/`: `claude-module-1.2.400.tar.bz2`, `codex-module-1.2.400.tar.bz2`, `gemini-module-1.2.400.tar.bz2`, `kimi-module-1.2.400.tar.bz2`, `glm-claude-code-module-1.2.400.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.400.tar.bz2`, `vscode-webview-1.2.400.tar.bz2`, `project-manager-1.2.400.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.400.tar.bz2`.
+168. [PENDING] Git Commit: `chore: build session wait copy release` (hash: TBD)
 169. [TODO] `local-models.phase27.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package session wait copy vsix`).
 170. [TODO] Git Commit: `chore: package session wait copy vsix` (hash: TBD)
 171. [TODO] `local-models.phase27.user-acceptance.task1` User retests the new release and confirms ordinary post-turn managed workflow waits show working copy while actual continuity rollover/resume still shows resume copy (scope: user workflow observation; expected commit: none).
