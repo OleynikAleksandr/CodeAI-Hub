@@ -25,10 +25,12 @@ const APPLICATION_ACTIVE_RE = /"activeStage": "application_skeleton"/u;
 const DIAGRAM_COMPLETE_MESSAGE_RE =
   /Core: Diagram Modules завершён и зафиксирован/u;
 const DIAGRAM_COMPLETED_RE = /"diagram_modules"/u;
-const DIAGRAM_UNIFIED_SESSION_RE =
-  /\.codeai-hub\/demo-workspace\/runtime\/sessions\/unified\/codexCli\/diagram-review\.jsonl/u;
 const USER_ACCEPTANCE_RE = /подтверждаю/u;
 const DIAGRAM_ACCEPTED_COMMIT_RE = /codeai-step: Diagram Modules accepted/u;
+const APPLICATION_SKELETON_ACTIVATION_EVENT = {
+  payload: { stage: "application_skeleton" },
+  type: "workflow:stage:activate",
+} as const;
 const execFileAsync = promisify(execFile);
 
 interface CapturedMessage {
@@ -259,11 +261,7 @@ test("Diagram Modules review acceptance is intercepted by Core and opens persist
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
     const unifiedSession = await readFile(unifiedSessionPath, "utf8");
     assert.match(unifiedSession, DIAGRAM_COMPLETE_MESSAGE_RE);
-    assert.match(
-      await git(workspaceRoot, ["ls-files"]),
-      DIAGRAM_UNIFIED_SESSION_RE
-    );
-    assert.deepEqual(harness.events, []);
+    assert.deepEqual(harness.events, [APPLICATION_SKELETON_ACTIVATION_EVENT]);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

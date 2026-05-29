@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "de68b7b07",
+  "lastRecordedCommit": "ba919251b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase28.navigation.task1",
-  "expectedCommitMessage": "fix: auto-select next workflow step after confirmation",
+  "currentTaskId": "local-models.phase28.verify.task1",
+  "expectedCommitMessage": "test: verify step confirmation navigation",
   "debt": {
-    "expectedCommitMessage": "fix: auto-select next workflow step after confirmation",
-    "preCommitHead": "de68b7b07",
+    "expectedCommitMessage": "test: verify step confirmation navigation",
+    "preCommitHead": "ba919251b",
     "stage": "commit_pending",
-    "taskId": "local-models.phase28.navigation.task1"
+    "taskId": "local-models.phase28.verify.task1"
   }
 }
 ```
@@ -497,9 +497,14 @@
 172. [DONE] `local-models.phase28.navigation.task1` After explicit artifact confirmation, make Project Manager select/render the next Core-active workflow step automatically while preserving manual return to the completed step (scope: `src/client/project-manager/**, packages/core/**, doc/SolidWorks-WorkFlow/**`; expected commit: `fix: auto-select next workflow step after confirmation`).
     - Fix 2026-05-29: Core now emits `workflow:stage:activate` after successful review acceptance commit for `Description -> Virtual Simulation`, `Virtual Simulation -> Diagram Modules`, and `Diagram Modules -> Application Skeleton`; Project Manager remains a display-only listener for the Core-owned command.
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
-173. [PENDING] Git Commit: `fix: auto-select next workflow step after confirmation` (hash: TBD)
-174. [TODO] `local-models.phase28.verify.task1` Run targeted Project Manager/Core workflow navigation tests and record exact commands/results in this plan (scope: `src/client/project-manager/**, packages/core/**, doc/TODO/todo-plan.md`; expected commit: `test: verify step confirmation navigation`).
-175. [TODO] Git Commit: `test: verify step confirmation navigation` (hash: TBD)
+173. [DONE] Git Commit: `fix: auto-select next workflow step after confirmation` (hash: ba919251b)
+174. [DONE] `local-models.phase28.verify.task1` Run targeted Project Manager/Core workflow navigation tests and record exact commands/results in this plan (scope: `src/client/project-manager/**, packages/core/**, doc/TODO/todo-plan.md`; expected commit: `test: verify step confirmation navigation`).
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts` — PASS (2 tests).
+    - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts` — PASS (1 test).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+175. [PENDING] Git Commit: `test: verify step confirmation navigation` (hash: TBD)
 176. [TODO] `local-models.phase28.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the step-confirmation navigation fix (scope: chat/process gate; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
