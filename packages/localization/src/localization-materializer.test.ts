@@ -21,17 +21,18 @@ const translateStructuredBatch = (text: string): string =>
 
 test("LocalizationMaterializer disables chunking for interface localization requests", async () => {
   const translationRequests: TranslationRequest[] = [];
+  const entries = Object.fromEntries(
+    Array.from({ length: 13 }, (_value, index) => [
+      `help.bundle_batch_${index}`,
+      `This helper entry ${index} must stay inside a bounded batch.`,
+    ])
+  );
+  entries.help_blocking_sync_duplicate =
+    "This helper entry 12 must stay inside a bounded batch.";
   const sourceDictionaryRegistry = new SourceDictionaryRegistry([
     {
       category: "user_guidance",
-      entries: {
-        "help.blocking_sync":
-          "This user-facing helper text must stay in one translation request.",
-        "help.blocking_sync_duplicate":
-          "This user-facing helper text must stay in one translation request.",
-        "help.bundle_batch":
-          "This second helper entry must travel inside the same batch.",
-      },
+      entries,
       language: "en",
     },
   ]);
@@ -82,13 +83,15 @@ test("LocalizationMaterializer disables chunking for interface localization requ
   });
 
   assert.ok(result);
-  assert.equal(translationRequests.length, 1);
+  assert.equal(translationRequests.length, 2);
   assert.equal(translationRequests[0]?.category, "localization_bundle");
+  assert.equal(translationRequests[1]?.category, "localization_bundle");
   assert.equal(translationRequests[0]?.chunkingMode, "disabled");
-  assert.equal(result.uniqueTranslationCount, 2);
+  assert.equal(translationRequests[1]?.chunkingMode, "disabled");
+  assert.equal(result.uniqueTranslationCount, 13);
   assert.equal(
-    result.bundle.entries["help.blocking_sync_duplicate"],
-    "[ru] This user-facing helper text must stay in one translation request."
+    result.bundle.entries.help_blocking_sync_duplicate,
+    "[ru] This helper entry 12 must stay inside a bounded batch."
   );
 });
 

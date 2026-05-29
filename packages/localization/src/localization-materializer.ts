@@ -30,6 +30,7 @@ import {
   recoverMissingStructuredEntry,
   resolveStructuredBatchTranslations,
   type StructuredBatchEntry,
+  splitStructuredBatchEntries,
 } from "./structured-batch-entry-recovery";
 import { UserGlossaryStore } from "./user-glossary-store";
 
@@ -41,7 +42,6 @@ export interface LocalizationMaterializationRequest {
   readonly targetLanguage: string;
   readonly workflowTermsPolicy?: "keep_english" | "translate";
 }
-
 export interface LocalizationMaterializationResult {
   readonly bundle: LocalizationBundleRecord;
   readonly fallbackTranslationCount: number;
@@ -50,7 +50,6 @@ export interface LocalizationMaterializationResult {
   readonly translatedEntryCount: number;
   readonly uniqueTranslationCount: number;
 }
-
 interface LocalizationMaterializerOptions {
   readonly bundleStore?: LocalizationBundleStore;
   readonly defaultEngineId?: string;
@@ -64,21 +63,22 @@ interface LocalizationMaterializerOptions {
   readonly translationFacade?: LocalizationTranslationFacadeContract;
   readonly userGlossaryStore?: UserGlossaryStore;
 }
-
 interface SourceDictionaryTranslationResult {
   readonly bundle: LocalizationBundleRecord;
   readonly fallbackTranslationCount: number;
   readonly partialFallbackTranslationCount: number;
 }
-
 const normalizeLanguage = (value: string | undefined, fallback: string) =>
   value?.trim() || fallback;
-
 const LOCALIZATION_TRANSLATION_RETRY_LIMIT = 3;
 const LOCALIZATION_TRANSLATION_TIMEOUT_BASE_MS = 6000;
 const LOCALIZATION_TRANSLATION_TIMEOUT_MAX_MS = 180_000;
 const LOCALIZATION_TRANSLATION_TIMEOUT_PER_CHARACTER_MS = 18;
 const LOCALIZATION_BATCH_TRANSLATION_CATEGORY = "localization_bundle";
+const LOCALIZATION_STRUCTURED_BATCH_LIMITS = {
+  maxCharacters: 1800,
+  maxEntries: 12,
+} as const;
 const resolveLocalizationTranslationTimeoutMs = (text: string): number =>
   Math.min(
     LOCALIZATION_TRANSLATION_TIMEOUT_MAX_MS,
@@ -88,7 +88,6 @@ const resolveLocalizationTranslationTimeoutMs = (text: string): number =>
 
 const hasUsableLocalizedText = (text: string): boolean =>
   text.trim().length > 0;
-
 const shouldSkipTranslation = (
   sourceLanguage: string,
   targetLanguage: string
@@ -100,7 +99,6 @@ const resolveEffectiveGlossaryCategory = (
   category: LocalizationCategoryId
 ): LocalizationCategoryId =>
   category === "ui_interface" ? "workflow_terms" : category;
-
 const createCompositeSourceHash = (
   sourceDictionary: LocalizationSourceDictionary,
   glossary: ResolvedGlossary,
@@ -135,7 +133,6 @@ export class LocalizationMaterializer {
   private readonly sourceDictionaryRegistry: SourceDictionaryRegistry;
   private readonly translationFacade: LocalizationTranslationFacadeContract;
   private readonly userGlossaryStore: UserGlossaryStore;
-
   constructor(options: LocalizationMaterializerOptions) {
     this.bundleStore = options.bundleStore ?? new LocalizationBundleStore();
     this.defaultEngineId = normalizeLanguage(
@@ -165,7 +162,6 @@ export class LocalizationMaterializer {
     this.userGlossaryStore =
       options.userGlossaryStore ?? new UserGlossaryStore();
   }
-
   async materialize(
     request: LocalizationMaterializationRequest
   ): Promise<LocalizationMaterializationResult | null> {
@@ -259,7 +255,6 @@ export class LocalizationMaterializer {
         }),
       ]);
     }
-
     return {
       bundle,
       fallbackTranslationCount: translationResult.fallbackTranslationCount,
@@ -295,7 +290,6 @@ export class LocalizationMaterializer {
     ) {
       return mergedGlossary;
     }
-
     return {
       rules: mergedGlossary.rules.filter(
         (rule) =>
@@ -317,7 +311,6 @@ export class LocalizationMaterializer {
       entries: { ...sourceDictionary.entries },
     };
   }
-
   private async translateSourceDictionary(
     category: LocalizationCategoryId,
     glossary: ResolvedGlossary,
@@ -333,7 +326,6 @@ export class LocalizationMaterializer {
         `Localization engine '${engineId}' does not support language '${targetLanguage}'.`
       );
     }
-
     const structuredBatchEntries: StructuredBatchEntry[] = [];
     const structuredEntryBySource = new Map<string, StructuredBatchEntry>();
     for (const [messageId, sourceText] of Object.entries(
@@ -373,29 +365,35 @@ export class LocalizationMaterializer {
         partialFallbackTranslationCount: 0,
       };
     }
-
-    const batchText = buildStructuredBatchText(structuredBatchEntries);
-    const translationResult = await this.translateProtectedTextWithRetry({
-      category: LOCALIZATION_BATCH_TRANSLATION_CATEGORY,
-      engineId,
-      protectedText: { protectedText: batchText, tokens: [] },
-      sourceLanguage,
-      targetLanguage,
-    });
-    if (translationResult.status !== "translated") {
-      return {
-        bundle: this.createSourceBundle(sourceDictionary, targetLanguage),
-        fallbackTranslationCount: structuredBatchEntries.length,
-        partialFallbackTranslationCount: 0,
-      };
-    }
-
-    const fallbackTranslationCount = 0;
-    const { partialFallbackTranslationCount, translatedEntries } =
-      await resolveStructuredBatchTranslations({
+    const structuredEntryBatches = splitStructuredBatchEntries(
+      structuredBatchEntries,
+      LOCALIZATION_STRUCTURED_BATCH_LIMITS
+    );
+    const translatedEntries: Record<string, string> = {};
+    let fallbackTranslationCount = 0;
+    let partialFallbackTranslationCount = 0;
+    for (const batchEntries of structuredEntryBatches) {
+      const batchText = buildStructuredBatchText(batchEntries);
+      const translationResult = await this.translateProtectedTextWithRetry({
+        category: LOCALIZATION_BATCH_TRANSLATION_CATEGORY,
+        engineId,
+        protectedText: { protectedText: batchText, tokens: [] },
+        sourceLanguage,
+        targetLanguage,
+      });
+      if (translationResult.status !== "translated") {
+        fallbackTranslationCount += batchEntries.length;
+        for (const entry of batchEntries) {
+          for (const messageId of entry.messageIds) {
+            translatedEntries[messageId] = entry.sourceText;
+          }
+        }
+        continue;
+      }
+      const resolvedBatch = await resolveStructuredBatchTranslations({
         batchReportedPartialFallback:
           translationResult.errorCode === "partial_fallback",
-        entries: structuredBatchEntries,
+        entries: batchEntries,
         finalText: translationResult.finalText,
         glossaryProtector: this.glossaryProtector,
         retryMissingEntry: (entry) =>
@@ -417,11 +415,14 @@ export class LocalizationMaterializer {
           }),
         targetLanguage,
       });
+      partialFallbackTranslationCount +=
+        resolvedBatch.partialFallbackTranslationCount;
+      Object.assign(translatedEntries, resolvedBatch.translatedEntries);
+    }
     const likelyUntranslatedEntryCount = resolveLikelyUntranslatedEntryCount({
       sourceEntries: sourceDictionary.entries,
       translatedEntries,
     });
-
     return {
       bundle: {
         category: sourceDictionary.category,

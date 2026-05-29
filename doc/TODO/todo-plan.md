@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "1a706c229",
+  "lastRecordedCommit": "6fc15eb96",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase13.batch-planner.task1",
-  "expectedCommitMessage": "test: cover localization structured batch planning",
+  "currentTaskId": "local-models.phase13.local-bundle-batching.task1",
+  "expectedCommitMessage": "fix: batch local model localization bundles",
   "debt": {
-    "expectedCommitMessage": "test: cover localization structured batch planning",
-    "preCommitHead": "1a706c229",
+    "expectedCommitMessage": "fix: batch local model localization bundles",
+    "preCommitHead": "6fc15eb96",
     "stage": "commit_pending",
-    "taskId": "local-models.phase13.batch-planner.task1"
+    "taskId": "local-models.phase13.local-bundle-batching.task1"
   }
 }
 ```
@@ -242,9 +242,12 @@
 75. [DONE] `local-models.phase13.batch-planner.task1` Add a reusable structured batch planner with coverage for entry-count and character-count limits (scope: `packages/localization/src/structured-batch-entry-recovery.ts, packages/localization/src/structured-batch-entry-recovery.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover localization structured batch planning`).
     - Investigation 2026-05-29: global settings persisted `uiEngineId=lmstudio:gemma-4-26b-a4b-it` and several `ru` categories, but `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` still contained an English startup snapshot.
     - Investigation 2026-05-29: a small LM Studio structured-marker sample translated successfully in 7395 ms, but a single `user_guidance` bundle materialization did not return promptly; the current materializer sends each bundle as one structured batch, which is too coarse for local models and leaves the browser on English fallback while materialization is pending or fails.
-76. [PENDING] Git Commit: `test: cover localization structured batch planning` (hash: TBD)
-77. [TODO] `local-models.phase13.local-bundle-batching.task1` Use bounded structured batches during localization materialization so local LM Studio models are not asked to translate an entire runtime bundle in one slow request (scope: `packages/localization/src/localization-materializer.ts, packages/localization/src/localization-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: batch local model localization bundles`).
-78. [TODO] Git Commit: `fix: batch local model localization bundles` (hash: TBD)
+76. [DONE] Git Commit: `test: cover localization structured batch planning` (hash: 6fc15eb96)
+77. [DONE] `local-models.phase13.local-bundle-batching.task1` Use bounded structured batches during localization materialization so local LM Studio models are not asked to translate an entire runtime bundle in one slow request (scope: `packages/localization/src/localization-materializer.ts, packages/localization/src/localization-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: batch local model localization bundles`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/localization` — PASS.
+    - Verification 2026-05-29: `node --test packages/localization/dist/localization-materializer.test.js packages/localization/dist/structured-batch-entry-recovery.test.js` — PASS (8 tests).
+    - Smoke 2026-05-29: built `LocalizationMaterializer` with real `lmstudio:gemma-4-26b-a4b-it` materialized a 13-entry `user_guidance` bundle as 2 bounded requests (`1762` and `791` chars), completed in `15837` ms, returned `fallback=0`, `partial=0`, and preserved `API`, `JSON`, `CodeAI Hub`, and `{providerId}`.
+78. [PENDING] Git Commit: `fix: batch local model localization bundles` (hash: TBD)
 79. [TODO] `local-models.phase13.user-acceptance.task1` User retests the fixed release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
 
 ## Phase 14 — Scope Closeout (owner: Codex, updated: 2026-05-29)
