@@ -62,6 +62,39 @@ export const buildStructuredBatchText = (
     )
     .join("\n\n");
 
+export const splitStructuredBatchEntries = (
+  entries: readonly StructuredBatchEntry[],
+  limits: {
+    readonly maxCharacters: number;
+    readonly maxEntries: number;
+  }
+): readonly (readonly StructuredBatchEntry[])[] => {
+  const batches: StructuredBatchEntry[][] = [];
+  let currentBatch: StructuredBatchEntry[] = [];
+
+  const flushCurrentBatch = (): void => {
+    if (currentBatch.length > 0) {
+      batches.push(currentBatch);
+      currentBatch = [];
+    }
+  };
+
+  for (const entry of entries) {
+    const nextBatch = [...currentBatch, entry];
+    const exceedsEntryLimit = nextBatch.length > limits.maxEntries;
+    const exceedsCharacterLimit =
+      currentBatch.length > 0 &&
+      buildStructuredBatchText(nextBatch).length > limits.maxCharacters;
+    if (exceedsEntryLimit || exceedsCharacterLimit) {
+      flushCurrentBatch();
+    }
+    currentBatch.push(entry);
+  }
+
+  flushCurrentBatch();
+  return batches;
+};
+
 export const resolveStructuredBatchTranslations = async (options: {
   readonly batchReportedPartialFallback: boolean;
   readonly entries: readonly StructuredBatchEntry[];

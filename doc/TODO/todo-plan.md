@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "0b03bddaa",
+  "lastRecordedCommit": "1a706c229",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase12.release-package.task1",
-  "expectedCommitMessage": "chore: package local runtime reliability vsix",
+  "currentTaskId": "local-models.phase13.batch-planner.task1",
+  "expectedCommitMessage": "test: cover localization structured batch planning",
   "debt": {
-    "expectedCommitMessage": "chore: package local runtime reliability vsix",
-    "preCommitHead": "0b03bddaa",
+    "expectedCommitMessage": "test: cover localization structured batch planning",
+    "preCommitHead": "1a706c229",
     "stage": "commit_pending",
-    "taskId": "local-models.phase12.release-package.task1"
+    "taskId": "local-models.phase13.batch-planner.task1"
   }
 }
 ```
@@ -234,10 +234,20 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version` completed successfully for version `1.2.394`.
     - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
     - Release package 2026-05-29: VSIX created at `codeai-hub-1.2.394.vsix` (`4.4M`); runtime package surface verification passed.
-73. [PENDING] Git Commit: `chore: package local runtime reliability vsix` (hash: TBD)
-74. [TODO] `local-models.phase12.user-acceptance.task1` User retests the new release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
+73. [DONE] Git Commit: `chore: package local runtime reliability vsix` (hash: 1a706c229)
+74. [BLOCKED] `local-models.phase12.user-acceptance.task1` User retests the new release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none). Result: release `1.2.394` shows the Local Models settings tab, but Project Manager UI remains English after local LM Studio engines and `ru` localization categories are selected.
 
-## Phase 13 — Scope Closeout (owner: Codex, updated: 2026-05-29)
+## Phase 13 — Local Bundle Materialization Fix (owner: Codex, updated: 2026-05-29)
+### Stream: Bounded Local Model Localization Batches
+75. [DONE] `local-models.phase13.batch-planner.task1` Add a reusable structured batch planner with coverage for entry-count and character-count limits (scope: `packages/localization/src/structured-batch-entry-recovery.ts, packages/localization/src/structured-batch-entry-recovery.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover localization structured batch planning`).
+    - Investigation 2026-05-29: global settings persisted `uiEngineId=lmstudio:gemma-4-26b-a4b-it` and several `ru` categories, but `~/.codeai-hub/localization/cache/browser-runtime-bootstrap.json` still contained an English startup snapshot.
+    - Investigation 2026-05-29: a small LM Studio structured-marker sample translated successfully in 7395 ms, but a single `user_guidance` bundle materialization did not return promptly; the current materializer sends each bundle as one structured batch, which is too coarse for local models and leaves the browser on English fallback while materialization is pending or fails.
+76. [PENDING] Git Commit: `test: cover localization structured batch planning` (hash: TBD)
+77. [TODO] `local-models.phase13.local-bundle-batching.task1` Use bounded structured batches during localization materialization so local LM Studio models are not asked to translate an entire runtime bundle in one slow request (scope: `packages/localization/src/localization-materializer.ts, packages/localization/src/localization-materializer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: batch local model localization bundles`).
+78. [TODO] Git Commit: `fix: batch local model localization bundles` (hash: TBD)
+79. [TODO] `local-models.phase13.user-acceptance.task1` User retests the fixed release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
+
+## Phase 14 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-75. [TODO] `local-models.phase13.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-76. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+80. [TODO] `local-models.phase14.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+81. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
