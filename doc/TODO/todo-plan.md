@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "26327dd5e",
+  "lastRecordedCommit": "2501bd891",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase31.claude-buffer.task1",
-  "expectedCommitMessage": "fix: harden claude live text buffer boundaries",
+  "currentTaskId": "local-models.phase31.docs.task1",
+  "expectedCommitMessage": "docs: document claude live tail dedupe",
   "debt": {
-    "expectedCommitMessage": "fix: harden claude live text buffer boundaries",
-    "preCommitHead": "26327dd5e",
+    "expectedCommitMessage": "docs: document claude live tail dedupe",
+    "preCommitHead": "2501bd891",
     "stage": "commit_pending",
-    "taskId": "local-models.phase31.claude-buffer.task1"
+    "taskId": "local-models.phase31.docs.task1"
   }
 }
 ```
@@ -618,9 +618,11 @@
     - Fix 2026-05-29: `ClaudeTextLiveBuffer` no longer flushes a visible segment at a period inside URL-like markdown link tokens such as `https://docs.ultracite.`, and its final reconciliation now suppresses covered suffix/window duplicate snapshots or emits only the unseen overlap tail.
     - Verification 2026-05-29: `npx tsx --test packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts` — PASS (14 tests).
     - Verification 2026-05-29: `npm exec -- ultracite check packages/Claude_Module/src/messaging/claude-text-live-buffer.ts packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts` — PASS.
-219. [PENDING] Git Commit: `fix: harden claude live text buffer boundaries` (hash: TBD)
-220. [TODO] `local-models.phase31.docs.task1` Document the Core overlap guard and Claude URL-safe live boundary rule in canonical provider/live-content docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/TODO/todo-plan.md`; expected commit: `docs: document claude live tail dedupe`).
-221. [TODO] Git Commit: `docs: document claude live tail dedupe` (hash: TBD)
+219. [DONE] Git Commit: `fix: harden claude live text buffer boundaries` (hash: 2501bd891)
+220. [DONE] `local-models.phase31.docs.task1` Document the Core overlap guard and Claude URL-safe live boundary rule in canonical provider/live-content docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/TODO/todo-plan.md`; expected commit: `docs: document claude live tail dedupe`).
+    - Documentation 2026-05-29: `SystemArchitecture.md` now states that Core's provider-message append path is the final source-of-truth guard for suppressing or trimming non-live assistant tails already covered by preceding live chunks, and that Claude text buffering must avoid URL/domain period splits.
+    - Documentation 2026-05-29: `Claude.md` now describes suffix/window final snapshot reconciliation, URL-safe markdown link boundaries, and the Core persisted-history guard for late ordinary assistant events.
+221. [PENDING] Git Commit: `docs: document claude live tail dedupe` (hash: TBD)
 
 ### Stream: Verification
 222. [TODO] `local-models.phase31.verify.task1` Run targeted Core/Claude tests and package builds for the live/final tail dedupe regression; record exact commands/results in this plan (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify claude live tail dedupe`).
