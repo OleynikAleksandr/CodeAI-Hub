@@ -37,7 +37,7 @@ import {
   type QualityGatesManagedValidationResult,
   validateQualityGatesManagedArtifacts,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
-import type { SessionManager } from "../../session-manager";
+import type { Session, SessionManager } from "../../session-manager";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import { resolvePreliminaryArtifactGate } from "./session-request-handler-preliminary-artifact-gate";
@@ -55,11 +55,6 @@ export type ManagedWorkflowTurnCompletionResult =
   | "continued"
   | "not_managed"
   | "settled";
-interface ManagedWorkflowTurnSession {
-  readonly initiativeSlug?: string | null;
-  readonly stage?: string | null;
-  readonly workspacePath?: string | null;
-}
 interface ManagedWorkflowTurnEventMessages {
   readonly appendCoreMessage: SessionRequestHandlerEventMessages["appendCoreMessage"];
   readonly waitForMessagePersistence?: SessionRequestHandlerEventMessages["waitForMessagePersistence"];
@@ -137,7 +132,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     sessionId: string
   ): Promise<ManagedWorkflowTurnCompletionResult> {
     const session = this.options.sessionManager.getSession(sessionId) as
-      | ManagedWorkflowTurnSession
+      | Session
       | null
       | undefined;
     if (!(session?.workspacePath && session.initiativeSlug && session.stage)) {
@@ -149,6 +144,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     ) {
       const gate = await resolvePreliminaryArtifactGate({
         stage: session.stage,
+        assistantMessages: session.messages,
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
       });

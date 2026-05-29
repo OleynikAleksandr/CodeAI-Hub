@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "5c178f57d",
+  "lastRecordedCommit": "d5a606ebe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase23.release-package.task1",
-  "expectedCommitMessage": "chore: package local provider context vsix",
+  "currentTaskId": "local-models.phase24.preliminary-artifact.task1",
+  "expectedCommitMessage": "fix: materialize local preliminary artifacts",
   "debt": {
-    "expectedCommitMessage": "chore: package local provider context vsix",
-    "preCommitHead": "5c178f57d",
+    "expectedCommitMessage": "fix: materialize local preliminary artifacts",
+    "preCommitHead": "d5a606ebe",
     "stage": "commit_pending",
-    "taskId": "local-models.phase23.release-package.task1"
+    "taskId": "local-models.phase24.preliminary-artifact.task1"
   }
 }
 ```
@@ -423,10 +423,21 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.398`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Verified release packaging output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
     - VSIX ready for user retest: `codeai-hub-1.2.398.vsix` (`4.4M`).
-146. [PENDING] Git Commit: `chore: package local provider context vsix` (hash: TBD)
-147. [TODO] `local-models.phase23.user-acceptance.task1` User retests the new release and confirms Local Models can complete a Description step while translation remains fast on the existing short-context path (scope: user workflow observation; expected commit: none).
+146. [DONE] Git Commit: `chore: package local provider context vsix` (hash: d5a606ebe)
+147. [BLOCKED] `local-models.phase23.user-acceptance.task1` User retests the new release and confirms Local Models can complete a Description step while translation remains fast on the existing short-context path (scope: user workflow observation; expected commit: none). Result: release `1.2.398` can run the Local Models Description turn, but Core opened/accepted Description review even though `Final_Description.md` was not physically materialized.
+
+## Phase 24 — Local Preliminary Artifact Materialization Fix (owner: Codex, updated: 2026-05-29)
+### Stream: Description Artifact Gate
+148. [DONE] `local-models.phase24.preliminary-artifact.task1` Materialize preliminary Description/Virtual Simulation markdown artifacts from provider assistant responses when local models return fenced artifact text, and block review if the canonical artifact file is still missing (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.test.ts`; expected commit: `fix: materialize local preliminary artifacts`).
+    - Finding 2026-05-29: release `1.2.398` local-model Description response returned the target path plus a fenced `markdown` artifact in chat, but no physical `.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md` was created.
+    - Finding 2026-05-29: preliminary artifact gate checked missing `virtual_simulation/virtual-simulation.md`, but did not check missing `description/Final_Description.md`.
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js` — PASS (6 tests).
+149. [PENDING] Git Commit: `fix: materialize local preliminary artifacts` (hash: TBD)
+150. [TODO] `local-models.phase24.preliminary-artifact-verify.task1` Run targeted Core tests/build and reproduce the user Local Models session shape with a fenced `Final_Description.md` response (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local preliminary artifact materialization`).
+151. [TODO] Git Commit: `test: verify local preliminary artifact materialization` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-148. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-149. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+152. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+153. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
