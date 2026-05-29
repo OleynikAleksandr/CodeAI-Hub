@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "7dcd58997",
+  "lastRecordedCommit": "5c178f57d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase23.release-build.task1",
-  "expectedCommitMessage": "chore: build local provider context release",
+  "currentTaskId": "local-models.phase23.release-package.task1",
+  "expectedCommitMessage": "chore: package local provider context vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build local provider context release",
-    "preCommitHead": "7dcd58997",
+    "expectedCommitMessage": "chore: package local provider context vsix",
+    "preCommitHead": "5c178f57d",
     "stage": "commit_pending",
-    "taskId": "local-models.phase23.release-build.task1"
+    "taskId": "local-models.phase23.release-package.task1"
   }
 }
 ```
@@ -418,9 +418,12 @@
 143. [DONE] `local-models.phase23.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local provider context release`).
     - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.398`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release build artifacts copied to `doc/tmp/releases/`: `claude-module-1.2.398.tar.bz2`, `codex-module-1.2.398.tar.bz2`, `gemini-module-1.2.398.tar.bz2`, `kimi-module-1.2.398.tar.bz2`, `glm-claude-code-module-1.2.398.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.398.tar.bz2`, `vscode-webview-1.2.398.tar.bz2`, `project-manager-1.2.398.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.398.tar.bz2`.
-144. [PENDING] Git Commit: `chore: build local provider context release` (hash: TBD)
-145. [TODO] `local-models.phase23.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local provider context vsix`).
-146. [TODO] Git Commit: `chore: package local provider context vsix` (hash: TBD)
+144. [DONE] Git Commit: `chore: build local provider context release` (hash: 5c178f57d)
+145. [DONE] `local-models.phase23.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local provider context vsix`).
+    - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.398`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Verified release packaging output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
+    - VSIX ready for user retest: `codeai-hub-1.2.398.vsix` (`4.4M`).
+146. [PENDING] Git Commit: `chore: package local provider context vsix` (hash: TBD)
 147. [TODO] `local-models.phase23.user-acceptance.task1` User retests the new release and confirms Local Models can complete a Description step while translation remains fast on the existing short-context path (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
