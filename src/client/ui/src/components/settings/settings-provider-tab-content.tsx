@@ -13,6 +13,15 @@ import LocalizationSettingsCard from "./localization-settings-card";
 import ProviderVersions from "./provider-versions";
 import SessionContinuityCard from "./session-continuity-card";
 import SettingsCard from "./settings-card";
+import {
+  descriptionStyles,
+  listStyles,
+  modelDescriptionStyles,
+  modelInfoStyles,
+  modelTitleStyles,
+  rowBaseStyles,
+  rowSelectedStyles,
+} from "./shared-model-card-styles";
 import { settingsSpacingTokens } from "./style-tokens";
 import type { TemplateUpdateSettingsControls } from "./template-update-settings-model";
 import TemplateUpdatesCard from "./template-updates-card";
@@ -49,19 +58,6 @@ const stackStyles: React.CSSProperties = {
   gap: settingsSpacingTokens.containerGap,
 };
 
-const localModelsListStyles: React.CSSProperties = {
-  display: "grid",
-  gap: "8px",
-};
-
-const localModelsItemStyles: React.CSSProperties = {
-  border: "1px solid rgba(255, 255, 255, 0.08)",
-  borderRadius: "6px",
-  color: "#f0f4f8",
-  fontSize: "13px",
-  padding: "10px 12px",
-};
-
 const localModelsMutedStyles: React.CSSProperties = {
   color: "#a8b3bf",
   fontSize: "12px",
@@ -78,27 +74,54 @@ const formatLocalModelName = (modelKey: string): string =>
     ?.replace(/[-_]+/gu, " ")
     .replace(/\b\w/gu, (match) => match.toUpperCase()) ?? modelKey;
 
-const LocalModelsSettingsTab: React.FC = () => {
+interface LocalModelsSettingsTabProps {
+  readonly defaultModel?: string;
+  readonly onDefaultModelChange?: (modelId: string) => void;
+}
+
+const LocalModelsSettingsTab: React.FC<LocalModelsSettingsTabProps> = ({
+  defaultModel,
+  onDefaultModelChange,
+}) => {
   const { availableEngines } = useLocalization();
   const localModels = availableEngines
     .map((engine) => engine.engineId)
     .filter((engineId) => engineId.startsWith(LOCAL_MODEL_ENGINE_PREFIX))
     .map((engineId) => engineId.slice(LOCAL_MODEL_ENGINE_PREFIX.length));
+  const selectedModel = localModels.includes(defaultModel ?? "")
+    ? defaultModel
+    : localModels[0];
 
   return (
     <div style={stackStyles}>
       <SettingsCard title="Local Models">
-        <div style={localModelsListStyles}>
-          <p style={localModelsMutedStyles}>
-            Downloaded LM Studio models discovered by Core. Download, delete,
-            context-window, and runtime tuning remain managed in LM Studio.
+        <div style={listStyles}>
+          <p style={descriptionStyles}>
+            Select the default LM Studio model used for new Local Models
+            sessions.
           </p>
           {localModels.length > 0 ? (
             localModels.map((modelKey) => (
-              <div key={modelKey} style={localModelsItemStyles}>
-                <strong>{formatLocalModelName(modelKey)}</strong>
-                <div style={localModelsMutedStyles}>lmstudio:{modelKey}</div>
-              </div>
+              <button
+                aria-pressed={modelKey === selectedModel}
+                key={modelKey}
+                onClick={() => onDefaultModelChange?.(modelKey)}
+                style={{
+                  ...rowBaseStyles,
+                  border: "none",
+                  textAlign: "left",
+                  width: "100%",
+                  ...(modelKey === selectedModel ? rowSelectedStyles : {}),
+                }}
+                type="button"
+              >
+                <div style={modelInfoStyles}>
+                  <div style={modelTitleStyles}>
+                    {formatLocalModelName(modelKey)}
+                  </div>
+                  <div style={modelDescriptionStyles}>lmstudio:{modelKey}</div>
+                </div>
+              </button>
             ))
           ) : (
             <p style={localModelsMutedStyles}>
@@ -158,6 +181,7 @@ export const SettingsProviderTabContent: React.FC<
     handleLocalizationEngineIdChange,
     handleLocalizationGlossaryEnabledChange,
     handleLocalizationWorkflowTermsPolicyChange,
+    handleLocalModelsDefaultModelChange,
     handleNativeRequestCaptureWorkbenchOpen,
     handleReasoningTranslationEngineIdChange,
     handleCodexReasoningChange,
@@ -283,7 +307,12 @@ export const SettingsProviderTabContent: React.FC<
   }
 
   if (activeTab === "localModels") {
-    return <LocalModelsSettingsTab />;
+    return (
+      <LocalModelsSettingsTab
+        defaultModel={settings.providers.localModels?.defaultModel}
+        onDefaultModelChange={handleLocalModelsDefaultModelChange}
+      />
+    );
   }
 
   if (activeTab === "gemini") {

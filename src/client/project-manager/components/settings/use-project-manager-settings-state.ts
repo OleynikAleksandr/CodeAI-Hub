@@ -50,6 +50,7 @@ import {
   updateGeminiContinuityRemainingPercentThreshold,
   updateGeminiDefaultModel,
   updateGeminiThinking,
+  updateLocalModelsDefaultModel,
   updateProviderAutoUpdate,
   updateResponsePolicyMode,
   updateStrictInstructionText,
@@ -432,7 +433,6 @@ export const useProjectManagerSettingsState =
         workspaceSlug: context.activeWorkspaceSlug,
       });
     }, [context.activeWorkspacePath, context.activeWorkspaceSlug]);
-
     const handleHostMessage = useCallback(
       (message: unknown) => {
         handleProjectManagerSettingsHostMessage({
@@ -444,7 +444,6 @@ export const useProjectManagerSettingsState =
       },
       [handleNativeRequestCapture, settings, transport]
     );
-
     return {
       coreControl,
       settings,
@@ -477,6 +476,8 @@ export const useProjectManagerSettingsState =
       handleLocalizationEngineIdChange,
       handleLocalizationGlossaryEnabledChange,
       handleLocalizationWorkflowTermsPolicyChange,
+      handleLocalModelsDefaultModelChange: (modelId) =>
+        updateSettings(updateLocalModelsDefaultModel(settings, modelId)),
       handleNativeRequestCapture,
       handleNativeRequestCaptureWorkbenchOpen,
       handleReasoningTranslationEngineIdChange,
