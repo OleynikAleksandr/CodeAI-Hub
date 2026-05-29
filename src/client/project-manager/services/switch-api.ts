@@ -29,6 +29,13 @@ export class SwitchApi {
     });
   }
 
+  requestLocalModelsModelSwitch(sessionId: string, targetModelId: string): void {
+    this.#send({
+      type: "session:local-models:model-switch",
+      payload: { sessionId, targetModelId },
+    } as unknown as OutgoingMessage);
+  }
+
   requestCodexReasoningSwitch(
     sessionId: string,
     targetReasoningEffort: CodexModelSwitchReasoningEffort

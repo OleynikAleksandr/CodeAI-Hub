@@ -238,6 +238,7 @@ class ProjectManagerApi {
   requestCodexModelSwitch(sessionId: string, targetModelId: string): void {
     this.switchApi.requestCodexModelSwitch(sessionId, targetModelId);
   }
+  requestLocalModelsModelSwitch(sessionId: string, targetModelId: string): void { this.switchApi.requestLocalModelsModelSwitch(sessionId, targetModelId); }
   requestCodexReasoningSwitch(
     sessionId: string,
     targetReasoningEffort: CodexModelSwitchReasoningEffort
