@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "e0f2eba54",
+  "lastRecordedCommit": "406935306",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase16.dialog-bridge.task1",
-  "expectedCommitMessage": "feat: connect local dialog model switching",
+  "currentTaskId": "local-models.phase16.provider-config.task1",
+  "expectedCommitMessage": "feat: resolve local model defaults from settings",
   "debt": {
-    "expectedCommitMessage": "feat: connect local dialog model switching",
-    "preCommitHead": "e0f2eba54",
+    "expectedCommitMessage": "feat: resolve local model defaults from settings",
+    "preCommitHead": "406935306",
     "stage": "commit_pending",
-    "taskId": "local-models.phase16.dialog-bridge.task1"
+    "taskId": "local-models.phase16.provider-config.task1"
   }
 }
 ```
@@ -288,11 +288,11 @@
 101. [DONE] Git Commit: `feat: switch local model sessions` (hash: e0f2eba54)
 
 102. [DONE] `local-models.phase16.dialog-bridge.task1` Wire Project Manager dialog sessions to pass downloaded Local Models into the picker and call the Local Models switch API (scope: `src/client/project-manager/components/sessions/project-manager-dialog-session-view.tsx, src/client/project-manager/components/sessions/use-project-manager-dialog-session-controller.ts, doc/TODO/todo-plan.md`; expected commit: `feat: connect local dialog model switching`).
-103. [PENDING] Git Commit: `feat: connect local dialog model switching` (hash: TBD)
+103. [DONE] Git Commit: `feat: connect local dialog model switching` (hash: 406935306)
 
 ### Stream: Provider Config And Verification
-104. [TODO] `local-models.phase16.provider-config.task1` Resolve Local Models provider defaults from persisted settings for Core-created sessions and model info labels (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: resolve local model defaults from settings`).
-105. [TODO] Git Commit: `feat: resolve local model defaults from settings` (hash: TBD)
+104. [DONE] `local-models.phase16.provider-config.task1` Resolve Local Models provider defaults from persisted settings for Core-created sessions and model info labels (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: resolve local model defaults from settings`).
+105. [PENDING] Git Commit: `feat: resolve local model defaults from settings` (hash: TBD)
 106. [TODO] `local-models.phase16.verify.task1` Run targeted tests/builds and smoke checks for Settings default model, step-card model selection, and per-turn Local Models switching (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider model selection`).
 107. [TODO] Git Commit: `test: verify local provider model selection` (hash: TBD)
 

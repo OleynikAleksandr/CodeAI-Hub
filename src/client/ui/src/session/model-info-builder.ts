@@ -12,6 +12,7 @@ type SettingsBackedProviderId = "claudeCodeCli" | "codexCli" | "geminiCli";
 const KIMI_DEFAULT_MODEL_DISPLAY_NAME = "Kimi Code";
 const GLM_CLAUDE_CODE_MODEL_DISPLAY_NAME = "GLM 5.1 / Claude Code";
 const KIMI_DEFAULT_MODEL_ID = "kimi-for-coding";
+const LOCAL_MODELS_DEFAULT_MODEL_ID = "local-model";
 
 const PROVIDER_ID_TO_KEY: Record<SettingsBackedProviderId, ProviderKey> = {
   claudeCodeCli: "claude",
@@ -183,6 +184,21 @@ export const buildModelInfo = (
       providerName: getDefaultProviderTitle(providerId),
       modelId,
       modelDisplayName: formatKimiSessionModelDisplayName(providerId, modelId),
+      source,
+    };
+  }
+  if (providerId === "localModels") {
+    const modelId =
+      effectiveModelId ??
+      settings.providers.localModels?.defaultModel ??
+      LOCAL_MODELS_DEFAULT_MODEL_ID;
+    return {
+      providerId,
+      providerName: getDefaultProviderTitle(providerId),
+      modelId,
+      modelDisplayName: formatModelDisplayName(
+        parseEffectiveModelId(modelId).baseModelId
+      ),
       source,
     };
   }

@@ -49,6 +49,10 @@ export interface GlmClaudeCodeSettingsSnapshot {
   readonly thinkingDisplaySyncEnabled?: unknown;
 }
 
+export interface LocalModelsSettingsSnapshot {
+  readonly defaultModel?: unknown;
+}
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null;
 
@@ -177,6 +181,16 @@ export const loadGlmClaudeCodeSettingsSnapshot = (
     defaultModel: glmClaudeCode.defaultModel,
     thinkingDisplaySyncEnabled: glmClaudeCode.thinkingDisplaySyncEnabled,
   };
+};
+
+export const loadLocalModelsSettingsSnapshot = (
+  settingsPath: string
+): LocalModelsSettingsSnapshot | null => {
+  const localModels = loadProviderSnapshot(settingsPath, "localModels");
+  if (!localModels) {
+    return null;
+  }
+  return { defaultModel: localModels.defaultModel };
 };
 
 export const loadClaudeProviderSettingsSnapshot = (

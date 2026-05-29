@@ -18,6 +18,7 @@ import {
   loadGeminiSettingsSnapshot,
   loadGlmClaudeCodeSettingsSnapshot,
   loadKimiSettingsSnapshot,
+  loadLocalModelsSettingsSnapshot,
 } from "./provider-settings-snapshot";
 
 export interface ProviderTurnConfigResolverOptions {
@@ -282,7 +283,13 @@ const resolveGlmClaudeCodeTurnConfig = (
 const resolveLocalModelsTurnConfig = (
   options: ProviderTurnConfigResolverOptions
 ): ResolvedKimiTurnConfig => {
+  const snapshot = loadLocalModelsSettingsSnapshot(options.settingsPath);
   const defaultModel =
+    normalizeOptionalString(
+      typeof snapshot?.defaultModel === "string"
+        ? snapshot.defaultModel
+        : undefined
+    ) ??
     normalizeOptionalString(options.env.CODEAI_LMSTUDIO_DEFAULT_MODEL) ??
     DEFAULT_LOCAL_MODELS_MODEL_ID;
 
