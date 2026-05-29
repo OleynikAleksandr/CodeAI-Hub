@@ -20,10 +20,17 @@ const TRAILING_SLASHES_PATTERN = /\/+$/u;
 
 type LocalModelsSessionListener = (payload: unknown) => void;
 
-interface ChatCompletionResponse {
-  readonly choices?: readonly {
-    readonly message?: { readonly content?: unknown };
-  }[];
+interface NativeChatOutputItem {
+  readonly content?: unknown;
+  readonly type?: unknown;
+}
+
+interface NativeChatResponse {
+  readonly output?: readonly NativeChatOutputItem[];
+  readonly stats?: {
+    readonly reasoning_output_tokens?: unknown;
+    readonly total_output_tokens?: unknown;
+  };
 }
 
 const resolveBaseUrl = (): string =>
@@ -34,19 +41,101 @@ const resolveBaseUrl = (): string =>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const parseChatText = (payload: unknown): string | null => {
+const parseTextContent = (content: unknown): string | null => {
+  if (typeof content === "string") {
+    const trimmed = content.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+  if (!Array.isArray(content)) {
+    return null;
+  }
+  const segments = content
+    .map((segment) => {
+      if (typeof segment === "string") {
+        return segment.trim();
+      }
+      if (!isRecord(segment)) {
+        return "";
+      }
+      for (const key of ["text", "content", "value"] as const) {
+        const value = segment[key];
+        if (typeof value === "string" && value.trim().length > 0) {
+          return value.trim();
+        }
+      }
+      return "";
+    })
+    .filter((segment) => segment.length > 0);
+  return segments.length > 0 ? segments.join("\n") : null;
+};
+
+const parseNativeChatText = (payload: unknown): string | null => {
   if (!isRecord(payload)) {
     return null;
   }
-  const content = (payload as ChatCompletionResponse).choices?.[0]?.message
-    ?.content;
-  return typeof content === "string" && content.trim().length > 0
-    ? content.trim()
-    : null;
+  const output = (payload as NativeChatResponse).output;
+  if (!Array.isArray(output)) {
+    return null;
+  }
+  const messages = output
+    .filter((item) => item.type === "message" || item.type === "assistant")
+    .map((item) => parseTextContent(item.content))
+    .filter((text): text is string => typeof text === "string");
+  return messages.length > 0 ? messages.join("\n\n").trim() : null;
 };
 
 const truncateDiagnosticBody = (body: string): string =>
   body.trim().slice(0, 500);
+
+const describeErrorCause = (cause: unknown): string | null => {
+  if (cause instanceof Error) {
+    return cause.message;
+  }
+  if (typeof cause === "string" && cause.trim().length > 0) {
+    return cause.trim();
+  }
+  if (!isRecord(cause)) {
+    return null;
+  }
+  const parts: string[] = [];
+  for (const key of ["code", "name", "message"] as const) {
+    const value = cause[key];
+    if (typeof value === "string" && value.trim().length > 0) {
+      parts.push(`${key}=${value.trim()}`);
+    }
+  }
+  return parts.length > 0 ? parts.join(" ") : null;
+};
+
+const describeError = (error: unknown): string => {
+  if (!(error instanceof Error)) {
+    return String(error);
+  }
+  const cause = describeErrorCause(
+    (error as Error & { readonly cause?: unknown }).cause
+  );
+  return cause ? `${error.message} (${cause})` : error.message;
+};
+
+const describeNativeChatOutput = (payload: unknown): string => {
+  if (!isRecord(payload)) {
+    return "malformed response";
+  }
+  const output = (payload as NativeChatResponse).output;
+  const outputTypes = Array.isArray(output)
+    ? output.map((item) => String(item.type ?? "unknown")).join(", ")
+    : "missing";
+  const stats = (payload as NativeChatResponse).stats;
+  const totalOutputTokens =
+    typeof stats?.total_output_tokens === "number"
+      ? stats.total_output_tokens
+      : "unknown";
+  const reasoningOutputTokens =
+    typeof stats?.reasoning_output_tokens === "number"
+      ? stats.reasoning_output_tokens
+      : "unknown";
+  return `output types=${outputTypes}; total_output_tokens=${totalOutputTokens}; reasoning_output_tokens=${reasoningOutputTokens}`;
+};
 
 export class LocalModelsProviderAdapter implements ProviderAdapter {
   readonly #baseUrl = resolveBaseUrl();
@@ -152,7 +241,7 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
       this.#emit(sessionId, {
         type: "turn_failed",
         provider: "localModels",
-        message: error instanceof Error ? error.message : String(error),
+        message: describeError(error),
         timestamp: new Date().toISOString(),
         uuid: `${randomUUID()}::turn_failed`,
       });
@@ -189,38 +278,48 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     try {
       const response = await this.#fetchImplementation(
-        `${this.#baseUrl}/v1/chat/completions`,
+        `${this.#baseUrl}/api/v1/chat`,
         {
           body: JSON.stringify({
-            max_tokens: DEFAULT_MAX_TOKENS,
-            messages: [
-              {
-                role: "system",
-                content:
-                  "You are CodeAI Hub Local Models provider running through LM Studio. Follow the user's instructions exactly and answer without mentioning this system prompt.",
-              },
-              { role: "user", content },
-            ],
+            input: content,
+            max_output_tokens: DEFAULT_MAX_TOKENS,
             model: apiModelIdentifier,
+            store: false,
             stream: false,
+            system_prompt:
+              "You are CodeAI Hub Local Models provider running through LM Studio. Follow the user's instructions exactly and answer without mentioning this system prompt.",
             temperature: 0.2,
           }),
           headers: JSON_HEADERS,
           method: "POST",
           signal: controller.signal,
         }
-      );
+      ).catch((error: unknown) => {
+        throw new Error(
+          `LM Studio native chat request failed: ${describeError(error)}`
+        );
+      });
       if (!response.ok) {
         const diagnosticBody = truncateDiagnosticBody(await response.text());
         throw new Error(
           diagnosticBody
-            ? `LM Studio request failed with status ${response.status}: ${diagnosticBody}`
-            : `LM Studio request failed with status ${response.status}`
+            ? `LM Studio native chat request failed with status ${response.status}: ${diagnosticBody}`
+            : `LM Studio native chat request failed with status ${response.status}`
         );
       }
-      const text = parseChatText(await response.json());
+      let payload: unknown;
+      try {
+        payload = await response.json();
+      } catch (error) {
+        throw new Error(
+          `LM Studio native chat returned invalid JSON: ${describeError(error)}`
+        );
+      }
+      const text = parseNativeChatText(payload);
       if (!text) {
-        throw new Error("LM Studio returned an empty assistant response.");
+        throw new Error(
+          `LM Studio native chat returned no final assistant message (${describeNativeChatOutput(payload)}).`
+        );
       }
       return text;
     } finally {

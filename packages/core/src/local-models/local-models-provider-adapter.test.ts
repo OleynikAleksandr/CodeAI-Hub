@@ -4,6 +4,18 @@ import { withAppliedProviderTurnConfig } from "../remote-bridge/types";
 import { LocalModelsProviderAdapter } from "./local-models-provider-adapter";
 
 const CONTEXT_LENGTH_ERROR_PATTERN = /context length exceeded/;
+const NO_FINAL_MESSAGE_PATTERN = /no final assistant message/;
+const SOCKET_CAUSE_PATTERN = /UND_ERR_SOCKET/;
+
+const createNativeMessageResponse = (content: string): Response =>
+  ({
+    json: () =>
+      Promise.resolve({
+        output: [{ content, type: "message" }],
+      }),
+    ok: true,
+    status: 200,
+  }) as Response;
 
 const createModelListJson = (): string =>
   JSON.stringify([
@@ -38,6 +50,7 @@ const createLoadedModelJson = (
 test("LocalModelsProviderAdapter uses selected local model and emits terminal events", async () => {
   const commandCalls: string[][] = [];
   const requestedModels: string[] = [];
+  const requestedUrls: string[] = [];
   const adapter = new LocalModelsProviderAdapter({
     commandRunner: (args) => {
       commandCalls.push([...args]);
@@ -49,17 +62,11 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
       }
       return args[0] === "ls" ? createModelListJson() : "";
     },
-    fetchImplementation: ((_url, init) => {
+    fetchImplementation: ((url, init) => {
+      requestedUrls.push(String(url));
       const body = JSON.parse(String(init?.body)) as { readonly model: string };
       requestedModels.push(body.model);
-      return Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            choices: [{ message: { content: "Локальный ответ." } }],
-          }),
-        ok: true,
-        status: 200,
-      } as Response);
+      return Promise.resolve(createNativeMessageResponse("Локальный ответ."));
     }) as typeof fetch,
   });
 
@@ -90,6 +97,7 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
   assert.deepEqual(requestedModels, [
     "codeaihub-workflow-agent-qwen-local-16384",
   ]);
+  assert.deepEqual(requestedUrls, ["http://127.0.0.1:1234/api/v1/chat"]);
   assert.deepEqual(
     events.map((event) => (event as { readonly type?: string }).type),
     ["turn_started", "assistant", "turn_completed"]
@@ -118,14 +126,9 @@ test("LocalModelsProviderAdapter starts LM Studio server before provider turns",
     fetchImplementation: ((_url, init) => {
       const body = JSON.parse(String(init?.body)) as { readonly model: string };
       requestedModels.push(body.model);
-      return Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            choices: [{ message: { content: "Ответ после старта сервера." } }],
-          }),
-        ok: true,
-        status: 200,
-      } as Response);
+      return Promise.resolve(
+        createNativeMessageResponse("Ответ после старта сервера.")
+      );
     }) as typeof fetch,
   });
   const sessionId = await adapter.createSession();
@@ -175,14 +178,9 @@ test("LocalModelsProviderAdapter reuses CodeAI-owned loaded identifier with enou
     fetchImplementation: ((_url, init) => {
       const body = JSON.parse(String(init?.body)) as { readonly model: string };
       requestedModels.push(body.model);
-      return Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            choices: [{ message: { content: "Ответ без перезагрузки." } }],
-          }),
-        ok: true,
-        status: 200,
-      } as Response);
+      return Promise.resolve(
+        createNativeMessageResponse("Ответ без перезагрузки.")
+      );
     }) as typeof fetch,
   });
 
@@ -225,5 +223,79 @@ test("LocalModelsProviderAdapter includes LM Studio non-OK body in diagnostics",
   await assert.rejects(
     () => adapter.sendMessage(sessionId, "Answer locally."),
     CONTEXT_LENGTH_ERROR_PATTERN
+  );
+});
+
+test("LocalModelsProviderAdapter reports reasoning-only native chat responses", async () => {
+  const adapter = new LocalModelsProviderAdapter({
+    commandRunner: (args) => {
+      if (args[0] === "ls") {
+        return createModelListJson();
+      }
+      if (args[0] === "server" && args[1] === "status") {
+        return "Server: ON (port: 1234)";
+      }
+      if (args[0] === "ps") {
+        return createLoadedModelJson();
+      }
+      return "";
+    },
+    fetchImplementation: (() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            output: [
+              {
+                content: "Reasoning without a final answer.",
+                type: "reasoning",
+              },
+            ],
+            stats: {
+              reasoning_output_tokens: 2047,
+              total_output_tokens: 2047,
+            },
+          }),
+        ok: true,
+        status: 200,
+      } as Response)) as typeof fetch,
+  });
+
+  const sessionId = await adapter.createSession();
+
+  await assert.rejects(
+    () => adapter.sendMessage(sessionId, "Answer locally."),
+    NO_FINAL_MESSAGE_PATTERN
+  );
+});
+
+test("LocalModelsProviderAdapter includes fetch cause diagnostics", async () => {
+  const fetchFailure = new TypeError("fetch failed") as TypeError & {
+    cause?: unknown;
+  };
+  fetchFailure.cause = {
+    code: "UND_ERR_SOCKET",
+    message: "other side closed",
+  };
+  const adapter = new LocalModelsProviderAdapter({
+    commandRunner: (args) => {
+      if (args[0] === "ls") {
+        return createModelListJson();
+      }
+      if (args[0] === "server" && args[1] === "status") {
+        return "Server: ON (port: 1234)";
+      }
+      if (args[0] === "ps") {
+        return createLoadedModelJson();
+      }
+      return "";
+    },
+    fetchImplementation: (() => Promise.reject(fetchFailure)) as typeof fetch,
+  });
+
+  const sessionId = await adapter.createSession();
+
+  await assert.rejects(
+    () => adapter.sendMessage(sessionId, "Answer locally."),
+    SOCKET_CAUSE_PATTERN
   );
 });

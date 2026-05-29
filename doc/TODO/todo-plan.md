@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "201dae5ef",
+  "lastRecordedCommit": "22429228e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase29.release-package.task1",
-  "expectedCommitMessage": "chore: package lm studio runtime policy vsix",
+  "currentTaskId": "local-models.phase30.provider-native-chat.task1",
+  "expectedCommitMessage": "fix: route local provider through lm studio native chat",
   "debt": {
-    "expectedCommitMessage": "chore: package lm studio runtime policy vsix",
-    "preCommitHead": "201dae5ef",
+    "expectedCommitMessage": "fix: route local provider through lm studio native chat",
+    "preCommitHead": "22429228e",
     "stage": "commit_pending",
-    "taskId": "local-models.phase29.release-package.task1"
+    "taskId": "local-models.phase30.provider-native-chat.task1"
   }
 }
 ```
@@ -556,10 +556,38 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.402`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
     - Release package 2026-05-29: VSIX ready at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.402.vsix` (`4.5M`).
-198. [PENDING] Git Commit: `chore: package lm studio runtime policy vsix` (hash: TBD)
-199. [TODO] `local-models.phase29.user-acceptance.task1` User retests the new release and confirms local LM Studio translation uses adaptive context, does not accumulate idle clones, keeps reasoning translation fast, and no longer blocks Project Manager indefinitely on slow UI localization materialization (scope: user workflow observation; expected commit: none).
+198. [DONE] Git Commit: `chore: package lm studio runtime policy vsix` (hash: 22429228e)
+199. [BLOCKED] `local-models.phase29.user-acceptance.task1` User retests the new release and confirms local LM Studio translation uses adaptive context, does not accumulate idle clones, keeps reasoning translation fast, and no longer blocks Project Manager indefinitely on slow UI localization materialization (scope: user workflow observation; expected commit: none). Result: release `1.2.402` keeps translation usable, but a Local Models workflow-agent Description turn with `qwen3.6-27b-mlx` failed as `fetch failed`; real `lms ps --json` showed two idle CodeAI-owned LM Studio worker models in memory (`translation-localization/hy-mt2` and `workflow-agent/qwen3.6`), so Phase 30 extends the provider transport and cross-model idle unload policy.
+
+## Phase 30 — Local Provider Native Chat And Memory Policy (owner: Codex, updated: 2026-05-29)
+### Stream: Provider Transport
+200. [DONE] `local-models.phase30.provider-native-chat.task1` Route workflow-agent Local Models turns through LM Studio native chat responses, parse final message output after reasoning blocks, and preserve fetch cause diagnostics (scope: `packages/core/src/local-models/local-models-provider-adapter.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: route local provider through lm studio native chat`).
+    - Finding 2026-05-29: real `qwen3.6-27b-mlx` workflow prompt through OpenAI-compatible `/v1/chat/completions` returned `200 OK` with only `message.reasoning_content` and empty `message.content`; Core logs for the Project Manager failure preserved only `fetch failed`, losing the undici cause.
+    - Finding 2026-05-29: LM Studio native `/api/v1/chat` exposes output items by type, so workflow-agent calls can distinguish final `message` output from reasoning-only output and fail with a specific diagnostic instead of silently treating reasoning as the assistant artifact.
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.test.ts` — PASS (6 tests).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-provider-adapter.test.js` — PASS (6 tests).
+201. [PENDING] Git Commit: `fix: route local provider through lm studio native chat` (hash: TBD)
+202. [TODO] `local-models.phase30.memory-policy.task1` Unload idle CodeAI-owned LM Studio models from other purposes/model keys before creating a new local runtime load while leaving generating and manually loaded models alone (scope: `packages/core/src/local-models/local-models-runtime-load-manager.ts, packages/core/src/local-models/local-models-runtime-load-manager.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: unload idle local model workers across purposes`).
+203. [TODO] Git Commit: `fix: unload idle local model workers across purposes` (hash: TBD)
+204. [TODO] `local-models.phase30.docs.task1` Document the native workflow-agent transport, reasoning-only local model limitation, and cross-purpose idle worker cleanup in canonical local-model docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local provider native chat policy`).
+205. [TODO] Git Commit: `docs: document local provider native chat policy` (hash: TBD)
+
+### Stream: Verification
+206. [TODO] `local-models.phase30.verify.task1` Run targeted Core tests/build and real LM Studio smoke checks for native provider calls plus idle cross-purpose worker cleanup; record exact commands/results in this plan (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider native chat policy`).
+207. [TODO] Git Commit: `test: verify local provider native chat policy` (hash: TBD)
+
+### Stream: Release Build
+208. [TODO] `local-models.phase30.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the native provider/memory-policy fix (scope: chat/process gate; expected commit: none).
+209. [TODO] `local-models.phase30.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local provider native chat release`).
+210. [TODO] Git Commit: `docs: prepare local provider native chat release` (hash: TBD)
+211. [TODO] `local-models.phase30.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local provider native chat release`).
+212. [TODO] Git Commit: `chore: build local provider native chat release` (hash: TBD)
+213. [TODO] `local-models.phase30.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local provider native chat vsix`).
+214. [TODO] Git Commit: `chore: package local provider native chat vsix` (hash: TBD)
+215. [TODO] `local-models.phase30.user-acceptance.task1` User retests the new release and confirms Local Models provider turns fail clearly or complete through native LM Studio chat, and idle CodeAI-owned local workers do not accumulate across translation and workflow-agent usage (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-200. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-201. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+216. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+217. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
