@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "0735dc800",
+  "lastRecordedCommit": "d6efff0aa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase29.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare lm studio runtime policy release",
+  "currentTaskId": "local-models.phase29.release-build.task1",
+  "expectedCommitMessage": "chore: build lm studio runtime policy release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare lm studio runtime policy release",
-    "preCommitHead": "0735dc800",
+    "expectedCommitMessage": "chore: build lm studio runtime policy release",
+    "preCommitHead": "d6efff0aa",
     "stage": "commit_pending",
-    "taskId": "local-models.phase29.release-prep.task1"
+    "taskId": "local-models.phase29.release-build.task1"
   }
 }
 ```
@@ -547,9 +547,11 @@
 193. [DONE] `local-models.phase29.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lm studio runtime policy release`).
     - Release prep 2026-05-29: future release version is `1.2.402` (current root `package.json` version `1.2.401` + 1).
     - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.402` and `CHANGELOG.md` entry `## [1.2.402] - 2026-05-29` added before release scripts.
-194. [PENDING] Git Commit: `docs: prepare lm studio runtime policy release` (hash: TBD)
-195. [TODO] `local-models.phase29.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build lm studio runtime policy release`).
-196. [TODO] Git Commit: `chore: build lm studio runtime policy release` (hash: TBD)
+194. [DONE] Git Commit: `docs: prepare lm studio runtime policy release` (hash: d6efff0aa)
+195. [DONE] `local-models.phase29.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build lm studio runtime policy release`).
+    - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.402`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release build artifacts copied to `doc/tmp/releases/`: `claude-module-1.2.402.tar.bz2`, `codex-module-1.2.402.tar.bz2`, `gemini-module-1.2.402.tar.bz2`, `kimi-module-1.2.402.tar.bz2`, `glm-claude-code-module-1.2.402.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.402.tar.bz2`, `vscode-webview-1.2.402.tar.bz2`, `project-manager-1.2.402.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.402.tar.bz2`.
+196. [PENDING] Git Commit: `chore: build lm studio runtime policy release` (hash: TBD)
 197. [TODO] `local-models.phase29.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package lm studio runtime policy vsix`).
 198. [TODO] Git Commit: `chore: package lm studio runtime policy vsix` (hash: TBD)
 199. [TODO] `local-models.phase29.user-acceptance.task1` User retests the new release and confirms local LM Studio translation uses adaptive context, does not accumulate idle clones, keeps reasoning translation fast, and no longer blocks Project Manager indefinitely on slow UI localization materialization (scope: user workflow observation; expected commit: none).
