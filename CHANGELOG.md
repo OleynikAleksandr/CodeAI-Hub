@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.393] - 2026-05-29
+### Added
+- **Local Models is now a full Project Manager provider.** Downloaded LM Studio models are exposed as selectable model options for the `Local Models` provider and can be used from workflow step provider cards.
+
+### Fixed
+- **Downloaded local models are visible from GUI-launched runtime sessions.** Core now searches for the LM Studio CLI in standard app-runtime paths such as `~/.lmstudio/bin/lms`, so CEF/VS Code launches no longer depend on shell `PATH`.
+- **UI Translation Engine selectors include local models.** The same downloaded LM Studio catalog is surfaced as dynamic `lmstudio:<modelKey>` translation engines for interface localization.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `node --test dist/local-models/local-models-facade.test.js dist/local-models/local-models-cli.test.js dist/local-models/local-models-provider-adapter.test.js` from `packages/core`
+- `npm run build:webview`
+- Real LM Studio visibility smoke for provider options and `lmstudio:*` translation engines.
+
 ## [1.2.392] - 2026-05-28
 ### Added
 - **LM Studio local models are selectable translation engines.** Core discovers downloaded LM Studio LLMs with `lms ls --json`, registers each model as `lmstudio:<modelKey>`, loads the selected model before first use, and calls the local OpenAI-compatible chat completions API.
