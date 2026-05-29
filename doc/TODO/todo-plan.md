@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "e0fabebd9",
+  "lastRecordedCommit": "58d4513be",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase14.release-build.task1",
-  "expectedCommitMessage": "chore: build local bundle batching release",
+  "currentTaskId": "local-models.phase14.release-package.task1",
+  "expectedCommitMessage": "chore: package local bundle batching vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build local bundle batching release",
-    "preCommitHead": "e0fabebd9",
+    "expectedCommitMessage": "chore: package local bundle batching vsix",
+    "preCommitHead": "58d4513be",
     "stage": "commit_pending",
-    "taskId": "local-models.phase14.release-build.task1"
+    "taskId": "local-models.phase14.release-package.task1"
   }
 }
 ```
@@ -260,9 +260,12 @@
 83. [DONE] `local-models.phase14.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local bundle batching release`).
     - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.395`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release build artifacts copied to `doc/tmp/releases/`: `claude-module-1.2.395.tar.bz2`, `codex-module-1.2.395.tar.bz2`, `gemini-module-1.2.395.tar.bz2`, `kimi-module-1.2.395.tar.bz2`, `glm-claude-code-module-1.2.395.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.395.tar.bz2`, `vscode-webview-1.2.395.tar.bz2`, `project-manager-1.2.395.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.395.tar.bz2`.
-84. [PENDING] Git Commit: `chore: build local bundle batching release` (hash: TBD)
-85. [TODO] `local-models.phase14.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local bundle batching vsix`).
-86. [TODO] Git Commit: `chore: package local bundle batching vsix` (hash: TBD)
+84. [DONE] Git Commit: `chore: build local bundle batching release` (hash: 58d4513be)
+85. [DONE] `local-models.phase14.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local bundle batching vsix`).
+    - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.395`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
+    - Release package 2026-05-29: VSIX created at `codeai-hub-1.2.395.vsix` (`4.4M`); runtime package surface verification passed.
+86. [PENDING] Git Commit: `chore: package local bundle batching vsix` (hash: TBD)
 87. [TODO] `local-models.phase14.user-acceptance.task1` User retests the new release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
