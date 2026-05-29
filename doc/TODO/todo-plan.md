@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "d03ba759a",
+  "lastRecordedCommit": "fae9ec792",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase30.memory-policy.task1",
-  "expectedCommitMessage": "fix: unload idle local model workers across purposes",
+  "currentTaskId": "local-models.phase30.docs.task1",
+  "expectedCommitMessage": "docs: document local provider native chat policy",
   "debt": {
-    "expectedCommitMessage": "fix: unload idle local model workers across purposes",
-    "preCommitHead": "d03ba759a",
+    "expectedCommitMessage": "docs: document local provider native chat policy",
+    "preCommitHead": "fae9ec792",
     "stage": "commit_pending",
-    "taskId": "local-models.phase30.memory-policy.task1"
+    "taskId": "local-models.phase30.docs.task1"
   }
 }
 ```
@@ -575,9 +575,10 @@
     - Verification 2026-05-29: `npm exec -- ultracite check packages/core/src/local-models/local-models-runtime-load-manager.ts packages/core/src/local-models/local-models-runtime-load-manager.test.ts` — PASS.
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-runtime-load-manager.test.js` — PASS (4 tests).
-203. [PENDING] Git Commit: `fix: unload idle local model workers across purposes` (hash: TBD)
-204. [TODO] `local-models.phase30.docs.task1` Document the native workflow-agent transport, reasoning-only local model limitation, and cross-purpose idle worker cleanup in canonical local-model docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local provider native chat policy`).
-205. [TODO] Git Commit: `docs: document local provider native chat policy` (hash: TBD)
+203. [DONE] Git Commit: `fix: unload idle local model workers across purposes` (hash: fae9ec792)
+204. [DONE] `local-models.phase30.docs.task1` Document the native workflow-agent transport, reasoning-only local model limitation, and cross-purpose idle worker cleanup in canonical local-model docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local provider native chat policy`).
+    - Documentation 2026-05-29: `SystemArchitecture.md` and `Shared_RuntimeTranslation_Module.md` now distinguish LM Studio translation's OpenAI-compatible endpoint from workflow-agent native `/api/v1/chat`, document final-message parsing after reasoning blocks, and define cross-purpose idle `codeaihub-*` worker cleanup.
+205. [PENDING] Git Commit: `docs: document local provider native chat policy` (hash: TBD)
 
 ### Stream: Verification
 206. [TODO] `local-models.phase30.verify.task1` Run targeted Core tests/build and real LM Studio smoke checks for native provider calls plus idle cross-purpose worker cleanup; record exact commands/results in this plan (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider native chat policy`).
