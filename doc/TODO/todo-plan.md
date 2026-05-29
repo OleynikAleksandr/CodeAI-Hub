@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-summary-language-2026-05-29",
   "branch": "main",
   "baseHead": "e733a3298",
-  "lastRecordedCommit": "e733a3298",
+  "lastRecordedCommit": "877597411",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_ReasoningSummary_Language_Planning.md",
-  "currentTaskId": "phase1-claude-reasoning-language",
-  "expectedCommitMessage": "fix: keep Claude reasoning summaries in target language",
+  "currentTaskId": "phase1-claude-doc-sync",
+  "expectedCommitMessage": "docs: document Claude reasoning summary language guard",
   "debt": {
-    "expectedCommitMessage": "fix: keep Claude reasoning summaries in target language",
-    "preCommitHead": "e733a3298",
+    "expectedCommitMessage": "docs: document Claude reasoning summary language guard",
+    "preCommitHead": "877597411",
     "stage": "commit_pending",
-    "taskId": "phase1-claude-reasoning-language"
+    "taskId": "phase1-claude-doc-sync"
   }
 }
 ```
@@ -42,9 +42,9 @@
 ## Phase 1 — Claude Reasoning Summary Language (owner: Codex, updated: 2026-05-29)
 ### Stream: Runtime Prompt And Translation Guard
 1. [DONE] `phase1-claude-reasoning-language` Add Claude visible reasoning-summary language instruction and skip provider-local reasoning translation when source text already matches Russian target language — scope: `packages/Claude_Module/src/sdk/claude-workflow-system-prompt.ts, packages/Claude_Module/src/messaging/claude-thought-translation-adapter.ts, packages/Claude_Module/src/messaging/claude-thought-translation-adapter.test.ts, doc/SolidWorks-WorkFlow/Plans/Claude_ReasoningSummary_Language_Planning.md`; expected commit: `fix: keep Claude reasoning summaries in target language`
-2. [PENDING] Git Commit: `fix: keep Claude reasoning summaries in target language` (hash: TBD)
-3. [TODO] `phase1-claude-doc-sync` Sync Claude module SSOT for prompt-owned reasoning summary language and translation skip guard — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit: `docs: document Claude reasoning summary language guard`
-4. [TODO] Git Commit: `docs: document Claude reasoning summary language guard` (hash: TBD)
+2. [DONE] Git Commit: `fix: keep Claude reasoning summaries in target language` (hash: 877597411)
+3. [DONE] `phase1-claude-doc-sync` Sync Claude module SSOT for prompt-owned reasoning summary language and translation skip guard — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit: `docs: document Claude reasoning summary language guard`
+4. [PENDING] Git Commit: `docs: document Claude reasoning summary language guard` (hash: TBD)
 
 ### Stream: Tooling Verification
 5. [TODO] `phase1-tooling-verification` Run targeted Claude module tests for prompt options and reasoning translation guard — scope: `packages/Claude_Module`; expected commit: `no commit`
