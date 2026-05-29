@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "e30707618",
+  "lastRecordedCommit": "546e596bc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase32.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare lm studio memory lifecycle release",
+  "currentTaskId": "local-models.phase32.release-build.task1",
+  "expectedCommitMessage": "chore: build lm studio memory lifecycle release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare lm studio memory lifecycle release",
-    "preCommitHead": "e30707618",
+    "expectedCommitMessage": "chore: build lm studio memory lifecycle release",
+    "preCommitHead": "546e596bc",
     "stage": "commit_pending",
-    "taskId": "local-models.phase32.release-prep.task1"
+    "taskId": "local-models.phase32.release-build.task1"
   }
 }
 ```
@@ -687,9 +687,11 @@
 243. [DONE] `local-models.phase32.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lm studio memory lifecycle release`).
     - Release prep 2026-05-29: future release version is `1.2.405` (current root `package.json` version `1.2.404` + 1).
     - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.405` and `CHANGELOG.md` entry `## [1.2.405] - 2026-05-29` added before release scripts.
-244. [PENDING] Git Commit: `docs: prepare lm studio memory lifecycle release` (hash: TBD)
-245. [TODO] `local-models.phase32.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build lm studio memory lifecycle release`).
-246. [TODO] Git Commit: `chore: build lm studio memory lifecycle release` (hash: TBD)
+244. [DONE] Git Commit: `docs: prepare lm studio memory lifecycle release` (hash: 546e596bc)
+245. [DONE] `local-models.phase32.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build lm studio memory lifecycle release`).
+    - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.405`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release artifacts 2026-05-29: `doc/tmp/releases/claude-module-1.2.405.tar.bz2`, `doc/tmp/releases/codex-module-1.2.405.tar.bz2`, `doc/tmp/releases/gemini-module-1.2.405.tar.bz2`, `doc/tmp/releases/kimi-module-1.2.405.tar.bz2`, `doc/tmp/releases/glm-claude-code-module-1.2.405.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.405.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.405.tar.bz2`, `doc/tmp/releases/project-manager-1.2.405.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.405.tar.bz2`.
+246. [PENDING] Git Commit: `chore: build lm studio memory lifecycle release` (hash: TBD)
 247. [TODO] `local-models.phase32.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package lm studio memory lifecycle vsix`).
 248. [TODO] Git Commit: `chore: package lm studio memory lifecycle vsix` (hash: TBD)
 249. [TODO] `local-models.phase32.user-acceptance.task1` User retests the new release and confirms CodeAI-owned LM Studio models receive TTL and idle local workers do not persist across Core restart/shutdown, while user-loaded LM Studio models remain untouched (scope: user workflow observation; expected commit: none).
