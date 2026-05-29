@@ -15,11 +15,15 @@
  */
 
 const MIN_FLUSH_CHARS = 96;
+const MIN_FINAL_OVERLAP_CHARS = 32;
+const MAX_FINAL_OVERLAP_SCAN_CHARS = 12_000;
 const ORPHAN_FINAL_TAIL_MAX_CHARS = 24;
 const SENTENCE_BOUNDARY_REGEX = /[.!?…\n]/g;
 const TRAILING_MARKDOWN_LIST_MARKER_REGEX =
   /(?:^|\n)\s{0,3}(?:\d+\.|[-*+])\s*$/u;
 const LEADING_WHITESPACE_REGEX = /^\s/u;
+const URL_LIKE_TOKEN_REGEX = /(?:^|[([])(?:https?:\/\/|www\.)/iu;
+const URL_CONTINUATION_CHAR_REGEX = /[\p{L}\p{N}_~:/?#[\]@!$&'()*+,;=%-]/u;
 const WORD_OR_FILENAME_TAIL_REGEX = /^[\p{L}\p{N}_-]/u;
 
 interface LiveTextState {
@@ -94,15 +98,13 @@ export class ClaudeTextLiveBuffer {
       state.materializedLength
     );
     if (!finalText.startsWith(materialized)) {
-      return finalText;
+      const overlapTail = this.resolveCoveredOrOverlappingFinalText(
+        materialized,
+        finalText
+      );
+      return overlapTail === undefined ? finalText : overlapTail;
     }
-    if (finalText.startsWith(state.nativeAccumulated)) {
-      const tail = finalText.slice(state.materializedLength);
-      return tail.trim().length > 0 && !this.isLikelyOrphanFinalTail(tail)
-        ? tail
-        : null;
-    }
-    return finalText;
+    return this.normalizeFinalTail(finalText.slice(state.materializedLength));
   }
 
   /**
@@ -145,7 +147,8 @@ export class ClaudeTextLiveBuffer {
       if (
         !(
           this.endsWithMarkerOnlyListLine(candidate) ||
-          this.endsInsideInlineCode(tail, match.index)
+          this.endsInsideInlineCode(tail, match.index) ||
+          this.endsInsideUrlLikeToken(tail, match.index)
         )
       ) {
         lastSafeBoundary = boundary;
@@ -177,6 +180,66 @@ export class ClaudeTextLiveBuffer {
       (char) => char === "`"
     ).length;
     return backtickCount % 2 === 1;
+  }
+
+  private endsInsideUrlLikeToken(text: string, boundaryStart: number): boolean {
+    if (text[boundaryStart] !== ".") {
+      return false;
+    }
+    const beforeBoundary = text.slice(0, boundaryStart);
+    const tokenStart = Math.max(
+      beforeBoundary.lastIndexOf(" "),
+      beforeBoundary.lastIndexOf("\n"),
+      beforeBoundary.lastIndexOf("\t")
+    );
+    const token = beforeBoundary.slice(tokenStart + 1);
+    if (!URL_LIKE_TOKEN_REGEX.test(token)) {
+      return false;
+    }
+    const nextChar = text[boundaryStart + 1];
+    return nextChar === undefined || URL_CONTINUATION_CHAR_REGEX.test(nextChar);
+  }
+
+  private resolveCoveredOrOverlappingFinalText(
+    materialized: string,
+    finalText: string
+  ): string | null | undefined {
+    if (
+      finalText.trim().length >= MIN_FINAL_OVERLAP_CHARS &&
+      materialized.includes(finalText)
+    ) {
+      return null;
+    }
+    const overlapLength = this.longestSuffixPrefixOverlap(
+      materialized,
+      finalText
+    );
+    if (overlapLength < MIN_FINAL_OVERLAP_CHARS) {
+      return undefined;
+    }
+    return this.normalizeFinalTail(finalText.slice(overlapLength));
+  }
+
+  private longestSuffixPrefixOverlap(left: string, right: string): number {
+    const leftWindow = left.slice(-MAX_FINAL_OVERLAP_SCAN_CHARS);
+    const rightWindow = right.slice(0, MAX_FINAL_OVERLAP_SCAN_CHARS);
+    const maxLength = Math.min(leftWindow.length, rightWindow.length);
+    for (
+      let length = maxLength;
+      length >= MIN_FINAL_OVERLAP_CHARS;
+      length -= 1
+    ) {
+      if (leftWindow.endsWith(rightWindow.slice(0, length))) {
+        return length;
+      }
+    }
+    return 0;
+  }
+
+  private normalizeFinalTail(tail: string): string | null {
+    return tail.trim().length > 0 && !this.isLikelyOrphanFinalTail(tail)
+      ? tail
+      : null;
   }
 
   private isLikelyOrphanFinalTail(tail: string): boolean {

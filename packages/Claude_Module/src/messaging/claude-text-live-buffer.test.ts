@@ -75,6 +75,26 @@ test("ClaudeTextLiveBuffer does not split inline-code filenames at periods", () 
   );
 });
 
+test("ClaudeTextLiveBuffer does not split markdown links inside URL domains", () => {
+  const buffer = new ClaudeTextLiveBuffer();
+  const segment = buffer.appendDelta(
+    "s",
+    "The finalized Quality Gates research cites official sources before the handoff. " +
+      "Sources:\n- [Ultracite Agent Skills](https://docs.ultracite."
+  );
+
+  assert.notEqual(segment, null);
+  assert.equal(segment?.includes("https://docs.ultracite."), false);
+
+  buffer.appendDelta("s", "ai/skills)\n- [Biome](https://biomejs.dev/)\n");
+  const completedLink = buffer.flushRemaining("s");
+
+  assert.equal(
+    completedLink?.includes("https://docs.ultracite.ai/skills"),
+    true
+  );
+});
+
 test("ClaudeTextLiveBuffer flushRemaining returns leftover tail and clears it", () => {
   const buffer = new ClaudeTextLiveBuffer();
   buffer.appendDelta("s", "pending tail without any boundary at all");
@@ -134,6 +154,40 @@ test("ClaudeTextLiveBuffer suppresses short orphan final word tails", () => {
 
   const tail = buffer.consumeFinal("s", `${livePrefix}ceptance.`);
   assert.equal(tail, null);
+});
+
+test("ClaudeTextLiveBuffer suppresses final suffix already covered by live text", () => {
+  const buffer = new ClaudeTextLiveBuffer();
+  const livePrefix =
+    "Sources:\n- [Ultracite](https://www.ultracite.ai/)\n- [Ultracite Agent Skills](https://docs.ultracite.";
+  const liveTail =
+    "ai/skills)\n- [Biome](https://biomejs.dev/)\n- [GitHub Actions](https://docs.github.com/en/actions)";
+
+  buffer.appendDelta("s", `${livePrefix}${liveTail}`);
+  buffer.flushRemaining("s");
+
+  const finalTail = buffer.consumeFinal(
+    "s",
+    "ills)\n- [Biome](https://biomejs.dev/)\n- [GitHub Actions](https://docs.github.com/en/actions)"
+  );
+  assert.equal(finalTail, null);
+});
+
+test("ClaudeTextLiveBuffer trims overlapped final suffix and emits only unseen tail", () => {
+  const buffer = new ClaudeTextLiveBuffer();
+  const liveText =
+    "The assistant already streamed a complete card with enough detail to cross the live boundary. " +
+    "The final snapshot restarts from this exact visible suffix.";
+  const overlap = liveText.slice(-72);
+
+  buffer.appendDelta("s", liveText);
+  buffer.flushRemaining("s");
+
+  const finalTail = buffer.consumeFinal(
+    "s",
+    `${overlap} New sentence not shown live.`
+  );
+  assert.equal(finalTail, " New sentence not shown live.");
 });
 
 test("ClaudeTextLiveBuffer consumeFinal returns full final when diverging from live draft", () => {

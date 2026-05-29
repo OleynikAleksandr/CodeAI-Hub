@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "ab7a835ea",
+  "lastRecordedCommit": "26327dd5e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase31.core-overlap.task1",
-  "expectedCommitMessage": "fix: suppress duplicated live assistant tails",
+  "currentTaskId": "local-models.phase31.claude-buffer.task1",
+  "expectedCommitMessage": "fix: harden claude live text buffer boundaries",
   "debt": {
-    "expectedCommitMessage": "fix: suppress duplicated live assistant tails",
-    "preCommitHead": "ab7a835ea",
+    "expectedCommitMessage": "fix: harden claude live text buffer boundaries",
+    "preCommitHead": "26327dd5e",
     "stage": "commit_pending",
-    "taskId": "local-models.phase31.core-overlap.task1"
+    "taskId": "local-models.phase31.claude-buffer.task1"
   }
 }
 ```
@@ -613,9 +613,12 @@
     - Fix 2026-05-29: Core provider-message append now checks an ordinary assistant event against immediately preceding `tag: "live"` assistant chunks and suppresses covered duplicate suffix/window content such as the observed `ills)` Sources tail; real unseen overlap tails are trimmed and retained as `tag: "live"` continuation content.
     - Verification 2026-05-29: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts` — PASS (9 tests).
     - Verification 2026-05-29: `npm exec -- ultracite check packages/core/src/remote-bridge/handlers/session-request-handler-live-tail-dedupe.ts packages/core/src/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts` — PASS.
-217. [PENDING] Git Commit: `fix: suppress duplicated live assistant tails` (hash: TBD)
-218. [TODO] `local-models.phase31.claude-buffer.task1` Harden Claude text live buffering so URL/domain periods are not treated as safe sentence boundaries and final suffix/window overlaps are treated as duplicate covered output when buffer state is still available (scope: `packages/Claude_Module/src/messaging/claude-text-live-buffer.ts, packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: harden claude live text buffer boundaries`).
-219. [TODO] Git Commit: `fix: harden claude live text buffer boundaries` (hash: TBD)
+217. [DONE] Git Commit: `fix: suppress duplicated live assistant tails` (hash: 26327dd5e)
+218. [DONE] `local-models.phase31.claude-buffer.task1` Harden Claude text live buffering so URL/domain periods are not treated as safe sentence boundaries and final suffix/window overlaps are treated as duplicate covered output when buffer state is still available (scope: `packages/Claude_Module/src/messaging/claude-text-live-buffer.ts, packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: harden claude live text buffer boundaries`).
+    - Fix 2026-05-29: `ClaudeTextLiveBuffer` no longer flushes a visible segment at a period inside URL-like markdown link tokens such as `https://docs.ultracite.`, and its final reconciliation now suppresses covered suffix/window duplicate snapshots or emits only the unseen overlap tail.
+    - Verification 2026-05-29: `npx tsx --test packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts` — PASS (14 tests).
+    - Verification 2026-05-29: `npm exec -- ultracite check packages/Claude_Module/src/messaging/claude-text-live-buffer.ts packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts` — PASS.
+219. [PENDING] Git Commit: `fix: harden claude live text buffer boundaries` (hash: TBD)
 220. [TODO] `local-models.phase31.docs.task1` Document the Core overlap guard and Claude URL-safe live boundary rule in canonical provider/live-content docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/TODO/todo-plan.md`; expected commit: `docs: document claude live tail dedupe`).
 221. [TODO] Git Commit: `docs: document claude live tail dedupe` (hash: TBD)
 
