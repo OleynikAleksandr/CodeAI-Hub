@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "367261cf4",
+  "lastRecordedCommit": "da4c67f72",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase31.release-build.task1",
-  "expectedCommitMessage": "chore: build claude live tail dedupe release",
+  "currentTaskId": "local-models.phase31.release-package.task1",
+  "expectedCommitMessage": "chore: package claude live tail dedupe vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build claude live tail dedupe release",
-    "preCommitHead": "367261cf4",
+    "expectedCommitMessage": "chore: package claude live tail dedupe vsix",
+    "preCommitHead": "da4c67f72",
     "stage": "commit_pending",
-    "taskId": "local-models.phase31.release-build.task1"
+    "taskId": "local-models.phase31.release-package.task1"
   }
 }
 ```
@@ -643,9 +643,12 @@
 227. [DONE] `local-models.phase31.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build claude live tail dedupe release`).
     - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.404`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release artifacts 2026-05-29: `doc/tmp/releases/claude-module-1.2.404.tar.bz2`, `doc/tmp/releases/codex-module-1.2.404.tar.bz2`, `doc/tmp/releases/gemini-module-1.2.404.tar.bz2`, `doc/tmp/releases/kimi-module-1.2.404.tar.bz2`, `doc/tmp/releases/glm-claude-code-module-1.2.404.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.404.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.404.tar.bz2`, `doc/tmp/releases/project-manager-1.2.404.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.404.tar.bz2`.
-228. [PENDING] Git Commit: `chore: build claude live tail dedupe release` (hash: TBD)
-229. [TODO] `local-models.phase31.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package claude live tail dedupe vsix`).
-230. [TODO] Git Commit: `chore: package claude live tail dedupe vsix` (hash: TBD)
+228. [DONE] Git Commit: `chore: build claude live tail dedupe release` (hash: da4c67f72)
+229. [DONE] `local-models.phase31.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package claude live tail dedupe vsix`).
+    - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.404`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release package verification 2026-05-29: output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
+    - Release package artifact 2026-05-29: `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.404.vsix` (4.5M).
+230. [PENDING] Git Commit: `chore: package claude live tail dedupe vsix` (hash: TBD)
 231. [TODO] `local-models.phase31.user-acceptance.task1` User retests the new release and confirms Claude live Sources lists no longer split into duplicate tail bubbles while Local Models release `1.2.403` behavior remains intact (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
