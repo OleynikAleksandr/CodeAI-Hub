@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "2501bd891",
+  "lastRecordedCommit": "54474f57e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase31.docs.task1",
-  "expectedCommitMessage": "docs: document claude live tail dedupe",
+  "currentTaskId": "local-models.phase31.verify.task1",
+  "expectedCommitMessage": "test: verify claude live tail dedupe",
   "debt": {
-    "expectedCommitMessage": "docs: document claude live tail dedupe",
-    "preCommitHead": "2501bd891",
+    "expectedCommitMessage": "test: verify claude live tail dedupe",
+    "preCommitHead": "54474f57e",
     "stage": "commit_pending",
-    "taskId": "local-models.phase31.docs.task1"
+    "taskId": "local-models.phase31.verify.task1"
   }
 }
 ```
@@ -622,11 +622,17 @@
 220. [DONE] `local-models.phase31.docs.task1` Document the Core overlap guard and Claude URL-safe live boundary rule in canonical provider/live-content docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/TODO/todo-plan.md`; expected commit: `docs: document claude live tail dedupe`).
     - Documentation 2026-05-29: `SystemArchitecture.md` now states that Core's provider-message append path is the final source-of-truth guard for suppressing or trimming non-live assistant tails already covered by preceding live chunks, and that Claude text buffering must avoid URL/domain period splits.
     - Documentation 2026-05-29: `Claude.md` now describes suffix/window final snapshot reconciliation, URL-safe markdown link boundaries, and the Core persisted-history guard for late ordinary assistant events.
-221. [PENDING] Git Commit: `docs: document claude live tail dedupe` (hash: TBD)
+221. [DONE] Git Commit: `docs: document claude live tail dedupe` (hash: 54474f57e)
 
 ### Stream: Verification
-222. [TODO] `local-models.phase31.verify.task1` Run targeted Core/Claude tests and package builds for the live/final tail dedupe regression; record exact commands/results in this plan (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify claude live tail dedupe`).
-223. [TODO] Git Commit: `test: verify claude live tail dedupe` (hash: TBD)
+222. [DONE] `local-models.phase31.verify.task1` Run targeted Core/Claude tests and package builds for the live/final tail dedupe regression; record exact commands/results in this plan (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify claude live tail dedupe`).
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts` — PASS (23 tests).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/claude-module` — PASS.
+    - Verification 2026-05-29: first parallel `npm run build --workspace @codeai-hub/core` failed because the simultaneous Claude build temporarily removed `@codeai-hub/claude-module/dist`; rerun sequentially after Claude build completed.
+    - Verification 2026-05-29: sequential `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js` — PASS (9 tests).
+    - Verification 2026-05-29: `node --test packages/Claude_Module/dist/messaging/claude-text-live-buffer.test.js` — PASS (14 tests).
+223. [PENDING] Git Commit: `test: verify claude live tail dedupe` (hash: TBD)
 
 ### Stream: Release Build
 224. [DONE] `local-models.phase31.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the Claude live/final tail dedupe regression (scope: chat/process gate; expected commit: none). Result: User explicitly requested "Чини ... починишь, собери новый релиз" on 2026-05-29; release build is approved after the fix and verification complete.
