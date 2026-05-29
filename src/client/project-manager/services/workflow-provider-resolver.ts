@@ -13,11 +13,15 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
-  value === "glmClaudeCode";
+  value === "glmClaudeCode" ||
+  value === "localModels";
 
 export const isResearchCapableProviderId = (
   providerId: ProviderStackId
-): boolean => providerId === "codexCli" || providerId === "claudeCodeCli";
+): boolean =>
+  providerId === "codexCli" ||
+  providerId === "claudeCodeCli" ||
+  providerId === "localModels";
 
 const resolveProviderIdFromDescription = (
   state: WorkflowStateSnapshot | null

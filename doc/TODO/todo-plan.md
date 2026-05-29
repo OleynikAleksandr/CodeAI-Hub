@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "97a5a1c43",
+  "lastRecordedCommit": "eb6a0f6e2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase7.core-provider.task1",
-  "expectedCommitMessage": "feat: add lm studio local provider runtime",
+  "currentTaskId": "local-models.phase7.provider-snapshot.task1",
+  "expectedCommitMessage": "feat: expose local models provider metadata",
   "debt": {
-    "expectedCommitMessage": "feat: add lm studio local provider runtime",
-    "preCommitHead": "97a5a1c43",
+    "expectedCommitMessage": "feat: expose local models provider metadata",
+    "preCommitHead": "eb6a0f6e2",
     "stage": "commit_pending",
-    "taskId": "local-models.phase7.core-provider.task1"
+    "taskId": "local-models.phase7.provider-snapshot.task1"
   }
 }
 ```
@@ -125,9 +125,10 @@
 27. [DONE] `local-models.phase7.core-provider.task1` Add a Core Local Models provider descriptor and chat adapter backed by LM Studio/OpenAI-compatible calls (scope: `packages/core/src/local-models/**, packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/config/provider-turn-config-resolver.ts`; expected commit: `feat: add lm studio local provider runtime`).
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test dist/local-models/local-models-provider-adapter.test.js` from `packages/core` — PASS (1 test).
-28. [PENDING] Git Commit: `feat: add lm studio local provider runtime` (hash: TBD)
-29. [TODO] `local-models.phase7.provider-snapshot.task1` Carry Local Models provider/model metadata through Core state into Project Manager provider snapshots and resolver allowlists (scope: `src/types/provider.ts, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `feat: expose local models provider metadata`).
-30. [TODO] Git Commit: `feat: expose local models provider metadata` (hash: TBD)
+28. [DONE] Git Commit: `feat: add lm studio local provider runtime` (hash: eb6a0f6e2)
+29. [DONE] `local-models.phase7.provider-snapshot.task1` Carry Local Models provider/model metadata through Core state into Project Manager provider snapshots and resolver allowlists (scope: `src/types/provider.ts, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `feat: expose local models provider metadata`).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+30. [PENDING] Git Commit: `feat: expose local models provider metadata` (hash: TBD)
 31. [TODO] `local-models.phase7.provider-ui.task1` Render Local Models in step provider cards with downloaded model options and default selections (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `feat: show local models in step provider picker`).
 32. [TODO] Git Commit: `feat: show local models in step provider picker` (hash: TBD)
 33. [TODO] `local-models.phase7.verify.task1` Run targeted builds/tests and real LM Studio visibility checks for provider picker plus translation-engine dropdown catalogs (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider visibility`).

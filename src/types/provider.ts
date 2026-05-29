@@ -3,7 +3,8 @@ export type KnownProviderStackId =
   | "codexCli"
   | "geminiCli"
   | "glmClaudeCode"
-  | "kimiCode";
+  | "kimiCode"
+  | "localModels";
 export type ProviderStackId = string;
 
 export interface ProviderStackDescriptor {
@@ -20,6 +21,7 @@ const PROVIDER_TITLE_MAP: Partial<Record<ProviderStackId, string>> = {
   geminiCli: "Gemini",
   glmClaudeCode: "GLM-Claude-Code",
   kimiCode: "Kimi",
+  localModels: "Local Models",
 };
 
 export const getDefaultProviderTitle = (providerId: ProviderStackId): string =>
@@ -30,6 +32,7 @@ const PROVIDER_DESCRIPTION_MAP: Partial<Record<ProviderStackId, string>> = {
   geminiCli: "Using your authentication Gemini CLI",
   glmClaudeCode: "Using GLM 5.1 through Claude Agent SDK-compatible runtime",
   kimiCode: "Using your authentication Kimi CLI",
+  localModels: "Runs downloaded LM Studio models on this Mac",
 };
 
 export const getDefaultProviderDescription = (

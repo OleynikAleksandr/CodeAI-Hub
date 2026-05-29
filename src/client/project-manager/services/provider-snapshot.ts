@@ -21,6 +21,7 @@ const DESCRIPTION_PROVIDER_IDS = new Set<ProviderStackId>([
   "geminiCli",
   "kimiCode",
   "glmClaudeCode",
+  "localModels",
 ]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
