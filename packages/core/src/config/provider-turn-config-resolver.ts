@@ -85,6 +85,7 @@ export interface ResolvedProviderTurnConfig {
   readonly gemini: ResolvedGeminiTurnConfig;
   readonly glmClaudeCode: ResolvedKimiTurnConfig;
   readonly kimi: ResolvedKimiTurnConfig;
+  readonly localModels: ResolvedKimiTurnConfig;
 }
 
 export interface ResolvedProviderEffectiveModelIdentity {
@@ -122,6 +123,7 @@ const buildClaudeEffectiveModelId = (
 
 const DEFAULT_KIMI_MODEL_ID = "kimi-for-coding";
 const DEFAULT_GLM_CLAUDE_CODE_MODEL_ID = "glm-5.1";
+const DEFAULT_LOCAL_MODELS_MODEL_ID = "local-model";
 
 const resolveClaudeThinkingDisplaySyncEnabled = (
   snapshot: ClaudeProviderSettingsSnapshot | null
@@ -277,6 +279,21 @@ const resolveGlmClaudeCodeTurnConfig = (
   };
 };
 
+const resolveLocalModelsTurnConfig = (
+  options: ProviderTurnConfigResolverOptions
+): ResolvedKimiTurnConfig => {
+  const defaultModel =
+    normalizeOptionalString(options.env.CODEAI_LMSTUDIO_DEFAULT_MODEL) ??
+    DEFAULT_LOCAL_MODELS_MODEL_ID;
+
+  return {
+    baseModelId: defaultModel,
+    defaultModel,
+    effectiveModelId: defaultModel,
+    thinkingDisplaySyncEnabled: true,
+  };
+};
+
 const resolveClaudeTurnConfig = (
   options: ProviderTurnConfigResolverOptions
 ): ResolvedClaudeTurnConfig => {
@@ -316,6 +333,7 @@ const buildResolvedProviderConfigRegistry = (resolved: {
   readonly gemini: ResolvedGeminiTurnConfig;
   readonly kimi: ResolvedKimiTurnConfig;
   readonly glmClaudeCode: ResolvedKimiTurnConfig;
+  readonly localModels: ResolvedKimiTurnConfig;
 }): Readonly<Record<string, ResolvedProviderTurnConfigEntry>> => ({
   claudeCodeCli: {
     providerId: "claudeCodeCli",
@@ -358,6 +376,13 @@ const buildResolvedProviderConfigRegistry = (resolved: {
     thinkingDisplaySyncEnabled:
       resolved.glmClaudeCode.thinkingDisplaySyncEnabled,
   },
+  localModels: {
+    providerId: "localModels",
+    baseModelId: resolved.localModels.baseModelId,
+    defaultModel: resolved.localModels.defaultModel,
+    effectiveModelId: resolved.localModels.effectiveModelId,
+    thinkingDisplaySyncEnabled: resolved.localModels.thinkingDisplaySyncEnabled,
+  },
 });
 
 const resolveProviderTurnConfig = (
@@ -368,6 +393,7 @@ const resolveProviderTurnConfig = (
   const gemini = resolveGeminiTurnConfig(options);
   const kimi = resolveKimiTurnConfig(options);
   const glmClaudeCode = resolveGlmClaudeCodeTurnConfig(options);
+  const localModels = resolveLocalModelsTurnConfig(options);
 
   return {
     claude,
@@ -375,12 +401,14 @@ const resolveProviderTurnConfig = (
     gemini,
     kimi,
     glmClaudeCode,
+    localModels,
     byProviderId: buildResolvedProviderConfigRegistry({
       claude,
       codex,
       gemini,
       kimi,
       glmClaudeCode,
+      localModels,
     }),
   };
 };

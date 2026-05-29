@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "b347645b3",
+  "lastRecordedCommit": "97a5a1c43",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase7.discovery.task1",
-  "expectedCommitMessage": "fix: discover lm studio models from app runtime",
+  "currentTaskId": "local-models.phase7.core-provider.task1",
+  "expectedCommitMessage": "feat: add lm studio local provider runtime",
   "debt": {
-    "expectedCommitMessage": "fix: discover lm studio models from app runtime",
-    "preCommitHead": "b347645b3",
+    "expectedCommitMessage": "feat: add lm studio local provider runtime",
+    "preCommitHead": "97a5a1c43",
     "stage": "commit_pending",
-    "taskId": "local-models.phase7.discovery.task1"
+    "taskId": "local-models.phase7.core-provider.task1"
   }
 }
 ```
@@ -121,9 +121,11 @@
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test dist/local-models/local-models-facade.test.js dist/local-models/local-models-cli.test.js` from `packages/core` — PASS (4 tests).
     - Smoke 2026-05-29: `LocalModelsFacade().listModels()` from built Core discovered `ruadaptqwen3-32b-instruct-mlx`, `gemma-4-26b-a4b-it`, and `mistral-small-3.2-24b-instruct-2506-mlx`.
-26. [PENDING] Git Commit: `fix: discover lm studio models from app runtime` (hash: TBD)
-27. [TODO] `local-models.phase7.core-provider.task1` Add a Core Local Models provider descriptor and chat adapter backed by LM Studio/OpenAI-compatible calls (scope: `packages/core/src/local-models/**, packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/config/provider-turn-config-resolver.ts`; expected commit: `feat: add lm studio local provider runtime`).
-28. [TODO] Git Commit: `feat: add lm studio local provider runtime` (hash: TBD)
+26. [DONE] Git Commit: `fix: discover lm studio models from app runtime` (hash: 97a5a1c43)
+27. [DONE] `local-models.phase7.core-provider.task1` Add a Core Local Models provider descriptor and chat adapter backed by LM Studio/OpenAI-compatible calls (scope: `packages/core/src/local-models/**, packages/core/src/provider-registry/provider-descriptor-factory.ts, packages/core/src/config/provider-turn-config-resolver.ts`; expected commit: `feat: add lm studio local provider runtime`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test dist/local-models/local-models-provider-adapter.test.js` from `packages/core` — PASS (1 test).
+28. [PENDING] Git Commit: `feat: add lm studio local provider runtime` (hash: TBD)
 29. [TODO] `local-models.phase7.provider-snapshot.task1` Carry Local Models provider/model metadata through Core state into Project Manager provider snapshots and resolver allowlists (scope: `src/types/provider.ts, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `feat: expose local models provider metadata`).
 30. [TODO] Git Commit: `feat: expose local models provider metadata` (hash: TBD)
 31. [TODO] `local-models.phase7.provider-ui.task1` Render Local Models in step provider cards with downloaded model options and default selections (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `feat: show local models in step provider picker`).

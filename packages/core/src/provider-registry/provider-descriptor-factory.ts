@@ -1,6 +1,7 @@
 import type { ModuleReporter } from "@codeai-hub/claude-module";
 import type { KimiModuleOptions } from "@codeai-hub/kimi-module";
 import type { CoreConfig } from "../config";
+import { LocalModelsProviderAdapter } from "../local-models/local-models-provider-adapter";
 import { resolveWorkspaceRuntimeCapsule } from "../workflow/runtime/workspace-runtime-capsule";
 import {
   CLAUDE_INSTALLER_PATHS,
@@ -106,6 +107,12 @@ const PROVIDER_MODEL_SYNC_CAPABILITIES: Readonly<
     runtimeModelSelectionKey: "base_model_id",
     syncsLabelFromAppliedConfig: true,
   },
+  localModels: {
+    acceptsAppliedTurnConfig: true,
+    appliedConfigIdentityKey: "effective_model_id",
+    runtimeModelSelectionKey: "base_model_id",
+    syncsLabelFromAppliedConfig: true,
+  },
 };
 
 export const resolveProviderModelSyncCapabilities = (
@@ -122,6 +129,7 @@ const PROVIDER_IMMEDIATE_BINDING_CAPABILITIES: Readonly<
   geminiCli: true,
   kimiCode: true,
   glmClaudeCode: false,
+  localModels: true,
 };
 
 const CODEX_WORKFLOW_DEFAULT_APPROVAL_MODE = "never";
@@ -342,6 +350,20 @@ const buildGlmClaudeCodeDescriptor = (
   return descriptor;
 };
 
+const buildLocalModelsDescriptor = (): ProviderDescriptor => ({
+  adapter: new LocalModelsProviderAdapter(),
+  capabilities: {
+    modelSync: resolveProviderModelSyncCapabilities("localModels"),
+    requiresPostStopResume: false,
+    supportsImmediateBinding:
+      resolveProviderImmediateBindingCapability("localModels"),
+  },
+  id: "localModels",
+  name: "Local Models",
+  description: "Runs downloaded LM Studio models on this Mac",
+  status: "active",
+});
+
 export const createProviderDescriptors = (
   options: ProviderDescriptorFactoryOptions
 ): ProviderDescriptor[] => [
@@ -350,6 +372,7 @@ export const createProviderDescriptors = (
   buildGeminiDescriptor(),
   buildKimiDescriptor(options),
   buildGlmClaudeCodeDescriptor(options),
+  buildLocalModelsDescriptor(),
 ];
 
 export const createGeminiAdapterInstance = (
