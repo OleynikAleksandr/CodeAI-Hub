@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.397] - 2026-05-29
+### Fixed
+- **LM Studio local models are visible immediately after settings load.** Core now sends the available localization engine catalog in the first `settings:loaded` payload, before full localization runtime materialization finishes.
+- **Project Manager keeps translated UI runtime while refreshing local model catalogs.** Fast `availableEngines` updates are merged into the active runtime without clearing translated bundles, restoring Local Models settings, workflow model choices, dialog switching, and Localization Engine selectors.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `node --test --test-name-pattern "resolves loaded localization" packages/core/dist/remote-bridge/handlers/settings-request-handler.localization-runtime.test.js`
+- `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts`
+- Real LM Studio discovery smoke for 5 downloaded `lmstudio:*` engines and first-payload catalog availability before runtime materialization completes.
+
 ## [1.2.396] - 2026-05-29
 ### Fixed
 - **Project Manager no longer drops translated runtime text during clear/rollback reloads.** Intermediate `settings:loaded` events with `localizationRuntime: null` now preserve the active translated runtime until Core sends a non-null replacement payload.

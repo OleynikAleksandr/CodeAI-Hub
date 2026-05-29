@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "561155745",
+  "lastRecordedCommit": "c20a8f6f4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase20.catalog-verify.task1",
-  "expectedCommitMessage": "test: verify local model catalog loading",
+  "currentTaskId": "local-models.phase21.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare local model catalog release",
   "debt": {
-    "expectedCommitMessage": "test: verify local model catalog loading",
-    "preCommitHead": "561155745",
+    "expectedCommitMessage": "docs: prepare local model catalog release",
+    "preCommitHead": "c20a8f6f4",
     "stage": "commit_pending",
-    "taskId": "local-models.phase20.catalog-verify.task1"
+    "taskId": "local-models.phase21.release-prep.task1"
   }
 }
 ```
@@ -374,9 +374,22 @@
     - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts` — PASS (2 tests).
     - Smoke 2026-05-29: built `LocalModelsFacade.listModels()` sees 5 downloaded LM Studio LLM engines: `lmstudio:openai/gpt-oss-20b`, `lmstudio:rugpt-3.5-13b`, `lmstudio:hy-mt2-30b-a3b-mlx`, `lmstudio:gemma-4-26b-a4b-it`, `lmstudio:mistral-small-3.2-24b-instruct-2506-mlx`.
     - Smoke 2026-05-29: built `SettingsLoadedBroadcaster` emits the 5 `lmstudio:*` engines in the first `settings:loaded` payload within 50 ms while `localizationRuntime` is still null and full local materialization is still pending.
-127. [PENDING] Git Commit: `test: verify local model catalog loading` (hash: TBD)
+127. [DONE] Git Commit: `test: verify local model catalog loading` (hash: c20a8f6f4)
+
+## Phase 21 — Local Model Catalog Release Build (owner: Codex, updated: 2026-05-29)
+### Stream: Release Confirmation And Packaging
+128. [DONE] `local-models.phase21.release-confirm.task1` Ask for and receive separate explicit user confirmation for a new release build after the local model catalog loading fix is verified (scope: chat/process gate; expected commit: none). Result: user explicitly confirmed "Исправишь и собери новый релиз" in chat on 2026-05-29.
+129. [DONE] `local-models.phase21.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local model catalog release`).
+    - Release prep 2026-05-29: future release version is `1.2.397` (current root `package.json` version `1.2.396` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.397` and `CHANGELOG.md` entry `## [1.2.397] - 2026-05-29` added before release scripts.
+130. [PENDING] Git Commit: `docs: prepare local model catalog release` (hash: TBD)
+131. [TODO] `local-models.phase21.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local model catalog release`).
+132. [TODO] Git Commit: `chore: build local model catalog release` (hash: TBD)
+133. [TODO] `local-models.phase21.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local model catalog vsix`).
+134. [TODO] Git Commit: `chore: package local model catalog vsix` (hash: TBD)
+135. [TODO] `local-models.phase21.user-acceptance.task1` User retests the new release and confirms Local Models lists and Localization Engine local entries are visible immediately after Project Manager opens (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-128. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-129. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+136. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+137. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
