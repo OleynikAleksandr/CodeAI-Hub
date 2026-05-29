@@ -7,7 +7,6 @@ import type {
   GeminiModelId,
   GeminiThinkingLevel,
 } from "../../../../../types/gemini-model-registry";
-import type { BrowserLocalizationRuntimePayload } from "../../app-host/localization-runtime-contract";
 import { readBrowserLocalizationBootstrapSnapshot } from "../../app-host/localization-runtime-contract";
 import { createBootstrapSettings } from "../../shared-hooks/use-bootstrap-settings";
 import vscode from "../../vscode";
@@ -47,6 +46,7 @@ import {
   completeNativeRequestCapture,
   createNativeRequestCaptureState,
   isIncomingMessage,
+  isSettingsSaveErrorMessage,
   type LocalizationCategoryKey,
   type LocalizationSyncStatusState,
   type LocalizationWorkflowTermsPolicy,
@@ -68,12 +68,6 @@ export const LOCALIZATION_GLOSSARY_DRAFT_STORAGE_KEY =
   "codeaihub:settings:localization:user-glossary-draft";
 export type { UseSettingsStateResult } from "./use-settings-state-support";
 
-const isSettingsSaveErrorMessage = (
-  message: unknown
-): message is { readonly type: "settings:save-error" } =>
-  (message as { readonly type?: unknown } | null)?.type ===
-  "settings:save-error";
-
 export const useSettingsState = (): UseSettingsStateResult => {
   const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
   const initialSettingsRef = useRef<Settings>(
@@ -83,10 +77,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
     createBootstrapSettings(bootstrapSnapshot)
   );
   const [hasChanges, setHasChanges] = useState(false);
-  const [localizationRuntime, setLocalizationRuntime] =
-    useState<BrowserLocalizationRuntimePayload>(
-      bootstrapSnapshot?.runtimePayload ?? null
-    );
+  const [localizationRuntime, setLocalizationRuntime] = useState(
+    bootstrapSnapshot?.runtimePayload ?? null
+  );
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [coreControl, setCoreControl] = useState<CoreControlState>({
@@ -125,7 +118,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
             mapSettingsSnapshot(event.data.settings)
           );
           initialSettingsRef.current = nextSettings;
-          setLocalizationRuntime(event.data.localizationRuntime ?? null);
+          setLocalizationRuntime(
+            (current) => event.data.localizationRuntime ?? current
+          );
           setSettings(nextSettings);
           setSaving(false);
           setResetting(false);
@@ -137,7 +132,9 @@ export const useSettingsState = (): UseSettingsStateResult => {
             mapSettingsSnapshot(event.data.settings)
           );
           initialSettingsRef.current = nextSettings;
-          setLocalizationRuntime(event.data.localizationRuntime ?? null);
+          setLocalizationRuntime(
+            (current) => event.data.localizationRuntime ?? current
+          );
           setSettings(nextSettings);
           setSaving(false);
           setHasChanges(false);

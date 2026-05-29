@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "038749308",
+  "lastRecordedCommit": "2e9957ab6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase17.clear-localization-verify.task1",
-  "expectedCommitMessage": "test: verify localization after clear rollback",
+  "currentTaskId": "local-models.phase18.localization-runtime-hardening.task1",
+  "expectedCommitMessage": "fix: keep settings localization runtime during reload",
   "debt": {
-    "expectedCommitMessage": "test: verify localization after clear rollback",
-    "preCommitHead": "038749308",
+    "expectedCommitMessage": "fix: keep settings localization runtime during reload",
+    "preCommitHead": "2e9957ab6",
     "stage": "commit_pending",
-    "taskId": "local-models.phase17.clear-localization-verify.task1"
+    "taskId": "local-models.phase18.localization-runtime-hardening.task1"
   }
 }
 ```
@@ -316,9 +316,32 @@
     - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
     - Verification 2026-05-29: `npm run build:project-manager` — PASS.
     - Smoke 2026-05-29: built Project Manager bundle `packages/ui/project-manager/dist/app.js` contains `if (payload.localizationRuntime) setLocalizationRuntime(payload.localizationRuntime);`, confirming intermediate null localization payloads no longer clear the active translated runtime.
-111. [PENDING] Git Commit: `test: verify localization after clear rollback` (hash: TBD)
+111. [DONE] Git Commit: `test: verify localization after clear rollback` (hash: 2e9957ab6)
+
+## Phase 18 — Localization Runtime Surface Hardening (owner: Codex, updated: 2026-05-29)
+### Stream: Settings Runtime Null Guard
+112. [DONE] `local-models.phase18.localization-runtime-hardening.task1` Apply the same non-null localization runtime reload guard to the shared Settings surface so intermediate Core reload events cannot clear active translated runtime outside Project Manager shell (scope: `src/client/ui/src/components/settings/use-settings-state.ts, src/client/ui/src/components/settings/use-settings-state-support.ts, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `fix: keep settings localization runtime during reload`).
+    - Fix 2026-05-29: shared Settings state now preserves the active browser localization runtime across intermediate `settings:loaded` / `settings:saved` events whose `localizationRuntime` is null, matching the Project Manager shell behavior.
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Smoke 2026-05-29: built `media/react-chat.js` and `packages/ui/project-manager/dist/app.js` contain non-null localization runtime guards.
+113. [PENDING] Git Commit: `fix: keep settings localization runtime during reload` (hash: TBD)
+114. [TODO] `local-models.phase18.localization-runtime-hardening-verify.task1` Run targeted tests/builds and bundle smoke checks for shared and Project Manager localization runtime guards (scope: `src/client/ui, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify localization runtime reload guards`).
+115. [TODO] Git Commit: `test: verify localization runtime reload guards` (hash: TBD)
+
+## Phase 19 — Localization Runtime Guard Release Build (owner: Codex, updated: 2026-05-29)
+### Stream: Release Confirmation And Packaging
+116. [DONE] `local-models.phase19.release-confirm.task1` Ask for and receive separate explicit user confirmation for a new release build after localization runtime guard fixes are verified (scope: chat/process gate; expected commit: none). Result: user explicitly confirmed "Исправишь всё и собери новый релиз" in chat on 2026-05-29.
+117. [TODO] `local-models.phase19.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare localization runtime guard release`).
+118. [TODO] Git Commit: `docs: prepare localization runtime guard release` (hash: TBD)
+119. [TODO] `local-models.phase19.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build localization runtime guard release`).
+120. [TODO] Git Commit: `chore: build localization runtime guard release` (hash: TBD)
+121. [TODO] `local-models.phase19.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package localization runtime guard vsix`).
+122. [TODO] Git Commit: `chore: package localization runtime guard vsix` (hash: TBD)
+123. [TODO] `local-models.phase19.user-acceptance.task1` User retests the new release and confirms localization remains Russian after clear/rollback and Local Models provider/model selection remains available (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-112. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-113. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+124. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+125. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

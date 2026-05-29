@@ -8142,6 +8142,7 @@
     const candidate = message;
     return candidate.type === "settings:loaded" || candidate.type === "settings:saved" || candidate.type === "settings:versions" || candidate.type === "settings:core-control-status" || candidate.type === "settings:localization-sync-status" || candidate.type === "settings:native-request-capture:result";
   };
+  var isSettingsSaveErrorMessage = (message) => message?.type === "settings:save-error";
   var clampRemainingPercentThreshold = (value) => Math.min(80, Math.max(5, Math.round(value)));
   var clampGeminiContextWindowTokenLimit = (value) => Math.min(1e6, Math.max(1e4, Math.round(value)));
   var LEGACY_SOURCE_LANGUAGE2 = "source";
@@ -9476,7 +9477,6 @@
   });
 
   // src/client/ui/src/components/settings/use-settings-state.ts
-  var isSettingsSaveErrorMessage = (message) => message?.type === "settings:save-error";
   var useSettingsState = () => {
     const bootstrapSnapshot = readBrowserLocalizationBootstrapSnapshot();
     const initialSettingsRef = (0, import_react.useRef)(
@@ -9522,7 +9522,9 @@
               mapSettingsSnapshot(event.data.settings)
             );
             initialSettingsRef.current = nextSettings;
-            setLocalizationRuntime(event.data.localizationRuntime ?? null);
+            setLocalizationRuntime(
+              (current) => event.data.localizationRuntime ?? current
+            );
             setSettings(nextSettings);
             setSaving(false);
             setResetting(false);
@@ -9534,7 +9536,9 @@
               mapSettingsSnapshot(event.data.settings)
             );
             initialSettingsRef.current = nextSettings;
-            setLocalizationRuntime(event.data.localizationRuntime ?? null);
+            setLocalizationRuntime(
+              (current) => event.data.localizationRuntime ?? current
+            );
             setSettings(nextSettings);
             setSaving(false);
             setHasChanges(false);

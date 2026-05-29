@@ -137,6 +137,12 @@ export const isIncomingMessage = (
   );
 };
 
+export const isSettingsSaveErrorMessage = (
+  message: unknown
+): message is { readonly type: "settings:save-error" } =>
+  (message as { readonly type?: unknown } | null)?.type ===
+  "settings:save-error";
+
 export const clampRemainingPercentThreshold = (value: number): number =>
   Math.min(80, Math.max(5, Math.round(value)));
 
