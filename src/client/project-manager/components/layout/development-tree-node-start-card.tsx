@@ -1,6 +1,7 @@
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { ProviderStackId } from "../../../../types/provider";
+import { useLocalization } from "../../../ui/src/app-host/use-localization";
 import { api } from "../../api";
 import { useWorkspaceSettingsPayload } from "../../services/workspace-settings-payload-hook";
 import { CaptureWorkbenchDomListboxSelector } from "../capture-workbench/dom-listbox-selector";
@@ -16,7 +17,8 @@ const isProviderStackId = (value: string): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
-  value === "glmClaudeCode";
+  value === "glmClaudeCode" ||
+  value === "localModels";
 
 const resolveKindLabel = (kind: BranchNodeKind): string =>
   kind === "product-part"
@@ -44,6 +46,7 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
   workspacePath,
   workspaceSlug,
 }) => {
+  const { availableEngines } = useLocalization();
   const providers = api.getDescriptionProviders();
   const firstProvider =
     providers.find((provider) => provider.connected && isProviderStackId(provider.id)) ??
@@ -60,9 +63,9 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
   const modelOptions = useMemo(
     () =>
       selectedProviderId
-        ? getStartCardModelOptions(selectedProviderId)
+        ? getStartCardModelOptions(selectedProviderId, availableEngines)
         : [],
-    [selectedProviderId]
+    [availableEngines, selectedProviderId]
   );
   const reasoningOptions = useMemo(
     () =>
@@ -80,11 +83,12 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
     }
     const selection = resolveDefaultStartCardModelSelection(
       settingsPayload,
-      selectedProviderId
+      selectedProviderId,
+      availableEngines
     );
     setSelectedModelId(selection.modelId);
     setSelectedReasoning(selection.reasoning);
-  }, [selectedProviderId, settingsPayload]);
+  }, [availableEngines, selectedProviderId, settingsPayload]);
 
   useEffect(() => {
     if (

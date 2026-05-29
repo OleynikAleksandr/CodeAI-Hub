@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "437d0889b",
+  "lastRecordedCommit": "7652e0719",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase9.settings-surface.task1",
-  "expectedCommitMessage": "fix: expose local provider in settings surfaces",
+  "currentTaskId": "local-models.phase9.pm-cards.task1",
+  "expectedCommitMessage": "fix: expose local provider in project manager cards",
   "debt": {
-    "expectedCommitMessage": "fix: expose local provider in settings surfaces",
-    "preCommitHead": "437d0889b",
+    "expectedCommitMessage": "fix: expose local provider in project manager cards",
+    "preCommitHead": "7652e0719",
     "stage": "commit_pending",
-    "taskId": "local-models.phase9.settings-surface.task1"
+    "taskId": "local-models.phase9.pm-cards.task1"
   }
 }
 ```
@@ -164,9 +164,10 @@
 ### Stream: Local Provider Surfaces
 43. [DONE] `local-models.phase9.settings-surface.task1` Add Local Models to Settings provider identity/fallback catalogs and render a Settings provider tab that lists downloaded LM Studio models (scope: `src/client/ui/src/session/session-candidates.ts, src/client/ui/src/core-bridge/constants.ts, src/client/ui/src/components/settings/settings-provider-tab-content.tsx`; expected commit: `fix: expose local provider in settings surfaces`).
     - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
-44. [PENDING] Git Commit: `fix: expose local provider in settings surfaces` (hash: TBD)
-45. [TODO] `local-models.phase9.pm-cards.task1` Add Local Models to Project Manager provider cards that still use local allowlists and update the Description provider picker text (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: expose local provider in project manager cards`).
-46. [TODO] Git Commit: `fix: expose local provider in project manager cards` (hash: TBD)
+44. [DONE] Git Commit: `fix: expose local provider in settings surfaces` (hash: 7652e0719)
+45. [DONE] `local-models.phase9.pm-cards.task1` Add Local Models to Project Manager provider cards that still use local allowlists and update the Description provider picker text (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: expose local provider in project manager cards`).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+46. [PENDING] Git Commit: `fix: expose local provider in project manager cards` (hash: TBD)
 47. [TODO] `local-models.phase9.verify.task1` Run targeted typecheck/build and smoke checks for Settings provider tab, Project Manager cards, and translation engine catalog visibility (scope: `src/client/ui, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider settings visibility`).
 48. [TODO] Git Commit: `test: verify local provider settings visibility` (hash: TBD)
 
