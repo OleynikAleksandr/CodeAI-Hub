@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "71c08b3f6",
+  "lastRecordedCommit": "933d90dd5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase19.release-build.task1",
-  "expectedCommitMessage": "chore: build localization runtime guard release",
+  "currentTaskId": "local-models.phase19.release-package.task1",
+  "expectedCommitMessage": "chore: package localization runtime guard vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build localization runtime guard release",
-    "preCommitHead": "71c08b3f6",
+    "expectedCommitMessage": "chore: package localization runtime guard vsix",
+    "preCommitHead": "933d90dd5",
     "stage": "commit_pending",
-    "taskId": "local-models.phase19.release-build.task1"
+    "taskId": "local-models.phase19.release-package.task1"
   }
 }
 ```
@@ -345,9 +345,12 @@
 119. [DONE] `local-models.phase19.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build localization runtime guard release`).
     - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.396`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release build artifacts copied to `doc/tmp/releases/`: `claude-module-1.2.396.tar.bz2`, `codex-module-1.2.396.tar.bz2`, `gemini-module-1.2.396.tar.bz2`, `kimi-module-1.2.396.tar.bz2`, `glm-claude-code-module-1.2.396.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.396.tar.bz2`, `vscode-webview-1.2.396.tar.bz2`, `project-manager-1.2.396.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.396.tar.bz2`.
-120. [PENDING] Git Commit: `chore: build localization runtime guard release` (hash: TBD)
-121. [TODO] `local-models.phase19.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package localization runtime guard vsix`).
-122. [TODO] Git Commit: `chore: package localization runtime guard vsix` (hash: TBD)
+120. [DONE] Git Commit: `chore: build localization runtime guard release` (hash: 933d90dd5)
+121. [DONE] `local-models.phase19.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package localization runtime guard vsix`).
+    - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.396`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
+    - Release package 2026-05-29: VSIX created at `codeai-hub-1.2.396.vsix` (`4.4M`); runtime package surface verification passed.
+122. [PENDING] Git Commit: `chore: package localization runtime guard vsix` (hash: TBD)
 123. [TODO] `local-models.phase19.user-acceptance.task1` User retests the new release and confirms localization remains Russian after clear/rollback and Local Models provider/model selection remains available (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
