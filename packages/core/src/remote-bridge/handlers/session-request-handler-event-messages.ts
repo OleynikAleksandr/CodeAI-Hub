@@ -7,6 +7,7 @@ import type {
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { BridgeEvent } from "../types";
+import { resolveLiveAssistantTailDedupe } from "./session-request-handler-live-tail-dedupe";
 
 const resolveTranslationProviderId = (
   providerId: string | undefined
@@ -204,10 +205,20 @@ export class SessionRequestHandlerEventMessages {
     readonly tag?: string;
   }): void {
     const emissionThinking = isThinkingDisplayMessage(options);
-    const content = shouldNormalizeDisplayMessageContent(options)
-      ? normalizeTranslationTextFormatting(options.content)
-      : options.content;
     const session = this.deps.sessionManager.getSession(options.sessionId);
+    const deduped = resolveLiveAssistantTailDedupe({
+      content: shouldNormalizeDisplayMessageContent(options)
+        ? normalizeTranslationTextFormatting(options.content)
+        : options.content,
+      messages: session?.messages ?? [],
+      role: options.role,
+      ...(options.tag ? { tag: options.tag } : {}),
+    });
+    if (!deduped) {
+      return;
+    }
+    const content = deduped.content;
+    const tag = deduped.tag ?? options.tag;
     const providerId = resolveTranslationProviderId(session?.providerId);
     const settingsPath = session?.modelBinding?.settingsPath;
     let visibilityAtEmission: "visible" | "hidden" | undefined;
@@ -227,7 +238,7 @@ export class SessionRequestHandlerEventMessages {
       {
         ...(options.messageId ? { messageId: options.messageId } : {}),
         ...(options.timestamp ? { timestamp: options.timestamp } : {}),
-        ...(options.tag ? { tag: options.tag } : {}),
+        ...(tag ? { tag } : {}),
         ...(visibilityAtEmission ? { visibilityAtEmission } : {}),
       }
     );

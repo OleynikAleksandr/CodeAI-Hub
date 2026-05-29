@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "a6e6e2d5c",
+  "lastRecordedCommit": "ab7a835ea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase30.release-package.task1",
-  "expectedCommitMessage": "chore: package local provider native chat vsix",
+  "currentTaskId": "local-models.phase31.core-overlap.task1",
+  "expectedCommitMessage": "fix: suppress duplicated live assistant tails",
   "debt": {
-    "expectedCommitMessage": "chore: package local provider native chat vsix",
-    "preCommitHead": "a6e6e2d5c",
+    "expectedCommitMessage": "fix: suppress duplicated live assistant tails",
+    "preCommitHead": "ab7a835ea",
     "stage": "commit_pending",
-    "taskId": "local-models.phase30.release-package.task1"
+    "taskId": "local-models.phase31.core-overlap.task1"
   }
 }
 ```
@@ -604,10 +604,36 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.403`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
     - Release package 2026-05-29: VSIX ready at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.403.vsix` (`4.5M`).
-214. [PENDING] Git Commit: `chore: package local provider native chat vsix` (hash: TBD)
-215. [TODO] `local-models.phase30.user-acceptance.task1` User retests the new release and confirms Local Models provider turns fail clearly or complete through native LM Studio chat, and idle CodeAI-owned local workers do not accumulate across translation and workflow-agent usage (scope: user workflow observation; expected commit: none).
+214. [DONE] Git Commit: `chore: package local provider native chat vsix` (hash: ab7a835ea)
+215. [BLOCKED] `local-models.phase30.user-acceptance.task1` User retests the new release and confirms Local Models provider turns fail clearly or complete through native LM Studio chat, and idle CodeAI-owned local workers do not accumulate across translation and workflow-agent usage (scope: user workflow observation; expected commit: none). Result: release `1.2.403` is broadly usable, but Claude Quality Gates history showed a duplicate assistant tail (`ills)` + repeated Sources list) after live text chunks, so Phase 31 fixes live/final assistant reconciliation before acceptance can continue.
+
+## Phase 31 — Claude Live Assistant Tail Dedup Regression (owner: Codex, updated: 2026-05-29)
+### Stream: Core Reconciliation Guard
+216. [DONE] `local-models.phase31.core-overlap.task1` Add a Core-owned final-assistant overlap guard that suppresses or trims non-live assistant tails already covered by immediately preceding live assistant chunks, regardless of the provider's final snapshot boundary (scope: `packages/core/src/remote-bridge/handlers, doc/TODO/todo-plan.md`; expected commit: `fix: suppress duplicated live assistant tails`).
+    - Fix 2026-05-29: Core provider-message append now checks an ordinary assistant event against immediately preceding `tag: "live"` assistant chunks and suppresses covered duplicate suffix/window content such as the observed `ills)` Sources tail; real unseen overlap tails are trimmed and retained as `tag: "live"` continuation content.
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts` — PASS (9 tests).
+    - Verification 2026-05-29: `npm exec -- ultracite check packages/core/src/remote-bridge/handlers/session-request-handler-live-tail-dedupe.ts packages/core/src/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.ts` — PASS.
+217. [PENDING] Git Commit: `fix: suppress duplicated live assistant tails` (hash: TBD)
+218. [TODO] `local-models.phase31.claude-buffer.task1` Harden Claude text live buffering so URL/domain periods are not treated as safe sentence boundaries and final suffix/window overlaps are treated as duplicate covered output when buffer state is still available (scope: `packages/Claude_Module/src/messaging/claude-text-live-buffer.ts, packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: harden claude live text buffer boundaries`).
+219. [TODO] Git Commit: `fix: harden claude live text buffer boundaries` (hash: TBD)
+220. [TODO] `local-models.phase31.docs.task1` Document the Core overlap guard and Claude URL-safe live boundary rule in canonical provider/live-content docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Claude.md, doc/TODO/todo-plan.md`; expected commit: `docs: document claude live tail dedupe`).
+221. [TODO] Git Commit: `docs: document claude live tail dedupe` (hash: TBD)
+
+### Stream: Verification
+222. [TODO] `local-models.phase31.verify.task1` Run targeted Core/Claude tests and package builds for the live/final tail dedupe regression; record exact commands/results in this plan (scope: `packages/core, packages/Claude_Module, doc/TODO/todo-plan.md`; expected commit: `test: verify claude live tail dedupe`).
+223. [TODO] Git Commit: `test: verify claude live tail dedupe` (hash: TBD)
+
+### Stream: Release Build
+224. [DONE] `local-models.phase31.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the Claude live/final tail dedupe regression (scope: chat/process gate; expected commit: none). Result: User explicitly requested "Чини ... починишь, собери новый релиз" on 2026-05-29; release build is approved after the fix and verification complete.
+225. [TODO] `local-models.phase31.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude live tail dedupe release`).
+226. [TODO] Git Commit: `docs: prepare claude live tail dedupe release` (hash: TBD)
+227. [TODO] `local-models.phase31.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build claude live tail dedupe release`).
+228. [TODO] Git Commit: `chore: build claude live tail dedupe release` (hash: TBD)
+229. [TODO] `local-models.phase31.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package claude live tail dedupe vsix`).
+230. [TODO] Git Commit: `chore: package claude live tail dedupe vsix` (hash: TBD)
+231. [TODO] `local-models.phase31.user-acceptance.task1` User retests the new release and confirms Claude live Sources lists no longer split into duplicate tail bubbles while Local Models release `1.2.403` behavior remains intact (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-216. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-217. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+232. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+233. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
