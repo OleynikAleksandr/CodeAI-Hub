@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "7652e0719",
+  "lastRecordedCommit": "9fb7edfa2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase9.pm-cards.task1",
-  "expectedCommitMessage": "fix: expose local provider in project manager cards",
+  "currentTaskId": "local-models.phase9.verify.task1",
+  "expectedCommitMessage": "test: verify local provider settings visibility",
   "debt": {
-    "expectedCommitMessage": "fix: expose local provider in project manager cards",
-    "preCommitHead": "7652e0719",
+    "expectedCommitMessage": "test: verify local provider settings visibility",
+    "preCommitHead": "9fb7edfa2",
     "stage": "commit_pending",
-    "taskId": "local-models.phase9.pm-cards.task1"
+    "taskId": "local-models.phase9.verify.task1"
   }
 }
 ```
@@ -167,9 +167,14 @@
 44. [DONE] Git Commit: `fix: expose local provider in settings surfaces` (hash: 7652e0719)
 45. [DONE] `local-models.phase9.pm-cards.task1` Add Local Models to Project Manager provider cards that still use local allowlists and update the Description provider picker text (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: expose local provider in project manager cards`).
     - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
-46. [PENDING] Git Commit: `fix: expose local provider in project manager cards` (hash: TBD)
-47. [TODO] `local-models.phase9.verify.task1` Run targeted typecheck/build and smoke checks for Settings provider tab, Project Manager cards, and translation engine catalog visibility (scope: `src/client/ui, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider settings visibility`).
-48. [TODO] Git Commit: `test: verify local provider settings visibility` (hash: TBD)
+46. [DONE] Git Commit: `fix: expose local provider in project manager cards` (hash: 9fb7edfa2)
+47. [DONE] `local-models.phase9.verify.task1` Run targeted typecheck/build and smoke checks for Settings provider tab, Project Manager cards, and translation engine catalog visibility (scope: `src/client/ui, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider settings visibility`).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Verification 2026-05-29: `npm run build:webview` — PASS.
+    - Smoke 2026-05-29: built `packages/ui/project-manager/dist/app.js` contains `Local Models` Settings tab, `localModels` provider allowlists for provider cards, Description picker copy mentioning Local Models, and `lmstudio:` local model catalog handling.
+    - Smoke 2026-05-29: built `media/react-chat.js` contains `localModels` in UI provider catalogs and `lmstudio:` translation engine handling.
+48. [PENDING] Git Commit: `test: verify local provider settings visibility` (hash: TBD)
 
 ## Phase 10 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout

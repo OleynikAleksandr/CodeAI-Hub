@@ -8376,7 +8376,8 @@
   var DEFAULT_PROVIDER_IDS = [
     "claudeCodeCli",
     "codexCli",
-    "geminiCli"
+    "geminiCli",
+    "localModels"
   ];
   var FALLBACK_PROVIDERS = DEFAULT_PROVIDER_IDS.map((providerId) => ({
     id: providerId,
@@ -8506,7 +8507,8 @@
     "codexCli",
     "geminiCli",
     "kimiCode",
-    "glmClaudeCode"
+    "glmClaudeCode",
+    "localModels"
   ]);
   var isProviderDescriptorCandidate = (value) => {
     if (!value || typeof value !== "object") {
