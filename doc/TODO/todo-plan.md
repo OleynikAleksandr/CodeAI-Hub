@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "9cd55b4c7",
+  "lastRecordedCommit": "87a5382ae",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase11.lmstudio-stderr.task1",
-  "expectedCommitMessage": "fix: capture lm studio server status output",
+  "currentTaskId": "local-models.phase11.verify.task1",
+  "expectedCommitMessage": "test: verify local translation runtime reliability",
   "debt": {
-    "expectedCommitMessage": "fix: capture lm studio server status output",
-    "preCommitHead": "9cd55b4c7",
+    "expectedCommitMessage": "test: verify local translation runtime reliability",
+    "preCommitHead": "87a5382ae",
     "stage": "commit_pending",
-    "taskId": "local-models.phase11.lmstudio-stderr.task1"
+    "taskId": "local-models.phase11.verify.task1"
   }
 }
 ```
@@ -206,9 +206,18 @@
     - Finding 2026-05-29: LM Studio `lms server status` reports `The server is running on port 1234.` on stderr, while the previous command runner ignored stderr and misclassified the ready server as unavailable.
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test dist/local-models/local-models-cli.test.js dist/local-models/local-models-facade.test.js dist/local-models/local-models-provider-adapter.test.js` from `packages/core` — PASS (8 tests).
-64. [PENDING] Git Commit: `fix: capture lm studio server status output` (hash: TBD)
-65. [TODO] `local-models.phase11.verify.task1` Run targeted Core tests/builds plus real LM Studio smoke for direct translation and localized runtime bootstrap with local engine (scope: `packages/core, packages/localization, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local translation runtime reliability`).
-66. [TODO] Git Commit: `test: verify local translation runtime reliability` (hash: TBD)
+64. [DONE] Git Commit: `fix: capture lm studio server status output` (hash: 87a5382ae)
+65. [DONE] `local-models.phase11.verify.task1` Run targeted Core tests/builds plus real LM Studio smoke for direct translation and localized runtime bootstrap with local engine (scope: `packages/core, packages/localization, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local translation runtime reliability`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/localization` — PASS.
+    - Verification 2026-05-29: `node --test dist/local-models/local-models-cli.test.js dist/local-models/local-models-facade.test.js dist/local-models/local-models-provider-adapter.test.js` from `packages/core` — PASS (8 tests).
+    - Verification 2026-05-29: `node --test dist/localization-translation-quality.test.js dist/localization-materializer.test.js` from `packages/localization` — PASS (8 tests).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Verification 2026-05-29: `npm run build:webview` — PASS.
+    - Smoke 2026-05-29: direct `lmstudio:gemma-4-26b-a4b-it` translation through built Core returned Russian in 7276 ms and preserved `API`, `JSON`, `CodeAI Hub`, and `{providerId}`.
+    - Smoke 2026-05-29: `createCoreLocalizationFacade().synchronizeRuntimePayload()` with `ui_interface=ru`, `engineId=lmstudio:gemma-4-26b-a4b-it`, and temp localization root produced a materialized Russian `ui_interface` bundle in 8564 ms with `activeEngineId=lmstudio:gemma-4-26b-a4b-it`.
+66. [PENDING] Git Commit: `test: verify local translation runtime reliability` (hash: TBD)
 
 ## Phase 12 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
