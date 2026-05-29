@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-summary-language-2026-05-29",
   "branch": "main",
   "baseHead": "e733a3298",
-  "lastRecordedCommit": "48cfd17a3",
+  "lastRecordedCommit": "494bffb26",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_ReasoningSummary_Language_Planning.md",
-  "currentTaskId": "phase1-release-docs",
-  "expectedCommitMessage": "docs: prepare 1.2.406 release notes",
+  "currentTaskId": "phase1-release-build",
+  "expectedCommitMessage": "chore: build 1.2.406 release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.406 release notes",
-    "preCommitHead": "48cfd17a3",
+    "expectedCommitMessage": "chore: build 1.2.406 release",
+    "preCommitHead": "494bffb26",
     "stage": "commit_pending",
-    "taskId": "phase1-release-docs"
+    "taskId": "phase1-release-build"
   }
 }
 ```
@@ -54,9 +54,9 @@
 
 ### Stream: Release Build
 7. [DONE] `phase1-release-docs` Update release-facing README and CHANGELOG to the next version before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.406 release notes`
-8. [PENDING] Git Commit: `docs: prepare 1.2.406 release notes` (hash: TBD)
-9. [TODO] `phase1-release-build` Run release scripts and collect VSIX/tarball artifacts after confirmed user approval — scope: `package.json, package-lock.json, packages/*/package.json, doc/tmp/releases/**`; expected commit: `chore: build 1.2.406 release`
-10. [TODO] Git Commit: `chore: build 1.2.406 release` (hash: TBD)
+8. [DONE] Git Commit: `docs: prepare 1.2.406 release notes` (hash: 494bffb26)
+9. [DONE] `phase1-release-build` Run release scripts and collect VSIX/tarball artifacts after confirmed user approval — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix`; expected commit: `chore: build 1.2.406 release`
+10. [PENDING] Git Commit: `chore: build 1.2.406 release` (hash: TBD)
 
 ### Stream: Scope Closeout
 11. [TODO] `phase1-scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
