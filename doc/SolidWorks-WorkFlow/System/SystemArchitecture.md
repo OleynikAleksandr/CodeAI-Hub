@@ -209,7 +209,8 @@
   - `src/apple-native-translation-engine.ts` + `native/apple-translation-helper/` = optional macOS on-device translation path; Node/Core talks to Apple `Translation` only through the Swift helper JSON contract and returns fail-closed `apple_native_*` readiness codes instead of silently substituting another engine
 - Core local models module: `packages/core/src/local-models/`
   - `local-models-facade.ts` = Core-only LM Studio discovery and translation engine composition; engine ids are stable `lmstudio:<modelKey>` values derived from downloaded LM Studio models, and both live reasoning translation and localization bundle materialization consume the same `TranslationFacade` registration path
-  - local model lifecycle is currently explicit/fail-closed: Core can discover, load, and call models through LM Studio, but in-app model download/delete and per-model tuning UI remain deferred to LM Studio
+  - `local-models-runtime-load-manager.ts` = Core-owned LM Studio load policy for translation and workflow-agent turns; it resolves purpose-specific context windows, reuses an already loaded model with enough context, and unloads idle CodeAI/LM Studio duplicate clones before creating another load
+  - local model lifecycle is currently explicit/fail-closed: Core can discover, load, reuse, unload idle duplicates, and call models through LM Studio, but in-app model download/delete and deep per-model tuning UI remain deferred to LM Studio
 - Browser localization lookup: `src/client/ui/src/app-host/use-localization.ts`
   - shared browser-side localization runtime consumed by settings host and localized PM surfaces
   - `packages/core/src/remote-bridge/handlers/settings-request-handler.ts` остаётся authoritative source для PM settings/runtime localization payloads; extension-side compat surface может читать persisted bootstrap, но не владеет write/localization-sync path
