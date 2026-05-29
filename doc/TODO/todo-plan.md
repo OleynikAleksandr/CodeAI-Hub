@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "8e58e1535",
+  "lastRecordedCommit": "e9b468425",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase7.provider-ui.task1",
-  "expectedCommitMessage": "feat: show local models in step provider picker",
+  "currentTaskId": "local-models.phase7.verify.task1",
+  "expectedCommitMessage": "test: verify local provider visibility",
   "debt": {
-    "expectedCommitMessage": "feat: show local models in step provider picker",
-    "preCommitHead": "8e58e1535",
+    "expectedCommitMessage": "test: verify local provider visibility",
+    "preCommitHead": "e9b468425",
     "stage": "commit_pending",
-    "taskId": "local-models.phase7.provider-ui.task1"
+    "taskId": "local-models.phase7.verify.task1"
   }
 }
 ```
@@ -132,9 +132,15 @@
 31. [DONE] `local-models.phase7.provider-ui.task1` Render Local Models in step provider cards with downloaded model options and default selections (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `feat: show local models in step provider picker`).
     - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
     - Verification 2026-05-29: `npm run build:project-manager` — PASS.
-32. [PENDING] Git Commit: `feat: show local models in step provider picker` (hash: TBD)
-33. [TODO] `local-models.phase7.verify.task1` Run targeted builds/tests and real LM Studio visibility checks for provider picker plus translation-engine dropdown catalogs (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider visibility`).
-34. [TODO] Git Commit: `test: verify local provider visibility` (hash: TBD)
+32. [DONE] Git Commit: `feat: show local models in step provider picker` (hash: e9b468425)
+33. [DONE] `local-models.phase7.verify.task1` Run targeted builds/tests and real LM Studio visibility checks for provider picker plus translation-engine dropdown catalogs (scope: `packages/core, src/client/project-manager, src/client/ui, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider visibility`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Verification 2026-05-29: `node --test dist/local-models/local-models-facade.test.js dist/local-models/local-models-cli.test.js dist/local-models/local-models-provider-adapter.test.js` from `packages/core` — PASS (5 tests).
+    - Verification 2026-05-29: `npm run build:webview` — PASS.
+    - Smoke 2026-05-29: built Core + Project Manager model-selection helpers expose downloaded LM Studio models as translation engines `lmstudio:ruadaptqwen3-32b-instruct-mlx`, `lmstudio:gemma-4-26b-a4b-it`, `lmstudio:mistral-small-3.2-24b-instruct-2506-mlx` and as Local Models provider options `ruadaptqwen3-32b-instruct-mlx`, `gemma-4-26b-a4b-it`, `mistral-small-3.2-24b-instruct-2506-mlx`; Local Models provider snapshot is connected.
+34. [PENDING] Git Commit: `test: verify local provider visibility` (hash: TBD)
 
 ## Phase 8 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
