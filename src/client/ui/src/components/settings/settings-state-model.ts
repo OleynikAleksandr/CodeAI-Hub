@@ -33,6 +33,12 @@ import {
   mapGlmClaudeCodeSettings,
   mapKimiSettings,
 } from "./kimi-settings-state";
+import {
+  areLocalModelsSettingsEqual,
+  type LocalModelsSettings,
+  mapLocalModelsSettings,
+  type RawLocalModelsSettings,
+} from "./local-models-settings-state";
 import type {
   RawAutoUpdateSettings,
   RawClaudeSettings,
@@ -63,7 +69,6 @@ export type ProviderId = "claude" | "codex" | "gemini" | "kimi";
 export type { ProviderVersions, VersionEntry } from "./provider-versions-model";
 export type { RawSettingsSnapshot } from "./settings-state-raw";
 
-type ThinkingSettings = ClaudeThinkingSettingsState;
 interface AutoUpdateSettings {
   readonly enabled: boolean;
 }
@@ -101,7 +106,7 @@ interface ClaudeSettings {
   readonly autoUpdate: AutoUpdateSettings;
   readonly defaultModel: ClaudeModelAliasId;
   readonly sessionContinuity: ContinuitySettings;
-  readonly thinking: ThinkingSettings;
+  readonly thinking: ClaudeThinkingSettingsState;
   readonly thinkingDisplaySyncEnabled: boolean;
 }
 export type CodexReasoningByModel = Readonly<
@@ -126,6 +131,7 @@ export interface Settings {
     readonly gemini: GeminiSettingsWithDisplaySync;
     readonly kimi?: KimiSettings;
     readonly glmClaudeCode?: GlmClaudeCodeSettings;
+    readonly localModels?: LocalModelsSettings;
   };
 }
 
@@ -152,12 +158,13 @@ const DEFAULT_CODEX_REASONING_BY_MODEL = CODEX_SETTINGS_MODELS.reduce<
 }, {});
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
+const mapBoolean = (value: unknown, fallback: boolean): boolean =>
+  typeof value === "boolean" ? value : fallback;
 const mapLocalizationString = (value: unknown, fallback: string): string => {
   const normalized = typeof value === "string" ? value.trim() : "";
   if (normalized.length === 0) {
     return fallback;
   }
-
   return normalized.toLowerCase() === LEGACY_SOURCE_LANGUAGE
     ? DEFAULT_LOCALIZATION_LANGUAGE
     : normalized;
@@ -173,7 +180,6 @@ const resolveLocalizationCategory = (
       return resolved;
     }
   }
-
   return fallback;
 };
 const deriveWorkflowTermsPolicy = (
@@ -184,24 +190,15 @@ const deriveWorkflowTermsPolicy = (
     : "translate";
 
 const mapThinkingDisplaySyncEnabled = (value: unknown): boolean =>
-  typeof value === "boolean" ? value : DEFAULT_THINKING_DISPLAY_SYNC_ENABLED;
+  mapBoolean(value, DEFAULT_THINKING_DISPLAY_SYNC_ENABLED);
 const mapCodexReasoningSummaryEnabled = (
   value: unknown,
   legacyValue: unknown
-): boolean => {
-  if (typeof value === "boolean") {
-    return value;
-  }
-
-  return mapThinkingDisplaySyncEnabled(legacyValue);
-};
+): boolean => mapBoolean(value, mapThinkingDisplaySyncEnabled(legacyValue));
 const mapAutoUpdateSettings = (
   value: RawAutoUpdateSettings | undefined
 ): AutoUpdateSettings => ({
-  enabled:
-    typeof value?.enabled === "boolean"
-      ? value.enabled
-      : DEFAULT_AUTO_UPDATE_ENABLED,
+  enabled: mapBoolean(value?.enabled, DEFAULT_AUTO_UPDATE_ENABLED),
 });
 
 const mapLocalizationCategories = (
@@ -254,7 +251,6 @@ const mapLocalizationSettings = (
     value?.categories,
     legacyDefaultLanguage
   );
-
   const uiEngineId =
     mapLocalizationString(value?.uiEngineId, "") ||
     mapLocalizationString(value?.engineId, DEFAULT_LOCALIZATION_ENGINE_ID);
@@ -271,10 +267,7 @@ const mapLocalizationSettings = (
     ),
     engineId: uiEngineId,
     reasoningEngineId,
-    glossaryEnabled:
-      typeof value?.glossaryEnabled === "boolean"
-        ? value.glossaryEnabled
-        : true,
+    glossaryEnabled: mapBoolean(value?.glossaryEnabled, true),
   };
 };
 
@@ -282,10 +275,10 @@ const mapGeneralSettings = (
   value: RawGeneralSettings | undefined
 ): GeneralSettings => ({
   coreControls: {
-    allowRestart:
-      typeof value?.coreControls?.allowRestart === "boolean"
-        ? value.coreControls.allowRestart
-        : DEFAULT_CORE_RESTART_ENABLED,
+    allowRestart: mapBoolean(
+      value?.coreControls?.allowRestart,
+      DEFAULT_CORE_RESTART_ENABLED
+    ),
   },
   localization: mapLocalizationSettings(value?.localization),
   responsePolicy: mapGeneralResponsePolicy(value?.responsePolicy),
@@ -338,7 +331,6 @@ const resolveClaudeDefaultModel = (value: unknown): ClaudeModelAliasId => {
   if (typeof value !== "string") {
     return DEFAULT_CLAUDE_MODEL_ALIAS;
   }
-
   const alias = value as ClaudeModelAliasId;
   return CLAUDE_MODEL_ALIAS_SET.has(alias) ? alias : DEFAULT_CLAUDE_MODEL_ALIAS;
 };
@@ -349,7 +341,6 @@ const mapCodexReasoningByModel = (value: unknown): CodexReasoningByModel => {
   if (!isRecord(value)) {
     return nextReasoningByModel;
   }
-
   for (const [modelId, reasoning] of Object.entries(value)) {
     if (
       typeof reasoning === "string" &&
@@ -395,6 +386,10 @@ export const mapSettingsSnapshot = (
     glmClaudeCode: mapGlmClaudeCodeSettings(
       value?.providers?.glmClaudeCode,
       mapThinkingDisplaySyncEnabled
+    ),
+    localModels: mapLocalModelsSettings(
+      (value?.providers as { readonly localModels?: RawLocalModelsSettings })
+        ?.localModels
     ),
   },
 });
@@ -497,4 +492,8 @@ export const areSettingsEqual = (left: Settings, right: Settings): boolean =>
   areKimiProviderSettingsEqual(
     left.providers.glmClaudeCode,
     right.providers.glmClaudeCode
+  ) &&
+  areLocalModelsSettingsEqual(
+    left.providers.localModels,
+    right.providers.localModels
   );

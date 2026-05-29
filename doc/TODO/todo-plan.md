@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "58d4513be",
+  "lastRecordedCommit": "64f85568f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase14.release-package.task1",
-  "expectedCommitMessage": "chore: package local bundle batching vsix",
+  "currentTaskId": "local-models.phase16.settings-default.task1",
+  "expectedCommitMessage": "feat: persist local model provider defaults",
   "debt": {
-    "expectedCommitMessage": "chore: package local bundle batching vsix",
-    "preCommitHead": "58d4513be",
+    "expectedCommitMessage": "feat: persist local model provider defaults",
+    "preCommitHead": "64f85568f",
     "stage": "commit_pending",
-    "taskId": "local-models.phase14.release-package.task1"
+    "taskId": "local-models.phase16.settings-default.task1"
   }
 }
 ```
@@ -265,10 +265,35 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.395`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
     - Release package 2026-05-29: VSIX created at `codeai-hub-1.2.395.vsix` (`4.4M`); runtime package surface verification passed.
-86. [PENDING] Git Commit: `chore: package local bundle batching vsix` (hash: TBD)
-87. [TODO] `local-models.phase14.user-acceptance.task1` User retests the new release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
+86. [DONE] Git Commit: `chore: package local bundle batching vsix` (hash: 64f85568f)
+87. [DONE] `local-models.phase14.user-acceptance.task1` User retests the new release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none). Result: release `1.2.395` confirms Local Models translation and reasoning localization work well with `LM Studio • gemma-4-26b-a4b-it`; remaining gap is full provider model parity for default settings, step-card selection, and per-turn dialog switching.
+
+## Phase 16 — Local Provider Model Selection Parity (owner: Codex, updated: 2026-05-29)
+### Stream: Settings Defaults
+88. [DONE] `local-models.phase16.settings-default.task1` Persist a Local Models provider default model in Settings state without changing translation-engine selections (scope: `src/client/ui/src/components/settings/local-models-settings-state.ts, src/client/ui/src/components/settings/settings-state-model.ts, doc/TODO/todo-plan.md`; expected commit: `feat: persist local model provider defaults`).
+89. [PENDING] Git Commit: `feat: persist local model provider defaults` (hash: TBD)
+90. [TODO] `local-models.phase16.settings-handlers.task1` Add Settings update handlers for Local Models default model changes in UI and Project Manager settings state (scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/use-settings-state-support.ts, doc/TODO/todo-plan.md`; expected commit: `feat: update local model settings handlers`).
+91. [TODO] Git Commit: `feat: update local model settings handlers` (hash: TBD)
+92. [TODO] `local-models.phase16.settings-hooks.task1` Wire Local Models default handlers through Settings hooks and the Local Models Settings tab control (scope: `src/client/ui/src/components/settings/use-settings-state.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/ui/src/components/settings/settings-provider-tab-content.tsx`; expected commit: `feat: select local default model in settings`).
+93. [TODO] Git Commit: `feat: select local default model in settings` (hash: TBD)
+
+### Stream: Step And Turn Selection
+94. [TODO] `local-models.phase16.step-selection.task1` Use the saved Local Models default in step provider cards and persist explicit card model choices as provider defaults (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts, doc/TODO/todo-plan.md`; expected commit: `feat: use local model defaults in step cards`).
+95. [TODO] Git Commit: `feat: use local model defaults in step cards` (hash: TBD)
+96. [TODO] `local-models.phase16.dialog-picker.task1` Show downloaded Local Models in the dialog turn model picker and route local picker selections from Project Manager to Core (scope: `src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-view.tsx`; expected commit: `feat: show local models in dialog picker`).
+97. [TODO] Git Commit: `feat: show local models in dialog picker` (hash: TBD)
+98. [TODO] `local-models.phase16.dialog-switch-api.task1` Add Project Manager switch API messages for Local Models turn-level model changes (scope: `src/client/project-manager/services/switch-api.ts, src/client/project-manager/api.ts, src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat: route local model switch requests`).
+99. [TODO] Git Commit: `feat: route local model switch requests` (hash: TBD)
+100. [TODO] `local-models.phase16.dialog-switch-core.task1` Handle Local Models switch requests in Core and update the session model binding for the next turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-local-models-model-switch.ts, packages/core/src/remote-bridge/session-stream-contracts.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts`; expected commit: `feat: switch local model sessions`).
+101. [TODO] Git Commit: `feat: switch local model sessions` (hash: TBD)
+
+### Stream: Provider Config And Verification
+102. [TODO] `local-models.phase16.provider-config.task1` Resolve Local Models provider defaults from persisted settings for Core-created sessions and model info labels (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: resolve local model defaults from settings`).
+103. [TODO] Git Commit: `feat: resolve local model defaults from settings` (hash: TBD)
+104. [TODO] `local-models.phase16.verify.task1` Run targeted tests/builds and smoke checks for Settings default model, step-card model selection, and per-turn Local Models switching (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider model selection`).
+105. [TODO] Git Commit: `test: verify local provider model selection` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-88. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-89. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+106. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+107. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
