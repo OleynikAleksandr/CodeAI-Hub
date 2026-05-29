@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "87a5382ae",
+  "lastRecordedCommit": "eb4749dea",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase11.verify.task1",
-  "expectedCommitMessage": "test: verify local translation runtime reliability",
+  "currentTaskId": "local-models.phase12.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare local runtime reliability release",
   "debt": {
-    "expectedCommitMessage": "test: verify local translation runtime reliability",
-    "preCommitHead": "87a5382ae",
+    "expectedCommitMessage": "docs: prepare local runtime reliability release",
+    "preCommitHead": "eb4749dea",
     "stage": "commit_pending",
-    "taskId": "local-models.phase11.verify.task1"
+    "taskId": "local-models.phase12.release-prep.task1"
   }
 }
 ```
@@ -217,9 +217,22 @@
     - Verification 2026-05-29: `npm run build:webview` — PASS.
     - Smoke 2026-05-29: direct `lmstudio:gemma-4-26b-a4b-it` translation through built Core returned Russian in 7276 ms and preserved `API`, `JSON`, `CodeAI Hub`, and `{providerId}`.
     - Smoke 2026-05-29: `createCoreLocalizationFacade().synchronizeRuntimePayload()` with `ui_interface=ru`, `engineId=lmstudio:gemma-4-26b-a4b-it`, and temp localization root produced a materialized Russian `ui_interface` bundle in 8564 ms with `activeEngineId=lmstudio:gemma-4-26b-a4b-it`.
-66. [PENDING] Git Commit: `test: verify local translation runtime reliability` (hash: TBD)
+66. [DONE] Git Commit: `test: verify local translation runtime reliability` (hash: eb4749dea)
 
-## Phase 12 — Scope Closeout (owner: Codex, updated: 2026-05-29)
+## Phase 12 — Runtime Reliability Release Build (owner: Codex, updated: 2026-05-29)
+### Stream: Release Confirmation And Packaging
+67. [DONE] `local-models.phase12.release-confirm.task1` Ask for and receive separate explicit user confirmation for a new release build after local runtime reliability fixes are verified (scope: chat/process gate; expected commit: none). Result: user explicitly confirmed release build in chat on 2026-05-29.
+68. [DONE] `local-models.phase12.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local runtime reliability release`).
+    - Release prep 2026-05-29: future release version is `1.2.394` (current root `package.json` version `1.2.393` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.394` and `CHANGELOG.md` entry `## [1.2.394] - 2026-05-29` added before release scripts.
+69. [PENDING] Git Commit: `docs: prepare local runtime reliability release` (hash: TBD)
+70. [TODO] `local-models.phase12.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local runtime reliability release`).
+71. [TODO] Git Commit: `chore: build local runtime reliability release` (hash: TBD)
+72. [TODO] `local-models.phase12.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local runtime reliability vsix`).
+73. [TODO] Git Commit: `chore: package local runtime reliability vsix` (hash: TBD)
+74. [TODO] `local-models.phase12.user-acceptance.task1` User retests the new release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
+
+## Phase 13 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-67. [TODO] `local-models.phase12.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-68. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+75. [TODO] `local-models.phase13.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+76. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

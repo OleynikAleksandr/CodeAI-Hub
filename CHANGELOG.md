@@ -8,6 +8,22 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.394] - 2026-05-29
+### Fixed
+- **LM Studio local server is started by Core before local model calls.** Local model translation and provider execution now run a server preflight so Project Manager does not depend on a manually started LM Studio server.
+- **LM Studio 0.4.14 server status output is parsed correctly.** The local model CLI runner now captures both stdout and stderr, matching the current `lms server status` behavior.
+- **Bad local localization output is rejected instead of cached.** Interface localization materialization detects mostly unchanged English responses and falls back without marking the bundle ready.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build --workspace @codeai-hub/localization`
+- `node --test dist/local-models/local-models-cli.test.js dist/local-models/local-models-facade.test.js dist/local-models/local-models-provider-adapter.test.js` from `packages/core`
+- `node --test dist/localization-translation-quality.test.js dist/localization-materializer.test.js` from `packages/localization`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run build:webview`
+- Real LM Studio smoke for `lmstudio:gemma-4-26b-a4b-it` direct translation and localization materialization.
+
 ## [1.2.393] - 2026-05-29
 ### Added
 - **Local Models is now a full Project Manager provider.** Downloaded LM Studio models are exposed as selectable model options for the `Local Models` provider and can be used from workflow step provider cards.
