@@ -76,7 +76,7 @@ const applySettingsPayload = (options: {
     return;
   }
 
-  setLocalizationRuntime(payload.localizationRuntime ?? null);
+  if (payload.localizationRuntime) setLocalizationRuntime(payload.localizationRuntime);
   setSettings(mapSettingsSnapshot(rawSettings as RawSettingsSnapshot));
   setError(resolveSettingsPayloadError(payload));
 };

@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "3fbd95ce2",
+  "lastRecordedCommit": "1d0f7e627",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase16.verify.task1",
-  "expectedCommitMessage": "test: verify local provider model selection",
+  "currentTaskId": "local-models.phase17.clear-localization.task1",
+  "expectedCommitMessage": "fix: preserve localization after clear rollback",
   "debt": {
-    "expectedCommitMessage": "test: verify local provider model selection",
-    "preCommitHead": "3fbd95ce2",
+    "expectedCommitMessage": "fix: preserve localization after clear rollback",
+    "preCommitHead": "1d0f7e627",
     "stage": "commit_pending",
-    "taskId": "local-models.phase16.verify.task1"
+    "taskId": "local-models.phase17.clear-localization.task1"
   }
 }
 ```
@@ -300,9 +300,21 @@
     - Verification 2026-05-29: `npm run build:webview` — PASS.
     - Smoke 2026-05-29: built Project Manager bundle contains `requestLocalModelsModelSwitch`, `session:local-models:model-switch`, Local Models dialog picker handling, Local Models Settings default selection, and step-card default persistence.
     - Smoke 2026-05-29: built Core resolves `providers.localModels.defaultModel=gemma-4-26b-a4b-it` into Local Models provider turn config and exposes the local model switch route through validator/router/session handler.
-107. [PENDING] Git Commit: `test: verify local provider model selection` (hash: TBD)
+107. [DONE] Git Commit: `test: verify local provider model selection` (hash: 1d0f7e627)
+
+## Phase 17 — Clear Rollback Localization Regression Fix (owner: Codex, updated: 2026-05-29)
+### Stream: Project Manager Localization Runtime
+108. [DONE] `local-models.phase17.clear-localization.task1` Diagnose and fix the clear/rollback path that leaves Project Manager on English runtime text despite persisted Russian localization settings (scope: `packages/core/src/remote-bridge/handlers/**, packages/localization/src/**, src/client/project-manager/**, doc/TODO/todo-plan.md`; expected commit: `fix: preserve localization after clear rollback`).
+    - Finding 2026-05-29: `SettingsLoadedBroadcaster` intentionally emits an immediate `settings:loaded` event with `localizationRuntime: null` before resolving the next runtime payload. Project Manager treated that intermediate event as an instruction to drop the current runtime, so clear/reload could visibly fall back to English while LM Studio rebuilt or resolved localization payloads.
+    - Fix 2026-05-29: Project Manager now preserves the active localization runtime until Core sends a non-null replacement payload, while still applying the incoming settings snapshot.
+    - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts` — PASS (2 tests).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+109. [PENDING] Git Commit: `fix: preserve localization after clear rollback` (hash: TBD)
+110. [TODO] `local-models.phase17.clear-localization-verify.task1` Run targeted tests/builds and smoke checks for settings-backed localization bootstrap after clear rollback (scope: `packages/core, packages/localization, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify localization after clear rollback`).
+111. [TODO] Git Commit: `test: verify localization after clear rollback` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-108. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-109. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+112. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+113. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

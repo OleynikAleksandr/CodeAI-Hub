@@ -76,4 +76,10 @@ test("useProjectManagerSettings keeps scoped settings strict but allows the shel
     true,
     "settings hook must not issue fallback no-scope settings loads"
   );
+  assert.equal(
+    source.includes("if (payload.localizationRuntime)"),
+    true,
+    "settings reloads must not drop the active localization runtime while Core is resolving the next payload"
+  );
+  assert.equal(source.includes("setLocalizationRuntime(payload.localizationRuntime ?? null)"), false);
 });
