@@ -93,6 +93,8 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
     "16384",
     "--identifier",
     "codeaihub-workflow-agent-qwen-local-16384",
+    "--ttl",
+    "1800",
   ]);
   assert.deepEqual(requestedModels, [
     "codeaihub-workflow-agent-qwen-local-16384",
@@ -148,6 +150,8 @@ test("LocalModelsProviderAdapter starts LM Studio server before provider turns",
     "16384",
     "--identifier",
     "codeaihub-workflow-agent-gemma-local-16384",
+    "--ttl",
+    "1800",
   ]);
   assert.deepEqual(requestedModels, [
     "codeaihub-workflow-agent-gemma-local-16384",
@@ -194,6 +198,54 @@ test("LocalModelsProviderAdapter reuses CodeAI-owned loaded identifier with enou
   assert.deepEqual(requestedModels, [
     "codeaihub-workflow-agent-gemma-local-16384",
   ]);
+});
+
+test("LocalModelsProviderAdapter cleans idle CodeAI-owned workers on initialize and dispose", async () => {
+  const commandCalls: string[][] = [];
+  const adapter = new LocalModelsProviderAdapter({
+    commandRunner: (args) => {
+      commandCalls.push([...args]);
+      if (args[0] === "ps") {
+        return JSON.stringify([
+          {
+            contextLength: 16_384,
+            identifier: "codeaihub-workflow-agent-gemma-local-16384",
+            modelKey: "gemma-local",
+            status: "idle",
+            type: "llm",
+          },
+          {
+            contextLength: 8192,
+            identifier: "codeaihub-translation-reasoning-qwen-local-8192",
+            modelKey: "qwen-local",
+            status: "generating",
+            type: "llm",
+          },
+          {
+            contextLength: 16_384,
+            identifier: "gemma-local",
+            modelKey: "gemma-local",
+            status: "idle",
+            type: "llm",
+          },
+        ]);
+      }
+      return "";
+    },
+    fetchImplementation: (() =>
+      Promise.resolve(createNativeMessageResponse("unused"))) as typeof fetch,
+  });
+
+  await adapter.initialize();
+  adapter.dispose();
+
+  assert.deepEqual(
+    commandCalls.filter((args) => args[0] === "unload"),
+    [
+      ["unload", "codeaihub-workflow-agent-gemma-local-16384"],
+      ["unload", "codeaihub-workflow-agent-gemma-local-16384"],
+    ]
+  );
 });
 
 test("LocalModelsProviderAdapter includes LM Studio non-OK body in diagnostics", async () => {

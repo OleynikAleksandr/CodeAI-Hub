@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "03026977d",
+  "lastRecordedCommit": "2e7364b87",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase32.provider-cleanup.task1",
-  "expectedCommitMessage": "fix: cleanup local models on provider lifecycle",
+  "currentTaskId": "local-models.phase32.provider-tests.task1",
+  "expectedCommitMessage": "test: cover lm studio memory cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: cleanup local models on provider lifecycle",
-    "preCommitHead": "03026977d",
+    "expectedCommitMessage": "test: cover lm studio memory cleanup",
+    "preCommitHead": "2e7364b87",
     "stage": "commit_pending",
-    "taskId": "local-models.phase32.provider-cleanup.task1"
+    "taskId": "local-models.phase32.provider-tests.task1"
   }
 }
 ```
@@ -662,9 +662,13 @@
     - Fix 2026-05-29: `LocalModelsProviderAdapter.initialize()` and `dispose()` now run best-effort cleanup of idle `codeaihub-*` LM Studio workers and clear session listeners on dispose.
     - Fix 2026-05-29: `ProviderRegistry.dispose()` now invokes optional adapter-level `dispose()` hooks with warning-only failure handling, so Core shutdown can release provider-owned external resources without making Project Manager the authority.
     - Verification 2026-05-29: `npm exec -- ultracite check packages/core/src/local-models/local-models-provider-adapter.ts packages/core/src/provider-registry/index.ts` — PASS.
-235. [PENDING] Git Commit: `fix: cleanup local models on provider lifecycle` (hash: TBD)
-236. [TODO] `local-models.phase32.provider-tests.task1` Add focused tests for Local Models provider startup/shutdown cleanup and provider registry adapter disposal (scope: `packages/core/src/local-models/local-models-provider-adapter.test.ts, packages/core/src/provider-registry/provider-descriptor-factory.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lm studio memory cleanup`).
-237. [TODO] Git Commit: `test: cover lm studio memory cleanup` (hash: TBD)
+235. [DONE] Git Commit: `fix: cleanup local models on provider lifecycle` (hash: 2e7364b87)
+236. [DONE] `local-models.phase32.provider-tests.task1` Add focused tests for Local Models provider startup/shutdown cleanup and provider registry adapter disposal (scope: `packages/core/src/local-models/local-models-provider-adapter.test.ts, packages/core/src/provider-registry/provider-descriptor-factory.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lm studio memory cleanup`).
+    - Verification 2026-05-29: `LocalModelsProviderAdapter` tests now assert `--ttl 1800` is passed for workflow-agent loads and that initialize/dispose unload only idle `codeaihub-*` workers.
+    - Verification 2026-05-29: `ProviderRegistry` test now asserts optional adapter `dispose()` hooks are invoked during registry disposal after scheduler cleanup.
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/provider-registry/provider-descriptor-factory.test.ts` — PASS (10 tests).
+    - Verification 2026-05-29: `npm exec -- ultracite check packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/provider-registry/provider-descriptor-factory.test.ts` — PASS.
+237. [PENDING] Git Commit: `test: cover lm studio memory cleanup` (hash: TBD)
 
 ### Stream: Documentation And Verification
 238. [TODO] `local-models.phase32.docs.task1` Document LM Studio TTL, CodeAI-owned identifier cleanup, and the boundary that user-loaded LM Studio models are not unloaded by Core (scope: `doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document lm studio model lifecycle`).

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import type { CodexModuleOptions } from "@codeai-hub/codex-app-server-module";
 import type { CoreConfig } from "../config";
+import { ProviderRegistry } from "./index";
 import { createCodexAdapterInstance } from "./provider-descriptor-factory";
 import type { ProviderAdapter } from "./provider-module-loader.types";
 
@@ -89,4 +90,36 @@ test("createCodexAdapterInstance preserves explicit Codex sandbox settings", () 
     FakeCodexAdapter.capturedWorkspace?.defaultSandboxMode,
     "read-only"
   );
+});
+
+test("ProviderRegistry dispose calls optional adapter disposers", () => {
+  const disposeCalls: string[] = [];
+  const warnings: unknown[] = [];
+  const registry = Object.assign(Object.create(ProviderRegistry.prototype), {
+    options: {
+      logger: {
+        warn: (_message: string, context: unknown) => warnings.push(context),
+      },
+    },
+    providers: [
+      {
+        adapter: {
+          dispose: () => disposeCalls.push("localModels"),
+        },
+        id: "localModels",
+      },
+      {
+        adapter: {},
+        id: "codexCli",
+      },
+    ],
+    recoveryScheduler: {
+      dispose: () => disposeCalls.push("scheduler"),
+    },
+  }) as ProviderRegistry;
+
+  registry.dispose();
+
+  assert.deepEqual(disposeCalls, ["scheduler", "localModels"]);
+  assert.deepEqual(warnings, []);
 });
