@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "ee26f3d99",
+  "lastRecordedCommit": "a6e6e2d5c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase30.release-build.task1",
-  "expectedCommitMessage": "chore: build local provider native chat release",
+  "currentTaskId": "local-models.phase30.release-package.task1",
+  "expectedCommitMessage": "chore: package local provider native chat vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build local provider native chat release",
-    "preCommitHead": "ee26f3d99",
+    "expectedCommitMessage": "chore: package local provider native chat vsix",
+    "preCommitHead": "a6e6e2d5c",
     "stage": "commit_pending",
-    "taskId": "local-models.phase30.release-build.task1"
+    "taskId": "local-models.phase30.release-package.task1"
   }
 }
 ```
@@ -599,9 +599,12 @@
     - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.403`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release build 2026-05-29: installed Core runtime at `/Users/oleksandroliinyk/.codeai-hub/core/darwin-arm64/1.2.403` and CEF launcher at `/Users/oleksandroliinyk/.codeai-hub/cef-launcher/darwin-arm64`.
     - Release build artifacts copied to `doc/tmp/releases/`: `claude-module-1.2.403.tar.bz2`, `codex-module-1.2.403.tar.bz2`, `gemini-module-1.2.403.tar.bz2`, `kimi-module-1.2.403.tar.bz2`, `glm-claude-code-module-1.2.403.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.403.tar.bz2`, `vscode-webview-1.2.403.tar.bz2`, `project-manager-1.2.403.tar.bz2`, and `CodeAIHubLauncher-macos-arm64-1.2.403.tar.bz2`.
-212. [PENDING] Git Commit: `chore: build local provider native chat release` (hash: TBD)
-213. [TODO] `local-models.phase30.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local provider native chat vsix`).
-214. [TODO] Git Commit: `chore: package local provider native chat vsix` (hash: TBD)
+212. [DONE] Git Commit: `chore: build local provider native chat release` (hash: a6e6e2d5c)
+213. [DONE] `local-models.phase30.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local provider native chat vsix`).
+    - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.403`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
+    - Release package 2026-05-29: VSIX ready at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.403.vsix` (`4.5M`).
+214. [PENDING] Git Commit: `chore: package local provider native chat vsix` (hash: TBD)
 215. [TODO] `local-models.phase30.user-acceptance.task1` User retests the new release and confirms Local Models provider turns fail clearly or complete through native LM Studio chat, and idle CodeAI-owned local workers do not accumulate across translation and workflow-agent usage (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
