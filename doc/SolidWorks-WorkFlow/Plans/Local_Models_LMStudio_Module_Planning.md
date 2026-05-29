@@ -36,7 +36,8 @@ Create a Core-owned Local Models translation boundary:
 - discovery reads LM Studio local model metadata through `lms ls --json` when available;
 - translation calls `http://127.0.0.1:1234/v1/chat/completions`;
 - each discovered LLM becomes a selectable engine id with the format `lmstudio:<modelKey>`;
-- the engine is explicit-only and fail-closed when LM Studio is not running, the model is unavailable, or the response is malformed.
+- the engine is explicit-only and fail-closed when LM Studio is not running, the model is unavailable, or the response is malformed;
+- Core loads CodeAI-owned instances with `codeaihub-*` identifiers and purpose-specific TTL values, then cleans up only idle `codeaihub-*` instances on Local Models provider startup/shutdown.
 
 The local module does not own:
 
@@ -44,7 +45,26 @@ The local module does not own:
 - workflow-agent model identity;
 - provider picker availability;
 - UI localization category ownership;
+- user-loaded LM Studio model instances without the `codeaihub-*` identifier prefix;
 - LM Studio model download/delete flows in this first production slice.
+
+### Memory Lifecycle
+
+LM Studio models loaded with `lms load` stay in memory unless they have TTL or
+are explicitly unloaded. CodeAI Hub therefore treats its own local-model loads as
+short-lived external resources:
+
+- localization and generic translation loads use a 300 second idle TTL;
+- reasoning translation loads use a 600 second idle TTL;
+- workflow-agent loads use an 1800 second idle TTL;
+- environment overrides may tune these TTLs without changing persisted project
+  settings;
+- Core startup/shutdown cleanup unloads only idle `codeaihub-*` instances and
+  never issues `lms unload --all`.
+
+This keeps translation warm during active batches while preventing one-off
+localization or workflow-agent experiments from pinning large models in memory
+after Core restart.
 
 ### Settings Surface
 

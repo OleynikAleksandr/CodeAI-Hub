@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "2e7364b87",
+  "lastRecordedCommit": "ebb2762b7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase32.provider-tests.task1",
-  "expectedCommitMessage": "test: cover lm studio memory cleanup",
+  "currentTaskId": "local-models.phase32.docs.task1",
+  "expectedCommitMessage": "docs: document lm studio model lifecycle",
   "debt": {
-    "expectedCommitMessage": "test: cover lm studio memory cleanup",
-    "preCommitHead": "2e7364b87",
+    "expectedCommitMessage": "docs: document lm studio model lifecycle",
+    "preCommitHead": "ebb2762b7",
     "stage": "commit_pending",
-    "taskId": "local-models.phase32.provider-tests.task1"
+    "taskId": "local-models.phase32.docs.task1"
   }
 }
 ```
@@ -668,11 +668,14 @@
     - Verification 2026-05-29: `ProviderRegistry` test now asserts optional adapter `dispose()` hooks are invoked during registry disposal after scheduler cleanup.
     - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/provider-registry/provider-descriptor-factory.test.ts` — PASS (10 tests).
     - Verification 2026-05-29: `npm exec -- ultracite check packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/provider-registry/provider-descriptor-factory.test.ts` — PASS.
-237. [PENDING] Git Commit: `test: cover lm studio memory cleanup` (hash: TBD)
+237. [DONE] Git Commit: `test: cover lm studio memory cleanup` (hash: ebb2762b7)
 
 ### Stream: Documentation And Verification
-238. [TODO] `local-models.phase32.docs.task1` Document LM Studio TTL, CodeAI-owned identifier cleanup, and the boundary that user-loaded LM Studio models are not unloaded by Core (scope: `doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document lm studio model lifecycle`).
-239. [TODO] Git Commit: `docs: document lm studio model lifecycle` (hash: TBD)
+238. [DONE] `local-models.phase32.docs.task1` Document LM Studio TTL, CodeAI-owned identifier cleanup, and the boundary that user-loaded LM Studio models are not unloaded by Core (scope: `doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document lm studio model lifecycle`).
+    - Documentation 2026-05-29: `SystemArchitecture.md` now states that CodeAI-owned LM Studio loads use `codeaihub-*` identifiers, purpose-specific TTL, and idle-only cleanup, while user-loaded LM Studio instances are outside Core ownership.
+    - Documentation 2026-05-29: `Local_Models_LMStudio_Module_Planning.md` now documents memory lifecycle defaults: localization/generic translation 300s, reasoning translation 600s, workflow-agent 1800s, and no `lms unload --all`.
+    - Verification 2026-05-29: `npm exec -- ultracite check doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md doc/SolidWorks-WorkFlow/System/SystemArchitecture.md` — PASS.
+239. [PENDING] Git Commit: `docs: document lm studio model lifecycle` (hash: TBD)
 240. [TODO] `local-models.phase32.verify.task1` Run targeted Local Models/Core tests and package build for LM Studio memory lifecycle changes; record exact commands/results in this plan (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify lm studio memory lifecycle`).
 241. [TODO] Git Commit: `test: verify lm studio memory lifecycle` (hash: TBD)
 
