@@ -23,6 +23,9 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
   const adapter = new LocalModelsProviderAdapter({
     commandRunner: (args) => {
       commandCalls.push([...args]);
+      if (args[0] === "server" && args[1] === "status") {
+        return "Server: ON (port: 1234)";
+      }
       return args[0] === "ls" ? createModelListJson() : "";
     },
     fetchImplementation: ((_url, init) => {
@@ -53,7 +56,8 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
     })
   );
 
-  assert.deepEqual(commandCalls[1], [
+  assert.deepEqual(commandCalls[1], ["server", "status"]);
+  assert.deepEqual(commandCalls[2], [
     "load",
     "qwen-local",
     "--context-length",
@@ -64,4 +68,46 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
     events.map((event) => (event as { readonly type?: string }).type),
     ["turn_started", "assistant", "turn_completed"]
   );
+});
+
+test("LocalModelsProviderAdapter starts LM Studio server before provider turns", async () => {
+  const commandCalls: string[][] = [];
+  const requestedModels: string[] = [];
+  let statusChecks = 0;
+  const adapter = new LocalModelsProviderAdapter({
+    commandRunner: (args) => {
+      commandCalls.push([...args]);
+      if (args[0] === "ls") {
+        return createModelListJson();
+      }
+      if (args[0] === "server" && args[1] === "status") {
+        statusChecks += 1;
+        return statusChecks === 1 ? "Server: OFF" : "Server: ON (port: 1234)";
+      }
+      return "";
+    },
+    fetchImplementation: ((_url, init) => {
+      const body = JSON.parse(String(init?.body)) as { readonly model: string };
+      requestedModels.push(body.model);
+      return Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            choices: [{ message: { content: "Ответ после старта сервера." } }],
+          }),
+        ok: true,
+        status: 200,
+      } as Response);
+    }) as typeof fetch,
+  });
+  const sessionId = await adapter.createSession();
+
+  await adapter.sendMessage(sessionId, "Answer locally.");
+
+  assert.deepEqual(commandCalls.slice(1, 5), [
+    ["server", "status"],
+    ["server", "start"],
+    ["server", "status"],
+    ["load", "gemma-local", "--context-length", "8192"],
+  ]);
+  assert.deepEqual(requestedModels, ["gemma-local"]);
 });

@@ -94,6 +94,9 @@ test("LocalModelsFacade sends OpenAI-compatible translation requests through LM 
           modelKey,
         });
       }
+      if (args[0] === "server" && args[1] === "status") {
+        return "Server: ON (port: 1234)";
+      }
       return "";
     },
     fetchImplementation: ((_url, init) => {
@@ -117,7 +120,8 @@ test("LocalModelsFacade sends OpenAI-compatible translation requests through LM 
 
   assert.equal(result.status, "translated");
   assert.equal(result.finalText, "Откройте Settings.");
-  assert.deepEqual(commandCalls[1], [
+  assert.deepEqual(commandCalls[1], ["server", "status"]);
+  assert.deepEqual(commandCalls[2], [
     "load",
     modelKey,
     "--context-length",
@@ -147,6 +151,9 @@ test("LocalModelsFacade disables Qwen thinking and fails closed when model load 
           displayName: "Ruadapt Qwen Test",
           modelKey: qwenModelKey,
         });
+      }
+      if (args[0] === "server" && args[1] === "status") {
+        return "Server: ON (port: 1234)";
       }
       return "";
     },
@@ -189,7 +196,13 @@ test("LocalModelsFacade disables Qwen thinking and fails closed when model load 
           modelKey: failingModelKey,
         });
       }
-      throw new Error("cannot load model");
+      if (args[0] === "server" && args[1] === "status") {
+        return "Server: ON (port: 1234)";
+      }
+      if (args[0] === "load") {
+        throw new Error("cannot load model");
+      }
+      return "";
     },
     fetchImplementation: (() => {
       return Promise.reject(new Error("fetch should not be called"));
@@ -204,4 +217,49 @@ test("LocalModelsFacade disables Qwen thinking and fails closed when model load 
 
   assert.equal(result.status, "fallback");
   assert.equal(result.errorCode, "lmstudio_model_load_failed");
+});
+
+test("LocalModelsFacade starts LM Studio server before translation when it is offline", async () => {
+  const commandCalls: string[][] = [];
+  let statusChecks = 0;
+  const modelKey = "mlx-community/server-start-test";
+  const facade = new LocalModelsFacade({
+    commandRunner: (args) => {
+      commandCalls.push([...args]);
+      if (args[0] === "ls") {
+        return createModelListJson({
+          displayName: "Server Start Test",
+          modelKey,
+        });
+      }
+      if (args[0] === "server" && args[1] === "status") {
+        statusChecks += 1;
+        return statusChecks === 1 ? "Server: OFF" : "Server: ON (port: 1234)";
+      }
+      return "";
+    },
+    fetchImplementation: (() =>
+      Promise.resolve({
+        json: () =>
+          Promise.resolve({
+            choices: [{ message: { content: "Проверка сервера." } }],
+          }),
+        ok: true,
+        status: 200,
+      } as Response)) as typeof fetch,
+  });
+
+  const engine = facade.createTranslationEngines()[0];
+  assert.ok(engine);
+  const result = await engine.translate(
+    createRequest(`lmstudio:${modelKey}`, "Server check.")
+  );
+
+  assert.equal(result.status, "translated");
+  assert.deepEqual(commandCalls.slice(1, 5), [
+    ["server", "status"],
+    ["server", "start"],
+    ["server", "status"],
+    ["load", modelKey, "--context-length", "8192"],
+  ]);
 });

@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "975d54c1d",
+  "lastRecordedCommit": "03e7a962b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase11.lmstudio-preflight.task1",
-  "expectedCommitMessage": "fix: start lm studio server for local models",
+  "currentTaskId": "local-models.phase11.lmstudio-tests.task1",
+  "expectedCommitMessage": "test: cover lm studio server preflight",
   "debt": {
-    "expectedCommitMessage": "fix: start lm studio server for local models",
-    "preCommitHead": "975d54c1d",
+    "expectedCommitMessage": "test: cover lm studio server preflight",
+    "preCommitHead": "03e7a962b",
     "stage": "commit_pending",
-    "taskId": "local-models.phase11.lmstudio-preflight.task1"
+    "taskId": "local-models.phase11.lmstudio-tests.task1"
   }
 }
 ```
@@ -191,9 +191,11 @@
 ### Stream: LM Studio Runtime Ownership
 57. [DONE] `local-models.phase11.lmstudio-preflight.task1` Start and verify the LM Studio local server before local translation/provider requests, so Project Manager does not depend on a manually started LM Studio server (scope: `packages/core/src/local-models/local-models-cli.ts, packages/core/src/local-models/local-models-facade.ts, packages/core/src/local-models/local-models-provider-adapter.ts`; expected commit: `fix: start lm studio server for local models`).
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
-58. [PENDING] Git Commit: `fix: start lm studio server for local models` (hash: TBD)
-59. [TODO] `local-models.phase11.lmstudio-tests.task1` Add regression coverage for LM Studio server status/start before translation and provider turns (scope: `packages/core/src/local-models/local-models-facade.test.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lm studio server preflight`).
-60. [TODO] Git Commit: `test: cover lm studio server preflight` (hash: TBD)
+58. [DONE] Git Commit: `fix: start lm studio server for local models` (hash: 03e7a962b)
+59. [DONE] `local-models.phase11.lmstudio-tests.task1` Add regression coverage for LM Studio server status/start before translation and provider turns (scope: `packages/core/src/local-models/local-models-facade.test.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lm studio server preflight`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test dist/local-models/local-models-facade.test.js dist/local-models/local-models-provider-adapter.test.js` from `packages/core` — PASS (6 tests).
+60. [PENDING] Git Commit: `test: cover lm studio server preflight` (hash: TBD)
 61. [TODO] `local-models.phase11.localization-sync.task1` Verify and, if needed, fix localization runtime settings so saved `uiEngineId` and non-English UI categories rebuild the browser bootstrap with the selected local model (scope: `packages/core/src/remote-bridge/handlers/**, packages/localization/src/**, src/client/**`; expected commit: `fix: sync local ui translation settings`).
 62. [TODO] Git Commit: `fix: sync local ui translation settings` (hash: TBD)
 63. [TODO] `local-models.phase11.verify.task1` Run targeted Core tests/builds plus real LM Studio smoke for direct translation and localized runtime bootstrap with local engine (scope: `packages/core, packages/localization, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local translation runtime reliability`).
