@@ -12,11 +12,12 @@ import {
 } from "./local-models-facade";
 
 const DEFAULT_LM_STUDIO_BASE_URL = "http://127.0.0.1:1234";
-const DEFAULT_CONTEXT_LENGTH = "8192";
+const DEFAULT_AGENT_CONTEXT_LENGTH = 16_384;
 const DEFAULT_MAX_TOKENS = 8192;
 const MODEL_LOAD_TIMEOUT_MS = 120_000;
 const REQUEST_TIMEOUT_MS = 300_000;
 const JSON_HEADERS = { "content-type": "application/json" } as const;
+const LM_STUDIO_IDENTIFIER_SAFE_PATTERN = /[^a-zA-Z0-9._-]+/gu;
 const TRAILING_SLASHES_PATTERN = /\/+$/u;
 
 type LocalModelsSessionListener = (payload: unknown) => void;
@@ -25,6 +26,13 @@ interface ChatCompletionResponse {
   readonly choices?: readonly {
     readonly message?: { readonly content?: unknown };
   }[];
+}
+
+interface LoadedLmStudioModelRecord {
+  readonly contextLength?: unknown;
+  readonly identifier?: unknown;
+  readonly modelKey?: unknown;
+  readonly type?: unknown;
 }
 
 const resolveBaseUrl = (): string =>
@@ -46,6 +54,59 @@ const parseChatText = (payload: unknown): string | null => {
     : null;
 };
 
+const asPositiveInteger = (value: string | undefined): number | null => {
+  if (!value) {
+    return null;
+  }
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+};
+
+const resolveAgentContextLength = (model: LocalModelDescriptor): number => {
+  const requested =
+    asPositiveInteger(process.env.CODEAI_LMSTUDIO_AGENT_CONTEXT_LENGTH) ??
+    DEFAULT_AGENT_CONTEXT_LENGTH;
+  return typeof model.maxContextLength === "number"
+    ? Math.min(requested, model.maxContextLength)
+    : requested;
+};
+
+const buildCodeAiIdentifier = (
+  modelKey: string,
+  contextLength: number
+): string =>
+  `codeaihub-${modelKey.replace(
+    LM_STUDIO_IDENTIFIER_SAFE_PATTERN,
+    "-"
+  )}-${contextLength}`;
+
+const parseLoadedModels = (
+  payload: string
+): readonly LoadedLmStudioModelRecord[] => {
+  try {
+    const parsed = JSON.parse(payload) as unknown;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const isLoadedWithContext = (options: {
+  readonly contextLength: number;
+  readonly identifier: string;
+  readonly records: readonly LoadedLmStudioModelRecord[];
+}): boolean =>
+  options.records.some(
+    (record) =>
+      record.type === "llm" &&
+      record.identifier === options.identifier &&
+      typeof record.contextLength === "number" &&
+      record.contextLength >= options.contextLength
+  );
+
+const truncateDiagnosticBody = (body: string): string =>
+  body.trim().slice(0, 500);
+
 export class LocalModelsProviderAdapter implements ProviderAdapter {
   readonly #baseUrl = resolveBaseUrl();
   readonly #commandRunner: LmsCommandRunner;
@@ -55,7 +116,7 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
     string,
     Set<LocalModelsSessionListener>
   >();
-  readonly #loadedModelKeys = new Set<string>();
+  readonly #loadedModelIdentifiers = new Set<string>();
 
   constructor(
     options: {
@@ -128,8 +189,8 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
           `LM Studio server is not available: ${serverErrorCode}`
         );
       }
-      this.#ensureModelLoaded(model.modelKey);
-      const assistantText = await this.#complete(model.modelKey, content);
+      const apiModelIdentifier = this.#ensureModelLoaded(model);
+      const assistantText = await this.#complete(apiModelIdentifier, content);
       this.#emit(sessionId, {
         type: "assistant",
         provider: "localModels",
@@ -169,23 +230,46 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
     return model;
   }
 
-  #ensureModelLoaded(modelKey: string): void {
-    if (this.#loadedModelKeys.has(modelKey)) {
-      return;
+  #ensureModelLoaded(model: LocalModelDescriptor): string {
+    const contextLength = resolveAgentContextLength(model);
+    const identifier = buildCodeAiIdentifier(model.modelKey, contextLength);
+    if (this.#loadedModelIdentifiers.has(identifier)) {
+      return identifier;
+    }
+    const loadedModels = parseLoadedModels(
+      this.#commandRunner(["ps", "--json"], {
+        timeoutMs: MODEL_LOAD_TIMEOUT_MS,
+      })
+    );
+    if (
+      isLoadedWithContext({
+        contextLength,
+        identifier,
+        records: loadedModels,
+      })
+    ) {
+      this.#loadedModelIdentifiers.add(identifier);
+      return identifier;
     }
     this.#commandRunner(
       [
         "load",
-        modelKey,
+        model.modelKey,
         "--context-length",
-        process.env.CODEAI_LMSTUDIO_CONTEXT_LENGTH ?? DEFAULT_CONTEXT_LENGTH,
+        String(contextLength),
+        "--identifier",
+        identifier,
       ],
       { timeoutMs: MODEL_LOAD_TIMEOUT_MS }
     );
-    this.#loadedModelKeys.add(modelKey);
+    this.#loadedModelIdentifiers.add(identifier);
+    return identifier;
   }
 
-  async #complete(modelKey: string, content: string): Promise<string> {
+  async #complete(
+    apiModelIdentifier: string,
+    content: string
+  ): Promise<string> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     try {
@@ -202,7 +286,7 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
               },
               { role: "user", content },
             ],
-            model: modelKey,
+            model: apiModelIdentifier,
             stream: false,
             temperature: 0.2,
           }),
@@ -212,8 +296,11 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
         }
       );
       if (!response.ok) {
+        const diagnosticBody = truncateDiagnosticBody(await response.text());
         throw new Error(
-          `LM Studio request failed with status ${response.status}`
+          diagnosticBody
+            ? `LM Studio request failed with status ${response.status}: ${diagnosticBody}`
+            : `LM Studio request failed with status ${response.status}`
         );
       }
       const text = parseChatText(await response.json());

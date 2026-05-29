@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "8959c842f",
+  "lastRecordedCommit": "484dad3fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase21.release-package.task1",
-  "expectedCommitMessage": "chore: package local model catalog vsix",
+  "currentTaskId": "local-models.phase22.provider-context.task1",
+  "expectedCommitMessage": "fix: stabilize local provider context loading",
   "debt": {
-    "expectedCommitMessage": "chore: package local model catalog vsix",
-    "preCommitHead": "8959c842f",
+    "expectedCommitMessage": "fix: stabilize local provider context loading",
+    "preCommitHead": "484dad3fb",
     "stage": "commit_pending",
-    "taskId": "local-models.phase21.release-package.task1"
+    "taskId": "local-models.phase22.provider-context.task1"
   }
 }
 ```
@@ -391,10 +391,22 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.397`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Verified release packaging output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
     - VSIX ready for user retest: `codeai-hub-1.2.397.vsix` (`4.4M`).
-134. [PENDING] Git Commit: `chore: package local model catalog vsix` (hash: TBD)
-135. [TODO] `local-models.phase21.user-acceptance.task1` User retests the new release and confirms Local Models lists and Localization Engine local entries are visible immediately after Project Manager opens (scope: user workflow observation; expected commit: none).
+134. [DONE] Git Commit: `chore: package local model catalog vsix` (hash: 484dad3fb)
+135. [BLOCKED] `local-models.phase21.user-acceptance.task1` User retests the new release and confirms Local Models lists and Localization Engine local entries are visible immediately after Project Manager opens (scope: user workflow observation; expected commit: none). Result: release `1.2.397` restores translation/localization model visibility, but Local Models provider turns in the Description step fail with LM Studio HTTP 400 for the large workflow prompt.
+
+## Phase 22 — Local Provider Context Regression Fixes (owner: Codex, updated: 2026-05-29)
+### Stream: LM Studio Provider Context Loading
+136. [DONE] `local-models.phase22.provider-context.task1` Make Local Models workflow-agent turns use a CodeAI-owned LM Studio loaded-model identifier with sufficient context instead of the shared short-context model key, and surface LM Studio error bodies for diagnostics (scope: `packages/core/src/local-models/local-models-provider-adapter.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: stabilize local provider context loading`).
+    - Finding 2026-05-29: Project Manager logs show Description Local Models turns dispatch `contentLength=46726` and fail with `LM Studio request failed with status 400`.
+    - Finding 2026-05-29: `lms ps --json` shows multiple `gemma-4-26b-a4b-it` instances at `contextLength=8192`; the current provider adapter loads the model with default `8192` and then calls `/v1/chat/completions` with `model=modelKey`, so it can route large workflow prompts to a short-context instance even when a larger manual LM Studio load exists.
+    - Fix 2026-05-29: workflow-agent Local Models turns now load/use a CodeAI-owned LM Studio identifier with provider-only default context `16384` (`CODEAI_LMSTUDIO_AGENT_CONTEXT_LENGTH` override supported), while the translation engine keeps its existing short-context path.
+    - Smoke 2026-05-29: direct LM Studio API call with a 46K Cyrillic prompt fails against shared `gemma-4-26b-a4b-it` but succeeds against `codeaihub-gemma-4-26b-a4b-it-16384`; built `LocalModelsProviderAdapter` emits `turn_started, assistant, turn_completed` for the same prompt.
+137. [PENDING] Git Commit: `fix: stabilize local provider context loading` (hash: TBD)
+138. [TODO] `local-models.phase22.provider-context-verify.task1` Run targeted Core tests/build plus live LM Studio smoke for a Description-sized local provider prompt (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider context loading`).
+139. [TODO] Git Commit: `test: verify local provider context loading` (hash: TBD)
+140. [TODO] `local-models.phase22.release-confirm.task1` Ask for separate explicit user confirmation before preparing and building the next release after the provider context fix is verified (scope: chat/process gate; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-136. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-137. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+141. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+142. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
