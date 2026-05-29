@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "51de855e8",
+  "lastRecordedCommit": "51e093d36",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase26.wait-copy.task1",
-  "expectedCommitMessage": "fix: classify session wait copy by lock reason",
+  "currentTaskId": "local-models.phase26.wait-copy-verify.task1",
+  "expectedCommitMessage": "test: verify session wait copy lock reasons",
   "debt": {
-    "expectedCommitMessage": "fix: classify session wait copy by lock reason",
-    "preCommitHead": "51de855e8",
+    "expectedCommitMessage": "test: verify session wait copy lock reasons",
+    "preCommitHead": "51e093d36",
     "stage": "commit_pending",
-    "taskId": "local-models.phase26.wait-copy.task1"
+    "taskId": "local-models.phase26.wait-copy-verify.task1"
   }
 }
 ```
@@ -465,9 +465,13 @@
     - Contract 2026-05-29: Project Manager remains display-only; Core-owned snapshot/lock reason still controls the blocked state, and PM only chooses the wait-copy label.
     - Verification 2026-05-29: `npx tsx --test src/client/ui/src/session/input-panel.test.tsx` — PASS (16 tests).
     - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
-161. [PENDING] Git Commit: `fix: classify session wait copy by lock reason` (hash: TBD)
-162. [TODO] `local-models.phase26.wait-copy-verify.task1` Run targeted Session UI tests/typecheck/build to verify context-check pending locks stay blocked but show working copy, while real rollover resume locks still show resume copy (scope: `src/client/ui/src/session, src/client/project-manager/components/sessions, doc/TODO/todo-plan.md`; expected commit: `test: verify session wait copy lock reasons`).
-163. [TODO] Git Commit: `test: verify session wait copy lock reasons` (hash: TBD)
+161. [DONE] Git Commit: `fix: classify session wait copy by lock reason` (hash: 51e093d36)
+162. [DONE] `local-models.phase26.wait-copy-verify.task1` Run targeted Session UI tests/typecheck/build to verify context-check pending locks stay blocked but show working copy, while real rollover resume locks still show resume copy (scope: `src/client/ui/src/session, src/client/project-manager/components/sessions, doc/TODO/todo-plan.md`; expected commit: `test: verify session wait copy lock reasons`).
+    - Verification 2026-05-29: `npx tsx --test src/client/ui/src/session/input-panel.test.tsx` — PASS (16 tests).
+    - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts` — PASS (4 tests).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+163. [PENDING] Git Commit: `test: verify session wait copy lock reasons` (hash: TBD)
 
 ## Phase 27 — Session Wait Copy Release Build (owner: Codex, updated: 2026-05-29)
 ### Stream: Release Confirmation And Packaging
