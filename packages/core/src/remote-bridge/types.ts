@@ -1,4 +1,7 @@
-import type { LocalizationRuntimePayload } from "@codeai-hub/localization";
+import type {
+  LocalizationEngineLanguageCatalog,
+  LocalizationRuntimePayload,
+} from "@codeai-hub/localization";
 import type { NativeRequestCaptureCommandResult } from "../provider-network-capture/native-request-capture-facade";
 import type { NativeRequestCaptureProviderId } from "../provider-network-capture/native-request-capture-types";
 import type { ProviderRegistry } from "../provider-registry";
@@ -191,6 +194,7 @@ export interface TechnicalStageRewriteBoundaryPayload {
 }
 
 interface SettingsLoadedPayload {
+  readonly availableEngines?: readonly LocalizationEngineLanguageCatalog[];
   readonly error: string | null;
   readonly localizationRuntime: LocalizationRuntimePayload | null;
   readonly settings: Record<string, unknown> | null;

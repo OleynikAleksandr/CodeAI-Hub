@@ -72,6 +72,14 @@ const createRuntimePayload = (): LocalizationRuntimePayload => ({
     },
   },
 });
+const createEngineCatalogs =
+  (): LocalizationRuntimePayload["availableEngines"] => [
+    { engineId: "google-gtx", languages: [{ code: "ru", label: "Russian" }] },
+    {
+      engineId: "lmstudio:gemma-4-26b-a4b-it",
+      languages: [{ code: "ru", label: "Russian" }],
+    },
+  ];
 
 const createSettings = (params: { readonly uiHelperText?: string } = {}) => {
   const uiHelperText = params.uiHelperText ?? "ru";
@@ -159,6 +167,7 @@ test("SettingsRequestHandler syncs saved localization through the active workspa
       "sync-marker.json"
     );
     return {
+      listAvailableEngines: createEngineCatalogs,
       resolveRuntimePayload: () => Promise.resolve(createRuntimePayload()),
       synchronizeRuntimePayload: async (
         settings: LocalizationRuntimeSettingsSnapshot,
@@ -269,6 +278,7 @@ test("SettingsRequestHandler resolves loaded localization through the active wor
   ): LocalizationFacade => {
     factoryWorkspaces.push(workspace);
     return {
+      listAvailableEngines: createEngineCatalogs,
       resolveRuntimePayload: (
         settings: LocalizationRuntimeSettingsSnapshot
       ) => {
@@ -302,6 +312,12 @@ test("SettingsRequestHandler resolves loaded localization through the active wor
     events.filter((event) => event.type === "settings:loaded").length,
     2
   );
+  const firstLoaded = events.find((event) => event.type === "settings:loaded");
+  assert.deepEqual(
+    firstLoaded?.payload.availableEngines?.map((engine) => engine.engineId),
+    ["google-gtx", "lmstudio:gemma-4-26b-a4b-it"]
+  );
+  assert.equal(firstLoaded?.payload.localizationRuntime, null);
 });
 
 test("SettingsRequestHandler opens user glossary in the active workspace runtime", async () => {

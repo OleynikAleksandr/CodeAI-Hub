@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { api } from "../../api";
 import type { BrowserLocalizationRuntimePayload } from "../../../ui/src/app-host/localization-runtime-contract";
 import { readBrowserLocalizationBootstrapSnapshot } from "../../../ui/src/app-host/localization-runtime-contract";
@@ -44,6 +51,12 @@ const createVersionsState = (
 });
 
 type SettingsPayload = SettingsLoadedPayload | SettingsSnapshotPayload;
+type LocalizationEngineCatalogs = NonNullable<
+  BrowserLocalizationRuntimePayload
+>["availableEngines"];
+type SettingsPayloadWithEngineCatalogs = SettingsPayload & {
+  readonly availableEngines?: LocalizationEngineCatalogs;
+};
 
 type TemplateUpdatesState = {
   readonly error: string | null;
@@ -58,12 +71,67 @@ const resolveSettingsPayloadError = (payload: SettingsPayload): string | null =>
     ? payload.error
     : null;
 
+const createCatalogOnlyLocalizationRuntime = (
+  activeEngineId: string,
+  availableEngines: LocalizationEngineCatalogs
+): NonNullable<BrowserLocalizationRuntimePayload> => ({
+  activeEngineId,
+  availableEngines,
+  resolvedBundlesByCategory: {
+    interactive_templates: {
+      entries: {},
+      language: "source",
+      source: "source_fallback",
+    },
+    system_feedback: {
+      entries: {},
+      language: "source",
+      source: "source_fallback",
+    },
+    ui_interface: {
+      entries: {},
+      language: "source",
+      source: "source_fallback",
+    },
+    user_guidance: {
+      entries: {},
+      language: "source",
+      source: "source_fallback",
+    },
+    workflow_terms: {
+      entries: {},
+      language: "source",
+      source: "source_fallback",
+    },
+  },
+});
+
+const mergeLocalizationEngineCatalogs = (
+  current: BrowserLocalizationRuntimePayload,
+  activeEngineId: string,
+  availableEngines: LocalizationEngineCatalogs
+): BrowserLocalizationRuntimePayload => {
+  if (availableEngines.length === 0) {
+    return current;
+  }
+  if (!current) {
+    return createCatalogOnlyLocalizationRuntime(
+      activeEngineId,
+      availableEngines
+    );
+  }
+  return {
+    ...current,
+    availableEngines,
+  };
+};
+
 const applySettingsPayload = (options: {
   readonly payload: SettingsPayload;
   readonly setError: (value: string | null) => void;
-  readonly setLocalizationRuntime: (
-    value: BrowserLocalizationRuntimePayload
-  ) => void;
+  readonly setLocalizationRuntime: Dispatch<
+    SetStateAction<BrowserLocalizationRuntimePayload>
+  >;
   readonly setSettings: (value: Settings) => void;
 }): void => {
   const { payload, setError, setLocalizationRuntime, setSettings } = options;
@@ -76,8 +144,20 @@ const applySettingsPayload = (options: {
     return;
   }
 
-  if (payload.localizationRuntime) setLocalizationRuntime(payload.localizationRuntime);
-  setSettings(mapSettingsSnapshot(rawSettings as RawSettingsSnapshot));
+  const nextSettings = mapSettingsSnapshot(rawSettings as RawSettingsSnapshot);
+  const payloadWithCatalogs = payload as SettingsPayloadWithEngineCatalogs;
+  if (payload.localizationRuntime) {
+    setLocalizationRuntime(payload.localizationRuntime);
+  } else if (payloadWithCatalogs.availableEngines) {
+    setLocalizationRuntime((current) =>
+      mergeLocalizationEngineCatalogs(
+        current,
+        nextSettings.general.localization.engineId,
+        payloadWithCatalogs.availableEngines ?? []
+      )
+    );
+  }
+  setSettings(nextSettings);
   setError(resolveSettingsPayloadError(payload));
 };
 

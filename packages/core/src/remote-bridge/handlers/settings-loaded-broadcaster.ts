@@ -39,9 +39,11 @@ export class SettingsLoadedBroadcaster {
     workspace?: WorkspaceSettingsScope
   ): Promise<void> {
     const scopePayload = toWorkspaceScopePayload(workspace);
+    const availableEngines = this.localizationFacade.listAvailableEngines();
     this.broadcaster({
       type: "settings:loaded",
       payload: {
+        availableEngines,
         localizationRuntime: null,
         settings,
         error: null,
@@ -56,6 +58,7 @@ export class SettingsLoadedBroadcaster {
     this.broadcaster({
       type: "settings:loaded",
       payload: {
+        availableEngines: localizationRuntime.availableEngines,
         localizationRuntime,
         settings,
         error: null,

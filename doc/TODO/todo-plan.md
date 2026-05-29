@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "933d90dd5",
+  "lastRecordedCommit": "c2058e7ff",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase19.release-package.task1",
-  "expectedCommitMessage": "chore: package localization runtime guard vsix",
+  "currentTaskId": "local-models.phase20.catalog-load.task1",
+  "expectedCommitMessage": "fix: restore local model catalog loading",
   "debt": {
-    "expectedCommitMessage": "chore: package localization runtime guard vsix",
-    "preCommitHead": "933d90dd5",
+    "expectedCommitMessage": "fix: restore local model catalog loading",
+    "preCommitHead": "c2058e7ff",
     "stage": "commit_pending",
-    "taskId": "local-models.phase19.release-package.task1"
+    "taskId": "local-models.phase20.catalog-load.task1"
   }
 }
 ```
@@ -350,10 +350,26 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.396`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
     - Release package 2026-05-29: VSIX created at `codeai-hub-1.2.396.vsix` (`4.4M`); runtime package surface verification passed.
-122. [PENDING] Git Commit: `chore: package localization runtime guard vsix` (hash: TBD)
-123. [TODO] `local-models.phase19.user-acceptance.task1` User retests the new release and confirms localization remains Russian after clear/rollback and Local Models provider/model selection remains available (scope: user workflow observation; expected commit: none).
+122. [DONE] Git Commit: `chore: package localization runtime guard vsix` (hash: c2058e7ff)
+123. [BLOCKED] `local-models.phase19.user-acceptance.task1` User retests the new release and confirms localization remains Russian after clear/rollback and Local Models provider/model selection remains available (scope: user workflow observation; expected commit: none). Result: release `1.2.396` can load Core, but Project Manager shows "No downloaded LM Studio models are currently visible to Core" and local engines disappear from Localization Engine while LM Studio CLI/Core discovery can list the models.
+
+## Phase 20 — Local Model Catalog Load Regression Fix (owner: Codex, updated: 2026-05-29)
+### Stream: Fast Local Model Catalog
+124. [DONE] `local-models.phase20.catalog-load.task1` Send a fast localization engine catalog with settings load events and let Project Manager preserve translated runtime while updating downloaded LM Studio model lists before slow localization materialization completes (scope: `packages/core/src/remote-bridge/**, src/client/project-manager/components/settings/**, doc/TODO/todo-plan.md`; expected commit: `fix: restore local model catalog loading`).
+    - Finding 2026-05-29: `lms ls --json` returns 5 local LLM records, and built `LocalModelsFacade.listModels()` exposes all five as `lmstudio:*` engines.
+    - Finding 2026-05-29: the first `settings:loaded` payload contains `localizationRuntime: null`; the downloaded local model list is only available inside the later full `localizationRuntime.availableEngines`, which can be delayed by local LM Studio runtime materialization.
+    - Fix 2026-05-29: `settings:loaded` now carries `availableEngines` immediately, and Project Manager merges that catalog into the current localization runtime without clearing translated bundles.
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Verification 2026-05-29: `node --test --test-name-pattern "resolves loaded localization" packages/core/dist/remote-bridge/handlers/settings-request-handler.localization-runtime.test.js` — PASS.
+    - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts` — PASS (2 tests).
+    - Smoke 2026-05-29: built `SettingsLoadedBroadcaster` emits `availableEngines=["google-gtx","lmstudio:gemma-4-26b-a4b-it"]` before full runtime resolution when `resolveRuntimePayload` is still pending.
+125. [PENDING] Git Commit: `fix: restore local model catalog loading` (hash: TBD)
+126. [TODO] `local-models.phase20.catalog-verify.task1` Run targeted tests/builds and live Core WebSocket smoke checks proving local LM Studio engines are visible before full localization runtime materialization finishes (scope: `packages/core, src/client/project-manager, packages/ui/project-manager/dist/app.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local model catalog loading`).
+127. [TODO] Git Commit: `test: verify local model catalog loading` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-124. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-125. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+128. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+129. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
