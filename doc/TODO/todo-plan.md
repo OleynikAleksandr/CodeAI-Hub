@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "7c9e7bb55",
+  "lastRecordedCommit": "6e37585ba",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase16.step-selection.task1",
-  "expectedCommitMessage": "feat: use local model defaults in step cards",
+  "currentTaskId": "local-models.phase16.dialog-picker.task1",
+  "expectedCommitMessage": "feat: show local models in dialog picker",
   "debt": {
-    "expectedCommitMessage": "feat: use local model defaults in step cards",
-    "preCommitHead": "7c9e7bb55",
+    "expectedCommitMessage": "feat: show local models in dialog picker",
+    "preCommitHead": "6e37585ba",
     "stage": "commit_pending",
-    "taskId": "local-models.phase16.step-selection.task1"
+    "taskId": "local-models.phase16.dialog-picker.task1"
   }
 }
 ```
@@ -279,9 +279,9 @@
 
 ### Stream: Step And Turn Selection
 94. [DONE] `local-models.phase16.step-selection.task1` Use the saved Local Models default in step provider cards and persist explicit card model choices as provider defaults (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts, doc/TODO/todo-plan.md`; expected commit: `feat: use local model defaults in step cards`).
-95. [PENDING] Git Commit: `feat: use local model defaults in step cards` (hash: TBD)
-96. [TODO] `local-models.phase16.dialog-picker.task1` Show downloaded Local Models in the dialog turn model picker and route local picker selections from Project Manager to Core (scope: `src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-view.tsx`; expected commit: `feat: show local models in dialog picker`).
-97. [TODO] Git Commit: `feat: show local models in dialog picker` (hash: TBD)
+95. [DONE] Git Commit: `feat: use local model defaults in step cards` (hash: 6e37585ba)
+96. [DONE] `local-models.phase16.dialog-picker.task1` Show downloaded Local Models in the dialog turn model picker and route local picker selections from Project Manager to Core (scope: `src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-view.tsx`; expected commit: `feat: show local models in dialog picker`).
+97. [PENDING] Git Commit: `feat: show local models in dialog picker` (hash: TBD)
 98. [TODO] `local-models.phase16.dialog-switch-api.task1` Add Project Manager switch API messages for Local Models turn-level model changes (scope: `src/client/project-manager/services/switch-api.ts, src/client/project-manager/api.ts, src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat: route local model switch requests`).
 99. [TODO] Git Commit: `feat: route local model switch requests` (hash: TBD)
 100. [TODO] `local-models.phase16.dialog-switch-core.task1` Handle Local Models switch requests in Core and update the session model binding for the next turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-local-models-model-switch.ts, packages/core/src/remote-bridge/session-stream-contracts.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts`; expected commit: `feat: switch local model sessions`).

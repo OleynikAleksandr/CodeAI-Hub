@@ -20,6 +20,7 @@ import {
   useQueuedSend,
 } from "./session-view-helpers";
 import StatusPanel from "./status-panel";
+import type { StatusPanelLocalModelOption } from "./status-panel-model-picker";
 import {
   buildTokenDebugSummary,
   resolveActiveSessionSnapshot,
@@ -67,6 +68,7 @@ interface SessionViewProps {
   readonly coreConnectionDetail?: string;
   readonly coreConnectionStatus: "connecting" | "ready" | "error";
   readonly emptyStatePending?: boolean;
+  readonly localModelOptions?: readonly StatusPanelLocalModelOption[];
   readonly onCloseSession: (sessionId: string) => void;
   readonly onFileLinkActivate?: (target: FileLinkTarget) => void;
   readonly onRefreshUsageLimits?: (request: UsageLimitsRefreshRequest) => void;
@@ -140,6 +142,7 @@ const SessionViewBody = ({
   snapshots,
   coreConnectionStatus,
   coreConnectionDetail,
+  localModelOptions,
   tokenDebugSummaryOverride,
   onSelectSession,
   onCloseSession,
@@ -329,6 +332,7 @@ const SessionViewBody = ({
           <StatusPanel
             connectionDetail={coreConnectionDetail}
             connectionStatus={coreConnectionStatus}
+            localModelOptions={localModelOptions}
             onSelectClaudeModel={
               onSelectClaudeModel
                 ? (modelId) => onSelectClaudeModel(activeSessionId, modelId)

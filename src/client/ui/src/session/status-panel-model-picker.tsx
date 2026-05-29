@@ -12,10 +12,16 @@ import type { ProviderStackId } from "../../../../types/provider";
 
 export type StatusPanelPickerMode = "model" | "reasoning";
 
+export interface StatusPanelLocalModelOption {
+  readonly displayName: string;
+  readonly id: string;
+}
+
 interface StatusPanelModelPickerProps {
   readonly anchorLeft: number;
   readonly currentModelId: string;
   readonly currentReasoning?: string;
+  readonly localModelOptions?: readonly StatusPanelLocalModelOption[];
   readonly mode: StatusPanelPickerMode;
   readonly onClose: () => void;
   readonly onSelectModel?: (modelId: string) => void;
@@ -141,9 +147,38 @@ const buildKimiConfig = (currentModelId: string): PickerConfig => {
   };
 };
 
+const buildLocalModelsConfig = (
+  currentModelId: string,
+  localModelOptions: readonly StatusPanelLocalModelOption[] = []
+): PickerConfig => {
+  const baseModelId = normalizeBaseModelId(currentModelId);
+  const models =
+    localModelOptions.length > 0
+      ? localModelOptions.map((model) => ({
+          id: model.id,
+          displayName: model.displayName,
+          reasoningOptions: ["default"],
+          defaultReasoning: "default",
+        }))
+      : [
+          {
+            id: baseModelId,
+            displayName: baseModelId,
+            reasoningOptions: ["default"],
+            defaultReasoning: "default",
+          },
+        ];
+  return {
+    currentModel: models.find((model) => model.id === baseModelId) ?? models[0],
+    currentReasoning: "default",
+    models,
+  };
+};
+
 const buildPickerConfig = (options: {
   readonly currentModelId: string;
   readonly currentReasoning?: string;
+  readonly localModelOptions?: readonly StatusPanelLocalModelOption[];
   readonly providerId: ProviderStackId;
 }): PickerConfig => {
   if (options.providerId === "claudeCodeCli") {
@@ -152,6 +187,12 @@ const buildPickerConfig = (options: {
   if (options.providerId === "kimiCode") {
     return buildKimiConfig(options.currentModelId);
   }
+  if (options.providerId === "localModels") {
+    return buildLocalModelsConfig(
+      options.currentModelId,
+      options.localModelOptions
+    );
+  }
   return buildCodexConfig(options.currentModelId, options.currentReasoning);
 };
 
@@ -159,6 +200,7 @@ export const StatusPanelModelPicker = ({
   anchorLeft,
   currentModelId,
   currentReasoning,
+  localModelOptions,
   mode,
   onClose,
   onSelectModel,
@@ -168,6 +210,7 @@ export const StatusPanelModelPicker = ({
   const config = buildPickerConfig({
     currentModelId,
     currentReasoning,
+    localModelOptions,
     providerId,
   });
 

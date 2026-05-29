@@ -8,6 +8,7 @@ import type { ProviderStackId } from "../../../../types/provider";
 import type { ModelInfo, SessionStatusInfo } from "../../../../types/session";
 import { useLocalization } from "../app-host/use-localization";
 import {
+  type StatusPanelLocalModelOption,
   StatusPanelModelPicker,
   type StatusPanelPickerMode,
 } from "./status-panel-model-picker";
@@ -23,6 +24,7 @@ type ClaudeThinkingSelection = ClaudeThinkingEffort | "off";
 interface StatusPanelProps {
   readonly connectionDetail?: string;
   readonly connectionStatus: CoreConnectionStatus;
+  readonly localModelOptions?: readonly StatusPanelLocalModelOption[];
   readonly onSelectClaudeModel?: (modelId: ClaudeModelAliasId) => void;
   readonly onSelectClaudeThinking?: (thinking: ClaudeThinkingSelection) => void;
   readonly onSelectModel?: (modelId: string) => void;
@@ -93,6 +95,7 @@ export const formatContextWindowUsage = (tokenUsage: {
 const StatusPanel = ({
   status,
   connectionStatus,
+  localModelOptions,
   onSelectClaudeModel,
   onSelectClaudeThinking,
   onSelectModel,
@@ -133,7 +136,8 @@ const StatusPanel = ({
   const canOpenPicker =
     model.providerId === "codexCli" ||
     model.providerId === "claudeCodeCli" ||
-    model.providerId === "kimiCode";
+    model.providerId === "kimiCode" ||
+    model.providerId === "localModels";
   const reasoningText =
     typeof model.reasoning === "string" && model.reasoning.length > 0
       ? `(${model.reasoning})`
@@ -161,6 +165,10 @@ const StatusPanel = ({
       return;
     }
     if (model.providerId === "kimiCode") {
+      onSelectModel?.(modelId);
+      return;
+    }
+    if (model.providerId === "localModels") {
       onSelectModel?.(modelId);
     }
   };
@@ -224,6 +232,7 @@ const StatusPanel = ({
           anchorLeft={openPicker.anchorLeft}
           currentModelId={model.modelId}
           currentReasoning={model.reasoning}
+          localModelOptions={localModelOptions}
           mode={openPicker.mode}
           onClose={() => setOpenPicker(null)}
           onSelectModel={handlePickerSelectModel}
