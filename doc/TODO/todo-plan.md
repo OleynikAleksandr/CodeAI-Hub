@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "f08594800",
+  "lastRecordedCommit": "b1c9c86fd",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase28.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare step confirmation navigation release",
+  "currentTaskId": "local-models.phase28.release-build.task1",
+  "expectedCommitMessage": "chore: build step confirmation navigation release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare step confirmation navigation release",
-    "preCommitHead": "f08594800",
+    "expectedCommitMessage": "chore: build step confirmation navigation release",
+    "preCommitHead": "b1c9c86fd",
     "stage": "commit_pending",
-    "taskId": "local-models.phase28.release-prep.task1"
+    "taskId": "local-models.phase28.release-build.task1"
   }
 }
 ```
@@ -509,9 +509,12 @@
 177. [DONE] `local-models.phase28.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare step confirmation navigation release`).
     - Release prep 2026-05-29: future release version is `1.2.401` (current root `package.json` version `1.2.400` + 1).
     - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.401` and `CHANGELOG.md` entry `## [1.2.401] - 2026-05-29` added before release scripts.
-178. [PENDING] Git Commit: `docs: prepare step confirmation navigation release` (hash: TBD)
-179. [TODO] `local-models.phase28.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build step confirmation navigation release`).
-180. [TODO] Git Commit: `chore: build step confirmation navigation release` (hash: TBD)
+178. [DONE] Git Commit: `docs: prepare step confirmation navigation release` (hash: b1c9c86fd)
+179. [DONE] `local-models.phase28.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build step confirmation navigation release`).
+    - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` succeeded from release-prepared version `1.2.400` and produced unified version `1.2.401`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release build 2026-05-29: installed Core runtime at `/Users/oleksandroliinyk/.codeai-hub/core/darwin-arm64/1.2.401` and CEF launcher at `/Users/oleksandroliinyk/.codeai-hub/cef-launcher/darwin-arm64`.
+    - Release build 2026-05-29: staged tarballs in `doc/tmp/releases/`: `claude-module-1.2.401.tar.bz2`, `codex-module-1.2.401.tar.bz2`, `gemini-module-1.2.401.tar.bz2`, `kimi-module-1.2.401.tar.bz2`, `glm-claude-code-module-1.2.401.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.401.tar.bz2`, `vscode-webview-1.2.401.tar.bz2`, `project-manager-1.2.401.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.401.tar.bz2`.
+180. [PENDING] Git Commit: `chore: build step confirmation navigation release` (hash: TBD)
 181. [TODO] `local-models.phase28.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package step confirmation navigation vsix`).
 182. [TODO] Git Commit: `chore: package step confirmation navigation vsix` (hash: TBD)
 183. [TODO] `local-models.phase28.user-acceptance.task1` User retests the new release and confirms confirmation-button navigation advances to the next Core-active workflow card while manual return remains possible (scope: user workflow observation; expected commit: none).
