@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.399] - 2026-05-29
+### Fixed
+- **Local Models preliminary artifacts are materialized from fenced markdown responses.** If an LM Studio workflow-step response includes the target artifact path plus a fenced markdown block, Core now writes that block to the canonical artifact file before opening review.
+- **Description review is blocked when `Final_Description.md` is missing.** Preliminary stages now require their physical artifact files before user review can open, preventing confirmation from completing an empty Description step.
+- **Virtual Simulation keeps the same fail-closed artifact gate.** The shared preliminary gate now validates both `Final_Description.md` and `virtual-simulation.md`.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js`
+- Smoke replay of the user Local Models JSONL where Core materialized `.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md` from the fenced markdown block.
+
 ## [1.2.398] - 2026-05-29
 ### Fixed
 - **Local Models can handle large workflow-step prompts.** Workflow-agent turns now load and call a CodeAI-owned LM Studio model identifier with a provider-only context window, avoiding HTTP 400 failures when the Description step sends a large prompt.

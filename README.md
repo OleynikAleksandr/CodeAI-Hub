@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.398** (Local Provider Context Loading)
+**Current Release — v1.2.399** (Local Preliminary Artifact Materialization)
+
+This release fixes Local Models workflow-step completion for preliminary
+documentation stages. When an LM Studio model returns the target artifact as a
+fenced markdown block in chat, Core now materializes that block into the
+canonical workflow file before opening user review.
+
+Description and Virtual Simulation review gates now fail closed when the
+required artifact file is missing. This prevents `подтверждаю` from completing a
+step that did not physically create `Final_Description.md` or
+`virtual-simulation.md`.
+
+**Previous Release — v1.2.398** (Local Provider Context Loading)
 
 This release stabilizes Local Models as a workflow-step provider. Core now loads
 workflow-agent turns through a CodeAI-owned LM Studio identifier with a

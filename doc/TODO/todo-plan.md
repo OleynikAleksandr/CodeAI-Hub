@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "950c6681b",
+  "lastRecordedCommit": "9a08c6ef0",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase24.preliminary-artifact-verify.task1",
-  "expectedCommitMessage": "test: verify local preliminary artifact materialization",
+  "currentTaskId": "local-models.phase25.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare local preliminary artifact release",
   "debt": {
-    "expectedCommitMessage": "test: verify local preliminary artifact materialization",
-    "preCommitHead": "950c6681b",
+    "expectedCommitMessage": "docs: prepare local preliminary artifact release",
+    "preCommitHead": "9a08c6ef0",
     "stage": "commit_pending",
-    "taskId": "local-models.phase24.preliminary-artifact-verify.task1"
+    "taskId": "local-models.phase25.release-prep.task1"
   }
 }
 ```
@@ -438,9 +438,22 @@
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js` — PASS (6 tests).
     - Smoke 2026-05-29: parsed the user release `1.2.398` Local Models session JSONL and passed its assistant response into `resolvePreliminaryArtifactGate`; Core materialized `.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md` from the fenced markdown block (`5890` bytes, first line `# Final Description: CodeAI Hub`) and returned `managed-workflow-user-review`.
-151. [PENDING] Git Commit: `test: verify local preliminary artifact materialization` (hash: TBD)
+151. [DONE] Git Commit: `test: verify local preliminary artifact materialization` (hash: 9a08c6ef0)
+
+## Phase 25 — Local Preliminary Artifact Release Build (owner: Codex, updated: 2026-05-29)
+### Stream: Release Confirmation And Packaging
+152. [DONE] `local-models.phase25.release-confirm.task1` Ask for and receive separate explicit user confirmation for a new release build after preliminary artifact materialization fixes are verified (scope: chat/process gate; expected commit: none). Result: User explicitly confirmed new release build in chat on 2026-05-29 after local preliminary artifact materialization fixes were verified.
+153. [DONE] `local-models.phase25.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local preliminary artifact release`).
+    - Release prep 2026-05-29: future release version is `1.2.399` (current root `package.json` version `1.2.398` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.399` and `CHANGELOG.md` entry `## [1.2.399] - 2026-05-29` added before release scripts.
+154. [PENDING] Git Commit: `docs: prepare local preliminary artifact release` (hash: TBD)
+155. [TODO] `local-models.phase25.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local preliminary artifact release`).
+156. [TODO] Git Commit: `chore: build local preliminary artifact release` (hash: TBD)
+157. [TODO] `local-models.phase25.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local preliminary artifact vsix`).
+158. [TODO] Git Commit: `chore: package local preliminary artifact vsix` (hash: TBD)
+159. [TODO] `local-models.phase25.user-acceptance.task1` User retests the new release and confirms Local Models can complete a Description step, materialize `Final_Description.md`, unlock the input after review, and preserve fast translation context behavior (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-152. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-153. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+160. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+161. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
