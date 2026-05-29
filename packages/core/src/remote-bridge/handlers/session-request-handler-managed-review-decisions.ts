@@ -162,6 +162,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
     this.deps = deps;
     this.preliminaryReviewCommitter =
       new SessionRequestHandlerPreliminaryReviewCommitter({
+        broadcaster: (event) => deps.broadcaster(event),
         eventMessages: deps.eventMessages,
       });
   }
@@ -436,6 +437,10 @@ export class SessionRequestHandlerManagedReviewDecisions {
         stage: DIAGRAM_MODULES_STAGE,
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
+      });
+      this.deps.broadcaster({
+        payload: { stage: APPLICATION_SKELETON_STAGE },
+        type: "workflow:stage:activate",
       });
     } catch (error) {
       this.deps.eventMessages.appendCoreMessage(session.id, {

@@ -1,7 +1,7 @@
 # Project Manager — Workflow Navigation SSOT
 
 **Status:** Active SSOT  
-**Updated:** 2026-05-16
+**Updated:** 2026-05-29
 **Owner:** Oleksandr + Codex
 
 > **Note:** Top stage toolbar был удалён в релизе `1.1.924`. Sidebar (Workflow Tree) — единственный source активации stage. Упоминания "Toolbar" ниже в §1 "Проблема" сохранены как исторический контекст; в инвариантах §4–§7 toolbar заменён на sidebar.
@@ -33,6 +33,7 @@
 Любое из событий ниже обязано приводить к установке `activeStage`:
 - клик по stage-узлу в левом sidebar (Workflow Tree);
 - клик по artifact/session узлу в sidebar;
+- Core event `workflow:stage:activate`, emitted only after Core has accepted the current review gate and completed its required commit boundary;
 - auto-select canonical startup stage при смене workspace.
 
 Cold-start restore rule:
@@ -80,6 +81,7 @@ Cold-start restore rule:
 5. Session panel startup restore обязан быть Core-workflow-state scoped; automatic startup restore не имеет права выбирать stage по browser-local recency или PM-only parser result.
 6. Startup auto-select и обычный stage click обязаны использовать один и тот же stage-to-artifact/session resolver; cold-start не имеет права держать отдельный selector.
 7. Левое дерево не имеет права хранить отдельный persistent expanded-state truth для workflow stage branches; раскрытие stage-веток должно следовать за `activeStage`.
+8. После нажатия `Подтверждаю` переход на следующую карточку является Core-owned command: Project Manager слушает `workflow:stage:activate` и отображает следующий stage, но не выводит acceptance из текста, UI-кнопки или локального состояния.
 
 ## 6) Особый случай Description pre-submit
 

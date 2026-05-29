@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "27b52208f",
+  "lastRecordedCommit": "de68b7b07",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase27.release-package.task1",
-  "expectedCommitMessage": "chore: package session wait copy vsix",
+  "currentTaskId": "local-models.phase28.navigation.task1",
+  "expectedCommitMessage": "fix: auto-select next workflow step after confirmation",
   "debt": {
-    "expectedCommitMessage": "chore: package session wait copy vsix",
-    "preCommitHead": "27b52208f",
+    "expectedCommitMessage": "fix: auto-select next workflow step after confirmation",
+    "preCommitHead": "de68b7b07",
     "stage": "commit_pending",
-    "taskId": "local-models.phase27.release-package.task1"
+    "taskId": "local-models.phase28.navigation.task1"
   }
 }
 ```
@@ -489,10 +489,20 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` succeeded for version `1.2.400`.
     - Release package 2026-05-29: verified output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
     - Release package 2026-05-29: VSIX ready at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.400.vsix` (`4.4M`).
-170. [PENDING] Git Commit: `chore: package session wait copy vsix` (hash: TBD)
-171. [TODO] `local-models.phase27.user-acceptance.task1` User retests the new release and confirms ordinary post-turn managed workflow waits show working copy while actual continuity rollover/resume still shows resume copy (scope: user workflow observation; expected commit: none).
+170. [DONE] Git Commit: `chore: package session wait copy vsix` (hash: de68b7b07)
+171. [DONE] `local-models.phase27.user-acceptance.task1` User retests the new release and confirms ordinary post-turn managed workflow waits show working copy while actual continuity rollover/resume still shows resume copy (scope: user workflow observation; expected commit: none). Result: User retested release 1.2.400 and found an acceptance regression: after clicking the confirmation button for a completed step artifact, Project Manager remains on the completed step instead of displaying the next Core-active workflow step.
+
+## Phase 28 — Step Confirmation Navigation (owner: Codex, updated: 2026-05-29)
+### Stream: Core-Owned Step Advancement Display
+172. [DONE] `local-models.phase28.navigation.task1` After explicit artifact confirmation, make Project Manager select/render the next Core-active workflow step automatically while preserving manual return to the completed step (scope: `src/client/project-manager/**, packages/core/**, doc/SolidWorks-WorkFlow/**`; expected commit: `fix: auto-select next workflow step after confirmation`).
+    - Fix 2026-05-29: Core now emits `workflow:stage:activate` after successful review acceptance commit for `Description -> Virtual Simulation`, `Virtual Simulation -> Diagram Modules`, and `Diagram Modules -> Application Skeleton`; Project Manager remains a display-only listener for the Core-owned command.
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+173. [PENDING] Git Commit: `fix: auto-select next workflow step after confirmation` (hash: TBD)
+174. [TODO] `local-models.phase28.verify.task1` Run targeted Project Manager/Core workflow navigation tests and record exact commands/results in this plan (scope: `src/client/project-manager/**, packages/core/**, doc/TODO/todo-plan.md`; expected commit: `test: verify step confirmation navigation`).
+175. [TODO] Git Commit: `test: verify step confirmation navigation` (hash: TBD)
+176. [TODO] `local-models.phase28.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the step-confirmation navigation fix (scope: chat/process gate; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-172. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-173. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+177. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+178. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

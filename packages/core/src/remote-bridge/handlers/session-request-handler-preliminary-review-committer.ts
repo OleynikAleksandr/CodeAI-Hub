@@ -8,6 +8,12 @@ import type { SessionRequestHandlerEventMessages } from "./session-request-handl
 
 type PreliminaryStageLabel = "Description" | "Virtual Simulation";
 type PreliminaryStageId = "description" | "virtual_simulation";
+type PreliminaryNextStageId = "diagram_modules" | "virtual_simulation";
+
+interface WorkflowStageActivateEvent {
+  readonly payload: { readonly stage: PreliminaryNextStageId };
+  readonly type: "workflow:stage:activate";
+}
 
 interface PreliminaryReviewCommitOptions {
   readonly content: string;
@@ -17,6 +23,7 @@ interface PreliminaryReviewCommitOptions {
 }
 
 interface PreliminaryReviewCommitterDeps {
+  readonly broadcaster?: (event: WorkflowStageActivateEvent) => void;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
     "appendCoreMessage" | "appendDialogMessage"
@@ -29,6 +36,13 @@ interface PreliminaryReviewCommitterDeps {
 
 const EXACT_ACCEPT_RE =
   /^(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?|п[іi]дтверджую|подтверждаю)[\s.!?]*$/iu;
+const NEXT_STAGE_BY_PRELIMINARY_STAGE: Record<
+  PreliminaryStageId,
+  PreliminaryNextStageId
+> = {
+  description: "virtual_simulation",
+  virtual_simulation: "diagram_modules",
+};
 
 const resolvePreliminaryStage = (
   stage: string | null
@@ -125,6 +139,10 @@ export class SessionRequestHandlerPreliminaryReviewCommitter {
             tag: "managed-workflow-validation",
           });
         }
+        this.#deps.broadcaster?.({
+          payload: { stage: NEXT_STAGE_BY_PRELIMINARY_STAGE[stage.stage] },
+          type: "workflow:stage:activate",
+        });
       } catch (error) {
         this.#deps.eventMessages.appendCoreMessage(options.sessionId, {
           content: formatCommitBlockedMessage(error),
