@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.402] - 2026-05-29
+### Fixed
+- **LM Studio context is now purpose-aware.** Reasoning translation keeps the fast `8192` profile, generic translation uses `16384`, localization materialization adapts to bounded batch size up to `32768`, and workflow-agent turns keep their separate provider profile.
+- **Local Models no longer accumulate idle same-model clones.** Core reuses loaded LM Studio models with enough context and unloads idle base, CodeAI-owned, and `modelKey:N` duplicate instances before creating a new load.
+- **Large MLX translation models are safer for UI localization.** Real `hy-mt2-30b-a3b-mlx` smoke verified an adaptive `16384` localization load, cleanup of the old idle `8192` clone, and a short reasoning translation without creating a second copy.
+
+### Tests
+- `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-facade.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build --workspace @codeai-hub/localization`
+- Live LM Studio smoke with `hy-mt2-30b-a3b-mlx`: adaptive localization load selected `codeaihub-translation-localization-hy-mt2-30b-a3b-mlx-16384`, unloaded the idle base `8192` instance, translated `Open Settings.` to Russian, and left one loaded `hy-mt2` instance.
+
 ## [1.2.401] - 2026-05-29
 ### Fixed
 - **Confirmation now opens the next workflow card.** After the user confirms an accepted artifact with `Подтверждаю`, Core emits `workflow:stage:activate` for the next trunk step only after the commit boundary succeeds.
