@@ -156,6 +156,11 @@ export interface CodexModelSwitchRequestPayload {
   readonly targetModelId: string;
 }
 
+export interface LocalModelsModelSwitchRequestPayload {
+  readonly sessionId: string;
+  readonly targetModelId: string;
+}
+
 export interface CodexReasoningSwitchRequestPayload {
   readonly sessionId: string;
   readonly targetReasoningEffort: CodexModelSwitchReasoningEffort;
@@ -269,6 +274,10 @@ export type SessionIncomingMessage =
   | {
       readonly type: "session:codex:model-switch";
       readonly payload: CodexModelSwitchRequestPayload;
+    }
+  | {
+      readonly type: "session:local-models:model-switch";
+      readonly payload: LocalModelsModelSwitchRequestPayload;
     }
   | {
       readonly type: "session:codex:reasoning-switch";

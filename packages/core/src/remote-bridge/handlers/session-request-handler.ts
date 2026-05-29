@@ -12,6 +12,7 @@ import type {
   ClaudeThinkingSwitchRequestPayload,
   CodexModelSwitchRequestPayload,
   CodexReasoningSwitchRequestPayload,
+  LocalModelsModelSwitchRequestPayload,
 } from "../session-stream-contracts";
 import type { BridgeEvent } from "../types";
 import type { SessionContinuityLockService } from "./session-continuity-lock-service";
@@ -42,6 +43,7 @@ import type {
 } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerFlowNodeReportState } from "./session-request-handler-flow-node-report-state";
 import type { SessionRequestHandlerFlowNodeRollover } from "./session-request-handler-flow-node-rollover";
+import { SessionRequestHandlerLocalModelsModelSwitch } from "./session-request-handler-local-models-model-switch";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import type { SessionRequestHandlerResumeLifecycle } from "./session-request-handler-resume-lifecycle";
 import type { SessionRequestHandlerRetryState } from "./session-request-handler-retry-state";
@@ -113,6 +115,7 @@ export class SessionRequestHandler {
   private readonly claudeThinkingSwitch: SessionRequestHandlerClaudeThinkingSwitch;
   private readonly codexModelSwitch: SessionRequestHandlerCodexModelSwitch;
   private readonly codexReasoningSwitch: SessionRequestHandlerCodexReasoningSwitch;
+  private readonly localModelsModelSwitch: SessionRequestHandlerLocalModelsModelSwitch;
   private readonly sessionActions: SessionRequestHandlerSessionActions;
   private readonly stopAction: SessionRequestHandlerStopAction;
   private readonly stopRebind: SessionRequestHandlerStopRebind;
@@ -267,6 +270,12 @@ export class SessionRequestHandler {
       logger: this.logger,
       sessionManager: this.sessionManager,
     });
+    this.localModelsModelSwitch =
+      new SessionRequestHandlerLocalModelsModelSwitch({
+        broadcaster: this.broadcaster,
+        logger: this.logger,
+        sessionManager: this.sessionManager,
+      });
     this.stopAction = new SessionRequestHandlerStopAction({
       continuityLockService: this.continuityLockService,
       emitSessionError: (sessionId, message) => {
@@ -394,6 +403,12 @@ export class SessionRequestHandler {
     options: ClaudeThinkingSwitchRequestPayload
   ): void {
     this.claudeThinkingSwitch.handle(options);
+  }
+
+  handleLocalModelsModelSwitch(
+    options: LocalModelsModelSwitchRequestPayload
+  ): void {
+    this.localModelsModelSwitch.handle(options);
   }
 
   async createSessionForWorkflow(options: {

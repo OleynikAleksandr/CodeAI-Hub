@@ -8,6 +8,7 @@ import { RemoteBridgeDevelopmentTreeNodeCommandRouter } from "./remote-bridge-de
 import { RemoteBridgeDialogCommandRouter } from "./remote-bridge-dialog-command-router";
 import type { RemoteBridgeMessageRouterDependencies } from "./remote-bridge-message-router-dependencies";
 import { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-create-router";
+import { validateSessionScopedMessageWorkspace } from "./remote-bridge-session-scope-validator";
 import { RemoteBridgeWorkbenchCommandRouter } from "./remote-bridge-workbench-command-router";
 import { RemoteBridgeWorkspaceCommandRouter } from "./remote-bridge-workspace-command-router";
 import type { IncomingMessage } from "./types";
@@ -176,6 +177,11 @@ export class RemoteBridgeMessageRouter {
           incoming.payload
         );
         break;
+      case "session:local-models:model-switch":
+        await this.deps.sessionHandler.handleLocalModelsModelSwitch(
+          incoming.payload
+        );
+        break;
       case "session:delete":
         await this.deps.sessionHandler.handleDelete(incoming.payload.sessionId);
         break;
@@ -318,36 +324,14 @@ export class RemoteBridgeMessageRouter {
         return false;
       }
     }
-    if (
-      incoming.type === "session:message" ||
-      incoming.type === "session:claude:model-switch" ||
-      incoming.type === "session:claude:thinking-switch" ||
-      incoming.type === "session:codex:model-switch" ||
-      incoming.type === "session:codex:reasoning-switch" ||
-      incoming.type === "session:delete" ||
-      incoming.type === "session:stop"
-    ) {
-      if (!scope.workspacePath) {
-        this.sendScopeViolation(
-          clientId,
-          incoming.type,
-          "Workspace scope is not selected"
-        );
-        return false;
-      }
-      const session = this.deps.sessionManager.getSession(
-        incoming.payload.sessionId
-      );
-      if (session && session.workspacePath !== scope.workspacePath) {
-        this.sendScopeViolation(
-          clientId,
-          incoming.type,
-          "Session command rejected for out-of-scope workspace"
-        );
-        return false;
-      }
-    }
-    return true;
+    return validateSessionScopedMessageWorkspace({
+      clientId,
+      incoming,
+      sendScopeViolation: (targetClientId, command, message) =>
+        this.sendScopeViolation(targetClientId, command, message),
+      sessionManager: this.deps.sessionManager,
+      workspacePath: scope.workspacePath,
+    });
   }
 
   private async handleSessionStopMessage(payload: {

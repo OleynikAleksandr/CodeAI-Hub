@@ -132,6 +132,7 @@ const isCodexModelSwitchPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
   typeof payload.sessionId === "string" &&
   typeof payload.targetModelId === "string";
+const isLocalModelsModelSwitchPayload = isCodexModelSwitchPayload;
 
 const isCodexReasoningSwitchPayload = (payload: unknown): boolean =>
   isRecord(payload) &&
@@ -296,6 +297,7 @@ const PAYLOAD_VALIDATORS: Readonly<Record<string, PayloadValidator>> = {
   "session:claude:thinking-switch": isClaudeThinkingSwitchPayload,
   "session:codex:model-switch": isCodexModelSwitchPayload,
   "session:codex:reasoning-switch": isCodexReasoningSwitchPayload,
+  "session:local-models:model-switch": isLocalModelsModelSwitchPayload,
   "session:create": isSessionCreatePayload,
   "session:delete": isSessionIdPayload,
   "session:message": isSessionMessagePayload,

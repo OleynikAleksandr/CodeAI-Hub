@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "2602f856c",
+  "lastRecordedCommit": "06dceffbe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase16.dialog-switch-api.task1",
-  "expectedCommitMessage": "feat: route local model switch requests",
+  "currentTaskId": "local-models.phase16.dialog-switch-core.task1",
+  "expectedCommitMessage": "feat: switch local model sessions",
   "debt": {
-    "expectedCommitMessage": "feat: route local model switch requests",
-    "preCommitHead": "2602f856c",
+    "expectedCommitMessage": "feat: switch local model sessions",
+    "preCommitHead": "06dceffbe",
     "stage": "commit_pending",
-    "taskId": "local-models.phase16.dialog-switch-api.task1"
+    "taskId": "local-models.phase16.dialog-switch-core.task1"
   }
 }
 ```
@@ -283,9 +283,9 @@
 96. [DONE] `local-models.phase16.dialog-picker.task1` Show downloaded Local Models in the dialog turn model picker and route local picker selections from Project Manager to Core (scope: `src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-view.tsx`; expected commit: `feat: show local models in dialog picker`).
 97. [DONE] Git Commit: `feat: show local models in dialog picker` (hash: 2602f856c)
 98. [DONE] `local-models.phase16.dialog-switch-api.task1` Add Project Manager switch API messages for Local Models turn-level model changes (scope: `src/client/project-manager/services/switch-api.ts, src/client/project-manager/api.ts, src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat: route local model switch requests`).
-99. [PENDING] Git Commit: `feat: route local model switch requests` (hash: TBD)
-100. [TODO] `local-models.phase16.dialog-switch-core.task1` Handle Local Models switch requests in Core and update the session model binding for the next turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-local-models-model-switch.ts, packages/core/src/remote-bridge/session-stream-contracts.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts`; expected commit: `feat: switch local model sessions`).
-101. [TODO] Git Commit: `feat: switch local model sessions` (hash: TBD)
+99. [DONE] Git Commit: `feat: route local model switch requests` (hash: 06dceffbe)
+100. [DONE] `local-models.phase16.dialog-switch-core.task1` Handle Local Models switch requests in Core and update the session model binding for the next turn (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-local-models-model-switch.ts, packages/core/src/remote-bridge/handlers/session-request-handler.ts, packages/core/src/remote-bridge/handlers/incoming-message-validator.ts, packages/core/src/remote-bridge/session-stream-contracts.ts, packages/core/src/remote-bridge/remote-bridge-message-router.ts, packages/core/src/remote-bridge/remote-bridge-session-scope-validator.ts, doc/TODO/todo-plan.md`; expected commit: `feat: switch local model sessions`).
+101. [PENDING] Git Commit: `feat: switch local model sessions` (hash: TBD)
 
 ### Stream: Provider Config And Verification
 102. [TODO] `local-models.phase16.provider-config.task1` Resolve Local Models provider defaults from persisted settings for Core-created sessions and model info labels (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/config/provider-turn-config-resolver.ts, src/client/ui/src/session/model-info-builder.ts`; expected commit: `feat: resolve local model defaults from settings`).
