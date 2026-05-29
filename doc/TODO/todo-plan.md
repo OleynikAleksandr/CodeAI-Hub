@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "2d2a40007",
+  "lastRecordedCommit": "3b3b3b258",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase28.release-package.task1",
-  "expectedCommitMessage": "chore: package step confirmation navigation vsix",
+  "currentTaskId": "local-models.phase29.runtime-policy.task1",
+  "expectedCommitMessage": "fix: manage lm studio translation runtime profiles",
   "debt": {
-    "expectedCommitMessage": "chore: package step confirmation navigation vsix",
-    "preCommitHead": "2d2a40007",
+    "expectedCommitMessage": "fix: manage lm studio translation runtime profiles",
+    "preCommitHead": "3b3b3b258",
     "stage": "commit_pending",
-    "taskId": "local-models.phase28.release-package.task1"
+    "taskId": "local-models.phase29.runtime-policy.task1"
   }
 }
 ```
@@ -519,10 +519,31 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.401`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release package 2026-05-29: verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
     - Release package 2026-05-29: VSIX ready at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.401.vsix` (`4.4M`).
-182. [PENDING] Git Commit: `chore: package step confirmation navigation vsix` (hash: TBD)
-183. [TODO] `local-models.phase28.user-acceptance.task1` User retests the new release and confirms confirmation-button navigation advances to the next Core-active workflow card while manual return remains possible (scope: user workflow observation; expected commit: none).
+182. [DONE] Git Commit: `chore: package step confirmation navigation vsix` (hash: 3b3b3b258)
+183. [DONE] `local-models.phase28.user-acceptance.task1` User retests the new release and confirms confirmation-button navigation advances to the next Core-active workflow card while manual return remains possible (scope: user workflow observation; expected commit: none). Result: release `1.2.401` passed the step-confirmation navigation retest path but user runtime testing exposed a new Local Models LM Studio runtime policy defect: translation uses a fixed `8192` context window, duplicate loaded clones can accumulate, and UI localization can block while a slow local model materializes bundles.
+
+## Phase 29 — LM Studio Runtime Profile Policy (owner: Codex, updated: 2026-05-29)
+### Stream: Context Window And Clone Lifecycle
+184. [DONE] `local-models.phase29.runtime-policy.task1` Add a Core-owned LM Studio runtime load policy that chooses context by purpose/model capacity, reuses already-loaded models with sufficient context, and unloads idle duplicate clones before creating new loads (scope: `packages/core/src/local-models/local-models-runtime-load-manager.ts, packages/core/src/local-models/local-models-facade.ts, packages/core/src/local-models/local-models-provider-adapter.ts`; expected commit: `fix: manage lm studio translation runtime profiles`).
+185. [PENDING] Git Commit: `fix: manage lm studio translation runtime profiles` (hash: TBD)
+186. [TODO] `local-models.phase29.runtime-tests.task1` Add regression coverage for adaptive translation context, loaded-model reuse, idle duplicate unloading, and provider-agent context reuse (scope: `packages/core/src/local-models/local-models-runtime-load-manager.test.ts, packages/core/src/local-models/local-models-facade.test.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts`; expected commit: `test: cover lm studio runtime load policy`).
+187. [TODO] Git Commit: `test: cover lm studio runtime load policy` (hash: TBD)
+188. [TODO] `local-models.phase29.docs.task1` Document the local-model runtime profile policy, reasoned context caps, and clone cleanup ownership in canonical docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/SolidWorks-WorkFlow/Modules/Localization.md`; expected commit: `docs: document lm studio runtime policy`).
+189. [TODO] Git Commit: `docs: document lm studio runtime policy` (hash: TBD)
+190. [TODO] `local-models.phase29.verify.task1` Run targeted Core/localization builds and real LM Studio smoke checks for `hy-mt2-30b-a3b-mlx` context/reuse behavior; record exact commands/results in this plan (scope: `packages/core, packages/localization, doc/TODO/todo-plan.md`; expected commit: `test: verify lm studio runtime policy`).
+191. [TODO] Git Commit: `test: verify lm studio runtime policy` (hash: TBD)
+
+### Stream: Release Build
+192. [DONE] `local-models.phase29.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the LM Studio runtime profile fix (scope: chat/process gate; expected commit: none). Result: User explicitly requested "Внеси эти исправления и собери новый релиз" on 2026-05-29 after the `1.2.401` runtime-policy defect analysis; release build is approved.
+193. [TODO] `local-models.phase29.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lm studio runtime policy release`).
+194. [TODO] Git Commit: `docs: prepare lm studio runtime policy release` (hash: TBD)
+195. [TODO] `local-models.phase29.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build lm studio runtime policy release`).
+196. [TODO] Git Commit: `chore: build lm studio runtime policy release` (hash: TBD)
+197. [TODO] `local-models.phase29.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package lm studio runtime policy vsix`).
+198. [TODO] Git Commit: `chore: package lm studio runtime policy vsix` (hash: TBD)
+199. [TODO] `local-models.phase29.user-acceptance.task1` User retests the new release and confirms local LM Studio translation uses adaptive context, does not accumulate idle clones, keeps reasoning translation fast, and no longer blocks Project Manager indefinitely on slow UI localization materialization (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-184. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-185. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+200. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+201. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

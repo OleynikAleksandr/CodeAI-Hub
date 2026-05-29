@@ -14,11 +14,13 @@ import {
   ensureLmStudioServerRunning,
   type LmsCommandRunner,
 } from "./local-models-cli";
+import {
+  type LocalModelRuntimePurpose,
+  LocalModelsRuntimeLoadManager,
+} from "./local-models-runtime-load-manager";
 
 const DEFAULT_LM_STUDIO_BASE_URL = "http://127.0.0.1:1234";
 const DISCOVERY_TIMEOUT_MS = 5000;
-const MODEL_LOAD_TIMEOUT_MS = 120_000;
-const DEFAULT_CONTEXT_LENGTH = "8192";
 const DEFAULT_MAX_TOKENS = 4096;
 const LM_STUDIO_JSON_HEADERS = {
   "content-type": "application/json",
@@ -95,8 +97,6 @@ interface ChatCompletionChoice {
 interface ChatCompletionResponse {
   readonly choices?: readonly ChatCompletionChoice[];
 }
-
-const loadedModelKeys = new Set<string>();
 
 const resolveBaseUrl = (baseUrl?: string): string =>
   (
@@ -240,6 +240,18 @@ const buildUserPrompt = (
   return shouldDisableThinking(model) ? `/no_think\n${prompt}` : prompt;
 };
 
+const resolveTranslationRuntimePurpose = (
+  request: NormalizedTranslationRequest
+): LocalModelRuntimePurpose => {
+  if (request.category === "reasoning") {
+    return "translation-reasoning";
+  }
+  if (request.category === "localization_bundle") {
+    return "translation-localization";
+  }
+  return "translation-generic";
+};
+
 class LmStudioLocalTranslationEngine implements TranslationEngine {
   readonly id: string;
   private readonly baseUrl: string;
@@ -247,6 +259,7 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
   private readonly fetchImplementation: typeof fetch;
   private readonly model: LocalModelDescriptor;
   private readonly reporter?: TranslationReporter;
+  private readonly runtimeLoadManager: LocalModelsRuntimeLoadManager;
 
   constructor(options: {
     readonly baseUrl: string;
@@ -254,6 +267,7 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
     readonly fetchImplementation: typeof fetch;
     readonly model: LocalModelDescriptor;
     readonly reporter?: TranslationReporter;
+    readonly runtimeLoadManager: LocalModelsRuntimeLoadManager;
   }) {
     this.baseUrl = options.baseUrl;
     this.commandRunner = options.commandRunner;
@@ -261,6 +275,7 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
     this.id = options.model.engineId;
     this.model = options.model;
     this.reporter = options.reporter;
+    this.runtimeLoadManager = options.runtimeLoadManager;
   }
 
   async translate(
@@ -274,9 +289,13 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
       return createFallbackResult(request, this.id, serverErrorCode);
     }
 
-    const loadErrorCode = this.ensureModelLoaded();
-    if (loadErrorCode) {
-      return createFallbackResult(request, this.id, loadErrorCode);
+    const apiModelIdentifier = this.ensureModelLoaded(request);
+    if (!apiModelIdentifier) {
+      return createFallbackResult(
+        request,
+        this.id,
+        "lmstudio_model_load_failed"
+      );
     }
 
     const controller = new AbortController();
@@ -285,7 +304,7 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
       const response = await this.fetchImplementation(
         `${this.baseUrl}/v1/chat/completions`,
         {
-          body: JSON.stringify(this.buildPayload(request)),
+          body: JSON.stringify(this.buildPayload(request, apiModelIdentifier)),
           headers: LM_STUDIO_JSON_HEADERS,
           method: "POST",
           signal: controller.signal,
@@ -324,7 +343,10 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
     }
   }
 
-  private buildPayload(request: NormalizedTranslationRequest): object {
+  private buildPayload(
+    request: NormalizedTranslationRequest,
+    apiModelIdentifier: string
+  ): object {
     return {
       max_tokens: DEFAULT_MAX_TOKENS,
       messages: [
@@ -337,36 +359,30 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
           role: "user",
         },
       ],
-      model: this.model.modelKey,
+      model: apiModelIdentifier,
       stream: false,
       temperature: 0.1,
       top_p: 0.8,
     };
   }
 
-  private ensureModelLoaded(): string | null {
-    if (loadedModelKeys.has(this.model.modelKey)) {
-      return null;
-    }
+  private ensureModelLoaded(
+    request: NormalizedTranslationRequest
+  ): string | null {
     try {
-      this.commandRunner(
-        [
-          "load",
-          this.model.modelKey,
-          "--context-length",
-          process.env.CODEAI_LMSTUDIO_CONTEXT_LENGTH ?? DEFAULT_CONTEXT_LENGTH,
-        ],
-        { timeoutMs: MODEL_LOAD_TIMEOUT_MS }
-      );
-      loadedModelKeys.add(this.model.modelKey);
-      return null;
+      return this.runtimeLoadManager.ensureModelLoaded({
+        maxTokens: DEFAULT_MAX_TOKENS,
+        model: this.model,
+        purpose: resolveTranslationRuntimePurpose(request),
+        sourceTextLength: request.text.length,
+      });
     } catch (error) {
       this.reporter?.warn?.("LM Studio model load failed", {
         engine: this.id,
         error: error instanceof Error ? error.message : String(error),
         modelKey: this.model.modelKey,
       });
-      return "lmstudio_model_load_failed";
+      return null;
     }
   }
 }
@@ -376,6 +392,7 @@ export class LocalModelsFacade {
   private readonly commandRunner: LmsCommandRunner;
   private readonly fetchImplementation: typeof fetch;
   private readonly reporter?: TranslationReporter;
+  private readonly runtimeLoadManager: LocalModelsRuntimeLoadManager;
 
   constructor(options: LocalModelsFacadeOptions = {}) {
     this.baseUrl = resolveBaseUrl(options.baseUrl);
@@ -383,6 +400,9 @@ export class LocalModelsFacade {
       options.commandRunner ?? createDefaultLmsCommandRunner();
     this.fetchImplementation = options.fetchImplementation ?? fetch;
     this.reporter = options.reporter;
+    this.runtimeLoadManager = new LocalModelsRuntimeLoadManager({
+      commandRunner: this.commandRunner,
+    });
   }
 
   createLocalizationEngineCatalogs(): readonly LocalizationEngineLanguageCatalog[] {
@@ -415,6 +435,7 @@ export class LocalModelsFacade {
           fetchImplementation: this.fetchImplementation,
           model,
           reporter: this.reporter,
+          runtimeLoadManager: this.runtimeLoadManager,
         })
     );
   }
