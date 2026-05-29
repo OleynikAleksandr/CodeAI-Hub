@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "2e9957ab6",
+  "lastRecordedCommit": "41ef58338",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase18.localization-runtime-hardening.task1",
-  "expectedCommitMessage": "fix: keep settings localization runtime during reload",
+  "currentTaskId": "local-models.phase18.localization-runtime-hardening-verify.task1",
+  "expectedCommitMessage": "test: verify localization runtime reload guards",
   "debt": {
-    "expectedCommitMessage": "fix: keep settings localization runtime during reload",
-    "preCommitHead": "2e9957ab6",
+    "expectedCommitMessage": "test: verify localization runtime reload guards",
+    "preCommitHead": "41ef58338",
     "stage": "commit_pending",
-    "taskId": "local-models.phase18.localization-runtime-hardening.task1"
+    "taskId": "local-models.phase18.localization-runtime-hardening-verify.task1"
   }
 }
 ```
@@ -326,9 +326,14 @@
     - Verification 2026-05-29: `npm run build:webview` — PASS.
     - Verification 2026-05-29: `npm run build:project-manager` — PASS.
     - Smoke 2026-05-29: built `media/react-chat.js` and `packages/ui/project-manager/dist/app.js` contain non-null localization runtime guards.
-113. [PENDING] Git Commit: `fix: keep settings localization runtime during reload` (hash: TBD)
-114. [TODO] `local-models.phase18.localization-runtime-hardening-verify.task1` Run targeted tests/builds and bundle smoke checks for shared and Project Manager localization runtime guards (scope: `src/client/ui, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify localization runtime reload guards`).
-115. [TODO] Git Commit: `test: verify localization runtime reload guards` (hash: TBD)
+113. [DONE] Git Commit: `fix: keep settings localization runtime during reload` (hash: 41ef58338)
+114. [DONE] `local-models.phase18.localization-runtime-hardening-verify.task1` Run targeted tests/builds and bundle smoke checks for shared and Project Manager localization runtime guards (scope: `src/client/ui, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify localization runtime reload guards`).
+    - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts` — PASS (2 tests).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Smoke 2026-05-29: built `media/react-chat.js` preserves current runtime on null localization payloads, and built `packages/ui/project-manager/dist/app.js` keeps the Project Manager non-null runtime guard.
+115. [PENDING] Git Commit: `test: verify localization runtime reload guards` (hash: TBD)
 
 ## Phase 19 — Localization Runtime Guard Release Build (owner: Codex, updated: 2026-05-29)
 ### Stream: Release Confirmation And Packaging
