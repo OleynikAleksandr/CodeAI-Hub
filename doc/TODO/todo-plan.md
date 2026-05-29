@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "22429228e",
+  "lastRecordedCommit": "d03ba759a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase30.provider-native-chat.task1",
-  "expectedCommitMessage": "fix: route local provider through lm studio native chat",
+  "currentTaskId": "local-models.phase30.memory-policy.task1",
+  "expectedCommitMessage": "fix: unload idle local model workers across purposes",
   "debt": {
-    "expectedCommitMessage": "fix: route local provider through lm studio native chat",
-    "preCommitHead": "22429228e",
+    "expectedCommitMessage": "fix: unload idle local model workers across purposes",
+    "preCommitHead": "d03ba759a",
     "stage": "commit_pending",
-    "taskId": "local-models.phase30.provider-native-chat.task1"
+    "taskId": "local-models.phase30.memory-policy.task1"
   }
 }
 ```
@@ -567,9 +567,15 @@
     - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-provider-adapter.test.ts` — PASS (6 tests).
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-provider-adapter.test.js` — PASS (6 tests).
-201. [PENDING] Git Commit: `fix: route local provider through lm studio native chat` (hash: TBD)
-202. [TODO] `local-models.phase30.memory-policy.task1` Unload idle CodeAI-owned LM Studio models from other purposes/model keys before creating a new local runtime load while leaving generating and manually loaded models alone (scope: `packages/core/src/local-models/local-models-runtime-load-manager.ts, packages/core/src/local-models/local-models-runtime-load-manager.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: unload idle local model workers across purposes`).
-203. [TODO] Git Commit: `fix: unload idle local model workers across purposes` (hash: TBD)
+201. [DONE] Git Commit: `fix: route local provider through lm studio native chat` (hash: d03ba759a)
+202. [DONE] `local-models.phase30.memory-policy.task1` Unload idle CodeAI-owned LM Studio models from other purposes/model keys before creating a new local runtime load while leaving generating and manually loaded models alone (scope: `packages/core/src/local-models/local-models-runtime-load-manager.ts, packages/core/src/local-models/local-models-runtime-load-manager.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: unload idle local model workers across purposes`).
+    - Finding 2026-05-29: real `lms ps --json` after the `1.2.402` retest showed two idle CodeAI-owned workers: `codeaihub-translation-localization-hy-mt2-30b-a3b-mlx-16384` and `codeaihub-workflow-agent-qwen3.6-27b-mlx-16384`; the previous cleanup only handled duplicates for the selected `modelKey`.
+    - Fix 2026-05-29: runtime load policy now unloads idle `codeaihub-*` workers for other model keys before creating/reusing a new selected load, while preserving currently generating workers and user/manual LM Studio identifiers.
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts` — PASS (4 tests).
+    - Verification 2026-05-29: `npm exec -- ultracite check packages/core/src/local-models/local-models-runtime-load-manager.ts packages/core/src/local-models/local-models-runtime-load-manager.test.ts` — PASS.
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-runtime-load-manager.test.js` — PASS (4 tests).
+203. [PENDING] Git Commit: `fix: unload idle local model workers across purposes` (hash: TBD)
 204. [TODO] `local-models.phase30.docs.task1` Document the native workflow-agent transport, reasoning-only local model limitation, and cross-purpose idle worker cleanup in canonical local-model docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local provider native chat policy`).
 205. [TODO] Git Commit: `docs: document local provider native chat policy` (hash: TBD)
 

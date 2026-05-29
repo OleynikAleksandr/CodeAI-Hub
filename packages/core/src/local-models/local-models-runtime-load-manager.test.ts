@@ -144,3 +144,55 @@ test("LocalModelsRuntimeLoadManager reuses sufficient loads and unloads only idl
     ]
   );
 });
+
+test("LocalModelsRuntimeLoadManager unloads idle CodeAI workers across model keys", () => {
+  const commandCalls: string[][] = [];
+  const manager = new LocalModelsRuntimeLoadManager({
+    commandRunner: (args) => {
+      commandCalls.push([...args]);
+      if (args[0] === "ps") {
+        return createLoadedModelsJson([
+          {
+            contextLength: 16_384,
+            identifier:
+              "codeaihub-translation-localization-hy-mt2-30b-a3b-mlx-16384",
+            modelKey: "hy-mt2-30b-a3b-mlx",
+            status: "idle",
+          },
+          {
+            contextLength: 16_384,
+            identifier: "codeaihub-workflow-agent-qwen3.6-27b-mlx-16384",
+            modelKey: "qwen3.6-27b-mlx",
+            status: "generating",
+          },
+          {
+            contextLength: 16_384,
+            identifier: "rugpt-3.5-13b",
+            modelKey: "rugpt-3.5-13b",
+            status: "idle",
+          },
+        ]);
+      }
+      return "";
+    },
+  });
+
+  const identifier = manager.ensureModelLoaded({
+    model: createModel("gemma-4-26b-a4b-it"),
+    purpose: "workflow-agent",
+  });
+
+  assert.equal(identifier, "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384");
+  assert.deepEqual(
+    commandCalls.filter((args) => args[0] === "unload"),
+    [["unload", "codeaihub-translation-localization-hy-mt2-30b-a3b-mlx-16384"]]
+  );
+  assert.deepEqual(commandCalls.at(-1), [
+    "load",
+    "gemma-4-26b-a4b-it",
+    "--context-length",
+    "16384",
+    "--identifier",
+    "codeaihub-workflow-agent-gemma-4-26b-a4b-it-16384",
+  ]);
+});

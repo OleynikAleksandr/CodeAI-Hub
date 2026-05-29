@@ -143,6 +143,9 @@ const isLoadedLlmForModel = (
   modelKey: string
 ): boolean => record.type === "llm" && record.modelKey === modelKey;
 
+const isLoadedLlm = (record: LoadedLmStudioModelRecord): boolean =>
+  record.type === "llm";
+
 const asIdentifier = (record: LoadedLmStudioModelRecord): string | null =>
   typeof record.identifier === "string" && record.identifier.trim().length > 0
     ? record.identifier.trim()
@@ -174,6 +177,21 @@ const isIdleDuplicateCandidate = (
   );
 };
 
+const isIdleCodeAiWorkerCandidate = (
+  record: LoadedLmStudioModelRecord,
+  selectedModelKey: string,
+  selectedIdentifier: string
+): boolean => {
+  const identifier = asIdentifier(record);
+  return (
+    !!identifier &&
+    identifier !== selectedIdentifier &&
+    record.modelKey !== selectedModelKey &&
+    record.status === "idle" &&
+    identifier.startsWith(`${CODEAI_IDENTIFIER_PREFIX}-`)
+  );
+};
+
 export class LocalModelsRuntimeLoadManager {
   private readonly commandRunner: LmsCommandRunner;
   private readonly modelLoadTimeoutMs: number;
@@ -196,15 +214,23 @@ export class LocalModelsRuntimeLoadManager {
       this.commandRunner(["ps", "--json"], {
         timeoutMs: this.modelLoadTimeoutMs,
       })
-    ).filter((record) => isLoadedLlmForModel(record, options.model.modelKey));
+    ).filter(isLoadedLlm);
+    const loadedModelsForSelectedModel = loadedModels.filter((record) =>
+      isLoadedLlmForModel(record, options.model.modelKey)
+    );
     const reusable = this.resolveReusableLoadedModel(
-      loadedModels,
+      loadedModelsForSelectedModel,
       contextLength,
       preferredIdentifier
     );
     const selectedIdentifier = reusable ?? preferredIdentifier;
-    this.unloadIdleDuplicates(
+    this.unloadIdleCodeAiWorkers(
       loadedModels,
+      options.model.modelKey,
+      selectedIdentifier
+    );
+    this.unloadIdleDuplicates(
+      loadedModelsForSelectedModel,
       options.model.modelKey,
       selectedIdentifier
     );
@@ -261,6 +287,30 @@ export class LocalModelsRuntimeLoadManager {
   ): void {
     for (const record of loadedModels) {
       if (!isIdleDuplicateCandidate(record, modelKey, selectedIdentifier)) {
+        continue;
+      }
+      const identifier = asIdentifier(record);
+      if (identifier) {
+        this.commandRunner(["unload", identifier], {
+          timeoutMs: this.modelLoadTimeoutMs,
+        });
+      }
+    }
+  }
+
+  private unloadIdleCodeAiWorkers(
+    loadedModels: readonly LoadedLmStudioModelRecord[],
+    selectedModelKey: string,
+    selectedIdentifier: string
+  ): void {
+    for (const record of loadedModels) {
+      if (
+        !isIdleCodeAiWorkerCandidate(
+          record,
+          selectedModelKey,
+          selectedIdentifier
+        )
+      ) {
         continue;
       }
       const identifier = asIdentifier(record);
