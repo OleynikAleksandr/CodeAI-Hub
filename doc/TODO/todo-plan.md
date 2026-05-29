@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "887270ef9",
+  "lastRecordedCommit": "e0c67c20a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase29.docs.task1",
-  "expectedCommitMessage": "docs: document lm studio runtime policy",
+  "currentTaskId": "local-models.phase29.verify.task1",
+  "expectedCommitMessage": "test: verify lm studio runtime policy",
   "debt": {
-    "expectedCommitMessage": "docs: document lm studio runtime policy",
-    "preCommitHead": "887270ef9",
+    "expectedCommitMessage": "test: verify lm studio runtime policy",
+    "preCommitHead": "e0c67c20a",
     "stage": "commit_pending",
-    "taskId": "local-models.phase29.docs.task1"
+    "taskId": "local-models.phase29.verify.task1"
   }
 }
 ```
@@ -532,9 +532,15 @@
 187. [DONE] Git Commit: `test: cover lm studio runtime load policy` (hash: 887270ef9)
 188. [DONE] `local-models.phase29.docs.task1` Document the local-model runtime profile policy, reasoned context caps, and clone cleanup ownership in canonical docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/SolidWorks-WorkFlow/Modules/Localization.md`; expected commit: `docs: document lm studio runtime policy`).
     - Documentation 2026-05-29: `SystemArchitecture.md`, `Shared_RuntimeTranslation_Module.md`, and `Localization.md` now describe Core-owned LM Studio runtime profiles, adaptive localization context caps, reuse of loaded models with sufficient context, and idle duplicate clone cleanup.
-189. [PENDING] Git Commit: `docs: document lm studio runtime policy` (hash: TBD)
-190. [TODO] `local-models.phase29.verify.task1` Run targeted Core/localization builds and real LM Studio smoke checks for `hy-mt2-30b-a3b-mlx` context/reuse behavior; record exact commands/results in this plan (scope: `packages/core, packages/localization, doc/TODO/todo-plan.md`; expected commit: `test: verify lm studio runtime policy`).
-191. [TODO] Git Commit: `test: verify lm studio runtime policy` (hash: TBD)
+189. [DONE] Git Commit: `docs: document lm studio runtime policy` (hash: e0c67c20a)
+190. [DONE] `local-models.phase29.verify.task1` Run targeted Core/localization builds and real LM Studio smoke checks for `hy-mt2-30b-a3b-mlx` context/reuse behavior; record exact commands/results in this plan (scope: `packages/core, packages/localization, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/TODO/todo-plan.md`; expected commit: `test: verify lm studio runtime policy`).
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-facade.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts` — PASS (11 tests).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/localization` — PASS.
+    - Finding 2026-05-29: real `lms ps --json` showed `hy-mt2-30b-a3b-mlx` already loaded as idle base identifier with `contextLength=8192`; the cleanup policy was tightened so a later adaptive `16384` localization load unloads that stale base clone before loading the CodeAI-owned identifier.
+    - Smoke 2026-05-29: built Core `LocalModelsRuntimeLoadManager` selected `codeaihub-translation-localization-hy-mt2-30b-a3b-mlx-16384` for `sourceTextLength=10000`, unloaded the idle base `8192` clone, and left exactly one loaded `hy-mt2` instance.
+    - Smoke 2026-05-29: built Core `LocalModelsFacade` short reasoning translation through `lmstudio:hy-mt2-30b-a3b-mlx` returned `Откройте настройки.` and did not recreate a second clone; `lms ps --json` still showed only `codeaihub-translation-localization-hy-mt2-30b-a3b-mlx-16384`.
+191. [PENDING] Git Commit: `test: verify lm studio runtime policy` (hash: TBD)
 
 ### Stream: Release Build
 192. [DONE] `local-models.phase29.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the LM Studio runtime profile fix (scope: chat/process gate; expected commit: none). Result: User explicitly requested "Внеси эти исправления и собери новый релиз" on 2026-05-29 after the `1.2.401` runtime-policy defect analysis; release build is approved.

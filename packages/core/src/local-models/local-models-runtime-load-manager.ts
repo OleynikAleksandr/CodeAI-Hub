@@ -168,6 +168,7 @@ const isIdleDuplicateCandidate = (
     return false;
   }
   return (
+    identifier === modelKey ||
     identifier.startsWith(`${CODEAI_IDENTIFIER_PREFIX}-`) ||
     identifier.startsWith(`${modelKey}:`)
   );

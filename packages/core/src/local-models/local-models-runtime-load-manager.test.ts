@@ -99,6 +99,12 @@ test("LocalModelsRuntimeLoadManager reuses sufficient loads and unloads only idl
           },
           {
             contextLength: 8192,
+            identifier: "hy-mt2-30b-a3b-mlx",
+            modelKey: "hy-mt2-30b-a3b-mlx",
+            status: "idle",
+          },
+          {
+            contextLength: 8192,
             identifier: "hy-mt2-30b-a3b-mlx:2",
             modelKey: "hy-mt2-30b-a3b-mlx",
             status: "idle",
@@ -132,6 +138,9 @@ test("LocalModelsRuntimeLoadManager reuses sufficient loads and unloads only idl
   );
   assert.deepEqual(
     commandCalls.filter((args) => args[0] === "unload"),
-    [["unload", "hy-mt2-30b-a3b-mlx:2"]]
+    [
+      ["unload", "hy-mt2-30b-a3b-mlx"],
+      ["unload", "hy-mt2-30b-a3b-mlx:2"],
+    ]
   );
 });
