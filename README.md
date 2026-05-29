@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.405** (LM Studio Memory Lifecycle)
+**Current Release — v1.2.406** (Claude Reasoning Summary Language)
+
+This release asks Claude visible thinking/reasoning summaries to follow the
+runtime reasoning/chat language selected for the current workflow step. Russian
+sessions now instruct Claude to avoid English default summary headings and
+short progress labels.
+
+Claude provider-local thinking translation also skips a second translation pass
+when the target language is Russian and the emitted thinking already contains
+Cyrillic text. English thinking in Russian-target sessions still flows through
+the translation facade.
+
+**Previous Release — v1.2.405** (LM Studio Memory Lifecycle)
 
 This release adds TTL and Core-owned cleanup for CodeAI-owned LM Studio model
 loads so local translation and workflow-agent experiments do not leave idle

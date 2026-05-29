@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.406] - 2026-05-29
+### Fixed
+- **Claude visible reasoning summaries follow the target language.** The shared Claude workflow system prompt now explicitly instructs visible thinking/thought/reasoning summaries to use the runtime reasoning/chat language, including Russian summary headings and short progress labels for `ru` sessions.
+- **Already Russian Claude thinking is not translated twice.** The provider-local thinking translation adapter skips TranslationFacade when the target language is Russian and the emitted thinking already contains Cyrillic text, preserving source-first Russian summaries.
+- **Claude SSOT documents the language guard.** The module contract now records prompt-owned visible reasoning language policy and the Russian no-retranslate guard.
+
+### Tests
+- `npm run build --workspace @codeai-hub/claude-module`
+- `node --test packages/Claude_Module/dist/messaging/claude-thought-translation-adapter.test.js`
+- `npm test --workspace @codeai-hub/claude-module`
+
 ## [1.2.405] - 2026-05-29
 ### Fixed
 - **CodeAI-owned LM Studio loads now receive TTL.** Translation/localization loads default to 300 seconds, reasoning translation loads to 600 seconds, and workflow-agent loads to 1800 seconds, with environment overrides for tuning.

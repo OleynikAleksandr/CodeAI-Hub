@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-summary-language-2026-05-29",
   "branch": "main",
   "baseHead": "e733a3298",
-  "lastRecordedCommit": "877597411",
+  "lastRecordedCommit": "48cfd17a3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_ReasoningSummary_Language_Planning.md",
-  "currentTaskId": "phase1-claude-doc-sync",
-  "expectedCommitMessage": "docs: document Claude reasoning summary language guard",
+  "currentTaskId": "phase1-release-docs",
+  "expectedCommitMessage": "docs: prepare 1.2.406 release notes",
   "debt": {
-    "expectedCommitMessage": "docs: document Claude reasoning summary language guard",
-    "preCommitHead": "877597411",
+    "expectedCommitMessage": "docs: prepare 1.2.406 release notes",
+    "preCommitHead": "48cfd17a3",
     "stage": "commit_pending",
-    "taskId": "phase1-claude-doc-sync"
+    "taskId": "phase1-release-docs"
   }
 }
 ```
@@ -44,13 +44,19 @@
 1. [DONE] `phase1-claude-reasoning-language` Add Claude visible reasoning-summary language instruction and skip provider-local reasoning translation when source text already matches Russian target language — scope: `packages/Claude_Module/src/sdk/claude-workflow-system-prompt.ts, packages/Claude_Module/src/messaging/claude-thought-translation-adapter.ts, packages/Claude_Module/src/messaging/claude-thought-translation-adapter.test.ts, doc/SolidWorks-WorkFlow/Plans/Claude_ReasoningSummary_Language_Planning.md`; expected commit: `fix: keep Claude reasoning summaries in target language`
 2. [DONE] Git Commit: `fix: keep Claude reasoning summaries in target language` (hash: 877597411)
 3. [DONE] `phase1-claude-doc-sync` Sync Claude module SSOT for prompt-owned reasoning summary language and translation skip guard — scope: `doc/SolidWorks-WorkFlow/Modules/Claude.md`; expected commit: `docs: document Claude reasoning summary language guard`
-4. [PENDING] Git Commit: `docs: document Claude reasoning summary language guard` (hash: TBD)
+4. [DONE] Git Commit: `docs: document Claude reasoning summary language guard` (hash: 48cfd17a3)
 
 ### Stream: Tooling Verification
-5. [TODO] `phase1-tooling-verification` Run targeted Claude module tests for prompt options and reasoning translation guard — scope: `packages/Claude_Module`; expected commit: `no commit`
+5. [DONE] `phase1-tooling-verification` Run targeted Claude module tests for prompt options and reasoning translation guard — scope: `packages/Claude_Module` Result: Claude module build passed; targeted adapter test passed 4/4; workspace Claude test script passed 20/20.
 
 ### Stream: User Workflow Acceptance Testing
-6. [TODO] `phase1-user-acceptance` Present verification results and wait for explicit user acceptance — scope: user acceptance gate; expected commit: `no commit`
+6. [DONE] `phase1-user-acceptance` Present verification results and wait for explicit user acceptance — scope: user acceptance gate Result: User accepted Claude reasoning summary language fix and explicitly requested a new release build.
+
+### Stream: Release Build
+7. [DONE] `phase1-release-docs` Update release-facing README and CHANGELOG to the next version before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.406 release notes`
+8. [PENDING] Git Commit: `docs: prepare 1.2.406 release notes` (hash: TBD)
+9. [TODO] `phase1-release-build` Run release scripts and collect VSIX/tarball artifacts after confirmed user approval — scope: `package.json, package-lock.json, packages/*/package.json, doc/tmp/releases/**`; expected commit: `chore: build 1.2.406 release`
+10. [TODO] Git Commit: `chore: build 1.2.406 release` (hash: TBD)
 
 ### Stream: Scope Closeout
-7. [TODO] `phase1-scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md`, `doc/TODO/Archive/`, planning-doc disposition; expected commit: `no commit`
+11. [TODO] `phase1-scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
