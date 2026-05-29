@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "1d0f7e627",
+  "lastRecordedCommit": "038749308",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase17.clear-localization.task1",
-  "expectedCommitMessage": "fix: preserve localization after clear rollback",
+  "currentTaskId": "local-models.phase17.clear-localization-verify.task1",
+  "expectedCommitMessage": "test: verify localization after clear rollback",
   "debt": {
-    "expectedCommitMessage": "fix: preserve localization after clear rollback",
-    "preCommitHead": "1d0f7e627",
+    "expectedCommitMessage": "test: verify localization after clear rollback",
+    "preCommitHead": "038749308",
     "stage": "commit_pending",
-    "taskId": "local-models.phase17.clear-localization.task1"
+    "taskId": "local-models.phase17.clear-localization-verify.task1"
   }
 }
 ```
@@ -310,9 +310,13 @@
     - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts` — PASS (2 tests).
     - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
     - Verification 2026-05-29: `npm run build:project-manager` — PASS.
-109. [PENDING] Git Commit: `fix: preserve localization after clear rollback` (hash: TBD)
-110. [TODO] `local-models.phase17.clear-localization-verify.task1` Run targeted tests/builds and smoke checks for settings-backed localization bootstrap after clear rollback (scope: `packages/core, packages/localization, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify localization after clear rollback`).
-111. [TODO] Git Commit: `test: verify localization after clear rollback` (hash: TBD)
+109. [DONE] Git Commit: `fix: preserve localization after clear rollback` (hash: 038749308)
+110. [DONE] `local-models.phase17.clear-localization-verify.task1` Run targeted tests/builds and smoke checks for settings-backed localization bootstrap after clear rollback (scope: `packages/core, packages/localization, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify localization after clear rollback`).
+    - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts` — PASS (2 tests).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Smoke 2026-05-29: built Project Manager bundle `packages/ui/project-manager/dist/app.js` contains `if (payload.localizationRuntime) setLocalizationRuntime(payload.localizationRuntime);`, confirming intermediate null localization payloads no longer clear the active translated runtime.
+111. [PENDING] Git Commit: `test: verify localization after clear rollback` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
