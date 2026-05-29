@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "484dad3fb",
+  "lastRecordedCommit": "6b4185d7c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase22.provider-context.task1",
-  "expectedCommitMessage": "fix: stabilize local provider context loading",
+  "currentTaskId": "local-models.phase22.provider-context-verify.task1",
+  "expectedCommitMessage": "test: verify local provider context loading",
   "debt": {
-    "expectedCommitMessage": "fix: stabilize local provider context loading",
-    "preCommitHead": "484dad3fb",
+    "expectedCommitMessage": "test: verify local provider context loading",
+    "preCommitHead": "6b4185d7c",
     "stage": "commit_pending",
-    "taskId": "local-models.phase22.provider-context.task1"
+    "taskId": "local-models.phase22.provider-context-verify.task1"
   }
 }
 ```
@@ -401,9 +401,12 @@
     - Finding 2026-05-29: `lms ps --json` shows multiple `gemma-4-26b-a4b-it` instances at `contextLength=8192`; the current provider adapter loads the model with default `8192` and then calls `/v1/chat/completions` with `model=modelKey`, so it can route large workflow prompts to a short-context instance even when a larger manual LM Studio load exists.
     - Fix 2026-05-29: workflow-agent Local Models turns now load/use a CodeAI-owned LM Studio identifier with provider-only default context `16384` (`CODEAI_LMSTUDIO_AGENT_CONTEXT_LENGTH` override supported), while the translation engine keeps its existing short-context path.
     - Smoke 2026-05-29: direct LM Studio API call with a 46K Cyrillic prompt fails against shared `gemma-4-26b-a4b-it` but succeeds against `codeaihub-gemma-4-26b-a4b-it-16384`; built `LocalModelsProviderAdapter` emits `turn_started, assistant, turn_completed` for the same prompt.
-137. [PENDING] Git Commit: `fix: stabilize local provider context loading` (hash: TBD)
-138. [TODO] `local-models.phase22.provider-context-verify.task1` Run targeted Core tests/build plus live LM Studio smoke for a Description-sized local provider prompt (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider context loading`).
-139. [TODO] Git Commit: `test: verify local provider context loading` (hash: TBD)
+137. [DONE] Git Commit: `fix: stabilize local provider context loading` (hash: 6b4185d7c)
+138. [DONE] `local-models.phase22.provider-context-verify.task1` Run targeted Core tests/build plus live LM Studio smoke for a Description-sized local provider prompt (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider context loading`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-provider-adapter.test.js` — PASS (4 tests).
+    - Smoke 2026-05-29: built `LocalModelsProviderAdapter` sent a `46324` character Cyrillic Description-sized prompt through `gemma-4-26b-a4b-it` using the CodeAI-owned `16384` context LM Studio identifier and emitted `turn_started, assistant, turn_completed` with assistant text `OK`.
+139. [PENDING] Git Commit: `test: verify local provider context loading` (hash: TBD)
 140. [TODO] `local-models.phase22.release-confirm.task1` Ask for separate explicit user confirmation before preparing and building the next release after the provider context fix is verified (scope: chat/process gate; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
