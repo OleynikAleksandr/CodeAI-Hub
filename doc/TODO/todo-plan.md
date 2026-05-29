@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "0b01f6f52",
+  "lastRecordedCommit": "51de855e8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase25.release-package.task1",
-  "expectedCommitMessage": "chore: package local preliminary artifact vsix",
+  "currentTaskId": "local-models.phase26.wait-copy.task1",
+  "expectedCommitMessage": "fix: classify session wait copy by lock reason",
   "debt": {
-    "expectedCommitMessage": "chore: package local preliminary artifact vsix",
-    "preCommitHead": "0b01f6f52",
+    "expectedCommitMessage": "fix: classify session wait copy by lock reason",
+    "preCommitHead": "51de855e8",
     "stage": "commit_pending",
-    "taskId": "local-models.phase25.release-package.task1"
+    "taskId": "local-models.phase26.wait-copy.task1"
   }
 }
 ```
@@ -455,10 +455,32 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.399`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Verified release packaging output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
     - VSIX ready for user retest: `codeai-hub-1.2.399.vsix` (`4.4M`).
-158. [PENDING] Git Commit: `chore: package local preliminary artifact vsix` (hash: TBD)
-159. [TODO] `local-models.phase25.user-acceptance.task1` User retests the new release and confirms Local Models can complete a Description step, materialize `Final_Description.md`, unlock the input after review, and preserve fast translation context behavior (scope: user workflow observation; expected commit: none).
+158. [DONE] Git Commit: `chore: package local preliminary artifact vsix` (hash: 51de855e8)
+159. [DONE] `local-models.phase25.user-acceptance.task1` User retests the new release and confirms Local Models can complete a Description step, materialize `Final_Description.md`, unlock the input after review, and preserve fast translation context behavior (scope: user workflow observation; expected commit: none). Result: Retest found an older Session UI wait-copy classification regression: ordinary post-turn Core-managed locks can show resume copy. Opened Phase 26 for the fix and release.
+
+## Phase 26 — Session Wait Copy Regression Fix (owner: Codex, updated: 2026-05-29)
+### Stream: Core-Owned Lock Display Classification
+160. [DONE] `local-models.phase26.wait-copy.task1` Make Project Manager display ordinary Core-owned post-turn/managed-workflow locks as working waits while reserving resume copy for actual continuity rollover/resume locks, and document the display-only contract (scope: `src/client/ui/src/session, doc/SolidWorks-WorkFlow/Contracts/SessionUI_Behavior.md, doc/TODO/todo-plan.md`; expected commit: `fix: classify session wait copy by lock reason`).
+    - Fix 2026-05-29: removed `context_check_pending` from the resume-copy classification while keeping real continuity rollover reasons (`threshold_reached`, `report_in_progress`, `resume_bootstrap`) on the resume copy path.
+    - Contract 2026-05-29: Project Manager remains display-only; Core-owned snapshot/lock reason still controls the blocked state, and PM only chooses the wait-copy label.
+    - Verification 2026-05-29: `npx tsx --test src/client/ui/src/session/input-panel.test.tsx` — PASS (16 tests).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+161. [PENDING] Git Commit: `fix: classify session wait copy by lock reason` (hash: TBD)
+162. [TODO] `local-models.phase26.wait-copy-verify.task1` Run targeted Session UI tests/typecheck/build to verify context-check pending locks stay blocked but show working copy, while real rollover resume locks still show resume copy (scope: `src/client/ui/src/session, src/client/project-manager/components/sessions, doc/TODO/todo-plan.md`; expected commit: `test: verify session wait copy lock reasons`).
+163. [TODO] Git Commit: `test: verify session wait copy lock reasons` (hash: TBD)
+
+## Phase 27 — Session Wait Copy Release Build (owner: Codex, updated: 2026-05-29)
+### Stream: Release Confirmation And Packaging
+164. [TODO] `local-models.phase27.release-confirm.task1` Ask for and receive separate explicit user confirmation for a new release build after the wait-copy regression fix is verified (scope: chat/process gate; expected commit: none).
+165. [TODO] `local-models.phase27.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare session wait copy release`).
+166. [TODO] Git Commit: `docs: prepare session wait copy release` (hash: TBD)
+167. [TODO] `local-models.phase27.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build session wait copy release`).
+168. [TODO] Git Commit: `chore: build session wait copy release` (hash: TBD)
+169. [TODO] `local-models.phase27.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package session wait copy vsix`).
+170. [TODO] Git Commit: `chore: package session wait copy vsix` (hash: TBD)
+171. [TODO] `local-models.phase27.user-acceptance.task1` User retests the new release and confirms ordinary post-turn managed workflow waits show working copy while actual continuity rollover/resume still shows resume copy (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-160. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-161. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+172. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+173. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

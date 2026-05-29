@@ -92,7 +92,14 @@
 
 UI copy должна соответствовать состоянию:
 - `running` → “Agent is working…”
-- continuity lock → “Agent is resuming…”
+- ordinary Core-owned blocked waits, including post-turn `context_check_pending`
+  and managed workflow validation/continuation locks → “Agent is working…”
+- actual continuity rollover/resume locks (`threshold_reached`,
+  `report_in_progress`, `resume_bootstrap`) → “Agent is resuming…”
+
+Project Manager остаётся display-only surface: он не решает, можно ли вводить
+сообщение, и не является источником правды для lifecycle. Он только выбирает
+UX-copy по Core-owned snapshot/lock reason.
 
 ### 4.2 Workflow open со стартовым core-submit
 

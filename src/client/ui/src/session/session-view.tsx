@@ -34,11 +34,15 @@ const MANAGED_REVIEW_ACCEPTANCE_CONTENT = "подтверждаю";
 type SessionSendTurnOptions = Record<string, unknown>;
 
 const RESUMING_LOCK_REASONS = new Set([
-  "context_check_pending",
   "threshold_reached",
   "report_in_progress",
   "resume_bootstrap",
 ] as const);
+
+export const isSessionResumeLockReason = (
+  reason: string | undefined
+): boolean =>
+  reason !== undefined && RESUMING_LOCK_REASONS.has(reason as never);
 
 const resolveInputConnectionState = (options: {
   readonly connectionState: ConnectionState;
@@ -54,8 +58,7 @@ const resolveInputConnectionState = (options: {
   }
   if (
     options.continuityLockActive &&
-    options.continuityLockReason &&
-    RESUMING_LOCK_REASONS.has(options.continuityLockReason as never)
+    isSessionResumeLockReason(options.continuityLockReason)
   ) {
     return "blocked";
   }
@@ -192,9 +195,7 @@ const SessionViewBody = ({
   const continuityLockActive =
     activeSession?.status.continuityLock?.active === true || terminalNoResume;
   const resumingLockActive =
-    continuityLockActive &&
-    continuityLockReason !== undefined &&
-    RESUMING_LOCK_REASONS.has(continuityLockReason as never);
+    continuityLockActive && isSessionResumeLockReason(continuityLockReason);
   const inputConnectionState = resolveInputConnectionState({
     connectionState,
     bindingStatus: activeSession?.binding.status ?? null,

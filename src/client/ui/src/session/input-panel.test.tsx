@@ -327,3 +327,18 @@ test("InputPanel does not restore resuming placeholder after resume_ready and fi
   );
   assert.equal(firstNormalTurnCompletedHtml.includes("disabled"), false);
 });
+
+test("SessionView reserves resume copy for actual rollover resume locks", async () => {
+  ensureBrowserLikeGlobals();
+  (globalThis as typeof globalThis & { React?: unknown }).React = await import(
+    "react"
+  );
+  const { isSessionResumeLockReason } = await import("./session-view");
+
+  assert.equal(isSessionResumeLockReason("context_check_pending"), false);
+  assert.equal(isSessionResumeLockReason("no_rollover_needed"), false);
+  assert.equal(isSessionResumeLockReason("resume_ready"), false);
+  assert.equal(isSessionResumeLockReason("threshold_reached"), true);
+  assert.equal(isSessionResumeLockReason("report_in_progress"), true);
+  assert.equal(isSessionResumeLockReason("resume_bootstrap"), true);
+});
