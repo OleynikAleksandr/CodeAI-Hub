@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.402** (LM Studio Runtime Profiles)
+**Current Release — v1.2.403** (Local Provider Native Chat)
+
+This release stabilizes Local Models as a workflow-step provider for LM Studio
+reasoning models. Workflow-agent turns now use LM Studio native `/api/v1/chat`,
+parse only final assistant message output after reasoning blocks, and report
+reasoning-only or socket/fetch failures with explicit diagnostics.
+
+Core also unloads idle CodeAI-owned local model workers from other model keys
+before creating a new heavy LM Studio load. This prevents translation and
+workflow-agent trials from leaving multiple large idle MLX workers in memory,
+while preserving generating workers and manually loaded LM Studio models.
+
+**Previous Release — v1.2.402** (LM Studio Runtime Profiles)
 
 This release fixes Local Models runtime loading for LM Studio. Core now chooses
 LM Studio context windows by purpose: short reasoning translation stays fast,

@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "51aa81cc9",
+  "lastRecordedCommit": "7f3bc5dd1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase30.verify.task1",
-  "expectedCommitMessage": "test: verify local provider native chat policy",
+  "currentTaskId": "local-models.phase30.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare local provider native chat release",
   "debt": {
-    "expectedCommitMessage": "test: verify local provider native chat policy",
-    "preCommitHead": "51aa81cc9",
+    "expectedCommitMessage": "docs: prepare local provider native chat release",
+    "preCommitHead": "7f3bc5dd1",
     "stage": "commit_pending",
-    "taskId": "local-models.phase30.verify.task1"
+    "taskId": "local-models.phase30.release-prep.task1"
   }
 }
 ```
@@ -587,12 +587,14 @@
     - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-runtime-load-manager.test.js packages/core/dist/local-models/local-models-provider-adapter.test.js packages/core/dist/local-models/local-models-facade.test.js` — PASS (14 tests).
     - Smoke 2026-05-29: built `LocalModelsProviderAdapter` with real `qwen3.6-27b-mlx` loaded `codeaihub-workflow-agent-qwen3.6-27b-mlx-16384`, called native LM Studio chat, and emitted `turn_started, assistant, turn_completed` for a one-word Russian prompt in `18336` ms with assistant text `готово`.
     - Smoke 2026-05-29: after the provider smoke, `lms ps --json` showed exactly one loaded worker (`codeaihub-workflow-agent-qwen3.6-27b-mlx-16384`) instead of the two-worker state observed in the user's failed retest; the test-loaded worker was then unloaded and final `lms ps --json` returned `[]`.
-207. [PENDING] Git Commit: `test: verify local provider native chat policy` (hash: TBD)
+207. [DONE] Git Commit: `test: verify local provider native chat policy` (hash: 7f3bc5dd1)
 
 ### Stream: Release Build
-208. [TODO] `local-models.phase30.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the native provider/memory-policy fix (scope: chat/process gate; expected commit: none).
-209. [TODO] `local-models.phase30.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local provider native chat release`).
-210. [TODO] Git Commit: `docs: prepare local provider native chat release` (hash: TBD)
+208. [DONE] `local-models.phase30.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the native provider/memory-policy fix (scope: chat/process gate; expected commit: none). Result: User explicitly requested "Собери новый релиз" on 2026-05-29 after the native provider/memory-policy fix was verified; release build is approved.
+209. [DONE] `local-models.phase30.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local provider native chat release`).
+    - Release prep 2026-05-29: future release version is `1.2.403` (current root `package.json` version `1.2.402` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.403` and `CHANGELOG.md` entry `## [1.2.403] - 2026-05-29` added before release scripts.
+210. [PENDING] Git Commit: `docs: prepare local provider native chat release` (hash: TBD)
 211. [TODO] `local-models.phase30.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local provider native chat release`).
 212. [TODO] Git Commit: `chore: build local provider native chat release` (hash: TBD)
 213. [TODO] `local-models.phase30.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local provider native chat vsix`).

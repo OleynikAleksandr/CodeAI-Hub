@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.403] - 2026-05-29
+### Fixed
+- **Local Models workflow-agent calls now use LM Studio native chat.** The provider calls `/api/v1/chat`, parses final `message` output after reasoning blocks, and no longer depends on OpenAI-compatible `message.content` for reasoning-heavy local models.
+- **Reasoning-only local outputs fail clearly.** If a model spends the output budget on reasoning without a final assistant message, Core reports that explicit condition instead of treating reasoning as a workflow artifact.
+- **Idle local model workers are cleaned across purposes.** Core unloads idle `codeaihub-*` LM Studio workers from other model keys before creating a new selected load, preventing translation/localization and workflow-agent trials from leaving multiple heavy idle MLX workers in memory. Generating workers and manually loaded LM Studio identifiers are left alone.
+- **Fetch/socket diagnostics now preserve cause details.** Local Models provider failures include the underlying fetch cause when available.
+
+### Tests
+- `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/local-models/local-models-facade.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/local-models/local-models-runtime-load-manager.test.js packages/core/dist/local-models/local-models-provider-adapter.test.js packages/core/dist/local-models/local-models-facade.test.js`
+- Live LM Studio smoke with `qwen3.6-27b-mlx`: native chat emitted `turn_started, assistant, turn_completed` for a one-word Russian prompt in `18336` ms, returned `готово`, and `lms ps --json` showed one loaded worker before the test unload.
+
 ## [1.2.402] - 2026-05-29
 ### Fixed
 - **LM Studio context is now purpose-aware.** Reasoning translation keeps the fast `8192` profile, generic translation uses `16384`, localization materialization adapts to bounded batch size up to `32768`, and workflow-agent turns keep their separate provider profile.
