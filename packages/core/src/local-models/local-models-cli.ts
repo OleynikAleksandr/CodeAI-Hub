@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
@@ -40,11 +40,19 @@ export const createDefaultLmsCommandRunner =
         continue;
       }
       try {
-        return execFileSync(command, [...args], {
+        const result = spawnSync(command, [...args], {
           encoding: "utf8",
-          stdio: ["ignore", "pipe", "ignore"],
+          stdio: ["ignore", "pipe", "pipe"],
           timeout: options.timeoutMs,
         });
+        if (result.error) {
+          throw result.error;
+        }
+        const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
+        if (result.status !== 0) {
+          throw new Error(output || `LM Studio CLI exited ${result.status}.`);
+        }
+        return output;
       } catch (error) {
         lastError = error;
       }

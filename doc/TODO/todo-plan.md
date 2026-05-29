@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "f923375df",
+  "lastRecordedCommit": "9cd55b4c7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase11.localization-sync.task1",
-  "expectedCommitMessage": "fix: sync local ui translation settings",
+  "currentTaskId": "local-models.phase11.lmstudio-stderr.task1",
+  "expectedCommitMessage": "fix: capture lm studio server status output",
   "debt": {
-    "expectedCommitMessage": "fix: sync local ui translation settings",
-    "preCommitHead": "f923375df",
+    "expectedCommitMessage": "fix: capture lm studio server status output",
+    "preCommitHead": "9cd55b4c7",
     "stage": "commit_pending",
-    "taskId": "local-models.phase11.localization-sync.task1"
+    "taskId": "local-models.phase11.lmstudio-stderr.task1"
   }
 }
 ```
@@ -201,11 +201,16 @@
     - Finding 2026-05-29: generated `ru` catalogs can contain unchanged English entries when a local model returns source text with a translated status; this must fail closed instead of being saved as a ready localized bundle.
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/localization` — PASS.
     - Verification 2026-05-29: `node --test dist/localization-translation-quality.test.js dist/localization-materializer.test.js` from `packages/localization` — PASS (8 tests).
-62. [PENDING] Git Commit: `fix: sync local ui translation settings` (hash: TBD)
-63. [TODO] `local-models.phase11.verify.task1` Run targeted Core tests/builds plus real LM Studio smoke for direct translation and localized runtime bootstrap with local engine (scope: `packages/core, packages/localization, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local translation runtime reliability`).
-64. [TODO] Git Commit: `test: verify local translation runtime reliability` (hash: TBD)
+62. [DONE] Git Commit: `fix: sync local ui translation settings` (hash: 9cd55b4c7)
+63. [DONE] `local-models.phase11.lmstudio-stderr.task1` Capture LM Studio CLI stderr output so `lms server status` can be recognized when the server reports readiness on stderr (scope: `packages/core/src/local-models/local-models-cli.ts, packages/core/src/local-models/local-models-cli.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: capture lm studio server status output`).
+    - Finding 2026-05-29: LM Studio `lms server status` reports `The server is running on port 1234.` on stderr, while the previous command runner ignored stderr and misclassified the ready server as unavailable.
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test dist/local-models/local-models-cli.test.js dist/local-models/local-models-facade.test.js dist/local-models/local-models-provider-adapter.test.js` from `packages/core` — PASS (8 tests).
+64. [PENDING] Git Commit: `fix: capture lm studio server status output` (hash: TBD)
+65. [TODO] `local-models.phase11.verify.task1` Run targeted Core tests/builds plus real LM Studio smoke for direct translation and localized runtime bootstrap with local engine (scope: `packages/core, packages/localization, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local translation runtime reliability`).
+66. [TODO] Git Commit: `test: verify local translation runtime reliability` (hash: TBD)
 
 ## Phase 12 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-65. [TODO] `local-models.phase12.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-66. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+67. [TODO] `local-models.phase12.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+68. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
