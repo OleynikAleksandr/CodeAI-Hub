@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "b1c9c86fd",
+  "lastRecordedCommit": "2d2a40007",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase28.release-build.task1",
-  "expectedCommitMessage": "chore: build step confirmation navigation release",
+  "currentTaskId": "local-models.phase28.release-package.task1",
+  "expectedCommitMessage": "chore: package step confirmation navigation vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build step confirmation navigation release",
-    "preCommitHead": "b1c9c86fd",
+    "expectedCommitMessage": "chore: package step confirmation navigation vsix",
+    "preCommitHead": "2d2a40007",
     "stage": "commit_pending",
-    "taskId": "local-models.phase28.release-build.task1"
+    "taskId": "local-models.phase28.release-package.task1"
   }
 }
 ```
@@ -514,9 +514,12 @@
     - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` succeeded from release-prepared version `1.2.400` and produced unified version `1.2.401`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release build 2026-05-29: installed Core runtime at `/Users/oleksandroliinyk/.codeai-hub/core/darwin-arm64/1.2.401` and CEF launcher at `/Users/oleksandroliinyk/.codeai-hub/cef-launcher/darwin-arm64`.
     - Release build 2026-05-29: staged tarballs in `doc/tmp/releases/`: `claude-module-1.2.401.tar.bz2`, `codex-module-1.2.401.tar.bz2`, `gemini-module-1.2.401.tar.bz2`, `kimi-module-1.2.401.tar.bz2`, `glm-claude-code-module-1.2.401.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.401.tar.bz2`, `vscode-webview-1.2.401.tar.bz2`, `project-manager-1.2.401.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.401.tar.bz2`.
-180. [PENDING] Git Commit: `chore: build step confirmation navigation release` (hash: TBD)
-181. [TODO] `local-models.phase28.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package step confirmation navigation vsix`).
-182. [TODO] Git Commit: `chore: package step confirmation navigation vsix` (hash: TBD)
+180. [DONE] Git Commit: `chore: build step confirmation navigation release` (hash: 2d2a40007)
+181. [DONE] `local-models.phase28.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package step confirmation navigation vsix`).
+    - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.401`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release package 2026-05-29: verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
+    - Release package 2026-05-29: VSIX ready at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.401.vsix` (`4.4M`).
+182. [PENDING] Git Commit: `chore: package step confirmation navigation vsix` (hash: TBD)
 183. [TODO] `local-models.phase28.user-acceptance.task1` User retests the new release and confirms confirmation-button navigation advances to the next Core-active workflow card while manual return remains possible (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
