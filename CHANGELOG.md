@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.398] - 2026-05-29
+### Fixed
+- **Local Models can handle large workflow-step prompts.** Workflow-agent turns now load and call a CodeAI-owned LM Studio model identifier with a provider-only context window, avoiding HTTP 400 failures when the Description step sends a large prompt.
+- **Fast local translation remains on the short-context path.** The LM Studio translation engine is intentionally unchanged so UI and reasoning translation keep their existing batched, lower-latency behavior.
+- **LM Studio 400 diagnostics now include the response body.** Provider failures expose the LM Studio error text, making future context/model-routing issues easier to diagnose.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/local-models/local-models-provider-adapter.test.js`
+- Live LM Studio smoke with a `46324` character Cyrillic Description-sized prompt through `gemma-4-26b-a4b-it`, using the CodeAI-owned `16384` context identifier and returning `turn_started, assistant, turn_completed`.
+
 ## [1.2.397] - 2026-05-29
 ### Fixed
 - **LM Studio local models are visible immediately after settings load.** Core now sends the available localization engine catalog in the first `settings:loaded` payload, before full localization runtime materialization finishes.

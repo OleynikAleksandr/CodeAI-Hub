@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.397** (Local Model Catalog Loading)
+**Current Release — v1.2.398** (Local Provider Context Loading)
+
+This release stabilizes Local Models as a workflow-step provider. Core now loads
+workflow-agent turns through a CodeAI-owned LM Studio identifier with a
+provider-only context window, so large Description prompts no longer route to a
+short-context shared model instance and fail with LM Studio HTTP 400.
+
+The translation engine path is intentionally unchanged. UI/reasoning
+translation keeps the existing short-context, batched LM Studio behavior for
+fast responses while workflow steps get the larger context they need.
+
+**Previous Release — v1.2.397** (Local Model Catalog Loading)
 
 This release restores immediate Local Models visibility in Project Manager after
 startup and settings reloads. Core now sends the localization engine catalog
@@ -15,7 +26,7 @@ Project Manager also merges the fast catalog into the active localization
 runtime without clearing translated bundles. This keeps Russian UI text stable
 while still exposing new `lmstudio:*` engines as soon as Core discovers them.
 
-**Previous Release — v1.2.396** (Localization Runtime Guard)
+**Earlier Release — v1.2.396** (Localization Runtime Guard)
 
 This release keeps Project Manager localization stable after workflow
 clear/rollback and settings reloads. Core can emit an immediate settings event

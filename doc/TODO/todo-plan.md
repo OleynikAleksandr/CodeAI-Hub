@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "6b4185d7c",
+  "lastRecordedCommit": "392f1e376",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase22.provider-context-verify.task1",
-  "expectedCommitMessage": "test: verify local provider context loading",
+  "currentTaskId": "local-models.phase23.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare local provider context release",
   "debt": {
-    "expectedCommitMessage": "test: verify local provider context loading",
-    "preCommitHead": "6b4185d7c",
+    "expectedCommitMessage": "docs: prepare local provider context release",
+    "preCommitHead": "392f1e376",
     "stage": "commit_pending",
-    "taskId": "local-models.phase22.provider-context-verify.task1"
+    "taskId": "local-models.phase23.release-prep.task1"
   }
 }
 ```
@@ -406,10 +406,22 @@
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-provider-adapter.test.js` — PASS (4 tests).
     - Smoke 2026-05-29: built `LocalModelsProviderAdapter` sent a `46324` character Cyrillic Description-sized prompt through `gemma-4-26b-a4b-it` using the CodeAI-owned `16384` context LM Studio identifier and emitted `turn_started, assistant, turn_completed` with assistant text `OK`.
-139. [PENDING] Git Commit: `test: verify local provider context loading` (hash: TBD)
-140. [TODO] `local-models.phase22.release-confirm.task1` Ask for separate explicit user confirmation before preparing and building the next release after the provider context fix is verified (scope: chat/process gate; expected commit: none).
+139. [DONE] Git Commit: `test: verify local provider context loading` (hash: 392f1e376)
+140. [DONE] `local-models.phase22.release-confirm.task1` Ask for separate explicit user confirmation before preparing and building the next release after the provider context fix is verified (scope: chat/process gate; expected commit: none). Result: user explicitly confirmed "Собери новый релиз" in chat on 2026-05-29.
+
+## Phase 23 — Local Provider Context Release Build (owner: Codex, updated: 2026-05-29)
+### Stream: Release Confirmation And Packaging
+141. [DONE] `local-models.phase23.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local provider context release`).
+    - Release prep 2026-05-29: future release version is `1.2.398` (current root `package.json` version `1.2.397` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.398` and `CHANGELOG.md` entry `## [1.2.398] - 2026-05-29` added before release scripts.
+142. [PENDING] Git Commit: `docs: prepare local provider context release` (hash: TBD)
+143. [TODO] `local-models.phase23.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local provider context release`).
+144. [TODO] Git Commit: `chore: build local provider context release` (hash: TBD)
+145. [TODO] `local-models.phase23.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local provider context vsix`).
+146. [TODO] Git Commit: `chore: package local provider context vsix` (hash: TBD)
+147. [TODO] `local-models.phase23.user-acceptance.task1` User retests the new release and confirms Local Models can complete a Description step while translation remains fast on the existing short-context path (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-141. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-142. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+148. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+149. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
