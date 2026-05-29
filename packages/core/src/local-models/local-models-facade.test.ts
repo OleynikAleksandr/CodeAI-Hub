@@ -121,13 +121,19 @@ test("LocalModelsFacade sends OpenAI-compatible translation requests through LM 
   assert.equal(result.status, "translated");
   assert.equal(result.finalText, "Откройте Settings.");
   assert.deepEqual(commandCalls[1], ["server", "status"]);
-  assert.deepEqual(commandCalls[2], [
+  assert.deepEqual(commandCalls[2], ["ps", "--json"]);
+  assert.deepEqual(commandCalls[3], [
     "load",
     modelKey,
     "--context-length",
     "8192",
+    "--identifier",
+    "codeaihub-translation-reasoning-mlx-community-gemma-request-test-8192",
   ]);
-  assert.equal(payloads[0]?.model, modelKey);
+  assert.equal(
+    payloads[0]?.model,
+    "codeaihub-translation-reasoning-mlx-community-gemma-request-test-8192"
+  );
   assert.equal(
     payloads[0]?.messages?.[0]?.content?.includes("Russian (ru)"),
     true
@@ -260,6 +266,14 @@ test("LocalModelsFacade starts LM Studio server before translation when it is of
     ["server", "status"],
     ["server", "start"],
     ["server", "status"],
-    ["load", modelKey, "--context-length", "8192"],
+    ["ps", "--json"],
+  ]);
+  assert.deepEqual(commandCalls[5], [
+    "load",
+    modelKey,
+    "--context-length",
+    "8192",
+    "--identifier",
+    "codeaihub-translation-reasoning-mlx-community-server-start-test-8192",
   ]);
 });

@@ -22,14 +22,15 @@ const createModelListJson = (): string =>
   ]);
 
 const createLoadedModelJson = (
-  identifier = "codeaihub-qwen-local-16384",
-  contextLength = 16_384
+  identifier = "codeaihub-workflow-agent-qwen-local-16384",
+  contextLength = 16_384,
+  modelKey = "qwen-local"
 ): string =>
   JSON.stringify([
     {
       contextLength,
       identifier,
-      modelKey: "qwen-local",
+      modelKey,
       type: "llm",
     },
   ]);
@@ -84,9 +85,11 @@ test("LocalModelsProviderAdapter uses selected local model and emits terminal ev
     "--context-length",
     "16384",
     "--identifier",
-    "codeaihub-qwen-local-16384",
+    "codeaihub-workflow-agent-qwen-local-16384",
   ]);
-  assert.deepEqual(requestedModels, ["codeaihub-qwen-local-16384"]);
+  assert.deepEqual(requestedModels, [
+    "codeaihub-workflow-agent-qwen-local-16384",
+  ]);
   assert.deepEqual(
     events.map((event) => (event as { readonly type?: string }).type),
     ["turn_started", "assistant", "turn_completed"]
@@ -141,9 +144,11 @@ test("LocalModelsProviderAdapter starts LM Studio server before provider turns",
     "--context-length",
     "16384",
     "--identifier",
-    "codeaihub-gemma-local-16384",
+    "codeaihub-workflow-agent-gemma-local-16384",
   ]);
-  assert.deepEqual(requestedModels, ["codeaihub-gemma-local-16384"]);
+  assert.deepEqual(requestedModels, [
+    "codeaihub-workflow-agent-gemma-local-16384",
+  ]);
 });
 
 test("LocalModelsProviderAdapter reuses CodeAI-owned loaded identifier with enough context", async () => {
@@ -159,7 +164,11 @@ test("LocalModelsProviderAdapter reuses CodeAI-owned loaded identifier with enou
         return "Server: ON (port: 1234)";
       }
       if (args[0] === "ps") {
-        return createLoadedModelJson("codeaihub-gemma-local-16384");
+        return createLoadedModelJson(
+          "codeaihub-workflow-agent-gemma-local-16384",
+          16_384,
+          "gemma-local"
+        );
       }
       return "";
     },
@@ -184,7 +193,9 @@ test("LocalModelsProviderAdapter reuses CodeAI-owned loaded identifier with enou
     commandCalls.some((args) => args[0] === "load"),
     false
   );
-  assert.deepEqual(requestedModels, ["codeaihub-gemma-local-16384"]);
+  assert.deepEqual(requestedModels, [
+    "codeaihub-workflow-agent-gemma-local-16384",
+  ]);
 });
 
 test("LocalModelsProviderAdapter includes LM Studio non-OK body in diagnostics", async () => {

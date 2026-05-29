@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "3b3b3b258",
+  "lastRecordedCommit": "4e2861886",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase29.runtime-policy.task1",
-  "expectedCommitMessage": "fix: manage lm studio translation runtime profiles",
+  "currentTaskId": "local-models.phase29.runtime-tests.task1",
+  "expectedCommitMessage": "test: cover lm studio runtime load policy",
   "debt": {
-    "expectedCommitMessage": "fix: manage lm studio translation runtime profiles",
-    "preCommitHead": "3b3b3b258",
+    "expectedCommitMessage": "test: cover lm studio runtime load policy",
+    "preCommitHead": "4e2861886",
     "stage": "commit_pending",
-    "taskId": "local-models.phase29.runtime-policy.task1"
+    "taskId": "local-models.phase29.runtime-tests.task1"
   }
 }
 ```
@@ -525,9 +525,11 @@
 ## Phase 29 — LM Studio Runtime Profile Policy (owner: Codex, updated: 2026-05-29)
 ### Stream: Context Window And Clone Lifecycle
 184. [DONE] `local-models.phase29.runtime-policy.task1` Add a Core-owned LM Studio runtime load policy that chooses context by purpose/model capacity, reuses already-loaded models with sufficient context, and unloads idle duplicate clones before creating new loads (scope: `packages/core/src/local-models/local-models-runtime-load-manager.ts, packages/core/src/local-models/local-models-facade.ts, packages/core/src/local-models/local-models-provider-adapter.ts`; expected commit: `fix: manage lm studio translation runtime profiles`).
-185. [PENDING] Git Commit: `fix: manage lm studio translation runtime profiles` (hash: TBD)
-186. [TODO] `local-models.phase29.runtime-tests.task1` Add regression coverage for adaptive translation context, loaded-model reuse, idle duplicate unloading, and provider-agent context reuse (scope: `packages/core/src/local-models/local-models-runtime-load-manager.test.ts, packages/core/src/local-models/local-models-facade.test.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts`; expected commit: `test: cover lm studio runtime load policy`).
-187. [TODO] Git Commit: `test: cover lm studio runtime load policy` (hash: TBD)
+185. [DONE] Git Commit: `fix: manage lm studio translation runtime profiles` (hash: 4e2861886)
+186. [DONE] `local-models.phase29.runtime-tests.task1` Add regression coverage for adaptive translation context, loaded-model reuse, idle duplicate unloading, and provider-agent context reuse (scope: `packages/core/src/local-models/local-models-runtime-load-manager.test.ts, packages/core/src/local-models/local-models-facade.test.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts`; expected commit: `test: cover lm studio runtime load policy`).
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-facade.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts` — PASS (11 tests).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+187. [PENDING] Git Commit: `test: cover lm studio runtime load policy` (hash: TBD)
 188. [TODO] `local-models.phase29.docs.task1` Document the local-model runtime profile policy, reasoned context caps, and clone cleanup ownership in canonical docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/SolidWorks-WorkFlow/Modules/Localization.md`; expected commit: `docs: document lm studio runtime policy`).
 189. [TODO] Git Commit: `docs: document lm studio runtime policy` (hash: TBD)
 190. [TODO] `local-models.phase29.verify.task1` Run targeted Core/localization builds and real LM Studio smoke checks for `hy-mt2-30b-a3b-mlx` context/reuse behavior; record exact commands/results in this plan (scope: `packages/core, packages/localization, doc/TODO/todo-plan.md`; expected commit: `test: verify lm studio runtime policy`).
