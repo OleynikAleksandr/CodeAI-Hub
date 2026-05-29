@@ -8,15 +8,15 @@
   "planId": "claude-reasoning-summary-language-2026-05-29",
   "branch": "main",
   "baseHead": "e733a3298",
-  "lastRecordedCommit": "494bffb26",
+  "lastRecordedCommit": "8d16d1542",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_ReasoningSummary_Language_Planning.md",
-  "currentTaskId": "phase1-release-build",
-  "expectedCommitMessage": "chore: build 1.2.406 release",
+  "currentTaskId": "phase1-release-vsix",
+  "expectedCommitMessage": "chore: package 1.2.406 vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.406 release",
-    "preCommitHead": "494bffb26",
+    "expectedCommitMessage": "chore: package 1.2.406 vsix",
+    "preCommitHead": "8d16d1542",
     "stage": "commit_pending",
-    "taskId": "phase1-release-build"
+    "taskId": "phase1-release-vsix"
   }
 }
 ```
@@ -55,8 +55,13 @@
 ### Stream: Release Build
 7. [DONE] `phase1-release-docs` Update release-facing README and CHANGELOG to the next version before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.406 release notes`
 8. [DONE] Git Commit: `docs: prepare 1.2.406 release notes` (hash: 494bffb26)
-9. [DONE] `phase1-release-build` Run release scripts and collect VSIX/tarball artifacts after confirmed user approval — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, codeai-hub-*.vsix`; expected commit: `chore: build 1.2.406 release`
-10. [PENDING] Git Commit: `chore: build 1.2.406 release` (hash: TBD)
+9. [DONE] `phase1-release-build` Run release scripts and collect provider/core/UI/launcher tarball artifacts after confirmed user approval — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build 1.2.406 release`
+10. [DONE] Git Commit: `chore: build 1.2.406 release` (hash: 8d16d1542)
+11. [DONE] `phase1-release-vsix` Run final VSIX packaging with the current version and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.406 vsix`
+12. [PENDING] Git Commit: `chore: package 1.2.406 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+13. [TODO] `phase1-release-acceptance` Hand off `codeai-hub-1.2.406.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-11. [TODO] `phase1-scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+14. [TODO] `phase1-scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
