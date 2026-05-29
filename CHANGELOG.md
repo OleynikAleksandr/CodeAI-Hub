@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.405] - 2026-05-29
+### Fixed
+- **CodeAI-owned LM Studio loads now receive TTL.** Translation/localization loads default to 300 seconds, reasoning translation loads to 600 seconds, and workflow-agent loads to 1800 seconds, with environment overrides for tuning.
+- **Core cleans idle local model workers on provider lifecycle.** Local Models provider startup and shutdown now run best-effort cleanup for idle `codeaihub-*` LM Studio instances.
+- **User-loaded LM Studio models stay untouched.** Cleanup is limited to idle CodeAI-owned identifiers and never uses `lms unload --all`.
+
+### Tests
+- `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/provider-registry/provider-descriptor-factory.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/local-models/local-models-runtime-load-manager.test.js packages/core/dist/local-models/local-models-provider-adapter.test.js packages/core/dist/provider-registry/provider-descriptor-factory.test.js`
+
 ## [1.2.404] - 2026-05-29
 ### Fixed
 - **Claude live/final assistant tails are deduped in Core.** A later ordinary assistant event that is already covered by immediately preceding `tag: "live"` chunks is suppressed; suffix-prefix overlaps are trimmed to the unseen continuation and kept as live content.

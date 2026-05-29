@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "7e4501e96",
+  "lastRecordedCommit": "e30707618",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase32.verify.task1",
-  "expectedCommitMessage": "test: verify lm studio memory lifecycle",
+  "currentTaskId": "local-models.phase32.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare lm studio memory lifecycle release",
   "debt": {
-    "expectedCommitMessage": "test: verify lm studio memory lifecycle",
-    "preCommitHead": "7e4501e96",
+    "expectedCommitMessage": "docs: prepare lm studio memory lifecycle release",
+    "preCommitHead": "e30707618",
     "stage": "commit_pending",
-    "taskId": "local-models.phase32.verify.task1"
+    "taskId": "local-models.phase32.release-prep.task1"
   }
 }
 ```
@@ -680,12 +680,14 @@
     - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/provider-registry/provider-descriptor-factory.test.ts` — PASS (16 tests).
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-runtime-load-manager.test.js packages/core/dist/local-models/local-models-provider-adapter.test.js packages/core/dist/provider-registry/provider-descriptor-factory.test.js` — PASS (16 tests).
-241. [PENDING] Git Commit: `test: verify lm studio memory lifecycle` (hash: TBD)
+241. [DONE] Git Commit: `test: verify lm studio memory lifecycle` (hash: e30707618)
 
 ### Stream: Release Build
 242. [DONE] `local-models.phase32.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for LM Studio memory lifecycle cleanup (scope: chat/process gate; expected commit: none). Result: User explicitly requested "Сделай, пожалуйста, этот фикс и собери новый релиз" on 2026-05-29; release build is approved after the fix and verification complete.
-243. [TODO] `local-models.phase32.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lm studio memory lifecycle release`).
-244. [TODO] Git Commit: `docs: prepare lm studio memory lifecycle release` (hash: TBD)
+243. [DONE] `local-models.phase32.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare lm studio memory lifecycle release`).
+    - Release prep 2026-05-29: future release version is `1.2.405` (current root `package.json` version `1.2.404` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.405` and `CHANGELOG.md` entry `## [1.2.405] - 2026-05-29` added before release scripts.
+244. [PENDING] Git Commit: `docs: prepare lm studio memory lifecycle release` (hash: TBD)
 245. [TODO] `local-models.phase32.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build lm studio memory lifecycle release`).
 246. [TODO] Git Commit: `chore: build lm studio memory lifecycle release` (hash: TBD)
 247. [TODO] `local-models.phase32.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package lm studio memory lifecycle vsix`).

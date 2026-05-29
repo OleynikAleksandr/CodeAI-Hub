@@ -2,11 +2,11 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.404** (Claude Live Tail Dedupe)
+**Current Release — v1.2.405** (LM Studio Memory Lifecycle)
 
-This release fixes a Claude live/final assistant reconciliation edge case where
-a final snapshot could restart inside already displayed live text and persist a
-second dialog bubble such as `ills)` plus a repeated Sources list.
+This release adds TTL and Core-owned cleanup for CodeAI-owned LM Studio model
+loads so local translation and workflow-agent experiments do not leave idle
+`codeaihub-*` model instances pinned in memory across Core restart/shutdown.
 
 Core now suppresses or trims non-live assistant tails already covered by
 immediately preceding `tag: "live"` chunks. Claude live text buffering also
