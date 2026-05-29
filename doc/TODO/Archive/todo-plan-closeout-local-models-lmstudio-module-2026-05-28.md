@@ -1,3 +1,18 @@
+# Plan Closeout: local-models-lmstudio-module-2026-05-28
+
+**Created:** 2026-05-29T15:31:16.340Z
+**Acceptance:** User accepted release 1.2.405 as-is after LM Studio memory lifecycle discussion and requested scope closeout plus GitHub push.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** local-models.phase15.closeout.task1
+**Expected Commit:** docs: close local models module scope
+**Last Recorded Commit:** 4fa38be59
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/Local_Models_LMStudio_Module_Planning.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/Local_Models_LMStudio_Module_Planning.md",
   "currentTaskId": "local-models.phase15.closeout.task1",
   "expectedCommitMessage": "docs: close local models module scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close local models module scope",
-    "preCommitHead": "4fa38be59",
-    "stage": "commit_pending",
-    "taskId": "local-models.phase15.closeout.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -701,6 +711,7 @@
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-250. [DONE] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-251. [PENDING] Git Commit: `docs: close local models module scope` (hash: TBD)
+250. [IN_PROGRESS] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+251. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
 252. [TODO] `local-models.phase15.closeout.handoff` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle.
+````

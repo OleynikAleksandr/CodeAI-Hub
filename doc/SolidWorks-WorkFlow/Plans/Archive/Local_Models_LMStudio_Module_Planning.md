@@ -1,7 +1,8 @@
 # Local Models LM Studio Module Planning
 
-**Status:** Active planning source
+**Status:** Archived accepted planning source
 **Created:** 2026-05-28
+**Closed:** 2026-05-29 via release 1.2.405 closeout
 **Owner:** Oleksandr + Codex
 
 ## Goal
