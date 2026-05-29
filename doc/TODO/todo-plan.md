@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "75a33496c",
+  "lastRecordedCommit": "437d0889b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase8.release-package.task1",
-  "expectedCommitMessage": "chore: package local provider visibility vsix",
+  "currentTaskId": "local-models.phase9.settings-surface.task1",
+  "expectedCommitMessage": "fix: expose local provider in settings surfaces",
   "debt": {
-    "expectedCommitMessage": "chore: package local provider visibility vsix",
-    "preCommitHead": "75a33496c",
+    "expectedCommitMessage": "fix: expose local provider in settings surfaces",
+    "preCommitHead": "437d0889b",
     "stage": "commit_pending",
-    "taskId": "local-models.phase8.release-package.task1"
+    "taskId": "local-models.phase9.settings-surface.task1"
   }
 }
 ```
@@ -157,10 +157,20 @@
     - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version` completed successfully for version `1.2.393`.
     - Release package 2026-05-29: VSIX created at `codeai-hub-1.2.393.vsix` (`4.4M`); runtime package surface verification passed.
     - Release package 2026-05-29: output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, and `Package created`.
-41. [PENDING] Git Commit: `chore: package local provider visibility vsix` (hash: TBD)
-42. [TODO] `local-models.phase8.user-acceptance.task1` User retests the new release and confirms Local Models are visible in provider cards and UI Translation Engine selectors (scope: user workflow observation; expected commit: none).
+41. [DONE] Git Commit: `chore: package local provider visibility vsix` (hash: 437d0889b)
+42. [DONE] `local-models.phase8.user-acceptance.task1` User retests the new release and confirms Local Models are visible in provider cards and UI Translation Engine selectors (scope: user workflow observation; expected commit: none). Result: release `1.2.393` shows downloaded LM Studio models in `UI Translation Engine`, but Local Models is still missing from Settings as a separate provider and may be missing from some provider cards.
 
-## Phase 9 — Scope Closeout (owner: Codex, updated: 2026-05-29)
+## Phase 9 — Settings And Card Visibility Regression Fixes (owner: Codex, updated: 2026-05-29)
+### Stream: Local Provider Surfaces
+43. [DONE] `local-models.phase9.settings-surface.task1` Add Local Models to Settings provider identity/fallback catalogs and render a Settings provider tab that lists downloaded LM Studio models (scope: `src/client/ui/src/session/session-candidates.ts, src/client/ui/src/core-bridge/constants.ts, src/client/ui/src/components/settings/settings-provider-tab-content.tsx`; expected commit: `fix: expose local provider in settings surfaces`).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+44. [PENDING] Git Commit: `fix: expose local provider in settings surfaces` (hash: TBD)
+45. [TODO] `local-models.phase9.pm-cards.task1` Add Local Models to Project Manager provider cards that still use local allowlists and update the Description provider picker text (scope: `src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/description/description-provider-picker.tsx, doc/TODO/todo-plan.md`; expected commit: `fix: expose local provider in project manager cards`).
+46. [TODO] Git Commit: `fix: expose local provider in project manager cards` (hash: TBD)
+47. [TODO] `local-models.phase9.verify.task1` Run targeted typecheck/build and smoke checks for Settings provider tab, Project Manager cards, and translation engine catalog visibility (scope: `src/client/ui, src/client/project-manager, media/react-chat.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider settings visibility`).
+48. [TODO] Git Commit: `test: verify local provider settings visibility` (hash: TBD)
+
+## Phase 10 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-43. [TODO] `local-models.phase9.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-44. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+49. [TODO] `local-models.phase10.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+50. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

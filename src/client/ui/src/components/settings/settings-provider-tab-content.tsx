@@ -1,5 +1,6 @@
 import type React from "react";
 import type { KimiModelId } from "../../../../../types/kimi-model-registry";
+import { useLocalization } from "../../app-host/use-localization";
 import ClaudeDefaultModelCard from "./claude-default-model/claude-default-model-card";
 import CodexDefaultModelCard from "./codex-default-model/codex-default-model-card";
 import GeminiDefaultModelCard from "./gemini-default-model/gemini-default-model-card";
@@ -11,6 +12,7 @@ import KimiSettingsTab from "./kimi-settings-tab";
 import LocalizationSettingsCard from "./localization-settings-card";
 import ProviderVersions from "./provider-versions";
 import SessionContinuityCard from "./session-continuity-card";
+import SettingsCard from "./settings-card";
 import { settingsSpacingTokens } from "./style-tokens";
 import type { TemplateUpdateSettingsControls } from "./template-update-settings-model";
 import TemplateUpdatesCard from "./template-updates-card";
@@ -38,12 +40,75 @@ export type SettingsTab =
   | "gemini"
   | "kimi"
   | "glmClaudeCode"
+  | "localModels"
   | "general";
 
 const stackStyles: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   gap: settingsSpacingTokens.containerGap,
+};
+
+const localModelsListStyles: React.CSSProperties = {
+  display: "grid",
+  gap: "8px",
+};
+
+const localModelsItemStyles: React.CSSProperties = {
+  border: "1px solid rgba(255, 255, 255, 0.08)",
+  borderRadius: "6px",
+  color: "#f0f4f8",
+  fontSize: "13px",
+  padding: "10px 12px",
+};
+
+const localModelsMutedStyles: React.CSSProperties = {
+  color: "#a8b3bf",
+  fontSize: "12px",
+  lineHeight: 1.5,
+  margin: 0,
+};
+
+const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
+
+const formatLocalModelName = (modelKey: string): string =>
+  modelKey
+    .split("/")
+    .pop()
+    ?.replace(/[-_]+/gu, " ")
+    .replace(/\b\w/gu, (match) => match.toUpperCase()) ?? modelKey;
+
+const LocalModelsSettingsTab: React.FC = () => {
+  const { availableEngines } = useLocalization();
+  const localModels = availableEngines
+    .map((engine) => engine.engineId)
+    .filter((engineId) => engineId.startsWith(LOCAL_MODEL_ENGINE_PREFIX))
+    .map((engineId) => engineId.slice(LOCAL_MODEL_ENGINE_PREFIX.length));
+
+  return (
+    <div style={stackStyles}>
+      <SettingsCard title="Local Models">
+        <div style={localModelsListStyles}>
+          <p style={localModelsMutedStyles}>
+            Downloaded LM Studio models discovered by Core. Download, delete,
+            context-window, and runtime tuning remain managed in LM Studio.
+          </p>
+          {localModels.length > 0 ? (
+            localModels.map((modelKey) => (
+              <div key={modelKey} style={localModelsItemStyles}>
+                <strong>{formatLocalModelName(modelKey)}</strong>
+                <div style={localModelsMutedStyles}>lmstudio:{modelKey}</div>
+              </div>
+            ))
+          ) : (
+            <p style={localModelsMutedStyles}>
+              No downloaded LM Studio models are currently visible to Core.
+            </p>
+          )}
+        </div>
+      </SettingsCard>
+    </div>
+  );
 };
 
 export const settingsTabs: ReadonlyArray<{
@@ -55,6 +120,7 @@ export const settingsTabs: ReadonlyArray<{
   { id: "gemini", label: "Gemini" },
   { id: "kimi", label: "Kimi" },
   { id: "glmClaudeCode", label: "GLM-Claude-Code" },
+  { id: "localModels", label: "Local Models" },
   { id: "general", label: "General" },
 ];
 
@@ -214,6 +280,10 @@ export const SettingsProviderTabContent: React.FC<
         />
       </div>
     );
+  }
+
+  if (activeTab === "localModels") {
+    return <LocalModelsSettingsTab />;
   }
 
   if (activeTab === "gemini") {
