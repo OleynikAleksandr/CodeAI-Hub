@@ -11,6 +11,7 @@ import type {
 } from "@codeai-hub/translation";
 import {
   createDefaultLmsCommandRunner,
+  ensureLmStudioServerRunning,
   type LmsCommandRunner,
 } from "./local-models-cli";
 
@@ -265,6 +266,14 @@ class LmStudioLocalTranslationEngine implements TranslationEngine {
   async translate(
     request: NormalizedTranslationRequest
   ): Promise<TranslationResult> {
+    const serverErrorCode = ensureLmStudioServerRunning({
+      commandRunner: this.commandRunner,
+      reporter: this.reporter,
+    });
+    if (serverErrorCode) {
+      return createFallbackResult(request, this.id, serverErrorCode);
+    }
+
     const loadErrorCode = this.ensureModelLoaded();
     if (loadErrorCode) {
       return createFallbackResult(request, this.id, loadErrorCode);

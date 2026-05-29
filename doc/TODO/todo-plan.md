@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "9fb7edfa2",
+  "lastRecordedCommit": "975d54c1d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase9.verify.task1",
-  "expectedCommitMessage": "test: verify local provider settings visibility",
+  "currentTaskId": "local-models.phase11.lmstudio-preflight.task1",
+  "expectedCommitMessage": "fix: start lm studio server for local models",
   "debt": {
-    "expectedCommitMessage": "test: verify local provider settings visibility",
-    "preCommitHead": "9fb7edfa2",
+    "expectedCommitMessage": "fix: start lm studio server for local models",
+    "preCommitHead": "975d54c1d",
     "stage": "commit_pending",
-    "taskId": "local-models.phase9.verify.task1"
+    "taskId": "local-models.phase11.lmstudio-preflight.task1"
   }
 }
 ```
@@ -174,9 +174,32 @@
     - Verification 2026-05-29: `npm run build:webview` — PASS.
     - Smoke 2026-05-29: built `packages/ui/project-manager/dist/app.js` contains `Local Models` Settings tab, `localModels` provider allowlists for provider cards, Description picker copy mentioning Local Models, and `lmstudio:` local model catalog handling.
     - Smoke 2026-05-29: built `media/react-chat.js` contains `localModels` in UI provider catalogs and `lmstudio:` translation engine handling.
-48. [PENDING] Git Commit: `test: verify local provider settings visibility` (hash: TBD)
+48. [DONE] Git Commit: `test: verify local provider settings visibility` (hash: 975d54c1d)
 
-## Phase 10 — Scope Closeout (owner: Codex, updated: 2026-05-29)
+## Phase 10 — Settings/Card Visibility Release Build (owner: Codex, updated: 2026-05-29)
+### Stream: Release Confirmation And Packaging
+49. [BLOCKED] `local-models.phase10.release-confirm.task1` Ask for and receive separate explicit user confirmation for a new release build after Settings/provider-card visibility fixes are verified (scope: chat/process gate; expected commit: none). Result: release build postponed after user runtime retest found local translation/localization still failing or remaining English.
+50. [TODO] `local-models.phase10.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local provider settings release`).
+51. [TODO] Git Commit: `docs: prepare local provider settings release` (hash: TBD)
+52. [TODO] `local-models.phase10.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local provider settings release`).
+53. [TODO] Git Commit: `chore: build local provider settings release` (hash: TBD)
+54. [TODO] `local-models.phase10.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local provider settings vsix`).
+55. [TODO] Git Commit: `chore: package local provider settings vsix` (hash: TBD)
+56. [TODO] `local-models.phase10.user-acceptance.task1` User retests the new release and confirms Local Models are visible in Settings, provider cards, and UI Translation Engine selectors (scope: user workflow observation; expected commit: none).
+
+## Phase 11 — Local Runtime Reliability Regression Fixes (owner: Codex, updated: 2026-05-29)
+### Stream: LM Studio Runtime Ownership
+57. [DONE] `local-models.phase11.lmstudio-preflight.task1` Start and verify the LM Studio local server before local translation/provider requests, so Project Manager does not depend on a manually started LM Studio server (scope: `packages/core/src/local-models/local-models-cli.ts, packages/core/src/local-models/local-models-facade.ts, packages/core/src/local-models/local-models-provider-adapter.ts`; expected commit: `fix: start lm studio server for local models`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+58. [PENDING] Git Commit: `fix: start lm studio server for local models` (hash: TBD)
+59. [TODO] `local-models.phase11.lmstudio-tests.task1` Add regression coverage for LM Studio server status/start before translation and provider turns (scope: `packages/core/src/local-models/local-models-facade.test.ts, packages/core/src/local-models/local-models-provider-adapter.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lm studio server preflight`).
+60. [TODO] Git Commit: `test: cover lm studio server preflight` (hash: TBD)
+61. [TODO] `local-models.phase11.localization-sync.task1` Verify and, if needed, fix localization runtime settings so saved `uiEngineId` and non-English UI categories rebuild the browser bootstrap with the selected local model (scope: `packages/core/src/remote-bridge/handlers/**, packages/localization/src/**, src/client/**`; expected commit: `fix: sync local ui translation settings`).
+62. [TODO] Git Commit: `fix: sync local ui translation settings` (hash: TBD)
+63. [TODO] `local-models.phase11.verify.task1` Run targeted Core tests/builds plus real LM Studio smoke for direct translation and localized runtime bootstrap with local engine (scope: `packages/core, packages/localization, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local translation runtime reliability`).
+64. [TODO] Git Commit: `test: verify local translation runtime reliability` (hash: TBD)
+
+## Phase 12 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-49. [TODO] `local-models.phase10.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-50. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+65. [TODO] `local-models.phase12.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+66. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

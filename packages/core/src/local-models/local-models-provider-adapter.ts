@@ -3,6 +3,7 @@ import type { ProviderAdapter } from "../provider-registry/provider-module-loade
 import { readAppliedProviderTurnConfig } from "../remote-bridge/types";
 import {
   createDefaultLmsCommandRunner,
+  ensureLmStudioServerRunning,
   type LmsCommandRunner,
 } from "./local-models-cli";
 import {
@@ -119,6 +120,14 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
     });
     try {
       const model = this.#resolveModel(turnOptions);
+      const serverErrorCode = ensureLmStudioServerRunning({
+        commandRunner: this.#commandRunner,
+      });
+      if (serverErrorCode) {
+        throw new Error(
+          `LM Studio server is not available: ${serverErrorCode}`
+        );
+      }
       this.#ensureModelLoaded(model.modelKey);
       const assistantText = await this.#complete(model.modelKey, content);
       this.#emit(sessionId, {

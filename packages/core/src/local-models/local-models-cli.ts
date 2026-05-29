@@ -8,6 +8,20 @@ export type LmsCommandRunner = (
   options: { readonly timeoutMs: number }
 ) => string;
 
+interface LmStudioServerReadinessOptions {
+  readonly commandRunner: LmsCommandRunner;
+  readonly reporter?: {
+    readonly warn?: (
+      message: string,
+      context?: Record<string, unknown>
+    ) => void;
+  };
+}
+
+const SERVER_STATUS_TIMEOUT_MS = 5000;
+const SERVER_START_TIMEOUT_MS = 30_000;
+const SERVER_RUNNING_PATTERN = /\bServer:\s*ON\b|\bserver\b.*\brunning\b/iu;
+
 export const resolveLmsCommandCandidates = (): readonly string[] => [
   "lms",
   path.join(homedir(), ".lmstudio", "bin", "lms"),
@@ -39,3 +53,48 @@ export const createDefaultLmsCommandRunner =
       ? lastError
       : new Error("Unable to execute LM Studio CLI.");
   };
+
+const isLmStudioServerRunning = (output: string): boolean =>
+  SERVER_RUNNING_PATTERN.test(output);
+
+export const ensureLmStudioServerRunning = (
+  options: LmStudioServerReadinessOptions
+): string | null => {
+  try {
+    const statusOutput = options.commandRunner(["server", "status"], {
+      timeoutMs: SERVER_STATUS_TIMEOUT_MS,
+    });
+    if (isLmStudioServerRunning(statusOutput)) {
+      return null;
+    }
+  } catch (error) {
+    options.reporter?.warn?.("LM Studio server status check failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+
+  try {
+    options.commandRunner(["server", "start"], {
+      timeoutMs: SERVER_START_TIMEOUT_MS,
+    });
+  } catch (error) {
+    options.reporter?.warn?.("LM Studio server start failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return "lmstudio_server_start_failed";
+  }
+
+  try {
+    const statusOutput = options.commandRunner(["server", "status"], {
+      timeoutMs: SERVER_STATUS_TIMEOUT_MS,
+    });
+    return isLmStudioServerRunning(statusOutput)
+      ? null
+      : "lmstudio_server_unavailable";
+  } catch (error) {
+    options.reporter?.warn?.("LM Studio server status check failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return "lmstudio_server_unavailable";
+  }
+};
