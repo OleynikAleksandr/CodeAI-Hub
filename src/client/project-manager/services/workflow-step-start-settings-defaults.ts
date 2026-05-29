@@ -29,6 +29,7 @@ import {
   updateCodexReasoning,
   updateGeminiDefaultModel,
   updateGeminiThinking,
+  updateLocalModelsDefaultModel,
   updateThinkingSettings,
 } from "../../ui/src/components/settings/settings-state-helpers";
 
@@ -184,6 +185,16 @@ const applyGeminiStartDefaults = (
   return changed ? nextSettings : null;
 };
 
+const applyLocalModelsStartDefaults = (
+  settings: Settings,
+  modelId: string | null
+): Settings | null => {
+  if (!modelId || settings.providers.localModels?.defaultModel === modelId) {
+    return null;
+  }
+  return updateLocalModelsDefaultModel(settings, modelId);
+};
+
 export const applyStartCardModelDefaults = (
   settings: Settings,
   params: Pick<StartWorkflowStepParams, "modelId" | "providerId" | "reasoning">
@@ -199,6 +210,9 @@ export const applyStartCardModelDefaults = (
   }
   if (params.providerId === "codexCli") {
     return applyCodexStartDefaults(settings, modelId, reasoning);
+  }
+  if (params.providerId === "localModels") {
+    return applyLocalModelsStartDefaults(settings, modelId);
   }
   if (
     params.providerId === "kimiCode" ||

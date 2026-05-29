@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "770295792",
+  "lastRecordedCommit": "7c9e7bb55",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase16.settings-hooks.task1",
-  "expectedCommitMessage": "feat: select local default model in settings",
+  "currentTaskId": "local-models.phase16.step-selection.task1",
+  "expectedCommitMessage": "feat: use local model defaults in step cards",
   "debt": {
-    "expectedCommitMessage": "feat: select local default model in settings",
-    "preCommitHead": "770295792",
+    "expectedCommitMessage": "feat: use local model defaults in step cards",
+    "preCommitHead": "7c9e7bb55",
     "stage": "commit_pending",
-    "taskId": "local-models.phase16.settings-hooks.task1"
+    "taskId": "local-models.phase16.step-selection.task1"
   }
 }
 ```
@@ -275,11 +275,11 @@
 90. [DONE] `local-models.phase16.settings-handlers.task1` Add Settings update handlers for Local Models default model changes in UI settings state (scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/use-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `feat: update local model settings handlers`).
 91. [DONE] Git Commit: `feat: update local model settings handlers` (hash: 770295792)
 92. [DONE] `local-models.phase16.settings-hooks.task1` Wire Local Models default handlers through Settings hooks and the Local Models Settings tab control (scope: `src/client/ui/src/components/settings/use-settings-state.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/ui/src/components/settings/settings-provider-tab-content.tsx`; expected commit: `feat: select local default model in settings`).
-93. [PENDING] Git Commit: `feat: select local default model in settings` (hash: TBD)
+93. [DONE] Git Commit: `feat: select local default model in settings` (hash: 7c9e7bb55)
 
 ### Stream: Step And Turn Selection
-94. [TODO] `local-models.phase16.step-selection.task1` Use the saved Local Models default in step provider cards and persist explicit card model choices as provider defaults (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts, doc/TODO/todo-plan.md`; expected commit: `feat: use local model defaults in step cards`).
-95. [TODO] Git Commit: `feat: use local model defaults in step cards` (hash: TBD)
+94. [DONE] `local-models.phase16.step-selection.task1` Use the saved Local Models default in step provider cards and persist explicit card model choices as provider defaults (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/services/workflow-step-start-settings-defaults.ts, doc/TODO/todo-plan.md`; expected commit: `feat: use local model defaults in step cards`).
+95. [PENDING] Git Commit: `feat: use local model defaults in step cards` (hash: TBD)
 96. [TODO] `local-models.phase16.dialog-picker.task1` Show downloaded Local Models in the dialog turn model picker and route local picker selections from Project Manager to Core (scope: `src/client/ui/src/session/status-panel-model-picker.tsx, src/client/ui/src/session/status-panel.tsx, src/client/ui/src/session/session-view.tsx`; expected commit: `feat: show local models in dialog picker`).
 97. [TODO] Git Commit: `feat: show local models in dialog picker` (hash: TBD)
 98. [TODO] `local-models.phase16.dialog-switch-api.task1` Add Project Manager switch API messages for Local Models turn-level model changes (scope: `src/client/project-manager/services/switch-api.ts, src/client/project-manager/api.ts, src/client/project-manager/core-stream-message-types.ts`; expected commit: `feat: route local model switch requests`).

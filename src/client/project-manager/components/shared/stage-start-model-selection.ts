@@ -158,8 +158,13 @@ export const resolveDefaultStartCardModelSelection = (
 ): StartCardModelSelection => {
   const settings = isSettings(payload?.settings) ? payload.settings : null;
   if (providerId === "localModels") {
+    const options = getLocalModelOptions(availableEngines);
+    const settingsDefault = settings?.providers.localModels?.defaultModel;
+    const defaultModel = options.some((option) => option.id === settingsDefault)
+      ? settingsDefault
+      : options[0]?.id;
     return {
-      modelId: getLocalModelOptions(availableEngines)[0]?.id ?? DEFAULT_LOCAL_MODEL_ID,
+      modelId: defaultModel ?? settingsDefault ?? DEFAULT_LOCAL_MODEL_ID,
       reasoning: "default",
     };
   }
