@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "d5a606ebe",
+  "lastRecordedCommit": "950c6681b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase24.preliminary-artifact.task1",
-  "expectedCommitMessage": "fix: materialize local preliminary artifacts",
+  "currentTaskId": "local-models.phase24.preliminary-artifact-verify.task1",
+  "expectedCommitMessage": "test: verify local preliminary artifact materialization",
   "debt": {
-    "expectedCommitMessage": "fix: materialize local preliminary artifacts",
-    "preCommitHead": "d5a606ebe",
+    "expectedCommitMessage": "test: verify local preliminary artifact materialization",
+    "preCommitHead": "950c6681b",
     "stage": "commit_pending",
-    "taskId": "local-models.phase24.preliminary-artifact.task1"
+    "taskId": "local-models.phase24.preliminary-artifact-verify.task1"
   }
 }
 ```
@@ -433,9 +433,12 @@
     - Finding 2026-05-29: preliminary artifact gate checked missing `virtual_simulation/virtual-simulation.md`, but did not check missing `description/Final_Description.md`.
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js` — PASS (6 tests).
-149. [PENDING] Git Commit: `fix: materialize local preliminary artifacts` (hash: TBD)
-150. [TODO] `local-models.phase24.preliminary-artifact-verify.task1` Run targeted Core tests/build and reproduce the user Local Models session shape with a fenced `Final_Description.md` response (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local preliminary artifact materialization`).
-151. [TODO] Git Commit: `test: verify local preliminary artifact materialization` (hash: TBD)
+149. [DONE] Git Commit: `fix: materialize local preliminary artifacts` (hash: 950c6681b)
+150. [DONE] `local-models.phase24.preliminary-artifact-verify.task1` Run targeted Core tests/build and reproduce the user Local Models session shape with a fenced `Final_Description.md` response (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local preliminary artifact materialization`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-preliminary-artifact-gate.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.preliminary.test.js` — PASS (6 tests).
+    - Smoke 2026-05-29: parsed the user release `1.2.398` Local Models session JSONL and passed its assistant response into `resolvePreliminaryArtifactGate`; Core materialized `.codeai-hub/codeai-hub-codex-5-4/description/Final_Description.md` from the fenced markdown block (`5890` bytes, first line `# Final Description: CodeAI Hub`) and returned `managed-workflow-user-review`.
+151. [PENDING] Git Commit: `test: verify local preliminary artifact materialization` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
