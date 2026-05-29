@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "eb6a0f6e2",
+  "lastRecordedCommit": "8e58e1535",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase7.provider-snapshot.task1",
-  "expectedCommitMessage": "feat: expose local models provider metadata",
+  "currentTaskId": "local-models.phase7.provider-ui.task1",
+  "expectedCommitMessage": "feat: show local models in step provider picker",
   "debt": {
-    "expectedCommitMessage": "feat: expose local models provider metadata",
-    "preCommitHead": "eb6a0f6e2",
+    "expectedCommitMessage": "feat: show local models in step provider picker",
+    "preCommitHead": "8e58e1535",
     "stage": "commit_pending",
-    "taskId": "local-models.phase7.provider-snapshot.task1"
+    "taskId": "local-models.phase7.provider-ui.task1"
   }
 }
 ```
@@ -128,9 +128,11 @@
 28. [DONE] Git Commit: `feat: add lm studio local provider runtime` (hash: eb6a0f6e2)
 29. [DONE] `local-models.phase7.provider-snapshot.task1` Carry Local Models provider/model metadata through Core state into Project Manager provider snapshots and resolver allowlists (scope: `src/types/provider.ts, src/client/project-manager/services/provider-snapshot.ts, src/client/project-manager/services/workflow-provider-resolver.ts`; expected commit: `feat: expose local models provider metadata`).
     - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
-30. [PENDING] Git Commit: `feat: expose local models provider metadata` (hash: TBD)
-31. [TODO] `local-models.phase7.provider-ui.task1` Render Local Models in step provider cards with downloaded model options and default selections (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `feat: show local models in step provider picker`).
-32. [TODO] Git Commit: `feat: show local models in step provider picker` (hash: TBD)
+30. [DONE] Git Commit: `feat: expose local models provider metadata` (hash: 8e58e1535)
+31. [DONE] `local-models.phase7.provider-ui.task1` Render Local Models in step provider cards with downloaded model options and default selections (scope: `src/client/project-manager/components/shared/stage-start-model-selection.ts, src/client/project-manager/components/shared/stage-confirmation-card.tsx, src/client/project-manager/components/shared/stage-confirmation-card-provider-tint.ts`; expected commit: `feat: show local models in step provider picker`).
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+32. [PENDING] Git Commit: `feat: show local models in step provider picker` (hash: TBD)
 33. [TODO] `local-models.phase7.verify.task1` Run targeted builds/tests and real LM Studio visibility checks for provider picker plus translation-engine dropdown catalogs (scope: `packages/core, src/client/project-manager, src/client/ui, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider visibility`).
 34. [TODO] Git Commit: `test: verify local provider visibility` (hash: TBD)
 

@@ -68,7 +68,8 @@ const isProviderStackId = (value: unknown): value is ProviderStackId =>
   value === "codexCli" ||
   value === "geminiCli" ||
   value === "kimiCode" ||
-  value === "glmClaudeCode";
+  value === "glmClaudeCode" ||
+  value === "localModels";
 
 const startService = new WorkflowStepStartService();
 
@@ -81,7 +82,7 @@ export const StageConfirmationCard: React.FC<{
 }> = (props) => {
   const { stage, workflowSnapshot, workspaceSlug, workspacePath, onStarted } =
     props;
-  const { t } = useLocalization();
+  const { availableEngines, t } = useLocalization();
   const [startInFlight, setStartInFlight] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
   const [selectedProviderId, setSelectedProviderId] =
@@ -144,9 +145,9 @@ export const StageConfirmationCard: React.FC<{
   const modelOptions = useMemo(
     () =>
       selectedProviderId
-        ? getStartCardModelOptions(selectedProviderId)
+        ? getStartCardModelOptions(selectedProviderId, availableEngines)
         : [],
-    [selectedProviderId]
+    [availableEngines, selectedProviderId]
   );
   const reasoningOptions = useMemo(
     () =>
@@ -163,7 +164,8 @@ export const StageConfirmationCard: React.FC<{
     !managedPreviewBlocked &&
     !startInFlight &&
     selectedProviderId !== null &&
-    selectedProvider?.connected === true;
+    selectedProvider?.connected === true &&
+    (selectedProviderId !== "localModels" || modelOptions.length > 0);
 
   useEffect(() => {
     const scopeKey = `${workspaceSlug}:${stage}`;
@@ -190,11 +192,12 @@ export const StageConfirmationCard: React.FC<{
     }
     const selection = resolveDefaultStartCardModelSelection(
       settingsPayload,
-      selectedProviderId
+      selectedProviderId,
+      availableEngines
     );
     setSelectedModelId(selection.modelId);
     setSelectedReasoning(selection.reasoning);
-  }, [selectedProviderId, settingsPayload]);
+  }, [availableEngines, selectedProviderId, settingsPayload]);
 
   useEffect(() => {
     if (reasoningOptions.length === 0) {

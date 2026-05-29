@@ -37,16 +37,47 @@ export type StartCardModelSelection = {
   readonly reasoning: string;
 };
 
+type LocalTranslationEngineCatalog = {
+  readonly engineId: string;
+};
+
 const GLM_CLAUDE_CODE_MODEL_LABEL = "GLM 5.1 / Claude Code";
 const GLM_CLAUDE_CODE_MODEL_DESCRIPTION =
   "GLM 5.1 exposed through the Claude Agent SDK-compatible runtime.";
+const LOCAL_MODEL_ENGINE_PREFIX = "lmstudio:";
+const DEFAULT_LOCAL_MODEL_ID = "local-model";
 
 const isSettings = (value: unknown): value is Settings =>
   Boolean(value) && typeof value === "object" && !Array.isArray(value);
 
+const formatLocalModelLabel = (modelKey: string): string =>
+  modelKey
+    .split("/")
+    .pop()
+    ?.replace(/[-_]+/gu, " ")
+    .replace(/\b\w/gu, (match) => match.toUpperCase()) ?? modelKey;
+
+const getLocalModelOptions = (
+  availableEngines: readonly LocalTranslationEngineCatalog[]
+): readonly StartCardModelOption[] =>
+  availableEngines
+    .filter((engine) => engine.engineId.startsWith(LOCAL_MODEL_ENGINE_PREFIX))
+    .map((engine) => {
+      const modelKey = engine.engineId.slice(LOCAL_MODEL_ENGINE_PREFIX.length);
+      return {
+        description: `LM Studio local model: ${modelKey}`,
+        id: modelKey,
+        label: formatLocalModelLabel(modelKey),
+      };
+    });
+
 export const getStartCardModelOptions = (
-  providerId: ProviderStackId
+  providerId: ProviderStackId,
+  availableEngines: readonly LocalTranslationEngineCatalog[] = []
 ): readonly StartCardModelOption[] => {
+  if (providerId === "localModels") {
+    return getLocalModelOptions(availableEngines);
+  }
   if (providerId === "claudeCodeCli") {
     return CLAUDE_MODEL_ALIASES.map((model) => ({
       description: model.description,
@@ -104,7 +135,11 @@ export const getStartCardReasoningOptions = (
       label: effort,
     }));
   }
-  if (providerId === "kimiCode" || providerId === "glmClaudeCode") {
+  if (
+    providerId === "kimiCode" ||
+    providerId === "glmClaudeCode" ||
+    providerId === "localModels"
+  ) {
     return [{ id: "default", label: "default" }];
   }
   const model =
@@ -118,9 +153,16 @@ export const getStartCardReasoningOptions = (
 
 export const resolveDefaultStartCardModelSelection = (
   payload: SettingsLoadedPayload | null,
-  providerId: ProviderStackId
+  providerId: ProviderStackId,
+  availableEngines: readonly LocalTranslationEngineCatalog[] = []
 ): StartCardModelSelection => {
   const settings = isSettings(payload?.settings) ? payload.settings : null;
+  if (providerId === "localModels") {
+    return {
+      modelId: getLocalModelOptions(availableEngines)[0]?.id ?? DEFAULT_LOCAL_MODEL_ID,
+      reasoning: "default",
+    };
+  }
   if (providerId === "claudeCodeCli") {
     return {
       modelId: settings?.providers.claude.defaultModel ?? DEFAULT_CLAUDE_MODEL_ALIAS,

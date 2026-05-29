@@ -42,4 +42,10 @@ export const PROVIDER_TINT_TOKENS: Record<ProviderStackId, ProviderTintTokens> =
       border: "rgba(37, 196, 128, 0.36)",
       badgeBackground: "rgba(37, 196, 128, 0.15)",
     },
+    localModels: {
+      accent: "rgba(245, 216, 122, 0.68)",
+      fill: "rgba(245, 216, 122, 0.10)",
+      border: "rgba(245, 216, 122, 0.36)",
+      badgeBackground: "rgba(245, 216, 122, 0.15)",
+    },
   };
