@@ -1,4 +1,3 @@
-import { execFileSync } from "node:child_process";
 import {
   DEFAULT_ENGINE_LANGUAGE_CATALOGS,
   type LocalizationEngineLanguageCatalog,
@@ -10,6 +9,10 @@ import type {
   TranslationReporter,
   TranslationResult,
 } from "@codeai-hub/translation";
+import {
+  createDefaultLmsCommandRunner,
+  type LmsCommandRunner,
+} from "./local-models-cli";
 
 const DEFAULT_LM_STUDIO_BASE_URL = "http://127.0.0.1:1234";
 const DISCOVERY_TIMEOUT_MS = 5000;
@@ -64,11 +67,6 @@ export interface LocalModelDescriptor {
   readonly sizeBytes?: number;
 }
 
-type LmsCommandRunner = (
-  args: readonly string[],
-  options: { readonly timeoutMs: number }
-) => string;
-
 interface LocalModelsFacadeOptions {
   readonly baseUrl?: string;
   readonly commandRunner?: LmsCommandRunner;
@@ -107,13 +105,6 @@ const resolveBaseUrl = (baseUrl?: string): string =>
   )
     .trim()
     .replace(TRAILING_SLASHES_PATTERN, "");
-
-const defaultCommandRunner: LmsCommandRunner = (args, options) =>
-  execFileSync("lms", [...args], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "ignore"],
-    timeout: options.timeoutMs,
-  });
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -379,7 +370,8 @@ export class LocalModelsFacade {
 
   constructor(options: LocalModelsFacadeOptions = {}) {
     this.baseUrl = resolveBaseUrl(options.baseUrl);
-    this.commandRunner = options.commandRunner ?? defaultCommandRunner;
+    this.commandRunner =
+      options.commandRunner ?? createDefaultLmsCommandRunner();
     this.fetchImplementation = options.fetchImplementation ?? fetch;
     this.reporter = options.reporter;
   }
