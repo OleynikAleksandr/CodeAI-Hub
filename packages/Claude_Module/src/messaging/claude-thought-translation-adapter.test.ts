@@ -62,6 +62,26 @@ test("ClaudeThoughtTranslationAdapter skips translation when target language is 
   assert.deepEqual(calls, []);
 });
 
+test("ClaudeThoughtTranslationAdapter skips translation when Russian reasoning already targets Russian", async () => {
+  const calls: string[] = [];
+  const adapter = new ClaudeThoughtTranslationAdapter(undefined, {
+    translate: (request: TranslationRequest) => {
+      calls.push(request.text);
+      return Promise.resolve(
+        createTranslatedResult(request, `[ru] ${request.text}`)
+      );
+    },
+  });
+
+  const translated = await adapter.translateReasoning(
+    "Проверяю файл README.md перед правкой.",
+    "ru"
+  );
+
+  assert.equal(translated, null);
+  assert.deepEqual(calls, []);
+});
+
 test("ClaudeThoughtTranslationAdapter forwards the selected translation engine", async () => {
   const engineIds: string[] = [];
   const adapter = new ClaudeThoughtTranslationAdapter(undefined, {

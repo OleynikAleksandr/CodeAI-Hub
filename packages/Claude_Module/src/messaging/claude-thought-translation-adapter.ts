@@ -11,6 +11,8 @@ const TRANSLATION_MAX_CHUNK_CHARS = 1200;
 const TRANSLATION_TIMEOUT_MS = 5000;
 const DEFAULT_TRANSLATION_ENGINE_ID = "google-gtx";
 const TRANSLATION_PROVIDER_ID = "claude";
+const CYRILLIC_CHARACTER_PATTERN = /[\u0400-\u052f]/u;
+const RUSSIAN_LANGUAGE_CODES = new Set(["ru", "ru-ru"]);
 
 const resolveTargetLanguage = (value?: string): string | null => {
   const normalized = value?.trim().toLowerCase();
@@ -20,6 +22,13 @@ const resolveTargetLanguage = (value?: string): string | null => {
 
   return normalized === SOURCE_LANGUAGE ? null : normalized;
 };
+
+const shouldSkipTranslationForTargetLanguage = (
+  text: string,
+  targetLanguage: string
+): boolean =>
+  RUSSIAN_LANGUAGE_CODES.has(targetLanguage) &&
+  CYRILLIC_CHARACTER_PATTERN.test(text);
 
 export interface ClaudeTextTranslationAdapter {
   translateReasoning(
@@ -90,6 +99,11 @@ export class ClaudeThoughtTranslationAdapter
     const normalized = text.trim();
     const resolvedTargetLanguage = resolveTargetLanguage(targetLanguage);
     if (!(normalized.length > 0 && resolvedTargetLanguage)) {
+      return null;
+    }
+    if (
+      shouldSkipTranslationForTargetLanguage(normalized, resolvedTargetLanguage)
+    ) {
       return null;
     }
 

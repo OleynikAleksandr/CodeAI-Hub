@@ -39,6 +39,14 @@ The current step template, target artifact path, questionnaire path, user materi
 - Report what changed in the artifact and the most important remaining questions.
 - Follow the runtime language directive for user-facing artifacts and chat updates.
 
+## Visible Reasoning Summary Language
+
+- Do not expose private chain-of-thought or internal deliberation.
+- If the runtime emits visible thinking, thought, or reasoning summary text, keep it as a concise user-safe operational summary.
+- Write every visible thinking, thought, or reasoning summary in the runtime reasoning/chat language from the current step language directive.
+- If that directive selects Russian (\`ru\`), visible thinking/reasoning summaries, headings, and short progress labels must be in Russian; do not use English default summary headings.
+- If the directive is missing, use the user's current chat language.
+
 ## Progress Updates
 
 - During work, regularly inform the user about progress in short commentary messages.
