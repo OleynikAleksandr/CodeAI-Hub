@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.404] - 2026-05-29
+### Fixed
+- **Claude live/final assistant tails are deduped in Core.** A later ordinary assistant event that is already covered by immediately preceding `tag: "live"` chunks is suppressed; suffix-prefix overlaps are trimmed to the unseen continuation and kept as live content.
+- **Claude live text no longer splits markdown links at URL periods.** `ClaudeTextLiveBuffer` treats URL/domain periods inside markdown links as unsafe flush boundaries and reconciles final suffix/window snapshots against already materialized live text.
+- **Sources-list duplicate bubbles are prevented.** The observed `ills)` + repeated Sources tail is covered by both the Core persisted-history guard and the Claude buffer reconciliation path.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-event-messages.test.ts packages/Claude_Module/src/messaging/claude-text-live-buffer.test.ts`
+- `npm run build --workspace @codeai-hub/claude-module`
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js`
+- `node --test packages/Claude_Module/dist/messaging/claude-text-live-buffer.test.js`
+
 ## [1.2.403] - 2026-05-29
 ### Fixed
 - **Local Models workflow-agent calls now use LM Studio native chat.** The provider calls `/api/v1/chat`, parses final `message` output after reasoning blocks, and no longer depends on OpenAI-compatible `message.content` for reasoning-heavy local models.

@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "54474f57e",
+  "lastRecordedCommit": "d3bb4e5d2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase31.verify.task1",
-  "expectedCommitMessage": "test: verify claude live tail dedupe",
+  "currentTaskId": "local-models.phase31.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare claude live tail dedupe release",
   "debt": {
-    "expectedCommitMessage": "test: verify claude live tail dedupe",
-    "preCommitHead": "54474f57e",
+    "expectedCommitMessage": "docs: prepare claude live tail dedupe release",
+    "preCommitHead": "d3bb4e5d2",
     "stage": "commit_pending",
-    "taskId": "local-models.phase31.verify.task1"
+    "taskId": "local-models.phase31.release-prep.task1"
   }
 }
 ```
@@ -632,12 +632,14 @@
     - Verification 2026-05-29: sequential `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-live-tail-dedupe.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-event-messages.test.js` — PASS (9 tests).
     - Verification 2026-05-29: `node --test packages/Claude_Module/dist/messaging/claude-text-live-buffer.test.js` — PASS (14 tests).
-223. [PENDING] Git Commit: `test: verify claude live tail dedupe` (hash: TBD)
+223. [DONE] Git Commit: `test: verify claude live tail dedupe` (hash: d3bb4e5d2)
 
 ### Stream: Release Build
 224. [DONE] `local-models.phase31.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the Claude live/final tail dedupe regression (scope: chat/process gate; expected commit: none). Result: User explicitly requested "Чини ... починишь, собери новый релиз" on 2026-05-29; release build is approved after the fix and verification complete.
-225. [TODO] `local-models.phase31.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude live tail dedupe release`).
-226. [TODO] Git Commit: `docs: prepare claude live tail dedupe release` (hash: TBD)
+225. [DONE] `local-models.phase31.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare claude live tail dedupe release`).
+    - Release prep 2026-05-29: future release version is `1.2.404` (current root `package.json` version `1.2.403` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.404` and `CHANGELOG.md` entry `## [1.2.404] - 2026-05-29` added before release scripts.
+226. [PENDING] Git Commit: `docs: prepare claude live tail dedupe release` (hash: TBD)
 227. [TODO] `local-models.phase31.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build claude live tail dedupe release`).
 228. [TODO] Git Commit: `chore: build claude live tail dedupe release` (hash: TBD)
 229. [TODO] `local-models.phase31.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package claude live tail dedupe vsix`).
