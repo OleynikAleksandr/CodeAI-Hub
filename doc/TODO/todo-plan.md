@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "ba919251b",
+  "lastRecordedCommit": "f08594800",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase28.verify.task1",
-  "expectedCommitMessage": "test: verify step confirmation navigation",
+  "currentTaskId": "local-models.phase28.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare step confirmation navigation release",
   "debt": {
-    "expectedCommitMessage": "test: verify step confirmation navigation",
-    "preCommitHead": "ba919251b",
+    "expectedCommitMessage": "docs: prepare step confirmation navigation release",
+    "preCommitHead": "f08594800",
     "stage": "commit_pending",
-    "taskId": "local-models.phase28.verify.task1"
+    "taskId": "local-models.phase28.release-prep.task1"
   }
 }
 ```
@@ -504,10 +504,19 @@
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
     - Verification 2026-05-29: `npm run build:project-manager` — PASS.
     - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
-175. [PENDING] Git Commit: `test: verify step confirmation navigation` (hash: TBD)
-176. [TODO] `local-models.phase28.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the step-confirmation navigation fix (scope: chat/process gate; expected commit: none).
+175. [DONE] Git Commit: `test: verify step confirmation navigation` (hash: f08594800)
+176. [DONE] `local-models.phase28.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the step-confirmation navigation fix (scope: chat/process gate; expected commit: none). Result: User explicitly requested 'После фикса собери новый релиз' after the step-confirmation navigation fix and verification; release build is approved.
+177. [DONE] `local-models.phase28.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare step confirmation navigation release`).
+    - Release prep 2026-05-29: future release version is `1.2.401` (current root `package.json` version `1.2.400` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.401` and `CHANGELOG.md` entry `## [1.2.401] - 2026-05-29` added before release scripts.
+178. [PENDING] Git Commit: `docs: prepare step confirmation navigation release` (hash: TBD)
+179. [TODO] `local-models.phase28.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build step confirmation navigation release`).
+180. [TODO] Git Commit: `chore: build step confirmation navigation release` (hash: TBD)
+181. [TODO] `local-models.phase28.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package step confirmation navigation vsix`).
+182. [TODO] Git Commit: `chore: package step confirmation navigation vsix` (hash: TBD)
+183. [TODO] `local-models.phase28.user-acceptance.task1` User retests the new release and confirms confirmation-button navigation advances to the next Core-active workflow card while manual return remains possible (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-177. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-178. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+184. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+185. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)

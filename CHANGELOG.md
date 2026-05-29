@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.401] - 2026-05-29
+### Fixed
+- **Confirmation now opens the next workflow card.** After the user confirms an accepted artifact with `Подтверждаю`, Core emits `workflow:stage:activate` for the next trunk step only after the commit boundary succeeds.
+- **Project Manager remains display-only.** PM listens for the Core activation event and updates the visible card/sidebar route, but it does not infer workflow acceptance from local UI state.
+- **Preliminary and managed review gates share the next-stage command path.** Description, Virtual Simulation, and Diagram Modules acceptance now route to the next Core-active stage consistently.
+
+### Tests
+- `npx tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-diagram-review-actions.test.ts`
+- `npx tsx --test src/client/project-manager/components/layout/workflow-navigation.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+
 ## [1.2.400] - 2026-05-29
 ### Fixed
 - **Post-turn managed workflow waits show working copy, not resume copy.** Project Manager no longer treats `context_check_pending` as a session-resume state; the input remains locked by the Core-owned snapshot, but the wait text is `Agent is working... Please wait.`.

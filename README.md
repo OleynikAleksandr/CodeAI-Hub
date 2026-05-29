@@ -2,17 +2,23 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.400** (Session Wait Copy Classification)
+**Current Release — v1.2.401** (Step Confirmation Navigation)
+
+This release makes explicit workflow artifact confirmation advance the visible
+Project Manager card to the next Core-active trunk step. After `Подтверждаю`,
+Core emits `workflow:stage:activate` only after the accepted artifact and commit
+boundary are complete, and Project Manager displays that Core-owned command.
+
+The user can still return to the completed step manually and continue the
+dialog there. Project Manager remains a projection: it does not infer acceptance
+from text, buttons, or local UI state.
+
+**Previous Release — v1.2.400** (Session Wait Copy Classification)
 
 This release fixes the Project Manager input wait copy while preserving Core as
 the source of truth for session lifecycle. Ordinary Core-owned post-turn waits,
 including `context_check_pending` and managed workflow validation/continuation,
 remain input-locked but now show `Agent is working... Please wait.`.
-
-`Agent is resuming your session... Please wait.` is now reserved for actual
-continuity rollover/resume locks such as `threshold_reached`,
-`report_in_progress`, and `resume_bootstrap`. Project Manager only displays the
-Core-owned snapshot state; it does not decide whether input is allowed.
 
 **Previous Release — v1.2.399** (Local Preliminary Artifact Materialization)
 
