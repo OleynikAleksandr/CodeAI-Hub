@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "74be29102",
+  "lastRecordedCommit": "e0fabebd9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase14.release-prep.task1",
-  "expectedCommitMessage": "docs: prepare local bundle batching release",
+  "currentTaskId": "local-models.phase14.release-build.task1",
+  "expectedCommitMessage": "chore: build local bundle batching release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare local bundle batching release",
-    "preCommitHead": "74be29102",
+    "expectedCommitMessage": "chore: build local bundle batching release",
+    "preCommitHead": "e0fabebd9",
     "stage": "commit_pending",
-    "taskId": "local-models.phase14.release-prep.task1"
+    "taskId": "local-models.phase14.release-build.task1"
   }
 }
 ```
@@ -256,9 +256,11 @@
 81. [DONE] `local-models.phase14.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local bundle batching release`).
     - Release prep 2026-05-29: future release version is `1.2.395` (current root `package.json` version `1.2.394` + 1).
     - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.395` and `CHANGELOG.md` entry `## [1.2.395] - 2026-05-29` added before release scripts.
-82. [PENDING] Git Commit: `docs: prepare local bundle batching release` (hash: TBD)
-83. [TODO] `local-models.phase14.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local bundle batching release`).
-84. [TODO] Git Commit: `chore: build local bundle batching release` (hash: TBD)
+82. [DONE] Git Commit: `docs: prepare local bundle batching release` (hash: e0fabebd9)
+83. [DONE] `local-models.phase14.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local bundle batching release`).
+    - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.395`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release build artifacts copied to `doc/tmp/releases/`: `claude-module-1.2.395.tar.bz2`, `codex-module-1.2.395.tar.bz2`, `gemini-module-1.2.395.tar.bz2`, `kimi-module-1.2.395.tar.bz2`, `glm-claude-code-module-1.2.395.tar.bz2`, `codeai-hub-core-darwin-arm64-1.2.395.tar.bz2`, `vscode-webview-1.2.395.tar.bz2`, `project-manager-1.2.395.tar.bz2`, `CodeAIHubLauncher-macos-arm64-1.2.395.tar.bz2`.
+84. [PENDING] Git Commit: `chore: build local bundle batching release` (hash: TBD)
 85. [TODO] `local-models.phase14.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local bundle batching vsix`).
 86. [TODO] Git Commit: `chore: package local bundle batching vsix` (hash: TBD)
 87. [TODO] `local-models.phase14.user-acceptance.task1` User retests the new release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
