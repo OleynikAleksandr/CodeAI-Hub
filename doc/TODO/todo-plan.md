@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "fae9ec792",
+  "lastRecordedCommit": "51aa81cc9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase30.docs.task1",
-  "expectedCommitMessage": "docs: document local provider native chat policy",
+  "currentTaskId": "local-models.phase30.verify.task1",
+  "expectedCommitMessage": "test: verify local provider native chat policy",
   "debt": {
-    "expectedCommitMessage": "docs: document local provider native chat policy",
-    "preCommitHead": "fae9ec792",
+    "expectedCommitMessage": "test: verify local provider native chat policy",
+    "preCommitHead": "51aa81cc9",
     "stage": "commit_pending",
-    "taskId": "local-models.phase30.docs.task1"
+    "taskId": "local-models.phase30.verify.task1"
   }
 }
 ```
@@ -578,11 +578,16 @@
 203. [DONE] Git Commit: `fix: unload idle local model workers across purposes` (hash: fae9ec792)
 204. [DONE] `local-models.phase30.docs.task1` Document the native workflow-agent transport, reasoning-only local model limitation, and cross-purpose idle worker cleanup in canonical local-model docs (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Modules/Shared_RuntimeTranslation_Module.md, doc/TODO/todo-plan.md`; expected commit: `docs: document local provider native chat policy`).
     - Documentation 2026-05-29: `SystemArchitecture.md` and `Shared_RuntimeTranslation_Module.md` now distinguish LM Studio translation's OpenAI-compatible endpoint from workflow-agent native `/api/v1/chat`, document final-message parsing after reasoning blocks, and define cross-purpose idle `codeaihub-*` worker cleanup.
-205. [PENDING] Git Commit: `docs: document local provider native chat policy` (hash: TBD)
+205. [DONE] Git Commit: `docs: document local provider native chat policy` (hash: 51aa81cc9)
 
 ### Stream: Verification
-206. [TODO] `local-models.phase30.verify.task1` Run targeted Core tests/build and real LM Studio smoke checks for native provider calls plus idle cross-purpose worker cleanup; record exact commands/results in this plan (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider native chat policy`).
-207. [TODO] Git Commit: `test: verify local provider native chat policy` (hash: TBD)
+206. [DONE] `local-models.phase30.verify.task1` Run targeted Core tests/build and real LM Studio smoke checks for native provider calls plus idle cross-purpose worker cleanup; record exact commands/results in this plan (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify local provider native chat policy`).
+    - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts packages/core/src/local-models/local-models-provider-adapter.test.ts packages/core/src/local-models/local-models-facade.test.ts` — PASS (14 tests).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `node --test packages/core/dist/local-models/local-models-runtime-load-manager.test.js packages/core/dist/local-models/local-models-provider-adapter.test.js packages/core/dist/local-models/local-models-facade.test.js` — PASS (14 tests).
+    - Smoke 2026-05-29: built `LocalModelsProviderAdapter` with real `qwen3.6-27b-mlx` loaded `codeaihub-workflow-agent-qwen3.6-27b-mlx-16384`, called native LM Studio chat, and emitted `turn_started, assistant, turn_completed` for a one-word Russian prompt in `18336` ms with assistant text `готово`.
+    - Smoke 2026-05-29: after the provider smoke, `lms ps --json` showed exactly one loaded worker (`codeaihub-workflow-agent-qwen3.6-27b-mlx-16384`) instead of the two-worker state observed in the user's failed retest; the test-loaded worker was then unloaded and final `lms ps --json` returned `[]`.
+207. [PENDING] Git Commit: `test: verify local provider native chat policy` (hash: TBD)
 
 ### Stream: Release Build
 208. [TODO] `local-models.phase30.release-confirm.task1` Ask for separate explicit user confirmation before preparing/building a new release for the native provider/memory-policy fix (scope: chat/process gate; expected commit: none).
