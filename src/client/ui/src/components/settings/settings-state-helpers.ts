@@ -149,6 +149,20 @@ export const updateKimiDefaultModel = (
   },
 });
 
+export const updateLocalModelsDefaultModel = (
+  settings: Settings,
+  defaultModel: string
+): Settings => ({
+  ...settings,
+  providers: {
+    ...settings.providers,
+    localModels: {
+      ...(settings.providers.localModels ?? {}),
+      defaultModel: defaultModel.trim() || "local-model",
+    },
+  },
+});
+
 export const updateCodexContinuityRemainingPercentThreshold = (
   settings: Settings,
   remainingPercentThreshold: number

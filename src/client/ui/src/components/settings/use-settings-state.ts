@@ -22,6 +22,7 @@ import {
   updateGeminiContinuityRemainingPercentThreshold,
   updateGeminiDefaultModel,
   updateGeminiThinking,
+  updateLocalModelsDefaultModel,
   updateProviderAutoUpdate,
   updateResponsePolicyMode,
   updateStrictInstructionText,
@@ -454,7 +455,6 @@ export const useSettingsState = (): UseSettingsStateResult => {
     },
     []
   );
-
   return {
     coreControl,
     settings,
@@ -483,6 +483,8 @@ export const useSettingsState = (): UseSettingsStateResult => {
     handleLocalizationEngineIdChange,
     handleLocalizationGlossaryEnabledChange,
     handleLocalizationWorkflowTermsPolicyChange,
+    handleLocalModelsDefaultModelChange: (modelId) =>
+      updateSettings(updateLocalModelsDefaultModel(settings, modelId)),
     handleNativeRequestCapture,
     handleReasoningTranslationEngineIdChange,
     handleProviderAutoUpdateChange,

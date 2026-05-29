@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "64f85568f",
+  "lastRecordedCommit": "a81640f65",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase16.settings-default.task1",
-  "expectedCommitMessage": "feat: persist local model provider defaults",
+  "currentTaskId": "local-models.phase16.settings-handlers.task1",
+  "expectedCommitMessage": "feat: update local model settings handlers",
   "debt": {
-    "expectedCommitMessage": "feat: persist local model provider defaults",
-    "preCommitHead": "64f85568f",
+    "expectedCommitMessage": "feat: update local model settings handlers",
+    "preCommitHead": "a81640f65",
     "stage": "commit_pending",
-    "taskId": "local-models.phase16.settings-default.task1"
+    "taskId": "local-models.phase16.settings-handlers.task1"
   }
 }
 ```
@@ -271,9 +271,9 @@
 ## Phase 16 — Local Provider Model Selection Parity (owner: Codex, updated: 2026-05-29)
 ### Stream: Settings Defaults
 88. [DONE] `local-models.phase16.settings-default.task1` Persist a Local Models provider default model in Settings state without changing translation-engine selections (scope: `src/client/ui/src/components/settings/local-models-settings-state.ts, src/client/ui/src/components/settings/settings-state-model.ts, doc/TODO/todo-plan.md`; expected commit: `feat: persist local model provider defaults`).
-89. [PENDING] Git Commit: `feat: persist local model provider defaults` (hash: TBD)
-90. [TODO] `local-models.phase16.settings-handlers.task1` Add Settings update handlers for Local Models default model changes in UI and Project Manager settings state (scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/use-settings-state-support.ts, doc/TODO/todo-plan.md`; expected commit: `feat: update local model settings handlers`).
-91. [TODO] Git Commit: `feat: update local model settings handlers` (hash: TBD)
+89. [DONE] Git Commit: `feat: persist local model provider defaults` (hash: a81640f65)
+90. [DONE] `local-models.phase16.settings-handlers.task1` Add Settings update handlers for Local Models default model changes in UI settings state (scope: `src/client/ui/src/components/settings/settings-state-helpers.ts, src/client/ui/src/components/settings/use-settings-state-support.ts, src/client/ui/src/components/settings/use-settings-state.ts, doc/TODO/todo-plan.md`; expected commit: `feat: update local model settings handlers`).
+91. [PENDING] Git Commit: `feat: update local model settings handlers` (hash: TBD)
 92. [TODO] `local-models.phase16.settings-hooks.task1` Wire Local Models default handlers through Settings hooks and the Local Models Settings tab control (scope: `src/client/ui/src/components/settings/use-settings-state.ts, src/client/project-manager/components/settings/use-project-manager-settings-state.ts, src/client/ui/src/components/settings/settings-provider-tab-content.tsx`; expected commit: `feat: select local default model in settings`).
 93. [TODO] Git Commit: `feat: select local default model in settings` (hash: TBD)
 

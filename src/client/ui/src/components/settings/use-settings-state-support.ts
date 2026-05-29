@@ -431,6 +431,7 @@ export interface UseSettingsStateResult {
   readonly handleLocalizationWorkflowTermsPolicyChange: (
     workflowTermsPolicy: LocalizationWorkflowTermsPolicy
   ) => void;
+  readonly handleLocalModelsDefaultModelChange?: (modelId: string) => void;
   readonly handleNativeRequestCapture: (
     providerId: NativeRequestCaptureProviderId,
     modelId: NativeRequestCaptureModelId,
