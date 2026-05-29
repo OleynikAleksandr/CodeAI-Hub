@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "546e596bc",
+  "lastRecordedCommit": "9458cd245",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase32.release-build.task1",
-  "expectedCommitMessage": "chore: build lm studio memory lifecycle release",
+  "currentTaskId": "local-models.phase32.release-package.task1",
+  "expectedCommitMessage": "chore: package lm studio memory lifecycle vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build lm studio memory lifecycle release",
-    "preCommitHead": "546e596bc",
+    "expectedCommitMessage": "chore: package lm studio memory lifecycle vsix",
+    "preCommitHead": "9458cd245",
     "stage": "commit_pending",
-    "taskId": "local-models.phase32.release-build.task1"
+    "taskId": "local-models.phase32.release-package.task1"
   }
 }
 ```
@@ -691,9 +691,12 @@
 245. [DONE] `local-models.phase32.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build lm studio memory lifecycle release`).
     - Release build 2026-05-29: `./scripts/build-all.sh --allow-dirty` completed successfully for version `1.2.405`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
     - Release artifacts 2026-05-29: `doc/tmp/releases/claude-module-1.2.405.tar.bz2`, `doc/tmp/releases/codex-module-1.2.405.tar.bz2`, `doc/tmp/releases/gemini-module-1.2.405.tar.bz2`, `doc/tmp/releases/kimi-module-1.2.405.tar.bz2`, `doc/tmp/releases/glm-claude-code-module-1.2.405.tar.bz2`, `doc/tmp/releases/codeai-hub-core-darwin-arm64-1.2.405.tar.bz2`, `doc/tmp/releases/vscode-webview-1.2.405.tar.bz2`, `doc/tmp/releases/project-manager-1.2.405.tar.bz2`, `doc/tmp/releases/CodeAIHubLauncher-macos-arm64-1.2.405.tar.bz2`.
-246. [PENDING] Git Commit: `chore: build lm studio memory lifecycle release` (hash: TBD)
-247. [TODO] `local-models.phase32.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package lm studio memory lifecycle vsix`).
-248. [TODO] Git Commit: `chore: package lm studio memory lifecycle vsix` (hash: TBD)
+246. [DONE] Git Commit: `chore: build lm studio memory lifecycle release` (hash: 9458cd245)
+247. [DONE] `local-models.phase32.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package lm studio memory lifecycle vsix`).
+    - Release package 2026-05-29: `./scripts/build-release.sh --use-current-version --allow-dirty` completed successfully for version `1.2.405`; `--allow-dirty` was used because the only pre-existing dirty path was the orchestrator's post-commit advancement in `doc/TODO/todo-plan.md`.
+    - Release package verification 2026-05-29: output included `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `Package created`, and `VSIX runtime package surface verified`.
+    - Release package 2026-05-29: VSIX ready at `/Users/oleksandroliinyk/VSCODE/CodeAI-Hub/codeai-hub-1.2.405.vsix` (`4.5M`).
+248. [PENDING] Git Commit: `chore: package lm studio memory lifecycle vsix` (hash: TBD)
 249. [TODO] `local-models.phase32.user-acceptance.task1` User retests the new release and confirms CodeAI-owned LM Studio models receive TTL and idle local workers do not persist across Core restart/shutdown, while user-loaded LM Studio models remain untouched (scope: user workflow observation; expected commit: none).
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
