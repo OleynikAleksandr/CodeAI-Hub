@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "fe54ece30",
+  "lastRecordedCommit": "03026977d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase32.runtime-ttl.task1",
-  "expectedCommitMessage": "fix: add lm studio model ttl cleanup",
+  "currentTaskId": "local-models.phase32.provider-cleanup.task1",
+  "expectedCommitMessage": "fix: cleanup local models on provider lifecycle",
   "debt": {
-    "expectedCommitMessage": "fix: add lm studio model ttl cleanup",
-    "preCommitHead": "fe54ece30",
+    "expectedCommitMessage": "fix: cleanup local models on provider lifecycle",
+    "preCommitHead": "03026977d",
     "stage": "commit_pending",
-    "taskId": "local-models.phase32.runtime-ttl.task1"
+    "taskId": "local-models.phase32.provider-cleanup.task1"
   }
 }
 ```
@@ -657,9 +657,12 @@
     - Fix 2026-05-29: CodeAI-owned LM Studio loads now pass purpose-specific `--ttl` values: generic/localization translation 300s, reasoning translation 600s, workflow-agent 1800s, with environment overrides for global and per-purpose tuning.
     - Fix 2026-05-29: `LocalModelsRuntimeLoadManager.unloadIdleCodeAiOwnedWorkers()` unloads only idle LLM instances whose identifier starts with `codeaihub-`; user-loaded LM Studio instances and active/generating CodeAI instances are left untouched.
     - Verification 2026-05-29: `npx tsx --test packages/core/src/local-models/local-models-runtime-load-manager.test.ts` — PASS (6 tests).
-233. [PENDING] Git Commit: `fix: add lm studio model ttl cleanup` (hash: TBD)
-234. [TODO] `local-models.phase32.provider-cleanup.task1` Wire Local Models startup/shutdown cleanup through provider lifecycle disposal so Core restart and graceful shutdown unload idle CodeAI-owned LM Studio workers (scope: `packages/core/src/local-models/local-models-provider-adapter.ts, packages/core/src/provider-registry/index.ts, doc/TODO/todo-plan.md`; expected commit: `fix: cleanup local models on provider lifecycle`).
-235. [TODO] Git Commit: `fix: cleanup local models on provider lifecycle` (hash: TBD)
+233. [DONE] Git Commit: `fix: add lm studio model ttl cleanup` (hash: 03026977d)
+234. [DONE] `local-models.phase32.provider-cleanup.task1` Wire Local Models startup/shutdown cleanup through provider lifecycle disposal so Core restart and graceful shutdown unload idle CodeAI-owned LM Studio workers (scope: `packages/core/src/local-models/local-models-provider-adapter.ts, packages/core/src/provider-registry/index.ts, doc/TODO/todo-plan.md`; expected commit: `fix: cleanup local models on provider lifecycle`).
+    - Fix 2026-05-29: `LocalModelsProviderAdapter.initialize()` and `dispose()` now run best-effort cleanup of idle `codeaihub-*` LM Studio workers and clear session listeners on dispose.
+    - Fix 2026-05-29: `ProviderRegistry.dispose()` now invokes optional adapter-level `dispose()` hooks with warning-only failure handling, so Core shutdown can release provider-owned external resources without making Project Manager the authority.
+    - Verification 2026-05-29: `npm exec -- ultracite check packages/core/src/local-models/local-models-provider-adapter.ts packages/core/src/provider-registry/index.ts` — PASS.
+235. [PENDING] Git Commit: `fix: cleanup local models on provider lifecycle` (hash: TBD)
 236. [TODO] `local-models.phase32.provider-tests.task1` Add focused tests for Local Models provider startup/shutdown cleanup and provider registry adapter disposal (scope: `packages/core/src/local-models/local-models-provider-adapter.test.ts, packages/core/src/provider-registry/provider-descriptor-factory.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover lm studio memory cleanup`).
 237. [TODO] Git Commit: `test: cover lm studio memory cleanup` (hash: TBD)
 

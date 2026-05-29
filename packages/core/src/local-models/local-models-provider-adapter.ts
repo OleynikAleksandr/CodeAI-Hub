@@ -167,7 +167,13 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
   }
 
   initialize(): Promise<void> {
+    this.#cleanupIdleCodeAiOwnedWorkers();
     return Promise.resolve();
+  }
+
+  dispose(): void {
+    this.#cleanupIdleCodeAiOwnedWorkers();
+    this.#listenersBySessionId.clear();
   }
 
   createSession(): Promise<string> {
@@ -268,6 +274,15 @@ export class LocalModelsProviderAdapter implements ProviderAdapter {
       model,
       purpose: "workflow-agent",
     });
+  }
+
+  #cleanupIdleCodeAiOwnedWorkers(): void {
+    try {
+      this.#runtimeLoadManager.unloadIdleCodeAiOwnedWorkers();
+    } catch {
+      // LM Studio cleanup is best-effort: startup/shutdown must not fail just
+      // because the companion CLI or server is temporarily unavailable.
+    }
   }
 
   async #complete(

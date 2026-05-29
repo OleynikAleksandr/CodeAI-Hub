@@ -52,6 +52,16 @@ export type {
 
 const GEMINI_AUTH_FILENAMES = ["oauth_creds.json", "credentials.json"] as const;
 
+type DisposableProviderAdapter = ProviderAdapter & {
+  readonly dispose: () => void;
+};
+
+const hasDisposableAdapter = (
+  adapter: ProviderAdapter | undefined
+): adapter is DisposableProviderAdapter =>
+  typeof (adapter as { readonly dispose?: unknown } | undefined)?.dispose ===
+  "function";
+
 export class ProviderRegistry {
   private readonly providers: ProviderDescriptor[];
   private readonly claudeAdapterCtor: ClaudeAdapterCtor;
@@ -210,6 +220,20 @@ export class ProviderRegistry {
 
   dispose(): void {
     this.recoveryScheduler.dispose();
+    for (const provider of this.providers) {
+      const adapter = provider.adapter;
+      if (!hasDisposableAdapter(adapter)) {
+        continue;
+      }
+      try {
+        adapter.dispose();
+      } catch (error) {
+        this.options.logger.warn("Provider adapter dispose failed", {
+          error: error instanceof Error ? error.message : String(error),
+          providerId: provider.id,
+        });
+      }
+    }
   }
 
   private async ensureGeminiAdapter(): Promise<void> {
