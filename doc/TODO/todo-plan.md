@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "c2058e7ff",
+  "lastRecordedCommit": "561155745",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase20.catalog-load.task1",
-  "expectedCommitMessage": "fix: restore local model catalog loading",
+  "currentTaskId": "local-models.phase20.catalog-verify.task1",
+  "expectedCommitMessage": "test: verify local model catalog loading",
   "debt": {
-    "expectedCommitMessage": "fix: restore local model catalog loading",
-    "preCommitHead": "c2058e7ff",
+    "expectedCommitMessage": "test: verify local model catalog loading",
+    "preCommitHead": "561155745",
     "stage": "commit_pending",
-    "taskId": "local-models.phase20.catalog-load.task1"
+    "taskId": "local-models.phase20.catalog-verify.task1"
   }
 }
 ```
@@ -365,9 +365,16 @@
     - Verification 2026-05-29: `node --test --test-name-pattern "resolves loaded localization" packages/core/dist/remote-bridge/handlers/settings-request-handler.localization-runtime.test.js` — PASS.
     - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts` — PASS (2 tests).
     - Smoke 2026-05-29: built `SettingsLoadedBroadcaster` emits `availableEngines=["google-gtx","lmstudio:gemma-4-26b-a4b-it"]` before full runtime resolution when `resolveRuntimePayload` is still pending.
-125. [PENDING] Git Commit: `fix: restore local model catalog loading` (hash: TBD)
-126. [TODO] `local-models.phase20.catalog-verify.task1` Run targeted tests/builds and live Core WebSocket smoke checks proving local LM Studio engines are visible before full localization runtime materialization finishes (scope: `packages/core, src/client/project-manager, packages/ui/project-manager/dist/app.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local model catalog loading`).
-127. [TODO] Git Commit: `test: verify local model catalog loading` (hash: TBD)
+125. [DONE] Git Commit: `fix: restore local model catalog loading` (hash: 561155745)
+126. [DONE] `local-models.phase20.catalog-verify.task1` Run targeted tests/builds and live Core WebSocket smoke checks proving local LM Studio engines are visible before full localization runtime materialization finishes (scope: `packages/core, src/client/project-manager, packages/ui/project-manager/dist/app.js, doc/TODO/todo-plan.md`; expected commit: `test: verify local model catalog loading`).
+    - Verification 2026-05-29: `npm run build --workspace @codeai-hub/core` — PASS.
+    - Verification 2026-05-29: `npm run typecheck:webview` — PASS.
+    - Verification 2026-05-29: `npm run build:project-manager` — PASS.
+    - Verification 2026-05-29: `node --test --test-name-pattern "resolves loaded localization" packages/core/dist/remote-bridge/handlers/settings-request-handler.localization-runtime.test.js` — PASS.
+    - Verification 2026-05-29: `npx tsx --test src/client/project-manager/components/settings/use-project-manager-settings.test.ts` — PASS (2 tests).
+    - Smoke 2026-05-29: built `LocalModelsFacade.listModels()` sees 5 downloaded LM Studio LLM engines: `lmstudio:openai/gpt-oss-20b`, `lmstudio:rugpt-3.5-13b`, `lmstudio:hy-mt2-30b-a3b-mlx`, `lmstudio:gemma-4-26b-a4b-it`, `lmstudio:mistral-small-3.2-24b-instruct-2506-mlx`.
+    - Smoke 2026-05-29: built `SettingsLoadedBroadcaster` emits the 5 `lmstudio:*` engines in the first `settings:loaded` payload within 50 ms while `localizationRuntime` is still null and full local materialization is still pending.
+127. [PENDING] Git Commit: `test: verify local model catalog loading` (hash: TBD)
 
 ## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
