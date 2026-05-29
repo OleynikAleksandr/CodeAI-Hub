@@ -2,7 +2,19 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.399** (Local Preliminary Artifact Materialization)
+**Current Release — v1.2.400** (Session Wait Copy Classification)
+
+This release fixes the Project Manager input wait copy while preserving Core as
+the source of truth for session lifecycle. Ordinary Core-owned post-turn waits,
+including `context_check_pending` and managed workflow validation/continuation,
+remain input-locked but now show `Agent is working... Please wait.`.
+
+`Agent is resuming your session... Please wait.` is now reserved for actual
+continuity rollover/resume locks such as `threshold_reached`,
+`report_in_progress`, and `resume_bootstrap`. Project Manager only displays the
+Core-owned snapshot state; it does not decide whether input is allowed.
+
+**Previous Release — v1.2.399** (Local Preliminary Artifact Materialization)
 
 This release fixes Local Models workflow-step completion for preliminary
 documentation stages. When an LM Studio model returns the target artifact as a

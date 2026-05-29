@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.400] - 2026-05-29
+### Fixed
+- **Post-turn managed workflow waits show working copy, not resume copy.** Project Manager no longer treats `context_check_pending` as a session-resume state; the input remains locked by the Core-owned snapshot, but the wait text is `Agent is working... Please wait.`.
+- **Actual rollover/resume states keep the resume copy.** `threshold_reached`, `report_in_progress`, and `resume_bootstrap` still show `Agent is resuming your session... Please wait.`.
+- **The Session UI contract now states the display-only boundary.** Project Manager chooses UX copy from Core-owned snapshot/lock reasons and does not own the lifecycle truth.
+
+### Tests
+- `npx tsx --test src/client/ui/src/session/input-panel.test.tsx`
+- `npx tsx --test src/client/project-manager/components/sessions/session-stream-rollover-pending.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+
 ## [1.2.399] - 2026-05-29
 ### Fixed
 - **Local Models preliminary artifacts are materialized from fenced markdown responses.** If an LM Studio workflow-step response includes the target artifact path plus a fenced markdown block, Core now writes that block to the canonical artifact file before opening review.
