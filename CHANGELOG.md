@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.395] - 2026-05-29
+### Fixed
+- **LM Studio UI localization bundles are sent in bounded batches.** Runtime localization materialization now splits structured bundle entries by entry count and character count before calling local models, avoiding one large request per UI category.
+- **Local bundle materialization no longer leaves Project Manager stuck on English fallback for large local requests.** Failed bounded batches remain fail-closed, while successful batches are merged into the final localized bundle.
+
+### Tests
+- `npm run build --workspace @codeai-hub/localization`
+- `node --test packages/localization/dist/localization-materializer.test.js packages/localization/dist/structured-batch-entry-recovery.test.js`
+- Real LM Studio smoke with `lmstudio:gemma-4-26b-a4b-it` materializing a 13-entry `user_guidance` bundle as 2 bounded requests with `fallback=0` and `partial=0`.
+
 ## [1.2.394] - 2026-05-29
 ### Fixed
 - **LM Studio local server is started by Core before local model calls.** Local model translation and provider execution now run a server preflight so Project Manager does not depend on a manually started LM Studio server.

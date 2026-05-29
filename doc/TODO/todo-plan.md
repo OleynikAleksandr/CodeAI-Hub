@@ -8,15 +8,15 @@
   "planId": "local-models-lmstudio-module-2026-05-28",
   "branch": "main",
   "baseHead": "f4bc0e6a1",
-  "lastRecordedCommit": "6fc15eb96",
+  "lastRecordedCommit": "74be29102",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Local_Models_LMStudio_Module_Planning.md",
-  "currentTaskId": "local-models.phase13.local-bundle-batching.task1",
-  "expectedCommitMessage": "fix: batch local model localization bundles",
+  "currentTaskId": "local-models.phase14.release-prep.task1",
+  "expectedCommitMessage": "docs: prepare local bundle batching release",
   "debt": {
-    "expectedCommitMessage": "fix: batch local model localization bundles",
-    "preCommitHead": "6fc15eb96",
+    "expectedCommitMessage": "docs: prepare local bundle batching release",
+    "preCommitHead": "74be29102",
     "stage": "commit_pending",
-    "taskId": "local-models.phase13.local-bundle-batching.task1"
+    "taskId": "local-models.phase14.release-prep.task1"
   }
 }
 ```
@@ -247,10 +247,23 @@
     - Verification 2026-05-29: `npm run build --workspace @codeai-hub/localization` — PASS.
     - Verification 2026-05-29: `node --test packages/localization/dist/localization-materializer.test.js packages/localization/dist/structured-batch-entry-recovery.test.js` — PASS (8 tests).
     - Smoke 2026-05-29: built `LocalizationMaterializer` with real `lmstudio:gemma-4-26b-a4b-it` materialized a 13-entry `user_guidance` bundle as 2 bounded requests (`1762` and `791` chars), completed in `15837` ms, returned `fallback=0`, `partial=0`, and preserved `API`, `JSON`, `CodeAI Hub`, and `{providerId}`.
-78. [PENDING] Git Commit: `fix: batch local model localization bundles` (hash: TBD)
-79. [TODO] `local-models.phase13.user-acceptance.task1` User retests the fixed release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
+78. [DONE] Git Commit: `fix: batch local model localization bundles` (hash: 74be29102)
+79. [BLOCKED] `local-models.phase13.user-acceptance.task1` User retests the fixed release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none). Result: pending a new release build for user retest after the bounded local model localization batch fix.
 
-## Phase 14 — Scope Closeout (owner: Codex, updated: 2026-05-29)
+## Phase 14 — Local Bundle Batching Release Build (owner: Codex, updated: 2026-05-29)
+### Stream: Release Confirmation And Packaging
+80. [DONE] `local-models.phase14.release-confirm.task1` Ask for and receive separate explicit user confirmation for a new release build after bounded local model localization batching is verified (scope: chat/process gate; expected commit: none). Result: user explicitly confirmed new release build in chat on 2026-05-29.
+81. [DONE] `local-models.phase14.release-prep.task1` After confirmation only, update README/CHANGELOG for the next release version before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare local bundle batching release`).
+    - Release prep 2026-05-29: future release version is `1.2.395` (current root `package.json` version `1.2.394` + 1).
+    - Release prep 2026-05-29: `README.md` Current Release updated to `v1.2.395` and `CHANGELOG.md` entry `## [1.2.395] - 2026-05-29` added before release scripts.
+82. [PENDING] Git Commit: `docs: prepare local bundle batching release` (hash: TBD)
+83. [TODO] `local-models.phase14.release-build.task1` Run approved release build scripts, collect generated artifacts, and record exact outputs/results in this plan (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, doc/tmp/releases, doc/TODO/todo-plan.md`; expected commit: `chore: build local bundle batching release`).
+84. [TODO] Git Commit: `chore: build local bundle batching release` (hash: TBD)
+85. [TODO] `local-models.phase14.release-package.task1` Run final VSIX packaging from the committed release version and record the VSIX path for user retest (scope: `codeai-hub-*.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: package local bundle batching vsix`).
+86. [TODO] Git Commit: `chore: package local bundle batching vsix` (hash: TBD)
+87. [TODO] `local-models.phase14.user-acceptance.task1` User retests the new release and confirms Local Models provider, translation engine, LM Studio auto-start, and UI localization behavior (scope: user workflow observation; expected commit: none).
+
+## Phase 15 — Scope Closeout (owner: Codex, updated: 2026-05-29)
 ### Stream: Closeout
-80. [TODO] `local-models.phase14.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
-81. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
+88. [TODO] `local-models.phase15.closeout.task1` After explicit user acceptance, archive this todo plan, dispose the planning document, update Docs Index, and leave terminal NONE state (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close local models module scope`).
+89. [TODO] Git Commit: `docs: close local models module scope` (hash: TBD)
