@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "7e83b4c3b",
+  "lastRecordedCommit": "83d75bf75",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-lock-terminal-boundary",
-  "expectedCommitMessage": "fix: lock managed input during core arbitration",
+  "currentTaskId": "managed-lock-async-continuations",
+  "expectedCommitMessage": "fix: keep managed lock across internal continuations",
   "debt": {
-    "expectedCommitMessage": "fix: lock managed input during core arbitration",
-    "preCommitHead": "7e83b4c3b",
+    "expectedCommitMessage": "fix: keep managed lock across internal continuations",
+    "preCommitHead": "83d75bf75",
     "stage": "commit_pending",
-    "taskId": "managed-lock-terminal-boundary"
+    "taskId": "managed-lock-async-continuations"
   }
 }
 ```
@@ -95,9 +95,9 @@
 
 ### Stream: Managed Core-Gated Input Lock Follow-up (from 1.2.411 retest)
 32. [DONE] `managed-lock-terminal-boundary` Lock managed technical sessions as soon as a provider turn reaches Core-managed terminal arbitration, before validation/commit/continuation work can expose an idle input state — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts`; expected commit: `fix: lock managed input during core arbitration`
-33. [PENDING] Git Commit: `fix: lock managed input during core arbitration` (hash: TBD)
-34. [TODO] `managed-lock-async-continuations` Dispatch managed internal continuations without awaiting the next provider turn inside the previous turn's arbitration, so all managed technical stages keep one Core-owned lock lifecycle until review/blocked settlement — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: keep managed lock across internal continuations`
-35. [TODO] Git Commit: `fix: keep managed lock across internal continuations` (hash: TBD)
+33. [DONE] Git Commit: `fix: lock managed input during core arbitration` (hash: 83d75bf75)
+34. [DONE] `managed-lock-async-continuations` Dispatch managed internal continuations without awaiting the next provider turn inside the previous turn's arbitration, so all managed technical stages keep one Core-owned lock lifecycle until review/blocked settlement — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: keep managed lock across internal continuations`
+35. [PENDING] Git Commit: `fix: keep managed lock across internal continuations` (hash: TBD)
 
 ### Stream: Tooling Verification
 36. [TODO] `managed-lock-follow-up-verify` Build core and webview and run webview typecheck for the managed input lock follow-up — scope: `core + webview build`

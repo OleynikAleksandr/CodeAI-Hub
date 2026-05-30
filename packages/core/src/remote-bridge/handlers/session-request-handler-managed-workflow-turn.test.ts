@@ -95,6 +95,10 @@ const appMaterializedDecision =
 
 const createHandler = (params: {
   readonly applicationStagePlan?: ApplicationSkeletonStagePlanController;
+  readonly sendInternalMessage?: (
+    sessionId: string,
+    content: string
+  ) => Promise<void>;
   readonly stage: typeof APP_STAGE | typeof DIAGRAM_STAGE;
   readonly workspaceRoot: string;
 }): {
@@ -129,10 +133,12 @@ const createHandler = (params: {
     },
     getMessageDispatch: () =>
       ({
-        sendInternalMessage: (_sessionId: string, content: string) => {
-          internalMessages.push(content);
-          return Promise.resolve();
-        },
+        sendInternalMessage:
+          params.sendInternalMessage ??
+          ((_sessionId: string, content: string) => {
+            internalMessages.push(content);
+            return Promise.resolve();
+          }),
       }) as never,
     sessionManager,
   });
@@ -375,6 +381,48 @@ test("managed workflow turn emits Core-owned Diagram Modules review handoff", as
       coreMessages.at(-1)?.content ?? "",
       TYPE_CONFIRMATION_RE
     );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("managed workflow turn returns continued before internal continuation settles", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "managed-review-diagram-async-continuation-")
+  );
+  try {
+    await prepareDiagramIndex(workspaceRoot);
+    const pendingInternalSend: { resolve?: () => void } = {};
+    let internalSendStarted: (() => void) | null = null;
+    const sendStarted = new Promise<void>((resolve) => {
+      internalSendStarted = resolve;
+    });
+    const { handler, internalMessages, sessionId } = createHandler({
+      sendInternalMessage: (_sessionId: string, content: string) => {
+        internalMessages.push(content);
+        internalSendStarted?.();
+        return new Promise<void>((resolve) => {
+          pendingInternalSend.resolve = resolve;
+        });
+      },
+      stage: DIAGRAM_STAGE,
+      workspaceRoot,
+    });
+
+    const resultPromise = handler.handleTurnCompleted(sessionId);
+    await sendStarted;
+    const result = await Promise.race([
+      resultPromise,
+      new Promise<"pending">((resolve) =>
+        setTimeout(() => resolve("pending"), 25)
+      ),
+    ]);
+    assert.ok(pendingInternalSend.resolve);
+    pendingInternalSend.resolve();
+
+    assert.equal(result, "continued");
+    assert.equal(await resultPromise, "continued");
+    assert.equal(internalMessages.length, 1);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

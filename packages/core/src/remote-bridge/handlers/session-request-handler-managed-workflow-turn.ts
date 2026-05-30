@@ -38,6 +38,7 @@ import {
   validateQualityGatesManagedArtifacts,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
 import type { Session, SessionManager } from "../../session-manager";
+import { dispatchManagedInternalContinuation as dispatchContinuation } from "./managed-internal-continuation-dispatch";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import { resolvePreliminaryArtifactGate } from "./session-request-handler-preliminary-artifact-gate";
@@ -230,7 +231,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         ].join("\n"),
         tag: "managed-workflow-validation",
       });
-      await messageDispatch.sendInternalMessage(params.sessionId, repairPrompt);
+      dispatchContinuation(messageDispatch, params.sessionId, repairPrompt);
       return "continued";
     }
     const planAdvance = await this.diagramStagePlan.commitAcceptedTurn({
@@ -249,19 +250,17 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       return "settled";
     }
     if (decision.nextAction === "dispatch_next_product_part") {
+      const nextPrompt = decision.nextPrompt;
       this.appendCoreMessage(params.sessionId, {
         content: buildDiagramModulesManagedContinuationMessage(
           decision.currentPartId
         ),
         tag: "managed-workflow-continuation",
       });
-      if (decision.nextPrompt) {
-        await messageDispatch.sendInternalMessage(
-          params.sessionId,
-          decision.nextPrompt
-        );
+      if (nextPrompt) {
+        dispatchContinuation(messageDispatch, params.sessionId, nextPrompt);
       }
-      return decision.nextPrompt ? "continued" : "settled";
+      return nextPrompt ? "continued" : "settled";
     }
     if (decision.nextAction === "open_user_review") {
       this.appendCoreMessage(params.sessionId, {
@@ -301,7 +300,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         });
         return "settled";
       }
-      await this.dispatchApplicationRepairPrompt(params, decision, {
+      this.dispatchApplicationRepairPrompt(params, decision, {
         rejectedCommitHash: planAdvance.commit.hash,
         repairTaskId: planAdvance.commit.nextTaskId,
       });
@@ -340,7 +339,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     return "settled";
   }
 
-  private async dispatchApplicationRepairPrompt(
+  private dispatchApplicationRepairPrompt(
     params: {
       readonly sessionId: string;
       readonly workspaceSlug: string;
@@ -350,7 +349,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       readonly rejectedCommitHash: string;
       readonly repairTaskId: string | null;
     } | null
-  ): Promise<void> {
+  ): void {
     const repairPrompt =
       decision.nextAction === "repair_materialization"
         ? buildApplicationSkeletonMaterializationRepairPrompt({
@@ -375,9 +374,8 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       ].join("\n"),
       tag: "managed-workflow-validation",
     });
-    await this.options
-      .getMessageDispatch()
-      .sendInternalMessage(params.sessionId, repairPrompt);
+    const messageDispatch = this.options.getMessageDispatch();
+    dispatchContinuation(messageDispatch, params.sessionId, repairPrompt);
   }
   private async handleQualityGatesTurn(params: {
     readonly sessionId: string;
@@ -408,7 +406,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         });
         return "settled";
       }
-      await this.dispatchQualityGatesRepairPrompt(params, decision, {
+      this.dispatchQualityGatesRepairPrompt(params, decision, {
         rejectedCommitHash: planAdvance.commit.hash,
         repairTaskId: planAdvance.commit.nextTaskId,
       });
@@ -452,7 +450,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     return "settled";
   }
 
-  private async dispatchQualityGatesRepairPrompt(
+  private dispatchQualityGatesRepairPrompt(
     params: {
       readonly sessionId: string;
       readonly workspaceSlug: string;
@@ -462,7 +460,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       readonly rejectedCommitHash: string;
       readonly repairTaskId: string | null;
     } | null
-  ): Promise<void> {
+  ): void {
     const repairPrompt =
       decision.nextAction === "repair_integration"
         ? buildQualityGatesIntegrationRepairPrompt({
@@ -482,9 +480,8 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       content: repairPrompt,
       tag: "managed-workflow-validation",
     });
-    await this.options
-      .getMessageDispatch()
-      .sendInternalMessage(params.sessionId, repairPrompt);
+    const messageDispatch = this.options.getMessageDispatch();
+    dispatchContinuation(messageDispatch, params.sessionId, repairPrompt);
   }
   private appendCoreMessage(
     sessionId: string,
