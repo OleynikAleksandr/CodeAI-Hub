@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { SessionMessage } from "../../../../types/session";
 import { useLocalization } from "../app-host/use-localization";
 import {
@@ -75,6 +75,7 @@ const DialogPanel = ({
     [messages]
   );
   const [pinnedToBottom, setPinnedToBottom] = useState(true);
+  const pinnedToBottomRef = useRef(true);
 
   const updatePinnedState = () => {
     const container = scrollContainerRef.current;
@@ -84,6 +85,7 @@ const DialogPanel = ({
     const distanceFromBottom =
       container.scrollHeight - (container.scrollTop + container.clientHeight);
     const nextPinned = distanceFromBottom <= AUTO_SCROLL_EPSILON;
+    pinnedToBottomRef.current = nextPinned;
     setPinnedToBottom((current) =>
       current === nextPinned ? current : nextPinned
     );
@@ -108,6 +110,28 @@ const DialogPanel = ({
     }
     container.scrollTop = container.scrollHeight;
   }, [pinnedToBottom, scrollAnchor]);
+
+  // Re-pin to the bottom when a message bubble grows after its initial render
+  // (e.g. a reasoning bubble's English text is replaced by a taller Russian
+  // translation). The scrollAnchor effect above runs before that async growth,
+  // so without this the bottom of the latest message gets pushed below the fold.
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || displayMessages.length === 0) {
+      return;
+    }
+    const observer = new ResizeObserver(() => {
+      if (pinnedToBottomRef.current) {
+        container.scrollTop = container.scrollHeight;
+      }
+    });
+    for (const child of Array.from(container.children)) {
+      observer.observe(child);
+    }
+    return () => {
+      observer.disconnect();
+    };
+  }, [displayMessages]);
 
   if (displayMessages.length === 0) {
     return (
