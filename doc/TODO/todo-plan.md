@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "a43249a7e",
+  "lastRecordedCommit": "4d236b53c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-continuation-summary-tests",
-  "expectedCommitMessage": "test: cover managed continuation display prompts",
+  "currentTaskId": "release-docs-417",
+  "expectedCommitMessage": "docs: prepare 1.2.417 release notes",
   "debt": {
-    "expectedCommitMessage": "test: cover managed continuation display prompts",
-    "preCommitHead": "a43249a7e",
+    "expectedCommitMessage": "docs: prepare 1.2.417 release notes",
+    "preCommitHead": "4d236b53c",
     "stage": "commit_pending",
-    "taskId": "managed-continuation-summary-tests"
+    "taskId": "release-docs-417"
   }
 }
 ```
@@ -204,9 +204,20 @@
 95. [DONE] `managed-continuation-visible-summary` Shorten live Diagram Modules Product Part continuation prompts themselves, not only their dialog projection: within the same provider session Core sends a compact delta `user` turn with the next target/part constraints and does not resend embedded templates/field references until a real recovery/rollover/new-session path requires them — scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: shorten visible managed continuation turns`
 96. [DONE] Git Commit: `fix: shorten visible managed continuation turns` (hash: a43249a7e)
 97. [DONE] `managed-continuation-summary-tests` Add regressions proving Diagram Modules live continuation user turns stay compact, include the next target/part constraints, and do not resend embedded template/field-reference contract bulk inside the same provider session — scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover managed continuation display prompts`
-98. [PENDING] Git Commit: `test: cover managed continuation display prompts` (hash: TBD)
-99. [TODO] `managed-dialog-gate-verify` Build core/webview and run targeted dialog gate/continuation tests for the 1.2.416 retest fix — scope: `core + webview build`
-100. [TODO] `release-confirmation-417` Wait for explicit user confirmation before preparing release notes or running release build for the managed dialog gate projection fix — scope: user confirmation gate
+98. [DONE] Git Commit: `test: cover managed continuation display prompts` (hash: 4d236b53c)
+99. [DONE] `managed-dialog-gate-verify` Build core/webview and run targeted dialog gate/continuation tests for the 1.2.416 retest fix — scope: `core + webview build` Result: Verification passed: npm run build --workspace @codeai-hub/core; node --import tsx targeted managed gate/continuation tests; npm run typecheck:webview; npm run build:webview.
+100. [DONE] `release-confirmation-417` Wait for explicit user confirmation before preparing release notes or running release build for the managed dialog gate projection fix — scope: user confirmation gate Result: User explicitly confirmed building the next release after the managed input gate and compact continuation prompt fixes.
+
+### Stream: Release Build
+101. [DONE] `release-docs-417` Update README and CHANGELOG to 1.2.417 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.417 release notes`
+102. [PENDING] Git Commit: `docs: prepare 1.2.417 release notes` (hash: TBD)
+103. [TODO] `release-build-417` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.417 release`
+104. [TODO] Git Commit: `chore: build 1.2.417 release` (hash: TBD)
+105. [TODO] `release-vsix-417` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.417 vsix`
+106. [TODO] Git Commit: `chore: package 1.2.417 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+107. [TODO] `release-acceptance-417` Hand off `codeai-hub-1.2.417.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-101. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+108. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

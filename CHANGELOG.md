@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.417] - 2026-05-30
+### Fixed
+- **Managed dialog input gates survive stale idle snapshots.** Project Manager dialog projections now preserve an active Core-owned `managed_input_gate` lock until Core sends an explicit managed unlock/review handoff, preventing stale idle workspace snapshots from reopening the input during Core-agent managed exchange.
+- **Diagram Modules Product Part continuations are compact delta user turns.** Inside the same live provider session, Core no longer resends embedded Product Part templates, field references, or merge rules on every Product Part subturn. The continuation now carries only the accepted boundary, next target artifact, Product Part id, accepted sibling list, and local turn constraints.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/project-manager/components/sessions/session-stream.test.ts src/client/project-manager/components/sessions/turn-state-stream.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.416] - 2026-05-30
 ### Fixed
 - **Managed continuations now start as visible User turns.** Core-authored prompts that are actually sent to the agent for the next managed subturn now go through the user-turn dispatch path instead of being shown only as System messages.
