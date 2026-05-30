@@ -2,7 +2,9 @@ import type { SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import { type BridgeEvent, serializeSessionModelBinding } from "../types";
+import { ManagedCoreGatedLockController } from "./managed-core-gated-lock-controller";
 import type { ManagedWorkflowTurnCompletionResult } from "./session-request-handler-managed-workflow-turn";
+import { recordSessionStreamHeartbeat } from "./session-stream-heartbeat";
 
 interface ProviderEventEnvelope {
   readonly payload?: unknown;
@@ -116,9 +118,11 @@ export class SessionProviderEventRouter {
   private readonly deps: SessionProviderEventRouterDependencies;
   private readonly processedTerminalEvents = new Map<string, Set<string>>();
   private readonly terminalEventCounters = new Map<string, number>();
+  private readonly managedCoreGatedLock: ManagedCoreGatedLockController;
 
   constructor(deps: SessionProviderEventRouterDependencies) {
     this.deps = deps;
+    this.managedCoreGatedLock = new ManagedCoreGatedLockController(deps);
   }
 
   handleProviderEvent(sessionId: string, event: unknown): void {
@@ -258,7 +262,7 @@ export class SessionProviderEventRouter {
         this.broadcastProviderError(sessionId, event);
         break;
       case "stream_event":
-        this.recordStreamHeartbeat(sessionId);
+        recordSessionStreamHeartbeat(this.deps, sessionId);
         this.deps.broadcaster({
           type: "session:stream",
           payload: { sessionId, event },
@@ -324,11 +328,13 @@ export class SessionProviderEventRouter {
           })
           .then((managedResult) => {
             if (managedResult === "continued") {
+              this.managedCoreGatedLock.apply(sessionId, true);
               flowNodeContinuityTask.catch((error: unknown) => {
                 this.logFlowNodeContinuityHandlerFailure(sessionId, error);
               });
               return;
             }
+            this.managedCoreGatedLock.apply(sessionId, false);
             this.deps.handleTurnCompletedWithFlowNodeArbitration(
               sessionId,
               flowNodeContinuityTask
@@ -358,18 +364,6 @@ export class SessionProviderEventRouter {
       role: "user",
       timestamp: readStringField(eventRecord, "timestamp") ?? undefined,
       uuid: readStringField(eventRecord, "uuid") ?? undefined,
-    });
-  }
-
-  private recordStreamHeartbeat(sessionId: string): void {
-    const session = this.deps.sessionManager.getSession(sessionId);
-    if (!session) {
-      return;
-    }
-    this.deps.workspaceRuntime?.recordHeartbeat({
-      workspaceRoot: session.workspacePath,
-      nodeId: session.stage ?? "session",
-      sessionId: session.id,
     });
   }
 

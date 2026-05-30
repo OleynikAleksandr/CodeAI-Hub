@@ -59,6 +59,7 @@ export type SessionContinuityLockReason =
   | "resume_ready"
   | "resume_failed"
   | "resume_timeout"
+  | "managed_core_gated"
   | SessionTerminalLockReason;
 
 export interface SessionContinuityLockTransition {

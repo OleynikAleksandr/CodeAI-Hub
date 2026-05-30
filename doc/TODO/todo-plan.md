@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "5b0e62f29",
+  "lastRecordedCommit": "5651e5528",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-409",
-  "expectedCommitMessage": "chore: package 1.2.409 vsix",
+  "currentTaskId": "managed-core-gated-lock",
+  "expectedCommitMessage": "fix: lock input while managed workflow stays in core-gated phase",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.409 vsix",
-    "preCommitHead": "5b0e62f29",
+    "expectedCommitMessage": "fix: lock input while managed workflow stays in core-gated phase",
+    "preCommitHead": "5651e5528",
     "stage": "commit_pending",
-    "taskId": "release-vsix-409"
+    "taskId": "managed-core-gated-lock"
   }
 }
 ```
@@ -52,10 +52,28 @@
 6. [DONE] `release-build-409` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.409 release`
 7. [DONE] Git Commit: `chore: build 1.2.409 release` (hash: 5b0e62f29)
 8. [DONE] `release-vsix-409` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.409 vsix`
-9. [PENDING] Git Commit: `chore: package 1.2.409 vsix` (hash: TBD)
+9. [DONE] Git Commit: `chore: package 1.2.409 vsix` (hash: 5651e5528)
 
 ### Stream: User Visual Acceptance Testing
-10. [TODO] `release-acceptance-409` Hand off `codeai-hub-1.2.409.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+10. [DONE] `release-acceptance-409` Hand off `codeai-hub-1.2.409.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.409 found managed-phase regression: input unlocks between agent turns during managed core-gated work (e.g. Diagram Modules); needs Core-owned managed_core_gated lock
+
+### Stream: Managed Phase Input Lock (from 1.2.409 retest)
+11. [DONE] `managed-core-gated-lock` Lock the user input for the whole managed core-gated phase: Core sets a session continuityLock (reason "managed_core_gated") when a managed-workflow turn returns "continued" (agent keeps working with the orchestrator), and clears it on "settled"/"not_managed" (review gate opens / done). Snapshot broadcast + client session-stream then render connectionState blocked; the input frees only at waiting_for_user. Single Core-owned source (managed turn runStatus), UI only reflects. Lock logic extracted to managed-core-gated-lock-controller.ts and recordStreamHeartbeat extracted to session-stream-heartbeat.ts to keep event-router within the 500-line architecture budget — scope: `packages/core/src/workspace-runtime/workspace-runtime-types.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-stream-heartbeat.ts`; expected commit: `fix: lock input while managed workflow stays in core-gated phase`
+12. [PENDING] Git Commit: `fix: lock input while managed workflow stays in core-gated phase` (hash: TBD)
+
+### Stream: Tooling Verification
+13. [TODO] `managed-lock-verify` Build core and webview and run webview typecheck for the managed core-gated lock — scope: `core + webview build`
+
+### Stream: Release Build
+14. [TODO] `release-docs-410` Update README and CHANGELOG to 1.2.410 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.410 release notes`
+15. [TODO] Git Commit: `docs: prepare 1.2.410 release notes` (hash: TBD)
+16. [TODO] `release-build-410` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.410 release`
+17. [TODO] Git Commit: `chore: build 1.2.410 release` (hash: TBD)
+18. [TODO] `release-vsix-410` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.410 vsix`
+19. [TODO] Git Commit: `chore: package 1.2.410 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+20. [TODO] `release-acceptance-410` Hand off `codeai-hub-1.2.410.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-11. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+21. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
