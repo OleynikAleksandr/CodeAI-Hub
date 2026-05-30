@@ -15,6 +15,11 @@ test("Quality Gates research acceptance opens contract drafting before integrati
   const workspacePath = await mkdtemp(path.join(os.tmpdir(), "qg-review-"));
   const sent: string[] = [];
   const coreMessages: string[] = [];
+  const userTurns: Array<{
+    readonly content: string;
+    readonly hiddenUserMessage: boolean;
+    readonly sessionId: string;
+  }> = [];
   const session = {
     id: "session-1",
     initiativeSlug: "demo-workspace",
@@ -38,6 +43,15 @@ test("Quality Gates research acceptance opens contract drafting before integrati
         },
       },
       messageDispatch: {
+        dispatchUserMessage: (options) => {
+          userTurns.push({
+            content: options.content,
+            hiddenUserMessage: options.hiddenUserMessage,
+            sessionId: options.sessionId,
+          });
+          sent.push(options.content);
+          return Promise.resolve();
+        },
         sendInternalMessage: (_sessionId, content) => {
           sent.push(content);
           return Promise.resolve();
@@ -48,7 +62,15 @@ test("Quality Gates research acceptance opens contract drafting before integrati
 
     assert.equal(sent.length, 1);
     assert.match(sent[0] ?? "", CONTRACT_DRAFTING_RE);
-    assert.match(coreMessages[0] ?? "", CONTRACT_JSON_RE);
+    assert.deepEqual(coreMessages, []);
+    assert.deepEqual(userTurns, [
+      {
+        content: sent[0] ?? "",
+        hiddenUserMessage: false,
+        sessionId: session.id,
+      },
+    ]);
+    assert.match(userTurns[0]?.content ?? "", CONTRACT_JSON_RE);
     assert.doesNotMatch(sent[0] ?? "", INTEGRATION_PROMPT_RE);
   } finally {
     await rm(workspacePath, { force: true, recursive: true });

@@ -21,6 +21,10 @@ const APP_MATERIALIZED_RE =
   /Application Skeleton materialized filesystem skeleton/u;
 const DIAGRAM_REVIEW_RE =
   /Core: Diagram Modules перешёл в пользовательскую проверку/u;
+const DIAGRAM_CONTINUATION_USER_NOTICE_RE =
+  /Core accepted the current Diagram Modules artifact/u;
+const DIAGRAM_CONTINUATION_PRODUCT_PART_RE =
+  /Materialize only Product Part "project-manager"/u;
 const RAW_APPLICATION_SKELETON_REPAIR_PROMPT_RE =
   /Core rejected the current Application Skeleton draft/u;
 const APPLICATION_SKELETON_REPAIR_USER_MESSAGE_RE =
@@ -99,6 +103,11 @@ const createHandler = (params: {
     sessionId: string,
     content: string
   ) => Promise<void>;
+  readonly dispatchUserMessage?: (options: {
+    readonly content: string;
+    readonly hiddenUserMessage: boolean;
+    readonly sessionId: string;
+  }) => Promise<void>;
   readonly stage: typeof APP_STAGE | typeof DIAGRAM_STAGE;
   readonly workspaceRoot: string;
 }): {
@@ -106,10 +115,12 @@ const createHandler = (params: {
   readonly handler: SessionRequestHandlerManagedWorkflowTurn;
   readonly internalMessages: string[];
   readonly sessionId: string;
+  readonly userMessages: string[];
   readonly waitEvents: string[];
 } => {
   const coreMessages: CapturedCoreMessage[] = [];
   const internalMessages: string[] = [];
+  const userMessages: string[] = [];
   const waitEvents: string[] = [];
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
@@ -133,6 +144,18 @@ const createHandler = (params: {
     },
     getMessageDispatch: () =>
       ({
+        dispatchUserMessage:
+          params.dispatchUserMessage ??
+          ((options: {
+            readonly content: string;
+            readonly hiddenUserMessage: boolean;
+            readonly sessionId: string;
+          }) => {
+            assert.equal(options.hiddenUserMessage, false);
+            userMessages.push(options.content);
+            internalMessages.push(options.content);
+            return Promise.resolve();
+          }),
         sendInternalMessage:
           params.sendInternalMessage ??
           ((_sessionId: string, content: string) => {
@@ -147,6 +170,7 @@ const createHandler = (params: {
     handler,
     internalMessages,
     sessionId: session.id,
+    userMessages,
     waitEvents,
   };
 };
@@ -386,6 +410,34 @@ test("managed workflow turn emits Core-owned Diagram Modules review handoff", as
   }
 });
 
+test("managed Diagram Modules continuation starts the next agent turn as a user message", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "managed-review-diagram-user-continuation-")
+  );
+  try {
+    await prepareDiagramIndex(workspaceRoot);
+    const { coreMessages, handler, sessionId, userMessages } = createHandler({
+      stage: DIAGRAM_STAGE,
+      workspaceRoot,
+    });
+
+    const result = await handler.handleTurnCompleted(sessionId);
+
+    assert.equal(result, "continued");
+    assert.deepEqual(
+      coreMessages.filter(
+        (message) => message.tag === "managed-workflow-continuation"
+      ),
+      []
+    );
+    assert.equal(userMessages.length, 1);
+    assert.match(userMessages[0] ?? "", DIAGRAM_CONTINUATION_USER_NOTICE_RE);
+    assert.match(userMessages[0] ?? "", DIAGRAM_CONTINUATION_PRODUCT_PART_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
 test("managed workflow turn returns continued before internal continuation settles", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "managed-review-diagram-async-continuation-")
@@ -398,8 +450,8 @@ test("managed workflow turn returns continued before internal continuation settl
       internalSendStarted = resolve;
     });
     const { handler, internalMessages, sessionId } = createHandler({
-      sendInternalMessage: (_sessionId: string, content: string) => {
-        internalMessages.push(content);
+      dispatchUserMessage: (options) => {
+        internalMessages.push(options.content);
         internalSendStarted?.();
         return new Promise<void>((resolve) => {
           pendingInternalSend.resolve = resolve;

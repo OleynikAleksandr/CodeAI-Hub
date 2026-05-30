@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "8f1c8b0d6",
+  "lastRecordedCommit": "ebf72e2c6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-continuation-user-role",
-  "expectedCommitMessage": "fix: send managed continuations as user turns",
+  "currentTaskId": "managed-continuation-user-role-tests",
+  "expectedCommitMessage": "test: cover managed continuation user turns",
   "debt": {
-    "expectedCommitMessage": "fix: send managed continuations as user turns",
-    "preCommitHead": "8f1c8b0d6",
+    "expectedCommitMessage": "test: cover managed continuation user turns",
+    "preCommitHead": "ebf72e2c6",
     "stage": "commit_pending",
-    "taskId": "managed-continuation-user-role"
+    "taskId": "managed-continuation-user-role-tests"
   }
 }
 ```
@@ -179,9 +179,9 @@
 
 ### Stream: Managed Continuation Provider Turn Role Fix (from 1.2.415 retest)
 80. [DONE] `managed-continuation-user-role` Fix Core-authored managed continuation prompts that start the next agent turn so they are provider-visible `user` messages, while UI-only review/user handoff notices remain `system` messages — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.ts`; expected commit: `fix: send managed continuations as user turns`
-81. [PENDING] Git Commit: `fix: send managed continuations as user turns` (hash: TBD)
-82. [TODO] `managed-continuation-user-role-tests` Add regressions proving managed continuation dispatch records/sends the next agent prompt as a user-authored turn and does not change system-only user review/handoff messages — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `test: cover managed continuation user turns`
-83. [TODO] Git Commit: `test: cover managed continuation user turns` (hash: TBD)
+81. [DONE] Git Commit: `fix: send managed continuations as user turns` (hash: ebf72e2c6)
+82. [DONE] `managed-continuation-user-role-tests` Add regressions proving managed continuation dispatch records/sends the next agent prompt as a user-authored turn and does not change system-only user review/handoff messages — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.test.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts`; expected commit: `test: cover managed continuation user turns`
+83. [PENDING] Git Commit: `test: cover managed continuation user turns` (hash: TBD)
 84. [TODO] `managed-continuation-user-role-verify` Build core and webview and run targeted managed continuation role tests — scope: `core + webview build`
 
 ### Stream: Release Build Confirmation
