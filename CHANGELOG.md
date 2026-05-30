@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.409] - 2026-05-30
+### Fixed
+- **Input lock follows "waiting for the user" correctly.** Reverted the 1.2.408 gate-present lock that wrongly blocked the input while a managed review gate was shown — the input must be free there so the user can reply, edit, or confirm.
+- **Input unlocks a short moment after the turn settles, not before.** A settle window (~450ms) keeps the input locked briefly after a turn goes idle so the agent's last streamed text finishes rendering first; a managed review gate unlocks immediately, and a new running turn re-locks immediately.
+
+### Tests
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.408] - 2026-05-30
 ### Fixed
 - **Questionnaire scrolls to the submit footer reliably.** The auto-scroll re-pins to the target via a ResizeObserver while auto-height textareas expand after load, so a fully filled questionnaire lands on the "Submit questionnaire" footer instead of mid-list (previously the section-8 header).

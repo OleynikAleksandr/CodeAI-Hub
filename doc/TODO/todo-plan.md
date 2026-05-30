@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "84b5446e2",
+  "lastRecordedCommit": "490414afb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "input-unlock-settle",
-  "expectedCommitMessage": "fix: defer input unlock until the agent stream settles",
+  "currentTaskId": "release-docs-409",
+  "expectedCommitMessage": "docs: prepare 1.2.409 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: defer input unlock until the agent stream settles",
-    "preCommitHead": "84b5446e2",
+    "expectedCommitMessage": "docs: prepare 1.2.409 release notes",
+    "preCommitHead": "490414afb",
     "stage": "commit_pending",
-    "taskId": "input-unlock-settle"
+    "taskId": "release-docs-409"
   }
 }
 ```
@@ -41,14 +41,14 @@
 ## Phase 1 — Input Unlock Settle + Release 1.2.409 (owner: Claude, updated: 2026-05-30)
 ### Stream: Input Unlock Timing Fix
 1. [DONE] `input-unlock-settle` Defer the input unlock by a short settle window after a turn goes idle without a managed review gate, so the input does not free up before the agent's last streamed text finishes rendering; a managed review gate (activeManagedReviewMessageId) unlocks immediately, and a new running turn re-locks immediately — scope: `src/client/ui/src/session/input-panel.tsx, src/client/ui/src/session/session-view.tsx`; expected commit: `fix: defer input unlock until the agent stream settles`
-2. [PENDING] Git Commit: `fix: defer input unlock until the agent stream settles` (hash: TBD)
+2. [DONE] Git Commit: `fix: defer input unlock until the agent stream settles` (hash: 490414afb)
 
 ### Stream: Tooling Verification
-3. [TODO] `input-unlock-settle-verify` Build webview and run webview typecheck for the input unlock settle fix — scope: `webview build`
+3. [DONE] `input-unlock-settle-verify` Build webview and run webview typecheck for the input unlock settle fix — scope: `webview build` Result: webview typecheck and build:webview passed for the input unlock settle fix
 
 ### Stream: Release Build
-4. [TODO] `release-docs-409` Update README and CHANGELOG to 1.2.409 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.409 release notes`
-5. [TODO] Git Commit: `docs: prepare 1.2.409 release notes` (hash: TBD)
+4. [DONE] `release-docs-409` Update README and CHANGELOG to 1.2.409 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.409 release notes`
+5. [PENDING] Git Commit: `docs: prepare 1.2.409 release notes` (hash: TBD)
 6. [TODO] `release-build-409` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.409 release`
 7. [TODO] Git Commit: `chore: build 1.2.409 release` (hash: TBD)
 8. [TODO] `release-vsix-409` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.409 vsix`
