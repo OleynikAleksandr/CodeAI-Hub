@@ -4,13 +4,14 @@ import type { SessionSnapshot } from "../../../../types/session";
 import { updateSnapshotsWithTurnState } from "./turn-state-stream";
 
 const createSnapshot = (
-  connectionState: "idle" | "running" | "blocked" = "idle"
+  connectionState: "idle" | "running" | "blocked" = "idle",
+  providerSessionId: string | null = null
 ): SessionSnapshot => ({
   messages: [],
   todos: [],
   draft: "",
   binding: {
-    providerSessionId: null,
+    providerSessionId,
     status: "ready",
   },
   status: {
@@ -90,4 +91,76 @@ test("updateSnapshotsWithTurnState ignores unrelated stream events", () => {
   });
 
   assert.equal(next, snapshots);
+});
+
+test("managed input gate locks visible dialog projection by provider session id", () => {
+  const snapshots = {
+    "dialog-visible": createSnapshot("idle", "provider-session-1"),
+  };
+
+  const next = updateSnapshotsWithTurnState(snapshots, {
+    sessionId: "runtime-session-1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "managed_input_gate",
+        active: true,
+        reason: "managed_core_gated",
+        providerSessionId: "provider-session-1",
+        sessionIds: ["runtime-session-1", "root-session-1"],
+      },
+    },
+  });
+
+  assert.equal(next["dialog-visible"].status.connectionState, "blocked");
+  assert.equal(next["dialog-visible"].status.continuityLock?.active, true);
+  assert.equal(
+    next["dialog-visible"].status.continuityLock?.reason,
+    "managed_core_gated"
+  );
+});
+
+test("managed input gate unlocks only its own managed lock", () => {
+  const locked = createSnapshot("blocked", "provider-session-1");
+  const snapshots = {
+    "dialog-visible": {
+      ...locked,
+      status: {
+        ...locked.status,
+        continuityLock: {
+          active: true,
+          reason: "managed_core_gated",
+          updatedAt: Date.now(),
+        },
+      },
+    },
+    "resume-visible": {
+      ...locked,
+      status: {
+        ...locked.status,
+        continuityLock: {
+          active: true,
+          reason: "resume_bootstrap",
+          updatedAt: Date.now(),
+        },
+      },
+    },
+  };
+
+  const next = updateSnapshotsWithTurnState(snapshots, {
+    sessionId: "runtime-session-1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "managed_input_gate",
+        active: false,
+        providerSessionId: "provider-session-1",
+      },
+    },
+  });
+
+  assert.equal(next["dialog-visible"].status.connectionState, "idle");
+  assert.equal(next["dialog-visible"].status.continuityLock?.active, false);
+  assert.equal(next["resume-visible"].status.connectionState, "blocked");
+  assert.equal(next["resume-visible"].status.continuityLock?.active, true);
 });

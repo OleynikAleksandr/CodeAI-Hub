@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "fcd4f65dc",
+  "lastRecordedCommit": "1275f9dca",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-input-gate-realtime-event",
-  "expectedCommitMessage": "fix: gate managed input from core state",
+  "currentTaskId": "managed-input-gate-regression-tests",
+  "expectedCommitMessage": "test: cover managed input gate projection",
   "debt": {
-    "expectedCommitMessage": "fix: gate managed input from core state",
-    "preCommitHead": "fcd4f65dc",
+    "expectedCommitMessage": "test: cover managed input gate projection",
+    "preCommitHead": "1275f9dca",
     "stage": "commit_pending",
-    "taskId": "managed-input-gate-realtime-event"
+    "taskId": "managed-input-gate-regression-tests"
   }
 }
 ```
@@ -160,9 +160,9 @@
 
 ### Stream: Core-Owned Managed Input Gate (from 1.2.414 retest)
 67. [DONE] `managed-input-gate-realtime-event` Add a Core-owned managed input gate realtime stream that reasserts lock/unlock independently of provider turn lifecycle and is consumed by visible session projections without using Project Manager as the source of truth — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, src/client/project-manager/components/sessions/turn-state-stream.ts, doc/TODO/todo-plan.md`; expected commit: `fix: gate managed input from core state`
-68. [PENDING] Git Commit: `fix: gate managed input from core state` (hash: TBD)
-69. [TODO] `managed-input-gate-regression-tests` Add regressions proving the managed input gate stays locked through Core continuation and reaches dialog/runtime projections even when provider turn lifecycle or dialog history replay would otherwise look idle — scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts`; expected commit: `test: cover managed input gate projection`
-70. [TODO] Git Commit: `test: cover managed input gate projection` (hash: TBD)
+68. [DONE] Git Commit: `fix: gate managed input from core state` (hash: 1275f9dca)
+69. [DONE] `managed-input-gate-regression-tests` Add regressions proving the managed input gate stays locked through Core continuation and reaches dialog/runtime projections even when provider turn lifecycle or dialog history replay would otherwise look idle — scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts`; expected commit: `test: cover managed input gate projection`
+70. [PENDING] Git Commit: `test: cover managed input gate projection` (hash: TBD)
 71. [TODO] `managed-input-gate-verify` Build core and webview and run targeted managed input gate tests — scope: `core + webview build`
 72. [TODO] `release-confirmation-415` Wait for explicit user confirmation before preparing release notes or running release build for the managed input gate fix — scope: user confirmation gate
 

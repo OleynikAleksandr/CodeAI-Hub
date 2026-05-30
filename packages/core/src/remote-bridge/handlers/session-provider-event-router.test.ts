@@ -327,9 +327,11 @@ test("SessionProviderEventRouter delays turn_completed and skips idle arbitratio
     "decision-pending",
     "flow-node",
     "messages-flushed",
+    "stream_event",
     "turn_state:running",
     "turn_completed",
     "managed",
+    "stream_event",
   ]);
 });
 

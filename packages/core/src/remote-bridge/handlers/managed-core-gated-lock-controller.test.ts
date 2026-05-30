@@ -10,20 +10,45 @@ interface LockCall {
   readonly workspaceRoot: string;
 }
 
+interface GateEventData {
+  readonly active?: boolean;
+  readonly kind?: string;
+  readonly providerSessionId?: string | null;
+  readonly reason?: string | null;
+  readonly sessionIds?: readonly string[];
+}
+
 const createController = (
   stage: string | null
 ): {
   readonly calls: LockCall[];
   readonly controller: ManagedCoreGatedLockController;
+  readonly gateEvents: GateEventData[];
 } => {
   const calls: LockCall[] = [];
+  const gateEvents: GateEventData[] = [];
   const controller = new ManagedCoreGatedLockController({
+    broadcaster: (event) => {
+      const streamEvent = event.payload.event as {
+        readonly data?: GateEventData;
+      };
+      gateEvents.push(streamEvent.data ?? {});
+    },
     sessionManager: {
-      getSession: (sessionId: string) => ({
-        id: sessionId,
-        stage,
-        workspacePath: "/workspace",
-      }),
+      getSession: (sessionId: string) =>
+        sessionId === "parent-session"
+          ? {
+              id: sessionId,
+              stage,
+              workspacePath: "/workspace",
+            }
+          : {
+              continuationParentId: "parent-session",
+              id: sessionId,
+              providerSessionId: "provider-session-1",
+              stage,
+              workspacePath: "/workspace",
+            },
     },
     workspaceRuntime: {
       notifyLockChanged: (sessionKey, options) => {
@@ -37,7 +62,7 @@ const createController = (
       },
     },
   });
-  return { calls, controller };
+  return { calls, controller, gateEvents };
 };
 
 test("managed core-gated lock starts during technical-stage Core arbitration", () => {
@@ -53,6 +78,29 @@ test("managed core-gated lock starts during technical-stage Core arbitration", (
       reason: "managed_core_gated",
       sessionId: "session-1",
       workspaceRoot: "/workspace",
+    },
+    {
+      active: true,
+      nodeId: "diagram_modules",
+      reason: "managed_core_gated",
+      sessionId: "session-1",
+      workspaceRoot: "/workspace",
+    },
+  ]);
+});
+
+test("managed core-gated lock emits realtime gate aliases for PM projections", () => {
+  const { controller, gateEvents } = createController("diagram_modules");
+
+  controller.lockForCoreArbitration("session-1");
+
+  assert.deepEqual(gateEvents, [
+    {
+      active: true,
+      kind: "managed_input_gate",
+      providerSessionId: "provider-session-1",
+      reason: "managed_core_gated",
+      sessionIds: ["session-1", "parent-session"],
     },
   ]);
 });
