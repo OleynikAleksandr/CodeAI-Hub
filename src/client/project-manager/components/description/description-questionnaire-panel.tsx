@@ -8,6 +8,10 @@ import { DescriptionQuestionnaireView } from "../../../ui/src/components/descrip
 import { api } from "../../api";
 import { toWorkflowWorkspaceSlug } from "../../services/workflow-state-client";
 import { DescriptionProviderPicker } from "./description-provider-picker";
+import {
+  computeQuestionnaireAutoScroll,
+  EMPTY_QUESTIONNAIRE_AUTO_SCROLL,
+} from "./questionnaire-autoscroll";
 
 const SAVE_DEBOUNCE_MS = 400;
 const USER_ARTIFACTS_CATEGORY = "interactive_templates";
@@ -282,6 +286,14 @@ export const DescriptionQuestionnairePanel: React.FC<
     return { ...panelState, questions: localizedQuestions, template: localizeQuestionnaireTemplate(panelState.template, localizedQuestions) };
   }, [panelState, t]);
 
+  const autoScroll = useMemo(
+    () =>
+      resolvedPanelState.status === "ready"
+        ? computeQuestionnaireAutoScroll(resolvedPanelState.questions, answers)
+        : EMPTY_QUESTIONNAIRE_AUTO_SCROLL,
+    [answers, resolvedPanelState]
+  );
+
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers((current) => ({ ...current, [questionId]: value }));
   };
@@ -449,6 +461,8 @@ export const DescriptionQuestionnairePanel: React.FC<
       ) : null}
       <DescriptionQuestionnaireView
         answers={answers}
+        autoScrollComplete={autoScroll.complete}
+        autoScrollTargetQuestionId={autoScroll.targetQuestionId}
         cancelLabel={t(
           USER_ARTIFACTS_CATEGORY,
           "pm.description.questionnaire.cancel_label",
