@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "40ca52dda",
+  "lastRecordedCommit": "5d26c8159",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-docs-411",
-  "expectedCommitMessage": "docs: prepare 1.2.411 release notes",
+  "currentTaskId": "release-build-411",
+  "expectedCommitMessage": "chore: build 1.2.411 release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.411 release notes",
-    "preCommitHead": "40ca52dda",
+    "expectedCommitMessage": "chore: build 1.2.411 release",
+    "preCommitHead": "5d26c8159",
     "stage": "commit_pending",
-    "taskId": "release-docs-411"
+    "taskId": "release-build-411"
   }
 }
 ```
@@ -84,9 +84,9 @@
 
 ### Stream: Release Build
 24. [DONE] `release-docs-411` Update README and CHANGELOG to 1.2.411 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.411 release notes`
-25. [PENDING] Git Commit: `docs: prepare 1.2.411 release notes` (hash: TBD)
-26. [TODO] `release-build-411` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.411 release`
-27. [TODO] Git Commit: `chore: build 1.2.411 release` (hash: TBD)
+25. [DONE] Git Commit: `docs: prepare 1.2.411 release notes` (hash: 5d26c8159)
+26. [DONE] `release-build-411` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.411 release`
+27. [PENDING] Git Commit: `chore: build 1.2.411 release` (hash: TBD)
 28. [TODO] `release-vsix-411` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.411 vsix`
 29. [TODO] Git Commit: `chore: package 1.2.411 vsix` (hash: TBD)
 
