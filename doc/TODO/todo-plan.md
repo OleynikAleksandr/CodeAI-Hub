@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "4e7e92385",
+  "lastRecordedCommit": "586fd0e3c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-417",
-  "expectedCommitMessage": "chore: package 1.2.417 vsix",
+  "currentTaskId": "managed-continuation-lifecycle-tag",
+  "expectedCommitMessage": "fix: lock input from managed continuation lifecycle",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.417 vsix",
-    "preCommitHead": "4e7e92385",
+    "expectedCommitMessage": "fix: lock input from managed continuation lifecycle",
+    "preCommitHead": "586fd0e3c",
     "stage": "commit_pending",
-    "taskId": "release-vsix-417"
+    "taskId": "managed-continuation-lifecycle-tag"
   }
 }
 ```
@@ -214,10 +214,18 @@
 103. [DONE] `release-build-417` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.417 release`
 104. [DONE] Git Commit: `chore: build 1.2.417 release` (hash: 4e7e92385)
 105. [DONE] `release-vsix-417` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.417 vsix`
-106. [PENDING] Git Commit: `chore: package 1.2.417 vsix` (hash: TBD)
+106. [DONE] Git Commit: `chore: package 1.2.417 vsix` (hash: 586fd0e3c)
 
 ### Stream: User Visual Acceptance Testing
-107. [TODO] `release-acceptance-417` Hand off `codeai-hub-1.2.417.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+107. [DONE] `release-acceptance-417` Hand off `codeai-hub-1.2.417.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.417 failed: Core continuation messages are now visible as `user` turns, but they do not carry the managed continuation lifecycle tag, so the dialog history projection remains idle/unlocked when the separate realtime gate is missed or overwritten; manual user sends still lock because they use the normal local send/runtime path.
+
+### Stream: Managed Continuation Lifecycle Gate (from 1.2.417 retest)
+108. [DONE] `managed-continuation-lifecycle-tag` Tag Core-authored visible managed continuation `user` messages and let the dialog projection keep input locked from that lifecycle marker until Core releases the managed review/user gate — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts`; expected commit: `fix: lock input from managed continuation lifecycle`
+109. [PENDING] Git Commit: `fix: lock input from managed continuation lifecycle` (hash: TBD)
+110. [TODO] `managed-continuation-lifecycle-tests` Add regressions for tagged Core visible `user` continuation messages, dialog-history lock projection, and provider-session turn-state targeting — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, src/client/project-manager/components/sessions/session-message-dedupe.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts`; expected commit: `test: cover managed continuation lifecycle lock`
+111. [TODO] Git Commit: `test: cover managed continuation lifecycle lock` (hash: TBD)
+112. [TODO] `managed-continuation-lifecycle-verify` Build core/webview and run targeted managed continuation lifecycle lock tests — scope: `core + webview build`
+113. [TODO] `release-confirmation-418` Wait for explicit user confirmation before preparing release notes or running release build for the managed continuation lifecycle lock fix — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-108. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+114. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

@@ -167,18 +167,27 @@ export class SessionRequestHandlerMessageDispatch {
   async dispatchUserMessage(options: {
     readonly content: string;
     readonly hiddenUserMessage: boolean;
+    readonly messageTag?: string;
     readonly session: Session;
     readonly sessionId: string;
     readonly turnOptions?: Record<string, unknown>;
   }): Promise<void> {
-    const { content, hiddenUserMessage, session, sessionId, turnOptions } =
-      options;
+    const {
+      content,
+      hiddenUserMessage,
+      messageTag,
+      session,
+      sessionId,
+      turnOptions,
+    } = options;
     const stage = session.stage ?? null;
     if (stage && TECHNICAL_STAGE_REWRITE_BLOCKED_STAGES.has(stage)) {
       if (
         !(
           hiddenUserMessage ||
-          (await this.appendVisibleUserMessage(session, sessionId, content))
+          (await this.appendVisibleUserMessage(session, sessionId, content, {
+            tag: messageTag,
+          }))
         )
       ) {
         return;
@@ -202,7 +211,9 @@ export class SessionRequestHandlerMessageDispatch {
     if (
       !(
         hiddenUserMessage ||
-        (await this.appendVisibleUserMessage(session, sessionId, content))
+        (await this.appendVisibleUserMessage(session, sessionId, content, {
+          tag: messageTag,
+        }))
       )
     ) {
       return;
@@ -386,12 +397,14 @@ export class SessionRequestHandlerMessageDispatch {
   private async appendVisibleUserMessage(
     session: Session,
     sessionId: string,
-    content: string
+    content: string,
+    options: { readonly tag?: string } = {}
   ): Promise<boolean> {
     const userMessage = this.deps.sessionManager.appendMessage(
       sessionId,
       "user",
-      content
+      content,
+      options.tag ? { tag: options.tag } : undefined
     );
     if (!userMessage) {
       this.deps.broadcaster({

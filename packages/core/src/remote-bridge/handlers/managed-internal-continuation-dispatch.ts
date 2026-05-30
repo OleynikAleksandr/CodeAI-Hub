@@ -4,6 +4,7 @@ export interface ManagedInternalContinuationDispatch {
   dispatchUserMessage?: (options: {
     readonly content: string;
     readonly hiddenUserMessage: boolean;
+    readonly messageTag?: string;
     readonly session: Session;
     readonly sessionId: string;
   }) => Promise<void>;
@@ -23,6 +24,7 @@ export const dispatchManagedInternalContinuation = (
       ? dispatch.dispatchUserMessage({
           content: options.content,
           hiddenUserMessage: false,
+          messageTag: "managed-workflow-continuation",
           session: options.session,
           sessionId: options.sessionId,
         })

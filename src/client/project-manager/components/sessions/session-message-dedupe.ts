@@ -139,9 +139,6 @@ const applyManagedWorkflowInputLock = (options: {
   readonly message: SessionMessage;
   readonly snapshot: SessionSnapshot;
 }): SessionSnapshot => {
-  if (options.message.role !== "system") {
-    return options.snapshot;
-  }
   const tag = options.message.tag;
   const now = Date.now();
   if (tag === MANAGED_WORKFLOW_CONTINUATION_TAG) {
@@ -165,6 +162,9 @@ const applyManagedWorkflowInputLock = (options: {
         updatedAt: now,
       },
     };
+  }
+  if (options.message.role !== "system") {
+    return options.snapshot;
   }
   if (!MANAGED_WORKFLOW_RELEASE_TAGS.has(tag ?? "")) {
     return options.snapshot;
