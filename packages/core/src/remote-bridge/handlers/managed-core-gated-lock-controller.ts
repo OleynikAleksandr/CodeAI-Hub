@@ -49,8 +49,8 @@ export class ManagedCoreGatedLockController {
     this.deps = deps;
   }
 
-  lockForCoreArbitration(sessionId: string): void {
-    this.notify(sessionId, true);
+  lockForCoreArbitration(sessionId: string): boolean {
+    return this.notify(sessionId, true);
   }
 
   apply(sessionId: string, managedResult: string | undefined): void {
@@ -62,16 +62,16 @@ export class ManagedCoreGatedLockController {
     sessionId: string,
     active: boolean,
     options: { readonly force?: boolean } = {}
-  ): void {
+  ): boolean {
     const workspaceRuntime = this.deps.workspaceRuntime;
     if (!workspaceRuntime) {
-      return;
+      return false;
     }
     if (active && this.lockedSessions.has(sessionId) && !options.force) {
-      return;
+      return true;
     }
     if (!(active || this.lockedSessions.has(sessionId))) {
-      return;
+      return false;
     }
     const session = this.deps.sessionManager.getSession(sessionId);
     if (
@@ -81,7 +81,7 @@ export class ManagedCoreGatedLockController {
         MANAGED_CORE_GATED_STAGES.has(session.stage as never)
       )
     ) {
-      return;
+      return false;
     }
     workspaceRuntime.notifyLockChanged(
       {
@@ -98,5 +98,6 @@ export class ManagedCoreGatedLockController {
     } else {
       this.lockedSessions.delete(sessionId);
     }
+    return true;
   }
 }

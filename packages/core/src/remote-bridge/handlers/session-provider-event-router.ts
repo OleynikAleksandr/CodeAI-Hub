@@ -306,7 +306,9 @@ export class SessionProviderEventRouter {
         );
       })
       .finally(() => {
-        this.managedCoreGatedLock.lockForCoreArbitration(sessionId);
+        if (this.managedCoreGatedLock.lockForCoreArbitration(sessionId)) {
+          this.deps.emitTurnStateEvent({ sessionId, state: "running" });
+        }
         this.deps.broadcaster({
           type: "session:stream",
           payload: { sessionId, event },

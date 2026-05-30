@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "9c9596025",
+  "lastRecordedCommit": "be9008fb3",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-413",
-  "expectedCommitMessage": "chore: package 1.2.413 vsix",
+  "currentTaskId": "managed-conversation-gate-triggers",
+  "expectedCommitMessage": "fix: lock input from core managed conversation state",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.413 vsix",
-    "preCommitHead": "9c9596025",
+    "expectedCommitMessage": "fix: lock input from core managed conversation state",
+    "preCommitHead": "be9008fb3",
     "stage": "commit_pending",
-    "taskId": "release-vsix-413"
+    "taskId": "managed-conversation-gate-triggers"
   }
 }
 ```
@@ -132,10 +132,20 @@
 51. [DONE] `release-build-413` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.413 release`
 52. [DONE] Git Commit: `chore: build 1.2.413 release` (hash: 9c9596025)
 53. [DONE] `release-vsix-413` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.413 vsix`
-54. [PENDING] Git Commit: `chore: package 1.2.413 vsix` (hash: TBD)
+54. [DONE] Git Commit: `chore: package 1.2.413 vsix` (hash: be9008fb3)
 
 ### Stream: User Visual Acceptance Testing
-55. [TODO] `release-acceptance-413` Hand off `codeai-hub-1.2.413.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+55. [DONE] `release-acceptance-413` Hand off `codeai-hub-1.2.413.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.413 failed: user input still unlocks during Core-agent managed conversation between Core accepted/next-substage system message and next provider turn; continue with Core managed-conversation gate lock.
+
+### Stream: Managed Conversation Gate Lock (from 1.2.413 retest)
+56. [DONE] `managed-conversation-gate-triggers` Lock user input from explicit Core managed-conversation boundaries: managed technical stages remain blocked from Core/provider arbitration through Core-authored continuation dispatch, and release only when Core opens a user review gate, blocked boundary, or complete user handoff; do not use Project Manager triggers — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: lock input from core managed conversation state`
+57. [PENDING] Git Commit: `fix: lock input from core managed conversation state` (hash: TBD)
+
+### Stream: Tooling Verification
+58. [TODO] `managed-conversation-gate-verify` Build core and webview and run targeted lock/event-router tests for the Core managed-conversation lock — scope: `core + webview build`
+
+### Stream: Release Build Confirmation
+59. [TODO] `release-confirmation-414` Wait for explicit user confirmation before preparing release notes or running release build for the managed conversation gate lock — scope: user confirmation gate
 
 ### Stream: Scope Closeout
 31. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

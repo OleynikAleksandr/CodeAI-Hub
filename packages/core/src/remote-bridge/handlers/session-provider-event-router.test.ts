@@ -264,8 +264,8 @@ test("SessionProviderEventRouter delays turn_completed and skips idle arbitratio
     clearPostTurnContextDecision: () => {
       // noop
     },
-    emitTurnStateEvent: () => {
-      // noop
+    emitTurnStateEvent: ({ state }) => {
+      events.push(`turn_state:${state}`);
     },
     finalizeFlowNodeContinuityLockOnBootstrapGate: () => {
       // noop
@@ -303,6 +303,11 @@ test("SessionProviderEventRouter delays turn_completed and skips idle arbitratio
       await flushPromise;
       events.push("messages-flushed");
     },
+    workspaceRuntime: {
+      notifyLockChanged: () => {
+        // noop
+      },
+    } as never,
   });
 
   router.handleProviderEvent("session-1", {
@@ -322,6 +327,7 @@ test("SessionProviderEventRouter delays turn_completed and skips idle arbitratio
     "decision-pending",
     "flow-node",
     "messages-flushed",
+    "turn_state:running",
     "turn_completed",
     "managed",
   ]);
