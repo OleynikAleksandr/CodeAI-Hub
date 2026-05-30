@@ -154,7 +154,8 @@ export const buildDiagramModulesProductPartContinuationPrompt = (
 ): string =>
   [
     "Core accepted the previous Diagram Modules artifact.",
-    "This Core continuation message is the authoritative scope for the current turn.",
+    "Continue in the same managed Diagram Modules session. The full artifact contract was embedded in the first managed prompt; do not ask Core to resend it.",
+    "This Core continuation message is only the delta scope for the current turn.",
     "",
     "Next target artifact:",
     `\`${options.expectedArtifactPath}\``,
@@ -167,8 +168,6 @@ export const buildDiagramModulesProductPartContinuationPrompt = (
     "Do not edit accepted Product Parts unless Core explicitly names them in this message.",
     "Do not create or update any other Product Part file in this turn.",
     "Do not continue to the next Product Part by yourself.",
-    "",
-    ...buildEmbeddedArtifactContract(PRODUCT_PART_TURN_TEMPLATE_IDS),
     "",
     "When ready, stop with a content-readiness note for Core validation.",
   ].join("\n");

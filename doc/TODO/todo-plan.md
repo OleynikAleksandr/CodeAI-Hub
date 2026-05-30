@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "a2375d655",
+  "lastRecordedCommit": "e16796de1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-dialog-gate-projection",
-  "expectedCommitMessage": "fix: keep managed dialog input gate locked",
+  "currentTaskId": "managed-continuation-visible-summary",
+  "expectedCommitMessage": "fix: shorten visible managed continuation turns",
   "debt": {
-    "expectedCommitMessage": "fix: keep managed dialog input gate locked",
-    "preCommitHead": "a2375d655",
+    "expectedCommitMessage": "fix: shorten visible managed continuation turns",
+    "preCommitHead": "e16796de1",
     "stage": "commit_pending",
-    "taskId": "managed-dialog-gate-projection"
+    "taskId": "managed-continuation-visible-summary"
   }
 }
 ```
@@ -200,10 +200,10 @@
 
 ### Stream: Managed Dialog Gate Projection + Continuation Display (from 1.2.416 retest)
 93. [DONE] `managed-dialog-gate-projection` Harden the Project Manager dialog projection so a Core-owned `managed_input_gate` lock cannot be overwritten by stale idle/unlocked workspace snapshots; release only on explicit Core managed gate unlock/review handoff — scope: `src/client/project-manager/components/sessions/session-stream.ts, src/client/project-manager/components/sessions/session-stream.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts`; expected commit: `fix: keep managed dialog input gate locked`
-94. [PENDING] Git Commit: `fix: keep managed dialog input gate locked` (hash: TBD)
-95. [TODO] `managed-continuation-visible-summary` Send full managed continuation instructions to the provider while recording only a short Core-authored visible `user` continuation summary in dialog history, removing duplicated prompt bulk from visible orchestration turns — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `fix: shorten visible managed continuation turns`
-96. [TODO] Git Commit: `fix: shorten visible managed continuation turns` (hash: TBD)
-97. [TODO] `managed-continuation-summary-tests` Add regressions for short visible managed continuation user messages and full provider prompt dispatch semantics — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `test: cover managed continuation display prompts`
+94. [DONE] Git Commit: `fix: keep managed dialog input gate locked` (hash: e16796de1)
+95. [DONE] `managed-continuation-visible-summary` Shorten live Diagram Modules Product Part continuation prompts themselves, not only their dialog projection: within the same provider session Core sends a compact delta `user` turn with the next target/part constraints and does not resend embedded templates/field references until a real recovery/rollover/new-session path requires them — scope: `packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-prompt-builder.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: shorten visible managed continuation turns`
+96. [PENDING] Git Commit: `fix: shorten visible managed continuation turns` (hash: TBD)
+97. [TODO] `managed-continuation-summary-tests` Add regressions proving Diagram Modules live continuation user turns stay compact, include the next target/part constraints, and do not resend embedded template/field-reference contract bulk inside the same provider session — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/managed-workflow-orchestration/managed-workflow-orchestration-facade.test.ts`; expected commit: `test: cover managed continuation display prompts`
 98. [TODO] Git Commit: `test: cover managed continuation display prompts` (hash: TBD)
 99. [TODO] `managed-dialog-gate-verify` Build core/webview and run targeted dialog gate/continuation tests for the 1.2.416 retest fix — scope: `core + webview build`
 100. [TODO] `release-confirmation-417` Wait for explicit user confirmation before preparing release notes or running release build for the managed dialog gate projection fix — scope: user confirmation gate
