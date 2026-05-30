@@ -8,15 +8,15 @@
   "planId": "questionnaire-autoscroll-2026-05-30",
   "branch": "main",
   "baseHead": "cf7c49e1e",
-  "lastRecordedCommit": "838e336ce",
+  "lastRecordedCommit": "1dab4e3dc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "dialog-reasoning-scroll",
-  "expectedCommitMessage": "fix: re-pin session dialog scroll after reasoning translation grows bubble",
+  "currentTaskId": "input-unlock-premature",
+  "expectedCommitMessage": "fix: unlock input only after agent turn fully completes",
   "debt": {
-    "expectedCommitMessage": "fix: re-pin session dialog scroll after reasoning translation grows bubble",
-    "preCommitHead": "838e336ce",
+    "expectedCommitMessage": "fix: unlock input only after agent turn fully completes",
+    "preCommitHead": "1dab4e3dc",
     "stage": "commit_pending",
-    "taskId": "dialog-reasoning-scroll"
+    "taskId": "input-unlock-premature"
   }
 }
 ```
@@ -63,11 +63,11 @@
 
 ### Stream: Session Dialog Reasoning Scroll Fix (from 1.2.407 retest)
 13. [DONE] `dialog-reasoning-scroll` Fix: in the session dialog panel the autoscroll keeps the latest bubble in view, but a reasoning bubble first renders in English and is then replaced by a taller Russian translation; the scroll is not re-adjusted after the bubble grows, so the bottom of the latest bubble/message is partially hidden below the fold. Likely needs to re-pin scroll-to-bottom after the reasoning translation grows the bubble (watch bubble height change and re-scroll while the view is pinned to bottom) — scope: `src/client/ui/src/session/dialog-panel.tsx`; expected commit: `fix: re-pin session dialog scroll after reasoning translation grows bubble`
-14. [PENDING] Git Commit: `fix: re-pin session dialog scroll after reasoning translation grows bubble` (hash: TBD)
+14. [DONE] Git Commit: `fix: re-pin session dialog scroll after reasoning translation grows bubble` (hash: 1dab4e3dc)
 
 ### Stream: Input Unlock Timing (from 1.2.407 retest)
-15. [TODO] `input-unlock-premature` Fix: the user input field unlocks before the agent turn actually finishes. With Claude/Opus the dialog is still visually streaming the agent's last messages (and the final orchestrator/system gate bubble with the "Подтверждаю" button has not appeared yet), but the input is already editable and sendable. The unlock trigger likely fires on an early feedback/stream event instead of the true end-of-turn (stream complete AND the system gate bubble rendered) — scope: TBD (input lock state / turn-completion trigger, provider-specific for Claude); expected commit: `fix: unlock input only after agent turn fully completes`
-16. [TODO] Git Commit: `fix: unlock input only after agent turn fully completes` (hash: TBD)
+15. [DONE] `input-unlock-premature` Fix: the user input field unlocks before the agent turn actually finishes. With Claude/Opus the dialog is still visually streaming the agent's last messages (and the final orchestrator/system gate bubble with the "Подтверждаю" button has not appeared yet), but the input is already editable and sendable. The unlock trigger likely fires on an early feedback/stream event instead of the true end-of-turn (stream complete AND the system gate bubble rendered) — scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `fix: unlock input only after agent turn fully completes`
+16. [PENDING] Git Commit: `fix: unlock input only after agent turn fully completes` (hash: TBD)
 17. [TODO] `input-lock-managed-phases` Enhancement: in agent-to-orchestrator managed phases (e.g. the Diagram Modules step) keep the user input locked through all intermediate agent messages and unlock only when the final system/orchestrator gate bubble with the "Подтверждаю" button appears — scope: TBD (managed-phase input gating); expected commit: `feat: keep input locked through managed agent-orchestrator phases until gate`
 18. [TODO] Git Commit: `feat: keep input locked through managed agent-orchestrator phases until gate` (hash: TBD)
 
