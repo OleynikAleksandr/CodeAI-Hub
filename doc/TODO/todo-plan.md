@@ -4,20 +4,15 @@
 ```json
 {
   "schema": "codeai-plan-v1",
-  "executionScopeStatus": "ACTIVE",
+  "executionScopeStatus": "NONE",
   "planId": "claude-reasoning-summary-language-2026-05-29",
   "branch": "main",
   "baseHead": "e733a3298",
-  "lastRecordedCommit": "8d16d1542",
+  "lastRecordedCommit": "34a1946df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Claude_ReasoningSummary_Language_Planning.md",
-  "currentTaskId": "phase1-release-vsix",
-  "expectedCommitMessage": "chore: package 1.2.406 vsix",
-  "debt": {
-    "expectedCommitMessage": "chore: package 1.2.406 vsix",
-    "preCommitHead": "8d16d1542",
-    "stage": "commit_pending",
-    "taskId": "phase1-release-vsix"
-  }
+  "currentTaskId": null,
+  "expectedCommitMessage": null,
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -58,10 +53,10 @@
 9. [DONE] `phase1-release-build` Run release scripts and collect provider/core/UI/launcher tarball artifacts after confirmed user approval — scope: `package.json, package-lock.json, packages/*/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/*/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**`; expected commit: `chore: build 1.2.406 release`
 10. [DONE] Git Commit: `chore: build 1.2.406 release` (hash: 8d16d1542)
 11. [DONE] `phase1-release-vsix` Run final VSIX packaging with the current version and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.406 vsix`
-12. [PENDING] Git Commit: `chore: package 1.2.406 vsix` (hash: TBD)
+12. [DONE] Git Commit: `chore: package 1.2.406 vsix` (hash: 34a1946df)
 
 ### Stream: User Visual Acceptance Testing
-13. [TODO] `phase1-release-acceptance` Hand off `codeai-hub-1.2.406.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+13. [DONE] `phase1-release-acceptance` Hand off `codeai-hub-1.2.406.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: User visual retest of codeai-hub-1.2.406.vsix FAILED acceptance: Claude reasoning summary still renders in English; language fix NOT confirmed. User directed to suspend and revisit later (deferred). Scope closed to NONE by user decision with reasoning-language fix unresolved; planning doc kept in active Plans for later investigation.
 
 ### Stream: Scope Closeout
-14. [TODO] `phase1-scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+14. [DONE] `phase1-scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition` Result: Scope closed by Plan Orchestrator; start a new plan only from NONE state.
