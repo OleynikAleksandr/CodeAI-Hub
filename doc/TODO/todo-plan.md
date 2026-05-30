@@ -8,15 +8,15 @@
   "planId": "questionnaire-autoscroll-2026-05-30",
   "branch": "main",
   "baseHead": "cf7c49e1e",
-  "lastRecordedCommit": "29ff3d65b",
+  "lastRecordedCommit": "50240f51c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-docs",
-  "expectedCommitMessage": "docs: prepare 1.2.407 release notes",
+  "currentTaskId": "release-build",
+  "expectedCommitMessage": "chore: build 1.2.407 release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.407 release notes",
-    "preCommitHead": "29ff3d65b",
+    "expectedCommitMessage": "chore: build 1.2.407 release",
+    "preCommitHead": "50240f51c",
     "stage": "commit_pending",
-    "taskId": "release-docs"
+    "taskId": "release-build"
   }
 }
 ```
@@ -48,9 +48,9 @@
 
 ### Stream: Release Build
 4. [DONE] `release-docs` Update README and CHANGELOG to 1.2.407 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.407 release notes`
-5. [PENDING] Git Commit: `docs: prepare 1.2.407 release notes` (hash: TBD)
-6. [TODO] `release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.407 release`
-7. [TODO] Git Commit: `chore: build 1.2.407 release` (hash: TBD)
+5. [DONE] Git Commit: `docs: prepare 1.2.407 release notes` (hash: 50240f51c)
+6. [DONE] `release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.407 release`
+7. [PENDING] Git Commit: `chore: build 1.2.407 release` (hash: TBD)
 8. [TODO] `release-vsix` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.407 vsix`
 9. [TODO] Git Commit: `chore: package 1.2.407 vsix` (hash: TBD)
 
