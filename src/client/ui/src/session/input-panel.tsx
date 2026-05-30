@@ -13,6 +13,7 @@ interface InputPanelProps {
   readonly continuityErrorCopy?: string | null;
   readonly continuityLockActive?: boolean;
   readonly draft: string;
+  readonly gatePresent?: boolean;
   readonly isQueued?: boolean;
   readonly onSubmit: (text: string) => void;
   readonly providerTheme?: ProviderTheme | null;
@@ -23,12 +24,14 @@ interface InputPanelProps {
 }
 
 const MAX_TEXTAREA_HEIGHT = 200;
+const STREAM_SETTLE_MS = 450;
 
 const InputPanel = ({
   draft,
   connectionState = "idle",
   continuityLockActive = false,
   continuityErrorCopy = null,
+  gatePresent = false,
   isQueued = false,
   providerTheme = null,
   resumingLockActive,
@@ -39,8 +42,30 @@ const InputPanel = ({
 }: InputPanelProps) => {
   const [optimisticStopActive, setOptimisticStopActive] = useState(false);
   const [stopInFlight, setStopInFlight] = useState(false);
+  const [streamSettleLocked, setStreamSettleLocked] = useState(false);
+  const previousConnectionStateRef = useRef(connectionState);
+  useEffect(() => {
+    const previous = previousConnectionStateRef.current;
+    previousConnectionStateRef.current = connectionState;
+    // After a turn goes idle, briefly keep the input locked so it does not free
+    // up before the agent's last streamed text finishes rendering (turnState
+    // goes idle slightly before the visual stream ends). A managed review gate
+    // unlocks immediately; a new running turn re-locks immediately.
+    if (connectionState === "idle" && previous !== "idle" && !gatePresent) {
+      setStreamSettleLocked(true);
+      const timer = window.setTimeout(
+        () => setStreamSettleLocked(false),
+        STREAM_SETTLE_MS
+      );
+      return () => window.clearTimeout(timer);
+    }
+    if (connectionState !== "idle" || gatePresent) {
+      setStreamSettleLocked(false);
+    }
+  }, [connectionState, gatePresent]);
   const inputLocked =
     connectionState !== "idle" ||
+    streamSettleLocked ||
     continuityLockActive ||
     isQueued ||
     terminalNoResume;

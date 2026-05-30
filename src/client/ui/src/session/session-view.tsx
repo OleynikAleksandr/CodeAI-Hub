@@ -322,6 +322,7 @@ const SessionViewBody = ({
             continuityErrorCopy={continuityErrorCopy}
             continuityLockActive={effectiveContinuityLockActive}
             draft={activeSession.draft}
+            gatePresent={activeManagedReviewMessageId !== null}
             isQueued={isQueued}
             onSubmit={submitMessage}
             providerTheme={providerTheme}
