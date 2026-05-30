@@ -36,8 +36,10 @@ const MANAGED_CORE_GATED_STAGES = new Set([
  * the lock as soon as provider output reaches Core arbitration, before
  * validation/commit/continuation can expose an idle input state. The lock is
  * kept while managed workflow reports "continued" and released on "settled" /
- * "not_managed". Only sessions this controller locked are released, so
- * resume/rollover locks are never disturbed.
+ * "not_managed". Continuations reassert the lock even when arbitration already
+ * set it, so the final Core-owned state wins over stale terminal/idle events.
+ * Only sessions this controller locked are released, so resume/rollover locks
+ * are never disturbed.
  */
 export class ManagedCoreGatedLockController {
   private readonly deps: ManagedLockDeps;
@@ -53,15 +55,19 @@ export class ManagedCoreGatedLockController {
 
   apply(sessionId: string, managedResult: string | undefined): void {
     const active = managedResult === "continued";
-    this.notify(sessionId, active);
+    this.notify(sessionId, active, { force: active });
   }
 
-  private notify(sessionId: string, active: boolean): void {
+  private notify(
+    sessionId: string,
+    active: boolean,
+    options: { readonly force?: boolean } = {}
+  ): void {
     const workspaceRuntime = this.deps.workspaceRuntime;
     if (!workspaceRuntime) {
       return;
     }
-    if (active && this.lockedSessions.has(sessionId)) {
+    if (active && this.lockedSessions.has(sessionId) && !options.force) {
       return;
     }
     if (!(active || this.lockedSessions.has(sessionId))) {

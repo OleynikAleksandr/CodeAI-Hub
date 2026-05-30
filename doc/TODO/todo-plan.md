@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "4328fe640",
+  "lastRecordedCommit": "7c650284e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-412",
-  "expectedCommitMessage": "chore: package 1.2.412 vsix",
+  "currentTaskId": "managed-stage-core-lock",
+  "expectedCommitMessage": "fix: keep managed input locked until user gate",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.412 vsix",
-    "preCommitHead": "4328fe640",
+    "expectedCommitMessage": "fix: keep managed input locked until user gate",
+    "preCommitHead": "7c650284e",
     "stage": "commit_pending",
-    "taskId": "release-vsix-412"
+    "taskId": "managed-stage-core-lock"
   }
 }
 ```
@@ -111,10 +111,20 @@
 40. [DONE] `release-build-412` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.412 release`
 41. [DONE] Git Commit: `chore: build 1.2.412 release` (hash: 4328fe640)
 42. [DONE] `release-vsix-412` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.412 vsix`
-43. [PENDING] Git Commit: `chore: package 1.2.412 vsix` (hash: TBD)
+43. [DONE] Git Commit: `chore: package 1.2.412 vsix` (hash: 7c650284e)
 
 ### Stream: User Visual Acceptance Testing
-44. [TODO] `release-acceptance-412` Hand off `codeai-hub-1.2.412.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+44. [DONE] `release-acceptance-412` Hand off `codeai-hub-1.2.412.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.412 failed: input still unlocks during Diagram Modules Core-orchestrator/provider exchange; continue with Core-owned stage-level managed lock investigation
+
+### Stream: Managed Stage-Level Core Lock (from 1.2.412 retest)
+45. [DONE] `managed-stage-core-lock` Fix the real Core-owned lock lifecycle for managed technical stages so user input stays blocked through Core-orchestrator/provider exchange and releases only at explicit user gate / blocked / complete boundaries; do not use Project Manager triggers as source of truth — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts`; expected commit: `fix: keep managed input locked until user gate`
+46. [PENDING] Git Commit: `fix: keep managed input locked until user gate` (hash: TBD)
+
+### Stream: Tooling Verification
+47. [TODO] `managed-stage-core-lock-verify` Build core and webview and run webview typecheck for the stage-level managed Core lock — scope: `core + webview build`
+
+### Stream: Release Build Confirmation
+48. [TODO] `release-confirmation-413` Wait for explicit user confirmation before preparing release notes or running release build for the stage-level managed Core lock — scope: user confirmation gate
 
 ### Stream: Scope Closeout
 31. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

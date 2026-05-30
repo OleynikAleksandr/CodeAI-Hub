@@ -260,7 +260,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       if (nextPrompt) {
         dispatchContinuation(messageDispatch, params.sessionId, nextPrompt);
       }
-      return nextPrompt ? "continued" : "settled";
+      return "continued";
     }
     if (decision.nextAction === "open_user_review") {
       this.appendCoreMessage(params.sessionId, {

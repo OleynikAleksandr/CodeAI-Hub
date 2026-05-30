@@ -75,9 +75,40 @@ test("managed core-gated lock releases only sessions locked by this controller",
       workspaceRoot: "/workspace",
     },
     {
+      active: true,
+      nodeId: "quality_gates",
+      reason: "managed_core_gated",
+      sessionId: "session-1",
+      workspaceRoot: "/workspace",
+    },
+    {
       active: false,
       nodeId: "quality_gates",
       reason: null,
+      sessionId: "session-1",
+      workspaceRoot: "/workspace",
+    },
+  ]);
+});
+
+test("managed core-gated lock reasserts continuation after arbitration", () => {
+  const { calls, controller } = createController("diagram_modules");
+
+  controller.lockForCoreArbitration("session-1");
+  controller.apply("session-1", "continued");
+
+  assert.deepEqual(calls, [
+    {
+      active: true,
+      nodeId: "diagram_modules",
+      reason: "managed_core_gated",
+      sessionId: "session-1",
+      workspaceRoot: "/workspace",
+    },
+    {
+      active: true,
+      nodeId: "diagram_modules",
+      reason: "managed_core_gated",
       sessionId: "session-1",
       workspaceRoot: "/workspace",
     },
