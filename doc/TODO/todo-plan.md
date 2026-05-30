@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "0e2f0a832",
+  "lastRecordedCommit": "4328fe640",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-build-412",
-  "expectedCommitMessage": "chore: build 1.2.412 release",
+  "currentTaskId": "release-vsix-412",
+  "expectedCommitMessage": "chore: package 1.2.412 vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.412 release",
-    "preCommitHead": "0e2f0a832",
+    "expectedCommitMessage": "chore: package 1.2.412 vsix",
+    "preCommitHead": "4328fe640",
     "stage": "commit_pending",
-    "taskId": "release-build-412"
+    "taskId": "release-vsix-412"
   }
 }
 ```
@@ -109,9 +109,9 @@
 38. [DONE] `release-docs-412` Update README and CHANGELOG to 1.2.412 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.412 release notes`
 39. [DONE] Git Commit: `docs: prepare 1.2.412 release notes` (hash: 0e2f0a832)
 40. [DONE] `release-build-412` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.412 release`
-41. [PENDING] Git Commit: `chore: build 1.2.412 release` (hash: TBD)
-42. [TODO] `release-vsix-412` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.412 vsix`
-43. [TODO] Git Commit: `chore: package 1.2.412 vsix` (hash: TBD)
+41. [DONE] Git Commit: `chore: build 1.2.412 release` (hash: 4328fe640)
+42. [DONE] `release-vsix-412` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.412 vsix`
+43. [PENDING] Git Commit: `chore: package 1.2.412 vsix` (hash: TBD)
 
 ### Stream: User Visual Acceptance Testing
 44. [TODO] `release-acceptance-412` Hand off `codeai-hub-1.2.412.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
