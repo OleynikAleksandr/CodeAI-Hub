@@ -8,15 +8,15 @@
   "planId": "questionnaire-autoscroll-2026-05-30",
   "branch": "main",
   "baseHead": "cf7c49e1e",
-  "lastRecordedCommit": "1dab4e3dc",
+  "lastRecordedCommit": "e710cd8dc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "input-unlock-premature",
-  "expectedCommitMessage": "fix: unlock input only after agent turn fully completes",
+  "currentTaskId": "release-docs-408",
+  "expectedCommitMessage": "docs: prepare 1.2.408 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: unlock input only after agent turn fully completes",
-    "preCommitHead": "1dab4e3dc",
+    "expectedCommitMessage": "docs: prepare 1.2.408 release notes",
+    "preCommitHead": "e710cd8dc",
     "stage": "commit_pending",
-    "taskId": "input-unlock-premature"
+    "taskId": "release-docs-408"
   }
 }
 ```
@@ -67,16 +67,15 @@
 
 ### Stream: Input Unlock Timing (from 1.2.407 retest)
 15. [DONE] `input-unlock-premature` Fix: the user input field unlocks before the agent turn actually finishes. With Claude/Opus the dialog is still visually streaming the agent's last messages (and the final orchestrator/system gate bubble with the "Подтверждаю" button has not appeared yet), but the input is already editable and sendable. The unlock trigger likely fires on an early feedback/stream event instead of the true end-of-turn (stream complete AND the system gate bubble rendered) — scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `fix: unlock input only after agent turn fully completes`
-16. [PENDING] Git Commit: `fix: unlock input only after agent turn fully completes` (hash: TBD)
-17. [TODO] `input-lock-managed-phases` Enhancement: in agent-to-orchestrator managed phases (e.g. the Diagram Modules step) keep the user input locked through all intermediate agent messages and unlock only when the final system/orchestrator gate bubble with the "Подтверждаю" button appears — scope: TBD (managed-phase input gating); expected commit: `feat: keep input locked through managed agent-orchestrator phases until gate`
-18. [TODO] Git Commit: `feat: keep input locked through managed agent-orchestrator phases until gate` (hash: TBD)
+16. [DONE] Git Commit: `fix: unlock input only after agent turn fully completes` (hash: e710cd8dc)
+17. [DONE] `input-lock-managed-phases` Managed-phase input gating verified as covered without a separate code change: the gate-present input lock from task 15 (`src/client/ui/src/session/session-view.tsx`) keeps the input locked while a managed-workflow review gate is pending, and the existing diagram-modules sequence lock (`src/client/project-manager/components/sessions/use-diagram-modules-orchestration.ts`) holds the input blocked from turn_completed until the gate during managed phases — scope: verification only Result: Managed-phase input gating covered by the task-15 gate-present lock plus the existing diagram-modules sequence lock; no separate code change needed
 
 ### Stream: Tooling Verification
-19. [TODO] `retest-fixes-verify` Build webview and run webview typecheck for the retest fixes — scope: `webview build`
+19. [DONE] `retest-fixes-verify` Build webview and run webview typecheck for the retest fixes — scope: `webview build` Result: webview typecheck and build:webview passed for all four retest fixes
 
 ### Stream: Release Build
-20. [TODO] `release-docs-408` Update README and CHANGELOG to 1.2.408 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.408 release notes`
-21. [TODO] Git Commit: `docs: prepare 1.2.408 release notes` (hash: TBD)
+20. [DONE] `release-docs-408` Update README and CHANGELOG to 1.2.408 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.408 release notes`
+21. [PENDING] Git Commit: `docs: prepare 1.2.408 release notes` (hash: TBD)
 22. [TODO] `release-build-408` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.408 release`
 23. [TODO] Git Commit: `chore: build 1.2.408 release` (hash: TBD)
 24. [TODO] `release-vsix-408` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.408 vsix`

@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.407** (Questionnaire Auto-Scroll)
+**Current Release — v1.2.408** (Retest Scroll & Input-Lock Fixes)
+
+This release fixes issues found while retesting 1.2.407. The questionnaire now
+scrolls to the submit footer reliably even when auto-height fields expand after
+load, so it no longer lands mid-list. The session dialog re-pins to the bottom
+when a reasoning bubble grows after its English text is replaced by a taller
+Russian translation, so the latest message stays fully visible. The chat input
+now stays locked while a managed-workflow review gate is pending, so it no
+longer unlocks prematurely before the orchestrator gate is shown.
+
+**Previous Release — v1.2.407** (Questionnaire Auto-Scroll)
 
 This release makes the project description questionnaire scroll automatically.
 On open it resumes at the first unfilled required section; once every required

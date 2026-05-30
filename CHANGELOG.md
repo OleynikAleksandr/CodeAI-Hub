@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.408] - 2026-05-30
+### Fixed
+- **Questionnaire scrolls to the submit footer reliably.** The auto-scroll re-pins to the target via a ResizeObserver while auto-height textareas expand after load, so a fully filled questionnaire lands on the "Submit questionnaire" footer instead of mid-list (previously the section-8 header).
+- **Session dialog re-pins to the bottom after a reasoning bubble grows.** When a reasoning bubble's English text is replaced by a taller Russian translation, a ResizeObserver re-scrolls to the bottom while the view is pinned, keeping the latest message fully visible.
+- **Chat input stays locked until the managed-workflow gate is confirmed.** The input lock now accounts for a present, unconfirmed managed review gate, so the input no longer unlocks prematurely after the turn goes idle but before/while the orchestrator gate is shown.
+
+### Tests
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.407] - 2026-05-30
 ### Changed
 - **Project description questionnaire auto-scrolls.** On open the questionnaire resumes at the first unfilled required section, and once all required sections are filled (section 11 `out_of_scope` is the last required; section 12 `notes` is optional) it scrolls to the "Submit questionnaire" button. Auto-scroll target logic lives in a dedicated helper (`questionnaire-autoscroll.ts`) so the panel stays within the 500-line architecture limit; the shared questionnaire view gained an optional scroll mechanism, leaving the idea questionnaire unchanged.
