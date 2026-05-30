@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.413] - 2026-05-30
+### Fixed
+- **Managed technical-stage input lock is reasserted after Core continuation decisions.** Core now re-broadcasts the `managed_core_gated` lock when a managed turn remains `continued`, so stale terminal or idle snapshots cannot unlock input between the Core "next subturn" system message and the next provider turn.
+- **Diagram Modules dispatch-next boundaries remain Core-gated until a real user boundary.** Product Part continuation turns now stay `continued` even if the provider prompt is unexpectedly absent; input is released only at explicit user review, blocked, or complete boundaries.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/managed-core-gated-lock-controller.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/session-provider-event-router.test.js`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.412] - 2026-05-30
 ### Fixed
 - **Managed technical-stage input locks before Core arbitration work begins.** Diagram Modules could still show an idle input while Core was validating artifacts, committing managed boundaries, and dispatching the next internal agent turn. Core now applies the `managed_core_gated` lock as soon as provider output reaches managed arbitration, before any validation/commit/continuation window can expose an idle snapshot.

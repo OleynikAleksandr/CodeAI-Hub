@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "7c650284e",
+  "lastRecordedCommit": "2c71efa50",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-stage-core-lock",
-  "expectedCommitMessage": "fix: keep managed input locked until user gate",
+  "currentTaskId": "release-docs-413",
+  "expectedCommitMessage": "docs: prepare 1.2.413 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: keep managed input locked until user gate",
-    "preCommitHead": "7c650284e",
+    "expectedCommitMessage": "docs: prepare 1.2.413 release notes",
+    "preCommitHead": "2c71efa50",
     "stage": "commit_pending",
-    "taskId": "managed-stage-core-lock"
+    "taskId": "release-docs-413"
   }
 }
 ```
@@ -118,13 +118,24 @@
 
 ### Stream: Managed Stage-Level Core Lock (from 1.2.412 retest)
 45. [DONE] `managed-stage-core-lock` Fix the real Core-owned lock lifecycle for managed technical stages so user input stays blocked through Core-orchestrator/provider exchange and releases only at explicit user gate / blocked / complete boundaries; do not use Project Manager triggers as source of truth — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts`; expected commit: `fix: keep managed input locked until user gate`
-46. [PENDING] Git Commit: `fix: keep managed input locked until user gate` (hash: TBD)
+46. [DONE] Git Commit: `fix: keep managed input locked until user gate` (hash: 2c71efa50)
 
 ### Stream: Tooling Verification
-47. [TODO] `managed-stage-core-lock-verify` Build core and webview and run webview typecheck for the stage-level managed Core lock — scope: `core + webview build`
+47. [DONE] `managed-stage-core-lock-verify` Build core and webview and run webview typecheck for the stage-level managed Core lock — scope: `core + webview build` Result: core build, webview typecheck, and build:webview passed for the stage-level managed Core lock
 
 ### Stream: Release Build Confirmation
-48. [TODO] `release-confirmation-413` Wait for explicit user confirmation before preparing release notes or running release build for the stage-level managed Core lock — scope: user confirmation gate
+48. [DONE] `release-confirmation-413` Wait for explicit user confirmation before preparing release notes or running release build for the stage-level managed Core lock — scope: user confirmation gate Result: User explicitly confirmed building release 1.2.413 for the stage-level managed Core lock
+
+### Stream: Release Build
+49. [DONE] `release-docs-413` Update README and CHANGELOG to 1.2.413 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.413 release notes`
+50. [PENDING] Git Commit: `docs: prepare 1.2.413 release notes` (hash: TBD)
+51. [TODO] `release-build-413` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.413 release`
+52. [TODO] Git Commit: `chore: build 1.2.413 release` (hash: TBD)
+53. [TODO] `release-vsix-413` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.413 vsix`
+54. [TODO] Git Commit: `chore: package 1.2.413 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+55. [TODO] `release-acceptance-413` Hand off `codeai-hub-1.2.413.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
 31. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
