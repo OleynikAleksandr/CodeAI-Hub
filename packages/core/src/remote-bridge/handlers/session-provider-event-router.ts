@@ -306,6 +306,7 @@ export class SessionProviderEventRouter {
         );
       })
       .finally(() => {
+        this.managedCoreGatedLock.lockForCoreArbitration(sessionId);
         this.deps.broadcaster({
           type: "session:stream",
           payload: { sessionId, event },
@@ -327,14 +328,7 @@ export class SessionProviderEventRouter {
             return "settled" as const;
           })
           .then((managedResult) => {
-            const lastMessageTag = this.deps.sessionManager
-              .getSession(sessionId)
-              ?.messages?.at(-1)?.tag;
-            this.managedCoreGatedLock.apply(
-              sessionId,
-              managedResult,
-              lastMessageTag
-            );
+            this.managedCoreGatedLock.apply(sessionId, managedResult);
             if (managedResult === "continued") {
               flowNodeContinuityTask.catch((error: unknown) => {
                 this.logFlowNodeContinuityHandlerFailure(sessionId, error);

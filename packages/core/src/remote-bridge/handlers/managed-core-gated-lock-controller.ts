@@ -25,12 +25,19 @@ interface ManagedLockDeps {
   };
 }
 
+const MANAGED_CORE_GATED_STAGES = new Set([
+  "application_skeleton",
+  "diagram_modules",
+  "quality_gates",
+] as const);
+
 /**
- * Owns the "managed core-gated" input lock. While managed-workflow turns return
- * "continued" the agent keeps working with the orchestrator (Phase 1, core
- * gated), so Core holds a session continuityLock; the lock is released on
- * "settled" (review gate opens) / "not_managed". Only sessions this controller
- * locked are released, so resume/rollover locks are never disturbed.
+ * Owns the "managed core-gated" input lock. Managed technical sessions enter
+ * the lock as soon as provider output reaches Core arbitration, before
+ * validation/commit/continuation can expose an idle input state. The lock is
+ * kept while managed workflow reports "continued" and released on "settled" /
+ * "not_managed". Only sessions this controller locked are released, so
+ * resume/rollover locks are never disturbed.
  */
 export class ManagedCoreGatedLockController {
   private readonly deps: ManagedLockDeps;
@@ -40,20 +47,16 @@ export class ManagedCoreGatedLockController {
     this.deps = deps;
   }
 
-  apply(
-    sessionId: string,
-    managedResult: string | undefined,
-    lastMessageTag: string | undefined
-  ): void {
-    // Core-gated while the agent keeps working with the orchestrator: a managed
-    // turn reported "continued" (repair / dispatch with internal prompt), or
-    // "settled" right after a continuation message (the agent continues by the
-    // visible continuation). The review gate ("managed-workflow-user-review")
-    // and blocked/validation outcomes release the lock.
-    const active =
-      managedResult === "continued" ||
-      (managedResult === "settled" &&
-        lastMessageTag === "managed-workflow-continuation");
+  lockForCoreArbitration(sessionId: string): void {
+    this.notify(sessionId, true);
+  }
+
+  apply(sessionId: string, managedResult: string | undefined): void {
+    const active = managedResult === "continued";
+    this.notify(sessionId, active);
+  }
+
+  private notify(sessionId: string, active: boolean): void {
     const workspaceRuntime = this.deps.workspaceRuntime;
     if (!workspaceRuntime) {
       return;
@@ -65,7 +68,13 @@ export class ManagedCoreGatedLockController {
       return;
     }
     const session = this.deps.sessionManager.getSession(sessionId);
-    if (!session?.workspacePath) {
+    if (
+      !(
+        session?.workspacePath &&
+        session.stage &&
+        MANAGED_CORE_GATED_STAGES.has(session.stage as never)
+      )
+    ) {
       return;
     }
     workspaceRuntime.notifyLockChanged(

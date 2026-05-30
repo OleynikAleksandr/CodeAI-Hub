@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "887de0cc9",
+  "lastRecordedCommit": "7e83b4c3b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-411",
-  "expectedCommitMessage": "chore: package 1.2.411 vsix",
+  "currentTaskId": "managed-lock-terminal-boundary",
+  "expectedCommitMessage": "fix: lock managed input during core arbitration",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.411 vsix",
-    "preCommitHead": "887de0cc9",
+    "expectedCommitMessage": "fix: lock managed input during core arbitration",
+    "preCommitHead": "7e83b4c3b",
     "stage": "commit_pending",
-    "taskId": "release-vsix-411"
+    "taskId": "managed-lock-terminal-boundary"
   }
 }
 ```
@@ -88,10 +88,19 @@
 26. [DONE] `release-build-411` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.411 release`
 27. [DONE] Git Commit: `chore: build 1.2.411 release` (hash: 887de0cc9)
 28. [DONE] `release-vsix-411` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.411 vsix`
-29. [PENDING] Git Commit: `chore: package 1.2.411 vsix` (hash: TBD)
+29. [DONE] Git Commit: `chore: package 1.2.411 vsix` (hash: 7e83b4c3b)
 
 ### Stream: User Visual Acceptance Testing
-30. [TODO] `release-acceptance-411` Hand off `codeai-hub-1.2.411.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+30. [DONE] `release-acceptance-411` Hand off `codeai-hub-1.2.411.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.411 found managed technical input still unlocks during Core-agent managed exchange in Diagram Modules; add follow-up managed core-gated input lock fix.
+
+### Stream: Managed Core-Gated Input Lock Follow-up (from 1.2.411 retest)
+32. [DONE] `managed-lock-terminal-boundary` Lock managed technical sessions as soon as a provider turn reaches Core-managed terminal arbitration, before validation/commit/continuation work can expose an idle input state — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts`; expected commit: `fix: lock managed input during core arbitration`
+33. [PENDING] Git Commit: `fix: lock managed input during core arbitration` (hash: TBD)
+34. [TODO] `managed-lock-async-continuations` Dispatch managed internal continuations without awaiting the next provider turn inside the previous turn's arbitration, so all managed technical stages keep one Core-owned lock lifecycle until review/blocked settlement — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: keep managed lock across internal continuations`
+35. [TODO] Git Commit: `fix: keep managed lock across internal continuations` (hash: TBD)
+
+### Stream: Tooling Verification
+36. [TODO] `managed-lock-follow-up-verify` Build core and webview and run webview typecheck for the managed input lock follow-up — scope: `core + webview build`
 
 ### Stream: Scope Closeout
 31. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
