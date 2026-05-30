@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.415** (Core-Owned Managed Input Gate)
+**Current Release — v1.2.416** (Managed Continuations As User Turns)
+
+This release fixes the root lifecycle mismatch behind the remaining managed
+workflow input unlock. Core-authored prompts that actually start the next agent
+turn are now recorded and dispatched as visible `User` turns, the same way the
+initial workflow prompt is. Core/system messages remain reserved for user-facing
+handoff and review notices that are not sent to the agent. Diagram Modules and
+Quality Gates managed continuations therefore re-enter the normal user-turn
+input lifecycle instead of appearing as idle System-only updates.
+
+**Previous Release — v1.2.415** (Core-Owned Managed Input Gate)
 
 This release moves the managed workflow input lock to a Core-owned realtime
 gate that is independent of provider turn idleness and Project Manager local

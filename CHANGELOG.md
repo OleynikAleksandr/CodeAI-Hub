@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.416] - 2026-05-30
+### Fixed
+- **Managed continuations now start as visible User turns.** Core-authored prompts that are actually sent to the agent for the next managed subturn now go through the user-turn dispatch path instead of being shown only as System messages.
+- **System messages stay limited to user-facing handoff/review notices.** Diagram Modules and Quality Gates no longer use `managed-workflow-continuation` System bubbles for provider-visible continuation prompts; the next agent prompt is recorded as a `User` message and re-enters the normal input-lock lifecycle.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/managed-internal-continuation-dispatch.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.js packages/core/dist/remote-bridge/handlers/quality-gates-review-decision-flow.test.js`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.415] - 2026-05-30
 ### Fixed
 - **Managed workflow input is now gated by Core realtime state, not provider turn idleness.** Core emits `managed_input_gate` stream events when managed technical-stage work enters or leaves Core-owned agent/orchestrator exchange, so the input remains locked even if the visible provider turn appears idle.

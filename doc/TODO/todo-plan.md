@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "ebf72e2c6",
+  "lastRecordedCommit": "dde797a87",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-continuation-user-role-tests",
-  "expectedCommitMessage": "test: cover managed continuation user turns",
+  "currentTaskId": "release-docs-416",
+  "expectedCommitMessage": "docs: prepare 1.2.416 release notes",
   "debt": {
-    "expectedCommitMessage": "test: cover managed continuation user turns",
-    "preCommitHead": "ebf72e2c6",
+    "expectedCommitMessage": "docs: prepare 1.2.416 release notes",
+    "preCommitHead": "dde797a87",
     "stage": "commit_pending",
-    "taskId": "managed-continuation-user-role-tests"
+    "taskId": "release-docs-416"
   }
 }
 ```
@@ -181,15 +181,15 @@
 80. [DONE] `managed-continuation-user-role` Fix Core-authored managed continuation prompts that start the next agent turn so they are provider-visible `user` messages, while UI-only review/user handoff notices remain `system` messages — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.ts`; expected commit: `fix: send managed continuations as user turns`
 81. [DONE] Git Commit: `fix: send managed continuations as user turns` (hash: ebf72e2c6)
 82. [DONE] `managed-continuation-user-role-tests` Add regressions proving managed continuation dispatch records/sends the next agent prompt as a user-authored turn and does not change system-only user review/handoff messages — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.test.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts`; expected commit: `test: cover managed continuation user turns`
-83. [PENDING] Git Commit: `test: cover managed continuation user turns` (hash: TBD)
-84. [TODO] `managed-continuation-user-role-verify` Build core and webview and run targeted managed continuation role tests — scope: `core + webview build`
+83. [DONE] Git Commit: `test: cover managed continuation user turns` (hash: dde797a87)
+84. [DONE] `managed-continuation-user-role-verify` Build core and webview and run targeted managed continuation role tests — scope: `core + webview build` Result: Verification passed: npm run build --workspace @codeai-hub/core; node --test managed-internal-continuation-dispatch, session-request-handler-managed-workflow-turn, and quality-gates-review-decision-flow dist tests; npm run typecheck:webview; npm run build:webview.
 
 ### Stream: Release Build Confirmation
-85. [TODO] `release-confirmation-416` Wait for explicit user confirmation before preparing release notes or running release build for the managed continuation role fix — scope: user confirmation gate
+85. [DONE] `release-confirmation-416` Wait for explicit user confirmation before preparing release notes or running release build for the managed continuation role fix — scope: user confirmation gate Result: User explicitly confirmed building release 1.2.416 for the managed continuation user-turn role fix.
 
 ### Stream: Release Build
-86. [TODO] `release-docs-416` Update README and CHANGELOG to 1.2.416 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.416 release notes`
-87. [TODO] Git Commit: `docs: prepare 1.2.416 release notes` (hash: TBD)
+86. [DONE] `release-docs-416` Update README and CHANGELOG to 1.2.416 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.416 release notes`
+87. [PENDING] Git Commit: `docs: prepare 1.2.416 release notes` (hash: TBD)
 88. [TODO] `release-build-416` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.416 release`
 89. [TODO] Git Commit: `chore: build 1.2.416 release` (hash: TBD)
 90. [TODO] `release-vsix-416` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.416 vsix`
