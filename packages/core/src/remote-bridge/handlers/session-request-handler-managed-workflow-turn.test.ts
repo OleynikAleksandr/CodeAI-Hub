@@ -109,6 +109,7 @@ const createHandler = (params: {
   readonly dispatchUserMessage?: (options: {
     readonly content: string;
     readonly hiddenUserMessage: boolean;
+    readonly messageTag?: string;
     readonly sessionId: string;
   }) => Promise<void>;
   readonly stage: typeof APP_STAGE | typeof DIAGRAM_STAGE;
@@ -118,11 +119,13 @@ const createHandler = (params: {
   readonly handler: SessionRequestHandlerManagedWorkflowTurn;
   readonly internalMessages: string[];
   readonly sessionId: string;
+  readonly userMessageTags: Array<string | undefined>;
   readonly userMessages: string[];
   readonly waitEvents: string[];
 } => {
   const coreMessages: CapturedCoreMessage[] = [];
   const internalMessages: string[] = [];
+  const userMessageTags: Array<string | undefined> = [];
   const userMessages: string[] = [];
   const waitEvents: string[] = [];
   const sessionManager = new SessionManager();
@@ -152,9 +155,11 @@ const createHandler = (params: {
           ((options: {
             readonly content: string;
             readonly hiddenUserMessage: boolean;
+            readonly messageTag?: string;
             readonly sessionId: string;
           }) => {
             assert.equal(options.hiddenUserMessage, false);
+            userMessageTags.push(options.messageTag);
             userMessages.push(options.content);
             internalMessages.push(options.content);
             return Promise.resolve();
@@ -173,6 +178,7 @@ const createHandler = (params: {
     handler,
     internalMessages,
     sessionId: session.id,
+    userMessageTags,
     userMessages,
     waitEvents,
   };
@@ -419,10 +425,11 @@ test("managed Diagram Modules continuation starts the next agent turn as a user 
   );
   try {
     await prepareDiagramIndex(workspaceRoot);
-    const { coreMessages, handler, sessionId, userMessages } = createHandler({
-      stage: DIAGRAM_STAGE,
-      workspaceRoot,
-    });
+    const { coreMessages, handler, sessionId, userMessageTags, userMessages } =
+      createHandler({
+        stage: DIAGRAM_STAGE,
+        workspaceRoot,
+      });
 
     const result = await handler.handleTurnCompleted(sessionId);
 
@@ -434,6 +441,7 @@ test("managed Diagram Modules continuation starts the next agent turn as a user 
       []
     );
     assert.equal(userMessages.length, 1);
+    assert.deepEqual(userMessageTags, ["managed-workflow-continuation"]);
     assert.match(userMessages[0] ?? "", DIAGRAM_CONTINUATION_USER_NOTICE_RE);
     assert.match(userMessages[0] ?? "", DIAGRAM_CONTINUATION_PRODUCT_PART_RE);
     assert.doesNotMatch(

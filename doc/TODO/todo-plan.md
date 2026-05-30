@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "586fd0e3c",
+  "lastRecordedCommit": "410ce33c4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-continuation-lifecycle-tag",
-  "expectedCommitMessage": "fix: lock input from managed continuation lifecycle",
+  "currentTaskId": "managed-continuation-lifecycle-tests",
+  "expectedCommitMessage": "test: cover managed continuation lifecycle lock",
   "debt": {
-    "expectedCommitMessage": "fix: lock input from managed continuation lifecycle",
-    "preCommitHead": "586fd0e3c",
+    "expectedCommitMessage": "test: cover managed continuation lifecycle lock",
+    "preCommitHead": "410ce33c4",
     "stage": "commit_pending",
-    "taskId": "managed-continuation-lifecycle-tag"
+    "taskId": "managed-continuation-lifecycle-tests"
   }
 }
 ```
@@ -221,9 +221,9 @@
 
 ### Stream: Managed Continuation Lifecycle Gate (from 1.2.417 retest)
 108. [DONE] `managed-continuation-lifecycle-tag` Tag Core-authored visible managed continuation `user` messages and let the dialog projection keep input locked from that lifecycle marker until Core releases the managed review/user gate — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts`; expected commit: `fix: lock input from managed continuation lifecycle`
-109. [PENDING] Git Commit: `fix: lock input from managed continuation lifecycle` (hash: TBD)
-110. [TODO] `managed-continuation-lifecycle-tests` Add regressions for tagged Core visible `user` continuation messages, dialog-history lock projection, and provider-session turn-state targeting — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, src/client/project-manager/components/sessions/session-message-dedupe.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts`; expected commit: `test: cover managed continuation lifecycle lock`
-111. [TODO] Git Commit: `test: cover managed continuation lifecycle lock` (hash: TBD)
+109. [DONE] Git Commit: `fix: lock input from managed continuation lifecycle` (hash: 410ce33c4)
+110. [DONE] `managed-continuation-lifecycle-tests` Add regressions for tagged Core visible `user` continuation messages and dialog-history lock projection on the real managed continuation path — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, src/client/project-manager/components/sessions/session-message-dedupe.test.ts`; expected commit: `test: cover managed continuation lifecycle lock`
+111. [PENDING] Git Commit: `test: cover managed continuation lifecycle lock` (hash: TBD)
 112. [TODO] `managed-continuation-lifecycle-verify` Build core/webview and run targeted managed continuation lifecycle lock tests — scope: `core + webview build`
 113. [TODO] `release-confirmation-418` Wait for explicit user confirmation before preparing release notes or running release build for the managed continuation lifecycle lock fix — scope: user confirmation gate
 

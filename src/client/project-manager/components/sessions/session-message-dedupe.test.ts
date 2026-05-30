@@ -46,12 +46,43 @@ const createSystemMessage = (
   tag,
 });
 
+const createUserMessage = (
+  id: string,
+  tag: string,
+  content = "Core continuation user turn"
+): SessionMessage => ({
+  content,
+  createdAt: Date.now(),
+  id,
+  role: "user",
+  tag,
+});
+
 test("managed workflow continuation message locks the user input", () => {
   const snapshots = { session: createSnapshot() };
 
   const next = appendDedupedSessionMessageToSnapshots(snapshots, {
     message: createSystemMessage(
       "continuation-1",
+      "managed-workflow-continuation"
+    ),
+    sessionId: "session",
+  });
+
+  assert.equal(next.session.status.connectionState, "blocked");
+  assert.equal(next.session.status.continuityLock?.active, true);
+  assert.equal(
+    next.session.status.continuityLock?.reason,
+    "managed_workflow_core_agent_turn"
+  );
+});
+
+test("managed workflow user continuation message locks the user input", () => {
+  const snapshots = { session: createSnapshot() };
+
+  const next = appendDedupedSessionMessageToSnapshots(snapshots, {
+    message: createUserMessage(
+      "continuation-user-1",
       "managed-workflow-continuation"
     ),
     sessionId: "session",

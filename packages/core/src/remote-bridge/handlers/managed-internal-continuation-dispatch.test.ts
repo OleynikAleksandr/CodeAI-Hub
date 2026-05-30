@@ -13,6 +13,7 @@ test("managed continuation dispatch uses a visible user turn when available", ()
   const userTurns: Array<{
     readonly content: string;
     readonly hiddenUserMessage: boolean;
+    readonly messageTag?: string;
     readonly sessionId: string;
   }> = [];
 
@@ -22,6 +23,7 @@ test("managed continuation dispatch uses a visible user turn when available", ()
         userTurns.push({
           content: options.content,
           hiddenUserMessage: options.hiddenUserMessage,
+          messageTag: options.messageTag,
           sessionId: options.sessionId,
         });
         return Promise.resolve();
@@ -41,6 +43,7 @@ test("managed continuation dispatch uses a visible user turn when available", ()
     {
       content: "Core continuation prompt",
       hiddenUserMessage: false,
+      messageTag: "managed-workflow-continuation",
       sessionId: session.id,
     },
   ]);
