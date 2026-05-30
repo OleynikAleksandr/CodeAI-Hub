@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.415] - 2026-05-30
+### Fixed
+- **Managed workflow input is now gated by Core realtime state, not provider turn idleness.** Core emits `managed_input_gate` stream events when managed technical-stage work enters or leaves Core-owned agent/orchestrator exchange, so the input remains locked even if the visible provider turn appears idle.
+- **Dialog/runtime projections receive the same Core gate.** Gate events include runtime, parent/dialog aliases, and provider-session identity, allowing Project Manager to lock the visible Diagram Modules, Application Skeleton, and Quality Gates views without owning the workflow truth or relying on local Project Manager triggers.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/managed-core-gated-lock-controller.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/session-provider-event-router.test.js`
+- `node --import tsx --test src/client/project-manager/components/sessions/turn-state-stream.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.414] - 2026-05-30
 ### Fixed
 - **Managed technical-stage input stays locked during Core conversation arbitration.** Core now treats provider `turn_completed` for managed technical stages as the start of Core-owned arbitration, asserts `managed_core_gated`, and emits `turn_state=running` before publishing the terminal event to clients.
