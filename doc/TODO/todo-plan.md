@@ -8,15 +8,15 @@
   "planId": "questionnaire-autoscroll-2026-05-30",
   "branch": "main",
   "baseHead": "cf7c49e1e",
-  "lastRecordedCommit": "137987741",
+  "lastRecordedCommit": "5885c7611",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix",
-  "expectedCommitMessage": "chore: package 1.2.407 vsix",
+  "currentTaskId": "autoscroll-fix-completion",
+  "expectedCommitMessage": "fix: scroll questionnaire to submit footer after layout settles",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.407 vsix",
-    "preCommitHead": "137987741",
+    "expectedCommitMessage": "fix: scroll questionnaire to submit footer after layout settles",
+    "preCommitHead": "5885c7611",
     "stage": "commit_pending",
-    "taskId": "release-vsix"
+    "taskId": "autoscroll-fix-completion"
   }
 }
 ```
@@ -52,10 +52,38 @@
 6. [DONE] `release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.407 release`
 7. [DONE] Git Commit: `chore: build 1.2.407 release` (hash: 137987741)
 8. [DONE] `release-vsix` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.407 vsix`
-9. [PENDING] Git Commit: `chore: package 1.2.407 vsix` (hash: TBD)
+9. [DONE] Git Commit: `chore: package 1.2.407 vsix` (hash: 5885c7611)
 
 ### Stream: User Visual Acceptance Testing
-10. [TODO] `release-acceptance` Hand off `codeai-hub-1.2.407.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+10. [DONE] `release-acceptance` Hand off `codeai-hub-1.2.407.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.407 found 4 issues (2 scroll, 2 input-lock), not accepted; proceeding to implement the accumulated retest fixes in this scope
+
+### Stream: Auto-Scroll Retest Fixes (from 1.2.407 retest)
+11. [DONE] `autoscroll-fix-completion` Fix: with all sections filled, the questionnaire scrolls to the section-8 header instead of the submit footer. Hypothesis: the footer `scrollIntoView` fires on load before the auto-height textareas expand to fit the filled content, so the footer shifts down after the scroll and the viewport lands around section 8. Likely needs to defer/re-run the scroll after layout settles (rAF or after textarea auto-height) — scope: `src/client/ui/src/components/idea-questionnaire/idea-questionnaire-view.tsx`; expected commit: `fix: scroll questionnaire to submit footer after layout settles`
+12. [PENDING] Git Commit: `fix: scroll questionnaire to submit footer after layout settles` (hash: TBD)
+
+### Stream: Session Dialog Reasoning Scroll Fix (from 1.2.407 retest)
+13. [TODO] `dialog-reasoning-scroll` Fix: in the session dialog panel the autoscroll keeps the latest bubble in view, but a reasoning bubble first renders in English and is then replaced by a taller Russian translation; the scroll is not re-adjusted after the bubble grows, so the bottom of the latest bubble/message is partially hidden below the fold. Likely needs to re-pin scroll-to-bottom after the reasoning translation grows the bubble (watch bubble height change and re-scroll while the view is pinned to bottom) — scope: TBD (likely session dialog message list / scroll controller); expected commit: `fix: re-pin session dialog scroll after reasoning translation grows bubble`
+14. [TODO] Git Commit: `fix: re-pin session dialog scroll after reasoning translation grows bubble` (hash: TBD)
+
+### Stream: Input Unlock Timing (from 1.2.407 retest)
+15. [TODO] `input-unlock-premature` Fix: the user input field unlocks before the agent turn actually finishes. With Claude/Opus the dialog is still visually streaming the agent's last messages (and the final orchestrator/system gate bubble with the "Подтверждаю" button has not appeared yet), but the input is already editable and sendable. The unlock trigger likely fires on an early feedback/stream event instead of the true end-of-turn (stream complete AND the system gate bubble rendered) — scope: TBD (input lock state / turn-completion trigger, provider-specific for Claude); expected commit: `fix: unlock input only after agent turn fully completes`
+16. [TODO] Git Commit: `fix: unlock input only after agent turn fully completes` (hash: TBD)
+17. [TODO] `input-lock-managed-phases` Enhancement: in agent-to-orchestrator managed phases (e.g. the Diagram Modules step) keep the user input locked through all intermediate agent messages and unlock only when the final system/orchestrator gate bubble with the "Подтверждаю" button appears — scope: TBD (managed-phase input gating); expected commit: `feat: keep input locked through managed agent-orchestrator phases until gate`
+18. [TODO] Git Commit: `feat: keep input locked through managed agent-orchestrator phases until gate` (hash: TBD)
+
+### Stream: Tooling Verification
+19. [TODO] `retest-fixes-verify` Build webview and run webview typecheck for the retest fixes — scope: `webview build`
+
+### Stream: Release Build
+20. [TODO] `release-docs-408` Update README and CHANGELOG to 1.2.408 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.408 release notes`
+21. [TODO] Git Commit: `docs: prepare 1.2.408 release notes` (hash: TBD)
+22. [TODO] `release-build-408` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.408 release`
+23. [TODO] Git Commit: `chore: build 1.2.408 release` (hash: TBD)
+24. [TODO] `release-vsix-408` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.408 vsix`
+25. [TODO] Git Commit: `chore: package 1.2.408 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+26. [TODO] `release-acceptance-408` Hand off `codeai-hub-1.2.408.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-11. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+27. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

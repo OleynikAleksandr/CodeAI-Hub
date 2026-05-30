@@ -33,6 +33,10 @@ const SUBMIT_SCROLL_OPTIONS: ScrollIntoViewOptions = {
   behavior: "smooth",
   block: "end",
 };
+// Keep re-pinning to the scroll target for a short window after the initial
+// scroll, so auto-height textareas that expand to fit filled content (growing
+// the page) do not leave the viewport stranded mid-list.
+const SETTLE_WINDOW_MS = 600;
 
 export const IdeaQuestionnaireView = ({
   title,
@@ -47,14 +51,17 @@ export const IdeaQuestionnaireView = ({
   onSubmit,
   onCancel,
 }: IdeaQuestionnaireViewProps) => {
+  const listRef = useRef<HTMLDivElement | null>(null);
   const sectionRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const footerRef = useRef<HTMLDivElement | null>(null);
   const hasInitialScrollRef = useRef(false);
   const wasCompleteRef = useRef(false);
 
   // Optional auto-scroll: enabled only when the parent passes the props
-  // (description questionnaire). Without them the idea questionnaire keeps
-  // its previous behavior unchanged.
+  // (description questionnaire). Without them the idea questionnaire keeps its
+  // previous behavior unchanged. Scrolls on initial load (resume at the first
+  // unfilled required section, or the submit footer when complete) and at the
+  // moment the questionnaire becomes complete.
   useEffect(() => {
     const enabled =
       autoScrollComplete !== undefined ||
@@ -63,32 +70,42 @@ export const IdeaQuestionnaireView = ({
       return;
     }
 
-    const scrollToFooter = () =>
-      footerRef.current?.scrollIntoView(SUBMIT_SCROLL_OPTIONS);
-    const scrollToSection = (questionId: string) =>
-      sectionRefs.current
-        .get(questionId)
-        ?.scrollIntoView(SECTION_SCROLL_OPTIONS);
-
-    // After the initial resume scroll, only react to the moment the
-    // questionnaire becomes fully complete (scroll down to the submit footer).
-    if (hasInitialScrollRef.current) {
-      if (autoScrollComplete && !wasCompleteRef.current) {
-        scrollToFooter();
-      }
-      wasCompleteRef.current = Boolean(autoScrollComplete);
+    const isInitial = !hasInitialScrollRef.current;
+    const becameComplete =
+      !isInitial && Boolean(autoScrollComplete) && !wasCompleteRef.current;
+    hasInitialScrollRef.current = true;
+    wasCompleteRef.current = Boolean(autoScrollComplete);
+    if (!(isInitial || becameComplete)) {
       return;
     }
 
-    // Initial scroll on load: resume at the first unfilled required section,
-    // or jump to the submit footer when everything required is already filled.
-    hasInitialScrollRef.current = true;
-    wasCompleteRef.current = Boolean(autoScrollComplete);
-    if (autoScrollComplete) {
-      scrollToFooter();
-    } else if (autoScrollTargetQuestionId) {
-      scrollToSection(autoScrollTargetQuestionId);
+    const target = autoScrollComplete
+      ? { element: footerRef.current, options: SUBMIT_SCROLL_OPTIONS }
+      : {
+          element: autoScrollTargetQuestionId
+            ? (sectionRefs.current.get(autoScrollTargetQuestionId) ?? null)
+            : null,
+          options: SECTION_SCROLL_OPTIONS,
+        };
+    if (!target.element) {
+      return;
     }
+
+    const scrollToTarget = () => target.element?.scrollIntoView(target.options);
+    scrollToTarget();
+
+    // Re-pin while the list height keeps changing (textarea auto-height).
+    const observer = new ResizeObserver(scrollToTarget);
+    if (listRef.current) {
+      observer.observe(listRef.current);
+    }
+    const stopTimer = window.setTimeout(() => {
+      observer.disconnect();
+    }, SETTLE_WINDOW_MS);
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(stopTimer);
+    };
   }, [autoScrollComplete, autoScrollTargetQuestionId, questions]);
 
   return (
@@ -100,7 +117,7 @@ export const IdeaQuestionnaireView = ({
         ) : null}
       </header>
 
-      <div style={questionnaireListStyles}>
+      <div ref={listRef} style={questionnaireListStyles}>
         {questions.map((question) => (
           <div
             key={question.id}
