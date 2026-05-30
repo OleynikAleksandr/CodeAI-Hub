@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.412] - 2026-05-30
+### Fixed
+- **Managed technical-stage input locks before Core arbitration work begins.** Diagram Modules could still show an idle input while Core was validating artifacts, committing managed boundaries, and dispatching the next internal agent turn. Core now applies the `managed_core_gated` lock as soon as provider output reaches managed arbitration, before any validation/commit/continuation window can expose an idle snapshot.
+- **Internal managed continuations no longer nest the next provider turn inside previous arbitration.** Diagram Modules, Application Skeleton, and Quality Gates dispatch internal continuation prompts asynchronously and immediately return `continued`, preserving one Core-owned lock lifecycle until the user-review gate or a blocked settlement.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/managed-core-gated-lock-controller.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.js`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.411] - 2026-05-30
 ### Fixed
 - **Managed core-gated input lock no longer releases between continuation turns.** The 1.2.410 lock was keyed only to the managed turn result, but dispatch-next continuations report "settled" without an internal prompt, which released the lock mid core-gated work. Core now keeps the lock while a managed turn is "continued" or "settled" immediately after a continuation message (`managed-workflow-continuation`), releasing it only at the user-review gate or blocked outcomes.

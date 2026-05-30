@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "83d75bf75",
+  "lastRecordedCommit": "e4e0b7929",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-lock-async-continuations",
-  "expectedCommitMessage": "fix: keep managed lock across internal continuations",
+  "currentTaskId": "release-docs-412",
+  "expectedCommitMessage": "docs: prepare 1.2.412 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: keep managed lock across internal continuations",
-    "preCommitHead": "83d75bf75",
+    "expectedCommitMessage": "docs: prepare 1.2.412 release notes",
+    "preCommitHead": "e4e0b7929",
     "stage": "commit_pending",
-    "taskId": "managed-lock-async-continuations"
+    "taskId": "release-docs-412"
   }
 }
 ```
@@ -97,10 +97,24 @@
 32. [DONE] `managed-lock-terminal-boundary` Lock managed technical sessions as soon as a provider turn reaches Core-managed terminal arbitration, before validation/commit/continuation work can expose an idle input state — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts`; expected commit: `fix: lock managed input during core arbitration`
 33. [DONE] Git Commit: `fix: lock managed input during core arbitration` (hash: 83d75bf75)
 34. [DONE] `managed-lock-async-continuations` Dispatch managed internal continuations without awaiting the next provider turn inside the previous turn's arbitration, so all managed technical stages keep one Core-owned lock lifecycle until review/blocked settlement — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: keep managed lock across internal continuations`
-35. [PENDING] Git Commit: `fix: keep managed lock across internal continuations` (hash: TBD)
+35. [DONE] Git Commit: `fix: keep managed lock across internal continuations` (hash: e4e0b7929)
 
 ### Stream: Tooling Verification
-36. [TODO] `managed-lock-follow-up-verify` Build core and webview and run webview typecheck for the managed input lock follow-up — scope: `core + webview build`
+36. [DONE] `managed-lock-follow-up-verify` Build core and webview and run webview typecheck for the managed input lock follow-up — scope: `core + webview build` Result: core build, webview typecheck, and build:webview passed for the managed input lock follow-up
+
+### Stream: Release Build Confirmation
+37. [DONE] `release-confirmation-412` Wait for explicit user confirmation before preparing release notes or running release build for the managed input lock follow-up — scope: user confirmation gate Result: User explicitly confirmed building release 1.2.412 for the managed input lock follow-up.
+
+### Stream: Release Build
+38. [DONE] `release-docs-412` Update README and CHANGELOG to 1.2.412 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.412 release notes`
+39. [PENDING] Git Commit: `docs: prepare 1.2.412 release notes` (hash: TBD)
+40. [TODO] `release-build-412` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.412 release`
+41. [TODO] Git Commit: `chore: build 1.2.412 release` (hash: TBD)
+42. [TODO] `release-vsix-412` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.412 vsix`
+43. [TODO] Git Commit: `chore: package 1.2.412 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+44. [TODO] `release-acceptance-412` Hand off `codeai-hub-1.2.412.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
 31. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
