@@ -62,6 +62,8 @@ const resolveTargetSnapshotId = (options: {
   return fallback?.[0] ?? null;
 };
 
+const MANAGED_CORE_GATED_LOCK_REASON = "managed_core_gated";
+
 export const applyWorkspaceSnapshotToSnapshots = (
   snapshots: SessionSnapshots,
   payload: WorkspaceSnapshotPushPayload
@@ -97,7 +99,7 @@ export const applyWorkspaceSnapshotToSnapshots = (
     const graphHeldReason =
       heldLockReasonBySessionId.get(sessionId) ??
       heldLockReasonBySessionId.get(targetSnapshotId);
-    const nextLockReason = resolveContinuityLockReason(session) ?? graphHeldReason;
+    let nextLockReason = resolveContinuityLockReason(session) ?? graphHeldReason;
     const contextDecisionPending = isContextDecisionPending(session, nextLockReason);
     const rolloverPending = isRolloverPendingAfterTerminalTurn(
       session,
@@ -120,6 +122,19 @@ export const applyWorkspaceSnapshotToSnapshots = (
     }
     const currentLockActive = current.status.continuityLock?.active === true;
     const currentLockReason = current.status.continuityLock?.reason;
+    if (
+      currentLockActive &&
+      currentLockReason === MANAGED_CORE_GATED_LOCK_REASON &&
+      !nextLockActive
+    ) {
+      nextLockActive = true;
+      nextLockReason = currentLockReason;
+      nextConnectionState =
+        session.turnState === "running" ||
+        current.status.connectionState === "running"
+          ? "running"
+          : "blocked";
+    }
     const currentTimerTotalSeconds = current.status.taskTimer?.totalSeconds ?? 0;
     const currentTimerRunningSinceMs =
       current.status.taskTimer?.runningSinceMs ?? null;

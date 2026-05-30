@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "d4c8b7fd4",
+  "lastRecordedCommit": "a2375d655",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-416",
-  "expectedCommitMessage": "chore: package 1.2.416 vsix",
+  "currentTaskId": "managed-dialog-gate-projection",
+  "expectedCommitMessage": "fix: keep managed dialog input gate locked",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.416 vsix",
-    "preCommitHead": "d4c8b7fd4",
+    "expectedCommitMessage": "fix: keep managed dialog input gate locked",
+    "preCommitHead": "a2375d655",
     "stage": "commit_pending",
-    "taskId": "release-vsix-416"
+    "taskId": "managed-dialog-gate-projection"
   }
 }
 ```
@@ -193,10 +193,20 @@
 88. [DONE] `release-build-416` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.416 release`
 89. [DONE] Git Commit: `chore: build 1.2.416 release` (hash: d4c8b7fd4)
 90. [DONE] `release-vsix-416` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.416 vsix`
-91. [PENDING] Git Commit: `chore: package 1.2.416 vsix` (hash: TBD)
+91. [DONE] Git Commit: `chore: package 1.2.416 vsix` (hash: a2375d655)
 
 ### Stream: User Visual Acceptance Testing
-92. [TODO] `release-acceptance-416` Hand off `codeai-hub-1.2.416.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+92. [DONE] `release-acceptance-416` Hand off `codeai-hub-1.2.416.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.416 failed: continuation messages are now user-role in JSONL, but the Project Manager dialog input still unlocks because the Core managed gate is only transient in the visible projection and gets overwritten by later idle/unlocked state; visible continuation user message also contains the full provider prompt instead of a short Core summary.
+
+### Stream: Managed Dialog Gate Projection + Continuation Display (from 1.2.416 retest)
+93. [DONE] `managed-dialog-gate-projection` Harden the Project Manager dialog projection so a Core-owned `managed_input_gate` lock cannot be overwritten by stale idle/unlocked workspace snapshots; release only on explicit Core managed gate unlock/review handoff — scope: `src/client/project-manager/components/sessions/session-stream.ts, src/client/project-manager/components/sessions/session-stream.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts`; expected commit: `fix: keep managed dialog input gate locked`
+94. [PENDING] Git Commit: `fix: keep managed dialog input gate locked` (hash: TBD)
+95. [TODO] `managed-continuation-visible-summary` Send full managed continuation instructions to the provider while recording only a short Core-authored visible `user` continuation summary in dialog history, removing duplicated prompt bulk from visible orchestration turns — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts`; expected commit: `fix: shorten visible managed continuation turns`
+96. [TODO] Git Commit: `fix: shorten visible managed continuation turns` (hash: TBD)
+97. [TODO] `managed-continuation-summary-tests` Add regressions for short visible managed continuation user messages and full provider prompt dispatch semantics — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `test: cover managed continuation display prompts`
+98. [TODO] Git Commit: `test: cover managed continuation display prompts` (hash: TBD)
+99. [TODO] `managed-dialog-gate-verify` Build core/webview and run targeted dialog gate/continuation tests for the 1.2.416 retest fix — scope: `core + webview build`
+100. [TODO] `release-confirmation-417` Wait for explicit user confirmation before preparing release notes or running release build for the managed dialog gate projection fix — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-93. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+101. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

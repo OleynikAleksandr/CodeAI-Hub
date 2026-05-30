@@ -349,3 +349,34 @@ test("applyWorkspaceSnapshotToSnapshots unlocks only after terminal continuity r
   assert.equal(noResume.collector.status.continuityLock?.active, true);
   assert.equal(noResume.collector.status.continuityLock?.reason, "terminal_no_resume");
 });
+
+test("applyWorkspaceSnapshotToSnapshots preserves managed Core gate across stale idle snapshots", async () => {
+  const applyWorkspaceSnapshotToSnapshots = await loadApplyWorkspaceSnapshotToSnapshots();
+  const base: SessionSnapshots = {
+    managed: createSnapshot({
+      connectionState: "blocked",
+      continuityLockActive: true,
+      continuityLockReason: "managed_core_gated",
+    }),
+  };
+
+  const next = applyWorkspaceSnapshotToSnapshots(
+    base,
+    createWorkspaceSnapshotPayload({
+      sequence: 40,
+      sessions: {
+        managed: createWorkspaceSession({
+          turnState: "idle",
+          continuityLockActive: false,
+        }),
+      },
+    })
+  );
+
+  assert.equal(next.managed.status.connectionState, "blocked");
+  assert.equal(next.managed.status.continuityLock?.active, true);
+  assert.equal(
+    next.managed.status.continuityLock?.reason,
+    "managed_core_gated"
+  );
+});
