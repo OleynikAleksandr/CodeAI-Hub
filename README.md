@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.413** (Managed Stage-Level Lock Reassertion)
+**Current Release — v1.2.414** (Managed Conversation Gate Lock)
+
+This release closes the managed technical-stage unlock window between a
+provider terminal event and Core's next managed handoff. When a managed
+technical turn reaches Core arbitration, Core now asserts the
+`managed_core_gated` lock and emits `turn_state=running` before publishing the
+terminal event to clients. The session stays blocked while Core validates,
+commits, and dispatches the next internal managed turn; input opens only when
+Core creates a user review gate, blocked boundary, or complete user handoff.
+
+**Previous Release — v1.2.413** (Managed Stage-Level Lock Reassertion)
 
 This release keeps managed technical-stage input locked through the full
 Core-orchestrator/provider exchange. Core now reasserts `managed_core_gated`

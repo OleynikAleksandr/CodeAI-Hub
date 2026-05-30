@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "be9008fb3",
+  "lastRecordedCommit": "40ea3aa63",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-conversation-gate-triggers",
-  "expectedCommitMessage": "fix: lock input from core managed conversation state",
+  "currentTaskId": "release-docs-414",
+  "expectedCommitMessage": "docs: prepare 1.2.414 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: lock input from core managed conversation state",
-    "preCommitHead": "be9008fb3",
+    "expectedCommitMessage": "docs: prepare 1.2.414 release notes",
+    "preCommitHead": "40ea3aa63",
     "stage": "commit_pending",
-    "taskId": "managed-conversation-gate-triggers"
+    "taskId": "release-docs-414"
   }
 }
 ```
@@ -139,13 +139,24 @@
 
 ### Stream: Managed Conversation Gate Lock (from 1.2.413 retest)
 56. [DONE] `managed-conversation-gate-triggers` Lock user input from explicit Core managed-conversation boundaries: managed technical stages remain blocked from Core/provider arbitration through Core-authored continuation dispatch, and release only when Core opens a user review gate, blocked boundary, or complete user handoff; do not use Project Manager triggers — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: lock input from core managed conversation state`
-57. [PENDING] Git Commit: `fix: lock input from core managed conversation state` (hash: TBD)
+57. [DONE] Git Commit: `fix: lock input from core managed conversation state` (hash: 40ea3aa63)
 
 ### Stream: Tooling Verification
-58. [TODO] `managed-conversation-gate-verify` Build core and webview and run targeted lock/event-router tests for the Core managed-conversation lock — scope: `core + webview build`
+58. [DONE] `managed-conversation-gate-verify` Build core and webview and run targeted lock/event-router tests for the Core managed-conversation lock — scope: `core + webview build` Result: Verification passed: npm run build --workspace @codeai-hub/core; targeted node tests for managed lock/event router/managed workflow turn; npm run typecheck:webview; npm run build:webview.
 
 ### Stream: Release Build Confirmation
-59. [TODO] `release-confirmation-414` Wait for explicit user confirmation before preparing release notes or running release build for the managed conversation gate lock — scope: user confirmation gate
+59. [DONE] `release-confirmation-414` Wait for explicit user confirmation before preparing release notes or running release build for the managed conversation gate lock — scope: user confirmation gate Result: User explicitly confirmed building release 1.2.414 for the Core managed-conversation input lock.
+
+### Stream: Release Build
+60. [DONE] `release-docs-414` Update README and CHANGELOG to 1.2.414 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.414 release notes`
+61. [PENDING] Git Commit: `docs: prepare 1.2.414 release notes` (hash: TBD)
+62. [TODO] `release-build-414` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.414 release`
+63. [TODO] Git Commit: `chore: build 1.2.414 release` (hash: TBD)
+64. [TODO] `release-vsix-414` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.414 vsix`
+65. [TODO] Git Commit: `chore: package 1.2.414 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+66. [TODO] `release-acceptance-414` Hand off `codeai-hub-1.2.414.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
 31. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

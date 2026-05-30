@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.414] - 2026-05-30
+### Fixed
+- **Managed technical-stage input stays locked during Core conversation arbitration.** Core now treats provider `turn_completed` for managed technical stages as the start of Core-owned arbitration, asserts `managed_core_gated`, and emits `turn_state=running` before publishing the terminal event to clients.
+- **The unlock trigger is now the Core user boundary, not provider idleness.** Diagram Modules, Application Skeleton, and Quality Gates keep input blocked while Core validates, commits, and dispatches internal managed continuations; the input opens only when Core creates a user review gate, blocked boundary, or complete user handoff.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/session-provider-event-router.test.js packages/core/dist/remote-bridge/handlers/managed-core-gated-lock-controller.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.js`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.413] - 2026-05-30
 ### Fixed
 - **Managed technical-stage input lock is reasserted after Core continuation decisions.** Core now re-broadcasts the `managed_core_gated` lock when a managed turn remains `continued`, so stale terminal or idle snapshots cannot unlock input between the Core "next subturn" system message and the next provider turn.
