@@ -1,12 +1,18 @@
 import type { SessionContinuityLockReason } from "../../workspace-runtime/workspace-runtime-types";
 
 interface ManagedLockSession {
+  readonly continuationParentId?: string | null;
   readonly id: string;
+  readonly providerSessionId?: string | null;
   readonly stage?: string | null;
   readonly workspacePath?: string;
 }
 
 interface ManagedLockDeps {
+  readonly broadcaster?: (event: {
+    readonly payload: { readonly event: unknown; readonly sessionId: string };
+    readonly type: "session:stream";
+  }) => void;
   readonly sessionManager: {
     getSession(sessionId: string): ManagedLockSession | null | undefined;
   };
@@ -50,7 +56,7 @@ export class ManagedCoreGatedLockController {
   }
 
   lockForCoreArbitration(sessionId: string): boolean {
-    return this.notify(sessionId, true);
+    return this.notify(sessionId, true, { force: true });
   }
 
   apply(sessionId: string, managedResult: string | undefined): void {
@@ -63,10 +69,6 @@ export class ManagedCoreGatedLockController {
     active: boolean,
     options: { readonly force?: boolean } = {}
   ): boolean {
-    const workspaceRuntime = this.deps.workspaceRuntime;
-    if (!workspaceRuntime) {
-      return false;
-    }
     if (active && this.lockedSessions.has(sessionId) && !options.force) {
       return true;
     }
@@ -83,7 +85,7 @@ export class ManagedCoreGatedLockController {
     ) {
       return false;
     }
-    workspaceRuntime.notifyLockChanged(
+    this.deps.workspaceRuntime?.notifyLockChanged(
       {
         workspaceRoot: session.workspacePath,
         nodeId: session.stage ?? "session",
@@ -98,6 +100,46 @@ export class ManagedCoreGatedLockController {
     } else {
       this.lockedSessions.delete(sessionId);
     }
+    this.emitManagedInputGate(session, active);
     return true;
+  }
+
+  private emitManagedInputGate(
+    session: ManagedLockSession,
+    active: boolean
+  ): void {
+    this.deps.broadcaster?.({
+      type: "session:stream",
+      payload: {
+        sessionId: session.id,
+        event: {
+          type: "stream_event",
+          provider: "core",
+          data: {
+            kind: "managed_input_gate",
+            active,
+            reason: active ? "managed_core_gated" : null,
+            providerSessionId: session.providerSessionId ?? null,
+            sessionIds: this.resolveSessionAliases(session),
+          },
+          timestamp: new Date().toISOString(),
+          uuid: `${session.id}::managed_input_gate::${active ? "lock" : "unlock"}::${Date.now()}`,
+        },
+      },
+    });
+  }
+
+  private resolveSessionAliases(
+    session: ManagedLockSession
+  ): readonly string[] {
+    const aliases = new Set([session.id]);
+    let cursor = session.continuationParentId ?? null;
+    for (let depth = 0; cursor && depth < 10; depth += 1) {
+      aliases.add(cursor);
+      cursor =
+        this.deps.sessionManager.getSession(cursor)?.continuationParentId ??
+        null;
+    }
+    return [...aliases];
   }
 }

@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "ddf5989b4",
+  "lastRecordedCommit": "fcd4f65dc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-414",
-  "expectedCommitMessage": "chore: package 1.2.414 vsix",
+  "currentTaskId": "managed-input-gate-realtime-event",
+  "expectedCommitMessage": "fix: gate managed input from core state",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.414 vsix",
-    "preCommitHead": "ddf5989b4",
+    "expectedCommitMessage": "fix: gate managed input from core state",
+    "preCommitHead": "fcd4f65dc",
     "stage": "commit_pending",
-    "taskId": "release-vsix-414"
+    "taskId": "managed-input-gate-realtime-event"
   }
 }
 ```
@@ -153,10 +153,18 @@
 62. [DONE] `release-build-414` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.414 release`
 63. [DONE] Git Commit: `chore: build 1.2.414 release` (hash: ddf5989b4)
 64. [DONE] `release-vsix-414` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.414 vsix`
-65. [PENDING] Git Commit: `chore: package 1.2.414 vsix` (hash: TBD)
+65. [DONE] Git Commit: `chore: package 1.2.414 vsix` (hash: fcd4f65dc)
 
 ### Stream: User Visual Acceptance Testing
-66. [TODO] `release-acceptance-414` Hand off `codeai-hub-1.2.414.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+66. [DONE] `release-acceptance-414` Hand off `codeai-hub-1.2.414.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.414 failed: input remains unlocked during Core-agent managed workflow exchange; switch fix strategy to a Core-owned managed input gate independent of provider turn lifecycle.
+
+### Stream: Core-Owned Managed Input Gate (from 1.2.414 retest)
+67. [DONE] `managed-input-gate-realtime-event` Add a Core-owned managed input gate realtime stream that reasserts lock/unlock independently of provider turn lifecycle and is consumed by visible session projections without using Project Manager as the source of truth — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, src/client/project-manager/components/sessions/turn-state-stream.ts, doc/TODO/todo-plan.md`; expected commit: `fix: gate managed input from core state`
+68. [PENDING] Git Commit: `fix: gate managed input from core state` (hash: TBD)
+69. [TODO] `managed-input-gate-regression-tests` Add regressions proving the managed input gate stays locked through Core continuation and reaches dialog/runtime projections even when provider turn lifecycle or dialog history replay would otherwise look idle — scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts, src/client/project-manager/components/sessions/turn-state-stream.test.ts`; expected commit: `test: cover managed input gate projection`
+70. [TODO] Git Commit: `test: cover managed input gate projection` (hash: TBD)
+71. [TODO] `managed-input-gate-verify` Build core and webview and run targeted managed input gate tests — scope: `core + webview build`
+72. [TODO] `release-confirmation-415` Wait for explicit user confirmation before preparing release notes or running release build for the managed input gate fix — scope: user confirmation gate
 
 ### Stream: Scope Closeout
 31. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
