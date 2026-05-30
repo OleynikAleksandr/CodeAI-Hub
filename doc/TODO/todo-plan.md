@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "0fa496429",
+  "lastRecordedCommit": "40ca52dda",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-lock-continuation",
-  "expectedCommitMessage": "fix: keep managed lock through continuation turns",
+  "currentTaskId": "release-docs-411",
+  "expectedCommitMessage": "docs: prepare 1.2.411 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: keep managed lock through continuation turns",
-    "preCommitHead": "0fa496429",
+    "expectedCommitMessage": "docs: prepare 1.2.411 release notes",
+    "preCommitHead": "40ca52dda",
     "stage": "commit_pending",
-    "taskId": "managed-lock-continuation"
+    "taskId": "release-docs-411"
   }
 }
 ```
@@ -77,14 +77,14 @@
 
 ### Stream: Managed Lock Refinement (from 1.2.410 retest)
 21. [DONE] `managed-lock-continuation` Fix: the managed core-gated lock was keyed to the turn result, but dispatch_next continuations return "settled" with no internal prompt, which wrongly released the lock mid core-gated work. Now Core keeps the lock while a managed turn is "continued" OR "settled" right after a continuation message ("managed-workflow-continuation"), releasing it only at the review gate / blocked outcomes — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`; expected commit: `fix: keep managed lock through continuation turns`
-22. [PENDING] Git Commit: `fix: keep managed lock through continuation turns` (hash: TBD)
+22. [DONE] Git Commit: `fix: keep managed lock through continuation turns` (hash: 40ca52dda)
 
 ### Stream: Tooling Verification
-23. [TODO] `managed-lock-continuation-verify` Build core and webview and run webview typecheck — scope: `core + webview build`
+23. [DONE] `managed-lock-continuation-verify` Build core and webview and run webview typecheck — scope: `core + webview build` Result: core build, webview typecheck and build:webview passed for the continuation-keyed managed lock
 
 ### Stream: Release Build
-24. [TODO] `release-docs-411` Update README and CHANGELOG to 1.2.411 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.411 release notes`
-25. [TODO] Git Commit: `docs: prepare 1.2.411 release notes` (hash: TBD)
+24. [DONE] `release-docs-411` Update README and CHANGELOG to 1.2.411 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.411 release notes`
+25. [PENDING] Git Commit: `docs: prepare 1.2.411 release notes` (hash: TBD)
 26. [TODO] `release-build-411` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.411 release`
 27. [TODO] Git Commit: `chore: build 1.2.411 release` (hash: TBD)
 28. [TODO] `release-vsix-411` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.411 vsix`

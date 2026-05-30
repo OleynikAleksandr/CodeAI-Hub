@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.411] - 2026-05-30
+### Fixed
+- **Managed core-gated input lock no longer releases between continuation turns.** The 1.2.410 lock was keyed only to the managed turn result, but dispatch-next continuations report "settled" without an internal prompt, which released the lock mid core-gated work. Core now keeps the lock while a managed turn is "continued" or "settled" immediately after a continuation message (`managed-workflow-continuation`), releasing it only at the user-review gate or blocked outcomes.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.410] - 2026-05-30
 ### Fixed
 - **Input stays locked through the whole managed core-gated phase.** While a managed-workflow stage (e.g. Diagram Modules) runs Core-gated work across sub-steps, Core now holds a session continuityLock (reason `managed_core_gated`) whenever a managed turn keeps "continuing", and releases it when the stage reaches the user-review gate. The input no longer unlocks between agent turns; the lock is derived in Core from the managed run status (single source of truth) and the webview only reflects it.
