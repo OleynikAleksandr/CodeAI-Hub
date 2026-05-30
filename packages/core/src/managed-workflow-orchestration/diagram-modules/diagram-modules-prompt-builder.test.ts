@@ -10,6 +10,10 @@ const assertIncludes = (content: string, expected: string): void => {
   assert.equal(content.includes(expected), true);
 };
 
+const assertExcludes = (content: string, unexpected: string): void => {
+  assert.equal(content.includes(unexpected), false);
+};
+
 test("diagram modules managed prompt embeds upstream sources and target artifacts", () => {
   const prompt = buildDiagramModulesManagedPrompt({
     workspaceRoot: "/workspace/demo",
@@ -71,7 +75,7 @@ test("diagram modules managed prompt embeds upstream sources and target artifact
   assertIncludes(prompt, "Fields in `product-parts.index.md`");
 });
 
-test("diagram modules continuation prompt embeds product part artifact contract", () => {
+test("diagram modules continuation prompt stays compact inside the same provider session", () => {
   const prompt = buildDiagramModulesProductPartContinuationPrompt({
     acceptedPartIds: [],
     currentPartId: "project-manager",
@@ -79,9 +83,15 @@ test("diagram modules continuation prompt embeds product part artifact contract"
       ".codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md",
   });
 
-  assertIncludes(prompt, "### product-part-template");
-  assertIncludes(prompt, "### diagram-modules-field-reference");
-  assertIncludes(prompt, "Identity table must include Part ID");
+  assertIncludes(prompt, "full artifact contract was embedded in the first");
+  assertIncludes(prompt, 'Materialize only Product Part "project-manager"');
+  assertIncludes(
+    prompt,
+    ".codeai-hub/demo-workspace/diagram_modules/product-parts/project-manager.md"
+  );
+  assertExcludes(prompt, "### product-part-template");
+  assertExcludes(prompt, "### diagram-modules-field-reference");
+  assertExcludes(prompt, "Identity table must include Part ID");
 });
 
 test("diagram modules repair prompt embeds the target artifact contract", () => {

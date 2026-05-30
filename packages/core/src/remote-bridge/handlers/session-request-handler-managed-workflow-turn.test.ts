@@ -25,6 +25,9 @@ const DIAGRAM_CONTINUATION_USER_NOTICE_RE =
   /Core accepted the current Diagram Modules artifact/u;
 const DIAGRAM_CONTINUATION_PRODUCT_PART_RE =
   /Materialize only Product Part "project-manager"/u;
+const DIAGRAM_CONTINUATION_TEMPLATE_RE = /### product-part-template/u;
+const DIAGRAM_CONTINUATION_FIELD_REFERENCE_RE =
+  /### diagram-modules-field-reference/u;
 const RAW_APPLICATION_SKELETON_REPAIR_PROMPT_RE =
   /Core rejected the current Application Skeleton draft/u;
 const APPLICATION_SKELETON_REPAIR_USER_MESSAGE_RE =
@@ -433,6 +436,14 @@ test("managed Diagram Modules continuation starts the next agent turn as a user 
     assert.equal(userMessages.length, 1);
     assert.match(userMessages[0] ?? "", DIAGRAM_CONTINUATION_USER_NOTICE_RE);
     assert.match(userMessages[0] ?? "", DIAGRAM_CONTINUATION_PRODUCT_PART_RE);
+    assert.doesNotMatch(
+      userMessages[0] ?? "",
+      DIAGRAM_CONTINUATION_TEMPLATE_RE
+    );
+    assert.doesNotMatch(
+      userMessages[0] ?? "",
+      DIAGRAM_CONTINUATION_FIELD_REFERENCE_RE
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
