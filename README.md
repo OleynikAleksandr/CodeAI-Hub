@@ -2,7 +2,16 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.409** (Input Unlock Timing Fix)
+**Current Release — v1.2.410** (Managed Core-Gated Input Lock)
+
+This release keeps the chat input locked for the whole managed core-gated phase
+(e.g. Diagram Modules), where the agent works only with the Core orchestrator
+across sub-steps. Core now holds a session lock while a managed turn keeps
+"continuing" and releases it when the stage reaches the user-review gate, so the
+input no longer frees up between agent turns. The lock is derived in Core from
+the managed run status — a single source of truth — and the UI only reflects it.
+
+**Previous Release — v1.2.409** (Input Unlock Timing Fix)
 
 This release corrects the input-lock behavior from 1.2.408. The chat input is
 free whenever the system or agent is waiting for the user — including when a

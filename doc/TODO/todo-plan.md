@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "5651e5528",
+  "lastRecordedCommit": "9033a816a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-core-gated-lock",
-  "expectedCommitMessage": "fix: lock input while managed workflow stays in core-gated phase",
+  "currentTaskId": "release-docs-410",
+  "expectedCommitMessage": "docs: prepare 1.2.410 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: lock input while managed workflow stays in core-gated phase",
-    "preCommitHead": "5651e5528",
+    "expectedCommitMessage": "docs: prepare 1.2.410 release notes",
+    "preCommitHead": "9033a816a",
     "stage": "commit_pending",
-    "taskId": "managed-core-gated-lock"
+    "taskId": "release-docs-410"
   }
 }
 ```
@@ -59,14 +59,14 @@
 
 ### Stream: Managed Phase Input Lock (from 1.2.409 retest)
 11. [DONE] `managed-core-gated-lock` Lock the user input for the whole managed core-gated phase: Core sets a session continuityLock (reason "managed_core_gated") when a managed-workflow turn returns "continued" (agent keeps working with the orchestrator), and clears it on "settled"/"not_managed" (review gate opens / done). Snapshot broadcast + client session-stream then render connectionState blocked; the input frees only at waiting_for_user. Single Core-owned source (managed turn runStatus), UI only reflects. Lock logic extracted to managed-core-gated-lock-controller.ts and recordStreamHeartbeat extracted to session-stream-heartbeat.ts to keep event-router within the 500-line architecture budget — scope: `packages/core/src/workspace-runtime/workspace-runtime-types.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-stream-heartbeat.ts`; expected commit: `fix: lock input while managed workflow stays in core-gated phase`
-12. [PENDING] Git Commit: `fix: lock input while managed workflow stays in core-gated phase` (hash: TBD)
+12. [DONE] Git Commit: `fix: lock input while managed workflow stays in core-gated phase` (hash: 9033a816a)
 
 ### Stream: Tooling Verification
-13. [TODO] `managed-lock-verify` Build core and webview and run webview typecheck for the managed core-gated lock — scope: `core + webview build`
+13. [DONE] `managed-lock-verify` Build core and webview and run webview typecheck for the managed core-gated lock — scope: `core + webview build` Result: core build, webview typecheck and build:webview passed for the managed core-gated input lock
 
 ### Stream: Release Build
-14. [TODO] `release-docs-410` Update README and CHANGELOG to 1.2.410 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.410 release notes`
-15. [TODO] Git Commit: `docs: prepare 1.2.410 release notes` (hash: TBD)
+14. [DONE] `release-docs-410` Update README and CHANGELOG to 1.2.410 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.410 release notes`
+15. [PENDING] Git Commit: `docs: prepare 1.2.410 release notes` (hash: TBD)
 16. [TODO] `release-build-410` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.410 release`
 17. [TODO] Git Commit: `chore: build 1.2.410 release` (hash: TBD)
 18. [TODO] `release-vsix-410` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.410 vsix`
