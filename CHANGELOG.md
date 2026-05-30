@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.418] - 2026-05-30
+### Fixed
+- **Managed continuation `User` turns now carry the lock lifecycle marker.** Core tags visible managed continuation user messages with `managed-workflow-continuation`, so dialog history no longer looks idle while Core has already dispatched the next agent subturn.
+- **Project Manager keeps input locked from the real continuation path.** The dialog projection now treats tagged Core-authored user continuations as active managed Core-agent work and releases the lock only on the existing managed review/complete handoff tags.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts src/client/project-manager/components/sessions/session-message-dedupe.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.417] - 2026-05-30
 ### Fixed
 - **Managed dialog input gates survive stale idle snapshots.** Project Manager dialog projections now preserve an active Core-owned `managed_input_gate` lock until Core sends an explicit managed unlock/review handoff, preventing stale idle workspace snapshots from reopening the input during Core-agent managed exchange.

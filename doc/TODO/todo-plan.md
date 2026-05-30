@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "410ce33c4",
+  "lastRecordedCommit": "091c264a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-continuation-lifecycle-tests",
-  "expectedCommitMessage": "test: cover managed continuation lifecycle lock",
+  "currentTaskId": "release-docs-418",
+  "expectedCommitMessage": "docs: prepare 1.2.418 release notes",
   "debt": {
-    "expectedCommitMessage": "test: cover managed continuation lifecycle lock",
-    "preCommitHead": "410ce33c4",
+    "expectedCommitMessage": "docs: prepare 1.2.418 release notes",
+    "preCommitHead": "091c264a7",
     "stage": "commit_pending",
-    "taskId": "managed-continuation-lifecycle-tests"
+    "taskId": "release-docs-418"
   }
 }
 ```
@@ -223,9 +223,20 @@
 108. [DONE] `managed-continuation-lifecycle-tag` Tag Core-authored visible managed continuation `user` messages and let the dialog projection keep input locked from that lifecycle marker until Core releases the managed review/user gate — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-message-dispatch.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts`; expected commit: `fix: lock input from managed continuation lifecycle`
 109. [DONE] Git Commit: `fix: lock input from managed continuation lifecycle` (hash: 410ce33c4)
 110. [DONE] `managed-continuation-lifecycle-tests` Add regressions for tagged Core visible `user` continuation messages and dialog-history lock projection on the real managed continuation path — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, src/client/project-manager/components/sessions/session-message-dedupe.test.ts`; expected commit: `test: cover managed continuation lifecycle lock`
-111. [PENDING] Git Commit: `test: cover managed continuation lifecycle lock` (hash: TBD)
-112. [TODO] `managed-continuation-lifecycle-verify` Build core/webview and run targeted managed continuation lifecycle lock tests — scope: `core + webview build`
-113. [TODO] `release-confirmation-418` Wait for explicit user confirmation before preparing release notes or running release build for the managed continuation lifecycle lock fix — scope: user confirmation gate
+111. [DONE] Git Commit: `test: cover managed continuation lifecycle lock` (hash: 091c264a7)
+112. [DONE] `managed-continuation-lifecycle-verify` Build core/webview and run targeted managed continuation lifecycle lock tests — scope: `core + webview build` Result: Verification passed: `npm run build --workspace @codeai-hub/core`; `node --import tsx --test` for managed continuation dispatch, managed workflow turn, and session message dedupe lock tests; `npm run typecheck:webview`; `npm run build:webview`.
+113. [DONE] `release-confirmation-418` Wait for explicit user confirmation before preparing release notes or running release build for the managed continuation lifecycle lock fix — scope: user confirmation gate Result: User explicitly confirmed building release 1.2.418 for the managed continuation lifecycle lock fix.
+
+### Stream: Release Build
+114. [DONE] `release-docs-418` Update README and CHANGELOG to 1.2.418 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.418 release notes`
+115. [PENDING] Git Commit: `docs: prepare 1.2.418 release notes` (hash: TBD)
+116. [TODO] `release-build-418` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.418 release`
+117. [TODO] Git Commit: `chore: build 1.2.418 release` (hash: TBD)
+118. [TODO] `release-vsix-418` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.418 vsix`
+119. [TODO] Git Commit: `chore: package 1.2.418 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+120. [TODO] `release-acceptance-418` Hand off `codeai-hub-1.2.418.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-114. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+121. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
