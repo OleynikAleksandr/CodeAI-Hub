@@ -202,6 +202,20 @@ const SessionViewBody = ({
     continuityLockActive,
     continuityLockReason,
   });
+  const effectiveContinuityLockActive =
+    continuityLockActive || managedReviewPendingId !== null;
+  const queueConnectionState: ConnectionState =
+    effectiveContinuityLockActive && connectionState !== "running"
+      ? "blocked"
+      : connectionState;
+  const continuityErrorCopy = resolveContinuityErrorCopy(activeSession);
+
+  const { isQueued, submitMessage } = useQueuedSend({
+    activeSessionId,
+    connectionState: queueConnectionState,
+    onSendMessage,
+  });
+
   const continuationChain = resolveContinuationChainOrEmpty({
     sessions: allSessions,
     activeSessionId,
@@ -216,25 +230,6 @@ const SessionViewBody = ({
   const activeManagedReviewMessageId = resolveActiveManagedReviewMessageId(
     virtualConversationMessages
   );
-  // Keep the input locked while a managed-workflow review gate bubble is
-  // present and unconfirmed. The orchestrator gate arrives after the turn goes
-  // idle, so without this the input would unlock prematurely in the gap
-  // before/while the gate is shown.
-  const effectiveContinuityLockActive =
-    continuityLockActive ||
-    managedReviewPendingId !== null ||
-    activeManagedReviewMessageId !== null;
-  const queueConnectionState: ConnectionState =
-    effectiveContinuityLockActive && connectionState !== "running"
-      ? "blocked"
-      : connectionState;
-  const continuityErrorCopy = resolveContinuityErrorCopy(activeSession);
-
-  const { isQueued, submitMessage } = useQueuedSend({
-    activeSessionId,
-    connectionState: queueConnectionState,
-    onSendMessage,
-  });
 
   useEffect(() => {
     if (

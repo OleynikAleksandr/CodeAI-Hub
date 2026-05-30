@@ -8,15 +8,15 @@
   "planId": "questionnaire-autoscroll-2026-05-30",
   "branch": "main",
   "baseHead": "cf7c49e1e",
-  "lastRecordedCommit": "ca488e5df",
+  "lastRecordedCommit": "f91b07eef",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-408",
-  "expectedCommitMessage": "chore: package 1.2.408 vsix",
+  "currentTaskId": "input-lock-regression-revert",
+  "expectedCommitMessage": "fix: keep input free when managed review gate is shown",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.408 vsix",
-    "preCommitHead": "ca488e5df",
+    "expectedCommitMessage": "fix: keep input free when managed review gate is shown",
+    "preCommitHead": "f91b07eef",
     "stage": "commit_pending",
-    "taskId": "release-vsix-408"
+    "taskId": "input-lock-regression-revert"
   }
 }
 ```
@@ -79,10 +79,14 @@
 22. [DONE] `release-build-408` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.408 release`
 23. [DONE] Git Commit: `chore: build 1.2.408 release` (hash: ca488e5df)
 24. [DONE] `release-vsix-408` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.408 vsix`
-25. [PENDING] Git Commit: `chore: package 1.2.408 vsix` (hash: TBD)
+25. [DONE] Git Commit: `chore: package 1.2.408 vsix` (hash: f91b07eef)
 
 ### Stream: User Visual Acceptance Testing
-26. [TODO] `release-acceptance-408` Hand off `codeai-hub-1.2.408.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+26. [DONE] `release-acceptance-408` Hand off `codeai-hub-1.2.408.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.408 found a regression: the task-15 gate-present input lock wrongly blocks input while the System review gate is shown, where the user must be able to reply/edit; reverting
+
+### Stream: Input Lock Regression Fix (from 1.2.408 retest)
+27. [DONE] `input-lock-regression-revert` Revert the gate-present input lock from task 15 (e710cd8dc): keeping the input locked while the managed review gate bubble is present is WRONG — that System review gate is the moment the user replies/asks/edits or confirms, so the input must be FREE then. Restore effectiveContinuityLockActive to `continuityLockActive || managedReviewPendingId !== null` — scope: `src/client/ui/src/session/session-view.tsx`; expected commit: `fix: keep input free when managed review gate is shown`
+28. [PENDING] Git Commit: `fix: keep input free when managed review gate is shown` (hash: TBD)
 
 ### Stream: Scope Closeout
-27. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+29. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
