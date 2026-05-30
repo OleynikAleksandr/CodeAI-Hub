@@ -9,18 +9,18 @@ import {
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder";
 import type { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import type { Session } from "../../session-manager";
+import {
+  dispatchManagedInternalContinuation,
+  type ManagedInternalContinuationDispatch,
+} from "./managed-internal-continuation-dispatch";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
-import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 
 export interface QualityGatesReviewFlowDeps {
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
     "appendCoreMessage"
   >;
-  readonly messageDispatch: Pick<
-    SessionRequestHandlerMessageDispatch,
-    "sendInternalMessage"
-  >;
+  readonly messageDispatch: ManagedInternalContinuationDispatch;
   readonly stagePlan: QualityGatesStagePlanController;
 }
 
@@ -53,11 +53,11 @@ export const openQualityGatesNextAcceptedReviewPhase = async (
     const prompt = buildQualityGatesContractDraftPrompt({
       workspaceSlug: session.initiativeSlug,
     });
-    deps.eventMessages.appendCoreMessage(session.id, {
+    dispatchManagedInternalContinuation(deps.messageDispatch, {
       content: prompt,
-      tag: "managed-workflow-continuation",
+      session,
+      sessionId: session.id,
     });
-    await deps.messageDispatch.sendInternalMessage(session.id, prompt);
     return;
   }
   try {
@@ -76,11 +76,11 @@ export const openQualityGatesNextAcceptedReviewPhase = async (
   const prompt = buildQualityGatesIntegrationPrompt({
     workspaceSlug: session.initiativeSlug,
   });
-  deps.eventMessages.appendCoreMessage(session.id, {
+  dispatchManagedInternalContinuation(deps.messageDispatch, {
     content: prompt,
-    tag: "managed-workflow-continuation",
+    session,
+    sessionId: session.id,
   });
-  await deps.messageDispatch.sendInternalMessage(session.id, prompt);
 };
 
 export const dispatchQualityGatesReviewRevision = async (
@@ -98,9 +98,9 @@ export const dispatchQualityGatesReviewRevision = async (
     userFeedback: content,
     workspaceSlug: session.initiativeSlug,
   });
-  deps.eventMessages.appendCoreMessage(session.id, {
+  dispatchManagedInternalContinuation(deps.messageDispatch, {
     content: prompt,
-    tag: "managed-workflow-user-review",
+    session,
+    sessionId: session.id,
   });
-  await deps.messageDispatch.sendInternalMessage(session.id, prompt);
 };

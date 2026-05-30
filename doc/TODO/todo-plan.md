@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "e443bd0b8",
+  "lastRecordedCommit": "8f1c8b0d6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-415",
-  "expectedCommitMessage": "chore: package 1.2.415 vsix",
+  "currentTaskId": "managed-continuation-user-role",
+  "expectedCommitMessage": "fix: send managed continuations as user turns",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.415 vsix",
-    "preCommitHead": "e443bd0b8",
+    "expectedCommitMessage": "fix: send managed continuations as user turns",
+    "preCommitHead": "8f1c8b0d6",
     "stage": "commit_pending",
-    "taskId": "release-vsix-415"
+    "taskId": "managed-continuation-user-role"
   }
 }
 ```
@@ -172,10 +172,31 @@
 75. [DONE] `release-build-415` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.415 release`
 76. [DONE] Git Commit: `chore: build 1.2.415 release` (hash: e443bd0b8)
 77. [DONE] `release-vsix-415` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.415 vsix`
-78. [PENDING] Git Commit: `chore: package 1.2.415 vsix` (hash: TBD)
+78. [DONE] Git Commit: `chore: package 1.2.415 vsix` (hash: 8f1c8b0d6)
 
 ### Stream: User Visual Acceptance Testing
-79. [TODO] `release-acceptance-415` Hand off `codeai-hub-1.2.415.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+79. [DONE] `release-acceptance-415` Hand off `codeai-hub-1.2.415.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.415 failed: managed continuation prompts that start the next agent turn are displayed/emitted as System messages instead of provider-visible User turns, so the normal input lifecycle never re-locks between Core accepting one artifact and dispatching the next managed turn.
+
+### Stream: Managed Continuation Provider Turn Role Fix (from 1.2.415 retest)
+80. [DONE] `managed-continuation-user-role` Fix Core-authored managed continuation prompts that start the next agent turn so they are provider-visible `user` messages, while UI-only review/user handoff notices remain `system` messages — scope: `packages/core/src/remote-bridge/handlers/managed-internal-continuation-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.ts`; expected commit: `fix: send managed continuations as user turns`
+81. [PENDING] Git Commit: `fix: send managed continuations as user turns` (hash: TBD)
+82. [TODO] `managed-continuation-user-role-tests` Add regressions proving managed continuation dispatch records/sends the next agent prompt as a user-authored turn and does not change system-only user review/handoff messages — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`; expected commit: `test: cover managed continuation user turns`
+83. [TODO] Git Commit: `test: cover managed continuation user turns` (hash: TBD)
+84. [TODO] `managed-continuation-user-role-verify` Build core and webview and run targeted managed continuation role tests — scope: `core + webview build`
+
+### Stream: Release Build Confirmation
+85. [TODO] `release-confirmation-416` Wait for explicit user confirmation before preparing release notes or running release build for the managed continuation role fix — scope: user confirmation gate
+
+### Stream: Release Build
+86. [TODO] `release-docs-416` Update README and CHANGELOG to 1.2.416 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.416 release notes`
+87. [TODO] Git Commit: `docs: prepare 1.2.416 release notes` (hash: TBD)
+88. [TODO] `release-build-416` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.416 release`
+89. [TODO] Git Commit: `chore: build 1.2.416 release` (hash: TBD)
+90. [TODO] `release-vsix-416` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.416 vsix`
+91. [TODO] Git Commit: `chore: package 1.2.416 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+92. [TODO] `release-acceptance-416` Hand off `codeai-hub-1.2.416.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-80. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+93. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

@@ -193,7 +193,6 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
     });
-    const messageDispatch = this.options.getMessageDispatch();
     if (!decision.valid) {
       const planAdvance = await commitDiagramModulesRejectedTurn({
         decision,
@@ -231,7 +230,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         ].join("\n"),
         tag: "managed-workflow-validation",
       });
-      dispatchContinuation(messageDispatch, params.sessionId, repairPrompt);
+      this.dispatchAgentContinuation(params.sessionId, repairPrompt);
       return "continued";
     }
     const planAdvance = await this.diagramStagePlan.commitAcceptedTurn({
@@ -251,14 +250,17 @@ export class SessionRequestHandlerManagedWorkflowTurn {
     }
     if (decision.nextAction === "dispatch_next_product_part") {
       const nextPrompt = decision.nextPrompt;
-      this.appendCoreMessage(params.sessionId, {
-        content: buildDiagramModulesManagedContinuationMessage(
-          decision.currentPartId
-        ),
-        tag: "managed-workflow-continuation",
-      });
       if (nextPrompt) {
-        dispatchContinuation(messageDispatch, params.sessionId, nextPrompt);
+        this.dispatchAgentContinuation(
+          params.sessionId,
+          [
+            buildDiagramModulesManagedContinuationMessage(
+              decision.currentPartId
+            ),
+            "",
+            nextPrompt,
+          ].join("\n")
+        );
       }
       return "continued";
     }
@@ -374,8 +376,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       ].join("\n"),
       tag: "managed-workflow-validation",
     });
-    const messageDispatch = this.options.getMessageDispatch();
-    dispatchContinuation(messageDispatch, params.sessionId, repairPrompt);
+    this.dispatchAgentContinuation(params.sessionId, repairPrompt);
   }
   private async handleQualityGatesTurn(params: {
     readonly sessionId: string;
@@ -480,8 +481,14 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       content: repairPrompt,
       tag: "managed-workflow-validation",
     });
-    const messageDispatch = this.options.getMessageDispatch();
-    dispatchContinuation(messageDispatch, params.sessionId, repairPrompt);
+    this.dispatchAgentContinuation(params.sessionId, repairPrompt);
+  }
+  private dispatchAgentContinuation(sessionId: string, content: string): void {
+    dispatchContinuation(this.options.getMessageDispatch(), {
+      content,
+      session: this.options.sessionManager.getSession(sessionId),
+      sessionId,
+    });
   }
   private appendCoreMessage(
     sessionId: string,
