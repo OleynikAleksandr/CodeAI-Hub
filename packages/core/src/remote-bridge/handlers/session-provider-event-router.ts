@@ -327,14 +327,20 @@ export class SessionProviderEventRouter {
             return "settled" as const;
           })
           .then((managedResult) => {
+            const lastMessageTag = this.deps.sessionManager
+              .getSession(sessionId)
+              ?.messages?.at(-1)?.tag;
+            this.managedCoreGatedLock.apply(
+              sessionId,
+              managedResult,
+              lastMessageTag
+            );
             if (managedResult === "continued") {
-              this.managedCoreGatedLock.apply(sessionId, true);
               flowNodeContinuityTask.catch((error: unknown) => {
                 this.logFlowNodeContinuityHandlerFailure(sessionId, error);
               });
               return;
             }
-            this.managedCoreGatedLock.apply(sessionId, false);
             this.deps.handleTurnCompletedWithFlowNodeArbitration(
               sessionId,
               flowNodeContinuityTask

@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "2c962c999",
+  "lastRecordedCommit": "0fa496429",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-410",
-  "expectedCommitMessage": "chore: package 1.2.410 vsix",
+  "currentTaskId": "managed-lock-continuation",
+  "expectedCommitMessage": "fix: keep managed lock through continuation turns",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.410 vsix",
-    "preCommitHead": "2c962c999",
+    "expectedCommitMessage": "fix: keep managed lock through continuation turns",
+    "preCommitHead": "0fa496429",
     "stage": "commit_pending",
-    "taskId": "release-vsix-410"
+    "taskId": "managed-lock-continuation"
   }
 }
 ```
@@ -70,10 +70,28 @@
 16. [DONE] `release-build-410` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.410 release`
 17. [DONE] Git Commit: `chore: build 1.2.410 release` (hash: 2c962c999)
 18. [DONE] `release-vsix-410` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.410 vsix`
-19. [PENDING] Git Commit: `chore: package 1.2.410 vsix` (hash: TBD)
+19. [DONE] Git Commit: `chore: package 1.2.410 vsix` (hash: 0fa496429)
 
 ### Stream: User Visual Acceptance Testing
-20. [TODO] `release-acceptance-410` Hand off `codeai-hub-1.2.410.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+20. [DONE] `release-acceptance-410` Hand off `codeai-hub-1.2.410.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.410: managed lock keyed to turn result released mid core-gated work because dispatch_next continuations return settled; refining to key off continuation message
+
+### Stream: Managed Lock Refinement (from 1.2.410 retest)
+21. [DONE] `managed-lock-continuation` Fix: the managed core-gated lock was keyed to the turn result, but dispatch_next continuations return "settled" with no internal prompt, which wrongly released the lock mid core-gated work. Now Core keeps the lock while a managed turn is "continued" OR "settled" right after a continuation message ("managed-workflow-continuation"), releasing it only at the review gate / blocked outcomes — scope: `packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.ts`; expected commit: `fix: keep managed lock through continuation turns`
+22. [PENDING] Git Commit: `fix: keep managed lock through continuation turns` (hash: TBD)
+
+### Stream: Tooling Verification
+23. [TODO] `managed-lock-continuation-verify` Build core and webview and run webview typecheck — scope: `core + webview build`
+
+### Stream: Release Build
+24. [TODO] `release-docs-411` Update README and CHANGELOG to 1.2.411 before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.411 release notes`
+25. [TODO] Git Commit: `docs: prepare 1.2.411 release notes` (hash: TBD)
+26. [TODO] `release-build-411` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.411 release`
+27. [TODO] Git Commit: `chore: build 1.2.411 release` (hash: TBD)
+28. [TODO] `release-vsix-411` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.411 vsix`
+29. [TODO] Git Commit: `chore: package 1.2.411 vsix` (hash: TBD)
+
+### Stream: User Visual Acceptance Testing
+30. [TODO] `release-acceptance-411` Hand off `codeai-hub-1.2.411.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-21. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+31. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

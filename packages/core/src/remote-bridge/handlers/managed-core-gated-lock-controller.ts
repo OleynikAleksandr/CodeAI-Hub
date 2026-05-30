@@ -40,7 +40,20 @@ export class ManagedCoreGatedLockController {
     this.deps = deps;
   }
 
-  apply(sessionId: string, active: boolean): void {
+  apply(
+    sessionId: string,
+    managedResult: string | undefined,
+    lastMessageTag: string | undefined
+  ): void {
+    // Core-gated while the agent keeps working with the orchestrator: a managed
+    // turn reported "continued" (repair / dispatch with internal prompt), or
+    // "settled" right after a continuation message (the agent continues by the
+    // visible continuation). The review gate ("managed-workflow-user-review")
+    // and blocked/validation outcomes release the lock.
+    const active =
+      managedResult === "continued" ||
+      (managedResult === "settled" &&
+        lastMessageTag === "managed-workflow-continuation");
     const workspaceRuntime = this.deps.workspaceRuntime;
     if (!workspaceRuntime) {
       return;
