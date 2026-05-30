@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.407] - 2026-05-30
+### Changed
+- **Project description questionnaire auto-scrolls.** On open the questionnaire resumes at the first unfilled required section, and once all required sections are filled (section 11 `out_of_scope` is the last required; section 12 `notes` is optional) it scrolls to the "Submit questionnaire" button. Auto-scroll target logic lives in a dedicated helper (`questionnaire-autoscroll.ts`) so the panel stays within the 500-line architecture limit; the shared questionnaire view gained an optional scroll mechanism, leaving the idea questionnaire unchanged.
+
+### Tests
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.406] - 2026-05-29
 ### Fixed
 - **Claude visible reasoning summaries follow the target language.** The shared Claude workflow system prompt now explicitly instructs visible thinking/thought/reasoning summaries to use the runtime reasoning/chat language, including Russian summary headings and short progress labels for `ru` sessions.

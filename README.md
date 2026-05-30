@@ -2,7 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.406** (Claude Reasoning Summary Language)
+**Current Release — v1.2.407** (Questionnaire Auto-Scroll)
+
+This release makes the project description questionnaire scroll automatically.
+On open it resumes at the first unfilled required section; once every required
+section is filled (section 11 is the last required one, while Notes stays
+optional) it scrolls down to the "Submit questionnaire" button. Typing in
+intermediate sections no longer forces manual scrolling to reach submit.
+
+**Previous Release — v1.2.406** (Claude Reasoning Summary Language)
 
 This release asks Claude visible thinking/reasoning summaries to follow the
 runtime reasoning/chat language selected for the current workflow step. Russian
