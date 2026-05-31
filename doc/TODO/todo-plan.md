@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "fb0228d3d",
+  "lastRecordedCommit": "05e76399b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-docs-420",
-  "expectedCommitMessage": "docs: prepare 1.2.420 release notes",
+  "currentTaskId": "release-build-420",
+  "expectedCommitMessage": "chore: build 1.2.420 release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.420 release notes",
-    "preCommitHead": "fb0228d3d",
+    "expectedCommitMessage": "chore: build 1.2.420 release",
+    "preCommitHead": "05e76399b",
     "stage": "commit_pending",
-    "taskId": "release-docs-420"
+    "taskId": "release-build-420"
   }
 }
 ```
@@ -269,9 +269,9 @@
 
 ### Stream: Release Build
 142. [DONE] `release-docs-420` Update README and CHANGELOG to 1.2.420 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.420 release notes`
-143. [PENDING] Git Commit: `docs: prepare 1.2.420 release notes` (hash: TBD)
-144. [TODO] `release-build-420` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.420 release`
-145. [TODO] Git Commit: `chore: build 1.2.420 release` (hash: TBD)
+143. [DONE] Git Commit: `docs: prepare 1.2.420 release notes` (hash: 05e76399b)
+144. [DONE] `release-build-420` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.420 release` Result: `./scripts/build-all.sh --allow-dirty` passed; dirty input was limited to the active plan transition. Provider/core/UI/launcher artifacts for 1.2.420 were produced in `~/.codeai-hub/releases/` and copied into `doc/tmp/releases/`.
+145. [PENDING] Git Commit: `chore: build 1.2.420 release` (hash: TBD)
 146. [TODO] `release-vsix-420` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.420 vsix`
 147. [TODO] Git Commit: `chore: package 1.2.420 vsix` (hash: TBD)
 

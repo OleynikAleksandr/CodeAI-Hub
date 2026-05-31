@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/initiatives",
-  "version": "1.2.419",
+  "version": "1.2.420",
   "description": "Initiatives storage primitives for CodeAI Hub",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
