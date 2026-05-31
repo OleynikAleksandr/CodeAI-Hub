@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "5e5e38042",
+  "lastRecordedCommit": "5fb082dca",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-markdown-authority-docs",
-  "expectedCommitMessage": "docs: clarify managed artifact authority",
+  "currentTaskId": "release-docs-429",
+  "expectedCommitMessage": "docs: prepare 1.2.429 release notes",
   "debt": {
-    "expectedCommitMessage": "docs: clarify managed artifact authority",
-    "preCommitHead": "5e5e38042",
+    "expectedCommitMessage": "docs: prepare 1.2.429 release notes",
+    "preCommitHead": "5fb082dca",
     "stage": "commit_pending",
-    "taskId": "managed-markdown-authority-docs"
+    "taskId": "release-docs-429"
   }
 }
 ```
@@ -448,13 +448,13 @@
 256. [DONE] `quality-gates-markdown-readability` Stop Quality Gates integration validation from treating `quality-gates.md` as terminal integration state while preserving Markdown existence/header checks and JSON/evidence blockers — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `fix: keep quality gates state in json contract`
 257. [DONE] Git Commit: `fix: keep quality gates state in json contract` (hash: 5e5e38042)
 258. [DONE] `managed-markdown-authority-docs` Update SSOT documentation so paired managed technical stages define Markdown as user-facing review artifacts and JSON/Core/evidence as runtime authority; keep Diagram Modules Markdown semantic SSOT exception explicit — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit: `docs: clarify managed artifact authority`
-259. [PENDING] Git Commit: `docs: clarify managed artifact authority` (hash: TBD)
-260. [TODO] `managed-markdown-authority-verify` Run targeted Application Skeleton / Quality Gates tests, core build, webview typecheck/build, and documentation link checks if feasible — scope: `core + webview + docs verification` Result: TBD
+259. [DONE] Git Commit: `docs: clarify managed artifact authority` (hash: 5fb082dca)
+260. [DONE] `managed-markdown-authority-verify` Run targeted Application Skeleton / Quality Gates tests, core build, webview typecheck/build, and documentation link checks if feasible — scope: `core + webview + docs verification` Result: Passed: Application Skeleton progress test, Quality Gates validator test, Quality Gates runner-evidence test, @codeai-hub/core build, webview typecheck, webview build, and Markdown link check.
 261. [DONE] `release-confirmation-429` User explicitly requested applying the Markdown/JSON authority fixes, updating documentation, and building a new release — scope: user confirmation gate Result: User explicitly requested the fixes and a new release in this turn.
 
 ### Stream: Release Build 1.2.429
-262. [TODO] `release-docs-429` Update README and CHANGELOG to 1.2.429 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.429 release notes`
-263. [TODO] Git Commit: `docs: prepare 1.2.429 release notes` (hash: TBD)
+262. [DONE] `release-docs-429` Update README and CHANGELOG to 1.2.429 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.429 release notes`
+263. [PENDING] Git Commit: `docs: prepare 1.2.429 release notes` (hash: TBD)
 264. [TODO] `release-build-429` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.429 release`
 265. [TODO] Git Commit: `chore: build 1.2.429 release` (hash: TBD)
 266. [TODO] `release-vsix-429` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.429 vsix`

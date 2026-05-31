@@ -8,6 +8,23 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.429] - 2026-05-31
+### Fixed
+- **Application Skeleton lifecycle state now belongs to map JSON.** Core no longer rejects materialized Application Skeleton results because `application-skeleton.md` still contains stale draft/review prose; materialization authority stays in `application-skeleton-map.json` plus filesystem foundation evidence.
+- **Quality Gates terminal state now belongs to JSON and evidence.** Integrated Quality Gates validation no longer treats `quality-gates.md` availability tables as machine state. Required gate availability is validated through `quality-gates.json`, package scripts, lifecycle hooks, declared `integratedPaths`, and runner evidence.
+
+### Documentation
+- Clarified the managed artifact authority model: Diagram Modules remains the intentional Markdown semantic SSOT exception, while paired Markdown/JSON stages use Markdown for user review and JSON/Core evidence for runtime state.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts`
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `npm run check:links`
+
 ## [1.2.428] - 2026-05-31
 ### Fixed
 - **Quality Gates integration lifecycle is now stack-generic but enforceable.** Core allows flexible Quality Gates prose, but rejects integration contracts where a gate has real runner evidence while still remaining in planned/not_integrated state.
