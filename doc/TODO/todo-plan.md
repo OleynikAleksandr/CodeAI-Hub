@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "b0d73d8d8",
+  "lastRecordedCommit": "292960003",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "quality-gates-visible-repair-428",
-  "expectedCommitMessage": "fix: hide quality gates technical continuations from dialog",
+  "currentTaskId": "release-docs-428",
+  "expectedCommitMessage": "docs: prepare 1.2.428 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: hide quality gates technical continuations from dialog",
-    "preCommitHead": "b0d73d8d8",
+    "expectedCommitMessage": "docs: prepare 1.2.428 release notes",
+    "preCommitHead": "292960003",
     "stage": "commit_pending",
-    "taskId": "quality-gates-visible-repair-428"
+    "taskId": "release-docs-428"
   }
 }
 ```
@@ -429,9 +429,18 @@
 241. [DONE] `quality-gates-lifecycle-tests-428` Add regressions for integrated planned gates with real package/hook runner evidence and phase-specific repair wording — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `test: cover quality gates lifecycle transitions`
 242. [DONE] Git Commit: `test: cover quality gates lifecycle transitions` (hash: b0d73d8d8)
 243. [DONE] `quality-gates-visible-repair-428` Split visible Core repair notices from provider-visible managed continuation prompts for Quality Gates, so the dialog no longer shows duplicated System/User technical repair text — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: hide quality gates technical continuations from dialog`
-244. [PENDING] Git Commit: `fix: hide quality gates technical continuations from dialog` (hash: TBD)
-245. [TODO] `quality-gates-contract-lifecycle-verify-428` Run targeted Quality Gates validator/managed-turn/template tests, then build core and webview — scope: `core + webview build`
-246. [TODO] `release-confirmation-428` User explicitly requested the Quality Gates lifecycle fixes and a new release — scope: user confirmation gate
+244. [DONE] Git Commit: `fix: hide quality gates technical continuations from dialog` (hash: 292960003)
+245. [DONE] `quality-gates-contract-lifecycle-verify-428` Run targeted Quality Gates validator/managed-turn/template tests, then build core and webview — scope: `core + webview build` Result: Verification passed: Quality Gates validator regressions, managed workflow turn repair prompt split tests, bundled template sync tests, @codeai-hub/core build, webview typecheck, and webview build all passed.
+246. [DONE] `release-confirmation-428` User explicitly requested the Quality Gates lifecycle fixes and a new release — scope: user confirmation gate Result: User explicitly requested applying the agreed fixes and building a new release.
+
+### Stream: Release Build 1.2.428
+247. [DONE] `release-docs-428` Update README and CHANGELOG to 1.2.428 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.428 release notes`
+248. [PENDING] Git Commit: `docs: prepare 1.2.428 release notes` (hash: TBD)
+249. [TODO] `release-build-428` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.428 release`
+250. [TODO] Git Commit: `chore: build 1.2.428 release` (hash: TBD)
+251. [TODO] `release-vsix-428` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.428 vsix`
+252. [TODO] Git Commit: `chore: package 1.2.428 vsix` (hash: TBD)
+253. [TODO] `release-acceptance-428` Hand off `codeai-hub-1.2.428.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-247. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+254. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

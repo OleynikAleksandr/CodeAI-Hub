@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.428] - 2026-05-31
+### Fixed
+- **Quality Gates integration lifecycle is now stack-generic but enforceable.** Core allows flexible Quality Gates prose, but rejects integration contracts where a gate has real runner evidence while still remaining in planned/not_integrated state.
+- **Quality Gates repair diagnostics are phase-aware.** Repair prompts now explain integration-phase lifecycle conflicts without draft-phase wording and describe npm/Husky as one adapter, not as a product-specific universal requirement.
+- **Quality Gates technical repair prompts stay out of the visible dialog.** Core now shows a concise user-facing repair notice and sends the full provider-visible repair prompt only through the managed agent continuation.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts`
+- `node --import tsx --test packages/core/src/templates/quality-gates-bundled-templates.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.427] - 2026-05-31
 ### Fixed
 - **Quality Gates workspace-local build artifacts return to agent repair.** Core now detects generated executable build outputs under `.artifacts/**`, such as `.artifacts/go/terminal`, as terminal residue diagnostics before Quality Gates handoff and instructs the agent to move future build output outside the workspace root.
