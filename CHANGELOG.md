@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.420] - 2026-05-31
+### Fixed
+- **Managed input gates now win over stale idle snapshots.** Project Manager preserves active managed workflow locks (`managed_core_gated`, `managed_workflow_core_agent_turn`, and `diagram_modules_sequence`) when later workspace snapshots report `idle` / `no_rollover_needed`, preventing Diagram Modules from reopening user input while Core and the agent are still exchanging managed subturns.
+- **Diagram Modules diagnostics no longer dirty the workspace.** The lifecycle trace moved from `.codeai-hub/<workspace-slug>/runtime/logs/` to `~/.codeai-hub/logs/managed-workflow/<workspace-slug>/diagram-modules-lifecycle.jsonl`, so developer diagnostics cannot block managed workflow completion.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts src/client/project-manager/components/sessions/session-stream.test.ts src/client/project-manager/components/sessions/session-message-dedupe.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.419] - 2026-05-31
 ### Added
 - **Diagram Modules managed lifecycle trace.** Core now writes a workspace-local JSONL trace at `.codeai-hub/<workspace-slug>/runtime/logs/diagram-modules-lifecycle.jsonl` for Diagram Modules managed sessions, including persisted user/system/assistant/thinking messages with content hashes and Core managed input gate lock/unlock/no-op events.

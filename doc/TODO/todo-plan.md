@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "53c30db0e",
+  "lastRecordedCommit": "fb0228d3d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-input-gate-priority",
-  "expectedCommitMessage": "fix: preserve managed input gate over idle snapshots",
+  "currentTaskId": "release-docs-420",
+  "expectedCommitMessage": "docs: prepare 1.2.420 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: preserve managed input gate over idle snapshots",
-    "preCommitHead": "53c30db0e",
+    "expectedCommitMessage": "docs: prepare 1.2.420 release notes",
+    "preCommitHead": "fb0228d3d",
     "stage": "commit_pending",
-    "taskId": "managed-input-gate-priority"
+    "taskId": "release-docs-420"
   }
 }
 ```
@@ -263,13 +263,13 @@
 136. [DONE] `managed-diagnostics-log-relocation` Move Diagram Modules lifecycle diagnostics from the workspace runtime capsule into user-level Core logs so diagnostic JSONL cannot block managed workflow dirty gates — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: move managed diagnostics out of workspace`
 137. [DONE] Git Commit: `fix: move managed diagnostics out of workspace` (hash: 53c30db0e)
 138. [DONE] `managed-input-gate-priority` Preserve Core/managed continuation input locks over stale idle/no_rollover workspace snapshots, and release only on explicit managed review/complete handoff — scope: `src/client/project-manager/components/sessions/session-stream.ts, src/client/project-manager/components/sessions/session-stream.test.ts`; expected commit: `fix: preserve managed input gate over idle snapshots`
-139. [PENDING] Git Commit: `fix: preserve managed input gate over idle snapshots` (hash: TBD)
-140. [TODO] `managed-input-gate-priority-verify` Build core/webview and run targeted managed input gate priority tests — scope: `core + webview build`
-141. [TODO] `release-confirmation-420` Wait for explicit user confirmation before preparing release notes or running release build for the managed input gate priority fix — scope: user confirmation gate
+139. [DONE] Git Commit: `fix: preserve managed input gate over idle snapshots` (hash: fb0228d3d)
+140. [DONE] `managed-input-gate-priority-verify` Build core/webview and run targeted managed input gate priority tests — scope: `core + webview build` Result: Verification passed: npm run build --workspace @codeai-hub/core; node --import tsx --test for managed-workflow-diagnostic-trace, session-stream, and session-message-dedupe; npm run typecheck:webview; npm run build:webview.
+141. [DONE] `release-confirmation-420` Wait for explicit user confirmation before preparing release notes or running release build for the managed input gate priority fix — scope: user confirmation gate Result: User explicitly requested fixing the managed input gate issues and building a new release in this turn.
 
 ### Stream: Release Build
-142. [TODO] `release-docs-420` Update README and CHANGELOG to 1.2.420 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.420 release notes`
-143. [TODO] Git Commit: `docs: prepare 1.2.420 release notes` (hash: TBD)
+142. [DONE] `release-docs-420` Update README and CHANGELOG to 1.2.420 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.420 release notes`
+143. [PENDING] Git Commit: `docs: prepare 1.2.420 release notes` (hash: TBD)
 144. [TODO] `release-build-420` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.420 release`
 145. [TODO] Git Commit: `chore: build 1.2.420 release` (hash: TBD)
 146. [TODO] `release-vsix-420` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.420 vsix`
