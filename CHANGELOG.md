@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.419] - 2026-05-31
+### Added
+- **Diagram Modules managed lifecycle trace.** Core now writes a workspace-local JSONL trace at `.codeai-hub/<workspace-slug>/runtime/logs/diagram-modules-lifecycle.jsonl` for Diagram Modules managed sessions, including persisted user/system/assistant/thinking messages with content hashes and Core managed input gate lock/unlock/no-op events.
+- **Project Manager input-gate diagnostics.** Project Manager now reports managed continuation lock decisions, review/complete release handling, workspace snapshot input-state applications, stale managed gate preservation, and blocked idle unlocks through the `managed-input-gate` diagnostic channel in the Core log.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.test.ts src/client/project-manager/components/sessions/session-message-dedupe.test.ts src/client/project-manager/components/sessions/session-stream.test.ts`
+
 ## [1.2.418] - 2026-05-30
 ### Fixed
 - **Managed continuation `User` turns now carry the lock lifecycle marker.** Core tags visible managed continuation user messages with `managed-workflow-continuation`, so dialog history no longer looks idle while Core has already dispatched the next agent subturn.

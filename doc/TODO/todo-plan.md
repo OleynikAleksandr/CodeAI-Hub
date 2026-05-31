@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "337da8a8e",
+  "lastRecordedCommit": "2b1a15c6b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-lifecycle-pm-diagnostics-test-guard",
-  "expectedCommitMessage": "fix: guard pm input diagnostics outside browser",
+  "currentTaskId": "release-docs-419",
+  "expectedCommitMessage": "docs: prepare 1.2.419 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: guard pm input diagnostics outside browser",
-    "preCommitHead": "337da8a8e",
+    "expectedCommitMessage": "docs: prepare 1.2.419 release notes",
+    "preCommitHead": "2b1a15c6b",
     "stage": "commit_pending",
-    "taskId": "managed-lifecycle-pm-diagnostics-test-guard"
+    "taskId": "release-docs-419"
   }
 }
 ```
@@ -244,13 +244,13 @@
 123. [DONE] `managed-lifecycle-pm-trace` Add Project Manager-side diagnostics for managed continuation tag locks, release tags, workspace snapshot lock decisions, and applied connection state — scope: `src/client/project-manager/components/sessions/managed-input-diagnostics.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts, src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `feat: trace project manager input gate state`
 124. [DONE] Git Commit: `feat: trace project manager input gate state` (hash: 337da8a8e)
 125. [DONE] `managed-lifecycle-pm-diagnostics-test-guard` Guard Project Manager input diagnostics so node tests and non-browser module imports never initialize the VS Code bridge — scope: `src/client/project-manager/components/sessions/managed-input-diagnostics.ts`; expected commit: `fix: guard pm input diagnostics outside browser`
-126. [PENDING] Git Commit: `fix: guard pm input diagnostics outside browser` (hash: TBD)
-127. [TODO] `managed-lifecycle-verify` Build core/webview and run targeted managed lifecycle diagnostic tests — scope: `core + webview build`
-128. [TODO] `release-confirmation-419` Wait for explicit user confirmation before preparing release notes or running release build for the managed lifecycle diagnostics — scope: user confirmation gate
+126. [DONE] Git Commit: `fix: guard pm input diagnostics outside browser` (hash: 2b1a15c6b)
+127. [DONE] `managed-lifecycle-verify` Build core/webview and run targeted managed lifecycle diagnostic tests — scope: `core + webview build` Result: Verification passed: npm run build --workspace @codeai-hub/core; npm run typecheck:webview; npm run build:webview; targeted node --import tsx --test for managed-core-gated-lock-controller, session-message-dedupe, and session-stream all passed.
+128. [DONE] `release-confirmation-419` Wait for explicit user confirmation before preparing release notes or running release build for the managed lifecycle diagnostics — scope: user confirmation gate Result: User explicitly confirmed building release 1.2.419 for the managed lifecycle/input-gate diagnostics.
 
 ### Stream: Release Build
-129. [TODO] `release-docs-419` Update README and CHANGELOG to 1.2.419 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.419 release notes`
-130. [TODO] Git Commit: `docs: prepare 1.2.419 release notes` (hash: TBD)
+129. [DONE] `release-docs-419` Update README and CHANGELOG to 1.2.419 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.419 release notes`
+130. [PENDING] Git Commit: `docs: prepare 1.2.419 release notes` (hash: TBD)
 131. [TODO] `release-build-419` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.419 release`
 132. [TODO] Git Commit: `chore: build 1.2.419 release` (hash: TBD)
 133. [TODO] `release-vsix-419` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.419 vsix`

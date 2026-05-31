@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.418** (Managed Continuation Lifecycle Lock)
+**Current Release — v1.2.419** (Managed Lifecycle Diagnostics)
+
+This release adds explicit diagnostics for the remaining managed input unlock
+investigation. Diagram Modules sessions now write a workspace-local lifecycle
+trace at `.codeai-hub/<workspace-slug>/runtime/logs/diagram-modules-lifecycle.jsonl`
+with persisted Core/user/agent messages and Core managed input gate
+transitions. Project Manager also reports managed input gate decisions to the
+Core log, including continuation-tag locks, review/complete releases, workspace
+snapshot input-state applications, and stale idle snapshots that try to reopen
+the input.
+
+**Previous Release — v1.2.418** (Managed Continuation Lifecycle Lock)
 
 This release fixes the remaining managed input unlock observed after 1.2.417.
 Core-authored managed continuation prompts still appear as visible `User` turns,
