@@ -16,6 +16,10 @@ const DRAFT_TASK_RE = /quality-gates\.phase1\.draft\.task1/u;
 const REVIEW_TASK_RE = /quality-gates\.phase2\.review\.task1/u;
 const INTEGRATE_TASK_RE = /quality-gates\.phase3\.integrate\.task1/u;
 const INTEGRATION_REPAIR_TASK_RE = /quality-gates\.phase3\.repair\.task1/u;
+const DRAFT_REPAIR_CYCLE_RE = /## Quality Gates Draft Repair Cycle/u;
+const INTEGRATION_REPAIR_CYCLE_RE =
+  /## Quality Gates Integration Repair Cycle/u;
+const NUMERIC_PHASE_HEADING_RE = /^## Phase (\d+) — .+$/gmu;
 const NO_REVISION_RE = /not-created-user-accepted-without-review-revision/u;
 const PHASE_4_RE = /## Phase 4 — Persistent Quality Gates User Return/u;
 const PERSISTENT_RETURN_COMMIT_DONE_RE =
@@ -106,6 +110,15 @@ const createIntegratedDecision = (): QualityGatesManagedValidationResult => ({
   valid: true,
 });
 
+const createInvalidDraftDecision = (): QualityGatesManagedValidationResult => ({
+  contractJson: buildContractJson(),
+  diagnostics: ["commands_missing"],
+  nextAction: "repair_current_artifact",
+  nextPrompt: "repair",
+  phase: "draft",
+  valid: false,
+});
+
 const createInvalidIntegrationDecision =
   (): QualityGatesManagedValidationResult => ({
     contractJson: buildContractJson({ accepted: true }),
@@ -115,6 +128,14 @@ const createInvalidIntegrationDecision =
     phase: "integration",
     valid: false,
   });
+
+const assertUniqueNumericPhaseHeadings = (plan: string): void => {
+  const phaseNumbers = Array.from(
+    plan.matchAll(NUMERIC_PHASE_HEADING_RE),
+    (match) => match[1]
+  );
+  assert.equal(new Set(phaseNumbers).size, phaseNumbers.length);
+};
 
 const prepareWorkspace = async (workspaceRoot: string): Promise<void> => {
   await new ManagedWorkflowScaffoldInstaller().installDiagramModulesScaffold({
@@ -337,7 +358,41 @@ test("QualityGatesStagePlanController records integration repair after rejected 
       "doc/TODO/stages/quality-gates/todo-plan.md"
     );
     assert.match(repairPlan, INTEGRATION_REPAIR_TASK_RE);
+    assert.match(repairPlan, INTEGRATION_REPAIR_CYCLE_RE);
     assert.match(repairPlan, REJECTED_INTEGRATION_HASH_RE);
+    assertUniqueNumericPhaseHeadings(repairPlan);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("QualityGatesStagePlanController labels draft repairs without duplicate phase numbers", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "quality-gates-draft-repair-labels-")
+  );
+  const controller = new QualityGatesStagePlanController();
+  try {
+    await prepareWorkspace(workspaceRoot);
+    await controller.openDraftPhase({ workspaceRoot });
+
+    const rejected = await controller.recordRejectedTurn({
+      decision: createInvalidDraftDecision(),
+      rejectedCommitHash: "feed1234",
+      workspaceRoot,
+    });
+    assert.equal(rejected.blocked, null);
+    assert.equal(
+      rejected.commit?.nextTaskId,
+      "quality-gates.phase1.repair.task1"
+    );
+
+    const repairPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/quality-gates/todo-plan.md"
+    );
+    assert.match(repairPlan, DRAFT_REPAIR_CYCLE_RE);
+    assert.match(repairPlan, REJECTED_INTEGRATION_HASH_RE);
+    assertUniqueNumericPhaseHeadings(repairPlan);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

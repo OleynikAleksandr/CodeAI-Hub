@@ -272,7 +272,7 @@ const appendDraftRepairStep = (
       attemptNumber === 1
         ? [
             "",
-            "## Phase 1 — Quality Gates Draft Repairs",
+            "## Quality Gates Draft Repair Cycle",
             "",
             "### Stream: Core-Gated Repair Attempts",
             "",
@@ -294,7 +294,7 @@ const appendIntegrationRepairStep = (
       attemptNumber === 1
         ? [
             "",
-            "## Phase 3 — Quality Gates Integration Repairs",
+            "## Quality Gates Integration Repair Cycle",
             "",
             "### Stream: Core-Gated Repair Attempts",
             "",

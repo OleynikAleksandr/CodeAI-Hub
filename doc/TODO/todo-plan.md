@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "41c7633c7",
+  "lastRecordedCommit": "5ac3f8683",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "quality-gates-integration-phase-authority",
-  "expectedCommitMessage": "fix: keep quality gates integration repairs in integration phase",
+  "currentTaskId": "quality-gates-stage-plan-visible-phase-numbering",
+  "expectedCommitMessage": "fix: clarify quality gates stage plan phase numbering",
   "debt": {
-    "expectedCommitMessage": "fix: keep quality gates integration repairs in integration phase",
-    "preCommitHead": "41c7633c7",
+    "expectedCommitMessage": "fix: clarify quality gates stage plan phase numbering",
+    "preCommitHead": "5ac3f8683",
     "stage": "commit_pending",
-    "taskId": "quality-gates-integration-phase-authority"
+    "taskId": "quality-gates-stage-plan-visible-phase-numbering"
   }
 }
 ```
@@ -370,9 +370,14 @@
 
 ### Stream: Quality Gates Integration Phase Authority (from 1.2.424 retest)
 200. [DONE] `quality-gates-integration-phase-authority` Keep Quality Gates validation in the stage-plan integration phase when the active managed task is integration or integration repair, so an agent cannot roll Core back to draft/user-review by changing artifact lifecycle flags — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-plan-phase.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep quality gates integration repairs in integration phase`
-201. [PENDING] Git Commit: `fix: keep quality gates integration repairs in integration phase` (hash: TBD)
-202. [TODO] `quality-gates-integration-phase-verify` Run targeted Quality Gates plan-phase validator tests and core build — scope: `core build`
-203. [TODO] `release-confirmation-425` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates integration phase authority fix — scope: user confirmation gate
+201. [DONE] Git Commit: `fix: keep quality gates integration repairs in integration phase` (hash: 5ac3f8683)
+202. [DONE] `quality-gates-integration-phase-verify` Run targeted Quality Gates plan-phase validator tests and core build — scope: `core build` Result: Targeted Quality Gates validator tests passed and @codeai-hub/core build passed.
+
+### Stream: Quality Gates Stage Plan Phase Labels (from 1.2.424 retest)
+203. [DONE] `quality-gates-stage-plan-visible-phase-numbering` Make generated Quality Gates repair sections visibly distinct from base numbered phases so the stage plan cannot show two different `Phase 1` or `Phase 3` headings — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify quality gates stage plan phase numbering`
+204. [PENDING] Git Commit: `fix: clarify quality gates stage plan phase numbering` (hash: TBD)
+205. [TODO] `quality-gates-stage-plan-visible-phase-numbering-verify` Run targeted Quality Gates stage-plan tests and core build — scope: `quality-gates stage-plan tests, core build`
+206. [TODO] `release-confirmation-425` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates integration phase authority fixes — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-204. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+207. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
