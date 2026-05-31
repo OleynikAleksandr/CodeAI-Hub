@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.424] - 2026-05-31
+### Fixed
+- **Quality Gates terminal cleanup stays Core-owned.** Core now classifies managed runtime ledgers as committable orchestration state, so terminal completion no longer asks the user to resolve Core-owned dirty workflow files.
+- **Generated root build artifacts return to agent repair.** Quality Gates validation detects unclassified root executables such as `surfaces` before terminal handoff and routes them through a provider-visible repair turn instead of leaving the user input locked behind a manual dirty-Git blocker.
+- **Managed workflow logs stay under the real workspace folder.** User-level managed lifecycle logs resolve by workspace basename, for example `~/.codeai-hub/logs/managed-workflow/CodeAI-Hub test01/`, and temporary/test workspace paths do not create stray folders unless `CODEAI_HUB_LOGS_DIR` is explicitly set.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-terminal-residue-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/managed-terminal-dirty-classifier.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.423] - 2026-05-31
 ### Fixed
 - **Application Skeleton acceptance now stays Core-gated.** After the user confirms the reviewed Application Skeleton contract, Core immediately locks the managed input gate, performs materialization under that lock, and only releases on a Core-owned handoff.

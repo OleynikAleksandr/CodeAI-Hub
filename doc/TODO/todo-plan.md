@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "8b49d22a7",
+  "lastRecordedCommit": "d6a4fe989",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-workflow-log-folder-isolation",
-  "expectedCommitMessage": "fix: isolate managed workflow logs by real workspace",
+  "currentTaskId": "release-docs-424",
+  "expectedCommitMessage": "docs: prepare 1.2.424 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: isolate managed workflow logs by real workspace",
-    "preCommitHead": "8b49d22a7",
+    "expectedCommitMessage": "docs: prepare 1.2.424 release notes",
+    "preCommitHead": "d6a4fe989",
     "stage": "commit_pending",
-    "taskId": "managed-workflow-log-folder-isolation"
+    "taskId": "release-docs-424"
   }
 }
 ```
@@ -353,9 +353,20 @@
 188. [DONE] `quality-gates-terminal-residue-verify` Run targeted Quality Gates validator/terminal residue tests and core build — scope: `core build` Result: Verification passed: targeted Quality Gates terminal residue/classifier/validator tests passed; npm run build --workspace @codeai-hub/core passed.
 ### Stream: Managed Workflow Log Folder Isolation
 189. [DONE] `managed-workflow-log-folder-isolation` Keep managed workflow lifecycle logs under the real workspace folder name and prevent temporary/test workspace paths from writing stray folders into the user-level managed-workflow log root — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: isolate managed workflow logs by real workspace`
-190. [PENDING] Git Commit: `fix: isolate managed workflow logs by real workspace` (hash: TBD)
-191. [TODO] `managed-workflow-log-folder-verify` Run targeted managed workflow diagnostic trace tests and core build — scope: `core build`
-192. [TODO] `release-confirmation-424` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates terminal residue and managed workflow log folder fixes — scope: user confirmation gate
+190. [DONE] Git Commit: `fix: isolate managed workflow logs by real workspace` (hash: d6a4fe989)
+191. [DONE] `managed-workflow-log-folder-verify` Run targeted managed workflow diagnostic trace tests and core build — scope: `core build` Result: Verification passed: node --import tsx --test packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts; npm run build --workspace @codeai-hub/core. New managed-workflow logs for real workspaces resolve by basename (for example CodeAI-Hub test01), and temp/test workspaces are suppressed unless CODEAI_HUB_LOGS_DIR is explicitly set.
+192. [DONE] `release-confirmation-424` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates terminal residue and managed workflow log folder fixes — scope: user confirmation gate Result: User explicitly confirmed applying the remaining fixes and building release 1.2.424 in this turn.
+
+### Stream: Release Build
+193. [DONE] `release-docs-424` Update README and CHANGELOG to 1.2.424 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.424 release notes`
+194. [PENDING] Git Commit: `docs: prepare 1.2.424 release notes` (hash: TBD)
+195. [TODO] `release-build-424` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.424 release`
+196. [TODO] Git Commit: `chore: build 1.2.424 release` (hash: TBD)
+197. [TODO] `release-vsix-424` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.424 vsix`
+198. [TODO] Git Commit: `chore: package 1.2.424 vsix` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+199. [TODO] `release-acceptance-424` Hand off `codeai-hub-1.2.424.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-193. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+200. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
