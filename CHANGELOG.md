@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.421] - 2026-05-31
+### Fixed
+- **Application Skeleton materialization now honors polyglot contracts.** Core creates every safe path declared by `projectFoundation.configFiles`, writes syntax-valid first-wave entrypoints by file type, and no longer forces npm package metadata into Python or Go Product Parts unless the accepted contract explicitly declares those files.
+
+### Added
+- **Managed lifecycle logs now cover all managed technical stages.** Core writes separate user-level JSONL traces for `Diagram Modules`, `Application Skeleton`, and `Quality Gates Baseline` under `~/.codeai-hub/logs/managed-workflow/<workspace-slug>/`.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.420] - 2026-05-31
 ### Fixed
 - **Managed input gates now win over stale idle snapshots.** Project Manager preserves active managed workflow locks (`managed_core_gated`, `managed_workflow_core_agent_turn`, and `diagram_modules_sequence`) when later workspace snapshots report `idle` / `no_rollover_needed`, preventing Diagram Modules from reopening user input while Core and the agent are still exchanging managed subturns.

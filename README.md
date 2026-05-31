@@ -2,7 +2,18 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.420** (Managed Input Gate Priority Fix)
+**Current Release — v1.2.421** (Application Skeleton Materialization + Managed Stage Logs)
+
+This release fixes Core-owned Application Skeleton materialization for polyglot
+project foundations. The materializer now creates every contract-declared
+configuration file, writes syntax-valid Python/Go/TypeScript first-wave
+entrypoints, and only adds npm package/tsconfig metadata to Product Parts that
+declare npm/TypeScript participation. Managed lifecycle diagnostics also now
+cover all managed technical stages with separate user-level JSONL logs for
+Diagram Modules, Application Skeleton, and Quality Gates Baseline under
+`~/.codeai-hub/logs/managed-workflow/<workspace-slug>/`.
+
+**Previous Release — v1.2.420** (Managed Input Gate Priority Fix)
 
 This release fixes the stale snapshot overwrite found by the 1.2.419
 diagnostics. Project Manager now treats managed workflow input locks as higher

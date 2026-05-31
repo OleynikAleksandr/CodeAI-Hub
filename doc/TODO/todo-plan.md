@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "ea076ee3f",
+  "lastRecordedCommit": "25588fc2a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-lifecycle-stage-logs",
-  "expectedCommitMessage": "feat: trace all managed technical stages",
+  "currentTaskId": "release-docs-421",
+  "expectedCommitMessage": "docs: prepare 1.2.421 release notes",
   "debt": {
-    "expectedCommitMessage": "feat: trace all managed technical stages",
-    "preCommitHead": "ea076ee3f",
+    "expectedCommitMessage": "docs: prepare 1.2.421 release notes",
+    "preCommitHead": "25588fc2a",
     "stage": "commit_pending",
-    "taskId": "managed-lifecycle-stage-logs"
+    "taskId": "release-docs-421"
   }
 }
 ```
@@ -284,17 +284,17 @@
 
 ### Stream: Managed Lifecycle Logs For Technical Stages
 151. [DONE] `managed-lifecycle-stage-logs` Extend user-level managed workflow lifecycle JSONL logging from Diagram Modules to Application Skeleton and Quality Gates Baseline, keeping all logs outside workspace runtime capsules — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: trace all managed technical stages`
-152. [PENDING] Git Commit: `feat: trace all managed technical stages` (hash: TBD)
+152. [DONE] Git Commit: `feat: trace all managed technical stages` (hash: 25588fc2a)
 
 ### Stream: Tooling Verification
-153. [TODO] `managed-technical-stage-verify` Build core/webview and run targeted Application Skeleton materializer + managed lifecycle trace tests — scope: `core + webview build`
+153. [DONE] `managed-technical-stage-verify` Build core/webview and run targeted Application Skeleton materializer + managed lifecycle trace tests — scope: `core + webview build` Result: Verification passed: node --import tsx --test for Application Skeleton materializer and managed workflow diagnostic trace; npm run build --workspace @codeai-hub/core; npm run typecheck:webview; npm run build:webview.
 
 ### Stream: Release Build Confirmation
 154. [DONE] `release-confirmation-421` Wait for explicit user confirmation before preparing release notes or running release build for the Application Skeleton repair and lifecycle log expansion — scope: user confirmation gate Result: User explicitly requested adding Application Skeleton and Quality Gates Baseline lifecycle logs, fixing the issue, and building a new release in this turn.
 
 ### Stream: Release Build
-155. [TODO] `release-docs-421` Update README and CHANGELOG to 1.2.421 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.421 release notes`
-156. [TODO] Git Commit: `docs: prepare 1.2.421 release notes` (hash: TBD)
+155. [DONE] `release-docs-421` Update README and CHANGELOG to 1.2.421 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.421 release notes`
+156. [PENDING] Git Commit: `docs: prepare 1.2.421 release notes` (hash: TBD)
 157. [TODO] `release-build-421` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.421 release`
 158. [TODO] Git Commit: `chore: build 1.2.421 release` (hash: TBD)
 159. [TODO] `release-vsix-421` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.421 vsix`
