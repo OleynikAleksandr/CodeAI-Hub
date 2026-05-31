@@ -253,9 +253,11 @@ Discussion-only review turns do not change canonical artifacts. When the user re
 
 Integration begins only when the runtime prompt explicitly assigns post-acceptance integration for an accepted Quality Gates contract. Do not ask whether to proceed and do not hand integration to another step.
 
-Materialization is not complete until all accepted required gates have executable package scripts, real gate runner/config files where needed, explicit Husky hook calls, updated contract state, and smoke evidence. A Markdown/JSON update without `.husky/pre-commit` / `.husky/pre-push` wiring is an incomplete integration and must be repaired before the final response.
+Materialization is not complete until all accepted required gates have concrete runner evidence for the selected stack adapter, updated contract state, and smoke evidence. For the npm/Husky adapter this means executable package scripts, real gate runner/config files where needed, and explicit Husky hook calls. A Markdown/JSON update without equivalent runner evidence is an incomplete integration and must be repaired before the final response.
+For npm/Husky projects, Materialization is not complete until all accepted required gates have executable package scripts, real gate runner/config files where needed, explicit Husky hook calls, updated contract state, and smoke evidence.
 
-During Phase 3, the Quality Gates hook section is agent-owned integration work. Do not describe `.husky/pre-commit` or `.husky/pre-push` updates as deferred to another actor, and do not finish while required hook calls are absent.
+During Phase 3, the Quality Gates enforcement section is agent-owned integration work. Do not describe selected stack-adapter enforcement wiring as deferred to another actor, and do not finish while required runner evidence is absent. For npm/Husky projects this includes `.husky/pre-commit` and `.husky/pre-push` updates.
+During Phase 3, the Quality Gates hook section is agent-owned integration work for npm/Husky projects. Do not describe `.husky/pre-commit` or `.husky/pre-push` updates as deferred to another actor, and do not finish while required hook calls are absent.
 
 Integration algorithm:
 
@@ -263,15 +265,16 @@ Integration algorithm:
 2. Verify the runtime-provided context is still for the Quality Gates integration task before creating package files, scripts, configs, or CI files.
 3. Mark acceptance in the contract, then set integration state to `in_progress`.
 4. Create or update only accepted gate infrastructure: package scripts/devDependencies or equivalent stack files, selected lint/format/static-analysis config, architecture/layout/size scripts, gate manifest entries, lifecycle hook wiring, and CI/update files selected by the contract.
-   - `package.json` must expose an exact script key `qg:<gate-id>` for every gate id listed in `requiredBeforeCommit` or `requiredBeforePush`.
-   - `.husky/pre-commit` must explicitly call every gate id listed in `requiredBeforeCommit` as `npm run qg:<gate-id>`.
-   - `.husky/pre-push` must explicitly call every gate id listed in `requiredBeforePush` as `npm run qg:<gate-id>`.
+   - The contract is product-agnostic: choose runner evidence appropriate to the accepted stack, such as npm/Husky, Make, Gradle, Cargo, Go, Python, .NET, CI-only, or another explicit adapter.
+   - For npm/Husky, `package.json` must expose an exact script key `qg:<gate-id>` for every gate id listed in `requiredBeforeCommit` or `requiredBeforePush`.
+   - For npm/Husky, `.husky/pre-commit` must explicitly call every gate id listed in `requiredBeforeCommit` as `npm run qg:<gate-id>`.
+   - For npm/Husky, `.husky/pre-push` must explicitly call every gate id listed in `requiredBeforePush` as `npm run qg:<gate-id>`.
    - Aggregate scripts such as `qg:before-commit` or `qg:before-push` are allowed only as additional convenience commands; they are not sufficient hook wiring evidence by themselves.
    - Preserve existing project hook commands such as `plan:validate`; append the Quality Gates wiring instead of replacing the hook.
    - If a required hook call is missing, repair `.husky/pre-commit` / `.husky/pre-push` directly; do not defer hook regeneration to Core.
 5. Avoid feature or business implementation code.
 6. Run the lightest feasible smoke checks for created gates.
-7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results only after the required hook scopes are actually wired. `deferredIntegration` may describe advisory/deferred/non-required items only; never defer a gate id that remains in `requiredBeforeCommit`, `requiredBeforePush`, `requiredBeforeModuleExecution`, or `requiredBeforeRelease`.
+7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results only after the required enforcement scopes are actually wired for the selected stack adapter. When a planned gate is materialized and has runner/enforcement evidence, remove it from `plannedRequiredAfterIntegration`, keep it only in the appropriate required array, and set `availability: "executable"`. Gates that do not affect future code yet may remain planned, but then they must not be wired into enforcement hooks. `deferredIntegration` may describe advisory/deferred/non-required items only; never defer a gate id that remains in `requiredBeforeCommit`, `requiredBeforePush`, `requiredBeforeModuleExecution`, or `requiredBeforeRelease`.
 8. Leave the accepted Quality Gates artifacts and gate infrastructure ready for runtime/user review.
 9. The final response may say `ready for runtime review`; do not claim completion beyond readiness.
 

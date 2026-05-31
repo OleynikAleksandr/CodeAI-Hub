@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "41ec95252",
+  "lastRecordedCommit": "4ad37bc62",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "quality-gates-contract-lifecycle-428",
-  "expectedCommitMessage": "fix: clarify quality gates integration lifecycle",
+  "currentTaskId": "quality-gates-lifecycle-tests-428",
+  "expectedCommitMessage": "test: cover quality gates lifecycle transitions",
   "debt": {
-    "expectedCommitMessage": "fix: clarify quality gates integration lifecycle",
-    "preCommitHead": "41ec95252",
+    "expectedCommitMessage": "test: cover quality gates lifecycle transitions",
+    "preCommitHead": "4ad37bc62",
     "stage": "commit_pending",
-    "taskId": "quality-gates-contract-lifecycle-428"
+    "taskId": "quality-gates-lifecycle-tests-428"
   }
 }
 ```
@@ -425,9 +425,9 @@
 
 ### Stream: Quality Gates Generic Contract Lifecycle (from 1.2.427 retest)
 239. [DONE] `quality-gates-contract-lifecycle-428` Make Quality Gates validation and repair prompts phase-aware and stack-generic: integrated gates that have runner evidence must transition from planned/not_integrated to required/executable, while user prose remains flexible unless it affects future code — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: clarify quality gates integration lifecycle`
-240. [PENDING] Git Commit: `fix: clarify quality gates integration lifecycle` (hash: TBD)
-241. [TODO] `quality-gates-lifecycle-tests-428` Add regressions for integrated planned gates with real package/hook runner evidence and phase-specific repair wording — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md`; expected commit: `test: cover quality gates lifecycle transitions`
-242. [TODO] Git Commit: `test: cover quality gates lifecycle transitions` (hash: TBD)
+240. [DONE] Git Commit: `fix: clarify quality gates integration lifecycle` (hash: 4ad37bc62)
+241. [DONE] `quality-gates-lifecycle-tests-428` Add regressions for integrated planned gates with real package/hook runner evidence and phase-specific repair wording — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `test: cover quality gates lifecycle transitions`
+242. [PENDING] Git Commit: `test: cover quality gates lifecycle transitions` (hash: TBD)
 243. [TODO] `quality-gates-visible-repair-428` Split visible Core repair notices from provider-visible managed continuation prompts for Quality Gates, so the dialog no longer shows duplicated System/User technical repair text — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: hide quality gates technical continuations from dialog`
 244. [TODO] Git Commit: `fix: hide quality gates technical continuations from dialog` (hash: TBD)
 245. [TODO] `quality-gates-contract-lifecycle-verify-428` Run targeted Quality Gates validator/managed-turn/template tests, then build core and webview — scope: `core + webview build`
