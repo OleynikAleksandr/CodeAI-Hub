@@ -37,7 +37,10 @@ const isResearchFirstDiagnostic = (diagnostic: string): boolean =>
   diagnostic.startsWith("research_") ||
   diagnostic.startsWith("missing_quality_gates_research_");
 
-const explainDiagnostic = (diagnostic: string): string => {
+const explainDiagnostic = (
+  diagnostic: string,
+  options: { readonly phase?: "draft" | "integration" } = {}
+): string => {
   if (diagnostic.startsWith("json_parse_error:")) {
     return `Fix \`quality-gates.json\`; it is not valid JSON. Parser detail: ${diagnostic
       .replace("json_parse_error:", "")
@@ -65,7 +68,16 @@ const explainDiagnostic = (diagnostic: string): string => {
     const gateId = diagnostic
       .replace("required_gate_is_non_blocking:", "")
       .trim();
+    if (options.phase === "integration") {
+      return `Gate \`${gateId}\` is both required and still listed as planned/non-blocking during integration. If the gate has runner evidence, remove it from \`plannedRequiredAfterIntegration\`, keep it only in the appropriate required array, set \`availability: "executable"\`, and keep the matching runner evidence. If it should not affect future code yet, remove it from required arrays and enforcement hooks.`;
+    }
     return `Gate \`${gateId}\` is listed as required and non-blocking at the same time. In draft phase, keep it out of required arrays and list it only in \`plannedRequiredAfterIntegration\`; its command must remain \`desiredStatus: "active"\`, \`availability: "not_integrated"\`, and \`integrationRequired: true\`.`;
+  }
+  if (
+    diagnostic.startsWith("planned_gate_has_runner_evidence_after_integration:")
+  ) {
+    const [, gateId = "", evidence = ""] = diagnostic.split(":");
+    return `Gate \`${gateId}\` is still listed as planned/not_integrated, but Core found integration runner evidence after Phase 3 (${evidence}). Promote it to the required executable state if it affects future code, or remove that runner evidence if it is truly future-only.`;
   }
   if (diagnostic.startsWith("planned_required_gate_non_active:")) {
     const gateId = diagnostic
@@ -148,10 +160,13 @@ const explainDiagnostic = (diagnostic: string): string => {
 };
 
 const formatDiagnostics = (
-  diagnostics: readonly string[]
+  diagnostics: readonly string[],
+  options: { readonly phase?: "draft" | "integration" } = {}
 ): readonly string[] =>
   diagnostics.length > 0
-    ? diagnostics.map((diagnostic) => `- ${explainDiagnostic(diagnostic)}`)
+    ? diagnostics.map(
+        (diagnostic) => `- ${explainDiagnostic(diagnostic, options)}`
+      )
     : ["- Core validation did not provide a detailed diagnostic."];
 
 const explainBoundaryDetails = (details: string): string => {
@@ -259,7 +274,10 @@ export const buildQualityGatesIntegrationPrompt = (options: {
     "- `integrated: true`",
     '- `integrationState: "integrated"`',
     "",
-    "Every gate listed in `requiredBeforeCommit` or `requiredBeforePush` must have a package script and a direct hook call.",
+    "Every gate listed in a required enforcement array must have concrete runner evidence for the selected stack adapter.",
+    "For the npm/Husky adapter, required `beforeCommit` / `beforePush` gates must have exact `package.json` scripts and direct `.husky` hook calls.",
+    'After a gate is materialized and enforcement evidence exists, remove it from `plannedRequiredAfterIntegration`, keep it only in the required enforcement array, and set `availability: "executable"`.',
+    "Gates that do not affect future code yet may remain planned, but then they must not be wired into enforcement hooks.",
     "Do not run Git commands or edit managed plan files.",
     "When integration is ready, stop with a content-readiness note for Core validation.",
   ].join("\n");
@@ -278,7 +296,7 @@ export const buildQualityGatesIntegrationRepairPrompt = (
         ]
       : []),
     "Diagnostics:",
-    ...formatDiagnostics(options.diagnostics),
+    ...formatDiagnostics(options.diagnostics, { phase: "integration" }),
     "",
     "Repair the Quality Gates integration within the current accepted contract scope.",
     "Change only the contract artifacts and accepted gate infrastructure.",

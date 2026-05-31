@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "0ebbd08c5",
+  "lastRecordedCommit": "41ec95252",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-427",
-  "expectedCommitMessage": "chore: package 1.2.427 vsix",
+  "currentTaskId": "quality-gates-contract-lifecycle-428",
+  "expectedCommitMessage": "fix: clarify quality gates integration lifecycle",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.427 vsix",
-    "preCommitHead": "0ebbd08c5",
+    "expectedCommitMessage": "fix: clarify quality gates integration lifecycle",
+    "preCommitHead": "41ec95252",
     "stage": "commit_pending",
-    "taskId": "release-vsix-427"
+    "taskId": "quality-gates-contract-lifecycle-428"
   }
 }
 ```
@@ -420,8 +420,18 @@
 234. [DONE] `release-build-427` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.427 release`
 235. [DONE] Git Commit: `chore: build 1.2.427 release` (hash: 0ebbd08c5)
 236. [DONE] `release-vsix-427` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.427 vsix`
-237. [PENDING] Git Commit: `chore: package 1.2.427 vsix` (hash: TBD)
-238. [TODO] `release-acceptance-427` Hand off `codeai-hub-1.2.427.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+237. [DONE] Git Commit: `chore: package 1.2.427 vsix` (hash: 41ec95252)
+238. [DONE] `release-acceptance-427` Hand off `codeai-hub-1.2.427.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.427 confirmed Quality Gates Baseline reaches completion without the previous dirty-Git/Stop hang, but exposed Quality Gates contract lifecycle ambiguity and duplicate visible Core/User repair prompts.
+
+### Stream: Quality Gates Generic Contract Lifecycle (from 1.2.427 retest)
+239. [DONE] `quality-gates-contract-lifecycle-428` Make Quality Gates validation and repair prompts phase-aware and stack-generic: integrated gates that have runner evidence must transition from planned/not_integrated to required/executable, while user prose remains flexible unless it affects future code — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: clarify quality gates integration lifecycle`
+240. [PENDING] Git Commit: `fix: clarify quality gates integration lifecycle` (hash: TBD)
+241. [TODO] `quality-gates-lifecycle-tests-428` Add regressions for integrated planned gates with real package/hook runner evidence and phase-specific repair wording — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts, packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md`; expected commit: `test: cover quality gates lifecycle transitions`
+242. [TODO] Git Commit: `test: cover quality gates lifecycle transitions` (hash: TBD)
+243. [TODO] `quality-gates-visible-repair-428` Split visible Core repair notices from provider-visible managed continuation prompts for Quality Gates, so the dialog no longer shows duplicated System/User technical repair text — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: hide quality gates technical continuations from dialog`
+244. [TODO] Git Commit: `fix: hide quality gates technical continuations from dialog` (hash: TBD)
+245. [TODO] `quality-gates-contract-lifecycle-verify-428` Run targeted Quality Gates validator/managed-turn/template tests, then build core and webview — scope: `core + webview build`
+246. [TODO] `release-confirmation-428` User explicitly requested the Quality Gates lifecycle fixes and a new release — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-239. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+247. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

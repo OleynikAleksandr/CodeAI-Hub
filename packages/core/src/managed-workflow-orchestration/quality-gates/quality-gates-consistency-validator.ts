@@ -1,5 +1,9 @@
 import { stat } from "node:fs/promises";
 import path from "node:path";
+import {
+  readHookText,
+  readPackageScripts,
+} from "./quality-gates-workspace-files";
 
 const REQUIRED_ARRAY_KEYS = [
   "requiredBeforeCommit",
@@ -25,6 +29,16 @@ const readStringArray = (
   return Array.isArray(raw) && raw.every((entry) => typeof entry === "string")
     ? (raw as readonly string[])
     : [];
+};
+
+const toPackageScriptName = (gateId: string): string => {
+  if (gateId.startsWith("qg:")) {
+    return gateId;
+  }
+  if (gateId.startsWith("qg-")) {
+    return `qg:${gateId.slice("qg-".length)}`;
+  }
+  return `qg:${gateId}`;
 };
 
 const collectNonBlockingGateIds = (
@@ -82,6 +96,49 @@ const fileExists = async (
   return Boolean(fileStat);
 };
 
+const collectPlannedGateRunnerEvidenceDiagnostics = async (params: {
+  readonly contractJson: Record<string, unknown>;
+  readonly workspaceRoot: string;
+}): Promise<readonly string[]> => {
+  const packageScripts = await readPackageScripts(params.workspaceRoot);
+  if (!packageScripts) {
+    return [];
+  }
+  const hooks = [
+    {
+      name: ".husky/pre-commit",
+      text: await readHookText(params.workspaceRoot, "pre-commit"),
+    },
+    {
+      name: ".husky/pre-push",
+      text: await readHookText(params.workspaceRoot, "pre-push"),
+    },
+  ] as const;
+  const errors: string[] = [];
+  for (const gateId of readStringArray(
+    params.contractJson,
+    "plannedRequiredAfterIntegration"
+  )) {
+    const scriptName = toPackageScriptName(gateId);
+    if (!(scriptName in packageScripts)) {
+      continue;
+    }
+    const hookEvidence = hooks
+      .filter((hook) => hook.text.includes(`npm run ${scriptName}`))
+      .map((hook) => hook.name);
+    if (hookEvidence.length === 0) {
+      continue;
+    }
+    errors.push(
+      `planned_gate_has_runner_evidence_after_integration:${gateId}:${[
+        `package.json:${scriptName}`,
+        ...hookEvidence,
+      ].join(",")}`
+    );
+  }
+  return errors;
+};
+
 export const collectQualityGatesIntegrationConsistencyDiagnostics =
   async (params: {
     readonly contractJson: Record<string, unknown>;
@@ -106,6 +163,12 @@ export const collectQualityGatesIntegrationConsistencyDiagnostics =
         );
       }
     }
+    errors.push(
+      ...(await collectPlannedGateRunnerEvidenceDiagnostics({
+        contractJson: params.contractJson,
+        workspaceRoot: params.workspaceRoot,
+      }))
+    );
 
     const integratedPaths = readStringArray(
       params.contractJson,
