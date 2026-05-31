@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "4da7351e7",
+  "lastRecordedCommit": "decde11c2",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-419",
-  "expectedCommitMessage": "chore: package 1.2.419 vsix",
+  "currentTaskId": "managed-diagnostics-log-relocation",
+  "expectedCommitMessage": "fix: move managed diagnostics out of workspace",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.419 vsix",
-    "preCommitHead": "4da7351e7",
+    "expectedCommitMessage": "fix: move managed diagnostics out of workspace",
+    "preCommitHead": "decde11c2",
     "stage": "commit_pending",
-    "taskId": "release-vsix-419"
+    "taskId": "managed-diagnostics-log-relocation"
   }
 }
 ```
@@ -254,10 +254,29 @@
 131. [DONE] `release-build-419` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.419 release`
 132. [DONE] Git Commit: `chore: build 1.2.419 release` (hash: 4da7351e7)
 133. [DONE] `release-vsix-419` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.419 vsix`
-134. [PENDING] Git Commit: `chore: package 1.2.419 vsix` (hash: TBD)
+134. [DONE] Git Commit: `chore: package 1.2.419 vsix` (hash: decde11c2)
 
 ### Stream: User Workflow Acceptance Testing
-135. [TODO] `release-acceptance-419` Hand off `codeai-hub-1.2.419.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+135. [DONE] `release-acceptance-419` Hand off `codeai-hub-1.2.419.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.419 confirmed the diagnostic evidence: Diagram Modules managed input lock is overwritten by idle/no_rollover workspace snapshots, and the workspace-local diagnostic JSONL is incorrectly treated as dirty workflow residue.
+
+### Stream: Managed Input Gate Priority Fix (from 1.2.419 retest)
+136. [DONE] `managed-diagnostics-log-relocation` Move Diagram Modules lifecycle diagnostics from the workspace runtime capsule into user-level Core logs so diagnostic JSONL cannot block managed workflow dirty gates — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: move managed diagnostics out of workspace`
+137. [PENDING] Git Commit: `fix: move managed diagnostics out of workspace` (hash: TBD)
+138. [TODO] `managed-input-gate-priority` Preserve Core/managed continuation input locks over stale idle/no_rollover workspace snapshots, and release only on explicit managed review/complete handoff — scope: `src/client/project-manager/components/sessions/session-stream.ts, src/client/project-manager/components/sessions/session-stream.test.ts`; expected commit: `fix: preserve managed input gate over idle snapshots`
+139. [TODO] Git Commit: `fix: preserve managed input gate over idle snapshots` (hash: TBD)
+140. [TODO] `managed-input-gate-priority-verify` Build core/webview and run targeted managed input gate priority tests — scope: `core + webview build`
+141. [TODO] `release-confirmation-420` Wait for explicit user confirmation before preparing release notes or running release build for the managed input gate priority fix — scope: user confirmation gate
+
+### Stream: Release Build
+142. [TODO] `release-docs-420` Update README and CHANGELOG to 1.2.420 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.420 release notes`
+143. [TODO] Git Commit: `docs: prepare 1.2.420 release notes` (hash: TBD)
+144. [TODO] `release-build-420` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.420 release`
+145. [TODO] Git Commit: `chore: build 1.2.420 release` (hash: TBD)
+146. [TODO] `release-vsix-420` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.420 vsix`
+147. [TODO] Git Commit: `chore: package 1.2.420 vsix` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+148. [TODO] `release-acceptance-420` Hand off `codeai-hub-1.2.420.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-136. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+149. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

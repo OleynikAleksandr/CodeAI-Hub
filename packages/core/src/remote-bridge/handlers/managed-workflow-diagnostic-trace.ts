@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { appendFileSync, mkdirSync } from "node:fs";
+import { homedir } from "node:os";
 import path from "node:path";
 import type { SessionMessage } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -50,13 +51,17 @@ const previewContent = (content: string): string =>
     ? `${content.slice(0, PREVIEW_LIMIT)}...`
     : content;
 
-const resolveLogPath = (session: DiagramModulesDiagnosticSession): string =>
+const resolveUserLogsRoot = (): string =>
+  process.env.CODEAI_HUB_LOGS_DIR?.trim() ||
+  path.join(homedir(), ".codeai-hub", "logs");
+
+export const resolveManagedWorkflowDiagnosticLogPath = (
+  session: DiagramModulesDiagnosticSession
+): string =>
   path.join(
-    session.workspacePath,
-    ".codeai-hub",
-    session.initiativeSlug ?? "workspace",
-    "runtime",
-    "logs",
+    resolveUserLogsRoot(),
+    "managed-workflow",
+    session.initiativeSlug,
     LOG_FILE_NAME
   );
 
@@ -83,7 +88,7 @@ const writeWorkspaceEntry = (
   session: DiagramModulesDiagnosticSession,
   entry: Record<string, unknown>
 ): void => {
-  const logPath = resolveLogPath(session);
+  const logPath = resolveManagedWorkflowDiagnosticLogPath(session);
   mkdirSync(path.dirname(logPath), { recursive: true });
   appendFileSync(logPath, `${JSON.stringify(entry)}\n`, "utf8");
 };
