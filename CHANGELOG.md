@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.422] - 2026-05-31
+### Fixed
+- **Application Skeleton materialization failures now return to the agent.** After the user confirms the Application Skeleton draft, Core records failed scaffold/environment validation as a managed rejected turn, keeps the user handoff closed, and dispatches a provider-visible repair prompt instead of showing a diagnostics-only System error to the user.
+- **Failed materialization state is explicit.** The Core materializer rewrites `application-skeleton-map.json` and `application-skeleton.md` to `materialized: false` / `materializationState: "failed"` when post-materialization validation fails, so managed state no longer claims success before validation passes.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.managed-review.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+
 ## [1.2.421] - 2026-05-31
 ### Fixed
 - **Application Skeleton materialization now honors polyglot contracts.** Core creates every safe path declared by `projectFoundation.configFiles`, writes syntax-valid first-wave entrypoints by file type, and no longer forces npm package metadata into Python or Go Product Parts unless the accepted contract explicitly declares those files.
