@@ -479,7 +479,7 @@ export class SessionRequestHandlerManagedWorkflowTurn {
             workspaceSlug: params.workspaceSlug,
           }));
     this.appendCoreMessage(params.sessionId, {
-      content: repairPrompt,
+      content: `Core: Quality Gates требует исправить ${decision.phase === "integration" ? "интеграцию" : "черновик"}.\nПолный repair prompt отправлен агенту внутренним сообщением.`,
       tag: "managed-workflow-validation",
     });
     this.dispatchAgentContinuation(params.sessionId, repairPrompt);

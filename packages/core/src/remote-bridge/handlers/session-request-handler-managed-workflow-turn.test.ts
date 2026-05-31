@@ -11,6 +11,7 @@ import { SessionRequestHandlerManagedWorkflowTurn } from "./session-request-hand
 const WORKSPACE_SLUG = "demo-workspace";
 const APP_STAGE = "application_skeleton";
 const DIAGRAM_STAGE = "diagram_modules";
+const QUALITY_STAGE = "quality_gates";
 const USER_REVIEW_RE =
   /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
 const CONFIRMATION_RE = /нажмите кнопку «Подтверждаю» ниже/u;
@@ -29,6 +30,10 @@ const RAW_APPLICATION_SKELETON_REPAIR_PROMPT_RE =
   /Core rejected the current Application Skeleton draft/u;
 const APPLICATION_SKELETON_REPAIR_USER_MESSAGE_RE =
   /Core: Application Skeleton требует исправить черновик/u;
+const RAW_QUALITY_GATES_REPAIR_PROMPT_RE =
+  /Core rejected the current Quality Gates draft/u;
+const QUALITY_GATES_REPAIR_USER_MESSAGE_RE =
+  /Core: Quality Gates требует исправить черновик/u;
 const APP_MARKDOWN_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton.md`;
 const APP_MAP_PATH = `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`;
 
@@ -73,6 +78,7 @@ const appDraftMap = (): Record<string, unknown> => ({
 
 const createHandler = (params: {
   readonly applicationStagePlan?: ApplicationSkeletonStagePlanController;
+  readonly qualityGatesStagePlan?: unknown;
   readonly sendInternalMessage?: (
     sessionId: string,
     content: string
@@ -83,7 +89,10 @@ const createHandler = (params: {
     readonly messageTag?: string;
     readonly sessionId: string;
   }) => Promise<void>;
-  readonly stage: typeof APP_STAGE | typeof DIAGRAM_STAGE;
+  readonly stage:
+    | typeof APP_STAGE
+    | typeof DIAGRAM_STAGE
+    | typeof QUALITY_STAGE;
   readonly workspaceRoot: string;
 }): {
   readonly coreMessages: CapturedCoreMessage[];
@@ -109,6 +118,9 @@ const createHandler = (params: {
   const handler = new SessionRequestHandlerManagedWorkflowTurn({
     ...(params.applicationStagePlan
       ? { applicationStagePlan: params.applicationStagePlan }
+      : {}),
+    ...(params.qualityGatesStagePlan
+      ? { qualityGatesStagePlan: params.qualityGatesStagePlan as never }
       : {}),
     eventMessages: {
       appendCoreMessage: (_sessionId: string, message: CapturedCoreMessage) => {
@@ -270,6 +282,49 @@ test("managed workflow repair shows concise Application Skeleton user message an
         )
       )
     );
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("managed workflow repair shows concise Quality Gates user message and keeps full prompt internal", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "managed-review-missing-quality-gates-")
+  );
+  try {
+    const { coreMessages, handler, internalMessages, sessionId } =
+      createHandler({
+        qualityGatesStagePlan: {
+          commitRejectedTurn: () =>
+            Promise.resolve({
+              blocked: null,
+              commit: {
+                expectedCommitMessage: "docs: draft quality gates baseline",
+                hash: "rejected-quality-gates",
+                nextTaskId: "quality-gates.phase1.repair.task1",
+              },
+            }),
+        },
+        stage: QUALITY_STAGE,
+        workspaceRoot,
+      });
+
+    const result = await handler.handleTurnCompleted(sessionId);
+
+    assert.equal(result, "continued");
+    assert.equal(coreMessages.length, 1);
+    assert.equal(coreMessages[0]?.tag, "managed-workflow-validation");
+    assert.match(
+      coreMessages[0]?.content ?? "",
+      QUALITY_GATES_REPAIR_USER_MESSAGE_RE
+    );
+    assert.doesNotMatch(
+      coreMessages[0]?.content ?? "",
+      RAW_QUALITY_GATES_REPAIR_PROMPT_RE
+    );
+    assert.equal(internalMessages.length, 1);
+    assert.match(internalMessages[0] ?? "", RAW_QUALITY_GATES_REPAIR_PROMPT_RE);
+    assert.notEqual(internalMessages[0], coreMessages[0]?.content);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
