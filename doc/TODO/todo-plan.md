@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "5a0196286",
+  "lastRecordedCommit": "e4b766572",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-426",
-  "expectedCommitMessage": "chore: package 1.2.426 vsix",
+  "currentTaskId": "quality-gates-dirty-stop-override",
+  "expectedCommitMessage": "fix: repair quality gates dirty gate and stop unlock",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.426 vsix",
-    "preCommitHead": "5a0196286",
+    "expectedCommitMessage": "fix: repair quality gates dirty gate and stop unlock",
+    "preCommitHead": "e4b766572",
     "stage": "commit_pending",
-    "taskId": "release-vsix-426"
+    "taskId": "quality-gates-dirty-stop-override"
   }
 }
 ```
@@ -405,8 +405,14 @@
 223. [DONE] `release-build-426` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.426 release`
 224. [DONE] Git Commit: `chore: build 1.2.426 release` (hash: 5a0196286)
 225. [DONE] `release-vsix-426` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.426 vsix`
-226. [PENDING] Git Commit: `chore: package 1.2.426 vsix` (hash: TBD)
-227. [TODO] `release-acceptance-426` Hand off `codeai-hub-1.2.426.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+226. [DONE] Git Commit: `chore: package 1.2.426 vsix` (hash: e4b766572)
+227. [DONE] `release-acceptance-426` Hand off `codeai-hub-1.2.426.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.426 failed in Quality Gates terminal completion: generated `.artifacts/go/terminal` remained as untracked Git residue and opened a manual dirty-Git blocker; Stop did not release the managed input lock from that stuck state.
+
+### Stream: Quality Gates Dirty Gate + Stop Override (from 1.2.426 retest)
+228. [DONE] `quality-gates-dirty-stop-override` Route workspace-local generated build artifacts such as `.artifacts/go/terminal` back to Quality Gates repair before terminal handoff, and make Stop force-release Core-owned managed input gates with Project Manager forced-unlock projection — scope: `packages/core/src, src/client/project-manager/components/sessions, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair quality gates dirty gate and stop unlock`
+229. [PENDING] Git Commit: `fix: repair quality gates dirty gate and stop unlock` (hash: TBD)
+230. [TODO] `quality-gates-dirty-stop-verify` Run targeted Quality Gates residue, Stop/manual unlock, Project Manager forced unlock tests, then build core and webview — scope: `core + webview build`
+231. [DONE] `release-confirmation-427` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates dirty gate and Stop override fixes — scope: user confirmation gate Result: User explicitly requested applying the fixes and building the new release.
 
 ### Stream: Scope Closeout
-228. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+232. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

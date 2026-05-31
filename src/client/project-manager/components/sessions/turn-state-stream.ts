@@ -17,10 +17,17 @@ const readTurnState = (event: unknown): "idle" | "running" | null => {
 
 interface ManagedInputGate {
   readonly active: boolean;
+  readonly force: boolean;
   readonly providerSessionId?: string | null;
   readonly reason?: string;
   readonly sessionIds: readonly string[];
 }
+
+const MANAGED_INPUT_GATE_UNLOCK_REASONS = new Set([
+  "managed_core_gated",
+  "diagram_modules_sequence",
+  "managed_workflow_core_agent_turn",
+] as const);
 
 const readManagedInputGate = (event: unknown): ManagedInputGate | null => {
   if (!isRecord(event) || event.type !== "stream_event") {
@@ -40,6 +47,7 @@ const readManagedInputGate = (event: unknown): ManagedInputGate | null => {
     typeof event.data.reason === "string" ? event.data.reason : undefined;
   return {
     active: event.data.active === true,
+    force: event.data.force === true,
     providerSessionId,
     reason,
     sessionIds,
@@ -86,7 +94,11 @@ const updateSnapshotsWithManagedInputGate = (
       continue;
     }
     const currentReason = snapshot.status.continuityLock?.reason;
-    if (!gate.active && currentReason !== "managed_core_gated") {
+    if (
+      !gate.active &&
+      !gate.force &&
+      !MANAGED_INPUT_GATE_UNLOCK_REASONS.has(currentReason as never)
+    ) {
       continue;
     }
     const nextConnectionState = gate.active

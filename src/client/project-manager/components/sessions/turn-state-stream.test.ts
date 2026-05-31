@@ -164,3 +164,36 @@ test("managed input gate unlocks only its own managed lock", () => {
   assert.equal(next["resume-visible"].status.connectionState, "blocked");
   assert.equal(next["resume-visible"].status.continuityLock?.active, true);
 });
+
+test("managed input gate forced unlock releases a stale managed lock reason", () => {
+  const locked = createSnapshot("blocked", "provider-session-1");
+  const snapshots = {
+    "dialog-visible": {
+      ...locked,
+      status: {
+        ...locked.status,
+        continuityLock: {
+          active: true,
+          reason: "managed_workflow_core_agent_turn",
+          updatedAt: Date.now(),
+        },
+      },
+    },
+  };
+
+  const next = updateSnapshotsWithTurnState(snapshots, {
+    sessionId: "runtime-session-1",
+    event: {
+      type: "stream_event",
+      data: {
+        kind: "managed_input_gate",
+        active: false,
+        force: true,
+        providerSessionId: "provider-session-1",
+      },
+    },
+  });
+
+  assert.equal(next["dialog-visible"].status.connectionState, "idle");
+  assert.equal(next["dialog-visible"].status.continuityLock?.active, false);
+});

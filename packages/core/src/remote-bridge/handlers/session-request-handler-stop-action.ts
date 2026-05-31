@@ -17,6 +17,7 @@ interface SessionRequestHandlerStopActionOptions {
   readonly providerBindingService: SessionProviderBindingService;
   readonly providerRegistry: ProviderRegistry;
   readonly providerSessions: Map<string, ProviderSessionBindingLike>;
+  readonly releaseManagedInputGate: (sessionId: string) => boolean;
   readonly resumeLifecycle: SessionRequestHandlerResumeLifecycle;
   readonly sessionManager: SessionManager;
 }
@@ -36,6 +37,10 @@ export class SessionRequestHandlerStopAction {
     }
 
     if (this.deps.sessionManager.hasStopInvalidatedBinding(sessionId)) {
+      const releasedManagedGate = this.releaseInputLocks(sessionId, session);
+      if (releasedManagedGate) {
+        this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
+      }
       this.deps.logger.info(
         "Session stop ignored — binding already invalidated",
         {
@@ -81,6 +86,7 @@ export class SessionRequestHandlerStopAction {
         session
       );
     }
+    this.releaseInputLocks(sessionId, session);
 
     this.deps.providerBindingService.invalidateProviderBinding(sessionId);
     this.deps.emitTurnStateEvent({ sessionId, state: "idle" });
@@ -92,5 +98,20 @@ export class SessionRequestHandlerStopAction {
         stage: session.stage ?? null,
       }
     );
+  }
+
+  private releaseInputLocks(
+    sessionId: string,
+    session: ReturnType<SessionManager["getSession"]>
+  ): boolean {
+    const releasedManagedGate = this.deps.releaseManagedInputGate(sessionId);
+    if (releasedManagedGate) {
+      this.deps.logger.info("Session stop released managed input gate", {
+        sessionId,
+        providerId: session?.providerId ?? null,
+        stage: session?.stage ?? null,
+      });
+    }
+    return releasedManagedGate;
   }
 }

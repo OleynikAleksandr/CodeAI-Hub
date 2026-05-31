@@ -78,3 +78,50 @@ test("SessionRequestHandler stop clears bootstrap locks and restores send path",
     false
   );
 });
+
+test("SessionRequestHandler stop force-releases managed input gates", async () => {
+  const harness = createHarness();
+  const session = harness.sessionManager.createSession(
+    "codexCli",
+    "/tmp/core-stop-managed-gate",
+    "provider-session-managed-stop",
+    { stage: "quality_gates" }
+  );
+  harness.providerSessions.set(session.id, {
+    providerId: "codexCli",
+    providerSessionId: "provider-session-managed-stop",
+    unsubscribe: noop,
+  });
+  harness.providerRegistry.getAdapter = () => ({
+    closeSession: async () => Promise.resolve(),
+  });
+
+  await harness.handler.handleStop(session.id);
+
+  assert.equal(
+    harness.runtimeLockUpdates.some(
+      (update) =>
+        update.sessionId === session.id &&
+        update.active === false &&
+        update.reason === null
+    ),
+    true
+  );
+  assert.equal(
+    harness.events.some((event) => {
+      if (event.type !== "session:stream") {
+        return false;
+      }
+      const payload = event.payload as {
+        readonly event?: { readonly data?: Record<string, unknown> };
+      };
+      const data = payload.event?.data;
+      return (
+        data?.kind === "managed_input_gate" &&
+        data.active === false &&
+        data.force === true
+      );
+    }),
+    true
+  );
+});

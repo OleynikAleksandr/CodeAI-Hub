@@ -15,6 +15,7 @@ import type {
   LocalModelsModelSwitchRequestPayload,
 } from "../session-stream-contracts";
 import type { BridgeEvent } from "../types";
+import { ManagedCoreGatedLockController } from "./managed-core-gated-lock-controller";
 import type { SessionContinuityLockService } from "./session-continuity-lock-service";
 import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
 import type {
@@ -276,6 +277,12 @@ export class SessionRequestHandler {
         logger: this.logger,
         sessionManager: this.sessionManager,
       });
+    const stopManagedInputGate = new ManagedCoreGatedLockController({
+      broadcaster: this.broadcaster,
+      logger: this.logger,
+      sessionManager: this.sessionManager,
+      workspaceRuntime: this.workspaceRuntime,
+    });
     this.stopAction = new SessionRequestHandlerStopAction({
       continuityLockService: this.continuityLockService,
       emitSessionError: (sessionId, message) => {
@@ -289,6 +296,8 @@ export class SessionRequestHandler {
       providerBindingService: this.providerBindingService,
       providerRegistry: this.providerRegistry,
       providerSessions: this.providerSessions,
+      releaseManagedInputGate: (sessionId) =>
+        stopManagedInputGate.releaseForManualStop(sessionId),
       resumeLifecycle: this.resumeLifecycle,
       sessionManager: this.sessionManager,
     });

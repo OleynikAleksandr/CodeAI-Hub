@@ -5,16 +5,12 @@ import { classifyManagedTerminalDirtyTree } from "../managed-terminal-dirty-clas
 const PATH_SEPARATOR_RE = /\//u;
 const EXECUTE_PERMISSION_DIVISORS = [64, 8, 1] as const;
 
-const isLikelyRootBuildArtifact = async (params: {
+const GENERATED_WORKSPACE_BUILD_ARTIFACT_PREFIXES = [".artifacts/"] as const;
+
+const isExecutableFile = async (params: {
   readonly pathValue: string;
   readonly workspaceRoot: string;
 }): Promise<boolean> => {
-  if (
-    PATH_SEPARATOR_RE.test(params.pathValue) ||
-    path.extname(params.pathValue).length > 0
-  ) {
-    return false;
-  }
   const fileStat = await stat(
     path.join(params.workspaceRoot, params.pathValue)
   ).catch(() => null);
@@ -24,6 +20,33 @@ const isLikelyRootBuildArtifact = async (params: {
         (divisor) => Math.floor(fileStat.mode / divisor) % 2 === 1
       )
   );
+};
+
+const isLikelyRootBuildArtifact = (params: {
+  readonly pathValue: string;
+  readonly workspaceRoot: string;
+}): Promise<boolean> => {
+  if (
+    PATH_SEPARATOR_RE.test(params.pathValue) ||
+    path.extname(params.pathValue).length > 0
+  ) {
+    return false;
+  }
+  return isExecutableFile(params);
+};
+
+const isWorkspaceLocalGeneratedBuildArtifact = (params: {
+  readonly pathValue: string;
+  readonly workspaceRoot: string;
+}): Promise<boolean> => {
+  if (
+    !GENERATED_WORKSPACE_BUILD_ARTIFACT_PREFIXES.some((prefix) =>
+      params.pathValue.startsWith(prefix)
+    )
+  ) {
+    return false;
+  }
+  return isExecutableFile(params);
 };
 
 export const collectQualityGatesTerminalResidueDiagnostics = async (params: {
@@ -48,6 +71,17 @@ export const collectQualityGatesTerminalResidueDiagnostics = async (params: {
     ) {
       diagnostics.push(
         `generated_root_build_artifact:${pathValue}; remove this generated root artifact and update the Quality Gates build command so it writes build output outside the workspace root.`
+      );
+      continue;
+    }
+    if (
+      await isWorkspaceLocalGeneratedBuildArtifact({
+        pathValue,
+        workspaceRoot: params.workspaceRoot,
+      })
+    ) {
+      diagnostics.push(
+        `generated_workspace_build_artifact:${pathValue}; remove this generated workspace-local build artifact and update the Quality Gates build command so it writes build output outside the workspace root, for example under the operating-system temp directory.`
       );
     }
   }

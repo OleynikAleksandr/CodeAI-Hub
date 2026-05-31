@@ -252,6 +252,7 @@ export const buildQualityGatesIntegrationPrompt = (options: {
     "- `.husky/pre-commit` and `.husky/pre-push`",
     "- `scripts/quality-gates/**`",
     "- quality gate config files and CI/update files explicitly selected by the accepted contract",
+    "- Build commands must not write generated binaries or caches anywhere under the workspace root, including `.artifacts/**`; use an operating-system temp directory or another external cache path.",
     "",
     "Required lifecycle state after successful integration:",
     "- `accepted: true`",
@@ -281,6 +282,7 @@ export const buildQualityGatesIntegrationRepairPrompt = (
     "",
     "Repair the Quality Gates integration within the current accepted contract scope.",
     "Change only the contract artifacts and accepted gate infrastructure.",
+    "If a diagnostic mentions a generated build artifact, delete that file and change the responsible command so future build output is written outside the workspace root.",
     "Do not run Git commands or edit managed plan files.",
     "When the repair is ready, stop with a content-readiness note for Core validation.",
   ].join("\n");

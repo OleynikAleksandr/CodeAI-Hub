@@ -9,6 +9,8 @@ import { collectQualityGatesTerminalResidueDiagnostics } from "./quality-gates-t
 
 const WORKSPACE_SLUG = "demo-workspace";
 const ROOT_BUILD_ARTIFACT_RE = /generated_root_build_artifact:surfaces/u;
+const WORKSPACE_BUILD_ARTIFACT_RE =
+  /generated_workspace_build_artifact:\.artifacts\/go\/terminal/u;
 const execFileAsync = promisify(execFile);
 
 const git = async (
@@ -43,6 +45,32 @@ test("Quality Gates terminal residue flags generated root build artifacts for re
     });
 
     assert.ok(diagnostics.some((item) => ROOT_BUILD_ARTIFACT_RE.test(item)));
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates terminal residue flags generated workspace-local build artifacts for repair", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-workspace-build-artifact-")
+  );
+  try {
+    await git(workspaceRoot, ["init"]);
+    await writeWorkspaceFile(
+      workspaceRoot,
+      ".artifacts/go/terminal",
+      "generated binary\n"
+    );
+    await chmod(path.join(workspaceRoot, ".artifacts/go/terminal"), 0o755);
+
+    const diagnostics = await collectQualityGatesTerminalResidueDiagnostics({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.ok(
+      diagnostics.some((item) => WORKSPACE_BUILD_ARTIFACT_RE.test(item))
+    );
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

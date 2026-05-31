@@ -65,6 +65,10 @@ export class ManagedCoreGatedLockController {
     return this.notify(sessionId, true, { force: true });
   }
 
+  releaseForManualStop(sessionId: string): boolean {
+    return this.notify(sessionId, false, { force: true });
+  }
+
   apply(sessionId: string, managedResult: string | undefined): void {
     const active = managedResult === "continued";
     this.notify(sessionId, active, { force: active });
@@ -94,7 +98,7 @@ export class ManagedCoreGatedLockController {
       });
       return true;
     }
-    if (!(active || wasLocked)) {
+    if (!(active || wasLocked || options.force)) {
       this.traceGate(session, "managed_input_gate.noop_already_unlocked", {
         active,
         force: options.force ?? false,
@@ -126,14 +130,20 @@ export class ManagedCoreGatedLockController {
       wasLocked,
       workspaceRuntimeNotified: Boolean(this.deps.workspaceRuntime),
     });
-    this.emitManagedInputGate(session, active, sessionIds);
+    this.emitManagedInputGate(
+      session,
+      active,
+      sessionIds,
+      options.force ?? false
+    );
     return true;
   }
 
   private emitManagedInputGate(
     session: ManagedLockSession,
     active: boolean,
-    sessionIds: readonly string[]
+    sessionIds: readonly string[],
+    force: boolean
   ): void {
     this.deps.broadcaster?.({
       type: "session:stream",
@@ -145,6 +155,7 @@ export class ManagedCoreGatedLockController {
           data: {
             kind: "managed_input_gate",
             active,
+            force,
             reason: active ? "managed_core_gated" : null,
             providerSessionId: session.providerSessionId ?? null,
             sessionIds,
