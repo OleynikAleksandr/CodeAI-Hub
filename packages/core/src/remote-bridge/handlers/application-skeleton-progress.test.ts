@@ -5,7 +5,10 @@ import path from "node:path";
 import test from "node:test";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
 import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
-import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
+import {
+  type ApplicationSkeletonProgressSnapshot,
+  readApplicationSkeletonProgressSnapshot,
+} from "./application-skeleton-progress";
 import {
   applyTechnicalRootProgressToState,
   resolveWorkflowBlockedStages,
@@ -31,9 +34,6 @@ const MATERIALIZED_MARKDOWN = `# Application Skeleton
 
 Application Skeleton принят и материализован. Следующий этап может опираться на этот workspace skeleton как на готовую базу для Quality Gates Baseline.
 `;
-const MARKDOWN_REVIEW_STATE_ERROR_RE =
-  /application-skeleton\.md status reviewState must be materialized/;
-const STALE_MATERIALIZATION_WORDING_RE = /stale materialization wording/;
 const MAP_REVIEW_STATE_ERROR_RE =
   /application-skeleton-map\.json reviewState must be materialized/;
 const MAP_MATERIALIZED_ERROR_RE =
@@ -44,6 +44,8 @@ const MISSING_MATERIALIZED_PATH_RE =
   /application skeleton materializedPath is missing: product-parts\/project-manager/;
 const MISSING_STANDALONE_MODULE_PATH_RE =
   /application skeleton codePath is missing: product-parts\/project-manager\/modules\/settings/;
+const PROJECT_MANAGER_PATH = "product-parts/project-manager";
+const STEP_NAVIGATION_PATH = `${PROJECT_MANAGER_PATH}/clusters/workflow-ui/modules/step-navigation`;
 
 const createState = (workspaceSlug: string): WorkflowState => {
   const stages = Object.fromEntries(
@@ -81,6 +83,29 @@ const createState = (workspaceSlug: string): WorkflowState => {
     workspaceSlug,
   };
 };
+
+const resolveBlockedStages = (
+  applicationSkeletonProgress:
+    | ApplicationSkeletonProgressSnapshot
+    | null
+    | undefined,
+  state: WorkflowState
+): Partial<Record<WorkflowStageId, boolean>> =>
+  resolveWorkflowBlockedStages({
+    applicationSkeletonProgress,
+    description: {
+      finalPath: ".codeai-hub/demo/description/Final_Description.md",
+    },
+    diagramModulesProgress: {
+      aggregateReady: true,
+      generatedCount: 1,
+      generatedPartIds: ["project-manager"],
+      plannedCount: 1,
+      plannedPartIds: ["project-manager"],
+      substep: "awaiting_review",
+    },
+    state,
+  });
 
 const writeSkeleton = async (params: {
   readonly map: Record<string, unknown>;
@@ -144,21 +169,7 @@ test("accepted application skeleton remains in progress until materialized", asy
       qualityGatesProgress: null,
       state,
     });
-    const blocked = resolveWorkflowBlockedStages({
-      applicationSkeletonProgress: progress,
-      description: {
-        finalPath: ".codeai-hub/demo/description/Final_Description.md",
-      },
-      diagramModulesProgress: {
-        aggregateReady: true,
-        generatedCount: 1,
-        generatedPartIds: ["project-manager"],
-        plannedCount: 1,
-        plannedPartIds: ["project-manager"],
-        substep: "awaiting_review",
-      },
-      state: updated,
-    });
+    const blocked = resolveBlockedStages(progress, updated);
 
     assert.equal(updated.stages.application_skeleton.status, "in_progress");
     assert.equal(blocked.quality_gates, true);
@@ -243,21 +254,7 @@ test("materialized application skeleton completes stage and unlocks quality gate
       qualityGatesProgress: null,
       state,
     });
-    const blocked = resolveWorkflowBlockedStages({
-      applicationSkeletonProgress: progress,
-      description: {
-        finalPath: ".codeai-hub/demo/description/Final_Description.md",
-      },
-      diagramModulesProgress: {
-        aggregateReady: true,
-        generatedCount: 1,
-        generatedPartIds: ["project-manager"],
-        plannedCount: 1,
-        plannedPartIds: ["project-manager"],
-        substep: "awaiting_review",
-      },
-      state: updated,
-    });
+    const blocked = resolveBlockedStages(progress, updated);
 
     assert.equal(updated.stages.application_skeleton.status, "completed");
     assert.equal(blocked.quality_gates, false);
@@ -266,28 +263,25 @@ test("materialized application skeleton completes stage and unlocks quality gate
   }
 });
 
-test("observed filesystem materialization fails when markdown remains draft", async () => {
+test("observed filesystem materialization uses map json instead of markdown lifecycle prose", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "application-skeleton-progress-stale-md-")
+    path.join(os.tmpdir(), "application-skeleton-progress-md-nonstate-")
   );
   const workspaceSlug = "demo";
 
   try {
-    await mkdir(path.join(workspaceRoot, "product-parts/project-manager"), {
+    await mkdir(path.join(workspaceRoot, PROJECT_MANAGER_PATH), {
       recursive: true,
     });
+    await writeWorkspaceFile(
+      workspaceRoot,
+      `${STEP_NAVIGATION_PATH}/index.ts`,
+      "export {};\n"
+    );
+    await writeFoundationFiles(workspaceRoot);
     await writeSkeleton({
-      markdown: `# Application Skeleton
-
-## Status
-
-- \`reviewState\`: \`draft\`
-- \`accepted\`: \`false\`
-- \`materialized\`: \`false\`
-- \`materializationState\`: \`not_started\`
-
-Черновик не фиксирует детали до явного подтверждения.
-`,
+      markdown:
+        "# Application Skeleton\n\n`reviewState`: `draft`\n`accepted`: `false`\nЧерновик будет создан после подтверждения.\n",
       workspaceRoot,
       workspaceSlug,
       map: {
@@ -296,13 +290,34 @@ test("observed filesystem materialization fails when markdown remains draft", as
         accepted: true,
         materialized: true,
         materializationState: "materialized",
-        materializedPaths: ["product-parts/project-manager"],
+        materializedPaths: [PROJECT_MANAGER_PATH],
+        openQuestions: [],
+        packageManager: "npm",
         productParts: [
           {
-            codePath: "product-parts/project-manager",
-            partId: "project-manager",
+            clusters: [
+              {
+                codePath: `${PROJECT_MANAGER_PATH}/clusters/workflow-ui`,
+                id: "workflow-ui",
+                modules: [
+                  {
+                    codePath: STEP_NAVIGATION_PATH,
+                    id: "step-navigation",
+                  },
+                ],
+              },
+            ],
+            codePath: PROJECT_MANAGER_PATH,
+            id: "project-manager",
           },
         ],
+        projectFoundation: {
+          configFiles: ["tsconfig.json"],
+          firstWaveEntrypoints: [`${PROJECT_MANAGER_PATH}/src/index.ts`],
+          installCommand: "npm ci",
+          requiredScripts: ["build", "lint"],
+        },
+        sourceRoot: "product-parts",
       },
     });
 
@@ -311,16 +326,9 @@ test("observed filesystem materialization fails when markdown remains draft", as
       workspaceSlug,
     });
     assert.equal(progress?.observedMaterialization, true);
-    assert.equal(progress?.materialized, false);
-    assert.equal(progress?.substep, "failed");
-    assert.match(
-      progress?.validationErrors.join("\n") ?? "",
-      MARKDOWN_REVIEW_STATE_ERROR_RE
-    );
-    assert.match(
-      progress?.validationErrors.join("\n") ?? "",
-      STALE_MATERIALIZATION_WORDING_RE
-    );
+    assert.equal(progress?.materialized, true);
+    assert.equal(progress?.substep, "materialized");
+    assert.deepEqual(progress?.validationErrors, []);
 
     const state = createState(workspaceSlug);
     const updated = applyTechnicalRootProgressToState({
@@ -328,24 +336,10 @@ test("observed filesystem materialization fails when markdown remains draft", as
       qualityGatesProgress: null,
       state,
     });
-    const blocked = resolveWorkflowBlockedStages({
-      applicationSkeletonProgress: progress,
-      description: {
-        finalPath: ".codeai-hub/demo/description/Final_Description.md",
-      },
-      diagramModulesProgress: {
-        aggregateReady: true,
-        generatedCount: 1,
-        generatedPartIds: ["project-manager"],
-        plannedCount: 1,
-        plannedPartIds: ["project-manager"],
-        substep: "awaiting_review",
-      },
-      state: updated,
-    });
+    const blocked = resolveBlockedStages(progress, updated);
 
-    assert.equal(updated.stages.application_skeleton.status, "in_progress");
-    assert.equal(blocked.quality_gates, true);
+    assert.equal(updated.stages.application_skeleton.status, "completed");
+    assert.equal(blocked.quality_gates, false);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

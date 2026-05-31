@@ -12,21 +12,7 @@ export interface ApplicationSkeletonMaterializationValidation {
   readonly validationErrors: readonly string[];
 }
 
-const STALE_MATERIALIZED_MARKDOWN_PATTERNS = Object.entries({
-  "after confirmation": /after confirmation/i,
-  "after explicit confirmation":
-    /\u043f\u043e\u0441\u043b\u0435\s+\u044f\u0432\u043d\u043e\u0433\u043e\s+\u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0438\u044f/i,
-  "after explicit user acceptance": /after explicit user acceptance/i,
-  "draft wording": /\u0427\u0435\u0440\u043d\u043e\u0432\u0438\u043a/i,
-  "draft-only": /draft-only/i,
-  "filesystem materialization is pending":
-    /filesystem materialization is pending/i,
-  "future creation wording":
-    /\u0431\u0443\u0434\u0435\u0442\s+\u0441\u043e\u0437\u0434\u0430/i,
-  "not materialized": /not materialized/i,
-  "planned but not yet": /planned but not yet/i,
-  "will be created": /will be created/i,
-}).map(([label, pattern]) => ({ label, pattern }));
+const APPLICATION_SKELETON_TITLE_RE = /^#\s+Application Skeleton\b/imu;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -254,46 +240,15 @@ const validateMaterializedFoundation = async (
   return errors;
 };
 
-const hasMarkdownStatus = (
-  markdown: string,
-  field: string,
-  value: string
-): boolean =>
-  new RegExp(`(?:\`${field}\`|${field})\\s*:\\s*\`?${value}\`?`, "i").test(
-    markdown
-  ) ||
-  new RegExp(`\\|\\s*\`?${field}\`?\\s*\\|\\s*\`?${value}\`?\\s*\\|`, "i").test(
-    markdown
-  );
-
-const hasMarkdownStatusField = (markdown: string, field: string): boolean =>
-  new RegExp(`(?:\`${field}\`|${field})\\s*:`, "i").test(markdown) ||
-  new RegExp(`\\|\\s*\`?${field}\`?\\s*\\|`, "i").test(markdown);
-
 const validateMaterializedMarkdown = (markdown: string | null): string[] => {
   if (!markdown) {
     return ["application-skeleton.md is missing"];
   }
   const errors: string[] = [];
-  for (const [field, value] of [
-    ["reviewState", "materialized"],
-    ["accepted", "true"],
-    ["materialized", "true"],
-    ["materializationState", "materialized"],
-  ] as const) {
-    if (
-      hasMarkdownStatusField(markdown, field) &&
-      !hasMarkdownStatus(markdown, field, value)
-    ) {
-      errors.push(`application-skeleton.md status ${field} must be ${value}`);
-    }
-  }
-  for (const stale of STALE_MATERIALIZED_MARKDOWN_PATTERNS) {
-    if (stale.pattern.test(markdown)) {
-      errors.push(
-        `application-skeleton.md contains stale materialization wording: ${stale.label}`
-      );
-    }
+  if (!APPLICATION_SKELETON_TITLE_RE.test(markdown)) {
+    errors.push(
+      "application-skeleton.md is missing '# Application Skeleton' heading"
+    );
   }
   return errors;
 };

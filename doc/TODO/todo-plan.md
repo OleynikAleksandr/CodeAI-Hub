@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "ac288c15b",
+  "lastRecordedCommit": "1fd87a8fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-428",
-  "expectedCommitMessage": "chore: package 1.2.428 vsix",
+  "currentTaskId": "application-skeleton-markdown-readability",
+  "expectedCommitMessage": "fix: keep application skeleton state in map json",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.428 vsix",
-    "preCommitHead": "ac288c15b",
+    "expectedCommitMessage": "fix: keep application skeleton state in map json",
+    "preCommitHead": "1fd87a8fb",
     "stage": "commit_pending",
-    "taskId": "release-vsix-428"
+    "taskId": "application-skeleton-markdown-readability"
   }
 }
 ```
@@ -439,8 +439,27 @@
 249. [DONE] `release-build-428` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.428 release`
 250. [DONE] Git Commit: `chore: build 1.2.428 release` (hash: ac288c15b)
 251. [DONE] `release-vsix-428` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.428 vsix`
-252. [PENDING] Git Commit: `chore: package 1.2.428 vsix` (hash: TBD)
-253. [TODO] `release-acceptance-428` Hand off `codeai-hub-1.2.428.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+252. [DONE] Git Commit: `chore: package 1.2.428 vsix` (hash: 1fd87a8fb)
+253. [DONE] `release-acceptance-428` Hand off `codeai-hub-1.2.428.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: User retest found no workflow remarks and Quality Gates Baseline reached the end; follow-up audit found paired Markdown/JSON authority cleanup needed so Markdown review artifacts do not act as runtime state.
+
+### Stream: Managed Markdown Authority Cleanup (from 1.2.428 follow-up audit)
+254. [DONE] `application-skeleton-markdown-readability` Stop Application Skeleton materialization validation from treating `application-skeleton.md` as runtime lifecycle state while preserving Markdown existence/header checks — scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton state in map json`
+255. [PENDING] Git Commit: `fix: keep application skeleton state in map json` (hash: TBD)
+256. [TODO] `quality-gates-markdown-readability` Stop Quality Gates integration validation from treating `quality-gates.md` as terminal integration state while preserving Markdown existence/header checks and JSON/evidence blockers — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `fix: keep quality gates state in json contract`
+257. [TODO] Git Commit: `fix: keep quality gates state in json contract` (hash: TBD)
+258. [TODO] `managed-markdown-authority-docs` Update SSOT documentation so paired managed technical stages define Markdown as user-facing review artifacts and JSON/Core/evidence as runtime authority; keep Diagram Modules Markdown semantic SSOT exception explicit — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit: `docs: clarify managed artifact authority`
+259. [TODO] Git Commit: `docs: clarify managed artifact authority` (hash: TBD)
+260. [TODO] `managed-markdown-authority-verify` Run targeted Application Skeleton / Quality Gates tests, core build, webview typecheck/build, and documentation link checks if feasible — scope: `core + webview + docs verification` Result: TBD
+261. [DONE] `release-confirmation-429` User explicitly requested applying the Markdown/JSON authority fixes, updating documentation, and building a new release — scope: user confirmation gate Result: User explicitly requested the fixes and a new release in this turn.
+
+### Stream: Release Build 1.2.429
+262. [TODO] `release-docs-429` Update README and CHANGELOG to 1.2.429 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.429 release notes`
+263. [TODO] Git Commit: `docs: prepare 1.2.429 release notes` (hash: TBD)
+264. [TODO] `release-build-429` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.429 release`
+265. [TODO] Git Commit: `chore: build 1.2.429 release` (hash: TBD)
+266. [TODO] `release-vsix-429` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.429 vsix`
+267. [TODO] Git Commit: `chore: package 1.2.429 vsix` (hash: TBD)
+268. [TODO] `release-acceptance-429` Hand off `codeai-hub-1.2.429.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-254. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+269. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
