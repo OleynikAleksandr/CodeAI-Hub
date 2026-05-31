@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.423] - 2026-05-31
+### Fixed
+- **Application Skeleton acceptance now stays Core-gated.** After the user confirms the reviewed Application Skeleton contract, Core immediately locks the managed input gate, performs materialization under that lock, and only releases on a Core-owned handoff.
+- **Successful materialization no longer opens a second user review.** Core now completes the materialized Application Skeleton handoff and activates Quality Gates directly after validation succeeds.
+- **Recoverable materialization failures return to the agent.** Failed scaffold/environment validation keeps the user handoff closed and dispatches a provider-visible repair turn instead of asking the user to adjudicate Core-generated errors.
+- **Managed lifecycle logs use the real workspace folder.** User-level managed workflow JSONL traces are grouped under `~/.codeai-hub/logs/managed-workflow/<workspace-folder-name>/`, not by initiative/demo slug.
+
+### Tests
+- `npm run build --workspace @codeai-hub/core`
+- `node --import tsx --test --test-name-pattern 'Application Skeleton' packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.managed-review.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.quality-gates.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.application-skeleton-completion.test.ts packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts`
+
 ## [1.2.422] - 2026-05-31
 ### Fixed
 - **Application Skeleton materialization failures now return to the agent.** After the user confirms the Application Skeleton draft, Core records failed scaffold/environment validation as a managed rejected turn, keeps the user handoff closed, and dispatches a provider-visible repair prompt instead of showing a diagnostics-only System error to the user.

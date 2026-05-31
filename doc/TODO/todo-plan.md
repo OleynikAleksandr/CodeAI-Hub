@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "9dff5a62c",
+  "lastRecordedCommit": "57418b5b1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "application-skeleton-auto-complete-materialization",
-  "expectedCommitMessage": "fix: auto-complete application skeleton materialization",
+  "currentTaskId": "release-docs-423",
+  "expectedCommitMessage": "docs: prepare 1.2.423 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: auto-complete application skeleton materialization",
-    "preCommitHead": "9dff5a62c",
+    "expectedCommitMessage": "docs: prepare 1.2.423 release notes",
+    "preCommitHead": "57418b5b1",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-auto-complete-materialization"
+    "taskId": "release-docs-423"
   }
 }
 ```
@@ -328,17 +328,17 @@
 
 ### Stream: Application Skeleton Materialization Acceptance (from 1.2.422 retest)
 175. [DONE] `application-skeleton-auto-complete-materialization` Lock input immediately after Application Skeleton review acceptance, keep failures routed to agent repair, auto-complete successful Core materialization into Quality Gates without a second user review, and group managed lifecycle logs by real workspace folder — scope: `packages/core/src/remote-bridge/handlers/**, doc/SolidWorks-WorkFlow/System/**, doc/TODO/todo-plan.md`; expected commit: `fix: auto-complete application skeleton materialization`
-176. [PENDING] Git Commit: `fix: auto-complete application skeleton materialization` (hash: TBD)
+176. [DONE] Git Commit: `fix: auto-complete application skeleton materialization` (hash: 57418b5b1)
 
 ### Stream: Tooling Verification
-177. [TODO] `application-skeleton-auto-complete-verify` Build core/webview and run targeted Application Skeleton review + managed workflow log tests — scope: `core + webview build`
+177. [DONE] `application-skeleton-auto-complete-verify` Build core/webview and run targeted Application Skeleton review + managed workflow log tests — scope: `core + webview build` Result: Verification passed: npm run build --workspace @codeai-hub/core; targeted Application Skeleton review, managed review, Quality Gates review, managed workflow turn, Application Skeleton completion, and managed workflow diagnostic trace tests all passed.
 
 ### Stream: Release Build Confirmation
 178. [DONE] `release-confirmation-423` Wait for explicit user confirmation before preparing release notes or running release build for the Application Skeleton auto-completion and log grouping fixes — scope: user confirmation gate Result: User explicitly requested implementing the discussed fixes and building a new release in this turn.
 
 ### Stream: Release Build
-179. [TODO] `release-docs-423` Update README and CHANGELOG to 1.2.423 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.423 release notes`
-180. [TODO] Git Commit: `docs: prepare 1.2.423 release notes` (hash: TBD)
+179. [DONE] `release-docs-423` Update README and CHANGELOG to 1.2.423 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.423 release notes`
+180. [PENDING] Git Commit: `docs: prepare 1.2.423 release notes` (hash: TBD)
 181. [TODO] `release-build-423` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.423 release`
 182. [TODO] Git Commit: `chore: build 1.2.423 release` (hash: TBD)
 183. [TODO] `release-vsix-423` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.423 vsix`
