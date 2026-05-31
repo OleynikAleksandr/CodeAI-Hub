@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { traceManagedWorkflowMessage } from "../remote-bridge/handlers/managed-workflow-diagnostic-trace";
 import type { SessionModelBinding } from "../session-model-binding";
 
 export type SessionRole = "user" | "assistant" | "system" | "thinking";
@@ -185,6 +186,7 @@ export class SessionManager {
     };
 
     session.messages.push(message);
+    traceManagedWorkflowMessage(session, message);
     session.updatedAt = message.timestamp;
     return message;
   }

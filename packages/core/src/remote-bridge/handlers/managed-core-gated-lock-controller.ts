@@ -1,9 +1,14 @@
+import type { Logger } from "../../telemetry/logger";
 import type { SessionContinuityLockReason } from "../../workspace-runtime/workspace-runtime-types";
+import { traceManagedWorkflowDiagnostic } from "./managed-workflow-diagnostic-trace";
 
 interface ManagedLockSession {
   readonly continuationParentId?: string | null;
   readonly id: string;
+  readonly initiativeSlug?: string | null;
+  readonly providerId?: string | null;
   readonly providerSessionId?: string | null;
+  readonly runSlug?: string | null;
   readonly stage?: string | null;
   readonly workspacePath?: string;
 }
@@ -13,6 +18,7 @@ interface ManagedLockDeps {
     readonly payload: { readonly event: unknown; readonly sessionId: string };
     readonly type: "session:stream";
   }) => void;
+  readonly logger?: Logger;
   readonly sessionManager: {
     getSession(sessionId: string): ManagedLockSession | null | undefined;
   };
@@ -69,12 +75,7 @@ export class ManagedCoreGatedLockController {
     active: boolean,
     options: { readonly force?: boolean } = {}
   ): boolean {
-    if (active && this.lockedSessions.has(sessionId) && !options.force) {
-      return true;
-    }
-    if (!(active || this.lockedSessions.has(sessionId))) {
-      return false;
-    }
+    const wasLocked = this.lockedSessions.has(sessionId);
     const session = this.deps.sessionManager.getSession(sessionId);
     if (
       !(
@@ -83,6 +84,22 @@ export class ManagedCoreGatedLockController {
         MANAGED_CORE_GATED_STAGES.has(session.stage as never)
       )
     ) {
+      return false;
+    }
+    if (active && wasLocked && !options.force) {
+      this.traceGate(session, "managed_input_gate.noop_already_locked", {
+        active,
+        force: options.force ?? false,
+        wasLocked,
+      });
+      return true;
+    }
+    if (!(active || wasLocked)) {
+      this.traceGate(session, "managed_input_gate.noop_already_unlocked", {
+        active,
+        force: options.force ?? false,
+        wasLocked,
+      });
       return false;
     }
     this.deps.workspaceRuntime?.notifyLockChanged(
@@ -100,13 +117,23 @@ export class ManagedCoreGatedLockController {
     } else {
       this.lockedSessions.delete(sessionId);
     }
-    this.emitManagedInputGate(session, active);
+    const sessionIds = this.resolveSessionAliases(session);
+    this.traceGate(session, "managed_input_gate.applied", {
+      active,
+      force: options.force ?? false,
+      reason: active ? "managed_core_gated" : null,
+      sessionIds,
+      wasLocked,
+      workspaceRuntimeNotified: Boolean(this.deps.workspaceRuntime),
+    });
+    this.emitManagedInputGate(session, active, sessionIds);
     return true;
   }
 
   private emitManagedInputGate(
     session: ManagedLockSession,
-    active: boolean
+    active: boolean,
+    sessionIds: readonly string[]
   ): void {
     this.deps.broadcaster?.({
       type: "session:stream",
@@ -120,12 +147,25 @@ export class ManagedCoreGatedLockController {
             active,
             reason: active ? "managed_core_gated" : null,
             providerSessionId: session.providerSessionId ?? null,
-            sessionIds: this.resolveSessionAliases(session),
+            sessionIds,
           },
           timestamp: new Date().toISOString(),
           uuid: `${session.id}::managed_input_gate::${active ? "lock" : "unlock"}::${Date.now()}`,
         },
       },
+    });
+  }
+
+  private traceGate(
+    session: ManagedLockSession,
+    event: string,
+    gate: Record<string, unknown>
+  ): void {
+    traceManagedWorkflowDiagnostic({
+      event,
+      logger: this.deps.logger,
+      payload: { gate },
+      session,
     });
   }
 
