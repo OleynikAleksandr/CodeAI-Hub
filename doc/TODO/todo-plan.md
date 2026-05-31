@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "73177273b",
+  "lastRecordedCommit": "247cc6b62",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-423",
-  "expectedCommitMessage": "chore: package 1.2.423 vsix",
+  "currentTaskId": "quality-gates-terminal-residue-flow",
+  "expectedCommitMessage": "fix: route quality gates terminal residue through core repair",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.423 vsix",
-    "preCommitHead": "73177273b",
+    "expectedCommitMessage": "fix: route quality gates terminal residue through core repair",
+    "preCommitHead": "247cc6b62",
     "stage": "commit_pending",
-    "taskId": "release-vsix-423"
+    "taskId": "quality-gates-terminal-residue-flow"
   }
 }
 ```
@@ -342,10 +342,16 @@
 181. [DONE] `release-build-423` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.423 release`
 182. [DONE] Git Commit: `chore: build 1.2.423 release` (hash: 73177273b)
 183. [DONE] `release-vsix-423` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.423 vsix` Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed with only active plan state dirty; verified SDK exclusions, production dependency pruning, VSIX runtime package surface, and created `codeai-hub-1.2.423.vsix` (4.6M; sha256 `4cae812071e069c229a5833000ddb3cbc43c79ef9db4edc4d6d2b24e32905b30`).
-184. [PENDING] Git Commit: `chore: package 1.2.423 vsix` (hash: TBD)
+184. [DONE] Git Commit: `chore: package 1.2.423 vsix` (hash: 247cc6b62)
 
 ### Stream: User Workflow Acceptance Testing
-185. [TODO] `release-acceptance-423` Hand off `codeai-hub-1.2.423.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+185. [DONE] `release-acceptance-423` Hand off `codeai-hub-1.2.423.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.423 failed: Quality Gates can reach terminal cleanup with unclassified residue after Core already committed integration/repair attempts; the step then opens a manual dirty-Git blocker even though this is a Core-owned orchestration commit boundary.
+
+### Stream: Quality Gates Terminal Residue Flow (from 1.2.423 retest)
+186. [DONE] `quality-gates-terminal-residue-flow` Route Quality Gates terminal dirty residue through Core-owned classification/repair instead of a manual user blocker: Core runtime ledgers are auto-committable, while generated root build artifacts force an agent repair before terminal completion — scope: `packages/core/src/managed-workflow-orchestration, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: route quality gates terminal residue through core repair`
+187. [PENDING] Git Commit: `fix: route quality gates terminal residue through core repair` (hash: TBD)
+188. [TODO] `quality-gates-terminal-residue-verify` Run targeted Quality Gates validator/terminal residue tests and core build — scope: `core build`
+189. [TODO] `release-confirmation-424` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates terminal residue fix — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-186. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+190. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

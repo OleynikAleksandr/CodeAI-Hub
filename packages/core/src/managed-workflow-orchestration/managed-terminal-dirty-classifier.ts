@@ -118,7 +118,9 @@ const resolveCoreRuntimePatterns = (
   `.codeai-hub/${workspaceSlug}/description/description-step.json`,
   `.codeai-hub/${workspaceSlug}/runtime/providers/`,
   `.codeai-hub/${workspaceSlug}/runtime/sessions/`,
+  `.codeai-hub/${workspaceSlug}/workflow/boundaries.json`,
   `.codeai-hub/${workspaceSlug}/workflow/checkpoints/`,
+  `.codeai-hub/${workspaceSlug}/workflow/managed/`,
   `.codeai-hub/${workspaceSlug}/workflow/state.json`,
   `.codeai-hub/${workspaceSlug}/workflow/undo-ledger.json`,
 ];

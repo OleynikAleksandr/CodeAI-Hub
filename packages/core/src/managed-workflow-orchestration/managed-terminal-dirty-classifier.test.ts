@@ -159,7 +159,9 @@ test("terminal dirty classifier allows quality-gate formatter residue without ac
       " M scripts/plan-orchestrator/plan-cli.mjs",
       " M product-parts/ai-providers/tsconfig.json",
       ` M .codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
+      ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/boundaries.json`,
       ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`,
+      ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/managed/diagram_modules.json`,
       ` M .codeai-hub/${WORKSPACE_SLUG}/workflow/managed/quality_gates.json`,
       "?? notes/manual-review.md",
     ],
@@ -172,7 +174,9 @@ test("terminal dirty classifier allows quality-gate formatter residue without ac
     "scripts/plan-orchestrator/plan-cli.mjs",
     "product-parts/ai-providers/tsconfig.json",
     `.codeai-hub/${WORKSPACE_SLUG}/application_skeleton/application-skeleton-map.json`,
+    `.codeai-hub/${WORKSPACE_SLUG}/workflow/boundaries.json`,
     `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/application_skeleton.json`,
+    `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/diagram_modules.json`,
     `.codeai-hub/${WORKSPACE_SLUG}/workflow/managed/quality_gates.json`,
   ]);
   assert.deepEqual(result.unclassifiedPaths, ["notes/manual-review.md"]);
