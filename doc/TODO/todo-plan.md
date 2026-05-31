@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "e4b766572",
+  "lastRecordedCommit": "931392187",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "quality-gates-dirty-stop-override",
-  "expectedCommitMessage": "fix: repair quality gates dirty gate and stop unlock",
+  "currentTaskId": "release-docs-427",
+  "expectedCommitMessage": "docs: prepare 1.2.427 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: repair quality gates dirty gate and stop unlock",
-    "preCommitHead": "e4b766572",
+    "expectedCommitMessage": "docs: prepare 1.2.427 release notes",
+    "preCommitHead": "931392187",
     "stage": "commit_pending",
-    "taskId": "quality-gates-dirty-stop-override"
+    "taskId": "release-docs-427"
   }
 }
 ```
@@ -410,9 +410,18 @@
 
 ### Stream: Quality Gates Dirty Gate + Stop Override (from 1.2.426 retest)
 228. [DONE] `quality-gates-dirty-stop-override` Route workspace-local generated build artifacts such as `.artifacts/go/terminal` back to Quality Gates repair before terminal handoff, and make Stop force-release Core-owned managed input gates with Project Manager forced-unlock projection — scope: `packages/core/src, src/client/project-manager/components/sessions, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: repair quality gates dirty gate and stop unlock`
-229. [PENDING] Git Commit: `fix: repair quality gates dirty gate and stop unlock` (hash: TBD)
-230. [TODO] `quality-gates-dirty-stop-verify` Run targeted Quality Gates residue, Stop/manual unlock, Project Manager forced unlock tests, then build core and webview — scope: `core + webview build`
+229. [DONE] Git Commit: `fix: repair quality gates dirty gate and stop unlock` (hash: 931392187)
+230. [DONE] `quality-gates-dirty-stop-verify` Run targeted Quality Gates residue, Stop/manual unlock, Project Manager forced unlock tests, then build core and webview — scope: `core + webview build` Result: Verification passed: Quality Gates terminal residue tests, Project Manager forced managed gate unlock tests, targeted Stop manual managed unlock test, @codeai-hub/core build, webview typecheck, and webview build all passed.
 231. [DONE] `release-confirmation-427` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates dirty gate and Stop override fixes — scope: user confirmation gate Result: User explicitly requested applying the fixes and building the new release.
 
+### Stream: Release Build 1.2.427
+232. [DONE] `release-docs-427` Update README and CHANGELOG to 1.2.427 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.427 release notes`
+233. [PENDING] Git Commit: `docs: prepare 1.2.427 release notes` (hash: TBD)
+234. [TODO] `release-build-427` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.427 release`
+235. [TODO] Git Commit: `chore: build 1.2.427 release` (hash: TBD)
+236. [TODO] `release-vsix-427` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.427 vsix`
+237. [TODO] Git Commit: `chore: package 1.2.427 vsix` (hash: TBD)
+238. [TODO] `release-acceptance-427` Hand off `codeai-hub-1.2.427.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+
 ### Stream: Scope Closeout
-232. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+239. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

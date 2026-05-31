@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.427] - 2026-05-31
+### Fixed
+- **Quality Gates workspace-local build artifacts return to agent repair.** Core now detects generated executable build outputs under `.artifacts/**`, such as `.artifacts/go/terminal`, as terminal residue diagnostics before Quality Gates handoff and instructs the agent to move future build output outside the workspace root.
+- **Stop force-releases managed input gates.** Core Stop now emits a forced managed input gate unlock and idle projection for managed technical sessions, and Project Manager accepts that forced unlock even when stale managed lock reasons remain in the dialog snapshot.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-terminal-residue-validator.test.ts src/client/project-manager/components/sessions/turn-state-stream.test.ts`
+- `node --import tsx --test --test-name-pattern "force-releases managed input gates" packages/core/src/remote-bridge/handlers/session-request-handler.stop.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.426] - 2026-05-31
 ### Fixed
 - **Quality Gates required gate ids no longer double-prefix npm script names.** Core now accepts contract gate ids that already use the canonical `qg:*` script-name form, preventing false `qg:qg:*` missing-script and missing-hook diagnostics during Quality Gates Baseline integration repair validation.
