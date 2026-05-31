@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "d65682250",
+  "lastRecordedCommit": "48c3047c8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "quality-gates-script-id-normalization",
-  "expectedCommitMessage": "fix: normalize quality gate script ids",
+  "currentTaskId": "release-docs-426",
+  "expectedCommitMessage": "docs: prepare 1.2.426 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: normalize quality gate script ids",
-    "preCommitHead": "d65682250",
+    "expectedCommitMessage": "docs: prepare 1.2.426 release notes",
+    "preCommitHead": "48c3047c8",
     "stage": "commit_pending",
-    "taskId": "quality-gates-script-id-normalization"
+    "taskId": "release-docs-426"
   }
 }
 ```
@@ -395,13 +395,13 @@
 
 ### Stream: Quality Gates Script ID Normalization (from 1.2.425 retest)
 217. [DONE] `quality-gates-script-id-normalization` Normalize required Quality Gate ids without double-prefixing already canonical `qg:*` script ids, and add regression coverage for colonized gate ids in package scripts and direct Husky hook calls — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-script-id.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: normalize quality gate script ids`
-218. [PENDING] Git Commit: `fix: normalize quality gate script ids` (hash: TBD)
-219. [TODO] `quality-gates-script-id-normalization-verify` Run targeted Quality Gates validator tests and core build — scope: `quality-gates validator tests, core build`
-220. [TODO] `release-confirmation-426` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates script-id normalization fix — scope: user confirmation gate
+218. [DONE] Git Commit: `fix: normalize quality gate script ids` (hash: 48c3047c8)
+219. [DONE] `quality-gates-script-id-normalization-verify` Run targeted Quality Gates validator tests and core build — scope: `quality-gates validator tests, core build` Result: Verification passed: targeted Quality Gates validator tests passed, including qg:* script id regression coverage; npm run build --workspace @codeai-hub/core passed.
+220. [DONE] `release-confirmation-426` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates script-id normalization fix — scope: user confirmation gate Result: User explicitly requested fixing the Quality Gates validator bug and building a new release in this turn.
 
 ### Stream: Release Build 1.2.426
-221. [TODO] `release-docs-426` Update README and CHANGELOG to 1.2.426 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.426 release notes`
-222. [TODO] Git Commit: `docs: prepare 1.2.426 release notes` (hash: TBD)
+221. [DONE] `release-docs-426` Update README and CHANGELOG to 1.2.426 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.426 release notes`
+222. [PENDING] Git Commit: `docs: prepare 1.2.426 release notes` (hash: TBD)
 223. [TODO] `release-build-426` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.426 release`
 224. [TODO] Git Commit: `chore: build 1.2.426 release` (hash: TBD)
 225. [TODO] `release-vsix-426` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.426 vsix`

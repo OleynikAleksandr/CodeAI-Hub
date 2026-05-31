@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.426] - 2026-05-31
+### Fixed
+- **Quality Gates required gate ids no longer double-prefix npm script names.** Core now accepts contract gate ids that already use the canonical `qg:*` script-name form, preventing false `qg:qg:*` missing-script and missing-hook diagnostics during Quality Gates Baseline integration repair validation.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-script-id.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.425] - 2026-05-31
 ### Fixed
 - **Quality Gates integration repair stays in the integration phase.** Core now uses the active Quality Gates stage-plan integration/repair microtask as phase authority before falling back to artifact lifecycle flags, so a provider repair cannot reopen draft user review by returning `accepted: false` / `integrated: false`.

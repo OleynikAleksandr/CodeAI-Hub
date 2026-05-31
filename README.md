@@ -2,7 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.425** (Quality Gates Phase Authority + Stage Plan Labels)
+**Current Release — v1.2.426** (Quality Gates Script ID Normalization)
+
+This release fixes the Quality Gates integration validator false negative found
+in 1.2.425. Core now treats already canonical `qg:*` gate ids as exact npm
+script names instead of rewriting them into `qg:qg:*`, so valid package scripts
+and direct Husky hook calls are accepted during Quality Gates Baseline
+integration repair validation.
+
+**Previous Release — v1.2.425** (Quality Gates Phase Authority + Stage Plan Labels)
 
 This release fixes the Quality Gates integration repair lifecycle. Core now
 keeps Quality Gates validation in the stage-plan-owned integration phase while
