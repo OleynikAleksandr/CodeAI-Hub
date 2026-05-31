@@ -38,6 +38,7 @@ import {
   validateQualityGatesManagedArtifacts,
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
 import type { Session, SessionManager } from "../../session-manager";
+import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
 import { dispatchManagedInternalContinuation as dispatchContinuation } from "./managed-internal-continuation-dispatch";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
@@ -331,11 +332,11 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       return "settled";
     }
     if (decision.nextAction === "open_persistent_return") {
-      this.appendCoreMessage(params.sessionId, {
-        content: buildApplicationSkeletonReviewHandoffMessage(
-          "materialized_skeleton"
-        ),
-        tag: "managed-workflow-user-review",
+      await completeApplicationSkeletonMaterializedHandoff({
+        eventMessages: this.options.eventMessages,
+        sessionId: params.sessionId,
+        stagePlan: this.applicationStagePlan,
+        workspaceRoot: params.workspaceRoot,
       });
     }
     return "settled";

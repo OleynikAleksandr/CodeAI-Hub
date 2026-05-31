@@ -4,6 +4,7 @@ import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
 import { type BridgeEvent, readAppliedProviderTurnConfig } from "../types";
+import { ManagedCoreGatedLockController } from "./managed-core-gated-lock-controller";
 import type { SessionContinuityLockService } from "./session-continuity-lock-service";
 import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
 import {
@@ -85,14 +86,22 @@ const resolveCurrentReviewGateMessageId = (session: Session): string | null => {
 
 export class SessionRequestHandlerSessionActions {
   private readonly deps: SessionRequestHandlerSessionActionsOptions;
+  private readonly managedCoreGatedLock: ManagedCoreGatedLockController;
   private readonly managedReviewDecisions: SessionRequestHandlerManagedReviewDecisions;
 
   constructor(options: SessionRequestHandlerSessionActionsOptions) {
     this.deps = options;
+    this.managedCoreGatedLock = new ManagedCoreGatedLockController(options);
     this.managedReviewDecisions =
       new SessionRequestHandlerManagedReviewDecisions({
         broadcaster: (event) => options.broadcaster(event as BridgeEvent),
         eventMessages: options.eventMessages,
+        managedInputGate: {
+          lock: (sessionId) =>
+            this.managedCoreGatedLock.lockForCoreArbitration(sessionId),
+          release: (sessionId) =>
+            this.managedCoreGatedLock.apply(sessionId, undefined),
+        },
         messageDispatch: options.messageDispatch,
       });
   }

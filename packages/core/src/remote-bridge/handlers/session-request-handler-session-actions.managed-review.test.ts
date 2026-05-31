@@ -35,6 +35,10 @@ const createActions = (sessionManager: SessionManager) => {
   }> = [];
   const dispatchedUserMessages: string[] = [];
   const events: BridgeEvent[] = [];
+  const lockEvents: Array<{
+    readonly active: boolean;
+    readonly reason?: string | null;
+  }> = [];
   const sentInternalMessages: string[] = [];
   const actions = new SessionRequestHandlerSessionActions({
     appliedTurnConfig: {} as never,
@@ -108,6 +112,14 @@ const createActions = (sessionManager: SessionManager) => {
     sessionManager,
     sessionStorage: {} as never,
     stopRebind: { ensureSessionReadyForSend: async () => true } as never,
+    workspaceRuntime: {
+      notifyLockChanged: (
+        _sessionKey: unknown,
+        options: { readonly active: boolean; readonly reason?: string | null }
+      ) => {
+        lockEvents.push(options);
+      },
+    } as never,
   });
   return {
     actions,
@@ -115,6 +127,7 @@ const createActions = (sessionManager: SessionManager) => {
     dialogMessages,
     dispatchedUserMessages,
     events,
+    lockEvents,
     sentInternalMessages,
   };
 };
@@ -279,6 +292,10 @@ test("Application Skeleton review confirmation dispatches materialization repair
     assert.equal(
       harness.coreMessages.at(-1)?.tag,
       "managed-workflow-validation"
+    );
+    assert.deepEqual(
+      harness.lockEvents.map((event) => event.active),
+      [true]
     );
     assert.doesNotMatch(
       String(harness.coreMessages.at(-1)?.content),

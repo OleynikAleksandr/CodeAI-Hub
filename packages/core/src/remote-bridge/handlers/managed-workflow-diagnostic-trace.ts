@@ -61,13 +61,24 @@ const resolveUserLogsRoot = (): string =>
   process.env.CODEAI_HUB_LOGS_DIR?.trim() ||
   path.join(homedir(), ".codeai-hub", "logs");
 
+const resolveWorkspaceLogFolder = (
+  session: ManagedWorkflowDiagnosticSession
+): string => {
+  const workspaceName = session.workspacePath
+    .replace(/\\/gu, "/")
+    .split("/")
+    .filter(Boolean)
+    .at(-1);
+  return workspaceName?.trim() || session.initiativeSlug;
+};
+
 export const resolveManagedWorkflowDiagnosticLogPath = (
   session: ManagedWorkflowDiagnosticSession
 ): string =>
   path.join(
     resolveUserLogsRoot(),
     "managed-workflow",
-    session.initiativeSlug,
+    resolveWorkspaceLogFolder(session),
     MANAGED_STAGE_LOG_FILES[session.stage]
   );
 

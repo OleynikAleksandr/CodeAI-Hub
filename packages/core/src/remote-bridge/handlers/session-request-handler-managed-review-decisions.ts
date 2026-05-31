@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { ApplicationSkeletonCoreMaterializer } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
@@ -12,30 +10,23 @@ import {
   isApplicationSkeletonReviewOpen,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-review-intent";
 import { ApplicationSkeletonStagePlanController } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller";
-import {
-  APPLICATION_STAGE_PLAN_PATH,
-  PHASE4_TASK_ID,
-} from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model";
+import { PHASE4_TASK_ID } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model";
 import { parseMaterializationRepairTaskNumber } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-repair-model";
 import { validateApplicationSkeletonManagedArtifacts } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-validator";
 import {
   acceptDiagramModulesReviewWithoutRevision,
   isDiagramModulesReviewOpen,
 } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance";
-import {
-  buildApplicationSkeletonReviewHandoffMessage,
-  buildManagedPersistentReturnHandoffMessage,
-} from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
+import { buildManagedPersistentReturnHandoffMessage } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
 import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
-import {
-  PLAN_END,
-  PLAN_START,
-  REVIEW_TASK_PREFIX as QUALITY_GATES_REVIEW_TASK_PREFIX,
-  QUALITY_GATES_STAGE_PLAN_PATH,
-} from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model";
 import type { Session } from "../../session-manager";
 import { WorkflowStepCommitFacade } from "../../workflow/boundary/workflow-step-commit-facade";
+import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
 import { persistApplicationSkeletonManagedDecision } from "./application-skeleton-managed-decision-persister";
+import {
+  isQualityGatesReviewOpen,
+  readApplicationSkeletonTaskId,
+} from "./managed-review-state-readers";
 import {
   dispatchQualityGatesReviewRevision,
   openQualityGatesNextAcceptedReviewPhase,
@@ -58,6 +49,10 @@ interface ManagedReviewDecisionDeps {
     SessionRequestHandlerEventMessages,
     "appendCoreMessage" | "appendDialogMessage" | "waitForMessagePersistence"
   >;
+  readonly managedInputGate?: {
+    readonly lock: (sessionId: string) => boolean;
+    readonly release: (sessionId: string) => void;
+  };
   readonly messageDispatch: Pick<
     SessionRequestHandlerMessageDispatch,
     "sendInternalMessage"
@@ -68,8 +63,6 @@ const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const QUALITY_GATES_STAGE = "quality_gates";
 const ACCEPT_RE =
   /(?:\b(?:accept(?:ed)?|approv(?:e|ed)|confirm(?:ed)?|ok(?:ay)?)\b|(?:^|[\s,.;:!?])(?:п[іi]дтверджую|подтверждаю)(?:$|[\s,.;:!?]))/iu;
-const FENCED_JSON_END_RE = /\s*```$/u;
-const FENCED_JSON_START_RE = /^```json\s*/u;
 const NEGATED_ACCEPT_RE =
   /(?:\b(?:do\s+not|don't|not)\s+(?:accept|approve|confirm)\b|(?:^|[\s,.;:!?])(?:не|не\s+надо|не\s+нужно)\s+(?:подтверждаю|п[іi]дтверджую)(?:$|[\s,.;:!?]))/iu;
 const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
@@ -86,64 +79,6 @@ const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   return "revision";
 };
 
-const isQualityGatesReviewOpen = async (
-  workspaceRoot: string
-): Promise<boolean> => {
-  const planText = await readFile(
-    path.join(workspaceRoot, QUALITY_GATES_STAGE_PLAN_PATH),
-    "utf8"
-  ).catch(() => null);
-  if (!planText) {
-    return false;
-  }
-  const json = planText
-    .split(PLAN_START)[1]
-    ?.split(PLAN_END)[0]
-    ?.trim()
-    .replace(FENCED_JSON_START_RE, "")
-    .replace(FENCED_JSON_END_RE, "")
-    .trim();
-  if (!json) {
-    return false;
-  }
-  try {
-    const state = JSON.parse(json) as { readonly currentTaskId?: unknown };
-    return (
-      typeof state.currentTaskId === "string" &&
-      state.currentTaskId.startsWith(QUALITY_GATES_REVIEW_TASK_PREFIX)
-    );
-  } catch {
-    return false;
-  }
-};
-
-const readApplicationSkeletonTaskId = async (
-  workspaceRoot: string
-): Promise<string | null> => {
-  const planText = await readFile(
-    path.join(workspaceRoot, APPLICATION_STAGE_PLAN_PATH),
-    "utf8"
-  ).catch(() => null);
-  if (!planText) {
-    return null;
-  }
-  const json = planText
-    .split(PLAN_START)[1]
-    ?.split(PLAN_END)[0]
-    ?.trim()
-    .replace(FENCED_JSON_START_RE, "")
-    .replace(FENCED_JSON_END_RE, "")
-    .trim();
-  if (!json) {
-    return null;
-  }
-  try {
-    const state = JSON.parse(json) as { readonly currentTaskId?: unknown };
-    return typeof state.currentTaskId === "string" ? state.currentTaskId : null;
-  } catch {
-    return null;
-  }
-};
 export class SessionRequestHandlerManagedReviewDecisions {
   private readonly applicationSkeletonStagePlan =
     new ApplicationSkeletonStagePlanController();
@@ -311,6 +246,12 @@ export class SessionRequestHandlerManagedReviewDecisions {
     if (!(session.workspacePath && session.initiativeSlug)) {
       return;
     }
+    const gateLocked = this.deps.managedInputGate?.lock(session.id) ?? false;
+    const releaseGate = (): void => {
+      if (gateLocked) {
+        this.deps.managedInputGate?.release(session.id);
+      }
+    };
     try {
       await this.applicationSkeletonStagePlan.acceptUserReviewWithoutRevision({
         workspaceRoot: session.workspacePath,
@@ -322,12 +263,24 @@ export class SessionRequestHandlerManagedReviewDecisions {
         ),
         tag: "managed-workflow-validation",
       });
+      releaseGate();
       return;
     }
-    await this.applicationSkeletonMaterializer.materialize({
-      workspaceRoot: session.workspacePath,
-      workspaceSlug: session.initiativeSlug,
-    });
+    try {
+      await this.applicationSkeletonMaterializer.materialize({
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      });
+    } catch (error) {
+      this.deps.eventMessages.appendCoreMessage(session.id, {
+        content: buildApplicationSkeletonBoundaryBlockedMessage(
+          error instanceof Error ? error.message : String(error)
+        ),
+        tag: "managed-workflow-validation",
+      });
+      releaseGate();
+      return;
+    }
     const decision = await validateApplicationSkeletonManagedArtifacts({
       workspaceRoot: session.workspacePath,
       workspaceSlug: session.initiativeSlug,
@@ -357,6 +310,7 @@ export class SessionRequestHandlerManagedReviewDecisions {
           ),
           tag: "managed-workflow-validation",
         });
+        releaseGate();
         return;
       }
       this.deps.eventMessages.appendCoreMessage(session.id, {
@@ -395,39 +349,21 @@ export class SessionRequestHandlerManagedReviewDecisions {
         ),
         tag: "managed-workflow-validation",
       });
+      releaseGate();
       return;
     }
-    this.deps.eventMessages.appendCoreMessage(session.id, {
-      content: buildApplicationSkeletonReviewHandoffMessage(
-        "materialized_skeleton"
-      ),
-      tag: "managed-workflow-user-review",
-    });
-  }
-  private async completeApplicationSkeletonFinalReview(
-    session: Session
-  ): Promise<void> {
-    if (!session.workspacePath) {
-      return;
-    }
-    try {
-      await this.applicationSkeletonStagePlan.acceptFinalMaterializedReview({
+    if (session.workspacePath) {
+      await completeApplicationSkeletonMaterializedHandoff({
+        broadcaster: this.deps.broadcaster,
+        eventMessages: this.deps.eventMessages,
+        sessionId: session.id,
+        stagePlan: this.applicationSkeletonStagePlan,
         workspaceRoot: session.workspacePath,
       });
-    } catch (error) {
-      this.deps.eventMessages.appendCoreMessage(session.id, {
-        content: buildApplicationSkeletonBoundaryBlockedMessage(
-          error instanceof Error ? error.message : String(error)
-        ),
-        tag: "managed-workflow-validation",
-      });
-      return;
     }
-    this.deps.broadcaster({
-      payload: { stage: QUALITY_GATES_STAGE },
-      type: "workflow:stage:activate",
-    });
+    releaseGate();
   }
+
   private async acceptApplicationSkeletonReview(
     session: Session,
     phase: ApplicationSkeletonReviewPhase
@@ -436,7 +372,16 @@ export class SessionRequestHandlerManagedReviewDecisions {
       await this.openApplicationSkeletonMaterialization(session);
       return;
     }
-    await this.completeApplicationSkeletonFinalReview(session);
+    if (!session.workspacePath) {
+      return;
+    }
+    await completeApplicationSkeletonMaterializedHandoff({
+      broadcaster: this.deps.broadcaster,
+      eventMessages: this.deps.eventMessages,
+      sessionId: session.id,
+      stagePlan: this.applicationSkeletonStagePlan,
+      workspaceRoot: session.workspacePath,
+    });
   }
   private async completeDiagramModulesReview(session: Session): Promise<void> {
     if (!(session.workspacePath && session.initiativeSlug)) {

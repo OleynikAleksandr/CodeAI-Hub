@@ -48,7 +48,7 @@ test("managed technical stage diagnostics are written under user-level logs", ()
       const logPath = resolveManagedWorkflowDiagnosticLogPath(session);
       assert.equal(
         logPath,
-        path.join(logRoot, "managed-workflow", "workspace-a", fileName)
+        path.join(logRoot, "managed-workflow", "project", fileName)
       );
       assert.ok(!logPath.startsWith("/workspace/project/"));
 
@@ -83,7 +83,7 @@ test("non-managed stage diagnostics are ignored", () => {
     });
 
     assert.equal(
-      existsSync(path.join(logRoot, "managed-workflow", "workspace-a")),
+      existsSync(path.join(logRoot, "managed-workflow", "project")),
       false
     );
   });
