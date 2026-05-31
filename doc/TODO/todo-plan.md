@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "57418b5b1",
+  "lastRecordedCommit": "eb1584f05",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-docs-423",
-  "expectedCommitMessage": "docs: prepare 1.2.423 release notes",
+  "currentTaskId": "release-build-423",
+  "expectedCommitMessage": "chore: build 1.2.423 release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.423 release notes",
-    "preCommitHead": "57418b5b1",
+    "expectedCommitMessage": "chore: build 1.2.423 release",
+    "preCommitHead": "eb1584f05",
     "stage": "commit_pending",
-    "taskId": "release-docs-423"
+    "taskId": "release-build-423"
   }
 }
 ```
@@ -338,9 +338,9 @@
 
 ### Stream: Release Build
 179. [DONE] `release-docs-423` Update README and CHANGELOG to 1.2.423 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.423 release notes`
-180. [PENDING] Git Commit: `docs: prepare 1.2.423 release notes` (hash: TBD)
-181. [TODO] `release-build-423` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.423 release`
-182. [TODO] Git Commit: `chore: build 1.2.423 release` (hash: TBD)
+180. [DONE] Git Commit: `docs: prepare 1.2.423 release notes` (hash: eb1584f05)
+181. [DONE] `release-build-423` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.423 release`
+182. [PENDING] Git Commit: `chore: build 1.2.423 release` (hash: TBD)
 183. [TODO] `release-vsix-423` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.423 vsix`
 184. [TODO] Git Commit: `chore: package 1.2.423 vsix` (hash: TBD)
 
