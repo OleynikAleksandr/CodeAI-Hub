@@ -1,6 +1,18 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { isRecord } from "./application-skeleton-foundation-contract";
+import {
+  buildDeclaredConfigFile,
+  buildEntrypoint,
+  buildPackageLock,
+  buildProductPartPackageJson,
+  buildProductPartTsconfig,
+  buildReadme,
+  buildRootBaseTsconfig,
+  buildRootPackageJson,
+  buildRootWorkspaceTsconfig,
+  shouldMaterializeNpmProductPart,
+} from "./application-skeleton-materializer-content";
 
 const DEFAULT_REQUIRED_SCRIPTS = ["build", "typecheck", "test:smoke"] as const;
 const MAP_FILE_NAME = "application-skeleton-map.json";
@@ -109,116 +121,14 @@ const collectProductPartNodes = (
       })
     : [];
 
-const toPackageName = (id: string): string =>
-  `@codeai-hub/${id.replace(/[^a-z0-9-]/giu, "-").toLowerCase()}`;
-
-const buildRootPackageJson = (
-  packageManager: string,
-  productParts: readonly TreeNode[]
-): string =>
-  `${JSON.stringify(
-    {
-      name: "codeai-generated-workspace",
-      private: true,
-      scripts: {
-        build: `${packageManager} run build --workspaces --if-present`,
-        "test:smoke": `${packageManager} run test:smoke --workspaces --if-present`,
-        typecheck: `${packageManager} run typecheck --workspaces --if-present`,
-      },
-      workspaces: productParts.map((node) => node.codePath),
-      devDependencies: {
-        typescript: "^5.9.3",
-      },
-    },
-    null,
-    2
-  )}\n`;
-
-const buildPackageLock = (productParts: readonly TreeNode[]): string =>
-  `${JSON.stringify(
-    {
-      name: "codeai-generated-workspace",
-      lockfileVersion: 3,
-      requires: true,
-      packages: {
-        "": {
-          name: "codeai-generated-workspace",
-          workspaces: productParts.map((node) => node.codePath),
-          devDependencies: {
-            typescript: "^5.9.3",
-          },
-        },
-      },
-    },
-    null,
-    2
-  )}\n`;
-
-const buildProductPartPackageJson = (node: TreeNode): string =>
-  `${JSON.stringify(
-    {
-      name: toPackageName(node.id),
-      private: true,
-      scripts: {
-        build: "tsc -p tsconfig.json",
-        "test:smoke": `node -e "console.log('${node.id} smoke ok')"`,
-        typecheck: "tsc -p tsconfig.json --noEmit",
-      },
-      version: "0.0.0",
-    },
-    null,
-    2
-  )}\n`;
-
-const buildProductPartTsconfig = (): string =>
-  `${JSON.stringify(
-    {
-      extends: "../../tsconfig.base.json",
-      compilerOptions: {
-        outDir: "dist",
-        rootDir: ".",
-      },
-      include: ["src/**/*.ts", "clusters/**/*.ts", "modules/**/*.ts"],
-    },
-    null,
-    2
-  )}\n`;
-
-const buildRootWorkspaceTsconfig = (
-  productParts: readonly TreeNode[]
-): string =>
-  `${JSON.stringify(
-    {
-      files: [],
-      references: productParts.map((node) => ({ path: node.codePath })),
-    },
-    null,
-    2
-  )}\n`;
-
-const buildRootBaseTsconfig = (): string =>
-  `${JSON.stringify(
-    {
-      compilerOptions: {
-        declaration: true,
-        esModuleInterop: true,
-        module: "NodeNext",
-        moduleResolution: "NodeNext",
-        noEmitOnError: true,
-        outDir: "dist",
-        strict: true,
-        target: "ES2022",
-      },
-    },
-    null,
-    2
-  )}\n`;
-
-const buildReadme = (node: TreeNode): string =>
-  `# ${node.id}\n\nMaterialized ${node.kind} placeholder for implementation agents.\n`;
-
-const buildEntrypoint = (id: string): string =>
-  `export const moduleId = ${JSON.stringify(id)};\n`;
+const ROOT_CONFIG_FILES = [
+  ".gitignore",
+  ".npmrc",
+  "package-lock.json",
+  "package.json",
+  "tsconfig.json",
+  "tsconfig.base.json",
+] as const;
 
 const buildMarkdown = (params: {
   readonly materializedPaths: readonly string[];
@@ -293,43 +203,63 @@ export class ApplicationSkeletonCoreMaterializer {
     const foundation = isRecord(mapJson.projectFoundation)
       ? mapJson.projectFoundation
       : {};
-    const firstWaveEntrypoints = unique([
-      ...readStringArray(foundation, "firstWaveEntrypoints"),
-      ...productParts.map((node) => `${node.codePath}/src/index.ts`),
+    const declaredConfigFiles = unique(
+      readStringArray(foundation, "configFiles")
+    );
+    const firstWaveEntrypoints = unique(
+      readStringArray(foundation, "firstWaveEntrypoints")
+    );
+    const npmProductParts = productParts.filter((node) =>
+      shouldMaterializeNpmProductPart({
+        configFiles: declaredConfigFiles,
+        entrypoints: firstWaveEntrypoints,
+        node,
+      })
+    );
+    const npmProductPartConfigFiles = unique(
+      npmProductParts.flatMap((node) => [
+        `${node.codePath}/package.json`,
+        `${node.codePath}/tsconfig.json`,
+      ])
+    );
+    const configFiles = unique([
+      ...declaredConfigFiles,
+      ...ROOT_CONFIG_FILES,
+      ...npmProductPartConfigFiles,
     ]);
     const basePaths = unique([
-      ".gitignore",
-      ".npmrc",
-      "package-lock.json",
-      "package.json",
-      "tsconfig.json",
-      "tsconfig.base.json",
+      ...ROOT_CONFIG_FILES,
       ...allNodes.flatMap((node) => [
         node.codePath,
         `${node.codePath}/README.md`,
       ]),
-      ...productParts.flatMap((node) => [
-        `${node.codePath}/package.json`,
-        `${node.codePath}/tsconfig.json`,
-      ]),
+      ...configFiles,
       ...firstWaveEntrypoints,
     ]);
     await this.writeRootFiles(
       params.workspaceRoot,
       packageManager,
-      productParts
+      npmProductParts
     );
     await Promise.all(
-      productParts.map((node) =>
+      npmProductParts.map((node) =>
         this.writeProductPartFiles(params.workspaceRoot, node)
       )
     );
+    await this.writeDeclaredConfigFiles({
+      configFiles: declaredConfigFiles,
+      handledConfigFiles: unique([
+        ...ROOT_CONFIG_FILES,
+        ...npmProductPartConfigFiles,
+      ]),
+      workspaceRoot: params.workspaceRoot,
+    });
     await Promise.all(
       allNodes.map((node) =>
         this.writeFile(
           params.workspaceRoot,
           `${node.codePath}/README.md`,
-          buildReadme(node)
+          buildReadme({ id: node.id, kind: node.kind })
         )
       )
     );
@@ -338,21 +268,13 @@ export class ApplicationSkeletonCoreMaterializer {
         this.writeFile(
           params.workspaceRoot,
           entrypoint,
-          buildEntrypoint(slugFromPath(entrypoint))
+          buildEntrypoint(entrypoint)
         )
       )
     );
     const nextFoundation = {
       ...foundation,
-      configFiles: unique([
-        ...readStringArray(foundation, "configFiles"),
-        ".gitignore",
-        ".npmrc",
-        "package-lock.json",
-        "package.json",
-        "tsconfig.json",
-        "tsconfig.base.json",
-      ]),
+      configFiles,
       firstWaveEntrypoints,
       installCommand:
         packageManager === "npm"
@@ -384,6 +306,25 @@ export class ApplicationSkeletonCoreMaterializer {
       buildMarkdown({ materializedPaths: basePaths, productParts })
     );
     return { materializedPaths: basePaths };
+  }
+
+  private async writeDeclaredConfigFiles(params: {
+    readonly configFiles: readonly string[];
+    readonly handledConfigFiles: readonly string[];
+    readonly workspaceRoot: string;
+  }): Promise<void> {
+    const handled = new Set(params.handledConfigFiles);
+    await Promise.all(
+      params.configFiles
+        .filter((configFile) => !handled.has(configFile))
+        .map((configFile) =>
+          this.writeFile(
+            params.workspaceRoot,
+            configFile,
+            buildDeclaredConfigFile(configFile)
+          )
+        )
+    );
   }
 
   private async writeRootFiles(

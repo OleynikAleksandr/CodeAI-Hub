@@ -19,6 +19,8 @@ const LOCAL_STATE_IGNORE_RE = /\.codeai-hub\/state\//u;
 const MARKDOWN_TITLE_RE = /^# Application Skeleton/mu;
 const CORE_MATERIALIZER_RE = /Core-owned scaffold materializer/u;
 const MATERIALIZED_STATE_RE = /materializationState`\s*:\s*`materialized/u;
+const PYTHON_MAIN_MODULE_RE = /MODULE_ID = "main-py"/u;
+const GO_MAIN_PACKAGE_RE = /^package main/mu;
 
 const createWorkspace = async (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "application-skeleton-materializer-"));
@@ -105,6 +107,17 @@ const assertPathExists = async (
   );
 };
 
+const assertPathMissing = async (
+  workspaceRoot: string,
+  relativePath: string
+): Promise<void> => {
+  assert.equal(
+    await stat(path.join(workspaceRoot, relativePath)).catch(() => null),
+    null,
+    `expected ${relativePath} to be absent`
+  );
+};
+
 test("Core materializer creates scaffold and materialized state from accepted Application Skeleton map", async () => {
   const workspaceRoot = await createWorkspace();
   try {
@@ -129,7 +142,6 @@ test("Core materializer creates scaffold and materialized state from accepted Ap
       "product-parts/core-runtime/clusters/remote-bridge/modules/session-gateway/README.md",
       "product-parts/core-runtime/modules/health-signal/README.md",
       "product-parts/core-runtime/src/core-entry.ts",
-      "product-parts/core-runtime/src/index.ts",
     ]) {
       await assertPathExists(workspaceRoot, relativePath);
     }
@@ -185,6 +197,132 @@ test("Core materializer creates scaffold and materialized state from accepted Ap
     assert.match(markdown, MARKDOWN_TITLE_RE);
     assert.match(markdown, CORE_MATERIALIZER_RE);
     assert.match(markdown, MATERIALIZED_STATE_RE);
+  } finally {
+    await rm(workspaceRoot, { recursive: true, force: true });
+  }
+});
+
+test("Core materializer honors polyglot contract config files and entrypoints", async () => {
+  const workspaceRoot = await createWorkspace();
+  try {
+    const stageDir = path.join(
+      workspaceRoot,
+      ".codeai-hub",
+      WORKSPACE_SLUG,
+      "application_skeleton"
+    );
+    await mkdir(stageDir, { recursive: true });
+    await writeFile(
+      path.join(stageDir, "application-skeleton-map.json"),
+      `${JSON.stringify(
+        {
+          accepted: false,
+          materializationState: "not_started",
+          materialized: false,
+          packageManager: "npm",
+          productParts: [
+            {
+              codePath: "product-parts/engine",
+              id: "engine",
+            },
+            {
+              codePath: "product-parts/web-surface",
+              id: "web-surface",
+            },
+            {
+              codePath: "product-parts/terminal-surface",
+              id: "terminal-surface",
+            },
+          ],
+          projectFoundation: {
+            configFiles: [
+              ".gitignore",
+              ".npmrc",
+              "package-lock.json",
+              "package.json",
+              "tsconfig.base.json",
+              "tsconfig.json",
+              "product-parts/engine/pyproject.toml",
+              "product-parts/web-surface/package.json",
+              "product-parts/web-surface/tsconfig.json",
+              "product-parts/terminal-surface/go.mod",
+            ],
+            firstWaveEntrypoints: [
+              "product-parts/engine/src/main.py",
+              "product-parts/web-surface/src/main.tsx",
+              "product-parts/terminal-surface/cmd/terminal-surface/main.go",
+            ],
+            installCommand: "npm install --include=dev",
+            requiredScripts: ["build", "typecheck", "test:smoke"],
+          },
+          reviewState: "draft",
+          schema: "codeai-application-skeleton-v1",
+          sourceRoot: "product-parts",
+          stack: {
+            frameworks: ["FastAPI", "React", "Bubble Tea"],
+            languages: ["Python", "TypeScript", "Go"],
+            runtimes: ["Python 3.13", "Node.js", "Go 1.24"],
+          },
+          workspaceRoot: ".",
+        },
+        null,
+        2
+      )}\n`,
+      "utf8"
+    );
+
+    const result = await new ApplicationSkeletonCoreMaterializer().materialize({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    for (const relativePath of [
+      "product-parts/engine/pyproject.toml",
+      "product-parts/engine/src/main.py",
+      "product-parts/web-surface/package.json",
+      "product-parts/web-surface/tsconfig.json",
+      "product-parts/web-surface/src/main.tsx",
+      "product-parts/terminal-surface/go.mod",
+      "product-parts/terminal-surface/cmd/terminal-surface/main.go",
+    ]) {
+      await assertPathExists(workspaceRoot, relativePath);
+      assert.ok(result.materializedPaths.includes(relativePath));
+    }
+
+    await assertPathMissing(workspaceRoot, "product-parts/engine/package.json");
+    await assertPathMissing(
+      workspaceRoot,
+      "product-parts/engine/tsconfig.json"
+    );
+    await assertPathMissing(
+      workspaceRoot,
+      "product-parts/terminal-surface/package.json"
+    );
+    await assertPathMissing(
+      workspaceRoot,
+      "product-parts/terminal-surface/tsconfig.json"
+    );
+
+    assert.match(
+      await readFile(
+        path.join(workspaceRoot, "product-parts/engine/src/main.py"),
+        "utf8"
+      ),
+      PYTHON_MAIN_MODULE_RE
+    );
+    assert.match(
+      await readFile(
+        path.join(
+          workspaceRoot,
+          "product-parts/terminal-surface/cmd/terminal-surface/main.go"
+        ),
+        "utf8"
+      ),
+      GO_MAIN_PACKAGE_RE
+    );
+
+    const rootPackage = await readJson(workspaceRoot, "package.json");
+    assert.deepEqual(rootPackage.workspaces, ["product-parts/web-surface"]);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

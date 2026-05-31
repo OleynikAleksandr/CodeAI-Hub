@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "195d3f1ad",
+  "lastRecordedCommit": "968e59aa6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-420",
-  "expectedCommitMessage": "chore: package 1.2.420 vsix",
+  "currentTaskId": "application-skeleton-polyglot-materializer",
+  "expectedCommitMessage": "fix: materialize application skeleton contract files",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.420 vsix",
-    "preCommitHead": "195d3f1ad",
+    "expectedCommitMessage": "fix: materialize application skeleton contract files",
+    "preCommitHead": "968e59aa6",
     "stage": "commit_pending",
-    "taskId": "release-vsix-420"
+    "taskId": "application-skeleton-polyglot-materializer"
   }
 }
 ```
@@ -273,10 +273,35 @@
 144. [DONE] `release-build-420` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.420 release` Result: `./scripts/build-all.sh --allow-dirty` passed; dirty input was limited to the active plan transition. Provider/core/UI/launcher artifacts for 1.2.420 were produced in `~/.codeai-hub/releases/` and copied into `doc/tmp/releases/`.
 145. [DONE] Git Commit: `chore: build 1.2.420 release` (hash: 195d3f1ad)
 146. [DONE] `release-vsix-420` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.420 vsix` Result: `./scripts/build-release.sh --use-current-version --allow-dirty` passed with only active plan state dirty; verified `Step 7: Verifying SDK exclusions`, `Removing dev dependencies before packaging`, `✅ Package created`, and VSIX runtime package surface. Package: `codeai-hub-1.2.420.vsix` (4.5M).
-147. [PENDING] Git Commit: `chore: package 1.2.420 vsix` (hash: TBD)
+147. [DONE] Git Commit: `chore: package 1.2.420 vsix` (hash: 968e59aa6)
 
 ### Stream: User Workflow Acceptance Testing
-148. [TODO] `release-acceptance-420` Hand off `codeai-hub-1.2.420.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+148. [DONE] `release-acceptance-420` Hand off `codeai-hub-1.2.420.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.420 confirmed Diagram Modules now keeps the managed input gate correctly, but Application Skeleton materialization fails after user acceptance because Core writes an npm/TypeScript-only scaffold, omits contract-declared polyglot config files, and leaves contradictory materialized state after validation failure.
+
+### Stream: Application Skeleton Materialization Repair (from 1.2.420 retest)
+149. [DONE] `application-skeleton-polyglot-materializer` Make the Core-owned Application Skeleton materializer honor accepted contract paths, create declared polyglot config files, write syntax-valid first-wave entrypoints, and document the deterministic materialization boundary — scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/*materializer*, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: materialize application skeleton contract files`
+150. [PENDING] Git Commit: `fix: materialize application skeleton contract files` (hash: TBD)
+
+### Stream: Managed Lifecycle Logs For Technical Stages
+151. [TODO] `managed-lifecycle-stage-logs` Extend user-level managed workflow lifecycle JSONL logging from Diagram Modules to Application Skeleton and Quality Gates Baseline, keeping all logs outside workspace runtime capsules — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: trace all managed technical stages`
+152. [TODO] Git Commit: `feat: trace all managed technical stages` (hash: TBD)
+
+### Stream: Tooling Verification
+153. [TODO] `managed-technical-stage-verify` Build core/webview and run targeted Application Skeleton materializer + managed lifecycle trace tests — scope: `core + webview build`
+
+### Stream: Release Build Confirmation
+154. [DONE] `release-confirmation-421` Wait for explicit user confirmation before preparing release notes or running release build for the Application Skeleton repair and lifecycle log expansion — scope: user confirmation gate Result: User explicitly requested adding Application Skeleton and Quality Gates Baseline lifecycle logs, fixing the issue, and building a new release in this turn.
+
+### Stream: Release Build
+155. [TODO] `release-docs-421` Update README and CHANGELOG to 1.2.421 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.421 release notes`
+156. [TODO] Git Commit: `docs: prepare 1.2.421 release notes` (hash: TBD)
+157. [TODO] `release-build-421` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.421 release`
+158. [TODO] Git Commit: `chore: build 1.2.421 release` (hash: TBD)
+159. [TODO] `release-vsix-421` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.421 vsix`
+160. [TODO] Git Commit: `chore: package 1.2.421 vsix` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+161. [TODO] `release-acceptance-421` Hand off `codeai-hub-1.2.421.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-149. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+162. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
