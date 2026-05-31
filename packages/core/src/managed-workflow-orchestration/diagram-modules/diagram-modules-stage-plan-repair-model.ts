@@ -65,7 +65,7 @@ export const appendDiagramModulesRepairStep = (params: {
     params.attemptNumber === 1
       ? [
           "",
-          "## Phase 1 — Diagram Modules Artifact Repairs",
+          "## Diagram Modules Artifact Repair Cycle",
           "",
           "### Stream: Core-Gated Repair Attempts",
           "",

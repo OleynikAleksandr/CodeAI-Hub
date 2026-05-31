@@ -148,7 +148,7 @@ export const appendDraftRepairStep = (
     attemptNumber === 1
       ? [
           "",
-          "## Phase 1 — Application Skeleton Draft Repairs",
+          "## Application Skeleton Draft Repair Cycle",
           "",
           "### Stream: Core-Gated Repair Attempts",
           "",
@@ -177,7 +177,7 @@ export const appendMaterializationRepairStep = (
     attemptNumber === 1
       ? [
           "",
-          "## Phase 3 — Application Skeleton Materialization Repairs",
+          "## Application Skeleton Materialization Repair Cycle",
           "",
           "### Stream: Core-Gated Repair Attempts",
           "",

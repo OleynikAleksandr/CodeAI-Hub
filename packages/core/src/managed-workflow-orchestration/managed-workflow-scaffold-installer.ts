@@ -236,7 +236,7 @@ const createStagePlan = (stage: keyof typeof STAGE_PLAN_PATHS): string => {
   const diagramModulesBody =
     stage === "diagram_modules"
       ? `
-## Phase 0 — Managed Input Checkpoint
+## Managed Input Checkpoint
 
 ### Stream: Core Git Hygiene
 

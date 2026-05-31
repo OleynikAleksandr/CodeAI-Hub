@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "5ac3f8683",
+  "lastRecordedCommit": "71a254bad",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "quality-gates-stage-plan-visible-phase-numbering",
-  "expectedCommitMessage": "fix: clarify quality gates stage plan phase numbering",
+  "currentTaskId": "managed-stage-plan-visible-phase-convention",
+  "expectedCommitMessage": "fix: normalize managed stage plan visible phase numbering",
   "debt": {
-    "expectedCommitMessage": "fix: clarify quality gates stage plan phase numbering",
-    "preCommitHead": "5ac3f8683",
+    "expectedCommitMessage": "fix: normalize managed stage plan visible phase numbering",
+    "preCommitHead": "71a254bad",
     "stage": "commit_pending",
-    "taskId": "quality-gates-stage-plan-visible-phase-numbering"
+    "taskId": "managed-stage-plan-visible-phase-convention"
   }
 }
 ```
@@ -375,9 +375,14 @@
 
 ### Stream: Quality Gates Stage Plan Phase Labels (from 1.2.424 retest)
 203. [DONE] `quality-gates-stage-plan-visible-phase-numbering` Make generated Quality Gates repair sections visibly distinct from base numbered phases so the stage plan cannot show two different `Phase 1` or `Phase 3` headings — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clarify quality gates stage plan phase numbering`
-204. [PENDING] Git Commit: `fix: clarify quality gates stage plan phase numbering` (hash: TBD)
-205. [TODO] `quality-gates-stage-plan-visible-phase-numbering-verify` Run targeted Quality Gates stage-plan tests and core build — scope: `quality-gates stage-plan tests, core build`
-206. [TODO] `release-confirmation-425` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates integration phase authority fixes — scope: user confirmation gate
+204. [DONE] Git Commit: `fix: clarify quality gates stage plan phase numbering` (hash: 71a254bad)
+205. [DONE] `quality-gates-stage-plan-visible-phase-numbering-verify` Run targeted Quality Gates stage-plan tests and core build — scope: `quality-gates stage-plan tests, core build` Result: Targeted Quality Gates stage-plan tests passed, validator regression tests passed, and @codeai-hub/core build passed.
+
+### Stream: Managed Stage Plan Visible Phase Convention (from 1.2.424 retest)
+206. [DONE] `managed-stage-plan-visible-phase-convention` Normalize visible managed stage plan numbering so numbered headings start at Phase 1 and Core-only checkpoint/repair cycles use unnumbered section headings — scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-repair-model.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-model.ts`; expected commit: `fix: normalize managed stage plan visible phase numbering`
+207. [PENDING] Git Commit: `fix: normalize managed stage plan visible phase numbering` (hash: TBD)
+208. [TODO] `managed-stage-plan-visible-phase-convention-verify` Run targeted managed stage-plan tests and core build — scope: `managed stage-plan tests, core build`
+209. [TODO] `release-confirmation-425` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates integration phase authority fixes — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-207. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+210. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
