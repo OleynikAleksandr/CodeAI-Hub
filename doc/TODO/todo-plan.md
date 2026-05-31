@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "5cf905dcc",
+  "lastRecordedCommit": "5e5e38042",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "quality-gates-markdown-readability",
-  "expectedCommitMessage": "fix: keep quality gates state in json contract",
+  "currentTaskId": "managed-markdown-authority-docs",
+  "expectedCommitMessage": "docs: clarify managed artifact authority",
   "debt": {
-    "expectedCommitMessage": "fix: keep quality gates state in json contract",
-    "preCommitHead": "5cf905dcc",
+    "expectedCommitMessage": "docs: clarify managed artifact authority",
+    "preCommitHead": "5e5e38042",
     "stage": "commit_pending",
-    "taskId": "quality-gates-markdown-readability"
+    "taskId": "managed-markdown-authority-docs"
   }
 }
 ```
@@ -446,9 +446,9 @@
 254. [DONE] `application-skeleton-markdown-readability` Stop Application Skeleton materialization validation from treating `application-skeleton.md` as runtime lifecycle state while preserving Markdown existence/header checks — scope: `packages/core/src/remote-bridge/handlers/application-skeleton-materialization-validator.ts, packages/core/src/remote-bridge/handlers/application-skeleton-progress.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep application skeleton state in map json`
 255. [DONE] Git Commit: `fix: keep application skeleton state in map json` (hash: 5cf905dcc)
 256. [DONE] `quality-gates-markdown-readability` Stop Quality Gates integration validation from treating `quality-gates.md` as terminal integration state while preserving Markdown existence/header checks and JSON/evidence blockers — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `fix: keep quality gates state in json contract`
-257. [PENDING] Git Commit: `fix: keep quality gates state in json contract` (hash: TBD)
-258. [TODO] `managed-markdown-authority-docs` Update SSOT documentation so paired managed technical stages define Markdown as user-facing review artifacts and JSON/Core/evidence as runtime authority; keep Diagram Modules Markdown semantic SSOT exception explicit — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit: `docs: clarify managed artifact authority`
-259. [TODO] Git Commit: `docs: clarify managed artifact authority` (hash: TBD)
+257. [DONE] Git Commit: `fix: keep quality gates state in json contract` (hash: 5e5e38042)
+258. [DONE] `managed-markdown-authority-docs` Update SSOT documentation so paired managed technical stages define Markdown as user-facing review artifacts and JSON/Core/evidence as runtime authority; keep Diagram Modules Markdown semantic SSOT exception explicit — scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Contracts/Workflow_CLI.md`; expected commit: `docs: clarify managed artifact authority`
+259. [PENDING] Git Commit: `docs: clarify managed artifact authority` (hash: TBD)
 260. [TODO] `managed-markdown-authority-verify` Run targeted Application Skeleton / Quality Gates tests, core build, webview typecheck/build, and documentation link checks if feasible — scope: `core + webview + docs verification` Result: TBD
 261. [DONE] `release-confirmation-429` User explicitly requested applying the Markdown/JSON authority fixes, updating documentation, and building a new release — scope: user confirmation gate Result: User explicitly requested the fixes and a new release in this turn.
 

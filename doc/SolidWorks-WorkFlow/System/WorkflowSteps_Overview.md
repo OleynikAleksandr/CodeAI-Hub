@@ -262,6 +262,7 @@ Manual start из sidebar Workflow Tree:
 
 `product-parts/<part-id>.md` являются canonical semantic artifacts отдельных `Product Part`.
 Каждый такой файл materialize-ит один ownership subtree `Product Part -> Cluster -> Module`.
+This is the intentional Markdown semantic SSOT exception among the managed technical stages until a future machine-readable semantic sidecar is explicitly introduced.
 
 `module-map.flow.json` хранит layout/view state визуального редактора — placeholder positions, viewport и (в формате v2) опциональную секцию `layoutParams` с declarative CSS Grid overrides (`columns`/`targetAspectRatio` на ProductPart, `moduleColumns` на Cluster).
 Visual diagram materialize-ится runtime из Core-owned parsed projection of index + part artifacts и не требует отдельного raw semantic map-файла в workspace. Parser requirements for `part_id`, Product Part identity, Cluster/Module fields, graph diagnostics, and renderability belong to the Core/shared artifact contract; Project Manager renders the projection and layout sidecar only.
@@ -298,8 +299,8 @@ Application Skeleton не выбирает и не интегрирует qualit
 The stage indicator is Core-owned: when the Application Skeleton continuity chain/session is active, workflow-state must project the step as in progress before final artifacts exist, so Project Manager and future clients render the orange active marker from Core state instead of inferring status locally.
 
 The stable artifact contract remains:
-- draft/review artifacts are `application-skeleton.md` and `application-skeleton-map.json`;
-- materialization state is represented in `application-skeleton-map.json`;
+- `application-skeleton.md` is the user-facing review artifact: Core validates that it exists and belongs to the Application Skeleton stage, but it is not runtime lifecycle state after materialization;
+- `application-skeleton-map.json` is the machine-readable contract and materialization authority;
 - `projectFoundation`, empty `openQuestions`, package manifest/lockfile, required scripts, config files, and first-wave source/facade entrypoints are validated by Core before downstream unlock;
 - Quality Gates Baseline remains locked until Core validates and commits that Application Skeleton materialization includes the accepted project foundation, not just `materialized: true`; successful validation auto-completes Application Skeleton without a second user review gate;
 - Development Tree bootstrap remains locked until Core has committed validated materialized skeleton output and Quality Gates integration evidence.
@@ -341,11 +342,13 @@ Provider-visible instructions for this step stay content-scoped: write/update th
 ### Execution contract
 
 - **Draft contract:** агент пишет только `quality-gates.md` и `quality-gates.json`; он не создаёт package scripts, configs, hooks, CI files, gate scripts, Development Tree artifacts или production code.
+- **Artifact authority:** `quality-gates.md` is the user-facing review artifact; `quality-gates.json` owns accepted/integrated state, gate availability, integration paths, and verification data for Core validation.
 - **Draft cleanup:** before a draft/review commit, Core restores or removes prohibited integration residue such as `package.json`, package-manager lockfiles, `.husky/pre-commit`, `.husky/pre-push`, and `scripts/quality-gates/**`. These paths become valid outputs only after user acceptance opens the Integration phase.
 - **Review:** пользователь может принять contract или перечислить правки. Core классифицирует это по активному stage plan; acceptance открывает integration phase, а правки остаются review revision task.
 - **Integration:** агент интегрирует gates только после Core prompt Phase 3 Quality Gates Integration и только в accepted scope: package scripts/lockfiles, `.husky/pre-commit`, `.husky/pre-push`, `scripts/quality-gates/**`, selected configs/CI files, and accepted gate artifacts.
 - Hook structure имеет Core validation owner: every gate listed in `requiredBeforeCommit` or `requiredBeforePush` must have a package script and a direct lifecycle hook call before the step can complete.
 - `quality-gates.json` обязан разделять намерение и фактическую исполнимость: `desiredStatus`, `availability`, `integrationRequired`, `plannedIntegrationPaths`, `blockingIn`, `accepted`, `integrated`, `integrationState`, `integratedPaths`, `verification`.
+- Terminal integration must not infer required gate state from Markdown prose or tables. Markdown must remain present with the `# Quality Gates Baseline` heading, while JSON, package scripts, hooks, and filesystem evidence decide whether the stage can complete.
 - Advisory/planned/deferred gates не могут быть active blockers. `availability: "not_integrated"` для required gate допустим только с `integrationRequired: true` и конкретными `plannedIntegrationPaths`.
 
 ---

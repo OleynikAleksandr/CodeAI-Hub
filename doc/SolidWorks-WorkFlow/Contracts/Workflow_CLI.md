@@ -1,7 +1,7 @@
 # Workflow Steps & Watcher — Contract (SSOT)
 
 **Status:** Active
-**Updated:** 2026-05-09
+**Updated:** 2026-05-31
 **Owner:** Oleksandr + Codex
 
 ---
@@ -42,11 +42,11 @@
   - `.codeai-hub/<workspaceSlug>/diagram_modules/product-parts/<part-id>.md` (canonical semantic artifacts per Product Part)
   - `.codeai-hub/<workspaceSlug>/diagram_modules/module-map.flow.json` (layout/view sidecar)
 - `Application Skeleton`:
-  - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton.md`
-  - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton-map.json`
+  - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton.md` (user-facing review artifact)
+  - `.codeai-hub/<workspaceSlug>/application_skeleton/application-skeleton-map.json` (machine contract and materialization state)
 - `Quality Gates Baseline`:
-  - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.md`
-  - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`
+  - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.md` (user-facing review artifact)
+  - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json` (machine contract and integration state)
 
 Legacy `description.md` допускается только для compat и не участвует в gating новых workflow.
 
@@ -58,7 +58,13 @@ Legacy `description.md` допускается только для compat и н�
   - `Artifacts` по умолчанию открывает визуальный Module Graph, построенный из staged product-part файлов;
   - `Help` показывает guidance по шагу.
 - Visible PM surface для diagram step рендерится через nested CSS Grid (React Flow удалён в релизе `1.1.921`) и управляется через right-click context menu (layout params `columns`, `targetAspectRatio`, `moduleColumns`, сохраняемые в `module-map.flow.json` v2 `layoutParams`); inline semantic editors не допускаются.
-- Semantic changes ожидаются через agent-run или прямое редактирование canonical Markdown artifact.
+- Semantic changes ожидаются через agent-run или прямое редактирование canonical Markdown artifact. This Markdown-as-semantic-SSOT rule is specific to `Diagram Modules`; paired Markdown/JSON stages use JSON/Core evidence as runtime state and Markdown as user-readable review output.
+
+### 3.2 Paired Markdown/JSON authority
+
+- `Application Skeleton`: `application-skeleton.md` is readable review prose; `application-skeleton-map.json` owns lifecycle fields such as `accepted`, `materialized`, `materializationState`, `openQuestions`, `projectFoundation`, and materialized path declarations.
+- `Quality Gates Baseline`: `quality-gates.md` is readable review prose; `quality-gates.json` owns `accepted`, `integrated`, `integrationState`, command availability, required gate arrays, `integratedPaths`, and verification state.
+- Core validators may require paired Markdown files to exist and carry the correct top-level heading, but they must not use Markdown prose/table values as authoritative runtime state when a paired machine-readable contract exists.
 
 ---
 
