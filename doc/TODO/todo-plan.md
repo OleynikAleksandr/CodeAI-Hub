@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "a88e835fe",
+  "lastRecordedCommit": "337da8a8e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-lifecycle-pm-trace",
-  "expectedCommitMessage": "feat: trace project manager input gate state",
+  "currentTaskId": "managed-lifecycle-pm-diagnostics-test-guard",
+  "expectedCommitMessage": "fix: guard pm input diagnostics outside browser",
   "debt": {
-    "expectedCommitMessage": "feat: trace project manager input gate state",
-    "preCommitHead": "a88e835fe",
+    "expectedCommitMessage": "fix: guard pm input diagnostics outside browser",
+    "preCommitHead": "337da8a8e",
     "stage": "commit_pending",
-    "taskId": "managed-lifecycle-pm-trace"
+    "taskId": "managed-lifecycle-pm-diagnostics-test-guard"
   }
 }
 ```
@@ -242,20 +242,22 @@
 121. [DONE] `managed-lifecycle-core-trace` Add workspace-local managed workflow diagnostics for Diagram Modules persisted messages, Core input gate transitions, and provider dispatch metadata — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/session-manager/index.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts`; expected commit: `feat: trace managed workflow lifecycle`
 122. [DONE] Git Commit: `feat: trace managed workflow lifecycle` (hash: a88e835fe)
 123. [DONE] `managed-lifecycle-pm-trace` Add Project Manager-side diagnostics for managed continuation tag locks, release tags, workspace snapshot lock decisions, and applied connection state — scope: `src/client/project-manager/components/sessions/managed-input-diagnostics.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts, src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `feat: trace project manager input gate state`
-124. [PENDING] Git Commit: `feat: trace project manager input gate state` (hash: TBD)
-125. [TODO] `managed-lifecycle-verify` Build core/webview and run targeted managed lifecycle diagnostic tests — scope: `core + webview build`
-126. [TODO] `release-confirmation-419` Wait for explicit user confirmation before preparing release notes or running release build for the managed lifecycle diagnostics — scope: user confirmation gate
+124. [DONE] Git Commit: `feat: trace project manager input gate state` (hash: 337da8a8e)
+125. [DONE] `managed-lifecycle-pm-diagnostics-test-guard` Guard Project Manager input diagnostics so node tests and non-browser module imports never initialize the VS Code bridge — scope: `src/client/project-manager/components/sessions/managed-input-diagnostics.ts`; expected commit: `fix: guard pm input diagnostics outside browser`
+126. [PENDING] Git Commit: `fix: guard pm input diagnostics outside browser` (hash: TBD)
+127. [TODO] `managed-lifecycle-verify` Build core/webview and run targeted managed lifecycle diagnostic tests — scope: `core + webview build`
+128. [TODO] `release-confirmation-419` Wait for explicit user confirmation before preparing release notes or running release build for the managed lifecycle diagnostics — scope: user confirmation gate
 
 ### Stream: Release Build
-127. [TODO] `release-docs-419` Update README and CHANGELOG to 1.2.419 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.419 release notes`
-128. [TODO] Git Commit: `docs: prepare 1.2.419 release notes` (hash: TBD)
-129. [TODO] `release-build-419` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.419 release`
-130. [TODO] Git Commit: `chore: build 1.2.419 release` (hash: TBD)
-131. [TODO] `release-vsix-419` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.419 vsix`
-132. [TODO] Git Commit: `chore: package 1.2.419 vsix` (hash: TBD)
+129. [TODO] `release-docs-419` Update README and CHANGELOG to 1.2.419 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.419 release notes`
+130. [TODO] Git Commit: `docs: prepare 1.2.419 release notes` (hash: TBD)
+131. [TODO] `release-build-419` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.419 release`
+132. [TODO] Git Commit: `chore: build 1.2.419 release` (hash: TBD)
+133. [TODO] `release-vsix-419` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.419 vsix`
+134. [TODO] Git Commit: `chore: package 1.2.419 vsix` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
-133. [TODO] `release-acceptance-419` Hand off `codeai-hub-1.2.419.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+135. [TODO] `release-acceptance-419` Hand off `codeai-hub-1.2.419.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-134. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+136. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
