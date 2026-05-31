@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "728b3e2e7",
+  "lastRecordedCommit": "1a50aa81e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "application-skeleton-valid-entrypoints",
-  "expectedCommitMessage": "fix: write valid application skeleton scaffold entrypoints",
+  "currentTaskId": "application-skeleton-repair-dispatch",
+  "expectedCommitMessage": "fix: dispatch application skeleton materialization repair",
   "debt": {
-    "expectedCommitMessage": "fix: write valid application skeleton scaffold entrypoints",
-    "preCommitHead": "728b3e2e7",
+    "expectedCommitMessage": "fix: dispatch application skeleton materialization repair",
+    "preCommitHead": "1a50aa81e",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-valid-entrypoints"
+    "taskId": "application-skeleton-repair-dispatch"
   }
 }
 ```
@@ -305,9 +305,9 @@
 
 ### Stream: Application Skeleton Materialization Repair Flow (from 1.2.421 retest)
 162. [DONE] `application-skeleton-valid-entrypoints` Fix Core-owned Application Skeleton scaffold content so fallback Product Part entrypoints are syntax-valid for their actual file paths and TypeScript project configs include TSX cluster sources — scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-materializer-content.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts`; expected commit: `fix: write valid application skeleton scaffold entrypoints`
-163. [PENDING] Git Commit: `fix: write valid application skeleton scaffold entrypoints` (hash: TBD)
-164. [TODO] `application-skeleton-repair-dispatch` Route Application Skeleton materialization/environment validation failures back into a provider-visible repair turn, keep user-facing diagnostics concise, and mark failed materialization state instead of leaving a false materialized success marker — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: dispatch application skeleton materialization repair`
-165. [TODO] Git Commit: `fix: dispatch application skeleton materialization repair` (hash: TBD)
+163. [DONE] Git Commit: `fix: write valid application skeleton scaffold entrypoints` (hash: 1a50aa81e)
+164. [DONE] `application-skeleton-repair-dispatch` Route Application Skeleton materialization/environment validation failures back into a provider-visible repair turn, keep user-facing diagnostics concise, and mark failed materialization state instead of leaving a false materialized success marker — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.managed-review.test.ts`; expected commit: `fix: dispatch application skeleton materialization repair`
+165. [PENDING] Git Commit: `fix: dispatch application skeleton materialization repair` (hash: TBD)
 
 ### Stream: Tooling Verification
 166. [TODO] `application-skeleton-repair-verify` Build core/webview and run targeted Application Skeleton materializer + managed repair flow tests — scope: `core + webview build`

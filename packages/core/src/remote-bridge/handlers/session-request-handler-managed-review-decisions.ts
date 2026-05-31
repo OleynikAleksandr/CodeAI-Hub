@@ -3,6 +3,7 @@ import path from "node:path";
 import { ApplicationSkeletonCoreMaterializer } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
+  buildApplicationSkeletonMaterializationRepairPrompt,
   buildApplicationSkeletonMaterializationRevisionPrompt,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-prompt-builder";
 import {
@@ -15,6 +16,7 @@ import {
   APPLICATION_STAGE_PLAN_PATH,
   PHASE4_TASK_ID,
 } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-model";
+import { parseMaterializationRepairTaskNumber } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-repair-model";
 import { validateApplicationSkeletonManagedArtifacts } from "../../managed-workflow-orchestration/application-skeleton/application-skeleton-validator";
 import {
   acceptDiagramModulesReviewWithoutRevision,
@@ -44,14 +46,12 @@ import { SessionRequestHandlerPreliminaryReviewCommitter } from "./session-reque
 
 type ManagedReviewIntent = "accept" | "none" | "revision";
 type ApplicationSkeletonReviewPhase = "draft" | "final";
-
 interface ManagedReviewDecisionOptions {
   readonly content: string;
   readonly hiddenUserMessage: boolean;
   readonly session: Session;
   readonly sessionId: string;
 }
-
 interface ManagedReviewDecisionDeps {
   readonly broadcaster: (event: unknown) => void;
   readonly eventMessages: Pick<
@@ -63,7 +63,6 @@ interface ManagedReviewDecisionDeps {
     "sendInternalMessage"
   >;
 }
-
 const APPLICATION_SKELETON_STAGE = "application_skeleton";
 const DIAGRAM_MODULES_STAGE = "diagram_modules";
 const QUALITY_GATES_STAGE = "quality_gates";
@@ -73,7 +72,6 @@ const FENCED_JSON_END_RE = /\s*```$/u;
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const NEGATED_ACCEPT_RE =
   /(?:\b(?:do\s+not|don't|not)\s+(?:accept|approve|confirm)\b|(?:^|[\s,.;:!?])(?:не|не\s+надо|не\s+нужно)\s+(?:подтверждаю|п[іi]дтверджую)(?:$|[\s,.;:!?]))/iu;
-
 const classifyManagedReviewIntent = (content: string): ManagedReviewIntent => {
   const normalized = content.trim();
   if (!normalized) {
@@ -146,7 +144,6 @@ const readApplicationSkeletonTaskId = async (
     return null;
   }
 };
-
 export class SessionRequestHandlerManagedReviewDecisions {
   private readonly applicationSkeletonStagePlan =
     new ApplicationSkeletonStagePlanController();
@@ -157,7 +154,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
   private readonly qualityGatesStagePlan =
     new QualityGatesStagePlanController();
   private readonly stepCommitFacade = new WorkflowStepCommitFacade();
-
   constructor(deps: ManagedReviewDecisionDeps) {
     this.deps = deps;
     this.preliminaryReviewCommitter =
@@ -166,7 +162,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
         eventMessages: deps.eventMessages,
       });
   }
-
   async handleReviewDecision(
     options: ManagedReviewDecisionOptions
   ): Promise<boolean> {
@@ -194,7 +189,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       intent: classifyManagedReviewIntent(options.content),
     });
   }
-
   private async handleApplicationSkeletonReviewDecision(
     options: ManagedReviewDecisionOptions & {
       readonly intent: ManagedReviewIntent;
@@ -230,7 +224,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     );
     return true;
   }
-
   private async resolveApplicationSkeletonReviewPhase(
     workspaceRoot: string
   ): Promise<ApplicationSkeletonReviewPhase | null> {
@@ -242,7 +235,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       ? "final"
       : null;
   }
-
   private async handleDiagramModulesReviewDecision(
     options: ManagedReviewDecisionOptions & {
       readonly intent: ManagedReviewIntent;
@@ -304,7 +296,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     });
     return true;
   }
-
   private appendUserReviewMessage(options: ManagedReviewDecisionOptions): void {
     if (options.hiddenUserMessage) {
       return;
@@ -314,7 +305,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       role: "user",
     });
   }
-
   private async openApplicationSkeletonMaterialization(
     session: Session
   ): Promise<void> {
@@ -342,18 +332,55 @@ export class SessionRequestHandlerManagedReviewDecisions {
       workspaceRoot: session.workspacePath,
       workspaceSlug: session.initiativeSlug,
     });
-    await persistApplicationSkeletonManagedDecision({ decision, session });
     if (!decision.valid) {
+      const failedMap =
+        await this.applicationSkeletonMaterializer.markMaterializationFailed({
+          diagnostics: decision.diagnostics,
+          workspaceRoot: session.workspacePath,
+          workspaceSlug: session.initiativeSlug,
+        });
+      const failedDecision = { ...decision, mapJson: failedMap };
+      await persistApplicationSkeletonManagedDecision({
+        decision: failedDecision,
+        session,
+      });
+      const planAdvance =
+        await this.applicationSkeletonStagePlan.commitRejectedTurn({
+          decision: failedDecision,
+          workspaceRoot: session.workspacePath,
+          workspaceSlug: session.initiativeSlug,
+        });
+      if (planAdvance.blocked) {
+        this.deps.eventMessages.appendCoreMessage(session.id, {
+          content: buildApplicationSkeletonBoundaryBlockedMessage(
+            planAdvance.blocked.message
+          ),
+          tag: "managed-workflow-validation",
+        });
+        return;
+      }
       this.deps.eventMessages.appendCoreMessage(session.id, {
         content: [
-          "Core-owned Application Skeleton materialization failed validation.",
-          "Diagnostics:",
-          ...decision.diagnostics.map((diagnostic) => `- ${diagnostic}`),
+          "Core обнаружил ошибку материализации Application Skeleton.",
+          "Repair prompt отправлен агенту внутренним сообщением.",
         ].join("\n"),
         tag: "managed-workflow-validation",
       });
+      await this.deps.messageDispatch.sendInternalMessage(
+        session.id,
+        buildApplicationSkeletonMaterializationRepairPrompt({
+          attemptNumber:
+            parseMaterializationRepairTaskNumber(
+              planAdvance.commit.nextTaskId ?? ""
+            ) ?? 1,
+          diagnostics: decision.diagnostics,
+          rejectedCommitHash: planAdvance.commit.hash,
+          workspaceSlug: session.initiativeSlug,
+        })
+      );
       return;
     }
+    await persistApplicationSkeletonManagedDecision({ decision, session });
     const planAdvance =
       await this.applicationSkeletonStagePlan.commitManagedTurn({
         decision,
@@ -377,7 +404,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       tag: "managed-workflow-user-review",
     });
   }
-
   private async completeApplicationSkeletonFinalReview(
     session: Session
   ): Promise<void> {
@@ -402,7 +428,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       type: "workflow:stage:activate",
     });
   }
-
   private async acceptApplicationSkeletonReview(
     session: Session,
     phase: ApplicationSkeletonReviewPhase
@@ -413,7 +438,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
     }
     await this.completeApplicationSkeletonFinalReview(session);
   }
-
   private async completeDiagramModulesReview(session: Session): Promise<void> {
     if (!(session.workspacePath && session.initiativeSlug)) {
       return;
@@ -452,7 +476,6 @@ export class SessionRequestHandlerManagedReviewDecisions {
       return;
     }
   }
-
   private async dispatchApplicationSkeletonReviewRevision(
     session: Session,
     content: string,

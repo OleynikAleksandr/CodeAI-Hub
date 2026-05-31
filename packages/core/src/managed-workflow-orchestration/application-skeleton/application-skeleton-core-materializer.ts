@@ -183,6 +183,60 @@ const buildMarkdown = (params: {
     "",
   ].join("\n");
 
+const buildFailedMarkdown = (params: {
+  readonly diagnostics: readonly string[];
+  readonly materializedPaths: readonly string[];
+  readonly productParts: readonly TreeNode[];
+}): string =>
+  [
+    "# Application Skeleton",
+    "",
+    "## Overview",
+    "",
+    "Application Skeleton принят пользователем, но Core-owned scaffold materializer не прошел post-materialization validation.",
+    "",
+    "## Status",
+    "",
+    "| Field | Value |",
+    "| --- | --- |",
+    "| accepted | `true` |",
+    "| materialized | `false` |",
+    "| reviewState | `accepted` |",
+    "| materializationState | `failed` |",
+    "",
+    "- `accepted`: `true`",
+    "- `materialized`: `false`",
+    "- `reviewState`: `accepted`",
+    "- `materializationState`: `failed`",
+    "",
+    "## Architecture",
+    "",
+    "Core сохраняет принятый Development Tree и блокирует пользовательский handoff до успешной repair/materialization validation.",
+    "",
+    "## Stack",
+    "",
+    "Bootstrap остается Core-owned; provider repair-turn должен исправлять только контракт, если diagnostics указывают на неоднозначность контракта.",
+    "",
+    "## Product Parts",
+    "",
+    ...params.productParts.map(
+      (node) => `- \`${node.id}\` → \`${node.codePath}\``
+    ),
+    "",
+    "## Filesystem",
+    "",
+    ...params.materializedPaths.map((entry) => `- \`${entry}\``),
+    "",
+    "## Materialization",
+    "",
+    "Материализация остановлена в failed-state. Пользовательский review gate не открыт.",
+    "",
+    "## Assumptions",
+    "",
+    ...params.diagnostics.map((diagnostic) => `- ${diagnostic}`),
+    "",
+  ].join("\n");
+
 export class ApplicationSkeletonCoreMaterializer {
   async materialize(params: {
     readonly workspaceRoot: string;
@@ -310,6 +364,43 @@ export class ApplicationSkeletonCoreMaterializer {
       buildMarkdown({ materializedPaths: basePaths, productParts })
     );
     return { materializedPaths: basePaths };
+  }
+
+  async markMaterializationFailed(params: {
+    readonly diagnostics: readonly string[];
+    readonly workspaceRoot: string;
+    readonly workspaceSlug: string;
+  }): Promise<Record<string, unknown>> {
+    const artifactRoot = `.codeai-hub/${params.workspaceSlug}/application_skeleton`;
+    const mapPath = `${artifactRoot}/${MAP_FILE_NAME}`;
+    const markdownPath = `${artifactRoot}/${MARKDOWN_FILE_NAME}`;
+    const mapJson = JSON.parse(
+      await readFile(path.join(params.workspaceRoot, mapPath), "utf8")
+    ) as Record<string, unknown>;
+    const materializedPaths = readStringArray(mapJson, "materializedPaths");
+    const failedMap = {
+      ...mapJson,
+      accepted: true,
+      materializationDiagnostics: [...params.diagnostics],
+      materializationState: "failed",
+      materialized: false,
+      reviewState: "accepted",
+    };
+    await this.writeFile(
+      params.workspaceRoot,
+      mapPath,
+      `${JSON.stringify(failedMap, null, 2)}\n`
+    );
+    await this.writeFile(
+      params.workspaceRoot,
+      markdownPath,
+      buildFailedMarkdown({
+        diagnostics: params.diagnostics,
+        materializedPaths,
+        productParts: collectProductPartNodes(failedMap),
+      })
+    );
+    return failedMap;
   }
 
   private async writeDeclaredConfigFiles(params: {
