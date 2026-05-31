@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.425] - 2026-05-31
+### Fixed
+- **Quality Gates integration repair stays in the integration phase.** Core now uses the active Quality Gates stage-plan integration/repair microtask as phase authority before falling back to artifact lifecycle flags, so a provider repair cannot reopen draft user review by returning `accepted: false` / `integrated: false`.
+- **Managed stage plan headings use one visible convention.** Numbered workflow phases now start at `Phase 1`; Core-only input checkpoints and repair cycles use unnumbered section headings instead of publishing `Phase 0` or duplicate `Phase 1` / `Phase 3` headings.
+
+### Tests
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-plan-phase.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-review-acceptance.test.ts packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+
 ## [1.2.424] - 2026-05-31
 ### Fixed
 - **Quality Gates terminal cleanup stays Core-owned.** Core now classifies managed runtime ledgers as committable orchestration state, so terminal completion no longer asks the user to resolve Core-owned dirty workflow files.

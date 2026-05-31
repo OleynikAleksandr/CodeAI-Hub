@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.424** (Quality Gates Terminal Cleanup + Managed Logs)
+**Current Release — v1.2.425** (Quality Gates Phase Authority + Stage Plan Labels)
+
+This release fixes the Quality Gates integration repair lifecycle. Core now
+keeps Quality Gates validation in the stage-plan-owned integration phase while
+an integration or integration-repair microtask is active, so an agent cannot
+roll the step back to draft/user-review by rewriting artifact lifecycle flags.
+Managed stage plans also use one visible phase convention: numbered workflow
+phases start at Phase 1, while Core-only checkpoints and repair cycles use
+unnumbered section headings.
+
+**Previous Release — v1.2.424** (Quality Gates Terminal Cleanup + Managed Logs)
 
 This release fixes the Quality Gates terminal cleanup path. Core now treats
 managed workflow runtime ledgers as Core-owned committable state and routes

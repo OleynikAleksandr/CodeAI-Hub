@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "71a254bad",
+  "lastRecordedCommit": "337a19da7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-stage-plan-visible-phase-convention",
-  "expectedCommitMessage": "fix: normalize managed stage plan visible phase numbering",
+  "currentTaskId": "release-docs-425",
+  "expectedCommitMessage": "docs: prepare 1.2.425 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: normalize managed stage plan visible phase numbering",
-    "preCommitHead": "71a254bad",
+    "expectedCommitMessage": "docs: prepare 1.2.425 release notes",
+    "preCommitHead": "337a19da7",
     "stage": "commit_pending",
-    "taskId": "managed-stage-plan-visible-phase-convention"
+    "taskId": "release-docs-425"
   }
 }
 ```
@@ -380,9 +380,18 @@
 
 ### Stream: Managed Stage Plan Visible Phase Convention (from 1.2.424 retest)
 206. [DONE] `managed-stage-plan-visible-phase-convention` Normalize visible managed stage plan numbering so numbered headings start at Phase 1 and Core-only checkpoint/repair cycles use unnumbered section headings — scope: `packages/core/src/managed-workflow-orchestration/managed-workflow-scaffold-installer.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-repair-model.ts, packages/core/src/managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-model.ts`; expected commit: `fix: normalize managed stage plan visible phase numbering`
-207. [PENDING] Git Commit: `fix: normalize managed stage plan visible phase numbering` (hash: TBD)
-208. [TODO] `managed-stage-plan-visible-phase-convention-verify` Run targeted managed stage-plan tests and core build — scope: `managed stage-plan tests, core build`
-209. [TODO] `release-confirmation-425` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates integration phase authority fixes — scope: user confirmation gate
+207. [DONE] Git Commit: `fix: normalize managed stage plan visible phase numbering` (hash: 337a19da7)
+208. [DONE] `managed-stage-plan-visible-phase-convention-verify` Run targeted managed stage-plan tests and core build — scope: `managed stage-plan tests, core build` Result: Managed stage-plan tests passed for Diagram Modules, Application Skeleton, and Quality Gates; @codeai-hub/core build passed.
+209. [DONE] `release-confirmation-425` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates integration phase authority fixes — scope: user confirmation gate Result: User explicitly requested building the new release.
+
+### Stream: Release Build 1.2.425
+210. [DONE] `release-docs-425` Update README and CHANGELOG to 1.2.425 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.425 release notes`
+211. [PENDING] Git Commit: `docs: prepare 1.2.425 release notes` (hash: TBD)
+212. [TODO] `release-build-425` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.425 release`
+213. [TODO] Git Commit: `chore: build 1.2.425 release` (hash: TBD)
+214. [TODO] `release-vsix-425` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.425 vsix`
+215. [TODO] Git Commit: `chore: package 1.2.425 vsix` (hash: TBD)
+216. [TODO] `release-acceptance-425` Hand off `codeai-hub-1.2.425.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-210. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+217. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
