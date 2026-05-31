@@ -22,7 +22,7 @@ const isExecutableFile = async (params: {
   );
 };
 
-const isLikelyRootBuildArtifact = (params: {
+const isLikelyRootBuildArtifact = async (params: {
   readonly pathValue: string;
   readonly workspaceRoot: string;
 }): Promise<boolean> => {
@@ -32,10 +32,10 @@ const isLikelyRootBuildArtifact = (params: {
   ) {
     return false;
   }
-  return isExecutableFile(params);
+  return await isExecutableFile(params);
 };
 
-const isWorkspaceLocalGeneratedBuildArtifact = (params: {
+const isWorkspaceLocalGeneratedBuildArtifact = async (params: {
   readonly pathValue: string;
   readonly workspaceRoot: string;
 }): Promise<boolean> => {
@@ -46,7 +46,7 @@ const isWorkspaceLocalGeneratedBuildArtifact = (params: {
   ) {
     return false;
   }
-  return isExecutableFile(params);
+  return await isExecutableFile(params);
 };
 
 export const collectQualityGatesTerminalResidueDiagnostics = async (params: {
