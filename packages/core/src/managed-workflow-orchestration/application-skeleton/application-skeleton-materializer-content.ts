@@ -104,7 +104,9 @@ export const buildProductPartTsconfig = (): string =>
       "src/**/*.ts",
       "src/**/*.tsx",
       "clusters/**/*.ts",
+      "clusters/**/*.tsx",
       "modules/**/*.ts",
+      "modules/**/*.tsx",
     ],
   });
 

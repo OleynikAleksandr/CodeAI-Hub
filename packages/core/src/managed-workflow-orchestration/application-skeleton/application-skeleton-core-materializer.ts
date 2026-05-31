@@ -222,6 +222,9 @@ export class ApplicationSkeletonCoreMaterializer {
         `${node.codePath}/tsconfig.json`,
       ])
     );
+    const npmProductPartEntrypoints = unique(
+      npmProductParts.map((node) => `${node.codePath}/src/index.ts`)
+    );
     const configFiles = unique([
       ...declaredConfigFiles,
       ...ROOT_CONFIG_FILES,
@@ -234,6 +237,7 @@ export class ApplicationSkeletonCoreMaterializer {
         `${node.codePath}/README.md`,
       ]),
       ...configFiles,
+      ...npmProductPartEntrypoints,
       ...firstWaveEntrypoints,
     ]);
     await this.writeRootFiles(
@@ -380,7 +384,7 @@ export class ApplicationSkeletonCoreMaterializer {
       this.writeFile(
         workspaceRoot,
         `${node.codePath}/src/index.ts`,
-        buildEntrypoint(node.id)
+        buildEntrypoint(`${node.codePath}/src/index.ts`)
       ),
     ]);
   }

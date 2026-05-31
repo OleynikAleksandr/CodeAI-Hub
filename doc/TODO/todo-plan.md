@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "657c79499",
+  "lastRecordedCommit": "728b3e2e7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-421",
-  "expectedCommitMessage": "chore: package 1.2.421 vsix",
+  "currentTaskId": "application-skeleton-valid-entrypoints",
+  "expectedCommitMessage": "fix: write valid application skeleton scaffold entrypoints",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.421 vsix",
-    "preCommitHead": "657c79499",
+    "expectedCommitMessage": "fix: write valid application skeleton scaffold entrypoints",
+    "preCommitHead": "728b3e2e7",
     "stage": "commit_pending",
-    "taskId": "release-vsix-421"
+    "taskId": "application-skeleton-valid-entrypoints"
   }
 }
 ```
@@ -298,10 +298,33 @@
 157. [DONE] `release-build-421` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.421 release`
 158. [DONE] Git Commit: `chore: build 1.2.421 release` (hash: 657c79499)
 159. [DONE] `release-vsix-421` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.421 vsix`
-160. [PENDING] Git Commit: `chore: package 1.2.421 vsix` (hash: TBD)
+160. [DONE] Git Commit: `chore: package 1.2.421 vsix` (hash: 728b3e2e7)
 
 ### Stream: User Workflow Acceptance Testing
-161. [TODO] `release-acceptance-421` Hand off `codeai-hub-1.2.421.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+161. [DONE] `release-acceptance-421` Hand off `codeai-hub-1.2.421.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.421 failed: Application Skeleton materialization validation failure is shown only to the user, scaffold can be marked materialized before environment validation succeeds, and Core creates invalid TypeScript fallback content in product-parts/surfaces/src/index.ts; continue with Application Skeleton materialization repair flow fix.
+
+### Stream: Application Skeleton Materialization Repair Flow (from 1.2.421 retest)
+162. [DONE] `application-skeleton-valid-entrypoints` Fix Core-owned Application Skeleton scaffold content so fallback Product Part entrypoints are syntax-valid for their actual file paths and TypeScript project configs include TSX cluster sources — scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-materializer-content.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.test.ts`; expected commit: `fix: write valid application skeleton scaffold entrypoints`
+163. [PENDING] Git Commit: `fix: write valid application skeleton scaffold entrypoints` (hash: TBD)
+164. [TODO] `application-skeleton-repair-dispatch` Route Application Skeleton materialization/environment validation failures back into a provider-visible repair turn, keep user-facing diagnostics concise, and mark failed materialization state instead of leaving a false materialized success marker — scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-review-decisions.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-core-materializer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.test.ts`; expected commit: `fix: dispatch application skeleton materialization repair`
+165. [TODO] Git Commit: `fix: dispatch application skeleton materialization repair` (hash: TBD)
+
+### Stream: Tooling Verification
+166. [TODO] `application-skeleton-repair-verify` Build core/webview and run targeted Application Skeleton materializer + managed repair flow tests — scope: `core + webview build`
+
+### Stream: Release Build Confirmation
+167. [DONE] `release-confirmation-422` Wait for explicit user confirmation before preparing release notes or running release build for the Application Skeleton materialization repair flow — scope: user confirmation gate Result: User explicitly requested fixing Application Skeleton materialization and building a new release in this turn.
+
+### Stream: Release Build
+168. [TODO] `release-docs-422` Update README and CHANGELOG to 1.2.422 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.422 release notes`
+169. [TODO] Git Commit: `docs: prepare 1.2.422 release notes` (hash: TBD)
+170. [TODO] `release-build-422` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.422 release`
+171. [TODO] Git Commit: `chore: build 1.2.422 release` (hash: TBD)
+172. [TODO] `release-vsix-422` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.422 vsix`
+173. [TODO] Git Commit: `chore: package 1.2.422 vsix` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+174. [TODO] `release-acceptance-422` Hand off `codeai-hub-1.2.422.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-162. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+175. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

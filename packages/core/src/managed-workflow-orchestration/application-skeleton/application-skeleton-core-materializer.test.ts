@@ -21,6 +21,8 @@ const CORE_MATERIALIZER_RE = /Core-owned scaffold materializer/u;
 const MATERIALIZED_STATE_RE = /materializationState`\s*:\s*`materialized/u;
 const PYTHON_MAIN_MODULE_RE = /MODULE_ID = "main-py"/u;
 const GO_MAIN_PACKAGE_RE = /^package main/mu;
+const TYPESCRIPT_ENTRYPOINT_RE = /^export const moduleId = "index-ts";$/mu;
+const TSX_CLUSTER_INCLUDE_RE = /clusters\/\*\*\/\*\.tsx/u;
 
 const createWorkspace = async (): Promise<string> =>
   mkdtemp(path.join(os.tmpdir(), "application-skeleton-materializer-"));
@@ -281,6 +283,7 @@ test("Core materializer honors polyglot contract config files and entrypoints", 
       "product-parts/engine/src/main.py",
       "product-parts/web-surface/package.json",
       "product-parts/web-surface/tsconfig.json",
+      "product-parts/web-surface/src/index.ts",
       "product-parts/web-surface/src/main.tsx",
       "product-parts/terminal-surface/go.mod",
       "product-parts/terminal-surface/cmd/terminal-surface/main.go",
@@ -319,6 +322,20 @@ test("Core materializer honors polyglot contract config files and entrypoints", 
         "utf8"
       ),
       GO_MAIN_PACKAGE_RE
+    );
+    assert.match(
+      await readFile(
+        path.join(workspaceRoot, "product-parts/web-surface/src/index.ts"),
+        "utf8"
+      ),
+      TYPESCRIPT_ENTRYPOINT_RE
+    );
+    assert.match(
+      await readFile(
+        path.join(workspaceRoot, "product-parts/web-surface/tsconfig.json"),
+        "utf8"
+      ),
+      TSX_CLUSTER_INCLUDE_RE
     );
 
     const rootPackage = await readJson(workspaceRoot, "package.json");
