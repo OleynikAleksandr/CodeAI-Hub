@@ -16,7 +16,6 @@ const NON_BLOCKING_ARRAY_KEYS = [
   "deferred",
   "plannedRequiredAfterIntegration",
 ] as const;
-const REGEXP_SPECIAL_RE = /[.*+?^${}()|[\]\\]/gu;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -66,22 +65,6 @@ const collectRequiredGateIds = (
     }
   }
   return [...requiredGateIds];
-};
-
-const escapeRegExp = (value: string): string =>
-  value.replace(REGEXP_SPECIAL_RE, "\\$&");
-
-const markdownClaimsNotIntegrated = (
-  markdown: string | null,
-  gateId: string
-): boolean => {
-  if (!markdown) {
-    return false;
-  }
-  return new RegExp(
-    `\\|[^\\n]*\`?${escapeRegExp(gateId)}\`?[^\\n]*\\|[^\\n]*\\bnot_integrated\\b`,
-    "u"
-  ).test(markdown);
 };
 
 const fileExists = async (
@@ -142,7 +125,6 @@ const collectPlannedGateRunnerEvidenceDiagnostics = async (params: {
 export const collectQualityGatesIntegrationConsistencyDiagnostics =
   async (params: {
     readonly contractJson: Record<string, unknown>;
-    readonly markdown: string | null;
     readonly workspaceRoot: string;
   }): Promise<readonly string[]> => {
     const errors: string[] = [];
@@ -155,11 +137,6 @@ export const collectQualityGatesIntegrationConsistencyDiagnostics =
       if (isRecord(gate) && gate.availability === "not_integrated") {
         errors.push(
           `quality-gates.json keeps required gate "${gateId}" as not_integrated after integration`
-        );
-      }
-      if (markdownClaimsNotIntegrated(params.markdown, gateId)) {
-        errors.push(
-          `quality-gates.md keeps required gate "${gateId}" as not_integrated after integration`
         );
       }
     }

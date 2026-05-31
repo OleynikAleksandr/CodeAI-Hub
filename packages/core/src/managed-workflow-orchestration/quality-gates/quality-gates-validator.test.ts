@@ -382,9 +382,9 @@ test("Quality Gates validator rejects integrated JSON that keeps a required gate
   }
 });
 
-test("Quality Gates validator rejects integrated Markdown that says a required gate is not_integrated", async () => {
+test("Quality Gates validator treats integrated Markdown availability as review prose", async () => {
   const workspaceRoot = await mkdtemp(
-    path.join(os.tmpdir(), "quality-gates-not-integrated-markdown-")
+    path.join(os.tmpdir(), "quality-gates-markdown-review-prose-")
   );
   try {
     await writeQualityGatesArtifacts(
@@ -417,13 +417,10 @@ test("Quality Gates validator rejects integrated Markdown that says a required g
       workspaceSlug: WORKSPACE_SLUG,
     });
 
-    assert.equal(result.valid, false);
-    assert.equal(result.nextAction, "repair_integration");
-    assert.ok(
-      result.diagnostics.includes(
-        'quality-gates.md keeps required gate "qg-secret-scan" as not_integrated after integration'
-      )
-    );
+    assert.equal(result.valid, true);
+    assert.equal(result.phase, "integration");
+    assert.equal(result.nextAction, "open_persistent_return");
+    assert.deepEqual(result.diagnostics, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

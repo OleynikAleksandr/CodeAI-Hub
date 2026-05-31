@@ -277,7 +277,6 @@ const validateDraftShape = (params: {
   }
   return errors;
 };
-
 const toPackageScriptName = (gateId: string): string => {
   if (gateId.startsWith("qg:")) {
     return gateId;
@@ -328,7 +327,10 @@ const validateIntegrationShape = async (params: {
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }): Promise<readonly string[]> => {
-  const errors = [...validateDraftShape({ ...params, contractJson: null })];
+  const errors = params.markdown ? [] : ["missing_markdown"];
+  if (params.markdown && !QUALITY_GATES_TITLE_RE.test(params.markdown)) {
+    errors.push("markdown_wrong_stage");
+  }
   if (!params.contractJson) {
     return [...errors, "missing_quality_gates_json"];
   }
@@ -360,7 +362,6 @@ const validateIntegrationShape = async (params: {
   errors.push(
     ...(await collectQualityGatesIntegrationConsistencyDiagnostics({
       contractJson: params.contractJson,
-      markdown: params.markdown,
       workspaceRoot: params.workspaceRoot,
     }))
   );
