@@ -9,6 +9,7 @@ import {
 } from "./quality-gates-prompt-builder";
 import { collectRequiredSizePolicyDiagnostics } from "./quality-gates-required-size-policy";
 import { resolveQualityGatesResearchFirstBoundary } from "./quality-gates-research-first-boundary";
+import { readQualityGatesCurrentTaskId } from "./quality-gates-stage-plan-state-reader";
 import { collectQualityGatesTerminalResidueDiagnostics } from "./quality-gates-terminal-residue-validator";
 import {
   readHookText,
@@ -52,6 +53,8 @@ const NON_BLOCKING_ARRAY_KEYS = [
   "deferred",
   "plannedRequiredAfterIntegration",
 ] as const;
+const INTEGRATION_PLAN_TASK_RE =
+  /^quality-gates\.phase3\.(?:integrate|repair)\.task\d+$/u;
 
 const relativeQualityGatesPath = (
   workspaceSlug: string,
@@ -365,7 +368,7 @@ const validateIntegrationShape = async (params: {
   return errors;
 };
 
-const resolvePhase = (
+const resolveArtifactPhase = (
   contractJson: Record<string, unknown> | null
 ): QualityGatesManagedPhase =>
   readAcceptedFlag(contractJson) ||
@@ -375,6 +378,22 @@ const resolvePhase = (
   )
     ? "integration"
     : "draft";
+
+const resolvePlanPhase = async (
+  workspaceRoot: string
+): Promise<QualityGatesManagedPhase | null> => {
+  const currentTaskId = await readQualityGatesCurrentTaskId(workspaceRoot);
+  return currentTaskId && INTEGRATION_PLAN_TASK_RE.test(currentTaskId)
+    ? "integration"
+    : null;
+};
+
+const resolvePhase = async (
+  request: QualityGatesManagedValidationRequest,
+  contractJson: Record<string, unknown> | null
+): Promise<QualityGatesManagedPhase> =>
+  (await resolvePlanPhase(request.workspaceRoot)) ??
+  resolveArtifactPhase(contractJson);
 
 const buildInvalidResult = (params: {
   readonly contractJson: Record<string, unknown> | null;
@@ -427,7 +446,7 @@ export const validateQualityGatesManagedArtifacts = async (
     return researchBoundary.decision;
   }
   const parsed = parseJsonObject(contractJsonText);
-  const phase = resolvePhase(parsed.value);
+  const phase = await resolvePhase(request, parsed.value);
   const diagnostics =
     phase === "integration"
       ? [

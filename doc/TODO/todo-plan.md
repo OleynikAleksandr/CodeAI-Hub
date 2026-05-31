@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "9ca7acf5d",
+  "lastRecordedCommit": "41c7633c7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-424",
-  "expectedCommitMessage": "chore: package 1.2.424 vsix",
+  "currentTaskId": "quality-gates-integration-phase-authority",
+  "expectedCommitMessage": "fix: keep quality gates integration repairs in integration phase",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.424 vsix",
-    "preCommitHead": "9ca7acf5d",
+    "expectedCommitMessage": "fix: keep quality gates integration repairs in integration phase",
+    "preCommitHead": "41c7633c7",
     "stage": "commit_pending",
-    "taskId": "release-vsix-424"
+    "taskId": "quality-gates-integration-phase-authority"
   }
 }
 ```
@@ -363,10 +363,16 @@
 195. [DONE] `release-build-424` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.424 release`
 196. [DONE] Git Commit: `chore: build 1.2.424 release` (hash: 9ca7acf5d)
 197. [DONE] `release-vsix-424` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.424 vsix`
-198. [PENDING] Git Commit: `chore: package 1.2.424 vsix` (hash: TBD)
+198. [DONE] Git Commit: `chore: package 1.2.424 vsix` (hash: 41c7633c7)
 
 ### Stream: User Workflow Acceptance Testing
-199. [TODO] `release-acceptance-424` Hand off `codeai-hub-1.2.424.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+199. [DONE] `release-acceptance-424` Hand off `codeai-hub-1.2.424.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.424 failed: Quality Gates integration repair returned draft-state artifacts; Core derived phase from artifact flags instead of the active stage-plan integration repair task, closed the plan with currentTaskId null, and opened an incorrect user-review gate while the provider session stayed pending.
+
+### Stream: Quality Gates Integration Phase Authority (from 1.2.424 retest)
+200. [DONE] `quality-gates-integration-phase-authority` Keep Quality Gates validation in the stage-plan integration phase when the active managed task is integration or integration repair, so an agent cannot roll Core back to draft/user-review by changing artifact lifecycle flags — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-plan-phase.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: keep quality gates integration repairs in integration phase`
+201. [PENDING] Git Commit: `fix: keep quality gates integration repairs in integration phase` (hash: TBD)
+202. [TODO] `quality-gates-integration-phase-verify` Run targeted Quality Gates plan-phase validator tests and core build — scope: `core build`
+203. [TODO] `release-confirmation-425` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates integration phase authority fix — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-200. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+204. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
