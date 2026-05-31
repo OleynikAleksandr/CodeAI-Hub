@@ -5,6 +5,7 @@ import path from "node:path";
 import test from "node:test";
 import {
   resolveManagedWorkflowDiagnosticLogPath,
+  shouldWriteManagedWorkflowDiagnosticLog,
   traceManagedWorkflowDiagnostic,
 } from "./managed-workflow-diagnostic-trace";
 
@@ -28,6 +29,20 @@ const MANAGED_STAGE_CASES = [
   ["application_skeleton", "application-skeleton-lifecycle.jsonl"],
   ["quality_gates", "quality-gates-baseline-lifecycle.jsonl"],
 ] as const;
+
+const withoutLogRoot = (run: () => void): void => {
+  const previous = process.env.CODEAI_HUB_LOGS_DIR;
+  process.env.CODEAI_HUB_LOGS_DIR = undefined;
+  try {
+    run();
+  } finally {
+    if (previous === undefined) {
+      process.env.CODEAI_HUB_LOGS_DIR = undefined;
+    } else {
+      process.env.CODEAI_HUB_LOGS_DIR = previous;
+    }
+  }
+};
 
 test("managed technical stage diagnostics are written under user-level logs", () => {
   withLogRoot((logRoot) => {
@@ -85,6 +100,42 @@ test("non-managed stage diagnostics are ignored", () => {
     assert.equal(
       existsSync(path.join(logRoot, "managed-workflow", "project")),
       false
+    );
+  });
+});
+
+test("temporary workspaces do not create user-level managed workflow log folders", () => {
+  withoutLogRoot(() => {
+    const session = {
+      id: "session-temp",
+      initiativeSlug: "workspace-a",
+      stage: "application_skeleton",
+      workspacePath: mkdtempSync(
+        path.join(tmpdir(), "application-skeleton-review-")
+      ),
+    } as const;
+
+    assert.equal(shouldWriteManagedWorkflowDiagnosticLog(session), false);
+  });
+});
+
+test("real workspace folder name remains the managed workflow log folder", () => {
+  withLogRoot((logRoot) => {
+    const session = {
+      id: "session-real",
+      initiativeSlug: "codeai-hub-test01",
+      stage: "quality_gates",
+      workspacePath: "/Users/oleksandroliinyk/VSCODE/CodeAI-Hub test01",
+    } as const;
+
+    assert.equal(
+      resolveManagedWorkflowDiagnosticLogPath(session),
+      path.join(
+        logRoot,
+        "managed-workflow",
+        "CodeAI-Hub test01",
+        "quality-gates-baseline-lifecycle.jsonl"
+      )
     );
   });
 });

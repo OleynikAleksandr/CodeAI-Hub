@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "247cc6b62",
+  "lastRecordedCommit": "8b49d22a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "quality-gates-terminal-residue-flow",
-  "expectedCommitMessage": "fix: route quality gates terminal residue through core repair",
+  "currentTaskId": "managed-workflow-log-folder-isolation",
+  "expectedCommitMessage": "fix: isolate managed workflow logs by real workspace",
   "debt": {
-    "expectedCommitMessage": "fix: route quality gates terminal residue through core repair",
-    "preCommitHead": "247cc6b62",
+    "expectedCommitMessage": "fix: isolate managed workflow logs by real workspace",
+    "preCommitHead": "8b49d22a7",
     "stage": "commit_pending",
-    "taskId": "quality-gates-terminal-residue-flow"
+    "taskId": "managed-workflow-log-folder-isolation"
   }
 }
 ```
@@ -349,9 +349,13 @@
 
 ### Stream: Quality Gates Terminal Residue Flow (from 1.2.423 retest)
 186. [DONE] `quality-gates-terminal-residue-flow` Route Quality Gates terminal dirty residue through Core-owned classification/repair instead of a manual user blocker: Core runtime ledgers are auto-committable, while generated root build artifacts force an agent repair before terminal completion — scope: `packages/core/src/managed-workflow-orchestration, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: route quality gates terminal residue through core repair`
-187. [PENDING] Git Commit: `fix: route quality gates terminal residue through core repair` (hash: TBD)
-188. [TODO] `quality-gates-terminal-residue-verify` Run targeted Quality Gates validator/terminal residue tests and core build — scope: `core build`
-189. [TODO] `release-confirmation-424` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates terminal residue fix — scope: user confirmation gate
+187. [DONE] Git Commit: `fix: route quality gates terminal residue through core repair` (hash: 8b49d22a7)
+188. [DONE] `quality-gates-terminal-residue-verify` Run targeted Quality Gates validator/terminal residue tests and core build — scope: `core build` Result: Verification passed: targeted Quality Gates terminal residue/classifier/validator tests passed; npm run build --workspace @codeai-hub/core passed.
+### Stream: Managed Workflow Log Folder Isolation
+189. [DONE] `managed-workflow-log-folder-isolation` Keep managed workflow lifecycle logs under the real workspace folder name and prevent temporary/test workspace paths from writing stray folders into the user-level managed-workflow log root — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `fix: isolate managed workflow logs by real workspace`
+190. [PENDING] Git Commit: `fix: isolate managed workflow logs by real workspace` (hash: TBD)
+191. [TODO] `managed-workflow-log-folder-verify` Run targeted managed workflow diagnostic trace tests and core build — scope: `core build`
+192. [TODO] `release-confirmation-424` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates terminal residue and managed workflow log folder fixes — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-190. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+193. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`

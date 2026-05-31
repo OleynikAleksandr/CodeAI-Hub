@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { appendFileSync, mkdirSync } from "node:fs";
-import { homedir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import path from "node:path";
 import type { SessionMessage } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
@@ -57,9 +57,23 @@ const previewContent = (content: string): string =>
     ? `${content.slice(0, PREVIEW_LIMIT)}...`
     : content;
 
+const readExplicitLogsRoot = (): string | null => {
+  const rawValue = process.env.CODEAI_HUB_LOGS_DIR;
+  const value = rawValue?.trim();
+  return value && value !== "undefined" ? value : null;
+};
+
 const resolveUserLogsRoot = (): string =>
-  process.env.CODEAI_HUB_LOGS_DIR?.trim() ||
-  path.join(homedir(), ".codeai-hub", "logs");
+  readExplicitLogsRoot() || path.join(homedir(), ".codeai-hub", "logs");
+
+const hasExplicitLogsRoot = (): boolean => Boolean(readExplicitLogsRoot());
+
+const isPathInside = (candidate: string, root: string): boolean => {
+  const relative = path.relative(path.resolve(root), path.resolve(candidate));
+  return (
+    relative === "" || !(relative.startsWith("..") || path.isAbsolute(relative))
+  );
+};
 
 const resolveWorkspaceLogFolder = (
   session: ManagedWorkflowDiagnosticSession
@@ -71,6 +85,11 @@ const resolveWorkspaceLogFolder = (
     .at(-1);
   return workspaceName?.trim() || session.initiativeSlug;
 };
+
+export const shouldWriteManagedWorkflowDiagnosticLog = (
+  session: ManagedWorkflowDiagnosticSession
+): boolean =>
+  hasExplicitLogsRoot() || !isPathInside(session.workspacePath, tmpdir());
 
 export const resolveManagedWorkflowDiagnosticLogPath = (
   session: ManagedWorkflowDiagnosticSession
@@ -105,6 +124,9 @@ const writeWorkspaceEntry = (
   session: ManagedWorkflowDiagnosticSession,
   entry: Record<string, unknown>
 ): void => {
+  if (!shouldWriteManagedWorkflowDiagnosticLog(session)) {
+    return;
+  }
   const logPath = resolveManagedWorkflowDiagnosticLogPath(session);
   mkdirSync(path.dirname(logPath), { recursive: true });
   appendFileSync(logPath, `${JSON.stringify(entry)}\n`, "utf8");
