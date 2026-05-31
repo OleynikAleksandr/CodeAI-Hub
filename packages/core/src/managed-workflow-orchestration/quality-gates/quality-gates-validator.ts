@@ -278,10 +278,15 @@ const validateDraftShape = (params: {
   return errors;
 };
 
-const toPackageScriptName = (gateId: string): string =>
-  gateId.startsWith("qg-")
-    ? `qg:${gateId.slice("qg-".length)}`
-    : `qg:${gateId}`;
+const toPackageScriptName = (gateId: string): string => {
+  if (gateId.startsWith("qg:")) {
+    return gateId;
+  }
+  if (gateId.startsWith("qg-")) {
+    return `qg:${gateId.slice("qg-".length)}`;
+  }
+  return `qg:${gateId}`;
+};
 
 const collectRequiredHookDiagnostics = async (params: {
   readonly contract: Record<string, unknown>;

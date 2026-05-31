@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "0fa296b90",
+  "lastRecordedCommit": "d65682250",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "release-vsix-425",
-  "expectedCommitMessage": "chore: package 1.2.425 vsix",
+  "currentTaskId": "quality-gates-script-id-normalization",
+  "expectedCommitMessage": "fix: normalize quality gate script ids",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.425 vsix",
-    "preCommitHead": "0fa296b90",
+    "expectedCommitMessage": "fix: normalize quality gate script ids",
+    "preCommitHead": "d65682250",
     "stage": "commit_pending",
-    "taskId": "release-vsix-425"
+    "taskId": "quality-gates-script-id-normalization"
   }
 }
 ```
@@ -390,8 +390,23 @@
 212. [DONE] `release-build-425` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.425 release`
 213. [DONE] Git Commit: `chore: build 1.2.425 release` (hash: 0fa296b90)
 214. [DONE] `release-vsix-425` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.425 vsix`
-215. [PENDING] Git Commit: `chore: package 1.2.425 vsix` (hash: TBD)
-216. [TODO] `release-acceptance-425` Hand off `codeai-hub-1.2.425.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
+215. [DONE] Git Commit: `chore: package 1.2.425 vsix` (hash: d65682250)
+216. [DONE] `release-acceptance-425` Hand off `codeai-hub-1.2.425.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate Result: Retest of 1.2.425 failed: Quality Gates integration validator normalized already-colonized `qg:*` ids into `qg:qg:*`, so Core repeatedly rejected valid package scripts and direct hook calls with false missing-script/missing-hook diagnostics.
+
+### Stream: Quality Gates Script ID Normalization (from 1.2.425 retest)
+217. [DONE] `quality-gates-script-id-normalization` Normalize required Quality Gate ids without double-prefixing already canonical `qg:*` script ids, and add regression coverage for colonized gate ids in package scripts and direct Husky hook calls — scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-script-id.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: normalize quality gate script ids`
+218. [PENDING] Git Commit: `fix: normalize quality gate script ids` (hash: TBD)
+219. [TODO] `quality-gates-script-id-normalization-verify` Run targeted Quality Gates validator tests and core build — scope: `quality-gates validator tests, core build`
+220. [TODO] `release-confirmation-426` Wait for explicit user confirmation before preparing release notes or running release build for the Quality Gates script-id normalization fix — scope: user confirmation gate
+
+### Stream: Release Build 1.2.426
+221. [TODO] `release-docs-426` Update README and CHANGELOG to 1.2.426 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.426 release notes`
+222. [TODO] Git Commit: `docs: prepare 1.2.426 release notes` (hash: TBD)
+223. [TODO] `release-build-426` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.426 release`
+224. [TODO] Git Commit: `chore: build 1.2.426 release` (hash: TBD)
+225. [TODO] `release-vsix-426` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.426 vsix`
+226. [TODO] Git Commit: `chore: package 1.2.426 vsix` (hash: TBD)
+227. [TODO] `release-acceptance-426` Hand off `codeai-hub-1.2.426.vsix` and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-217. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
+228. [TODO] `scope-closeout` Reserved post-closeout handoff anchor — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/, planning-doc disposition`
