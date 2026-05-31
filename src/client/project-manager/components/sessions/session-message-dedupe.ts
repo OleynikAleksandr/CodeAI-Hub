@@ -1,5 +1,6 @@
 import type { SessionMessage, SessionSnapshot } from "../../../../types/session";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
+import { logManagedInputDiagnostic } from "./managed-input-diagnostics";
 
 const RECENT_DEDUPE_SCAN_LIMIT = 200;
 const OPTIMISTIC_MESSAGE_ID_PREFIX = "optimistic-";
@@ -11,6 +12,47 @@ const MANAGED_WORKFLOW_RELEASE_TAGS = new Set([
   "managed-workflow-complete",
   "managed-workflow-user-review",
 ]);
+
+const describeMessageForDiagnostics = (
+  message: SessionMessage
+): Record<string, unknown> => ({
+  contentLength: message.content.length,
+  createdAt: message.createdAt,
+  id: message.id,
+  role: message.role,
+  tag: message.tag ?? null,
+  visibilityAtEmission: message.visibilityAtEmission ?? null,
+});
+
+const describeInputStateForDiagnostics = (
+  snapshot: SessionSnapshot
+): Record<string, unknown> => ({
+  connectionState: snapshot.status.connectionState,
+  continuityLock: snapshot.status.continuityLock
+    ? {
+        active: snapshot.status.continuityLock.active,
+        reason: snapshot.status.continuityLock.reason ?? null,
+        updatedAt: snapshot.status.continuityLock.updatedAt,
+      }
+    : null,
+});
+
+const logInputLockDecision = (options: {
+  readonly after?: SessionSnapshot;
+  readonly before: SessionSnapshot;
+  readonly event: string;
+  readonly message: SessionMessage;
+  readonly sessionId: string;
+}): void => {
+  logManagedInputDiagnostic(options.event, {
+    after: options.after
+      ? describeInputStateForDiagnostics(options.after)
+      : null,
+    before: describeInputStateForDiagnostics(options.before),
+    message: describeMessageForDiagnostics(options.message),
+    sessionId: options.sessionId,
+  });
+};
 
 const isReplayDuplicate = (options: {
   readonly existing: SessionMessage;
@@ -95,6 +137,7 @@ const updateSnapshotMessages = (options: {
 }): SessionSnapshots => {
   const snapshotWithMessages = applyManagedWorkflowInputLock({
     message: options.triggerMessage,
+    sessionId: options.sessionId,
     snapshot: {
       ...options.snapshot,
       messages: [...options.messages],
@@ -114,6 +157,7 @@ const updateSnapshotForMessageSideEffects = (options: {
 }): SessionSnapshots => {
   const updated = applyManagedWorkflowInputLock({
     message: options.message,
+    sessionId: options.sessionId,
     snapshot: options.snapshot,
   });
   if (updated === options.snapshot) {
@@ -137,12 +181,13 @@ const shouldReleaseManagedWorkflowLock = (
 
 const applyManagedWorkflowInputLock = (options: {
   readonly message: SessionMessage;
+  readonly sessionId: string;
   readonly snapshot: SessionSnapshot;
 }): SessionSnapshot => {
   const tag = options.message.tag;
   const now = Date.now();
   if (tag === MANAGED_WORKFLOW_CONTINUATION_TAG) {
-    return {
+    const next: SessionSnapshot = {
       ...options.snapshot,
       status: {
         ...options.snapshot.status,
@@ -162,6 +207,14 @@ const applyManagedWorkflowInputLock = (options: {
         updatedAt: now,
       },
     };
+    logInputLockDecision({
+      after: next,
+      before: options.snapshot,
+      event: "pm.message_dedupe.lock_from_managed_continuation",
+      message: options.message,
+      sessionId: options.sessionId,
+    });
+    return next;
   }
   if (options.message.role !== "system") {
     return options.snapshot;
@@ -170,9 +223,15 @@ const applyManagedWorkflowInputLock = (options: {
     return options.snapshot;
   }
   if (!shouldReleaseManagedWorkflowLock(options.snapshot)) {
+    logInputLockDecision({
+      before: options.snapshot,
+      event: "pm.message_dedupe.release_ignored_for_lock_reason",
+      message: options.message,
+      sessionId: options.sessionId,
+    });
     return options.snapshot;
   }
-  return {
+  const next: SessionSnapshot = {
     ...options.snapshot,
     status: {
       ...options.snapshot.status,
@@ -187,6 +246,14 @@ const applyManagedWorkflowInputLock = (options: {
       updatedAt: now,
     },
   };
+  logInputLockDecision({
+    after: next,
+    before: options.snapshot,
+    event: "pm.message_dedupe.release_from_managed_system_tag",
+    message: options.message,
+    sessionId: options.sessionId,
+  });
+  return next;
 };
 
 export const appendOptimisticUserMessage = (

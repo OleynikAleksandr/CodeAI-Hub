@@ -17,6 +17,7 @@ import {
   sanitizeSessionMessagePayload,
 } from "../../../ui/src/core-bridge/normalizers";
 import type { SessionSnapshots } from "../../../ui/src/session/helpers";
+import { logManagedInputDiagnostic } from "./managed-input-diagnostics";
 type IncomingMessage = {
   readonly type: string;
   readonly payload?: unknown;
@@ -32,6 +33,8 @@ type SessionHistoryUpdate = {
   readonly sessionId: string;
   readonly messages: readonly unknown[];
 };
+type WorkspaceRuntimeSession =
+  WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string];
 
 const readProviderSessionId = (
   session: WorkspaceSnapshotPushPayload["snapshot"]["sessions"][string]
@@ -63,6 +66,72 @@ const resolveTargetSnapshotId = (options: {
 };
 
 const MANAGED_CORE_GATED_LOCK_REASON = "managed_core_gated";
+
+const describeSnapshotInputState = (
+  snapshot: SessionSnapshots[string]
+): Record<string, unknown> => ({
+  connectionState: snapshot.status.connectionState,
+  continuityLock: snapshot.status.continuityLock
+    ? {
+        active: snapshot.status.continuityLock.active,
+        reason: snapshot.status.continuityLock.reason ?? null,
+        updatedAt: snapshot.status.continuityLock.updatedAt,
+      }
+    : null,
+  taskTimer: snapshot.status.taskTimer ?? null,
+});
+
+const describeComputedInputState = (options: {
+  readonly connectionState: "idle" | "running" | "blocked";
+  readonly lockActive: boolean;
+  readonly lockReason: string | undefined;
+  readonly timerRunningSinceMs: number | null;
+  readonly timerTotalSeconds: number;
+}): Record<string, unknown> => ({
+  connectionState: options.connectionState,
+  continuityLock: {
+    active: options.lockActive,
+    reason: options.lockReason ?? null,
+  },
+  taskTimer: {
+    runningSinceMs: options.timerRunningSinceMs,
+    totalSeconds: options.timerTotalSeconds,
+  },
+});
+
+const describeWorkspaceSession = (
+  session: WorkspaceRuntimeSession
+): Record<string, unknown> => ({
+  bindingStatus: session.bindingStatus ?? null,
+  continuityLockActive: session.continuityLockActive ?? null,
+  continuityLockReason: session.continuityLockReason ?? null,
+  providerSessionId: readProviderSessionId(session),
+  resumeMode: session.resumeMode ?? null,
+  turnState: session.turnState ?? null,
+});
+
+const logWorkspaceSnapshotInputDecision = (options: {
+  readonly after?: Record<string, unknown>;
+  readonly before: SessionSnapshots[string];
+  readonly event: string;
+  readonly incoming?: Record<string, unknown>;
+  readonly payload: WorkspaceSnapshotPushPayload;
+  readonly session: WorkspaceRuntimeSession;
+  readonly sessionId: string;
+  readonly targetSnapshotId: string;
+}): void => {
+  logManagedInputDiagnostic(options.event, {
+    after: options.after ?? null,
+    before: describeSnapshotInputState(options.before),
+    incoming: options.incoming ?? null,
+    selectionId: options.payload.selectionId,
+    sequence: options.payload.sequence,
+    session: describeWorkspaceSession(options.session),
+    sessionId: options.sessionId,
+    targetSnapshotId: options.targetSnapshotId,
+    workspaceRoot: options.payload.workspaceRoot,
+  });
+};
 
 export const applyWorkspaceSnapshotToSnapshots = (
   snapshots: SessionSnapshots,
@@ -122,11 +191,27 @@ export const applyWorkspaceSnapshotToSnapshots = (
     }
     const currentLockActive = current.status.continuityLock?.active === true;
     const currentLockReason = current.status.continuityLock?.reason;
+    const incomingInputState = describeComputedInputState({
+      connectionState: nextConnectionState,
+      lockActive: nextLockActive,
+      lockReason: nextLockReason,
+      timerRunningSinceMs: session.taskTimer?.runningSinceMs ?? null,
+      timerTotalSeconds: session.taskTimer?.totalSeconds ?? 0,
+    });
     if (
       currentLockActive &&
       currentLockReason === MANAGED_CORE_GATED_LOCK_REASON &&
       !nextLockActive
     ) {
+      logWorkspaceSnapshotInputDecision({
+        before: current,
+        event: "pm.workspace_snapshot.preserved_managed_core_gate",
+        incoming: incomingInputState,
+        payload,
+        session,
+        sessionId,
+        targetSnapshotId,
+      });
       nextLockActive = true;
       nextLockReason = currentLockReason;
       nextConnectionState =
@@ -157,6 +242,21 @@ export const applyWorkspaceSnapshotToSnapshots = (
       !snapshotSignalsIdleUnlocked &&
       (!allowIdleUnlock || awaitingBootstrapTurn)
     ) {
+      logWorkspaceSnapshotInputDecision({
+        before: current,
+        event: "pm.workspace_snapshot.blocked_idle_unlock",
+        incoming: describeComputedInputState({
+          connectionState: nextConnectionState,
+          lockActive: nextLockActive,
+          lockReason: nextLockReason,
+          timerRunningSinceMs: nextTimerRunningSinceMs,
+          timerTotalSeconds: nextTimerTotalSeconds,
+        }),
+        payload,
+        session,
+        sessionId,
+        targetSnapshotId,
+      });
       nextLockActive = true;
       nextConnectionState = "blocked";
     }
@@ -171,6 +271,23 @@ export const applyWorkspaceSnapshotToSnapshots = (
     }
     changed = true;
     const now = Date.now();
+    const afterInputState = describeComputedInputState({
+      connectionState: nextConnectionState,
+      lockActive: nextLockActive,
+      lockReason: nextLockReason,
+      timerRunningSinceMs: nextTimerRunningSinceMs,
+      timerTotalSeconds: nextTimerTotalSeconds,
+    });
+    logWorkspaceSnapshotInputDecision({
+      after: afterInputState,
+      before: current,
+      event: "pm.workspace_snapshot.applied_input_state",
+      incoming: incomingInputState,
+      payload,
+      session,
+      sessionId,
+      targetSnapshotId,
+    });
     nextSnapshots[targetSnapshotId] = {
       ...current,
       status: {

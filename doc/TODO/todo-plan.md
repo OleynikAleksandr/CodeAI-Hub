@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "4da36260d",
+  "lastRecordedCommit": "a88e835fe",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-lifecycle-core-trace",
-  "expectedCommitMessage": "feat: trace managed workflow lifecycle",
+  "currentTaskId": "managed-lifecycle-pm-trace",
+  "expectedCommitMessage": "feat: trace project manager input gate state",
   "debt": {
-    "expectedCommitMessage": "feat: trace managed workflow lifecycle",
-    "preCommitHead": "4da36260d",
+    "expectedCommitMessage": "feat: trace project manager input gate state",
+    "preCommitHead": "a88e835fe",
     "stage": "commit_pending",
-    "taskId": "managed-lifecycle-core-trace"
+    "taskId": "managed-lifecycle-pm-trace"
   }
 }
 ```
@@ -240,9 +240,9 @@
 
 ### Stream: Managed Lifecycle Diagnostic Logging (from 1.2.418 retest)
 121. [DONE] `managed-lifecycle-core-trace` Add workspace-local managed workflow diagnostics for Diagram Modules persisted messages, Core input gate transitions, and provider dispatch metadata — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/session-manager/index.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts`; expected commit: `feat: trace managed workflow lifecycle`
-122. [PENDING] Git Commit: `feat: trace managed workflow lifecycle` (hash: TBD)
-123. [TODO] `managed-lifecycle-pm-trace` Add Project Manager-side diagnostics for managed continuation tag locks, release tags, workspace snapshot lock decisions, and applied connection state — scope: `src/client/project-manager/components/sessions/managed-input-diagnostics.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts, src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `feat: trace project manager input gate state`
-124. [TODO] Git Commit: `feat: trace project manager input gate state` (hash: TBD)
+122. [DONE] Git Commit: `feat: trace managed workflow lifecycle` (hash: a88e835fe)
+123. [DONE] `managed-lifecycle-pm-trace` Add Project Manager-side diagnostics for managed continuation tag locks, release tags, workspace snapshot lock decisions, and applied connection state — scope: `src/client/project-manager/components/sessions/managed-input-diagnostics.ts, src/client/project-manager/components/sessions/session-message-dedupe.ts, src/client/project-manager/components/sessions/session-stream.ts`; expected commit: `feat: trace project manager input gate state`
+124. [PENDING] Git Commit: `feat: trace project manager input gate state` (hash: TBD)
 125. [TODO] `managed-lifecycle-verify` Build core/webview and run targeted managed lifecycle diagnostic tests — scope: `core + webview build`
 126. [TODO] `release-confirmation-419` Wait for explicit user confirmation before preparing release notes or running release build for the managed lifecycle diagnostics — scope: user confirmation gate
 
