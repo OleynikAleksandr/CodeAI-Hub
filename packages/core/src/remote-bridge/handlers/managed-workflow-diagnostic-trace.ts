@@ -5,9 +5,14 @@ import path from "node:path";
 import type { SessionMessage } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 
-const DIAGRAM_MODULES_STAGE = "diagram_modules";
-const LOG_FILE_NAME = "diagram-modules-lifecycle.jsonl";
 const PREVIEW_LIMIT = 320;
+const MANAGED_STAGE_LOG_FILES = {
+  application_skeleton: "application-skeleton-lifecycle.jsonl",
+  diagram_modules: "diagram-modules-lifecycle.jsonl",
+  quality_gates: "quality-gates-baseline-lifecycle.jsonl",
+} as const;
+
+type ManagedDiagnosticStage = keyof typeof MANAGED_STAGE_LOG_FILES;
 
 export interface ManagedDiagnosticSession {
   readonly continuationParentId?: string | null;
@@ -28,19 +33,20 @@ interface TraceOptions {
   readonly session: ManagedDiagnosticSession | null | undefined;
 }
 
-type DiagramModulesDiagnosticSession = ManagedDiagnosticSession & {
+type ManagedWorkflowDiagnosticSession = ManagedDiagnosticSession & {
   readonly initiativeSlug: string;
-  readonly stage: typeof DIAGRAM_MODULES_STAGE;
+  readonly stage: ManagedDiagnosticStage;
   readonly workspacePath: string;
 };
 
-const isDiagramModulesSession = (
+const isManagedWorkflowDiagnosticSession = (
   session: ManagedDiagnosticSession | null | undefined
-): session is DiagramModulesDiagnosticSession =>
+): session is ManagedWorkflowDiagnosticSession =>
   Boolean(
     session?.workspacePath &&
       session.initiativeSlug &&
-      session.stage === DIAGRAM_MODULES_STAGE
+      typeof session.stage === "string" &&
+      session.stage in MANAGED_STAGE_LOG_FILES
   );
 
 const hashContent = (content: string): string =>
@@ -56,17 +62,17 @@ const resolveUserLogsRoot = (): string =>
   path.join(homedir(), ".codeai-hub", "logs");
 
 export const resolveManagedWorkflowDiagnosticLogPath = (
-  session: DiagramModulesDiagnosticSession
+  session: ManagedWorkflowDiagnosticSession
 ): string =>
   path.join(
     resolveUserLogsRoot(),
     "managed-workflow",
     session.initiativeSlug,
-    LOG_FILE_NAME
+    MANAGED_STAGE_LOG_FILES[session.stage]
   );
 
 const buildBaseEntry = (
-  session: DiagramModulesDiagnosticSession,
+  session: ManagedWorkflowDiagnosticSession,
   event: string
 ): Record<string, unknown> => ({
   event,
@@ -85,7 +91,7 @@ const buildBaseEntry = (
 });
 
 const writeWorkspaceEntry = (
-  session: DiagramModulesDiagnosticSession,
+  session: ManagedWorkflowDiagnosticSession,
   entry: Record<string, unknown>
 ): void => {
   const logPath = resolveManagedWorkflowDiagnosticLogPath(session);
@@ -94,7 +100,7 @@ const writeWorkspaceEntry = (
 };
 
 export const traceManagedWorkflowDiagnostic = (options: TraceOptions): void => {
-  if (!isDiagramModulesSession(options.session)) {
+  if (!isManagedWorkflowDiagnosticSession(options.session)) {
     return;
   }
   const contentMetadata =

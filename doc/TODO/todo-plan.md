@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "968e59aa6",
+  "lastRecordedCommit": "ea076ee3f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "application-skeleton-polyglot-materializer",
-  "expectedCommitMessage": "fix: materialize application skeleton contract files",
+  "currentTaskId": "managed-lifecycle-stage-logs",
+  "expectedCommitMessage": "feat: trace all managed technical stages",
   "debt": {
-    "expectedCommitMessage": "fix: materialize application skeleton contract files",
-    "preCommitHead": "968e59aa6",
+    "expectedCommitMessage": "feat: trace all managed technical stages",
+    "preCommitHead": "ea076ee3f",
     "stage": "commit_pending",
-    "taskId": "application-skeleton-polyglot-materializer"
+    "taskId": "managed-lifecycle-stage-logs"
   }
 }
 ```
@@ -280,11 +280,11 @@
 
 ### Stream: Application Skeleton Materialization Repair (from 1.2.420 retest)
 149. [DONE] `application-skeleton-polyglot-materializer` Make the Core-owned Application Skeleton materializer honor accepted contract paths, create declared polyglot config files, write syntax-valid first-wave entrypoints, and document the deterministic materialization boundary — scope: `packages/core/src/managed-workflow-orchestration/application-skeleton/*materializer*, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: materialize application skeleton contract files`
-150. [PENDING] Git Commit: `fix: materialize application skeleton contract files` (hash: TBD)
+150. [DONE] Git Commit: `fix: materialize application skeleton contract files` (hash: ea076ee3f)
 
 ### Stream: Managed Lifecycle Logs For Technical Stages
-151. [TODO] `managed-lifecycle-stage-logs` Extend user-level managed workflow lifecycle JSONL logging from Diagram Modules to Application Skeleton and Quality Gates Baseline, keeping all logs outside workspace runtime capsules — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: trace all managed technical stages`
-152. [TODO] Git Commit: `feat: trace all managed technical stages` (hash: TBD)
+151. [DONE] `managed-lifecycle-stage-logs` Extend user-level managed workflow lifecycle JSONL logging from Diagram Modules to Application Skeleton and Quality Gates Baseline, keeping all logs outside workspace runtime capsules — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `feat: trace all managed technical stages`
+152. [PENDING] Git Commit: `feat: trace all managed technical stages` (hash: TBD)
 
 ### Stream: Tooling Verification
 153. [TODO] `managed-technical-stage-verify` Build core/webview and run targeted Application Skeleton materializer + managed lifecycle trace tests — scope: `core + webview build`
