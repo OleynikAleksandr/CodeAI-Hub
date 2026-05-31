@@ -66,6 +66,39 @@ const resolveTargetSnapshotId = (options: {
 };
 
 const MANAGED_CORE_GATED_LOCK_REASON = "managed_core_gated";
+const MANAGED_REVIEW_RELEASE_LOCK_REASONS = new Set([
+  "diagram_modules_sequence",
+  "managed_workflow_core_agent_turn",
+]);
+const MANAGED_INPUT_LOCK_REASONS = new Set([
+  MANAGED_CORE_GATED_LOCK_REASON,
+  ...MANAGED_REVIEW_RELEASE_LOCK_REASONS,
+]);
+
+const isManagedInputLockReason = (
+  reason: string | undefined
+): reason is string => Boolean(reason && MANAGED_INPUT_LOCK_REASONS.has(reason));
+
+const shouldKeepCurrentManagedInputLock = (options: {
+  readonly currentLockActive: boolean;
+  readonly currentLockReason: string | undefined;
+  readonly nextLockActive: boolean;
+  readonly nextLockReason: string | undefined;
+}): boolean => {
+  if (
+    !options.currentLockActive ||
+    !isManagedInputLockReason(options.currentLockReason)
+  ) {
+    return false;
+  }
+  if (MANAGED_REVIEW_RELEASE_LOCK_REASONS.has(options.currentLockReason)) {
+    return options.nextLockReason !== options.currentLockReason;
+  }
+  return (
+    !options.nextLockActive ||
+    !isManagedInputLockReason(options.nextLockReason)
+  );
+};
 
 const describeSnapshotInputState = (
   snapshot: SessionSnapshots[string]
@@ -199,13 +232,16 @@ export const applyWorkspaceSnapshotToSnapshots = (
       timerTotalSeconds: session.taskTimer?.totalSeconds ?? 0,
     });
     if (
-      currentLockActive &&
-      currentLockReason === MANAGED_CORE_GATED_LOCK_REASON &&
-      !nextLockActive
+      shouldKeepCurrentManagedInputLock({
+        currentLockActive,
+        currentLockReason,
+        nextLockActive,
+        nextLockReason,
+      })
     ) {
       logWorkspaceSnapshotInputDecision({
         before: current,
-        event: "pm.workspace_snapshot.preserved_managed_core_gate",
+        event: "pm.workspace_snapshot.preserved_managed_input_gate",
         incoming: incomingInputState,
         payload,
         session,
@@ -214,11 +250,7 @@ export const applyWorkspaceSnapshotToSnapshots = (
       });
       nextLockActive = true;
       nextLockReason = currentLockReason;
-      nextConnectionState =
-        session.turnState === "running" ||
-        current.status.connectionState === "running"
-          ? "running"
-          : "blocked";
+      nextConnectionState = session.turnState === "running" ? "running" : "blocked";
     }
     const currentTimerTotalSeconds = current.status.taskTimer?.totalSeconds ?? 0;
     const currentTimerRunningSinceMs =
@@ -294,7 +326,6 @@ export const applyWorkspaceSnapshotToSnapshots = (
         ...current.status,
         connectionState: nextConnectionState,
         continuityLock: {
-          ...(current.status.continuityLock ?? { active: false, updatedAt: now }),
           active: nextLockActive,
           ...(nextLockReason ? { reason: nextLockReason } : {}),
           updatedAt: now,

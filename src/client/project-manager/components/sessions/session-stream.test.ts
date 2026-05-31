@@ -380,3 +380,90 @@ test("applyWorkspaceSnapshotToSnapshots preserves managed Core gate across stale
     "managed_core_gated"
   );
 });
+
+test("applyWorkspaceSnapshotToSnapshots preserves managed continuation lock over no-rollover idle snapshots", async () => {
+  const applyWorkspaceSnapshotToSnapshots = await loadApplyWorkspaceSnapshotToSnapshots();
+  const base: SessionSnapshots = {
+    managed: createSnapshot({
+      connectionState: "blocked",
+      continuityLockActive: true,
+      continuityLockReason: "managed_workflow_core_agent_turn",
+    }),
+  };
+
+  const next = applyWorkspaceSnapshotToSnapshots(
+    base,
+    createWorkspaceSnapshotPayload({
+      sequence: 41,
+      sessions: {
+        managed: createWorkspaceSession({
+          turnState: "idle",
+          continuityLockActive: false,
+          continuityLockReason: "no_rollover_needed",
+          resumeMode: "resume_in_place",
+          finalTurnCompleted: true,
+        }),
+      },
+    })
+  );
+
+  assert.equal(next.managed.status.connectionState, "blocked");
+  assert.equal(next.managed.status.continuityLock?.active, true);
+  assert.equal(
+    next.managed.status.continuityLock?.reason,
+    "managed_workflow_core_agent_turn"
+  );
+});
+
+test("applyWorkspaceSnapshotToSnapshots keeps diagram sequence lock across managed gate and idle churn", async () => {
+  const applyWorkspaceSnapshotToSnapshots = await loadApplyWorkspaceSnapshotToSnapshots();
+  const base: SessionSnapshots = {
+    managed: createSnapshot({
+      connectionState: "running",
+      continuityLockActive: true,
+      continuityLockReason: "diagram_modules_sequence",
+    }),
+  };
+
+  const running = applyWorkspaceSnapshotToSnapshots(
+    base,
+    createWorkspaceSnapshotPayload({
+      sequence: 42,
+      sessions: {
+        managed: createWorkspaceSession({
+          turnState: "running",
+          continuityLockActive: true,
+          continuityLockReason:
+            "managed_core_gated" as WorkspaceSnapshotContinuityLockReason,
+        }),
+      },
+    })
+  );
+  const idle = applyWorkspaceSnapshotToSnapshots(
+    running,
+    createWorkspaceSnapshotPayload({
+      sequence: 43,
+      sessions: {
+        managed: createWorkspaceSession({
+          turnState: "idle",
+          continuityLockActive: false,
+          continuityLockReason: "no_rollover_needed",
+          resumeMode: "resume_in_place",
+          finalTurnCompleted: true,
+        }),
+      },
+    })
+  );
+
+  assert.equal(running.managed.status.connectionState, "running");
+  assert.equal(
+    running.managed.status.continuityLock?.reason,
+    "diagram_modules_sequence"
+  );
+  assert.equal(idle.managed.status.connectionState, "blocked");
+  assert.equal(idle.managed.status.continuityLock?.active, true);
+  assert.equal(
+    idle.managed.status.continuityLock?.reason,
+    "diagram_modules_sequence"
+  );
+});

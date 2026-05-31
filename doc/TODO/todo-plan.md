@@ -8,15 +8,15 @@
   "planId": "input-unlock-settle-2026-05-30",
   "branch": "main",
   "baseHead": "84b5446e2",
-  "lastRecordedCommit": "decde11c2",
+  "lastRecordedCommit": "53c30db0e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Questionnaire_AutoScroll_Planning.md",
-  "currentTaskId": "managed-diagnostics-log-relocation",
-  "expectedCommitMessage": "fix: move managed diagnostics out of workspace",
+  "currentTaskId": "managed-input-gate-priority",
+  "expectedCommitMessage": "fix: preserve managed input gate over idle snapshots",
   "debt": {
-    "expectedCommitMessage": "fix: move managed diagnostics out of workspace",
-    "preCommitHead": "decde11c2",
+    "expectedCommitMessage": "fix: preserve managed input gate over idle snapshots",
+    "preCommitHead": "53c30db0e",
     "stage": "commit_pending",
-    "taskId": "managed-diagnostics-log-relocation"
+    "taskId": "managed-input-gate-priority"
   }
 }
 ```
@@ -261,9 +261,9 @@
 
 ### Stream: Managed Input Gate Priority Fix (from 1.2.419 retest)
 136. [DONE] `managed-diagnostics-log-relocation` Move Diagram Modules lifecycle diagnostics from the workspace runtime capsule into user-level Core logs so diagnostic JSONL cannot block managed workflow dirty gates — scope: `packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.ts, packages/core/src/remote-bridge/handlers/managed-workflow-diagnostic-trace.test.ts, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `fix: move managed diagnostics out of workspace`
-137. [PENDING] Git Commit: `fix: move managed diagnostics out of workspace` (hash: TBD)
-138. [TODO] `managed-input-gate-priority` Preserve Core/managed continuation input locks over stale idle/no_rollover workspace snapshots, and release only on explicit managed review/complete handoff — scope: `src/client/project-manager/components/sessions/session-stream.ts, src/client/project-manager/components/sessions/session-stream.test.ts`; expected commit: `fix: preserve managed input gate over idle snapshots`
-139. [TODO] Git Commit: `fix: preserve managed input gate over idle snapshots` (hash: TBD)
+137. [DONE] Git Commit: `fix: move managed diagnostics out of workspace` (hash: 53c30db0e)
+138. [DONE] `managed-input-gate-priority` Preserve Core/managed continuation input locks over stale idle/no_rollover workspace snapshots, and release only on explicit managed review/complete handoff — scope: `src/client/project-manager/components/sessions/session-stream.ts, src/client/project-manager/components/sessions/session-stream.test.ts`; expected commit: `fix: preserve managed input gate over idle snapshots`
+139. [PENDING] Git Commit: `fix: preserve managed input gate over idle snapshots` (hash: TBD)
 140. [TODO] `managed-input-gate-priority-verify` Build core/webview and run targeted managed input gate priority tests — scope: `core + webview build`
 141. [TODO] `release-confirmation-420` Wait for explicit user confirmation before preparing release notes or running release build for the managed input gate priority fix — scope: user confirmation gate
 
