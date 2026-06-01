@@ -8,15 +8,15 @@
   "planId": "session-status-open-settings-bottom-align-2026-06-01",
   "branch": "main",
   "baseHead": "8453d4f19",
-  "lastRecordedCommit": "6bae49de1",
+  "lastRecordedCommit": "1f274c582",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md",
-  "currentTaskId": "release-build-2",
-  "expectedCommitMessage": "chore: build 1.2.433 release",
+  "currentTaskId": "release-vsix-2",
+  "expectedCommitMessage": "chore: package 1.2.433 vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.433 release",
-    "preCommitHead": "6bae49de1",
+    "expectedCommitMessage": "chore: package 1.2.433 vsix",
+    "preCommitHead": "1f274c582",
     "stage": "commit_pending",
-    "taskId": "release-build-2"
+    "taskId": "release-vsix-2"
   }
 }
 ```
@@ -88,9 +88,9 @@
 19. [DONE] `release-docs-2` Update README "Current Release" and CHANGELOG for 1.2.433 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.433 release notes`
 20. [DONE] Git Commit: `docs: prepare 1.2.433 release notes` (hash: 6bae49de1)
 21. [DONE] `release-build-2` Run `./scripts/build-all.sh` to bump versions to 1.2.433 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.433 release`
-22. [PENDING] Git Commit: `chore: build 1.2.433 release` (hash: TBD)
-23. [TODO] `release-vsix-2` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.433 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.433 vsix`
-24. [TODO] Git Commit: `chore: package 1.2.433 vsix` (hash: TBD)
+22. [DONE] Git Commit: `chore: build 1.2.433 release` (hash: 1f274c582)
+23. [DONE] `release-vsix-2` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.433 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.433 vsix`
+24. [PENDING] Git Commit: `chore: package 1.2.433 vsix` (hash: TBD)
 
 ## Phase 7 - User Visual Acceptance Testing Round 2 (owner: Claude, updated: 2026-06-01)
 ### Stream: User Visual Acceptance Testing
