@@ -859,10 +859,12 @@ body {
   overflow-y: auto;
 }
 
-/* Sessions panel only: drop the bottom padding so the embedded session status
-   bar reaches the panel bottom and sits at the single --pm-panel-gap from the
-   window edge. The artifacts panel keeps its symmetric padding. */
+/* Sessions panel only: the session status bar reaches the panel bottom (no
+   bottom padding) and, with the tab bar hidden, the session id bar rises to the
+   top at the standard 8px gap (top padding 16px -> 8px). The artifacts panel
+   keeps its symmetric 16px padding. */
 .pm-panel--sessions .pm-panel__content {
+  padding-top: 8px;
   padding-bottom: 0;
 }
 

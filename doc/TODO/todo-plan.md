@@ -8,15 +8,15 @@
   "planId": "session-tabbar-hide-idbar-raise-2026-06-01",
   "branch": "main",
   "baseHead": "7fd2c7e1a",
-  "lastRecordedCommit": "7fd2c7e1a",
+  "lastRecordedCommit": "72d45671c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionTabBar_Hide_IdBarRaise_Layout.md",
-  "currentTaskId": "planning-intake",
-  "expectedCommitMessage": "docs: plan hide session tab bar and raise id bar",
+  "currentTaskId": "hide-tabbar-raise-idbar",
+  "expectedCommitMessage": "feat: hide session tab bar and raise id bar",
   "debt": {
-    "expectedCommitMessage": "docs: plan hide session tab bar and raise id bar",
-    "preCommitHead": "7fd2c7e1a",
+    "expectedCommitMessage": "feat: hide session tab bar and raise id bar",
+    "preCommitHead": "72d45671c",
     "stage": "commit_pending",
-    "taskId": "planning-intake"
+    "taskId": "hide-tabbar-raise-idbar"
   }
 }
 ```
@@ -45,12 +45,12 @@
 ## Phase 1 - Planning Intake (owner: Claude, updated: 2026-06-01)
 ### Stream: Planning Intake
 1. [DONE] `planning-intake` Create the planning doc and active todo-plan, register the planning doc in the docs index — scope: `doc/SolidWorks-WorkFlow/Plans/SessionTabBar_Hide_IdBarRaise_Layout.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: plan hide session tab bar and raise id bar`
-2. [PENDING] Git Commit: `docs: plan hide session tab bar and raise id bar` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan hide session tab bar and raise id bar` (hash: 72d45671c)
 
 ## Phase 2 - Tab Bar Hide Implementation (owner: Claude, updated: 2026-06-01)
 ### Stream: Hide Tab Bar & Raise ID Bar
-3. [TODO] `hide-tabbar-raise-idbar` Hide the session tab bar (`.session-app__header { display: none }`, kept in code) and reduce the sessions-panel content top padding to the standard 8px gap so the session ID bar rises to the top — scope: `media/session-view.css, packages/ui/project-manager/styles.css`; expected commit: `feat: hide session tab bar and raise id bar`
-4. [TODO] Git Commit: `feat: hide session tab bar and raise id bar` (hash: TBD)
+3. [DONE] `hide-tabbar-raise-idbar` Hide the session tab bar (`.session-app__header { display: none }`, kept in code) and reduce the sessions-panel content top padding to the standard 8px gap so the session ID bar rises to the top — scope: `media/session-view.css, packages/ui/project-manager/styles.css`; expected commit: `feat: hide session tab bar and raise id bar`
+4. [PENDING] Git Commit: `feat: hide session tab bar and raise id bar` (hash: TBD)
 
 ## Phase 3 - Verification & Release (owner: Claude, updated: 2026-06-01)
 ### Stream: Tooling Verification
