@@ -8,15 +8,15 @@
   "planId": "session-status-open-settings-bottom-align-2026-06-01",
   "branch": "main",
   "baseHead": "8453d4f19",
-  "lastRecordedCommit": "2f902b3a6",
+  "lastRecordedCommit": "fb8e9fc73",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md",
-  "currentTaskId": "open-settings-bottom-align",
-  "expectedCommitMessage": "fix: align open settings button with session status bar",
+  "currentTaskId": "release-docs",
+  "expectedCommitMessage": "docs: prepare 1.2.432 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: align open settings button with session status bar",
-    "preCommitHead": "2f902b3a6",
+    "expectedCommitMessage": "docs: prepare 1.2.432 release notes",
+    "preCommitHead": "fb8e9fc73",
     "stage": "commit_pending",
-    "taskId": "open-settings-bottom-align"
+    "taskId": "release-docs"
   }
 }
 ```
@@ -54,18 +54,18 @@
 
 ### Stream: Open Settings Button Alignment
 5. [DONE] `open-settings-bottom-align` Match the OPEN SETTINGS button height to the status chip button, match the footer zone height to the status panel, and bottom-align the button with the status chips — scope: `packages/ui/project-manager/styles.css`; expected commit: `fix: align open settings button with session status bar`
-6. [PENDING] Git Commit: `fix: align open settings button with session status bar` (hash: TBD)
+6. [DONE] Git Commit: `fix: align open settings button with session status bar` (hash: fb8e9fc73)
 
 ## Phase 3 - Verification & Release (owner: Claude, updated: 2026-06-01)
 ### Stream: Tooling Verification
-7. [TODO] `layout-verify` Run targeted webview/project-manager builds and typecheck to confirm the CSS bundles regenerate cleanly — scope: `webview + project-manager build/typecheck`
+7. [DONE] `layout-verify` Run targeted webview/project-manager builds and typecheck to confirm the CSS bundles regenerate cleanly — scope: `webview + project-manager build/typecheck` Result: Verification passed: build:webview (react-chat.js unchanged - CSS is not bundled into JS), build:project-manager (dist regenerated, gitignored), typecheck:webview clean. Fresh CSS confirmed injected into the Project Manager bundle: old .session-app 'padding: 0 0 8px' gone, footer 'padding: 13px 12px 8px' and settings button 'min-height: 28px' present. No tracked build artifacts dirtied.
 
 ### Stream: Release Build Confirmation
-8. [TODO] `release-confirmation` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate
+8. [DONE] `release-confirmation` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate Result: User explicitly confirmed building release 1.2.432 for visual verification.
 
 ### Stream: Release Build
-9. [TODO] `release-docs` Update README "Current Release" and CHANGELOG for the next version before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.432 release notes`
-10. [TODO] Git Commit: `docs: prepare 1.2.432 release notes` (hash: TBD)
+9. [DONE] `release-docs` Update README "Current Release" and CHANGELOG for the next version before packaging — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.432 release notes`
+10. [PENDING] Git Commit: `docs: prepare 1.2.432 release notes` (hash: TBD)
 11. [TODO] `release-build` Run `./scripts/build-all.sh` to bump versions and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.432 release`
 12. [TODO] Git Commit: `chore: build 1.2.432 release` (hash: TBD)
 13. [TODO] `release-vsix` Run `./scripts/build-release.sh --use-current-version` to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.432 vsix`

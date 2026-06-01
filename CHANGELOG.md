@@ -8,6 +8,15 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.432] - 2026-06-01
+### Changed
+- **Project Manager bottom bar alignment.** The SESSIONS status panel now drops to the window bottom with only the standard 8px gap (removed the residual `.session-app` bottom padding and the sessions-panel `.pm-panel__content` bottom padding). The WORKSPACE `OPEN SETTINGS` button height now mirrors the session status chip button (`min-height: 28px`, `padding: 4px 12px`), its footer zone height matches the status panel (~50px), and the button is bottom-aligned with the status chips so both columns end on one horizontal line.
+
+### Verification
+- `npm run build:webview`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+
 ## [1.2.431] - 2026-06-01
 ### Fixed
 - **Provider picker rows refresh after warmup.** Core now broadcasts a fresh `core:state` provider snapshot on provider status events, so Project Manager replaces early `starting` rows with the final provider availability after warmup or retry completes.
