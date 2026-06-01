@@ -8,15 +8,15 @@
   "planId": "claude-thinking-default-and-pm-startup-audit-2026-06-01",
   "branch": "main",
   "baseHead": "b5c00288f",
-  "lastRecordedCommit": "1227268c8",
+  "lastRecordedCommit": "dfb964fd0",
   "planningSource": "user request 2026-06-01: enable Claude thinking by default and analyze first Project Manager startup latency",
-  "currentTaskId": "release-build",
-  "expectedCommitMessage": "chore: build 1.2.430 release",
+  "currentTaskId": "release-vsix",
+  "expectedCommitMessage": "chore: package 1.2.430 vsix",
   "debt": {
-    "expectedCommitMessage": "chore: build 1.2.430 release",
-    "preCommitHead": "1227268c8",
+    "expectedCommitMessage": "chore: package 1.2.430 vsix",
+    "preCommitHead": "dfb964fd0",
     "stage": "commit_pending",
-    "taskId": "release-build"
+    "taskId": "release-vsix"
   }
 }
 ```
@@ -75,9 +75,9 @@
 13. [DONE] `release-docs` Update README and CHANGELOG for the next release before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.430 release notes`
 14. [DONE] Git Commit: `docs: prepare 1.2.430 release notes` (hash: 1227268c8)
 15. [DONE] `release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.430 release`
-16. [PENDING] Git Commit: `chore: build 1.2.430 release` (hash: TBD)
-17. [TODO] `release-vsix` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package next vsix`
-18. [TODO] Git Commit: `chore: package next vsix` (hash: TBD)
+16. [DONE] Git Commit: `chore: build 1.2.430 release` (hash: dfb964fd0)
+17. [DONE] `release-vsix` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.430 vsix`
+18. [PENDING] Git Commit: `chore: package 1.2.430 vsix` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 19. [TODO] `release-acceptance` Hand off the new VSIX and wait for explicit user retest acceptance — scope: user acceptance gate
