@@ -8,15 +8,15 @@
   "planId": "session-status-open-settings-bottom-align-2026-06-01",
   "branch": "main",
   "baseHead": "8453d4f19",
-  "lastRecordedCommit": "34f8eeead",
+  "lastRecordedCommit": "6bae49de1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md",
-  "currentTaskId": "release-docs-2",
-  "expectedCommitMessage": "docs: prepare 1.2.433 release notes",
+  "currentTaskId": "release-build-2",
+  "expectedCommitMessage": "chore: build 1.2.433 release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.433 release notes",
-    "preCommitHead": "34f8eeead",
+    "expectedCommitMessage": "chore: build 1.2.433 release",
+    "preCommitHead": "6bae49de1",
     "stage": "commit_pending",
-    "taskId": "release-docs-2"
+    "taskId": "release-build-2"
   }
 }
 ```
@@ -86,9 +86,9 @@
 
 ### Stream: Release Build
 19. [DONE] `release-docs-2` Update README "Current Release" and CHANGELOG for 1.2.433 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.433 release notes`
-20. [PENDING] Git Commit: `docs: prepare 1.2.433 release notes` (hash: TBD)
-21. [TODO] `release-build-2` Run `./scripts/build-all.sh` to bump versions to 1.2.433 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.433 release`
-22. [TODO] Git Commit: `chore: build 1.2.433 release` (hash: TBD)
+20. [DONE] Git Commit: `docs: prepare 1.2.433 release notes` (hash: 6bae49de1)
+21. [DONE] `release-build-2` Run `./scripts/build-all.sh` to bump versions to 1.2.433 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.433 release`
+22. [PENDING] Git Commit: `chore: build 1.2.433 release` (hash: TBD)
 23. [TODO] `release-vsix-2` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.433 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.433 vsix`
 24. [TODO] Git Commit: `chore: package 1.2.433 vsix` (hash: TBD)
 
