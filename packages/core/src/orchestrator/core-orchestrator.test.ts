@@ -8,10 +8,13 @@ const SOURCE_PATH = path.resolve(
   "packages/core/src/orchestrator/core-orchestrator.ts"
 );
 
-test("CoreOrchestrator starts the remote bridge only after provider startup is ready", async () => {
+test("CoreOrchestrator opens the remote bridge before provider warmup completes", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
   const autoUpdateIndex = source.indexOf(
     "await this.providerAutoUpdateService.runStartupAutoUpdate();"
+  );
+  const warmupPendingIndex = source.indexOf(
+    "this.providerRegistry.markStartupWarmupPending();"
   );
   const providerInitializeIndex = source.indexOf(
     "await this.providerRegistry.initialize();"
@@ -19,8 +22,10 @@ test("CoreOrchestrator starts the remote bridge only after provider startup is r
   const bridgeStartIndex = source.indexOf("await this.remoteBridge.start();");
 
   assert.notEqual(autoUpdateIndex, -1);
+  assert.notEqual(warmupPendingIndex, -1);
   assert.notEqual(providerInitializeIndex, -1);
   assert.notEqual(bridgeStartIndex, -1);
-  assert.ok(autoUpdateIndex < providerInitializeIndex);
-  assert.ok(providerInitializeIndex < bridgeStartIndex);
+  assert.ok(autoUpdateIndex < warmupPendingIndex);
+  assert.ok(warmupPendingIndex < bridgeStartIndex);
+  assert.ok(bridgeStartIndex < providerInitializeIndex);
 });

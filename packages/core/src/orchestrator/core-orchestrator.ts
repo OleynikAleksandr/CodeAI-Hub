@@ -113,8 +113,15 @@ export class CoreOrchestrator {
     await this.templateSync.sync();
     await this.runStartupSelfTest();
     await this.providerAutoUpdateService.runStartupAutoUpdate();
-    await this.providerRegistry.initialize();
+    this.providerRegistry.markStartupWarmupPending();
     await this.remoteBridge.start();
+    this.statusReporter.emit({
+      phase: "boot",
+      scope: "core",
+      label: "CodeAI Hub core API is ready.",
+      detail: "Provider modules are warming up in the background.",
+    });
+    await this.providerRegistry.initialize();
     this.statusReporter.emit({
       phase: "finalize",
       scope: "core",

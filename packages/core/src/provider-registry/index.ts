@@ -192,13 +192,27 @@ export class ProviderRegistry {
     );
   }
 
+  markStartupWarmupPending(): void {
+    for (const provider of this.providers) {
+      const mutable = provider as MutableProviderDescriptor;
+      if (mutable.status !== "active") {
+        continue;
+      }
+      mutable.status = "degraded";
+      mutable.statusMessage = `${mutable.name} is starting. Provider actions become available after startup warmup finishes.`;
+    }
+  }
+
   listProviders(): Provider[] {
     return this.providers.map((provider) => this.toProviderSnapshot(provider));
   }
 
   getAdapter(providerId: string): ProviderAdapter | undefined {
-    return this.providers.find((provider) => provider.id === providerId)
-      ?.adapter;
+    const provider = this.providers.find((item) => item.id === providerId);
+    if (provider?.status !== "active") {
+      return undefined;
+    }
+    return provider.adapter;
   }
 
   getDescriptor(providerId: string): ProviderDescriptor | undefined {

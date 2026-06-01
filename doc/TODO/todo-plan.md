@@ -8,15 +8,15 @@
   "planId": "claude-thinking-default-and-pm-startup-audit-2026-06-01",
   "branch": "main",
   "baseHead": "b5c00288f",
-  "lastRecordedCommit": "b5c00288f",
+  "lastRecordedCommit": "144b9e6ce",
   "planningSource": "user request 2026-06-01: enable Claude thinking by default and analyze first Project Manager startup latency",
-  "currentTaskId": "claude-thinking-default",
-  "expectedCommitMessage": "fix: enable claude thinking by default",
+  "currentTaskId": "pm-startup-early-bridge",
+  "expectedCommitMessage": "fix: open project manager before provider warmup",
   "debt": {
-    "expectedCommitMessage": "fix: enable claude thinking by default",
-    "preCommitHead": "b5c00288f",
+    "expectedCommitMessage": "fix: open project manager before provider warmup",
+    "preCommitHead": "144b9e6ce",
     "stage": "commit_pending",
-    "taskId": "claude-thinking-default"
+    "taskId": "pm-startup-early-bridge"
   }
 }
 ```
@@ -46,13 +46,39 @@
 ## Phase 1 - Claude Thinking Default + Startup Analysis (owner: Codex, updated: 2026-06-01)
 ### Stream: Claude Thinking Default
 1. [DONE] `claude-thinking-default` Enable Claude thinking mode by default for new/missing settings only, without migrating explicit existing workspace values — scope: `src/client/ui/src/components/settings/claude-thinking-state.ts, packages/core/src/remote-bridge/handlers/settings-persistence-snapshot.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule.ts`; expected commit: `fix: enable claude thinking by default`
-2. [PENDING] Git Commit: `fix: enable claude thinking by default` (hash: TBD)
+2. [DONE] Git Commit: `fix: enable claude thinking by default` (hash: 144b9e6ce)
 
 ### Stream: Tooling Verification
-3. [TODO] `claude-thinking-default-verify` Run targeted settings default tests and type-safe checks if needed — scope: `settings tests, core settings tests`
+3. [DONE] `claude-thinking-default-verify` Run targeted settings default tests and type-safe checks if needed — scope: `settings tests, core settings tests` Result: Verification passed: targeted Settings UI auto-update defaults test and Core provider auto-update service test passed after the Claude thinking default commit.
 
 ### Stream: User Workflow Acceptance Testing
-4. [TODO] `user-acceptance` Report implementation result and Project Manager startup analysis; wait for explicit user acceptance — scope: user acceptance gate
+4. [DONE] `user-acceptance` Report implementation result and Project Manager startup analysis; wait for explicit user acceptance — scope: user acceptance gate Result: User accepted the Claude thinking default and requested implementing the Project Manager startup optimization plus building a new release for verification.
+
+## Phase 2 - Project Manager Startup Optimization + Release (owner: Codex, updated: 2026-06-01)
+### Stream: Core Bridge Startup
+5. [DONE] `pm-startup-early-bridge` Open the Core remote bridge before heavy provider warmup, while keeping provider actions unavailable until provider initialization succeeds — scope: `packages/core/src/orchestrator/core-orchestrator.ts, packages/core/src/orchestrator/core-orchestrator.test.ts, packages/core/src/provider-registry/index.ts`; expected commit: `fix: open project manager before provider warmup`
+6. [PENDING] Git Commit: `fix: open project manager before provider warmup` (hash: TBD)
+
+### Stream: Project Manager Startup Requests
+7. [TODO] `pm-startup-lazy-version-check` Stop eager provider version checks on first Project Manager socket open; keep manual/settings-triggered version reloads — scope: `src/client/project-manager/api.ts`; expected commit: `fix: defer provider version checks on startup`
+8. [TODO] Git Commit: `fix: defer provider version checks on startup` (hash: TBD)
+
+### Stream: Tooling Verification
+9. [TODO] `pm-startup-verify` Run targeted Core orchestrator/startup request tests plus core/webview builds — scope: `core + project-manager startup tests`
+
+### Stream: Release Build Confirmation
+10. [DONE] `release-confirmation` User explicitly requested building a new release after the startup optimization — scope: user confirmation gate Result: User asked to implement the startup change and build a new release for verification.
+
+### Stream: Release Build
+11. [TODO] `release-docs` Update README and CHANGELOG for the next release before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare next release notes`
+12. [TODO] Git Commit: `docs: prepare next release notes` (hash: TBD)
+13. [TODO] `release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build next release`
+14. [TODO] Git Commit: `chore: build next release` (hash: TBD)
+15. [TODO] `release-vsix` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package next vsix`
+16. [TODO] Git Commit: `chore: package next vsix` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+17. [TODO] `release-acceptance` Hand off the new VSIX and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-5. [TODO] `scope-closeout` Close out todo-plan only after explicit user acceptance — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/`
+18. [TODO] `scope-closeout` Close out todo-plan only after explicit user acceptance — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/`
