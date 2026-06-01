@@ -150,6 +150,7 @@ Continuity chains remain stage-family agnostic. The same load/persistence rules 
 UI на этом этапе:
 - левая панель (`Sessions`) показывает user-facing Help для шага Description;
 - правая панель (`Artifacts`) показывает редактор `questionnaire.md`;
+- редактор анкеты при открытии прокручивается к первой незаполненной обязательной секции, а после заполнения всех обязательных секций — к нижней зоне отправки; optional-секции не блокируют готовность анкеты;
 - runtime-сессии ещё нет.
 
 ### 1.2 Submit и запуск Description Agent

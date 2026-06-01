@@ -63,7 +63,7 @@ Legacy `description.md` допускается только для compat и н�
 ### 3.2 Paired Markdown/JSON authority
 
 - `Application Skeleton`: `application-skeleton.md` is readable review prose; `application-skeleton-map.json` owns lifecycle fields such as `accepted`, `materialized`, `materializationState`, `openQuestions`, `projectFoundation`, and materialized path declarations.
-- `Quality Gates Baseline`: `quality-gates.md` is readable review prose; `quality-gates.json` owns `accepted`, `integrated`, `integrationState`, command availability, required gate arrays, `integratedPaths`, and verification state.
+- `Quality Gates Baseline`: `quality-gates.md` is readable review prose; `quality-gates.json` owns `accepted`, `integrated`, `integrationState`, gate category/disposition, command availability, required gate arrays, `integratedPaths`, adapter evidence, and verification state.
 - Core validators may require paired Markdown files to exist and carry the correct top-level heading, but they must not use Markdown prose/table values as authoritative runtime state when a paired machine-readable contract exists.
 
 ---

@@ -10,7 +10,7 @@
 **Planning Source Disposition:** kept active for the next implementation scope
 **Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/ApplicationSkeleton_ProjectFoundation_Planning_RU.md
 **Companion Planning Source Disposition:** kept as accepted deferred source for the later Quality Gates scope
-**Companion Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/QualityGates_WorkingBaseline_Planning_RU.md
+**Companion Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_WorkingBaseline_Planning_RU.md
 
 ## Closeout Summary
 

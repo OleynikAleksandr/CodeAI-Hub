@@ -35,7 +35,7 @@
 ## Context Pack For This Cycle
 
 - **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/ApplicationSkeleton_ProjectFoundation_Planning_RU.md`
-- **Deferred companion source:** `doc/SolidWorks-WorkFlow/Plans/QualityGates_WorkingBaseline_Planning_RU.md`
+- **Deferred companion source:** `doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_WorkingBaseline_Planning_RU.md`
 - **Read this context before implementation:**
   - `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`
   - `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`

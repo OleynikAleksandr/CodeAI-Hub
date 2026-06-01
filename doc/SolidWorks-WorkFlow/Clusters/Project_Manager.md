@@ -56,6 +56,7 @@ while that review action is in flight.
 - До `Submit questionnaire` в стадии `Description` runtime-сессии нет:
   - левая панель показывает Description Help,
   - правая панель показывает редактор `questionnaire.md`.
+  - questionnaire editor scrolls to the first incomplete required section on open and to the submit footer once all required sections are complete; optional sections do not block completion and typing does not continuously steal scroll.
 - После `Submit questionnaire` создаётся runtime-сессия Description:
   - левая панель возвращается к Session UI,
   - правая панель имеет переключатель `Artifacts/Help`.
