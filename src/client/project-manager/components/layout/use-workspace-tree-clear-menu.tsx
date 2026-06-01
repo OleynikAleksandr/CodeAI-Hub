@@ -162,7 +162,7 @@ export const useWorkspaceTreeClearMenu = (params: {
         </div>
         <div className="pm-tree-menu__actions">
           <button
-            className="pm-modal__button pm-modal__button--secondary"
+            className="pm-tree-menu__btn pm-tree-menu__btn--secondary"
             onClick={(event) => {
               event.stopPropagation();
               close();
@@ -172,14 +172,14 @@ export const useWorkspaceTreeClearMenu = (params: {
             Cancel
           </button>
           <button
-            className="pm-modal__button pm-modal__button--danger"
+            className="pm-tree-menu__btn pm-tree-menu__btn--danger"
             onClick={(event) => {
               event.stopPropagation();
               void clearConfirmed();
             }}
             type="button"
           >
-            Clear
+            Clear/Undo
           </button>
         </div>
       </>
@@ -193,7 +193,7 @@ export const useWorkspaceTreeClearMenu = (params: {
         role="menuitem"
         type="button"
       >
-        Clear
+        Clear/Undo
       </button>
     );
 

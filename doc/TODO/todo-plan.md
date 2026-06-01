@@ -8,15 +8,15 @@
   "planId": "clear-menu-dialog-restyle-2026-06-01",
   "branch": "main",
   "baseHead": "a8da6740b",
-  "lastRecordedCommit": "9d2f8ff6a",
+  "lastRecordedCommit": "2a916409f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ClearMenu_ConfirmDialog_Restyle_DesignSystem.md",
-  "currentTaskId": "release-vsix",
-  "expectedCommitMessage": "chore: package 1.2.435 vsix",
+  "currentTaskId": "restyle-polish",
+  "expectedCommitMessage": "fix: polish clear menu and rename clear to clear/undo",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.435 vsix",
-    "preCommitHead": "9d2f8ff6a",
+    "expectedCommitMessage": "fix: polish clear menu and rename clear to clear/undo",
+    "preCommitHead": "2a916409f",
     "stage": "commit_pending",
-    "taskId": "release-vsix"
+    "taskId": "restyle-polish"
   }
 }
 ```
@@ -68,12 +68,36 @@
 10. [DONE] `release-build` Run `./scripts/build-all.sh` to bump versions to 1.2.435 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.435 release`
 11. [DONE] Git Commit: `chore: build 1.2.435 release` (hash: 9d2f8ff6a)
 12. [DONE] `release-vsix` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.435 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.435 vsix`
-13. [PENDING] Git Commit: `chore: package 1.2.435 vsix` (hash: TBD)
+13. [DONE] Git Commit: `chore: package 1.2.435 vsix` (hash: 2a916409f)
 
 ## Phase 6 - User Visual Acceptance Testing (owner: Claude, updated: 2026-06-01)
 ### Stream: User Visual Acceptance Testing
-14. [TODO] `user-visual-acceptance` Hand over the 1.2.435 VSIX and wait for explicit user visual acceptance of the restyled menu and dialog — scope: user acceptance gate
+14. [DONE] `user-visual-acceptance` Hand over the 1.2.435 VSIX and wait for explicit user visual acceptance of the restyled menu and dialog — scope: user acceptance gate Result: User reviewed 1.2.435: design direction accepted but the menu item was off (text not centered, button too large from a fixed height without flex centering) and menu/dialog did not yet read as part of the design. Approved the interactive prototype with a compact centered menu item, compact 32px dialog buttons; also requested renaming Clear to Clear/Undo since the action is an undo via Git rollback. Proceeding to polish + re-release 1.2.436.
 
-## Phase 7 - Scope Closeout (owner: Claude, updated: 2026-06-01)
+## Phase 7 - Restyle Polish & Clear/Undo Round 2 (owner: Claude, updated: 2026-06-01)
+### Stream: Menu Polish & Clear/Undo Label
+16. [DONE] `restyle-polish` Center and compact the menu item (flex centering, no fixed height), use compact 32px dialog buttons, and rename the Clear action to "Clear/Undo" (it is an undo via Git rollback) on the menu item and the danger button — scope: `packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx`; expected commit: `fix: polish clear menu and rename clear to clear/undo`
+17. [PENDING] Git Commit: `fix: polish clear menu and rename clear to clear/undo` (hash: TBD)
+
+## Phase 8 - Re-Verification & Release 1.2.436 (owner: Claude, updated: 2026-06-01)
+### Stream: Tooling Verification
+18. [TODO] `restyle-verify-2` Rebuild the project-manager bundle and typecheck the webview; confirm the polished classes and Clear/Undo label are injected — scope: `project-manager build + webview typecheck`
+
+### Stream: Release Build Confirmation
+19. [TODO] `release-confirmation-2` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate
+
+### Stream: Release Build
+20. [TODO] `release-docs-2` Update README "Current Release" and CHANGELOG for 1.2.436 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.436 release notes`
+21. [TODO] Git Commit: `docs: prepare 1.2.436 release notes` (hash: TBD)
+22. [TODO] `release-build-2` Run `./scripts/build-all.sh` to bump versions to 1.2.436 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.436 release`
+23. [TODO] Git Commit: `chore: build 1.2.436 release` (hash: TBD)
+24. [TODO] `release-vsix-2` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.436 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.436 vsix`
+25. [TODO] Git Commit: `chore: package 1.2.436 vsix` (hash: TBD)
+
+## Phase 9 - User Visual Acceptance Testing Round 2 (owner: Claude, updated: 2026-06-01)
+### Stream: User Visual Acceptance Testing
+26. [TODO] `user-visual-acceptance-2` Hand over the 1.2.436 VSIX and wait for explicit user visual acceptance of the polished menu, dialog, and Clear/Undo label — scope: user acceptance gate
+
+## Phase 10 - Scope Closeout (owner: Claude, updated: 2026-06-01)
 ### Stream: Scope Closeout
-15. [TODO] `scope-closeout` After acceptance, archive the todo-plan and planning doc and refresh the docs index — scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/**`
+27. [TODO] `scope-closeout` After acceptance, archive the todo-plan and planning doc and refresh the docs index — scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/**`
