@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.430] - 2026-06-01
+### Fixed
+- **Project Manager can open before provider warmup finishes.** Core now starts the remote bridge after template sync, startup self-test, and provider auto-update gating, then warms provider modules through the already-open status channel. Provider adapters remain unavailable until initialization succeeds.
+- **First socket connection no longer triggers provider npm version checks.** Project Manager still supports explicit Settings version reloads, but cold startup no longer starts `settings:versions` automatically.
+- **Claude Thinking mode is enabled by default.** New or missing Claude thinking settings now default to enabled while preserving explicit existing opt-outs.
+
+### Tests
+- `node --import tsx --test packages/core/src/orchestrator/core-orchestrator.test.ts packages/core/src/remote-bridge/handlers/settings-provider-auto-update-service.test.ts src/client/ui/src/components/settings/settings-auto-update-defaults.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.429] - 2026-05-31
 ### Fixed
 - **Application Skeleton lifecycle state now belongs to map JSON.** Core no longer rejects materialized Application Skeleton results because `application-skeleton.md` still contains stale draft/review prose; materialization authority stays in `application-skeleton-map.json` plus filesystem foundation evidence.
