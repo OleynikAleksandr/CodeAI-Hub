@@ -8,15 +8,15 @@
   "planId": "claude-thinking-default-and-pm-startup-audit-2026-06-01",
   "branch": "main",
   "baseHead": "b5c00288f",
-  "lastRecordedCommit": "144b9e6ce",
+  "lastRecordedCommit": "7395566ba",
   "planningSource": "user request 2026-06-01: enable Claude thinking by default and analyze first Project Manager startup latency",
-  "currentTaskId": "pm-startup-early-bridge",
-  "expectedCommitMessage": "fix: open project manager before provider warmup",
+  "currentTaskId": "pm-startup-lazy-version-check",
+  "expectedCommitMessage": "fix: defer provider version checks on startup",
   "debt": {
-    "expectedCommitMessage": "fix: open project manager before provider warmup",
-    "preCommitHead": "144b9e6ce",
+    "expectedCommitMessage": "fix: defer provider version checks on startup",
+    "preCommitHead": "7395566ba",
     "stage": "commit_pending",
-    "taskId": "pm-startup-early-bridge"
+    "taskId": "pm-startup-lazy-version-check"
   }
 }
 ```
@@ -57,11 +57,11 @@
 ## Phase 2 - Project Manager Startup Optimization + Release (owner: Codex, updated: 2026-06-01)
 ### Stream: Core Bridge Startup
 5. [DONE] `pm-startup-early-bridge` Open the Core remote bridge before heavy provider warmup, while keeping provider actions unavailable until provider initialization succeeds — scope: `packages/core/src/orchestrator/core-orchestrator.ts, packages/core/src/orchestrator/core-orchestrator.test.ts, packages/core/src/provider-registry/index.ts`; expected commit: `fix: open project manager before provider warmup`
-6. [PENDING] Git Commit: `fix: open project manager before provider warmup` (hash: TBD)
+6. [DONE] Git Commit: `fix: open project manager before provider warmup` (hash: 7395566ba)
 
 ### Stream: Project Manager Startup Requests
-7. [TODO] `pm-startup-lazy-version-check` Stop eager provider version checks on first Project Manager socket open; keep manual/settings-triggered version reloads — scope: `src/client/project-manager/api.ts`; expected commit: `fix: defer provider version checks on startup`
-8. [TODO] Git Commit: `fix: defer provider version checks on startup` (hash: TBD)
+7. [DONE] `pm-startup-lazy-version-check` Stop eager provider version checks on first Project Manager socket open; keep manual/settings-triggered version reloads — scope: `src/client/project-manager/api.ts`; expected commit: `fix: defer provider version checks on startup`
+8. [PENDING] Git Commit: `fix: defer provider version checks on startup` (hash: TBD)
 
 ### Stream: Tooling Verification
 9. [TODO] `pm-startup-verify` Run targeted Core orchestrator/startup request tests plus core/webview builds — scope: `core + project-manager startup tests`

@@ -493,7 +493,6 @@ class ProjectManagerApi {
       }
     });
     this.listProjects();
-    this.loadSettingsVersions();
   }
 }
 
