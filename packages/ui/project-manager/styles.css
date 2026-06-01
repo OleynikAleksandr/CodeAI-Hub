@@ -418,16 +418,26 @@ body {
 }
 
 .pm-sidebar__footer {
-  padding: 10px 12px 12px;
+  /* Footer zone height matches the session status panel (~50px): 13 + 28
+     (button) + 8 + 1 (border-top). The 8px bottom padding lands the button on
+     the same baseline as the status bar (one --pm-panel-gap from the edge). */
+  padding: 13px 12px 8px;
   border-top: 1px solid var(--pm-border-color);
 }
 
 .pm-sidebar__settings-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: 9px 12px;
+  /* Height mirrors the session status chip button (.session-status-button:
+     min-height 28px, padding 4px 12px) so the bottom bar reads as one row. */
+  min-height: 28px;
+  padding: 4px 12px;
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
+  line-height: 1;
   color: var(--pm-accent-strong);
   text-transform: uppercase;
   letter-spacing: 0.08em;
