@@ -8,15 +8,15 @@
   "planId": "session-status-open-settings-bottom-align-2026-06-01",
   "branch": "main",
   "baseHead": "8453d4f19",
-  "lastRecordedCommit": "2c10b04a7",
+  "lastRecordedCommit": "34f8eeead",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md",
-  "currentTaskId": "open-settings-baseline-fix",
-  "expectedCommitMessage": "fix: align open settings button height and baseline with status chips",
+  "currentTaskId": "release-docs-2",
+  "expectedCommitMessage": "docs: prepare 1.2.433 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: align open settings button height and baseline with status chips",
-    "preCommitHead": "2c10b04a7",
+    "expectedCommitMessage": "docs: prepare 1.2.433 release notes",
+    "preCommitHead": "34f8eeead",
     "stage": "commit_pending",
-    "taskId": "open-settings-baseline-fix"
+    "taskId": "release-docs-2"
   }
 }
 ```
@@ -78,15 +78,15 @@
 ## Phase 5 - Open Settings Alignment Fix Round 2 (owner: Claude, updated: 2026-06-01)
 ### Stream: Open Settings Height & Baseline Fix
 16. [DONE] `open-settings-baseline-fix` Set the OPEN SETTINGS button height to 32px (the visible chip height) and make the footer zone symmetric (17px top/bottom) so the button top/bottom align with the status chips baseline; sync the planning doc — scope: `packages/ui/project-manager/styles.css, doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md`; expected commit: `fix: align open settings button height and baseline with status chips`
-17. [PENDING] Git Commit: `fix: align open settings button height and baseline with status chips` (hash: TBD)
+17. [DONE] Git Commit: `fix: align open settings button height and baseline with status chips` (hash: 34f8eeead)
 
 ## Phase 6 - Re-Verification & Release 1.2.433 (owner: Claude, updated: 2026-06-01)
 ### Stream: Tooling Verification
-18. [TODO] `layout-verify-2` Rebuild the project-manager bundle and confirm the new footer/button CSS is injected — scope: `project-manager build`
+18. [DONE] `layout-verify-2` Rebuild the project-manager bundle and confirm the new footer/button CSS is injected — scope: `project-manager build` Result: Verification passed: build:project-manager regenerated dist with new CSS - footer 'padding: 17px 12px' (symmetric) present, old '13px 12px 8px' gone, settings button 'min-height: 32px' present. dist gitignored, no tracked artifacts dirtied.
 
 ### Stream: Release Build
-19. [TODO] `release-docs-2` Update README "Current Release" and CHANGELOG for 1.2.433 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.433 release notes`
-20. [TODO] Git Commit: `docs: prepare 1.2.433 release notes` (hash: TBD)
+19. [DONE] `release-docs-2` Update README "Current Release" and CHANGELOG for 1.2.433 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.433 release notes`
+20. [PENDING] Git Commit: `docs: prepare 1.2.433 release notes` (hash: TBD)
 21. [TODO] `release-build-2` Run `./scripts/build-all.sh` to bump versions to 1.2.433 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.433 release`
 22. [TODO] Git Commit: `chore: build 1.2.433 release` (hash: TBD)
 23. [TODO] `release-vsix-2` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.433 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.433 vsix`
