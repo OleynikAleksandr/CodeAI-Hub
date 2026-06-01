@@ -28,7 +28,7 @@ Legacy пакет остаётся в репозитории как ~60 TypeScri
 
 3. Не трогать historical материал: `CHANGELOG.md`, `doc/TODO/Archive/`, `doc/SolidWorks-WorkFlow/Plans/Archive/`, legacy session-report archive (removed), `doc/BugRegistry.md`. Эти упоминания — аудит-trail, их сохранение важно для регрессионных расследований.
 
-4. Не трогать `Plans/Codex_AppServer_Capabilities_Analysis.md`: этот research-doc обсуждает публичный OpenAI App Server как текущую интеграционную поверхность, а TypeScript SDK — только как исторический baseline, не как наш internal пакет.
+4. Не трогать `Plans/Backlog/Codex_AppServer_Capabilities_Analysis.md`: этот research-doc обсуждает публичный OpenAI App Server как текущую интеграционную поверхность, а TypeScript SDK — только как исторический baseline, не как наш internal пакет.
 
 ## Out of Scope
 

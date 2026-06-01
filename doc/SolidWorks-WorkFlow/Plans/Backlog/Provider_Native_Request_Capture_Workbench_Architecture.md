@@ -2,7 +2,7 @@
 
 **Status:** Draft rev6 (Phase 1 implementation planning source)
 **Created:** 2026-05-01
-**Updated:** 2026-05-01 — rev2 учёл P1.1/P1.2/P1.3/P2.4/P2.5/P2.6; rev3 учёл P1 (Product Goal contract), P2 (Codex CLI hypothesis), P2 (Translation comparison contract), P3 (Gemini Phase 2 file ownership); rev4 учёл P3 (internal section refs), P3 (Translation wording precision); 2026-05-02 rev5 — UI-scope ownership for Phase 1 Workbench moved to child plan `Capture_Workbench_UI_Architecture.md`: §3.4 run history wording and §3.5 first-iteration provider scope are explicitly superseded by the child rev2; rev6 — §3.7 closes the detached transport/localization pre-flight spike for Phase 1 implementation.
+**Updated:** 2026-05-01 — rev2 учёл P1.1/P1.2/P1.3/P2.4/P2.5/P2.6; rev3 учёл P1 (Product Goal contract), P2 (Codex CLI hypothesis), P2 (Translation comparison contract), P3 (Gemini Phase 2 file ownership); rev4 учёл P3 (internal section refs), P3 (Translation wording precision); 2026-05-02 rev5 — UI-scope ownership for Phase 1 Workbench moved to child plan `Plans/Backlog/Capture_Workbench_UI_Architecture.md`: §3.4 run history wording and §3.5 first-iteration provider scope are explicitly superseded by the child rev2; rev6 — §3.7 closes the detached transport/localization pre-flight spike for Phase 1 implementation.
 **Owner:** Oleksandr + Codex
 **Scope:** Эволюция модуля `Provider Native Request Capture` из карточки в Settings → General в полноценный исследовательский полигон. Главная цель — сравнение `Vanilla CLI baseline` (provider bridge с дефолтами) и `CodeAI Hub Managed` (текущий applied turn config) в идентичных условиях `(provider, model, reasoning, userPrompt, workspace)` для одного и того же пользовательского запроса.
 
@@ -106,11 +106,11 @@ Vanilla работает в **активном workspace** пользовате�
 - Каждый клик пишет одну пару файлов:
   - `<timestamp>-<provider>-<scenario>-<correlation>-managed.{jsonl,md}` (для Managed-кнопки),
   - `<timestamp>-<provider>-<scenario>-<correlation>-vanilla.{jsonl,md}` (для Vanilla-кнопки).
-- Workbench отображает захваты в одном run history list, сгруппированном по ключу `(provider, model, reasoning, scenario)`. Соседние захваты с одинаковым ключом и разными режимами визуально подсвечиваются как сравнимая пара, даже если они сделаны в разное время. **UI scope superseded by child plan rev2:** the Phase 1 Workbench replaces this generic run-history-list framing with a slot-based UI-side index (`workbench-index.json`) over the same immutable timestamped artifacts described above; `current + previous` per slot is a UI projection and does not change the writer naming or retention contract here. Diff view ships in Phase 1 (semantic section diff `Managed: current vs previous`), not deferred — see `Plans/Capture_Workbench_UI_Architecture.md` §3 and §4.
+- Workbench отображает захваты в одном run history list, сгруппированном по ключу `(provider, model, reasoning, scenario)`. Соседние захваты с одинаковым ключом и разными режимами визуально подсвечиваются как сравнимая пара, даже если они сделаны в разное время. **UI scope superseded by child plan rev2:** the Phase 1 Workbench replaces this generic run-history-list framing with a slot-based UI-side index (`workbench-index.json`) over the same immutable timestamped artifacts described above; `current + previous` per slot is a UI projection and does not change the writer naming or retention contract here. Diff view ships in Phase 1 (semantic section diff `Managed: current vs previous`), not deferred — see `Plans/Backlog/Capture_Workbench_UI_Architecture.md` §3 and §4.
 
 ### 3.5 Scope управления провайдерами
 
-Long-term scope of the Workbench covers all three providers (Claude, Codex, Gemini), and Gemini eventually requires `captureNativeRequest` in `GeminiProviderAdapter` for both modes. **Phase 1 UI scope superseded by child plan rev2:** the first Workbench release ships with **Claude and Codex Managed capture only**; the Gemini Provider option is rendered as a disabled placeholder in the selection bar with tooltip `Gemini support arrives with parent Phase 2`. The capture transport union (`NativeRequestCaptureProviderId = "claude" | "codex"`) is unchanged in Phase 1. See `Plans/Capture_Workbench_UI_Architecture.md` §2.1 and §5.2. The Phase 2 stream defined below remains the canonical owner of when and how Gemini joins the union.
+Long-term scope of the Workbench covers all three providers (Claude, Codex, Gemini), and Gemini eventually requires `captureNativeRequest` in `GeminiProviderAdapter` for both modes. **Phase 1 UI scope superseded by child plan rev2:** the first Workbench release ships with **Claude and Codex Managed capture only**; the Gemini Provider option is rendered as a disabled placeholder in the selection bar with tooltip `Gemini support arrives with parent Phase 2`. The capture transport union (`NativeRequestCaptureProviderId = "claude" | "codex"`) is unchanged in Phase 1. See `Plans/Backlog/Capture_Workbench_UI_Architecture.md` §2.1 and §5.2. The Phase 2 stream defined below remains the canonical owner of when and how Gemini joins the union.
 
 ### 3.6 Translation как отдельный сравнительный контракт
 
@@ -297,6 +297,6 @@ UI vehicle для будущего Vanilla режима.
 
 ### Related plans
 
-- `Plans/Claude_Agent_SDK_Capabilities_Analysis.md` — что доступно в Claude SDK для Vanilla опций.
-- `Plans/Codex_AppServer_Capabilities_Analysis.md` — managed Codex baseline для контраста с Vanilla `codex exec`.
-- `Plans/CrossProvider_Common_Capabilities.md` — общие инварианты, которые должны соблюсти все три провайдера в обоих режимах.
+- `Plans/Backlog/Claude_Agent_SDK_Capabilities_Analysis.md` — что доступно в Claude SDK для Vanilla опций.
+- `Plans/Backlog/Codex_AppServer_Capabilities_Analysis.md` — managed Codex baseline для контраста с Vanilla `codex exec`.
+- `Plans/Backlog/CrossProvider_Common_Capabilities.md` — общие инварианты, которые должны соблюсти все три провайдера в обоих режимах.

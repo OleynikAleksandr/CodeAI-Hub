@@ -259,8 +259,8 @@ After every flag change:
 ## 6. Related Documents
 
 - `doc/SolidWorks-WorkFlow/Plans/Provider_Instruction_Stack_Tuning_Tests.md`
-- `doc/SolidWorks-WorkFlow/Plans/Codex_AppServer_Capabilities_Analysis.md`
-- `doc/SolidWorks-WorkFlow/Plans/CrossProvider_Common_Capabilities.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Codex_AppServer_Capabilities_Analysis.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/CrossProvider_Common_Capabilities.md`
 - `doc/SolidWorks-WorkFlow/Modules/Codex.md`
 - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`

@@ -6,7 +6,7 @@
 **Owner:** Oleksandr + Codex
 **Scope:** Формализовать branch-level workflow, который начинается после `Diagram Modules`: `Product Part Specification`, `Cluster Design`, `Module Design` / `Module Planning` / `Module Execution`, standalone-module path, required contracts для выбранной implementation wave и readiness gates между сессиями.
 
-**Синхронизирован с:** `Plans/DevelopmentTree_Sidebar_Visualization_Architecture.md` (rev 3, Accepted) — единый sidebar/session model.
+**Синхронизирован с:** `Plans/Backlog/DevelopmentTree_Sidebar_Visualization_Architecture.md` (rev 3, Accepted) — единый sidebar/session model.
 
 ---
 
@@ -81,7 +81,7 @@
 - писать бизнес-логику модулей;
 - навязывать один giant-bang sequence, в котором весь продукт обязан быть полностью расписан до старта первой implementation wave;
 - сливать specification и facade contract в один markdown-файл;
-- определять визуализацию sidebar (ownership: `DevelopmentTree_Sidebar_Visualization_Architecture.md`).
+- определять визуализацию sidebar (ownership: `Plans/Backlog/DevelopmentTree_Sidebar_Visualization_Architecture.md`).
 
 ---
 
@@ -689,7 +689,7 @@ Gates нужны, чтобы каждая следующая сессия:
 
 В первый unified execution cycle **не входят**:
 
-- detailed `Implementation` tab view из `DevelopmentTree_Sidebar_Visualization_Architecture.md`, §10.2;
+- detailed `Implementation` tab view из `Plans/Backlog/DevelopmentTree_Sidebar_Visualization_Architecture.md`, §10.2;
 - custom tooltip component из того же документа, §10.3;
 - mutation/delete flow для уже materialized Diagram Modules branch structure;
 - любые отдельные trunk-рефакторинги вне той части, которая нужна для Development Tree rollout.

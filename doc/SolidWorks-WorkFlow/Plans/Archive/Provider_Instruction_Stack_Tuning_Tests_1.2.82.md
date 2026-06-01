@@ -39,9 +39,9 @@
 - OpenAI Codex App Server: `https://developers.openai.com/codex/app-server`
 - OpenAI Codex repo config notes: `https://github.com/openai/codex/blob/main/docs/config.md`
 - Existing CodeAI Hub docs:
-  - `doc/SolidWorks-WorkFlow/Plans/Claude_Agent_SDK_Capabilities_Analysis.md`
-  - `doc/SolidWorks-WorkFlow/Plans/Codex_AppServer_Capabilities_Analysis.md`
-  - `doc/SolidWorks-WorkFlow/Plans/CrossProvider_Common_Capabilities.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Claude_Agent_SDK_Capabilities_Analysis.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/Codex_AppServer_Capabilities_Analysis.md`
+  - `doc/SolidWorks-WorkFlow/Plans/Backlog/CrossProvider_Common_Capabilities.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Provider_Native_Request_Capture_Architecture.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Native_Request_Capture_Workflow_Scenarios_1.2.66.md`
   - `doc/SolidWorks-WorkFlow/Plans/Archive/Native_Request_Capture_Codex_Turn_Context_Hotfix_1.2.67.md`

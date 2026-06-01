@@ -6,7 +6,7 @@
 
 ## Default agent tool list
 
-Источник: `doc/SolidWorks-WorkFlow/Plans/KIMI/Kimi_Default_Agent_Source.yaml`.
+Источник: `doc/SolidWorks-WorkFlow/Plans/Backlog/KIMI/Kimi_Default_Agent_Source.yaml`.
 
 Default root agent включает:
 

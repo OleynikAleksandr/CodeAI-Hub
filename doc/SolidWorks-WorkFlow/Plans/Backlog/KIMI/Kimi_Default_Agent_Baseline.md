@@ -24,8 +24,8 @@ Kimi CLI сам выбирает default agent, если не передан `--
 
 В эту папку добавлены raw-копии этих файлов:
 
-- `doc/SolidWorks-WorkFlow/Plans/KIMI/Kimi_Default_Agent_Source.yaml`
-- `doc/SolidWorks-WorkFlow/Plans/KIMI/Kimi_Default_SystemPrompt_Source.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/KIMI/Kimi_Default_Agent_Source.yaml`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/KIMI/Kimi_Default_SystemPrompt_Source.md`
 
 Эти две копии нужно считать baseline snapshot для Kimi CLI `1.44.0`, а не вечным контрактом: при обновлении CLI их нужно переснять.
 

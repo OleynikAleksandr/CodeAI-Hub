@@ -277,7 +277,7 @@ Sidebar читалка получает readiness state как часть Develo
 - `doc/SolidWorks-WorkFlow/Docs_Index.md`
 - `doc/SolidWorks-WorkFlow/Contracts/FacadeClassDiagram_DesignAndMaintenance.md`
 - `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_Skeleton_Materialization_Architecture.md`
-- `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_Sidebar_Visualization_Architecture.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/DevelopmentTree_Sidebar_Visualization_Architecture.md`
 - `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`
 - `packages/core/src/remote-bridge/handlers/development-tree-snapshot.ts`
 - `packages/core/src/remote-bridge/handlers/workflow-state-service.ts`

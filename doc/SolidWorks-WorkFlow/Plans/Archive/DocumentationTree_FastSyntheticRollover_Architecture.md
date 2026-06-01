@@ -262,7 +262,7 @@ User retests:
 - Reworking provider-native context window reporting.
 - Rewriting Description / Virtual Simulation / Diagram Modules agent prompts beyond the minimal continuation envelope.
 
-The next implementation-heavy continuity redesign is captured separately in `doc/SolidWorks-WorkFlow/Plans/Implementation_Continuity_Deterministic_Snapshot_Architecture.md`.
+The next implementation-heavy continuity redesign is captured separately in `doc/SolidWorks-WorkFlow/Plans/Backlog/Implementation_Continuity_Deterministic_Snapshot_Architecture.md`.
 
 ---
 

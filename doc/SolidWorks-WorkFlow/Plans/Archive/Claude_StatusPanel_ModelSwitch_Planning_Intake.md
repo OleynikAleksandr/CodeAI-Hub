@@ -14,8 +14,8 @@ The Codex Status Panel model/reasoning switch scope is closed and accepted in re
 - `doc/SolidWorks-WorkFlow/Modules/Claude.md`
 - `doc/SolidWorks-WorkFlow/Modules/Session_UI/SessionStatusPanel.md`
 - `doc/SolidWorks-WorkFlow/Contracts/EffectiveModelIdentity_And_Settings_SSOT.md`
-- `doc/SolidWorks-WorkFlow/Plans/Claude_Agent_SDK_Capabilities_Analysis.md`
-- `doc/SolidWorks-WorkFlow/Plans/CrossProvider_Common_Capabilities.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/Claude_Agent_SDK_Capabilities_Analysis.md`
+- `doc/SolidWorks-WorkFlow/Plans/Backlog/CrossProvider_Common_Capabilities.md`
 - `doc/SolidWorks-WorkFlow/Plans/Archive/Codex_StatusPanel_ModelSwitch_Architecture.md`
 - `doc/TODO/Archive/todo-plan-codex-status-panel-model-switch.md`
 
