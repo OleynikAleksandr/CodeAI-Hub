@@ -46,7 +46,7 @@ export const mapClaudeThinkingSettings = (
   value: RawThinkingSettings | undefined
 ): ClaudeThinkingSettingsState => ({
   effort: mapClaudeThinkingEffort(value?.effort ?? value?.maxTokens),
-  enabled: Boolean(value?.enabled),
+  enabled: typeof value?.enabled === "boolean" ? value.enabled : true,
 });
 
 export const areClaudeThinkingSettingsEqual = (

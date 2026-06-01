@@ -65,7 +65,7 @@ const WORKSPACE_SETTINGS_SEED = {
   providers: {
     claude: {
       thinking: {
-        enabled: false,
+        enabled: true,
         effort: "medium",
       },
       thinkingDisplaySyncEnabled: true,
