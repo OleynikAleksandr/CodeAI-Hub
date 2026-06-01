@@ -8,15 +8,15 @@
   "planId": "claude-thinking-default-and-pm-startup-audit-2026-06-01",
   "branch": "main",
   "baseHead": "b5c00288f",
-  "lastRecordedCommit": "ae615fbee",
+  "lastRecordedCommit": "3a2a67cb1",
   "planningSource": "user request 2026-06-01: enable Claude thinking by default and analyze first Project Manager startup latency",
-  "currentTaskId": "provider-refresh-release-docs",
-  "expectedCommitMessage": "docs: prepare 1.2.431 release notes",
+  "currentTaskId": "provider-refresh-release-build",
+  "expectedCommitMessage": "chore: build 1.2.431 release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.431 release notes",
-    "preCommitHead": "ae615fbee",
+    "expectedCommitMessage": "chore: build 1.2.431 release",
+    "preCommitHead": "3a2a67cb1",
     "stage": "commit_pending",
-    "taskId": "provider-refresh-release-docs"
+    "taskId": "provider-refresh-release-build"
   }
 }
 ```
@@ -92,9 +92,9 @@
 
 ### Stream: Provider Refresh Release Build
 24. [DONE] `provider-refresh-release-docs` Update README and CHANGELOG for 1.2.431 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.431 release notes`
-25. [PENDING] Git Commit: `docs: prepare 1.2.431 release notes` (hash: TBD)
-26. [TODO] `provider-refresh-release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.431 release`
-27. [TODO] Git Commit: `chore: build 1.2.431 release` (hash: TBD)
+25. [DONE] Git Commit: `docs: prepare 1.2.431 release notes` (hash: 3a2a67cb1)
+26. [DONE] `provider-refresh-release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.431 release`
+27. [PENDING] Git Commit: `chore: build 1.2.431 release` (hash: TBD)
 28. [TODO] `provider-refresh-release-vsix` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.431 vsix`
 29. [TODO] Git Commit: `chore: package 1.2.431 vsix` (hash: TBD)
 
