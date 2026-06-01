@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "1add4fc4f",
+  "lastRecordedCommit": "1ad80e095",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: organize active plans backlog",
+  "currentTaskId": "phase4.stream1.task1",
+  "expectedCommitMessage": "docs: revise development tree module workflow",
   "debt": {
-    "expectedCommitMessage": "docs: organize active plans backlog",
-    "preCommitHead": "1add4fc4f",
+    "expectedCommitMessage": "docs: revise development tree module workflow",
+    "preCommitHead": "1ad80e095",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase4.stream1.task1"
   }
 }
 ```
@@ -46,24 +46,43 @@
 ### Stream: Root Planning Shelf
 
 1. [DONE] `phase1.stream1.task1` Reorganize `Plans/` root so the current active planning source remains in root while deferred/reference planning documents move to `Plans/Backlog/`; update navigation and path references (scope: `doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: organize active plans backlog`).
-2. [PENDING] Git Commit: `docs: organize active plans backlog` (hash: TBD)
+2. [DONE] Git Commit: `docs: organize active plans backlog` (hash: 1ad80e095)
 
 ## Phase 2 - Tooling Verification (owner: Codex, updated: 2026-06-01)
 
 ### Stream: Documentation Checks
 
-3. [TODO] `phase2.stream1.task1` Run `npm run plan:validate` and targeted path/link spot checks for moved planning documents (scope: `doc/TODO/todo-plan.md`).
+3. [DONE] `phase2.stream1.task1` Run `npm run plan:validate` and targeted path/link spot checks for moved planning documents (scope: `doc/TODO/todo-plan.md`). Result: plan:validate passed; check:links passed; root Plans contains only README.md plus DevelopmentTree_BranchWorkflow_Architecture.md as the active working planning document
 
 ## Phase 3 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-01)
 
 ### Stream: User Acceptance
 
-4. [TODO] `phase3.stream1.task1` User reviews the `Plans/` shelf model and accepts or requests adjustments before scope closeout (scope: `doc/TODO/todo-plan.md`).
+4. [DONE] `phase3.stream1.task1` User reviews the `Plans/` shelf model and accepts or requests adjustments before scope closeout (scope: `doc/TODO/todo-plan.md`). Result: User accepted the Plans shelf model and requested continuing with the active Development Tree planning source.
 
-## Phase 4 - Scope Closeout (owner: Codex, updated: 2026-06-01)
+## Phase 4 - Development Tree Module Workflow Revision (owner: Codex, updated: 2026-06-01)
+
+### Stream: Module Session And Worker Visibility
+
+5. [DONE] `phase4.stream1.task1` Revise `DevelopmentTree_BranchWorkflow_Architecture.md` to reflect the one module-agent session model, artifact/user-review phases, interactive Implementation TODO Plan, read-only worker sessions, and MVP responsibility split between Core and the module agent; update the docs index summary for this active planning source (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md, doc/TODO/todo-plan.md`; expected commit: `docs: revise development tree module workflow`).
+6. [PENDING] Git Commit: `docs: revise development tree module workflow` (hash: TBD)
+
+## Phase 5 - Tooling Verification (owner: Codex, updated: 2026-06-01)
+
+### Stream: Documentation Checks
+
+7. [TODO] `phase5.stream1.task1` Run `npm run plan:validate` and `npm run check:links` after the architecture revision (scope: `doc/TODO/todo-plan.md`).
+
+## Phase 6 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-01)
+
+### Stream: User Acceptance
+
+8. [TODO] `phase6.stream1.task1` User reviews the revised Development Tree branch workflow architecture and accepts or requests adjustments before scope closeout (scope: `doc/TODO/todo-plan.md`).
+
+## Phase 7 - Scope Closeout (owner: Codex, updated: 2026-06-01)
 
 ### Stream: Closeout
 
-5. [TODO] `phase4.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close plans backlog intake`).
-6. [TODO] Git Commit: `docs: close plans backlog intake` (hash: TBD)
-7. [TODO] `phase4.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+9. [TODO] `phase7.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close plans backlog intake`).
+10. [TODO] Git Commit: `docs: close plans backlog intake` (hash: TBD)
+11. [TODO] `phase7.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
