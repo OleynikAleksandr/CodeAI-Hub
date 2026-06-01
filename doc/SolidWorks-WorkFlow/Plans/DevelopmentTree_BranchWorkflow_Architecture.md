@@ -237,6 +237,49 @@ MVP:
 
 Разница только в path: standalone module живёт под `standalone-modules/`, а не под `clusters/<cluster-id>/modules/`.
 
+### 4.11. Microtask completion always has a Git Commit boundary
+
+`Implementation TODO Plan` должен использовать тот же принцип, что и основной `doc/TODO/todo-plan.md` CodeAI Hub:
+
+- каждая implementation microtask имеет отдельную строку задачи;
+- сразу после неё идёт отдельная строка `Git Commit: <message>`;
+- commit boundary нельзя пропустить или объединить с другой microtask без явного перепланирования.
+
+Этот `Git Commit` запускается через Core-managed commit lifecycle. На commit boundary срабатывают pre-commit hooks, включая Quality Gates, подготовленные на предыдущем шаге `Quality Gates Baseline`.
+
+Следовательно, microtask считается законченной не тогда, когда worker написал "готово", а когда:
+
+1. module agent принял смысловой результат;
+2. Core применил изменения в canonical workspace;
+3. Core выполнил Git Commit item;
+4. pre-commit hooks / Quality Gates прошли или failure записан в план.
+
+### 4.12. Module agent owns commit intent; workers do not commit
+
+Worker не должен быть владельцем commit-а.
+
+Правильное разделение:
+
+- worker выполняет microtask и возвращает результат: patch, changed files, notes, validation output;
+- module agent решает, принимать ли результат по смыслу;
+- Core применяет принятый результат к canonical workspace и выполняет managed commit;
+- pre-commit hooks запускают Quality Gates;
+- interactive `Implementation TODO Plan` обновляет статус microtask и связанного Git Commit item.
+
+Причина простая: worker видит только маленький кусок задачи. Module agent видит facade contract, specification, весь implementation plan и пользовательский feedback. Поэтому именно module agent должен решать, готов ли результат к commit boundary.
+
+### 4.13. Parallel workers use isolated workspaces by default
+
+Для MVP безопасное правило такое:
+
+- serial microtasks могут выполняться в canonical workspace под supervision module agent-а;
+- parallel writable microtasks запускаются в отдельных worker sandboxes/worktrees от одного base commit;
+- worker не коммитит в общий repo;
+- worker возвращает patch/result snapshot;
+- module agent и Core мержат результаты обратно последовательно, через отдельный Git Commit item после каждой microtask.
+
+Один общий workspace для нескольких workers допустим только для read-only analysis или строго serial execution. Даже если две parallel microtasks кажутся независимыми, по умолчанию лучше дать им разные sandboxes: это убирает race conditions, грязное рабочее дерево и скрытые file conflicts.
+
 ---
 
 ## 5. Target Workflow
@@ -490,6 +533,24 @@ Worker runs живут под module workflow:
 
 Markdown version is user-readable. JSON version is machine-readable and drives the interactive right-panel view.
 
+Внутри `Microtasks` каждая реальная work item должна быть парой:
+
+```text
+1. [TODO] Implement clock payload formatter (parallel group A; worker candidate)
+2. [TODO] Git Commit: docs/code: implement clock payload formatter
+```
+
+Для пользователя это должно отображаться как одна work row with commit boundary details или как две связанные строки. Для Core это всегда две связанные записи: work item и commit item.
+
+`implementation-plan.json` должен явно хранить:
+
+- microtask id;
+- paired commit id;
+- expected commit message;
+- execution mode: `serial`, `parallel`, or `read-only`;
+- workspace policy: `canonical`, `worker-sandbox`, or `read-only`;
+- Quality Gates result for the paired commit.
+
 ### 7.7. Worker Run Snapshot
 
 Минимальные поля:
@@ -559,6 +620,23 @@ Core проверяет формальное:
 
 Core не принимает смысловое решение вместо module agent-а.
 
+### 8.6. Commit and Quality Gates gate
+
+Каждая implementation microtask закрывается только через связанный `Git Commit` item.
+
+Commit gate делает две вещи:
+
+1. фиксирует accepted worker/module-agent result в repo history;
+2. запускает pre-commit hooks, которые выполняют Quality Gates из предыдущего stage.
+
+Если hook или Quality Gate падает:
+
+- microtask не считается закрытой;
+- paired Git Commit item остаётся failed/pending;
+- module agent получает failure summary;
+- пользователь видит failure в интерактивном `Implementation TODO Plan`;
+- исправление идёт через module-agent session, а не через direct worker chat.
+
 ---
 
 ## 9. OUTDATED Propagation
@@ -621,10 +699,12 @@ Core не принимает смысловое решение вместо modu
 7. Создать и принять `Module Specification`.
 8. Создать и принять `Implementation TODO Plan`.
 9. Выполнить worker microtasks с интерактивным progress view.
-10. Вернуть worker results module agent-у.
-11. Module agent выполняет assembly / semantic integration.
-12. Пользователь принимает module result.
-13. Core закрывает module workflow.
+10. После каждой accepted microtask выполнить paired Git Commit через Core-managed lifecycle.
+11. На каждом commit boundary запустить pre-commit hooks / Quality Gates.
+12. Вернуть worker results module agent-у.
+13. Module agent выполняет assembly / semantic integration.
+14. Пользователь принимает module result.
+15. Core закрывает module workflow.
 
 ---
 
@@ -644,6 +724,10 @@ Core не принимает смысловое решение вместо modu
 - no input field in worker transcript view;
 - user feedback goes to module-agent session;
 - Core validates formats, commits and gates.
+- each implementation microtask has a paired Git Commit item;
+- module agent owns accept/reject decisions for worker results;
+- Core owns the actual managed commit and pre-commit Quality Gates boundary;
+- writable parallel workers run in isolated worker sandboxes/worktrees by default.
 
 ### 11.2. May Come Later
 
@@ -677,7 +761,10 @@ Core не принимает смысловое решение вместо modu
 8. Почему worker sessions read-only?
 9. Куда пользователь пишет feedback по микрозадаче?
 10. Что делает Core, а что делает module agent?
-11. Что входит в первый MVP, а что оставлено на later automation?
+11. Кто принимает worker result и кто выполняет Git Commit boundary?
+12. Как pre-commit hooks / Quality Gates связаны с implementation microtasks?
+13. В каких workspaces запускаются parallel workers?
+14. Что входит в первый MVP, а что оставлено на later automation?
 
 ---
 
@@ -692,6 +779,9 @@ Core не принимает смысловое решение вместо modu
 - Core является формальным оркестратором и validator-ом, но не chat participant;
 - `Facade Contract`, `Module Specification` и `Implementation TODO Plan` создаются последовательно и проходят user review;
 - `Implementation TODO Plan` становится интерактивной правой панелью;
+- каждая implementation microtask имеет paired Git Commit item, который запускает pre-commit Quality Gates;
+- module agent принимает или отклоняет worker result, worker сам не коммитит;
+- parallel writable workers работают в isolated sandboxes/worktrees, а merge в canonical workspace идёт последовательно через Core-managed commits;
 - worker sessions видимы read-only через строки плана;
 - feedback по worker result идёт module agent-у;
 - первая версия остаётся реалистичной: module agent supervises execution, Core enforces lifecycle.
