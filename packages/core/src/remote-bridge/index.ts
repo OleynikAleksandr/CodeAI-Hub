@@ -91,6 +91,12 @@ export class RemoteBridge {
     this.unsubscribeStatus = this.statusReporter.subscribe((event) => {
       this.latestStatus = event;
       this.broadcast({ type: "core:loading-status", payload: event });
+      if (event.phase === "provider") {
+        this.broadcast({
+          type: "core:state",
+          payload: this.buildInitialState(),
+        });
+      }
     });
     this.serverLifecycle = new RemoteBridgeServerLifecycle({
       config: this.config,

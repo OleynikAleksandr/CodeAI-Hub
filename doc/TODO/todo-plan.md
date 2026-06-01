@@ -8,15 +8,15 @@
   "planId": "claude-thinking-default-and-pm-startup-audit-2026-06-01",
   "branch": "main",
   "baseHead": "b5c00288f",
-  "lastRecordedCommit": "dfb964fd0",
+  "lastRecordedCommit": "4e82ba05c",
   "planningSource": "user request 2026-06-01: enable Claude thinking by default and analyze first Project Manager startup latency",
-  "currentTaskId": "release-vsix",
-  "expectedCommitMessage": "chore: package 1.2.430 vsix",
+  "currentTaskId": "provider-warmup-state-refresh",
+  "expectedCommitMessage": "fix: refresh provider status after warmup",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.430 vsix",
-    "preCommitHead": "dfb964fd0",
+    "expectedCommitMessage": "fix: refresh provider status after warmup",
+    "preCommitHead": "4e82ba05c",
     "stage": "commit_pending",
-    "taskId": "release-vsix"
+    "taskId": "provider-warmup-state-refresh"
   }
 }
 ```
@@ -77,10 +77,18 @@
 15. [DONE] `release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.430 release`
 16. [DONE] Git Commit: `chore: build 1.2.430 release` (hash: dfb964fd0)
 17. [DONE] `release-vsix` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.430 vsix`
-18. [PENDING] Git Commit: `chore: package 1.2.430 vsix` (hash: TBD)
+18. [DONE] Git Commit: `chore: package 1.2.430 vsix` (hash: 4e82ba05c)
 
 ### Stream: User Workflow Acceptance Testing
-19. [TODO] `release-acceptance` Hand off the new VSIX and wait for explicit user retest acceptance — scope: user acceptance gate
+19. [DONE] `release-acceptance` Hand off the new VSIX and wait for explicit user retest acceptance — scope: user acceptance gate Result: User retest accepted Project Manager startup speed but found Claude/Gemini provider picker rows stuck in startup warmup state even after Core provider initialization completed.
+
+### Stream: Provider Warmup State Refresh
+20. [DONE] `provider-warmup-state-refresh` Broadcast a fresh Core state/provider snapshot after provider warmup and retry status changes, so Project Manager replaces early "starting" provider rows with the final provider state — scope: `packages/core/src/remote-bridge/index.ts, packages/core/src/remote-bridge/remote-bridge-provider-state-broadcast.test.ts`; expected commit: `fix: refresh provider status after warmup`
+21. [PENDING] Git Commit: `fix: refresh provider status after warmup` (hash: TBD)
+22. [TODO] `provider-warmup-state-refresh-verify` Run targeted provider state broadcast test, core build, and webview typecheck/build — scope: `core + webview verification`
+
+### Stream: Release Build Confirmation
+23. [TODO] `provider-refresh-release-confirmation` Wait for explicit user confirmation before building a follow-up release for provider warmup state refresh — scope: user confirmation gate
 
 ### Stream: Scope Closeout
-20. [TODO] `scope-closeout` Close out todo-plan only after explicit user acceptance — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/`
+24. [TODO] `scope-closeout` Close out todo-plan only after explicit user acceptance — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/`
