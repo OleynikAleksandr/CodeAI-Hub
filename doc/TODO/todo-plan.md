@@ -8,15 +8,15 @@
   "planId": "clear-menu-dialog-restyle-2026-06-01",
   "branch": "main",
   "baseHead": "a8da6740b",
-  "lastRecordedCommit": "a8da6740b",
+  "lastRecordedCommit": "487f580bb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ClearMenu_ConfirmDialog_Restyle_DesignSystem.md",
-  "currentTaskId": "planning-intake",
-  "expectedCommitMessage": "docs: plan clear menu and confirm dialog restyle",
+  "currentTaskId": "restyle-clear-menu",
+  "expectedCommitMessage": "fix: restyle clear menu and confirm dialog to design system",
   "debt": {
-    "expectedCommitMessage": "docs: plan clear menu and confirm dialog restyle",
-    "preCommitHead": "a8da6740b",
+    "expectedCommitMessage": "fix: restyle clear menu and confirm dialog to design system",
+    "preCommitHead": "487f580bb",
     "stage": "commit_pending",
-    "taskId": "planning-intake"
+    "taskId": "restyle-clear-menu"
   }
 }
 ```
@@ -43,12 +43,12 @@
 ## Phase 1 - Planning Intake (owner: Claude, updated: 2026-06-01)
 ### Stream: Planning Intake
 1. [DONE] `planning-intake` Create the planning doc and active todo-plan, register the planning doc in the docs index — scope: `doc/SolidWorks-WorkFlow/Plans/ClearMenu_ConfirmDialog_Restyle_DesignSystem.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: plan clear menu and confirm dialog restyle`
-2. [PENDING] Git Commit: `docs: plan clear menu and confirm dialog restyle` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan clear menu and confirm dialog restyle` (hash: 487f580bb)
 
 ## Phase 2 - Restyle Implementation (owner: Claude, updated: 2026-06-01)
 ### Stream: Restyle Clear Menu & Confirm Dialog
-3. [TODO] `restyle-clear-menu` Replace the inline styles in the Clear context menu and confirm dialog with PM design-system classes (`.pm-tree-menu*` + `.pm-modal__button--danger`), reusing `--pm-*` tokens and the `.pm-modal` / `.pm-workspace-menu` patterns; keep only the cursor `left/top` inline — scope: `packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx`; expected commit: `fix: restyle clear menu and confirm dialog to design system`
-4. [TODO] Git Commit: `fix: restyle clear menu and confirm dialog to design system` (hash: TBD)
+3. [DONE] `restyle-clear-menu` Replace the inline styles in the Clear context menu and confirm dialog with PM design-system classes (`.pm-tree-menu*` + `.pm-modal__button--danger`), reusing `--pm-*` tokens and the `.pm-modal` / `.pm-workspace-menu` patterns; keep only the cursor `left/top` inline — scope: `packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx`; expected commit: `fix: restyle clear menu and confirm dialog to design system`
+4. [PENDING] Git Commit: `fix: restyle clear menu and confirm dialog to design system` (hash: TBD)
 
 ## Phase 3 - Verification & Prototype (owner: Claude, updated: 2026-06-01)
 ### Stream: Tooling Verification

@@ -151,70 +151,46 @@ export const useWorkspaceTreeClearMenu = (params: {
 
   const menuContent =
     menu?.mode === "confirm" ? (
-      <div style={{ display: "grid", gap: 8, maxWidth: 280, padding: 8 }}>
-        <div style={{ color: "#f8fafc", fontSize: 13, lineHeight: 1.4 }}>
+      <>
+        <div className="pm-tree-menu__text">
           Clear "{menu.label}" and all downstream workflow data? This cannot be
           undone.
         </div>
-        <div style={{ color: "#fca5a5", fontSize: 12, lineHeight: 1.4 }}>
+        <div className="pm-tree-menu__warning">
           Core will use Git rollback, then run git clean -fd. Untracked files
           that are not ignored under this workspace will be removed.
         </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+        <div className="pm-tree-menu__actions">
           <button
+            className="pm-modal__button pm-modal__button--secondary"
             onClick={(event) => {
               event.stopPropagation();
               close();
-            }}
-            style={{
-              background: "transparent",
-              border: "1px solid rgba(255,255,255,0.22)",
-              borderRadius: 4,
-              color: "#f8fafc",
-              cursor: "pointer",
-              font: "inherit",
-              padding: "5px 10px",
             }}
             type="button"
           >
             Cancel
           </button>
           <button
+            className="pm-modal__button pm-modal__button--danger"
             onClick={(event) => {
               event.stopPropagation();
               void clearConfirmed();
-            }}
-            style={{
-              background: "#b91c1c",
-              border: "1px solid rgba(255,255,255,0.18)",
-              borderRadius: 4,
-              color: "#fff",
-              cursor: "pointer",
-              font: "inherit",
-              padding: "5px 10px",
             }}
             type="button"
           >
             Clear
           </button>
         </div>
-      </div>
+      </>
     ) : (
       <button
+        className="pm-tree-menu__item"
         onClick={(event) => {
           event.stopPropagation();
           requestConfirmation();
         }}
         role="menuitem"
-        style={{
-          background: "transparent",
-          border: 0,
-          color: "#f8fafc",
-          cursor: "pointer",
-          font: "inherit",
-          padding: "6px 18px",
-          textAlign: "left",
-        }}
         type="button"
       >
         Clear
@@ -227,19 +203,12 @@ export const useWorkspaceTreeClearMenu = (params: {
       <div
         aria-label="Workflow step menu"
         aria-modal={menu.mode === "confirm" ? "true" : undefined}
+        className={
+          menu.mode === "confirm" ? "pm-tree-menu__dialog" : "pm-tree-menu"
+        }
         onClick={(event) => event.stopPropagation()}
         role={menu.mode === "confirm" ? "dialog" : "menu"}
-        style={{
-          background: "#1f2937",
-          border: "1px solid rgba(255,255,255,0.16)",
-          borderRadius: 6,
-          boxShadow: "0 12px 28px rgba(0,0,0,0.28)",
-          left: menu.x,
-          padding: 4,
-          position: "fixed",
-          top: menu.y,
-          zIndex: 1000,
-        }}
+        style={{ left: menu.x, top: menu.y }}
       >
         {menuContent}
       </div>
