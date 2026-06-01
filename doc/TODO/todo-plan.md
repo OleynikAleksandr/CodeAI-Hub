@@ -8,15 +8,15 @@
   "planId": "session-tabbar-hide-idbar-raise-2026-06-01",
   "branch": "main",
   "baseHead": "7fd2c7e1a",
-  "lastRecordedCommit": "72d45671c",
+  "lastRecordedCommit": "696fc0906",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionTabBar_Hide_IdBarRaise_Layout.md",
-  "currentTaskId": "hide-tabbar-raise-idbar",
-  "expectedCommitMessage": "feat: hide session tab bar and raise id bar",
+  "currentTaskId": "release-docs",
+  "expectedCommitMessage": "docs: prepare 1.2.434 release notes",
   "debt": {
-    "expectedCommitMessage": "feat: hide session tab bar and raise id bar",
-    "preCommitHead": "72d45671c",
+    "expectedCommitMessage": "docs: prepare 1.2.434 release notes",
+    "preCommitHead": "696fc0906",
     "stage": "commit_pending",
-    "taskId": "hide-tabbar-raise-idbar"
+    "taskId": "release-docs"
   }
 }
 ```
@@ -50,18 +50,18 @@
 ## Phase 2 - Tab Bar Hide Implementation (owner: Claude, updated: 2026-06-01)
 ### Stream: Hide Tab Bar & Raise ID Bar
 3. [DONE] `hide-tabbar-raise-idbar` Hide the session tab bar (`.session-app__header { display: none }`, kept in code) and reduce the sessions-panel content top padding to the standard 8px gap so the session ID bar rises to the top — scope: `media/session-view.css, packages/ui/project-manager/styles.css`; expected commit: `feat: hide session tab bar and raise id bar`
-4. [PENDING] Git Commit: `feat: hide session tab bar and raise id bar` (hash: TBD)
+4. [DONE] Git Commit: `feat: hide session tab bar and raise id bar` (hash: 696fc0906)
 
 ## Phase 3 - Verification & Release (owner: Claude, updated: 2026-06-01)
 ### Stream: Tooling Verification
-5. [TODO] `tabbar-verify` Rebuild the project-manager bundle and typecheck the webview; confirm the new CSS is injected — scope: `project-manager build + webview typecheck`
+5. [DONE] `tabbar-verify` Rebuild the project-manager bundle and typecheck the webview; confirm the new CSS is injected — scope: `project-manager build + webview typecheck` Result: Verification passed: build:project-manager regenerated dist, typecheck:webview clean. Both edits confirmed injected into the bundle: .session-app__header display:none (tab bar hidden, kept in code), and .pm-panel--sessions .pm-panel__content padding-top: 8px (id bar raised to the 8px gap). No tracked artifacts dirtied.
 
 ### Stream: Release Build Confirmation
-6. [TODO] `release-confirmation` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate
+6. [DONE] `release-confirmation` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate Result: User confirmed building release 1.2.434 for the hidden tab bar / raised id bar change.
 
 ### Stream: Release Build
-7. [TODO] `release-docs` Update README "Current Release" and CHANGELOG for 1.2.434 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.434 release notes`
-8. [TODO] Git Commit: `docs: prepare 1.2.434 release notes` (hash: TBD)
+7. [DONE] `release-docs` Update README "Current Release" and CHANGELOG for 1.2.434 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.434 release notes`
+8. [PENDING] Git Commit: `docs: prepare 1.2.434 release notes` (hash: TBD)
 9. [TODO] `release-build` Run `./scripts/build-all.sh` to bump versions to 1.2.434 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.434 release`
 10. [TODO] Git Commit: `chore: build 1.2.434 release` (hash: TBD)
 11. [TODO] `release-vsix` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.434 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.434 vsix`

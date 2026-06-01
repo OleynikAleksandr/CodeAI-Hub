@@ -2,14 +2,12 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.433** (Project Manager Bottom Bar Alignment)
+**Current Release — v1.2.434** (Hide Session Tab Bar)
 
-This release finishes the Project Manager bottom-bar alignment started in
-1.2.432. The SESSIONS status panel sits at the window bottom with the standard
-8px gap, and the WORKSPACE `OPEN SETTINGS` button now matches the visible status
-chip height (32px) and shares the exact top/bottom edges of the model / reasoning
-chips — one horizontal line across both columns — with symmetric gaps in its
-footer zone.
+This release hides the SESSIONS tab bar in the Project Manager. The tab strip
+(`Diagram Modules Codex ×`) is no longer displayed — it stays in the code, just
+hidden — and the session ID bar rises to the top of the column at the standard
+8px gap, so the freed space is reclaimed by the rest of the session UI.
 
 **Previous Release — v1.2.430** (Project Manager Startup + Claude Thinking Defaults)
 

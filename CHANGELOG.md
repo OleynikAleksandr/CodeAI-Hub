@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.434] - 2026-06-01
+### Changed
+- **Session tab bar hidden.** The SESSIONS tab bar (`.session-app__header`) is set to `display: none` (kept in code, not removed), and the sessions-panel content top padding is reduced from 16px to the standard 8px gap, so the session ID bar rises to the top of the column and the rest of the session UI shifts up.
+
+### Verification
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+
 ## [1.2.433] - 2026-06-01
 ### Fixed
 - **OPEN SETTINGS button aligned with the status chips.** Follow-up to 1.2.432: the WORKSPACE `OPEN SETTINGS` button height now matches the *visible* status chip height (`min-height: 32px` — the stretched row height set by the tokens chip), and the footer zone uses symmetric `17px` top/bottom padding so the button's top and bottom edges line up exactly with the model / reasoning chips across both columns.
