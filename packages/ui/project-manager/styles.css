@@ -847,6 +847,13 @@ body {
   overflow-y: auto;
 }
 
+/* Sessions panel only: drop the bottom padding so the embedded session status
+   bar reaches the panel bottom and sits at the single --pm-panel-gap from the
+   window edge. The artifacts panel keeps its symmetric padding. */
+.pm-panel--sessions .pm-panel__content {
+  padding-bottom: 0;
+}
+
 .pm-placeholder {
   font-size: 13px;
   line-height: 1.6;

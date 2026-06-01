@@ -8,15 +8,15 @@
   "planId": "session-status-open-settings-bottom-align-2026-06-01",
   "branch": "main",
   "baseHead": "8453d4f19",
-  "lastRecordedCommit": "8453d4f19",
+  "lastRecordedCommit": "568ab8c2c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md",
-  "currentTaskId": "planning-intake",
-  "expectedCommitMessage": "docs: plan session status and open settings bottom alignment",
+  "currentTaskId": "status-panel-bottom-drop",
+  "expectedCommitMessage": "fix: drop session status panel to window bottom",
   "debt": {
-    "expectedCommitMessage": "docs: plan session status and open settings bottom alignment",
-    "preCommitHead": "8453d4f19",
+    "expectedCommitMessage": "fix: drop session status panel to window bottom",
+    "preCommitHead": "568ab8c2c",
     "stage": "commit_pending",
-    "taskId": "planning-intake"
+    "taskId": "status-panel-bottom-drop"
   }
 }
 ```
@@ -45,12 +45,12 @@
 ## Phase 1 - Planning Intake (owner: Claude, updated: 2026-06-01)
 ### Stream: Planning Intake
 1. [DONE] `planning-intake` Create the planning doc and active todo-plan, register the planning doc in the docs index — scope: `doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: plan session status and open settings bottom alignment`
-2. [PENDING] Git Commit: `docs: plan session status and open settings bottom alignment` (hash: TBD)
+2. [DONE] Git Commit: `docs: plan session status and open settings bottom alignment` (hash: 568ab8c2c)
 
 ## Phase 2 - Bottom Bar Layout Implementation (owner: Claude, updated: 2026-06-01)
 ### Stream: Session Status Panel Bottom Drop
-3. [TODO] `status-panel-bottom-drop` Drop the session status panel to the window bottom by removing the residual `.session-app` bottom padding and the sessions-panel content bottom padding, leaving only the 8px minimal gap — scope: `media/session-view.css, packages/ui/project-manager/styles.css`; expected commit: `fix: drop session status panel to window bottom`
-4. [TODO] Git Commit: `fix: drop session status panel to window bottom` (hash: TBD)
+3. [DONE] `status-panel-bottom-drop` Drop the session status panel to the window bottom by removing the residual `.session-app` bottom padding and the sessions-panel content bottom padding, leaving only the 8px minimal gap — scope: `media/session-view.css, packages/ui/project-manager/styles.css`; expected commit: `fix: drop session status panel to window bottom`
+4. [PENDING] Git Commit: `fix: drop session status panel to window bottom` (hash: TBD)
 
 ### Stream: Open Settings Button Alignment
 5. [TODO] `open-settings-bottom-align` Match the OPEN SETTINGS button height to the status chip button, match the footer zone height to the status panel, and bottom-align the button with the status chips — scope: `packages/ui/project-manager/styles.css`; expected commit: `fix: align open settings button with session status bar`

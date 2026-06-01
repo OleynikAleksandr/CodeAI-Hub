@@ -10,7 +10,10 @@
   gap: 8px;
   height: 100%;
   min-height: 0;
-  padding: 0 0 8px;
+  /* No bottom padding: the status panel drops to the panel bottom and keeps
+     only the single 8px gap supplied by the surrounding layout (bottom-bar
+     alignment with the Project Manager OPEN SETTINGS button). */
+  padding: 0;
 }
 
 .session-app__header {
