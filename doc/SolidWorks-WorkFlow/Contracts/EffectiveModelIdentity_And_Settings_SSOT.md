@@ -1,7 +1,7 @@
 # Effective Model Identity And Settings SSOT - Contract (SSOT)
  
 **Status:** Implemented on `main`
-**Updated:** 2026-05-02
+**Updated:** 2026-06-01
 **Owner:** Oleksandr + Codex
 **Last metadata audit:** 2026-05-01 on `main` (`v1.2.121`; original validation: `v1.2.101`)
 
@@ -80,6 +80,8 @@ Kimi provider settings are split by runtime:
 Both may default to the same base model (`kimi-for-coding`), but they must remain separate persisted defaults because they run under different provider process/session/turn envelopes.
 
 Presentation-only/runtime-localization fields, such as `thinkingDisplaySyncEnabled`, `reasoningEngineId` / `reasoningLanguage` (the dedicated reasoning translation pair after the UI/Reasoning translation split) и их deprecated legacy aliases `translationEngineId` / `messagesForTheUserLanguage`, live in the same persisted settings snapshot / applied-config envelope but are intentionally excluded from effective identity resolution. Они управляют visible thinking presentation и target language for translated reasoning/thought bubbles, and must not mutate `modelId` or applied turn config identity. Both legacy aliases are threaded with the same resolved value as the canonical reasoning fields until the provider adapters finish migrating.
+
+Claude thinking defaults are seed/default-materialization behavior, not a migration of bound sessions. When a settings snapshot is new or missing `providers.claude.thinking.enabled`, UI/Core normalization defaults it to `true` and keeps the default effort value. An explicit saved `enabled: false` remains authoritative, and existing `session.modelBinding` values are not recomputed from the new default.
 
 ### 3.5. `ModelInvocationProfile`
 
@@ -212,6 +214,7 @@ Rules:
 17. Unbound runtime/model SDK events must not overwrite an existing binding-owned UI/runtime identity.
 18. Settings snapshot caches must be path-scoped, short-lived, and invalidated by Core write/reset/default-materialization paths; cache reuse is a performance detail and must not change settings ownership.
 19. Capture-scoped reasoning override is a diagnostic-only exception; it may affect native capture artifacts for one command but must never write Settings, mutate `session.modelBinding`, or become a provider-local identity source.
+20. Missing Claude thinking settings default to enabled for new/default snapshots only; explicit saved values and already-bound session identities remain authoritative.
 
 ---
 
