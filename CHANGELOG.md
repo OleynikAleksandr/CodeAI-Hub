@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.431] - 2026-06-01
+### Fixed
+- **Provider picker rows refresh after warmup.** Core now broadcasts a fresh `core:state` provider snapshot on provider status events, so Project Manager replaces early `starting` rows with the final provider availability after warmup or retry completes.
+
+### Tests
+- `node --import tsx --test packages/core/src/remote-bridge/remote-bridge-provider-state-broadcast.test.ts`
+- `npm run build --workspace @codeai-hub/core`
+- `npm run typecheck:webview`
+- `npm run build:webview`
+
 ## [1.2.430] - 2026-06-01
 ### Fixed
 - **Project Manager can open before provider warmup finishes.** Core now starts the remote bridge after template sync, startup self-test, and provider auto-update gating, then warms provider modules through the already-open status channel. Provider adapters remain unavailable until initialization succeeds.

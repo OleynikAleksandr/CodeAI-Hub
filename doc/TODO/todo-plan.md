@@ -8,15 +8,15 @@
   "planId": "claude-thinking-default-and-pm-startup-audit-2026-06-01",
   "branch": "main",
   "baseHead": "b5c00288f",
-  "lastRecordedCommit": "4e82ba05c",
+  "lastRecordedCommit": "ae615fbee",
   "planningSource": "user request 2026-06-01: enable Claude thinking by default and analyze first Project Manager startup latency",
-  "currentTaskId": "provider-warmup-state-refresh",
-  "expectedCommitMessage": "fix: refresh provider status after warmup",
+  "currentTaskId": "provider-refresh-release-docs",
+  "expectedCommitMessage": "docs: prepare 1.2.431 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: refresh provider status after warmup",
-    "preCommitHead": "4e82ba05c",
+    "expectedCommitMessage": "docs: prepare 1.2.431 release notes",
+    "preCommitHead": "ae615fbee",
     "stage": "commit_pending",
-    "taskId": "provider-warmup-state-refresh"
+    "taskId": "provider-refresh-release-docs"
   }
 }
 ```
@@ -84,11 +84,22 @@
 
 ### Stream: Provider Warmup State Refresh
 20. [DONE] `provider-warmup-state-refresh` Broadcast a fresh Core state/provider snapshot after provider warmup and retry status changes, so Project Manager replaces early "starting" provider rows with the final provider state — scope: `packages/core/src/remote-bridge/index.ts, packages/core/src/remote-bridge/remote-bridge-provider-state-broadcast.test.ts`; expected commit: `fix: refresh provider status after warmup`
-21. [PENDING] Git Commit: `fix: refresh provider status after warmup` (hash: TBD)
-22. [TODO] `provider-warmup-state-refresh-verify` Run targeted provider state broadcast test, core build, and webview typecheck/build — scope: `core + webview verification`
+21. [DONE] Git Commit: `fix: refresh provider status after warmup` (hash: ae615fbee)
+22. [DONE] `provider-warmup-state-refresh-verify` Run targeted provider state broadcast test, core build, and webview typecheck/build — scope: `core + webview verification` Result: Verification passed: provider state broadcast regression test, @codeai-hub/core build, webview typecheck, and build:webview passed.
 
 ### Stream: Release Build Confirmation
-23. [TODO] `provider-refresh-release-confirmation` Wait for explicit user confirmation before building a follow-up release for provider warmup state refresh — scope: user confirmation gate
+23. [DONE] `provider-refresh-release-confirmation` Wait for explicit user confirmation before building a follow-up release for provider warmup state refresh — scope: user confirmation gate Result: User explicitly requested building a new release for the provider warmup state refresh fix.
+
+### Stream: Provider Refresh Release Build
+24. [DONE] `provider-refresh-release-docs` Update README and CHANGELOG for 1.2.431 before packaging — scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare 1.2.431 release notes`
+25. [PENDING] Git Commit: `docs: prepare 1.2.431 release notes` (hash: TBD)
+26. [TODO] `provider-refresh-release-build` Run build-all.sh to bump versions and collect provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.431 release`
+27. [TODO] Git Commit: `chore: build 1.2.431 release` (hash: TBD)
+28. [TODO] `provider-refresh-release-vsix` Run build-release.sh --use-current-version to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.431 vsix`
+29. [TODO] Git Commit: `chore: package 1.2.431 vsix` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+30. [TODO] `release-acceptance-431` Hand off the new VSIX and wait for explicit user retest acceptance — scope: user acceptance gate
 
 ### Stream: Scope Closeout
-24. [TODO] `scope-closeout` Close out todo-plan only after explicit user acceptance — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/`
+31. [TODO] `scope-closeout` Close out todo-plan only after explicit user acceptance — scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/`
