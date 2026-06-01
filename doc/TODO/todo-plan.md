@@ -8,15 +8,15 @@
   "planId": "clear-menu-dialog-restyle-2026-06-01",
   "branch": "main",
   "baseHead": "a8da6740b",
-  "lastRecordedCommit": "136ce1628",
+  "lastRecordedCommit": "ddc199682",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ClearMenu_ConfirmDialog_Restyle_DesignSystem.md",
-  "currentTaskId": "release-docs",
-  "expectedCommitMessage": "docs: prepare 1.2.435 release notes",
+  "currentTaskId": "release-build",
+  "expectedCommitMessage": "chore: build 1.2.435 release",
   "debt": {
-    "expectedCommitMessage": "docs: prepare 1.2.435 release notes",
-    "preCommitHead": "136ce1628",
+    "expectedCommitMessage": "chore: build 1.2.435 release",
+    "preCommitHead": "ddc199682",
     "stage": "commit_pending",
-    "taskId": "release-docs"
+    "taskId": "release-build"
   }
 }
 ```
@@ -64,9 +64,9 @@
 ## Phase 5 - Release Build (owner: Claude, updated: 2026-06-01)
 ### Stream: Release Build
 8. [DONE] `release-docs` Update README "Current Release" and CHANGELOG for 1.2.435 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.435 release notes`
-9. [PENDING] Git Commit: `docs: prepare 1.2.435 release notes` (hash: TBD)
-10. [TODO] `release-build` Run `./scripts/build-all.sh` to bump versions to 1.2.435 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.435 release`
-11. [TODO] Git Commit: `chore: build 1.2.435 release` (hash: TBD)
+9. [DONE] Git Commit: `docs: prepare 1.2.435 release notes` (hash: ddc199682)
+10. [DONE] `release-build` Run `./scripts/build-all.sh` to bump versions to 1.2.435 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.435 release`
+11. [PENDING] Git Commit: `chore: build 1.2.435 release` (hash: TBD)
 12. [TODO] `release-vsix` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.435 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.435 vsix`
 13. [TODO] Git Commit: `chore: package 1.2.435 vsix` (hash: TBD)
 
