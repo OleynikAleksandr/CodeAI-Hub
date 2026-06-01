@@ -8,15 +8,15 @@
   "planId": "clear-menu-dialog-restyle-2026-06-01",
   "branch": "main",
   "baseHead": "a8da6740b",
-  "lastRecordedCommit": "2a916409f",
+  "lastRecordedCommit": "af4b65b6b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ClearMenu_ConfirmDialog_Restyle_DesignSystem.md",
-  "currentTaskId": "restyle-polish",
-  "expectedCommitMessage": "fix: polish clear menu and rename clear to clear/undo",
+  "currentTaskId": "release-docs-2",
+  "expectedCommitMessage": "docs: prepare 1.2.436 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: polish clear menu and rename clear to clear/undo",
-    "preCommitHead": "2a916409f",
+    "expectedCommitMessage": "docs: prepare 1.2.436 release notes",
+    "preCommitHead": "af4b65b6b",
     "stage": "commit_pending",
-    "taskId": "restyle-polish"
+    "taskId": "release-docs-2"
   }
 }
 ```
@@ -77,18 +77,18 @@
 ## Phase 7 - Restyle Polish & Clear/Undo Round 2 (owner: Claude, updated: 2026-06-01)
 ### Stream: Menu Polish & Clear/Undo Label
 16. [DONE] `restyle-polish` Center and compact the menu item (flex centering, no fixed height), use compact 32px dialog buttons, and rename the Clear action to "Clear/Undo" (it is an undo via Git rollback) on the menu item and the danger button — scope: `packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx`; expected commit: `fix: polish clear menu and rename clear to clear/undo`
-17. [PENDING] Git Commit: `fix: polish clear menu and rename clear to clear/undo` (hash: TBD)
+17. [DONE] Git Commit: `fix: polish clear menu and rename clear to clear/undo` (hash: af4b65b6b)
 
 ## Phase 8 - Re-Verification & Release 1.2.436 (owner: Claude, updated: 2026-06-01)
 ### Stream: Tooling Verification
-18. [TODO] `restyle-verify-2` Rebuild the project-manager bundle and typecheck the webview; confirm the polished classes and Clear/Undo label are injected — scope: `project-manager build + webview typecheck`
+18. [DONE] `restyle-verify-2` Rebuild the project-manager bundle and typecheck the webview; confirm the polished classes and Clear/Undo label are injected — scope: `project-manager build + webview typecheck` Result: Verification passed: build:project-manager OK, typecheck:webview clean. app.js contains Clear/Undo (2) and pm-tree-menu__btn--danger; bundle CSS has pm-tree-menu__item flex-centered and compact pm-tree-menu__btn; old pm-modal__button--danger removed.
 
 ### Stream: Release Build Confirmation
-19. [TODO] `release-confirmation-2` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate
+19. [DONE] `release-confirmation-2` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate Result: User confirmed building release 1.2.436 with the polished menu and Clear/Undo label.
 
 ### Stream: Release Build
-20. [TODO] `release-docs-2` Update README "Current Release" and CHANGELOG for 1.2.436 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.436 release notes`
-21. [TODO] Git Commit: `docs: prepare 1.2.436 release notes` (hash: TBD)
+20. [DONE] `release-docs-2` Update README "Current Release" and CHANGELOG for 1.2.436 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.436 release notes`
+21. [PENDING] Git Commit: `docs: prepare 1.2.436 release notes` (hash: TBD)
 22. [TODO] `release-build-2` Run `./scripts/build-all.sh` to bump versions to 1.2.436 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.436 release`
 23. [TODO] Git Commit: `chore: build 1.2.436 release` (hash: TBD)
 24. [TODO] `release-vsix-2` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.436 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.436 vsix`

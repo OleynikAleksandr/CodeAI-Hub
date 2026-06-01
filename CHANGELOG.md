@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.436] - 2026-06-01
+### Changed
+- **Clear/Undo menu polished and relabelled.** The Development Tree context menu item is now flex-centered and compact (fixing the off-center, oversized item from 1.2.435), the confirm dialog uses compact 32px buttons (`.pm-tree-menu__btn`), and the destructive action is labelled `Clear/Undo` since it performs an undo via Git rollback. Behavior is unchanged.
+
+### Verification
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+
 ## [1.2.435] - 2026-06-01
 ### Changed
 - **Clear context menu and confirm dialog restyled to the design system.** The Development Tree right-click `Clear` menu and its confirmation dialog (`use-workspace-tree-clear-menu.tsx`) no longer use ad-hoc inline styles / hard-coded colors. They now use `.pm-tree-menu*` classes and `--pm-*` tokens, mirroring the `.pm-modal` / `.pm-workspace-menu` patterns, with a new tinted `.pm-modal__button--danger` variant for the destructive Clear action. Behavior is unchanged.

@@ -2,13 +2,12 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.435** (Clear Menu & Confirm Dialog Restyle)
+**Current Release — v1.2.436** (Clear/Undo Menu Polish)
 
-This release restyles the Development Tree right-click `Clear` context menu and
-its confirmation dialog to match the Project Manager design system. The ad-hoc
-inline styles are replaced with `--pm-*` tokens and the established `.pm-modal` /
-`.pm-workspace-menu` patterns (panel surface, soft shadow, accent hover, and a
-tinted danger button), so the menu and dialog no longer stand out.
+This release polishes the Development Tree context menu and confirm dialog from
+1.2.435. The menu item is now compact and centered, the dialog uses compact
+buttons, and the action is labelled `Clear/Undo` since it is an undo via Git
+rollback. The menu and dialog now read as part of the tree's visual language.
 
 **Previous Release — v1.2.430** (Project Manager Startup + Claude Thinking Defaults)
 
