@@ -7571,7 +7571,7 @@
   var mapClaudeThinkingEffort = (value) => typeof value === "string" && CLAUDE_THINKING_EFFORT_SET.has(value) ? value : resolveLegacyThinkingEffort(value);
   var mapClaudeThinkingSettings = (value) => ({
     effort: mapClaudeThinkingEffort(value?.effort ?? value?.maxTokens),
-    enabled: Boolean(value?.enabled)
+    enabled: typeof value?.enabled === "boolean" ? value.enabled : true
   });
   var areClaudeThinkingSettingsEqual = (left, right) => left.enabled === right.enabled && left.effort === right.effort;
 
