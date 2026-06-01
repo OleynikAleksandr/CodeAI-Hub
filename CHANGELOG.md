@@ -8,6 +8,14 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.435] - 2026-06-01
+### Changed
+- **Clear context menu and confirm dialog restyled to the design system.** The Development Tree right-click `Clear` menu and its confirmation dialog (`use-workspace-tree-clear-menu.tsx`) no longer use ad-hoc inline styles / hard-coded colors. They now use `.pm-tree-menu*` classes and `--pm-*` tokens, mirroring the `.pm-modal` / `.pm-workspace-menu` patterns, with a new tinted `.pm-modal__button--danger` variant for the destructive Clear action. Behavior is unchanged.
+
+### Verification
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+
 ## [1.2.434] - 2026-06-01
 ### Changed
 - **Session tab bar hidden.** The SESSIONS tab bar (`.session-app__header`) is set to `display: none` (kept in code, not removed), and the sessions-panel content top padding is reduced from 16px to the standard 8px gap, so the session ID bar rises to the top of the column and the rest of the session UI shifts up.

@@ -8,15 +8,15 @@
   "planId": "clear-menu-dialog-restyle-2026-06-01",
   "branch": "main",
   "baseHead": "a8da6740b",
-  "lastRecordedCommit": "487f580bb",
+  "lastRecordedCommit": "136ce1628",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/ClearMenu_ConfirmDialog_Restyle_DesignSystem.md",
-  "currentTaskId": "restyle-clear-menu",
-  "expectedCommitMessage": "fix: restyle clear menu and confirm dialog to design system",
+  "currentTaskId": "release-docs",
+  "expectedCommitMessage": "docs: prepare 1.2.435 release notes",
   "debt": {
-    "expectedCommitMessage": "fix: restyle clear menu and confirm dialog to design system",
-    "preCommitHead": "487f580bb",
+    "expectedCommitMessage": "docs: prepare 1.2.435 release notes",
+    "preCommitHead": "136ce1628",
     "stage": "commit_pending",
-    "taskId": "restyle-clear-menu"
+    "taskId": "release-docs"
   }
 }
 ```
@@ -48,23 +48,23 @@
 ## Phase 2 - Restyle Implementation (owner: Claude, updated: 2026-06-01)
 ### Stream: Restyle Clear Menu & Confirm Dialog
 3. [DONE] `restyle-clear-menu` Replace the inline styles in the Clear context menu and confirm dialog with PM design-system classes (`.pm-tree-menu*` + `.pm-modal__button--danger`), reusing `--pm-*` tokens and the `.pm-modal` / `.pm-workspace-menu` patterns; keep only the cursor `left/top` inline — scope: `packages/ui/project-manager/styles.css, src/client/project-manager/components/layout/use-workspace-tree-clear-menu.tsx`; expected commit: `fix: restyle clear menu and confirm dialog to design system`
-4. [PENDING] Git Commit: `fix: restyle clear menu and confirm dialog to design system` (hash: TBD)
+4. [DONE] Git Commit: `fix: restyle clear menu and confirm dialog to design system` (hash: 136ce1628)
 
 ## Phase 3 - Verification & Prototype (owner: Claude, updated: 2026-06-01)
 ### Stream: Tooling Verification
-5. [TODO] `restyle-verify` Rebuild the project-manager bundle and typecheck the webview; confirm the new classes are injected — scope: `project-manager build + webview typecheck`
+5. [DONE] `restyle-verify` Rebuild the project-manager bundle and typecheck the webview; confirm the new classes are injected — scope: `project-manager build + webview typecheck` Result: Verification passed: build:project-manager regenerated dist, typecheck:webview clean. New design-system classes confirmed in the bundle: pm-tree-menu (9 occurrences) and pm-modal__button--danger (2). No tracked artifacts dirtied.
 
 ### Stream: Prototype Visual Check
-6. [TODO] `prototype-check` Produce an HTML prototype of the restyled menu + dialog and get the user to confirm the design before the release build — scope: prototype + user design confirmation gate
+6. [DONE] `prototype-check` Produce an HTML prototype of the restyled menu + dialog and get the user to confirm the design before the release build — scope: prototype + user design confirmation gate Result: User approved the restyle prototype (doc/tmp/prototypes/clear-menu-restyle.html) as the target design.
 
 ## Phase 4 - Release Confirmation (owner: Claude, updated: 2026-06-01)
 ### Stream: Release Build Confirmation
-7. [TODO] `release-confirmation` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate
+7. [DONE] `release-confirmation` Ask the user explicitly to confirm building a new release before any version bump or build script — scope: user confirmation gate Result: User confirmed building release 1.2.435 with the restyled Clear menu and confirm dialog.
 
 ## Phase 5 - Release Build (owner: Claude, updated: 2026-06-01)
 ### Stream: Release Build
-8. [TODO] `release-docs` Update README "Current Release" and CHANGELOG for 1.2.435 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.435 release notes`
-9. [TODO] Git Commit: `docs: prepare 1.2.435 release notes` (hash: TBD)
+8. [DONE] `release-docs` Update README "Current Release" and CHANGELOG for 1.2.435 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.435 release notes`
+9. [PENDING] Git Commit: `docs: prepare 1.2.435 release notes` (hash: TBD)
 10. [TODO] `release-build` Run `./scripts/build-all.sh` to bump versions to 1.2.435 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.435 release`
 11. [TODO] Git Commit: `chore: build 1.2.435 release` (hash: TBD)
 12. [TODO] `release-vsix` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.435 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.435 vsix`
