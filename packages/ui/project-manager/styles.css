@@ -418,10 +418,11 @@ body {
 }
 
 .pm-sidebar__footer {
-  /* Footer zone height matches the session status panel (~50px): 13 + 28
-     (button) + 8 + 1 (border-top). The 8px bottom padding lands the button on
-     the same baseline as the status bar (one --pm-panel-gap from the edge). */
-  padding: 13px 12px 8px;
+  /* Symmetric top/bottom gaps. The 17px bottom padding lands the button bottom
+     on the status chips baseline: 8px (--pm-panel-gap) + 1px (panel border) +
+     8px (panel padding) = 17px above the window edge. With the 32px button the
+     zone is 17 + 32 + 17 + 1 (border-top) = 67px tall. */
+  padding: 17px 12px;
   border-top: 1px solid var(--pm-border-color);
 }
 
@@ -430,9 +431,10 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  /* Height mirrors the session status chip button (.session-status-button:
-     min-height 28px, padding 4px 12px) so the bottom bar reads as one row. */
-  min-height: 28px;
+  /* Height mirrors the VISIBLE session status chip height. The model/reasoning
+     buttons share a row with the tokens chip (.session-status-chip--limits,
+     min-height 32px) under align-items: stretch, so they render at 32px. */
+  min-height: 32px;
   padding: 4px 12px;
   font-family: inherit;
   font-size: 12px;

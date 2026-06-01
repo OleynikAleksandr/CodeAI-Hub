@@ -49,12 +49,12 @@ So the two bottom edges are misaligned (status panel sits 32px up, button sits 1
 
 ## 3. Target behavior
 
-1. **OPEN SETTINGS button height = status chip button height** → `min-height: 28px`, `padding: 4px 12px` (mirror `.session-status-button`).
-2. **OPEN SETTINGS footer zone height = status panel height** (≈50px).
-3. **Status panel dropped to the very bottom** → remove the extra 8px (`.session-app` padding-bottom) + 16px (`.pm-panel__content` bottom padding for the sessions panel), leaving only the single 8px `--pm-panel-gap` below it.
-4. **OPEN SETTINGS bottom-aligned with the status chips** → button bottom at 8px from window bottom (same as the status panel), so both columns end on one horizontal line.
+1. **OPEN SETTINGS button height = VISIBLE status chip height** → `min-height: 32px`. The model/reasoning buttons (`.session-status-button`, base `min-height: 28px`) share a row with the tokens chip (`.session-status-chip--limits`, `min-height: 32px`) under `align-items: stretch`, so they render at 32px — that is the height to match (not the 28px base value).
+2. **OPEN SETTINGS footer zone has symmetric top/bottom gaps** and grows to fit the rule below (≈67px), rather than matching the panel box height.
+3. **Status panel dropped to the very bottom** → remove the extra 8px (`.session-app` padding-bottom) + 16px (`.pm-panel__content` bottom padding for the sessions panel), leaving only the single 8px `--pm-panel-gap` below it. (Accepted in 1.2.432.)
+4. **OPEN SETTINGS top/bottom aligned with the status chips** → the chips baseline is `17px` above the window edge (`8px` `--pm-panel-gap` + `1px` panel border + `8px` panel padding), so the footer bottom padding is `17px` and the top padding `17px` (symmetric). With the `32px` button the footer zone is `17 + 32 + 17 + 1` (border-top) = `67px`.
 
-Net result: status panel and OPEN SETTINGS form one bottom bar — equal heights, same baseline, 8px minimal gap.
+Net result: the OPEN SETTINGS button and the status chips share the same top and bottom edges — one horizontal line across both columns; the footer zone has equal top/bottom gaps.
 
 ## 4. Files in scope
 
@@ -78,5 +78,5 @@ No TSX changes expected (existing class names are sufficient). No Core/contract 
 
 ## 7. Risks / open points
 
-- Exact pixel match between the 28px chip button and the stretched 32px chip row is a visual-tuning detail; the box model is mirrored, final 1px adjustments are deferred to visual acceptance.
+- Round 1 (1.2.432) aligned the button to the panel-box bottom (8px) with a 28px button; user feedback showed the button must instead match the VISIBLE chip height (32px) and the chips baseline (17px). Resolved in Round 2 (1.2.433) per §3, confirmed against the approved prototype `doc/tmp/prototypes/open-settings-bottom-align.html`.
 - `.pm-panel__content` bottom padding is changed only for the sessions panel (`.pm-panel--sessions .pm-panel__content`) so the artifacts panel is unaffected.

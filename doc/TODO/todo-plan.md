@@ -8,15 +8,15 @@
   "planId": "session-status-open-settings-bottom-align-2026-06-01",
   "branch": "main",
   "baseHead": "8453d4f19",
-  "lastRecordedCommit": "4f85db6f0",
+  "lastRecordedCommit": "2c10b04a7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md",
-  "currentTaskId": "release-vsix",
-  "expectedCommitMessage": "chore: package 1.2.432 vsix",
+  "currentTaskId": "open-settings-baseline-fix",
+  "expectedCommitMessage": "fix: align open settings button height and baseline with status chips",
   "debt": {
-    "expectedCommitMessage": "chore: package 1.2.432 vsix",
-    "preCommitHead": "4f85db6f0",
+    "expectedCommitMessage": "fix: align open settings button height and baseline with status chips",
+    "preCommitHead": "2c10b04a7",
     "stage": "commit_pending",
-    "taskId": "release-vsix"
+    "taskId": "open-settings-baseline-fix"
   }
 }
 ```
@@ -69,12 +69,33 @@
 11. [DONE] `release-build` Run `./scripts/build-all.sh` to bump versions and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.432 release`
 12. [DONE] Git Commit: `chore: build 1.2.432 release` (hash: 4f85db6f0)
 13. [DONE] `release-vsix` Run `./scripts/build-release.sh --use-current-version` to package the VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.432 vsix`
-14. [PENDING] Git Commit: `chore: package 1.2.432 vsix` (hash: TBD)
+14. [DONE] Git Commit: `chore: package 1.2.432 vsix` (hash: 2c10b04a7)
 
 ## Phase 4 - User Visual Acceptance Testing (owner: Claude, updated: 2026-06-01)
 ### Stream: User Visual Acceptance Testing
-15. [TODO] `user-visual-acceptance` Hand over the VSIX and wait for explicit user visual acceptance of the bottom-bar alignment — scope: user acceptance gate
+15. [DONE] `user-visual-acceptance` Hand over the VSIX and wait for explicit user visual acceptance of the bottom-bar alignment — scope: user acceptance gate Result: User tested 1.2.432: status panel bottom drop ACCEPTED. OPEN SETTINGS rejected - button height not equal to visible chip (32px) and not on the same horizontal line as the chips. HTML prototype doc/tmp/prototypes/open-settings-bottom-align.html approved by user as the target. Proceeding to fix and re-release 1.2.433.
 
-## Phase 5 - Scope Closeout (owner: Claude, updated: 2026-06-01)
+## Phase 5 - Open Settings Alignment Fix Round 2 (owner: Claude, updated: 2026-06-01)
+### Stream: Open Settings Height & Baseline Fix
+16. [DONE] `open-settings-baseline-fix` Set the OPEN SETTINGS button height to 32px (the visible chip height) and make the footer zone symmetric (17px top/bottom) so the button top/bottom align with the status chips baseline; sync the planning doc — scope: `packages/ui/project-manager/styles.css, doc/SolidWorks-WorkFlow/Plans/SessionStatus_OpenSettings_BottomBar_Alignment_Layout.md`; expected commit: `fix: align open settings button height and baseline with status chips`
+17. [PENDING] Git Commit: `fix: align open settings button height and baseline with status chips` (hash: TBD)
+
+## Phase 6 - Re-Verification & Release 1.2.433 (owner: Claude, updated: 2026-06-01)
+### Stream: Tooling Verification
+18. [TODO] `layout-verify-2` Rebuild the project-manager bundle and confirm the new footer/button CSS is injected — scope: `project-manager build`
+
+### Stream: Release Build
+19. [TODO] `release-docs-2` Update README "Current Release" and CHANGELOG for 1.2.433 — scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare 1.2.433 release notes`
+20. [TODO] Git Commit: `docs: prepare 1.2.433 release notes` (hash: TBD)
+21. [TODO] `release-build-2` Run `./scripts/build-all.sh` to bump versions to 1.2.433 and rebuild provider/core/UI/launcher tarball artifacts — scope: `package.json, package-lock.json, packages/**, assets/**, doc/tmp/releases/**`; expected commit: `chore: build 1.2.433 release`
+22. [TODO] Git Commit: `chore: build 1.2.433 release` (hash: TBD)
+23. [TODO] `release-vsix-2` Run `./scripts/build-release.sh --use-current-version` to package the 1.2.433 VSIX and verify release-package output — scope: `.vscodeignore, packages/core/src/templates/bundled-templates.ts, codeai-hub-*.vsix`; expected commit: `chore: package 1.2.433 vsix`
+24. [TODO] Git Commit: `chore: package 1.2.433 vsix` (hash: TBD)
+
+## Phase 7 - User Visual Acceptance Testing Round 2 (owner: Claude, updated: 2026-06-01)
+### Stream: User Visual Acceptance Testing
+25. [TODO] `user-visual-acceptance-2` Hand over the 1.2.433 VSIX and wait for explicit user visual acceptance of the OPEN SETTINGS alignment — scope: user acceptance gate
+
+## Phase 8 - Scope Closeout (owner: Claude, updated: 2026-06-01)
 ### Stream: Scope Closeout
-16. [TODO] `scope-closeout` After acceptance, archive the todo-plan and planning doc and refresh the docs index — scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/**`
+26. [TODO] `scope-closeout` After acceptance, archive the todo-plan and planning doc and refresh the docs index — scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/**`
