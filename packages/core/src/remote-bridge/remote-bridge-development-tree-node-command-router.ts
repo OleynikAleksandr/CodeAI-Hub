@@ -7,8 +7,8 @@ import type { RemoteBridgeSessionCreateRouter } from "./remote-bridge-session-cr
 const execFileAsync = promisify(execFile);
 const COMMAND = "development-tree:node-start";
 const DEVELOPMENT_TREE_STAGE_PREFIX = "development_tree/";
-const LEAD_ORCHESTRATION_STAGE_RE =
-  /^development_tree\/materialized\/product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*\/lead-product-part-orchestration$/;
+const PRODUCT_PART_STAGE_RE =
+  /^development_tree\/materialized\/product-parts\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 type SendCommandError = (
   clientId: string,
@@ -75,12 +75,12 @@ export class RemoteBridgeDevelopmentTreeNodeCommandRouter {
       );
       return;
     }
-    if (!LEAD_ORCHESTRATION_STAGE_RE.test(workflowPath)) {
+    if (!PRODUCT_PART_STAGE_RE.test(workflowPath)) {
       this.sendCommandError(
         clientId,
         COMMAND,
-        "Core acceptance check failed for Development Tree node start: Lead Product Part Contract Graph is not frozen yet. Start the Lead Product Part Orchestration node first.",
-        "contract_graph_pending"
+        "Core acceptance check failed for Development Tree node start: Product Part Development Brief is pending. Start only Product Part nodes in this wave.",
+        "product_part_brief_pending"
       );
       return;
     }

@@ -48,28 +48,6 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
           artifactWorkspacePath:
             ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell",
           codeWorkspacePath: "product-parts/ui-shell",
-          operations: [
-            {
-              id: "lead-product-part-orchestration",
-              kind: "lead_orchestration",
-              title: "Lead Product Part Orchestration",
-              workflowPath:
-                "development_tree/materialized/product-parts/ui-shell/lead-product-part-orchestration",
-              artifactWorkspacePath:
-                ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/lead-product-part-orchestration",
-              children: [
-                {
-                  id: "contract-graph",
-                  kind: "contract_graph",
-                  title: "Contract Graph",
-                  workflowPath:
-                    "development_tree/materialized/product-parts/ui-shell/lead-product-part-orchestration/contract-graph",
-                  artifactWorkspacePath:
-                    ".codeai-hub/demo/development_tree/materialized/product-parts/ui-shell/lead-product-part-orchestration/contract-graph",
-                },
-              ],
-            },
-          ],
           readiness: "in_progress",
           status: "materialized",
           clusters: [
@@ -209,8 +187,7 @@ test("fetchWorkflowState parses optional development tree readiness", async () =
   ]);
   assert.equal(part?.readiness, "in_progress");
   assert.equal(part?.codeWorkspacePath, "product-parts/ui-shell");
-  assert.equal(part?.operations?.[0]?.kind, "lead_orchestration");
-  assert.equal(part?.operations?.[0]?.children?.[0]?.kind, "contract_graph");
+  assert.equal(part?.operations, undefined);
   const cluster = part?.clusters[0];
   assert.equal(cluster?.readiness, "ready");
   assert.equal(cluster?.operations?.[0]?.kind, "workers");

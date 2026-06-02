@@ -236,12 +236,12 @@ test("DevelopmentTreeStateFacade refreshes readiness after draft writes", async 
   }
 });
 
-test("DevelopmentTreeStateFacade applies leadership order and locks non-lead nodes", async () => {
+test("DevelopmentTreeStateFacade applies leadership order without legacy lead operation rows", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "devtree-leadership-")
   );
   const workspaceSlug = "demo-workspace";
-  const lockedReason = "Lead Product Part contract graph is pending";
+  const downstreamLockedReason = "Product Part Development Brief is pending";
   try {
     await writeWorkspaceFile(
       workspaceRoot,
@@ -274,38 +274,14 @@ test("DevelopmentTreeStateFacade applies leadership order and locks non-lead nod
       snapshot.parts.map((part) => part.id),
       ["core-runtime", "project-manager"]
     );
-    const leadOperation = (
-      leadPart as {
-        readonly operations?: readonly {
-          readonly children?: readonly { readonly id: string }[];
-          readonly id: string;
-          readonly kind: string;
-          readonly workflowPath: string;
-        }[];
-      }
-    )?.operations?.[0];
-    assert.equal(leadOperation?.id, "lead-product-part-orchestration");
-    assert.equal(leadOperation?.kind, "lead_orchestration");
-    assert.equal(
-      leadOperation?.workflowPath,
-      "development_tree/materialized/product-parts/core-runtime/lead-product-part-orchestration"
-    );
-    assert.deepEqual(
-      leadOperation?.children?.map((child) => child.id),
-      [
-        "contract-graph",
-        "cross-part-contracts",
-        "shared-interfaces",
-        "execution-waves",
-      ]
-    );
+    assert.equal(leadPart?.operations, undefined);
     assert.equal(leadPart?.lifecycle?.startable, true);
     assert.equal(leadPart?.lifecycle?.lockedReason, undefined);
-    assert.equal(followerPart?.lifecycle?.startable, false);
-    assert.equal(followerPart?.lifecycle?.lockedReason, lockedReason);
+    assert.equal(followerPart?.lifecycle?.startable, true);
+    assert.equal(followerPart?.lifecycle?.lockedReason, undefined);
     assert.equal(
       followerPart?.clusters[0]?.modules[0]?.lifecycle?.lockedReason,
-      lockedReason
+      downstreamLockedReason
     );
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

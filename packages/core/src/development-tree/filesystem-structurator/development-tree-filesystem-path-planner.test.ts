@@ -41,41 +41,6 @@ const createExpectedEntries = (rootRelativePath: string) => [
     relativePath: `${rootRelativePath}/product-parts/local-runtime`,
   },
   {
-    kind: "lead_orchestration",
-    partId: "local-runtime",
-    clusterId: undefined,
-    moduleId: undefined,
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration`,
-  },
-  {
-    kind: "contract_graph",
-    partId: "local-runtime",
-    clusterId: undefined,
-    moduleId: undefined,
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration/contract-graph`,
-  },
-  {
-    kind: "cross_part_contracts",
-    partId: "local-runtime",
-    clusterId: undefined,
-    moduleId: undefined,
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration/cross-part-contracts`,
-  },
-  {
-    kind: "shared_interfaces",
-    partId: "local-runtime",
-    clusterId: undefined,
-    moduleId: undefined,
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration/shared-interfaces`,
-  },
-  {
-    kind: "execution_waves",
-    partId: "local-runtime",
-    clusterId: undefined,
-    moduleId: undefined,
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/lead-product-part-orchestration/execution-waves`,
-  },
-  {
     kind: "cluster",
     partId: "local-runtime",
     clusterId: "orchestration",
@@ -102,6 +67,13 @@ const createExpectedEntries = (rootRelativePath: string) => [
     clusterId: undefined,
     moduleId: "provider-bridge",
     relativePath: `${rootRelativePath}/product-parts/local-runtime/modules/provider-bridge`,
+  },
+  {
+    kind: "product_part",
+    partId: "project-manager",
+    clusterId: undefined,
+    moduleId: undefined,
+    relativePath: `${rootRelativePath}/product-parts/project-manager`,
   },
 ];
 
@@ -150,7 +122,16 @@ test("DevelopmentTreeFilesystemPathPlanner creates neutral materialized P/C/M pa
     ])
   );
   assert.equal(
-    plan.directories.some((entry) => entry.partId === "project-manager"),
+    plan.directories.some(
+      (entry) =>
+        entry.partId === "project-manager" && entry.kind === "product_part"
+    ),
+    true
+  );
+  assert.equal(
+    plan.directories.some((entry) =>
+      entry.relativePath.includes("lead-product-part-orchestration")
+    ),
     false
   );
   assert.equal(

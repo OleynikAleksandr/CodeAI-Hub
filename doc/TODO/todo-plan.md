@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "d374832b0",
+  "lastRecordedCommit": "9e2af19df",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase35.stream1.task1",
-  "expectedCommitMessage": "fix: compact product part development tree bootstrap",
+  "currentTaskId": "phase35.stream1.task2",
+  "expectedCommitMessage": "test: cover compact product part bootstrap regression",
   "debt": {
-    "expectedCommitMessage": "fix: compact product part development tree bootstrap",
-    "preCommitHead": "d374832b0",
+    "expectedCommitMessage": "test: cover compact product part bootstrap regression",
+    "preCommitHead": "9e2af19df",
     "stage": "commit_pending",
-    "taskId": "phase35.stream1.task1"
+    "taskId": "phase35.stream1.task2"
   }
 }
 ```
@@ -270,9 +270,9 @@
 ### Stream: Product Part Bootstrap Regression
 
 60. [DONE] `phase35.stream1.task1` Remove legacy Lead Product Part Orchestration / Contract Graph projection and materialize top Product Part folders for every Product Part before Product Part Development Brief bootstrap (scope: `packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts`; expected commit: `fix: compact product part development tree bootstrap`).
-61. [PENDING] Git Commit: `fix: compact product part development tree bootstrap` (hash: TBD)
-62. [TODO] `phase35.stream1.task2` Update focused Core/UI regression tests and Development Tree node start routing so Product Part nodes can start without the removed Contract Graph gate (scope: `packages/core/src/development-tree/**/*.test.ts, packages/core/src/remote-bridge/**/*.test.ts, src/client/project-manager/**/*.test.ts`; expected commit: `test: cover compact product part bootstrap regression`).
-63. [TODO] Git Commit: `test: cover compact product part bootstrap regression` (hash: TBD)
+61. [DONE] Git Commit: `fix: compact product part development tree bootstrap` (hash: 9e2af19df)
+62. [DONE] `phase35.stream1.task2` Update focused Core/UI regression tests and Development Tree node start routing so Product Part nodes can start without the removed Contract Graph gate (scope: `packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `test: cover compact product part bootstrap regression`).
+63. [PENDING] Git Commit: `test: cover compact product part bootstrap regression` (hash: TBD)
 
 ## Phase 34 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 

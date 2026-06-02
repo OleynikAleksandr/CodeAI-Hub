@@ -40,8 +40,6 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
 }> = ({
   kind,
   label,
-  nodeId,
-  operationKind,
   workflowPath,
   workspacePath,
   workspaceSlug,
@@ -99,11 +97,11 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
     }
   }, [reasoningOptions, selectedReasoning]);
 
-  const lockedReason =
-    operationKind === "lead_orchestration"
-      ? null
-      : "Lead Product Part Contract Graph is not frozen yet. Start Lead Product Part Orchestration first.";
-  const startDisabled = Boolean(lockedReason) || !(selectedProviderId && selectedModelId && selectedReasoning);
+  const startDisabled = !(
+    selectedProviderId &&
+    selectedModelId &&
+    selectedReasoning
+  );
   return (
     <div className="pm-details" style={{ padding: "24px 20px" }}>
       <strong style={{ display: "block", fontSize: 14, marginBottom: 16 }}>
@@ -111,8 +109,8 @@ export const DevelopmentTreeNodeStartCard: React.FC<{
       </strong>
       <div style={{ display: "grid", gap: 12 }}>
         <div style={{ color: "var(--pm-text-muted)", fontSize: 13 }}>
-          {lockedReason ??
-            "Draft artifacts are not created yet. Start this node to create only this node session and its draft artifacts."}
+          Draft artifacts are not created yet. Start this node to create only
+          this node session and its draft artifacts.
         </div>
         <CaptureWorkbenchDomListboxSelector
           label="Agent provider"

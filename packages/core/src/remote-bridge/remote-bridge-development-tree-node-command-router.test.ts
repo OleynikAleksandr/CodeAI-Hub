@@ -53,16 +53,21 @@ const createRouter = () => {
   };
 };
 
-test("Development Tree node router allows only lead orchestration before contract graph freeze", async () => {
+test("Development Tree node router allows Product Part nodes before downstream brief acceptance", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "devtree-node-router-")
   );
   const workspaceSlug = "demo-workspace";
-  const leadWorkflowPath =
-    "development_tree/materialized/product-parts/core-runtime/lead-product-part-orchestration";
+  const productPartWorkflowPath =
+    "development_tree/materialized/product-parts/core-runtime";
   try {
     await mkdir(
-      path.join(workspaceRoot, ".codeai-hub", workspaceSlug, leadWorkflowPath),
+      path.join(
+        workspaceRoot,
+        ".codeai-hub",
+        workspaceSlug,
+        productPartWorkflowPath
+      ),
       { recursive: true }
     );
     await writeFile(path.join(workspaceRoot, ".gitkeep"), "", "utf8");
@@ -73,12 +78,12 @@ test("Development Tree node router allows only lead orchestration before contrac
       providerId: "codexCli",
       workspacePath: workspaceRoot,
       workspaceSlug,
-      workflowPath: leadWorkflowPath,
+      workflowPath: productPartWorkflowPath,
     });
 
     assert.deepEqual(errors, []);
     assert.deepEqual(sessions, [
-      { clientId: "client-1", stage: leadWorkflowPath },
+      { clientId: "client-1", stage: productPartWorkflowPath },
     ]);
 
     await router.handle("client-1", {
@@ -90,7 +95,7 @@ test("Development Tree node router allows only lead orchestration before contrac
     });
 
     const latestError = errors.at(-1) as { readonly code: string } | undefined;
-    assert.equal(latestError?.code, "contract_graph_pending");
+    assert.equal(latestError?.code, "product_part_brief_pending");
     assert.equal(sessions.length, 1);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });

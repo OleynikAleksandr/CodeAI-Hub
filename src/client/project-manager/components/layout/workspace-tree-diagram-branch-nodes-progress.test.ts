@@ -232,7 +232,7 @@ test("buildDevelopmentTreeNodes renders cluster operations before modules", () =
   assert.equal(clusterChildren?.[2]?.nodeType, "module");
 });
 
-test("buildDevelopmentTreeNodes renders lead orchestration and locked nodes", () => {
+test("buildDevelopmentTreeNodes renders Product Part nodes without legacy lead operations", () => {
   const nodes = buildDevelopmentTreeNodes(
     {
       leadProductPartId: "core-runtime",
@@ -240,28 +240,6 @@ test("buildDevelopmentTreeNodes renders lead orchestration and locked nodes", ()
       parts: [
         {
           id: "core-runtime",
-          operations: [
-            {
-              id: "lead-product-part-orchestration",
-              kind: "lead_orchestration",
-              title: "Lead Product Part Orchestration",
-              workflowPath:
-                "development_tree/materialized/product-parts/core-runtime/lead-product-part-orchestration",
-              artifactWorkspacePath:
-                ".codeai-hub/demo/development_tree/materialized/product-parts/core-runtime/lead-product-part-orchestration",
-              children: [
-                {
-                  id: "contract-graph",
-                  kind: "contract_graph",
-                  title: "Contract Graph",
-                  workflowPath:
-                    "development_tree/materialized/product-parts/core-runtime/lead-product-part-orchestration/contract-graph",
-                  artifactWorkspacePath:
-                    ".codeai-hub/demo/development_tree/materialized/product-parts/core-runtime/lead-product-part-orchestration/contract-graph",
-                },
-              ],
-            },
-          ],
           status: "materialized",
           clusters: [],
           standaloneModules: [],
@@ -269,7 +247,7 @@ test("buildDevelopmentTreeNodes renders lead orchestration and locked nodes", ()
         {
           id: "project-manager",
           lifecycle: {
-            lockedReason: "Lead Product Part contract graph is pending",
+            lockedReason: "Product Part Development Brief is pending",
             startState: "not_started",
             startable: false,
           },
@@ -283,8 +261,7 @@ test("buildDevelopmentTreeNodes renders lead orchestration and locked nodes", ()
   );
 
   assert.equal(nodes[0]?.id, "devtree:core-runtime");
-  assert.equal(nodes[0]?.children?.[0]?.label, "Lead Product Part Orchestration");
-  assert.equal(nodes[0]?.children?.[0]?.children?.[0]?.label, "Contract Graph");
+  assert.equal(nodes[0]?.children, undefined);
   assert.equal(nodes[1]?.status, "blocked");
-  assert.equal(nodes[1]?.title, "Lead Product Part contract graph is pending");
+  assert.equal(nodes[1]?.title, "Product Part Development Brief is pending");
 });
