@@ -11,6 +11,7 @@ const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PART_ID = "engine";
 const BRIEF_PATH = `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/${PART_ID}/ProductPartDevelopmentBrief.draft.md`;
+const CONTINUITY_INDEX_PATH = `.codeai-hub/${WORKSPACE_SLUG}/continuity/index.json`;
 const PLAN_PATH = `doc/TODO/stages/development-tree/product-parts/${PART_ID}/todo-plan.md`;
 const ACCEPTED_BRIEF_COMMIT_RE =
   /docs: update engine product part development brief/u;
@@ -126,6 +127,30 @@ test("Product Part brief handoff commits accepted draft and opens user review", 
     ]);
 
     await writeWorkspaceFile(workspaceRoot, BRIEF_PATH, createBrief(true));
+    await writeWorkspaceFile(
+      workspaceRoot,
+      CONTINUITY_INDEX_PATH,
+      `${JSON.stringify(
+        {
+          entries: [
+            {
+              dialogId: "product-part-session-1",
+              latestSessionId: "product-part-session-1",
+              providerId: "claudeCodeCli",
+              providerSessionId: "real-provider-session",
+              rootSessionId: "product-part-session-1",
+              stage: `development_tree/materialized/product-parts/${PART_ID}`,
+              updatedAt: "2026-06-02T00:00:00.000Z",
+            },
+          ],
+          updatedAt: "2026-06-02T00:00:00.000Z",
+          version: 1,
+          workspaceSlug: WORKSPACE_SLUG,
+        },
+        null,
+        2
+      )}\n`
+    );
     const result =
       await new ProductPartDevelopmentBriefTurnController().handleTurnCompleted(
         {

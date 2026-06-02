@@ -113,6 +113,9 @@ const createManagedDecisionPath = (params: {
 }): string =>
   `.codeai-hub/${params.workspaceSlug}/workflow/managed/development-tree-product-parts/${params.partId}.json`;
 
+const createContinuityIndexPath = (workspaceSlug: string): string =>
+  `.codeai-hub/${workspaceSlug}/continuity/index.json`;
+
 const createTaskPrefix = (partId: string): string =>
   `development-tree.product-part.${partId}`;
 
@@ -379,7 +382,11 @@ export class ProductPartDevelopmentBriefTurnController {
     );
     await this.gitBoundary.commitManagedChanges({
       commitMessage: "chore: advance managed workflow ledger",
-      managedPaths: [planPath, managedDecisionPath],
+      managedPaths: await uniqueExistingPaths(params.workspaceRoot, [
+        planPath,
+        managedDecisionPath,
+        createContinuityIndexPath(params.workspaceSlug),
+      ]),
       workspaceRoot: params.workspaceRoot,
     });
     return {
