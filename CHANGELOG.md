@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.440] - 2026-06-02
+### Fixed
+- **Removed legacy Contract Graph operation rows from the Development Tree.** Core no longer emits or materializes `Lead Product Part Orchestration`, `Contract Graph`, `Cross-Part Contracts`, `Shared Interfaces`, or `Execution Waves` under the lead Product Part.
+- **Product Part bootstrap now covers every planned Product Part.** The Development Tree filesystem planner creates top Product Part folders for every Product Part from the leadership order before Product Part Development Brief bootstrap, instead of relying only on generated detailed part files.
+- **Manual Product Part node start no longer depends on Contract Graph.** The node start route and Project Manager start card now use the Product Part Development Brief wave boundary.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build:project-manager`
+- `npm run typecheck:webview`
+- `node --test packages/core/dist/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.js packages/core/dist/development-tree/development-tree-state-facade-metadata.test.js packages/core/dist/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.js packages/core/dist/remote-bridge/remote-bridge-development-tree-node-command-router.test.js`
+
 ## [1.2.439] - 2026-06-02
 ### Added
 - **Product Part Development Brief bootstrap.** Core now creates `doc/TODO/stages/development-tree/product-parts/<part-id>/todo-plan.md`, materializes the first `ProductPartDevelopmentBrief.draft.md` artifact, and starts Product Part agent sessions from inline prompts.

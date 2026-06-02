@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "9e2af19df",
+  "lastRecordedCommit": "6bec804ec",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase35.stream1.task2",
-  "expectedCommitMessage": "test: cover compact product part bootstrap regression",
+  "currentTaskId": "phase38.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.440",
   "debt": {
-    "expectedCommitMessage": "test: cover compact product part bootstrap regression",
-    "preCommitHead": "9e2af19df",
+    "expectedCommitMessage": "docs: prepare release 1.2.440",
+    "preCommitHead": "6bec804ec",
     "stage": "commit_pending",
-    "taskId": "phase35.stream1.task2"
+    "taskId": "phase38.stream1.task1"
   }
 }
 ```
@@ -272,12 +272,38 @@
 60. [DONE] `phase35.stream1.task1` Remove legacy Lead Product Part Orchestration / Contract Graph projection and materialize top Product Part folders for every Product Part before Product Part Development Brief bootstrap (scope: `packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts`; expected commit: `fix: compact product part development tree bootstrap`).
 61. [DONE] Git Commit: `fix: compact product part development tree bootstrap` (hash: 9e2af19df)
 62. [DONE] `phase35.stream1.task2` Update focused Core/UI regression tests and Development Tree node start routing so Product Part nodes can start without the removed Contract Graph gate (scope: `packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.ts, packages/core/src/remote-bridge/remote-bridge-development-tree-node-command-router.test.ts, src/client/project-manager/components/layout/development-tree-node-start-card.tsx, src/client/project-manager/components/layout/workspace-tree-diagram-branch-nodes-progress.test.ts, src/client/project-manager/services/workflow-state-client.test.ts`; expected commit: `test: cover compact product part bootstrap regression`).
-63. [PENDING] Git Commit: `test: cover compact product part bootstrap regression` (hash: TBD)
+63. [DONE] Git Commit: `test: cover compact product part bootstrap regression` (hash: 6bec804ec)
 
-## Phase 34 - Scope Closeout (owner: Codex, updated: 2026-06-02)
+## Phase 36 - Release 1.2.440 Build Confirmation (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: Release Confirmation
+
+64. [DONE] `phase36.stream1.task1` Await explicit user confirmation before preparing and building release 1.2.440 for retesting the compact Product Part Development Tree bootstrap fix (scope: `doc/TODO/todo-plan.md`). Result: user confirmed release build.
+
+## Phase 38 - Release 1.2.440 Preparation (owner: Codex, updated: 2026-06-02)
+
+### Stream: Release Docs
+
+65. [DONE] `phase38.stream1.task1` Prepare release docs for version 1.2.440 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.440`).
+66. [PENDING] Git Commit: `docs: prepare release 1.2.440` (hash: TBD)
+
+## Phase 39 - Release 1.2.440 Build (owner: Codex, updated: 2026-06-02)
+
+### Stream: Build Artifacts
+
+67. [TODO] `phase39.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.440 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.440`).
+68. [TODO] Git Commit: `chore: build release 1.2.440` (hash: TBD)
+
+## Phase 40 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: User Retest
+
+69. [TODO] `phase40.stream1.task1` User installs/tests release 1.2.440, regenerates the Development Tree, and verifies that the sidebar contains only Product Part / Cluster / Module rows while Product Part Development Brief plans/sessions start for every Product Part (scope: `doc/TODO/todo-plan.md`).
+
+## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Closeout
 
-64. [TODO] `phase34.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree product part bootstrap scope`).
-65. [TODO] Git Commit: `docs: close development tree product part bootstrap scope` (hash: TBD)
-66. [TODO] `phase34.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+70. [TODO] `phase41.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree product part bootstrap scope`).
+71. [TODO] Git Commit: `docs: close development tree product part bootstrap scope` (hash: TBD)
+72. [TODO] `phase41.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
