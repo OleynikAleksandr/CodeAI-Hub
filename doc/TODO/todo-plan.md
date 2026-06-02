@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "6bec804ec",
+  "lastRecordedCommit": "5cc3dd321",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase38.stream1.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.440",
+  "currentTaskId": "phase39.stream1.task1",
+  "expectedCommitMessage": "chore: build release 1.2.440",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.440",
-    "preCommitHead": "6bec804ec",
+    "expectedCommitMessage": "chore: build release 1.2.440",
+    "preCommitHead": "5cc3dd321",
     "stage": "commit_pending",
-    "taskId": "phase38.stream1.task1"
+    "taskId": "phase39.stream1.task1"
   }
 }
 ```
@@ -285,14 +285,14 @@
 ### Stream: Release Docs
 
 65. [DONE] `phase38.stream1.task1` Prepare release docs for version 1.2.440 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.440`).
-66. [PENDING] Git Commit: `docs: prepare release 1.2.440` (hash: TBD)
+66. [DONE] Git Commit: `docs: prepare release 1.2.440` (hash: 5cc3dd321)
 
 ## Phase 39 - Release 1.2.440 Build (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Build Artifacts
 
-67. [TODO] `phase39.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.440 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.440`).
-68. [TODO] Git Commit: `chore: build release 1.2.440` (hash: TBD)
+67. [DONE] `phase39.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.440 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.440`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.440.vsix`; release tarballs copied to `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+68. [PENDING] Git Commit: `chore: build release 1.2.440` (hash: TBD)
 
 ## Phase 40 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
