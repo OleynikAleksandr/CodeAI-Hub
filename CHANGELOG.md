@@ -8,6 +8,26 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.439] - 2026-06-02
+### Added
+- **Product Part Development Brief bootstrap.** Core now creates `doc/TODO/stages/development-tree/product-parts/<part-id>/todo-plan.md`, materializes the first `ProductPartDevelopmentBrief.draft.md` artifact, and starts Product Part agent sessions from inline prompts.
+
+### Changed
+- **Development Tree startup stays shallow.** The bootstrap starts Product Part agents only; Cluster and Module agents remain pending until their parent Product Part brief flow is ready.
+
+### Verification
+- `npm run plan:validate`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/development-tree/product-part-development-brief-plan-writer.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.js`
+- `node --test packages/core/dist/development-tree/development-tree-node-bootstrap-facade.test.js`
+- `node --test packages/core/dist/development-tree/development-tree-state-facade-metadata.test.js`
+- `node --test packages/core/dist/development-tree/development-tree-snapshot.test.js`
+- `node --test packages/core/dist/development-tree/node-first-message-builder.test.js`
+- `node --test packages/core/dist/development-tree/product-part-development-brief-draft-template.test.js`
+- `node --test packages/core/dist/development-tree/product-part-development-brief-readiness.test.js`
+- `node --test packages/core/dist/development-tree/product-part-development-brief-writer.test.js`
+
 ## [1.2.438] - 2026-06-02
 ### Changed
 - **Development Tree cluster rows are compact.** Core no longer projects `Workers` / `Integration` operation children under cluster nodes, matching the compact module projection from 1.2.437.

@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "748599d54",
+  "lastRecordedCommit": "f44eddd44",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase29.stream1.task1",
-  "expectedCommitMessage": "feat: bootstrap product part brief agents",
+  "currentTaskId": "phase31.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.439",
   "debt": {
-    "expectedCommitMessage": "feat: bootstrap product part brief agents",
-    "preCommitHead": "748599d54",
+    "expectedCommitMessage": "docs: prepare release 1.2.439",
+    "preCommitHead": "f44eddd44",
     "stage": "commit_pending",
-    "taskId": "phase29.stream1.task1"
+    "taskId": "phase31.stream1.task1"
   }
 }
 ```
@@ -237,24 +237,38 @@
 ### Stream: Core Orchestration
 
 52. [DONE] `phase29.stream1.task1` Wire Core to create Product Part brief plans and start Product Part agent sessions after Development Tree materialization, while keeping Cluster/Module agents locked for later waves (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/remote-bridge/handlers/development-tree-product-part-agent-bootstrap.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `feat: bootstrap product part brief agents`).
-53. [PENDING] Git Commit: `feat: bootstrap product part brief agents` (hash: TBD)
+53. [DONE] Git Commit: `feat: bootstrap product part brief agents` (hash: f44eddd44)
 
 ## Phase 30 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Targeted Checks
 
-54. [TODO] `phase30.stream1.task1` Run plan validation plus targeted Core tests/builds for Product Part Development Brief plan/session bootstrap (scope: `doc/TODO/todo-plan.md`).
+54. [DONE] `phase30.stream1.task1` Run plan validation plus targeted Core tests/builds for Product Part Development Brief plan/session bootstrap (scope: `doc/TODO/todo-plan.md`). Result: plan:validate passed; @codeai-hub/core build passed; ProductPartDevelopmentBrief plan writer, workflow-state bootstrap, node bootstrap, read-model, prompt, draft/readiness focused dist tests passed; no PartDescription.draft.md references remain in packages/core/src
 
-## Phase 31 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+## Phase 31 - Release Preparation (owner: Codex, updated: 2026-06-02)
+
+### Stream: Release Docs
+
+55. [DONE] `phase31.stream1.task1` Prepare release docs for version 1.2.439 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.439`).
+56. [PENDING] Git Commit: `docs: prepare release 1.2.439` (hash: TBD)
+
+## Phase 32 - Release Build (owner: Codex, updated: 2026-06-02)
+
+### Stream: Build Artifacts
+
+57. [TODO] `phase32.stream1.task1` Run the release build flow requested by the user and record the resulting VSIX/tarball artifacts for version 1.2.439 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.439`).
+58. [TODO] Git Commit: `chore: build release 1.2.439` (hash: TBD)
+
+## Phase 33 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: User Retest
 
-55. [TODO] `phase31.stream1.task1` User regenerates the Development Tree and verifies that Product Part todo plans are created and Product Part agent sessions start for Product Part Development Brief work only (scope: `doc/TODO/todo-plan.md`).
+59. [TODO] `phase33.stream1.task1` User installs/tests release 1.2.439, regenerates the Development Tree, and verifies that Product Part todo plans are created and Product Part agent sessions start for Product Part Development Brief work only (scope: `doc/TODO/todo-plan.md`).
 
-## Phase 32 - Scope Closeout (owner: Codex, updated: 2026-06-02)
+## Phase 34 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Closeout
 
-56. [TODO] `phase32.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree product part bootstrap scope`).
-57. [TODO] Git Commit: `docs: close development tree product part bootstrap scope` (hash: TBD)
-58. [TODO] `phase32.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+60. [TODO] `phase34.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree product part bootstrap scope`).
+61. [TODO] Git Commit: `docs: close development tree product part bootstrap scope` (hash: TBD)
+62. [TODO] `phase34.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
