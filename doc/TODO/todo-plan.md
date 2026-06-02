@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "eab839dfc",
+  "lastRecordedCommit": "4a66b274f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase42.stream1.task1",
-  "expectedCommitMessage": "fix: defer product part brief bootstrap until quality gates",
+  "currentTaskId": "phase43.stream1.task1",
+  "expectedCommitMessage": "test: verify product part bootstrap timing",
   "debt": {
-    "expectedCommitMessage": "fix: defer product part brief bootstrap until quality gates",
-    "preCommitHead": "eab839dfc",
+    "expectedCommitMessage": "test: verify product part bootstrap timing",
+    "preCommitHead": "4a66b274f",
     "stage": "commit_pending",
-    "taskId": "phase42.stream1.task1"
+    "taskId": "phase43.stream1.task1"
   }
 }
 ```
@@ -305,14 +305,14 @@
 ### Stream: Quality Gates Handoff
 
 73. [DONE] `phase42.stream1.task1` Move Product Part Development Brief bootstrap from workflow-state read side effects to the accepted Quality Gates terminal handoff, and cover the Diagram Modules dirty-gate regression (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/development-tree/**`; expected commit: `fix: defer product part brief bootstrap until quality gates`). Result: workflow-state read is now side-effect free for Product Part Brief bootstrap; accepted Quality Gates terminal handoff now materializes Development Tree Product Part brief plans/drafts, starts Product Part agent sessions through the workflow session gateway, and commits the bootstrap artifacts with `docs: bootstrap product part development briefs`.
-74. [PENDING] Git Commit: `fix: defer product part brief bootstrap until quality gates` (hash: TBD)
+74. [DONE] Git Commit: `fix: defer product part brief bootstrap until quality gates` (hash: 4a66b274f)
 
 ## Phase 43 - Product Part Bootstrap Verification (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Targeted Checks
 
-75. [TODO] `phase43.stream1.task1` Run focused Core tests/builds for Development Tree bootstrap timing and Quality Gates handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part bootstrap timing`).
-76. [TODO] Git Commit: `test: verify product part bootstrap timing` (hash: TBD)
+75. [DONE] `phase43.stream1.task1` Run focused Core tests/builds for Development Tree bootstrap timing and Quality Gates handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part bootstrap timing`). Result: `npm run build --workspace=@codeai-hub/core`, `npm run plan:validate`, and focused compiled Node tests for workflow-state/Product Part bootstrap/Quality Gates handoff passed with 13/13 tests.
+76. [PENDING] Git Commit: `test: verify product part bootstrap timing` (hash: TBD)
 
 ## Phase 44 - Release 1.2.441 Preparation (owner: Codex, updated: 2026-06-02)
 
