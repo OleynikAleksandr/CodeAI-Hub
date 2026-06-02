@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "8df8e7331",
+  "lastRecordedCommit": "464d297f4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase58.stream2.task1",
-  "expectedCommitMessage": "fix: commit product part continuity ledger updates",
+  "currentTaskId": "phase59.stream1.task1",
+  "expectedCommitMessage": "test: verify product part language and ledger repair",
   "debt": {
-    "expectedCommitMessage": "fix: commit product part continuity ledger updates",
-    "preCommitHead": "8df8e7331",
+    "expectedCommitMessage": "test: verify product part language and ledger repair",
+    "preCommitHead": "464d297f4",
     "stage": "commit_pending",
-    "taskId": "phase58.stream2.task1"
+    "taskId": "phase59.stream1.task1"
   }
 }
 ```
@@ -434,14 +434,14 @@
 ### Stream: Managed Ledger Cleanliness
 
 113. [DONE] `phase58.stream2.task1` Ensure accepted Product Part brief handoff does not leave `.codeai-hub/<workspace>/continuity/index.json` dirty after Core commits accepted draft and advances the Product Part todo-plan (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit product part continuity ledger updates`). Result: Product Part ledger advancement now includes the continuity index when present; focused handoff test confirms a dirty continuity index is committed and the workspace is clean after Core acceptance.
-114. [PENDING] Git Commit: `fix: commit product part continuity ledger updates` (hash: TBD)
+114. [DONE] Git Commit: `fix: commit product part continuity ledger updates` (hash: 464d297f4)
 
 ## Phase 59 - Product Part Agent Repair Verification (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Targeted Checks
 
-115. [TODO] `phase59.stream1.task1` Run plan validation plus focused Core tests/builds for Product Part language, prompt role, and ledger-clean handoff before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part language and ledger repair`).
-116. [TODO] Git Commit: `test: verify product part language and ledger repair` (hash: TBD)
+115. [DONE] `phase59.stream1.task1` Run plan validation plus focused Core tests/builds for Product Part language, prompt role, and ledger-clean handoff before release preparation (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts`; expected commit: `test: verify product part language and ledger repair`). Result: `npm run plan:validate`, Product Part prompt language bootstrapper test, Product Part start-prompt role test, Product Part brief handoff ledger-clean test, and `npm run build --workspace=@codeai-hub/core` passed; the start-prompt role regression test now avoids `import.meta` so it compiles under the current Core CommonJS build.
+116. [PENDING] Git Commit: `test: verify product part language and ledger repair` (hash: TBD)
 
 ## Phase 60 - Release 1.2.444 Preparation (owner: Codex, updated: 2026-06-02)
 

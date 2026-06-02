@@ -1,18 +1,20 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import test from "node:test";
 
 const APPEND_DIALOG_MESSAGE_RE = /appendDialogMessage/u;
 const APPEND_CORE_MESSAGE_RE = /appendCoreMessage/u;
 const DEVELOPMENT_TREE_START_PROMPT_TAG_RE =
   /development-tree-agent-start-prompt/u;
+const RUNTIME_CORE_SOURCE_PATH = join(
+  process.cwd(),
+  "packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts"
+);
 const USER_ROLE_RE = /role:\s*"user"/u;
 
 test("Development Tree start prompts persist as user turns", async () => {
-  const source = await readFile(
-    new URL("./session-request-handler-runtime-core.ts", import.meta.url),
-    "utf8"
-  );
+  const source = await readFile(RUNTIME_CORE_SOURCE_PATH, "utf8");
   const blockStart = source.indexOf("persistStartPrompt:");
   const blockEnd = source.indexOf("eventMessages,", blockStart);
   const persistStartPromptBlock =
