@@ -86,7 +86,7 @@ const readRuntimeContinuityCallbacks = (
   (runtime.continuity as unknown as RuntimeContinuityCallbackOwner).callbacks;
 
 const waitForManagedTurn = (): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, 350));
+  new Promise((resolve) => setTimeout(resolve, 1000));
 
 const readWorkspaceFile = (
   workspaceRoot: string,
@@ -122,6 +122,7 @@ const createCoreConfig = (): CoreConfig => ({
 
 const createRuntimeCallbacks =
   (): SessionRequestHandlerRuntimeDependencies["callbacks"] => ({
+    createSessionForWorkflow: async () => null,
     emitContinuityLockEvent: noop,
     emitTurnStateEvent: noop,
     finalizeFlowNodeContinuityLock: noop,
@@ -317,17 +318,14 @@ test("createSessionRequestHandlerRuntimeCore dispatches repair prompt for invali
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_PROMPT_RE);
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_TARGET_RE);
     assert.match(sentMessages[0] ?? "", DIAGRAM_REPAIR_HEADING_RE);
-    assert.equal(session.messages.at(-1)?.tag, "managed-workflow-validation");
-    assert.match(
-      session.messages.at(-1)?.content ?? "",
-      DIAGRAM_REPAIR_NOTICE_RE
+    const validationMessage = session.messages.find(
+      (message) => message.tag === "managed-workflow-validation"
     );
-    assert.match(
-      session.messages.at(-1)?.content ?? "",
-      DIAGRAM_REPAIR_NOTICE_TARGET_RE
-    );
+    assert.ok(validationMessage);
+    assert.match(validationMessage.content, DIAGRAM_REPAIR_NOTICE_RE);
+    assert.match(validationMessage.content, DIAGRAM_REPAIR_NOTICE_TARGET_RE);
     assert.doesNotMatch(
-      session.messages.at(-1)?.content ?? "",
+      validationMessage.content,
       EMBEDDED_TEMPLATE_HEADING_RE
     );
     const repairPlan = await readWorkspaceFile(

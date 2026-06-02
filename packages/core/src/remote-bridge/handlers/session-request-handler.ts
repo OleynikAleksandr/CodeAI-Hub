@@ -138,6 +138,8 @@ export class SessionRequestHandler {
         this.continuityRolloverOrchestrator,
       getFlowNodeContinuity: () => this.flowNodeContinuity,
       getTurnArbitration: () => this.turnArbitration,
+      createSessionForWorkflow: async (workflowOptions) =>
+        await this.workflowSession.createSessionForWorkflow(workflowOptions),
       handleMessage: async (sessionId, payload) =>
         await this.handleMessage(sessionId, payload),
       onTurnCompleted: options.onTurnCompleted,

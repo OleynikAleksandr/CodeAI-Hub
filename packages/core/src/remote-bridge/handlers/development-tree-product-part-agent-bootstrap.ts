@@ -1,50 +1,20 @@
-import type { Request } from "express";
+import type { DevelopmentTreeNodeBootstrapScanResult } from "../../development-tree/node-bootstrap/development-tree-node-bootstrap-facade";
 import { DevelopmentTreeNodeBootstrapFacade } from "../../development-tree/node-bootstrap/development-tree-node-bootstrap-facade";
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
-import type { SessionManager } from "../../session-manager";
 
 export interface DevelopmentTreeProductPartAgentBootstrapRequest {
   readonly agentGateway?: DevelopmentTreeAgentSessionGateway;
   readonly leadProductPartId?: string | null;
   readonly productPartLeadershipOrder?: readonly string[];
-  readonly req: Request;
-  readonly sessionManager?: SessionManager;
+  readonly providerId?: string | null;
   readonly workspaceRoot: string;
   readonly workspaceSlug: string;
 }
 
-const readNonEmptyString = (value: unknown): string | null =>
-  typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-
-const resolveProviderId = (params: {
-  readonly req: Request;
-  readonly sessionManager?: SessionManager;
-  readonly workspaceSlug: string;
-}): string | null => {
-  if (!params.sessionManager) {
-    return null;
-  }
-  const query = params.req.query as Record<string, unknown>;
-  const sessionId = readNonEmptyString(query.sessionId);
-  if (sessionId) {
-    return params.sessionManager.getSession(sessionId)?.providerId ?? null;
-  }
-  return (
-    params.sessionManager
-      .listSessions()
-      .find((session) => session.initiativeSlug === params.workspaceSlug)
-      ?.providerId ?? null
-  );
-};
-
 export const bootstrapDevelopmentTreeProductPartAgents = async (
   request: DevelopmentTreeProductPartAgentBootstrapRequest
-): Promise<void> => {
-  const providerId = resolveProviderId({
-    req: request.req,
-    sessionManager: request.sessionManager,
-    workspaceSlug: request.workspaceSlug,
-  });
+): Promise<DevelopmentTreeNodeBootstrapScanResult> => {
+  const providerId = request.providerId?.trim() || null;
   const agentSessionOptions =
     request.agentGateway && providerId
       ? {
@@ -55,7 +25,7 @@ export const bootstrapDevelopmentTreeProductPartAgents = async (
         }
       : undefined;
 
-  await new DevelopmentTreeNodeBootstrapFacade({
+  return await new DevelopmentTreeNodeBootstrapFacade({
     agentSessionOptions,
   }).consumeNewNodes({
     leadProductPartId: request.leadProductPartId,

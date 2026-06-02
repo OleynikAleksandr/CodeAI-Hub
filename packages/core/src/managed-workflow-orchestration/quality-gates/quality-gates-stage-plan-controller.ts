@@ -36,6 +36,9 @@ import {
 } from "./quality-gates-stage-plan-model";
 import type { QualityGatesManagedValidationResult } from "./quality-gates-validator";
 
+const DEVELOPMENT_TREE_BOOTSTRAP_COMMIT_MESSAGE =
+  "docs: bootstrap product part development briefs";
+
 export interface QualityGatesStagePlanCommit {
   readonly expectedCommitMessage: string;
   readonly hash: string;
@@ -190,6 +193,17 @@ export class QualityGatesStagePlanController {
       stage: "quality_gates",
       workspaceRoot: params.workspaceRoot,
       workspaceSlug: params.workspaceSlug,
+    });
+  }
+
+  async commitDevelopmentTreeBootstrap(params: {
+    readonly managedPaths: readonly string[];
+    readonly workspaceRoot: string;
+  }): Promise<void> {
+    await this.gitBoundary.commitManagedChanges({
+      commitMessage: DEVELOPMENT_TREE_BOOTSTRAP_COMMIT_MESSAGE,
+      managedPaths: params.managedPaths,
+      workspaceRoot: params.workspaceRoot,
     });
   }
 

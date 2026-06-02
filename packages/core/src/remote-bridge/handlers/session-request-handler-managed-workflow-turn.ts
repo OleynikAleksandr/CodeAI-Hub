@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
   buildApplicationSkeletonDraftRepairPrompt,
@@ -27,11 +28,7 @@ import {
   buildManagedPersistentReturnHandoffMessage,
   buildManagedUserLedReviewHandoffMessage,
 } from "../../managed-workflow-orchestration/managed-workflow-user-handoff-messages";
-import {
-  buildQualityGatesBoundaryBlockedMessage,
-  buildQualityGatesDraftRepairPrompt,
-  buildQualityGatesIntegrationRepairPrompt,
-} from "../../managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder";
+import { buildQualityGatesBoundaryBlockedMessage } from "../../managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder";
 import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import {
   type QualityGatesManagedValidationResult,
@@ -39,7 +36,9 @@ import {
 } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
 import type { Session, SessionManager } from "../../session-manager";
 import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
+import { DevelopmentTreeQualityGatesHandoffBootstrap } from "./development-tree-quality-gates-handoff-bootstrap";
 import { dispatchManagedInternalContinuation as dispatchContinuation } from "./managed-internal-continuation-dispatch";
+import { buildQualityGatesRepairDispatch } from "./quality-gates-repair-prompt-dispatch";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
 import { resolvePreliminaryArtifactGate } from "./session-request-handler-preliminary-artifact-gate";
@@ -51,8 +50,6 @@ const QUALITY_GATES_STAGE = "quality_gates";
 const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
 const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
   /^application-skeleton\.phase3\.repair\.task(\d+)$/u;
-const QUALITY_GATES_INTEGRATION_REPAIR_TASK_RE =
-  /^quality-gates\.phase3\.repair\.task(\d+)$/u;
 export type ManagedWorkflowTurnCompletionResult =
   | "continued"
   | "not_managed"
@@ -63,6 +60,7 @@ interface ManagedWorkflowTurnEventMessages {
 }
 interface SessionRequestHandlerManagedWorkflowTurnOptions {
   readonly applicationStagePlan?: ApplicationSkeletonStagePlanController;
+  readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
   readonly diagramStagePlan?: DiagramModulesStagePlanController;
   readonly eventMessages: ManagedWorkflowTurnEventMessages;
   readonly getMessageDispatch: () => SessionRequestHandlerMessageDispatch;
@@ -103,13 +101,6 @@ const resolveMaterializationRepairAttemptNumber = (
   const value = Number(match?.[1]);
   return Number.isInteger(value) && value > 0 ? value : 1;
 };
-const resolveQualityGatesIntegrationRepairAttemptNumber = (
-  taskId: string | null
-): number => {
-  const match = taskId?.match(QUALITY_GATES_INTEGRATION_REPAIR_TASK_RE);
-  const value = Number(match?.[1]);
-  return Number.isInteger(value) && value > 0 ? value : 1;
-};
 const resolveDiagramModulesRepairAttemptNumber = (
   taskId: string | null
 ): number => parseDiagramModulesRepairTaskNumber(taskId ?? "") ?? 1;
@@ -117,6 +108,8 @@ export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly applicationStagePlan: ApplicationSkeletonStagePlanController;
   private readonly diagramStagePlan: DiagramModulesStagePlanController;
   private readonly options: SessionRequestHandlerManagedWorkflowTurnOptions;
+  private readonly productPartBootstrap =
+    new DevelopmentTreeQualityGatesHandoffBootstrap();
   private readonly qualityGatesStagePlan: QualityGatesStagePlanController;
 
   constructor(options: SessionRequestHandlerManagedWorkflowTurnOptions) {
@@ -448,6 +441,14 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         workspaceRoot: params.workspaceRoot,
         workspaceSlug: params.workspaceSlug,
       });
+      await this.productPartBootstrap.bootstrap({
+        agentGateway: this.options.developmentTreeAgentGateway,
+        sessionId: params.sessionId,
+        sessionManager: this.options.sessionManager,
+        stagePlan: this.qualityGatesStagePlan,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      });
     }
     return "settled";
   }
@@ -463,26 +464,16 @@ export class SessionRequestHandlerManagedWorkflowTurn {
       readonly repairTaskId: string | null;
     } | null
   ): void {
-    const repairPrompt =
-      decision.nextAction === "repair_integration"
-        ? buildQualityGatesIntegrationRepairPrompt({
-            attemptNumber: resolveQualityGatesIntegrationRepairAttemptNumber(
-              rejected?.repairTaskId ?? null
-            ),
-            diagnostics: decision.diagnostics,
-            rejectedCommitHash: rejected?.rejectedCommitHash ?? null,
-            workspaceSlug: params.workspaceSlug,
-          })
-        : (decision.nextPrompt ??
-          buildQualityGatesDraftRepairPrompt({
-            diagnostics: decision.diagnostics,
-            workspaceSlug: params.workspaceSlug,
-          }));
+    const dispatch = buildQualityGatesRepairDispatch(
+      params,
+      decision,
+      rejected
+    );
     this.appendCoreMessage(params.sessionId, {
-      content: `Core: Quality Gates требует исправить ${decision.phase === "integration" ? "интеграцию" : "черновик"}.\nПолный repair prompt отправлен агенту внутренним сообщением.`,
+      content: dispatch.notice,
       tag: "managed-workflow-validation",
     });
-    this.dispatchAgentContinuation(params.sessionId, repairPrompt);
+    this.dispatchAgentContinuation(params.sessionId, dispatch.prompt);
   }
   private dispatchAgentContinuation(sessionId: string, content: string): void {
     dispatchContinuation(this.options.getMessageDispatch(), {

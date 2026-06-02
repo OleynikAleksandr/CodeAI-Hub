@@ -100,7 +100,6 @@ export const createRemoteBridgeBootstrap = (options: {
     service: new SessionSpeechService({ logger: options.logger }),
   });
   const workflowStateService = new WorkflowStateService({
-    developmentTreeAgentGateway: sessionHandler,
     logger: options.logger,
     sessionManager: options.sessionManager,
   });

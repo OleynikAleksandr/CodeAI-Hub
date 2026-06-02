@@ -1,7 +1,6 @@
 import path from "node:path";
 import type { Request, Response } from "express";
 import { DevelopmentTreeStateFacade } from "../../development-tree/development-tree-state-facade";
-import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import { ManagedWorkflowReadModelProjector } from "../../managed-workflow-orchestration/managed-workflow-read-model-projector";
 import { SessionContinuityFacade } from "../../session-continuity/session-continuity-facade";
 import type { SessionManager } from "../../session-manager";
@@ -18,7 +17,6 @@ import type { WorkflowWatcherEvent } from "../../workflow/watcher/watcher-types"
 import type { TechnicalStageRewriteBoundaryPayload } from "../types";
 import type { ApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
 import { readApplicationSkeletonProgressSnapshot } from "./application-skeleton-progress";
-import { bootstrapDevelopmentTreeProductPartAgents } from "./development-tree-product-part-agent-bootstrap";
 import { readDiagramModulesProgressSnapshot } from "./diagram-modules-progress";
 import type { QualityGatesProgressSnapshot } from "./quality-gates-progress";
 import {
@@ -82,7 +80,6 @@ const resolveTechnicalStageRewriteBoundary = (params: {
 
 export class WorkflowStateService {
   private readonly logger: Logger;
-  private readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
   private readonly sessionManager?: SessionManager;
   private readonly stores = new Map<string, WorkflowStateFacade>();
   private readonly descriptionStepStore = new DescriptionStepStore();
@@ -92,11 +89,9 @@ export class WorkflowStateService {
     new ManagedWorkflowReadModelProjector();
 
   constructor(options: {
-    readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
     readonly logger: Logger;
     readonly sessionManager?: SessionManager;
   }) {
-    this.developmentTreeAgentGateway = options.developmentTreeAgentGateway;
     this.logger = options.logger;
     this.sessionManager = options.sessionManager;
   }
@@ -272,21 +267,6 @@ export class WorkflowStateService {
                 state: validatedState,
                 workspaceRoot,
               })
-            )
-            .then((validatedState) =>
-              bootstrapDevelopmentTreeProductPartAgents({
-                agentGateway: this.developmentTreeAgentGateway,
-                leadProductPartId:
-                  technicalStageProgress.diagramModulesProgress
-                    ?.leadProductPartId ?? null,
-                productPartLeadershipOrder:
-                  technicalStageProgress.diagramModulesProgress
-                    ?.productPartLeadershipOrder ?? [],
-                req,
-                sessionManager: this.sessionManager,
-                workspaceRoot,
-                workspaceSlug: workspaceSlugResult.value,
-              }).then(() => validatedState)
             )
             .then((validatedState) =>
               this.developmentTreeState

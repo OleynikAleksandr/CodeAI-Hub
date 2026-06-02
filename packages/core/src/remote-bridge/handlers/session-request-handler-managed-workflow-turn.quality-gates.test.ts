@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { appendFileSync, mkdirSync } from "node:fs";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
+import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchestration/managed-workflow-scaffold-installer";
 import { QualityGatesStagePlanController } from "../../managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller";
 import type { QualityGatesManagedValidationResult } from "../../managed-workflow-orchestration/quality-gates/quality-gates-validator";
@@ -23,6 +24,11 @@ const QUALITY_RETURN_RE = /Core: Quality Gates завершён и зафикс�
 const RETURN_RE = /Можно переходить к следующему шагу/u;
 const MANAGED_TERMINAL_RESIDUE_COMMIT_RE =
   /chore: commit managed terminal residue/u;
+const PRODUCT_PART_BOOTSTRAP_COMMIT_RE =
+  /docs: bootstrap product part development briefs/u;
+const PRODUCT_PART_BRIEF_DRAFT_RE = /ProductPartDevelopmentBrief\.draft\.md/u;
+const PRODUCT_PART_BRIEF_TITLE_RE = /ProductPartDevelopmentBrief/u;
+const PRODUCT_PART_LOCAL_RUNTIME_RE = /local-runtime/u;
 const USER_REVIEW_RE =
   /Пожалуйста, ответьте на вопросы агента, задайте свои вопросы или напишите правки/u;
 
@@ -100,6 +106,7 @@ const qualityIntegratedDecision = (): QualityGatesManagedValidationResult => ({
 });
 
 const createHandler = (params: {
+  readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
   readonly persistCoreMessages?: boolean;
   readonly workspaceRoot: string;
 }): {
@@ -118,6 +125,7 @@ const createHandler = (params: {
     { initiativeSlug: WORKSPACE_SLUG, stage: QUALITY_STAGE }
   );
   const handler = new SessionRequestHandlerManagedWorkflowTurn({
+    developmentTreeAgentGateway: params.developmentTreeAgentGateway,
     eventMessages: {
       appendCoreMessage: (_sessionId: string, message: CapturedCoreMessage) => {
         coreMessages.push(message);
@@ -152,6 +160,62 @@ const createHandler = (params: {
     sessionManager,
   });
   return { coreMessages, handler, sessionId: session.id, waitEvents };
+};
+
+const writeDiagramModulesAcceptedArtifacts = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts.index.md`,
+    [
+      "# Product Parts Index",
+      "",
+      "- leadProductPartId: `local-runtime`",
+      "- productPartLeadershipOrder: `local-runtime`",
+      "",
+      "### Product Part: local-runtime",
+      "- Title: Local Runtime",
+      "- Purpose: Runtime shell.",
+      "",
+    ].join("\n")
+  );
+  await writeWorkspaceFile(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/diagram_modules/product-parts/local-runtime.md`,
+    [
+      "# Product Part: local-runtime",
+      "",
+      "## Identity",
+      "",
+      "| Field | Value |",
+      "| ----- | ----- |",
+      "| Part ID | `local-runtime` |",
+      "",
+      "## Owned Clusters",
+      "",
+      "## Standalone Modules",
+      "",
+      "| `module-id` | Responsibility |",
+      "| --- | --- |",
+      "| `provider-bridge` | Coordinates providers. |",
+      "",
+    ].join("\n")
+  );
+  await execFileAsync("git", ["add", `.codeai-hub/${WORKSPACE_SLUG}`], {
+    cwd: workspaceRoot,
+  });
+  await execFileAsync(
+    "git",
+    [
+      "-c",
+      "core.hooksPath=/dev/null",
+      "commit",
+      "-m",
+      "test: accept diagram modules",
+    ],
+    { cwd: workspaceRoot }
+  ).catch(() => undefined);
 };
 
 const researchJson = (): string =>
@@ -316,6 +380,68 @@ test("Quality Gates completion commits persisted Core handoff residue", async ()
       { cwd: workspaceRoot }
     );
     assert.match(logOutput, MANAGED_TERMINAL_RESIDUE_COMMIT_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates completion bootstraps Product Part brief workflow after terminal handoff", async () => {
+  const workspaceRoot = await mkdtemp(path.join(tmpdir(), "qg-devtree-"));
+  try {
+    await prepareQualityIntegration(workspaceRoot);
+    await writeDiagramModulesAcceptedArtifacts(workspaceRoot);
+    const createdStages: string[] = [];
+    const sentMessages: string[] = [];
+    const { handler, sessionId } = createHandler({
+      developmentTreeAgentGateway: {
+        createSessionForWorkflow: (options) => {
+          createdStages.push(options.context.stage);
+          return Promise.resolve({ id: `devtree-${createdStages.length}` });
+        },
+        handleMessage: (_sessionId, content) => {
+          sentMessages.push(content);
+          return Promise.resolve();
+        },
+      },
+      persistCoreMessages: true,
+      workspaceRoot,
+    });
+
+    await handler.handleTurnCompleted(sessionId);
+
+    const productPartPlan = path.join(
+      workspaceRoot,
+      "doc/TODO/stages/development-tree/product-parts/local-runtime/todo-plan.md"
+    );
+    const productPartBrief = path.join(
+      workspaceRoot,
+      `.codeai-hub/${WORKSPACE_SLUG}/development_tree/materialized/product-parts/local-runtime/ProductPartDevelopmentBrief.draft.md`
+    );
+    assert.match(
+      await readFile(productPartPlan, "utf8"),
+      PRODUCT_PART_LOCAL_RUNTIME_RE
+    );
+    assert.match(
+      await readFile(productPartBrief, "utf8"),
+      PRODUCT_PART_BRIEF_TITLE_RE
+    );
+    assert.deepEqual(createdStages, [
+      "development_tree/materialized/product-parts/local-runtime",
+    ]);
+    assert.equal(sentMessages.length, 1);
+    assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_RE);
+    const { stdout: statusOutput } = await execFileAsync(
+      "git",
+      ["status", "--porcelain"],
+      { cwd: workspaceRoot }
+    );
+    assert.equal(statusOutput.trim(), "");
+    const { stdout: logOutput } = await execFileAsync(
+      "git",
+      ["log", "--oneline", "-5"],
+      { cwd: workspaceRoot }
+    );
+    assert.match(logOutput, PRODUCT_PART_BOOTSTRAP_COMMIT_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }

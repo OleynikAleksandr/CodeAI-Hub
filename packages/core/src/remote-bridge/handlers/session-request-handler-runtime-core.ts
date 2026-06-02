@@ -194,6 +194,12 @@ export const createSessionRequestHandlerRuntimeCore = (
     sessionTranslation,
   });
   const managedWorkflowTurn = new SessionRequestHandlerManagedWorkflowTurn({
+    developmentTreeAgentGateway: {
+      createSessionForWorkflow: async (workflowOptions) =>
+        await options.callbacks.createSessionForWorkflow(workflowOptions),
+      handleMessage: async (sessionId, content) =>
+        await messageDispatchRef.get().sendInternalMessage(sessionId, content),
+    },
     eventMessages,
     getMessageDispatch: () => messageDispatchRef.get(),
     sessionManager: options.sessionManager,

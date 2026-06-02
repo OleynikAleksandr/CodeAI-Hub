@@ -4,6 +4,7 @@ import type { ProviderRegistry } from "../../provider-registry";
 import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
+import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { BridgeEvent } from "../types";
 import type { SessionContinuityLockService } from "./session-continuity-lock-service";
 import type { SessionContinuityRolloverOrchestrator } from "./session-continuity-rollover-orchestrator";
@@ -16,6 +17,16 @@ import type {
 import type { SessionRequestHandlerTurnArbitration } from "./session-request-handler-turn-arbitration";
 
 interface SessionRequestHandlerRuntimeCallbackDependencies {
+  readonly createSessionForWorkflow: (options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly context: {
+      readonly initiativeSlug: string;
+      readonly stage: string;
+      readonly runSlug?: string | null;
+      readonly resumeMode?: SessionResumeMode;
+    };
+  }) => Promise<Session | null>;
   readonly getBroadcaster: () => (event: BridgeEvent) => void;
   readonly getContinuityLockService: () => SessionContinuityLockService;
   readonly getContinuityRolloverOrchestrator: () => SessionContinuityRolloverOrchestrator;
@@ -166,6 +177,7 @@ export const createSessionRequestHandlerRuntimeCallbacks = (
   };
 
   return {
+    createSessionForWorkflow: dependencies.createSessionForWorkflow,
     emitContinuityLockEvent: (lockEvent) =>
       dependencies
         .getContinuityLockService()

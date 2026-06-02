@@ -13,15 +13,10 @@ import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
 import type { Request, Response } from "express";
-import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const execFileAsync = promisify(execFile);
-const LOCAL_RUNTIME_PATTERN = /local-runtime/;
-const PRODUCT_PART_BRIEF_TITLE_PATTERN = /ProductPartDevelopmentBrief/;
-const PRODUCT_PART_BRIEF_DRAFT_PATTERN =
-  /ProductPartDevelopmentBrief\.draft\.md/;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -268,7 +263,7 @@ const runFeedbackScenario = async (params: {
   }
 };
 
-test("workflow-state read bootstraps Product Part brief plans and sessions only", async () => {
+test("workflow-state read does not bootstrap Product Part brief plans before Quality Gates handoff", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-development-tree-")
   );
@@ -285,33 +280,8 @@ test("workflow-state read bootstraps Product Part brief plans and sessions only"
     );
     await commitWorkspace(workspaceRoot);
 
-    const sessionManager = new SessionManager();
-    sessionManager.createSession("codexCli", workspaceRoot, "provider-root", {
-      initiativeSlug: workspaceSlug,
-      stage: "quality_gates",
-    });
-    const createdStages: string[] = [];
-    const sentMessages: string[] = [];
     const service = new WorkflowStateService({
-      developmentTreeAgentGateway: {
-        createSessionForWorkflow: (options) => {
-          createdStages.push(options.context.stage);
-          const session = sessionManager.createSession(
-            options.providerId,
-            options.workspacePath,
-            `provider-${createdStages.length}`,
-            options.context
-          );
-          return Promise.resolve(session);
-        },
-        handleMessage: (sessionId, content) => {
-          sentMessages.push(content);
-          sessionManager.appendMessage(sessionId, "user", content);
-          return Promise.resolve();
-        },
-      },
       logger: new Logger("error"),
-      sessionManager,
     });
 
     await readWorkflowStatePayload({
@@ -333,20 +303,15 @@ test("workflow-state read bootstraps Product Part brief plans and sessions only"
       ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge/ModuleSpec.draft.md"
     );
 
-    assert.match(
-      await readFile(productPartPlan, "utf8"),
-      LOCAL_RUNTIME_PATTERN
+    assert.equal(
+      await readFile(productPartPlan, "utf8").catch(() => null),
+      null
     );
-    assert.match(
-      await readFile(productPartBrief, "utf8"),
-      PRODUCT_PART_BRIEF_TITLE_PATTERN
+    assert.equal(
+      await readFile(productPartBrief, "utf8").catch(() => null),
+      null
     );
     assert.equal(await stat(moduleDraft).catch(() => null), null);
-    assert.deepEqual(createdStages, [
-      "development_tree/materialized/product-parts/local-runtime",
-    ]);
-    assert.equal(sentMessages.length, 1);
-    assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_PATTERN);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }

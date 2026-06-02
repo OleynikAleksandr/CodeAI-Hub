@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "5cc3dd321",
+  "lastRecordedCommit": "eab839dfc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase39.stream1.task1",
-  "expectedCommitMessage": "chore: build release 1.2.440",
+  "currentTaskId": "phase42.stream1.task1",
+  "expectedCommitMessage": "fix: defer product part brief bootstrap until quality gates",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.440",
-    "preCommitHead": "5cc3dd321",
+    "expectedCommitMessage": "fix: defer product part brief bootstrap until quality gates",
+    "preCommitHead": "eab839dfc",
     "stage": "commit_pending",
-    "taskId": "phase39.stream1.task1"
+    "taskId": "phase42.stream1.task1"
   }
 }
 ```
@@ -292,13 +292,47 @@
 ### Stream: Build Artifacts
 
 67. [DONE] `phase39.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.440 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.440`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.440.vsix`; release tarballs copied to `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-68. [PENDING] Git Commit: `chore: build release 1.2.440` (hash: TBD)
+68. [DONE] Git Commit: `chore: build release 1.2.440` (hash: eab839dfc)
 
 ## Phase 40 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: User Retest
 
-69. [TODO] `phase40.stream1.task1` User installs/tests release 1.2.440, regenerates the Development Tree, and verifies that the sidebar contains only Product Part / Cluster / Module rows while Product Part Development Brief plans/sessions start for every Product Part (scope: `doc/TODO/todo-plan.md`).
+69. [BLOCKED] `phase40.stream1.task1` User installs/tests release 1.2.440, regenerates the Development Tree, and verifies that the sidebar contains only Product Part / Cluster / Module rows while Product Part Development Brief plans/sessions start for every Product Part (scope: `doc/TODO/todo-plan.md`). Result: release 1.2.440 failed retest; Core created `ProductPartDevelopmentBrief.draft.md` files while closing Diagram Modules, so the Diagram Modules dirty gate blocked completion with Development Tree files that should be created after Quality Gates Baseline.
+
+## Phase 42 - Product Part Bootstrap Timing Fix (owner: Codex, updated: 2026-06-02)
+
+### Stream: Quality Gates Handoff
+
+73. [DONE] `phase42.stream1.task1` Move Product Part Development Brief bootstrap from workflow-state read side effects to the accepted Quality Gates terminal handoff, and cover the Diagram Modules dirty-gate regression (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/development-tree/**`; expected commit: `fix: defer product part brief bootstrap until quality gates`). Result: workflow-state read is now side-effect free for Product Part Brief bootstrap; accepted Quality Gates terminal handoff now materializes Development Tree Product Part brief plans/drafts, starts Product Part agent sessions through the workflow session gateway, and commits the bootstrap artifacts with `docs: bootstrap product part development briefs`.
+74. [PENDING] Git Commit: `fix: defer product part brief bootstrap until quality gates` (hash: TBD)
+
+## Phase 43 - Product Part Bootstrap Verification (owner: Codex, updated: 2026-06-02)
+
+### Stream: Targeted Checks
+
+75. [TODO] `phase43.stream1.task1` Run focused Core tests/builds for Development Tree bootstrap timing and Quality Gates handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part bootstrap timing`).
+76. [TODO] Git Commit: `test: verify product part bootstrap timing` (hash: TBD)
+
+## Phase 44 - Release 1.2.441 Preparation (owner: Codex, updated: 2026-06-02)
+
+### Stream: Release Docs
+
+77. [TODO] `phase44.stream1.task1` Prepare release docs for version 1.2.441 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.441`).
+78. [TODO] Git Commit: `docs: prepare release 1.2.441` (hash: TBD)
+
+## Phase 45 - Release 1.2.441 Build (owner: Codex, updated: 2026-06-02)
+
+### Stream: Build Artifacts
+
+79. [TODO] `phase45.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.441 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.441`).
+80. [TODO] Git Commit: `chore: build release 1.2.441` (hash: TBD)
+
+## Phase 46 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: User Retest
+
+81. [TODO] `phase46.stream1.task1` User installs/tests release 1.2.441 and verifies Product Part Development Brief files are not created during Diagram Modules closure, then are created after Quality Gates Baseline completion (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 

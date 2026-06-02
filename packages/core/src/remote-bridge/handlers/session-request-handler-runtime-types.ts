@@ -4,6 +4,7 @@ import type { Session, SessionManager } from "../../session-manager";
 import type { Logger } from "../../telemetry/logger";
 import type { UnifiedSessionStorage } from "../../unified-session/storage";
 import type { WorkspaceRuntimeFacade } from "../../workspace-runtime/workspace-runtime-facade";
+import type { SessionResumeMode } from "../../workspace-runtime/workspace-runtime-types";
 import type { BridgeEvent } from "../types";
 import type {
   ContinuityLockReason,
@@ -33,6 +34,16 @@ export interface ContinuityRootResolutionOptionsLike {
 }
 
 export interface SessionRequestHandlerRuntimeCallbacks {
+  readonly createSessionForWorkflow: (options: {
+    readonly providerId: string;
+    readonly workspacePath: string;
+    readonly context: {
+      readonly initiativeSlug: string;
+      readonly stage: string;
+      readonly runSlug?: string | null;
+      readonly resumeMode?: SessionResumeMode;
+    };
+  }) => Promise<Session | null>;
   readonly emitContinuityLockEvent: (
     options: EmitContinuityLockEventOptions
   ) => void;
