@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "960884aaf",
+  "lastRecordedCommit": "6c9af7801",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase52.stream1.task1",
-  "expectedCommitMessage": "fix: broadcast provider state after warmup",
+  "currentTaskId": "phase53.stream1.task1",
+  "expectedCommitMessage": "test: verify provider warmup snapshot repair",
   "debt": {
-    "expectedCommitMessage": "fix: broadcast provider state after warmup",
-    "preCommitHead": "960884aaf",
+    "expectedCommitMessage": "test: verify provider warmup snapshot repair",
+    "preCommitHead": "6c9af7801",
     "stage": "commit_pending",
-    "taskId": "phase52.stream1.task1"
+    "taskId": "phase53.stream1.task1"
   }
 }
 ```
@@ -387,14 +387,14 @@
 ### Stream: Core State Broadcast
 
 99. [DONE] `phase52.stream1.task1` Ensure Core broadcasts a fresh `core:state` provider snapshot after startup warmup completes, so Project Manager provider rows move from `starting`/unavailable to active without requiring a reload (scope: `packages/core/src/remote-bridge/index.ts, packages/core/src/remote-bridge/remote-bridge-provider-state-broadcast.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: broadcast provider state after warmup`). Result: RemoteBridge now rebroadcasts Core state on provider status events and the final ready status, so clients connected during warmup receive the post-warmup active provider snapshot.
-100. [PENDING] Git Commit: `fix: broadcast provider state after warmup` (hash: TBD)
+100. [DONE] Git Commit: `fix: broadcast provider state after warmup` (hash: 6c9af7801)
 
 ## Phase 53 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Targeted Checks
 
-101. [TODO] `phase53.stream1.task1` Run plan validation, focused provider-state broadcast test, and Core build after the provider warmup snapshot repair (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify provider warmup snapshot repair`).
-102. [TODO] Git Commit: `test: verify provider warmup snapshot repair` (hash: TBD)
+101. [DONE] `phase53.stream1.task1` Run plan validation, focused provider-state broadcast test, and Core build after the provider warmup snapshot repair (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify provider warmup snapshot repair`). Result: `npm run plan:validate`, `node --test packages/core/dist/remote-bridge/remote-bridge-provider-state-broadcast.test.js`, and `npm run build --workspace=@codeai-hub/core` passed.
+102. [PENDING] Git Commit: `test: verify provider warmup snapshot repair` (hash: TBD)
 
 ## Phase 54 - Release Build Confirmation (owner: Oleksandr, updated: 2026-06-02)
 
