@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "2b8aade06",
+  "lastRecordedCommit": "748599d54",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase28.stream1.task4",
-  "expectedCommitMessage": "test: update product part brief prompt coverage",
+  "currentTaskId": "phase29.stream1.task1",
+  "expectedCommitMessage": "feat: bootstrap product part brief agents",
   "debt": {
-    "expectedCommitMessage": "test: update product part brief prompt coverage",
-    "preCommitHead": "2b8aade06",
+    "expectedCommitMessage": "feat: bootstrap product part brief agents",
+    "preCommitHead": "748599d54",
     "stage": "commit_pending",
-    "taskId": "phase28.stream1.task4"
+    "taskId": "phase29.stream1.task1"
   }
 }
 ```
@@ -230,14 +230,14 @@
 48. [DONE] `phase28.stream1.task3` Update draft generation/readiness focused tests for the renamed Product Part Development Brief artifact (scope: `packages/core/src/development-tree/node-bootstrap/draft-template-registry.test.ts, packages/core/src/development-tree/node-bootstrap/draft-readiness-classifier.test.ts, packages/core/src/development-tree/node-bootstrap/draft-writer.test.ts`; expected commit: `test: update product part brief draft coverage`).
 49. [DONE] Git Commit: `test: update product part brief draft coverage` (hash: 2b8aade06)
 50. [DONE] `phase28.stream1.task4` Update first prompt/session bootstrap focused tests for Product Part Development Brief naming (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts`; expected commit: `test: update product part brief prompt coverage`).
-51. [PENDING] Git Commit: `test: update product part brief prompt coverage` (hash: TBD)
+51. [DONE] Git Commit: `test: update product part brief prompt coverage` (hash: 748599d54)
 
 ## Phase 29 - Product Part Agent Bootstrap Wiring (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Core Orchestration
 
-52. [TODO] `phase29.stream1.task1` Wire Core to create Product Part brief plans and start Product Part agent sessions after Development Tree materialization, while keeping Cluster/Module agents locked for later waves (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `feat: bootstrap product part brief agents`).
-53. [TODO] Git Commit: `feat: bootstrap product part brief agents` (hash: TBD)
+52. [DONE] `phase29.stream1.task1` Wire Core to create Product Part brief plans and start Product Part agent sessions after Development Tree materialization, while keeping Cluster/Module agents locked for later waves (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/remote-bridge/handlers/development-tree-product-part-agent-bootstrap.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/remote-bridge-bootstrap.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `feat: bootstrap product part brief agents`).
+53. [PENDING] Git Commit: `feat: bootstrap product part brief agents` (hash: TBD)
 
 ## Phase 30 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 

@@ -1,15 +1,27 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, rm, stat, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
 import type { Request, Response } from "express";
+import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import { WorkflowStateService } from "./workflow-state-service";
 
 const execFileAsync = promisify(execFile);
+const LOCAL_RUNTIME_PATTERN = /local-runtime/;
+const PRODUCT_PART_BRIEF_TITLE_PATTERN = /ProductPartDevelopmentBrief/;
+const PRODUCT_PART_BRIEF_DRAFT_PATTERN =
+  /ProductPartDevelopmentBrief\.draft\.md/;
 
 const writeWorkspaceFile = async (
   workspaceRoot: string,
@@ -35,6 +47,9 @@ const writeJsonFile = (
 const createProductPartsIndex = (): string =>
   [
     "# Product Parts Index",
+    "",
+    "- leadProductPartId: `local-runtime`",
+    "- productPartLeadershipOrder: `local-runtime`",
     "",
     "### Product Part: local-runtime",
     "- Title: Local Runtime",
@@ -253,7 +268,7 @@ const runFeedbackScenario = async (params: {
   }
 };
 
-test("workflow-state read unlocks development tree without node auto fan-out", async () => {
+test("workflow-state read bootstraps Product Part brief plans and sessions only", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "workflow-state-development-tree-")
   );
@@ -261,34 +276,77 @@ test("workflow-state read unlocks development tree without node auto fan-out", a
 
   try {
     await writeTechnicalRootArtifacts(workspaceRoot, workspaceSlug);
+    await mkdir(
+      path.join(
+        workspaceRoot,
+        ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge"
+      ),
+      { recursive: true }
+    );
     await commitWorkspace(workspaceRoot);
 
-    const createService = () =>
-      new WorkflowStateService({
-        logger: new Logger("error"),
-      });
+    const sessionManager = new SessionManager();
+    sessionManager.createSession("codexCli", workspaceRoot, "provider-root", {
+      initiativeSlug: workspaceSlug,
+      stage: "quality_gates",
+    });
+    const createdStages: string[] = [];
+    const sentMessages: string[] = [];
+    const service = new WorkflowStateService({
+      developmentTreeAgentGateway: {
+        createSessionForWorkflow: (options) => {
+          createdStages.push(options.context.stage);
+          const session = sessionManager.createSession(
+            options.providerId,
+            options.workspacePath,
+            `provider-${createdStages.length}`,
+            options.context
+          );
+          return Promise.resolve(session);
+        },
+        handleMessage: (sessionId, content) => {
+          sentMessages.push(content);
+          sessionManager.appendMessage(sessionId, "user", content);
+          return Promise.resolve();
+        },
+      },
+      logger: new Logger("error"),
+      sessionManager,
+    });
 
     await readWorkflowStatePayload({
-      service: createService(),
+      service,
       workspaceRoot,
       workspaceSlug,
     });
 
-    assert.equal(
-      await stat(
-        path.join(
-          workspaceRoot,
-          ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime"
-        )
-      ).catch(() => null),
-      null
+    const productPartPlan = path.join(
+      workspaceRoot,
+      "doc/TODO/stages/development-tree/product-parts/local-runtime/todo-plan.md"
+    );
+    const productPartBrief = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/ProductPartDevelopmentBrief.draft.md"
+    );
+    const moduleDraft = path.join(
+      workspaceRoot,
+      ".codeai-hub/demo-workspace/development_tree/materialized/product-parts/local-runtime/modules/provider-bridge/ModuleSpec.draft.md"
     );
 
-    await readWorkflowStatePayload({
-      service: createService(),
-      workspaceRoot,
-      workspaceSlug,
-    });
+    assert.match(
+      await readFile(productPartPlan, "utf8"),
+      LOCAL_RUNTIME_PATTERN
+    );
+    assert.match(
+      await readFile(productPartBrief, "utf8"),
+      PRODUCT_PART_BRIEF_TITLE_PATTERN
+    );
+    assert.equal(await stat(moduleDraft).catch(() => null), null);
+    assert.deepEqual(createdStages, [
+      "development_tree/materialized/product-parts/local-runtime",
+    ]);
+    assert.equal(sentMessages.length, 1);
+    assert.match(sentMessages[0] ?? "", PRODUCT_PART_BRIEF_DRAFT_PATTERN);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
