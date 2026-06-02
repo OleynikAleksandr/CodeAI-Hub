@@ -4,7 +4,7 @@
 **Created:** 2026-04-07
 **Updated:** 2026-06-02
 **Owner:** Oleksandr + Codex
-**Scope:** Формализовать Development Tree после `Diagram Modules`, `Application Skeleton` и `Quality Gates Baseline`: `Product Part Specification`, `Cluster Design`, managed module workflow, worker visibility, user review gates, and MVP boundaries for implementation execution.
+**Scope:** Формализовать Development Tree после `Diagram Modules`, `Application Skeleton` и `Quality Gates Baseline`: `Product Part Development Brief`, `Lead Development Order Plan`, `Cluster Design`, managed module workflow, worker visibility, user review gates, and MVP boundaries for implementation execution.
 
 **Синхронизирован с:** `Plans/Backlog/DevelopmentTree_Sidebar_Visualization_Architecture.md` (rev 3, Accepted) — sidebar/session visual baseline.
 
@@ -87,18 +87,18 @@ Trunk workflow заканчивается на технически готово
 
 Development Tree начинается только после того, как Core видит принятую структуру модулей, installable skeleton и baseline gates.
 
-### 4.2. Product Part Specification remains the branch root
+### 4.2. Product Part Development Brief remains the branch root
 
-Для каждого выбранного `Product Part` нужен branch-root artifact:
+Для каждого `Product Part` нужен короткий branch-root artifact:
 
 - роль части продукта;
-- границы ответственности;
+- что входит в эту часть;
 - clusters;
 - standalone modules;
-- первая implementation wave;
-- open decisions.
+- очевидные зависимости из `Diagram Modules`;
+- что важно помнить следующим cluster/module agents.
 
-Это не facade contract. Это паспорт ветки продукта.
+Это не facade contract и не самостоятельная спецификация входов/выходов. `Product Part` является формальной веткой продукта, а реальные контракты создаются ниже: у cluster-ов, standalone module-ов и module-ов.
 
 ### 4.3. Cluster Design keeps one session and two artifacts
 
@@ -282,17 +282,19 @@ Worker не должен быть владельцем commit-а.
 
 Один общий workspace для нескольких workers допустим только для read-only analysis или строго serial execution. Даже если две parallel microtasks кажутся независимыми, по умолчанию лучше дать им разные sandboxes: это убирает race conditions, грязное рабочее дерево и скрытые file conflicts.
 
-### 4.14. Lead Product Part orchestration is the first branch event
+### 4.14. Product Part coordination is the first branch event
 
 После завершения всего `Documentation Tree` (`Description`, `Virtual Simulation`, `Diagram Modules`, `Application Skeleton`, `Quality Gates Baseline`) первый реальный Development Tree workflow должен стартовать не с произвольного module node.
 
-Правильная первая рабочая точка:
+Принятое решение:
 
-```text
-doc/TODO/stages/development-tree/product-parts/<lead-part-id>/todo-plan.md
-```
+- каждый `Product Part` получает свой `Product Part Development Brief`;
+- brief-и разных Product Parts можно готовить параллельно;
+- только lead Product Part дополнительно создаёт `Development Order Plan`;
+- `Development Order Plan` должен быть понятен Core-оркестратору и управлять тем, какие cluster/module agents открывать первыми;
+- `Open Questions` не является отдельным обязательным артефактом. Если агенту не хватает информации, он задаёт вопросы пользователю в своей session до финального draft-а.
 
-Этот managed plan принадлежит `Lead Product Part` agent-у. Core материализует его после того, как:
+Core создаёт managed plans после того, как:
 
 1. `Diagram Modules` принят и содержит `leadProductPartId`;
 2. `Diagram Modules` содержит `productPartLeadershipOrder`;
@@ -300,45 +302,62 @@ doc/TODO/stages/development-tree/product-parts/<lead-part-id>/todo-plan.md
 4. `Application Skeleton` материализован и принят;
 5. `Quality Gates Baseline` integrated and accepted.
 
-`Diagram Modules` отвечает за выбор lead Product Part и порядок Product Parts. Этот порядок не декоративный: он задает leadership / contract orchestration priority и порядок root nodes в Development Tree.
+Для каждого Product Part:
 
-`Lead Product Part` agent не является отдельным абстрактным `Project/Application Orchestrator`. Мы отказываемся от отдельного верхнего project-agent-а, потому что lead Product Part уже является естественным владельцем главной boundary приложения.
+```text
+doc/TODO/stages/development-tree/product-parts/<part-id>/todo-plan.md
+```
 
-Lead Product Part workflow создает application-wide `Contract Graph`:
+Этот plan заставляет Product Part agent сделать только `Product Part Development Brief` и пройти user review.
 
-- какие Product Parts, clusters и modules обмениваются commands/events/queries/state/artifacts;
-- какие facade boundaries являются публичными;
-- какие dependencies разрешены;
-- какие dependencies запрещены;
-- какие payload names / ports / shared interfaces нужны;
-- какие execution waves можно запускать serial или parallel;
-- какие downstream nodes ждут assigned contract slice.
+Для lead Product Part тот же plan содержит дополнительную часть: `Development Order Plan`.
+
+`Diagram Modules` отвечает за выбор lead Product Part и порядок Product Parts. Этот порядок не декоративный: он задаёт leadership / coordination priority и порядок root nodes в Development Tree.
+
+`Lead Product Part` agent не является отдельным абстрактным `Project/Application Orchestrator`. Он не проектирует входы/выходы всего приложения и не создаёт контракты за cluster/module agents. Его задача проще: собрать понятный порядок начала разработки по уже принятой структуре.
+
+`Product Part Development Brief` отвечает обычным языком:
+
+- что это за часть продукта;
+- зачем она нужна;
+- какие clusters и standalone modules в неё входят;
+- какие ограничения из skeleton / Quality Gates надо помнить;
+- какие очевидные зависимости видны из `Diagram Modules`.
+
+`Development Order Plan` отвечает на вопросы Core:
+
+- какие Product Part brief-и должны быть готовы перед стартом wave;
+- какие cluster agents можно открыть первыми;
+- какие standalone module agents можно открыть первыми;
+- что можно делать параллельно;
+- что должно ждать результата другого узла;
+- какие узлы остаются заблокированными до user acceptance.
+
+Если агент видит критичную неясность, без которой нельзя честно создать brief или order plan, он не выдумывает. Он задаёт пользователю вопросы в session. Финальный артефакт создаётся только после того, как критичные вопросы закрыты.
 
 Минимальная логика:
 
 ```text
 Quality Gates Baseline accepted
   -> Core materializes Development Tree branch scaffolding
-  -> Core creates lead Product Part managed todo-plan.md
-  -> Core unlocks only the lead Product Part agent start action
-  -> non-lead Product Parts / clusters / modules stay visible but locked
-  -> Lead Product Part agent drafts Contract Graph
-  -> Core validates graph structure and references
-  -> user reviews / revises / accepts Contract Graph
-  -> Core freezes accepted graph revision
-  -> Core materializes downstream contract artifacts
-  -> Core unlocks only the first allowed Product Part / Cluster / Module wave
+  -> Core creates Product Part managed todo-plan.md for every Product Part
+  -> Product Part agents draft Product Part Development Briefs in parallel
+  -> user reviews / revises / accepts each brief
+  -> Lead Product Part agent drafts Development Order Plan
+  -> Core validates the plan shape and node references
+  -> user reviews / revises / accepts Development Order Plan
+  -> Core unlocks only the first allowed cluster / standalone module wave
 ```
 
-До frozen `Contract Graph` нельзя запускать обычные Product Part / Cluster / Module agents, потому что у них еще нет assigned contract slice. Иначе module agent начнет проектировать facade/specification в отрыве от общего приложения.
+До accepted `Development Order Plan` нельзя запускать cluster/module agents автоматически. Пользователь может видеть всё дерево, но Core не должен открывать нижние agents без понятного порядка старта.
 
-После downstream work Lead Product Part возвращается как application-level integration owner:
+После downstream work Product Part agents могут вернуться как integration reviewers:
 
 ```text
 Module implementation
   -> Cluster integration
   -> Product Part integration
-  -> Lead Product Part application integration
+  -> Lead Product Part coordination review if cross-part order changed
   -> final user review
 ```
 
@@ -347,9 +366,9 @@ Implementation status as of 2026-06-02:
 - Core prompt/validation layer for `Diagram Modules` already requires `leadProductPartId` and `productPartLeadershipOrder`.
 - Core/PM read-model types already carry these fields.
 - Sidebar projection already has a `Lead Product Part Orchestration` operation shape.
-- Filesystem scaffolding already knows `lead-product-part-orchestration/contract-graph`, `cross-part-contracts`, `shared-interfaces`, and `execution-waves` directories.
-- Missing implementation: Core does not yet create the lead Product Part managed `todo-plan.md` at `doc/TODO/stages/development-tree/product-parts/<lead-part-id>/todo-plan.md`.
-- Missing implementation: Core does not yet bootstrap the Lead Product Part agent session as the first unlocked branch workflow after `Quality Gates Baseline`.
+- Missing implementation: Core does not yet create Product Part managed `todo-plan.md` files at `doc/TODO/stages/development-tree/product-parts/<part-id>/todo-plan.md`.
+- Missing implementation: Core does not yet bootstrap Product Part agent sessions for Development Brief creation after `Quality Gates Baseline`.
+- Missing implementation: Core does not yet create/validate the lead-only `Development Order Plan`.
 - Missing implementation: current Development Tree materialization path must pass `leadProductPartId` and `productPartLeadershipOrder` into the filesystem planner, not only `plannedPartIds` / `generatedPartIds`.
 
 ---
@@ -363,8 +382,8 @@ Implementation status as of 2026-06-02:
 3. `Diagram Modules` (trunk)
 4. `Application Skeleton` (trunk)
 5. `Quality Gates Baseline` (trunk)
-6. `Lead Product Part Orchestration` / `Contract Graph` (branch root)
-7. `Product Part Specification` / participant contract review (branch)
+6. `Product Part Development Briefs` (branch root, parallel)
+7. `Lead Development Order Plan` (lead Product Part only)
 8. `Cluster Design` (branch)
 9. `Module Workflow` (branch)
 
@@ -448,7 +467,12 @@ Branch-level user artifacts живут под:
 
 Для каждого `Product Part`:
 
-`.codeai-hub/<workspaceSlug>/development_tree/product-parts/<part-id>/product-part-specification.md`
+`.codeai-hub/<workspaceSlug>/development_tree/product-parts/<part-id>/product-part-development-brief.md`
+
+Для lead Product Part дополнительно:
+
+- `.codeai-hub/<workspaceSlug>/development_tree/product-parts/<lead-part-id>/development-order-plan.md`
+- `.codeai-hub/<workspaceSlug>/development_tree/product-parts/<lead-part-id>/development-order-plan.json`
 
 ### 6.3. Cluster artifacts
 
@@ -474,7 +498,19 @@ Branch-level user artifacts живут под:
 
 `.codeai-hub/<workspaceSlug>/development_tree/product-parts/<part-id>/modules/<module-id>/`
 
-### 6.6. Core managed module plan
+### 6.6. Core managed Product Part plan
+
+Core-owned lifecycle state для Product Part workflow живёт отдельно от user artifacts:
+
+`doc/TODO/stages/development-tree/product-parts/<part-id>/todo-plan.md`
+
+Для обычного Product Part этот plan ведёт `Product Part Development Brief`.
+
+Для lead Product Part этот же plan дополнительно ведёт `Development Order Plan`, который Core использует как карту разблокировки первых cluster / standalone module agents.
+
+Это service plan, а не пользовательский artifact. Он нужен Core-у и Product Part agent-у для phase tracking, clarification gates, user review, validation, commits, recovery и closeout.
+
+### 6.7. Core managed module plan
 
 Core-owned lifecycle state для module workflow живёт отдельно от user artifacts:
 
@@ -486,7 +522,20 @@ Core-owned lifecycle state для module workflow живёт отдельно о
 
 Это service plan, а не пользовательский artifact. Он нужен Core-у и module agent-у для phase tracking, gates, commits, recovery и closeout.
 
-### 6.7. Module-agent session snapshot
+### 6.8. Product Part agent session snapshot
+
+Durable snapshot основной Product Part agent session должен быть привязан к Product Part path:
+
+`doc/TODO/stages/development-tree/product-parts/<part-id>/product-part-session/`
+
+Минимальный состав:
+
+- `transcript.md`;
+- `session-state.json`;
+- `artifacts.json`;
+- `decisions.md`.
+
+### 6.9. Module-agent session snapshot
 
 Durable snapshot основной module-agent session должен быть привязан к module path:
 
@@ -501,7 +550,7 @@ Durable snapshot основной module-agent session должен быть п�
 
 UI может хранить provider-native session id отдельно, но Core-owned snapshot должен позволять восстановить смысловое состояние module workflow.
 
-### 6.8. Worker session snapshots
+### 6.10. Worker session snapshots
 
 Worker run snapshots are created only when implementation execution reaches a worker task. They are not pre-created as `workers/` operation folders during fresh Development Tree materialization.
 
@@ -523,19 +572,46 @@ Suggested service path:
 
 ## 7. Required Artifact Shape
 
-### 7.1. Product Part Specification
+### 7.1. Product Part Development Brief
 
 Минимальные разделы:
 
 1. `Identity`
-2. `Role in Diagram Modules Structure`
-3. `Owned Branch Structure`
-4. `Responsibilities`
-5. `Dependency Boundaries`
-6. `Implementation Waves`
-7. `Open Decisions`
+2. `Role in the Application`
+3. `What Belongs Here`
+4. `Clusters and Standalone Modules`
+5. `Known Dependencies From Diagram Modules`
+6. `Skeleton and Quality Gate Notes`
+7. `User Decisions Already Clarified`
 
-### 7.2. Cluster Specification
+Это обычное описание ветки продукта. Оно не задаёт facade API и не объявляет входы/выходы Product Part.
+
+### 7.2. Lead Development Order Plan
+
+Минимальные разделы markdown version:
+
+1. `Input Summary`
+2. `Briefs Required Before Wave Unlock`
+3. `First Cluster / Standalone Module Wave`
+4. `Parallel Groups`
+5. `Sequential Dependencies`
+6. `Blocked Nodes`
+7. `User Review Notes`
+
+Machine-readable `development-order-plan.json` должен хранить:
+
+- `leadProductPartId`;
+- `productPartLeadershipOrder`;
+- список Product Part brief-ов и их acceptance status;
+- first wave node ids;
+- для каждого node: `kind`, `partId`, optional `clusterId`, optional `moduleId`;
+- execution marker: `parallel` или `serial`;
+- dependency node ids;
+- locked reason, если node ещё нельзя открыть.
+
+Если у lead agent есть критичные вопросы, без которых нельзя честно создать этот plan, они задаются пользователю до draft-а. Неясности не выносятся в отдельный обязательный artifact.
+
+### 7.3. Cluster Specification
 
 Минимальные разделы:
 
@@ -549,7 +625,7 @@ Suggested service path:
 8. `Non-Goals`
 9. `Open Decisions`
 
-### 7.3. Cluster Facade Contract
+### 7.4. Cluster Facade Contract
 
 Минимальные разделы:
 
@@ -562,7 +638,7 @@ Suggested service path:
 7. `Failure / Status Semantics`
 8. `Observability Requirements`
 
-### 7.4. Module Facade Contract
+### 7.5. Module Facade Contract
 
 Минимальные разделы:
 
@@ -576,7 +652,7 @@ Suggested service path:
 8. `Invariants`
 9. `Traceability / Logging Expectations`
 
-### 7.5. Module Specification
+### 7.6. Module Specification
 
 Минимальные разделы:
 
@@ -591,7 +667,7 @@ Suggested service path:
 9. `Non-Goals`
 10. `Open Decisions`
 
-### 7.6. Implementation TODO Plan
+### 7.7. Implementation TODO Plan
 
 Минимальные разделы:
 
@@ -626,7 +702,7 @@ Markdown version is user-readable. JSON version is machine-readable and drives t
 - workspace policy: `canonical`, `worker-sandbox`, or `read-only`;
 - Quality Gates result for the paired commit.
 
-### 7.7. Worker Run Snapshot
+### 7.8. Worker Run Snapshot
 
 Минимальные поля:
 
@@ -639,7 +715,7 @@ Markdown version is user-readable. JSON version is machine-readable and drives t
 7. validation output;
 8. module-agent acceptance state.
 
-### 7.8. Facade process alignment
+### 7.9. Facade process alignment
 
 Cluster/module facade contracts должны быть согласованы с:
 
@@ -653,7 +729,11 @@ Cluster/module facade contracts должны быть согласованы с:
 
 ### 8.1. Product Part gate
 
-`Cluster Design` можно начинать только после принятого или draft-ready `Product Part Specification`.
+`Cluster Design` можно начинать только после:
+
+1. принятого или draft-ready `Product Part Development Brief` owning Product Part;
+2. accepted `Development Order Plan`, если Development Tree содержит lead Product Part workflow;
+3. unlock marker для этого cluster / standalone module в Core-readable order plan.
 
 ### 8.2. Cluster gate
 
@@ -720,7 +800,8 @@ Commit gate делает две вещи:
 
 Изменение `Diagram Modules` product-part artifacts делает downstream branch artifacts `OUTDATED`:
 
-- `Product Part Specification`;
+- `Product Part Development Brief`;
+- `Development Order Plan`;
 - `Cluster Specification`;
 - `Cluster Facade Contract`;
 - module workflow artifacts;
@@ -728,11 +809,11 @@ Commit gate делает две вещи:
 
 ### 9.2. Product Part to cluster/module
 
-Изменение `Product Part Specification` делает `OUTDATED`:
+Изменение `Product Part Development Brief` или lead `Development Order Plan` делает `OUTDATED`:
 
 - cluster design artifacts этого Product Part;
 - standalone module artifacts этого Product Part;
-- module implementation plans, которые опираются на старую branch boundary.
+- module implementation plans, которые опираются на старое описание ветки или старый порядок unlock.
 
 ### 9.3. Cluster to module
 
@@ -766,20 +847,26 @@ Commit gate делает две вещи:
 Для одной выбранной ветки:
 
 1. Прочитать accepted `Diagram Modules` artifacts.
-2. Выбрать `Product Part`.
-3. Создать и принять `Product Part Specification`.
-4. Для нужного cluster создать и принять `Cluster Specification` + `Cluster Facade Contract`.
-5. Для module открыть module-agent session.
-6. Создать и принять `Module Facade Contract`.
-7. Создать и принять `Module Specification`.
-8. Создать и принять `Implementation TODO Plan`.
-9. Выполнить worker microtasks с интерактивным progress view.
-10. После каждой accepted microtask выполнить paired Git Commit через Core-managed lifecycle.
-11. На каждом commit boundary запустить pre-commit hooks / Quality Gates.
-12. Вернуть worker results module agent-у.
-13. Module agent выполняет assembly / semantic integration.
-14. Пользователь принимает module result.
-15. Core закрывает module workflow.
+2. Core создаёт Product Part managed plans.
+3. Product Part agents параллельно создают `Product Part Development Brief`.
+4. Если агенту не хватает информации, он задаёт вопросы пользователю до финального draft-а.
+5. Пользователь принимает brief каждого Product Part.
+6. Lead Product Part agent создаёт `Development Order Plan`.
+7. Core валидирует machine-readable order plan.
+8. Пользователь принимает Development Order Plan.
+9. Core открывает только первую разрешённую wave cluster / standalone module agents.
+10. Для нужного cluster создать и принять `Cluster Specification` + `Cluster Facade Contract`.
+11. Для module открыть module-agent session.
+12. Создать и принять `Module Facade Contract`.
+13. Создать и принять `Module Specification`.
+14. Создать и принять `Implementation TODO Plan`.
+15. Выполнить worker microtasks с интерактивным progress view.
+16. После каждой accepted microtask выполнить paired Git Commit через Core-managed lifecycle.
+17. На каждом commit boundary запустить pre-commit hooks / Quality Gates.
+18. Вернуть worker results module agent-у.
+19. Module agent выполняет assembly / semantic integration.
+20. Пользователь принимает module result.
+21. Core закрывает module workflow.
 
 ---
 
@@ -789,6 +876,11 @@ Commit gate делает две вещи:
 
 ### 11.1. Must Have
 
+- managed Product Part `todo-plan.md` under `doc/TODO/stages/development-tree/product-parts/<part-id>/todo-plan.md`;
+- parallel `Product Part Development Brief` creation for every Product Part;
+- clarification phase before final brief/order-plan draft when agent lacks critical information;
+- lead-only `Development Order Plan` markdown + JSON;
+- Core-readable unlock markers for the first cluster / standalone module wave;
 - один module node в Development Tree;
 - одна writable module-agent session;
 - artifact tabs: `Facade Contract`, `Module Specification`, `Implementation TODO Plan`;
@@ -828,19 +920,24 @@ Commit gate делает две вещи:
 Этот planning scope считается достаточно подготовленным, если после review можно однозначно ответить:
 
 1. Что появляется в Development Tree после `Quality Gates Baseline`?
-2. Почему module имеет одну module-agent session, а не три отдельные sessions?
-3. Какие три главных module artifacts создаются до worker execution?
-4. Где находится Core-owned module `todo-plan.md`?
-5. Где находятся user-facing markdown/json artifacts?
-6. Где находятся worker session snapshots?
-7. Как пользователь видит ход worker execution?
-8. Почему worker sessions read-only?
-9. Куда пользователь пишет feedback по микрозадаче?
-10. Что делает Core, а что делает module agent?
-11. Кто принимает worker result и кто выполняет Git Commit boundary?
-12. Как pre-commit hooks / Quality Gates связаны с implementation microtasks?
-13. В каких workspaces запускаются parallel workers?
-14. Что входит в первый MVP, а что оставлено на later automation?
+2. Почему Product Part не имеет собственного facade contract?
+3. Какие артефакты создаёт каждый Product Part agent?
+4. Что дополнительно создаёт lead Product Part agent?
+5. Что делает агент, если ему не хватает информации?
+6. Как `Development Order Plan` управляет первым unlock cluster / standalone module agents?
+7. Почему module имеет одну module-agent session, а не три отдельные sessions?
+8. Какие три главных module artifacts создаются до worker execution?
+9. Где находится Core-owned module `todo-plan.md`?
+10. Где находятся user-facing markdown/json artifacts?
+11. Где находятся worker session snapshots?
+12. Как пользователь видит ход worker execution?
+13. Почему worker sessions read-only?
+14. Куда пользователь пишет feedback по микрозадаче?
+15. Что делает Core, а что делает module agent?
+16. Кто принимает worker result и кто выполняет Git Commit boundary?
+17. Как pre-commit hooks / Quality Gates связаны с implementation microtasks?
+18. В каких workspaces запускаются parallel workers?
+19. Что входит в первый MVP, а что оставлено на later automation?
 
 ---
 
@@ -850,6 +947,11 @@ Commit gate делает две вещи:
 
 - trunk даёт описание, simulation, diagram modules, skeleton и quality gates;
 - Development Tree показывает Product Part / Cluster / Module структуру;
+- каждый Product Part сначала получает `Product Part Development Brief`;
+- Product Part brief-и можно готовить параллельно;
+- lead Product Part дополнительно создаёт Core-readable `Development Order Plan`;
+- критичные вопросы задаются пользователю до финального draft-а, а не сохраняются как отдельный обязательный artifact;
+- Core открывает первую cluster / standalone module wave только по принятому `Development Order Plan`;
 - module node остаётся одним узлом, без раздувания дерева сотнями microtasks;
 - module agent является главным собеседником пользователя по модулю;
 - Core является формальным оркестратором и validator-ом, но не chat participant;

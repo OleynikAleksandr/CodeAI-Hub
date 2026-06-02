@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "fe87505e4",
+  "lastRecordedCommit": "433f26dc1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase25.stream1.task1",
-  "expectedCommitMessage": "docs: add lead product part orchestration model",
+  "currentTaskId": "phase26.stream1.task1",
+  "expectedCommitMessage": "docs: record product part coordination scenario",
   "debt": {
-    "expectedCommitMessage": "docs: add lead product part orchestration model",
-    "preCommitHead": "fe87505e4",
+    "expectedCommitMessage": "docs: record product part coordination scenario",
+    "preCommitHead": "433f26dc1",
     "stage": "commit_pending",
-    "taskId": "phase25.stream1.task1"
+    "taskId": "phase26.stream1.task1"
   }
 }
 ```
@@ -203,12 +203,19 @@
 ### Stream: Contract Graph Model
 
 38. [DONE] `phase25.stream1.task1` Inspect current Development Tree orchestration implementation and move the archived lead Product Part / Contract Graph workflow model into the active Development Tree planning document as the next real branch orchestration layer (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: add lead product part orchestration model`).
-39. [PENDING] Git Commit: `docs: add lead product part orchestration model` (hash: TBD)
+39. [DONE] Git Commit: `docs: add lead product part orchestration model` (hash: 433f26dc1)
 
-## Phase 26 - Scope Closeout (owner: Codex, updated: 2026-06-02)
+## Phase 26 - Product Part Coordination Scenario (owner: Codex, updated: 2026-06-02)
+
+### Stream: Accepted Product Part Workflow
+
+40. [DONE] `phase26.stream1.task1` Replace the over-engineered mandatory Contract Graph framing with the accepted Product Part coordination scenario: every Product Part gets a Development Brief, only the lead Product Part creates the Core-readable Development Order Plan, and missing information is handled through clarification phases rather than a separate Open Questions artifact (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: record product part coordination scenario`).
+41. [PENDING] Git Commit: `docs: record product part coordination scenario` (hash: TBD)
+
+## Phase 27 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Closeout
 
-40. [TODO] `phase26.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree module display scope`).
-41. [TODO] Git Commit: `docs: close development tree module display scope` (hash: TBD)
-42. [TODO] `phase26.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+42. [TODO] `phase27.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree module display scope`).
+43. [TODO] Git Commit: `docs: close development tree module display scope` (hash: TBD)
+44. [TODO] `phase27.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
