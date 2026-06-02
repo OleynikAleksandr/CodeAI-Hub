@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "00eafd142",
+  "lastRecordedCommit": "b3d8e68ab",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase61.stream1.task1",
-  "expectedCommitMessage": "chore: build release 1.2.444",
+  "currentTaskId": "phase63.stream1.task1",
+  "expectedCommitMessage": "fix: clear workflow runtime session files",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.444",
-    "preCommitHead": "00eafd142",
+    "expectedCommitMessage": "fix: clear workflow runtime session files",
+    "preCommitHead": "b3d8e68ab",
     "stage": "commit_pending",
-    "taskId": "phase61.stream1.task1"
+    "taskId": "phase63.stream1.task1"
   }
 }
 ```
@@ -455,13 +455,20 @@
 ### Stream: Build Artifacts
 
 119. [DONE] `phase61.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.444 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.444`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.444.vsix`; release tarballs created in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-120. [PENDING] Git Commit: `chore: build release 1.2.444` (hash: TBD)
+120. [DONE] Git Commit: `chore: build release 1.2.444` (hash: b3d8e68ab)
 
 ## Phase 62 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: User Retest
 
-121. [TODO] `phase62.stream1.task1` User installs/tests release 1.2.444 and verifies Product Part prompts use global `ru/ru`, draft prose and agent replies are Russian, Product Part start prompts appear as user turns, and Product Part handoff leaves no dirty continuity ledger (scope: `doc/TODO/todo-plan.md`).
+121. [BLOCKED] `phase62.stream1.task1` User installs/tests release 1.2.444 and verifies Product Part prompts use global `ru/ru`, draft prose and agent replies are Russian, Product Part start prompts appear as user turns, and Product Part handoff leaves no dirty continuity ledger (scope: `doc/TODO/todo-plan.md`). Result: retest exposed a long-standing Clear/Undo defect: workflow clear removes in-memory sessions only, leaving unified and provider-native runtime session files from cleared/downstream steps.
+
+## Phase 63 - Workflow Clear Runtime Session Cleanup (owner: Codex, updated: 2026-06-02)
+
+### Stream: Unified And Native Session Files
+
+122. [DONE] `phase63.stream1.task1` Extend workflow Clear/Undo so it removes downstream unified session histories plus provider-native session files for real provider ids (`codexCli`, `claudeCodeCli`, `geminiCli`, `glmClaudeCode`) without deleting provider auth/settings/cache files; add focused regression coverage (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear*, doc/TODO/todo-plan.md`; expected commit: `fix: clear workflow runtime session files`).
+123. [PENDING] Git Commit: `fix: clear workflow runtime session files` (hash: TBD)
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 

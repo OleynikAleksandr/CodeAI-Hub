@@ -270,6 +270,7 @@ test("workflow step clear restores workflow stages from Git boundary", async () 
     cleared: true,
     deletedProviderNativeSessionPaths: [],
     deletedSessionIds: [virtual.id, diagram.id],
+    deletedUnifiedSessionPaths: [],
     restore: {
       boundaryHash: "abc123",
       clearCommitHash: "def456",
