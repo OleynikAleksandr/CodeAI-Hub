@@ -23,6 +23,10 @@ export interface DevelopmentTreeAgentSessionGateway {
     readonly workspacePath: string;
   }) => Promise<{ readonly id: string } | null>;
   readonly handleMessage: (sessionId: string, content: string) => Promise<void>;
+  readonly persistStartPrompt?: (
+    sessionId: string,
+    content: string
+  ) => Promise<void> | void;
 }
 
 export interface NodeAgentSessionBootstrapperOptions {
@@ -337,6 +341,10 @@ export class NodeAgentSessionBootstrapper {
       ...createPromptPackContractLines(promptPackContract),
     ].join("\n");
     if (session) {
+      await options.gateway.persistStartPrompt?.(
+        session.id,
+        firstMessageContent
+      );
       await options.gateway.handleMessage(session.id, firstMessageContent);
     }
     return {

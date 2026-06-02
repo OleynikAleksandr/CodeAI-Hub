@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "2f9d4a844",
+  "lastRecordedCommit": "cf1061d64",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase47.stream2.task1",
-  "expectedCommitMessage": "fix: preserve workflow state during product part sessions",
+  "currentTaskId": "phase47.stream2.task2",
+  "expectedCommitMessage": "fix: persist product part agent start prompts",
   "debt": {
-    "expectedCommitMessage": "fix: preserve workflow state during product part sessions",
-    "preCommitHead": "2f9d4a844",
+    "expectedCommitMessage": "fix: persist product part agent start prompts",
+    "preCommitHead": "cf1061d64",
     "stage": "commit_pending",
-    "taskId": "phase47.stream2.task1"
+    "taskId": "phase47.stream2.task2"
   }
 }
 ```
@@ -346,9 +346,9 @@
 ### Stream: Workflow State And Session Audit
 
 86. [DONE] `phase47.stream2.task1` Prevent Development Tree Product Part session updates from regressing `.codeai-hub/<workspace>/workflow/state.json` to an older Documentation Tree stage; preserve the correct last active stage after Quality Gates handoff and Product Part bootstrap (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: preserve workflow state during product part sessions`).
-87. [PENDING] Git Commit: `fix: preserve workflow state during product part sessions` (hash: TBD)
-88. [TODO] `phase47.stream2.task2` Persist the Product Part agent start prompt as an auditable visible session message/event so the user can inspect the exact Core assignment for each Product Part session, not only the agent's responses (scope: `packages/core/src/development-tree/node-bootstrap/**, packages/core/src/unified-session/**, doc/TODO/todo-plan.md`; expected commit: `fix: persist product part agent start prompts`).
-89. [TODO] Git Commit: `fix: persist product part agent start prompts` (hash: TBD)
+87. [DONE] Git Commit: `fix: preserve workflow state during product part sessions` (hash: cf1061d64)
+88. [DONE] `phase47.stream2.task2` Persist the Product Part agent start prompt as an auditable visible session message/event so the user can inspect the exact Core assignment for each Product Part session, not only the agent's responses (scope: `packages/core/src/development-tree/node-bootstrap/**, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/unified-session/**, doc/TODO/todo-plan.md`; expected commit: `fix: persist product part agent start prompts`).
+89. [PENDING] Git Commit: `fix: persist product part agent start prompts` (hash: TBD)
 
 ### Stream: Regression Coverage
 

@@ -199,6 +199,11 @@ export const createSessionRequestHandlerRuntimeCore = (
         await options.callbacks.createSessionForWorkflow(workflowOptions),
       handleMessage: async (sessionId, content) =>
         await messageDispatchRef.get().sendInternalMessage(sessionId, content),
+      persistStartPrompt: (sessionId, content) =>
+        eventMessages.appendCoreMessage(sessionId, {
+          content,
+          tag: "development-tree-agent-start-prompt",
+        }),
     },
     eventMessages,
     getMessageDispatch: () => messageDispatchRef.get(),

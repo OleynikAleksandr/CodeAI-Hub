@@ -49,6 +49,8 @@ const writeWorkspaceArtifact = async (
 
 test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage", async () => {
   const createdStages: string[] = [];
+  const gatewayEvents: string[] = [];
+  const persistedPrompts: string[] = [];
   const sentMessages: string[] = [];
   const result = await new NodeAgentSessionBootstrapper().bootstrapNode(
     {
@@ -68,8 +70,13 @@ test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage
           return Promise.resolve({ id: "session-1" });
         },
         handleMessage: (_sessionId, content) => {
+          gatewayEvents.push("send");
           sentMessages.push(content);
           return Promise.resolve();
+        },
+        persistStartPrompt: (_sessionId, content) => {
+          gatewayEvents.push("persist");
+          persistedPrompts.push(content);
         },
       },
       providerId: "codexCli",
@@ -83,6 +90,8 @@ test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage
     "development_tree/materialized/product-parts/project-manager/clusters/workflow-and-artifact-ui/modules/workflow-step-controller";
   assert.equal(result.stage, expectedStage);
   assert.deepEqual(createdStages, [expectedStage]);
+  assert.deepEqual(gatewayEvents, ["persist", "send"]);
+  assert.deepEqual(persistedPrompts, sentMessages);
   assert.match(sentMessages[0] ?? "", PROMPT_PACK_CONTRACT_PATTERN);
   assert.match(sentMessages[0] ?? "", RESEARCH_ARTIFACT_PATH_PATTERN);
   assert.match(sentMessages[0] ?? "", RESEARCH_SOURCE_TYPE_PATTERN);
