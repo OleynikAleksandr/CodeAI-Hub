@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "921902dce",
+  "lastRecordedCommit": "734ac1f67",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase47.stream1.task1",
-  "expectedCommitMessage": "fix: accept product part brief agent outputs",
+  "currentTaskId": "phase47.stream1.task2",
+  "expectedCommitMessage": "fix: mark product part briefs touched by agents",
   "debt": {
-    "expectedCommitMessage": "fix: accept product part brief agent outputs",
-    "preCommitHead": "921902dce",
+    "expectedCommitMessage": "fix: mark product part briefs touched by agents",
+    "preCommitHead": "734ac1f67",
     "stage": "commit_pending",
-    "taskId": "phase47.stream1.task1"
+    "taskId": "phase47.stream1.task2"
   }
 }
 ```
@@ -339,9 +339,9 @@
 ### Stream: Agent Output Acceptance And Managed Commits
 
 82. [DONE] `phase47.stream1.task1` Add Core-owned acceptance for completed Product Part Development Brief agent turns: detect the Product Part stage, validate that all `agent-fill` blocks are filled, stage the changed brief/continuity files, commit the accepted draft, and advance that Product Part `todo-plan.md` from Phase 1 to user review (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/node-bootstrap/**, doc/TODO/todo-plan.md`; expected commit: `fix: accept product part brief agent outputs`).
-83. [PENDING] Git Commit: `fix: accept product part brief agent outputs` (hash: TBD)
-84. [TODO] `phase47.stream1.task2` Correct Product Part brief metadata after agent edits: set/derive `agentTouched: true`, keep draft status explicit, and avoid leaving filled briefs looking like untouched generated templates (scope: `packages/core/src/development-tree/**, packages/core/src/remote-bridge/handlers/**, doc/TODO/todo-plan.md`; expected commit: `fix: mark product part briefs touched by agents`).
-85. [TODO] Git Commit: `fix: mark product part briefs touched by agents` (hash: TBD)
+83. [DONE] Git Commit: `fix: accept product part brief agent outputs` (hash: 734ac1f67)
+84. [DONE] `phase47.stream1.task2` Correct Product Part brief metadata after agent edits: set/derive `agentTouched: true`, keep draft status explicit, and avoid leaving filled briefs looking like untouched generated templates (scope: `packages/core/src/development-tree/**, packages/core/src/remote-bridge/handlers/**, doc/TODO/todo-plan.md`; expected commit: `fix: mark product part briefs touched by agents`).
+85. [PENDING] Git Commit: `fix: mark product part briefs touched by agents` (hash: TBD)
 
 ### Stream: Workflow State And Session Audit
 

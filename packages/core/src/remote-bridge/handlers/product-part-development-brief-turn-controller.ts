@@ -46,6 +46,9 @@ const PLAN_END = "<!-- codeai-plan-state:end -->";
 const PLAN_START = "<!-- codeai-plan-state:start -->";
 const PRODUCT_PART_STAGE_RE =
   /^development_tree\/materialized\/product-parts\/([^/]+)$/u;
+const FRONTMATTER_RE = /^---\n([\s\S]*?)\n---\n?/u;
+const AGENT_TOUCHED_RE = /^agentTouched:\s*(?:false|true)\s*$/im;
+const STATUS_RE = /^status:\s*\S+\s*$/im;
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -192,6 +195,21 @@ const buildReadyDecision = (params: {
     2
   )}\n`;
 
+const ensureAcceptedBriefFrontmatter = (content: string): string => {
+  const match = content.match(FRONTMATTER_RE);
+  if (!match) {
+    return `---\nstatus: draft\nagentTouched: true\n---\n${content}`;
+  }
+  const frontmatter = match[1] ?? "";
+  const withStatus = STATUS_RE.test(frontmatter)
+    ? frontmatter
+    : `status: draft\n${frontmatter}`;
+  const nextFrontmatter = AGENT_TOUCHED_RE.test(withStatus)
+    ? withStatus.replace(AGENT_TOUCHED_RE, "agentTouched: true")
+    : `${withStatus}\nagentTouched: true`;
+  return content.replace(FRONTMATTER_RE, `---\n${nextFrontmatter}\n---\n`);
+};
+
 const createReadyMessage = (params: {
   readonly commitHash: string;
   readonly partId: string;
@@ -303,6 +321,10 @@ export class ProductPartDevelopmentBriefTurnController {
 
     const managedDecisionPath = createManagedDecisionPath(params);
     const briefPath = createBriefPath(params);
+    const acceptedBriefContent = ensureAcceptedBriefFrontmatter(
+      await readText(params.workspaceRoot, briefPath)
+    );
+    await writeText(params.workspaceRoot, briefPath, acceptedBriefContent);
     const gitCommit = await this.gitBoundary.commitManagedChanges({
       commitMessage: planState.expectedCommitMessage,
       managedPaths: await uniqueExistingPaths(params.workspaceRoot, [
