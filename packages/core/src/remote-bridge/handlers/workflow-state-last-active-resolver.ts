@@ -1,5 +1,9 @@
-import type { WorkflowLastActiveSnapshot } from "../../workflow/state/workflow-last-active-store";
+import {
+  resolvePreferredWorkflowLastActive,
+  type WorkflowLastActiveSnapshot,
+} from "../../workflow/state/workflow-last-active-store";
 import type { WorkflowState } from "../../workflow/state/workflow-state-types";
+import type { WorkflowStageId } from "../../workflow/watcher/watcher-types";
 
 const DEFAULT_DESCRIPTION_ARTIFACT_PATH = (workspaceSlug: string): string =>
   `.codeai-hub/${workspaceSlug}/description/questionnaire.md`;
@@ -20,6 +24,27 @@ const resolveDescriptionArtifactPath = (params: {
     : undefined) ??
   DEFAULT_DESCRIPTION_ARTIFACT_PATH(params.workspaceSlug);
 
+const isWorkflowStageId = (value: string): value is WorkflowStageId =>
+  value === "description" ||
+  value === "virtual_simulation" ||
+  value === "diagram_modules" ||
+  value === "application_skeleton" ||
+  value === "quality_gates";
+
+const resolveContinuityLastActiveCandidates = (
+  chains: readonly {
+    readonly stage: string;
+    readonly updatedAt: string;
+    readonly segments: readonly unknown[];
+  }[]
+): readonly WorkflowLastActiveSnapshot[] =>
+  chains.flatMap((chain) => {
+    if (chain.segments.length === 0 || !isWorkflowStageId(chain.stage)) {
+      return [];
+    }
+    return [{ stage: chain.stage, updatedAt: chain.updatedAt }];
+  });
+
 export const resolveCanonicalLastActive = (params: {
   readonly chains: readonly {
     readonly stage: string;
@@ -35,7 +60,7 @@ export const resolveCanonicalLastActive = (params: {
   readonly state: WorkflowState;
   readonly workspaceSlug: string;
 }): WorkflowLastActiveSnapshot | null => {
-  return {
+  const descriptionCandidate: WorkflowLastActiveSnapshot = {
     stage: "description",
     updatedAt:
       params.description?.updatedAt ??
@@ -47,4 +72,9 @@ export const resolveCanonicalLastActive = (params: {
       workspaceSlug: params.workspaceSlug,
     }),
   };
+  return resolvePreferredWorkflowLastActive([
+    params.lastActive,
+    descriptionCandidate,
+    ...resolveContinuityLastActiveCandidates(params.chains),
+  ]);
 };

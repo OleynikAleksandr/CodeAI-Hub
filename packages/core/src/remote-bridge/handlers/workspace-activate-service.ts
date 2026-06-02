@@ -9,6 +9,7 @@ import {
 } from "../../workflow/description/description-step-store";
 import { bootstrapWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import {
+  resolvePreferredWorkflowLastActive,
   type WorkflowLastActiveSnapshot,
   WorkflowLastActiveStore,
 } from "../../workflow/state/workflow-last-active-store";
@@ -84,15 +85,23 @@ const repairLastActiveSnapshot = async (params: {
   readonly workspacePath: string;
   readonly workspaceSlug: string;
 }): Promise<WorkflowLastActiveSnapshot | null> => {
-  const preferred = buildDescriptionStartupSnapshot({
+  const descriptionCandidate = buildDescriptionStartupSnapshot({
     descriptionSnapshot: params.descriptionSnapshot,
     lastActive: params.lastActive,
     workspaceSlug: params.workspaceSlug,
   });
+  const preferred = resolvePreferredWorkflowLastActive([
+    params.lastActive,
+    descriptionCandidate,
+  ]);
+  if (!preferred) {
+    return null;
+  }
 
   if (
     params.lastActive?.stage === preferred.stage &&
-    params.lastActive.artifactPath === preferred.artifactPath
+    params.lastActive.artifactPath === preferred.artifactPath &&
+    params.lastActive.updatedAt === preferred.updatedAt
   ) {
     return params.lastActive;
   }

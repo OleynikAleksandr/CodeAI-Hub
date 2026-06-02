@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "734ac1f67",
+  "lastRecordedCommit": "2f9d4a844",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase47.stream1.task2",
-  "expectedCommitMessage": "fix: mark product part briefs touched by agents",
+  "currentTaskId": "phase47.stream2.task1",
+  "expectedCommitMessage": "fix: preserve workflow state during product part sessions",
   "debt": {
-    "expectedCommitMessage": "fix: mark product part briefs touched by agents",
-    "preCommitHead": "734ac1f67",
+    "expectedCommitMessage": "fix: preserve workflow state during product part sessions",
+    "preCommitHead": "2f9d4a844",
     "stage": "commit_pending",
-    "taskId": "phase47.stream1.task2"
+    "taskId": "phase47.stream2.task1"
   }
 }
 ```
@@ -341,12 +341,12 @@
 82. [DONE] `phase47.stream1.task1` Add Core-owned acceptance for completed Product Part Development Brief agent turns: detect the Product Part stage, validate that all `agent-fill` blocks are filled, stage the changed brief/continuity files, commit the accepted draft, and advance that Product Part `todo-plan.md` from Phase 1 to user review (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/node-bootstrap/**, doc/TODO/todo-plan.md`; expected commit: `fix: accept product part brief agent outputs`).
 83. [DONE] Git Commit: `fix: accept product part brief agent outputs` (hash: 734ac1f67)
 84. [DONE] `phase47.stream1.task2` Correct Product Part brief metadata after agent edits: set/derive `agentTouched: true`, keep draft status explicit, and avoid leaving filled briefs looking like untouched generated templates (scope: `packages/core/src/development-tree/**, packages/core/src/remote-bridge/handlers/**, doc/TODO/todo-plan.md`; expected commit: `fix: mark product part briefs touched by agents`).
-85. [PENDING] Git Commit: `fix: mark product part briefs touched by agents` (hash: TBD)
+85. [DONE] Git Commit: `fix: mark product part briefs touched by agents` (hash: 2f9d4a844)
 
 ### Stream: Workflow State And Session Audit
 
-86. [TODO] `phase47.stream2.task1` Prevent Development Tree Product Part session updates from regressing `.codeai-hub/<workspace>/workflow/state.json` to an older Documentation Tree stage; preserve the correct last active stage after Quality Gates handoff and Product Part bootstrap (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: preserve workflow state during product part sessions`).
-87. [TODO] Git Commit: `fix: preserve workflow state during product part sessions` (hash: TBD)
+86. [DONE] `phase47.stream2.task1` Prevent Development Tree Product Part session updates from regressing `.codeai-hub/<workspace>/workflow/state.json` to an older Documentation Tree stage; preserve the correct last active stage after Quality Gates handoff and Product Part bootstrap (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: preserve workflow state during product part sessions`).
+87. [PENDING] Git Commit: `fix: preserve workflow state during product part sessions` (hash: TBD)
 88. [TODO] `phase47.stream2.task2` Persist the Product Part agent start prompt as an auditable visible session message/event so the user can inspect the exact Core assignment for each Product Part session, not only the agent's responses (scope: `packages/core/src/development-tree/node-bootstrap/**, packages/core/src/unified-session/**, doc/TODO/todo-plan.md`; expected commit: `fix: persist product part agent start prompts`).
 89. [TODO] Git Commit: `fix: persist product part agent start prompts` (hash: TBD)
 
