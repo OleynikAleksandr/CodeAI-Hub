@@ -81,44 +81,9 @@ export const createLeadProductPartOperationNodes = (
 };
 
 export const createModuleOperationNodes = (
-  moduleWorkflowPath: string,
-  workspaceSlug: string
-): readonly DevelopmentTreeOperationNode[] => {
-  const workspacePath = createArtifactWorkspacePath(
-    workspaceSlug,
-    moduleWorkflowPath
-  );
-  return [
-    {
-      id: "module-facade-specification",
-      kind: "module_facade_specification",
-      title: "Module / Facade Specification",
-      workflowPath: moduleWorkflowPath,
-      artifactWorkspacePath: workspacePath,
-    },
-    {
-      id: "implementation",
-      kind: "implementation",
-      title: "Implementation",
-      workflowPath: `${moduleWorkflowPath}/implementation`,
-      artifactWorkspacePath: workspacePath,
-      children: [
-        createLeafOperationNode({
-          kind: "workers",
-          title: "Workers",
-          moduleWorkflowPath,
-          workspaceSlug,
-        }),
-        createLeafOperationNode({
-          kind: "integration",
-          title: "Integration",
-          moduleWorkflowPath,
-          workspaceSlug,
-        }),
-      ],
-    },
-  ];
-};
+  _moduleWorkflowPath: string,
+  _workspaceSlug: string
+): readonly DevelopmentTreeOperationNode[] => [];
 
 export const createClusterOperationNodes = (
   clusterWorkflowPath: string,

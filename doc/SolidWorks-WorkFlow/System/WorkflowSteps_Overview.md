@@ -43,21 +43,11 @@ Diagram Modules
      ├─ Cluster Design (ветка per cluster)
      │   ├─ Cluster Specification (функции, модули, зона ответственности)
      │   ├─ Cluster Facade Contract (внешний контракт кластера)
-     │   └─ Module Design (ветка per module)
-     │       ├─ Module Specification (интерфейсы, методы, зависимости)
-     │       ├─ Module Facade Contract (публичный API модуля)
-     │       ├─ Implementation Foundation (subtree/env/scripts/gates для выбранной wave)
-     │       ├─ TODO Plan (фазы, стримы, микро-задачи ≤3 файлов)
-     │       └─ Implementation (код + синхронные обновления документации)
-     └─ Standalone Module Design
-         ├─ Module Specification
-         ├─ Module Facade Contract
-         ├─ Implementation Foundation (если standalone module входит в выбранную wave)
-         ├─ TODO Plan
-         └─ Implementation
+     │   └─ Module (один узел per module; артефакты и execution plan открываются справа)
+     └─ Standalone Module (один узел per module; тот же module workflow без cluster layer)
 ```
 
-Ключевое решение: **фасады не являются отдельным шагом ствола**. Для cluster и module используется один design-step, который materialize-ит сразу два артефакта: specification и facade contract. Это позволяет проектировать внутреннюю структуру и публичную boundary одновременно, не превращая фасады в неуправляемый плоский список.
+Ключевое решение: **фасады не являются отдельным шагом ствола**. Для cluster используется один design-step, который materialize-ит сразу два артефакта: specification и facade contract. Для module левый Development Tree показывает только сам module node; `Facade Contract`, `Module Specification`, `Implementation TODO Plan`, worker progress и semantic integration являются правопанельными артефактами/состояниями одной module-agent session, а не дочерними строками дерева.
 
 Сквозной принцип: **feedback loop + OUTDATED propagation**. Любое изменение upstream-артефакта помечает downstream-шаги как требующие синхронизации.
 
@@ -120,7 +110,7 @@ Any client-side artifact parser for a managed step is transitional implementatio
 Continuity chains remain stage-family agnostic. The same load/persistence rules apply to `description`, `virtual_simulation`, `diagram_modules`, `application_skeleton`, `quality_gates`, and all nested `development_tree/...` sessions; no step may depend on a separate card-only fallback once a recoverable chain exists.
 
 Текущий статус реализации Development Tree:
-- Read model: workflow-state API отдаёт `developmentTree` snapshot из Diagram Modules product-part artifacts и Core-owned `.codeai-hub/<workspaceSlug>/development_tree/materialized/...` artifact workspace. Snapshot остаётся backward-compatible, но может содержать `artifactWorkspacePath`, optional `codeWorkspacePath` из accepted/materialized Application Skeleton map и `operations[]` для Module nodes (`Module / Facade Specification`, `Implementation`, `Workers`, `Integration`).
+- Read model: workflow-state API отдаёт `developmentTree` snapshot из Diagram Modules product-part artifacts и Core-owned `.codeai-hub/<workspaceSlug>/development_tree/materialized/...` artifact workspace. Snapshot остаётся backward-compatible, но module nodes больше не получают operation children (`Module / Facade Specification`, `Implementation`, `Workers`, `Integration`) в левой tree projection; module workflow details должны открываться в правой Project Manager panel. Snapshot может содержать `artifactWorkspacePath`, optional `codeWorkspacePath` из accepted/materialized Application Skeleton map и non-module `operations[]` там, где Core явно поддерживает branch-level operation rows.
 - Materialization gate: Core держит Quality Gates/Development Tree readiness disabled, пока `application-skeleton-map.json` не содержит committed `materialized: true` with `foundationReady: true`, а `quality-gates.json` не содержит committed `integrated: true`. `foundationReady` requires empty `openQuestions`, package manager metadata, package manifest/lockfile, required scripts, config files, and first-wave production entrypoints. Sidebar показывает locked-row вместо раннего session bootstrap.
 - Materialization: after final accepted Diagram Modules Product Part, Core runs the Development Tree materializer from the canonical Diagram Modules read model and creates neutral artifact directories under `.codeai-hub/<workspaceSlug>/development_tree/materialized/product-parts/...`, including module-level `workers/` and `integration/`. Application Skeleton remains the only owner of production `product-parts/...` code projection; Development Tree only exposes optional `codeWorkspacePath` after the skeleton map is accepted/materialized.
 - Orphan handling: when Diagram Modules structure changes, Core summarizes existing materialized artifact folders against the new plan. Empty orphan folders may be auto-delete candidates; populated orphan folders require explicit user disposition (`archive`, `keep_detached`, or `delete`) and are not deleted by the materializer.
