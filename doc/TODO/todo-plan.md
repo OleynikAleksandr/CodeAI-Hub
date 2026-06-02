@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "66c25dd22",
+  "lastRecordedCommit": "33ba6ee02",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase20.stream1.task1",
-  "expectedCommitMessage": "docs: sync cluster tree projection model",
+  "currentTaskId": "phase22.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.438",
   "debt": {
-    "expectedCommitMessage": "docs: sync cluster tree projection model",
-    "preCommitHead": "66c25dd22",
+    "expectedCommitMessage": "docs: prepare release 1.2.438",
+    "preCommitHead": "33ba6ee02",
     "stage": "commit_pending",
-    "taskId": "phase20.stream1.task1"
+    "taskId": "phase22.stream1.task1"
   }
 }
 ```
@@ -170,20 +170,20 @@
 ### Stream: Compact Cluster Projection
 
 30. [DONE] `phase20.stream1.task1` Update Development Tree documentation so cluster workflow details are right-panel artifacts/states, not left-tree operation rows or pre-created operation folders (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync cluster tree projection model`).
-31. [PENDING] Git Commit: `docs: sync cluster tree projection model` (hash: TBD)
+31. [DONE] Git Commit: `docs: sync cluster tree projection model` (hash: 33ba6ee02)
 
 ## Phase 21 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Targeted Checks
 
-32. [TODO] `phase21.stream1.task1` Run targeted Development Tree snapshot/planner tests and affected Core/Project Manager builds after the cluster projection fix (scope: `doc/TODO/todo-plan.md`).
+32. [DONE] `phase21.stream1.task1` Run targeted Development Tree snapshot/planner tests and affected Core/Project Manager builds after the cluster projection fix (scope: `doc/TODO/todo-plan.md`). Result: plan:validate passed; @codeai-hub/core build passed; build:project-manager passed; build:webview passed; typecheck:webview passed; DevelopmentTreeStateFacade metadata test passed; DevelopmentTree filesystem path planner test passed.
 
 ## Phase 22 - Release Preparation (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Release Docs
 
-33. [TODO] `phase22.stream1.task1` Prepare release docs for version 1.2.438 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.438`).
-34. [TODO] Git Commit: `docs: prepare release 1.2.438` (hash: TBD)
+33. [DONE] `phase22.stream1.task1` Prepare release docs for version 1.2.438 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.438`).
+34. [PENDING] Git Commit: `docs: prepare release 1.2.438` (hash: TBD)
 
 ## Phase 23 - Release Build (owner: Codex, updated: 2026-06-02)
 

@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.438] - 2026-06-02
+### Changed
+- **Development Tree cluster rows are compact.** Core no longer projects `Workers` / `Integration` operation children under cluster nodes, matching the compact module projection from 1.2.437.
+- **Fresh Development Tree scaffolding mirrors only real product structure.** New `.codeai-hub/.../development_tree/...` and `doc/TODO/stages/development-tree/...` scaffolding creates Product Part / Cluster / Module folders only; worker progress and integration state live in right-panel workflow artifacts.
+
+### Verification
+- `npm run plan:validate`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run build:project-manager`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `node --test packages/core/dist/development-tree/development-tree-state-facade-metadata.test.js`
+- `node --test packages/core/dist/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.js`
+
 ## [1.2.437] - 2026-06-02
 ### Changed
 - **Development Tree module rows are compact.** Core no longer projects module phase/operation children (`Module / Facade Specification`, `Implementation`, `Workers`, `Integration`) under each module node. The left tree now stays focused on Product Part / Cluster / Module structure, while module workflow details are documented as right-panel surfaces for the selected module.
