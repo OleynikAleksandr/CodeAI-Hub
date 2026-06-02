@@ -113,8 +113,10 @@ test("DevelopmentTreeStateFacade exposes draft artifacts and sessions per node",
       plannedPartIds: ["project-manager"],
       generatedPartIds: ["project-manager"],
     });
-    const module = snapshot.parts[0]?.clusters[0]?.modules[0];
+    const cluster = snapshot.parts[0]?.clusters[0];
+    const module = cluster?.modules[0];
 
+    assert.deepEqual(cluster?.operations, []);
     assert.equal(module?.workflowPath, moduleWorkflowPath);
     assert.equal(
       module?.artifactWorkspacePath,

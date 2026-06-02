@@ -6,25 +6,6 @@ export const createArtifactWorkspacePath = (
   workflowPath: string
 ): string => path.posix.join(".codeai-hub", workspaceSlug, workflowPath);
 
-const createLeafOperationNode = (params: {
-  readonly kind: "integration" | "workers";
-  readonly moduleWorkflowPath: string;
-  readonly title: string;
-  readonly workspaceSlug: string;
-}): DevelopmentTreeOperationNode => {
-  const workflowPath = `${params.moduleWorkflowPath}/${params.kind}`;
-  return {
-    id: params.kind,
-    kind: params.kind,
-    title: params.title,
-    workflowPath,
-    artifactWorkspacePath: createArtifactWorkspacePath(
-      params.workspaceSlug,
-      workflowPath
-    ),
-  };
-};
-
 const LEAD_ORCHESTRATION_WORKFLOW_SEGMENT = "lead-product-part-orchestration";
 const LEAD_ORCHESTRATION_CHILDREN = [
   { id: "contract-graph", kind: "contract_graph", title: "Contract Graph" },
@@ -86,19 +67,6 @@ export const createModuleOperationNodes = (
 ): readonly DevelopmentTreeOperationNode[] => [];
 
 export const createClusterOperationNodes = (
-  clusterWorkflowPath: string,
-  workspaceSlug: string
-): readonly DevelopmentTreeOperationNode[] => [
-  createLeafOperationNode({
-    kind: "workers",
-    title: "Workers",
-    moduleWorkflowPath: clusterWorkflowPath,
-    workspaceSlug,
-  }),
-  createLeafOperationNode({
-    kind: "integration",
-    title: "Integration",
-    moduleWorkflowPath: clusterWorkflowPath,
-    workspaceSlug,
-  }),
-];
+  _clusterWorkflowPath: string,
+  _workspaceSlug: string
+): readonly DevelopmentTreeOperationNode[] => [];

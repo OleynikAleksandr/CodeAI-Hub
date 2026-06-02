@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "446f0b521",
+  "lastRecordedCommit": "2449d053d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase17.stream1.task1",
-  "expectedCommitMessage": "docs: sync development tree scaffolding model",
+  "currentTaskId": "phase19.stream1.task1",
+  "expectedCommitMessage": "fix: hide cluster operation rows in development tree",
   "debt": {
-    "expectedCommitMessage": "docs: sync development tree scaffolding model",
-    "preCommitHead": "446f0b521",
+    "expectedCommitMessage": "fix: hide cluster operation rows in development tree",
+    "preCommitHead": "2449d053d",
     "stage": "commit_pending",
-    "taskId": "phase17.stream1.task1"
+    "taskId": "phase19.stream1.task1"
   }
 }
 ```
@@ -150,18 +150,58 @@
 ### Stream: Scaffolding Model
 
 25. [DONE] `phase17.stream1.task1` Update Development Tree documentation so filesystem scaffolding matches the compact tree model: product parts, clusters, modules, and right-panel artifacts instead of operation subfolders (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree scaffolding model`).
-26. [PENDING] Git Commit: `docs: sync development tree scaffolding model` (hash: TBD)
+26. [DONE] Git Commit: `docs: sync development tree scaffolding model` (hash: 2449d053d)
 
 ## Phase 18 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Targeted Checks
 
-27. [TODO] `phase18.stream1.task1` Run targeted Development Tree planner tests and affected Core build/plan validation after the scaffolding fix (scope: `doc/TODO/todo-plan.md`).
+27. [DONE] `phase18.stream1.task1` Run targeted Development Tree planner tests and affected Core build/plan validation after the scaffolding fix (scope: `doc/TODO/todo-plan.md`). Result: plan:validate passed; @codeai-hub/core build passed; development-tree filesystem path planner dist test passed.
 
-## Phase 19 - Scope Closeout (owner: Codex, updated: 2026-06-02)
+## Phase 19 - Cluster Development Tree Display Fix (owner: Codex, updated: 2026-06-02)
+
+### Stream: Core Snapshot Projection
+
+28. [DONE] `phase19.stream1.task1` Stop Core from projecting cluster operation rows (`Workers`, `Integration`) under cluster nodes while keeping Product Part / Cluster / Module rows and lead Product Part orchestration rows intact (scope: `packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hide cluster operation rows in development tree`).
+29. [PENDING] Git Commit: `fix: hide cluster operation rows in development tree` (hash: TBD)
+
+## Phase 20 - Documentation Sync (owner: Codex, updated: 2026-06-02)
+
+### Stream: Compact Cluster Projection
+
+30. [TODO] `phase20.stream1.task1` Update Development Tree documentation so cluster workflow details are right-panel artifacts/states, not left-tree operation rows or pre-created operation folders (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync cluster tree projection model`).
+31. [TODO] Git Commit: `docs: sync cluster tree projection model` (hash: TBD)
+
+## Phase 21 - Tooling Verification (owner: Codex, updated: 2026-06-02)
+
+### Stream: Targeted Checks
+
+32. [TODO] `phase21.stream1.task1` Run targeted Development Tree snapshot/planner tests and affected Core/Project Manager builds after the cluster projection fix (scope: `doc/TODO/todo-plan.md`).
+
+## Phase 22 - Release Preparation (owner: Codex, updated: 2026-06-02)
+
+### Stream: Release Docs
+
+33. [TODO] `phase22.stream1.task1` Prepare release docs for version 1.2.438 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.438`).
+34. [TODO] Git Commit: `docs: prepare release 1.2.438` (hash: TBD)
+
+## Phase 23 - Release Build (owner: Codex, updated: 2026-06-02)
+
+### Stream: Build Artifacts
+
+35. [TODO] `phase23.stream1.task1` Run the release build flow requested by the user and record the resulting VSIX/tarball artifacts for version 1.2.438 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.438`).
+36. [TODO] Git Commit: `chore: build release 1.2.438` (hash: TBD)
+
+## Phase 24 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: User Retest
+
+37. [TODO] `phase24.stream1.task1` User installs/tests release 1.2.438 and verifies cluster nodes no longer show `Workers`/`Integration`, module nodes stay compact, and freshly regenerated Development Tree scaffolding has no pre-created operation folders (scope: `doc/TODO/todo-plan.md`).
+
+## Phase 25 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Closeout
 
-28. [TODO] `phase19.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree module display scope`).
-29. [TODO] Git Commit: `docs: close development tree module display scope` (hash: TBD)
-30. [TODO] `phase19.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+38. [TODO] `phase25.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree module display scope`).
+39. [TODO] Git Commit: `docs: close development tree module display scope` (hash: TBD)
+40. [TODO] `phase25.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
