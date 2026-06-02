@@ -83,39 +83,11 @@ const createExpectedEntries = (rootRelativePath: string) => [
     relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration`,
   },
   {
-    kind: "workers",
-    partId: "local-runtime",
-    clusterId: "orchestration",
-    moduleId: undefined,
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/workers`,
-  },
-  {
-    kind: "integration",
-    partId: "local-runtime",
-    clusterId: "orchestration",
-    moduleId: undefined,
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/integration`,
-  },
-  {
     kind: "module",
     partId: "local-runtime",
     clusterId: "orchestration",
     moduleId: "workflow-state",
     relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/workflow-state`,
-  },
-  {
-    kind: "workers",
-    partId: "local-runtime",
-    clusterId: "orchestration",
-    moduleId: "workflow-state",
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/workflow-state/workers`,
-  },
-  {
-    kind: "integration",
-    partId: "local-runtime",
-    clusterId: "orchestration",
-    moduleId: "workflow-state",
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/workflow-state/integration`,
   },
   {
     kind: "module",
@@ -125,39 +97,11 @@ const createExpectedEntries = (rootRelativePath: string) => [
     relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/session-router`,
   },
   {
-    kind: "workers",
-    partId: "local-runtime",
-    clusterId: "orchestration",
-    moduleId: "session-router",
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/session-router/workers`,
-  },
-  {
-    kind: "integration",
-    partId: "local-runtime",
-    clusterId: "orchestration",
-    moduleId: "session-router",
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/clusters/orchestration/modules/session-router/integration`,
-  },
-  {
     kind: "module",
     partId: "local-runtime",
     clusterId: undefined,
     moduleId: "provider-bridge",
     relativePath: `${rootRelativePath}/product-parts/local-runtime/modules/provider-bridge`,
-  },
-  {
-    kind: "workers",
-    partId: "local-runtime",
-    clusterId: undefined,
-    moduleId: "provider-bridge",
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/modules/provider-bridge/workers`,
-  },
-  {
-    kind: "integration",
-    partId: "local-runtime",
-    clusterId: undefined,
-    moduleId: "provider-bridge",
-    relativePath: `${rootRelativePath}/product-parts/local-runtime/modules/provider-bridge/integration`,
   },
 ];
 
@@ -207,6 +151,14 @@ test("DevelopmentTreeFilesystemPathPlanner creates neutral materialized P/C/M pa
   );
   assert.equal(
     plan.directories.some((entry) => entry.partId === "project-manager"),
+    false
+  );
+  assert.equal(
+    plan.directories.some(
+      (entry) =>
+        entry.relativePath.endsWith("/workers") ||
+        entry.relativePath.endsWith("/integration")
+    ),
     false
   );
 });

@@ -63,16 +63,6 @@ const createStandaloneModuleSegments = (params: {
   params.moduleId,
 ];
 
-const createModuleOperationSegments = (
-  moduleSegments: readonly string[],
-  operation: "integration" | "workers"
-): readonly string[] => [...moduleSegments, operation];
-
-const createClusterOperationSegments = (
-  clusterSegments: readonly string[],
-  operation: "integration" | "workers"
-): readonly string[] => [...clusterSegments, operation];
-
 const pushModuleDirectoryPlans = (params: {
   readonly clusterId?: string;
   readonly directories: DevelopmentTreeFilesystemDirectoryPlan[];
@@ -94,19 +84,6 @@ const pushModuleDirectoryPlans = (params: {
       ...base,
       kind: "module",
       segments: params.moduleSegments,
-    }),
-    createDevelopmentTreeDirectoryPlan({
-      ...base,
-      kind: "workers",
-      segments: createModuleOperationSegments(params.moduleSegments, "workers"),
-    }),
-    createDevelopmentTreeDirectoryPlan({
-      ...base,
-      kind: "integration",
-      segments: createModuleOperationSegments(
-        params.moduleSegments,
-        "integration"
-      ),
     })
   );
 };
@@ -189,63 +166,17 @@ const pushClusterDirectoryPlan = (params: {
   );
 };
 
-const pushClusterOperationDirectoryPlans = (params: {
-  readonly clusterId: string;
-  readonly clusterSegments: readonly string[];
-  readonly directories: DevelopmentTreeFilesystemDirectoryPlan[];
-  readonly partId: string;
-  readonly rootAbsolutePath: string;
-  readonly rootRelativePath: string;
-}): void => {
-  const base = {
-    rootAbsolutePath: params.rootAbsolutePath,
-    rootRelativePath: params.rootRelativePath,
-    partId: params.partId,
-    clusterId: params.clusterId,
-  };
-  params.directories.push(
-    createDevelopmentTreeDirectoryPlan({
-      ...base,
-      kind: "workers",
-      segments: createClusterOperationSegments(
-        params.clusterSegments,
-        "workers"
-      ),
-    }),
-    createDevelopmentTreeDirectoryPlan({
-      ...base,
-      kind: "integration",
-      segments: createClusterOperationSegments(
-        params.clusterSegments,
-        "integration"
-      ),
-    })
-  );
-};
-
 const pushClusterTreeDirectoryPlans = (params: {
   readonly cluster: DevelopmentTreeSnapshot["parts"][number]["clusters"][number];
   readonly directories: DevelopmentTreeFilesystemDirectoryPlan[];
   readonly partId: string;
   readonly roots: readonly DevelopmentTreePlanRoot[];
 }): void => {
-  const clusterSegments = createClusterSegments({
-    partId: params.partId,
-    clusterId: params.cluster.id,
-  });
   for (const root of params.roots) {
     pushClusterDirectoryPlan({
       directories: params.directories,
       partId: params.partId,
       clusterId: params.cluster.id,
-      rootAbsolutePath: root.absolutePath,
-      rootRelativePath: root.relativePath,
-    });
-    pushClusterOperationDirectoryPlans({
-      directories: params.directories,
-      partId: params.partId,
-      clusterId: params.cluster.id,
-      clusterSegments,
       rootAbsolutePath: root.absolutePath,
       rootRelativePath: root.relativePath,
     });

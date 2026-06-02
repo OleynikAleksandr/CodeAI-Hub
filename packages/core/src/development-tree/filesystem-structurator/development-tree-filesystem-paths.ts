@@ -5,12 +5,10 @@ export type DevelopmentTreeFilesystemNodeKind =
   | "contract_graph"
   | "cross_part_contracts"
   | "execution_waves"
-  | "integration"
   | "lead_orchestration"
   | "module"
   | "product_part"
-  | "shared_interfaces"
-  | "workers";
+  | "shared_interfaces";
 
 export interface DevelopmentTreeFilesystemDirectoryPlan {
   readonly absolutePath: string;
