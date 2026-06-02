@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "433f26dc1",
+  "lastRecordedCommit": "a6ce3349b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase26.stream1.task1",
-  "expectedCommitMessage": "docs: record product part coordination scenario",
+  "currentTaskId": "phase27.stream1.task1",
+  "expectedCommitMessage": "feat: create product part brief stage plans",
   "debt": {
-    "expectedCommitMessage": "docs: record product part coordination scenario",
-    "preCommitHead": "433f26dc1",
+    "expectedCommitMessage": "feat: create product part brief stage plans",
+    "preCommitHead": "a6ce3349b",
     "stage": "commit_pending",
-    "taskId": "phase26.stream1.task1"
+    "taskId": "phase27.stream1.task1"
   }
 }
 ```
@@ -210,12 +210,45 @@
 ### Stream: Accepted Product Part Workflow
 
 40. [DONE] `phase26.stream1.task1` Replace the over-engineered mandatory Contract Graph framing with the accepted Product Part coordination scenario: every Product Part gets a Development Brief, only the lead Product Part creates the Core-readable Development Order Plan, and missing information is handled through clarification phases rather than a separate Open Questions artifact (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: record product part coordination scenario`).
-41. [PENDING] Git Commit: `docs: record product part coordination scenario` (hash: TBD)
+41. [DONE] Git Commit: `docs: record product part coordination scenario` (hash: a6ce3349b)
 
-## Phase 27 - Scope Closeout (owner: Codex, updated: 2026-06-02)
+## Phase 27 - Product Part Brief Plan Artifacts (owner: Codex, updated: 2026-06-02)
+
+### Stream: Managed Stage Plans
+
+42. [DONE] `phase27.stream1.task1` Add a Core writer and focused coverage for `doc/TODO/stages/development-tree/product-parts/<part-id>/todo-plan.md` Product Part Development Brief plans (scope: `packages/core/src/development-tree/product-part-workflow/**, packages/core/src/development-tree/product-part-workflow/**/*.test.ts`; expected commit: `feat: create product part brief stage plans`).
+43. [PENDING] Git Commit: `feat: create product part brief stage plans` (hash: TBD)
+
+## Phase 28 - Product Part Brief Prompt Artifacts (owner: Codex, updated: 2026-06-02)
+
+### Stream: First Agent Prompt
+
+44. [TODO] `phase28.stream1.task1` Align Product Part node draft artifacts and the first agent message with `Product Part Development Brief` instead of the older generic part description wording (scope: `packages/core/src/development-tree/node-bootstrap/draft-template-registry.ts, packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/node-bootstrap/node-first-message-builder.ts`; expected commit: `feat: define product part brief prompts`).
+45. [TODO] Git Commit: `feat: define product part brief prompts` (hash: TBD)
+
+## Phase 29 - Product Part Agent Bootstrap Wiring (owner: Codex, updated: 2026-06-02)
+
+### Stream: Core Orchestration
+
+46. [TODO] `phase29.stream1.task1` Wire Core to create Product Part brief plans and start Product Part agent sessions after Development Tree materialization, while keeping Cluster/Module agents locked for later waves (scope: `packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.ts, packages/core/src/remote-bridge/handlers/workflow-state-service.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `feat: bootstrap product part brief agents`).
+47. [TODO] Git Commit: `feat: bootstrap product part brief agents` (hash: TBD)
+
+## Phase 30 - Tooling Verification (owner: Codex, updated: 2026-06-02)
+
+### Stream: Targeted Checks
+
+48. [TODO] `phase30.stream1.task1` Run plan validation plus targeted Core tests/builds for Product Part Development Brief plan/session bootstrap (scope: `doc/TODO/todo-plan.md`).
+
+## Phase 31 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: User Retest
+
+49. [TODO] `phase31.stream1.task1` User regenerates the Development Tree and verifies that Product Part todo plans are created and Product Part agent sessions start for Product Part Development Brief work only (scope: `doc/TODO/todo-plan.md`).
+
+## Phase 32 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Closeout
 
-42. [TODO] `phase27.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree module display scope`).
-43. [TODO] Git Commit: `docs: close development tree module display scope` (hash: TBD)
-44. [TODO] `phase27.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+50. [TODO] `phase32.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree product part bootstrap scope`).
+51. [TODO] Git Commit: `docs: close development tree product part bootstrap scope` (hash: TBD)
+52. [TODO] `phase32.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
