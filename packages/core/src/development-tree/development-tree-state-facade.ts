@@ -39,7 +39,8 @@ const createModuleRowRegex = (): RegExp =>
   /^\|\s*`([a-z0-9]+(?:-[a-z0-9]+)*)`\s*\|\s*([^|\n]+?)\s*\|[ \t]*$/gm;
 const STANDALONE_SECTION_RE = /^##\s+(?:Direct\s+)?Standalone\s+Modules/im;
 const NEXT_SECTION_SEARCH_RE = /^##\s+/m;
-const LEAD_CONTRACT_LOCK_REASON = "Lead Product Part contract graph is pending";
+const DOWNSTREAM_BRIEF_LOCK_REASON =
+  "Product Part Development Brief is pending";
 const DRAFT_FILES = {
   cluster: ["ClusterDescription.draft.md", "ClusterFacadeContract.draft.md"],
   module: ["ModuleSpec.draft.md", "ModuleFacadeContract.draft.md"],
@@ -335,9 +336,9 @@ const createMetadataReader = async (params: DevelopmentTreeSnapshotRequest) => {
     }
     const session = resolveLatestNodeSession(chains, workflowPath);
     const lockedReason =
-      params.leadProductPartId && options.partId !== params.leadProductPartId
-        ? LEAD_CONTRACT_LOCK_REASON
-        : undefined;
+      options.kind === "product_part"
+        ? undefined
+        : DOWNSTREAM_BRIEF_LOCK_REASON;
     return {
       artifactWorkspacePath: createArtifactWorkspacePath(
         params.workspaceSlug,
@@ -442,7 +443,7 @@ const applyReadiness = async (
   return {
     ...part,
     ...metadata,
-    ...(operations ? { operations } : {}),
+    ...(operations && operations.length > 0 ? { operations } : {}),
     clusters,
     standaloneModules,
     readiness: aggregateReadiness(selfReadiness, [
