@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "2774bf6b6",
+  "lastRecordedCommit": "90b753bb4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase10.stream1.task1",
-  "expectedCommitMessage": "fix: hide module operation rows in development tree",
+  "currentTaskId": "phase11.stream1.task1",
+  "expectedCommitMessage": "docs: sync module tree projection docs",
   "debt": {
-    "expectedCommitMessage": "fix: hide module operation rows in development tree",
-    "preCommitHead": "2774bf6b6",
+    "expectedCommitMessage": "docs: sync module tree projection docs",
+    "preCommitHead": "90b753bb4",
     "stage": "commit_pending",
-    "taskId": "phase10.stream1.task1"
+    "taskId": "phase11.stream1.task1"
   }
 }
 ```
@@ -103,14 +103,14 @@
 ### Stream: Core Snapshot Projection
 
 13. [DONE] `phase10.stream1.task1` Stop Core from projecting module phase/operation rows (`Module / Facade Specification`, `Implementation`, nested `Workers`, `Integration`) under module nodes while keeping Product Part / Cluster / Module rows intact; update the focused Core snapshot test and SSOT note (scope: `packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md`; expected commit: `fix: hide module operation rows in development tree`).
-14. [PENDING] Git Commit: `fix: hide module operation rows in development tree` (hash: TBD)
+14. [DONE] Git Commit: `fix: hide module operation rows in development tree` (hash: 90b753bb4)
 
 ## Phase 11 - Documentation Sync (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Sidebar Projection SSOT
 
-15. [TODO] `phase11.stream1.task1` Update remaining SSOT/module docs so Project Manager and UI bundle documentation no longer describe module operation rows as the active Development Tree projection (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: sync module tree projection docs`).
-16. [TODO] Git Commit: `docs: sync module tree projection docs` (hash: TBD)
+15. [DONE] `phase11.stream1.task1` Update remaining SSOT/module docs so Project Manager and UI bundle documentation no longer describe module operation rows as the active Development Tree projection (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: sync module tree projection docs`).
+16. [PENDING] Git Commit: `docs: sync module tree projection docs` (hash: TBD)
 
 ## Phase 12 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 

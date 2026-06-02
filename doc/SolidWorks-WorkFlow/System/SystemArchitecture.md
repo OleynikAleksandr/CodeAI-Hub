@@ -489,6 +489,7 @@ Workflow artifact edit contract:
   - **Product Part** nodes create the branch-root draft artifact from the exact owner Markdown context (`diagram_modules/product-parts/<part-id>.md`) plus selected upstream context.
   - **Cluster** nodes create Cluster Specification and Cluster Facade Contract drafts from scoped context for the owning Product Part and cluster.
   - **Module** and standalone Module nodes create Module Specification and Module Facade Contract drafts from scoped context for the owning Product Part/Cluster/Module.
+  - **Module tree projection** stays compact: module phase details are not children in the left Development Tree. `Facade Contract`, `Module Specification`, `Implementation TODO Plan`, worker progress, and semantic integration are selected-module work surfaces in the right Project Manager panel.
   - Production code folders are created from accepted `application-skeleton-map.json` `codePath` mappings before node implementation sessions begin.
   - Quality gate tooling and Development Tree release remain locked until Core has committed accepted skeleton materialization with `foundationReady: true` and integrated Quality Gates evidence.
   - If Diagram Modules, Application Skeleton, or Quality Gates readiness validation fails after agent work, Core may open an explicit stage-plan repair task and provider repair prompt through the active managed cluster; hidden repair tasks through the retired orchestration model remain forbidden.
