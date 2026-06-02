@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { providerSettingsSnapshotCache } from "../../config/json-file-snapshot-cache";
 import { NodeAgentSessionBootstrapper } from "./node-agent-session-bootstrapper";
 
 const RUSSIAN_RESPONSE_LANGUAGE_PATTERN =
@@ -45,6 +46,20 @@ const writeWorkspaceArtifact = async (
   const absolutePath = path.join(workspacePath, relativePath);
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, content, "utf8");
+};
+
+const setGlobalSettingsPathForTest = (settingsPath: string): (() => void) => {
+  const original = process.env.CODEAI_GLOBAL_SETTINGS_PATH;
+  process.env.CODEAI_GLOBAL_SETTINGS_PATH = settingsPath;
+  providerSettingsSnapshotCache.clear();
+  return () => {
+    if (original === undefined) {
+      process.env.CODEAI_GLOBAL_SETTINGS_PATH = undefined;
+    } else {
+      process.env.CODEAI_GLOBAL_SETTINGS_PATH = original;
+    }
+    providerSettingsSnapshotCache.clear();
+  };
 };
 
 test("NodeAgentSessionBootstrapper uses materialized node path as workflow stage", async () => {
@@ -103,10 +118,9 @@ test("NodeAgentSessionBootstrapper reads response language from settings reasoni
     path.join(os.tmpdir(), "node-agent-settings-")
   );
   const settingsPath = path.join(settingsDir, "settings.json");
-  const previousSettingsPath = process.env.CLAUDE_SETTINGS_PATH;
+  const restoreGlobalSettingsPath = setGlobalSettingsPathForTest(settingsPath);
   const sentMessages: string[] = [];
   try {
-    process.env.CLAUDE_SETTINGS_PATH = settingsPath;
     await writeFile(
       settingsPath,
       `${JSON.stringify({
@@ -146,11 +160,7 @@ test("NodeAgentSessionBootstrapper reads response language from settings reasoni
 
     assert.match(sentMessages[0] ?? "", RUSSIAN_RESPONSE_LANGUAGE_PATTERN);
   } finally {
-    if (previousSettingsPath === undefined) {
-      process.env.CLAUDE_SETTINGS_PATH = undefined;
-    } else {
-      process.env.CLAUDE_SETTINGS_PATH = previousSettingsPath;
-    }
+    restoreGlobalSettingsPath();
     await rm(settingsDir, { recursive: true, force: true });
   }
 });
@@ -160,10 +170,9 @@ test("NodeAgentSessionBootstrapper reads draft artifact language from settings a
     path.join(os.tmpdir(), "node-agent-artifact-settings-")
   );
   const settingsPath = path.join(settingsDir, "settings.json");
-  const previousSettingsPath = process.env.CLAUDE_SETTINGS_PATH;
+  const restoreGlobalSettingsPath = setGlobalSettingsPathForTest(settingsPath);
   const sentMessages: string[] = [];
   try {
-    process.env.CLAUDE_SETTINGS_PATH = settingsPath;
     await writeFile(
       settingsPath,
       `${JSON.stringify({
@@ -210,11 +219,7 @@ test("NodeAgentSessionBootstrapper reads draft artifact language from settings a
     assert.match(firstMessage, RUSSIAN_ARTIFACT_LANGUAGE_PATTERN);
     assert.match(firstMessage, RUSSIAN_DRAFT_ARTIFACT_RULE_PATTERN);
   } finally {
-    if (previousSettingsPath === undefined) {
-      process.env.CLAUDE_SETTINGS_PATH = undefined;
-    } else {
-      process.env.CLAUDE_SETTINGS_PATH = previousSettingsPath;
-    }
+    restoreGlobalSettingsPath();
     await rm(settingsDir, { recursive: true, force: true });
   }
 });

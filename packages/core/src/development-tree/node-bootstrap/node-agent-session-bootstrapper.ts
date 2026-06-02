@@ -1,5 +1,9 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  loadArtifactsForTheUserLanguage,
+  loadReasoningLanguage,
+} from "../../config/provider-settings-snapshot";
 import { resolveWorkspaceRuntimeCapsule } from "../../workflow/runtime/workspace-runtime-capsule";
 import type { DevelopmentTreeAgentPromptPackContract } from "../development-tree-types";
 import type { DevelopmentTreeDetectedNode } from "./development-tree-node-detector";
@@ -127,56 +131,6 @@ const resolveProviderId = async (
 ): Promise<string> =>
   typeof providerId === "function" ? await providerId() : providerId;
 
-const readObject = (value: unknown): Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : {};
-
-const readSettingsLocalizationCategory = async (
-  categoryKeys: readonly string[],
-  fallbackLanguage: string,
-  settingsPath: string
-): Promise<string> => {
-  try {
-    const settings = readObject(
-      JSON.parse(await readFile(settingsPath, "utf8"))
-    );
-    const general = readObject(settings.general);
-    const localization = readObject(general.localization);
-    const categories = readObject(localization.categories);
-    for (const key of categoryKeys) {
-      const categoryLanguage = categories[key];
-      if (typeof categoryLanguage === "string" && categoryLanguage.trim()) {
-        return categoryLanguage.trim();
-      }
-    }
-    const defaultLanguage = localization.defaultLanguage;
-    return typeof defaultLanguage === "string" && defaultLanguage.trim()
-      ? defaultLanguage.trim()
-      : fallbackLanguage;
-  } catch {
-    return fallbackLanguage;
-  }
-};
-
-const readReasoningLanguageFromSettings = (
-  settingsPath: string
-): Promise<string> =>
-  readSettingsLocalizationCategory(
-    ["reasoning"],
-    DEFAULT_RESPONSE_LANGUAGE,
-    settingsPath
-  );
-
-const readArtifactLanguageFromSettings = (
-  settingsPath: string
-): Promise<string> =>
-  readSettingsLocalizationCategory(
-    ["artifactsForTheUser", "artifacts_for_the_user"],
-    DEFAULT_ARTIFACT_LANGUAGE,
-    settingsPath
-  );
-
 const resolveResponseLanguage = async (
   responseLanguage: NodeAgentSessionBootstrapperOptions["responseLanguage"],
   settingsPath: string
@@ -188,7 +142,7 @@ const resolveResponseLanguage = async (
   if (typeof responseLanguage === "string" && responseLanguage.trim()) {
     return responseLanguage.trim();
   }
-  return readReasoningLanguageFromSettings(settingsPath);
+  return loadReasoningLanguage(settingsPath) || DEFAULT_RESPONSE_LANGUAGE;
 };
 
 const resolveArtifactLanguage = async (
@@ -202,7 +156,9 @@ const resolveArtifactLanguage = async (
   if (typeof artifactLanguage === "string" && artifactLanguage.trim()) {
     return artifactLanguage.trim();
   }
-  return readArtifactLanguageFromSettings(settingsPath);
+  return (
+    loadArtifactsForTheUserLanguage(settingsPath) || DEFAULT_ARTIFACT_LANGUAGE
+  );
 };
 
 const createWorkflowArtifactSpecs = (

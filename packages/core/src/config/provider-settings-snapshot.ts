@@ -280,3 +280,30 @@ export const loadReasoningLanguage = (settingsPath: string): string => {
     fallbackFromMessages
   );
 };
+
+export const loadArtifactsForTheUserLanguage = (
+  settingsPath: string
+): string => {
+  const parsed = loadLocalizationSettingsSnapshot(settingsPath);
+  if (!parsed) {
+    return DEFAULT_LOCALIZATION_LANGUAGE;
+  }
+
+  const general = isRecord(parsed.general) ? parsed.general : {};
+  const localization = isRecord(general.localization)
+    ? general.localization
+    : {};
+  const categories = isRecord(localization.categories)
+    ? localization.categories
+    : {};
+  const defaultLanguage = normalizeLocalizationLanguage(
+    localization.defaultLanguage,
+    DEFAULT_LOCALIZATION_LANGUAGE
+  );
+
+  return resolveLocalizationCategory(
+    categories,
+    ["artifactsForTheUser", "artifacts_for_the_user", "interactiveTemplates"],
+    defaultLanguage
+  );
+};

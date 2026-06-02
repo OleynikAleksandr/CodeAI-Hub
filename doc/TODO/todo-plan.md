@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "40e9efebe",
+  "lastRecordedCommit": "7b4803ef5",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase56.stream1.task1",
-  "expectedCommitMessage": "chore: build release 1.2.443",
+  "currentTaskId": "phase58.stream1.task1",
+  "expectedCommitMessage": "fix: use global language settings for product part agents",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.443",
-    "preCommitHead": "40e9efebe",
+    "expectedCommitMessage": "fix: use global language settings for product part agents",
+    "preCommitHead": "7b4803ef5",
     "stage": "commit_pending",
-    "taskId": "phase56.stream1.task1"
+    "taskId": "phase58.stream1.task1"
   }
 }
 ```
@@ -414,13 +414,54 @@
 ### Stream: Build Artifacts
 
 106. [DONE] `phase56.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.443 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.443`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.443.vsix`; release tarballs created in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-107. [PENDING] Git Commit: `chore: build release 1.2.443` (hash: TBD)
+107. [DONE] Git Commit: `chore: build release 1.2.443` (hash: 7b4803ef5)
 
 ## Phase 57 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: User Retest
 
-108. [TODO] `phase57.stream1.task1` User installs/tests release 1.2.443 and verifies Claude provider rows move from warmup/starting to active after Core startup, then continues the simplified FinderWidget workflow (scope: `doc/TODO/todo-plan.md`).
+108. [BLOCKED] `phase57.stream1.task1` User installs/tests release 1.2.443 and verifies Claude provider rows move from warmup/starting to active after Core startup, then continues the simplified FinderWidget workflow (scope: `doc/TODO/todo-plan.md`). Result: release 1.2.443 passed the provider warmup retest, but Product Part agent orchestration exposed follow-up defects: Product Part prompts used `en/en` instead of global `ru/ru`, draft artifacts and agent replies were English, Product Part start prompts were persisted as `system` messages instead of user-visible user turns, and the Workspace continuity index could remain dirty after accepted Product Part brief commits.
+
+## Phase 58 - Product Part Agent Language And Session Repair (owner: Codex, updated: 2026-06-02)
+
+### Stream: Language Source And Start Prompt Role
+
+109. [DONE] `phase58.stream1.task1` Make Product Part agent bootstrap resolve chat/artifact languages from the global localization settings source already used by translation policy, not from workspace-local provider settings; verify `ru/ru` appears in the first prompt when global settings define Russian (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts`; expected commit: `fix: use global language settings for product part agents`). Result: Product Part prompt bootstrap now uses the same global-localization overlay as translation policy; focused bootstrapper tests confirm reasoning/artifact languages resolve from `CODEAI_GLOBAL_SETTINGS_PATH`.
+110. [PENDING] Git Commit: `fix: use global language settings for product part agents` (hash: TBD)
+111. [TODO] `phase58.stream1.task2` Persist Product Part agent start prompts as auditable `user` messages while keeping Core acceptance/status messages as system feedback (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: persist product part start prompts as user turns`).
+112. [TODO] Git Commit: `fix: persist product part start prompts as user turns` (hash: TBD)
+
+### Stream: Managed Ledger Cleanliness
+
+113. [TODO] `phase58.stream2.task1` Ensure accepted Product Part brief handoff does not leave `.codeai-hub/<workspace>/continuity/index.json` dirty after Core commits accepted draft and advances the Product Part todo-plan (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.ts, packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit product part continuity ledger updates`).
+114. [TODO] Git Commit: `fix: commit product part continuity ledger updates` (hash: TBD)
+
+## Phase 59 - Product Part Agent Repair Verification (owner: Codex, updated: 2026-06-02)
+
+### Stream: Targeted Checks
+
+115. [TODO] `phase59.stream1.task1` Run plan validation plus focused Core tests/builds for Product Part language, prompt role, and ledger-clean handoff before release preparation (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part language and ledger repair`).
+116. [TODO] Git Commit: `test: verify product part language and ledger repair` (hash: TBD)
+
+## Phase 60 - Release 1.2.444 Preparation (owner: Codex, updated: 2026-06-02)
+
+### Stream: Release Docs
+
+117. [TODO] `phase60.stream1.task1` Prepare release docs for version 1.2.444 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.444`).
+118. [TODO] Git Commit: `docs: prepare release 1.2.444` (hash: TBD)
+
+## Phase 61 - Release 1.2.444 Build (owner: Codex, updated: 2026-06-02)
+
+### Stream: Build Artifacts
+
+119. [TODO] `phase61.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.444 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.444`).
+120. [TODO] Git Commit: `chore: build release 1.2.444` (hash: TBD)
+
+## Phase 62 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: User Retest
+
+121. [TODO] `phase62.stream1.task1` User installs/tests release 1.2.444 and verifies Product Part prompts use global `ru/ru`, draft prose and agent replies are Russian, Product Part start prompts appear as user turns, and Product Part handoff leaves no dirty continuity ledger (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
