@@ -2,7 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.436** (Clear/Undo Menu Polish)
+**Current Release — v1.2.437** (Compact Module Development Tree)
+
+This release updates the Development Tree module projection. Core no longer
+emits module phase rows (`Module / Facade Specification`, `Implementation`,
+`Workers`, `Integration`) under each module node, so the left tree stays focused
+on the product structure: Product Part -> Cluster -> Module. Module work
+details are now documented as right-panel surfaces for the selected module.
+
+**Previous Release — v1.2.436** (Clear/Undo Menu Polish)
 
 This release polishes the Development Tree context menu and confirm dialog from
 1.2.435. The menu item is now compact and centered, the dialog uses compact

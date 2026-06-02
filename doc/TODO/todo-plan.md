@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "90b753bb4",
+  "lastRecordedCommit": "8c90402bf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase11.stream1.task1",
-  "expectedCommitMessage": "docs: sync module tree projection docs",
+  "currentTaskId": "phase13.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.437",
   "debt": {
-    "expectedCommitMessage": "docs: sync module tree projection docs",
-    "preCommitHead": "90b753bb4",
+    "expectedCommitMessage": "docs: prepare release 1.2.437",
+    "preCommitHead": "8c90402bf",
     "stage": "commit_pending",
-    "taskId": "phase11.stream1.task1"
+    "taskId": "phase13.stream1.task1"
   }
 }
 ```
@@ -110,20 +110,20 @@
 ### Stream: Sidebar Projection SSOT
 
 15. [DONE] `phase11.stream1.task1` Update remaining SSOT/module docs so Project Manager and UI bundle documentation no longer describe module operation rows as the active Development Tree projection (scope: `doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md`; expected commit: `docs: sync module tree projection docs`).
-16. [PENDING] Git Commit: `docs: sync module tree projection docs` (hash: TBD)
+16. [DONE] Git Commit: `docs: sync module tree projection docs` (hash: 8c90402bf)
 
 ## Phase 12 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Targeted Checks
 
-17. [TODO] `phase12.stream1.task1` Run targeted Core/Project Manager checks after the module tree display fix, including plan validation and affected builds/tests where available (scope: `doc/TODO/todo-plan.md`).
+17. [DONE] `phase12.stream1.task1` Run targeted Core/Project Manager checks after the module tree display fix, including plan validation and affected builds/tests where available (scope: `doc/TODO/todo-plan.md`). Result: plan:validate passed; build:core passed; build:project-manager passed; build:webview passed; typecheck:webview passed; DevelopmentTreeStateFacade metadata test passed.
 
 ## Phase 13 - Release Preparation (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Release Docs
 
-18. [TODO] `phase13.stream1.task1` Prepare release docs for the next version requested by the user before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.437`).
-19. [TODO] Git Commit: `docs: prepare release 1.2.437` (hash: TBD)
+18. [DONE] `phase13.stream1.task1` Prepare release docs for the next version requested by the user before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.437`).
+19. [PENDING] Git Commit: `docs: prepare release 1.2.437` (hash: TBD)
 
 ## Phase 14 - Release Build (owner: Codex, updated: 2026-06-02)
 

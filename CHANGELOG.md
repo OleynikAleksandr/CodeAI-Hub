@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.437] - 2026-06-02
+### Changed
+- **Development Tree module rows are compact.** Core no longer projects module phase/operation children (`Module / Facade Specification`, `Implementation`, `Workers`, `Integration`) under each module node. The left tree now stays focused on Product Part / Cluster / Module structure, while module workflow details are documented as right-panel surfaces for the selected module.
+
+### Verification
+- `npm run plan:validate`
+- `npm run build:core`
+- `npm run build:project-manager`
+- `npm run build:webview`
+- `npm run typecheck:webview`
+- `node --test packages/core/dist/development-tree/development-tree-state-facade-metadata.test.js`
+
 ## [1.2.436] - 2026-06-01
 ### Changed
 - **Clear/Undo menu polished and relabelled.** The Development Tree context menu item is now flex-centered and compact (fixing the off-center, oversized item from 1.2.435), the confirm dialog uses compact 32px buttons (`.pm-tree-menu__btn`), and the destructive action is labelled `Clear/Undo` since it performs an undo via Git rollback. Behavior is unchanged.
