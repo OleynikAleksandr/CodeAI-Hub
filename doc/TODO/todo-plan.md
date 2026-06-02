@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "33ba6ee02",
+  "lastRecordedCommit": "746bee17b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase22.stream1.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.438",
+  "currentTaskId": "phase23.stream1.task1",
+  "expectedCommitMessage": "chore: build release 1.2.438",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.438",
-    "preCommitHead": "33ba6ee02",
+    "expectedCommitMessage": "chore: build release 1.2.438",
+    "preCommitHead": "746bee17b",
     "stage": "commit_pending",
-    "taskId": "phase22.stream1.task1"
+    "taskId": "phase23.stream1.task1"
   }
 }
 ```
@@ -183,14 +183,14 @@
 ### Stream: Release Docs
 
 33. [DONE] `phase22.stream1.task1` Prepare release docs for version 1.2.438 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.438`).
-34. [PENDING] Git Commit: `docs: prepare release 1.2.438` (hash: TBD)
+34. [DONE] Git Commit: `docs: prepare release 1.2.438` (hash: 746bee17b)
 
 ## Phase 23 - Release Build (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Build Artifacts
 
-35. [TODO] `phase23.stream1.task1` Run the release build flow requested by the user and record the resulting VSIX/tarball artifacts for version 1.2.438 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.438`).
-36. [TODO] Git Commit: `chore: build release 1.2.438` (hash: TBD)
+35. [DONE] `phase23.stream1.task1` Run the release build flow requested by the user and record the resulting VSIX/tarball artifacts for version 1.2.438 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.438`).
+36. [PENDING] Git Commit: `chore: build release 1.2.438` (hash: TBD)
 
 ## Phase 24 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
