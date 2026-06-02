@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "cd34a5d08",
+  "lastRecordedCommit": "5b8177422",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase65.stream1.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.445",
+  "currentTaskId": "phase66.stream1.task1",
+  "expectedCommitMessage": "chore: build release 1.2.445",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.445",
-    "preCommitHead": "cd34a5d08",
+    "expectedCommitMessage": "chore: build release 1.2.445",
+    "preCommitHead": "5b8177422",
     "stage": "commit_pending",
-    "taskId": "phase65.stream1.task1"
+    "taskId": "phase66.stream1.task1"
   }
 }
 ```
@@ -481,14 +481,14 @@
 ### Stream: Release Docs
 
 125. [DONE] `phase65.stream1.task1` Prepare release docs for version 1.2.445 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.445`).
-126. [PENDING] Git Commit: `docs: prepare release 1.2.445` (hash: TBD)
+126. [DONE] Git Commit: `docs: prepare release 1.2.445` (hash: 5b8177422)
 
 ## Phase 66 - Release 1.2.445 Build (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Build Artifacts
 
-127. [TODO] `phase66.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.445 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.445`).
-128. [TODO] Git Commit: `chore: build release 1.2.445` (hash: TBD)
+127. [DONE] `phase66.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.445 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.445`).
+128. [PENDING] Git Commit: `chore: build release 1.2.445` (hash: TBD)
 
 ## Phase 67 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
