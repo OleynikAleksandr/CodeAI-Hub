@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "add7eb910",
+  "lastRecordedCommit": "446f0b521",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase16.stream1.task1",
-  "expectedCommitMessage": "fix: simplify development tree filesystem scaffolding",
+  "currentTaskId": "phase17.stream1.task1",
+  "expectedCommitMessage": "docs: sync development tree scaffolding model",
   "debt": {
-    "expectedCommitMessage": "fix: simplify development tree filesystem scaffolding",
-    "preCommitHead": "add7eb910",
+    "expectedCommitMessage": "docs: sync development tree scaffolding model",
+    "preCommitHead": "446f0b521",
     "stage": "commit_pending",
-    "taskId": "phase16.stream1.task1"
+    "taskId": "phase17.stream1.task1"
   }
 }
 ```
@@ -143,14 +143,14 @@
 ### Stream: Core Planner
 
 23. [DONE] `phase16.stream1.task1` Stop Core from creating legacy `workers/` and `integration/` operation directories in both materialized Development Tree and `doc/TODO/stages/development-tree` scaffolding when a fresh tree is generated (scope: `packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-paths.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.ts, packages/core/src/development-tree/filesystem-structurator/development-tree-filesystem-path-planner.test.ts`; expected commit: `fix: simplify development tree filesystem scaffolding`).
-24. [PENDING] Git Commit: `fix: simplify development tree filesystem scaffolding` (hash: TBD)
+24. [DONE] Git Commit: `fix: simplify development tree filesystem scaffolding` (hash: 446f0b521)
 
 ## Phase 17 - Documentation Sync (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Scaffolding Model
 
-25. [TODO] `phase17.stream1.task1` Update Development Tree documentation so filesystem scaffolding matches the compact tree model: product parts, clusters, modules, and right-panel artifacts instead of operation subfolders (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree scaffolding model`).
-26. [TODO] Git Commit: `docs: sync development tree scaffolding model` (hash: TBD)
+25. [DONE] `phase17.stream1.task1` Update Development Tree documentation so filesystem scaffolding matches the compact tree model: product parts, clusters, modules, and right-panel artifacts instead of operation subfolders (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync development tree scaffolding model`).
+26. [PENDING] Git Commit: `docs: sync development tree scaffolding model` (hash: TBD)
 
 ## Phase 18 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 

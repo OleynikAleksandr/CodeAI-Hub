@@ -1,8 +1,8 @@
 # Development Tree Branch Workflow Architecture
 
-**Status:** Reference Architecture (updated 2026-06-01). Sidebar visualization of Product Part / Cluster / Module branch structure and automatic first-draft materialization are already implemented in production. This document defines the next branch workflow model after `Quality Gates Baseline`: one module node, one module-agent session, artifact/user-review phases, interactive Implementation TODO Plan, and read-only worker sessions.
+**Status:** Reference Architecture (updated 2026-06-02). Sidebar visualization of Product Part / Cluster / Module branch structure and automatic first-draft materialization are already implemented in production. This document defines the next branch workflow model after `Quality Gates Baseline`: compact filesystem scaffolding, one module node, one module-agent session, artifact/user-review phases, interactive Implementation TODO Plan, and read-only worker sessions.
 **Created:** 2026-04-07
-**Updated:** 2026-06-01
+**Updated:** 2026-06-02
 **Owner:** Oleksandr + Codex
 **Scope:** Формализовать Development Tree после `Diagram Modules`, `Application Skeleton` и `Quality Gates Baseline`: `Product Part Specification`, `Cluster Design`, managed module workflow, worker visibility, user review gates, and MVP boundaries for implementation execution.
 
@@ -54,6 +54,8 @@ Development Tree должен работать так:
 Ключевое решение:
 
 > Левое дерево показывает продуктовую структуру. Правая панель показывает артефакты, интерактивный план и worker progress. Пользователь общается только с агентом выбранного product/cluster/module node.
+
+Fresh Development Tree scaffolding follows the same rule. Core creates only real Product Part / Cluster / Module directories in `.codeai-hub/<workspaceSlug>/development_tree/materialized/...` and `doc/TODO/stages/development-tree/...`. It does not pre-create `workers/` or `integration/` operation folders; those concerns live in right-panel artifacts, managed plans, and session snapshots when the selected node workflow actually reaches them.
 
 ---
 
@@ -235,7 +237,7 @@ MVP:
 - worker execution visibility;
 - module assembly.
 
-Разница только в path: standalone module живёт под `standalone-modules/`, а не под `clusters/<cluster-id>/modules/`.
+Разница только в path: standalone module живёт под `product-parts/<part-id>/modules/<module-id>/`, а cluster module живёт под `product-parts/<part-id>/clusters/<cluster-id>/modules/<module-id>/`.
 
 ### 4.11. Microtask completion always has a Git Commit boundary
 
@@ -399,7 +401,7 @@ Branch-level user artifacts живут под:
 
 Для standalone modules тот же набор живёт под:
 
-`.codeai-hub/<workspaceSlug>/development_tree/product-parts/<part-id>/standalone-modules/<module-id>/`
+`.codeai-hub/<workspaceSlug>/development_tree/product-parts/<part-id>/modules/<module-id>/`
 
 ### 6.6. Core managed module plan
 
@@ -409,7 +411,7 @@ Core-owned lifecycle state для module workflow живёт отдельно о
 
 Для standalone module:
 
-`doc/TODO/stages/development-tree/product-parts/<part-id>/standalone-modules/<module-id>/todo-plan.md`
+`doc/TODO/stages/development-tree/product-parts/<part-id>/modules/<module-id>/todo-plan.md`
 
 Это service plan, а не пользовательский artifact. Он нужен Core-у и module agent-у для phase tracking, gates, commits, recovery и closeout.
 
@@ -430,9 +432,11 @@ UI может хранить provider-native session id отдельно, но C
 
 ### 6.8. Worker session snapshots
 
-Worker runs живут под module workflow:
+Worker run snapshots are created only when implementation execution reaches a worker task. They are not pre-created as `workers/` operation folders during fresh Development Tree materialization.
 
-`doc/TODO/stages/development-tree/product-parts/<part-id>/clusters/<cluster-id>/modules/<module-id>/workers/<task-id>/<run-id>/`
+Suggested service path:
+
+`doc/TODO/stages/development-tree/product-parts/<part-id>/clusters/<cluster-id>/modules/<module-id>/worker-runs/<task-id>/<run-id>/`
 
 Минимальный состав:
 
@@ -728,6 +732,7 @@ Commit gate делает две вещи:
 - module agent owns accept/reject decisions for worker results;
 - Core owns the actual managed commit and pre-commit Quality Gates boundary;
 - writable parallel workers run in isolated worker sandboxes/worktrees by default.
+- fresh Development Tree filesystem scaffolding contains Product Part / Cluster / Module directories only; no pre-created `workers/` or `integration/` operation folders.
 
 ### 11.2. May Come Later
 
