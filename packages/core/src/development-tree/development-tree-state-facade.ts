@@ -43,7 +43,7 @@ const LEAD_CONTRACT_LOCK_REASON = "Lead Product Part contract graph is pending";
 const DRAFT_FILES = {
   cluster: ["ClusterDescription.draft.md", "ClusterFacadeContract.draft.md"],
   module: ["ModuleSpec.draft.md", "ModuleFacadeContract.draft.md"],
-  product_part: ["PartDescription.draft.md"],
+  product_part: ["ProductPartDevelopmentBrief.draft.md"],
 } as const satisfies Record<
   DevelopmentTreeDraftReadinessKind,
   readonly string[]

@@ -248,8 +248,8 @@ test("readDevelopmentTreeSnapshot includes aggregated draft readiness", async ()
       { recursive: true }
     );
     await writeFile(
-      path.join(materializedPart, "PartDescription.draft.md"),
-      createReadyDraft("PartDescription"),
+      path.join(materializedPart, "ProductPartDevelopmentBrief.draft.md"),
+      createReadyDraft("ProductPartDevelopmentBrief"),
       "utf8"
     );
     await writeFile(

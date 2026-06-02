@@ -155,7 +155,7 @@ test("DevelopmentTreeStateFacade refreshes readiness after draft writes", async 
     );
     await writeWorkspaceFile(
       workspaceRoot,
-      `${partRoot}/PartDescription.draft.md`,
+      `${partRoot}/ProductPartDevelopmentBrief.draft.md`,
       createDraft(sentinel)
     );
     await writeWorkspaceFile(
@@ -192,7 +192,7 @@ test("DevelopmentTreeStateFacade refreshes readiness after draft writes", async 
 
     await writeWorkspaceFile(
       workspaceRoot,
-      `${partRoot}/PartDescription.draft.md`,
+      `${partRoot}/ProductPartDevelopmentBrief.draft.md`,
       createDraft("Project Manager part draft is filled.")
     );
     await writeWorkspaceFile(
