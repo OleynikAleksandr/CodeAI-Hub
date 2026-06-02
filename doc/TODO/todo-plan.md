@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "6e2908ba8",
+  "lastRecordedCommit": "2b8aade06",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase28.stream1.task3",
-  "expectedCommitMessage": "test: update product part brief draft coverage",
+  "currentTaskId": "phase28.stream1.task4",
+  "expectedCommitMessage": "test: update product part brief prompt coverage",
   "debt": {
-    "expectedCommitMessage": "test: update product part brief draft coverage",
-    "preCommitHead": "6e2908ba8",
+    "expectedCommitMessage": "test: update product part brief prompt coverage",
+    "preCommitHead": "2b8aade06",
     "stage": "commit_pending",
-    "taskId": "phase28.stream1.task3"
+    "taskId": "phase28.stream1.task4"
   }
 }
 ```
@@ -228,9 +228,9 @@
 46. [DONE] `phase28.stream1.task2` Expose the renamed Product Part Development Brief artifact through the Development Tree read-model and focused snapshot coverage (scope: `packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: expose product part brief artifacts`).
 47. [DONE] Git Commit: `feat: expose product part brief artifacts` (hash: 6e2908ba8)
 48. [DONE] `phase28.stream1.task3` Update draft generation/readiness focused tests for the renamed Product Part Development Brief artifact (scope: `packages/core/src/development-tree/node-bootstrap/draft-template-registry.test.ts, packages/core/src/development-tree/node-bootstrap/draft-readiness-classifier.test.ts, packages/core/src/development-tree/node-bootstrap/draft-writer.test.ts`; expected commit: `test: update product part brief draft coverage`).
-49. [PENDING] Git Commit: `test: update product part brief draft coverage` (hash: TBD)
-50. [TODO] `phase28.stream1.task4` Update first prompt/session bootstrap focused tests for Product Part Development Brief naming (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts`; expected commit: `test: update product part brief prompt coverage`).
-51. [TODO] Git Commit: `test: update product part brief prompt coverage` (hash: TBD)
+49. [DONE] Git Commit: `test: update product part brief draft coverage` (hash: 2b8aade06)
+50. [DONE] `phase28.stream1.task4` Update first prompt/session bootstrap focused tests for Product Part Development Brief naming (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts`; expected commit: `test: update product part brief prompt coverage`).
+51. [PENDING] Git Commit: `test: update product part brief prompt coverage` (hash: TBD)
 
 ## Phase 29 - Product Part Agent Bootstrap Wiring (owner: Codex, updated: 2026-06-02)
 

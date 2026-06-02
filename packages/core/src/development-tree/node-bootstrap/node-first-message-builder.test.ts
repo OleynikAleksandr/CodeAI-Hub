@@ -27,6 +27,8 @@ const CONTRACT_ARTIFACT_LOCALIZATION_PATTERN =
   /Contract artifacts are not an English-language exception/;
 const FACADE_CONTRACT_PROSE_LOCALIZATION_PATTERN =
   /keep method\/event names and identifiers canonical, but write descriptions, boundary rationale, assumptions, and open questions in the target artifact language/;
+const PRODUCT_PART_BRIEF_DRAFT_PATTERN =
+  /ProductPartDevelopmentBrief\.draft\.md/;
 const RUNTIME_TOOLING_FACTS_PATTERN = /Runtime tooling facts:/;
 const PYTHON3_COMMAND_PATTERN = /Python command: `python3`\./;
 const ARTIFACT_WRITE_ENCODING_PATTERN = /Artifact write encoding:/;
@@ -152,7 +154,10 @@ test("NodeFirstMessageBuilder maps product part and cluster draft files", () => 
     technologyBase: "TypeScript",
   });
 
-  assert.deepEqual(productPart.draftFileNames, ["PartDescription.draft.md"]);
+  assert.deepEqual(productPart.draftFileNames, [
+    "ProductPartDevelopmentBrief.draft.md",
+  ]);
+  assert.match(productPart.content, PRODUCT_PART_BRIEF_DRAFT_PATTERN);
   assert.deepEqual(cluster.draftFileNames, [
     "ClusterDescription.draft.md",
     "ClusterFacadeContract.draft.md",
