@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "6d79e75e9",
+  "lastRecordedCommit": "a5453df66",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase47.stream3.task1",
-  "expectedCommitMessage": "test: cover product part brief handoff lifecycle",
+  "currentTaskId": "phase48.stream1.task1",
+  "expectedCommitMessage": "test: verify product part handoff repair",
   "debt": {
-    "expectedCommitMessage": "test: cover product part brief handoff lifecycle",
-    "preCommitHead": "6d79e75e9",
+    "expectedCommitMessage": "test: verify product part handoff repair",
+    "preCommitHead": "a5453df66",
     "stage": "commit_pending",
-    "taskId": "phase47.stream3.task1"
+    "taskId": "phase48.stream1.task1"
   }
 }
 ```
@@ -353,14 +353,14 @@
 ### Stream: Regression Coverage
 
 90. [DONE] `phase47.stream3.task1` Add focused regression coverage for the complete post-Quality Gates Product Part handoff: bootstrap happens after Quality Gates, three Product Part agents can fill drafts, Core commits accepted outputs, Product Part todo-plans advance to review, workflow state does not regress, and start prompts are visible in session history (scope: `packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-last-active-resolver.test.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover product part brief handoff lifecycle`).
-91. [PENDING] Git Commit: `test: cover product part brief handoff lifecycle` (hash: TBD)
+91. [DONE] Git Commit: `test: cover product part brief handoff lifecycle` (hash: a5453df66)
 
 ## Phase 48 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Targeted Checks
 
-92. [TODO] `phase48.stream1.task1` Run targeted Core build/tests for Product Part handoff repair after implementation and record results before any release build decision (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part handoff repair`).
-93. [TODO] Git Commit: `test: verify product part handoff repair` (hash: TBD)
+92. [DONE] `phase48.stream1.task1` Run targeted Core build/tests for Product Part handoff repair after implementation and record results before any release build decision (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part handoff repair`). Result: `npm run plan:validate`, `npm run build --workspace=@codeai-hub/core`, `product-part-development-brief-turn-controller.test.js`, `workflow-state-last-active-resolver.test.js`, and the NodeAgentSessionBootstrapper prompt persistence subtest passed.
+93. [PENDING] Git Commit: `test: verify product part handoff repair` (hash: TBD)
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
