@@ -305,11 +305,11 @@ Worker не должен быть владельцем commit-а.
 Development Tree
 └─ engine
    └─ time-info
-      └─ Clock
-         └─ Workers 37/100
+      ├─ Clock
+      └─ Greeting
 ```
 
-`Workers` здесь — компактный контейнер/progress indicator, а не список из сотни раскрытых строк.
+`Workers`, `Integration`, `Facade Contract`, `Module Specification` и `Implementation TODO Plan` не являются дочерними строками левого дерева. Они открываются справа для выбранного cluster/module node.
 
 Основные детали живут справа:
 

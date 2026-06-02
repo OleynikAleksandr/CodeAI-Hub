@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "2449d053d",
+  "lastRecordedCommit": "66c25dd22",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase19.stream1.task1",
-  "expectedCommitMessage": "fix: hide cluster operation rows in development tree",
+  "currentTaskId": "phase20.stream1.task1",
+  "expectedCommitMessage": "docs: sync cluster tree projection model",
   "debt": {
-    "expectedCommitMessage": "fix: hide cluster operation rows in development tree",
-    "preCommitHead": "2449d053d",
+    "expectedCommitMessage": "docs: sync cluster tree projection model",
+    "preCommitHead": "66c25dd22",
     "stage": "commit_pending",
-    "taskId": "phase19.stream1.task1"
+    "taskId": "phase20.stream1.task1"
   }
 }
 ```
@@ -163,14 +163,14 @@
 ### Stream: Core Snapshot Projection
 
 28. [DONE] `phase19.stream1.task1` Stop Core from projecting cluster operation rows (`Workers`, `Integration`) under cluster nodes while keeping Product Part / Cluster / Module rows and lead Product Part orchestration rows intact (scope: `packages/core/src/development-tree/development-tree-operation-nodes.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: hide cluster operation rows in development tree`).
-29. [PENDING] Git Commit: `fix: hide cluster operation rows in development tree` (hash: TBD)
+29. [DONE] Git Commit: `fix: hide cluster operation rows in development tree` (hash: 66c25dd22)
 
 ## Phase 20 - Documentation Sync (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Compact Cluster Projection
 
-30. [TODO] `phase20.stream1.task1` Update Development Tree documentation so cluster workflow details are right-panel artifacts/states, not left-tree operation rows or pre-created operation folders (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync cluster tree projection model`).
-31. [TODO] Git Commit: `docs: sync cluster tree projection model` (hash: TBD)
+30. [DONE] `phase20.stream1.task1` Update Development Tree documentation so cluster workflow details are right-panel artifacts/states, not left-tree operation rows or pre-created operation folders (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/Project_Manager.md, doc/SolidWorks-WorkFlow/Modules/UI_Bundles.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync cluster tree projection model`).
+31. [PENDING] Git Commit: `docs: sync cluster tree projection model` (hash: TBD)
 
 ## Phase 21 - Tooling Verification (owner: Codex, updated: 2026-06-02)
 
