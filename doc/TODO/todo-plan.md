@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "4a66b274f",
+  "lastRecordedCommit": "b32001f8e",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase43.stream1.task1",
-  "expectedCommitMessage": "test: verify product part bootstrap timing",
+  "currentTaskId": "phase44.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.441",
   "debt": {
-    "expectedCommitMessage": "test: verify product part bootstrap timing",
-    "preCommitHead": "4a66b274f",
+    "expectedCommitMessage": "docs: prepare release 1.2.441",
+    "preCommitHead": "b32001f8e",
     "stage": "commit_pending",
-    "taskId": "phase43.stream1.task1"
+    "taskId": "phase44.stream1.task1"
   }
 }
 ```
@@ -312,14 +312,14 @@
 ### Stream: Targeted Checks
 
 75. [DONE] `phase43.stream1.task1` Run focused Core tests/builds for Development Tree bootstrap timing and Quality Gates handoff (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part bootstrap timing`). Result: `npm run build --workspace=@codeai-hub/core`, `npm run plan:validate`, and focused compiled Node tests for workflow-state/Product Part bootstrap/Quality Gates handoff passed with 13/13 tests.
-76. [PENDING] Git Commit: `test: verify product part bootstrap timing` (hash: TBD)
+76. [DONE] Git Commit: `test: verify product part bootstrap timing` (hash: b32001f8e)
 
 ## Phase 44 - Release 1.2.441 Preparation (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Release Docs
 
-77. [TODO] `phase44.stream1.task1` Prepare release docs for version 1.2.441 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.441`).
-78. [TODO] Git Commit: `docs: prepare release 1.2.441` (hash: TBD)
+77. [DONE] `phase44.stream1.task1` Prepare release docs for version 1.2.441 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.441`). Result: README and CHANGELOG now describe release 1.2.441 as the Quality Gates-owned Product Part Development Brief handoff fix.
+78. [PENDING] Git Commit: `docs: prepare release 1.2.441` (hash: TBD)
 
 ## Phase 45 - Release 1.2.441 Build (owner: Codex, updated: 2026-06-02)
 

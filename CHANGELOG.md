@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.441] - 2026-06-02
+### Fixed
+- **Product Part Development Brief bootstrap now waits for Quality Gates.** Core no longer creates `ProductPartDevelopmentBrief.draft.md` or Product Part stage `todo-plan.md` files during Diagram Modules completion or `workflow-state` reads.
+- **Quality Gates terminal handoff now owns Product Part bootstrap.** After accepted Quality Gates Baseline completion, Core materializes Product Part brief plans/drafts, starts Product Part agent sessions, and commits the bootstrap artifacts through the managed Quality Gates handoff.
+- **Repair prompt extraction keeps managed workflow files below architecture limits.** Quality Gates repair prompt dispatch was split into a focused helper while preserving the Core-owned validation/repair lifecycle.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-runtime-core.test.js`
+
 ## [1.2.440] - 2026-06-02
 ### Fixed
 - **Removed legacy Contract Graph operation rows from the Development Tree.** Core no longer emits or materializes `Lead Product Part Orchestration`, `Contract Graph`, `Cross-Part Contracts`, `Shared Interfaces`, or `Execution Waves` under the lead Product Part.

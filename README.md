@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.440** (Compact Product Part Bootstrap Fix)
+**Current Release — v1.2.441** (Quality Gates Product Part Handoff)
+
+This release moves Product Part Development Brief bootstrap to the accepted
+Quality Gates Baseline terminal handoff. Diagram Modules completion no longer
+creates Product Part brief drafts or stage todo plans, so the Diagram Modules
+dirty gate stays focused on diagram artifacts only. After Quality Gates is
+accepted, Core materializes Product Part brief plans/drafts, starts Product Part
+agent sessions, and commits those bootstrap files through the managed Quality
+Gates handoff.
+
+**Previous Release — v1.2.440** (Compact Product Part Bootstrap Fix)
 
 This release fixes the Development Tree regression from 1.2.439. Core no
 longer projects or materializes the legacy `Lead Product Part Orchestration` /
