@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "b3d8e68ab",
+  "lastRecordedCommit": "cd34a5d08",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase63.stream1.task1",
-  "expectedCommitMessage": "fix: clear workflow runtime session files",
+  "currentTaskId": "phase65.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.445",
   "debt": {
-    "expectedCommitMessage": "fix: clear workflow runtime session files",
-    "preCommitHead": "b3d8e68ab",
+    "expectedCommitMessage": "docs: prepare release 1.2.445",
+    "preCommitHead": "cd34a5d08",
     "stage": "commit_pending",
-    "taskId": "phase63.stream1.task1"
+    "taskId": "phase65.stream1.task1"
   }
 }
 ```
@@ -468,7 +468,33 @@
 ### Stream: Unified And Native Session Files
 
 122. [DONE] `phase63.stream1.task1` Extend workflow Clear/Undo so it removes downstream unified session histories plus provider-native session files for real provider ids (`codexCli`, `claudeCodeCli`, `geminiCli`, `glmClaudeCode`) without deleting provider auth/settings/cache files; add focused regression coverage (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear*, doc/TODO/todo-plan.md`; expected commit: `fix: clear workflow runtime session files`).
-123. [PENDING] Git Commit: `fix: clear workflow runtime session files` (hash: TBD)
+123. [DONE] Git Commit: `fix: clear workflow runtime session files` (hash: cd34a5d08)
+
+## Phase 64 - Release Build Confirmation (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: Release Confirmation
+
+124. [DONE] `phase64.stream1.task1` Await explicit user confirmation before preparing/building the next release with the Clear/Undo runtime session cleanup fix (scope: `doc/TODO/todo-plan.md`). Result: user explicitly requested a new release build.
+
+## Phase 65 - Release 1.2.445 Preparation (owner: Codex, updated: 2026-06-02)
+
+### Stream: Release Docs
+
+125. [DONE] `phase65.stream1.task1` Prepare release docs for version 1.2.445 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.445`).
+126. [PENDING] Git Commit: `docs: prepare release 1.2.445` (hash: TBD)
+
+## Phase 66 - Release 1.2.445 Build (owner: Codex, updated: 2026-06-02)
+
+### Stream: Build Artifacts
+
+127. [TODO] `phase66.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.445 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.445`).
+128. [TODO] Git Commit: `chore: build release 1.2.445` (hash: TBD)
+
+## Phase 67 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: User Retest
+
+129. [TODO] `phase67.stream1.task1` User installs/tests release 1.2.445 and verifies Clear/Undo removes downstream unified and provider-native runtime session histories without deleting provider auth/settings/cache files (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 

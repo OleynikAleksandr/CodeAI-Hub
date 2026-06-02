@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.445] - 2026-06-02
+### Fixed
+- **Clear/Undo now removes unified runtime histories.** Workflow clear deletes downstream `.codeai-hub/<workspace>/runtime/sessions/unified/**` session histories and translation overlays instead of only removing in-memory Core sessions.
+- **Clear/Undo now removes matching provider-native session files.** Core cleans matching native history files under `runtime/providers/**/home` for real provider ids such as `codexCli`, `claudeCodeCli`, `geminiCli`, and `glmClaudeCode`.
+- **Provider auth and cache files are preserved.** Cleanup targets workflow session histories and avoids provider credentials, settings, and cache files.
+
+### Verification
+- `npm run plan:validate`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.runtime-cleanup.test.js`
+- `node --test --test-name-pattern 'workflow step clear (rejects invalid requests|restores workflow stages|prunes provider-native workflow sessions only|keeps development-tree node clear fail-closed|removes Diagram Modules work|removes Virtual Simulation)' packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.test.js`
+
 ## [1.2.444] - 2026-06-02
 ### Fixed
 - **Product Part agents now use global localization settings.** Product Part bootstrap resolves response and draft-artifact languages from the global settings source, so Russian workspaces use `ru/ru` instead of falling back to `en/en`.
