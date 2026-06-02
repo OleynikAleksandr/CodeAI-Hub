@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "746bee17b",
+  "lastRecordedCommit": "fe87505e4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase23.stream1.task1",
-  "expectedCommitMessage": "chore: build release 1.2.438",
+  "currentTaskId": "phase25.stream1.task1",
+  "expectedCommitMessage": "docs: add lead product part orchestration model",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.438",
-    "preCommitHead": "746bee17b",
+    "expectedCommitMessage": "docs: add lead product part orchestration model",
+    "preCommitHead": "fe87505e4",
     "stage": "commit_pending",
-    "taskId": "phase23.stream1.task1"
+    "taskId": "phase25.stream1.task1"
   }
 }
 ```
@@ -190,18 +190,25 @@
 ### Stream: Build Artifacts
 
 35. [DONE] `phase23.stream1.task1` Run the release build flow requested by the user and record the resulting VSIX/tarball artifacts for version 1.2.438 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.438`).
-36. [PENDING] Git Commit: `chore: build release 1.2.438` (hash: TBD)
+36. [DONE] Git Commit: `chore: build release 1.2.438` (hash: fe87505e4)
 
 ## Phase 24 - User Visual Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: User Retest
 
-37. [TODO] `phase24.stream1.task1` User installs/tests release 1.2.438 and verifies cluster nodes no longer show `Workers`/`Integration`, module nodes stay compact, and freshly regenerated Development Tree scaffolding has no pre-created operation folders (scope: `doc/TODO/todo-plan.md`).
+37. [DONE] `phase24.stream1.task1` User installs/tests release 1.2.438 and verifies cluster nodes no longer show `Workers`/`Integration`, module nodes stay compact, and freshly regenerated Development Tree scaffolding has no pre-created operation folders (scope: `doc/TODO/todo-plan.md`). Result: User tested release 1.2.438; compact cluster/module Development Tree projection and fresh scaffolding are accepted.
 
-## Phase 25 - Scope Closeout (owner: Codex, updated: 2026-06-02)
+## Phase 25 - Lead Product Part Orchestration Planning (owner: Codex, updated: 2026-06-02)
+
+### Stream: Contract Graph Model
+
+38. [DONE] `phase25.stream1.task1` Inspect current Development Tree orchestration implementation and move the archived lead Product Part / Contract Graph workflow model into the active Development Tree planning document as the next real branch orchestration layer (scope: `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: add lead product part orchestration model`).
+39. [PENDING] Git Commit: `docs: add lead product part orchestration model` (hash: TBD)
+
+## Phase 26 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Closeout
 
-38. [TODO] `phase25.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree module display scope`).
-39. [TODO] Git Commit: `docs: close development tree module display scope` (hash: TBD)
-40. [TODO] `phase25.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+40. [TODO] `phase26.stream1.task1` After explicit user acceptance, archive this active `todo-plan.md` closeout snapshot and leave `DevelopmentTree_BranchWorkflow_Architecture.md` as the active root planning source or record its final disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree module display scope`).
+41. [TODO] Git Commit: `docs: close development tree module display scope` (hash: TBD)
+42. [TODO] `phase26.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).

@@ -282,6 +282,76 @@ Worker не должен быть владельцем commit-а.
 
 Один общий workspace для нескольких workers допустим только для read-only analysis или строго serial execution. Даже если две parallel microtasks кажутся независимыми, по умолчанию лучше дать им разные sandboxes: это убирает race conditions, грязное рабочее дерево и скрытые file conflicts.
 
+### 4.14. Lead Product Part orchestration is the first branch event
+
+После завершения всего `Documentation Tree` (`Description`, `Virtual Simulation`, `Diagram Modules`, `Application Skeleton`, `Quality Gates Baseline`) первый реальный Development Tree workflow должен стартовать не с произвольного module node.
+
+Правильная первая рабочая точка:
+
+```text
+doc/TODO/stages/development-tree/product-parts/<lead-part-id>/todo-plan.md
+```
+
+Этот managed plan принадлежит `Lead Product Part` agent-у. Core материализует его после того, как:
+
+1. `Diagram Modules` принят и содержит `leadProductPartId`;
+2. `Diagram Modules` содержит `productPartLeadershipOrder`;
+3. первый item `productPartLeadershipOrder` совпадает с `leadProductPartId`;
+4. `Application Skeleton` материализован и принят;
+5. `Quality Gates Baseline` integrated and accepted.
+
+`Diagram Modules` отвечает за выбор lead Product Part и порядок Product Parts. Этот порядок не декоративный: он задает leadership / contract orchestration priority и порядок root nodes в Development Tree.
+
+`Lead Product Part` agent не является отдельным абстрактным `Project/Application Orchestrator`. Мы отказываемся от отдельного верхнего project-agent-а, потому что lead Product Part уже является естественным владельцем главной boundary приложения.
+
+Lead Product Part workflow создает application-wide `Contract Graph`:
+
+- какие Product Parts, clusters и modules обмениваются commands/events/queries/state/artifacts;
+- какие facade boundaries являются публичными;
+- какие dependencies разрешены;
+- какие dependencies запрещены;
+- какие payload names / ports / shared interfaces нужны;
+- какие execution waves можно запускать serial или parallel;
+- какие downstream nodes ждут assigned contract slice.
+
+Минимальная логика:
+
+```text
+Quality Gates Baseline accepted
+  -> Core materializes Development Tree branch scaffolding
+  -> Core creates lead Product Part managed todo-plan.md
+  -> Core unlocks only the lead Product Part agent start action
+  -> non-lead Product Parts / clusters / modules stay visible but locked
+  -> Lead Product Part agent drafts Contract Graph
+  -> Core validates graph structure and references
+  -> user reviews / revises / accepts Contract Graph
+  -> Core freezes accepted graph revision
+  -> Core materializes downstream contract artifacts
+  -> Core unlocks only the first allowed Product Part / Cluster / Module wave
+```
+
+До frozen `Contract Graph` нельзя запускать обычные Product Part / Cluster / Module agents, потому что у них еще нет assigned contract slice. Иначе module agent начнет проектировать facade/specification в отрыве от общего приложения.
+
+После downstream work Lead Product Part возвращается как application-level integration owner:
+
+```text
+Module implementation
+  -> Cluster integration
+  -> Product Part integration
+  -> Lead Product Part application integration
+  -> final user review
+```
+
+Implementation status as of 2026-06-02:
+
+- Core prompt/validation layer for `Diagram Modules` already requires `leadProductPartId` and `productPartLeadershipOrder`.
+- Core/PM read-model types already carry these fields.
+- Sidebar projection already has a `Lead Product Part Orchestration` operation shape.
+- Filesystem scaffolding already knows `lead-product-part-orchestration/contract-graph`, `cross-part-contracts`, `shared-interfaces`, and `execution-waves` directories.
+- Missing implementation: Core does not yet create the lead Product Part managed `todo-plan.md` at `doc/TODO/stages/development-tree/product-parts/<lead-part-id>/todo-plan.md`.
+- Missing implementation: Core does not yet bootstrap the Lead Product Part agent session as the first unlocked branch workflow after `Quality Gates Baseline`.
+- Missing implementation: current Development Tree materialization path must pass `leadProductPartId` and `productPartLeadershipOrder` into the filesystem planner, not only `plannedPartIds` / `generatedPartIds`.
+
 ---
 
 ## 5. Target Workflow
@@ -293,9 +363,10 @@ Worker не должен быть владельцем commit-а.
 3. `Diagram Modules` (trunk)
 4. `Application Skeleton` (trunk)
 5. `Quality Gates Baseline` (trunk)
-6. `Product Part Specification` (branch)
-7. `Cluster Design` (branch)
-8. `Module Workflow` (branch)
+6. `Lead Product Part Orchestration` / `Contract Graph` (branch root)
+7. `Product Part Specification` / participant contract review (branch)
+8. `Cluster Design` (branch)
+9. `Module Workflow` (branch)
 
 ### 5.2. Development Tree shape
 
