@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "a5453df66",
+  "lastRecordedCommit": "574d004db",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase48.stream1.task1",
-  "expectedCommitMessage": "test: verify product part handoff repair",
+  "currentTaskId": "phase49.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.442",
   "debt": {
-    "expectedCommitMessage": "test: verify product part handoff repair",
-    "preCommitHead": "a5453df66",
+    "expectedCommitMessage": "docs: prepare release 1.2.442",
+    "preCommitHead": "574d004db",
     "stage": "commit_pending",
-    "taskId": "phase48.stream1.task1"
+    "taskId": "phase49.stream1.task1"
   }
 }
 ```
@@ -360,7 +360,27 @@
 ### Stream: Targeted Checks
 
 92. [DONE] `phase48.stream1.task1` Run targeted Core build/tests for Product Part handoff repair after implementation and record results before any release build decision (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part handoff repair`). Result: `npm run plan:validate`, `npm run build --workspace=@codeai-hub/core`, `product-part-development-brief-turn-controller.test.js`, `workflow-state-last-active-resolver.test.js`, and the NodeAgentSessionBootstrapper prompt persistence subtest passed.
-93. [PENDING] Git Commit: `test: verify product part handoff repair` (hash: TBD)
+93. [DONE] Git Commit: `test: verify product part handoff repair` (hash: 574d004db)
+
+## Phase 49 - Release 1.2.442 Preparation (owner: Codex, updated: 2026-06-02)
+
+### Stream: Release Docs
+
+94. [DONE] `phase49.stream1.task1` Prepare release docs for version 1.2.442 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.442`). Result: README and CHANGELOG describe release 1.2.442 as the Product Part agent handoff repair.
+95. [PENDING] Git Commit: `docs: prepare release 1.2.442` (hash: TBD)
+
+## Phase 50 - Release 1.2.442 Build (owner: Codex, updated: 2026-06-02)
+
+### Stream: Build Artifacts
+
+96. [TODO] `phase50.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.442 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.442`).
+97. [TODO] Git Commit: `chore: build release 1.2.442` (hash: TBD)
+
+## Phase 51 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: User Retest
+
+98. [TODO] `phase51.stream1.task1` User installs/tests release 1.2.442 with the simplified project flow and verifies Product Part agent outputs are committed, Product Part todo-plans move to review, start prompts are visible, and workflow state does not regress (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 

@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.442] - 2026-06-02
+### Fixed
+- **Product Part agent outputs are now Core-accepted.** When a Product Part Development Brief agent fills the draft, Core validates the required blocks, commits the accepted draft, and advances that Product Part stage `todo-plan.md` to user review.
+- **Accepted briefs now show real agent work.** Filled `ProductPartDevelopmentBrief.draft.md` artifacts keep explicit draft status and are marked `agentTouched: true` instead of looking like untouched generated templates.
+- **Product Part sessions no longer regress workflow state.** Development Tree/Product Part sessions preserve the newer Documentation Tree stage after Quality Gates handoff instead of pushing `workflow/state.json` back to Description.
+- **Product Part start prompts are visible in session history.** Core stores the first Product Part agent assignment as an auditable session message before sending it to the provider.
+
+### Verification
+- `npm run plan:validate`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/product-part-development-brief-turn-controller.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-state-last-active-resolver.test.js`
+- `node --test --test-name-pattern "uses materialized node path" packages/core/dist/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.js`
+
 ## [1.2.441] - 2026-06-02
 ### Fixed
 - **Product Part Development Brief bootstrap now waits for Quality Gates.** Core no longer creates `ProductPartDevelopmentBrief.draft.md` or Product Part stage `todo-plan.md` files during Diagram Modules completion or `workflow-state` reads.
