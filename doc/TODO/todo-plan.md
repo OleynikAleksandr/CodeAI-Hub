@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "b32001f8e",
+  "lastRecordedCommit": "059c254d7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase44.stream1.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.441",
+  "currentTaskId": "phase45.stream1.task1",
+  "expectedCommitMessage": "chore: build release 1.2.441",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.441",
-    "preCommitHead": "b32001f8e",
+    "expectedCommitMessage": "chore: build release 1.2.441",
+    "preCommitHead": "059c254d7",
     "stage": "commit_pending",
-    "taskId": "phase44.stream1.task1"
+    "taskId": "phase45.stream1.task1"
   }
 }
 ```
@@ -319,14 +319,14 @@
 ### Stream: Release Docs
 
 77. [DONE] `phase44.stream1.task1` Prepare release docs for version 1.2.441 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.441`). Result: README and CHANGELOG now describe release 1.2.441 as the Quality Gates-owned Product Part Development Brief handoff fix.
-78. [PENDING] Git Commit: `docs: prepare release 1.2.441` (hash: TBD)
+78. [DONE] Git Commit: `docs: prepare release 1.2.441` (hash: 059c254d7)
 
 ## Phase 45 - Release 1.2.441 Build (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Build Artifacts
 
-79. [TODO] `phase45.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.441 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.441`).
-80. [TODO] Git Commit: `chore: build release 1.2.441` (hash: TBD)
+79. [DONE] `phase45.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.441 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.441`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.441.vsix`; release tarballs created in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
+80. [PENDING] Git Commit: `chore: build release 1.2.441` (hash: TBD)
 
 ## Phase 46 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
