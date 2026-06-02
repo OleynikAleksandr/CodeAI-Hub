@@ -13,6 +13,7 @@ const CORE_STATE_BROADCAST_RE =
 test("RemoteBridge rebroadcasts Core state after provider status changes", async () => {
   const source = await readFile(SOURCE_PATH, "utf8");
   const providerGuardIndex = source.indexOf('event.phase === "provider"');
+  const finalizeGuardIndex = source.indexOf('event.phase === "finalize"');
   const loadingStatusIndex = source.indexOf(
     'this.broadcast({ type: "core:loading-status", payload: event });'
   );
@@ -20,8 +21,10 @@ test("RemoteBridge rebroadcasts Core state after provider status changes", async
   const stateBroadcastIndex = stateBroadcastMatch?.index ?? -1;
 
   assert.notEqual(providerGuardIndex, -1);
+  assert.notEqual(finalizeGuardIndex, -1);
   assert.notEqual(loadingStatusIndex, -1);
   assert.notEqual(stateBroadcastIndex, -1);
   assert.ok(loadingStatusIndex < providerGuardIndex);
+  assert.ok(providerGuardIndex < finalizeGuardIndex);
   assert.ok(providerGuardIndex < stateBroadcastIndex);
 });

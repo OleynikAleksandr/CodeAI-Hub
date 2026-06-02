@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "ec0405939",
+  "lastRecordedCommit": "960884aaf",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase50.stream1.task1",
-  "expectedCommitMessage": "chore: build release 1.2.442",
+  "currentTaskId": "phase52.stream1.task1",
+  "expectedCommitMessage": "fix: broadcast provider state after warmup",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.442",
-    "preCommitHead": "ec0405939",
+    "expectedCommitMessage": "fix: broadcast provider state after warmup",
+    "preCommitHead": "960884aaf",
     "stage": "commit_pending",
-    "taskId": "phase50.stream1.task1"
+    "taskId": "phase52.stream1.task1"
   }
 }
 ```
@@ -374,13 +374,33 @@
 ### Stream: Build Artifacts
 
 96. [DONE] `phase50.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.442 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.442`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.442.vsix`; release tarballs created in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-97. [PENDING] Git Commit: `chore: build release 1.2.442` (hash: TBD)
+97. [DONE] Git Commit: `chore: build release 1.2.442` (hash: 960884aaf)
 
 ## Phase 51 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: User Retest
 
-98. [TODO] `phase51.stream1.task1` User installs/tests release 1.2.442 with the simplified project flow and verifies Product Part agent outputs are committed, Product Part todo-plans move to review, start prompts are visible, and workflow state does not regress (scope: `doc/TODO/todo-plan.md`).
+98. [BLOCKED] `phase51.stream1.task1` User installs/tests release 1.2.442 with the simplified project flow and verifies Product Part agent outputs are committed, Product Part todo-plans move to review, start prompts are visible, and workflow state does not regress (scope: `doc/TODO/todo-plan.md`). Result: retest found a provider picker regression: Project Manager can keep the stale `starting`/unavailable Claude provider snapshot even after Core reports `claudeCodeCli` as active through `/api/v1/status`.
+
+## Phase 52 - Provider Warmup Snapshot Repair (owner: Codex, updated: 2026-06-02)
+
+### Stream: Core State Broadcast
+
+99. [DONE] `phase52.stream1.task1` Ensure Core broadcasts a fresh `core:state` provider snapshot after startup warmup completes, so Project Manager provider rows move from `starting`/unavailable to active without requiring a reload (scope: `packages/core/src/remote-bridge/index.ts, packages/core/src/remote-bridge/remote-bridge-provider-state-broadcast.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: broadcast provider state after warmup`). Result: RemoteBridge now rebroadcasts Core state on provider status events and the final ready status, so clients connected during warmup receive the post-warmup active provider snapshot.
+100. [PENDING] Git Commit: `fix: broadcast provider state after warmup` (hash: TBD)
+
+## Phase 53 - Tooling Verification (owner: Codex, updated: 2026-06-02)
+
+### Stream: Targeted Checks
+
+101. [TODO] `phase53.stream1.task1` Run plan validation, focused provider-state broadcast test, and Core build after the provider warmup snapshot repair (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify provider warmup snapshot repair`).
+102. [TODO] Git Commit: `test: verify provider warmup snapshot repair` (hash: TBD)
+
+## Phase 54 - Release Build Confirmation (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: Release Confirmation
+
+103. [TODO] `phase54.stream1.task1` Await explicit user confirmation before preparing/building the next release after the provider warmup snapshot repair (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
