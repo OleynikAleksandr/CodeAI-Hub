@@ -8,6 +8,19 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.444] - 2026-06-02
+### Fixed
+- **Product Part agents now use global localization settings.** Product Part bootstrap resolves response and draft-artifact languages from the global settings source, so Russian workspaces use `ru/ru` instead of falling back to `en/en`.
+- **Product Part start prompts are visible user turns.** Core persists Development Tree agent start prompts as auditable `user` messages while keeping Core acceptance/status feedback as system messages.
+- **Accepted Product Part handoffs now keep the workspace clean.** Core includes `.codeai-hub/<workspace>/continuity/index.json` in the managed ledger commit when accepting a Product Part Development Brief.
+
+### Verification
+- `npm run plan:validate`
+- `node --import tsx --test packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/product-part-development-brief-turn-controller.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.443] - 2026-06-02
 ### Fixed
 - **Provider picker now receives the final warmup state.** Core rebroadcasts `core:state` after startup warmup completes, so Project Manager provider rows move from `starting` / unavailable to active once providers such as Claude are ready.

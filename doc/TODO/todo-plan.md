@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "464d297f4",
+  "lastRecordedCommit": "1df0b0988",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase59.stream1.task1",
-  "expectedCommitMessage": "test: verify product part language and ledger repair",
+  "currentTaskId": "phase60.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.444",
   "debt": {
-    "expectedCommitMessage": "test: verify product part language and ledger repair",
-    "preCommitHead": "464d297f4",
+    "expectedCommitMessage": "docs: prepare release 1.2.444",
+    "preCommitHead": "1df0b0988",
     "stage": "commit_pending",
-    "taskId": "phase59.stream1.task1"
+    "taskId": "phase60.stream1.task1"
   }
 }
 ```
@@ -441,14 +441,14 @@
 ### Stream: Targeted Checks
 
 115. [DONE] `phase59.stream1.task1` Run plan validation plus focused Core tests/builds for Product Part language, prompt role, and ledger-clean handoff before release preparation (scope: `doc/TODO/todo-plan.md, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts`; expected commit: `test: verify product part language and ledger repair`). Result: `npm run plan:validate`, Product Part prompt language bootstrapper test, Product Part start-prompt role test, Product Part brief handoff ledger-clean test, and `npm run build --workspace=@codeai-hub/core` passed; the start-prompt role regression test now avoids `import.meta` so it compiles under the current Core CommonJS build.
-116. [PENDING] Git Commit: `test: verify product part language and ledger repair` (hash: TBD)
+116. [DONE] Git Commit: `test: verify product part language and ledger repair` (hash: 1df0b0988)
 
 ## Phase 60 - Release 1.2.444 Preparation (owner: Codex, updated: 2026-06-02)
 
 ### Stream: Release Docs
 
-117. [TODO] `phase60.stream1.task1` Prepare release docs for version 1.2.444 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.444`).
-118. [TODO] Git Commit: `docs: prepare release 1.2.444` (hash: TBD)
+117. [DONE] `phase60.stream1.task1` Prepare release docs for version 1.2.444 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.444`). Result: README and CHANGELOG describe release 1.2.444 as the Product Part agent language, visible start-prompt, and continuity-ledger cleanliness repair.
+118. [PENDING] Git Commit: `docs: prepare release 1.2.444` (hash: TBD)
 
 ## Phase 61 - Release 1.2.444 Build (owner: Codex, updated: 2026-06-02)
 
