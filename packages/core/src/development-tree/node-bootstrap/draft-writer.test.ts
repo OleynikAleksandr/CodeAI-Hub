@@ -120,7 +120,11 @@ test("DevelopmentTreeNodeBootstrapFacade materializes drafts for consumed nodes"
 
     assert.deepEqual(
       result.writtenDrafts.map((draft) => draft.fileName),
-      ["PartDescription.draft.md", MODULE_SPEC_PATH, MODULE_CONTRACT_PATH]
+      [
+        "ProductPartDevelopmentBrief.draft.md",
+        MODULE_SPEC_PATH,
+        MODULE_CONTRACT_PATH,
+      ]
     );
     assert.equal(result.processedCount, 2);
   } finally {

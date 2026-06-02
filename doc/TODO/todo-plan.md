@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "6e088af57",
+  "lastRecordedCommit": "6e2908ba8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase28.stream1.task2",
-  "expectedCommitMessage": "feat: expose product part brief artifacts",
+  "currentTaskId": "phase28.stream1.task3",
+  "expectedCommitMessage": "test: update product part brief draft coverage",
   "debt": {
-    "expectedCommitMessage": "feat: expose product part brief artifacts",
-    "preCommitHead": "6e088af57",
+    "expectedCommitMessage": "test: update product part brief draft coverage",
+    "preCommitHead": "6e2908ba8",
     "stage": "commit_pending",
-    "taskId": "phase28.stream1.task2"
+    "taskId": "phase28.stream1.task3"
   }
 }
 ```
@@ -226,9 +226,9 @@
 44. [DONE] `phase28.stream1.task1` Rename the Product Part draft template/readiness rule and first agent message to `Product Part Development Brief` instead of the older generic part description wording (scope: `packages/core/src/development-tree/node-bootstrap/draft-template-registry.ts, packages/core/src/development-tree/node-bootstrap/draft-readiness-classifier.ts, packages/core/src/development-tree/node-bootstrap/node-first-message-builder.ts`; expected commit: `feat: define product part brief prompts`).
 45. [DONE] Git Commit: `feat: define product part brief prompts` (hash: 6e088af57)
 46. [DONE] `phase28.stream1.task2` Expose the renamed Product Part Development Brief artifact through the Development Tree read-model and focused snapshot coverage (scope: `packages/core/src/development-tree/development-tree-state-facade.ts, packages/core/src/development-tree/development-tree-state-facade-metadata.test.ts, packages/core/src/remote-bridge/handlers/development-tree-snapshot.test.ts`; expected commit: `feat: expose product part brief artifacts`).
-47. [PENDING] Git Commit: `feat: expose product part brief artifacts` (hash: TBD)
-48. [TODO] `phase28.stream1.task3` Update draft generation/readiness focused tests for the renamed Product Part Development Brief artifact (scope: `packages/core/src/development-tree/node-bootstrap/draft-template-registry.test.ts, packages/core/src/development-tree/node-bootstrap/draft-readiness-classifier.test.ts, packages/core/src/development-tree/node-bootstrap/draft-writer.test.ts`; expected commit: `test: update product part brief draft coverage`).
-49. [TODO] Git Commit: `test: update product part brief draft coverage` (hash: TBD)
+47. [DONE] Git Commit: `feat: expose product part brief artifacts` (hash: 6e2908ba8)
+48. [DONE] `phase28.stream1.task3` Update draft generation/readiness focused tests for the renamed Product Part Development Brief artifact (scope: `packages/core/src/development-tree/node-bootstrap/draft-template-registry.test.ts, packages/core/src/development-tree/node-bootstrap/draft-readiness-classifier.test.ts, packages/core/src/development-tree/node-bootstrap/draft-writer.test.ts`; expected commit: `test: update product part brief draft coverage`).
+49. [PENDING] Git Commit: `test: update product part brief draft coverage` (hash: TBD)
 50. [TODO] `phase28.stream1.task4` Update first prompt/session bootstrap focused tests for Product Part Development Brief naming (scope: `packages/core/src/development-tree/node-bootstrap/node-first-message-builder.test.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, packages/core/src/development-tree/node-bootstrap/development-tree-node-bootstrap-facade.test.ts`; expected commit: `test: update product part brief prompt coverage`).
 51. [TODO] Git Commit: `test: update product part brief prompt coverage` (hash: TBD)
 

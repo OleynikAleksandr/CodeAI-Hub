@@ -20,7 +20,7 @@ const GENERATED_ZONE_PATTERN = /<!-- generated -->[\s\S]*<!-- \/generated -->/;
 const AGENT_FILL_SENTINEL =
   "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._";
 const PATCH_FRIENDLY_RESPONSIBILITY_PATTERN =
-  /## Responsibility\n\n<!-- agent-fill -->\n_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content\._\n<!-- \/agent-fill -->/;
+  /## Product purpose\n\n<!-- agent-fill -->\n_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content\._\n<!-- \/agent-fill -->/;
 const AGENT_FILL_BLOCK_PATTERN =
   /<!-- agent-fill -->\n([\s\S]*?)\n<!-- \/agent-fill -->/g;
 const TRAILING_WHITESPACE_PATTERN = /[ \t]$/m;
@@ -62,7 +62,7 @@ test("DraftTemplateRegistry selects structural draft files by node kind", () => 
         createNode({ kind: "product_part", id: "local-runtime" })
       )
       .map((template) => template.fileName),
-    ["PartDescription.draft.md"]
+    ["ProductPartDevelopmentBrief.draft.md"]
   );
   assert.deepEqual(
     registry

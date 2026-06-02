@@ -18,7 +18,12 @@ ${content}
 test("DraftReadinessClassifier returns idle when agent-fill sections are empty", () => {
   const result = new DraftReadinessClassifier().classify({
     kind: "product_part",
-    files: [{ fileName: "PartDescription.draft.md", content: createDraft("") }],
+    files: [
+      {
+        fileName: "ProductPartDevelopmentBrief.draft.md",
+        content: createDraft(""),
+      },
+    ],
   });
 
   assert.equal(result.readiness, "idle");
@@ -68,7 +73,7 @@ test("DraftReadinessClassifier treats outdated or orphaned drafts as in_progress
     kind: "product_part",
     files: [
       {
-        fileName: "PartDescription.draft.md",
+        fileName: "ProductPartDevelopmentBrief.draft.md",
         content: createDraft("Responsibility is described.").replace(
           "orphaned: false",
           "orphaned: true"
