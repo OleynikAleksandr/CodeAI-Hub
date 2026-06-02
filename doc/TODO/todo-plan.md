@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "6c9af7801",
+  "lastRecordedCommit": "031f37539",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase53.stream1.task1",
-  "expectedCommitMessage": "test: verify provider warmup snapshot repair",
+  "currentTaskId": "phase55.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.443",
   "debt": {
-    "expectedCommitMessage": "test: verify provider warmup snapshot repair",
-    "preCommitHead": "6c9af7801",
+    "expectedCommitMessage": "docs: prepare release 1.2.443",
+    "preCommitHead": "031f37539",
     "stage": "commit_pending",
-    "taskId": "phase53.stream1.task1"
+    "taskId": "phase55.stream1.task1"
   }
 }
 ```
@@ -394,13 +394,33 @@
 ### Stream: Targeted Checks
 
 101. [DONE] `phase53.stream1.task1` Run plan validation, focused provider-state broadcast test, and Core build after the provider warmup snapshot repair (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify provider warmup snapshot repair`). Result: `npm run plan:validate`, `node --test packages/core/dist/remote-bridge/remote-bridge-provider-state-broadcast.test.js`, and `npm run build --workspace=@codeai-hub/core` passed.
-102. [PENDING] Git Commit: `test: verify provider warmup snapshot repair` (hash: TBD)
+102. [DONE] Git Commit: `test: verify provider warmup snapshot repair` (hash: 031f37539)
 
 ## Phase 54 - Release Build Confirmation (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: Release Confirmation
 
-103. [TODO] `phase54.stream1.task1` Await explicit user confirmation before preparing/building the next release after the provider warmup snapshot repair (scope: `doc/TODO/todo-plan.md`).
+103. [DONE] `phase54.stream1.task1` Await explicit user confirmation before preparing/building the next release after the provider warmup snapshot repair (scope: `doc/TODO/todo-plan.md`). Result: user explicitly requested a new release build.
+
+## Phase 55 - Release 1.2.443 Preparation (owner: Codex, updated: 2026-06-02)
+
+### Stream: Release Docs
+
+104. [DONE] `phase55.stream1.task1` Prepare release docs for version 1.2.443 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.443`). Result: README and CHANGELOG describe release 1.2.443 as the provider warmup snapshot repair.
+105. [PENDING] Git Commit: `docs: prepare release 1.2.443` (hash: TBD)
+
+## Phase 56 - Release 1.2.443 Build (owner: Codex, updated: 2026-06-02)
+
+### Stream: Build Artifacts
+
+106. [TODO] `phase56.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.443 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.443`).
+107. [TODO] Git Commit: `chore: build release 1.2.443` (hash: TBD)
+
+## Phase 57 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
+
+### Stream: User Retest
+
+108. [TODO] `phase57.stream1.task1` User installs/tests release 1.2.443 and verifies Claude provider rows move from warmup/starting to active after Core startup, then continues the simplified FinderWidget workflow (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 

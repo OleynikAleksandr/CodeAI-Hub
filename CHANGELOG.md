@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.443] - 2026-06-02
+### Fixed
+- **Provider picker now receives the final warmup state.** Core rebroadcasts `core:state` after startup warmup completes, so Project Manager provider rows move from `starting` / unavailable to active once providers such as Claude are ready.
+- **Claude provider display stays aligned with Core status.** The UI no longer has to rely on the stale warmup snapshot when `/api/v1/status` already reports `claudeCodeCli` as active.
+
+### Verification
+- `npm run plan:validate`
+- `node --test packages/core/dist/remote-bridge/remote-bridge-provider-state-broadcast.test.js`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.442] - 2026-06-02
 ### Fixed
 - **Product Part agent outputs are now Core-accepted.** When a Product Part Development Brief agent fills the draft, Core validates the required blocks, commits the accepted draft, and advances that Product Part stage `todo-plan.md` to user review.
