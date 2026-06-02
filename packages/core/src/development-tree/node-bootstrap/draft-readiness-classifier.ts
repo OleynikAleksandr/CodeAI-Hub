@@ -30,7 +30,7 @@ const ORPHANED_TRUE_PATTERN = /^orphaned:\s*true\s*$/im;
 const REQUIRED_FILES = {
   cluster: ["ClusterDescription.draft.md", "ClusterFacadeContract.draft.md"],
   module: ["ModuleSpec.draft.md", "ModuleFacadeContract.draft.md"],
-  product_part: ["PartDescription.draft.md"],
+  product_part: ["ProductPartDevelopmentBrief.draft.md"],
 } as const satisfies Record<
   DevelopmentTreeDraftReadinessKind,
   readonly string[]

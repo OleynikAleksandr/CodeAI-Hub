@@ -9,7 +9,7 @@ export type DevelopmentTreeDraftFileName =
   | "ClusterFacadeContract.draft.md"
   | "ModuleFacadeContract.draft.md"
   | "ModuleSpec.draft.md"
-  | "PartDescription.draft.md";
+  | "ProductPartDevelopmentBrief.draft.md";
 
 export interface DevelopmentTreeDraftTemplate {
   readonly fileName: DevelopmentTreeDraftFileName;
@@ -35,7 +35,10 @@ const AGENT_FILL_SENTINEL =
   "_CODEAI_AGENT_FILL_SENTINEL: replace this line with draft content._";
 
 const PRODUCT_PART_TEMPLATES: readonly DevelopmentTreeDraftTemplate[] = [
-  { fileName: "PartDescription.draft.md", nodeKind: "product_part" },
+  {
+    fileName: "ProductPartDevelopmentBrief.draft.md",
+    nodeKind: "product_part",
+  },
 ] as const;
 
 const CLUSTER_TEMPLATES: readonly DevelopmentTreeDraftTemplate[] = [
@@ -72,7 +75,7 @@ const createAgentSection = (title: string): string =>
 const createGeneratedBlock = (lines: readonly string[]): string =>
   [GENERATED_START, ...lines, GENERATED_END].join("\n");
 
-const renderProductPartDescription = (
+const renderProductPartDevelopmentBrief = (
   node: DevelopmentTreeDetectedNode
 ): string =>
   [
@@ -87,9 +90,18 @@ const renderProductPartDescription = (
       "",
       "## Owns (derived)",
       "- Child clusters and standalone modules materialized under this part.",
+      "",
+      "## Reminder",
+      "- This Product Part has no standalone facade contract. Cluster and Module agents define their own contracts later.",
     ]),
     "",
-    createAgentSection("Responsibility"),
+    createAgentSection("Product purpose"),
+    "",
+    createAgentSection("Included clusters and standalone modules"),
+    "",
+    createAgentSection("Skeleton and Quality Gates constraints"),
+    "",
+    createAgentSection("Visible dependencies"),
     "",
     createAgentSection("Open questions"),
   ].join("\n");
@@ -193,8 +205,8 @@ const renderTemplateBody = (
   node: DevelopmentTreeDetectedNode
 ): string => {
   switch (fileName) {
-    case "PartDescription.draft.md":
-      return renderProductPartDescription(node);
+    case "ProductPartDevelopmentBrief.draft.md":
+      return renderProductPartDevelopmentBrief(node);
     case "ClusterDescription.draft.md":
       return renderClusterDescription(node);
     case "ClusterFacadeContract.draft.md":

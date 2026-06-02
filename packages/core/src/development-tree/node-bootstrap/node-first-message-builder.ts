@@ -162,7 +162,8 @@ const createNodeSpecificRules = (
     ];
   }
   return [
-    "- Define product-part responsibility in PartDescription.draft.md.",
+    "- Create the Product Part Development Brief in ProductPartDevelopmentBrief.draft.md.",
+    "- Keep it as a plain-language coordination brief, not a facade contract.",
     "- Keep child cluster/module ownership aligned with the materialized tree.",
   ];
 };
