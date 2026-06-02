@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "7b4803ef5",
+  "lastRecordedCommit": "77f8a5f84",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase58.stream1.task1",
-  "expectedCommitMessage": "fix: use global language settings for product part agents",
+  "currentTaskId": "phase58.stream1.task2",
+  "expectedCommitMessage": "fix: persist product part start prompts as user turns",
   "debt": {
-    "expectedCommitMessage": "fix: use global language settings for product part agents",
-    "preCommitHead": "7b4803ef5",
+    "expectedCommitMessage": "fix: persist product part start prompts as user turns",
+    "preCommitHead": "77f8a5f84",
     "stage": "commit_pending",
-    "taskId": "phase58.stream1.task1"
+    "taskId": "phase58.stream1.task2"
   }
 }
 ```
@@ -427,9 +427,9 @@
 ### Stream: Language Source And Start Prompt Role
 
 109. [DONE] `phase58.stream1.task1` Make Product Part agent bootstrap resolve chat/artifact languages from the global localization settings source already used by translation policy, not from workspace-local provider settings; verify `ru/ru` appears in the first prompt when global settings define Russian (scope: `packages/core/src/config/provider-settings-snapshot.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts`; expected commit: `fix: use global language settings for product part agents`). Result: Product Part prompt bootstrap now uses the same global-localization overlay as translation policy; focused bootstrapper tests confirm reasoning/artifact languages resolve from `CODEAI_GLOBAL_SETTINGS_PATH`.
-110. [PENDING] Git Commit: `fix: use global language settings for product part agents` (hash: TBD)
-111. [TODO] `phase58.stream1.task2` Persist Product Part agent start prompts as auditable `user` messages while keeping Core acceptance/status messages as system feedback (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/development-tree/node-bootstrap/node-agent-session-bootstrapper.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-workflow-session.managed-workspace.test.ts`; expected commit: `fix: persist product part start prompts as user turns`).
-112. [TODO] Git Commit: `fix: persist product part start prompts as user turns` (hash: TBD)
+110. [DONE] Git Commit: `fix: use global language settings for product part agents` (hash: 77f8a5f84)
+111. [DONE] `phase58.stream1.task2` Persist Product Part agent start prompts as auditable `user` messages while keeping Core acceptance/status messages as system feedback (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core.ts, packages/core/src/remote-bridge/handlers/session-request-handler-runtime-core-start-prompt-role.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: persist product part start prompts as user turns`). Result: Development Tree Product Part start prompts now persist through `appendDialogMessage` with `role: "user"` while Core acceptance messages remain system feedback; focused runtime-core regression test passed.
+112. [PENDING] Git Commit: `fix: persist product part start prompts as user turns` (hash: TBD)
 
 ### Stream: Managed Ledger Cleanliness
 

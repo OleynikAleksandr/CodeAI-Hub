@@ -200,8 +200,9 @@ export const createSessionRequestHandlerRuntimeCore = (
       handleMessage: async (sessionId, content) =>
         await messageDispatchRef.get().sendInternalMessage(sessionId, content),
       persistStartPrompt: (sessionId, content) =>
-        eventMessages.appendCoreMessage(sessionId, {
+        eventMessages.appendDialogMessage(sessionId, {
           content,
+          role: "user",
           tag: "development-tree-agent-start-prompt",
         }),
     },
