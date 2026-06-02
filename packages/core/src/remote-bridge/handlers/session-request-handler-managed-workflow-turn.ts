@@ -1,5 +1,3 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import type { DevelopmentTreeAgentSessionGateway } from "../../development-tree/node-bootstrap/node-agent-session-bootstrapper";
 import {
   buildApplicationSkeletonBoundaryBlockedMessage,
@@ -19,10 +17,7 @@ import {
 import { DiagramModulesStagePlanController } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-controller";
 import { commitDiagramModulesRejectedTurn } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-controller";
 import { parseDiagramModulesRepairTaskNumber } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-stage-plan-repair-model";
-import {
-  type DiagramModulesManagedValidationResult,
-  validateDiagramModulesManagedArtifacts,
-} from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
+import { validateDiagramModulesManagedArtifacts } from "../../managed-workflow-orchestration/diagram-modules/diagram-modules-validator";
 import {
   buildApplicationSkeletonReviewHandoffMessage,
   buildManagedPersistentReturnHandoffMessage,
@@ -38,6 +33,8 @@ import type { Session, SessionManager } from "../../session-manager";
 import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
 import { DevelopmentTreeQualityGatesHandoffBootstrap } from "./development-tree-quality-gates-handoff-bootstrap";
 import { dispatchManagedInternalContinuation as dispatchContinuation } from "./managed-internal-continuation-dispatch";
+import { persistManagedDecision } from "./managed-workflow-decision-persister";
+import { ProductPartDevelopmentBriefTurnController } from "./product-part-development-brief-turn-controller";
 import { buildQualityGatesRepairDispatch } from "./quality-gates-repair-prompt-dispatch";
 import type { SessionRequestHandlerEventMessages } from "./session-request-handler-event-messages";
 import type { SessionRequestHandlerMessageDispatch } from "./session-request-handler-message-dispatch";
@@ -67,31 +64,6 @@ interface SessionRequestHandlerManagedWorkflowTurnOptions {
   readonly qualityGatesStagePlan?: QualityGatesStagePlanController;
   readonly sessionManager: Pick<SessionManager, "getSession">;
 }
-const persistManagedDecision = async (params: {
-  readonly decision:
-    | ApplicationSkeletonManagedValidationResult
-    | DiagramModulesManagedValidationResult
-    | QualityGatesManagedValidationResult;
-  readonly schema: string;
-  readonly sessionId: string;
-  readonly stage: "application_skeleton" | "diagram_modules" | "quality_gates";
-  readonly workspaceRoot: string;
-  readonly workspaceSlug: string;
-}): Promise<void> => {
-  const relativePath = `.codeai-hub/${params.workspaceSlug}/workflow/managed/${params.stage}.json`;
-  const absolutePath = path.join(params.workspaceRoot, relativePath);
-  const snapshot = {
-    schema: params.schema,
-    stage: params.stage,
-    sessionId: params.sessionId,
-    updatedAt: new Date().toISOString(),
-    ...params.decision,
-    diagnostics: undefined,
-    nextPrompt: undefined,
-  };
-  await mkdir(path.dirname(absolutePath), { recursive: true });
-  await writeFile(absolutePath, `${JSON.stringify(snapshot, null, 2)}\n`);
-};
 const resolveMaterializationRepairAttemptNumber = (
   taskId: string | null
 ): number => {
@@ -110,6 +82,8 @@ export class SessionRequestHandlerManagedWorkflowTurn {
   private readonly options: SessionRequestHandlerManagedWorkflowTurnOptions;
   private readonly productPartBootstrap =
     new DevelopmentTreeQualityGatesHandoffBootstrap();
+  private readonly productPartBriefTurn =
+    new ProductPartDevelopmentBriefTurnController();
   private readonly qualityGatesStagePlan: QualityGatesStagePlanController;
 
   constructor(options: SessionRequestHandlerManagedWorkflowTurnOptions) {
@@ -169,6 +143,18 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         workspaceRoot: session.workspacePath,
         workspaceSlug: session.initiativeSlug,
       });
+    }
+    const productPartTurn = await this.productPartBriefTurn.handleTurnCompleted(
+      {
+        sessionId,
+        stage: session.stage,
+        workspaceRoot: session.workspacePath,
+        workspaceSlug: session.initiativeSlug,
+      }
+    );
+    if (productPartTurn.handled) {
+      this.appendCoreMessage(sessionId, productPartTurn.message);
+      return "settled";
     }
     return "not_managed";
   }

@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "059c254d7",
+  "lastRecordedCommit": "921902dce",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase45.stream1.task1",
-  "expectedCommitMessage": "chore: build release 1.2.441",
+  "currentTaskId": "phase47.stream1.task1",
+  "expectedCommitMessage": "fix: accept product part brief agent outputs",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.441",
-    "preCommitHead": "059c254d7",
+    "expectedCommitMessage": "fix: accept product part brief agent outputs",
+    "preCommitHead": "921902dce",
     "stage": "commit_pending",
-    "taskId": "phase45.stream1.task1"
+    "taskId": "phase47.stream1.task1"
   }
 }
 ```
@@ -326,13 +326,41 @@
 ### Stream: Build Artifacts
 
 79. [DONE] `phase45.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.441 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.441`). Result: `./scripts/build-all.sh --allow-dirty` and `./scripts/build-release.sh --use-current-version --allow-dirty` passed; VSIX created at `codeai-hub-1.2.441.vsix`; release tarballs created in `doc/tmp/releases/` and `~/.codeai-hub/releases/`.
-80. [PENDING] Git Commit: `chore: build release 1.2.441` (hash: TBD)
+80. [DONE] Git Commit: `chore: build release 1.2.441` (hash: 921902dce)
 
 ## Phase 46 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: User Retest
 
-81. [TODO] `phase46.stream1.task1` User installs/tests release 1.2.441 and verifies Product Part Development Brief files are not created during Diagram Modules closure, then are created after Quality Gates Baseline completion (scope: `doc/TODO/todo-plan.md`).
+81. [DONE] `phase46.stream1.task1` User installs/tests release 1.2.441 and verifies Product Part Development Brief files are not created during Diagram Modules closure, then are created after Quality Gates Baseline completion (scope: `doc/TODO/todo-plan.md`). Result: Release 1.2.441 passed the bootstrap timing retest: Product Part brief bootstrap starts after Quality Gates, and three Product Part agent sessions are created. Follow-up defects remain: agent outputs are not Core-accepted/committed, Product Part todo-plans do not advance to review, brief metadata remains agentTouched:false, workflow state regresses, and start prompts are not auditable.
+
+## Phase 47 - Product Part Agent Handoff Repair (owner: Codex, updated: 2026-06-02)
+
+### Stream: Agent Output Acceptance And Managed Commits
+
+82. [DONE] `phase47.stream1.task1` Add Core-owned acceptance for completed Product Part Development Brief agent turns: detect the Product Part stage, validate that all `agent-fill` blocks are filled, stage the changed brief/continuity files, commit the accepted draft, and advance that Product Part `todo-plan.md` from Phase 1 to user review (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/development-tree/node-bootstrap/**, doc/TODO/todo-plan.md`; expected commit: `fix: accept product part brief agent outputs`).
+83. [PENDING] Git Commit: `fix: accept product part brief agent outputs` (hash: TBD)
+84. [TODO] `phase47.stream1.task2` Correct Product Part brief metadata after agent edits: set/derive `agentTouched: true`, keep draft status explicit, and avoid leaving filled briefs looking like untouched generated templates (scope: `packages/core/src/development-tree/**, packages/core/src/remote-bridge/handlers/**, doc/TODO/todo-plan.md`; expected commit: `fix: mark product part briefs touched by agents`).
+85. [TODO] Git Commit: `fix: mark product part briefs touched by agents` (hash: TBD)
+
+### Stream: Workflow State And Session Audit
+
+86. [TODO] `phase47.stream2.task1` Prevent Development Tree Product Part session updates from regressing `.codeai-hub/<workspace>/workflow/state.json` to an older Documentation Tree stage; preserve the correct last active stage after Quality Gates handoff and Product Part bootstrap (scope: `packages/core/src/remote-bridge/handlers/**, packages/core/src/workflow/**, doc/TODO/todo-plan.md`; expected commit: `fix: preserve workflow state during product part sessions`).
+87. [TODO] Git Commit: `fix: preserve workflow state during product part sessions` (hash: TBD)
+88. [TODO] `phase47.stream2.task2` Persist the Product Part agent start prompt as an auditable visible session message/event so the user can inspect the exact Core assignment for each Product Part session, not only the agent's responses (scope: `packages/core/src/development-tree/node-bootstrap/**, packages/core/src/unified-session/**, doc/TODO/todo-plan.md`; expected commit: `fix: persist product part agent start prompts`).
+89. [TODO] Git Commit: `fix: persist product part agent start prompts` (hash: TBD)
+
+### Stream: Regression Coverage
+
+90. [TODO] `phase47.stream3.task1` Add focused regression coverage for the complete post-Quality Gates Product Part handoff: bootstrap happens after Quality Gates, three Product Part agents can fill drafts, Core commits accepted outputs, Product Part todo-plans advance to review, workflow state does not regress, and start prompts are visible in session history (scope: `packages/core/src/remote-bridge/handlers/**/*.test.ts, packages/core/src/development-tree/**/*.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover product part brief handoff lifecycle`).
+91. [TODO] Git Commit: `test: cover product part brief handoff lifecycle` (hash: TBD)
+
+## Phase 48 - Tooling Verification (owner: Codex, updated: 2026-06-02)
+
+### Stream: Targeted Checks
+
+92. [TODO] `phase48.stream1.task1` Run targeted Core build/tests for Product Part handoff repair after implementation and record results before any release build decision (scope: `doc/TODO/todo-plan.md`; expected commit: `test: verify product part handoff repair`).
+93. [TODO] Git Commit: `test: verify product part handoff repair` (hash: TBD)
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
