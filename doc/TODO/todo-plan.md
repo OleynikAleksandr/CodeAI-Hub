@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "a535a8f61",
+  "lastRecordedCommit": "b60c46f5d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase68.stream1.task2",
-  "expectedCommitMessage": "docs: clarify workflow clear session cleanup",
+  "currentTaskId": "phase71.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.446",
   "debt": {
-    "expectedCommitMessage": "docs: clarify workflow clear session cleanup",
-    "preCommitHead": "a535a8f61",
+    "expectedCommitMessage": "docs: prepare release 1.2.446",
+    "preCommitHead": "b60c46f5d",
     "stage": "commit_pending",
-    "taskId": "phase68.stream1.task2"
+    "taskId": "phase71.stream1.task1"
   }
 }
 ```
@@ -503,19 +503,39 @@
 130. [DONE] `phase68.stream1.task1` Make workflow Clear/Undo prune all workflow unified history files and all provider-native session history files inside the workspace runtime capsule, independent of live runtime session registry, while preserving auth/settings/cache files (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-runtime-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.runtime-cleanup.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear workflow runtime history files`).
 131. [DONE] Git Commit: `fix: clear workflow runtime history files` (hash: a535a8f61)
 132. [DONE] `phase68.stream1.task2` Sync Workflow Clear documentation with the no-continuity runtime history cleanup behavior (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify workflow clear session cleanup`).
-133. [PENDING] Git Commit: `docs: clarify workflow clear session cleanup` (hash: TBD)
+133. [DONE] Git Commit: `docs: clarify workflow clear session cleanup` (hash: b60c46f5d)
 
 ## Phase 69 - Runtime Cleanup Verification (owner: Codex, updated: 2026-06-03)
 
 ### Stream: Targeted Checks
 
-134. [TODO] `phase69.stream1.task1` Run plan validation, focused runtime cleanup regression test, and affected Core build after the Clear/Undo cleanup repair (scope: `doc/TODO/todo-plan.md`).
+134. [DONE] `phase69.stream1.task1` Run plan validation, focused runtime cleanup regression test, and affected Core build after the Clear/Undo cleanup repair (scope: `doc/TODO/todo-plan.md`). Result: Result: npm run plan:validate passed; npm run build --workspace=@codeai-hub/core passed; focused compiled runtime cleanup test passed and confirms workflow unified histories plus provider-native session history containers are pruned while unrelated unified history and auth/settings/cache files are preserved.
 
 ## Phase 70 - Release Build Confirmation (owner: Oleksandr, updated: 2026-06-03)
 
 ### Stream: Release Confirmation
 
-135. [TODO] `phase70.stream1.task1` Await explicit user confirmation before preparing/building the next release with the corrected Clear/Undo runtime history cleanup behavior (scope: `doc/TODO/todo-plan.md`).
+135. [DONE] `phase70.stream1.task1` Await explicit user confirmation before preparing/building the next release with the corrected Clear/Undo runtime history cleanup behavior (scope: `doc/TODO/todo-plan.md`). Result: user explicitly requested a new release build.
+
+## Phase 71 - Release 1.2.446 Preparation (owner: Codex, updated: 2026-06-03)
+
+### Stream: Release Docs
+
+136. [DONE] `phase71.stream1.task1` Prepare release docs for version 1.2.446 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.446`).
+137. [PENDING] Git Commit: `docs: prepare release 1.2.446` (hash: TBD)
+
+## Phase 72 - Release 1.2.446 Build (owner: Codex, updated: 2026-06-03)
+
+### Stream: Build Artifacts
+
+138. [TODO] `phase72.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.446 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.446`).
+139. [TODO] Git Commit: `chore: build release 1.2.446` (hash: TBD)
+
+## Phase 73 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-03)
+
+### Stream: User Retest
+
+140. [TODO] `phase73.stream1.task1` User installs/tests release 1.2.446 on a clean FinderWidget workspace and verifies Clear/Undo removes workflow unified histories plus provider-native session histories while preserving provider auth/settings/cache files (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 

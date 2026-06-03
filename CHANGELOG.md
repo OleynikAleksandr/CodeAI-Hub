@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.446] - 2026-06-03
+### Fixed
+- **Clear/Undo now prunes old unified workflow histories without relying on live sessions.** Core removes workflow `.jsonl` histories and translation overlays for cleared workflow work even when those sessions are no longer present in the runtime session registry.
+- **Provider-native session history cleanup is workspace-wide.** Clear/Undo now prunes provider-native session history containers such as Codex `sessions/` and `shell_snapshots/`, Claude project/session logs, and Gemini chat session files inside the selected workspace runtime capsule.
+- **Provider runtime state is still preserved.** Auth, settings, installation ids, caches, models, memories, and other non-session runtime files remain intact.
+
+### Verification
+- `npm run plan:validate`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.runtime-cleanup.test.js`
+
 ## [1.2.445] - 2026-06-02
 ### Fixed
 - **Clear/Undo now removes unified runtime histories.** Workflow clear deletes downstream `.codeai-hub/<workspace>/runtime/sessions/unified/**` session histories and translation overlays instead of only removing in-memory Core sessions.
