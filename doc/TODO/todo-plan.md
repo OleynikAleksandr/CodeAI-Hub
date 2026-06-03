@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "66e037018",
+  "lastRecordedCommit": "358a577a6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream3.task1",
-  "expectedCommitMessage": "docs: sync workflow clear cleanup rollback",
+  "currentTaskId": "phase2.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.448",
   "debt": {
-    "expectedCommitMessage": "docs: sync workflow clear cleanup rollback",
-    "preCommitHead": "66e037018",
+    "expectedCommitMessage": "docs: prepare release 1.2.448",
+    "preCommitHead": "358a577a6",
     "stage": "commit_pending",
-    "taskId": "phase1.stream3.task1"
+    "taskId": "phase2.stream1.task1"
   }
 }
 ```
@@ -37,7 +37,7 @@
 - Keep the rollback scoped to the Clear/Undo session cleanup regression.
 - Use Git rollback mechanics for the cleanup code; do not rewrite public history.
 - Commit every completed task through `npm run plan:commit -- "<expected commit message>"`.
-- Do not build a release until the user explicitly asks for a release build.
+- The user explicitly asked for a verification release after the rollback; build `1.2.448` without closing the scope until user retest is complete.
 
 ## Phase 1 — Roll Back Clear/Undo Session Cleanup (owner: Codex, updated: 2026-06-03)
 
@@ -54,17 +54,29 @@
 ### Stream: Documentation Sync
 
 5. [DONE] `phase1.stream3.task1` Sync the workflow documentation so it no longer claims the reverted broad provider-native cleanup behavior as the active contract (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: sync workflow clear cleanup rollback`).
-6. [PENDING] `phase1.stream3.commit1` Git Commit: `docs: sync workflow clear cleanup rollback` (hash: TBD)
+6. [DONE] `phase1.stream3.commit1` Git Commit: `docs: sync workflow clear cleanup rollback` (hash: 358a577a6)
 
 ### Stream: Tooling Verification
 
-7. [TODO] `phase1.stream4.task1` Run targeted Clear/Undo tests plus Core build and plan validation after the rollback (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+7. [DONE] `phase1.stream4.task1` Run targeted Clear/Undo tests plus Core build and plan validation after the rollback (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification passed: @codeai-hub/core build, workflow-step-clear-service test suite (7 tests), and plan validation.
+
+## Phase 2 — Release 1.2.448 For Rollback Retest (owner: Codex, updated: 2026-06-03)
+
+### Stream: Release Notes
+
+8. [DONE] `phase2.stream1.task1` Prepare `1.2.448` release notes for the Clear/Undo session cleanup rollback (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.448`).
+9. [PENDING] `phase2.stream1.commit1` Git Commit: `docs: prepare release 1.2.448` (hash: TBD)
+
+### Stream: Release Build
+
+10. [TODO] `phase2.stream2.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` for `1.2.448`, then record the generated release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/launcher/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.448`).
+11. [TODO] `phase2.stream2.commit1` Git Commit: `chore: build release 1.2.448` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-8. [TODO] `phase1.stream5.task1` Hand over the rollback result for user retest; wait for explicit acceptance or the next failure report (scope: user workflow acceptance; expected commit: no commit expected).
+12. [TODO] `phase2.stream3.task1` Hand over release `1.2.448` for user retest; wait for explicit acceptance or the next failure report (scope: user workflow acceptance; expected commit: no commit expected).
 
 ### Stream: Scope Closeout
 
-9. [TODO] `phase1.stream6.task1` Close or extend this rollback scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close workflow clear cleanup rollback`).
-10. [TODO] `phase1.stream6.commit1` Git Commit: `docs: close workflow clear cleanup rollback` (hash: TBD)
+13. [TODO] `phase2.stream4.task1` Close or extend this rollback scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close workflow clear cleanup rollback`).
+14. [TODO] `phase2.stream4.commit1` Git Commit: `docs: close workflow clear cleanup rollback` (hash: TBD)

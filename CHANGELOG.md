@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.448] - 2026-06-03
+### Changed
+- **Rolled back broad Clear/Undo runtime history cleanup.** Clear/Undo no longer removes all workflow unified histories, Codex session and shell snapshot folders, Claude project/session logs, Gemini chat logs, or provider SQLite state from the selected workspace runtime capsule.
+- **Clear/Undo is back to the narrower, resume-safer cleanup path.** The active code removes live Core runtime session registrations for cleared workflow steps and only attempts the older narrow provider-native cleanup when a concrete live provider session id is known.
+- **Provider-native cleanup is deferred to a dedicated contract.** Future cleanup work must be provider-specific, resume-safe, and covered by tests that prove native session histories remain available until the owning workflow step is intentionally cleared.
+
+### Verification
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.test.js`
+- `npm run plan:validate`
+
 ## [1.2.447] - 2026-06-03
 ### Fixed
 - **Clear/Undo now finishes when rolling back to the first workflow boundary.** Core rematerializes the pruned workflow boundary registry before creating the clear commit, so clearing `Description` no longer fails on a missing `.codeai-hub/<workspace>/workflow/boundaries.json` pathspec.
