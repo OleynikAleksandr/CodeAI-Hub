@@ -2,7 +2,6 @@ import { readdir, readFile, rm, stat } from "node:fs/promises";
 import path from "node:path";
 import { buildHumanReadableDialogId } from "../../session-continuity/dialog-id";
 import type { Session } from "../../session-manager";
-import { isStageAtOrAfter } from "../../workflow/boundary/workflow-boundary-model";
 import {
   resolveWorkspaceRuntimeCapsule,
   type WorkspaceRuntimeProviderId,
@@ -23,21 +22,6 @@ const WORKFLOW_STAGE_FILE_SUFFIXES: ReadonlyArray<{
   { stage: "application_skeleton", suffix: "-application-skeleton" },
   { stage: "quality_gates", suffix: "-quality-gates" },
 ];
-const PROVIDER_HOME_IDS_BY_SESSION_PROVIDER_ID: Readonly<
-  Record<string, WorkspaceRuntimeProviderId>
-> = {
-  claude: "claude",
-  claudeCodeCli: "claude",
-  codex: "codex",
-  codexCli: "codex",
-  gemini: "gemini",
-  geminiCli: "gemini",
-  glmClaudeCode: "glm-claude-code",
-  "glm-claude-code": "glm-claude-code",
-  kimi: "kimi",
-  kimiCode: "kimi",
-};
-
 export interface WorkflowRuntimeSessionRef {
   readonly historySessionId: string;
   readonly providerId: string;
@@ -62,11 +46,6 @@ export const createWorkflowRuntimeSessionRef = (
   providerSessionId: session.providerSessionId,
   sessionId: session.id,
 });
-
-const resolveProviderHomeId = (
-  providerId: string
-): WorkspaceRuntimeProviderId | null =>
-  PROVIDER_HOME_IDS_BY_SESSION_PROVIDER_ID[providerId] ?? null;
 
 const walkSessionFiles = async (
   root: string,
@@ -114,13 +93,21 @@ const isProviderNativeSessionPath = (params: {
   return false;
 };
 
-const basenameWithoutJsonl = (filePath: string): string =>
-  path.basename(filePath).slice(0, -JSONL_EXTENSION.length);
+const basenameWithoutSessionExtension = (filePath: string): string => {
+  const basename = path.basename(filePath);
+  if (basename.endsWith(TRANSLATION_SESSION_SUFFIX)) {
+    return basename.slice(0, -TRANSLATION_SESSION_SUFFIX.length);
+  }
+  if (basename.endsWith(JSONL_EXTENSION)) {
+    return basename.slice(0, -JSONL_EXTENSION.length);
+  }
+  return basename;
+};
 
 const resolveWorkflowStageFromHistoryFileName = (
   filePath: string
 ): WorkflowStageId | null => {
-  const historyId = basenameWithoutJsonl(filePath);
+  const historyId = basenameWithoutSessionExtension(filePath);
   return (
     WORKFLOW_STAGE_FILE_SUFFIXES.find((entry) =>
       historyId.endsWith(entry.suffix)
@@ -137,20 +124,16 @@ const shouldRemoveWorkflowHistoryFile = (params: {
   readonly content: string;
   readonly exactHistorySessionIds: ReadonlySet<string>;
   readonly filePath: string;
-  readonly targetStage: WorkflowStageId;
 }): boolean => {
-  const historyId = basenameWithoutJsonl(params.filePath);
+  const historyId = basenameWithoutSessionExtension(params.filePath);
   if (params.exactHistorySessionIds.has(historyId)) {
     return true;
   }
   const stage = resolveWorkflowStageFromHistoryFileName(params.filePath);
-  if (stage && isStageAtOrAfter(stage, params.targetStage)) {
+  if (stage) {
     return true;
   }
-  return (
-    contentReferencesDevelopmentTree(params.content) &&
-    isStageAtOrAfter("quality_gates", params.targetStage)
-  );
+  return contentReferencesDevelopmentTree(params.content);
 };
 
 const readOptionalText = async (filePath: string): Promise<string> =>
@@ -203,10 +186,7 @@ export const pruneUnifiedWorkflowSessions = async (params: {
       withFileTypes: true,
     }).catch(() => []);
     for (const file of files) {
-      if (
-        !(file.isFile() && file.name.endsWith(JSONL_EXTENSION)) ||
-        file.name.endsWith(TRANSLATION_SESSION_SUFFIX)
-      ) {
+      if (!(file.isFile() && file.name.endsWith(JSONL_EXTENSION))) {
         continue;
       }
       const filePath = path.join(providerDirectory, file.name);
@@ -216,7 +196,6 @@ export const pruneUnifiedWorkflowSessions = async (params: {
           content,
           exactHistorySessionIds,
           filePath,
-          targetStage: params.targetStage,
         })
       ) {
         continue;
@@ -226,50 +205,19 @@ export const pruneUnifiedWorkflowSessions = async (params: {
         removedPaths,
         workspacePath: params.workspacePath,
       });
-      await removeFileIfExistsAndRecord({
-        filePath: filePath.replace(JSONL_EXTENSION, TRANSLATION_SESSION_SUFFIX),
-        removedPaths,
-        workspacePath: params.workspacePath,
-      });
+      if (!file.name.endsWith(TRANSLATION_SESSION_SUFFIX)) {
+        await removeFileIfExistsAndRecord({
+          filePath: filePath.replace(
+            JSONL_EXTENSION,
+            TRANSLATION_SESSION_SUFFIX
+          ),
+          removedPaths,
+          workspacePath: params.workspacePath,
+        });
+      }
     }
   }
   return removedPaths;
-};
-
-const buildProviderSessionIdsByHome = (
-  sessions: readonly WorkflowRuntimeSessionRef[]
-): ReadonlyMap<WorkspaceRuntimeProviderId, ReadonlySet<string>> => {
-  const byHome = new Map<WorkspaceRuntimeProviderId, Set<string>>();
-  for (const session of sessions) {
-    if (!session.providerSessionId) {
-      continue;
-    }
-    const providerHomeId = resolveProviderHomeId(session.providerId);
-    if (!providerHomeId) {
-      continue;
-    }
-    const bucket = byHome.get(providerHomeId) ?? new Set<string>();
-    bucket.add(session.providerSessionId);
-    byHome.set(providerHomeId, bucket);
-  }
-  return byHome;
-};
-
-const contentOrNameReferencesProviderSession = (params: {
-  readonly content: string;
-  readonly filePath: string;
-  readonly providerSessionIds: ReadonlySet<string>;
-}): boolean => {
-  const basename = path.basename(params.filePath);
-  for (const providerSessionId of params.providerSessionIds) {
-    if (
-      basename.includes(providerSessionId) ||
-      params.content.includes(providerSessionId)
-    ) {
-      return true;
-    }
-  }
-  return false;
 };
 
 export const pruneProviderNativeWorkflowSessions = async (params: {
@@ -283,17 +231,12 @@ export const pruneProviderNativeWorkflowSessions = async (params: {
     workspaceRoot: params.workspacePath,
     workspaceSlug: params.workspaceSlug,
   });
-  const providerSessionIdsByHome = buildProviderSessionIdsByHome(
-    params.sessions
-  );
 
   for (const [providerHomeId, providerHome] of Object.entries(
     capsule.providerHomes
   ) as ReadonlyArray<
     readonly [WorkspaceRuntimeProviderId, { readonly absolutePath: string }]
   >) {
-    const providerSessionIds =
-      providerSessionIdsByHome.get(providerHomeId) ?? new Set<string>();
     for (const filePath of await walkSessionFiles(
       providerHome.absolutePath,
       PROVIDER_NATIVE_SESSION_EXTENSIONS
@@ -301,27 +244,11 @@ export const pruneProviderNativeWorkflowSessions = async (params: {
       if (!isProviderNativeSessionPath({ filePath, providerHomeId })) {
         continue;
       }
-      const content = await readOptionalText(filePath);
-      if (
-        contentOrNameReferencesProviderSession({
-          content,
-          filePath,
-          providerSessionIds,
-        }) ||
-        (path.extname(filePath) !== ".sh" &&
-          shouldRemoveWorkflowHistoryFile({
-            content,
-            exactHistorySessionIds: new Set(),
-            filePath,
-            targetStage: params.targetStage,
-          }))
-      ) {
-        await removeFileIfExistsAndRecord({
-          filePath,
-          removedPaths,
-          workspacePath: params.workspacePath,
-        });
-      }
+      await removeFileIfExistsAndRecord({
+        filePath,
+        removedPaths,
+        workspacePath: params.workspacePath,
+      });
     }
   }
   return removedPaths;

@@ -94,7 +94,7 @@ const writeUnifiedHistory = async (
   return filePath;
 };
 
-test("workflow step clear removes unified and provider-native runtime session files", async () => {
+test("workflow step clear removes workspace workflow runtime history files", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "clear-runtime-sessions-")
   );
@@ -143,10 +143,22 @@ test("workflow step clear removes unified and provider-native runtime session fi
     "codexCli",
     "codex-orphan-app-shell.jsonl"
   );
+  const orphanDescriptionTranslationPath = path.join(
+    capsule.unifiedSessionsRoot.absolutePath,
+    "codexCli",
+    "codex-orphan-description.translations.jsonl"
+  );
+  const unrelatedUnifiedHistoryPath = path.join(
+    capsule.unifiedSessionsRoot.absolutePath,
+    "codexCli",
+    "codex-manual-chat.jsonl"
+  );
   await writeText(
     orphanProductPartHistoryPath,
     "Workflow path: development_tree/materialized/product-parts/app-shell\n"
   );
+  await writeText(orphanDescriptionTranslationPath, '{"type":"keep?"}\n');
+  await writeText(unrelatedUnifiedHistoryPath, "manual chat\n");
 
   const codexNativePath = path.join(
     capsule.providerHomes.codex.absolutePath,
@@ -157,6 +169,16 @@ test("workflow step clear removes unified and provider-native runtime session fi
     capsule.providerHomes.codex.absolutePath,
     "shell_snapshots",
     "codex-virtual-provider-session.123.sh"
+  );
+  const orphanCodexShellSnapshotPath = path.join(
+    capsule.providerHomes.codex.absolutePath,
+    "shell_snapshots",
+    "orphan-workflow-shell-snapshot.sh"
+  );
+  const orphanCodexNativePath = path.join(
+    capsule.providerHomes.codex.absolutePath,
+    "sessions/2026/06/02",
+    "orphan-workflow-session.jsonl"
   );
   const claudeNativePath = path.join(
     capsule.providerHomes.claude.absolutePath,
@@ -174,6 +196,8 @@ test("workflow step clear removes unified and provider-native runtime session fi
   );
   await writeText(codexNativePath, "{}\n");
   await writeText(codexShellSnapshotPath, "#!/bin/sh\n");
+  await writeText(orphanCodexShellSnapshotPath, "#!/bin/sh\n");
+  await writeText(orphanCodexNativePath, "{}\n");
   await writeText(
     claudeNativePath,
     "Workflow path: development_tree/materialized/product-parts/app-shell\n"
@@ -211,7 +235,7 @@ test("workflow step clear removes unified and provider-native runtime session fi
   );
 
   assert.equal(capture.read().statusCode, 200);
-  assert.equal(await fileExists(descriptionHistoryPath), true);
+  assert.equal(await fileExists(descriptionHistoryPath), false);
   assert.equal(await fileExists(virtualHistoryPath), false);
   assert.equal(
     await fileExists(
@@ -221,8 +245,12 @@ test("workflow step clear removes unified and provider-native runtime session fi
   );
   assert.equal(await fileExists(productPartHistoryPath), false);
   assert.equal(await fileExists(orphanProductPartHistoryPath), false);
+  assert.equal(await fileExists(orphanDescriptionTranslationPath), false);
+  assert.equal(await fileExists(unrelatedUnifiedHistoryPath), true);
   assert.equal(await fileExists(codexNativePath), false);
   assert.equal(await fileExists(codexShellSnapshotPath), false);
+  assert.equal(await fileExists(orphanCodexShellSnapshotPath), false);
+  assert.equal(await fileExists(orphanCodexNativePath), false);
   assert.equal(await fileExists(claudeNativePath), false);
   assert.equal(await fileExists(geminiNativePath), false);
   assert.equal(await fileExists(codexAuthPath), true);

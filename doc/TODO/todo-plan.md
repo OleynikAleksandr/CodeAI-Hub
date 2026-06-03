@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "5b8177422",
+  "lastRecordedCommit": "de92c0dc7",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase66.stream1.task1",
-  "expectedCommitMessage": "chore: build release 1.2.445",
+  "currentTaskId": "phase68.stream1.task1",
+  "expectedCommitMessage": "fix: clear workflow runtime history files",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.445",
-    "preCommitHead": "5b8177422",
+    "expectedCommitMessage": "fix: clear workflow runtime history files",
+    "preCommitHead": "de92c0dc7",
     "stage": "commit_pending",
-    "taskId": "phase66.stream1.task1"
+    "taskId": "phase68.stream1.task1"
   }
 }
 ```
@@ -488,13 +488,34 @@
 ### Stream: Build Artifacts
 
 127. [DONE] `phase66.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.445 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.445`).
-128. [PENDING] Git Commit: `chore: build release 1.2.445` (hash: TBD)
+128. [DONE] Git Commit: `chore: build release 1.2.445` (hash: de92c0dc7)
 
 ## Phase 67 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-02)
 
 ### Stream: User Retest
 
-129. [TODO] `phase67.stream1.task1` User installs/tests release 1.2.445 and verifies Clear/Undo removes downstream unified and provider-native runtime session histories without deleting provider auth/settings/cache files (scope: `doc/TODO/todo-plan.md`).
+129. [BLOCKED] `phase67.stream1.task1` User installs/tests release 1.2.445 and verifies Clear/Undo removes downstream unified and provider-native runtime session histories without deleting provider auth/settings/cache files (scope: `doc/TODO/todo-plan.md`). Result: retest showed unified workflow histories still accumulate under `.codeai-hub/<workspaceSlug>/runtime/sessions/unified/<provider>/` after Clear/Undo; current cleanup depends too much on live runtime session registry and does not aggressively prune old workspace-local provider native session histories.
+
+## Phase 68 - Workflow Clear Runtime History Repair (owner: Codex, updated: 2026-06-03)
+
+### Stream: Workspace Runtime Cleanup
+
+130. [DONE] `phase68.stream1.task1` Make workflow Clear/Undo prune all workflow unified history files and all provider-native session history files inside the workspace runtime capsule, independent of live runtime session registry, while preserving auth/settings/cache files (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-runtime-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.runtime-cleanup.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear workflow runtime history files`).
+131. [PENDING] Git Commit: `fix: clear workflow runtime history files` (hash: TBD)
+132. [TODO] `phase68.stream1.task2` Sync Workflow Clear documentation with the no-continuity runtime history cleanup behavior (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify workflow clear session cleanup`).
+133. [TODO] Git Commit: `docs: clarify workflow clear session cleanup` (hash: TBD)
+
+## Phase 69 - Runtime Cleanup Verification (owner: Codex, updated: 2026-06-03)
+
+### Stream: Targeted Checks
+
+134. [TODO] `phase69.stream1.task1` Run plan validation, focused runtime cleanup regression test, and affected Core build after the Clear/Undo cleanup repair (scope: `doc/TODO/todo-plan.md`).
+
+## Phase 70 - Release Build Confirmation (owner: Oleksandr, updated: 2026-06-03)
+
+### Stream: Release Confirmation
+
+135. [TODO] `phase70.stream1.task1` Await explicit user confirmation before preparing/building the next release with the corrected Clear/Undo runtime history cleanup behavior (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
