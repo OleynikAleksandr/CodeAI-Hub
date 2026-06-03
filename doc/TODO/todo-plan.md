@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "358a577a6",
+  "lastRecordedCommit": "58cc84012",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase2.stream1.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.448",
+  "currentTaskId": "phase2.stream2.task1",
+  "expectedCommitMessage": "chore: build release 1.2.448",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.448",
-    "preCommitHead": "358a577a6",
+    "expectedCommitMessage": "chore: build release 1.2.448",
+    "preCommitHead": "58cc84012",
     "stage": "commit_pending",
-    "taskId": "phase2.stream1.task1"
+    "taskId": "phase2.stream2.task1"
   }
 }
 ```
@@ -65,12 +65,12 @@
 ### Stream: Release Notes
 
 8. [DONE] `phase2.stream1.task1` Prepare `1.2.448` release notes for the Clear/Undo session cleanup rollback (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.448`).
-9. [PENDING] `phase2.stream1.commit1` Git Commit: `docs: prepare release 1.2.448` (hash: TBD)
+9. [DONE] `phase2.stream1.commit1` Git Commit: `docs: prepare release 1.2.448` (hash: 58cc84012)
 
 ### Stream: Release Build
 
-10. [TODO] `phase2.stream2.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` for `1.2.448`, then record the generated release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/launcher/manifest.json, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.448`).
-11. [TODO] `phase2.stream2.commit1` Git Commit: `chore: build release 1.2.448` (hash: TBD)
+10. [DONE] `phase2.stream2.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` for `1.2.448`, then record the generated release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.448`).
+11. [PENDING] `phase2.stream2.commit1` Git Commit: `chore: build release 1.2.448` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 

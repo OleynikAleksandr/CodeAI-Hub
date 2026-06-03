@@ -1,6 +1,6 @@
 {
   "name": "@codeai-hub/claude-module",
-  "version": "1.2.447",
+  "version": "1.2.448",
   "description": "Claude provider integration for CodeAI Hub core",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
