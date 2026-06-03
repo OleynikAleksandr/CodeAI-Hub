@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "de92c0dc7",
+  "lastRecordedCommit": "a535a8f61",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase68.stream1.task1",
-  "expectedCommitMessage": "fix: clear workflow runtime history files",
+  "currentTaskId": "phase68.stream1.task2",
+  "expectedCommitMessage": "docs: clarify workflow clear session cleanup",
   "debt": {
-    "expectedCommitMessage": "fix: clear workflow runtime history files",
-    "preCommitHead": "de92c0dc7",
+    "expectedCommitMessage": "docs: clarify workflow clear session cleanup",
+    "preCommitHead": "a535a8f61",
     "stage": "commit_pending",
-    "taskId": "phase68.stream1.task1"
+    "taskId": "phase68.stream1.task2"
   }
 }
 ```
@@ -501,9 +501,9 @@
 ### Stream: Workspace Runtime Cleanup
 
 130. [DONE] `phase68.stream1.task1` Make workflow Clear/Undo prune all workflow unified history files and all provider-native session history files inside the workspace runtime capsule, independent of live runtime session registry, while preserving auth/settings/cache files (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-runtime-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.runtime-cleanup.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: clear workflow runtime history files`).
-131. [PENDING] Git Commit: `fix: clear workflow runtime history files` (hash: TBD)
-132. [TODO] `phase68.stream1.task2` Sync Workflow Clear documentation with the no-continuity runtime history cleanup behavior (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify workflow clear session cleanup`).
-133. [TODO] Git Commit: `docs: clarify workflow clear session cleanup` (hash: TBD)
+131. [DONE] Git Commit: `fix: clear workflow runtime history files` (hash: a535a8f61)
+132. [DONE] `phase68.stream1.task2` Sync Workflow Clear documentation with the no-continuity runtime history cleanup behavior (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: clarify workflow clear session cleanup`).
+133. [PENDING] Git Commit: `docs: clarify workflow clear session cleanup` (hash: TBD)
 
 ## Phase 69 - Runtime Cleanup Verification (owner: Codex, updated: 2026-06-03)
 
