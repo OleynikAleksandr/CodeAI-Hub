@@ -210,7 +210,10 @@ export class WorkflowRollbackCoordinator {
     readonly registryPath: string;
   }> {
     const prunedRegistry = await this.#registryStore.pruneFromStage(params);
-    const registryPath = this.#registryStore.getRegistryPath(params);
+    const registryPath = await this.#registryStore.write({
+      ...params,
+      registry: prunedRegistry,
+    });
     return {
       prunedStages: params.prunedStages.filter((stage) =>
         prunedRegistry.entries.every((entry) => entry.stage !== stage)

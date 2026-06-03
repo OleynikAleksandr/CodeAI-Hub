@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "98dd05531",
+  "lastRecordedCommit": "1a1ee49d9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase72.stream1.task1",
-  "expectedCommitMessage": "chore: build release 1.2.446",
+  "currentTaskId": "phase74.stream1.task1",
+  "expectedCommitMessage": "fix: materialize workflow clear registry projection",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.446",
-    "preCommitHead": "98dd05531",
+    "expectedCommitMessage": "fix: materialize workflow clear registry projection",
+    "preCommitHead": "1a1ee49d9",
     "stage": "commit_pending",
-    "taskId": "phase72.stream1.task1"
+    "taskId": "phase74.stream1.task1"
   }
 }
 ```
@@ -529,13 +529,26 @@
 ### Stream: Build Artifacts
 
 138. [DONE] `phase72.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.446 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.446`).
-139. [PENDING] Git Commit: `chore: build release 1.2.446` (hash: TBD)
+139. [DONE] Git Commit: `chore: build release 1.2.446` (hash: 1a1ee49d9)
 
 ## Phase 73 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-03)
 
 ### Stream: User Retest
 
-140. [TODO] `phase73.stream1.task1` User installs/tests release 1.2.446 on a clean FinderWidget workspace and verifies Clear/Undo removes workflow unified histories plus provider-native session histories while preserving provider auth/settings/cache files (scope: `doc/TODO/todo-plan.md`).
+140. [BLOCKED] `phase73.stream1.task1` User installs/tests release 1.2.446 on a clean FinderWidget workspace and verifies Clear/Undo removes workflow unified histories plus provider-native session histories while preserving provider auth/settings/cache files (scope: `doc/TODO/todo-plan.md`). Result: retest showed Clear/Undo still leaves unified and provider-native Codex session histories because the rollback clear commit can fail after reset when `.codeai-hub/<workspaceSlug>/workflow/boundaries.json` is absent at the target boundary.
+
+## Phase 74 - Workflow Clear Registry Projection Repair (owner: Codex, updated: 2026-06-03)
+
+### Stream: Rollback Projection
+
+141. [DONE] `phase74.stream1.task1` Ensure Workflow Clear/Undo materializes the pruned workflow boundary registry projection before the clear commit, so rollback does not fail on a missing `boundaries.json` pathspec and runtime session cleanup can run (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-clear-registry-projection.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: materialize workflow clear registry projection`).
+142. [PENDING] Git Commit: `fix: materialize workflow clear registry projection` (hash: TBD)
+
+## Phase 75 - Runtime Cleanup Verification (owner: Codex, updated: 2026-06-03)
+
+### Stream: Targeted Checks
+
+143. [TODO] `phase75.stream1.task1` Run plan validation, focused boundary rollback/runtime cleanup regression tests, and affected Core build after the registry projection repair (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 
