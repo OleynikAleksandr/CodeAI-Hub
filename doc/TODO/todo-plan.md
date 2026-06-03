@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "12edb060e",
+  "lastRecordedCommit": "3ab555283",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: plan workflow clear cleanup rollback",
+  "currentTaskId": "phase1.stream2.task1",
+  "expectedCommitMessage": "fix: revert workflow clear session cleanup",
   "debt": {
-    "expectedCommitMessage": "docs: plan workflow clear cleanup rollback",
-    "preCommitHead": "12edb060e",
+    "expectedCommitMessage": "fix: revert workflow clear session cleanup",
+    "preCommitHead": "3ab555283",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase1.stream2.task1"
   }
 }
 ```
@@ -44,12 +44,12 @@
 ### Stream: Plan Intake
 
 1. [DONE] `phase1.stream1.task1` Create the active rollback plan for the Clear/Undo provider-native session cleanup regression (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan workflow clear cleanup rollback`).
-2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan workflow clear cleanup rollback` (hash: TBD)
+2. [DONE] `phase1.stream1.commit1` Git Commit: `docs: plan workflow clear cleanup rollback` (hash: 3ab555283)
 
 ### Stream: Code Rollback
 
-3. [TODO] `phase1.stream2.task1` Roll back the Clear/Undo session cleanup code to the pre-`cd34a5d08` behavior, removing the broad workflow history cleanup helper and restoring the narrower service path (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-runtime-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.runtime-cleanup.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: revert workflow clear session cleanup`).
-4. [TODO] `phase1.stream2.commit1` Git Commit: `fix: revert workflow clear session cleanup` (hash: TBD)
+3. [DONE] `phase1.stream2.task1` Roll back the Clear/Undo session cleanup code to the pre-`cd34a5d08` behavior, removing the broad workflow history cleanup helper and restoring the narrower service path (scope: `packages/core/src/remote-bridge/handlers/workflow-step-clear-service.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.test.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-runtime-cleanup.ts, packages/core/src/remote-bridge/handlers/workflow-step-clear-service.runtime-cleanup.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: revert workflow clear session cleanup`).
+4. [PENDING] `phase1.stream2.commit1` Git Commit: `fix: revert workflow clear session cleanup` (hash: TBD)
 
 ### Stream: Documentation Sync
 
