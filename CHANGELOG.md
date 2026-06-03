@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.447] - 2026-06-03
+### Fixed
+- **Clear/Undo now finishes when rolling back to the first workflow boundary.** Core rematerializes the pruned workflow boundary registry before creating the clear commit, so clearing `Description` no longer fails on a missing `.codeai-hub/<workspace>/workflow/boundaries.json` pathspec.
+- **Runtime session cleanup can run after first-boundary rollback.** Because the rollback commit now succeeds, Core reaches the cleanup step that removes workflow unified histories and provider-native session history files from the workspace runtime capsule.
+
+### Verification
+- `npm run plan:validate`
+- `npm run build --workspace=@codeai-hub/core`
+- `node --test packages/core/dist/workflow/boundary/workflow-boundary-clear-registry-projection.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-step-clear-service.runtime-cleanup.test.js`
+
 ## [1.2.446] - 2026-06-03
 ### Fixed
 - **Clear/Undo now prunes old unified workflow histories without relying on live sessions.** Core removes workflow `.jsonl` histories and translation overlays for cleared workflow work even when those sessions are no longer present in the runtime session registry.

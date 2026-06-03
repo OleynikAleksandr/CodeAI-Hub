@@ -8,15 +8,15 @@
   "planId": "plans-backlog-intake-2026-06-01",
   "branch": "main",
   "baseHead": "1add4fc4f",
-  "lastRecordedCommit": "1a1ee49d9",
+  "lastRecordedCommit": "440776b21",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase74.stream1.task1",
-  "expectedCommitMessage": "fix: materialize workflow clear registry projection",
+  "currentTaskId": "phase77.stream1.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.447",
   "debt": {
-    "expectedCommitMessage": "fix: materialize workflow clear registry projection",
-    "preCommitHead": "1a1ee49d9",
+    "expectedCommitMessage": "docs: prepare release 1.2.447",
+    "preCommitHead": "440776b21",
     "stage": "commit_pending",
-    "taskId": "phase74.stream1.task1"
+    "taskId": "phase77.stream1.task1"
   }
 }
 ```
@@ -542,13 +542,39 @@
 ### Stream: Rollback Projection
 
 141. [DONE] `phase74.stream1.task1` Ensure Workflow Clear/Undo materializes the pruned workflow boundary registry projection before the clear commit, so rollback does not fail on a missing `boundaries.json` pathspec and runtime session cleanup can run (scope: `packages/core/src/workflow/boundary/workflow-rollback-coordinator.ts, packages/core/src/workflow/boundary/workflow-boundary-clear-registry-projection.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: materialize workflow clear registry projection`).
-142. [PENDING] Git Commit: `fix: materialize workflow clear registry projection` (hash: TBD)
+142. [DONE] Git Commit: `fix: materialize workflow clear registry projection` (hash: 440776b21)
 
 ## Phase 75 - Runtime Cleanup Verification (owner: Codex, updated: 2026-06-03)
 
 ### Stream: Targeted Checks
 
-143. [TODO] `phase75.stream1.task1` Run plan validation, focused boundary rollback/runtime cleanup regression tests, and affected Core build after the registry projection repair (scope: `doc/TODO/todo-plan.md`).
+143. [DONE] `phase75.stream1.task1` Run plan validation, focused boundary rollback/runtime cleanup regression tests, and affected Core build after the registry projection repair (scope: `doc/TODO/todo-plan.md`). Result: Result: npm run plan:validate passed; npm run build --workspace=@codeai-hub/core passed; workflow-boundary-clear-registry-projection.test.js passed; workflow-step-clear-service.runtime-cleanup.test.js passed; dry-run on copied FinderWidget session files removed the four unified JSONL files and two Codex native rollout JSONL files.
+
+## Phase 76 - Release Build Confirmation (owner: Oleksandr, updated: 2026-06-03)
+
+### Stream: Release Confirmation
+
+144. [DONE] `phase76.stream1.task1` Await explicit user confirmation before preparing/building the next release with the Workflow Clear registry projection repair (scope: `doc/TODO/todo-plan.md`). Result: Result: user explicitly requested a new release build for the Workflow Clear registry projection repair.
+
+## Phase 77 - Release 1.2.447 Preparation (owner: Codex, updated: 2026-06-03)
+
+### Stream: Release Docs
+
+145. [DONE] `phase77.stream1.task1` Prepare release docs for version 1.2.447 before running release scripts (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.447`).
+146. [PENDING] Git Commit: `docs: prepare release 1.2.447` (hash: TBD)
+
+## Phase 78 - Release 1.2.447 Build (owner: Codex, updated: 2026-06-03)
+
+### Stream: Build Artifacts
+
+147. [TODO] `phase78.stream1.task1` Run the release build flow and record the resulting VSIX/tarball artifacts for version 1.2.447 (scope: `doc/TODO/todo-plan.md, package.json, package-lock.json, packages/**/package.json, src/client/ui/package.json, src/client/project-manager/package.json, assets/**/manifest.json, scripts/**, doc/tmp/releases/**`; expected commit: `chore: build release 1.2.447`).
+148. [TODO] Git Commit: `chore: build release 1.2.447` (hash: TBD)
+
+## Phase 79 - User Workflow Acceptance Testing (owner: Oleksandr, updated: 2026-06-03)
+
+### Stream: User Retest
+
+149. [TODO] `phase79.stream1.task1` User installs/tests release 1.2.447 and verifies Clear/Undo removes workflow unified histories plus provider-native session histories after rolling back from downstream steps (scope: `doc/TODO/todo-plan.md`).
 
 ## Phase 41 - Scope Closeout (owner: Codex, updated: 2026-06-02)
 

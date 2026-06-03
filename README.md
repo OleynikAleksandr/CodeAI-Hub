@@ -2,7 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.446** (Clear/Undo Runtime History Cleanup)
+**Current Release — v1.2.447** (Clear/Undo Registry Projection Repair)
+
+This release fixes the remaining Clear/Undo rollback failure found in 1.2.446.
+When clearing back to the first workflow boundary, Core now rematerializes the
+pruned workflow boundary registry before creating the clear commit. That keeps
+the rollback from failing on a missing `workflow/boundaries.json` path and lets
+the runtime cleanup step remove unified and provider-native session histories.
+
+**Previous Release — v1.2.446** (Clear/Undo Runtime History Cleanup)
 
 This release completes the Clear/Undo runtime cleanup repair. Core now prunes
 workflow unified histories and provider-native session history containers across
