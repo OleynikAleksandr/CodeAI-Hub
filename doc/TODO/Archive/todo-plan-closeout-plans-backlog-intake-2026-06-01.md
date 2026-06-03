@@ -1,3 +1,18 @@
+# Plan Closeout: plans-backlog-intake-2026-06-01
+
+**Created:** 2026-06-03T09:56:49.560Z
+**Acceptance:** User accepted release 1.2.447; Workflow Clear/Undo registry projection and session cleanup retest passed.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase41.stream1.task1
+**Expected Commit:** docs: close development tree product part bootstrap scope
+**Last Recorded Commit:** 9d04aaae3
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md",
   "currentTaskId": "phase41.stream1.task1",
   "expectedCommitMessage": "docs: close development tree product part bootstrap scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close development tree product part bootstrap scope",
-    "preCommitHead": "9d04aaae3",
-    "stage": "commit_pending",
-    "taskId": "phase41.stream1.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -580,6 +590,7 @@
 
 ### Stream: Closeout
 
-70. [DONE] `phase41.stream1.task1` After explicit user acceptance, sync Workflow Clear accepted behavior into SSOT docs, archive this active `todo-plan.md` closeout snapshot, and record final planning-source disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree product part bootstrap scope`).
-71. [PENDING] Git Commit: `docs: close development tree product part bootstrap scope` (hash: TBD)
+70. [IN_PROGRESS] `phase41.stream1.task1` After explicit user acceptance, sync Workflow Clear accepted behavior into SSOT docs, archive this active `todo-plan.md` closeout snapshot, and record final planning-source disposition (scope: `doc/TODO/**, doc/SolidWorks-WorkFlow/Plans/**, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: close development tree product part bootstrap scope`).
+71. [TODO] Git Commit: `docs: close development tree product part bootstrap scope` (hash: TBD)
 72. [TODO] `phase41.stream1.task2` Reserved post-closeout handoff anchor (scope: `doc/TODO/todo-plan.md`).
+````
