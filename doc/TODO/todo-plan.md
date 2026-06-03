@@ -9,7 +9,7 @@
   "branch": "main",
   "baseHead": "1add4fc4f",
   "lastRecordedCommit": "8f6ba806e",
-  "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md",
+  "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
   "currentTaskId": null,
   "expectedCommitMessage": null,
   "debt": null
@@ -21,7 +21,7 @@
 
 - **Execution Scope Status:** NONE
 - **Latest closeout archive:** `doc/TODO/Archive/todo-plan-closeout-plans-backlog-intake-2026-06-01.md`
-- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md`
+- **Planning source:** `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`
 - **Last recorded commit:** `8f6ba806e`
 
 ## Start Next Scope

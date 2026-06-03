@@ -10,6 +10,8 @@
 **Planning Source Disposition:** moved
 **Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/DevelopmentTree_BranchWorkflow_Architecture.md
 
+**Post-closeout correction, 2026-06-03:** the closeout disposition above was too broad. The release/scope phases through `1.2.447` were accepted, but the full Development Tree planning source is still active for later phases. `DevelopmentTree_BranchWorkflow_Architecture.md` was restored to `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md`; the archived active-plan copy below remains historical evidence of the closed execution cycle.
+
 ## Active Plan Copy
 
 ````markdown
