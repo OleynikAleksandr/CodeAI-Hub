@@ -26,7 +26,7 @@ interface PreliminaryReviewCommitterDeps {
   readonly broadcaster?: (event: WorkflowStageActivateEvent) => void;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
-    "appendCoreMessage" | "appendDialogMessage"
+    "appendCoreMessage" | "appendDialogMessage" | "waitForMessagePersistence"
   >;
   readonly stepCommitFacade?: Pick<
     WorkflowStepCommitFacade,
@@ -125,6 +125,9 @@ export class SessionRequestHandlerPreliminaryReviewCommitter {
     });
     if (options.session.workspacePath && options.session.initiativeSlug) {
       try {
+        await this.#deps.eventMessages.waitForMessagePersistence(
+          options.sessionId
+        );
         const commitResult = await this.#stepCommitFacade.commitAcceptedStep({
           sessions: [options.session],
           stage: stage.stage,

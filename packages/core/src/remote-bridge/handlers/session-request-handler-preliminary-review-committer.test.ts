@@ -50,16 +50,26 @@ test("preliminary review acceptance activates the next Core workflow stage", asy
   for (const { nextStage, stage } of cases) {
     const events: unknown[] = [];
     const commitStages: string[] = [];
+    const operationOrder: string[] = [];
     const committer = new SessionRequestHandlerPreliminaryReviewCommitter({
       broadcaster: (event) => {
         events.push(event);
       },
       eventMessages: {
-        appendCoreMessage: () => undefined,
-        appendDialogMessage: () => undefined,
+        appendCoreMessage: () => {
+          operationOrder.push("append-core-message");
+        },
+        appendDialogMessage: () => {
+          operationOrder.push("append-dialog-message");
+        },
+        waitForMessagePersistence: () => {
+          operationOrder.push("wait-for-message-persistence");
+          return Promise.resolve();
+        },
       },
       stepCommitFacade: {
         commitAcceptedStep: (options) => {
+          operationOrder.push("commit-accepted-step");
           commitStages.push(options.stage);
           return Promise.resolve({
             commit: { hash: "accepted" },
@@ -78,6 +88,12 @@ test("preliminary review acceptance activates the next Core workflow stage", asy
 
     assert.equal(handled, true);
     assert.deepEqual(commitStages, [stage]);
+    assert.deepEqual(operationOrder, [
+      "append-dialog-message",
+      "append-core-message",
+      "wait-for-message-persistence",
+      "commit-accepted-step",
+    ]);
     assert.deepEqual(events, [
       { payload: { stage: nextStage }, type: "workflow:stage:activate" },
     ]);

@@ -89,6 +89,7 @@ test("preliminary review reports residual document auto-commits to the user", as
       ) => {
         dialogMessages.push(message);
       },
+      waitForMessagePersistence: () => Promise.resolve(),
     },
     stepCommitFacade: {
       commitAcceptedStep: async () => ({

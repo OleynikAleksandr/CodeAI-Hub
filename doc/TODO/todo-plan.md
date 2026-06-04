@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "9d9d86c4c",
+  "lastRecordedCommit": "bbd623a1b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase4.stream1.task1",
-  "expectedCommitMessage": "docs: plan release 1.2.450 acceptance residue fix",
+  "currentTaskId": "phase4.stream2.task1",
+  "expectedCommitMessage": "fix: flush preliminary review translations before commit",
   "debt": {
-    "expectedCommitMessage": "docs: plan release 1.2.450 acceptance residue fix",
-    "preCommitHead": "9d9d86c4c",
+    "expectedCommitMessage": "fix: flush preliminary review translations before commit",
+    "preCommitHead": "bbd623a1b",
     "stage": "commit_pending",
-    "taskId": "phase4.stream1.task1"
+    "taskId": "phase4.stream2.task1"
   }
 }
 ```
@@ -128,12 +128,12 @@
 ### Stream: Plan Intake
 
 31. [DONE] `phase4.stream1.task1` Record the release 1.2.449 acceptance-test failure and add regression streams for post-acceptance translation residue plus provider cache/log tracking (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan release 1.2.450 acceptance residue fix`).
-32. [PENDING] `phase4.stream1.commit1` Git Commit: `docs: plan release 1.2.450 acceptance residue fix` (hash: TBD)
+32. [DONE] `phase4.stream1.commit1` Git Commit: `docs: plan release 1.2.450 acceptance residue fix` (hash: bbd623a1b)
 
 ### Stream: Preliminary Acceptance Flush
 
-33. [TODO] `phase4.stream2.task1` Make preliminary Description/Virtual Simulation acceptance wait for queued dialog message and translation overlay persistence before accepted-step Git commit (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.test.ts`; expected commit: `fix: flush preliminary review translations before commit`).
-34. [TODO] `phase4.stream2.commit1` Git Commit: `fix: flush preliminary review translations before commit` (hash: TBD)
+33. [DONE] `phase4.stream2.task1` Make preliminary Description/Virtual Simulation acceptance wait for queued dialog message and translation overlay persistence before accepted-step Git commit (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts`; expected commit: `fix: flush preliminary review translations before commit`).
+34. [PENDING] `phase4.stream2.commit1` Git Commit: `fix: flush preliminary review translations before commit` (hash: TBD)
 
 ### Stream: Provider Cache Ignore Tightening
 
