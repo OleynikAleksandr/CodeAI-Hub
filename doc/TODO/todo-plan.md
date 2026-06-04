@@ -8,15 +8,15 @@
   "planId": "application-skeleton-terminal-residue-2026-06-04",
   "branch": "main",
   "baseHead": "c531f5680",
-  "lastRecordedCommit": "4590351ec",
+  "lastRecordedCommit": "ddb73b0c4",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream8.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.451",
+  "currentTaskId": "phase1.stream9.task1",
+  "expectedCommitMessage": "chore: build release 1.2.451",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.451",
-    "preCommitHead": "4590351ec",
+    "expectedCommitMessage": "chore: build release 1.2.451",
+    "preCommitHead": "ddb73b0c4",
     "stage": "commit_pending",
-    "taskId": "phase1.stream8.task1"
+    "taskId": "phase1.stream9.task1"
   }
 }
 ```
@@ -75,19 +75,24 @@
 ### Stream: Release Metadata Prep
 
 13. [DONE] `phase1.stream8.task1` Prepare README/CHANGELOG for future release `1.2.451` before running release packaging, so packaged VSIX metadata matches the release (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.451`).
-14. [PENDING] `phase1.stream8.commit1` Git Commit: `docs: prepare release 1.2.451` (hash: TBD)
+14. [DONE] `phase1.stream8.commit1` Git Commit: `docs: prepare release 1.2.451` (hash: ddb73b0c4)
 
 ### Stream: Release Build
 
-15. [TODO] `phase1.stream9.task1` Run release build for `1.2.451` only after explicit user confirmation and release metadata prep (scope: release artifacts and version files; expected commit: `chore: build release 1.2.451`).
-16. [TODO] `phase1.stream9.commit1` Git Commit: `chore: build release 1.2.451` (hash: TBD)
+15. [DONE] `phase1.stream9.task1` Run `./scripts/build-all.sh` for `1.2.451` after explicit user confirmation and release metadata prep (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.451`).
+16. [PENDING] `phase1.stream9.commit1` Git Commit: `chore: build release 1.2.451` (hash: TBD)
+
+### Stream: VSIX Package
+
+17. [TODO] `phase1.stream10.task1` Run `./scripts/build-release.sh --use-current-version` for `1.2.451` from the clean post-build-all tree (scope: `codeai-hub-1.2.451.vsix, package.json, package-lock.json, .vscodeignore, packages/core/src/templates/bundled-templates.ts, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.451`).
+18. [TODO] `phase1.stream10.commit1` Git Commit: `chore: package release 1.2.451` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-17. [TODO] `phase1.stream10.task1` Hand over release `1.2.451` for user retest; wait for explicit acceptance or next failure report (scope: user workflow acceptance; expected commit: no commit expected).
+19. [TODO] `phase1.stream11.task1` Hand over release `1.2.451` for user retest; wait for explicit acceptance or next failure report (scope: user workflow acceptance; expected commit: no commit expected).
 
 ### Stream: Scope Closeout
 
-18. [TODO] `phase1.stream11.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close application skeleton terminal residue scope`).
-19. [TODO] `phase1.stream11.commit1` Git Commit: `docs: close application skeleton terminal residue scope` (hash: TBD)
-20. [TODO] `phase1.stream11.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
+20. [TODO] `phase1.stream12.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close application skeleton terminal residue scope`).
+21. [TODO] `phase1.stream12.commit1` Git Commit: `docs: close application skeleton terminal residue scope` (hash: TBD)
+22. [TODO] `phase1.stream12.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
