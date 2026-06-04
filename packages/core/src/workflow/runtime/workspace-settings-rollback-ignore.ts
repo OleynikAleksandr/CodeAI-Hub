@@ -44,44 +44,17 @@ const isWorkspaceSettingsGitStatusEntry = (params: {
 }): boolean =>
   extractGitStatusPath(params.entry) === params.settingsFile.relativePath;
 
-const buildProviderHomeRoots = (
-  capsule: WorkspaceRuntimeCapsule
-): readonly string[] =>
-  Object.values(capsule.providerHomes).map(
-    (providerHome) => providerHome.relativePath
-  );
-
 const buildRollbackIgnoredRuntimeRoots = (
   capsule: WorkspaceRuntimeCapsule
 ): readonly string[] => [
   capsule.settingsRoot.relativePath,
   capsule.localizationRoot.relativePath,
-  ...buildProviderHomeRoots(capsule),
 ];
-
-const isProviderUnifiedSessionPath = (params: {
-  readonly capsule: WorkspaceRuntimeCapsule;
-  readonly relativePath: string;
-}): boolean => {
-  const normalizedCandidate = trimTrailingSlash(params.relativePath);
-  const normalizedRoot = trimTrailingSlash(
-    params.capsule.unifiedSessionsRoot.relativePath
-  );
-  if (
-    normalizedCandidate === normalizedRoot ||
-    !normalizedCandidate.startsWith(`${normalizedRoot}/`)
-  ) {
-    return false;
-  }
-  const suffix = normalizedCandidate.slice(normalizedRoot.length + 1);
-  return params.relativePath.endsWith("/") || suffix.includes("/");
-};
 
 export const isWorkspaceRollbackIgnoredRuntimePath = (params: {
   readonly capsule: WorkspaceRuntimeCapsule;
   readonly relativePath: string;
 }): boolean =>
-  isProviderUnifiedSessionPath(params) ||
   buildRollbackIgnoredRuntimeRoots(params.capsule).some((root) =>
     isSameOrDescendantPath(params.relativePath, root)
   );

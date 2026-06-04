@@ -20,6 +20,7 @@ import {
 } from "./workspace-settings-rollback-ignore";
 
 const execFileAsync = promisify(execFile);
+const gitignoreLines = WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.split("\n");
 
 const git = async (cwd: string, args: readonly string[]): Promise<string> => {
   const { stdout } = await execFileAsync("git", args, { cwd });
@@ -39,7 +40,7 @@ test("buildWorkspaceRuntimeCapsuleGitignore resolves the capsule gitignore path"
   assert.equal(gitignore.content, WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT);
 });
 
-test("workspace runtime gitignore keeps rollback state trackable", () => {
+test("workspace runtime gitignore keeps workflow sessions trackable", () => {
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
       "!runtime/settings/settings.json"
@@ -56,24 +57,10 @@ test("workspace runtime gitignore keeps rollback state trackable", () => {
     ),
     true
   );
-  assert.equal(
-    WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
-      "runtime/providers/**/home/"
-    ),
-    true
-  );
-  assert.equal(
-    WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
-      "runtime/sessions/unified/*/"
-    ),
-    true
-  );
-  assert.equal(
-    WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
-      "!runtime/sessions/unified/"
-    ),
-    true
-  );
+  assert.equal(gitignoreLines.includes("runtime/providers/**/home/"), false);
+  assert.equal(gitignoreLines.includes("runtime/sessions/unified/*/"), false);
+  assert.equal(gitignoreLines.includes("!runtime/sessions/unified/"), true);
+  assert.equal(gitignoreLines.includes("!runtime/providers/**/home/"), true);
   assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes("runtime/**/tmp/"),
     false
@@ -107,7 +94,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/config.toml",
     }),
-    true
+    false
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -115,7 +102,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/skills/.system/imagegen/SKILL.md",
     }),
-    true
+    false
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -123,7 +110,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/providers/codex/home/sessions/2026/05/26/session.jsonl",
     }),
-    true
+    false
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -131,7 +118,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/glmclaudecode-description.jsonl",
     }),
-    true
+    false
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -139,7 +126,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
       relativePath:
         ".codeai-hub/codeai-hub-codex-5-4/runtime/sessions/unified/glmClaudeCode/glmclaudecode-description.translations.jsonl",
     }),
-    true
+    false
   );
   assert.equal(
     isWorkspaceRollbackIgnoredRuntimePath({
@@ -151,7 +138,7 @@ test("workspace rollback ignore classifies mutable runtime paths", () => {
   );
 });
 
-test("workspace rollback ignore untracks legacy mutable runtime files", async () => {
+test("workspace rollback ignore untracks only live settings and localization files", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "codeai-runtime-untrack-")
   );
@@ -163,6 +150,8 @@ test("workspace rollback ignore untracks legacy mutable runtime files", async ()
       "cache",
       "browser-runtime-bootstrap.json"
     ),
+  ];
+  const rollbackOwnedPaths = [
     path.posix.join(capsule.providerHomes.codex.relativePath, "config.toml"),
     path.posix.join(
       capsule.providerHomes.codex.relativePath,
@@ -190,11 +179,15 @@ test("workspace rollback ignore untracks legacy mutable runtime files", async ()
       "glmclaudecode-description.translations.jsonl"
     ),
   ];
-  const rollbackOwnedPath = path.posix.join(
+  const rollbackOwnedSessionIndexPath = path.posix.join(
     capsule.unifiedSessionsRoot.relativePath,
     "session.json"
   );
-  for (const relativePath of [...trackedMutablePaths, rollbackOwnedPath]) {
+  for (const relativePath of [
+    ...trackedMutablePaths,
+    ...rollbackOwnedPaths,
+    rollbackOwnedSessionIndexPath,
+  ]) {
     await mkdir(path.dirname(path.join(workspaceRoot, relativePath)), {
       recursive: true,
     });
@@ -215,18 +208,23 @@ test("workspace rollback ignore untracks legacy mutable runtime files", async ()
   for (const relativePath of trackedMutablePaths) {
     assert.equal(tracked.includes(relativePath), false);
   }
-  assert.equal(tracked.includes(rollbackOwnedPath), true);
+  for (const relativePath of [
+    ...rollbackOwnedPaths,
+    rollbackOwnedSessionIndexPath,
+  ]) {
+    assert.equal(tracked.includes(relativePath), true);
+  }
   assert.deepEqual(
     filterWorkspaceRollbackIgnoredGitStatusEntries({
       capsule,
       entries: [
         ` M ${trackedMutablePaths[0]}`,
         `?? ${trackedMutablePaths[1]}`,
-        `?? ${trackedMutablePaths[2]}`,
-        ` M ${rollbackOwnedPath}`,
+        `?? ${rollbackOwnedPaths[0]}`,
+        ` M ${rollbackOwnedSessionIndexPath}`,
       ],
     }),
-    [` M ${rollbackOwnedPath}`]
+    [`?? ${rollbackOwnedPaths[0]}`, ` M ${rollbackOwnedSessionIndexPath}`]
   );
 });
 

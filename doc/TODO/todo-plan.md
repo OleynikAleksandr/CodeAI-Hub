@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "f92c9fb3e",
+  "lastRecordedCommit": "e4ce012c6",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase2.stream4.task1",
-  "expectedCommitMessage": "docs: plan git-owned workflow runtime sessions",
+  "currentTaskId": "phase3.stream1.task1",
+  "expectedCommitMessage": "fix: track workflow runtime sessions in git",
   "debt": {
-    "expectedCommitMessage": "docs: plan git-owned workflow runtime sessions",
-    "preCommitHead": "f92c9fb3e",
+    "expectedCommitMessage": "fix: track workflow runtime sessions in git",
+    "preCommitHead": "e4ce012c6",
     "stage": "commit_pending",
-    "taskId": "phase2.stream4.task1"
+    "taskId": "phase3.stream1.task1"
   }
 }
 ```
@@ -79,14 +79,14 @@
 ### Stream: Scope Closeout
 
 13. [DONE] `phase2.stream4.task1` Extend this accepted rollback scope into the Git-owned workflow runtime sessions MVP requested by the user, keeping the Development Tree planning source active and avoiding `plan:closeout` archival (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan git-owned workflow runtime sessions`).
-14. [PENDING] `phase2.stream4.commit1` Git Commit: `docs: plan git-owned workflow runtime sessions` (hash: TBD)
+14. [DONE] `phase2.stream4.commit1` Git Commit: `docs: plan git-owned workflow runtime sessions` (hash: e4ce012c6)
 
 ## Phase 3 — Git-Owned Workflow Runtime Sessions MVP (owner: Codex, updated: 2026-06-04)
 
 ### Stream: Runtime Capsule Git Ownership
 
-15. [TODO] `phase3.stream1.task1` Update workspace runtime capsule ignore rules and rollback-ignore classification so workflow unified sessions and provider-native session histories are Git-owned, while settings, localization, credentials, installed packages, caches, SQLite databases, logs and binaries stay outside Git (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: track workflow runtime sessions in git`).
-16. [TODO] `phase3.stream1.commit1` Git Commit: `fix: track workflow runtime sessions in git` (hash: TBD)
+15. [DONE] `phase3.stream1.task1` Update workspace runtime capsule ignore rules and rollback-ignore classification so workflow unified sessions and provider-native session histories are Git-owned, while settings, localization, credentials, installed packages, caches, SQLite databases, logs and binaries stay outside Git (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-settings-rollback-ignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: track workflow runtime sessions in git`).
+16. [PENDING] `phase3.stream1.commit1` Git Commit: `fix: track workflow runtime sessions in git` (hash: TBD)
 
 ### Stream: Commit And Rollback Behavior
 
