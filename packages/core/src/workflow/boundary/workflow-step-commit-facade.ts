@@ -83,6 +83,7 @@ const VOLATILE_PROVIDER_SEGMENTS = new Set([
   ".npm",
   ".pnpm-store",
   "Cache",
+  "Caches",
   "Code Cache",
   "GPUCache",
   "node_modules",
@@ -154,6 +155,7 @@ const isVolatileProviderRuntimePath = (value: string): boolean => {
   return (
     VOLATILE_PROVIDER_FILE_NAMES.has(fileName) ||
     fileName.startsWith("oauth") ||
+    fileName.endsWith("-cache.json") ||
     providerHomeParts.some((part) => VOLATILE_PROVIDER_SEGMENTS.has(part)) ||
     providerHomePath.endsWith(".sqlite") ||
     providerHomePath.endsWith(".sqlite-shm") ||

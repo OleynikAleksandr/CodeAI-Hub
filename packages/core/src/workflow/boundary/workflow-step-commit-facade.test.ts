@@ -23,6 +23,10 @@ const CAPSULE_PROVIDER_SQLITE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/logs_2\.sqlite/u;
 const CAPSULE_PROVIDER_AUTH_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/auth\.json/u;
+const CAPSULE_PROVIDER_CACHE_JSON_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/\.codex\/mcp-needs-auth-cache\.json/u;
+const CAPSULE_PROVIDER_CACHES_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/Library\/Caches\/codex-cli-nodejs\/mcp-logs\/capture\.jsonl/u;
 const CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/shell_snapshots\/snapshot\.sh/u;
 const CAPSULE_LOCALIZATION_CACHE_RE =
@@ -299,9 +303,24 @@ test("accepted step commit untracks provider secrets and caches left by older ca
       "shell_snapshots",
       "snapshot.sh"
     );
+    const volatileCachesPath = path.join(
+      capsule.providerHomes.codex.absolutePath,
+      "Library",
+      "Caches",
+      "codex-cli-nodejs",
+      "mcp-logs",
+      "capture.jsonl"
+    );
+    const volatileCacheJsonPath = path.join(
+      capsule.providerHomes.codex.absolutePath,
+      ".codex",
+      "mcp-needs-auth-cache.json"
+    );
     await writeText(volatileSqlitePath, "old logs\n");
     await writeText(volatileAuthPath, '{"token":"old"}\n');
     await writeText(volatileShellSnapshotPath, "old snapshot\n");
+    await writeText(volatileCachesPath, "old cache log\n");
+    await writeText(volatileCacheJsonPath, '{"cache":"old"}\n');
     await git(workspaceRoot, ["add", "."]);
     await git(workspaceRoot, [
       "add",
@@ -309,6 +328,8 @@ test("accepted step commit untracks provider secrets and caches left by older ca
       path.relative(workspaceRoot, volatileSqlitePath),
       path.relative(workspaceRoot, volatileAuthPath),
       path.relative(workspaceRoot, volatileShellSnapshotPath),
+      path.relative(workspaceRoot, volatileCachesPath),
+      path.relative(workspaceRoot, volatileCacheJsonPath),
     ]);
     await git(workspaceRoot, ["commit", "-m", "test: old capsule commit"]);
 
@@ -319,6 +340,8 @@ test("accepted step commit untracks provider secrets and caches left by older ca
     await writeText(volatileSqlitePath, "new logs\n");
     await writeText(volatileAuthPath, '{"token":"new"}\n');
     await writeText(volatileShellSnapshotPath, "new snapshot\n");
+    await writeText(volatileCachesPath, "new cache log\n");
+    await writeText(volatileCacheJsonPath, '{"cache":"new"}\n');
 
     await new WorkflowStepCommitFacade().commitAcceptedStep({
       stage: "description",
@@ -330,6 +353,8 @@ test("accepted step commit untracks provider secrets and caches left by older ca
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SQLITE_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_AUTH_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CACHE_JSON_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CACHES_RE);
     assert.match(trackedFiles, CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });

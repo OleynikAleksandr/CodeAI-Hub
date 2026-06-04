@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "520d91cdc",
+  "lastRecordedCommit": "a2b4839d1",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase4.stream3.task1",
-  "expectedCommitMessage": "fix: ignore provider cache files in runtime capsule",
+  "currentTaskId": "phase4.stream3.task2",
+  "expectedCommitMessage": "fix: untrack provider cache files in step commits",
   "debt": {
-    "expectedCommitMessage": "fix: ignore provider cache files in runtime capsule",
-    "preCommitHead": "520d91cdc",
+    "expectedCommitMessage": "fix: untrack provider cache files in step commits",
+    "preCommitHead": "a2b4839d1",
     "stage": "commit_pending",
-    "taskId": "phase4.stream3.task1"
+    "taskId": "phase4.stream3.task2"
   }
 }
 ```
@@ -138,9 +138,9 @@
 ### Stream: Provider Cache Ignore Tightening
 
 35. [DONE] `phase4.stream3.task1` Extend workspace runtime capsule `.gitignore` cache patterns for provider `Caches/` folders and provider `*-cache.json` files (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore provider cache files in runtime capsule`).
-36. [PENDING] `phase4.stream3.commit1` Git Commit: `fix: ignore provider cache files in runtime capsule` (hash: TBD)
-37. [TODO] `phase4.stream3.task2` Extend accepted-step commit cleanup so legacy tracked provider `Caches/` folders and provider `*-cache.json` files are untracked before clean-Git gate (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: untrack provider cache files in step commits`).
-38. [TODO] `phase4.stream3.commit2` Git Commit: `fix: untrack provider cache files in step commits` (hash: TBD)
+36. [DONE] `phase4.stream3.commit1` Git Commit: `fix: ignore provider cache files in runtime capsule` (hash: a2b4839d1)
+37. [DONE] `phase4.stream3.task2` Extend accepted-step commit cleanup so legacy tracked provider `Caches/` folders and provider `*-cache.json` files are untracked before clean-Git gate (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: untrack provider cache files in step commits`).
+38. [PENDING] `phase4.stream3.commit2` Git Commit: `fix: untrack provider cache files in step commits` (hash: TBD)
 
 ### Stream: Tooling Verification
 
