@@ -1,3 +1,21 @@
+# Plan Closeout: workflow-clear-session-cleanup-rollback-2026-06-03
+
+**Created:** 2026-06-04
+**Acceptance:** User tested release 1.2.450 and confirmed the runtime session clean-Git behavior is correct.
+**Execution Scope Status:** ACTIVE at archive time; terminal NONE is recorded in doc/TODO/todo-plan.md after closeout commit.
+**Branch:** main
+**Planning Source Disposition:** kept active/deferred for future Development Tree phases
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md
+
+## Closeout Summary
+
+- Release 1.2.450 accepted by user retest.
+- SSOT documentation was synchronized for preliminary acceptance message/translation persistence and provider cache/log exclusion rules.
+- The Development Tree planning document remains active because the broader Development Tree design is not complete.
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +30,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
   "currentTaskId": "phase4.stream9.task1",
   "expectedCommitMessage": "docs: close release 1.2.450 runtime session scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close release 1.2.450 runtime session scope",
-    "preCommitHead": "817267063",
-    "stage": "commit_pending",
-    "taskId": "phase4.stream9.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -166,6 +179,7 @@
 
 ### Stream: Scope Closeout
 
-46. [DONE] `phase4.stream9.task1` Sync the accepted `1.2.450` runtime session behavior into active SSOT documentation, create a tracked closeout archive snapshot, and keep the Development Tree planning source active/deferred for future phases (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close release 1.2.450 runtime session scope`).
-47. [PENDING] `phase4.stream9.commit1` Git Commit: `docs: close release 1.2.450 runtime session scope` (hash: TBD)
+46. [IN_PROGRESS] `phase4.stream9.task1` Sync the accepted `1.2.450` runtime session behavior into active SSOT documentation, create a tracked closeout archive snapshot, and keep the Development Tree planning source active/deferred for future phases (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close release 1.2.450 runtime session scope`).
+47. [TODO] `phase4.stream9.commit1` Git Commit: `docs: close release 1.2.450 runtime session scope` (hash: TBD)
 48. [TODO] `phase4.stream9.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
+````
