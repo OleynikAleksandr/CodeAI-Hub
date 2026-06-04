@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "a2b4839d1",
+  "lastRecordedCommit": "e21a863a8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase4.stream3.task2",
-  "expectedCommitMessage": "fix: untrack provider cache files in step commits",
+  "currentTaskId": "phase4.stream6.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.450",
   "debt": {
-    "expectedCommitMessage": "fix: untrack provider cache files in step commits",
-    "preCommitHead": "a2b4839d1",
+    "expectedCommitMessage": "docs: prepare release 1.2.450",
+    "preCommitHead": "e21a863a8",
     "stage": "commit_pending",
-    "taskId": "phase4.stream3.task2"
+    "taskId": "phase4.stream6.task1"
   }
 }
 ```
@@ -140,8 +140,26 @@
 35. [DONE] `phase4.stream3.task1` Extend workspace runtime capsule `.gitignore` cache patterns for provider `Caches/` folders and provider `*-cache.json` files (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore provider cache files in runtime capsule`).
 36. [DONE] `phase4.stream3.commit1` Git Commit: `fix: ignore provider cache files in runtime capsule` (hash: a2b4839d1)
 37. [DONE] `phase4.stream3.task2` Extend accepted-step commit cleanup so legacy tracked provider `Caches/` folders and provider `*-cache.json` files are untracked before clean-Git gate (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: untrack provider cache files in step commits`).
-38. [PENDING] `phase4.stream3.commit2` Git Commit: `fix: untrack provider cache files in step commits` (hash: TBD)
+38. [DONE] `phase4.stream3.commit2` Git Commit: `fix: untrack provider cache files in step commits` (hash: e21a863a8)
 
 ### Stream: Tooling Verification
 
-39. [TODO] `phase4.stream4.task1` Run targeted preliminary committer, runtime capsule gitignore, workflow step commit tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+39. [DONE] `phase4.stream4.task1` Run targeted preliminary committer, runtime capsule gitignore, workflow step commit tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification passed: preliminary committer tests, residual-doc committer test, runtime capsule gitignore tests, workflow step commit tests, @codeai-hub/core build, and plan validation.
+
+### Stream: Release Build Confirmation Gate
+
+40. [DONE] `phase4.stream5.task1` Ask the user whether to build release `1.2.450` for retesting the Description acceptance clean-Git regression (scope: user release-build confirmation; expected commit: no commit expected). Result: User confirmed building release 1.2.450 in chat.
+
+### Stream: Release Notes
+
+41. [DONE] `phase4.stream6.task1` Prepare `1.2.450` release notes for the preliminary acceptance translation flush and provider cache ignore tightening (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.450`).
+42. [PENDING] `phase4.stream6.commit1` Git Commit: `docs: prepare release 1.2.450` (hash: TBD)
+
+### Stream: Release Build
+
+43. [TODO] `phase4.stream7.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` for `1.2.450`, then record generated release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.450`).
+44. [TODO] `phase4.stream7.commit1` Git Commit: `chore: build release 1.2.450` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+45. [TODO] `phase4.stream8.task1` Hand over release `1.2.450` for user retest of Description acceptance clean-Git behavior with Git-owned runtime sessions (scope: user workflow acceptance; expected commit: no commit expected).

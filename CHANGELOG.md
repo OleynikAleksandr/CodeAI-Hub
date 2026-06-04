@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.450] - 2026-06-04
+### Fixed
+- **Accepted Description/Virtual Simulation steps now commit their final session translation overlay.** Core waits for the preliminary-review completion message and translation persistence before creating the accepted-step Git commit, preventing a post-acceptance dirty `runtime/sessions/unified/**/*.translations.jsonl` file.
+- **Provider cache/log files stay out of Git-owned runtime sessions.** Workspace runtime capsule `.gitignore` now excludes provider `Caches/` folders and provider `*-cache.json` files while keeping real unified and provider-native workflow session histories tracked.
+- **Legacy tracked provider cache files are untracked before accepted-step clean-Git checks.** Accepted-step commits now remove provider `Caches/` and `*-cache.json` files from the Git index before checking whether the workspace is clean.
+
+### Verification
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.test.ts packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.449] - 2026-06-04
 ### Changed
 - **Workflow sessions are now Git-owned recovery state.** Core tracks provider-neutral unified histories and provider-native workflow session histories needed for resume under the workspace runtime capsule.
