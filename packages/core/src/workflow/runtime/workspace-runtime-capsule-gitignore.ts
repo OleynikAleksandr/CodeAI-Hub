@@ -61,6 +61,14 @@ const CACHE_PATTERNS = [
   "runtime/providers/**/home/**/models_cache.json",
 ] as const;
 
+const PROVIDER_NATIVE_SESSION_EXCEPTIONS = [
+  "# Provider-native workflow session histories stored under provider tmp",
+  "!runtime/providers/gemini/home/.gemini/tmp/",
+  "!runtime/providers/gemini/home/.gemini/tmp/*/",
+  "!runtime/providers/gemini/home/.gemini/tmp/*/chats/",
+  "!runtime/providers/gemini/home/.gemini/tmp/*/chats/*.jsonl",
+] as const;
+
 export const WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT = [
   "# CodeAI Hub workspace runtime capsule",
   "# Workflow unified sessions and provider-native session histories are Git-owned workflow state.",
@@ -77,6 +85,8 @@ export const WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT = [
   "",
   "# Provider caches and noisy local files",
   ...CACHE_PATTERNS,
+  "",
+  ...PROVIDER_NATIVE_SESSION_EXCEPTIONS,
   "",
 ].join("\n");
 

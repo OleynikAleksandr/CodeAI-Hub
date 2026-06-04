@@ -67,6 +67,91 @@ test("workspace runtime gitignore keeps workflow sessions trackable", () => {
   );
 });
 
+test("workspace runtime gitignore tracks provider-native session histories", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(tmpdir(), "codeai-provider-native-gitignore-")
+  );
+  const capsule = resolveWorkspaceRuntimeCapsule({ workspaceRoot });
+  await bootstrapWorkspaceRuntimeCapsule({ workspaceRoot });
+
+  const trackedSessionPaths = [
+    path.posix.join(
+      capsule.providerHomes.codex.relativePath,
+      "sessions",
+      "2026",
+      "06",
+      "04",
+      "rollout-codex.jsonl"
+    ),
+    path.posix.join(
+      capsule.providerHomes.claude.relativePath,
+      ".claude",
+      "projects",
+      "finderwidget-test01",
+      "claude-session.jsonl"
+    ),
+    path.posix.join(
+      capsule.providerHomes["glm-claude-code"].relativePath,
+      ".claude",
+      "projects",
+      "finderwidget-test01",
+      "glm-session.jsonl"
+    ),
+    path.posix.join(
+      capsule.providerHomes.gemini.relativePath,
+      ".gemini",
+      "tmp",
+      "finderwidget-test01",
+      "chats",
+      "session-gemini.jsonl"
+    ),
+    path.posix.join(capsule.providerHomes.kimi.relativePath, "wire.jsonl"),
+  ];
+  const ignoredProviderTmpPath = path.posix.join(
+    capsule.providerHomes.codex.relativePath,
+    "tmp",
+    "arg0",
+    "scratch.lock"
+  );
+  const ignoredGeminiAuthPath = path.posix.join(
+    capsule.providerHomes.gemini.relativePath,
+    ".gemini",
+    "oauth_creds.json"
+  );
+
+  for (const relativePath of [
+    ...trackedSessionPaths,
+    ignoredProviderTmpPath,
+    ignoredGeminiAuthPath,
+  ]) {
+    await mkdir(path.dirname(path.join(workspaceRoot, relativePath)), {
+      recursive: true,
+    });
+    await writeFile(path.join(workspaceRoot, relativePath), "{}\n", "utf8");
+  }
+  await git(workspaceRoot, ["init"]);
+
+  const status = await git(workspaceRoot, [
+    "status",
+    "--short",
+    "--untracked-files=all",
+  ]);
+  const statusPaths = status
+    .split("\n")
+    .filter(Boolean)
+    .map((line) => line.slice(3));
+
+  for (const relativePath of trackedSessionPaths) {
+    assert.equal(
+      statusPaths.includes(relativePath),
+      true,
+      `${relativePath} must stay visible to Git`
+    );
+  }
+  assert.equal(statusPaths.includes(ignoredProviderTmpPath), false);
+  assert.equal(statusPaths.includes(ignoredGeminiAuthPath), false);
+});
+
 test("workspace rollback ignore classifies mutable runtime paths", () => {
   const capsule = resolveWorkspaceRuntimeCapsule({
     workspaceRoot: "/tmp/CodeAI-Hub codex 5.4",

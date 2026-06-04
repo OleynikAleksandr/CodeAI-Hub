@@ -8,15 +8,15 @@
   "planId": "application-skeleton-terminal-residue-2026-06-04",
   "branch": "main",
   "baseHead": "c531f5680",
-  "lastRecordedCommit": "428264853",
+  "lastRecordedCommit": "9ca8c8d2f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream10.task1",
-  "expectedCommitMessage": "chore: package release 1.2.451",
+  "currentTaskId": "phase1.stream12.task1",
+  "expectedCommitMessage": "fix: track provider-native workflow sessions",
   "debt": {
-    "expectedCommitMessage": "chore: package release 1.2.451",
-    "preCommitHead": "428264853",
+    "expectedCommitMessage": "fix: track provider-native workflow sessions",
+    "preCommitHead": "9ca8c8d2f",
     "stage": "commit_pending",
-    "taskId": "phase1.stream10.task1"
+    "taskId": "phase1.stream12.task1"
   }
 }
 ```
@@ -85,14 +85,45 @@
 ### Stream: VSIX Package
 
 17. [DONE] `phase1.stream10.task1` Run `./scripts/build-release.sh --use-current-version` for `1.2.451` from the clean post-build-all tree (scope: `codeai-hub-1.2.451.vsix, package.json, package-lock.json, .vscodeignore, packages/core/src/templates/bundled-templates.ts, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.451`).
-18. [PENDING] `phase1.stream10.commit1` Git Commit: `chore: package release 1.2.451` (hash: TBD)
+18. [DONE] `phase1.stream10.commit1` Git Commit: `chore: package release 1.2.451` (hash: 9ca8c8d2f)
 
 ### Stream: User Workflow Acceptance Testing
 
-19. [TODO] `phase1.stream11.task1` Hand over release `1.2.451` for user retest; wait for explicit acceptance or next failure report (scope: user workflow acceptance; expected commit: no commit expected).
+19. [DONE] `phase1.stream11.task1` Hand over release `1.2.451` for user retest; wait for explicit acceptance or next failure report (scope: user workflow acceptance; expected commit: no commit expected). Result: User retest accepted Codex Clear/Undo session rollback, but rejected Gemini because native Gemini chat files under `.gemini/tmp/<workspace>/chats/*.jsonl` were ignored by the runtime capsule `.gitignore`.
+
+### Stream: Provider Native Session Git Ownership
+
+20. [DONE] `phase1.stream12.task1` Make workspace runtime capsule `.gitignore` track provider-native workflow session histories for Codex, Claude, GLM-Claude-Code, Gemini, and Kimi while keeping provider tmp caches/auth ignored (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: track provider-native workflow sessions`).
+21. [PENDING] `phase1.stream12.commit1` Git Commit: `fix: track provider-native workflow sessions` (hash: TBD)
+
+### Stream: Gemini Session Documentation Sync
+
+22. [TODO] `phase1.stream13.task1` Document that Gemini native chat histories under `.gemini/tmp/<workspace>/chats/*.jsonl` are rollback-owned workflow session history despite living under Gemini tmp (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document gemini native session git ownership`).
+23. [TODO] `phase1.stream13.commit1` Git Commit: `docs: document gemini native session git ownership` (hash: TBD)
+
+### Stream: Gemini Verification
+
+24. [TODO] `phase1.stream14.task1` Run runtime capsule gitignore regression tests, Core build, and plan validation before asking for the next release build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+
+### Stream: Release Build Confirmation Gate
+
+25. [TODO] `phase1.stream15.task1` Ask the user whether to build release `1.2.452` for Gemini native session rollback retesting (scope: user release-build confirmation; expected commit: no commit expected).
+
+### Stream: Release 1.2.452
+
+26. [TODO] `phase1.stream16.task1` Prepare release metadata for `1.2.452` after explicit user confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.452`).
+27. [TODO] `phase1.stream16.commit1` Git Commit: `docs: prepare release 1.2.452` (hash: TBD)
+28. [TODO] `phase1.stream16.task2` Run `./scripts/build-all.sh` for `1.2.452` (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.452`).
+29. [TODO] `phase1.stream16.commit2` Git Commit: `chore: build release 1.2.452` (hash: TBD)
+30. [TODO] `phase1.stream16.task3` Run `./scripts/build-release.sh --use-current-version` for `1.2.452` (scope: `codeai-hub-1.2.452.vsix, package.json, package-lock.json, .vscodeignore, packages/core/src/templates/bundled-templates.ts, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.452`).
+31. [TODO] `phase1.stream16.commit3` Git Commit: `chore: package release 1.2.452` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+32. [TODO] `phase1.stream17.task1` Hand over release `1.2.452` for user retest; wait for explicit acceptance or next failure report (scope: user workflow acceptance; expected commit: no commit expected).
 
 ### Stream: Scope Closeout
 
-20. [TODO] `phase1.stream12.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close application skeleton terminal residue scope`).
-21. [TODO] `phase1.stream12.commit1` Git Commit: `docs: close application skeleton terminal residue scope` (hash: TBD)
-22. [TODO] `phase1.stream12.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
+33. [TODO] `phase1.stream18.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close application skeleton terminal residue scope`).
+34. [TODO] `phase1.stream18.commit1` Git Commit: `docs: close application skeleton terminal residue scope` (hash: TBD)
+35. [TODO] `phase1.stream18.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
