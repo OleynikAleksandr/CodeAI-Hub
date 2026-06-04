@@ -67,6 +67,27 @@ const LOCAL_STATE_IGNORE_PATTERN = ".codeai-hub/state/";
 const NEWLINE_RE = /\r?\n/u;
 const RENAME_SEPARATOR = " -> ";
 const TRAILING_SLASHES_RE = /\/+$/u;
+const VOLATILE_PROVIDER_FILE_NAMES = new Set([
+  ".env",
+  ".netrc",
+  ".npmrc",
+  "auth.json",
+  "credentials.json",
+  "models_cache.json",
+  "secrets.json",
+  "token.json",
+  "tokens.json",
+]);
+const VOLATILE_PROVIDER_SEGMENTS = new Set([
+  ".cache",
+  ".npm",
+  ".pnpm-store",
+  "Cache",
+  "Code Cache",
+  "GPUCache",
+  "node_modules",
+  "tmp",
+]);
 
 const buildAcceptedStepCommitMessage = (stage: WorkflowStageId): string =>
   `codeai-step: ${getWorkflowBoundaryStageLabel(stage)} accepted`;
@@ -128,10 +149,16 @@ const isVolatileProviderRuntimePath = (value: string): boolean => {
     return false;
   }
   const providerHomePath = parts.slice(6).join("/");
+  const providerHomeParts = splitGitPath(providerHomePath);
+  const fileName = providerHomeParts.at(-1) ?? "";
   return (
-    providerHomePath === "models_cache.json" ||
+    VOLATILE_PROVIDER_FILE_NAMES.has(fileName) ||
+    fileName.startsWith("oauth") ||
+    providerHomeParts.some((part) => VOLATILE_PROVIDER_SEGMENTS.has(part)) ||
     providerHomePath.endsWith(".sqlite") ||
-    providerHomePath.startsWith("shell_snapshots/")
+    providerHomePath.endsWith(".sqlite-shm") ||
+    providerHomePath.endsWith(".sqlite-wal") ||
+    providerHomePath.endsWith(".log")
   );
 };
 

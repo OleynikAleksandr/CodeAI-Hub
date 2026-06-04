@@ -21,6 +21,8 @@ const CAPSULE_PROVIDER_CONFIG_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/config\.toml/u;
 const CAPSULE_PROVIDER_SQLITE_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/logs_2\.sqlite/u;
+const CAPSULE_PROVIDER_AUTH_RE =
+  /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/auth\.json/u;
 const CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE =
   /\.codeai-hub\/demo-workspace\/runtime\/providers\/codex\/home\/shell_snapshots\/snapshot\.sh/u;
 const CAPSULE_LOCALIZATION_CACHE_RE =
@@ -131,10 +133,10 @@ test("accepted step commit tracks workspace capsule directly and leaves Git clea
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.match(trackedFiles, CAPSULE_FINAL_DESCRIPTION_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_LOCALIZATION_CACHE_RE);
-    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
-    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SESSION_RE);
+    assert.match(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
+    assert.match(trackedFiles, CAPSULE_PROVIDER_SESSION_RE);
     assert.match(trackedFiles, CAPSULE_TASK_TIMER_STATE_RE);
-    assert.doesNotMatch(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
+    assert.match(trackedFiles, CAPSULE_UNIFIED_SESSION_RE);
     assert.doesNotMatch(trackedFiles, RUNTIME_SLICES_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
@@ -272,7 +274,7 @@ test("accepted step commit untracks already tracked local CodeAI runtime state",
   }
 });
 
-test("accepted step commit untracks provider volatile files left by older capsule commits", async () => {
+test("accepted step commit untracks provider secrets and caches left by older capsule commits", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "step-volatile-workspace-")
   );
@@ -288,18 +290,24 @@ test("accepted step commit untracks provider volatile files left by older capsul
       capsule.providerHomes.codex.absolutePath,
       "logs_2.sqlite"
     );
+    const volatileAuthPath = path.join(
+      capsule.providerHomes.codex.absolutePath,
+      "auth.json"
+    );
     const volatileShellSnapshotPath = path.join(
       capsule.providerHomes.codex.absolutePath,
       "shell_snapshots",
       "snapshot.sh"
     );
     await writeText(volatileSqlitePath, "old logs\n");
+    await writeText(volatileAuthPath, '{"token":"old"}\n');
     await writeText(volatileShellSnapshotPath, "old snapshot\n");
     await git(workspaceRoot, ["add", "."]);
     await git(workspaceRoot, [
       "add",
       "-f",
       path.relative(workspaceRoot, volatileSqlitePath),
+      path.relative(workspaceRoot, volatileAuthPath),
       path.relative(workspaceRoot, volatileShellSnapshotPath),
     ]);
     await git(workspaceRoot, ["commit", "-m", "test: old capsule commit"]);
@@ -309,7 +317,8 @@ test("accepted step commit untracks provider volatile files left by older capsul
       "# Final Description\n"
     );
     await writeText(volatileSqlitePath, "new logs\n");
-    await rm(volatileShellSnapshotPath, { force: true });
+    await writeText(volatileAuthPath, '{"token":"new"}\n');
+    await writeText(volatileShellSnapshotPath, "new snapshot\n");
 
     await new WorkflowStepCommitFacade().commitAcceptedStep({
       stage: "description",
@@ -320,13 +329,14 @@ test("accepted step commit untracks provider volatile files left by older capsul
     assert.equal(await git(workspaceRoot, ["status", "--porcelain"]), "");
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SQLITE_RE);
-    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE);
+    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_AUTH_RE);
+    assert.match(trackedFiles, CAPSULE_PROVIDER_SHELL_SNAPSHOT_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
 });
 
-test("accepted step commit untracks legacy mutable runtime without overwriting workspace settings", async () => {
+test("accepted step commit preserves Git-owned provider session history while ignoring settings", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(tmpdir(), "step-settings-workspace-")
   );
@@ -412,8 +422,8 @@ test("accepted step commit untracks legacy mutable runtime without overwriting w
     const trackedFiles = await git(workspaceRoot, ["ls-files"]);
     assert.doesNotMatch(trackedFiles, CAPSULE_SETTINGS_RE);
     assert.doesNotMatch(trackedFiles, CAPSULE_LOCALIZATION_CACHE_RE);
-    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
-    assert.doesNotMatch(trackedFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
+    assert.match(trackedFiles, CAPSULE_PROVIDER_CONFIG_RE);
+    assert.match(trackedFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
     assert.match(
       await git(workspaceRoot, ["log", "--oneline", "-1"]),
       ACCEPTED_STEP_COMMIT_RE
@@ -426,8 +436,8 @@ test("accepted step commit untracks legacy mutable runtime without overwriting w
     ]);
     assert.doesNotMatch(headTreeFiles, CAPSULE_SETTINGS_RE);
     assert.doesNotMatch(headTreeFiles, CAPSULE_LOCALIZATION_CACHE_RE);
-    assert.doesNotMatch(headTreeFiles, CAPSULE_PROVIDER_CONFIG_RE);
-    assert.doesNotMatch(headTreeFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
+    assert.match(headTreeFiles, CAPSULE_PROVIDER_CONFIG_RE);
+    assert.match(headTreeFiles, CAPSULE_PROVIDER_LEGACY_SESSION_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
