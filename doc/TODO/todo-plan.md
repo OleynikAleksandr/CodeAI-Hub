@@ -8,15 +8,15 @@
   "planId": "application-skeleton-terminal-residue-2026-06-04",
   "branch": "main",
   "baseHead": "c531f5680",
-  "lastRecordedCommit": "2e3d476cc",
+  "lastRecordedCommit": "547b4bace",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream13.task1",
-  "expectedCommitMessage": "docs: document provider-native session git ownership",
+  "currentTaskId": "phase1.stream16.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.452",
   "debt": {
-    "expectedCommitMessage": "docs: document provider-native session git ownership",
-    "preCommitHead": "2e3d476cc",
+    "expectedCommitMessage": "docs: prepare release 1.2.452",
+    "preCommitHead": "547b4bace",
     "stage": "commit_pending",
-    "taskId": "phase1.stream13.task1"
+    "taskId": "phase1.stream16.task1"
   }
 }
 ```
@@ -99,20 +99,20 @@
 ### Stream: Provider Native Session Documentation Sync
 
 22. [DONE] `phase1.stream13.task1` Document provider-native workflow session Git ownership for Codex, Claude, GLM-Claude-Code, Gemini, and Kimi, including the Gemini `.gemini/tmp/<workspace>/chats/*.jsonl` exception (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document provider-native session git ownership`).
-23. [PENDING] `phase1.stream13.commit1` Git Commit: `docs: document provider-native session git ownership` (hash: TBD)
+23. [DONE] `phase1.stream13.commit1` Git Commit: `docs: document provider-native session git ownership` (hash: 547b4bace)
 
 ### Stream: Provider Native Session Verification
 
-24. [TODO] `phase1.stream14.task1` Run runtime capsule gitignore regression tests, Core build, and plan validation before asking for the next release build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+24. [DONE] `phase1.stream14.task1` Run runtime capsule gitignore regression tests, Core build, and plan validation before asking for the next release build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Provider-native session gitignore regression passed for Codex, Claude, GLM-Claude-Code, Gemini, and Kimi; npm run build --workspace=@codeai-hub/core passed; npm run plan:validate passed.
 
 ### Stream: Release Build Confirmation Gate
 
-25. [TODO] `phase1.stream15.task1` Ask the user whether to build release `1.2.452` for Gemini native session rollback retesting (scope: user release-build confirmation; expected commit: no commit expected).
+25. [DONE] `phase1.stream15.task1` Ask the user whether to build release `1.2.452` for Gemini native session rollback retesting (scope: user release-build confirmation; expected commit: no commit expected). Result: User explicitly confirmed building release 1.2.452 for provider-native session rollback retesting.
 
 ### Stream: Release 1.2.452
 
-26. [TODO] `phase1.stream16.task1` Prepare release metadata for `1.2.452` after explicit user confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.452`).
-27. [TODO] `phase1.stream16.commit1` Git Commit: `docs: prepare release 1.2.452` (hash: TBD)
+26. [DONE] `phase1.stream16.task1` Prepare release metadata for `1.2.452` after explicit user confirmation (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.452`).
+27. [PENDING] `phase1.stream16.commit1` Git Commit: `docs: prepare release 1.2.452` (hash: TBD)
 28. [TODO] `phase1.stream16.task2` Run `./scripts/build-all.sh` for `1.2.452` (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.452`).
 29. [TODO] `phase1.stream16.commit2` Git Commit: `chore: build release 1.2.452` (hash: TBD)
 30. [TODO] `phase1.stream16.task3` Run `./scripts/build-release.sh --use-current-version` for `1.2.452` (scope: `codeai-hub-1.2.452.vsix, package.json, package-lock.json, .vscodeignore, packages/core/src/templates/bundled-templates.ts, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.452`).

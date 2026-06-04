@@ -2,7 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.451** (Application Skeleton Terminal Residue Flush)
+**Current Release — v1.2.452** (Provider-Native Session Rollback)
+
+This release fixes provider-native workflow session ownership for the runtime
+capsule. Codex, Claude, GLM-Claude-Code, Gemini, and Kimi session histories now
+remain visible to Git when they are required for provider resume, including
+Gemini chat files stored under `.gemini/tmp/<workspace>/chats/*.jsonl`, while
+auth files, package caches, and non-session provider tmp files stay ignored.
+
+**Previous Release — v1.2.451** (Application Skeleton Terminal Residue Flush)
 
 This release fixes the Application Skeleton completion dirty-Git regression
 found in v1.2.450. After Core materializes and commits the accepted skeleton, it

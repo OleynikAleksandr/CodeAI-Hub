@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.452] - 2026-06-04
+### Fixed
+- **Provider-native workflow sessions are now tracked consistently across providers.** The workspace runtime capsule keeps Codex `home/sessions/**/*.jsonl`, Claude `home/.claude/projects/**/*.jsonl`, GLM-Claude-Code `home/.claude/projects/**/*.jsonl`, Gemini `home/.gemini/tmp/<workspace>/chats/*.jsonl`, and Kimi `home/wire.jsonl` visible to Git when they are required for provider resume.
+- **Gemini chat history under provider `tmp` no longer disappears from rollback ownership.** The runtime capsule `.gitignore` re-includes Gemini chat JSONL files while leaving auth files, package caches, and non-session provider tmp/cache files ignored.
+
+### Verification
+- `node --import tsx --test packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.451] - 2026-06-04
 ### Fixed
 - **Application Skeleton terminal completion no longer leaves dirty session files before Quality Gates.** Core now persists the final `managed-workflow-complete` message and translation overlay, commits that terminal session residue, and only then activates `Quality Gates Baseline`.
