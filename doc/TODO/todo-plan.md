@@ -8,15 +8,15 @@
   "planId": "application-skeleton-terminal-residue-2026-06-04",
   "branch": "main",
   "baseHead": "c531f5680",
-  "lastRecordedCommit": "c60cf4a3b",
+  "lastRecordedCommit": "de7b7136c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream3.task1",
-  "expectedCommitMessage": "test: cover application skeleton completion residue ordering",
+  "currentTaskId": "phase1.stream4.task1",
+  "expectedCommitMessage": "docs: document application skeleton terminal residue commit",
   "debt": {
-    "expectedCommitMessage": "test: cover application skeleton completion residue ordering",
-    "preCommitHead": "c60cf4a3b",
+    "expectedCommitMessage": "docs: document application skeleton terminal residue commit",
+    "preCommitHead": "de7b7136c",
     "stage": "commit_pending",
-    "taskId": "phase1.stream3.task1"
+    "taskId": "phase1.stream4.task1"
   }
 }
 ```
@@ -52,12 +52,12 @@
 ### Stream: Regression Test
 
 5. [DONE] `phase1.stream3.task1` Cover Application Skeleton final handoff ordering so completion message persistence and terminal residue commit happen before Quality Gates activation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton completion residue ordering`).
-6. [PENDING] `phase1.stream3.commit1` Git Commit: `test: cover application skeleton completion residue ordering` (hash: TBD)
+6. [DONE] `phase1.stream3.commit1` Git Commit: `test: cover application skeleton completion residue ordering` (hash: de7b7136c)
 
 ### Stream: Documentation Sync
 
-7. [TODO] `phase1.stream4.task1` Sync active SSOT docs so managed Application Skeleton completion follows the same persisted-message terminal residue rule as other managed stage completions (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document application skeleton terminal residue commit`).
-8. [TODO] `phase1.stream4.commit1` Git Commit: `docs: document application skeleton terminal residue commit` (hash: TBD)
+7. [DONE] `phase1.stream4.task1` Sync active SSOT docs so managed Application Skeleton completion follows the same persisted-message terminal residue rule as other managed stage completions (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document application skeleton terminal residue commit`).
+8. [PENDING] `phase1.stream4.commit1` Git Commit: `docs: document application skeleton terminal residue commit` (hash: TBD)
 
 ### Stream: Tooling Verification
 
