@@ -164,11 +164,7 @@ export class ApplicationSkeletonStagePlanController {
     if (stageState.currentTaskId !== PHASE4_TASK_ID) {
       throw new Error("Application Skeleton final review is not open.");
     }
-    await ensureManagedTerminalGitClean({
-      gitBoundary: this.managedGitBoundary,
-      stage: "application_skeleton",
-      workspaceRoot: params.workspaceRoot,
-    });
+    await this.commitTerminalHandoffResidue(params);
     await writeText(
       params.workspaceRoot,
       APPLICATION_STAGE_PLAN_PATH,
@@ -193,6 +189,16 @@ export class ApplicationSkeletonStagePlanController {
     await commitManagedWorkflowLedger({
       gitBoundary: this.managedGitBoundary,
       ledgerPaths: [WORKSPACE_PLAN_PATH, APPLICATION_STAGE_PLAN_PATH],
+      workspaceRoot: params.workspaceRoot,
+    });
+  }
+
+  async commitTerminalHandoffResidue(params: {
+    readonly workspaceRoot: string;
+  }): Promise<void> {
+    await ensureManagedTerminalGitClean({
+      gitBoundary: this.managedGitBoundary,
+      stage: "application_skeleton",
       workspaceRoot: params.workspaceRoot,
     });
   }

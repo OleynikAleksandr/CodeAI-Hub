@@ -5,6 +5,9 @@ import type { SessionRequestHandlerEventMessages } from "./session-request-handl
 
 interface ApplicationSkeletonCompletionHandoffParams {
   readonly broadcaster?: (event: unknown) => void;
+  readonly commitTerminalHandoffResidue?: (params: {
+    readonly workspaceRoot: string;
+  }) => Promise<void>;
   readonly eventMessages: Pick<
     SessionRequestHandlerEventMessages,
     "appendCoreMessage"
@@ -16,6 +19,20 @@ interface ApplicationSkeletonCompletionHandoffParams {
   readonly stagePlan: ApplicationSkeletonStagePlanController;
   readonly workspaceRoot: string;
 }
+
+const commitTerminalHandoffResidue = async (
+  params: ApplicationSkeletonCompletionHandoffParams
+): Promise<void> => {
+  if (params.commitTerminalHandoffResidue) {
+    await params.commitTerminalHandoffResidue({
+      workspaceRoot: params.workspaceRoot,
+    });
+    return;
+  }
+  await params.stagePlan.commitTerminalHandoffResidue({
+    workspaceRoot: params.workspaceRoot,
+  });
+};
 
 export const completeApplicationSkeletonMaterializedHandoff = async (
   params: ApplicationSkeletonCompletionHandoffParams
@@ -38,6 +55,17 @@ export const completeApplicationSkeletonMaterializedHandoff = async (
     tag: "managed-workflow-complete",
   });
   await params.eventMessages.waitForMessagePersistence?.(params.sessionId);
+  try {
+    await commitTerminalHandoffResidue(params);
+  } catch (error) {
+    params.eventMessages.appendCoreMessage(params.sessionId, {
+      content: buildApplicationSkeletonBoundaryBlockedMessage(
+        error instanceof Error ? error.message : String(error)
+      ),
+      tag: "managed-workflow-validation",
+    });
+    return false;
+  }
   params.broadcaster?.({
     payload: { stage: "quality_gates" },
     type: "workflow:stage:activate",
