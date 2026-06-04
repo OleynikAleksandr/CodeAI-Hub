@@ -8,15 +8,15 @@
   "planId": "application-skeleton-terminal-residue-2026-06-04",
   "branch": "main",
   "baseHead": "c531f5680",
-  "lastRecordedCommit": "9ca8c8d2f",
+  "lastRecordedCommit": "2e3d476cc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream12.task1",
-  "expectedCommitMessage": "fix: track provider-native workflow sessions",
+  "currentTaskId": "phase1.stream13.task1",
+  "expectedCommitMessage": "docs: document provider-native session git ownership",
   "debt": {
-    "expectedCommitMessage": "fix: track provider-native workflow sessions",
-    "preCommitHead": "9ca8c8d2f",
+    "expectedCommitMessage": "docs: document provider-native session git ownership",
+    "preCommitHead": "2e3d476cc",
     "stage": "commit_pending",
-    "taskId": "phase1.stream12.task1"
+    "taskId": "phase1.stream13.task1"
   }
 }
 ```
@@ -94,14 +94,14 @@
 ### Stream: Provider Native Session Git Ownership
 
 20. [DONE] `phase1.stream12.task1` Make workspace runtime capsule `.gitignore` track provider-native workflow session histories for Codex, Claude, GLM-Claude-Code, Gemini, and Kimi while keeping provider tmp caches/auth ignored (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: track provider-native workflow sessions`).
-21. [PENDING] `phase1.stream12.commit1` Git Commit: `fix: track provider-native workflow sessions` (hash: TBD)
+21. [DONE] `phase1.stream12.commit1` Git Commit: `fix: track provider-native workflow sessions` (hash: 2e3d476cc)
 
-### Stream: Gemini Session Documentation Sync
+### Stream: Provider Native Session Documentation Sync
 
-22. [TODO] `phase1.stream13.task1` Document that Gemini native chat histories under `.gemini/tmp/<workspace>/chats/*.jsonl` are rollback-owned workflow session history despite living under Gemini tmp (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document gemini native session git ownership`).
-23. [TODO] `phase1.stream13.commit1` Git Commit: `docs: document gemini native session git ownership` (hash: TBD)
+22. [DONE] `phase1.stream13.task1` Document provider-native workflow session Git ownership for Codex, Claude, GLM-Claude-Code, Gemini, and Kimi, including the Gemini `.gemini/tmp/<workspace>/chats/*.jsonl` exception (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document provider-native session git ownership`).
+23. [PENDING] `phase1.stream13.commit1` Git Commit: `docs: document provider-native session git ownership` (hash: TBD)
 
-### Stream: Gemini Verification
+### Stream: Provider Native Session Verification
 
 24. [TODO] `phase1.stream14.task1` Run runtime capsule gitignore regression tests, Core build, and plan validation before asking for the next release build (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
