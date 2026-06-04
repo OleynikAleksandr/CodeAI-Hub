@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "e21a863a8",
+  "lastRecordedCommit": "2d2ac5355",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase4.stream6.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.450",
+  "currentTaskId": "phase4.stream7.task1",
+  "expectedCommitMessage": "chore: build release 1.2.450",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.450",
-    "preCommitHead": "e21a863a8",
+    "expectedCommitMessage": "chore: build release 1.2.450",
+    "preCommitHead": "2d2ac5355",
     "stage": "commit_pending",
-    "taskId": "phase4.stream6.task1"
+    "taskId": "phase4.stream7.task1"
   }
 }
 ```
@@ -153,12 +153,12 @@
 ### Stream: Release Notes
 
 41. [DONE] `phase4.stream6.task1` Prepare `1.2.450` release notes for the preliminary acceptance translation flush and provider cache ignore tightening (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.450`).
-42. [PENDING] `phase4.stream6.commit1` Git Commit: `docs: prepare release 1.2.450` (hash: TBD)
+42. [DONE] `phase4.stream6.commit1` Git Commit: `docs: prepare release 1.2.450` (hash: 2d2ac5355)
 
 ### Stream: Release Build
 
-43. [TODO] `phase4.stream7.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` for `1.2.450`, then record generated release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.450`).
-44. [TODO] `phase4.stream7.commit1` Git Commit: `chore: build release 1.2.450` (hash: TBD)
+43. [DONE] `phase4.stream7.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` for `1.2.450`, then record generated release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.450`).
+44. [PENDING] `phase4.stream7.commit1` Git Commit: `chore: build release 1.2.450` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
