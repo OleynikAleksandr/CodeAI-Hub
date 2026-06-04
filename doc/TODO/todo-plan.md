@@ -8,15 +8,15 @@
   "planId": "application-skeleton-terminal-residue-2026-06-04",
   "branch": "main",
   "baseHead": "c531f5680",
-  "lastRecordedCommit": "ddb73b0c4",
+  "lastRecordedCommit": "428264853",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream9.task1",
-  "expectedCommitMessage": "chore: build release 1.2.451",
+  "currentTaskId": "phase1.stream10.task1",
+  "expectedCommitMessage": "chore: package release 1.2.451",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.451",
-    "preCommitHead": "ddb73b0c4",
+    "expectedCommitMessage": "chore: package release 1.2.451",
+    "preCommitHead": "428264853",
     "stage": "commit_pending",
-    "taskId": "phase1.stream9.task1"
+    "taskId": "phase1.stream10.task1"
   }
 }
 ```
@@ -80,12 +80,12 @@
 ### Stream: Release Build
 
 15. [DONE] `phase1.stream9.task1` Run `./scripts/build-all.sh` for `1.2.451` after explicit user confirmation and release metadata prep (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.451`).
-16. [PENDING] `phase1.stream9.commit1` Git Commit: `chore: build release 1.2.451` (hash: TBD)
+16. [DONE] `phase1.stream9.commit1` Git Commit: `chore: build release 1.2.451` (hash: 428264853)
 
 ### Stream: VSIX Package
 
-17. [TODO] `phase1.stream10.task1` Run `./scripts/build-release.sh --use-current-version` for `1.2.451` from the clean post-build-all tree (scope: `codeai-hub-1.2.451.vsix, package.json, package-lock.json, .vscodeignore, packages/core/src/templates/bundled-templates.ts, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.451`).
-18. [TODO] `phase1.stream10.commit1` Git Commit: `chore: package release 1.2.451` (hash: TBD)
+17. [DONE] `phase1.stream10.task1` Run `./scripts/build-release.sh --use-current-version` for `1.2.451` from the clean post-build-all tree (scope: `codeai-hub-1.2.451.vsix, package.json, package-lock.json, .vscodeignore, packages/core/src/templates/bundled-templates.ts, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.451`).
+18. [PENDING] `phase1.stream10.commit1` Git Commit: `chore: package release 1.2.451` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
