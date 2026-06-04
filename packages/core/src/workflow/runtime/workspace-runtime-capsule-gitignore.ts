@@ -48,6 +48,7 @@ const CACHE_PATTERNS = [
   "runtime/providers/**/home/**/.npm/",
   "runtime/providers/**/home/**/.pnpm-store/",
   "runtime/providers/**/home/**/Cache/",
+  "runtime/providers/**/home/**/Caches/",
   "runtime/providers/**/home/**/Code Cache/",
   "runtime/providers/**/home/**/GPUCache/",
   "runtime/providers/**/home/**/node_modules/",
@@ -56,6 +57,7 @@ const CACHE_PATTERNS = [
   "runtime/providers/**/home/**/*.sqlite-shm",
   "runtime/providers/**/home/**/*.sqlite-wal",
   "runtime/providers/**/home/**/*.log",
+  "runtime/providers/**/home/**/*-cache.json",
   "runtime/providers/**/home/**/models_cache.json",
 ] as const;
 

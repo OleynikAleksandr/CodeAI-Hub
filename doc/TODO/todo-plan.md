@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "bbd623a1b",
+  "lastRecordedCommit": "520d91cdc",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase4.stream2.task1",
-  "expectedCommitMessage": "fix: flush preliminary review translations before commit",
+  "currentTaskId": "phase4.stream3.task1",
+  "expectedCommitMessage": "fix: ignore provider cache files in runtime capsule",
   "debt": {
-    "expectedCommitMessage": "fix: flush preliminary review translations before commit",
-    "preCommitHead": "bbd623a1b",
+    "expectedCommitMessage": "fix: ignore provider cache files in runtime capsule",
+    "preCommitHead": "520d91cdc",
     "stage": "commit_pending",
-    "taskId": "phase4.stream2.task1"
+    "taskId": "phase4.stream3.task1"
   }
 }
 ```
@@ -133,12 +133,12 @@
 ### Stream: Preliminary Acceptance Flush
 
 33. [DONE] `phase4.stream2.task1` Make preliminary Description/Virtual Simulation acceptance wait for queued dialog message and translation overlay persistence before accepted-step Git commit (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.test.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade-residual-docs.test.ts`; expected commit: `fix: flush preliminary review translations before commit`).
-34. [PENDING] `phase4.stream2.commit1` Git Commit: `fix: flush preliminary review translations before commit` (hash: TBD)
+34. [DONE] `phase4.stream2.commit1` Git Commit: `fix: flush preliminary review translations before commit` (hash: 520d91cdc)
 
 ### Stream: Provider Cache Ignore Tightening
 
-35. [TODO] `phase4.stream3.task1` Extend workspace runtime capsule `.gitignore` cache patterns for provider `Caches/` folders and provider `*-cache.json` files (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore provider cache files in runtime capsule`).
-36. [TODO] `phase4.stream3.commit1` Git Commit: `fix: ignore provider cache files in runtime capsule` (hash: TBD)
+35. [DONE] `phase4.stream3.task1` Extend workspace runtime capsule `.gitignore` cache patterns for provider `Caches/` folders and provider `*-cache.json` files (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore provider cache files in runtime capsule`).
+36. [PENDING] `phase4.stream3.commit1` Git Commit: `fix: ignore provider cache files in runtime capsule` (hash: TBD)
 37. [TODO] `phase4.stream3.task2` Extend accepted-step commit cleanup so legacy tracked provider `Caches/` folders and provider `*-cache.json` files are untracked before clean-Git gate (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: untrack provider cache files in step commits`).
 38. [TODO] `phase4.stream3.commit2` Git Commit: `fix: untrack provider cache files in step commits` (hash: TBD)
 

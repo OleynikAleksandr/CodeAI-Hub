@@ -273,6 +273,18 @@ test("workspace runtime gitignore excludes provider secrets and caches", () => {
     true
   );
   assert.equal(
+    WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
+      "runtime/providers/**/home/**/Caches/"
+    ),
+    true
+  );
+  assert.equal(
+    WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.includes(
+      "runtime/providers/**/home/**/*-cache.json"
+    ),
+    true
+  );
+  assert.equal(
     WORKSPACE_RUNTIME_CAPSULE_GITIGNORE_CONTENT.endsWith("\n"),
     true
   );
