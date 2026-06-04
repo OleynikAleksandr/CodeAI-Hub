@@ -1,3 +1,12 @@
+# Plan Closeout: application-skeleton-terminal-residue-2026-06-04
+
+**Created:** 2026-06-04
+**Acceptance:** User tested release `1.2.452` and accepted the provider-native session rollback fix; workflow Clear/Undo now behaves correctly.
+**Release:** `1.2.452`
+**Planning Source Disposition:** kept active. `doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md` is still the active Development Tree planning document for later phases and must not be moved to `Plans/Archive` by this bugfix closeout.
+
+---
+
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +21,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
   "currentTaskId": "phase1.stream18.task1",
   "expectedCommitMessage": "docs: close application skeleton terminal residue scope",
-  "debt": {
-    "expectedCommitMessage": "docs: close application skeleton terminal residue scope",
-    "preCommitHead": "7e672b3ac",
-    "stage": "commit_pending",
-    "taskId": "phase1.stream18.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -124,6 +128,6 @@
 
 ### Stream: Scope Closeout
 
-33. [DONE] `phase1.stream18.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close application skeleton terminal residue scope`).
-34. [PENDING] `phase1.stream18.commit1` Git Commit: `docs: close application skeleton terminal residue scope` (hash: TBD)
+33. [IN_PROGRESS] `phase1.stream18.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close application skeleton terminal residue scope`).
+34. [TODO] `phase1.stream18.commit1` Git Commit: `docs: close application skeleton terminal residue scope` (hash: TBD)
 35. [TODO] `phase1.stream18.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
