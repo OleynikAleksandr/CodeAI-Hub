@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "5491807b0",
+  "lastRecordedCommit": "9d9d86c4c",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase3.stream6.task1",
-  "expectedCommitMessage": "chore: build release 1.2.449",
+  "currentTaskId": "phase4.stream1.task1",
+  "expectedCommitMessage": "docs: plan release 1.2.450 acceptance residue fix",
   "debt": {
-    "expectedCommitMessage": "chore: build release 1.2.449",
-    "preCommitHead": "5491807b0",
+    "expectedCommitMessage": "docs: plan release 1.2.450 acceptance residue fix",
+    "preCommitHead": "9d9d86c4c",
     "stage": "commit_pending",
-    "taskId": "phase3.stream6.task1"
+    "taskId": "phase4.stream1.task1"
   }
 }
 ```
@@ -112,13 +112,36 @@
 ### Stream: Release Build
 
 26. [DONE] `phase3.stream6.task1` Run `./scripts/build-all.sh` and `./scripts/build-release.sh --use-current-version` for `1.2.449`, then record generated release artifacts (scope: `package.json, package-lock.json, packages/**/package.json, assets/**/manifest.json, packages/core/src/templates/bundled-templates.ts, .vscodeignore, doc/tmp/releases/**, *.vsix, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.449`).
-27. [PENDING] `phase3.stream6.commit1` Git Commit: `chore: build release 1.2.449` (hash: TBD)
+27. [DONE] `phase3.stream6.commit1` Git Commit: `chore: build release 1.2.449` (hash: 9d9d86c4c)
 
 ### Stream: User Workflow Acceptance Testing
 
-28. [TODO] `phase3.stream7.task1` Hand over release `1.2.449` for user Clear/Undo retest with Git-owned unified and provider-native workflow sessions (scope: user workflow acceptance; expected commit: no commit expected).
+28. [BLOCKED] `phase3.stream7.task1` Hand over release `1.2.449` for user Clear/Undo retest with Git-owned unified and provider-native workflow sessions (scope: user workflow acceptance; expected commit: no commit expected). Result: User tested release 1.2.449 after Description acceptance in `FinderWidget-Test01`; Git stayed dirty because `runtime/sessions/unified/...description.translations.jsonl` received the `managed-workflow-complete` translation after `codeai-step: Description accepted`. The accepted commit also included provider cache/log files under Claude `Library/Caches/...` and `.claude/mcp-needs-auth-cache.json`, so provider cache ignore/untrack rules need tightening.
 
 ### Stream: Scope Closeout
 
 29. [TODO] `phase3.stream8.task1` Close this extended scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close git-owned workflow runtime sessions scope`).
 30. [TODO] `phase3.stream8.commit1` Git Commit: `docs: close git-owned workflow runtime sessions scope` (hash: TBD)
+
+## Phase 4 — Release 1.2.450 Acceptance Residue Fix (owner: Codex, updated: 2026-06-04)
+
+### Stream: Plan Intake
+
+31. [DONE] `phase4.stream1.task1` Record the release 1.2.449 acceptance-test failure and add regression streams for post-acceptance translation residue plus provider cache/log tracking (scope: `doc/TODO/todo-plan.md`; expected commit: `docs: plan release 1.2.450 acceptance residue fix`).
+32. [PENDING] `phase4.stream1.commit1` Git Commit: `docs: plan release 1.2.450 acceptance residue fix` (hash: TBD)
+
+### Stream: Preliminary Acceptance Flush
+
+33. [TODO] `phase4.stream2.task1` Make preliminary Description/Virtual Simulation acceptance wait for queued dialog message and translation overlay persistence before accepted-step Git commit (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.ts, packages/core/src/remote-bridge/handlers/session-request-handler-preliminary-review-committer.test.ts`; expected commit: `fix: flush preliminary review translations before commit`).
+34. [TODO] `phase4.stream2.commit1` Git Commit: `fix: flush preliminary review translations before commit` (hash: TBD)
+
+### Stream: Provider Cache Ignore Tightening
+
+35. [TODO] `phase4.stream3.task1` Extend workspace runtime capsule `.gitignore` cache patterns for provider `Caches/` folders and provider `*-cache.json` files (scope: `packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.ts, packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts`; expected commit: `fix: ignore provider cache files in runtime capsule`).
+36. [TODO] `phase4.stream3.commit1` Git Commit: `fix: ignore provider cache files in runtime capsule` (hash: TBD)
+37. [TODO] `phase4.stream3.task2` Extend accepted-step commit cleanup so legacy tracked provider `Caches/` folders and provider `*-cache.json` files are untracked before clean-Git gate (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: untrack provider cache files in step commits`).
+38. [TODO] `phase4.stream3.commit2` Git Commit: `fix: untrack provider cache files in step commits` (hash: TBD)
+
+### Stream: Tooling Verification
+
+39. [TODO] `phase4.stream4.task1` Run targeted preliminary committer, runtime capsule gitignore, workflow step commit tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
