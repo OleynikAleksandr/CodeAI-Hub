@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "f1903ad48",
+  "lastRecordedCommit": "4a968f4f9",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase3.stream2.task1",
-  "expectedCommitMessage": "fix: rollback workflow sessions through git",
+  "currentTaskId": "phase3.stream2.task2",
+  "expectedCommitMessage": "fix: keep workflow sessions under boundary rollback",
   "debt": {
-    "expectedCommitMessage": "fix: rollback workflow sessions through git",
-    "preCommitHead": "f1903ad48",
+    "expectedCommitMessage": "fix: keep workflow sessions under boundary rollback",
+    "preCommitHead": "4a968f4f9",
     "stage": "commit_pending",
-    "taskId": "phase3.stream2.task1"
+    "taskId": "phase3.stream2.task2"
   }
 }
 ```
@@ -91,9 +91,9 @@
 ### Stream: Commit And Rollback Behavior
 
 17. [DONE] `phase3.stream2.task1` Update accepted step commits so Core no longer untracks provider-native session histories or unified session JSONL files and still untracks provider caches/secrets (scope: `packages/core/src/workflow/boundary/workflow-step-commit-facade.ts, packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts`; expected commit: `fix: rollback workflow sessions through git`).
-18. [PENDING] `phase3.stream2.commit1` Git Commit: `fix: rollback workflow sessions through git` (hash: TBD)
-19. [TODO] `phase3.stream2.task2` Update boundary rollback tests so Git rollback removes tracked future workflow sessions while preserving ignored settings/localization/cache state (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts`; expected commit: `fix: keep workflow sessions under boundary rollback`).
-20. [TODO] `phase3.stream2.commit2` Git Commit: `fix: keep workflow sessions under boundary rollback` (hash: TBD)
+18. [DONE] `phase3.stream2.commit1` Git Commit: `fix: rollback workflow sessions through git` (hash: 4a968f4f9)
+19. [DONE] `phase3.stream2.task2` Update boundary rollback tests so Git rollback removes tracked future workflow sessions while preserving ignored settings/localization/cache state (scope: `packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts, packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts, packages/core/src/workflow/boundary/workflow-rollback-runtime-sessions.test.ts`; expected commit: `fix: keep workflow sessions under boundary rollback`).
+20. [PENDING] `phase3.stream2.commit2` Git Commit: `fix: keep workflow sessions under boundary rollback` (hash: TBD)
 
 ### Stream: Documentation Sync
 

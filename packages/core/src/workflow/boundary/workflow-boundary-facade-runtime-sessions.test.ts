@@ -16,6 +16,7 @@ const execFileAsync = promisify(execFile);
 const WORKSPACE_SLUG = "demo-workspace";
 const PROVIDER_SESSION_LOG_RE =
   /runtime\/sessions\/unified\/glmClaudeCode\/glmclaudecode-description\.jsonl/u;
+const DIRTY_BOUNDARY_RE = /Workflow boundary cannot be created/u;
 
 const createWorkspace = async (): Promise<string> =>
   await mkdtemp(path.join(tmpdir(), "codeai-boundary-runtime-"));
@@ -33,7 +34,7 @@ const runGit = async (
   return stdout.trim();
 };
 
-test("WorkflowBoundaryFacade untracks dirty provider session transcripts before the next boundary", async () => {
+test("WorkflowBoundaryFacade refuses dirty provider session transcripts before the next boundary", async () => {
   const workspaceRoot = await createWorkspace();
   try {
     const facade = new WorkflowBoundaryFacade({
@@ -79,19 +80,18 @@ test("WorkflowBoundaryFacade untracks dirty provider session transcripts before 
     await writeText(sessionLogPath, '{"message":"changed"}\n');
     await writeText(translationsLogPath, '{"message":"changed"}\n');
 
-    const boundary = await facade.ensureBoundary({
-      stage: "virtual_simulation",
-      workspaceRoot,
-      workspaceSlug: WORKSPACE_SLUG,
-    });
-
-    assert.equal(boundary.created, true);
-    assert.deepEqual(
-      await new WorkflowBoundaryGit().statusPorcelain(workspaceRoot),
-      []
+    await assert.rejects(
+      facade.ensureBoundary({
+        stage: "virtual_simulation",
+        workspaceRoot,
+        workspaceSlug: WORKSPACE_SLUG,
+      }),
+      DIRTY_BOUNDARY_RE
     );
-    assert.doesNotMatch(
-      await runGit(workspaceRoot, ["ls-files"]),
+    assert.match(
+      (await new WorkflowBoundaryGit().statusPorcelain(workspaceRoot)).join(
+        "\n"
+      ),
       PROVIDER_SESSION_LOG_RE
     );
   } finally {
