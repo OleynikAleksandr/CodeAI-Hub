@@ -9,6 +9,7 @@ import { ManagedWorkflowScaffoldInstaller } from "../../managed-workflow-orchest
 import { SessionManager } from "../../session-manager";
 import { Logger } from "../../telemetry/logger";
 import type { BridgeEvent } from "../types";
+import { completeApplicationSkeletonMaterializedHandoff } from "./application-skeleton-completion-handoff";
 import { SessionRequestHandlerSessionActions } from "./session-request-handler-session-actions";
 
 const WORKSPACE_SLUG = "demo-workspace";
@@ -358,14 +359,46 @@ test("Application Skeleton review corrections stay in the active review task", a
   }
 });
 
-test("Application Skeleton final acceptance broadcasts Quality Gates activation", async () => {
-  const source = await readFile(
-    path.resolve(
-      process.cwd(),
-      "packages/core/src/remote-bridge/handlers/application-skeleton-completion-handoff.ts"
-    ),
-    "utf8"
-  );
-  assert.ok(source.includes('type: "workflow:stage:activate"'));
-  assert.ok(source.includes("managed-workflow-complete"));
+test("Application Skeleton final acceptance commits completion residue before Quality Gates activation", async () => {
+  const calls: string[] = [];
+  const stagePlan = {
+    acceptFinalMaterializedReview: () => {
+      calls.push("accept-final-review");
+      return Promise.resolve();
+    },
+    commitTerminalHandoffResidue: () => {
+      calls.push("commit-terminal-residue");
+      return Promise.resolve();
+    },
+  } as unknown as ApplicationSkeletonStagePlanController;
+
+  const completed = await completeApplicationSkeletonMaterializedHandoff({
+    broadcaster: (event) => {
+      calls.push(
+        (event as { readonly payload?: { readonly stage?: string } }).payload
+          ?.stage ?? "unknown-activation"
+      );
+    },
+    eventMessages: {
+      appendCoreMessage: (_sessionId, message) => {
+        calls.push(message.tag);
+      },
+      waitForMessagePersistence: (sessionId) => {
+        calls.push(`wait:${sessionId}`);
+        return Promise.resolve();
+      },
+    },
+    sessionId: "application-session",
+    stagePlan,
+    workspaceRoot: "/tmp/application-skeleton",
+  });
+
+  assert.equal(completed, true);
+  assert.deepEqual(calls, [
+    "accept-final-review",
+    "managed-workflow-complete",
+    "wait:application-session",
+    "commit-terminal-residue",
+    "quality_gates",
+  ]);
 });

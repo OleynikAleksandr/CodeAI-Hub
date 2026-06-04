@@ -8,15 +8,15 @@
   "planId": "application-skeleton-terminal-residue-2026-06-04",
   "branch": "main",
   "baseHead": "c531f5680",
-  "lastRecordedCommit": "6ecf65ead",
+  "lastRecordedCommit": "c60cf4a3b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream2.task1",
-  "expectedCommitMessage": "fix: commit application skeleton completion session residue",
+  "currentTaskId": "phase1.stream3.task1",
+  "expectedCommitMessage": "test: cover application skeleton completion residue ordering",
   "debt": {
-    "expectedCommitMessage": "fix: commit application skeleton completion session residue",
-    "preCommitHead": "6ecf65ead",
+    "expectedCommitMessage": "test: cover application skeleton completion residue ordering",
+    "preCommitHead": "c60cf4a3b",
     "stage": "commit_pending",
-    "taskId": "phase1.stream2.task1"
+    "taskId": "phase1.stream3.task1"
   }
 }
 ```
@@ -47,12 +47,12 @@
 ### Stream: Managed Completion Residue
 
 3. [DONE] `phase1.stream2.task1` Make Application Skeleton final managed completion persist and commit session/translation residue before unlocking Quality Gates (scope: `packages/core/src/remote-bridge/handlers/application-skeleton-completion-handoff.ts, packages/core/src/managed-workflow-orchestration/application-skeleton/application-skeleton-stage-plan-controller.ts, doc/TODO/todo-plan.md`; expected commit: `fix: commit application skeleton completion session residue`).
-4. [PENDING] `phase1.stream2.commit1` Git Commit: `fix: commit application skeleton completion session residue` (hash: TBD)
+4. [DONE] `phase1.stream2.commit1` Git Commit: `fix: commit application skeleton completion session residue` (hash: c60cf4a3b)
 
 ### Stream: Regression Test
 
-5. [TODO] `phase1.stream3.task1` Cover Application Skeleton final handoff ordering so completion message persistence and terminal residue commit happen before Quality Gates activation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton completion residue ordering`).
-6. [TODO] `phase1.stream3.commit1` Git Commit: `test: cover application skeleton completion residue ordering` (hash: TBD)
+5. [DONE] `phase1.stream3.task1` Cover Application Skeleton final handoff ordering so completion message persistence and terminal residue commit happen before Quality Gates activation (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover application skeleton completion residue ordering`).
+6. [PENDING] `phase1.stream3.commit1` Git Commit: `test: cover application skeleton completion residue ordering` (hash: TBD)
 
 ### Stream: Documentation Sync
 
