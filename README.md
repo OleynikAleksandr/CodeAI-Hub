@@ -2,7 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.450** (Acceptance Session Commit Flush)
+**Current Release — v1.2.451** (Application Skeleton Terminal Residue Flush)
+
+This release fixes the Application Skeleton completion dirty-Git regression
+found in v1.2.450. After Core materializes and commits the accepted skeleton, it
+now persists the final `managed-workflow-complete` message and translation
+overlay, commits that terminal session residue, and only then unlocks
+`Quality Gates Baseline`.
+
+**Previous Release — v1.2.450** (Acceptance Session Commit Flush)
 
 This release fixes the Description/Virtual Simulation acceptance dirty-Git
 regression found in v1.2.449. Before Core creates the accepted-step commit, it

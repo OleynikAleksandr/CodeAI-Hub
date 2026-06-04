@@ -8,6 +8,16 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.451] - 2026-06-04
+### Fixed
+- **Application Skeleton terminal completion no longer leaves dirty session files before Quality Gates.** Core now persists the final `managed-workflow-complete` message and translation overlay, commits that terminal session residue, and only then activates `Quality Gates Baseline`.
+- **Application Skeleton handoff ordering is covered by a regression test.** The test asserts that final review acceptance, message persistence, terminal residue commit, and Quality Gates activation happen in the required order.
+
+### Verification
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.450] - 2026-06-04
 ### Fixed
 - **Accepted Description/Virtual Simulation steps now commit their final session translation overlay.** Core waits for the preliminary-review completion message and translation persistence before creating the accepted-step Git commit, preventing a post-acceptance dirty `runtime/sessions/unified/**/*.translations.jsonl` file.
