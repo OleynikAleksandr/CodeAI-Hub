@@ -8,15 +8,15 @@
   "planId": "application-skeleton-terminal-residue-2026-06-04",
   "branch": "main",
   "baseHead": "c531f5680",
-  "lastRecordedCommit": "de7b7136c",
+  "lastRecordedCommit": "28d43e1fb",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase1.stream4.task1",
-  "expectedCommitMessage": "docs: document application skeleton terminal residue commit",
+  "currentTaskId": "phase1.stream5.task1",
+  "expectedCommitMessage": "fix: typecheck application skeleton completion test",
   "debt": {
-    "expectedCommitMessage": "docs: document application skeleton terminal residue commit",
-    "preCommitHead": "de7b7136c",
+    "expectedCommitMessage": "fix: typecheck application skeleton completion test",
+    "preCommitHead": "28d43e1fb",
     "stage": "commit_pending",
-    "taskId": "phase1.stream4.task1"
+    "taskId": "phase1.stream5.task1"
   }
 }
 ```
@@ -57,27 +57,32 @@
 ### Stream: Documentation Sync
 
 7. [DONE] `phase1.stream4.task1` Sync active SSOT docs so managed Application Skeleton completion follows the same persisted-message terminal residue rule as other managed stage completions (scope: `doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/TODO/todo-plan.md`; expected commit: `docs: document application skeleton terminal residue commit`).
-8. [PENDING] `phase1.stream4.commit1` Git Commit: `docs: document application skeleton terminal residue commit` (hash: TBD)
+8. [DONE] `phase1.stream4.commit1` Git Commit: `docs: document application skeleton terminal residue commit` (hash: 28d43e1fb)
+
+### Stream: Regression Test Typecheck Fix
+
+9. [DONE] `phase1.stream5.task1` Make the Application Skeleton completion ordering regression test satisfy strict Core TypeScript build checks (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-session-actions.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: typecheck application skeleton completion test`).
+10. [PENDING] `phase1.stream5.commit1` Git Commit: `fix: typecheck application skeleton completion test` (hash: TBD)
 
 ### Stream: Tooling Verification
 
-9. [TODO] `phase1.stream5.task1` Run targeted Application Skeleton managed handoff tests, Core build, and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+11. [TODO] `phase1.stream6.task1` Run targeted Application Skeleton managed handoff tests, Core build, and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
 
 ### Stream: Release Build Confirmation Gate
 
-10. [TODO] `phase1.stream6.task1` Ask the user whether to build release `1.2.451` for retesting Application Skeleton to Quality Gates unlock with clean Git (scope: user release-build confirmation; expected commit: no commit expected).
+12. [TODO] `phase1.stream7.task1` Ask the user whether to build release `1.2.451` for retesting Application Skeleton to Quality Gates unlock with clean Git (scope: user release-build confirmation; expected commit: no commit expected).
 
 ### Stream: Release Build
 
-11. [TODO] `phase1.stream7.task1` Run release build for `1.2.451` only after explicit user confirmation (scope: release artifacts and version files; expected commit: `chore: build release 1.2.451`).
-12. [TODO] `phase1.stream7.commit1` Git Commit: `chore: build release 1.2.451` (hash: TBD)
+13. [TODO] `phase1.stream8.task1` Run release build for `1.2.451` only after explicit user confirmation (scope: release artifacts and version files; expected commit: `chore: build release 1.2.451`).
+14. [TODO] `phase1.stream8.commit1` Git Commit: `chore: build release 1.2.451` (hash: TBD)
 
 ### Stream: User Workflow Acceptance Testing
 
-13. [TODO] `phase1.stream8.task1` Hand over release `1.2.451` for user retest; wait for explicit acceptance or next failure report (scope: user workflow acceptance; expected commit: no commit expected).
+15. [TODO] `phase1.stream9.task1` Hand over release `1.2.451` for user retest; wait for explicit acceptance or next failure report (scope: user workflow acceptance; expected commit: no commit expected).
 
 ### Stream: Scope Closeout
 
-14. [TODO] `phase1.stream9.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close application skeleton terminal residue scope`).
-15. [TODO] `phase1.stream9.commit1` Git Commit: `docs: close application skeleton terminal residue scope` (hash: TBD)
-16. [TODO] `phase1.stream9.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
+16. [TODO] `phase1.stream10.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**`; expected commit: `docs: close application skeleton terminal residue scope`).
+17. [TODO] `phase1.stream10.commit1` Git Commit: `docs: close application skeleton terminal residue scope` (hash: TBD)
+18. [TODO] `phase1.stream10.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).

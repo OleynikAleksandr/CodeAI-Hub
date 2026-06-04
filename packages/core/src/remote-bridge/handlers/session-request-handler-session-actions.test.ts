@@ -381,6 +381,7 @@ test("Application Skeleton final acceptance commits completion residue before Qu
     },
     eventMessages: {
       appendCoreMessage: (_sessionId, message) => {
+        assert.equal(message.tag, "managed-workflow-complete");
         calls.push(message.tag);
       },
       waitForMessagePersistence: (sessionId) => {
