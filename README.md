@@ -2,7 +2,17 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.448** (Clear/Undo Session Cleanup Rollback)
+**Current Release — v1.2.449** (Git-Owned Workflow Runtime Sessions)
+
+This release makes workflow session history part of the managed Git timeline.
+Core now tracks provider-neutral unified histories and provider-native workflow
+session histories that are needed for resume, while `.gitignore` still excludes
+auth tokens, API/OAuth credentials, provider caches, installed packages,
+SQLite/log noise, and binaries. Clear/Undo no longer relies on a separate broad
+session cleanup pass: sessions created after the selected workflow boundary are
+removed by the same Git rollback that removes downstream artifacts.
+
+**Previous Release — v1.2.448** (Clear/Undo Session Cleanup Rollback)
 
 This release rolls back the broad Clear/Undo runtime history cleanup introduced
 in the 1.2.445-1.2.447 line. Clear/Undo still restores workflow files through

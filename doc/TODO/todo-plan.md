@@ -8,15 +8,15 @@
   "planId": "workflow-clear-session-cleanup-rollback-2026-06-03",
   "branch": "main",
   "baseHead": "12edb060e",
-  "lastRecordedCommit": "e0c25f06e",
+  "lastRecordedCommit": "c733fb25f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/DevelopmentTree_BranchWorkflow_Architecture.md",
-  "currentTaskId": "phase3.stream3.task1",
-  "expectedCommitMessage": "docs: document git-owned runtime session rollback",
+  "currentTaskId": "phase3.stream5.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.449",
   "debt": {
-    "expectedCommitMessage": "docs: document git-owned runtime session rollback",
-    "preCommitHead": "e0c25f06e",
+    "expectedCommitMessage": "docs: prepare release 1.2.449",
+    "preCommitHead": "c733fb25f",
     "stage": "commit_pending",
-    "taskId": "phase3.stream3.task1"
+    "taskId": "phase3.stream5.task1"
   }
 }
 ```
@@ -98,16 +98,16 @@
 ### Stream: Documentation Sync
 
 21. [DONE] `phase3.stream3.task1` Document the MVP rule that local Git and GitHub push include workflow session histories, with `.gitignore` excluding only secrets, auth, caches, installations and noisy runtime files (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/System/SystemArchitecture.md, doc/TODO/todo-plan.md`; expected commit: `docs: document git-owned runtime session rollback`).
-22. [PENDING] `phase3.stream3.commit1` Git Commit: `docs: document git-owned runtime session rollback` (hash: TBD)
+22. [DONE] `phase3.stream3.commit1` Git Commit: `docs: document git-owned runtime session rollback` (hash: c733fb25f)
 
 ### Stream: Tooling Verification
 
-23. [TODO] `phase3.stream4.task1` Run targeted runtime capsule, workflow boundary and workflow step commit tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected).
+23. [DONE] `phase3.stream4.task1` Run targeted runtime capsule, workflow boundary and workflow step commit tests plus Core build and plan validation (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: no commit expected). Result: Verification passed: runtime capsule gitignore tests, workflow boundary rollback/session tests, workflow step commit tests, @codeai-hub/core build, and plan validation.
 
 ### Stream: Release Notes
 
-24. [TODO] `phase3.stream5.task1` Prepare release notes for `1.2.449` Git-owned workflow runtime sessions MVP (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.449`).
-25. [TODO] `phase3.stream5.commit1` Git Commit: `docs: prepare release 1.2.449` (hash: TBD)
+24. [DONE] `phase3.stream5.task1` Prepare release notes for `1.2.449` Git-owned workflow runtime sessions MVP (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.449`).
+25. [PENDING] `phase3.stream5.commit1` Git Commit: `docs: prepare release 1.2.449` (hash: TBD)
 
 ### Stream: Release Build
 

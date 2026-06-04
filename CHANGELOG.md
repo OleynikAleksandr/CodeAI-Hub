@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.449] - 2026-06-04
+### Changed
+- **Workflow sessions are now Git-owned recovery state.** Core tracks provider-neutral unified histories and provider-native workflow session histories needed for resume under the workspace runtime capsule.
+- **Clear/Undo removes future sessions through Git rollback.** Sessions created at or after the selected boundary disappear with the same `reset/clean` transaction that removes downstream workflow artifacts.
+- **Provider secrets and noisy runtime state stay ignored.** Auth tokens, API/OAuth credentials, login files, package installs, caches, SQLite databases, logs, binaries, model caches, and other non-session provider runtime files remain outside Git.
+
+### Verification
+- `node --import tsx --test packages/core/src/workflow/runtime/workspace-runtime-capsule-gitignore.test.ts packages/core/src/workflow/boundary/workflow-step-commit-facade.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade.test.ts packages/core/src/workflow/boundary/workflow-boundary-facade-runtime-sessions.test.ts packages/core/src/workflow/boundary/workflow-rollback-runtime-sessions.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.448] - 2026-06-03
 ### Changed
 - **Rolled back broad Clear/Undo runtime history cleanup.** Clear/Undo no longer removes all workflow unified histories, Codex session and shell snapshot folders, Claude project/session logs, Gemini chat logs, or provider SQLite state from the selected workspace runtime capsule.
