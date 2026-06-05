@@ -274,13 +274,35 @@ Integration algorithm:
    - If a required hook call is missing, repair `.husky/pre-commit` / `.husky/pre-push` directly; do not defer hook regeneration to Core.
 5. Avoid feature or business implementation code.
 6. Run the lightest feasible smoke checks for created gates.
-7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and verification results only after the required enforcement scopes are actually wired for the selected stack adapter. When a planned gate is materialized and has runner/enforcement evidence, remove it from `plannedRequiredAfterIntegration`, keep it only in the appropriate required array, and set `availability: "executable"`. Gates that do not affect future code yet may remain planned, but then they must not be wired into enforcement hooks. `deferredIntegration` may describe advisory/deferred/non-required items only; never defer a gate id that remains in `requiredBeforeCommit`, `requiredBeforePush`, `requiredBeforeModuleExecution`, or `requiredBeforeRelease`.
+7. Update `quality-gates.json` with `accepted: true`, `integrated: true`, `integrationState: "integrated"`, `integratedPaths`, and integration smoke results only after the required enforcement scopes are actually wired for the selected stack adapter. When a planned gate is materialized and has runner/enforcement evidence, remove it from `plannedRequiredAfterIntegration`, keep it only in the appropriate required array, and set `availability: "executable"`. Gates that do not affect future code yet may remain planned, but then they must not be wired into enforcement hooks. `deferredIntegration` may describe advisory/deferred/non-required items only; never defer a gate id that remains in `requiredBeforeCommit`, `requiredBeforePush`, `requiredBeforeModuleExecution`, or `requiredBeforeRelease`.
 8. Leave the accepted Quality Gates artifacts and gate infrastructure ready for runtime/user review.
 9. The final response may say `ready for runtime review`; do not claim completion beyond readiness.
 
 If runtime/user feedback reports a blocker, repair the reported issue or stop with the exact blocker. Never finish by claiming the Quality Gates stage is unlocked.
 
 Final integration response: summarize created/updated paths, smoke results, and readiness for runtime/user review. Do not hand integration to a separate session.
+
+## Phase 4: Formal Quality Gates Verification
+
+Formal verification begins only when the runtime prompt explicitly assigns Phase 4 after Core accepts integration readiness. Phase 3 integration is not terminal and must not open persistent return by itself.
+
+Verification algorithm:
+
+1. Re-read `quality-gates.json`, `package.json`, `.husky/pre-commit`, `.husky/pre-push`, and every integrated path listed in the contract.
+2. Resolve every `npm run <script>` command referenced by `.husky/pre-commit` and `.husky/pre-push` against `package.json.scripts`. Missing scripts are verification failures even if Markdown evidence claims they exist.
+3. Run all required formal verification commands that exist in this workspace:
+   - `npm run qg:before-module-execution`
+   - `npm run qg:before-commit`
+   - `npm run qg:before-push`
+   - `sh .husky/pre-commit`
+   - `sh .husky/pre-push`
+   - `npm run qg:all`
+4. Confirm that no gate id still listed in `plannedRequiredAfterIntegration` is also required for enforcement.
+5. Confirm that every path in `integratedPaths` still exists.
+6. Update `quality-gates.json` with `verificationState: "verified"` and command evidence only after every required command and hook check succeeds.
+7. If any command fails or any required script/path/hook evidence is missing, repair the accepted gate infrastructure and rerun the formal verification commands before reporting readiness.
+
+Final verification response: summarize command results, repaired paths if any, and readiness for Core validation. Do not run Git commands or edit stage todo files.
 
 ## JSON Contract Requirements
 
@@ -335,4 +357,5 @@ Before each final response, verify:
 - Phase 1B final response is allowed only after the four canonical draft artifacts are ready for runtime structural validation and user review;
 - Phase 2 review revisions only touch the canonical Quality Gates research/contract artifacts; never integrate or self-accept;
 - Phase 3 final response is allowed only after the accepted gate infrastructure is ready for runtime/user review; `unlocked` language is not allowed;
+- Phase 4 final response is allowed only after formal gate commands and hook scripts have been run or explicitly proven absent/not applicable by the runtime prompt;
 - artifacts are in the user-facing artifact language, while identifiers and field names remain canonical.

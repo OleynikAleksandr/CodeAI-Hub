@@ -279,7 +279,7 @@ export const buildQualityGatesIntegrationPrompt = (options: {
     'After a gate is materialized and enforcement evidence exists, remove it from `plannedRequiredAfterIntegration`, keep it only in the required enforcement array, and set `availability: "executable"`.',
     "Gates that do not affect future code yet may remain planned, but then they must not be wired into enforcement hooks.",
     "Do not run Git commands or edit managed plan files.",
-    "When integration is ready, stop with a content-readiness note for Core validation.",
+    "When integration is ready, stop with a content-readiness note for Core validation. Do not claim the Quality Gates step is complete; Core must open Phase 4 Formal Quality Gates Verification first.",
   ].join("\n");
 
 export const buildQualityGatesIntegrationRepairPrompt = (
@@ -302,7 +302,7 @@ export const buildQualityGatesIntegrationRepairPrompt = (
     "Change only the contract artifacts and accepted gate infrastructure.",
     "If a diagnostic mentions a generated build artifact, delete that file and change the responsible command so future build output is written outside the workspace root.",
     "Do not run Git commands or edit managed plan files.",
-    "When the repair is ready, stop with a content-readiness note for Core validation.",
+    "When the repair is ready, stop with a content-readiness note for Core validation. Do not claim the Quality Gates step is complete; Core must open Phase 4 Formal Quality Gates Verification first.",
   ].join("\n");
 
 export const buildQualityGatesReviewRevisionPrompt = (options: {
@@ -362,9 +362,9 @@ export const buildQualityGatesBoundaryBlockedMessage = (
 
 export const buildQualityGatesPersistentReturnMessage = (): string =>
   [
-    "Core accepted Quality Gates integration.",
+    "Core accepted Quality Gates formal verification.",
     "",
-    "The gate baseline has been integrated, lifecycle hooks were checked, and the result was recorded in Git. The Quality Gates step is complete, and a persistent return phase is open for later corrections.",
+    "The gate baseline has been integrated, formal enforcement checks passed, and the result was recorded in Git. The Quality Gates step is complete, and a persistent return phase is open for later corrections.",
     "",
     "The input field is available for future Quality Gates changes. If no changes are needed now, continue to the next workflow step.",
   ].join("\n");
