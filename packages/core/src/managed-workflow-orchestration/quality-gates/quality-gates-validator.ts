@@ -1,5 +1,8 @@
 import path from "node:path";
-import { collectQualityGatesIntegrationConsistencyDiagnostics } from "./quality-gates-consistency-validator";
+import {
+  collectQualityGatesIntegrationConsistencyDiagnostics,
+  collectQualityGatesVerificationEvidenceDiagnostics,
+} from "./quality-gates-consistency-validator";
 import { collectQualityGatesHookCommandDiagnostics } from "./quality-gates-formal-verification-runner";
 import { collectPlannedRequiredGateDiagnostics } from "./quality-gates-planned-required-validator";
 import {
@@ -14,7 +17,7 @@ import { readQualityGatesCurrentTaskId } from "./quality-gates-stage-plan-state-
 import { collectQualityGatesTerminalResidueDiagnostics } from "./quality-gates-terminal-residue-validator";
 import { readRequiredFile } from "./quality-gates-workspace-files";
 
-export type QualityGatesManagedPhase = "draft" | "integration";
+export type QualityGatesManagedPhase = "draft" | "integration" | "verification";
 
 export type QualityGatesManagedNextAction =
   | "open_persistent_return"
@@ -52,6 +55,7 @@ const NON_BLOCKING_ARRAY_KEYS = [
 ] as const;
 const INTEGRATION_PLAN_TASK_RE =
   /^quality-gates\.phase3\.(?:integrate|repair)\.task\d+$/u;
+const VERIFICATION_PLAN_TASK_RE = /^quality-gates\.phase4\.verify\.task\d+$/u;
 
 const relativeQualityGatesPath = (
   workspaceSlug: string,
@@ -341,6 +345,9 @@ const resolvePlanPhase = async (
   workspaceRoot: string
 ): Promise<QualityGatesManagedPhase | null> => {
   const currentTaskId = await readQualityGatesCurrentTaskId(workspaceRoot);
+  if (currentTaskId && VERIFICATION_PLAN_TASK_RE.test(currentTaskId)) {
+    return "verification";
+  }
   return currentTaskId && INTEGRATION_PLAN_TASK_RE.test(currentTaskId)
     ? "integration"
     : null;
@@ -362,23 +369,57 @@ const buildInvalidResult = (params: {
   contractJson: params.contractJson,
   diagnostics: params.diagnostics,
   nextAction:
-    params.phase === "integration"
-      ? "repair_integration"
-      : "repair_current_artifact",
+    params.phase === "draft" ? "repair_current_artifact" : "repair_integration",
   nextPrompt:
-    params.phase === "integration"
-      ? buildQualityGatesIntegrationRepairPrompt({
-          attemptNumber: 1,
+    params.phase === "draft"
+      ? buildQualityGatesDraftRepairPrompt({
           diagnostics: params.diagnostics,
           workspaceSlug: params.workspaceSlug,
         })
-      : buildQualityGatesDraftRepairPrompt({
+      : buildQualityGatesIntegrationRepairPrompt({
+          attemptNumber: 1,
           diagnostics: params.diagnostics,
           workspaceSlug: params.workspaceSlug,
         }),
   phase: params.phase,
   valid: false,
 });
+
+const collectDiagnosticsForPhase = async (params: {
+  readonly contractJson: Record<string, unknown> | null;
+  readonly markdown: string | null;
+  readonly parsedErrors: readonly string[];
+  readonly phase: QualityGatesManagedPhase;
+  readonly researchDiagnostics: readonly string[];
+  readonly workspaceRoot: string;
+  readonly workspaceSlug: string;
+}): Promise<readonly string[]> => {
+  if (params.phase !== "draft") {
+    return [
+      ...params.parsedErrors,
+      ...(await validateIntegrationShape({
+        contractJson: params.contractJson,
+        markdown: params.markdown,
+        workspaceRoot: params.workspaceRoot,
+        workspaceSlug: params.workspaceSlug,
+      })),
+      ...(params.phase === "verification" && params.contractJson
+        ? await collectQualityGatesVerificationEvidenceDiagnostics({
+            contractJson: params.contractJson,
+            workspaceRoot: params.workspaceRoot,
+          })
+        : []),
+    ];
+  }
+  return [
+    ...params.parsedErrors,
+    ...params.researchDiagnostics,
+    ...validateDraftShape({
+      contractJson: params.contractJson,
+      markdown: params.markdown,
+    }),
+  ];
+};
 
 export const validateQualityGatesManagedArtifacts = async (
   request: QualityGatesManagedValidationRequest
@@ -405,22 +446,15 @@ export const validateQualityGatesManagedArtifacts = async (
   }
   const parsed = parseJsonObject(contractJsonText);
   const phase = await resolvePhase(request, parsed.value);
-  const diagnostics =
-    phase === "integration"
-      ? [
-          ...parsed.errors,
-          ...(await validateIntegrationShape({
-            contractJson: parsed.value,
-            markdown,
-            workspaceRoot: request.workspaceRoot,
-            workspaceSlug: request.workspaceSlug,
-          })),
-        ]
-      : [
-          ...parsed.errors,
-          ...researchBoundary.researchDiagnostics,
-          ...validateDraftShape({ contractJson: parsed.value, markdown }),
-        ];
+  const diagnostics = await collectDiagnosticsForPhase({
+    contractJson: parsed.value,
+    markdown,
+    parsedErrors: parsed.errors,
+    phase,
+    researchDiagnostics: researchBoundary.researchDiagnostics,
+    workspaceRoot: request.workspaceRoot,
+    workspaceSlug: request.workspaceSlug,
+  });
   if (diagnostics.length > 0) {
     return buildInvalidResult({
       contractJson: parsed.value,
@@ -429,7 +463,7 @@ export const validateQualityGatesManagedArtifacts = async (
       workspaceSlug: request.workspaceSlug,
     });
   }
-  if (phase === "integration") {
+  if (phase === "integration" || phase === "verification") {
     return {
       contractJson: parsed.value,
       diagnostics: [],

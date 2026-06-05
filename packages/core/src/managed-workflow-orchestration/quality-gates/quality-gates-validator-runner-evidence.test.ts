@@ -8,6 +8,7 @@ import { validateQualityGatesManagedArtifacts } from "./quality-gates-validator"
 const WORKSPACE_SLUG = "demo-workspace";
 const RUNNER_EVIDENCE_RE = /runner evidence after Phase 3/u;
 const DRAFT_PHASE_RE = /In draft phase/u;
+const VERIFIED_RETURN_RE = /formal enforcement checks passed/u;
 
 const writeFileInWorkspace = async (
   workspaceRoot: string,
@@ -116,6 +117,78 @@ const writeQualityGatesArtifacts = async (
   );
 };
 
+const writeQualityGatesJson = async (
+  workspaceRoot: string,
+  contract: Record<string, unknown>
+): Promise<void> => {
+  await writeFileInWorkspace(
+    workspaceRoot,
+    `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.json`,
+    `${JSON.stringify(contract, null, 2)}\n`
+  );
+};
+
+const writeVerificationStagePlan = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await writeFileInWorkspace(
+    workspaceRoot,
+    "doc/TODO/stages/quality-gates/todo-plan.md",
+    [
+      "<!-- codeai-plan-state:start -->",
+      "```json",
+      '{"currentTaskId":"quality-gates.phase4.verify.task1"}',
+      "```",
+      "<!-- codeai-plan-state:end -->",
+    ].join("\n")
+  );
+};
+
+const buildVerifiedContract = (): Record<string, unknown> => ({
+  accepted: true,
+  advisory: [],
+  commands: {
+    "qg-max-file-lines": {
+      availability: "executable",
+      baseline: ["recommended"],
+      blockingIn: ["beforeCommit"],
+      desiredStatus: "active",
+      id: "qg-max-file-lines",
+      integrationRequired: true,
+      policy: {
+        appliesTo: ["source_files", "classes"],
+        maxLines: 500,
+        type: "source_size_limit",
+      },
+      proposedCommand: "npm run qg:max-file-lines",
+    },
+    "qg-secret-scan": {
+      availability: "executable",
+      baseline: ["recommended"],
+      blockingIn: ["beforeCommit"],
+      desiredStatus: "active",
+      id: "qg-secret-scan",
+      integrationRequired: true,
+      proposedCommand: "npm run qg:secret-scan",
+    },
+  },
+  deferred: [],
+  integrated: true,
+  integratedPaths: [
+    "package.json",
+    ".husky/pre-commit",
+    "scripts/quality-gates/max-file-lines.mjs",
+    "scripts/quality-gates/secret-scan.mjs",
+  ],
+  integrationState: "integrated",
+  plannedRequiredAfterIntegration: [],
+  requiredBeforeCommit: ["qg-max-file-lines", "qg-secret-scan"],
+  requiredBeforeModuleExecution: [],
+  requiredBeforePush: [],
+  requiredBeforeRelease: [],
+  schema: "codeai-quality-gates-v1",
+});
+
 const writeRunnerEvidence = async (workspaceRoot: string): Promise<void> => {
   await writeFileInWorkspace(
     workspaceRoot,
@@ -168,6 +241,65 @@ test("Quality Gates rejects planned/not_integrated gates with runner evidence", 
     );
     assert.match(result.nextPrompt ?? "", RUNNER_EVIDENCE_RE);
     assert.doesNotMatch(result.nextPrompt ?? "", DRAFT_PHASE_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates verification phase rejects missing formal evidence", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-missing-verification-")
+  );
+  try {
+    await writeQualityGatesArtifacts(workspaceRoot);
+    await writeQualityGatesJson(workspaceRoot, buildVerifiedContract());
+    await writeRunnerEvidence(workspaceRoot);
+    await writeVerificationStagePlan(workspaceRoot);
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, false);
+    assert.equal(result.phase, "verification");
+    assert.ok(result.diagnostics.includes("missing_verification_state"));
+    assert.ok(result.diagnostics.includes("missing_verification_evidence"));
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates verification phase accepts recorded command evidence", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-verified-")
+  );
+  try {
+    await writeQualityGatesArtifacts(workspaceRoot);
+    await writeQualityGatesJson(workspaceRoot, {
+      ...buildVerifiedContract(),
+      verificationEvidence: {
+        checkedAt: "2026-06-05T00:00:00.000Z",
+        commands: [
+          { command: "sh .husky/pre-commit", status: "passed" },
+          { command: "npm run qg:max-file-lines", status: "passed" },
+          { command: "npm run qg:secret-scan", status: "passed" },
+        ],
+      },
+      verificationState: "verified",
+    });
+    await writeRunnerEvidence(workspaceRoot);
+    await writeVerificationStagePlan(workspaceRoot);
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, true);
+    assert.equal(result.phase, "verification");
+    assert.equal(result.nextAction, "open_persistent_return");
+    assert.match(result.nextPrompt ?? "", VERIFIED_RETURN_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
