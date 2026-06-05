@@ -69,11 +69,11 @@ export const resolveTreeStatus = (
   if (status === "in_progress") {
     return "progress";
   }
-  if (blocked) {
-    return "blocked";
-  }
   if (status === "completed") {
     return "active";
+  }
+  if (blocked) {
+    return "blocked";
   }
   return "todo";
 };

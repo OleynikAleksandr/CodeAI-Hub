@@ -8,15 +8,15 @@
   "planId": "quality-gates-completed-marker-hotfix-2026-06-05",
   "branch": "main",
   "baseHead": "6fbafc9d1",
-  "lastRecordedCommit": "6fbafc9d1",
+  "lastRecordedCommit": "c293a834a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_CompletedMarker_Hotfix.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: plan quality gates completed marker hotfix",
+  "currentTaskId": "phase1.stream2.task1",
+  "expectedCommitMessage": "fix: mark completed quality gates as available",
   "debt": {
-    "expectedCommitMessage": "docs: plan quality gates completed marker hotfix",
-    "preCommitHead": "6fbafc9d1",
+    "expectedCommitMessage": "fix: mark completed quality gates as available",
+    "preCommitHead": "c293a834a",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase1.stream2.task1"
   }
 }
 ```
@@ -48,12 +48,12 @@
 ### Stream: Plan Intake
 
 1. [DONE] `phase1.stream1.task1` Record the user-reported Quality Gates completed marker regression and open the active bugfix scope (scope: `doc/SolidWorks-WorkFlow/Plans/QualityGates_CompletedMarker_Hotfix.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan quality gates completed marker hotfix`).
-2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan quality gates completed marker hotfix` (hash: TBD)
+2. [DONE] `phase1.stream1.commit1` Git Commit: `docs: plan quality gates completed marker hotfix` (hash: c293a834a)
 
 ### Stream: Marker Projection Fix
 
-3. [TODO] `phase1.stream2.task1` Make completed `quality_gates` project as completed/available in the Documentation Tree marker while preserving Development Tree readiness (scope: max 3 files under `packages/core` or `src/client/project-manager`; expected commit: `fix: mark completed quality gates as available`).
-4. [TODO] `phase1.stream2.commit1` Git Commit: `fix: mark completed quality gates as available` (hash: TBD)
+3. [DONE] `phase1.stream2.task1` Make completed `quality_gates` project as completed/available in the Documentation Tree marker while preserving Development Tree readiness (scope: `src/client/project-manager/components/layout/workspace-tree-model.ts, src/client/project-manager/components/layout/workspace-tree-model.test.ts`; expected commit: `fix: mark completed quality gates as available`).
+4. [PENDING] `phase1.stream2.commit1` Git Commit: `fix: mark completed quality gates as available` (hash: TBD)
 
 ### Stream: Tooling Verification
 
@@ -68,4 +68,3 @@
 7. [TODO] `phase1.stream5.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_CompletedMarker_Hotfix.md`; expected commit: `docs: close quality gates completed marker hotfix`).
 8. [TODO] `phase1.stream5.commit1` Git Commit: `docs: close quality gates completed marker hotfix` (hash: TBD)
 9. [TODO] `phase1.stream5.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
-

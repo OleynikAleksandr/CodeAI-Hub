@@ -8,8 +8,11 @@ test("resolveTreeStatus keeps started stages in progress until Core marks comple
   assert.equal(resolveTreeStatus("idle", false), "todo");
 });
 
-test("resolveTreeStatus preserves warning states before completion visuals", () => {
-  assert.equal(resolveTreeStatus("completed", true), "blocked");
+test("resolveTreeStatus keeps completed markers active despite gating blockers", () => {
+  assert.equal(resolveTreeStatus("completed", true), "active");
+});
+
+test("resolveTreeStatus preserves warning states for non-completed stages", () => {
   assert.equal(resolveTreeStatus("invalid", false), "blocked");
   assert.equal(resolveTreeStatus("outdated", false), "outdated");
 });
