@@ -2,7 +2,14 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.452** (Provider-Native Session Rollback)
+**Current Release — v1.2.453** (Quality Gates Completed Marker)
+
+This release fixes the Project Manager Documentation Tree marker for completed
+`Quality Gates Baseline`. A completed Quality Gates stage now stays green even
+when a later gating snapshot reports runtime/session residue that still needs
+cleanup before the next workflow action.
+
+**Previous Release — v1.2.452** (Provider-Native Session Rollback)
 
 This release fixes provider-native workflow session ownership for the runtime
 capsule. Codex, Claude, GLM-Claude-Code, Gemini, and Kimi session histories now

@@ -8,6 +8,17 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.453] - 2026-06-05
+### Fixed
+- **Completed Quality Gates stays green in the Documentation Tree.** Project Manager no longer lets a stale or runtime-residue gating blocker repaint a Core-completed `Quality Gates Baseline` marker as blocked/red.
+- **Completed stage visuals now outrank gating blockers.** `completed` workflow stages map to the active/green sidebar marker while `invalid`, `outdated`, and running states keep their existing warning/progress behavior.
+
+### Verification
+- `npm exec -- tsx --test src/client/project-manager/components/layout/workspace-tree-model.test.ts`
+- `npm run typecheck:webview`
+- `npm run build:project-manager`
+- `npm run plan:validate`
+
 ## [1.2.452] - 2026-06-04
 ### Fixed
 - **Provider-native workflow sessions are now tracked consistently across providers.** The workspace runtime capsule keeps Codex `home/sessions/**/*.jsonl`, Claude `home/.claude/projects/**/*.jsonl`, GLM-Claude-Code `home/.claude/projects/**/*.jsonl`, Gemini `home/.gemini/tmp/<workspace>/chats/*.jsonl`, and Kimi `home/wire.jsonl` visible to Git when they are required for provider resume.

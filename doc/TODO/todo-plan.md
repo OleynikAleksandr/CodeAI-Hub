@@ -8,15 +8,15 @@
   "planId": "quality-gates-completed-marker-hotfix-2026-06-05",
   "branch": "main",
   "baseHead": "6fbafc9d1",
-  "lastRecordedCommit": "c293a834a",
+  "lastRecordedCommit": "306df09fa",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_CompletedMarker_Hotfix.md",
-  "currentTaskId": "phase1.stream2.task1",
-  "expectedCommitMessage": "fix: mark completed quality gates as available",
+  "currentTaskId": "phase1.stream5.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.453",
   "debt": {
-    "expectedCommitMessage": "fix: mark completed quality gates as available",
-    "preCommitHead": "c293a834a",
+    "expectedCommitMessage": "docs: prepare release 1.2.453",
+    "preCommitHead": "306df09fa",
     "stage": "commit_pending",
-    "taskId": "phase1.stream2.task1"
+    "taskId": "phase1.stream5.task1"
   }
 }
 ```
@@ -53,18 +53,37 @@
 ### Stream: Marker Projection Fix
 
 3. [DONE] `phase1.stream2.task1` Make completed `quality_gates` project as completed/available in the Documentation Tree marker while preserving Development Tree readiness (scope: `src/client/project-manager/components/layout/workspace-tree-model.ts, src/client/project-manager/components/layout/workspace-tree-model.test.ts`; expected commit: `fix: mark completed quality gates as available`).
-4. [PENDING] `phase1.stream2.commit1` Git Commit: `fix: mark completed quality gates as available` (hash: TBD)
+4. [DONE] `phase1.stream2.commit1` Git Commit: `fix: mark completed quality gates as available` (hash: 306df09fa)
 
 ### Stream: Tooling Verification
 
-5. [TODO] `phase1.stream3.task1` Run targeted regression tests/builds for the touched package plus `npm run plan:validate` (scope: verification commands and `doc/TODO/todo-plan.md`; expected commit: none).
+5. [DONE] `phase1.stream3.task1` Run targeted regression tests/builds for the touched package plus `npm run plan:validate` (scope: verification commands and `doc/TODO/todo-plan.md`; expected commit: none). Result: Targeted workspace-tree model test passed; npm run typecheck:webview passed; npm run build:project-manager passed; npm run plan:validate passed.
 
 ### Stream: User Workflow Acceptance Testing
 
-6. [TODO] `phase1.stream4.task1` Hand the fix back for user retest of the Quality Gates completed marker (scope: user workflow acceptance; expected commit: none).
+6. [DONE] `phase1.stream4.task1` Hand the fix back for user retest of the Quality Gates completed marker (scope: user workflow acceptance; expected commit: none). Result: User explicitly requested a release build for retesting; acceptance remains pending after VSIX handoff.
+
+### Stream: Release Metadata Prep
+
+7. [DONE] `phase1.stream5.task1` Prepare README/CHANGELOG for future release `1.2.453` before running release packaging, so packaged VSIX metadata matches the release (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.453`).
+8. [PENDING] `phase1.stream5.commit1` Git Commit: `docs: prepare release 1.2.453` (hash: TBD)
+
+### Stream: Release Build
+
+9. [TODO] `phase1.stream6.task1` Run `./scripts/build-all.sh` for `1.2.453` after explicit user confirmation and release metadata prep (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.453`).
+10. [TODO] `phase1.stream6.commit1` Git Commit: `chore: build release 1.2.453` (hash: TBD)
+
+### Stream: VSIX Package
+
+11. [TODO] `phase1.stream7.task1` Run `./scripts/build-release.sh --use-current-version` for `1.2.453` from the clean post-build-all tree (scope: `codeai-hub-1.2.453.vsix, package.json, package-lock.json, .vscodeignore, packages/core/src/templates/bundled-templates.ts, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: package release 1.2.453`).
+12. [TODO] `phase1.stream7.commit1` Git Commit: `chore: package release 1.2.453` (hash: TBD)
+
+### Stream: User Workflow Acceptance Testing
+
+13. [TODO] `phase1.stream8.task1` Hand over release `1.2.453` for user retest of the Quality Gates completed marker; wait for explicit acceptance or next failure report (scope: user workflow acceptance; expected commit: none).
 
 ### Stream: Scope Closeout
 
-7. [TODO] `phase1.stream5.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_CompletedMarker_Hotfix.md`; expected commit: `docs: close quality gates completed marker hotfix`).
-8. [TODO] `phase1.stream5.commit1` Git Commit: `docs: close quality gates completed marker hotfix` (hash: TBD)
-9. [TODO] `phase1.stream5.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
+14. [TODO] `phase1.stream9.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_CompletedMarker_Hotfix.md`; expected commit: `docs: close quality gates completed marker hotfix`).
+15. [TODO] `phase1.stream9.commit1` Git Commit: `docs: close quality gates completed marker hotfix` (hash: TBD)
+16. [TODO] `phase1.stream9.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
