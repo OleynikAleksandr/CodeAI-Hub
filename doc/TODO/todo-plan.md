@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "a40fcfa80",
+  "lastRecordedCommit": "f1f7cc822",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase4.stream1.task1",
-  "expectedCommitMessage": "feat: gate quality gates completion on formal verification",
+  "currentTaskId": "phase4.stream2.task1",
+  "expectedCommitMessage": "fix: require verified quality gates before development tree unlock",
   "debt": {
-    "expectedCommitMessage": "feat: gate quality gates completion on formal verification",
-    "preCommitHead": "a40fcfa80",
+    "expectedCommitMessage": "fix: require verified quality gates before development tree unlock",
+    "preCommitHead": "f1f7cc822",
     "stage": "commit_pending",
-    "taskId": "phase4.stream1.task1"
+    "taskId": "phase4.stream2.task1"
   }
 }
 ```
@@ -82,12 +82,12 @@
 ### Stream: Managed Turn Flow
 
 15. [DONE] `phase4.stream1.task1` Add the Core continuation prompt for Phase 4 verification, route successful Phase 3 integration into that verification continuation, then route verified Phase 4 output into Phase 5 persistent return (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts`; expected commit: `feat: gate quality gates completion on formal verification`).
-16. [PENDING] `phase4.stream1.commit1` Git Commit: `feat: gate quality gates completion on formal verification` (hash: TBD)
+16. [DONE] `phase4.stream1.commit1` Git Commit: `feat: gate quality gates completion on formal verification` (hash: f1f7cc822)
 
 ### Stream: Read Model And Bootstrap Guard
 
-17. [TODO] `phase4.stream2.task1` Keep Project Manager/read-model and Development Tree unlock blocked until Quality Gates verification is valid, not only integrated (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `fix: require verified quality gates before development tree unlock`).
-18. [TODO] `phase4.stream2.commit1` Git Commit: `fix: require verified quality gates before development tree unlock` (hash: TBD)
+17. [DONE] `phase4.stream2.task1` Keep Project Manager/read-model and Development Tree unlock blocked until Quality Gates verification is valid, not only integrated (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `fix: require verified quality gates before development tree unlock`).
+18. [PENDING] `phase4.stream2.commit1` Git Commit: `fix: require verified quality gates before development tree unlock` (hash: TBD)
 
 ## Phase 5 - Documentation Sync (owner: Codex, updated: 2026-06-05)
 

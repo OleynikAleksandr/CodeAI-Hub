@@ -249,13 +249,38 @@ test("development tree unlocks from application skeleton and quality gates progr
       workspaceRoot,
       workspaceSlug,
     });
-    assert.equal(integrated.qualityGatesProgress?.integrated, true);
-    assert.equal(integrated.qualityGatesProgress?.substep, "integrated");
-    assert.equal(integrated.applicationSkeletonReadiness.ready, true);
-    assert.equal(integrated.qualityGatesReadiness.ready, true);
-    assert.deepEqual(integrated.applicationSkeletonReadiness.blockers, []);
-    assert.deepEqual(integrated.qualityGatesReadiness.blockers, []);
-    assert.equal(integrated.unlocked, true);
+    assert.equal(integrated.qualityGatesProgress?.integrated, false);
+    assert.equal(integrated.qualityGatesProgress?.substep, "integrating");
+    assert.equal(integrated.qualityGatesReadiness.ready, false);
+    assert.equal(integrated.unlocked, false);
+
+    await writeJsonArtifact({
+      fileName: "quality-gates.json",
+      stage: "quality_gates",
+      workspaceRoot,
+      workspaceSlug,
+      content: {
+        accepted: true,
+        commands: {},
+        integrated: true,
+        integratedPaths: ["package.json", ".husky/pre-commit"],
+        integrationState: "integrated",
+        schema: "codeai-quality-gates-v1",
+        verificationState: "verified",
+      },
+    });
+
+    const verified = await readDevelopmentTreeBootstrapGate({
+      workspaceRoot,
+      workspaceSlug,
+    });
+    assert.equal(verified.qualityGatesProgress?.integrated, true);
+    assert.equal(verified.qualityGatesProgress?.substep, "integrated");
+    assert.equal(verified.applicationSkeletonReadiness.ready, true);
+    assert.equal(verified.qualityGatesReadiness.ready, true);
+    assert.deepEqual(verified.applicationSkeletonReadiness.blockers, []);
+    assert.deepEqual(verified.qualityGatesReadiness.blockers, []);
+    assert.equal(verified.unlocked, true);
   } finally {
     await rm(workspaceRoot, { recursive: true, force: true });
   }
@@ -319,6 +344,7 @@ test("development tree blocks downstream stages when application skeleton founda
         integratedPaths: ["package.json"],
         integrationState: "integrated",
         schema: "codeai-quality-gates-v1",
+        verificationState: "verified",
       },
     });
 

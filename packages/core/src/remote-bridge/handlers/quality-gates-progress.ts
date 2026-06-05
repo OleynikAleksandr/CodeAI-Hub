@@ -28,6 +28,7 @@ export interface QualityGatesProgressSnapshot {
   readonly markdownExists: boolean;
   readonly substep: QualityGatesSubstep;
   readonly validationErrors: readonly string[];
+  readonly verified: boolean;
 }
 
 const HOOK_SECTION_START = "# codeai:gates:start";
@@ -84,6 +85,9 @@ const readIntegrationState = (
   value: Record<string, unknown> | null
 ): string | null =>
   typeof value?.integrationState === "string" ? value.integrationState : null;
+
+const readVerifiedFlag = (value: Record<string, unknown> | null): boolean =>
+  value?.verificationState === "verified";
 
 const hasCommandContract = (value: Record<string, unknown> | null): boolean =>
   typeof value?.commands === "object" &&
@@ -199,6 +203,9 @@ const resolveSubstep = (params: {
   if (params.integrationState === "in_progress") {
     return "integrating";
   }
+  if (params.declaredIntegrated) {
+    return "integrating";
+  }
   if (params.integrationState === "failed") {
     return "failed";
   }
@@ -250,6 +257,7 @@ export const readQualityGatesProgressSnapshot = async (params: {
     commandContractReady &&
     readAcceptedFlag(contract);
   const integrationState = readIntegrationState(contract);
+  const verified = readVerifiedFlag(contract);
   const declaredIntegrated =
     accepted && commandContractReady && readIntegratedFlag(contract);
   const shouldValidateHooks = hasAcceptedIntegrationAttemptStarted({
@@ -262,7 +270,8 @@ export const readQualityGatesProgressSnapshot = async (params: {
     shouldValidateHooks,
     workspaceRoot: params.workspaceRoot,
   });
-  const integrated = declaredIntegrated && validationErrors.length === 0;
+  const integrated =
+    declaredIntegrated && verified && validationErrors.length === 0;
   return {
     accepted,
     commandContractReady,
@@ -280,6 +289,7 @@ export const readQualityGatesProgressSnapshot = async (params: {
       validationErrors,
     }),
     validationErrors,
+    verified,
   };
 };
 

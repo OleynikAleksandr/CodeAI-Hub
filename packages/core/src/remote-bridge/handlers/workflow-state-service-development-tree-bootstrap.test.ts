@@ -151,6 +151,7 @@ const writeTechnicalRootArtifacts = async (
       requiredBeforeCommit: ["qg-secret-scan"],
       requiredBeforePush: ["qg-smoke-checks"],
       schema: "codeai-quality-gates-v1",
+      verificationState: "verified",
     }
   );
   await writeWorkspaceFile(
