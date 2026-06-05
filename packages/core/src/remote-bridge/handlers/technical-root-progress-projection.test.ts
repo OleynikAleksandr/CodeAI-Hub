@@ -77,6 +77,7 @@ test("managed review artifacts override stale invalid stage markers", () => {
     markdownExists: true,
     substep: "awaiting_acceptance",
     validationErrors: [],
+    verified: false,
   };
 
   const updated = applyTechnicalRootProgressToState({

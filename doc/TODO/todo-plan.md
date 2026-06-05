@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "444f78e47",
+  "lastRecordedCommit": "85083f58b",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase5.stream1.task1",
-  "expectedCommitMessage": "docs: document quality gates formal verification lifecycle",
+  "currentTaskId": "phase6.stream2.task1",
+  "expectedCommitMessage": "test: align quality gates progress fixture with verification state",
   "debt": {
-    "expectedCommitMessage": "docs: document quality gates formal verification lifecycle",
-    "preCommitHead": "444f78e47",
+    "expectedCommitMessage": "test: align quality gates progress fixture with verification state",
+    "preCommitHead": "85083f58b",
     "stage": "commit_pending",
-    "taskId": "phase5.stream1.task1"
+    "taskId": "phase6.stream2.task1"
   }
 }
 ```
@@ -94,23 +94,28 @@
 ### Stream: SSOT Updates
 
 19. [DONE] `phase5.stream1.task1` Update canonical workflow/managed orchestration docs for the new Quality Gates Phase 4/Phase 5 lifecycle and verification authority (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document quality gates formal verification lifecycle`).
-20. [PENDING] `phase5.stream1.commit1` Git Commit: `docs: document quality gates formal verification lifecycle` (hash: TBD)
+20. [DONE] `phase5.stream1.commit1` Git Commit: `docs: document quality gates formal verification lifecycle` (hash: 85083f58b)
 
 ## Phase 6 - Tooling Verification (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Targeted Verification
 
-21. [TODO] `phase6.stream1.task1` Run targeted tests for Quality Gates orchestration plus `npm run plan:validate`, `npm run build --workspace=@codeai-hub/core`, and any failing diagnostic commands required by the touched files (scope: verification commands and `doc/TODO/todo-plan.md`; expected commit: none).
+21. [DONE] `phase6.stream1.task1` Run targeted tests for Quality Gates orchestration plus `npm run plan:validate`, `npm run build --workspace=@codeai-hub/core`, and any failing diagnostic commands required by the touched files (scope: verification commands and `doc/TODO/todo-plan.md`; expected commit: none). Result: targeted tests 31/31 passed and `npm run plan:validate` passed; `npm run build --workspace=@codeai-hub/core` exposed a missing Quality Gates `verified` fixture now tracked by Phase 6 repair.
+
+### Stream: Build Fixture Repair
+
+22. [DONE] `phase6.stream2.task1` Align the technical root progress projection test fixture with the new Quality Gates verification read-model field found by core build (scope: `packages/core/src/remote-bridge/handlers/technical-root-progress-projection.test.ts`; expected commit: `test: align quality gates progress fixture with verification state`).
+23. [PENDING] `phase6.stream2.commit1` Git Commit: `test: align quality gates progress fixture with verification state` (hash: TBD)
 
 ## Phase 7 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-05)
 
 ### Stream: User Acceptance
 
-22. [TODO] `phase7.stream1.task1` Hand the implemented Quality Gates formal verification lifecycle back for user workflow acceptance and wait for explicit acceptance or failure report (scope: user workflow acceptance; expected commit: none).
+24. [TODO] `phase7.stream1.task1` Hand the implemented Quality Gates formal verification lifecycle back for user workflow acceptance and wait for explicit acceptance or failure report (scope: user workflow acceptance; expected commit: none).
 
 ## Phase 8 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Closeout
 
-23. [TODO] `phase8.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
-24. [TODO] `phase8.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
+25. [TODO] `phase8.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
+26. [TODO] `phase8.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
