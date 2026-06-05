@@ -12,7 +12,8 @@ import { validateQualityGatesManagedArtifacts } from "./quality-gates-validator"
 
 const WORKSPACE_SLUG = "demo-workspace";
 const DRAFT_REJECTED_RE = /Core rejected the current Quality Gates draft/u;
-const INTEGRATION_ACCEPTED_RE = /Core accepted Quality Gates integration/u;
+const FORMAL_VERIFICATION_ACCEPTED_RE =
+  /Core accepted Quality Gates formal verification/u;
 const INTEGRATION_OPEN_RE = /Core opens Phase 3 Quality Gates Integration/u;
 const INTEGRATION_REJECTED_RE = /Core rejected Quality Gates integration/u;
 const PLAN_STATE_PROBLEM_RE = /orchestrator plan-state problem/u;
@@ -278,7 +279,7 @@ test("Quality Gates validator accepts integrated contract with scripts and hooks
     assert.equal(result.valid, true);
     assert.equal(result.phase, "integration");
     assert.equal(result.nextAction, "open_persistent_return");
-    assert.match(result.nextPrompt ?? "", INTEGRATION_ACCEPTED_RE);
+    assert.match(result.nextPrompt ?? "", FORMAL_VERIFICATION_ACCEPTED_RE);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
