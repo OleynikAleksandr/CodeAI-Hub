@@ -384,7 +384,7 @@ const buildSourceBlock = (
 
 const buildArtifactModeBlock = (relativePath: string): string => {
   const researchLine = relativePath.endsWith("/quality-gates-research.md")
-    ? "- Quality Gates Phase 1A is research-only: create `quality-gates-research.md` and `quality-gates-research.json`; do not create `quality-gates.md` or `quality-gates.json`."
+    ? "- Quality Gates research pass is research-only: create `quality-gates-research.md` and `quality-gates-research.json`; do not create `quality-gates.md` or `quality-gates.json`."
     : null;
   return [
     "Workflow artifact mode:",

@@ -27,14 +27,14 @@ Canonical outputs:
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.md`
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`
 
-## Phase 1A: Research Review
+## Research Pass: Current Tooling Review
 
 The first pass of this step is research-only. Before Core explicitly confirms that the user accepted the research report, write only:
 
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates-research.md`
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates-research.json`
 
-Do not create `quality-gates.md` or `quality-gates.json` during Phase 1A. Do not create or edit package manifests, configs, hooks, CI files, scripts, or production code.
+Do not create `quality-gates.md` or `quality-gates.json` during the research pass. Do not create or edit package manifests, configs, hooks, CI files, scripts, or production code.
 
 Research algorithm:
 
@@ -120,11 +120,11 @@ Required `quality-gates-research.json` template:
 }
 ```
 
-Every Phase 1A response must tell the user, in the chat language, that the Quality Gates research report is ready for review and must be confirmed or corrected before contract drafting.
+Every research-pass response must tell the user, in the chat language, that the Quality Gates research report is ready for review and must be confirmed or corrected before contract drafting.
 
-## Phase 1B: Draft Gate Contract
+## Contract Draft Pass: Gate Contract
 
-Core opens this phase only after the user accepts the research report. In Phase 1B, write the contract artifacts from the accepted research:
+Core opens this pass only after the user accepts the research report. In the contract draft pass, write the contract artifacts from the accepted research:
 
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.md`
 - `.codeai-hub/<workspaceSlug>/quality_gates/quality-gates.json`
@@ -353,8 +353,8 @@ Before each final response, verify:
 - each not-integrated active gate has planned integration paths;
 - selected baseline membership matches required arrays;
 - `accepted` and `integrated` are false in draft phase;
-- Phase 1A final response is allowed only after the two canonical research artifacts are ready for runtime structural validation and user review;
-- Phase 1B final response is allowed only after the four canonical draft artifacts are ready for runtime structural validation and user review;
+- Research-pass final response is allowed only after the two canonical research artifacts are ready for runtime structural validation and user review;
+- Contract-draft-pass final response is allowed only after the four canonical draft artifacts are ready for runtime structural validation and user review;
 - Phase 2 review revisions only touch the canonical Quality Gates research/contract artifacts; never integrate or self-accept;
 - Phase 3 final response is allowed only after the accepted gate infrastructure is ready for runtime/user review; `unlocked` language is not allowed;
 - Phase 4 final response is allowed only after formal gate commands and hook scripts have been run or explicitly proven absent/not applicable by the runtime prompt;
