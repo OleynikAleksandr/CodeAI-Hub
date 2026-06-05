@@ -8,15 +8,15 @@
   "planId": "quality-gates-completed-marker-hotfix-2026-06-05",
   "branch": "main",
   "baseHead": "6fbafc9d1",
-  "lastRecordedCommit": "306df09fa",
+  "lastRecordedCommit": "c15560472",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_CompletedMarker_Hotfix.md",
-  "currentTaskId": "phase1.stream5.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.453",
+  "currentTaskId": "phase1.stream6.task1",
+  "expectedCommitMessage": "chore: build release 1.2.453",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.453",
-    "preCommitHead": "306df09fa",
+    "expectedCommitMessage": "chore: build release 1.2.453",
+    "preCommitHead": "c15560472",
     "stage": "commit_pending",
-    "taskId": "phase1.stream5.task1"
+    "taskId": "phase1.stream6.task1"
   }
 }
 ```
@@ -66,12 +66,12 @@
 ### Stream: Release Metadata Prep
 
 7. [DONE] `phase1.stream5.task1` Prepare README/CHANGELOG for future release `1.2.453` before running release packaging, so packaged VSIX metadata matches the release (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.453`).
-8. [PENDING] `phase1.stream5.commit1` Git Commit: `docs: prepare release 1.2.453` (hash: TBD)
+8. [DONE] `phase1.stream5.commit1` Git Commit: `docs: prepare release 1.2.453` (hash: c15560472)
 
 ### Stream: Release Build
 
-9. [TODO] `phase1.stream6.task1` Run `./scripts/build-all.sh` for `1.2.453` after explicit user confirmation and release metadata prep (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.453`).
-10. [TODO] `phase1.stream6.commit1` Git Commit: `chore: build release 1.2.453` (hash: TBD)
+9. [DONE] `phase1.stream6.task1` Run `./scripts/build-all.sh` for `1.2.453` after explicit user confirmation and release metadata prep (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/**/manifest.json, assets/ui/manifest.json, doc/tmp/releases/**, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.453`).
+10. [PENDING] `phase1.stream6.commit1` Git Commit: `chore: build release 1.2.453` (hash: TBD)
 
 ### Stream: VSIX Package
 
