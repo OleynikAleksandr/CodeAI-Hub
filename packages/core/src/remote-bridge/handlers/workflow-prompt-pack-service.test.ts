@@ -22,7 +22,8 @@ const DIAGRAM_LEADERSHIP_ORDER_RE = /productPartLeadershipOrder/u;
 const DIAGRAM_LEADERSHIP_RULES_RE = /Product Part leadership rules:/u;
 const DIAGRAM_THIN_DISTRIBUTION_RULE_RE = /do not choose a thin distribution/u;
 const QUALITY_GATES_RESEARCH_ONLY_RE =
-  /Quality Gates Phase 1A is research-only/u;
+  /Quality Gates research pass is research-only/u;
+const QUALITY_GATES_LEGACY_SUBPHASE_RE = /Quality Gates Phase 1A/u;
 const QUALITY_GATES_CONTRACT_TARGET_RE =
   /Target artifact: `.*quality-gates\.md`/u;
 
@@ -138,6 +139,10 @@ test("Core workflow prompt pack targets every workflow stage without PM rules", 
       }
       if (stage === "quality_gates") {
         assert.match(promptPack.content, QUALITY_GATES_RESEARCH_ONLY_RE);
+        assert.doesNotMatch(
+          promptPack.content,
+          QUALITY_GATES_LEGACY_SUBPHASE_RE
+        );
         assert.doesNotMatch(
           promptPack.content,
           QUALITY_GATES_CONTRACT_TARGET_RE

@@ -4,8 +4,9 @@ import path from "node:path";
 import test from "node:test";
 import { BUNDLED_TEMPLATE_SOURCES } from "./bundled-templates";
 
-const RESEARCH_PHASE_RE = /Phase 1A: Research Review/;
-const DRAFT_PHASE_RE = /Phase 1B: Draft Gate Contract/;
+const RESEARCH_PHASE_RE = /Research Pass: Current Tooling Review/;
+const DRAFT_PHASE_RE = /Contract Draft Pass: Gate Contract/;
+const LEGACY_SUBPHASE_RE = /Phase 1A|Phase 1B/;
 const REVIEW_PHASE_RE = /Phase 2: User-Led Review/;
 const INTEGRATION_PHASE_RE = /Phase 3: Post-Acceptance Integration/;
 const FORMAL_VERIFICATION_PHASE_RE =
@@ -90,8 +91,8 @@ const CONTRACT_MARKDOWN_TEMPLATE_RE =
   /Required `quality-gates\.md` contract template:[\s\S]*# Quality Gates Baseline/u;
 const CONTRACT_JSON_TEMPLATE_RE =
   /Required `quality-gates\.json` contract template:[\s\S]*"schema": "codeai-quality-gates-v1"/u;
-const PHASE_1A_CONTRACT_FORBIDDEN_RE =
-  /Do not create `quality-gates\.md` or `quality-gates\.json` during Phase 1A/u;
+const RESEARCH_PASS_CONTRACT_FORBIDDEN_RE =
+  /Do not create `quality-gates\.md` or `quality-gates\.json` during the research pass/u;
 const DESIRED_STATUS_RE = /"desiredStatus": "active"/;
 const AVAILABILITY_RE = /"availability": "not_integrated"/;
 const INTEGRATION_REQUIRED_RE = /"integrationRequired": true/;
@@ -137,6 +138,7 @@ test("quality gates bundled prompt keeps research-first integration contract", (
 
   assert.match(prompt, RESEARCH_PHASE_RE);
   assert.match(prompt, DRAFT_PHASE_RE);
+  assert.doesNotMatch(prompt, LEGACY_SUBPHASE_RE);
   assert.match(prompt, REVIEW_PHASE_RE);
   assert.match(prompt, INTEGRATION_PHASE_RE);
   assert.match(prompt, FORMAL_VERIFICATION_PHASE_RE);
@@ -189,7 +191,7 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.match(prompt, RESEARCH_JSON_TEMPLATE_RE);
   assert.match(prompt, CONTRACT_MARKDOWN_TEMPLATE_RE);
   assert.match(prompt, CONTRACT_JSON_TEMPLATE_RE);
-  assert.match(prompt, PHASE_1A_CONTRACT_FORBIDDEN_RE);
+  assert.match(prompt, RESEARCH_PASS_CONTRACT_FORBIDDEN_RE);
   assert.doesNotMatch(prompt, HARDCODED_ULTRACITE_RE);
   assert.doesNotMatch(prompt, HARDCODED_KNIP_RE);
   assert.doesNotMatch(prompt, DEVELOPMENT_TREE_SESSION_RE);

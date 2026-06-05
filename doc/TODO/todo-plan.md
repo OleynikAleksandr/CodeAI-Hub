@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "447926e4c",
+  "lastRecordedCommit": "80878d1a8",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream2.task1",
-  "expectedCommitMessage": "fix: clarify quality gates prompt phase taxonomy",
+  "currentTaskId": "phase9.stream2.task2",
+  "expectedCommitMessage": "test: align quality gates prompt taxonomy assertions",
   "debt": {
-    "expectedCommitMessage": "fix: clarify quality gates prompt phase taxonomy",
-    "preCommitHead": "447926e4c",
+    "expectedCommitMessage": "test: align quality gates prompt taxonomy assertions",
+    "preCommitHead": "80878d1a8",
     "stage": "commit_pending",
-    "taskId": "phase9.stream2.task1"
+    "taskId": "phase9.stream2.task2"
   }
 }
 ```
@@ -130,9 +130,9 @@
 ### Stream: Acceptance Repair
 
 29. [DONE] `phase9.stream2.task1` Remove misleading provider-visible `Phase 1A` / `Phase 1B` taxonomy from Quality Gates prompts and runtime artifact-mode guidance while keeping Core-owned Phase numbering intact (scope: `packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.ts, packages/core/src/templates/bundled-templates.ts`; expected commit: `fix: clarify quality gates prompt phase taxonomy`).
-30. [PENDING] `phase9.stream2.commit1` Git Commit: `fix: clarify quality gates prompt phase taxonomy` (hash: TBD)
-31. [TODO] `phase9.stream2.task2` Update bundled Quality Gates prompt tests so they assert research/draft pass terminology instead of provider-visible `Phase 1A` / `Phase 1B` (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: align quality gates prompt taxonomy assertions`).
-32. [TODO] `phase9.stream2.commit2` Git Commit: `test: align quality gates prompt taxonomy assertions` (hash: TBD)
+30. [DONE] `phase9.stream2.commit1` Git Commit: `fix: clarify quality gates prompt phase taxonomy` (hash: 80878d1a8)
+31. [DONE] `phase9.stream2.task2` Update bundled Quality Gates prompt and workflow prompt-pack tests so they assert research/draft pass terminology instead of provider-visible `Phase 1A` / `Phase 1B` (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts`; expected commit: `test: align quality gates prompt taxonomy assertions`).
+32. [PENDING] `phase9.stream2.commit2` Git Commit: `test: align quality gates prompt taxonomy assertions` (hash: TBD)
 33. [TODO] `phase9.stream3.task1` Hand the repaired Quality Gates prompt taxonomy and release artifact back for user workflow acceptance retest (scope: user workflow acceptance; expected commit: none).
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
