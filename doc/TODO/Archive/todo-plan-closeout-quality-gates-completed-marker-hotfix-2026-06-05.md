@@ -1,3 +1,18 @@
+# Plan Closeout: quality-gates-completed-marker-hotfix-2026-06-05
+
+**Created:** 2026-06-05T13:49:44.022Z
+**Acceptance:** User tested release 1.2.453 and accepted the Quality Gates completed marker fix; GitHub release publication is left to the user.
+**Execution Scope Status:** ACTIVE
+**Branch:** main
+**Current Task:** phase1.stream9.task1
+**Expected Commit:** docs: close quality gates completed marker hotfix
+**Last Recorded Commit:** 70fa4b213
+**Planning Source Disposition:** moved
+**Planning Source Path:** doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_CompletedMarker_Hotfix.md
+
+## Active Plan Copy
+
+````markdown
 # Development TODO Plan
 
 <!-- codeai-plan-state:start -->
@@ -12,12 +27,7 @@
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_CompletedMarker_Hotfix.md",
   "currentTaskId": "phase1.stream9.task1",
   "expectedCommitMessage": "docs: close quality gates completed marker hotfix",
-  "debt": {
-    "expectedCommitMessage": "docs: close quality gates completed marker hotfix",
-    "preCommitHead": "70fa4b213",
-    "stage": "commit_pending",
-    "taskId": "phase1.stream9.task1"
-  }
+  "debt": null
 }
 ```
 <!-- codeai-plan-state:end -->
@@ -84,6 +94,7 @@
 
 ### Stream: Scope Closeout
 
-14. [DONE] `phase1.stream9.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_CompletedMarker_Hotfix.md, doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_CompletedMarker_Hotfix.md`; expected commit: `docs: close quality gates completed marker hotfix`).
-15. [PENDING] `phase1.stream9.commit1` Git Commit: `docs: close quality gates completed marker hotfix` (hash: TBD)
+14. [IN_PROGRESS] `phase1.stream9.task1` Close this bugfix scope only after explicit user acceptance (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/Archive/QualityGates_CompletedMarker_Hotfix.md`; expected commit: `docs: close quality gates completed marker hotfix`).
+15. [TODO] `phase1.stream9.commit1` Git Commit: `docs: close quality gates completed marker hotfix` (hash: TBD)
 16. [TODO] `phase1.stream9.task2` Reserved post-closeout handoff anchor; do not execute automatically unless the user asks for another cycle (scope: post-closeout handoff only; expected commit: none).
+````
