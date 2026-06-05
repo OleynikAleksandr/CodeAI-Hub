@@ -1,5 +1,6 @@
 import path from "node:path";
 import { collectQualityGatesIntegrationConsistencyDiagnostics } from "./quality-gates-consistency-validator";
+import { collectQualityGatesHookCommandDiagnostics } from "./quality-gates-formal-verification-runner";
 import { collectPlannedRequiredGateDiagnostics } from "./quality-gates-planned-required-validator";
 import {
   buildQualityGatesDraftRepairPrompt,
@@ -11,11 +12,7 @@ import { collectRequiredSizePolicyDiagnostics } from "./quality-gates-required-s
 import { resolveQualityGatesResearchFirstBoundary } from "./quality-gates-research-first-boundary";
 import { readQualityGatesCurrentTaskId } from "./quality-gates-stage-plan-state-reader";
 import { collectQualityGatesTerminalResidueDiagnostics } from "./quality-gates-terminal-residue-validator";
-import {
-  readHookText,
-  readPackageScripts,
-  readRequiredFile,
-} from "./quality-gates-workspace-files";
+import { readRequiredFile } from "./quality-gates-workspace-files";
 
 export type QualityGatesManagedPhase = "draft" | "integration";
 
@@ -277,50 +274,6 @@ const validateDraftShape = (params: {
   }
   return errors;
 };
-const toPackageScriptName = (gateId: string): string => {
-  if (gateId.startsWith("qg:")) {
-    return gateId;
-  }
-  if (gateId.startsWith("qg-")) {
-    return `qg:${gateId.slice("qg-".length)}`;
-  }
-  return `qg:${gateId}`;
-};
-
-const collectRequiredHookDiagnostics = async (params: {
-  readonly contract: Record<string, unknown>;
-  readonly packageScripts: Record<string, string> | null;
-  readonly workspaceRoot: string;
-}): Promise<readonly string[]> => {
-  const errors: string[] = [];
-  if (!params.packageScripts) {
-    errors.push("missing_package_json");
-  }
-  const hookSpecs = [
-    {
-      gateIds: readStringArray(params.contract, "requiredBeforeCommit").value,
-      hookName: "pre-commit" as const,
-    },
-    {
-      gateIds: readStringArray(params.contract, "requiredBeforePush").value,
-      hookName: "pre-push" as const,
-    },
-  ];
-  for (const spec of hookSpecs) {
-    const hookText = await readHookText(params.workspaceRoot, spec.hookName);
-    for (const gateId of spec.gateIds) {
-      const scriptName = toPackageScriptName(gateId);
-      if (params.packageScripts && !(scriptName in params.packageScripts)) {
-        errors.push(`missing_package_script:${gateId}`);
-      }
-      if (!hookText.includes(`npm run ${scriptName}`)) {
-        errors.push(`missing_hook_gate:${gateId} in .husky/${spec.hookName}`);
-      }
-    }
-  }
-  return errors;
-};
-
 const validateIntegrationShape = async (params: {
   readonly contractJson: Record<string, unknown> | null;
   readonly markdown: string | null;
@@ -353,9 +306,8 @@ const validateIntegrationShape = async (params: {
     errors.push("integration_state_integrated_required");
   }
   errors.push(
-    ...(await collectRequiredHookDiagnostics({
+    ...(await collectQualityGatesHookCommandDiagnostics({
       contract: params.contractJson,
-      packageScripts: await readPackageScripts(params.workspaceRoot),
       workspaceRoot: params.workspaceRoot,
     }))
   );

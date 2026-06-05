@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "38824295b",
+  "lastRecordedCommit": "e4add429d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase2.stream2.task2",
-  "expectedCommitMessage": "test: assert quality gates formal verification prompting",
+  "currentTaskId": "phase3.stream1.task1",
+  "expectedCommitMessage": "feat: validate quality gate hook commands",
   "debt": {
-    "expectedCommitMessage": "test: assert quality gates formal verification prompting",
-    "preCommitHead": "38824295b",
+    "expectedCommitMessage": "feat: validate quality gate hook commands",
+    "preCommitHead": "e4add429d",
     "stage": "commit_pending",
-    "taskId": "phase2.stream2.task2"
+    "taskId": "phase3.stream1.task1"
   }
 }
 ```
@@ -61,14 +61,14 @@
 5. [DONE] `phase2.stream2.task1` Update Quality Gates runtime/asset prompting so Phase 3 no longer claims terminal completion and agents know Phase 4 formal verification is required, then sync the bundled prompt source (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/agents/quality-gates-agent/assets/quality-gates-prompt.md, packages/core/src/templates/bundled-templates.ts`; expected commit: `feat: prompt quality gates formal verification`).
 6. [DONE] `phase2.stream2.commit1` Git Commit: `feat: prompt quality gates formal verification` (hash: 38824295b)
 7. [DONE] `phase2.stream2.task2` Add formal bundled-template assertions for the Quality Gates Phase 4 verification prompt contract (scope: `packages/core/src/templates/quality-gates-bundled-templates.test.ts`; expected commit: `test: assert quality gates formal verification prompting`).
-8. [PENDING] `phase2.stream2.commit2` Git Commit: `test: assert quality gates formal verification prompting` (hash: TBD)
+8. [DONE] `phase2.stream2.commit2` Git Commit: `test: assert quality gates formal verification prompting` (hash: e4add429d)
 
 ## Phase 3 - Core Verification Contract (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Hook Command Resolution
 
-9. [TODO] `phase3.stream1.task1` Add Core-owned static resolution for hook `npm run <script>` commands and tests that reject missing package scripts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts`; expected commit: `feat: validate quality gate hook commands`).
-10. [TODO] `phase3.stream1.commit1` Git Commit: `feat: validate quality gate hook commands` (hash: TBD)
+9. [DONE] `phase3.stream1.task1` Add Core-owned static resolution for hook `npm run <script>` commands and tests that reject missing package scripts (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts`; expected commit: `feat: validate quality gate hook commands`).
+10. [PENDING] `phase3.stream1.commit1` Git Commit: `feat: validate quality gate hook commands` (hash: TBD)
 
 ### Stream: Verification Evidence
 
