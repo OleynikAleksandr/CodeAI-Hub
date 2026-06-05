@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "f1f7cc822",
+  "lastRecordedCommit": "444f78e47",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase4.stream2.task1",
-  "expectedCommitMessage": "fix: require verified quality gates before development tree unlock",
+  "currentTaskId": "phase5.stream1.task1",
+  "expectedCommitMessage": "docs: document quality gates formal verification lifecycle",
   "debt": {
-    "expectedCommitMessage": "fix: require verified quality gates before development tree unlock",
-    "preCommitHead": "f1f7cc822",
+    "expectedCommitMessage": "docs: document quality gates formal verification lifecycle",
+    "preCommitHead": "444f78e47",
     "stage": "commit_pending",
-    "taskId": "phase4.stream2.task1"
+    "taskId": "phase5.stream1.task1"
   }
 }
 ```
@@ -87,14 +87,14 @@
 ### Stream: Read Model And Bootstrap Guard
 
 17. [DONE] `phase4.stream2.task1` Keep Project Manager/read-model and Development Tree unlock blocked until Quality Gates verification is valid, not only integrated (scope: `packages/core/src/remote-bridge/handlers/quality-gates-progress.ts, packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts, packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`; expected commit: `fix: require verified quality gates before development tree unlock`).
-18. [PENDING] `phase4.stream2.commit1` Git Commit: `fix: require verified quality gates before development tree unlock` (hash: TBD)
+18. [DONE] `phase4.stream2.commit1` Git Commit: `fix: require verified quality gates before development tree unlock` (hash: 444f78e47)
 
 ## Phase 5 - Documentation Sync (owner: Codex, updated: 2026-06-05)
 
 ### Stream: SSOT Updates
 
-19. [TODO] `phase5.stream1.task1` Update canonical workflow/managed orchestration docs for the new Quality Gates Phase 4/Phase 5 lifecycle and verification authority (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document quality gates formal verification lifecycle`).
-20. [TODO] `phase5.stream1.commit1` Git Commit: `docs: document quality gates formal verification lifecycle` (hash: TBD)
+19. [DONE] `phase5.stream1.task1` Update canonical workflow/managed orchestration docs for the new Quality Gates Phase 4/Phase 5 lifecycle and verification authority (scope: `doc/SolidWorks-WorkFlow/System/WorkflowSteps_Overview.md, doc/SolidWorks-WorkFlow/Clusters/ManagedWorkflowOrchestration.md, doc/SolidWorks-WorkFlow/Docs_Index.md`; expected commit: `docs: document quality gates formal verification lifecycle`).
+20. [PENDING] `phase5.stream1.commit1` Git Commit: `docs: document quality gates formal verification lifecycle` (hash: TBD)
 
 ## Phase 6 - Tooling Verification (owner: Codex, updated: 2026-06-05)
 

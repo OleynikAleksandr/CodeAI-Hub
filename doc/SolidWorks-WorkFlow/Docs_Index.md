@@ -21,7 +21,7 @@
 ## 1) Канонические документы (этот каталог)
 
 ### Workflow Overview
-- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→5 + Development Tree branches), артефактов, OUTDATED propagation, managed technical-stage runtime boundary, workspace-owned Git rollback Clear with rebuildable boundary registry projection and workflow session-history cleanup, and Core Runtime continuity/read-model contracts.
+- `System/WorkflowSteps_Overview.md` — SSOT шагов workflow (1→5 + Development Tree branches), артефактов, OUTDATED propagation, managed technical-stage runtime boundary, Quality Gates formal verification before Development Tree unlock, workspace-owned Git rollback Clear with rebuildable boundary registry projection and workflow session-history cleanup, and Core Runtime continuity/read-model contracts.
 
 ### System
 - `System/SystemArchitecture.md` — SSOT всей системы и глобальных инвариантов, включая Core-level provider-native request capture diagnostics, model invocation profile boundaries, workspace-owned runtime capsule, pure Git workflow rollback, rebuildable `workflow/boundaries.json`, and no-continuity Clear session cleanup.
@@ -32,7 +32,7 @@
 ### Clusters
 - `Clusters/Project_Manager.md` — SSOT подсистемы Project Manager.
 - `Clusters/CoreOrchestrator.md` — SSOT подсистемы Core Orchestrator.
-- `Clusters/ManagedWorkflowOrchestration.md` — SSOT active runtime cluster for managed technical Documentation Tree stages: facade boundary, internal modules, reusable phase types, step-controller extension contract, prompt/artifact/parser authority, managed commits, user review gates, and downstream unlock.
+- `Clusters/ManagedWorkflowOrchestration.md` — SSOT active runtime cluster for managed technical Documentation Tree stages: facade boundary, internal modules, reusable phase types, step-controller extension contract, prompt/artifact/parser authority, managed commits, user review gates, Quality Gates formal verification evidence, and downstream unlock.
 
 ### Modules
 - `Modules/Claude.md` — SSOT Claude provider module, including provider-home runtime isolation and SDK isolation-mode rules for CodeAI Hub-managed turns.
@@ -233,6 +233,7 @@
 - `Plans/Archive/Questionnaire_AutoScroll_Planning.md` — archived accepted planning source for Description questionnaire navigation: before submit, Project Manager scrolls to the first incomplete required section and then to the submit footer when required sections are complete. Stable behavior lives in `Clusters/Project_Manager.md` and `System/WorkflowSteps_Overview.md`.
 - `Plans/Archive/Claude_ReasoningSummary_Language_Planning.md` — archived accepted planning source for Claude visible reasoning-summary language handling. Stable behavior lives in `Modules/Claude.md` and `System/SystemArchitecture.md`.
 - `Plans/Archive/QualityGates_WorkingBaseline_Planning_RU.md` — archived accepted planning source for the Quality Gates implementation scope: materialized-foundation research, user-accepted gate selection, required/advisory/deferred/rejected disposition, and executable required gates with Core-validated command/adapter evidence before Development Tree unlock. Stable behavior lives in `Clusters/ManagedWorkflowOrchestration.md`, `System/SystemArchitecture.md`, `System/WorkflowSteps_Overview.md`, and `Contracts/Workflow_CLI.md`.
+- `Plans/QualityGates_FormalVerification_Phase_Planning.md` — active planning source for the Quality Gates Phase 4 formal verification insertion: Core dispatches a post-integration verification phase, validates hook/script command evidence, records `verificationState: "verified"`, and only then opens persistent return / Development Tree bootstrap.
 - `Plans/DevelopmentTree_BranchWorkflow_Architecture.md` — active reference architecture / design intake для продолжающейся Development Tree разработки после `Quality Gates Baseline`: Product Part / Cluster branch workflow, one module-agent session per module, artifact/user-review phases, interactive Implementation TODO Plan, read-only worker sessions, Product Part Development Brief bootstrap, and accepted Workflow Clear/Undo registry/session cleanup behavior. This planning source remains active because only several phases of the full Development Tree implementation are complete.
 - `Plans/Backlog/DevelopmentTree_Sidebar_Visualization_Architecture.md` — accepted reference architecture для Development Tree sidebar; core sidebar/read-model часть уже реализована, но branch-session lifecycle, provider inheritance, draft-artifact gating, outdated propagation и progress counters остаются deferred/future scope.
 - `Plans/Archive/Implementation_Foundation_Architecture.md` — archived planning-doc поздней branch-level фазы (Draft 2026-04-05, Accepted-статус не получен); заархивирован 2026-04-21 после ревизии active Plans: никаких следов реализации Foundation-шага в коде нет, execution-phase prioritization сместилось. Документ остаётся как reference architecture для будущего scope реализации Design/Planning/Execution agents.

@@ -2,7 +2,7 @@
 
 **Status:** Active runtime boundary for managed technical trunk steps.
 **Created:** 2026-05-15.
-**Updated:** 2026-05-31.
+**Updated:** 2026-06-05.
 **Owner:** Core Runtime.
 **Code boundary:** `packages/core/src/managed-workflow-orchestration/`.
 **Public facade:** `ManagedWorkflowOrchestrationFacade`.
@@ -43,6 +43,8 @@ Core owns the trunk step marker state for every managed technical stage. `Diagra
 - `completed` / green only after Core reaches the terminal `### Stream: User Return And Revisions` boundary, records the stage in the managed workspace `completedStages` ledger, and passes the terminal clean-Git checkpoint.
 
 For `Application Skeleton`, a successful Core-owned materialization validation is the terminal managed boundary. The marker stays `in_progress` during draft review, acceptance, materialization, validation, and commit, then turns `completed` when Core records the materialization commit, opens persistent user return, and activates `Quality Gates Baseline`. There is no second post-materialization user-review gate because the user already accepted the contract before materialization.
+
+For `Quality Gates Baseline`, integration is not the terminal managed boundary. The marker stays `in_progress` through draft/review, acceptance, accepted-only integration, formal gate verification, and the persistent user-return transition. It turns `completed` only after Core validates `verificationState: "verified"`, recorded command evidence for required gate scripts and hooks, opens the persistent return boundary, writes the completed-stage ledger, and passes the terminal clean-Git checkpoint.
 
 Current review artifacts dominate stale invalid projection. If `Application Skeleton` or `Quality Gates Baseline` has a current Core review gate/progress artifact, the stage must project `in_progress`/yellow even when an older in-memory invalidation event still exists. Invalid/blocked state may surface diagnostics, but it must not repaint an active user-review stage red unless Core has actually closed or rejected that current review gate.
 
@@ -87,11 +89,13 @@ Quality Gates Baseline and later implementation stages may depend on this founda
 
 The boundary is strict: Application Skeleton owns stack/package/workspace decisions and the first installable project foundation, while Quality Gates Baseline owns research, selection, and integration of quality tooling after that foundation is available. Quality Gates must not be used as a repair layer for an incomplete Application Skeleton foundation.
 
-Quality Gates starts from the materialized project foundation, not from a fixed product example. The agent/Core loop must research current tooling for the detected stack, classify proposed gates as required, advisory, deferred, or rejected, and only materialize accepted required gates that are executable for the current workspace. Required gates cannot remain placeholders: Core must validate concrete command evidence, lifecycle hook/adapter evidence, and unresolved-item disposition before Development Tree unlock.
+Quality Gates starts from the materialized project foundation, not from a fixed product example. The agent/Core loop must research current tooling for the detected stack, classify proposed gates as required, advisory, deferred, or rejected, and only materialize accepted required gates that are executable for the current workspace. Required gates cannot remain placeholders: Core must validate concrete command evidence, lifecycle hook/adapter evidence, unresolved-item disposition, and formal verification evidence before Development Tree unlock.
 
 Validated Application Skeleton materialization completes the managed stage. After Core commits a valid materialization attempt, Core publishes the terminal persistent return boundary and unlocks/activates `Quality Gates Baseline` automatically. If validation fails with actionable scaffold or contract diagnostics, Core keeps the input gate closed and dispatches a repair prompt to the agent; only unrecoverable Core boundary failures are surfaced to the user as blockers.
 
-Quality Gates integration has an additional artifact consistency gate. In the integration phase, `quality-gates.json` is the machine-readable source of truth and `quality-gates.md` is a user-facing review artifact. Core must reject an integrated Quality Gates result when any required gate remains marked `not_integrated` in JSON, when required package scripts or lifecycle hook calls are missing, or when declared `integratedPaths` do not exist in the workspace. Draft/proposal phases may describe planned or not-yet-integrated gates, and terminal integration only requires Markdown to remain present and headed as `# Quality Gates Baseline`; machine state is validated from JSON, package scripts, hooks, and filesystem evidence.
+Quality Gates integration has an additional artifact consistency gate. In the integration phase, `quality-gates.json` is the machine-readable source of truth and `quality-gates.md` is a user-facing review artifact. Core must reject an integrated Quality Gates result when any required gate remains marked `not_integrated` in JSON, when required package scripts or lifecycle hook calls are missing, or when declared `integratedPaths` do not exist in the workspace. Draft/proposal phases may describe planned or not-yet-integrated gates, and integration only requires Markdown to remain present and headed as `# Quality Gates Baseline`; machine state is validated from JSON, package scripts, hooks, and filesystem evidence.
+
+Quality Gates formal verification is the post-integration completion gate. After the integration commit, Core opens a dedicated verification phase instead of persistent return. The agent must resolve hook `npm run` commands against `package.json`, execute or formally check the expected gate commands (`qg:before-module-execution`, `qg:before-commit`, `qg:before-push`, `qg:all`, `sh .husky/pre-commit`, `sh .husky/pre-push`), and record `verificationState: "verified"` plus `verificationEvidence` in `quality-gates.json`. Core validates that evidence before persistent return opens or Development Tree becomes startable.
 
 Quality Gates draft/review phases are pre-acceptance and must not leave integration residue. Before Core records a draft/review managed commit, it restores or cleans prohibited integration paths (`package.json`, package-manager lockfiles, `.husky/pre-commit`, `.husky/pre-push`, and `scripts/quality-gates/**`). Those files become valid managed output only after the user accepts the draft contract and Core enters the integration phase.
 
@@ -218,7 +222,8 @@ The active implementation must provide the complete managed lifecycle:
 - the registered controller for the selected stage is visible in Core workflow-state and client projections;
 - the first prompt embeds all required source artifacts, templates, field references, examples, schema fragments, and authoring rules as provider-visible text;
 - Core validates every provider output through the canonical parser/validator and writes diagnostics as Core-owned feedback;
-- Quality Gates integration validates artifact consistency across JSON, package scripts, lifecycle hooks, and declared integration paths before persistent return opens; Markdown remains a user-facing review artifact and is not terminal integration state;
+- Quality Gates integration validates artifact consistency across JSON, package scripts, lifecycle hooks, and declared integration paths before formal verification opens; Markdown remains a user-facing review artifact and is not terminal integration state;
+- Quality Gates formal verification validates `verificationState: "verified"` and command evidence before persistent return opens or Development Tree bootstrap becomes startable;
 - every repair, revision, acceptance, materialization, integration, and persistent-return transition creates or advances a concrete stage-plan microtask with a paired `Git Commit:` item;
 - managed Git hygiene keeps the workspace clean at stage boundaries, including pre-stage cleanup, terminal dirty-tree classification, `.codeai-hub/state/` ignore enforcement, Core commits for classified residue, and blockers for unclassified residue;
 - completed upstream stage LEDs remain green after downstream blockers, while active downstream stages render in progress from Core state and only terminal `User Return And Revisions` completion can publish a green managed marker;
