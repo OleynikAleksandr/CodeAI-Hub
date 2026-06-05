@@ -15,13 +15,15 @@ const GIT_HASH_RE = /^[0-9a-f]{7,}$/u;
 const DRAFT_TASK_RE = /quality-gates\.phase1\.draft\.task1/u;
 const REVIEW_TASK_RE = /quality-gates\.phase2\.review\.task1/u;
 const INTEGRATE_TASK_RE = /quality-gates\.phase3\.integrate\.task1/u;
+const FORMAL_VERIFY_TASK_RE = /quality-gates\.phase4\.verify\.task1/u;
 const INTEGRATION_REPAIR_TASK_RE = /quality-gates\.phase3\.repair\.task1/u;
 const DRAFT_REPAIR_CYCLE_RE = /## Quality Gates Draft Repair Cycle/u;
 const INTEGRATION_REPAIR_CYCLE_RE =
   /## Quality Gates Integration Repair Cycle/u;
 const NUMERIC_PHASE_HEADING_RE = /^## Phase (\d+) — .+$/gmu;
 const NO_REVISION_RE = /not-created-user-accepted-without-review-revision/u;
-const PHASE_4_RE = /## Phase 4 — Persistent Quality Gates User Return/u;
+const PHASE_4_RE = /## Phase 4 — Formal Quality Gates Verification/u;
+const PHASE_5_RE = /## Phase 5 — Persistent Quality Gates User Return/u;
 const PERSISTENT_RETURN_COMMIT_DONE_RE =
   /\[DONE\] Git Commit: `not-created-persistent-user-return-open` \(hash: not-created-persistent-user-return-open\)/u;
 const PERSISTENT_RETURN_COMMIT_TODO_RE =
@@ -236,8 +238,38 @@ test("QualityGatesStagePlanController commits draft, accepts review, and commits
       "doc/TODO/stages/quality-gates/todo-plan.md"
     );
     assert.match(finalPlan, PHASE_4_RE);
-    assert.match(finalPlan, PERSISTENT_RETURN_COMMIT_DONE_RE);
-    assert.doesNotMatch(finalPlan, PERSISTENT_RETURN_COMMIT_TODO_RE);
+    assert.match(finalPlan, FORMAL_VERIFY_TASK_RE);
+    assert.doesNotMatch(finalPlan, PHASE_5_RE);
+    assert.doesNotMatch(finalPlan, PERSISTENT_RETURN_COMMIT_DONE_RE);
+    const workspacePlanAfterIntegration = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/workspace.plan.md"
+    );
+    assert.doesNotMatch(
+      workspacePlanAfterIntegration,
+      QUALITY_GATES_COMPLETED_RE
+    );
+
+    await writeWorkspaceFile(
+      workspaceRoot,
+      MANAGED_DECISION_PATH,
+      '{"stage":"quality_gates","phase":"verification"}\n'
+    );
+    const verifiedCommit = await controller.commitManagedTurn({
+      decision: createIntegratedDecision(),
+      sessionId: "session-1",
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+    assert.equal(verifiedCommit.blocked, null);
+
+    const verifiedPlan = await readWorkspaceFile(
+      workspaceRoot,
+      "doc/TODO/stages/quality-gates/todo-plan.md"
+    );
+    assert.match(verifiedPlan, PHASE_5_RE);
+    assert.match(verifiedPlan, PERSISTENT_RETURN_COMMIT_DONE_RE);
+    assert.doesNotMatch(verifiedPlan, PERSISTENT_RETURN_COMMIT_TODO_RE);
     const workspacePlan = await readWorkspaceFile(
       workspaceRoot,
       "doc/TODO/workspace.plan.md"

@@ -17,7 +17,7 @@ import {
   markReviewAcceptedWithoutRevision,
   type NextPlanStep,
   openDraftStagePlan,
-  PHASE4_TASK_ID,
+  PHASE5_TASK_ID,
   PLAN_END,
   PLAN_START,
   parseStateBlock,
@@ -349,7 +349,7 @@ export class QualityGatesStagePlanController {
     readonly stageState: ManagedPlanState;
     readonly workspaceRoot: string;
   }): Promise<void> {
-    if (params.next.taskId === PHASE4_TASK_ID) {
+    if (params.next.taskId === PHASE5_TASK_ID) {
       await ensureManagedTerminalGitClean({
         gitBoundary: this.managedGitBoundary,
         stage: "quality_gates",
@@ -383,7 +383,7 @@ export class QualityGatesStagePlanController {
       params.workspaceRoot,
       params.sessionId
         ? {
-            completed: params.next.taskId === PHASE4_TASK_ID,
+            completed: params.next.taskId === PHASE5_TASK_ID,
             hash: params.hash,
             message: params.commitMessage,
             sessionId: params.sessionId,

@@ -16,7 +16,9 @@ export const REVIEW_TASK_PREFIX = "quality-gates.phase2.review.task";
 const INTEGRATE_TASK_PREFIX = "quality-gates.phase3.integrate.task";
 export const INTEGRATE_COMMIT_MESSAGE =
   "feat: integrate quality gates baseline attempt 1";
-export const PHASE4_TASK_ID = "quality-gates.phase4.user-return.task1";
+const FORMAL_VERIFY_TASK_ID = "quality-gates.phase4.verify.task1";
+const FORMAL_VERIFY_COMMIT_MESSAGE = "chore: verify quality gates enforcement";
+export const PHASE5_TASK_ID = "quality-gates.phase5.user-return.task1";
 
 const BOOTSTRAP_TASK_ID = "quality-gates.phase1.bootstrap.task1";
 const BOOTSTRAP_COMMIT_MESSAGE = "docs: bootstrap quality gates managed stage";
@@ -29,14 +31,12 @@ const NO_REVISION_DISPOSITION =
   "not-created-user-accepted-without-review-revision";
 const FENCED_JSON_START_RE = /^```json\s*/u;
 const FENCED_JSON_END_RE = /\s*```$/u;
-
 export interface ManagedPlanState {
   currentTaskId: string | null;
   expectedCommitMessage: string | null;
   lastRecordedCommit: string | null;
   [key: string]: unknown;
 }
-
 export interface ManagedWorkspaceState {
   acceptedCommits?: unknown[];
   activePlanPath?: string | null;
@@ -47,15 +47,12 @@ export interface ManagedWorkspaceState {
   unlockedStages?: unknown[];
   [key: string]: unknown;
 }
-
 export interface NextPlanStep {
   readonly expectedCommitMessage: string | null;
   readonly taskId: string | null;
 }
-
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
 const maxListNumber = (content: string): number => {
   let max = 0;
   for (const match of content.matchAll(/^(\d+)\.\s+\[/gmu)) {
@@ -63,12 +60,10 @@ const maxListNumber = (content: string): number => {
   }
   return max;
 };
-
 export const readText = async (
   workspaceRoot: string,
   relativePath: string
 ): Promise<string> => readFile(path.join(workspaceRoot, relativePath), "utf8");
-
 export const writeText = async (
   workspaceRoot: string,
   relativePath: string,
@@ -78,7 +73,6 @@ export const writeText = async (
   await mkdir(path.dirname(absolutePath), { recursive: true });
   await writeFile(absolutePath, content, "utf8");
 };
-
 export const parseStateBlock = <TState>(
   content: string,
   startMarker: string,
@@ -95,7 +89,6 @@ export const parseStateBlock = <TState>(
   }
   return JSON.parse(json) as TState;
 };
-
 export const replaceStateBlock = (
   content: string,
   startMarker: string,
@@ -111,7 +104,6 @@ export const replaceStateBlock = (
     `${startMarker}\n\`\`\`json\n${JSON.stringify(state, null, 2)}\n\`\`\`\n${endMarker}`
   );
 };
-
 export const addUnique = <TValue>(
   values: readonly unknown[] | undefined,
   value: TValue
@@ -119,7 +111,6 @@ export const addUnique = <TValue>(
   const existing = Array.isArray(values) ? values : [];
   return existing.includes(value) ? [...existing] : [...existing, value];
 };
-
 export const buildContractArtifactPaths = (
   workspaceSlug: string
 ): readonly string[] => [
@@ -128,28 +119,20 @@ export const buildContractArtifactPaths = (
   `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.md`,
   `.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json`,
 ];
-
 const buildReviewCommitMessage = (reviewNumber: number): string =>
   `docs: revise quality gates contract revision ${reviewNumber}`;
-
 const buildReviewTaskId = (reviewNumber: number): string =>
   `${REVIEW_TASK_PREFIX}${reviewNumber}`;
-
 const buildDraftRepairTaskId = (attemptNumber: number): string =>
   `${DRAFT_REPAIR_TASK_PREFIX}${attemptNumber}`;
-
 const buildDraftRepairCommitMessage = (attemptNumber: number): string =>
   `${DRAFT_REPAIR_COMMIT_PREFIX} ${attemptNumber}`;
-
 export const buildIntegrateTaskId = (attemptNumber: number): string =>
   `${INTEGRATE_TASK_PREFIX}${attemptNumber}`;
-
 const buildIntegrationRepairTaskId = (attemptNumber: number): string =>
   `${INTEGRATION_REPAIR_TASK_PREFIX}${attemptNumber}`;
-
 const buildIntegrationRepairCommitMessage = (attemptNumber: number): string =>
   `${INTEGRATION_REPAIR_COMMIT_PREFIX} ${attemptNumber}`;
-
 const parsePrefixedTaskNumber = (
   taskId: string,
   prefix: string
@@ -160,13 +143,10 @@ const parsePrefixedTaskNumber = (
   const value = Number(taskId.slice(prefix.length));
   return Number.isInteger(value) && value > 0 ? value : null;
 };
-
 const parseReviewTaskNumber = (taskId: string): number | null =>
   parsePrefixedTaskNumber(taskId, REVIEW_TASK_PREFIX);
-
 const parseDraftRepairTaskNumber = (taskId: string): number | null =>
   parsePrefixedTaskNumber(taskId, DRAFT_REPAIR_TASK_PREFIX);
-
 const nextRepairAttemptNumber = (content: string, prefix: string): number => {
   let max = 0;
   for (const match of content.matchAll(
@@ -176,7 +156,6 @@ const nextRepairAttemptNumber = (content: string, prefix: string): number => {
   }
   return max + 1;
 };
-
 const appendTaskPair = (params: {
   readonly commitMessage: string;
   readonly content: string;
@@ -196,6 +175,14 @@ const appendTaskPair = (params: {
     "",
   ].join("\n");
 };
+
+const buildPhaseHeader = (title: string, stream: string): readonly string[] => [
+  "",
+  `## ${title}`,
+  "",
+  `### Stream: ${stream}`,
+  "",
+];
 
 export const openDraftStagePlan = (content: string): string => {
   if (content.includes(`\`${DRAFT_TASK_ID}\``)) {
@@ -232,13 +219,10 @@ const appendReviewStep = (content: string, reviewNumber: number): string =>
     commitMessage: buildReviewCommitMessage(reviewNumber),
     phaseHeader:
       reviewNumber === 1
-        ? [
-            "",
-            "## Phase 2 — Quality Gates Contract Review",
-            "",
-            "### Stream: User-Led Review",
-            "",
-          ]
+        ? buildPhaseHeader(
+            "Phase 2 — Quality Gates Contract Review",
+            "User-Led Review"
+          )
         : [""],
     taskLine:
       "User reviews the Quality Gates contract and either accepts it or requests revision (scope: user decision + `.codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json`;",
@@ -249,13 +233,10 @@ export const appendIntegrationStep = (content: string): string =>
     content,
     taskId: buildIntegrateTaskId(1),
     commitMessage: INTEGRATE_COMMIT_MESSAGE,
-    phaseHeader: [
-      "",
-      "## Phase 3 — Quality Gates Integration",
-      "",
-      "### Stream: Accepted-Only Integration",
-      "",
-    ],
+    phaseHeader: buildPhaseHeader(
+      "Phase 3 — Quality Gates Integration",
+      "Accepted-Only Integration"
+    ),
     taskLine:
       "Integrate the user-accepted Quality Gates contract into package scripts, gate infrastructure, and lifecycle hooks, then stop for Core validation (scope: `.codeai-hub/**/quality_gates/**, package.json, lockfiles, .husky/pre-commit, .husky/pre-push, scripts/quality-gates/**, accepted gate configs/CI files`;",
   });
@@ -270,13 +251,10 @@ const appendDraftRepairStep = (
     commitMessage: buildDraftRepairCommitMessage(attemptNumber),
     phaseHeader:
       attemptNumber === 1
-        ? [
-            "",
-            "## Quality Gates Draft Repair Cycle",
-            "",
-            "### Stream: Core-Gated Repair Attempts",
-            "",
-          ]
+        ? buildPhaseHeader(
+            "Quality Gates Draft Repair Cycle",
+            "Core-Gated Repair Attempts"
+          )
         : [""],
     taskLine:
       "Repair the rejected Quality Gates research/contract draft artifacts and stop for Core validation (scope: `.codeai-hub/**/quality_gates/quality-gates-research.md, .codeai-hub/**/quality_gates/quality-gates-research.json, .codeai-hub/**/quality_gates/quality-gates.md, .codeai-hub/**/quality_gates/quality-gates.json`;",
@@ -292,30 +270,37 @@ const appendIntegrationRepairStep = (
     commitMessage: buildIntegrationRepairCommitMessage(attemptNumber),
     phaseHeader:
       attemptNumber === 1
-        ? [
-            "",
-            "## Quality Gates Integration Repair Cycle",
-            "",
-            "### Stream: Core-Gated Repair Attempts",
-            "",
-          ]
+        ? buildPhaseHeader(
+            "Quality Gates Integration Repair Cycle",
+            "Core-Gated Repair Attempts"
+          )
         : [""],
     taskLine:
       "Repair the rejected Quality Gates integration and stop for Core validation (scope: `.codeai-hub/**/quality_gates/**, package.json, lockfiles, .husky/pre-commit, .husky/pre-push, scripts/quality-gates/**, accepted gate configs/CI files`;",
   });
 
+const appendFormalVerificationStep = (content: string): string =>
+  appendTaskPair({
+    content,
+    taskId: FORMAL_VERIFY_TASK_ID,
+    commitMessage: FORMAL_VERIFY_COMMIT_MESSAGE,
+    phaseHeader: buildPhaseHeader(
+      "Phase 4 — Formal Quality Gates Verification",
+      "Enforcement Surface Verification"
+    ),
+    taskLine:
+      "Run and record formal verification for the integrated Quality Gates enforcement surface before persistent return (scope: `.codeai-hub/**/quality_gates/**, package.json, .husky/pre-commit, .husky/pre-push, scripts/quality-gates/**, accepted gate configs`;",
+  });
+
 const appendPersistentReturnStep = (content: string): string =>
   appendTaskPair({
     content,
-    taskId: PHASE4_TASK_ID,
+    taskId: PHASE5_TASK_ID,
     commitMessage: "not-created-persistent-user-return-open",
-    phaseHeader: [
-      "",
-      "## Phase 4 — Persistent Quality Gates User Return",
-      "",
-      "### Stream: User Return And Revisions",
-      "",
-    ],
+    phaseHeader: buildPhaseHeader(
+      "Phase 5 — Persistent Quality Gates User Return",
+      "User Return And Revisions"
+    ),
     taskLine:
       "Persistent Quality Gates return phase is open for future user revisions after accepted integration (scope: user workflow;",
   }).replace(
@@ -344,8 +329,17 @@ export const resolveNextAfterCommit = (params: {
       taskId: buildReviewTaskId(nextReviewNumber),
     };
   }
-  if (params.decision.nextAction === "open_persistent_return") {
-    return { expectedCommitMessage: null, taskId: PHASE4_TASK_ID };
+  if (
+    params.decision.nextAction === "open_persistent_return" &&
+    params.currentTaskId.startsWith(INTEGRATE_TASK_PREFIX)
+  ) {
+    return {
+      expectedCommitMessage: FORMAL_VERIFY_COMMIT_MESSAGE,
+      taskId: FORMAL_VERIFY_TASK_ID,
+    };
+  }
+  if (params.currentTaskId === FORMAL_VERIFY_TASK_ID) {
+    return { expectedCommitMessage: null, taskId: PHASE5_TASK_ID };
   }
   return { expectedCommitMessage: null, taskId: null };
 };
@@ -414,7 +408,10 @@ export const updateStagePlanAfterCommit = (params: {
   if (integrationRepairNumber !== null) {
     return appendIntegrationRepairStep(markedDone, integrationRepairNumber);
   }
-  return params.next.taskId === PHASE4_TASK_ID
+  if (params.next.taskId === FORMAL_VERIFY_TASK_ID) {
+    return appendFormalVerificationStep(markedDone);
+  }
+  return params.next.taskId === PHASE5_TASK_ID
     ? appendPersistentReturnStep(markedDone)
     : markedDone;
 };

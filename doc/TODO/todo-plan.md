@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "2e7f35a14",
+  "lastRecordedCommit": "493285524",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase1.stream1.task1",
-  "expectedCommitMessage": "docs: plan quality gates formal verification phase",
+  "currentTaskId": "phase2.stream1.task1",
+  "expectedCommitMessage": "feat: add quality gates formal verification phase model",
   "debt": {
-    "expectedCommitMessage": "docs: plan quality gates formal verification phase",
-    "preCommitHead": "2e7f35a14",
+    "expectedCommitMessage": "feat: add quality gates formal verification phase model",
+    "preCommitHead": "493285524",
     "stage": "commit_pending",
-    "taskId": "phase1.stream1.task1"
+    "taskId": "phase2.stream1.task1"
   }
 }
 ```
@@ -47,14 +47,14 @@
 ### Stream: Plan Intake
 
 1. [DONE] `phase1.stream1.task1` Record the accepted architecture direction for adding a formal Quality Gates verification phase before persistent return (scope: `doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md, doc/TODO/todo-plan.md`; expected commit: `docs: plan quality gates formal verification phase`).
-2. [PENDING] `phase1.stream1.commit1` Git Commit: `docs: plan quality gates formal verification phase` (hash: TBD)
+2. [DONE] `phase1.stream1.commit1` Git Commit: `docs: plan quality gates formal verification phase` (hash: 493285524)
 
 ## Phase 2 - Stage Plan Lifecycle (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Phase Model And Plan Generation
 
-3. [TODO] `phase2.stream1.task1` Add the Quality Gates formal verification task id, Phase 4 plan append path, and Phase 5 persistent return numbering (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`; expected commit: `feat: add quality gates formal verification phase model`).
-4. [TODO] `phase2.stream1.commit1` Git Commit: `feat: add quality gates formal verification phase model` (hash: TBD)
+3. [DONE] `phase2.stream1.task1` Add the Quality Gates formal verification task id, Phase 4 plan append path, and Phase 5 persistent return numbering (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts`; expected commit: `feat: add quality gates formal verification phase model`).
+4. [PENDING] `phase2.stream1.commit1` Git Commit: `feat: add quality gates formal verification phase model` (hash: TBD)
 
 ### Stream: Phase Prompting
 
