@@ -47,6 +47,7 @@ const QUALITY_GATES_STAGE = "quality_gates";
 const VIRTUAL_SIMULATION_STAGE = "virtual_simulation";
 const APPLICATION_SKELETON_MATERIALIZATION_REPAIR_TASK_RE =
   /^application-skeleton\.phase3\.repair\.task(\d+)$/u;
+const QUALITY_GATES_VERIFY_TASK_ID = "quality-gates.phase4.verify.task1";
 export type ManagedWorkflowTurnCompletionResult =
   | "continued"
   | "not_managed"
@@ -73,6 +74,16 @@ const resolveMaterializationRepairAttemptNumber = (
   const value = Number(match?.[1]);
   return Number.isInteger(value) && value > 0 ? value : 1;
 };
+
+const buildQualityGatesVerificationContinuation = (
+  workspaceSlug: string
+): string =>
+  [
+    "Core opens Phase 4 Formal Quality Gates Verification.",
+    `Verify \`.codeai-hub/${workspaceSlug}/quality_gates/quality-gates.json\` and the integrated enforcement surface before persistent return.`,
+    'Resolve hook `npm run <script>` calls against `package.json`, run available `qg:*` aggregate commands and Husky hook scripts, then record `verificationState: "verified"` with command evidence.',
+    "Do not run Git commands or edit stage todo files.",
+  ].join("\n");
 const resolveDiagramModulesRepairAttemptNumber = (
   taskId: string | null
 ): number => parseDiagramModulesRepairTaskNumber(taskId ?? "") ?? 1;
@@ -407,6 +418,18 @@ export class SessionRequestHandlerManagedWorkflowTurn {
         tag: "managed-workflow-validation",
       });
       return "settled";
+    }
+    if (planAdvance.commit.nextTaskId === QUALITY_GATES_VERIFY_TASK_ID) {
+      this.appendCoreMessage(params.sessionId, {
+        content:
+          "Core: Quality Gates integration accepted. Phase 4 formal verification prompt sent.",
+        tag: "managed-workflow-validation",
+      });
+      this.dispatchAgentContinuation(
+        params.sessionId,
+        buildQualityGatesVerificationContinuation(params.workspaceSlug)
+      );
+      return "continued";
     }
     const completesStage = decision.nextAction === "open_persistent_return";
     if (decision.nextAction !== "open_user_review" && !completesStage) {

@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "3328ff051",
+  "lastRecordedCommit": "a40fcfa80",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase3.stream2.task2",
-  "expectedCommitMessage": "test: align quality gates verification return prompt",
+  "currentTaskId": "phase4.stream1.task1",
+  "expectedCommitMessage": "feat: gate quality gates completion on formal verification",
   "debt": {
-    "expectedCommitMessage": "test: align quality gates verification return prompt",
-    "preCommitHead": "3328ff051",
+    "expectedCommitMessage": "feat: gate quality gates completion on formal verification",
+    "preCommitHead": "a40fcfa80",
     "stage": "commit_pending",
-    "taskId": "phase3.stream2.task2"
+    "taskId": "phase4.stream1.task1"
   }
 }
 ```
@@ -75,14 +75,14 @@
 11. [DONE] `phase3.stream2.task1` Extend Quality Gates JSON validation for `verificationState` and command evidence, including stale or missing evidence diagnostics (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-consistency-validator.ts`; expected commit: `feat: require quality gates verification evidence`).
 12. [DONE] `phase3.stream2.commit1` Git Commit: `feat: require quality gates verification evidence` (hash: 3328ff051)
 13. [DONE] `phase3.stream2.task2` Align existing Quality Gates validator prompt expectations with the formal verification persistent return wording (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts`; expected commit: `test: align quality gates verification return prompt`).
-14. [PENDING] `phase3.stream2.commit2` Git Commit: `test: align quality gates verification return prompt` (hash: TBD)
+14. [DONE] `phase3.stream2.commit2` Git Commit: `test: align quality gates verification return prompt` (hash: a40fcfa80)
 
 ## Phase 4 - Orchestration And Handoff (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Managed Turn Flow
 
-15. [TODO] `phase4.stream1.task1` Add the Core continuation prompt for Phase 4 verification, route successful Phase 3 integration into that verification continuation, then route verified Phase 4 output into Phase 5 persistent return (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/remote-bridge/handlers/quality-gates-review-decision-flow.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts`; expected commit: `feat: gate quality gates completion on formal verification`).
-16. [TODO] `phase4.stream1.commit1` Git Commit: `feat: gate quality gates completion on formal verification` (hash: TBD)
+15. [DONE] `phase4.stream1.task1` Add the Core continuation prompt for Phase 4 verification, route successful Phase 3 integration into that verification continuation, then route verified Phase 4 output into Phase 5 persistent return (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts`; expected commit: `feat: gate quality gates completion on formal verification`).
+16. [PENDING] `phase4.stream1.commit1` Git Commit: `feat: gate quality gates completion on formal verification` (hash: TBD)
 
 ### Stream: Read Model And Bootstrap Guard
 

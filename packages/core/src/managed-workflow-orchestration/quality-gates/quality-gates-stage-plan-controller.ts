@@ -266,7 +266,7 @@ export class QualityGatesStagePlanController {
     if (!(stageState.currentTaskId && stageState.expectedCommitMessage)) {
       return this.blockPlanMismatch();
     }
-    if (params.decision.phase !== "integration") {
+    if (params.decision.phase === "draft") {
       await cleanQualityGatesDraftScope({
         workspaceRoot: params.workspaceRoot,
       });

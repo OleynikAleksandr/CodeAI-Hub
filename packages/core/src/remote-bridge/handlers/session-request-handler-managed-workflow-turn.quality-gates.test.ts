@@ -21,9 +21,9 @@ const QUALITY_JSON_PATH = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-g
 const QUALITY_REVIEW_RE =
   /Core: Quality Gates перешёл в пользовательскую проверку/u;
 const QUALITY_RETURN_RE = /Core: Quality Gates завершён и зафиксирован/u;
+const QUALITY_VERIFY_RE =
+  /Core opens Phase 4 Formal Quality Gates Verification/u;
 const RETURN_RE = /Можно переходить к следующему шагу/u;
-const MANAGED_TERMINAL_RESIDUE_COMMIT_RE =
-  /chore: commit managed terminal residue/u;
 const PRODUCT_PART_BOOTSTRAP_COMMIT_RE =
   /docs: bootstrap product part development briefs/u;
 const PRODUCT_PART_BRIEF_DRAFT_RE = /ProductPartDevelopmentBrief\.draft\.md/u;
@@ -105,6 +105,26 @@ const qualityIntegratedDecision = (): QualityGatesManagedValidationResult => ({
   valid: true,
 });
 
+const qualityVerifiedDecision = (): QualityGatesManagedValidationResult => {
+  const integrated = qualityIntegratedDecision();
+  return {
+    ...integrated,
+    contractJson: {
+      ...integrated.contractJson,
+      verificationEvidence: {
+        checkedAt: "2026-06-05T00:00:00.000Z",
+        commands: [
+          { command: "sh .husky/pre-commit", status: "passed" },
+          { command: "npm run qg:secret-scan", status: "passed" },
+          { command: "npm run qg:max-file-lines", status: "passed" },
+        ],
+      },
+      verificationState: "verified",
+    },
+    phase: "verification",
+  };
+};
+
 const createHandler = (params: {
   readonly developmentTreeAgentGateway?: DevelopmentTreeAgentSessionGateway;
   readonly persistCoreMessages?: boolean;
@@ -112,10 +132,12 @@ const createHandler = (params: {
 }): {
   readonly coreMessages: CapturedCoreMessage[];
   readonly handler: SessionRequestHandlerManagedWorkflowTurn;
+  readonly internalMessages: string[];
   readonly sessionId: string;
   readonly waitEvents: string[];
 } => {
   const coreMessages: CapturedCoreMessage[] = [];
+  const internalMessages: string[] = [];
   const waitEvents: string[] = [];
   const sessionManager = new SessionManager();
   const session = sessionManager.createSession(
@@ -155,11 +177,20 @@ const createHandler = (params: {
     },
     getMessageDispatch: () =>
       ({
-        sendInternalMessage: () => Promise.resolve(),
+        sendInternalMessage: (_sessionId: string, content: string) => {
+          internalMessages.push(content);
+          return Promise.resolve();
+        },
       }) as never,
     sessionManager,
   });
-  return { coreMessages, handler, sessionId: session.id, waitEvents };
+  return {
+    coreMessages,
+    handler,
+    internalMessages,
+    sessionId: session.id,
+    waitEvents,
+  };
 };
 
 const writeDiagramModulesAcceptedArtifacts = async (
@@ -334,6 +365,24 @@ const prepareQualityIntegration = async (
   );
 };
 
+const prepareQualityVerification = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await prepareQualityIntegration(workspaceRoot);
+  const controller = new QualityGatesStagePlanController();
+  await controller.commitManagedTurn({
+    decision: qualityIntegratedDecision(),
+    sessionId: "setup-session",
+    workspaceRoot,
+    workspaceSlug: WORKSPACE_SLUG,
+  });
+  await writeWorkspaceFile(
+    workspaceRoot,
+    QUALITY_JSON_PATH,
+    `${JSON.stringify(qualityVerifiedDecision().contractJson, null, 2)}\n`
+  );
+};
+
 test("Quality Gates turn emits Core-owned user review handoff", async () => {
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "qg-review-"));
   try {
@@ -353,33 +402,21 @@ test("Quality Gates turn emits Core-owned user review handoff", async () => {
   }
 });
 
-test("Quality Gates completion commits persisted Core handoff residue", async () => {
+test("Quality Gates integration opens formal verification continuation", async () => {
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "qg-clean-"));
   try {
     await prepareQualityIntegration(workspaceRoot);
-    const { coreMessages, handler, sessionId, waitEvents } = createHandler({
-      persistCoreMessages: true,
-      workspaceRoot,
-    });
+    const { coreMessages, handler, internalMessages, sessionId, waitEvents } =
+      createHandler({
+        persistCoreMessages: true,
+        workspaceRoot,
+      });
 
     await handler.handleTurnCompleted(sessionId);
 
-    assert.equal(coreMessages.at(-1)?.tag, "managed-workflow-complete");
-    assert.match(coreMessages.at(-1)?.content ?? "", QUALITY_RETURN_RE);
-    assert.match(coreMessages.at(-1)?.content ?? "", RETURN_RE);
-    assert.deepEqual(waitEvents, [sessionId]);
-    const { stdout: statusOutput } = await execFileAsync(
-      "git",
-      ["status", "--porcelain"],
-      { cwd: workspaceRoot }
-    );
-    assert.equal(statusOutput.trim(), "");
-    const { stdout: logOutput } = await execFileAsync(
-      "git",
-      ["log", "--oneline", "-5"],
-      { cwd: workspaceRoot }
-    );
-    assert.match(logOutput, MANAGED_TERMINAL_RESIDUE_COMMIT_RE);
+    assert.equal(coreMessages.at(-1)?.tag, "managed-workflow-validation");
+    assert.match(internalMessages.at(-1) ?? "", QUALITY_VERIFY_RE);
+    assert.deepEqual(waitEvents, []);
   } finally {
     await rm(workspaceRoot, { force: true, recursive: true });
   }
@@ -388,11 +425,11 @@ test("Quality Gates completion commits persisted Core handoff residue", async ()
 test("Quality Gates completion bootstraps Product Part brief workflow after terminal handoff", async () => {
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "qg-devtree-"));
   try {
-    await prepareQualityIntegration(workspaceRoot);
+    await prepareQualityVerification(workspaceRoot);
     await writeDiagramModulesAcceptedArtifacts(workspaceRoot);
     const createdStages: string[] = [];
     const sentMessages: string[] = [];
-    const { handler, sessionId } = createHandler({
+    const { coreMessages, handler, sessionId, waitEvents } = createHandler({
       developmentTreeAgentGateway: {
         createSessionForWorkflow: (options) => {
           createdStages.push(options.context.stage);
@@ -409,6 +446,10 @@ test("Quality Gates completion bootstraps Product Part brief workflow after term
 
     await handler.handleTurnCompleted(sessionId);
 
+    assert.equal(coreMessages.at(-1)?.tag, "managed-workflow-complete");
+    assert.match(coreMessages.at(-1)?.content ?? "", QUALITY_RETURN_RE);
+    assert.match(coreMessages.at(-1)?.content ?? "", RETURN_RE);
+    assert.deepEqual(waitEvents, [sessionId]);
     const productPartPlan = path.join(
       workspaceRoot,
       "doc/TODO/stages/development-tree/product-parts/local-runtime/todo-plan.md"
