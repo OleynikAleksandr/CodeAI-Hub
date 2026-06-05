@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "2ee778029",
+  "lastRecordedCommit": "5e89dbe2f",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase7.stream1.task1",
-  "expectedCommitMessage": "docs: prepare release 1.2.454 notes",
+  "currentTaskId": "phase8.stream1.task1",
+  "expectedCommitMessage": "chore: build release 1.2.454",
   "debt": {
-    "expectedCommitMessage": "docs: prepare release 1.2.454 notes",
-    "preCommitHead": "2ee778029",
+    "expectedCommitMessage": "chore: build release 1.2.454",
+    "preCommitHead": "5e89dbe2f",
     "stage": "commit_pending",
-    "taskId": "phase7.stream1.task1"
+    "taskId": "phase8.stream1.task1"
   }
 }
 ```
@@ -112,14 +112,14 @@
 ### Stream: Release Metadata
 
 24. [DONE] `phase7.stream1.task1` Update release-facing README/CHANGELOG metadata for the confirmed `1.2.454` release before version bump/build scripts run (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.454 notes`).
-25. [PENDING] `phase7.stream1.commit1` Git Commit: `docs: prepare release 1.2.454 notes` (hash: TBD)
+25. [DONE] `phase7.stream1.commit1` Git Commit: `docs: prepare release 1.2.454 notes` (hash: 5e89dbe2f)
 
 ## Phase 8 - Release Build (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Build And Package
 
-26. [TODO] `phase8.stream1.task1` Run the confirmed release build flow: ensure clean tree, run `./scripts/build-all.sh`, verify produced tarballs, run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and record results (scope: release commands, generated release/version artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.454`).
-27. [TODO] `phase8.stream1.commit1` Git Commit: `chore: build release 1.2.454` (hash: TBD)
+26. [DONE] `phase8.stream1.task1` Run the confirmed release build flow: ensure clean tree, run `./scripts/build-all.sh`, verify produced tarballs, run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and record results (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.454`).
+27. [PENDING] `phase8.stream1.commit1` Git Commit: `chore: build release 1.2.454` (hash: TBD)
 
 ## Phase 9 - User Workflow Acceptance Testing (owner: User, updated: 2026-06-05)
 
