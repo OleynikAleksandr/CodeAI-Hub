@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.454] - 2026-06-05
+### Added
+- **Quality Gates now has a formal verification phase before persistent return.** After accepted integration, Core dispatches a dedicated verification turn instead of immediately completing the stage.
+- **Development Tree bootstrap now requires verified gate evidence.** Core validates `verificationState: "verified"` plus per-command evidence for required scripts and Husky hook paths before Product Part work can start.
+
+### Fixed
+- **Integrated-but-unverified Quality Gates no longer unlock code-writing agents.** The read model and Development Tree bootstrap gate both require the verified state, not only `integrated: true`.
+
+### Verification
+- `node --import tsx --test packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts packages/core/src/templates/quality-gates-bundled-templates.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-formal-verification-runner.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.ts packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.ts packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.ts packages/core/src/development-tree/development-tree-bootstrap-gate.test.ts packages/core/src/remote-bridge/handlers/workflow-state-service-development-tree-bootstrap.test.ts`
+- `node --import tsx --test packages/core/src/remote-bridge/handlers/technical-root-progress-projection.test.ts`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.453] - 2026-06-05
 ### Fixed
 - **Completed Quality Gates stays green in the Documentation Tree.** Project Manager no longer lets a stale or runtime-residue gating blocker repaint a Core-completed `Quality Gates Baseline` marker as blocked/red.
