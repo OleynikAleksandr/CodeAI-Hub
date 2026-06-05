@@ -8,6 +8,8 @@ const RESEARCH_PHASE_RE = /Phase 1A: Research Review/;
 const DRAFT_PHASE_RE = /Phase 1B: Draft Gate Contract/;
 const REVIEW_PHASE_RE = /Phase 2: User-Led Review/;
 const INTEGRATION_PHASE_RE = /Phase 3: Post-Acceptance Integration/;
+const FORMAL_VERIFICATION_PHASE_RE =
+  /Phase 4: Formal Quality Gates Verification/;
 const ACCEPTANCE_BOUNDARY_RE = /Acceptance is a user\/runtime decision/;
 const NO_SELF_ACCEPT_RE = /Do not set `accepted: true` yourself/;
 const SIZE_POLICY_RE = /Source files and classes must stay <= 500 lines/;
@@ -53,6 +55,13 @@ const GATE_CONTRACT_REVISION_RE =
   /Do not edit plan files or create lifecycle tasks yourself/;
 const INTEGRATION_CONTEXT_RE =
   /runtime-provided context is still for the Quality Gates integration task/;
+const PHASE3_NOT_TERMINAL_RE =
+  /Phase 3 integration is not terminal and must not open persistent return by itself/u;
+const VERIFY_HOOK_SCRIPT_RESOLUTION_RE =
+  /Resolve every `npm run <script>` command referenced by `\.husky\/pre-commit` and `\.husky\/pre-push` against `package\.json\.scripts`/u;
+const VERIFY_REQUIRED_COMMANDS_RE =
+  /npm run qg:before-module-execution[\s\S]*npm run qg:before-commit[\s\S]*npm run qg:before-push[\s\S]*sh \.husky\/pre-commit[\s\S]*sh \.husky\/pre-push[\s\S]*npm run qg:all/u;
+const VERIFIED_STATE_RE = /verificationState: "verified"/;
 const NO_ROOT_TODO_RE = /doc\/TODO\/todo-plan\.md/;
 const WORKSPACE_PLAN_PATH_RE = /doc\/TODO\/workspace\.plan\.md/;
 const PLAN_STATUS_COMMAND_RE = /npm run plan:status/;
@@ -130,6 +139,7 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.match(prompt, DRAFT_PHASE_RE);
   assert.match(prompt, REVIEW_PHASE_RE);
   assert.match(prompt, INTEGRATION_PHASE_RE);
+  assert.match(prompt, FORMAL_VERIFICATION_PHASE_RE);
   assert.match(prompt, ACCEPTANCE_BOUNDARY_RE);
   assert.match(prompt, NO_SELF_ACCEPT_RE);
   assert.match(prompt, SIZE_POLICY_RE);
@@ -162,6 +172,10 @@ test("quality gates bundled prompt keeps research-first integration contract", (
   assert.match(prompt, CORE_UNLOCK_RE);
   assert.match(prompt, GATE_CONTRACT_REVISION_RE);
   assert.match(prompt, INTEGRATION_CONTEXT_RE);
+  assert.match(prompt, PHASE3_NOT_TERMINAL_RE);
+  assert.match(prompt, VERIFY_HOOK_SCRIPT_RESOLUTION_RE);
+  assert.match(prompt, VERIFY_REQUIRED_COMMANDS_RE);
+  assert.match(prompt, VERIFIED_STATE_RE);
   assert.match(prompt, NO_PLANNED_DUPLICATES_RE);
   assert.match(prompt, PLANNED_REQUIRED_ACTIVE_RE);
   assert.match(prompt, NO_PLANNED_REQUIRED_ADVISORY_RE);
