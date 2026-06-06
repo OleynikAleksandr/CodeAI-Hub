@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "1bff05a76",
+  "lastRecordedCommit": "03431f78a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream5.task1",
-  "expectedCommitMessage": "fix: keep managed continuations validating after repair",
+  "currentTaskId": "phase9.stream5.task2",
+  "expectedCommitMessage": "test: cover quality gates verification repair chain",
   "debt": {
-    "expectedCommitMessage": "fix: keep managed continuations validating after repair",
-    "preCommitHead": "1bff05a76",
+    "expectedCommitMessage": "test: cover quality gates verification repair chain",
+    "preCommitHead": "03431f78a",
     "stage": "commit_pending",
-    "taskId": "phase9.stream5.task1"
+    "taskId": "phase9.stream5.task2"
   }
 }
 ```
@@ -151,9 +151,9 @@
 ### Stream: Release 455 Repair
 
 44. [DONE] `phase9.stream5.task1` Keep managed Core validation active across repeated internal continuations so terminal duplicate filtering cannot suppress a post-repair Quality Gates validation turn (scope: `packages/core/src/remote-bridge/handlers/session-provider-event-router.ts, packages/core/src/remote-bridge/handlers/managed-core-gated-lock-controller.ts, packages/core/src/remote-bridge/handlers/session-provider-event-router.test.ts`; expected commit: `fix: keep managed continuations validating after repair`).
-45. [PENDING] `phase9.stream5.commit1` Git Commit: `fix: keep managed continuations validating after repair` (hash: TBD)
-46. [TODO] `phase9.stream5.task2` Add a regression that reproduces the Quality Gates verification failure -> Phase 3 repair -> repeated Phase 4 continuation chain before user return (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.ts`; expected commit: `test: cover quality gates verification repair chain`).
-47. [TODO] `phase9.stream5.commit2` Git Commit: `test: cover quality gates verification repair chain` (hash: TBD)
+45. [DONE] `phase9.stream5.commit1` Git Commit: `fix: keep managed continuations validating after repair` (hash: 03431f78a)
+46. [DONE] `phase9.stream5.task2` Add a regression that reproduces the Quality Gates verification failure -> Phase 3 repair -> repeated Phase 4 continuation chain before user return (scope: `packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.ts`; expected commit: `test: cover quality gates verification repair chain`).
+47. [PENDING] `phase9.stream5.commit2` Git Commit: `test: cover quality gates verification repair chain` (hash: TBD)
 48. [TODO] `phase9.stream5.task3` Update release-facing metadata for the confirmed 1.2.456 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.456 notes`).
 49. [TODO] `phase9.stream5.commit3` Git Commit: `docs: prepare release 1.2.456 notes` (hash: TBD)
 50. [TODO] `phase9.stream5.task4` Run the confirmed release build flow for the 1.2.456 retest build: ensure managed-plan release state is recorded, run `./scripts/build-all.sh`, verify produced tarballs, run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and record results (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.456`).
