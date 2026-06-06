@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "e12b2e9c8",
+  "lastRecordedCommit": "020f5c69a",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream7.task2",
-  "expectedCommitMessage": "fix: dispatch quality gates verification repair prompt",
+  "currentTaskId": "phase9.stream7.task3",
+  "expectedCommitMessage": "test: cover quality gates verified repair persistent return",
   "debt": {
-    "expectedCommitMessage": "fix: dispatch quality gates verification repair prompt",
-    "preCommitHead": "e12b2e9c8",
+    "expectedCommitMessage": "test: cover quality gates verified repair persistent return",
+    "preCommitHead": "020f5c69a",
     "stage": "commit_pending",
-    "taskId": "phase9.stream7.task2"
+    "taskId": "phase9.stream7.task3"
   }
 }
 ```
@@ -173,9 +173,9 @@
 60. [DONE] `phase9.stream7.task1` Fix Quality Gates repair advancement so a valid post-verification repair with `nextAction: open_persistent_return` creates/advances the persistent return plan boundary instead of rewinding the stage plan pointer to an old review task (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-model.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-paths.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-validator.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts`; expected commit: `fix: open quality gates persistent return after verified repair`).
 61. [DONE] `phase9.stream7.commit1` Git Commit: `fix: open quality gates persistent return after verified repair` (hash: e12b2e9c8)
 62. [DONE] `phase9.stream7.task2` Route rejected Phase 4 verification attempts through a Phase 4 repair dispatch prompt instead of the Phase 3 integration repair envelope (scope: `packages/core/src/remote-bridge/handlers/quality-gates-repair-prompt-dispatch.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: dispatch quality gates verification repair prompt`).
-63. [PENDING] `phase9.stream7.commit2` Git Commit: `fix: dispatch quality gates verification repair prompt` (hash: TBD)
-64. [TODO] `phase9.stream7.task3` Add regression coverage for a Quality Gates Phase 4 verification rejection followed by a valid repair that must open Phase 5 Persistent Quality Gates User Return and keep the stage plan pointer on the return boundary (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates verified repair persistent return`).
-65. [TODO] `phase9.stream7.commit3` Git Commit: `test: cover quality gates verified repair persistent return` (hash: TBD)
+63. [DONE] `phase9.stream7.commit2` Git Commit: `fix: dispatch quality gates verification repair prompt` (hash: 020f5c69a)
+64. [DONE] `phase9.stream7.task3` Add regression coverage for a Quality Gates Phase 4 verification rejection followed by a valid repair that must open Phase 5 Persistent Quality Gates User Return and keep the stage plan pointer on the return boundary (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-verification-repair.test.ts, packages/core/src/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.ts, doc/TODO/todo-plan.md`; expected commit: `test: cover quality gates verified repair persistent return`).
+65. [PENDING] `phase9.stream7.commit3` Git Commit: `test: cover quality gates verified repair persistent return` (hash: TBD)
 66. [TODO] `phase9.stream7.task4` Run targeted Quality Gates orchestration tests and core build after the persistent-return repair (scope: `packages/core, doc/TODO/todo-plan.md`; expected commit: `test: verify quality gates persistent return repair`).
 67. [TODO] `phase9.stream7.commit4` Git Commit: `test: verify quality gates persistent return repair` (hash: TBD)
 68. [TODO] `phase9.stream7.task5` Update release-facing metadata for the confirmed next retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.457 notes`).
