@@ -11,9 +11,8 @@ import { SessionRequestHandlerManagedWorkflowTurn } from "./session-request-hand
 const WORKSPACE_SLUG = "demo-workspace";
 const QUALITY_STAGE = "quality_gates";
 const QUALITY_JSON_PATH = `.codeai-hub/${WORKSPACE_SLUG}/quality_gates/quality-gates.json`;
-const PHASE_3_REPAIR_RE =
-  /Core opens Phase 3 Quality Gates Integration Repair/u;
-const PHASE_4_RE = /Core opens Phase 4 Formal Quality Gates Verification/u;
+const PHASE_4_REPAIR_RE =
+  /Core opens Phase 4 Quality Gates Verification Repair/u;
 const USER_RETURN_RE = /Core: Quality Gates завершён и зафиксирован/u;
 
 const writeWorkspaceFile = async (
@@ -169,18 +168,23 @@ const createStagePlan = (): QualityGatesStagePlanController =>
             : "quality-gates.phase5.return.task1",
       },
     }),
-    commitRejectedTurn: async () => ({
+    commitRejectedTurn: async (params: {
+      readonly decision: QualityGatesManagedValidationResult;
+    }) => ({
       blocked: null,
       commit: {
         expectedCommitMessage: "test",
         hash: "def5678",
-        nextTaskId: "quality-gates.phase3.repair.task1",
+        nextTaskId:
+          params.decision.phase === "verification"
+            ? "quality-gates.phase4.repair.task1"
+            : "quality-gates.phase3.repair.task1",
       },
     }),
     commitTerminalHandoffResidue: async () => undefined,
   }) as unknown as QualityGatesStagePlanController;
 
-test("Quality Gates verification repair reopens Phase 4 before user return", async () => {
+test("Quality Gates verification repair opens user return", async () => {
   const workspaceRoot = await mkdtemp(path.join(tmpdir(), "qg-repair-chain-"));
   try {
     const sessionManager = new SessionManager();
@@ -217,14 +221,10 @@ test("Quality Gates verification repair reopens Phase 4 before user return", asy
     await writeQualityGatesWorkspace(workspaceRoot, baseContract());
     await writeStageTask(workspaceRoot, "quality-gates.phase4.verify.task1");
     await handler.handleTurnCompleted(session.id);
-    assert.match(internalMessages.at(-1) ?? "", PHASE_3_REPAIR_RE);
+    assert.match(internalMessages.at(-1) ?? "", PHASE_4_REPAIR_RE);
 
     await writeQualityGatesWorkspace(workspaceRoot, verifiedContract());
-    await writeStageTask(workspaceRoot, "quality-gates.phase3.repair.task1");
-    await handler.handleTurnCompleted(session.id);
-    assert.match(internalMessages.at(-1) ?? "", PHASE_4_RE);
-
-    await writeStageTask(workspaceRoot, "quality-gates.phase4.verify.task1");
+    await writeStageTask(workspaceRoot, "quality-gates.phase4.repair.task1");
     await handler.handleTurnCompleted(session.id);
     assert.match(coreMessages.at(-1) ?? "", USER_RETURN_RE);
     assert.deepEqual(waitEvents, [session.id]);
