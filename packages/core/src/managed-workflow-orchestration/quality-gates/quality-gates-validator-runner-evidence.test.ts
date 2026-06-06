@@ -217,6 +217,52 @@ const writeRunnerEvidence = async (workspaceRoot: string): Promise<void> => {
   );
 };
 
+const writeAggregateRunnerEvidence = async (
+  workspaceRoot: string
+): Promise<void> => {
+  await writeFileInWorkspace(
+    workspaceRoot,
+    "package.json",
+    `${JSON.stringify({
+      scripts: {
+        "qg:all":
+          "npm run qg:before-module-execution && npm run qg:before-commit && npm run qg:before-push",
+        "qg:before-commit": "npm run qg:max-file-lines",
+        "qg:before-module-execution": "npm run qg:smoke",
+        "qg:before-push": "npm run qg:secret-scan",
+        "qg:max-file-lines": "node scripts/quality-gates/max-file-lines.mjs",
+        "qg:secret-scan": "node scripts/quality-gates/secret-scan.mjs",
+        "qg:smoke": "node scripts/quality-gates/smoke.mjs",
+      },
+    })}\n`
+  );
+  await writeFileInWorkspace(
+    workspaceRoot,
+    ".husky/pre-commit",
+    "#!/bin/sh\nset -e\nnpm run qg:max-file-lines\nnpm run qg:secret-scan\n"
+  );
+  await writeFileInWorkspace(
+    workspaceRoot,
+    ".husky/pre-push",
+    "#!/bin/sh\nset -e\nnpm run qg:secret-scan\n"
+  );
+  await writeFileInWorkspace(
+    workspaceRoot,
+    "scripts/quality-gates/max-file-lines.mjs",
+    "console.log('ok');\n"
+  );
+  await writeFileInWorkspace(
+    workspaceRoot,
+    "scripts/quality-gates/secret-scan.mjs",
+    "console.log('ok');\n"
+  );
+  await writeFileInWorkspace(
+    workspaceRoot,
+    "scripts/quality-gates/smoke.mjs",
+    "console.log('ok');\n"
+  );
+};
+
 test("Quality Gates rejects planned/not_integrated gates with runner evidence", async () => {
   const workspaceRoot = await mkdtemp(
     path.join(os.tmpdir(), "quality-gates-runner-evidence-")
@@ -296,7 +342,58 @@ test("Quality Gates verification phase accepts recorded command evidence", async
       workspaceSlug: WORKSPACE_SLUG,
     });
 
-    assert.equal(result.valid, true);
+    assert.equal(result.valid, true, JSON.stringify(result.diagnostics));
+    assert.equal(result.phase, "verification");
+    assert.equal(result.nextAction, "open_persistent_return");
+    assert.match(result.nextPrompt ?? "", VERIFIED_RETURN_RE);
+  } finally {
+    await rm(workspaceRoot, { force: true, recursive: true });
+  }
+});
+
+test("Quality Gates verification phase accepts aggregate array evidence", async () => {
+  const workspaceRoot = await mkdtemp(
+    path.join(os.tmpdir(), "quality-gates-verified-array-")
+  );
+  try {
+    await writeQualityGatesArtifacts(workspaceRoot);
+    const verifiedContract = buildVerifiedContract();
+    const verifiedCommands = verifiedContract.commands as Record<
+      string,
+      unknown
+    >;
+    await writeQualityGatesJson(workspaceRoot, {
+      ...verifiedContract,
+      commands: {
+        ...verifiedCommands,
+        "qg-smoke": {
+          availability: "executable",
+          baseline: ["recommended"],
+          blockingIn: ["beforeModuleExecution"],
+          desiredStatus: "active",
+          id: "qg-smoke",
+          integrationRequired: true,
+          proposedCommand: "npm run qg:smoke",
+        },
+      },
+      requiredBeforeModuleExecution: ["qg-smoke"],
+      requiredBeforePush: ["qg-secret-scan"],
+      verificationEvidence: [
+        "npm run qg:all",
+        "sh .husky/pre-commit",
+        "sh .husky/pre-push",
+      ],
+      verificationState: "verified",
+    });
+    await writeAggregateRunnerEvidence(workspaceRoot);
+    await writeVerificationStagePlan(workspaceRoot);
+
+    const result = await validateQualityGatesManagedArtifacts({
+      workspaceRoot,
+      workspaceSlug: WORKSPACE_SLUG,
+    });
+
+    assert.equal(result.valid, true, JSON.stringify(result.diagnostics));
     assert.equal(result.phase, "verification");
     assert.equal(result.nextAction, "open_persistent_return");
     assert.match(result.nextPrompt ?? "", VERIFIED_RETURN_RE);

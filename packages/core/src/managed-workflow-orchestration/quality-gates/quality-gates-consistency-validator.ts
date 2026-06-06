@@ -92,23 +92,18 @@ const fileExists = async (
   return Boolean(fileStat);
 };
 
-const readVerificationCommandStatuses = (
-  contractJson: Record<string, unknown>
-): {
-  readonly checkedAt: string | null;
+interface VerificationEvidence {
   readonly commands: ReadonlyMap<string, string>;
-} | null => {
-  if (!isRecord(contractJson.verificationEvidence)) {
-    return null;
-  }
-  const checkedAt =
-    typeof contractJson.verificationEvidence.checkedAt === "string"
-      ? contractJson.verificationEvidence.checkedAt
-      : null;
-  const rawCommands = contractJson.verificationEvidence.commands;
-  if (!Array.isArray(rawCommands)) {
-    return { checkedAt, commands: new Map() };
-  }
+}
+
+interface VerificationRequirement {
+  readonly alternatives: readonly (readonly string[])[];
+  readonly diagnosticCommand: string;
+}
+
+const readVerificationCommands = (
+  rawCommands: readonly unknown[]
+): ReadonlyMap<string, string> => {
   const commands = new Map<string, string>();
   for (const entry of rawCommands) {
     if (typeof entry === "string") {
@@ -123,15 +118,46 @@ const readVerificationCommandStatuses = (
       typeof entry.status === "string" ? entry.status : "unknown"
     );
   }
-  return { checkedAt, commands };
+  return commands;
 };
 
-const collectExpectedVerificationCommands = async (params: {
+const readVerificationCommandStatuses = (
+  contractJson: Record<string, unknown>
+): VerificationEvidence | null => {
+  const rawEvidence = contractJson.verificationEvidence;
+  if (Array.isArray(rawEvidence)) {
+    return { commands: readVerificationCommands(rawEvidence) };
+  }
+  if (!isRecord(rawEvidence)) {
+    return null;
+  }
+  const rawCommands = rawEvidence.commands;
+  if (!Array.isArray(rawCommands)) {
+    return { commands: new Map() };
+  }
+  return { commands: readVerificationCommands(rawCommands) };
+};
+
+const hasPassedCommand = (
+  evidence: VerificationEvidence,
+  command: string
+): boolean => evidence.commands.get(command) === "passed";
+
+const hasPassedCommandGroup = (
+  evidence: VerificationEvidence,
+  commands: readonly string[]
+): boolean =>
+  commands.length > 0 &&
+  commands.every((command) => hasPassedCommand(evidence, command));
+
+const collectVerificationEvidenceRequirements = async (params: {
   readonly contractJson: Record<string, unknown>;
   readonly workspaceRoot: string;
-}): Promise<readonly string[]> => {
-  const commands = new Set<string>();
+}): Promise<readonly VerificationRequirement[]> => {
+  const requirements: VerificationRequirement[] = [];
   const packageScripts = await readPackageScripts(params.workspaceRoot);
+  const allAlternative =
+    packageScripts && "qg:all" in packageScripts ? ["npm run qg:all"] : null;
   const hookSpecs = [
     {
       aggregateScript: "qg:before-commit",
@@ -148,26 +174,68 @@ const collectExpectedVerificationCommands = async (params: {
     readStringArray(params.contractJson, "requiredBeforeModuleExecution")
       .length > 0
   ) {
-    commands.add("npm run qg:before-module-execution");
+    const alternatives = [
+      ...(allAlternative ? [allAlternative] : []),
+      ["npm run qg:before-module-execution"],
+    ];
+    requirements.push({
+      alternatives,
+      diagnosticCommand: "npm run qg:before-module-execution",
+    });
   }
   for (const spec of hookSpecs) {
     const gateIds = readStringArray(params.contractJson, spec.contractKey);
     if (gateIds.length === 0) {
       continue;
     }
+    const alternatives: string[][] = allAlternative ? [allAlternative] : [];
     if (packageScripts && spec.aggregateScript in packageScripts) {
-      commands.add(`npm run ${spec.aggregateScript}`);
+      alternatives.push([`npm run ${spec.aggregateScript}`]);
     }
-    commands.add(`sh .husky/${spec.hookName}`);
     const hookText = await readHookText(params.workspaceRoot, spec.hookName);
-    for (const scriptName of collectHookNpmRunScripts(hookText)) {
-      commands.add(`npm run ${scriptName}`);
+    const hookCommands = collectHookNpmRunScripts(hookText).map(
+      (scriptName) => `npm run ${scriptName}`
+    );
+    if (hookCommands.length > 0) {
+      alternatives.push(hookCommands);
     }
+    requirements.push({
+      alternatives,
+      diagnosticCommand: `npm run ${spec.aggregateScript}`,
+    });
+    requirements.push({
+      alternatives: [[`sh .husky/${spec.hookName}`]],
+      diagnosticCommand: `sh .husky/${spec.hookName}`,
+    });
   }
-  if (packageScripts && "qg:all" in packageScripts) {
-    commands.add("npm run qg:all");
+  return requirements;
+};
+
+const collectMissingVerificationRequirementDiagnostics = (
+  evidence: VerificationEvidence,
+  requirements: readonly VerificationRequirement[]
+): readonly string[] => {
+  const errors: string[] = [];
+  for (const requirement of requirements) {
+    if (
+      requirement.alternatives.some((alternative) =>
+        hasPassedCommandGroup(evidence, alternative)
+      )
+    ) {
+      continue;
+    }
+    const status = evidence.commands.get(requirement.diagnosticCommand);
+    if (status && status !== "passed") {
+      errors.push(
+        `verification_command_not_passed:${requirement.diagnosticCommand}:${status}`
+      );
+      continue;
+    }
+    errors.push(
+      `missing_verification_command_evidence:${requirement.diagnosticCommand}`
+    );
   }
-  return [...commands];
+  return errors;
 };
 
 const collectPlannedGateRunnerEvidenceDiagnostics = async (params: {
@@ -272,16 +340,11 @@ export const collectQualityGatesVerificationEvidenceDiagnostics =
       errors.push("missing_verification_evidence");
       return errors;
     }
-    if (!evidence.checkedAt) {
-      errors.push("verification_evidence_missing_checked_at");
-    }
-    for (const command of await collectExpectedVerificationCommands(params)) {
-      const status = evidence.commands.get(command);
-      if (!status) {
-        errors.push(`missing_verification_command_evidence:${command}`);
-      } else if (status !== "passed") {
-        errors.push(`verification_command_not_passed:${command}:${status}`);
-      }
-    }
+    errors.push(
+      ...collectMissingVerificationRequirementDiagnostics(
+        evidence,
+        await collectVerificationEvidenceRequirements(params)
+      )
+    );
     return errors;
   };
