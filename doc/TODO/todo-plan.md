@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "70f18bf70",
+  "lastRecordedCommit": "318c8970d",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream10.task1",
-  "expectedCommitMessage": "fix: explain quality gates verification repairs",
+  "currentTaskId": "phase9.stream11.task1",
+  "expectedCommitMessage": "docs: prepare release 1.2.459 notes",
   "debt": {
-    "expectedCommitMessage": "fix: explain quality gates verification repairs",
-    "preCommitHead": "70f18bf70",
+    "expectedCommitMessage": "docs: prepare release 1.2.459 notes",
+    "preCommitHead": "318c8970d",
     "stage": "commit_pending",
-    "taskId": "phase9.stream10.task1"
+    "taskId": "phase9.stream11.task1"
   }
 }
 ```
@@ -200,11 +200,18 @@
 ### Stream: Verification Repair Prompt Diagnostics
 
 80. [DONE] `phase9.stream10.task1` Make Quality Gates Phase 4 repair prompts actionable by explaining the Core-read evidence paths, concrete missing commands, and minimal accepted JSON shape for one-pass agent repair (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts, doc/TODO/todo-plan.md`; expected commit: `fix: explain quality gates verification repairs`).
-81. [PENDING] `phase9.stream10.commit1` Git Commit: `fix: explain quality gates verification repairs` (hash: TBD)
+81. [DONE] `phase9.stream10.commit1` Git Commit: `fix: explain quality gates verification repairs` (hash: 318c8970d)
+
+### Stream: Release 459 Build
+
+82. [DONE] `phase9.stream11.task1` Update release-facing metadata for the confirmed 1.2.459 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md, doc/TODO/todo-plan.md`; expected commit: `docs: prepare release 1.2.459 notes`).
+83. [PENDING] `phase9.stream11.commit1` Git Commit: `docs: prepare release 1.2.459 notes` (hash: TBD)
+84. [TODO] `phase9.stream11.task2` Run the confirmed release build flow for the 1.2.459 retest build and record produced artifacts (scope: `package.json, package-lock.json, packages/core/package.json, packages/Claude_Module/package.json, packages/Codex_AppServer_Module/package.json, packages/Gemini_Module/package.json, packages/Kimi_Module/package.json, packages/localization/package.json, packages/translation/package.json, packages/initiatives/package.json, packages/unified-session/package.json, assets/core/manifest.json, assets/launcher/manifest.json, assets/providers/claude/manifest.json, assets/providers/codex/manifest.json, assets/providers/gemini/manifest.json, assets/providers/glm-claude-code/manifest.json, assets/providers/kimi/manifest.json, assets/ui/manifest.json, doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.459`).
+85. [TODO] `phase9.stream11.commit2` Git Commit: `chore: build release 1.2.459` (hash: TBD)
 
 ## Phase 10 - Scope Closeout (owner: Codex, updated: 2026-06-05)
 
 ### Stream: Closeout
 
-82. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
-83. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)
+86. [TODO] `phase10.stream1.task1` Close this scope only after explicit user acceptance; archive the active plan and dispose the planning source without touching the Development Tree branch workflow architecture document (scope: `doc/TODO/todo-plan.md, doc/TODO/Archive/**, doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md`; expected commit: `docs: close quality gates formal verification scope`).
+87. [TODO] `phase10.stream1.commit1` Git Commit: `docs: close quality gates formal verification scope` (hash: TBD)

@@ -8,6 +8,18 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.459] - 2026-06-06
+### Fixed
+- **Quality Gates Phase 4 now reads nested agent evidence.** Core accepts `verificationEvidence.commandRuns`, `verificationEvidence.commandEvidence`, `verificationEvidence.verificationCommandEvidence`, and top-level `verificationCommandEvidence` in addition to the preferred `verificationEvidence.commands[]` shape.
+- **Verification repair prompts now explain the exact evidence contract.** Phase 4 repair prompts name the canonical `quality-gates.json` artifact, list accepted evidence paths, and include a minimal JSON snippet for the missing commands.
+- **FinderWidget retest artifact validates to persistent return.** The current nested evidence artifact validates as `valid: true`, `phase: "verification"`, and `nextAction: "open_persistent_return"` with no diagnostics.
+
+### Verification
+- `node --test packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-validator-runner-evidence.test.js packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-verification-repair.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.js`
+- `node --test packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.js packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-verification-repair.test.js packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates-repair-chain.test.js`
+- `npm run build --workspace=@codeai-hub/core`
+- `npm run plan:validate`
+
 ## [1.2.458] - 2026-06-06
 ### Fixed
 - **Quality Gates Phase 4 evidence no longer loops on JSON shape alone.** Core accepts `verificationEvidence` as either an object with `commands` or a top-level command array.

@@ -2,7 +2,15 @@
 
 CodeAI Hub is a Visual Studio Code extension + standalone Project Manager (CEF) that unifies multiple AI providers behind a single, type-safe orchestration layer.
 
-**Current Release — v1.2.458** (Quality Gates Evidence Relaxation)
+**Current Release — v1.2.459** (Quality Gates Evidence Repair Guidance)
+
+This release fixes the Quality Gates Phase 4 verification retest loop found in
+v1.2.458. Core now reads nested evidence shapes that agents naturally record
+(`commandRuns`, `commandEvidence`, and `verificationCommandEvidence`) and gives
+Phase 4 repair prompts a concrete JSON repair contract so agents can fix missing
+verification evidence in one pass.
+
+**Previous Release — v1.2.458** (Quality Gates Evidence Relaxation)
 
 This release fixes the Quality Gates Phase 4 evidence loop found in v1.2.457.
 Core now treats formal verification evidence as proof of the executable gate
