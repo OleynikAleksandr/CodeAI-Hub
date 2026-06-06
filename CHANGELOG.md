@@ -8,6 +8,20 @@ orchestrator removal.
 
 ## [Unreleased]
 
+## [1.2.455] - 2026-06-06
+### Fixed
+- **Quality Gates integration repair now opens formal verification.** A valid `quality-gates.phase3.repair.taskN` result follows the same Phase 4 verification path as the initial Phase 3 integration instead of completing the stage.
+- **Quality Gates completion now fails closed before verification.** Core only treats `open_persistent_return` as terminal after the validator is in the `verification` phase.
+- **Quality Gates prompts now carry explicit phase envelopes.** The initial prompt opens Phase 1 with the active stage todo-plan path, and Phase 2/Phase 3/repair continuation prompts include the same Core-owned zero-context resume envelope.
+
+### Verification
+- `node --test packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-stage-plan-controller.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/session-request-handler-managed-workflow-turn.quality-gates.test.js`
+- `node --test packages/core/dist/remote-bridge/handlers/workflow-prompt-pack-service.test.js`
+- `node --test packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.js`
+- `node --test packages/core/dist/managed-workflow-orchestration/quality-gates/quality-gates-validator.test.js`
+- `npm run build --workspace=@codeai-hub/core`
+
 ## [1.2.454] - 2026-06-05
 ### Added
 - **Quality Gates now has a formal verification phase before persistent return.** After accepted integration, Core dispatches a dedicated verification turn instead of immediately completing the stage.

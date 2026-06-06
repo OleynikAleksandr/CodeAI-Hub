@@ -8,15 +8,15 @@
   "planId": "quality-gates-formal-verification-phase-2026-06-05",
   "branch": "main",
   "baseHead": "2e7f35a14",
-  "lastRecordedCommit": "f3c4cfbb3",
+  "lastRecordedCommit": "60e00b842",
   "planningSource": "doc/SolidWorks-WorkFlow/Plans/QualityGates_FormalVerification_Phase_Planning.md",
-  "currentTaskId": "phase9.stream4.task3",
-  "expectedCommitMessage": "fix: standardize quality gates continuation prompts",
+  "currentTaskId": "phase9.stream4.task4",
+  "expectedCommitMessage": "docs: prepare release 1.2.455 notes",
   "debt": {
-    "expectedCommitMessage": "fix: standardize quality gates continuation prompts",
-    "preCommitHead": "f3c4cfbb3",
+    "expectedCommitMessage": "docs: prepare release 1.2.455 notes",
+    "preCommitHead": "60e00b842",
     "stage": "commit_pending",
-    "taskId": "phase9.stream4.task3"
+    "taskId": "phase9.stream4.task4"
   }
 }
 ```
@@ -142,9 +142,9 @@
 36. [DONE] `phase9.stream4.task2` Add a Core-owned Quality Gates Phase 1 startup envelope with the active stage todo-plan path and assert that the initial prompt no longer relies on legacy subphase wording (scope: `packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.ts, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-quality-gates-envelope.ts, packages/core/src/remote-bridge/handlers/workflow-prompt-pack-service.test.ts`; expected commit: `fix: add quality gates startup phase envelope`).
 37. [DONE] `phase9.stream4.commit2` Git Commit: `fix: add quality gates startup phase envelope` (hash: f3c4cfbb3)
 38. [DONE] `phase9.stream4.task3` Standardize Quality Gates Phase 2, Phase 3, and repair continuation prompts with explicit phase names, active stage todo-plan path, and zero-context resume guidance (scope: `packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.ts, packages/core/src/managed-workflow-orchestration/quality-gates/quality-gates-prompt-builder.phase-envelope.test.ts`; expected commit: `fix: standardize quality gates continuation prompts`).
-39. [PENDING] `phase9.stream4.commit3` Git Commit: `fix: standardize quality gates continuation prompts` (hash: TBD)
-40. [TODO] `phase9.stream4.task4` Update release-facing metadata for the confirmed 1.2.455 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.455 notes`).
-41. [TODO] `phase9.stream4.commit4` Git Commit: `docs: prepare release 1.2.455 notes` (hash: TBD)
+39. [DONE] `phase9.stream4.commit3` Git Commit: `fix: standardize quality gates continuation prompts` (hash: 60e00b842)
+40. [DONE] `phase9.stream4.task4` Update release-facing metadata for the confirmed 1.2.455 retest build before version bump/build scripts run (scope: `README.md, CHANGELOG.md`; expected commit: `docs: prepare release 1.2.455 notes`).
+41. [PENDING] `phase9.stream4.commit4` Git Commit: `docs: prepare release 1.2.455 notes` (hash: TBD)
 42. [TODO] `phase9.stream4.task5` Run the confirmed release build flow for the retest build: ensure clean tree, run `./scripts/build-all.sh`, verify produced tarballs, run `./scripts/build-release.sh --use-current-version`, verify VSIX output, and record results (scope: package versions/manifests, release artifacts, `doc/TODO/todo-plan.md`; expected commit: `chore: build release 1.2.455`).
 43. [TODO] `phase9.stream4.commit5` Git Commit: `chore: build release 1.2.455` (hash: TBD)
 
