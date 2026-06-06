@@ -310,10 +310,12 @@ test("SessionProviderEventRouter delays turn_completed and skips idle arbitratio
     } as never,
   });
 
-  router.handleProviderEvent("session-1", {
+  const terminalEvent = {
+    eventId: "managed-turn-1",
     provider: "claude",
     type: "turn_completed",
-  });
+  };
+  router.handleProviderEvent("session-1", terminalEvent);
 
   await Promise.resolve();
   assert.deepEqual(events, ["decision-pending", "flow-node"]);
@@ -333,6 +335,11 @@ test("SessionProviderEventRouter delays turn_completed and skips idle arbitratio
     "managed",
     "stream_event",
   ]);
+
+  router.handleProviderEvent("session-1", terminalEvent);
+  await new Promise<void>((resolve) => setImmediate(resolve));
+
+  assert.equal(events.filter((entry) => entry === "managed").length, 2);
 });
 
 test("SessionProviderEventRouter deduplicates terminal events with the same provider id", () => {

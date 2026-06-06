@@ -69,6 +69,10 @@ export class ManagedCoreGatedLockController {
     return this.notify(sessionId, false, { force: true });
   }
 
+  isLocked(sessionId: string): boolean {
+    return this.lockedSessions.has(sessionId);
+  }
+
   apply(sessionId: string, managedResult: string | undefined): void {
     const active = managedResult === "continued";
     this.notify(sessionId, active, { force: active });

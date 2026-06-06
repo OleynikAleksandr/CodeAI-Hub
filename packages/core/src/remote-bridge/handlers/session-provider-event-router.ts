@@ -149,6 +149,10 @@ export class SessionProviderEventRouter {
     if (
       typeof typedEvent.type === "string" &&
       TERMINAL_EVENT_TYPES.has(typedEvent.type) &&
+      !(
+        typedEvent.type === "turn_completed" &&
+        this.managedCoreGatedLock.isLocked(sessionId)
+      ) &&
       this.isDuplicateTerminalEvent(sessionId, typedEvent)
     ) {
       this.deps.logger.debug(
